@@ -131,7 +131,7 @@ public class FormTextModel {
 				String text = getSingleNodeText(child);
 				if (text != null && !isIgnorableWhiteSpace(text, true)) {
 					Paragraph p = new Paragraph(true);
-					p.parseRegularText(text, expandURLs,
+					p.parseRegularText(text, expandURLs, true,
 							getHyperlinkSettings(), null);
 					plist.add(p);
 				}
@@ -237,7 +237,7 @@ public class FormTextModel {
 				String value = getSingleNodeText(child);
 
 				if (value != null && !isIgnorableWhiteSpace(value, false)) {
-					p.parseRegularText(value, expandURLs,
+					p.parseRegularText(value, expandURLs, true,
 							getHyperlinkSettings(), null);
 				}
 			} else if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -252,7 +252,7 @@ public class FormTextModel {
 				} else if (name.equalsIgnoreCase("b")) { //$NON-NLS-1$
 					String text = getNodeText(child);
 					String fontId = BOLD_FONT_ID;
-					p.parseRegularText(text, expandURLs,
+					p.parseRegularText(text, expandURLs, true,
 							getHyperlinkSettings(), fontId);
 				} else if (name.equalsIgnoreCase("br")) { //$NON-NLS-1$
 					segment = new BreakSegment();
@@ -493,6 +493,13 @@ public class FormTextModel {
 		NamedNodeMap atts = textNode.getAttributes();
 		Node font = atts.getNamedItem("font"); //$NON-NLS-1$
 		Node color = atts.getNamedItem("color"); //$NON-NLS-1$
+		boolean wrapAllowed=true;
+		Node nowrap = atts.getNamedItem("nowrap"); //$NON-NLS-1$
+		if (nowrap != null) {
+			String value = nowrap.getNodeValue();
+			if (value != null && value.equalsIgnoreCase("true")) //$NON-NLS-1$
+				wrapAllowed = false;
+		}
 		String fontId = null;
 		String colorId = null;
 		if (font != null) {
@@ -501,7 +508,7 @@ public class FormTextModel {
 		if (color != null) {
 			colorId = "c." + color.getNodeValue(); //$NON-NLS-1$
 		}
-		p.parseRegularText(text, expandURLs, getHyperlinkSettings(), fontId,
+		p.parseRegularText(text, expandURLs, wrapAllowed, getHyperlinkSettings(), fontId,
 				colorId);
 	}
 
@@ -526,7 +533,7 @@ public class FormTextModel {
 			if (c == '\n') {
 				String text = regularText.substring(pstart, i);
 				pstart = i + 1;
-				p.parseRegularText(text, convertURLs, getHyperlinkSettings(),
+				p.parseRegularText(text, convertURLs, true, getHyperlinkSettings(),
 						null);
 				p = null;
 			}
@@ -534,7 +541,7 @@ public class FormTextModel {
 		if (p != null) {
 			// no new line
 			String text = regularText.substring(pstart);
-			p.parseRegularText(text, convertURLs, getHyperlinkSettings(), null);
+			p.parseRegularText(text, convertURLs, true, getHyperlinkSettings(), null);
 		}
 	}
 

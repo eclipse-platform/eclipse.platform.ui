@@ -58,12 +58,12 @@ public class Paragraph {
 		segments.add(segment);
 	}
 
-	public void parseRegularText(String text, boolean expandURLs,
+	public void parseRegularText(String text, boolean expandURLs, boolean wrapAllowed,
 			HyperlinkSettings settings, String fontId) {
-		parseRegularText(text, expandURLs, settings, fontId, null);
+		parseRegularText(text, expandURLs, wrapAllowed, settings, fontId, null);
 	}
 
-	public void parseRegularText(String text, boolean expandURLs,
+	public void parseRegularText(String text, boolean expandURLs, boolean wrapAllowed,
 			HyperlinkSettings settings, String fontId, String colorId) {
 		if (text.length() == 0)
 			return;
@@ -71,12 +71,12 @@ public class Paragraph {
 			int loc = text.indexOf(HTTP);
 
 			if (loc == -1)
-				addSegment(new TextSegment(text, fontId, colorId));
+				addSegment(new TextSegment(text, fontId, colorId, wrapAllowed));
 			else {
 				int textLoc = 0;
 				while (loc != -1) {
 					addSegment(new TextSegment(text.substring(textLoc, loc),
-							fontId, colorId));
+							fontId, colorId, wrapAllowed));
 					boolean added = false;
 					for (textLoc = loc; textLoc < text.length(); textLoc++) {
 						char c = text.charAt(textLoc);
@@ -97,11 +97,11 @@ public class Paragraph {
 				}
 				if (textLoc < text.length()) {
 					addSegment(new TextSegment(text.substring(textLoc), fontId,
-							colorId));
+							colorId, wrapAllowed));
 				}
 			}
 		} else {
-			addSegment(new TextSegment(text, fontId, colorId));
+			addSegment(new TextSegment(text, fontId, colorId, wrapAllowed));
 		}
 	}
 

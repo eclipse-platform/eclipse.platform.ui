@@ -127,7 +127,9 @@ import org.eclipse.ui.internal.forms.widgets.TextSegment;
  * <li><b>span </b>- the enclosed text will have the color and font specified
  * in the element attributes. Color is provided using 'color' attribute and is a
  * key to the Color object set by 'setColor' method. Font is provided using
- * 'font' attribute and is a key to the Font object set by 'setFont' method.
+ * 'font' attribute and is a key to the Font object set by 'setFont' method. As with
+ * hyperlinks, it is possible to block wrapping by setting 'nowrap' to true
+ * (false by default).
  * </li>
  * <li><b>control (new in 3.1)</b> - to place a control that is a child of the
  * text control. Element accepts attribute 'href' that is a key to the Control

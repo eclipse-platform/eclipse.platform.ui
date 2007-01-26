@@ -92,14 +92,19 @@ public class TextSegment extends ParagraphSegment {
 	}
 
 	public TextSegment(String text, String fontId) {
-		this(text, fontId, null);
+		this(text, fontId, null, true);
 	}
 
 	public TextSegment(String text, String fontId, String colorId) {
+		this(text, fontId, colorId, true);
+	}
+	
+	public TextSegment(String text, String fontId, String colorId, boolean wrapAllowed) {
 		this.text = cleanup(text);
 		this.fontId = fontId;
 		this.colorId = colorId;
-	}
+		this.wrapAllowed = wrapAllowed;
+	}	
 
 	private String cleanup(String text) {
 		StringBuffer buf = new StringBuffer();

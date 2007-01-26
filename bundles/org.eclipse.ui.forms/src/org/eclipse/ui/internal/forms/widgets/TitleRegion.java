@@ -383,6 +383,8 @@ public class TitleRegion extends Canvas {
 	public boolean setBusy(boolean busy) {
 		if (busy)
 			ensureBusyLabelExists();
+		else if (busyLabel==null)
+			return false;
 		if (busy == busyLabel.isBusy())
 			return false;
 		busyLabel.setBusy(busy);

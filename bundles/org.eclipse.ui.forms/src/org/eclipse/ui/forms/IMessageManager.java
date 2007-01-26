@@ -16,25 +16,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.Form;
 
 /**
- * This interface provides for managing messages in a form. It is responsible
- * for:
+ * This interface provides for managing typed messages in a form. Typed messages
+ * are messages associated with a type that indicates their severity (error,
+ * warning, information). The interface is responsible for:
  * <ul>
- * <li>Bridging the concept of typed messages and field decorations</li>
- * <li>Adding multiple messages per field in a form</li>
+ * <li>Bridging the concept of typed messages and control decorations</li>
+ * <li>Adding one or more messages per control in a form</li>
  * <li>Rolling up local messages to the form header</li>
- * <li>Adding multiple general messages to the form header</li>
+ * <li>Adding one or more general messages to the form header</li>
  * </ul>
  * <p>
  * To use it in a form, do the following:
  * <ol>
  * <li>For each interactive control, add a listener to it to monitor user input</li>
  * <li>Every time the input changes, validate it. If there is a problem, add a
- * message with a unique ID to the manager. If there is already a message with
- * the same ID in the manager, its type and message text will be updated (no
- * duplicates). Note that you can messages with different ids to the same
- * control to track multiple problem with the user input.</li>
- * <li>If the problem has been cleared, remove the message using the id.</li>
- * <li>If something happens in the form that is not related to any control, us
+ * message with a unique key to the manager. If there is already a message with
+ * the same key in the manager, its type and message text will be replaced (no
+ * duplicates). Note that you add can messages with different keys to the same
+ * control to track multiple problems with the user input.</li>
+ * <li>If the problem has been cleared, remove the message using the key
+ * (attempting to remove a message that is not in the manager is safe).</li>
+ * <li>If something happens in the form that is not related to any control, use
  * the other <code>addMessage</code> method.</li>
  * </ol>
  * <p>
@@ -50,6 +52,9 @@ import org.eclipse.ui.forms.widgets.Form;
 public interface IMessageManager {
 	/**
 	 * Adds a general message that is not associated with any decorated field.
+	 * Note that subsequent calls using the same key will not result in
+	 * duplicate messages. Instead, the previous message with the same key will
+	 * be replaced with the new message.
 	 * 
 	 * @param key
 	 *            a unique message key that will be used to look the message up
@@ -65,7 +70,10 @@ public interface IMessageManager {
 	void addMessage(Object key, String messageText, Object data, int type);
 
 	/**
-	 * Adds a message that should be associated with the provided control.
+	 * Adds a message that should be associated with the provided control. Note
+	 * that subsequent calls using the same key will not result in duplicate
+	 * messages. Instead, the previous message with the same key will be
+	 * replaced with the new message.
 	 * 
 	 * @param key
 	 *            the unique message key
@@ -82,7 +90,8 @@ public interface IMessageManager {
 			Control control);
 
 	/**
-	 * Removes the provided general message.
+	 * Removes the general message with the provided key. Does nothing if
+	 * message for the key does not exist.
 	 * 
 	 * @param key
 	 *            the key of the message to remove
@@ -98,7 +107,8 @@ public interface IMessageManager {
 	void removeMessages();
 
 	/**
-	 * Removes the message associated with the provided control.
+	 * Removes a keyed message associated with the provided control. Does
+	 * nothing if the message for that key does not exist.
 	 * 
 	 * @param key
 	 *            the id of the message to remove
@@ -108,7 +118,8 @@ public interface IMessageManager {
 	void removeMessage(Object key, Control control);
 
 	/**
-	 * Removes all the messages associated with the provided control.
+	 * Removes all the messages associated with the provided control. Does
+	 * nothing if there are no messages for this control.
 	 * 
 	 * @param control
 	 *            the control the messages are associated with
@@ -125,17 +136,17 @@ public interface IMessageManager {
 	 * Updates the message container with the messages currently in the manager.
 	 * Use this method when some of the controls previously managed have been
 	 * disposed. Automatic update on control dispose is not done to avoid an
-	 * attempt to update a container that is in the process of being disposed
-	 * itself.
+	 * attempt to update a container that is itself in the process of being
+	 * disposed.
 	 */
 	void update();
 
 	/**
-	 * When message manager is used in context of a form, and there
-	 * are hyperlink listeners for messages in the header, the hyperlink
-	 * event will carry an object of type <code>IMessage[]</code> as an
-	 * href. You can use this method to create a summary text from this
-	 * array consistent with the tool tip used by the form header.
+	 * When message manager is used in context of a form, and there are
+	 * hyperlink listeners for messages in the header, the hyperlink event will
+	 * carry an object of type <code>IMessage[]</code> as an href. You can use
+	 * this method to create a summary text from this array consistent with the
+	 * tool tip used by the form header.
 	 * 
 	 * @param messages
 	 *            an array of messages
