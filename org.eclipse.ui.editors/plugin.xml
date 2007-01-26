@@ -928,4 +928,22 @@
       </factory>
    </extension>
    
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+      <target
+            id="org.eclipse.ui.DefaultTextEditor"
+            name="%TextEditorHyperlinkTarget">
+      </target>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+      <hyperlinkDetector
+            class="org.eclipse.ui.internal.editors.text.URLHyperlinkDetector"
+            id="org.eclipse.ui.internal.editors.text.URLHyperlinkDetector"
+            name="%URLHyperlinkDetector"
+            targetId="org.eclipse.ui.DefaultTextEditor">
+      </hyperlinkDetector>
+   </extension>
+
 </plugin>

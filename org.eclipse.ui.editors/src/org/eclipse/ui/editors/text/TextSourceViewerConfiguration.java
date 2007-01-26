@@ -10,11 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.action.Action;
@@ -43,9 +49,9 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 
-import org.eclipse.ui.internal.editors.text.URLHyperlinkDetector;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
 import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
@@ -216,8 +222,54 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		if (!fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED))
 			return null;
+		
+		return getRegisteredHyperlinkDetectors(sourceViewer);
+	}
 
-		return new IHyperlinkDetector[] { new URLHyperlinkDetector() };
+	/**
+	 * Returns the registered hyperlink detectors which are used to detect
+	 * hyperlinks in the given source viewer.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return an array with hyperlink detectors or <code>null</code> if no hyperlink detectors are registered
+	 * @since 3.3
+	 */
+	protected final IHyperlinkDetector[] getRegisteredHyperlinkDetectors(ISourceViewer sourceViewer) {
+		HyperlinkDetectorRegistry registry= EditorsUI.getHyperlinkDetectorRegistry();
+
+		Map targets= getHyperlinkDetectorTargets(sourceViewer);
+		Assert.isNotNull(targets);
+		
+		IHyperlinkDetector[] result= null;
+		Iterator iter= targets.entrySet().iterator();
+		while (iter.hasNext()) {
+			Entry target= (Entry)iter.next();
+			String targetId= (String)target.getKey();
+			IAdaptable context= (IAdaptable)target.getValue(); 
+			result= merge(result, registry.createHyperlinkDetectors(targetId, context));
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the hyperlink detector targets supported by the
+	 * given source viewer.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the hyperlink detector targets with target id (<code>String</code>) as key
+	 * 			and the target context (<code>IAdaptable</code>) as value 
+	 * @since 3.3
+	 */
+	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map targets= new HashMap();
+		targets.put("org.eclipse.ui.DefaultTextEditor", null); //$NON-NLS-1$
+		return targets;
 	}
 
 	/*
@@ -368,4 +420,30 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			}
 		};
 	}
+
+	/**
+	 * Helper method to merge two {@link IHyperlinkDetector} arrays.
+	 * 
+	 * @param array1 an array of hyperlink detectors or <code>null</code>
+	 * @param array2 an array of hyperlink detectors or <code>null</code>
+	 * @return an array with the merged hyperlink detectors or <code>null</code> if both given arrays are <code>null</code>
+	 * @since 3.3
+	 */
+	private IHyperlinkDetector[] merge(IHyperlinkDetector[] array1, IHyperlinkDetector[] array2) {
+		if (array1 == null && array2 == null)
+			return null;
+		else if (array1 == null)
+			return array2;
+		else if (array2 == null)
+			return array1;
+		else {
+			IHyperlinkDetector[] allHyperlinkDetectors;
+			int size= array1.length + array2.length;  
+			allHyperlinkDetectors= new IHyperlinkDetector[size];
+			System.arraycopy(array1, 0, allHyperlinkDetectors, 0, array1.length);
+			System.arraycopy(array2, 0, allHyperlinkDetectors, array1.length, array2.length);
+			return allHyperlinkDetectors;
+		}
+	}
+
 }

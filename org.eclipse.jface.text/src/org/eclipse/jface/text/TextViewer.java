@@ -64,6 +64,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
@@ -5253,6 +5254,13 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	public void setHyperlinkDetectors(IHyperlinkDetector[] hyperlinkDetectors, int eventStateMask) {
+		if (fHyperlinkDetectors != null) {
+			for (int i= 0; i < fHyperlinkDetectors.length; i++) {
+				if (fHyperlinkDetectors[i] instanceof IHyperlinkDetectorExtension)
+					((IHyperlinkDetectorExtension)fHyperlinkDetectors[i]).dispose();
+			}
+		}
+		
 		boolean enable= hyperlinkDetectors != null && hyperlinkDetectors.length > 0;
 		fHyperlinkStateMask= eventStateMask;
 		fHyperlinkDetectors= hyperlinkDetectors;

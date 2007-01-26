@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -167,6 +168,21 @@ public final class EditorsUI {
 	 */
 	public static ISharedTextColors getSharedTextColors() {
 		return EditorsPlugin.getDefault().getSharedTextColors();
+	}
+
+	/**
+	 * Returns the registry that contains the hyperlink detectors contributed
+	 * by  the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code>
+	 * extension point.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @return the hyperlink detector registry
+	 * @since 3.3
+	 */
+	public static HyperlinkDetectorRegistry getHyperlinkDetectorRegistry() {
+		return EditorsPlugin.getDefault().getHyperlinkDetectorRegistry();
 	}
 
 	// --------------- Status codes for this plug-in ---------------

@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -77,6 +78,12 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
 	private SpellingService fSpellingService;
+	
+	/**
+	 * The hyperlink detector registry.
+	 * @since 3.3
+	 */
+	private HyperlinkDetectorRegistry fHyperlinkDetectorRegistry;
 
 	public EditorsPlugin() {
 		Assert.isTrue(fgInstance == null);
@@ -181,6 +188,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		fAnnotationPreferenceLookup= null;
 		fAnnotationTypeHierarchy= null;
 		fMarkerAnnotationPreferences= null;
+		fHyperlinkDetectorRegistry= null;
 
 		super.stop(context);
 	}
@@ -195,5 +203,19 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		if (fSpellingService == null)
 			fSpellingService= new SpellingService(getPreferenceStore());
 		return fSpellingService;
+	}
+
+	/**
+	 * Returns the registry that contains the hyperlink detectors contributed
+	 * by  the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code>
+	 * extension point.
+	 * 
+	 * @return the hyperlink detector registry
+	 * @since 3.3
+	 */
+	public synchronized HyperlinkDetectorRegistry getHyperlinkDetectorRegistry() {
+		if (fHyperlinkDetectorRegistry == null)
+			fHyperlinkDetectorRegistry= new HyperlinkDetectorRegistry();
+		return fHyperlinkDetectorRegistry;
 	}
 }
