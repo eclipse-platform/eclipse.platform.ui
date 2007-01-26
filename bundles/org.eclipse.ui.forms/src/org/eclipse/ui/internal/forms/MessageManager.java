@@ -23,11 +23,13 @@ import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
@@ -38,6 +40,7 @@ public class MessageManager implements IMessageManager {
 	private ArrayList messages = new ArrayList();
 	private Hashtable decorators = new Hashtable();
 	private ScrolledForm scrolledForm;
+	private boolean computedPrefixAdded = true;
 	private static FieldDecoration standardError = FieldDecorationRegistry
 			.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 	private static FieldDecoration standardWarning = FieldDecorationRegistry
@@ -140,6 +143,10 @@ public class MessageManager implements IMessageManager {
 			return decoration.getControl() == null;
 		}
 
+		void updatePrefix() {
+			prefix = null;
+		}
+
 		String getPrefix() {
 			if (prefix == null)
 				createPrefix();
@@ -147,6 +154,10 @@ public class MessageManager implements IMessageManager {
 		}
 
 		private void createPrefix() {
+			if (!isComputedPrefixAdded()) {
+				prefix = ""; //$NON-NLS-1$
+				return;
+			}
 			Control c = decoration.getControl();
 			Composite parent = c.getParent();
 			Control[] siblings = parent.getChildren();
@@ -156,8 +167,16 @@ public class MessageManager implements IMessageManager {
 					// a label
 					for (int j = i - 1; j >= 0; j--) {
 						Control label = siblings[j];
+						String ltext = null;
 						if (label instanceof Label) {
-							prefix = ((Label) label).getText() + ": "; //$NON-NLS-1$
+							ltext = ((Label) label).getText();
+						} else if (label instanceof Hyperlink) {
+							ltext = ((Hyperlink) label).getText();
+						} else if (label instanceof CLabel) {
+							ltext = ((CLabel) label).getText();
+						}
+						if (ltext != null) {
+							prefix = ltext + ": "; //$NON-NLS-1$
 							return;
 						}
 					}
@@ -200,7 +219,7 @@ public class MessageManager implements IMessageManager {
 			if (controlMessages.isEmpty())
 				decoration.hide();
 			else {
-				int type = ((IMessage) controlMessages.get(0)).getMessageType();
+				int type = getMaxType();
 				String description = createDetails(controlMessages, true);
 				if (type == IMessageProvider.ERROR)
 					decoration.setImage(standardError.getImage());
@@ -209,6 +228,14 @@ public class MessageManager implements IMessageManager {
 				decoration.setDescriptionText(description);
 				decoration.show();
 			}
+		}
+
+		private int getMaxType() {
+			int type = 0;
+			for (int i = 0; i < controlMessages.size(); i++)
+				type = Math.max(type, ((IMessage) controlMessages.get(i))
+						.getMessageType());
+			return type;
 		}
 	}
 
@@ -381,13 +408,13 @@ public class MessageManager implements IMessageManager {
 		ArrayList peers = createPeers(mergedList);
 		int maxType = ((IMessage) peers.get(0)).getMessageType();
 		String messageText;
-		IMessage[] array = (IMessage[]) peers.toArray(new IMessage[peers
-		                                       					.size()]);
+		IMessage[] array = (IMessage[]) peers
+				.toArray(new IMessage[peers.size()]);
 		if (peers.size() == 1 && ((Message) peers.get(0)).prefix == null) {
 			// a single message
-			IMessage message = (IMessage)peers.get(0);
+			IMessage message = (IMessage) peers.get(0);
 			messageText = message.getMessage();
-			scrolledForm.setMessage(messageText, maxType, array); 
+			scrolledForm.setMessage(messageText, maxType, array);
 		} else {
 			// show a summary message for the message
 			// and list of errors for the details
@@ -450,16 +477,28 @@ public class MessageManager implements IMessageManager {
 		out.flush();
 		return sw.toString();
 	}
-	
+
 	public String createSummary(IMessage[] messages) {
 		return createDetails(messages);
 	}
-	
+
 	private void pruneControlDecorators() {
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = (ControlDecorator) iter.next();
 			if (dec.isDisposed())
 				iter.remove();
+		}
+	}
+
+	public boolean isComputedPrefixAdded() {
+		return computedPrefixAdded;
+	}
+
+	public void setComputedPrefixAdded(boolean value) {
+		this.computedPrefixAdded = value;
+		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
+			ControlDecorator dec = (ControlDecorator) iter.next();
+			dec.updatePrefix();
 		}
 	}
 }

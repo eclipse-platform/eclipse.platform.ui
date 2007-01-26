@@ -142,6 +142,27 @@ public interface IMessageManager {
 	void update();
 
 	/**
+	 * By default, message manager will check the immediate control before the
+	 * message control and compute an automatic prefix for control messages.
+	 * This is not a precise science and in some cases it may fail. This method
+	 * can be used to turn the prefixes off.
+	 * 
+	 * @param value
+	 *            <code>true</code> to add control message prefixes,
+	 *            <code>false</code> otherwise.
+	 */
+
+	void setComputedPrefixAdded(boolean value);
+
+	/**
+	 * Tests if control message prefixes are automatically prepended.
+	 * 
+	 * @return <code>true</code> if computed prefises are added,
+	 *         <code>false</code> otherwise.
+	 */
+	boolean isComputedPrefixAdded();
+
+	/**
 	 * When message manager is used in context of a form, and there are
 	 * hyperlink listeners for messages in the header, the hyperlink event will
 	 * carry an object of type <code>IMessage[]</code> as an href. You can use
