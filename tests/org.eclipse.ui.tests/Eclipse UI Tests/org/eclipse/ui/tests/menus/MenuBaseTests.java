@@ -106,9 +106,9 @@ public class MenuBaseTests extends MenuTestCase {
 		
 		// NOTE: Uncomment to print the info needed to update the 'expected'
 		// arrays
-		printIds(items);
-		printClasses(items);
-		printMenuItemLabels(menuItems);
+//		printIds(items);
+//		printClasses(items);
+//		printMenuItemLabels(menuItems);
 		
 		// Correct number of items?
 		assertTrue("createMenuBar: Bad count", menuItems.length == expectedMenuItemLabels.length);
