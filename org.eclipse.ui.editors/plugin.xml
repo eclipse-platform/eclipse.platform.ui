@@ -242,6 +242,13 @@
             id="org.eclipse.ui.editors.preferencePages.LinkedModePreferencePage">
          <keywordReference id="org.eclipse.ui.editors.linkedmode"/>
       </page>
+      <page
+            name="%HyperlinkDetectorsPreferencePage"
+            category="org.eclipse.ui.preferencePages.GeneralTextEditor"
+            class="org.eclipse.ui.internal.editors.text.HyperlinkDetectorsPreferencePage"
+            id="org.eclipse.ui.editors.preferencePages.HyperlinkDetectorsPreferencePage">
+         <keywordReference id="org.eclipse.ui.editors.hyperlinkDetectors"/>
+      </page>
       
    </extension>
    <extension
@@ -264,6 +271,9 @@
       <keyword
             label="%preferenceKeywords.linkedmode"
             id="org.eclipse.ui.editors.linkedmode"/>
+      <keyword
+            label="%preferenceKeywords.hyperlinkDetectors"
+            id="org.eclipse.ui.editors.hyperlinkDetectors"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.documentProviders">

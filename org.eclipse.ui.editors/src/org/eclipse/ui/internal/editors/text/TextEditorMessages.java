@@ -79,6 +79,9 @@ final class TextEditorMessages extends NLS {
 	public static String AnnotationsConfigurationBlock_HIGHLIGHT;
 	public static String AnnotationsConfigurationBlock_labels_showIn;
 	public static String AnnotationsConfigurationBlock_color;
+	public static String HyperlinkDetectorsConfigurationBlock_description;
+	public static String HyperlinkDetectorTable_nameColumn;
+	public static String HyperlinkDetectorTable_targetNameColumn;
 	public static String SelectResourcesDialog_filterSelection;
 	public static String SelectResourcesDialog_deselectAll;
 	public static String SelectResourcesDialog_selectAll;

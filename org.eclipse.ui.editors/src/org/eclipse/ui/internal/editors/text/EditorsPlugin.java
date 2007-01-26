@@ -215,7 +215,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	 */
 	public synchronized HyperlinkDetectorRegistry getHyperlinkDetectorRegistry() {
 		if (fHyperlinkDetectorRegistry == null)
-			fHyperlinkDetectorRegistry= new HyperlinkDetectorRegistry();
+			fHyperlinkDetectorRegistry= new HyperlinkDetectorRegistry(getPreferenceStore());
 		return fHyperlinkDetectorRegistry;
 	}
 }

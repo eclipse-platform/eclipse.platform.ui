@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
@@ -40,10 +42,11 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
  */
 public final class HyperlinkDetectorRegistry {
 	
+	
 	/**
 	 * Delegate for contributed hyperlink detectors.
 	 */
-	private static class HyperlinkDetectorDelegate implements IHyperlinkDetector, IHyperlinkDetectorExtension {
+	private class HyperlinkDetectorDelegate implements IHyperlinkDetector, IHyperlinkDetectorExtension {
 		
 		private HyperlinkDetectorDescriptor fHyperlinkDescriptor;
 		private AbstractHyperlinkDetector fHyperlinkDetector;
@@ -59,7 +62,10 @@ public final class HyperlinkDetectorRegistry {
 		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion, boolean)
 		 */
 		public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
-			if (fHyperlinkDetector == null && !fFailedDuringCreation) {
+			if (!isEnabled())
+				return null;
+			
+			if (!fFailedDuringCreation && fHyperlinkDetector == null) {
 				try {
 					fHyperlinkDetector= fHyperlinkDescriptor.createHyperlinkDetector();
 				} catch (CoreException ex) {
@@ -74,6 +80,10 @@ public final class HyperlinkDetectorRegistry {
 			return null;
 		}
 		
+		private boolean isEnabled() {
+			return fPreferenceStore == null || !fPreferenceStore.getBoolean(fHyperlinkDescriptor.getId());
+		}
+
 		private void setContext(IAdaptable context) {
 			fContext= context;
 		}
@@ -94,7 +104,29 @@ public final class HyperlinkDetectorRegistry {
 
 	
 	private HyperlinkDetectorDescriptor[] fHyperlinkDetectorDescriptors;
+	private IPreferenceStore fPreferenceStore;
 	
+
+	/**
+	 * Creates a new hyperlink detector registry.
+	 */
+	public HyperlinkDetectorRegistry() {
+	}
+	
+	/**
+	 * Creates a new hyperlink detector registry that controls
+	 * hyperlink enablement via the given preference store.
+	 * <p>
+	 * The hyperlink detector id is used as preference key.
+	 * The value is of type <code>Boolean</code> where
+	 * <code>false</code> means that the hyperlink detector is active. 
+	 * </p>
+	 * 
+	 * @param preferenceStore the preference store to be used
+	 */
+	public HyperlinkDetectorRegistry(IPreferenceStore preferenceStore) {
+		fPreferenceStore= preferenceStore;
+	}
 	
 	/**
 	 * Returns all hyperlink detectors contributed to the workbench.
