@@ -186,7 +186,7 @@ public class MessageManager implements IMessageManager {
 							if (!ltext.endsWith(":")) //$NON-NLS-1$
 								prefix = ltext + ": "; //$NON-NLS-1$
 							else
-								prefix = ltext;
+								prefix = ltext + " "; //$NON-NLS-1$
 							return;
 						}
 					}
