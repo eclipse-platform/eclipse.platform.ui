@@ -67,4 +67,33 @@ public class ValidationStatus extends Status {
 		return new ValidationStatus(IStatus.ERROR, message, exception);
 	}
 
+	/**
+	 * Creates a new validation warning status with the given message.
+	 * 
+	 * @param message
+	 * @return a new warning status with the given message
+	 */
+	public static IStatus warning(String message) {
+		return new ValidationStatus(IStatus.WARNING, message);
+	}
+	
+	/**
+	 * Creates a new validation info status with the given message.
+	 * 
+	 * @param message
+	 * @return a new info status with the given message
+	 */
+	public static IStatus info(String message) {
+		return new ValidationStatus(IStatus.INFO, message);
+	}
+	
+	/**
+	 * Returns an OK status.
+	 * 
+	 * @return an ok status
+	 */
+	public static IStatus ok() {
+		return Status.OK_STATUS;
+	}
+	
 }
