@@ -140,7 +140,7 @@ public class MessageManager implements IMessageManager {
 			for (int i = 0; i < siblings.length; i++) {
 				if (siblings[i] == c) {
 					// this is us - go backward until you hit
-					// a label
+					// a label-like widget
 					for (int j = i - 1; j >= 0; j--) {
 						Control label = siblings[j];
 						String ltext = null;
