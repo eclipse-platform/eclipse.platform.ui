@@ -20,11 +20,11 @@ import org.eclipse.ui.IActionDelegate2;
  * This action gets its immediate context from what was right-clicked
  * on to present the action.
  * 
- * @see {@link ContextRunner}
- * @see {@link IActionDelegate2}
- * @see {@link RunContextLaunchingAction}
- * @see {@link DebugContextLaunchingAction}
- * @see {@link ProfileContextLaunchingAction}
+ * @see ContextRunner
+ * @see IActionDelegate2
+ * @see RunContextLaunchingAction
+ * @see DebugContextLaunchingAction
+ * @see ProfileContextLaunchingAction
  * 
  * @since 3.3
  * EXPERIMENTAL

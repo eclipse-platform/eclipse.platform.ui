@@ -56,10 +56,10 @@ import com.ibm.icu.text.MessageFormat;
  * Static runner for context launching to provide the base capability of context 
  * launching to more than one form of action (drop down, toolbar, view, etc)
  * 
- * @see {@link ContextLaunchingAction}
- * @see {@link ContextLaunchingToolbarAction}
- * @see {@link ILaunchListener}
- * @see {@link org.eclipse.debug.core.ILaunchManager}
+ * @see ContextLaunchingAction
+ * @see ContextLaunchingToolbarAction
+ * @see ILaunchListener
+ * @see org.eclipse.debug.core.ILaunchManager
  * 
  *  @since 3.3
  *  EXPERIMENTAL
@@ -339,8 +339,8 @@ public class ContextRunner implements ILaunchListener {
 	 * Returns the current context to be considered for launching. 
 	 * The returned object will be one of:
 	 * <ol>
-	 * <li>{@link IEditorInput}</li>
-	 * <li>{@link Object}, where <i>object</i> is the first element in the selection obtained from the 
+	 * <li>IEditorInput</li>
+	 * <li>Object where <i>object</i> is the first element in the selection obtained from the 
 	 * selection provider of the currently selected workbench part</li>
 	 * </ol>
 	 * @return the currently selected context to consider for launching, or <code>null</code>.

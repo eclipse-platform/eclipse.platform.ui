@@ -22,10 +22,10 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 /**
  * A wrapper class for a context launching toolbar action
  * 
- * @see {@link ContextRunner}
- * @see {@link ContextLaunchingAction}
- * @see {@link Action}
- * @see {@link IWorkbenchWindowActionDelegate}
+ * @see ContextRunner
+ * @see ContextLaunchingAction
+ * @see Action
+ * @see IWorkbenchWindowActionDelegate
  * 
  *  @since 3.3
  *  EXPERIMENTAL

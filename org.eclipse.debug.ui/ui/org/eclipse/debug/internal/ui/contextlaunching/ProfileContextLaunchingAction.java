@@ -15,10 +15,10 @@ import org.eclipse.debug.core.ILaunchManager;
 /**
  * Specialization of <code>ContextLaunchingAction</code> for profile mode
  * 
- * @see {@link ContextLaunchingAction}
- * @see {@link ILaunchManager}
- * @see {@link RunContextLaunchingAction}
- * @see {@link DebugContextLaunchingAction}
+ * @see ContextLaunchingAction
+ * @see ILaunchManager
+ * @see RunContextLaunchingAction
+ * @see DebugContextLaunchingAction
  * 
  * @since 3.3
  * EXPERIMENTAL

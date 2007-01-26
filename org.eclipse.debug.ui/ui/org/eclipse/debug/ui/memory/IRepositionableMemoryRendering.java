@@ -45,7 +45,7 @@ public interface IRepositionableMemoryRendering extends IMemoryRendering{
 	/**
 	 * Position the rendering to the given address.
 	 * 
-	 * @param the address to go to
+	 * @param address the address to go to
 	 * @throws DebugException when there is a problem repositioning the rendering to the 
 	 * address
 	 */
