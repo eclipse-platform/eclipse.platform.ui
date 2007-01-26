@@ -177,7 +177,6 @@ public class UAContentFilter {
 			 * This can happen when attempting to resolve a UI variable (e.g. "workbench")
 			 * in a non-UI environment (infocenter mode). Fail silently.
 			 */
-			e.printStackTrace();
 			return false;
 		}
 	}
