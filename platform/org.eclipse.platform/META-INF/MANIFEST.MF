@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.ui.intro;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.2.0,4.0.0)";resolution:=optional,
  org.eclipse.update.ui;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
  org.eclipse.ui.intro.universal;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)"
+ org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.ui.ide.application;bundle-version="[1.0.0,2.0.0)"
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
  CDC-1.0/Foundation-1.0,
