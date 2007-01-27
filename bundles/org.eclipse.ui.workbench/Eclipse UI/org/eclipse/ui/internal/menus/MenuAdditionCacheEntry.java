@@ -187,7 +187,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		// item of style 'pulldown'
 		if (getLocation().startsWith("toolbar")) //$NON-NLS-1$
 			return null;
-		
+
 		return new MenuManager(getLabel(menuAddition), getId(menuAddition));
 	}
 
@@ -267,9 +267,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			final IConfigurationElement itemAddition) {
 		return new CommandContributionItem(getId(itemAddition),
 				getCommandId(itemAddition), getParameters(itemAddition),
-				getIconDescriptor(itemAddition), null, null,
-				getLabel(itemAddition), null, getTooltip(itemAddition),
-				getStyle(itemAddition));
+				getIconDescriptor(itemAddition),
+				getDisabledIconDescriptor(itemAddition),
+				getHoverIconDescriptor(itemAddition), getLabel(itemAddition),
+				null, getTooltip(itemAddition), getStyle(itemAddition));
 	}
 
 	/*
@@ -303,11 +304,43 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 	}
 
+	static String getDisabledIconPath(IConfigurationElement element) {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
+	}
+
+	static String getHoverIconPath(IConfigurationElement element) {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_HOVERICON);
+	}
+
 	static ImageDescriptor getIconDescriptor(IConfigurationElement element) {
 		String extendingPluginId = element.getDeclaringExtension()
 				.getContributor().getName();
 
 		String iconPath = getIconPath(element);
+		if (iconPath != null) {
+			return AbstractUIPlugin.imageDescriptorFromPlugin(
+					extendingPluginId, iconPath);
+		}
+		return null;
+	}
+
+	static ImageDescriptor getDisabledIconDescriptor(IConfigurationElement element) {
+		String extendingPluginId = element.getDeclaringExtension()
+				.getContributor().getName();
+
+		String iconPath = getDisabledIconPath(element);
+		if (iconPath != null) {
+			return AbstractUIPlugin.imageDescriptorFromPlugin(
+					extendingPluginId, iconPath);
+		}
+		return null;
+	}
+
+	static ImageDescriptor getHoverIconDescriptor(IConfigurationElement element) {
+		String extendingPluginId = element.getDeclaringExtension()
+				.getContributor().getName();
+
+		String iconPath = getHoverIconPath(element);
 		if (iconPath != null) {
 			return AbstractUIPlugin.imageDescriptorFromPlugin(
 					extendingPluginId, iconPath);
