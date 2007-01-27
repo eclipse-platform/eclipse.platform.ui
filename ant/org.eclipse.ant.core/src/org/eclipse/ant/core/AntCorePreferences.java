@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,9 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Constants;
+import org.osgi.service.packageadmin.ExportedPackage;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 
 /**
@@ -424,12 +427,24 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 */
 	public IAntClasspathEntry[] getDefaultAntHomeEntries() {
 		if (defaultAntHomeEntries== null) {
-			List result = new ArrayList(29);
-			Bundle bundle = Platform.getBundle("org.apache.ant"); //$NON-NLS-1$
-			if (bundle != null) {
-				addLibraries(bundle, result);
+			ServiceTracker tracker = new ServiceTracker(AntCorePlugin.getPlugin().getBundle().getBundleContext(), PackageAdmin.class.getName(), null);
+			tracker.open();
+			try {
+				List result = new ArrayList(29);
+				PackageAdmin packageAdmin = (PackageAdmin) tracker.getService();
+				if (packageAdmin != null) {
+					ExportedPackage exportedPackage = packageAdmin.getExportedPackage("org.apache.tools.ant"); //$NON-NLS-1$
+					if (exportedPackage != null) {
+						Bundle bundle = exportedPackage.getExportingBundle();
+						if (bundle != null) {
+							addLibraries(bundle, result);
+						}
+					}
+				}
+				defaultAntHomeEntries= (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
+			} finally {
+				tracker.close();
 			}
-			defaultAntHomeEntries= (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
 		}
 		return defaultAntHomeEntries;
 	}
