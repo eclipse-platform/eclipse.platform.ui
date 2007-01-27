@@ -28,10 +28,13 @@ import org.eclipse.core.runtime.Status;
 /**
  * Data binding has three concerns, the target, the model, and the data flow
  * between the target and model. BindSpec contains values and settings that
- * influence how data binding manages this data flow between the target and the
+ * influence how bindings manage this data flow between the target and the
  * model.
  * 
  * @since 1.0
+ * 
+ * APIREVIEW why are the old-style validators not stored in the map together with the new-style ones?
+ * APIREVIEW can we remove getPartialTargetValidator etc.?
  * 
  */
 public class BindSpec {
@@ -44,8 +47,9 @@ public class BindSpec {
 
 	/**
 	 * Policy constant specifying that update or validation should only occur
-	 * when explicitly requested by calling {@link #updateModels() } or
-	 * {@link #updateTargets() }.
+	 * when explicitly requested by calling
+	 * {@link Binding#updateModelFromTarget()} or
+	 * {@link Binding#updateTargetFromModel()}.
 	 */
 	public static final Integer POLICY_EXPLICIT = new Integer(2);
 
@@ -54,9 +58,8 @@ public class BindSpec {
 	 */
 	private static final IValidator[] NO_VALIDATORS = new IValidator[0];
 
-	/**
-	 * @since 3.3
-	 * 
+	/*
+	 * Default validator implementation that always returns an OK status.
 	 */
 	static class DefaultValidator implements IValidator {
 		public IStatus validate(Object value) {
@@ -64,18 +67,13 @@ public class BindSpec {
 		}
 	}
 
-	/**
-	 * @since 3.3
-	 * 
+	/*
+	 * Default converter implementation, does not perform any conversion.
 	 */
 	static class DefaultConverter implements IConverter {
-		/**
-		 * 
-		 */
+
 		private final Object toType;
-		/**
-		 * 
-		 */
+
 		private final Object fromType;
 
 		/**
@@ -121,7 +119,7 @@ public class BindSpec {
 	private Integer targetValidatePosition;
 
 	/**
-	 * Default constructor that initializes all objects to their defaults.
+	 * Default constructor.  Does not set any values.
 	 */
 	public BindSpec() {
 	}
@@ -448,7 +446,6 @@ public class BindSpec {
 	/**
 	 * Stores validators along with the pipeline position to validate.
 	 * 
-	 * @since 3.3
 	 */
 	private static class ValidatorsContainer {
 		final int pipelinePosition;

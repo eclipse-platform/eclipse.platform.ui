@@ -220,10 +220,8 @@ public class ValueBinding extends Binding {
 	 */
 	private void doUpdateModelFromTarget(ValueDiff diff, int lastPosition) {
 		Assert.isTrue(model.getRealm().isCurrent());
-		BindingEvent e = new BindingEvent(model, target, diff,
-				BindingEvent.EVENT_COPY_TO_MODEL,
-				BindingEvent.PIPELINE_AFTER_GET) {
-		};
+		BindingEvent e = createBindingEvent(model, target, diff,
+				BindingEvent.EVENT_COPY_TO_MODEL, BindingEvent.PIPELINE_AFTER_GET);
 		e.originalValue = diff.getNewValue();
 		if (!performPosition(e.originalValue, BindingEvent.PIPELINE_AFTER_GET,
 				e, lastPosition)) {
@@ -327,10 +325,8 @@ public class ValueBinding extends Binding {
 		Assert.isTrue(target.getRealm().isCurrent());
 		try {
 			updatingTarget = true;
-			BindingEvent e = new BindingEvent(model, target, diff,
-					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET) {
-			};
+			BindingEvent e = createBindingEvent(model, target, diff,
+					BindingEvent.EVENT_COPY_TO_TARGET, BindingEvent.PIPELINE_AFTER_GET);
 			e.originalValue = diff.getNewValue();
 			if (!performPosition(e.originalValue,
 					BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {

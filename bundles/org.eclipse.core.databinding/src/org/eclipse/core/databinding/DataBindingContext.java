@@ -155,8 +155,8 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Disposes of this data binding context and all observable objects created
-	 * in this context.
+	 * Disposes of this data binding context and all bindings that were added to
+	 * this context.
 	 */
 	public void dispose() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {

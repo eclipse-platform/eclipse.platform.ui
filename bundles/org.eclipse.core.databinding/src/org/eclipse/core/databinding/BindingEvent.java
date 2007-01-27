@@ -14,7 +14,6 @@ package org.eclipse.core.databinding;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.IDiff;
@@ -23,31 +22,16 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * The event that is passed to a #bindingEvent method of an IBindingListener.
+ * Instances of this class provide a description of a particular event that
+ * occurred in a binding. It is passed to
+ * {@link IBindingListener#bindingEvent(BindingEvent)}.
+ * <p>
  * This class is not intended to be subclassed by clients.
+ * </p>
  * 
  * @since 1.0
  */
 public class BindingEvent {
-	/**
-	 * (Non-API Method) Construct a BindingEvent.
-	 * 
-	 * @param model
-	 * @param target
-	 * @param diff
-	 * @param copyType
-	 * @param pipelinePosition
-	 *            The initial processing pipeline position.
-	 */
-	public BindingEvent(IObservable model, IObservable target, IDiff diff,
-			int copyType, int pipelinePosition) {
-		this.model = model;
-		this.target = target;
-		this.diff = diff;
-		this.copyType = copyType;
-		this.pipelinePosition = pipelinePosition;
-		createSymbolTable();
-	}
 
 	/**
 	 * The model observable for the change that is being processed.
@@ -89,16 +73,16 @@ public class BindingEvent {
 	public IStatus validationStatus = Status.OK_STATUS;
 
 	/**
-	 * Holds the value that was retrieved from the source updatable. Setting the
-	 * value of this field changes the value that will be processed by all
+	 * Holds the value that was retrieved from the source observable. Setting
+	 * the value of this field changes the value that will be processed by all
 	 * subsequent steps in the data flow pipeline.
 	 */
 	public Object originalValue = null;
 
 	/**
-	 * Holds the value that will be copied into the final updatable. This value
+	 * Holds the value that will be copied into the final observable. This value
 	 * is null if the original value has not been converted into the final
-	 * updatable's data type or if no conversion will be performed. Setting the
+	 * observable's data type or if no conversion will be performed. Setting the
 	 * value of this field changes the value that will be processed by all
 	 * subsequent steps in the data flow pipeline.
 	 */
@@ -118,31 +102,13 @@ public class BindingEvent {
 
 	/**
 	 * A constant indicating that this event is occuring during a partial
-	 * validation event.
+	 * validation.
 	 */
 	public static final int EVENT_PARTIAL_VALIDATE = 2;
 
 	/**
-	 * A constant indicating that this event is occuring during an element
-	 * remove operation.
-	 */
-	public static final int EVENT_REMOVE = 3;
-
-	/**
-	 * A constant indicating that this event is occuring during a lazy list
-	 * insert operation.
-	 */
-	public static final int EVENT_LAZY_INSERT = 4;
-
-	/**
-	 * A constant indicating that this event is occuring during a lazy list
-	 * delete operation.
-	 */
-	public static final int EVENT_LAZY_DELETE = 5;
-
-	/**
 	 * A constant indicating that this event is occuring immedately after the
-	 * value to copy has been gotten from its IUpdatable.
+	 * value to copy has been gotten from its observable.
 	 */
 	public static final int PIPELINE_AFTER_GET = 0;
 
@@ -160,17 +126,18 @@ public class BindingEvent {
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the
-	 * converted value has been set/changed on the updatable.
+	 * converted value has been set/changed on the observable.
 	 */
 	public static final int PIPELINE_AFTER_CHANGE = 3;
 
 	/**
 	 * A Map of Integer --> String mapping the integer constants for the
-	 * pipeline events defined in this class to their String symbols.
+	 * pipeline events defined in this class to their String symbols. Can be
+	 * used for debugging purposes.
 	 */
 	public static final Map PIPELINE_CONSTANTS;
 	static {
-		Map constants = new LinkedHashMap();
+		Map constants = new HashMap();
 		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_GET),
 				"PIPELINE_AFTER_GET"); //$NON-NLS-1$
 		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_CONVERT),
@@ -181,30 +148,50 @@ public class BindingEvent {
 				"PIPELINE_AFTER_CHANGE"); //$NON-NLS-1$
 		PIPELINE_CONSTANTS = Collections.unmodifiableMap(constants);
 	}
-	private HashMap eventConstants = new HashMap();
 
 	/**
-	 * Creates a table of constants from this class.
+	 * A Map of Integer --> String mapping the integer constants for the event
+	 * constants defined in this class to their String symbols. Can be used for
+	 * debugging purposes.
 	 */
-	private void createSymbolTable() {
-		eventConstants.put(new Integer(BindingEvent.EVENT_COPY_TO_TARGET),
+	public static final Map EVENT_CONSTANTS;
+	static {
+		Map constants = new HashMap();
+		constants.put(new Integer(BindingEvent.EVENT_COPY_TO_TARGET),
 				"EVENT_COPY_TO_TARGET"); //$NON-NLS-1$
-		eventConstants.put(new Integer(BindingEvent.EVENT_COPY_TO_MODEL),
+		constants.put(new Integer(BindingEvent.EVENT_COPY_TO_MODEL),
 				"EVENT_COPY_TO_MODEL"); //$NON-NLS-1$
-		eventConstants.put(new Integer(BindingEvent.EVENT_PARTIAL_VALIDATE),
+		constants.put(new Integer(BindingEvent.EVENT_PARTIAL_VALIDATE),
 				"EVENT_PARTIAL_VALIDATE"); //$NON-NLS-1$
-		eventConstants.put(new Integer(BindingEvent.EVENT_REMOVE),
-				"EVENT_REMOVE"); //$NON-NLS-1$
+		EVENT_CONSTANTS = Collections.unmodifiableMap(constants);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * (Non-API Method) Construct a BindingEvent.
 	 * 
-	 * @see java.lang.Object#toString()
+	 * @param model
+	 * @param target
+	 * @param diff
+	 * @param copyType
+	 * @param pipelinePosition
+	 *            The initial processing pipeline position.
+	 */
+	/* package */BindingEvent(IObservable model, IObservable target,
+			IDiff diff, int copyType, int pipelinePosition) {
+		this.model = model;
+		this.target = target;
+		this.diff = diff;
+		this.copyType = copyType;
+		this.pipelinePosition = pipelinePosition;
+	}
+
+	/**
+	 * Returns a string representation of this event for debugging purposes. The
+	 * format of the string representation is not guaranteed to remain the same.
 	 */
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		result.append(eventConstants.get(new Integer(copyType))
+		result.append(EVENT_CONSTANTS.get(new Integer(copyType))
 				+ ": Diff(" + diff + "): "); //$NON-NLS-1$ //$NON-NLS-2$
 		result.append("("); //$NON-NLS-1$
 		result.append(PIPELINE_CONSTANTS.get(new Integer(pipelinePosition)));

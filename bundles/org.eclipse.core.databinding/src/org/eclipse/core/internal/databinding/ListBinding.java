@@ -152,9 +152,8 @@ public class ListBinding extends Binding {
 			return;
 		}
 
-		BindingEvent e = new BindingEvent(modelList, targetList, diff,
-				BindingEvent.EVENT_COPY_TO_MODEL,
-				BindingEvent.PIPELINE_AFTER_GET);
+		BindingEvent e = createBindingEvent(modelList, targetList, diff,
+				BindingEvent.EVENT_COPY_TO_MODEL, BindingEvent.PIPELINE_AFTER_GET);
 
 		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
 			return;
@@ -198,9 +197,8 @@ public class ListBinding extends Binding {
 		if (updating) {
 			return;
 		}
-		BindingEvent e = new BindingEvent(modelList, targetList, diff,
-				BindingEvent.EVENT_COPY_TO_TARGET,
-				BindingEvent.PIPELINE_AFTER_GET);
+		BindingEvent e = createBindingEvent(modelList, targetList, diff,
+				BindingEvent.EVENT_COPY_TO_TARGET, BindingEvent.PIPELINE_AFTER_GET);
 		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
 			return;
 		}

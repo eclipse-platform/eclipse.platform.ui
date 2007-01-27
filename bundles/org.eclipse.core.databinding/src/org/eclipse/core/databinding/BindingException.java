@@ -23,8 +23,6 @@ import java.io.PrintWriter;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * TODO API review issue: Use CoreException instead?
- * 
  * @since 1.0
  */
 public class BindingException extends RuntimeException {

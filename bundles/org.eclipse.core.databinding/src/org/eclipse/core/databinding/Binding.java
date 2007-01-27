@@ -15,15 +15,14 @@ package org.eclipse.core.databinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * The interface that represents a binding between a model and a target.
- * 
- * This interface is not intended to be implemented by clients.
+ * This abstract class represents a binding between a model and a target.
  * 
  * @since 1.0
  */
@@ -34,6 +33,7 @@ public abstract class Binding {
 	protected DataBindingContext context;
 
 	/**
+	 * Creates a new binding, using the given context.
 	 * @param context
 	 */
 	public Binding(DataBindingContext context) {
@@ -171,4 +171,20 @@ public abstract class Binding {
 	 * @param pipelinePosition BindingEvent.PIPELINE_* constant
 	 */
 	public abstract void updateTargetFromModel(int pipelinePosition);
+
+	/**
+	 * Returns a new BindingEvent object.
+	 * 
+	 * @param model
+	 * @param target
+	 * @param diff
+	 * @param copyType
+	 * @param pipelinePosition
+	 *            The initial processing pipeline position.
+	 * @return the new binding event
+	 */
+	protected BindingEvent createBindingEvent(IObservable model,
+			IObservable target, IDiff diff, int copyType, int pipelinePosition) {
+		return new BindingEvent(model, target, diff, copyType, pipelinePosition);
+	}
 }
