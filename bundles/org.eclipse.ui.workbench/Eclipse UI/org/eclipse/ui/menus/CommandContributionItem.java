@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -72,19 +74,19 @@ public final class CommandContributionItem extends ContributionItem implements
 	 * A push button tool item or menu item.
 	 */
 	public static final int STYLE_PUSH = SWT.PUSH;
-	
+
 	/**
-	 * A checked tool item or menu item. 
+	 * A checked tool item or menu item.
 	 */
 	public static final int STYLE_CHECK = SWT.CHECK;
-	
+
 	/**
-	 * A radio-button style menu item. 
+	 * A radio-button style menu item.
 	 */
 	public static final int STYLE_RADIO = SWT.RADIO;
-	
+
 	/**
-	 * A ToolBar pulldown item. 
+	 * A ToolBar pulldown item.
 	 */
 	public static final int STYLE_PULLDOWN = SWT.DROP_DOWN;
 
@@ -119,6 +121,8 @@ public final class CommandContributionItem extends ContributionItem implements
 	private boolean checkedState;
 
 	private int style;
+
+	private ICommandListener commandListener;
 
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
@@ -162,10 +166,10 @@ public final class CommandContributionItem extends ContributionItem implements
 		this.mnemonic = mnemonic;
 		this.tooltip = tooltip;
 		this.style = style;
-		menuService = (IMenuService) PlatformUI.getWorkbench()
-		.getService(IMenuService.class);
+		menuService = (IMenuService) PlatformUI.getWorkbench().getService(
+				IMenuService.class);
 		commandService = (ICommandService) PlatformUI.getWorkbench()
-		.getService(ICommandService.class);
+				.getService(ICommandService.class);
 		handlerService = (IHandlerService) PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
 		createCommand(commandId, parameters);
@@ -174,11 +178,28 @@ public final class CommandContributionItem extends ContributionItem implements
 			try {
 				callbackRef = commandService.registerCallbackForCommand(
 						command, this);
+				command.getCommand().addCommandListener(getCommandListener());
 			} catch (NotDefinedException e) {
 				WorkbenchPlugin.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
 						+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	private ICommandListener getCommandListener() {
+		if (commandListener == null) {
+			commandListener = new ICommandListener() {
+				public void commandChanged(CommandEvent commandEvent) {
+					if (commandEvent.isHandledChanged()) {
+						update(null);
+					}
+				}
+			};
+		}
+		return commandListener;
 	}
 
 	ParameterizedCommand getCommand() {
@@ -250,7 +271,7 @@ public final class CommandContributionItem extends ContributionItem implements
 		int tmpStyle = style;
 		if (tmpStyle == STYLE_PULLDOWN)
 			tmpStyle = STYLE_PUSH;
-		
+
 		MenuItem item = null;
 		if (index >= 0) {
 			item = new MenuItem(parent, tmpStyle, index);
@@ -334,7 +355,7 @@ public final class CommandContributionItem extends ContributionItem implements
 				}
 
 				updateIcons();
-				if (item.getSelection()!=checkedState) {
+				if (item.getSelection() != checkedState) {
 					item.setSelection(checkedState);
 				}
 
@@ -368,8 +389,8 @@ public final class CommandContributionItem extends ContributionItem implements
 						item.setToolTipText(text);
 					}
 				}
-				
-				if (item.getSelection()!=checkedState) {
+
+				if (item.getSelection() != checkedState) {
 					item.setSelection(checkedState);
 				}
 
@@ -398,6 +419,10 @@ public final class CommandContributionItem extends ContributionItem implements
 		if (callbackRef != null) {
 			commandService.unregisterCallback(callbackRef);
 			callbackRef = null;
+		}
+		if (commandListener!=null) {
+			command.getCommand().removeCommandListener(commandListener);
+			commandListener = null;
 		}
 		command = null;
 		disposeOldImages();
@@ -435,7 +460,7 @@ public final class CommandContributionItem extends ContributionItem implements
 		// Special check for ToolBar dropdowns...
 		if (openDropDownMenu(event))
 			return;
-		
+
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {
@@ -454,10 +479,11 @@ public final class CommandContributionItem extends ContributionItem implements
 	}
 
 	/**
-	 * Determines if the selection was on the dropdown affordance
-	 * and, if so, opens the drop down menu (populated using the
-	 * same id as this item...
-	 * @param event The <code>SWT.Selection</code> event to be tested
+	 * Determines if the selection was on the dropdown affordance and, if so,
+	 * opens the drop down menu (populated using the same id as this item...
+	 * 
+	 * @param event
+	 *            The <code>SWT.Selection</code> event to be tested
 	 * 
 	 * @return <code>true</code> iff a drop down menu was opened
 	 */
@@ -473,7 +499,8 @@ public final class CommandContributionItem extends ContributionItem implements
 					Menu menu = menuManager.createContextMenu(ti.getParent());
 					menuManager.addMenuListener(new IMenuListener() {
 						public void menuAboutToShow(IMenuManager manager) {
-							menuService.populateContributionManager(menuManager, "menu:" + getId()); //$NON-NLS-1$
+							menuService.populateContributionManager(
+									menuManager, "menu:" + getId()); //$NON-NLS-1$
 						}
 					});
 					menu.addDisposeListener(new DisposeListener() {
@@ -486,13 +513,13 @@ public final class CommandContributionItem extends ContributionItem implements
 					Point p = ti.getParent().toDisplay(
 							new Point(b.x, b.y + b.height));
 					menu.setLocation(p.x, p.y); // waiting for SWT
-												// 0.42
+					// 0.42
 					menu.setVisible(true);
 					return true; // we don't fire the action
 				}
 			}
 		}
-		
+
 		return false;
 	}
 
