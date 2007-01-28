@@ -17,14 +17,13 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICallbackUpdater;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.ICommandCallback;
 
 /**
@@ -43,35 +42,32 @@ public class ToggleContextHandler extends AbstractHandler implements
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		String contextId = event.getParameter(TOGGLE_ID);
-		if (event.getApplicationContext() instanceof IEvaluationContext) {
-			IEvaluationContext app = (IEvaluationContext) event
-					.getApplicationContext();
-			IWorkbenchWindow window = (IWorkbenchWindow) app
-					.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-			IContextService contextService = (IContextService) window
-					.getService(IContextService.class);
-			IContextActivation a = (IContextActivation) contextActivations
-					.get(contextId);
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
 
-			// toggle the context active or not
-			if (a == null) {
-				contextActivations.put(contextId, contextService
-						.activateContext(contextId));
-			} else {
-				contextService.deactivateContext(a);
-				contextActivations.remove(contextId);
-			}
+		IContextService contextService = (IContextService) window
+				.getService(IContextService.class);
+		IContextActivation a = (IContextActivation) contextActivations
+				.get(contextId);
 
-			// now we should update any menu items/tool items that refer
-			// to toggleContext(contextId) ... this request means
-			// only update the UI that points to this specific context
-			// id ... not the other, non-interesting ones.
-			ICommandService commandService = (ICommandService) window
-					.getService(ICommandService.class);
-			Map filter = new HashMap();
-			filter.put(TOGGLE_ID, contextId);
-			commandService.refreshCallbacks(event.getCommand().getId(), filter);
+		// toggle the context active or not
+		if (a == null) {
+			contextActivations.put(contextId, contextService
+					.activateContext(contextId));
+		} else {
+			contextService.deactivateContext(a);
+			contextActivations.remove(contextId);
 		}
+
+		// now we should update any menu items/tool items that refer
+		// to toggleContext(contextId) ... this request means
+		// only update the UI that points to this specific context
+		// id ... not the other, non-interesting ones.
+		ICommandService commandService = (ICommandService) window
+				.getService(ICommandService.class);
+		Map filter = new HashMap();
+		filter.put(TOGGLE_ID, contextId);
+		commandService.refreshCallbacks(event.getCommand().getId(), filter);
 		return null;
 	}
 
