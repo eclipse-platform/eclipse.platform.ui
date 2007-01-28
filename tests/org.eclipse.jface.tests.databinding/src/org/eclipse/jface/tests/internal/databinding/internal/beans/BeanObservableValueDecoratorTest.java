@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Brad Reynolds and others.
+ * Copyright (c) 2007 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Brad Reynolds - bug 171616
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.beans;
@@ -16,42 +15,46 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @since 3.2
+ * @since 3.3
  */
-public class JavaBeanObservableValueTest extends TestCase {
-	private Realm realm;
+public class BeanObservableValueDecoratorTest extends TestCase {
 	private Bean bean;
 	private JavaBeanObservableValue observableValue;
+	private BeanObservableValueDecorator decorator;
 	private PropertyDescriptor propertyDescriptor;
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		realm = SWTObservables.getRealm(Display.getDefault());		
 		bean = new Bean();
-		propertyDescriptor = new PropertyDescriptor("value", Bean.class);
-		observableValue = new JavaBeanObservableValue(realm, bean, propertyDescriptor, String.class);
+		propertyDescriptor = new PropertyDescriptor("value",
+				Bean.class);
+		observableValue = new JavaBeanObservableValue(
+				SWTObservables.getRealm(Display.getDefault()), bean,
+				propertyDescriptor, String.class);
+		decorator = new BeanObservableValueDecorator(
+				observableValue, bean, observableValue
+						.getPropertyDescriptor());
+	}
+
+	public void testGetDelegate() throws Exception {
+		assertEquals(observableValue, decorator.getDelegate());
 	}
 	
-    public void testSetValue() throws Exception {
-        String value = "value";
-        assertNull(observableValue.getValue());
-        observableValue.setValue(value);
-        assertEquals("value", value, observableValue.getValue());
-    }
-    
-    public void testGetObserved() throws Exception {
-    	assertEquals(bean, observableValue.getObserved());
+	public void testGetObserved() throws Exception {
+		assertEquals(bean, decorator.getObserved());
 	}
-    
-    public void testGetPropertyDescriptor() throws Exception {
-    	assertEquals(propertyDescriptor, observableValue.getPropertyDescriptor());
+
+	public void testGetPropertyDescriptor() throws Exception {
+		assertEquals(propertyDescriptor, decorator.getPropertyDescriptor());
 	}
 }

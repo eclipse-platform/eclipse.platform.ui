@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164268
+ *     Brad Reynolds - bug 164268, 171616
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
 
@@ -25,6 +25,9 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
+import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
+import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
@@ -143,12 +146,8 @@ final public class BeansObservables {
 			String attributeName, Class elementType) {
 		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(bean
 				.getClass(), attributeName);
-		Class propertyType = propertyDescriptor.getPropertyType();
+		elementType = getCollectionElementType(elementType, propertyDescriptor);
 
-		if (elementType == null) {
-			elementType = propertyType.isArray() ? propertyType.getComponentType()
-					: Object.class;
-		}
 		return new JavaBeanObservableList(realm, bean, propertyDescriptor,
 				elementType);
 	}
@@ -161,13 +160,7 @@ final public class BeansObservables {
 	 */
 	public static IObservableSet observeSet(Realm realm, Object bean,
 			String attributeName) {
-		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(bean
-				.getClass(), attributeName);
-		Class propertyType = propertyDescriptor.getPropertyType();
-		Class componentType = propertyType.isArray() ? propertyType
-				.getComponentType() : Object.class;
-		return new JavaBeanObservableSet(realm, bean, propertyDescriptor,
-				componentType);
+		return observeSet(realm, bean, attributeName, null);
 	}
 
 	/**
@@ -228,8 +221,13 @@ final public class BeansObservables {
 	 */
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, String attributeName, Class attributeType) {
-		return MasterDetailObservables.detailValue(master, valueFactory(realm,
-				attributeName), attributeType);
+
+		IObservableValue value = MasterDetailObservables.detailValue(master,
+				valueFactory(realm, attributeName), attributeType);
+		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
+				value, master, getPropertyDescriptor((Class) master
+						.getValueType(), attributeName));
+		return decorator;
 	}
 
 	/**
@@ -247,8 +245,14 @@ final public class BeansObservables {
 	 */
 	public static IObservableList observeDetailList(Realm realm,
 			IObservableValue master, String attributeName, Class attributeType) {
-		return MasterDetailObservables.detailList(master, listFactory(realm,
-				attributeName, attributeType), attributeType);
+		IObservableList observableList = MasterDetailObservables.detailList(
+				master, listFactory(realm, attributeName, attributeType),
+				attributeType);
+		BeanObservableListDecorator decorator = new BeanObservableListDecorator(
+				observableList, master, getPropertyDescriptor((Class) master
+						.getValueType(), attributeName));
+
+		return decorator;
 	}
 
 	/**
@@ -266,8 +270,61 @@ final public class BeansObservables {
 	 */
 	public static IObservableSet observeDetailSet(Realm realm,
 			IObservableValue master, String attributeName, Class attributeType) {
-		return MasterDetailObservables.detailSet(master, setFactory(realm,
-				attributeName), attributeType);
-	}
+		IObservableSet observableSet = MasterDetailObservables.detailSet(
+				master, setFactory(realm, attributeName, attributeType),
+				attributeType);
+		BeanObservableSetDecorator decorator = new BeanObservableSetDecorator(
+				observableSet, master, getPropertyDescriptor(attributeType, attributeName));
 
+		return decorator;
+	}
+	
+	/**
+	 * @param realm
+	 * @param bean
+	 * @param attributeName
+	 * @param elementType can be <code>null</code>
+	 * @return
+	 */
+	public static IObservableSet observeSet(Realm realm, Object bean,
+			String attributeName, Class elementType) {
+		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(bean
+				.getClass(), attributeName);
+		elementType = getCollectionElementType(elementType, propertyDescriptor);
+
+		return new JavaBeanObservableSet(realm, bean, propertyDescriptor,
+				elementType);
+	}
+	
+	/**
+	 * @param realm
+	 * @param propertyName
+	 * @param elementType can be <code>null</code>
+	 * @return
+	 */
+	public static IObservableFactory setFactory(final Realm realm,
+			final String propertyName, final Class elementType) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observeSet(realm, target, propertyName, elementType);
+			}
+		};
+	}
+	
+	/**
+	 * @param elementType
+	 *            can be <code>null</code>
+	 * @param propertyDescriptor
+	 * @return type of the items in a collection/array property
+	 */
+	private static Class getCollectionElementType(Class elementType,
+			PropertyDescriptor propertyDescriptor) {
+		if (elementType == null) {
+			Class propertyType = propertyDescriptor.getPropertyType();
+			elementType = propertyType.isArray() ? propertyType
+					.getComponentType() : Object.class;
+		}
+
+		return elementType;
+	}
 }

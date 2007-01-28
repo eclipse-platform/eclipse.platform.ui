@@ -54,7 +54,11 @@ import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest_Pol
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Pipeline;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Policies;
+import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableListDecoratorTest;
+import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableSetDecoratorTest;
+import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableValueDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableMapTest;
+import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.observable.UnmodifiableObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
@@ -176,7 +180,12 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ValueBindingTest_Policies.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.beans
+		addTestSuite(BeanObservableListDecoratorTest.class);
+		addTestSuite(BeanObservableSetDecoratorTest.class);
+		addTestSuite(BeanObservableValueDecoratorTest.class);
+		addTestSuite(BeanObservableListDecoratorTest.class);
 		addTestSuite(JavaBeanObservableMapTest.class);
+		addTestSuite(JavaBeanObservableSetTest.class);
 		addTestSuite(JavaBeanObservableValueTest.class);
 
 		// org.eclipse.jface.tests.internal.databinding.internal.observable

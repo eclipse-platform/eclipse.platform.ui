@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 171616
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -20,6 +21,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
@@ -29,7 +31,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableSet extends ObservableSet {
+public class JavaBeanObservableSet extends ObservableSet implements IBeanObservable {
 
 	private final Object object;
 
@@ -68,7 +70,7 @@ public class JavaBeanObservableSet extends ObservableSet {
 	 */
 	public JavaBeanObservableSet(Realm realm, Object object, PropertyDescriptor descriptor,
 			Class elementType) {
-		super(realm, new HashSet(), descriptor.getPropertyType());
+		super(realm, new HashSet(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
 		wrappedSet.addAll(Arrays.asList(getValues()));
@@ -115,6 +117,20 @@ public class JavaBeanObservableSet extends ObservableSet {
 			}
 		}
 		return values;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
+	 */
+	public Object getObserved() {
+		return object;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getPropertyDescriptor()
+	 */
+	public PropertyDescriptor getPropertyDescriptor() {
+		return descriptor;
 	}
 
 }

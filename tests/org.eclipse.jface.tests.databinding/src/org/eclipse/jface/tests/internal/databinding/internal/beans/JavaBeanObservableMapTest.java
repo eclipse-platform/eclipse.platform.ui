@@ -11,8 +11,6 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal.beans;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.beans.PropertyDescriptor;
 
 import junit.framework.TestCase;
@@ -29,9 +27,9 @@ import org.eclipse.jface.tests.databinding.observable.ThreadRealm;
  * 
  */
 public class JavaBeanObservableMapTest extends TestCase {
-	private Model model1;
+	private Bean model1;
 
-	private Model model2;
+	private Bean model2;
 
 	private WritableSet set;
 
@@ -42,14 +40,14 @@ public class JavaBeanObservableMapTest extends TestCase {
 	protected void setUp() throws Exception {
 		ThreadRealm realm = new ThreadRealm();
 		realm.init(Thread.currentThread());
-		model1 = new Model("1");
-		model2 = new Model("2");
+		model1 = new Bean("1");
+		model2 = new Bean("2");
 
-		set = new WritableSet(realm, Model.class);
+		set = new WritableSet(realm, Bean.class);
 		set.add(model1);
 		set.add(model2);
 
-		propertyDescriptor = new PropertyDescriptor("value", Model.class);
+		propertyDescriptor = new PropertyDescriptor("value", Bean.class);
 		map = new JavaBeanObservableMap(set, propertyDescriptor);
 	}
 
@@ -96,7 +94,7 @@ public class JavaBeanObservableMapTest extends TestCase {
 		MapChangeListener listener = new MapChangeListener();
 		map.addMapChangeListener(listener);
 
-		Model model3 = new Model("3");
+		Bean model3 = new Bean("3");
 
 		assertEquals(0, listener.count);
 		set.add(model3);
@@ -122,6 +120,14 @@ public class JavaBeanObservableMapTest extends TestCase {
 		assertTrue(listener.diff.getRemovedKeys().contains(model1));
 		assertEquals(1, map.size());
 	}
+	
+	public void testGetObserved() throws Exception {
+		assertEquals(set, map.getObserved());
+	}
+	
+	public void testGetPropertyDescriptor() throws Exception {
+		assertEquals(propertyDescriptor, map.getPropertyDescriptor());
+	}
 
 	private static class MapChangeListener implements IMapChangeListener {
 		int count;
@@ -131,37 +137,6 @@ public class JavaBeanObservableMapTest extends TestCase {
 		public void handleMapChange(MapChangeEvent event) {
 			count++;
 			this.diff = event.diff;
-		}
-	}
-
-	public static class Model {
-		private String value;
-
-		private PropertyChangeSupport propertyChangeSupport;
-
-		public Model(String value) {
-			this.value = value;
-			propertyChangeSupport = new PropertyChangeSupport(this);
-		}
-
-		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(listener);
-		}
-
-		/**
-		 * @return Returns the value.
-		 */
-		public String getValue() {
-			return value;
-		}
-
-		/**
-		 * @param value
-		 *            The value to set.
-		 */
-		public void setValue(String value) {
-			propertyChangeSupport.firePropertyChange("value", this.value,
-					this.value = value);
 		}
 	}
 }

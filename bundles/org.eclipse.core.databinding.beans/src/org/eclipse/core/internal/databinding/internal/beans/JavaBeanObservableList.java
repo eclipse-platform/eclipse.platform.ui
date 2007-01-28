@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 171616
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.runtime.Assert;
@@ -27,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableList extends ObservableList {
+public class JavaBeanObservableList extends ObservableList implements IBeanObservable {
 
 	private final Object object;
 
@@ -114,6 +116,18 @@ public class JavaBeanObservableList extends ObservableList {
 		}
 		return values;
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
+	 */
+	public Object getObserved() {
+		return object;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getPropertyDescriptor()
+	 */
+	public PropertyDescriptor getPropertyDescriptor() {
+		return descriptor;
+	}
 }
 

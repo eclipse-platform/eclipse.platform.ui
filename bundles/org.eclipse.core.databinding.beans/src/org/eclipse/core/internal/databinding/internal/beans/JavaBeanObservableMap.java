@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 171616
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -15,6 +16,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 
+import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -26,10 +28,10 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableMap extends ComputedObservableMap {
+public class JavaBeanObservableMap extends ComputedObservableMap implements IBeanObservable {
 
 	private PropertyDescriptor propertyDescriptor;
-
+	
 	private PropertyChangeListener elementListener = new PropertyChangeListener() {
 		public void propertyChange(final java.beans.PropertyChangeEvent event) {
 			if (!updating) {
@@ -55,6 +57,7 @@ public class JavaBeanObservableMap extends ComputedObservableMap {
 	public JavaBeanObservableMap(IObservableSet domain,
 			PropertyDescriptor propertyDescriptor) {
 		super(domain);
+		
 		this.propertyDescriptor = propertyDescriptor;
 		init();
 	}
@@ -97,4 +100,17 @@ public class JavaBeanObservableMap extends ComputedObservableMap {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
+	 */
+	public Object getObserved() {
+		return keySet();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getPropertyDescriptor()
+	 */
+	public PropertyDescriptor getPropertyDescriptor() {
+		return propertyDescriptor;
+	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Brad Reynolds - bug 164134
+ *     Brad Reynolds - bug 164134, 171616
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.internal.beans;
 
@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
@@ -31,7 +32,7 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableValue extends AbstractObservableValue {
+public class JavaBeanObservableValue extends AbstractObservableValue implements IBeanObservable {
 	private final Object object;
 
 	private PropertyChangeListener listener;
@@ -258,5 +259,19 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 		if (type == Object.class && overrideType != null)
 			type = overrideType;
 		return type;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
+	 */
+	public Object getObserved() {
+		return object;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getPropertyDescriptor()
+	 */
+	public PropertyDescriptor getPropertyDescriptor() {
+		return propertyDescriptor;
 	}
 }
