@@ -34,7 +34,7 @@
             delegateName="%AntBuilderLaunchDelegate.name"
             id="org.eclipse.ant.AntBuilderLaunchConfigurationType"
             modes="run"
-            name="%AntBuilder">
+            name="%AntBuilder.name">
       </launchConfigurationType>
    </extension>
    <extension
