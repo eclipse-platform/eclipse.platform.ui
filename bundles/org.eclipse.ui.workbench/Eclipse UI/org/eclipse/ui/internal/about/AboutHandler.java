@@ -13,31 +13,26 @@ package org.eclipse.ui.internal.about;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 
 /**
  * Creates an About dialog and opens it.
+ * 
  * @since 3.3
  */
 public class AboutHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		Object appContextObj = event.getApplicationContext();
-		if (appContextObj instanceof IEvaluationContext) {
-			IEvaluationContext appContext = (IEvaluationContext) appContextObj;
-			IWorkbenchWindow window = (IWorkbenchWindow) appContext
-					.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-			if (window == null) {
-				throw new ExecutionException("No active workbench window"); //$NON-NLS-1$
-			}
-			new AboutDialog(window.getShell()).open();
-		}
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
+		new AboutDialog(window.getShell()).open();
 		return null;
 	}
 }
