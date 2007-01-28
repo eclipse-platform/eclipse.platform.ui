@@ -95,8 +95,6 @@ public class MenuBaseTests extends MenuTestCase {
 		MenuManager manager = new MenuManager("Test Menu", TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"
 				+ TEST_CONTRIBUTIONS_CACHE_ID);
-
-		IContributionItem[] items = manager.getItems();
 		
 		Shell shell = window.getShell();
 
