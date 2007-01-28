@@ -11,24 +11,29 @@
 
 package org.eclipse.core.databinding.observable;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 /**
- * @since 3.3
+ * Listener management implementation. Exposed to subclasses in form of
+ * {@link AbstractObservable} and {@link ChangeSupport}.
+ * 
+ * @since 1.0
  * 
  */
-public class ChangeManager extends ListenerManager {
+/* package */ class ChangeManager {
 
 	ListenerList[] listenerLists = null;
 	Object listenerTypes[] = null;
-	private ListenerManager listenerManager;
+	private Realm realm;
 
 	/**
-	 * @param listenerSupport
+	 * @param realm 
 	 * 
 	 */
-	public ChangeManager(ListenerManager listenerSupport) {
-		this.listenerManager = listenerSupport == null ? this : listenerSupport;
+	/* package */ ChangeManager(Realm realm) {
+		Assert.isNotNull(realm);
+		this.realm = realm;
 	}
 
 	/**
@@ -57,7 +62,7 @@ public class ChangeManager extends ListenerManager {
 			listenerLists[length] = new ListenerList();
 			listenerLists[length].add(listener);
 			if (length == 0) {
-				listenerManager.firstListenerAdded();
+				this.firstListenerAdded();
 			}
 			return;
 		}
@@ -75,7 +80,7 @@ public class ChangeManager extends ListenerManager {
 			listenerLists[listenerTypeIndex].remove(listener);
 			if (listenerLists[listenerTypeIndex].size() == 0) {
 				if (!hasListeners()) {
-					listenerManager.lastListenerRemoved();
+					this.lastListenerRemoved();
 				}
 			}
 		}
@@ -119,10 +124,29 @@ public class ChangeManager extends ListenerManager {
 	/**
 	 * 
 	 */
+	protected void firstListenerAdded() {
+	}
+
+	/**
+	 * 
+	 */
+	protected void lastListenerRemoved() {
+	}
+
+	/**
+	 * 
+	 */
 	public void dispose() {
 		listenerLists = null;
 		listenerTypes = null;
-		listenerManager = null;
+		realm = null;
+	}
+
+	/**
+	 * @return Returns the realm.
+	 */
+	public Realm getRealm() {
+		return realm;
 	}
 
 }

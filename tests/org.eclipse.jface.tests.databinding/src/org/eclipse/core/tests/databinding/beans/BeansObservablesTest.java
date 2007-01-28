@@ -24,7 +24,6 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.DetailObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
@@ -105,7 +104,7 @@ public class BeansObservablesTest extends TestCase {
 				null), beanObservable.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", parent, beanObservable.getObserved());
 		assertTrue("delegate",
-				beanObservable.getDelegate() instanceof DetailObservableValue);
+				beanObservable.getDelegate().getClass().getName().endsWith("DetailObservableValue"));
 	}
 
 	public void testObservableDetailListIBeanObservable() throws Exception {

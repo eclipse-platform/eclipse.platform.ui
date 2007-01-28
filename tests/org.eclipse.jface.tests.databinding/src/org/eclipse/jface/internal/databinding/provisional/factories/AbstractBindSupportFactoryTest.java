@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
+import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.IStatus;
@@ -34,12 +35,12 @@ public class AbstractBindSupportFactoryTest extends TestCase {
 	}
 
 	protected void assertNoErrorsFound() {
-		IStatus status = (IStatus)ctx.getValidationStatus().getValue();
+		IStatus status = AggregateValidationStatus.getStatusMaxSeverity(ctx.getBindings());
 		assertTrue("No errors should be found, but found " + status , status.isOK());
 	}
 
 	protected void assertErrorsFound() {
-		IStatus status = (IStatus) ctx.getValidationStatus().getValue();
+		IStatus status = AggregateValidationStatus.getStatusMaxSeverity(ctx.getBindings());
 		assertFalse("Errors should be found, but found none.", status.isOK());
 	}
 

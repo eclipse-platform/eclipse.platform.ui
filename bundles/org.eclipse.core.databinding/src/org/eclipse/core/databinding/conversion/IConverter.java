@@ -25,16 +25,22 @@ package org.eclipse.core.databinding.conversion;
 public interface IConverter {
 
 	/**
-	 * Returns the type whose instances can be converted by this converter.
+	 * Returns the type whose instances can be converted by this converter. The
+	 * return type is Object rather than Class to optionally support richer type
+	 * systems than the one provided by Java reflection.
 	 * 
-	 * @return the type whose instances can be converted, or null if this converter is untyped
+	 * @return the type whose instances can be converted, or null if this
+	 *         converter is untyped
 	 */
 	public Object getFromType();
 
 	/**
-	 * Returns the type to which this converter can convert.
+	 * Returns the type to which this converter can convert. The return type is
+	 * Object rather than Class to optionally support richer type systems than
+	 * the one provided by Java reflection.
 	 * 
-	 * @return the type to which this converter can convert, or null if this converter is untyped
+	 * @return the type to which this converter can convert, or null if this
+	 *         converter is untyped
 	 */
 	public Object getToType();
 
@@ -42,8 +48,8 @@ public interface IConverter {
 	 * Returns the result of the conversion of the given object.
 	 * 
 	 * @param fromObject
-	 *            the object to convert, must be of type {@link #getFromType()}
-	 * @return the converted object, must be of type {@link #getToType()}
+	 *            the object to convert, of type {@link #getFromType()}
+	 * @return the converted object, of type {@link #getToType()}
 	 */
 	public Object convert(Object fromObject);
 }

@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.conversion.ToStringConverter;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
 import org.eclipse.core.databinding.validation.String2BytePrimitiveValidator;
@@ -44,10 +45,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Data binding has three concerns, the target, the model, and the data flow
- * between the target and model. BindSpec contains values and settings that
- * influence how data binding manages this data flow between the target and the
- * model.
+ * This class provides default validators and converters for common data types
+ * in form of a BindSpec subclass that can be passed to bind methods, e.g.
+ * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, BindSpec)}.
+ * 
+ * APIREVIEW We need to list all provided validators and converters.
  * 
  * @since 1.0
  */
@@ -115,34 +117,6 @@ public class DefaultBindSpec extends BindSpec {
 					new ObjectToPrimitiveValidator(Double.TYPE));
 			associate(Object.class, Boolean.TYPE,
 					new ObjectToPrimitiveValidator(Boolean.TYPE));
-
-			// Regex-implemented validators here...
-			// associate(String.class, Character.TYPE, new RegexStringValidator(
-			// "^.$|^$", ".",
-			// BindingMessages.getString("Validate_CharacterHelp")));
-			// //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			// associate(String.class, Character.class, new
-			// RegexStringValidator(
-			// "^.$|^$", ".",
-			// BindingMessages.getString("Validate_CharacterHelp")));
-			// //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			// associate(String.class, Boolean.TYPE, new RegexStringValidator(
-			// BindingMessages.getString("Validate_BooleanPartialValidRegex"),
-			// //$NON-NLS-1$
-			// BindingMessages.getString("Validate_BooleanValidRegex"),
-			// //$NON-NLS-1$
-			// BindingMessages.getString("Validate_BooleanHelp")));
-			// //$NON-NLS-1$
-			// associate(String.class, Boolean.class, new RegexStringValidator(
-			// BindingMessages.getString("Validate_BooleanPartialValidRegex"),
-			// //$NON-NLS-1$
-			// BindingMessages.getString("Validate_BooleanValidRegex"),
-			// //$NON-NLS-1$
-			// BindingMessages.getString("Validate_BooleanHelp")));
-			// //$NON-NLS-1$
-			// associate(String.class, String.class, new
-			// RegexStringValidator("^.*$", "^.*$", "")); //$NON-NLS-1$
-			// //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		/**
@@ -162,7 +136,7 @@ public class DefaultBindSpec extends BindSpec {
 		}
 
 		/**
-		 * Return an IVerifier for a specific class.
+		 * Return an IValidator for a specific fromClass and toClass.
 		 * 
 		 * @param fromClass
 		 *            The Class to convert from
@@ -293,12 +267,14 @@ public class DefaultBindSpec extends BindSpec {
 							.newInstance();
 					converterMap.put(key, result);
 					return result;
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (InstantiationException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.ERROR,
+											Policy.JFACE_DATABINDING,
+											"Error while instantiating default converter", e)); //$NON-NLS-1$
 				}
 			}
 		}
@@ -358,6 +334,9 @@ public class DefaultBindSpec extends BindSpec {
 	}
 
 	/**
+	 * This implementation of
+	 * {@link #fillBindSpecDefaults(IObservable, IObservable)}
+	 * 
 	 * @param dataBindingContext
 	 * @param bindSpec
 	 * @param target
@@ -406,7 +385,7 @@ public class DefaultBindSpec extends BindSpec {
 				}
 				if (getModelValidators(position).length == 0) {
 					addModelValidator(position, createValidator(position,
-							targetType));					
+							targetType));
 				}
 			}
 		}
@@ -432,131 +411,6 @@ public class DefaultBindSpec extends BindSpec {
 		// TODO string-based lookup of validator
 		return validatorRegistry.get(fromType, toType);
 	}
-
-	// --------------------------- OLD
-
-	// public IConverter createConverter(Object fromType, Object toType) {
-	// if (!(fromType instanceof Class) || !(toType instanceof Class)) {
-	// return null;
-	// }
-	// Class toClass = (Class) toType;
-	// if (toClass.isPrimitive()) {
-	// toClass = autoboxed(toClass);
-	// }
-	// Class fromClass = (Class) fromType;
-	// if (fromClass.isPrimitive()) {
-	// fromClass = autoboxed(fromClass);
-	// }
-	// if (toClass.isAssignableFrom(fromClass)) {
-	// return new IdentityConverter(fromClass, toClass);
-	// }
-	// Map converterMap = getConverterMap();
-	// Class[] supertypeHierarchyFlattened = ClassLookupSupport
-	// .getTypeHierarchyFlattened(fromClass);
-	// for (int i = 0; i < supertypeHierarchyFlattened.length; i++) {
-	// Class currentFromClass = supertypeHierarchyFlattened[i];
-	// if (currentFromClass == toType) {
-	// // converting to toType is just a widening
-	// return new IdentityConverter(fromClass, toClass);
-	// }
-	// Pair key = new Pair(currentFromClass.getName(), toClass.getName());
-	// Object converterOrClassname = converterMap.get(key);
-	// if (converterOrClassname instanceof IConverter) {
-	// return (IConverter) converterOrClassname;
-	// } else if (converterOrClassname instanceof String) {
-	// String classname = (String) converterOrClassname;
-	// Class converterClass;
-	// try {
-	// converterClass = Class.forName(classname);
-	// IConverter result = (IConverter) converterClass
-	// .newInstance();
-	// converterMap.put(key, result);
-	// return result;
-	// } catch (ClassNotFoundException e) {
-	// e.printStackTrace();
-	// } catch (InstantiationException e) {
-	// e.printStackTrace();
-	// } catch (IllegalAccessException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// // Since we found no converter yet, try a "downcast" converter
-	// if (fromClass.isAssignableFrom(toClass)) {
-	// return new IdentityConverter(fromClass, toClass);
-	// }
-	// return null;
-	// }
-	//
-	// private Map getConverterMap() {
-	// // using string-based lookup avoids loading of too many classes
-	// if (converterMap == null) {
-	// converterMap = new HashMap();
-	// converterMap
-	// .put(
-	// new Pair("java.util.Date", "java.lang.String"),
-	// "org.eclipse.core.databinding.conversion.ConvertDate2String");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.math.BigDecimal"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2BigDecimal");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Boolean"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Boolean");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Byte"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Byte");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Character"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Character");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.util.Date"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Date");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Double"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Double");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Float"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Float");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Integer"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Integer");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Long"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Long");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.String", "java.lang.Short"),
-	// "org.eclipse.core.databinding.conversion.ConvertString2Short");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// converterMap
-	// .put(
-	// new Pair("java.lang.Object", "java.lang.String"),
-	// "org.eclipse.core.databinding.conversion.ToStringConverter");
-	// //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-	// }
-	// return converterMap;
-	// }
-
-	// --------------------------- OLD
 
 	private Map getConverterMap() {
 		// using string-based lookup avoids loading of too many classes

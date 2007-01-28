@@ -14,7 +14,6 @@ package org.eclipse.core.databinding.observable.masterdetail;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.internal.databinding.DetailObservableValue;
 
 /**
  * @since 3.2
@@ -41,7 +40,7 @@ public class MasterDetailObservables {
 	 */
 	public static IObservableValue detailValue(IObservableValue master,
 			IObservableFactory detailFactory, Object detailType) {
-		return new DetailObservableValue(detailFactory, master, detailType);
+		return new DetailObservableValue(master, detailFactory, detailType);
 	}
 
 	/**

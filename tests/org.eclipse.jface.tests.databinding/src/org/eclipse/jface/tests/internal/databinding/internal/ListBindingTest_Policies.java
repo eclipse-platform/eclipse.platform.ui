@@ -58,24 +58,28 @@ public class ListBindingTest_Policies extends TestCase {
 	}
 
 	public void testUpdateModelPolicyNull() throws Exception {
-		new ListBinding(dbc, target, model, new BindSpec()
-				.setModelUpdatePolicy(null));
+		new ListBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(null)).init(dbc);
+
 		target.add("1");
 		assertTrue("should be automatic", Arrays.equals(target.toArray(), model
 				.toArray()));
 	}
 
 	public void testUpdateModelPolicyAutomatic() throws Exception {
-		new ListBinding(dbc, target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC));
+		new ListBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
+
 		target.add("1");
 		assertTrue("should be automatic", Arrays.equals(target.toArray(), model
 				.toArray()));
 	}
 
 	public void testUpdateModelPolicyExplicit() throws Exception {
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding( target, model,
 				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
+
 		target.add("1");
 
 		assertFalse("should not be updated", Arrays.equals(target.toArray(),
@@ -87,24 +91,28 @@ public class ListBindingTest_Policies extends TestCase {
 	}
 
 	public void testUpdateTargetPolicyNull() throws Exception {
-		new ListBinding(dbc, target, model, new BindSpec()
-				.setTargetUpdatePolicy(null));
+		new ListBinding( target, model, new BindSpec()
+				.setTargetUpdatePolicy(null)).init(dbc);
+
 		model.add("1");
 		assertTrue("should be automatic", Arrays.equals(model.toArray(), target
 				.toArray()));
 	}
 
 	public void testUpdateTargetPolicyAutomatic() throws Exception {
-		new ListBinding(dbc, target, model, new BindSpec()
-				.setTargetUpdatePolicy(BindSpec.POLICY_AUTOMATIC));
+		new ListBinding(target, model, new BindSpec()
+				.setTargetUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
+
 		model.add("1");
 		assertTrue("should be automatic", Arrays.equals(model.toArray(), target
 				.toArray()));
 	}
 
 	public void testUpdateTargetPolicyExplicit() throws Exception {
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec().setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
+
 		model.add("1");
 
 		assertFalse("should not be updated", Arrays.equals(model.toArray(),
@@ -119,9 +127,11 @@ public class ListBindingTest_Policies extends TestCase {
 		TrackLastListener listener = new TrackLastListener();
 		int position = BindingEvent.PIPELINE_BEFORE_CHANGE;
 
-		new ListBinding(dbc, target, model, new BindSpec()
+		final ListBinding listBinding = new ListBinding(target, model, new BindSpec()
 				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
-				.setTargetValidatePolicy(new Integer(position)))
+				.setTargetValidatePolicy(new Integer(position)));
+		listBinding.init(dbc);
+		listBinding
 				.addBindingEventListener(listener);
 
 		String value = "value";
@@ -134,8 +144,10 @@ public class ListBindingTest_Policies extends TestCase {
 	public void testDefaultTargetValidationPosition() throws Exception {
 		TrackLastListener listener = new TrackLastListener();
 
-		new ListBinding(dbc, target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT))
+		final ListBinding listBinding = new ListBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		listBinding.init(dbc);
+		listBinding
 				.addBindingEventListener(listener);
 
 		listener.lastPosition = -1;

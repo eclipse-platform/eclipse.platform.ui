@@ -30,14 +30,7 @@ import org.eclipse.core.databinding.observable.Realm;
 public abstract class AbstractObservableSet extends AbstractObservable implements
 		IObservableSet {
 
-	private ChangeSupport changeSupport = new ChangeSupport(null){
-		protected void firstListenerAdded() {
-			AbstractObservableSet.this.firstListenerAdded();
-		}
-		protected void lastListenerRemoved() {
-			AbstractObservableSet.this.lastListenerRemoved();
-		}
-	};
+	private ChangeSupport changeSupport;
 
 	private boolean stale = false;
 
@@ -47,6 +40,14 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 
 	protected AbstractObservableSet(Realm realm) {
 		super(realm);
+		changeSupport = new ChangeSupport(realm){
+			protected void firstListenerAdded() {
+				AbstractObservableSet.this.firstListenerAdded();
+			}
+			protected void lastListenerRemoved() {
+				AbstractObservableSet.this.lastListenerRemoved();
+			}
+		};
 	}
 	
 	public void addSetChangeListener(ISetChangeListener listener) {

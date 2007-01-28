@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValidationStatusMap;
@@ -43,20 +42,18 @@ import org.eclipse.core.runtime.Status;
  * consulting with the Platform/UI team.
  * </p>
  * 
- * @since 1.1
+ * @since 1.0
  * 
  */
 public class DataBindingContext {
 	private List bindingEventListeners = new ArrayList();
 
 	private WritableList bindings;
-    
-    /**
-     * Unmodifiable version of {@link #bindings} for exposure publicly.
-     */
-    private IObservableList unmodifiableBindings;
 
-	private ComputedValue validationStatus;
+	/**
+	 * Unmodifiable version of {@link #bindings} for public exposure.
+	 */
+	private IObservableList unmodifiableBindings;
 
 	private IObservableMap validationStatusMap;
 
@@ -65,43 +62,36 @@ public class DataBindingContext {
 	/**
 	 * Creates a data binding context, using the current default realm for the
 	 * validation observables.
+	 * 
+	 * @see Realm
 	 */
 	public DataBindingContext() {
 		this(Realm.getDefault());
 	}
 
 	/**
-	 * Creates a data binding context using the given realm for the validation observables.
+	 * Creates a data binding context using the given realm for the validation
+	 * observables.
 	 * 
 	 * @param validationRealm
 	 *            the realm to be used for the validation observables
+	 * 
+	 * @see Realm
 	 */
 	public DataBindingContext(Realm validationRealm) {
 		Assert.isNotNull(validationRealm);
 		this.validationRealm = validationRealm;
 		bindings = new WritableList(validationRealm);
-        
-        unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
-		validationStatus = new ComputedValue(validationRealm) {
-			protected Object calculate() {
-				for(Iterator it=bindings.iterator(); it.hasNext();) {
-					Binding binding = (Binding) it.next();
-					IStatus status = (IStatus) binding.getValidationStatus().getValue();
-					if(!status.isOK()) {
-						return status;
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		validationStatusMap = new ValidationStatusMap(validationRealm, bindings,
-				false);
+
+		unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
+		validationStatusMap = new ValidationStatusMap(validationRealm,
+				bindings, false);
 	}
 
 	/**
 	 * Add a listener to the set of listeners that will be notified when an
-	 * event occurs in the data flow pipeline that is managed by any binding
-	 * created by this data binding context.
+	 * event occurs in the data flow pipeline managed by any binding in this
+	 * data binding context.
 	 * 
 	 * @param listener
 	 *            The listener to add.
@@ -112,45 +102,47 @@ public class DataBindingContext {
 
 	/**
 	 * Binds two observable values using converter and validator as specified in
-	 * bindSpec. If bindSpec is null, a default converter and validator is used.
+	 * bindSpec. If bindSpec is null, default converters and validators as
+	 * defined by {@link DefaultBindSpec} will be used.
 	 * 
 	 * @param targetObservableValue
 	 * @param modelObservableValue
 	 * @param bindSpec
-	 *            the bind spec, or null. Any bindSpec object must not be reused
-	 *            or changed after it is passed to #bind.
-	 * @return The Binding that manages this data flow
+	 *            the bind spec, or null. A bindSpec object must not be reused
+	 *            or changed after it is passed to this method.
+	 * @return a Binding synchronizing the state of the two observables
 	 */
 	public Binding bindValue(IObservableValue targetObservableValue,
 			IObservableValue modelObservableValue, BindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
 		}
-		Binding result = new ValueBinding(this, targetObservableValue,
+		Binding result = new ValueBinding(targetObservableValue,
 				modelObservableValue, bindSpec);
-        bindings.add(result);
+		result.init(this);
 		return result;
 	}
 
 	/**
 	 * Binds two observable lists using converter and validator as specified in
-	 * bindSpec. If bindSpec is null, a default converter and validator is used.
+	 * bindSpec. If bindSpec is null, default converters and validators as
+	 * defined by {@link DefaultBindSpec} will be used.
 	 * 
 	 * @param targetObservableList
 	 * @param modelObservableList
 	 * @param bindSpec
-	 *            the bind spec, or null. Any bindSpec object must not be reused
-	 *            or changed after it is passed to #bind.
-	 * @return The Binding that manages this data flow
+	 *            the bind spec, or null. A bindSpec object must not be reused
+	 *            or changed after it is passed to this method.
+	 * @return a Binding synchronizing the state of the two observables
 	 */
 	public Binding bindList(IObservableList targetObservableList,
 			IObservableList modelObservableList, BindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
 		}
-		Binding result = new ListBinding(this, targetObservableList,
+		Binding result = new ListBinding(targetObservableList,
 				modelObservableList, bindSpec);
-        bindings.add(result);
+		result.init(this);
 		return result;
 	}
 
@@ -159,19 +151,26 @@ public class DataBindingContext {
 	 * this context.
 	 */
 	public void dispose() {
-		for (Iterator it = bindings.iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
-			binding.dispose();
+		Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
+		for (int i = 0; i < bindingArray.length; i++) {
+			bindingArray[i].dispose();
 		}
 	}
 
+	/**
+	 * Fires a binding event to all binding listeners. To be called by bindings
+	 * in this data binding context.
+	 * 
+	 * @param event
+	 * @return a status object  
+	 */
 	protected IStatus fireBindingEvent(BindingEvent event) {
 		IStatus result = Status.OK_STATUS;
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter
 				.hasNext();) {
 			IBindingListener listener = (IBindingListener) bindingEventIter
 					.next();
-			result = listener.bindingEvent(event);
+			result = listener.handleBindingEvent(event);
 			if (!result.isOK())
 				break;
 		}
@@ -179,8 +178,8 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an unmodifiable observable list with elements of type Binding, ordered by
-	 * creation time
+	 * Returns an unmodifiable observable list with elements of type {@link Binding},
+	 * ordered by time of addition.
 	 * 
 	 * @return the observable list containing all bindings
 	 */
@@ -189,21 +188,12 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an observable value of type IStatus, containing the most
-	 * recent full validation error, i.e. the last element of the list returned
-	 * by getValidationErrors().
+	 * Returns an observable map from bindings (type: {@link Binding}) to
+	 * statuses (type: {@link IStatus}). The keys of the map are the bindings
+	 * returned by {@link #getBindings()}, and the values are the current
+	 * validaion status objects for each binding.
 	 * 
-	 * @return the validation observable
-	 */
-	public IObservableValue getValidationStatus() {
-		return validationStatus;
-	}
-
-	/**
-	 * Returns an observable list with elements of type IStatus, ordered
-	 * by the time of detection
-	 * 
-	 * @return the observable list containing all validation errors
+	 * @return the observable map from bindings to status objects.
 	 */
 	public IObservableMap getValidationStatusMap() {
 		return validationStatusMap;
@@ -215,9 +205,8 @@ public class DataBindingContext {
 	 * @param binding
 	 *            The binding to add.
 	 */
-	public void addBinding(Binding binding) {
+	/* package */ void addBinding(Binding binding) {
 		bindings.add(binding);
-		binding.setDataBindingContext(this);
 	}
 
 	/**
@@ -255,24 +244,23 @@ public class DataBindingContext {
 			binding.updateTargetFromModel();
 		}
 	}
-    
-    /**
-     * Removes the binding.
-     * 
-     * @param binding
-     * @return <code>true</code> if was associated with the context,
-     *         <code>false</code> if not
-     */
-    public boolean removeBinding(Binding binding) {
-        if (bindings.contains(binding)) {
-            binding.setDataBindingContext(null);
-        }
-
-        return bindings.remove(binding);
-    }
 
 	/**
+	 * Removes the given binding.
+	 * 
+	 * @param binding
+	 * @return <code>true</code> if was associated with the context,
+	 *         <code>false</code> if not
+	 */
+	/* package */ boolean removeBinding(Binding binding) {
+		return bindings.remove(binding);
+	}
+
+	/**
+	 * Returns the validation realm.
+	 * 
 	 * @return the realm for the validation observables
+	 * @see Realm
 	 */
 	public Realm getValidationRealm() {
 		return validationRealm;

@@ -30,16 +30,7 @@ import org.eclipse.core.runtime.AssertionFailedException;
 public abstract class AbstractObservableMap extends AbstractMap implements
 		IObservableMap {
 
-	private ChangeSupport changeSupport = new ChangeSupport(null){
-		protected void firstListenerAdded() {
-			AbstractObservableMap.this.firstListenerAdded();
-		}
-		protected void lastListenerRemoved() {
-			AbstractObservableMap.this.lastListenerRemoved();
-		}
-	};
-
-	private Realm realm;
+	private ChangeSupport changeSupport;
 
 	private boolean stale;
 
@@ -65,7 +56,15 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 * @param realm
 	 */
 	public AbstractObservableMap(Realm realm) {
-		this.realm = realm;
+		Assert.isNotNull(realm);
+		changeSupport = new ChangeSupport(realm){
+			protected void firstListenerAdded() {
+				AbstractObservableMap.this.firstListenerAdded();
+			}
+			protected void lastListenerRemoved() {
+				AbstractObservableMap.this.lastListenerRemoved();
+			}
+		};
 	}
 
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
@@ -90,7 +89,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public Realm getRealm() {
-		return realm;
+		return changeSupport.getRealm();
 	}
 
 	public boolean isStale() {
@@ -153,6 +152,6 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 *             if the realm is not the current realm
 	 */
 	protected void checkRealm() {
-		Assert.isTrue(realm.isCurrent());
+		Assert.isTrue(getRealm().isCurrent());
 	}
 }

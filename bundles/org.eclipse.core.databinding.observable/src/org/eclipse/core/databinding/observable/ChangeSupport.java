@@ -12,16 +12,16 @@
 package org.eclipse.core.databinding.observable;
 
 /**
- * @since 3.3
+ * @since 1.0
  *
  */
 public abstract class ChangeSupport extends ChangeManager {
 
 	/**
-	 * @param listenerSupport
+	 * @param realm 
 	 */
-	public ChangeSupport(ListenerManager listenerSupport) {
-		super(listenerSupport);
+	public ChangeSupport(Realm realm) {
+		super(realm);
 	}
 	
 	public void addListener(Object listenerType,

@@ -42,24 +42,22 @@ import org.eclipse.core.runtime.AssertionFailedException;
 public abstract class AbstractObservableList extends AbstractList implements
 		IObservableList {
 
-	private ChangeSupport changeSupport = new ChangeSupport(null){
-		protected void firstListenerAdded() {
-			AbstractObservableList.this.firstListenerAdded();
-		}
-		protected void lastListenerRemoved() {
-			AbstractObservableList.this.lastListenerRemoved();
-		}
-	};
+	private ChangeSupport changeSupport;
 
-	private Realm realm;
-	
 	/**
 	 * @param realm 
 	 * 
 	 */
 	public AbstractObservableList(Realm realm) {
 		Assert.isNotNull(realm);
-		this.realm = realm;
+		changeSupport = new ChangeSupport(realm){
+			protected void firstListenerAdded() {
+				AbstractObservableList.this.firstListenerAdded();
+			}
+			protected void lastListenerRemoved() {
+				AbstractObservableList.this.lastListenerRemoved();
+			}
+		};
 	}
 
 	/**
@@ -256,7 +254,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	public Realm getRealm() {
-		return realm;
+		return changeSupport.getRealm();
 	}
 	
 	/**
@@ -267,6 +265,6 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 *             if the realm is not the current realm
 	 */
 	protected void checkRealm() {
-		Assert.isTrue(realm.isCurrent());
+		Assert.isTrue(getRealm().isCurrent());
 	}
 }

@@ -12,6 +12,7 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
+import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
@@ -62,7 +63,9 @@ public class Snippet004DataBindingContextErrorLabel {
 						new FiveValidator()));
 
         // Bind the error label to the validation error on the dbc.
-        dbc.bindValue(SWTObservables.observeText(errorLabel), dbc.getValidationStatus(), null);
+        dbc.bindValue(SWTObservables.observeText(errorLabel),
+				new AggregateValidationStatus(dbc.getBindings(),
+						AggregateValidationStatus.MAX_SEVERITY), null);
 
         shell.pack();
         shell.open();

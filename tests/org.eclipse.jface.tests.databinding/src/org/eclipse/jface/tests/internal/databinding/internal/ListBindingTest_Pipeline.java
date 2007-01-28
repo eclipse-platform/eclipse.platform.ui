@@ -68,8 +68,9 @@ public class ListBindingTest_Pipeline extends TestCase {
 		TrackPositionListener listener = new TrackPositionListener(
 				positions.length);
 
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
 		binding.addBindingEventListener(listener);
 
 		target.add("1");
@@ -86,8 +87,10 @@ public class ListBindingTest_Pipeline extends TestCase {
 
 		TrackPositionListener listener = new TrackPositionListener(
 				positions.length);
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(listener);
 
 		model.add("1");
@@ -136,7 +139,8 @@ public class ListBindingTest_Pipeline extends TestCase {
 			break;
 		}
 
-		ListBinding binding = new ListBinding(dbc, target, model, bindSpec);
+		ListBinding binding = new ListBinding(target, model, bindSpec);
+		binding.init(dbc);
 
 		binding.addBindingEventListener(listener);
 		listener.active = true;
@@ -174,8 +178,10 @@ public class ListBindingTest_Pipeline extends TestCase {
 
 	private void assertLastPhase(int phase, boolean performTarget) {
 		TrackLastListener listener = new TrackLastListener();
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(listener);
 
 		if (performTarget) {
@@ -202,9 +208,10 @@ public class ListBindingTest_Pipeline extends TestCase {
 		}
 
 		Validator validator = new Validator();
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec().addTargetValidator(
 						BindingEvent.PIPELINE_AFTER_GET, validator));
+		binding.init(dbc);
 
 		assertTrue(((IStatus) binding.getValidationStatus().getValue()).isOK());
 		target.add("value");
@@ -214,13 +221,15 @@ public class ListBindingTest_Pipeline extends TestCase {
 
 	public void testValidationErrorStatusListenerFailure() throws Exception {
 		class Listener implements IBindingListener {
-			public IStatus bindingEvent(BindingEvent e) {
+			public IStatus handleBindingEvent(BindingEvent e) {
 				return Status.CANCEL_STATUS;
 			}
 		}
 
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(new Listener());
 
 		assertTrue(((IStatus) binding.getValidationStatus().getValue()).isOK());

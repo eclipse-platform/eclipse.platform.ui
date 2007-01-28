@@ -66,7 +66,9 @@ public class ValueBindingTest_Pipeline extends TestCase {
 		TrackPositionListener listener = new TrackPositionListener(
 				positions.length);
 
-		Binding binding = new ValueBinding(dbc, target, model, new BindSpec());
+		Binding binding = new ValueBinding(target, model, new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(listener);
 
 		listener.reset(); // reset, runs on bind
@@ -113,7 +115,9 @@ public class ValueBindingTest_Pipeline extends TestCase {
 			break;
 		}
 
-		ValueBinding binding = new ValueBinding(dbc, target, model, bindSpec);
+		ValueBinding binding = new ValueBinding(target, model, bindSpec);
+		binding.init(dbc);
+
 		binding.addBindingEventListener(listener);
 		listener.active = true;
 		value.setValue("1");
@@ -134,8 +138,10 @@ public class ValueBindingTest_Pipeline extends TestCase {
 		TrackPositionListener listener = new TrackPositionListener(
 				positions.length);
 
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(listener);
 
 		model.setValue("1");
@@ -199,8 +205,10 @@ public class ValueBindingTest_Pipeline extends TestCase {
 	private void assertLastPosition(int position, int copyType) {
 		TrackLastListener listener = new TrackLastListener();
 
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(listener);
 		listener.active = true;
 
@@ -225,9 +233,11 @@ public class ValueBindingTest_Pipeline extends TestCase {
 		}
 
 		Validator validator = new Validator();
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec().addTargetValidator(
 						BindingEvent.PIPELINE_AFTER_GET, validator));
+		binding.init(dbc);
+
 		assertTrue(((IStatus) binding.getValidationStatus().getValue()).isOK());
 		target.setValue("value");
 		assertFalse("status should be in error", ((IStatus) binding
@@ -236,13 +246,15 @@ public class ValueBindingTest_Pipeline extends TestCase {
 
 	public void testValidationErrorStatusListenerFailure() throws Exception {
 		class Listener implements IBindingListener {
-			public IStatus bindingEvent(BindingEvent e) {
+			public IStatus handleBindingEvent(BindingEvent e) {
 				return Status.CANCEL_STATUS;
 			}
 		}
 
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec());
+		binding.init(dbc);
+
 		binding.addBindingEventListener(new Listener());
 
 		assertTrue(((IStatus) binding.getValidationStatus().getValue()).isOK());

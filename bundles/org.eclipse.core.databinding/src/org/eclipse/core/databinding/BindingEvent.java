@@ -13,35 +13,35 @@
 package org.eclipse.core.databinding;
 
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.IDiff;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
  * Instances of this class provide a description of a particular event that
  * occurred in a binding. It is passed to
- * {@link IBindingListener#bindingEvent(BindingEvent)}.
+ * {@link IBindingListener#handleBindingEvent(BindingEvent)}.
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>
  * 
  * @since 1.0
  */
-public class BindingEvent {
+public class BindingEvent extends EventObject {
 
 	/**
-	 * The model observable for the change that is being processed.
+	 * 
 	 */
-	public final IObservable model;
+	private static final long serialVersionUID = 8410698137884587257L;
 
 	/**
-	 * The target observable for the change that is being processed.
+	 * The binding object from which this event originated.
 	 */
-	public final IObservable target;
+	public final Binding binding;
 
 	/**
 	 * The diff describing the change, or <code>null</code> if no diff is
@@ -176,10 +176,10 @@ public class BindingEvent {
 	 * @param pipelinePosition
 	 *            The initial processing pipeline position.
 	 */
-	/* package */BindingEvent(IObservable model, IObservable target,
-			IDiff diff, int copyType, int pipelinePosition) {
-		this.model = model;
-		this.target = target;
+	/* package */BindingEvent(Binding binding, IDiff diff, int copyType,
+			int pipelinePosition) {
+		super(binding);
+		this.binding = binding;
 		this.diff = diff;
 		this.copyType = copyType;
 		this.pipelinePosition = pipelinePosition;

@@ -59,9 +59,10 @@ public class ListBindingTest extends TestCase {
 	}
 
 	public void testUpdateModelFromTarget() throws Exception {
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
 						.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
 		
 		target.add("1");
 		List targetCopy = new ArrayList(target.size());
@@ -76,9 +77,10 @@ public class ListBindingTest extends TestCase {
 	}
 
 	public void testUpdateTargetFromModel() throws Exception {
-		ListBinding binding = new ListBinding(dbc, target, model,
+		ListBinding binding = new ListBinding(target, model,
 				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
 						.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
 		
 		target.add("1");		
 		model.add("2");

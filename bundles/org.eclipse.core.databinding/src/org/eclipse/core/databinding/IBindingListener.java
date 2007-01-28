@@ -14,15 +14,14 @@ package org.eclipse.core.databinding;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * An interface for objects that need to listen to events that occur in the data
- * flow pipeline
+ * An interface for objects that need to listen to events that occur while
+ * synchronizing the state of two observables in a binding.
  * 
  * @since 1.0
  */
 public interface IBindingListener {
 	/**
-	 * Method bindingEvent. The method that is called when something interesting
-	 * occurs in the data flow pipeline.
+	 * This method is called when a binding event occurred.
 	 * 
 	 * @param e
 	 *            The IBindingEvent to handle.
@@ -30,6 +29,6 @@ public interface IBindingListener {
 	 *         error or cancel status is returned. The error will be propagated
 	 *         to the data binding context's error message updatable.
 	 */
-	public IStatus bindingEvent(BindingEvent e);
+	public IStatus handleBindingEvent(BindingEvent e);
 
 }

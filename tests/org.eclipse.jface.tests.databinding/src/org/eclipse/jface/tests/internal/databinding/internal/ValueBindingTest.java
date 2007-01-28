@@ -60,8 +60,8 @@ public class ValueBindingTest extends TestCase {
 		spec.setUpdateTarget(false);
 
 		try {
-			new ValueBinding(new DataBindingContext(),
-					new ObservableValueStub(), new ObservableValueStub(), spec);
+			new ValueBinding(
+					new ObservableValueStub(), new ObservableValueStub(), spec).init(new DataBindingContext());
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -77,7 +77,7 @@ public class ValueBindingTest extends TestCase {
         DataBindingContext dbc = new DataBindingContext();
         
         assertFalse(model.getValue().equals(target.getValue()));
-        new ValueBinding(dbc, target, model, spec);
+        new ValueBinding(target, model, spec).init(dbc);
         
         assertEquals(target.getValue(), model.getValue());
     }

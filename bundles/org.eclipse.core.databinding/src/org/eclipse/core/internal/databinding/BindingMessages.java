@@ -26,9 +26,14 @@ public class BindingMessages {
 			.getBundle("org.eclipse.core.internal.databinding.messages"); //$NON-NLS-1$
 	
 	/**
-	 * 
+	 * Key to be used for an index out of range message.
 	 */
-	public static final String INDEX_OUT_OF_RANGE = "index out of range"; //$NON-NLS-1$
+	public static final String INDEX_OUT_OF_RANGE = "IndexOutOfRange"; //$NON-NLS-1$
+
+	/**
+	 * Key to be used for a "Multiple Problems." message.
+	 */
+	public static final String MULTIPLE_PROBLEMS = "MultipleProblems"; //$NON-NLS-1$
 
 	/**
 	 * Returns the resource object with the given key in the resource bundle for

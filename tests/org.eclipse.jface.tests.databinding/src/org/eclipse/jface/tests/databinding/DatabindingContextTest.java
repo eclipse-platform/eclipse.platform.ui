@@ -16,6 +16,7 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -48,8 +49,8 @@ public class DatabindingContextTest extends TestCase {
 	public void testDisposeBindings() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
 
-		Binding binding = new BindingStub(dbc);
-		dbc.addBinding(binding);
+		Binding binding = new BindingStub();
+		binding.init(dbc);
 
 		assertFalse(binding.isDisposed());
 		dbc.dispose();
@@ -92,7 +93,7 @@ public class DatabindingContextTest extends TestCase {
 		ValueChangeCounter errorCounter = new ValueChangeCounter();
 		ChangeCounter errorsCounter = new ChangeCounter();
 
-		IObservableValue error = dbc.getValidationStatus();
+		IObservableValue error = new AggregateValidationStatus(dbc.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
 		error.addValueChangeListener(errorCounter);
 		assertTrue(((IStatus) error.getValue()).isOK());
 
@@ -115,6 +116,7 @@ public class DatabindingContextTest extends TestCase {
 		assertEquals(1, errors.size());
 		assertEquals(1, errorsCounter.count);
 		assertEquals(1, errorCounter.count);
+		error.dispose();
 	}
 
 	/**
@@ -163,8 +165,8 @@ public class DatabindingContextTest extends TestCase {
 
 	public void testGetBindingsImmutability() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
-		BindingStub binding = new BindingStub(null);
-		dbc.addBinding(binding);
+		BindingStub binding = new BindingStub();
+		binding.init(dbc);
 
 		try {
 			dbc.getBindings().remove(0);
@@ -174,18 +176,15 @@ public class DatabindingContextTest extends TestCase {
 	}
 
 	public void testRemoveBinding() throws Exception {
-		BindingStub binding = new BindingStub(null);
+		BindingStub binding = new BindingStub();
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.addBinding(binding);
+		binding.init(dbc);
 
 		assertTrue("context should contain the binding", dbc.getBindings()
 				.contains(binding));
-		assertTrue("removing the factory should return true", dbc
-				.removeBinding(binding));
+		binding.dispose();
 		assertFalse("binding should have been removed", dbc.getBindings()
 				.contains(binding));
-		assertFalse("when not found false should be returned", dbc
-				.removeBinding(binding));
 	}
 
 	/**
@@ -218,8 +217,8 @@ public class DatabindingContextTest extends TestCase {
 	private static class BindingStub extends Binding {
 		DataBindingContext context;
 
-		public BindingStub(DataBindingContext context) {
-			super(context);
+		public BindingStub() {
+			super();
 		}
 
 		public IObservableValue getPartialValidationStatus() {
@@ -240,6 +239,12 @@ public class DatabindingContextTest extends TestCase {
 		}
 
 		public void updateModelFromTarget(int phase) {			
+		}
+
+		protected void postInit() {
+		}
+
+		protected void preInit() {
 		}
 	}
 }

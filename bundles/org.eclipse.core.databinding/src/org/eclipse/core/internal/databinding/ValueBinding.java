@@ -18,7 +18,6 @@ import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.BindingException;
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -68,21 +67,15 @@ public class ValueBinding extends Binding {
 			new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE) };
 
 	/**
-	 * @param context
 	 * @param target
 	 * @param model
 	 * @param bindSpec
 	 */
-	public ValueBinding(DataBindingContext context, IObservableValue target,
+	public ValueBinding(IObservableValue target,
 			IObservableValue model, BindSpec bindSpec) {
-		super(context);
 		this.target = target;
 		this.model = model;
 		fillBindSpecDefaults(bindSpec, target, model);
-		validationErrorObservable = new WritableValue(context
-				.getValidationRealm(), IStatus.class, null);
-		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), IStatus.class, null);
 
 		for (int i = 0; i < VALIDATION_POSITIONS.length; i++) {
 			Integer position = VALIDATION_POSITIONS[i];
@@ -138,9 +131,7 @@ public class ValueBinding extends Binding {
 						.addValueChangingListener(targetChangingListener);
 			}
 		}
-		if (bindSpec.isUpdateTarget()) {
-			updateTargetFromModel();
-		}
+		this.updateTarget = bindSpec.isUpdateTarget();
 	}
 
 	public void dispose() {
@@ -210,6 +201,8 @@ public class ValueBinding extends Binding {
 		}
 	};
 
+	private boolean updateTarget;
+
 	/**
 	 * Perform the target to model process up to and including the
 	 * <code>lastPosition</code>.
@@ -220,7 +213,7 @@ public class ValueBinding extends Binding {
 	 */
 	private void doUpdateModelFromTarget(ValueDiff diff, int lastPosition) {
 		Assert.isTrue(model.getRealm().isCurrent());
-		BindingEvent e = createBindingEvent(model, target, diff,
+		BindingEvent e = createBindingEvent(diff,
 				BindingEvent.EVENT_COPY_TO_MODEL, BindingEvent.PIPELINE_AFTER_GET);
 		e.originalValue = diff.getNewValue();
 		if (!performPosition(e.originalValue, BindingEvent.PIPELINE_AFTER_GET,
@@ -325,7 +318,7 @@ public class ValueBinding extends Binding {
 		Assert.isTrue(target.getRealm().isCurrent());
 		try {
 			updatingTarget = true;
-			BindingEvent e = createBindingEvent(model, target, diff,
+			BindingEvent e = createBindingEvent(diff,
 					BindingEvent.EVENT_COPY_TO_TARGET, BindingEvent.PIPELINE_AFTER_GET);
 			e.originalValue = diff.getNewValue();
 			if (!performPosition(e.originalValue,
@@ -413,4 +406,18 @@ public class ValueBinding extends Binding {
 			}
 		});
 	}
+
+	protected void preInit() {
+		validationErrorObservable = new WritableValue(context
+				.getValidationRealm(), IStatus.class, null);
+		partialValidationErrorObservable = new WritableValue(context
+				.getValidationRealm(), IStatus.class, null);
+	}
+
+	protected void postInit() {
+		if (updateTarget) {
+			updateTargetFromModel();
+		}
+	}
+
 }

@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 
+import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
@@ -303,20 +304,20 @@ public class PropertyScenarios extends ScenariosTestCase {
                 new DefaultBindSpec().addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator));
 
         assertEquals("5.0", text.getText());
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         enterText(text, "0.65");
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
         adventure.setPrice(42.24);
         assertEquals("42.24", text.getText());
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         enterText(text, "jygt");
-        assertEquals(mustBeCurrencyMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
+        assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         enterText(text, "-23.9");
-        assertEquals(cannotBeNegativeMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
+        assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
         adventure.setPrice(0.0);
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
     }
 
     public void testScenario08() {
@@ -371,20 +372,20 @@ public class PropertyScenarios extends ScenariosTestCase {
                 bindSpec);
 
         assertEquals("$5.00", text.getText());
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         enterText(text, "$0.65");
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
         adventure.setPrice(42.24);
         assertEquals("$42.24", text.getText());
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         enterText(text, "jygt");
-        assertEquals(mustBeCurrencyMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
+        assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         enterText(text, "-$23.9");
-        assertEquals(cannotBeNegativeMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
+        assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
         adventure.setPrice(0.0);
-        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
+        assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
     }
 
     public void testScenario09() {

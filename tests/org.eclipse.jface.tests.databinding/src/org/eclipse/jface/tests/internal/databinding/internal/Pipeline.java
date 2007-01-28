@@ -56,7 +56,7 @@ class Pipeline {
 		int lastPosition = -1;
 		int lastCopyType = -1;
 
-		public IStatus bindingEvent(BindingEvent e) {
+		public IStatus handleBindingEvent(BindingEvent e) {
 			if (active) {
 				lastPosition = e.pipelinePosition;
 				lastCopyType = e.copyType;
@@ -97,7 +97,7 @@ class Pipeline {
 			copyTypes = new int[expectedCount];
 		}
 
-		public IStatus bindingEvent(BindingEvent e) {
+		public IStatus handleBindingEvent(BindingEvent e) {
 			positions[++index] = e.pipelinePosition;
 			copyTypes[index] = e.copyType;
 			count++;

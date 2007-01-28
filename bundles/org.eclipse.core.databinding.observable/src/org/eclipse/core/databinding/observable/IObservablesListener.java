@@ -12,8 +12,11 @@
 package org.eclipse.core.databinding.observable;
 
 /**
- * @since 3.3
- *
+ * Marker interface for all listener types in the observables framework. Not
+ * intended to be directly implemented by clients.
+ * 
+ * @since 1.0
+ * 
  */
 public interface IObservablesListener {
 

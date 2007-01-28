@@ -15,8 +15,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.DetailObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -36,7 +36,7 @@ public class DetailObservableValueTest extends TestCase {
             }
         };
         
-        DetailObservableValue detailObservable = new DetailObservableValue(factory, outerObservable, Object.class);
+        IObservableValue detailObservable = MasterDetailObservables.detailValue(outerObservable, factory, Object.class);
         Object value = new Object();
         
         assertFalse(value.equals(innerObservable.getValue()));

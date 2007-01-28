@@ -15,9 +15,15 @@ package org.eclipse.core.databinding.observable;
  * 
  * <p>
  * This interface is not intended to be implemented by clients. Clients should
- * instead subclass one of the classes that implement this interface. Note that
- * direct implementers of this interface outside of the framework will be broken
- * in future releases when methods are added to this interface.
+ * instead subclass one of the classes in the framework that implement this
+ * interface. Note that direct implementers of this interface outside of the
+ * framework will be broken in future releases when methods are added to this
+ * interface.
+ * </p>
+ * <p>
+ * Implementations must not manage listeners themselves, listener management
+ * should be delegated to a private instance of type {@link ChangeSupport}, or
+ * inherited from {@link ChangeManager}.
  * </p>
  * 
  * @since 1.0
@@ -26,14 +32,26 @@ package org.eclipse.core.databinding.observable;
 public interface IObservable {
 
 	/**
-	 * Returns the realm from which this obserable must be accessed, and
-	 *  
+	 * Returns the realm for this observable. Unless otherwise specified,
+	 * getters and setters must be accessed from within this realm. Listeners
+	 * will be within this realm when they receive events from this observable.
+	 * <p>
+	 * Because observables can only be accessed from within one realm, and they
+	 * always fire events on that realm, their state can be observed in an
+	 * incremental way. It is always safe to call getters of an observable from
+	 * within a change listener attached to that observable.
+	 * </p>
+	 * 
 	 * @return the realm
 	 */
 	public Realm getRealm();
-	
+
 	/**
-	 * Adds the given change listener to the list of change listeners.
+	 * Adds the given change listener to the list of change listeners. Change
+	 * listeners are notified about changes of the state of this observable in a
+	 * generic way, without specifying the change that happened. To get the
+	 * changed state, a change listener needs to query for the current state of
+	 * this observable.
 	 * 
 	 * @param listener
 	 */
@@ -48,9 +66,13 @@ public interface IObservable {
 	public void removeChangeListener(IChangeListener listener);
 
 	/**
-	 * Adds the given stale listener to the list of stale listeners.
+	 * Adds the given stale listener to the list of stale listeners. Stale
+	 * listeners are notified when an observable object becomes stale, not when
+	 * is becomes non-stale.
 	 * 
 	 * @param listener
+	 * 
+	 * @see #isStale()
 	 */
 	public void addStaleListener(IStaleListener listener);
 
@@ -63,11 +85,12 @@ public interface IObservable {
 	public void removeStaleListener(IStaleListener listener);
 
 	/**
-	 * Returns whether the state of this observable is stale. A non-stale object
-	 * that becomes stale will notify its stale listeners. A stale object that
-	 * becomes non-stale does so by changing its state and notifying its change
-	 * listeners. Clients that do not expect asynchronous changes may ignore
-	 * staleness of observable objects.
+	 * Returns whether the state of this observable is stale and is expected to
+	 * change soon. A non-stale observable that becomes stale will notify its
+	 * stale listeners. A stale object that becomes non-stale does so by
+	 * changing its state and notifying its change listeners, it does <b>not</b>
+	 * notify its stale listeners about becoming non-stale. Clients that do not
+	 * expect asynchronous changes may ignore staleness of observable objects.
 	 * 
 	 * @return true if this observable's state is stale and will change soon.
 	 * 

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *******************************************************************************/
-package org.eclipse.core.internal.databinding;
+package org.eclipse.core.databinding.observable.masterdetail;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  * 
  */
-public class DetailObservableValue extends AbstractObservableValue {
+/* package */ class DetailObservableValue extends AbstractObservableValue {
 
 	private boolean updating = false;
 
@@ -46,13 +46,13 @@ public class DetailObservableValue extends AbstractObservableValue {
 	private IObservableFactory factory;
 
 	/**
-	 * @param realm 
-	 * @param factory
 	 * @param outerObservableValue
+	 * @param factory
 	 * @param detailType
+	 * @param realm 
 	 */
-	public DetailObservableValue(IObservableFactory factory,
-			IObservableValue outerObservableValue, Object detailType) {
+	public DetailObservableValue(IObservableValue outerObservableValue,
+			IObservableFactory factory, Object detailType) {
 		super(outerObservableValue.getRealm());
 		this.factory = factory;
 		this.detailType = detailType;

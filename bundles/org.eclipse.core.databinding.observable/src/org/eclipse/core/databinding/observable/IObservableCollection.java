@@ -11,8 +11,16 @@
 
 package org.eclipse.core.databinding.observable;
 
+import java.util.Collection;
+
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+
 /**
- * Marker interface for observable collections.
+ * Interface for observable collections. Only general change listeners can be
+ * added to an observable collection. Listeners interested in incremental
+ * changes have to be added using more concrete subtypes such as
+ * {@link IObservableList} or {@link IObservableSet}.
  * 
  * <p>
  * This interface is not intended to be implemented by clients. Clients should
@@ -23,7 +31,7 @@ package org.eclipse.core.databinding.observable;
  * 
  * @since 1.0
  */
-public interface IObservableCollection extends IObservable {
+public interface IObservableCollection extends IObservable, Collection {
 
 	/**
 	 * @return

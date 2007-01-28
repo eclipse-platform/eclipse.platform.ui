@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This abstract class represents a binding between a model and a target.
+ * This abstract class represents a binding between a model and a target. Newly
+ * created instances need to be added to a data binding context using
+ * {@link #init(DataBindingContext)}.
  * 
  * @since 1.0
  */
@@ -33,13 +35,46 @@ public abstract class Binding {
 	protected DataBindingContext context;
 
 	/**
-	 * Creates a new binding, using the given context.
+	 * Creates a new binding.
+	 * 
 	 * @param context
 	 */
-	public Binding(DataBindingContext context) {
-		this.context = context;
+	public Binding() {
 	}
 	
+	/**
+	 * Initializes this binding with the given context and adds it to the list
+	 * of bindings of the context.
+	 * <p>
+	 * Subclasses may extend, but must call the super implementation.
+	 * </p>
+	 * 
+	 * @param context
+	 */
+	public final void init(DataBindingContext context) {
+		this.context = context;
+		preInit();
+		context.addBinding(this);
+		postInit();
+	}
+	
+	/**
+	 * Called by {@link #init(DataBindingContext)} after setting
+	 * {@link #context} but before adding this binding to the context.
+	 * Subclasses may use this method to perform initialization that could not
+	 * be done in the constructor. Care should be taken not to cause any events
+	 * while running this method.
+	 */
+	protected abstract void preInit();
+	
+	/**
+	 * Called by {@link #init(DataBindingContext)} after adding this binding to
+	 * the context. Subclasses may use this method to perform initialization
+	 * that may cause events to be fired, including BindingEvents that are
+	 * forwarded to the data binding context.
+	 */
+	protected abstract void postInit();
+
 	/**
 	 * This method allows subclasses to fill bind spec defaults. Usually called
 	 * from subclass constructors.
@@ -83,7 +118,7 @@ public abstract class Binding {
 		}
 		for (int i = 0; i < listeners.length; i++) {
 			IBindingListener listener = listeners[i];
-			result = listener.bindingEvent(event);
+			result = listener.handleBindingEvent(event);
 			if (!result.isOK())
 				break;
 		}
@@ -136,6 +171,9 @@ public abstract class Binding {
 	 */
 	public void dispose() {
 		bindingEventListeners = null;
+		if (context != null) {
+			context.removeBinding(this);
+		}
 		context = null;
 		disposed = true;
 	}
@@ -183,8 +221,7 @@ public abstract class Binding {
 	 *            The initial processing pipeline position.
 	 * @return the new binding event
 	 */
-	protected BindingEvent createBindingEvent(IObservable model,
-			IObservable target, IDiff diff, int copyType, int pipelinePosition) {
-		return new BindingEvent(model, target, diff, copyType, pipelinePosition);
+	protected BindingEvent createBindingEvent(IDiff diff, int copyType, int pipelinePosition) {
+		return new BindingEvent(this, diff, copyType, pipelinePosition);
 	}
 }

@@ -56,22 +56,23 @@ public class ValueBindingTest_Policies extends TestCase {
 	}
 
 	public void testUpdateModelPolicyNull() throws Exception {
-		new ValueBinding(dbc, target, model, new BindSpec()
-				.setModelUpdatePolicy(null));
+		new ValueBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(null)).init(dbc);
 		target.setValue("1");
 		assertEquals("should be automatic", target.getValue(), model.getValue());
 	}
 
 	public void testUpdateModelPolicyAutomatic() throws Exception {
-		new ValueBinding(dbc, target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC));
+		new ValueBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
 		target.setValue("1");
 		assertEquals("should be automatic", target.getValue(), model.getValue());
 	}
 
 	public void testUpdateModelPolicyExplicit() throws Exception {
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec().setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
 
 		model.setValue("1");
 		assertFalse(model.getValue().equals(target.getValue()));
@@ -81,15 +82,15 @@ public class ValueBindingTest_Policies extends TestCase {
 	}
 
 	public void testUpdateTargetPolicyNull() throws Exception {
-		new ValueBinding(dbc, target, model, new BindSpec()
-				.setTargetUpdatePolicy(null));
+		new ValueBinding(target, model, new BindSpec()
+				.setTargetUpdatePolicy(null)).init(dbc);
 		model.setValue("1");
 		assertEquals("should be automatic", model.getValue(), target.getValue());
 	}
 
 	public void testUpdateTargetPolicyAutomatic() throws Exception {
-		new ValueBinding(dbc, target, model, new BindSpec()
-				.setTargetUpdatePolicy(BindSpec.POLICY_AUTOMATIC));
+		new ValueBinding(target, model, new BindSpec()
+				.setTargetUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
 		model.setValue("1");
 		assertEquals("should be automatic", model.getValue(), target.getValue());
 	}
@@ -98,8 +99,9 @@ public class ValueBindingTest_Policies extends TestCase {
 		TrackLastListener listener = new TrackLastListener();
 		listener.lastPosition = -1;
 		
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
 		binding.addBindingEventListener(listener);
 
 		target.setValue("1");
@@ -115,9 +117,10 @@ public class ValueBindingTest_Policies extends TestCase {
 		int position = BindingEvent.PIPELINE_AFTER_GET;
 		TrackLastListener listener = new TrackLastListener();
 
-		ValueBinding binding = new ValueBinding(dbc, target, model,
+		ValueBinding binding = new ValueBinding(target, model,
 				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
 						.setTargetValidatePolicy(new Integer(position)));
+		binding.init(dbc);
 		binding.addBindingEventListener(listener);
 
 		String value = "1";

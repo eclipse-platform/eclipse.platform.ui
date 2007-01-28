@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -53,16 +52,14 @@ public class ListBinding extends Binding {
 			new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE) };
 
 	/**
-	 * @param context
 	 * @param targetList
 	 * @param target
 	 * @param modelList
 	 * @param model
 	 * @param bindSpec
 	 */
-	public ListBinding(DataBindingContext context, IObservableList targetList,
+	public ListBinding(IObservableList targetList,
 			IObservableList modelList, BindSpec bindSpec) {
-		super(context);
 		this.targetList = targetList;
 		this.modelList = modelList;
 
@@ -76,10 +73,6 @@ public class ListBinding extends Binding {
 		}
 
 		fillBindSpecDefaults(bindSpec, targetList, modelList);
-		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), null);
-		validationErrorObservable = new WritableValue(context
-				.getValidationRealm(), null);
 
 		Integer policy = (bindSpec.getModelUpdatePolicy() != null) ? bindSpec
 				.getModelUpdatePolicy() : BindSpec.POLICY_AUTOMATIC;
@@ -104,7 +97,6 @@ public class ListBinding extends Binding {
 		if (policy == null || policy.equals(BindSpec.POLICY_AUTOMATIC)) {
 			modelList.addListChangeListener(modelChangeListener);
 		}
-		updateTargetFromModel();
 	}
 
 	/*
@@ -152,7 +144,7 @@ public class ListBinding extends Binding {
 			return;
 		}
 
-		BindingEvent e = createBindingEvent(modelList, targetList, diff,
+		BindingEvent e = createBindingEvent(diff,
 				BindingEvent.EVENT_COPY_TO_MODEL, BindingEvent.PIPELINE_AFTER_GET);
 
 		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
@@ -197,7 +189,7 @@ public class ListBinding extends Binding {
 		if (updating) {
 			return;
 		}
-		BindingEvent e = createBindingEvent(modelList, targetList, diff,
+		BindingEvent e = createBindingEvent(diff,
 				BindingEvent.EVENT_COPY_TO_TARGET, BindingEvent.PIPELINE_AFTER_GET);
 		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
 			return;
@@ -329,4 +321,16 @@ public class ListBinding extends Binding {
 			}
 		});
 	}
+
+	protected void preInit() {
+		partialValidationErrorObservable = new WritableValue(context
+				.getValidationRealm(), null);
+		validationErrorObservable = new WritableValue(context
+				.getValidationRealm(), null);
+	}
+
+	protected void postInit() {
+		updateTargetFromModel();
+	}
+	
 }
