@@ -1259,4 +1259,6 @@ public interface IWorkbenchRegistryConstants {
 	 * The type of reference which refers to the widget.
 	 */
 	public static String TYPE_WIDGET = "widget"; //$NON-NLS-1$
+
+	public static String TAG_TOOLBAR = "toolbar"; //$NON-NLS-1$
 }

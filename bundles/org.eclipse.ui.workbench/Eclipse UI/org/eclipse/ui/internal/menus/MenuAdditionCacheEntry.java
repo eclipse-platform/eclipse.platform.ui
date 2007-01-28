@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
@@ -160,7 +162,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				newItem = createSeparatorAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				newItem = createMenuAdditionContribution(items[i]);
-
+			} else if (IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
+				newItem = createToolBarAdditionContribution(items[i]);
 			}
 
 			// Cache the relationship between the ICI and the
@@ -174,6 +177,16 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param configurationElement
+	 * @return
+	 */
+	private IContributionItem createToolBarAdditionContribution(
+			IConfigurationElement configurationElement) {
+		return new ToolBarContributionItem(new ToolBarManager(),
+				getId(configurationElement));
 	}
 
 	/**
@@ -305,7 +318,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	}
 
 	static String getDisabledIconPath(IConfigurationElement element) {
-		return element.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
+		return element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
 	}
 
 	static String getHoverIconPath(IConfigurationElement element) {
@@ -324,7 +338,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		return null;
 	}
 
-	static ImageDescriptor getDisabledIconDescriptor(IConfigurationElement element) {
+	static ImageDescriptor getDisabledIconDescriptor(
+			IConfigurationElement element) {
 		String extendingPluginId = element.getDeclaringExtension()
 				.getContributor().getName();
 

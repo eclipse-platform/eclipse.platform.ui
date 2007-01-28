@@ -521,6 +521,7 @@ This should be the starting point for &lt;i&gt;all&lt;/i&gt; contributions into 
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="dynamicContribution" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="toolbar" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="locationURI" type="string" use="required">
             <annotation>
@@ -742,6 +743,23 @@ Separator contributions that have an id define the start of a logical group so t
             </annotation>
          </attribute>
          <attribute name="visible" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="toolbar">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="id"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   
