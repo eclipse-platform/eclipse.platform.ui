@@ -84,6 +84,11 @@
             id="org.eclipse.ui.contexts.dialog"
             parentId="org.eclipse.ui.contexts.dialogAndWindow">
       </context>
+      <context
+            description="%context.actionSet.description"
+            id="org.eclipse.ui.contexts.actionSet"
+            name="%context.actionSet.name">
+      </context>
    </extension>
    
    <extension point="org.eclipse.ui.bindings">
