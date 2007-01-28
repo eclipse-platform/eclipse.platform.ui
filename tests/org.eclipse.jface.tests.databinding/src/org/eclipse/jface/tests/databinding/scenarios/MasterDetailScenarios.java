@@ -30,7 +30,6 @@ import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -69,11 +68,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 	}
 
 	public void testScenario01() {
-		//disabled until 147515 is resolved
-		if (BindingTestSuite.failingTestsDisabled(this)) {
-			return;
-		}
-		
 		// Displaying the catalog's list of Lodging objects in a list viewer,
 		// using their names. The name of the currently selected Lodging can
 		// be edited in a text widget. There is always a selected Lodging
@@ -143,11 +137,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 	}
 
 	public void testScenario02() {
-		//disabled until 147515 is resolved
-		if (BindingTestSuite.failingTestsDisabled(this)) {
-			return;
-		}
-		
 		// Selecting from the list of lodgings for an adventure and editing the
 		// properties of the selected lodging in text widgets. If no lodging is
 		// selected the input controls for name and adventure are disabled.
@@ -275,11 +264,6 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 	}
 
 	public void testScenario03() {
-		//disabled until 147515 is resolved
-		if (BindingTestSuite.failingTestsDisabled(this)) {
-			return;
-		}
-		
 		// List adventures and for the selected adventure allow its default
 		// lodging�s name and description to be changed in text controls. If
 		// there is no selected adventure or the default lodging is null the

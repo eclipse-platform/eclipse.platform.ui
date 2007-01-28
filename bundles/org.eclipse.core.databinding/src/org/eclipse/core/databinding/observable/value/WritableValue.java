@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 158687
- *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 164653, 147515
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -25,50 +25,43 @@ public class WritableValue extends AbstractObservableValue {
 	private final Object valueType;
 
 	/**
-	 * @param realm 
-	 * @param initialValue
+	 * Constructs a new instance with the default realm, a <code>null</code>
+	 * value type, and a <code>null</code> value.
 	 */
-	public WritableValue(Object initialValue) {
-		this(Realm.getDefault(), null, initialValue);
+	public WritableValue() {
+		this(null, null);
 	}
 
 	/**
-	 * @param realm 
-	 * @param type
-	 */
-	public WritableValue(Class type) {
-		this(Realm.getDefault(), type, null);
-	}
-
-	/**
-	 * @param realm 
+	 * Constructs a new instance with the default realm.
+	 * 
 	 * @param valueType
+	 *            can be <code>null</code>
 	 * @param initialValue
+	 *            can be <code>null</code>
 	 */
 	public WritableValue(Object valueType, Object initialValue) {
 		this(Realm.getDefault(), valueType, initialValue);
 	}
 
 	/**
-	 * @param realm 
-	 * @param initialValue
+	 * Constructs a new instance with the provided <code>realm</code>, a
+	 * <code>null</code> value type, and a <code>null</code> initial value.
+	 * 
+	 * @param realm
 	 */
-	public WritableValue(Realm realm, Object initialValue) {
-		this(realm, null, initialValue);
+	public WritableValue(Realm realm) {
+		this(realm, null, null);
 	}
-	
+
 	/**
-	 * @param realm 
-	 * @param type
-	 */
-	public WritableValue(Realm realm, Class type) {
-		this(realm, type, null);
-	}
-	
-	/**
-	 * @param realm 
+	 * Constructs a new instance.
+	 * 
+	 * @param realm
 	 * @param valueType
+	 *            can be <code>null</code>
 	 * @param initialValue
+	 *            can be <code>null</code>
 	 */
 	public WritableValue(Realm realm, Object valueType, Object initialValue) {
 		super(realm);
@@ -104,4 +97,11 @@ public class WritableValue extends AbstractObservableValue {
 		return valueType;
 	}
 
+	/**
+	 * @param elementType can be <code>null</code>
+	 * @return new instance with the default realm and a value of <code>null</code>
+	 */
+	public static WritableValue withValueType(Object elementType) {
+		return new WritableValue(Realm.getDefault(), elementType, null );
+	}
 }

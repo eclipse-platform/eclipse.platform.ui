@@ -14,18 +14,14 @@ package org.eclipse.jface.tests.internal.databinding.internal.beans;
 
 import java.beans.PropertyDescriptor;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
  */
-public class JavaBeanObservableValueTest extends TestCase {
-	private Realm realm;
+public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Bean bean;
 	private JavaBeanObservableValue observableValue;
 	private PropertyDescriptor propertyDescriptor;
@@ -34,10 +30,11 @@ public class JavaBeanObservableValueTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		realm = SWTObservables.getRealm(Display.getDefault());		
+		super.setUp();
+		
 		bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor("value", Bean.class);
-		observableValue = new JavaBeanObservableValue(realm, bean, propertyDescriptor, String.class);
+		observableValue = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor, String.class);
 	}
 	
     public void testSetValue() throws Exception {

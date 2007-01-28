@@ -11,25 +11,20 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
 
-public class ObservableTest extends TestCase {
+public class ObservableTest extends AbstractDefaultRealmTestCase {
 
 	private static class MyObservable extends WritableValue {
 		/**
 		 * @param initialValue
 		 */
 		public MyObservable(Object initialValue) {
-			super(initialValue);
+			super(null, initialValue);
 		}
 
 		public void fireChange(Object oldValue, Object newValue) {
@@ -42,11 +37,11 @@ public class ObservableTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
         
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
 		observable = new MyObservable(null);
 	}
 
 	protected void tearDown() throws Exception {
+		super.tearDown();
 		if (observable != null) {
 			try {
 				observable.dispose();
@@ -55,7 +50,6 @@ public class ObservableTest extends TestCase {
 			}
 		}
 		observable = null;
-		super.tearDown();
 	}
 
     private static class ChangeListener implements IChangeListener {

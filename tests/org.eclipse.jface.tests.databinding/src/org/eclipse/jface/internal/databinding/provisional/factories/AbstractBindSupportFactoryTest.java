@@ -13,23 +13,19 @@ package org.eclipse.jface.internal.databinding.provisional.factories;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
-
-import junit.framework.TestCase;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
  *
  */
-public class AbstractBindSupportFactoryTest extends TestCase {
+public class AbstractBindSupportFactoryTest extends AbstractDefaultRealmTestCase {
 
 	protected DataBindingContext ctx;
 	
-	protected void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+	protected void setUp() throws Exception {
+        super.setUp();
 
         ctx = new DataBindingContext();
 	}

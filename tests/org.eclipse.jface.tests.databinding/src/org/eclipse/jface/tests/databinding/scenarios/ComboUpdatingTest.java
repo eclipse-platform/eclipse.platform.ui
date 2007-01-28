@@ -122,7 +122,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
         
-        IObservableList list = new WritableList(getChoices());
+        IObservableList list = new WritableList(getChoices(), null);
         getDbc().bindList(SWTObservables.observeItems(comboEditable), list, null);
 
 		spinEventLoop(0);
@@ -173,7 +173,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
         
-        IObservableList list = new WritableList(String.class);
+        IObservableList list = new WritableList(new ArrayList(), String.class);
         list.addAll(getChoices());
         getDbc().bindList(SWTObservables.observeItems(comboEditable), list, null);
         

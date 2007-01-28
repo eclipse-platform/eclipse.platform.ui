@@ -48,7 +48,7 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	public Object getElementType() {
-		return Object.class;
+		return null;
 	}
 
 	public int size() {

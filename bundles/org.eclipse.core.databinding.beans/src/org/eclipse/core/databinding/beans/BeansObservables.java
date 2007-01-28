@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164268, 171616
+ *     Brad Reynolds - bug 147515
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
 
@@ -136,10 +137,10 @@ final public class BeansObservables {
 	 * @param bean
 	 * @param attributeName
 	 * @param elementType
-	 *            type of the elements in the list. If <code>null</code> and the
-	 *            attribute is an array the type will be inferred. If
+	 *            type of the elements in the list. If <code>null</code> and
+	 *            the attribute is an array the type will be inferred. If
 	 *            <code>null</code> and the attribute type cannot be inferred
-	 *            element type will be of type <code>Object.class</code>.
+	 *            element type will be <code>null</code>.
 	 * @return observable list
 	 */
 	public static IObservableList observeList(Realm realm, Object bean,
@@ -214,7 +215,7 @@ final public class BeansObservables {
 	 * @param realm
 	 * @param master
 	 * @param attributeName
-	 * @param attributeType
+	 * @param attributeType can be <code>null</code>
 	 * @return
 	 * 
 	 * @see MasterDetailObservables
@@ -225,8 +226,9 @@ final public class BeansObservables {
 		IObservableValue value = MasterDetailObservables.detailValue(master,
 				valueFactory(realm, attributeName), attributeType);
 		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
-				value, master, getPropertyDescriptor((Class) master
-						.getValueType(), attributeName));
+				value, master, getValueTypePropertyDescriptor(master,
+						attributeName));
+
 		return decorator;
 	}
 
@@ -238,7 +240,7 @@ final public class BeansObservables {
 	 * @param realm
 	 * @param master
 	 * @param attributeName
-	 * @param attributeType
+	 * @param attributeType can be <code>null</code>
 	 * @return
 	 * 
 	 * @see MasterDetailObservables
@@ -249,8 +251,8 @@ final public class BeansObservables {
 				master, listFactory(realm, attributeName, attributeType),
 				attributeType);
 		BeanObservableListDecorator decorator = new BeanObservableListDecorator(
-				observableList, master, getPropertyDescriptor((Class) master
-						.getValueType(), attributeName));
+				observableList, master, getValueTypePropertyDescriptor(master,
+						attributeName));
 
 		return decorator;
 	}
@@ -263,18 +265,20 @@ final public class BeansObservables {
 	 * @param realm
 	 * @param master
 	 * @param attributeName
-	 * @param attributeType
+	 * @param attributeType can be <code>null</code>
 	 * @return
 	 * 
 	 * @see MasterDetailObservables
 	 */
 	public static IObservableSet observeDetailSet(Realm realm,
 			IObservableValue master, String attributeName, Class attributeType) {
+
 		IObservableSet observableSet = MasterDetailObservables.detailSet(
 				master, setFactory(realm, attributeName, attributeType),
 				attributeType);
 		BeanObservableSetDecorator decorator = new BeanObservableSetDecorator(
-				observableSet, master, getPropertyDescriptor(attributeType, attributeName));
+				observableSet, master, getValueTypePropertyDescriptor(master,
+						attributeName));
 
 		return decorator;
 	}
@@ -283,7 +287,8 @@ final public class BeansObservables {
 	 * @param realm
 	 * @param bean
 	 * @param attributeName
-	 * @param elementType can be <code>null</code>
+	 * @param elementType
+	 *            can be <code>null</code>
 	 * @return
 	 */
 	public static IObservableSet observeSet(Realm realm, Object bean,
@@ -299,7 +304,8 @@ final public class BeansObservables {
 	/**
 	 * @param realm
 	 * @param propertyName
-	 * @param elementType can be <code>null</code>
+	 * @param elementType
+	 *            can be <code>null</code>
 	 * @return
 	 */
 	public static IObservableFactory setFactory(final Realm realm,
@@ -326,5 +332,16 @@ final public class BeansObservables {
 		}
 
 		return elementType;
+	}
+	
+	/**
+	 * @param observable
+	 * @param attributeName
+	 * @return property descriptor or <code>null</code>
+	 */
+	private static PropertyDescriptor getValueTypePropertyDescriptor(
+			IObservableValue observable, String attributeName) {
+		return (observable.getValueType() != null) ? getPropertyDescriptor(
+				(Class) observable.getValueType(), attributeName) : null;
 	}
 }

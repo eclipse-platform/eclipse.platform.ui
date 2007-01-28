@@ -15,22 +15,18 @@ package org.eclipse.jface.tests.internal.databinding.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.ListBinding;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
  * 
  */
-public class ListBindingTest extends TestCase {
+public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	private IObservableList target;
 	private IObservableList model;
 	private DataBindingContext dbc;
@@ -43,19 +39,9 @@ public class ListBindingTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-		target = new WritableList(String.class);
-		model = new WritableList(String.class);
+		target = new WritableList(new ArrayList(), String.class);
+		model = new WritableList(new ArrayList(), String.class);
 		dbc = new DataBindingContext();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
 	}
 
 	public void testUpdateModelFromTarget() throws Exception {

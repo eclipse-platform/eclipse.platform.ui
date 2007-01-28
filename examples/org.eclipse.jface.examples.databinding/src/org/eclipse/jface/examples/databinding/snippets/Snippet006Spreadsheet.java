@@ -160,7 +160,7 @@ public class Snippet006Spreadsheet {
 		for (int i = 0; i < NUM_ROWS; i++) {
 			new TableItem(table, SWT.NONE);
 			for (int j = 0; j < NUM_COLUMNS; j++) {
-				cellFormulas[i][j] = new WritableValue(null);
+				cellFormulas[i][j] = new WritableValue();
 				cellValues[i][j] = new ComputedCellValue(cellFormulas[i][j]);
 				if (!FUNKY_FORMULAS || i == 0 || j == 0) {
 					cellFormulas[i][j].setValue("");

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 137877
  *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 147515
  *******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
@@ -125,6 +126,6 @@ public class SelectionProviderSingleSelectionObservableValue extends
 	}
 
 	public Object getValueType() {
-		return Object.class;
+		return null;
 	}
 }

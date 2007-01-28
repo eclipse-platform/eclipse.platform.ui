@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 147515
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.masterdetail;
@@ -23,7 +24,7 @@ import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObser
  * 
  */
 public class MasterDetailObservables {
-
+	
 	/**
 	 * Creates a detail observable value from a master observable value and a
 	 * factory. This can be used to create observable values that represent a
@@ -36,7 +37,7 @@ public class MasterDetailObservables {
 	 *            given a current value of the master
 	 * @param detailType
 	 *            the value type of the detail observable value, typically of
-	 *            type java.lang.Class
+	 *            type java.lang.Class and can be <code>null</code>
 	 * @return an observable value of the given value type that, for any current
 	 *         value of the given master value, behaves like the observable
 	 *         value created by the factory for that current value.
@@ -58,7 +59,7 @@ public class MasterDetailObservables {
 	 *            a current value of the master
 	 * @param detailElementType
 	 *            the element type of the detail observable list, typically of
-	 *            type java.lang.Class
+	 *            type java.lang.Class and can be <code>null</code>
 	 * @return an observable list with the given element type that, for any
 	 *         current value of the given master value, behaves like the
 	 *         observable list created by the factory for that current value.
@@ -81,7 +82,7 @@ public class MasterDetailObservables {
 	 *            a current value of the master
 	 * @param detailElementType
 	 *            the element type of the detail observable set, typically of
-	 *            type java.lang.Class
+	 *            type java.lang.Class and can be <code>null</code>
 	 * @return an observable set with the given element type that, for any
 	 *         current value of the given master value, behaves like the
 	 *         observable set created by the factory for that current value.

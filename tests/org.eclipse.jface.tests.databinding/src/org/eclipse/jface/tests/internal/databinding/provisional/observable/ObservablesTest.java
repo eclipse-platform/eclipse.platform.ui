@@ -14,25 +14,13 @@ package org.eclipse.jface.tests.internal.databinding.provisional.observable;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.Observables;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
-public class ObservablesTest extends TestCase {
-	protected void setUp() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-	}
-	
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
-	}
-	
+public class ObservablesTest extends AbstractDefaultRealmTestCase {	
 	public void testUnmodifableObservableListExceptions() throws Exception {
 		try {
 			Observables.unmodifiableObservableList(null);

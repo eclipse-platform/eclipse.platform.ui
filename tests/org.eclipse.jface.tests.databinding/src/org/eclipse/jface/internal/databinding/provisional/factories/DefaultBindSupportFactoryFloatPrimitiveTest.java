@@ -19,7 +19,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends AbstractBindSup
 
     private TestDataObject dataObject;
 
-    public void setUp() {
+    public void setUp() throws Exception {
     	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");

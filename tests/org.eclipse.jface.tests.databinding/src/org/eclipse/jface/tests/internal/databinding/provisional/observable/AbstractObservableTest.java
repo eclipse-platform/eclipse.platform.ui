@@ -12,8 +12,6 @@
 
 package org.eclipse.jface.tests.internal.databinding.provisional.observable;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -21,26 +19,21 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests for AbstractObservable.
  * 
  * @since 1.1
  */
-public class AbstractObservableTest extends TestCase {
+public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	private ObservableStub observable;
 	
 	protected void setUp() throws Exception {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+        super.setUp();
 		observable = new ObservableStub(Realm.getDefault());
-	}
-	
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
 	}
 	
 	public void testStaleListener() throws Exception {

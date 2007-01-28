@@ -13,46 +13,38 @@ package org.eclipse.jface.tests.internal.databinding.internal;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.IBindingListener;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackLastListener;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackPositionListener;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackedValidator;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Asserts the pipeline behavior of ValueBinding.
  * 
  * @since 3.2
  */
-public class ValueBindingTest_Pipeline extends TestCase {
+public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 	private IObservableValue target;
 	private IObservableValue model;
 	private DataBindingContext dbc;
 
 	protected void setUp() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		super.setUp();
 
-		target = new WritableValue(String.class);
-		model = new WritableValue(String.class);
+		target = new WritableValue(String.class, null);
+		model = new WritableValue(String.class, null);
 		dbc = new DataBindingContext();
-	}
-
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
 	}
 
 	public void testTargetToModelPipelinePositionOrder() throws Exception {

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 147515
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
@@ -46,12 +47,12 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * 
 	 */
 	public ComputedValue() {
-		this(Realm.getDefault(), Object.class);
+		this(Realm.getDefault(), null);
 	}
 
 	/**
 	 * @param realm 
-	 * @param valueType
+	 * @param valueType can be <code>null</code>
 	 */
 	public ComputedValue(Object valueType) {
 		this(Realm.getDefault(), valueType);
@@ -62,7 +63,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * 
 	 */
 	public ComputedValue(Realm realm) {
-		this(realm, Object.class);
+		this(realm, null);
 	}
 	
 	/**

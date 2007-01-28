@@ -12,13 +12,10 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.ControlObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -28,13 +25,13 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  * 
  */
-public class ControlObservableValueTest extends TestCase {
+public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Shell shell;
 
 	protected void setUp() throws Exception {
+		super.setUp();
+		
 		shell = new Shell();
-
-		Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
 	}
 
 	/*
@@ -47,8 +44,6 @@ public class ControlObservableValueTest extends TestCase {
 			shell.dispose();
 			shell = null;
 		}
-
-		Realm.setDefault(null);
 	}
 
 	public void testSetValueEnabled() throws Exception {

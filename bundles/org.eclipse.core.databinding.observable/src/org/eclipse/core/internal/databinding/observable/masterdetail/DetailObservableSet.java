@@ -85,13 +85,14 @@ public class DetailObservableSet extends ObservableSet {
 			this.innerObservableSet = (IObservableSet) factory
 					.createObservable(currentOuterValue);
 			wrappedSet = innerObservableSet;
-			Object innerValueType = innerObservableSet.getElementType();
-			if (elementType == null) {
-				elementType = innerValueType;
-			} else {
+
+			if (elementType != null) {
+				Object innerValueType = innerObservableSet.getElementType();
+
 				Assert.isTrue(elementType.equals(innerValueType),
 						"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
 			}
+
 			innerObservableSet.addSetChangeListener(innerChangeListener);
 		}
 	}

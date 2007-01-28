@@ -12,58 +12,79 @@
 
 package org.eclipse.jface.tests.databinding.observable.value;
 
-import junit.framework.TestCase;
-
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
  */
-public class WritableValueTest extends TestCase {
-    /**
-     * Asserts that ValueChange events are only fired when the value changes.
-     * 
-     * @throws Exception
-     */
-    public void testValueChangeOnlyFiresOnChange() throws Exception {
-        WritableValue writableValue = new WritableValue(SWTObservables.getRealm(Display.getDefault()), null);
-        ValueChangeCounter counter = new ValueChangeCounter();
-        writableValue.addValueChangeListener(counter);
-        
-        assertEquals(0, counter.count);
-        //set same
-        writableValue.setValue(null);
-        assertEquals(0, counter.count);
-        
-        //set different
-        writableValue.setValue("value");
-        assertEquals(1, counter.count);
-        
-        //set same
-        writableValue.setValue("value");
-        assertEquals(1, counter.count);
-        
-        //set different
-        writableValue.setValue(null);
-        assertEquals(2, counter.count);
-    }
-    
-    public void testDoSetValue() throws Exception {
-        WritableValue writableValue = new WritableValue(SWTObservables.getRealm(Display.getDefault()), null);
-        Object value = new Object();
-        writableValue.setValue(value);
-        assertEquals(value, writableValue.getValue());
-    }
-    
-    private static class ValueChangeCounter implements IValueChangeListener {
-        int count;
+public class WritableValueTest extends AbstractDefaultRealmTestCase {
+	/**
+	 * Asserts that ValueChange events are only fired when the value changes.
+	 * 
+	 * @throws Exception
+	 */
+	public void testValueChangeOnlyFiresOnChange() throws Exception {
+		WritableValue writableValue = new WritableValue();
+		ValueChangeCounter counter = new ValueChangeCounter();
+		writableValue.addValueChangeListener(counter);
 
-        public void handleValueChange(ValueChangeEvent event) {
-            count++;
-        }
-    }
+		assertEquals(0, counter.count);
+		// set same
+		writableValue.setValue(null);
+		assertEquals(0, counter.count);
+
+		// set different
+		writableValue.setValue("value");
+		assertEquals(1, counter.count);
+
+		// set same
+		writableValue.setValue("value");
+		assertEquals(1, counter.count);
+
+		// set different
+		writableValue.setValue(null);
+		assertEquals(2, counter.count);
+	}
+
+	public void testDoSetValue() throws Exception {
+		WritableValue writableValue = new WritableValue(SWTObservables
+				.getRealm(Display.getDefault()));
+		Object value = new Object();
+		writableValue.setValue(value);
+		assertEquals(value, writableValue.getValue());
+	}
+
+	/**
+	 * All constructors delegate to the 3 arg constructor.
+	 * 
+	 * @throws Exception
+	 */
+	public void testConstructor() throws Exception {
+		WritableValue value = new WritableValue(SWTObservables.getRealm(Display
+				.getDefault()), null, null);
+		assertNull(value.getValue());
+		assertNull(value.getValueType());
+	}
+	
+	public void testWithValueType() throws Exception {
+		Object elementType = String.class;
+		WritableValue value = WritableValue.withValueType(elementType);
+		assertNotNull(value);
+		assertEquals(Realm.getDefault(), value.getRealm());
+		assertEquals(elementType, value.getValueType());
+	}
+
+	private static class ValueChangeCounter implements IValueChangeListener {
+		int count;
+
+		public void handleValueChange(ValueChangeEvent event) {
+			count++;
+		}
+	}
 }

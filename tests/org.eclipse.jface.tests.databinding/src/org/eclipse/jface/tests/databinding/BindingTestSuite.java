@@ -10,7 +10,7 @@
  *     Brad Reynolds - bugs 137877, 152543, 152540
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 164247
- *     Brad Reynolds - bug 164653, 159768, 170848
+ *     Brad Reynolds - bug 164653, 159768, 170848, 147515
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -23,6 +23,8 @@ import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
@@ -39,6 +41,7 @@ import org.eclipse.jface.tests.databinding.mask.EditMaskParserTest;
 import org.eclipse.jface.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.jface.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.jface.tests.databinding.observable.list.WritableListTest;
+import org.eclipse.jface.tests.databinding.observable.set.WritableSetTest;
 import org.eclipse.jface.tests.databinding.observable.value.AbstractObservableValueTest;
 import org.eclipse.jface.tests.databinding.observable.value.AbstractVetoableValueTest;
 import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
@@ -85,15 +88,14 @@ public class BindingTestSuite extends TestSuite {
     }
 
 	public BindingTestSuite() {
-		// org.eclipse.core.databinding.observable.masterdetail
-		addTestSuite(DetailObservableValueTest.class);
-
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
 		addTestSuite(WritableMapTest.class);
 		
 		//org.eclipse.core.tests.internal.databinding.observable.masterdetail
+		addTestSuite(DetailObservableListTest.class);
+		addTestSuite(DetailObservableSetTest.class);
 		addTestSuite(DetailObservableValueTest.class);
 		
 		// org.eclipse.core.internal.databinding.internal.beans
@@ -137,6 +139,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableListTest.class);
 		addTestSuite(ObservableListTest.class);
 		addTestSuite(WritableListTest.class);
+		
+		//org.eclipse.jface.tests.databinding.observable.set
+		addTestSuite(WritableSetTest.class);
 
 		// org.eclipse.jface.tests.databinding.observable.value
 		addTestSuite(AbstractObservableValueTest.class);

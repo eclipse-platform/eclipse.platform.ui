@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
-import junit.framework.TestCase;
+import java.util.ArrayList;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -36,16 +35,8 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
 
-public class DatabindingContextTest extends TestCase {
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-	}
-
+public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	public void testDisposeBindings() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
 
@@ -60,8 +51,8 @@ public class DatabindingContextTest extends TestCase {
 
 	public void testBindValue() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
-		IObservableValue target = new WritableValue(String.class);
-		IObservableValue model = new WritableValue(String.class);
+		IObservableValue target = new WritableValue(String.class, null);
+		IObservableValue model = new WritableValue(String.class, null);
 
 		Binding binding = dbc.bindValue(target, model, null);
 		assertTrue("binding is of the incorrect type",
@@ -70,8 +61,8 @@ public class DatabindingContextTest extends TestCase {
 
 	public void testBindList() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
-		IObservableList target = new WritableList();
-		IObservableList model = new WritableList();
+		IObservableList target = WritableList.withElementType(Object.class);
+		IObservableList model = WritableList.withElementType(Object.class);
 
 		Binding binding = dbc.bindList(target, model, null);
 		assertTrue("binding is of the incorrect type",
@@ -85,15 +76,16 @@ public class DatabindingContextTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testValidationError() throws Exception {
-		WritableValue targetObservable = new WritableValue(String.class);
-		WritableValue modelObservable = new WritableValue(String.class);
+		WritableValue targetObservable = new WritableValue(String.class, null);
+		WritableValue modelObservable = new WritableValue(String.class, null);
 
 		final String errorMessage = "error";
 		DataBindingContext dbc = new DataBindingContext();
 		ValueChangeCounter errorCounter = new ValueChangeCounter();
 		ChangeCounter errorsCounter = new ChangeCounter();
 
-		IObservableValue error = new AggregateValidationStatus(dbc.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
+		IObservableValue error = new AggregateValidationStatus(dbc
+				.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
 		error.addValueChangeListener(errorCounter);
 		assertTrue(((IStatus) error.getValue()).isOK());
 
@@ -107,8 +99,10 @@ public class DatabindingContextTest extends TestCase {
 			}
 		};
 
-		dbc.bindValue(targetObservable, modelObservable, new DefaultBindSpec()
-				.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator));
+		dbc
+				.bindValue(targetObservable, modelObservable,
+						new DefaultBindSpec().addTargetValidator(
+								BindingEvent.PIPELINE_AFTER_GET, validator));
 
 		targetObservable.setValue("");
 		assertFalse(((IStatus) error.getValue()).isOK());
@@ -127,8 +121,8 @@ public class DatabindingContextTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testBindValueAddBinding() throws Exception {
-		WritableValue targetValue = new WritableValue(String.class);
-		WritableValue modelValue = new WritableValue(String.class);
+		WritableValue targetValue = new WritableValue(String.class, null);
+		WritableValue modelValue = new WritableValue(String.class, null);
 
 		DataBindingContext dbc = new DataBindingContext();
 		assertNotNull(dbc.getBindings());
@@ -149,8 +143,9 @@ public class DatabindingContextTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testBindListAddBinding() throws Exception {
-		WritableList targetList = new WritableList(Object.class);
-		WritableList modelList = new WritableList(Object.class);
+		WritableList targetList = new WritableList(new ArrayList(),
+				Object.class);
+		WritableList modelList = new WritableList(new ArrayList(), Object.class);
 
 		DataBindingContext dbc = new DataBindingContext();
 		assertNotNull(dbc.getBindings());
@@ -235,10 +230,10 @@ public class DatabindingContextTest extends TestCase {
 		public void updateTargetFromModel() {
 		}
 
-		public void updateTargetFromModel(int phase) {			
+		public void updateTargetFromModel(int phase) {
 		}
 
-		public void updateModelFromTarget(int phase) {			
+		public void updateModelFromTarget(int phase) {
 		}
 
 		protected void postInit() {

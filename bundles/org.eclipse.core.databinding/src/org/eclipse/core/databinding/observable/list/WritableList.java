@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 167204
  *     Gautam Saggar - bug 169529
+ *     Brad Reynolds - bug 147515
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -30,63 +31,47 @@ import org.eclipse.core.databinding.observable.Realm;
 public class WritableList extends ObservableList {
 
 	/**
-	 * Creates an empty writable list in the default realm, containing elements of type Object.
-	 * @param realm 
+	 * Creates an empty writable list in the default realm with a
+	 * <code>null</code> element type.
+	 * 
+	 * @param realm
 	 */
 	public WritableList() {
-		this(Realm.getDefault(), Object.class);
+		this(Realm.getDefault());
 	}
 
 	/**
-	 * Creates an empty writable list containing elements of type Object.
-	 * @param realm 
+	 * Creates an empty writable list with a <code>null</code> element type.
+	 * 
+	 * @param realm
 	 */
 	public WritableList(Realm realm) {
-		this(realm, Object.class);
-	}
-	
-	/**
-	 * Creates an empty writable list in the default realm, containing elements of the given type.
-	 * @param realm 
-	 * 
-	 * @param elementType
-	 */
-	public WritableList(Object elementType) {
-		this(Realm.getDefault(), new ArrayList(), elementType);
+		this(realm, new ArrayList(), null);
 	}
 
 	/**
-	 * Creates an empty writable list containing elements of the given type.
-	 * @param realm 
+	 * Construts a new instance with the default realm.
 	 * 
+	 * @param toWrap
 	 * @param elementType
+	 *            can be <code>null</code>
 	 */
-	public WritableList(Realm realm, Object elementType) {
-		super(realm, new ArrayList(), elementType);
+	public WritableList(List toWrap, Object elementType) {
+		this(Realm.getDefault(), toWrap, elementType);
 	}
-	
+
 	/**
-	 * Creates a writable list containing elements of the given type,
-	 * wrapping an existing client-supplied list.
-	 * @param realm 
+	 * Creates a writable list containing elements of the given type, wrapping
+	 * an existing client-supplied list.
 	 * 
-	 * @param toWrap The java.utilList to wrap
+	 * @param realm
+	 * @param toWrap
+	 *            The java.utilList to wrap
 	 * @param elementType
+	 *            can be <code>null</code>
 	 */
 	public WritableList(Realm realm, List toWrap, Object elementType) {
 		super(realm, toWrap, elementType);
-	}
-
-	/**
-	 * Creates a writable list containing elements of the given type,
-	 * wrapping an existing client-supplied list.
-	 * @param realm 
-	 * 
-	 * @param toWrap The java.utilList to wrap
-	 * @param elementType
-	 */
-	public WritableList(List toWrap, Object elementType) {
-		super(Realm.getDefault(), toWrap, elementType);
 	}
 
 	public Object set(int index, Object element) {
@@ -211,5 +196,15 @@ public class WritableList extends ObservableList {
 		}
 		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()])));
+	}
+
+	/**
+	 * @param elementType
+	 *            can be <code>null</code>
+	 * @return new list with the default realm.
+	 */
+	public static WritableList withElementType(Object elementType) {
+		return new WritableList(Realm.getDefault(), new ArrayList(),
+				elementType);
 	}
 }

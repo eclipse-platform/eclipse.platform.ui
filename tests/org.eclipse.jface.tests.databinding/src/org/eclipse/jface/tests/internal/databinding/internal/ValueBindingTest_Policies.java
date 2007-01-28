@@ -11,24 +11,20 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.ValueBinding;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackLastListener;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Asserts the policies of ValueBinding.
  * 
  * @since 3.2
  */
-public class ValueBindingTest_Policies extends TestCase {
+public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 	private WritableValue target;
 	private WritableValue model;
 	private DataBindingContext dbc;
@@ -39,20 +35,11 @@ public class ValueBindingTest_Policies extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		super.setUp();
 
-		target = new WritableValue(String.class);
-		model = new WritableValue(String.class);
+		target = new WritableValue(String.class, null);
+		model = new WritableValue(String.class, null);
 		dbc = new DataBindingContext();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
 	}
 
 	public void testUpdateModelPolicyNull() throws Exception {

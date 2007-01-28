@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 147515
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -27,71 +28,49 @@ import org.eclipse.core.databinding.observable.Realm;
 public class WritableSet extends ObservableSet {
 
 	/**
-	 * @param realm 
+	 * Constructs a new instance with the default realm, empty list, and a
+	 * <code>null</code> element type.
+	 * 
+	 * @param realm
 	 * @param wrappedSet
 	 */
 	public WritableSet() {
-		this(Realm.getDefault(), Object.class);
+		this(Realm.getDefault());
 	}
 
 	/**
-	 * @param realm 
+	 * Construts a new instance with the default realm.
+	 * 
+	 * @param realm
 	 * @param c
-	 */
-	public WritableSet(Collection c) {
-		this(Realm.getDefault(), c, Object.class);
-	}
-
-	/**
-	 * @param realm 
-	 * @param c
-	 * @param elementType 
+	 * @param elementType
+	 *            can be <code>null</code>
 	 */
 	public WritableSet(Collection c, Object elementType) {
 		this(Realm.getDefault(), new HashSet(c), elementType);
 	}
 
-	
 	/**
-	 * @param realm 
-	 * @param elementType
-	 */
-	public WritableSet(Object elementType) {
-		this(Realm.getDefault(), new HashSet(), elementType);
-	}
-
-	/**
-	 * @param realm 
+	 * Constructs a new instance with an empty list and a <code>null</code> element type.
+	 * 
+	 * @param realm
 	 * @param wrappedSet
 	 */
 	public WritableSet(Realm realm) {
-		this(realm, Object.class);
+		this(realm, new HashSet(), null);
 	}
-	
+
 	/**
-	 * @param realm 
+	 * Constructs a new instance.
+	 * 
+	 * @param realm
 	 * @param c
-	 */
-	public WritableSet(Realm realm, Collection c) {
-		this(realm, c, Object.class);
-	}
-	
-	/**
-	 * @param realm 
-	 * @param c
-	 * @param elementType 
+	 * @param elementType
+	 *            can be <code>null</code>
 	 */
 	public WritableSet(Realm realm, Collection c, Object elementType) {
 		super(realm, new HashSet(c), elementType);
 		this.elementType = elementType;
-	}
-	
-	/**
-	 * @param realm 
-	 * @param elementType
-	 */
-	public WritableSet(Realm realm, Object elementType) {
-		super(realm, new HashSet(), elementType);
 	}
 
 	public boolean add(Object o) {
@@ -166,4 +145,11 @@ public class WritableSet extends ObservableSet {
 		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));
 	}
 
+	/**
+	 * @param elementType can be <code>null</code>
+	 * @return new instance with the default realm
+	 */
+	public static WritableSet withElementType(Object elementType) {
+		return new WritableSet(Realm.getDefault(), new HashSet(), elementType);
+	}
 }

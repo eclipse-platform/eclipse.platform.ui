@@ -18,8 +18,9 @@ import org.eclipse.jface.examples.databinding.ModelObject;
 public class DefaultBindSupportFactoryBooleanPrimitiveTest extends AbstractBindSupportFactoryTest {
     private TestDataObject dataObject;
 
-    public void setUp() {
+    public void setUp() throws Exception {
     	super.setUp();
+    	
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
         dataObject.setBooleanPrimitiveVal(false);

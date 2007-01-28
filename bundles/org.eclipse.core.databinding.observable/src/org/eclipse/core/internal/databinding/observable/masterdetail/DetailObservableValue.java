@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 147515
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -83,9 +84,8 @@ public class DetailObservableValue extends AbstractObservableValue {
 			this.innerObservableValue = (IObservableValue) factory
 					.createObservable(currentOuterValue);
 			Object innerValueType = innerObservableValue.getValueType();
-			if (detailType == null) {
-				detailType = innerValueType;
-			} else {
+
+			if (detailType != null) {
 				Assert
 						.isTrue(detailType.equals(innerValueType),
 								"Cannot change value type in a nested observable value"); //$NON-NLS-1$

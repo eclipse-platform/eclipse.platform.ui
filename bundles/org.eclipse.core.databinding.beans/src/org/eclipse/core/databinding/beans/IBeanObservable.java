@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Brad Reynolds - bug 147515
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -23,11 +24,15 @@ import java.beans.PropertyDescriptor;
  */
 public interface IBeanObservable {
 	/**
-	 * @return property descriptor of the property being observed
+	 * @return property descriptor of the property being observed,
+	 *         <code>null</code> if the runtime time information was not
+	 *         provided on construction of the observable
 	 */
 	public PropertyDescriptor getPropertyDescriptor();
+
 	/**
-	 * @return instance being observed.  This can be either a bean or an observable (e.g. master detail).
+	 * @return instance being observed. This can be either a bean or an
+	 *         observable (e.g. master detail).
 	 */
 	public Object getObserved();
 }

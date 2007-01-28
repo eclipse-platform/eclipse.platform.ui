@@ -11,33 +11,30 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.IBindingListener;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackLastListener;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackPositionListener;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackedValidator;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Asserts pipeline behavior of ListBinding.
  * 
  * @since 3.2
  */
-public class ListBindingTest_Pipeline extends TestCase {
+public class ListBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;
 	private IObservableList target;
 	private IObservableList model;
@@ -45,16 +42,9 @@ public class ListBindingTest_Pipeline extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
 		dbc = new DataBindingContext();
-		target = new WritableList(String.class);
-		model = new WritableList(String.class);
-	}
-
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
-
-		super.tearDown();
+		target = new WritableList(new ArrayList(), String.class);
+		model = new WritableList(new ArrayList(), String.class);
 	}
 
 	public void testTargetToModelPipelinePhaseOrder() throws Exception {

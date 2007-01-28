@@ -12,6 +12,7 @@
 package org.eclipse.jface.tests.internal.databinding.internal.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -43,7 +44,7 @@ public class JavaBeanObservableMapTest extends TestCase {
 		model1 = new Bean("1");
 		model2 = new Bean("2");
 
-		set = new WritableSet(realm, Bean.class);
+		set = new WritableSet(realm, new HashSet(), Bean.class);
 		set.add(model1);
 		set.add(model2);
 

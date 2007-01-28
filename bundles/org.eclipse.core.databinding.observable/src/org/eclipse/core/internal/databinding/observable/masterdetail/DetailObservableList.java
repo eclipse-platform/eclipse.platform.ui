@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 147515
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -49,8 +50,10 @@ public class DetailObservableList extends ObservableList {
 
 	private IObservableValue outerObservableValue;
 
+	private Object detailType;
+
 	/**
-	 * @param realm 
+	 * @param realm
 	 * @param factory
 	 * @param outerObservableValue
 	 * @param feature
@@ -61,6 +64,7 @@ public class DetailObservableList extends ObservableList {
 		super(outerObservableValue.getRealm(), new ArrayList(), detailType);
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
+		this.detailType = detailType;
 		updateInnerObservableValue(outerObservableValue);
 
 		outerObservableValue.addValueChangeListener(outerChangeListener);
@@ -88,9 +92,12 @@ public class DetailObservableList extends ObservableList {
 			this.innerObservableList = (IObservableList) factory
 					.createObservable(currentOuterValue);
 			wrappedList = innerObservableList;
-			Object innerValueType = innerObservableList.getElementType();
-			Assert.isTrue(getElementType().equals(innerValueType),
-					"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
+
+			if (detailType != null) {
+				Object innerValueType = innerObservableList.getElementType();
+				Assert.isTrue(getElementType().equals(innerValueType),
+						"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
+			}
 			innerObservableList.addListChangeListener(innerChangeListener);
 		}
 	}

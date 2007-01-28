@@ -11,26 +11,23 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.ListBinding;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackLastListener;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Asserts policies of ListBinding.
  * 
  * @since 3.2
  */
-public class ListBindingTest_Policies extends TestCase {
+public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 	private WritableList target;
 	private WritableList model;
 	private DataBindingContext dbc;
@@ -41,20 +38,11 @@ public class ListBindingTest_Policies extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		super.setUp();
 
-		target = new WritableList(String.class);
-		model = new WritableList(String.class);
+		target = new WritableList(new ArrayList(), String.class);
+		model = new WritableList(new ArrayList(), String.class);
 		dbc = new DataBindingContext();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
 	}
 
 	public void testUpdateModelPolicyNull() throws Exception {

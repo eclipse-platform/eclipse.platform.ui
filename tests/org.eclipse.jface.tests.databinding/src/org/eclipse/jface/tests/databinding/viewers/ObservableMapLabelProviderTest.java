@@ -12,26 +12,21 @@
 
 package org.eclipse.jface.tests.databinding.viewers;
 
-import junit.framework.TestCase;
+import java.util.HashSet;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 1.1
  */
-public class ObservableMapLabelProviderTest extends TestCase {
-    protected void setUp() throws Exception {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-    }
+public class ObservableMapLabelProviderTest extends AbstractDefaultRealmTestCase {
     
     public void testGetColumnText() throws Exception {
-        WritableSet set = new WritableSet(Item.class);
+        WritableSet set = new WritableSet(new HashSet(), Item.class);
         Item item = new Item();
         String value = "value";
         item.setValue(value);
@@ -42,7 +37,7 @@ public class ObservableMapLabelProviderTest extends TestCase {
     }
     
     public void testGetColumnTextNullValue() throws Exception {
-        WritableSet set = new WritableSet(Item.class);
+        WritableSet set = new WritableSet(new HashSet(), Item.class);
         Item item = new Item();
         set.add(item);   
         

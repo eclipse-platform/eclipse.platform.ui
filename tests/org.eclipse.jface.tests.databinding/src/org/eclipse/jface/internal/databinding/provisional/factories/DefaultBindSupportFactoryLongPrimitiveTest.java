@@ -19,7 +19,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends AbstractBindSupp
 
     private TestDataObject dataObject;
 
-    public void setUp() {
+    public void setUp() throws Exception {
     	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");

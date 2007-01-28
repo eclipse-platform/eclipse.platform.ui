@@ -13,42 +13,18 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.ValueBinding;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  * @since 3.2
  * 
  */
-public class ValueBindingTest extends TestCase {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-	}
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
-		
-		super.tearDown();
-	}
-
+public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * Bug 152543.
 	 * 
@@ -71,7 +47,7 @@ public class ValueBindingTest extends TestCase {
         DefaultBindSpec spec = new DefaultBindSpec();
         String initialValue = "value";
         
-        WritableValue target = new WritableValue(String.class);
+        WritableValue target = new WritableValue(String.class, null);
         WritableValue model = new WritableValue(String.class, initialValue);
         
         DataBindingContext dbc = new DataBindingContext();

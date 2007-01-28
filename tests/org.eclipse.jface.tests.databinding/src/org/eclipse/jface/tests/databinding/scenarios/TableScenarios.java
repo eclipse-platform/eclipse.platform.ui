@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -95,7 +96,7 @@ public class TableScenarios extends ScenariosTestCase {
 		// Show that a TableViewer with three columns renders the accounts
 		Account[] accounts = catalog.getAccounts();
 
-		IObservableList list = new WritableList(Account.class);
+		IObservableList list = new WritableList(new ArrayList(), Account.class);
 		list.addAll(Arrays.asList(accounts));
 
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();

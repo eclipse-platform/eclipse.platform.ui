@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 164653, 147515
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.observable.list;
@@ -18,9 +18,11 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -142,5 +144,24 @@ public class WritableListTest extends TestCase {
 				list.clear();
 			}			
 		});
+	}
+	
+	public void testNullElementType() throws Exception {
+		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		WritableList writableList = new WritableList();
+		assertNull(writableList.getElementType());
+		
+		writableList = new WritableList(Realm.getDefault());
+		assertNull(writableList.getElementType());
+	}
+	
+	public void testWithElementType() throws Exception {
+		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		
+		Object elementType = String.class;
+		WritableList list = WritableList.withElementType(elementType);
+		assertNotNull(list);
+		assertEquals(Realm.getDefault(), list.getRealm());
+		assertEquals(elementType, list.getElementType());
 	}
 }

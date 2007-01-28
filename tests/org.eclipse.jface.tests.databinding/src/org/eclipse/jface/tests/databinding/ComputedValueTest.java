@@ -17,19 +17,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 1.0
  * 
  */
-public class ComputedValueTest extends TestCase {
+public class ComputedValueTest extends AbstractDefaultRealmTestCase {
     public void testValueType() throws Exception {
         ComputedValue cv = new ComputedValue(Integer.TYPE) {
             protected Object calculate() {
@@ -45,18 +40,7 @@ public class ComputedValueTest extends TestCase {
             }
         };
 
-        assertEquals("when type is not set it defaults to Object.cass", Object.class, cv.getValueType());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see junit.framework.TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+        assertNull(cv.getValueType());
     }
 
     public void test_getValue() throws Exception {

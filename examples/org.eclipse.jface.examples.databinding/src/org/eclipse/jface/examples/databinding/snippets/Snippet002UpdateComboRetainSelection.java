@@ -172,7 +172,7 @@ public class Snippet002UpdateComboRetainSelection {
     private static IObservableFactory getListDetailFactory() {
         return new IObservableFactory() {
             public IObservable createObservable(Object target) {
-                WritableList list = new WritableList(String.class);
+                WritableList list = WritableList.withElementType(String.class);
                 list.addAll((Collection) target);
                 return list;
             }

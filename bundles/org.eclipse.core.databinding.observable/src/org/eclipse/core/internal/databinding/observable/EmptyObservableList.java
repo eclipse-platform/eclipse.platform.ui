@@ -49,7 +49,7 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	public Object getElementType() {
-		return Object.class;
+		return null;
 	}
 
 	public int size() {

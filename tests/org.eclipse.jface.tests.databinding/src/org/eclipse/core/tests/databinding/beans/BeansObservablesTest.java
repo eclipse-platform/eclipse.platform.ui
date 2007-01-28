@@ -14,8 +14,6 @@ package org.eclipse.core.tests.databinding.beans;
 
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -27,33 +25,23 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.Bean;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
  */
-public class BeansObservablesTest extends TestCase {
+public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	Bean[] elements = null;
 	Bean model = null;
 	Class elementType = null;
 
 	protected void setUp() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		super.setUp();
 
 		elements = new Bean[] { new Bean("1"), new Bean("2"), new Bean("3") };
 		model = new Bean(Arrays.asList(elements));
 		elementType = Bean.class;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
 	}
 
 	public void testObserveListArrayInferredElementType() throws Exception {
@@ -81,7 +69,7 @@ public class BeansObservablesTest extends TestCase {
 	}
 
 	public void testObserveDetailListElementType() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class);
+		WritableValue parent = new WritableValue(Bean.class, null);
 		parent.setValue(model);
 		IObservableList list = BeansObservables.observeDetailList(Realm
 				.getDefault(), parent, "list", elementType);
@@ -92,7 +80,7 @@ public class BeansObservablesTest extends TestCase {
 	}
 
 	public void testObserveDetailValueIBeanObservable() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class);
+		WritableValue parent = new WritableValue(Bean.class, null);
 		parent.setValue(new Bean());
 
 		IObservableValue detailValue = BeansObservables.observeDetailValue(
@@ -103,52 +91,92 @@ public class BeansObservablesTest extends TestCase {
 		assertEquals("property descriptor", Bean.class.getMethod("getValue",
 				null), beanObservable.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", parent, beanObservable.getObserved());
-		assertTrue("delegate",
-				beanObservable.getDelegate().getClass().getName().endsWith("DetailObservableValue"));
+		assertTrue("delegate", beanObservable.getDelegate().getClass()
+				.getName().endsWith("DetailObservableValue"));
+	}
+
+	public void testObserveDetailValueNullOuterElementType() throws Exception {
+		WritableValue parent = new WritableValue(null, new Bean());
+
+		IObservableValue detailValue = BeansObservables.observeDetailValue(
+				Realm.getDefault(), parent, "value", String.class);
+		
+		assertNull("property descriptor", ((IBeanObservable) detailValue)
+				.getPropertyDescriptor());
 	}
 
 	public void testObservableDetailListIBeanObservable() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class);
+		WritableValue parent = new WritableValue(Bean.class, null);
 		parent.setValue(new Bean());
 
 		IObservableList detailList = BeansObservables.observeDetailList(Realm
 				.getDefault(), parent, "list", Bean.class);
-		assertTrue("detail is not an IBeanObservable", detailList instanceof IBeanObservable);
+		assertTrue("detail is not an IBeanObservable",
+				detailList instanceof IBeanObservable);
 
 		BeanObservableListDecorator beanObservable = (BeanObservableListDecorator) detailList;
 		assertEquals("property descriptor", Bean.class.getMethod("getList",
 				null), beanObservable.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", parent, beanObservable.getObserved());
-		
-		//DetailObservableList is package level we can do a straight instanceof check
-		assertTrue("delegate is the observed", beanObservable.getDelegate().equals(detailList));
+
+		// DetailObservableList is package level we can do a straight instanceof
+		// check
+		assertTrue("delegate is the observed", beanObservable.getDelegate()
+				.equals(detailList));
 	}
-	
+
+	public void testObservableDetailListNullOuterElementType() throws Exception {
+		WritableValue parent = new WritableValue(null, new Bean());
+
+		IObservableList detailList = BeansObservables.observeDetailList(Realm
+				.getDefault(), parent, "list", Bean.class);
+
+		assertNull("property descriptor", ((IBeanObservable) detailList)
+				.getPropertyDescriptor());
+	}
+
 	public void testObservableDetailSetIBeanObservable() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class);
+		WritableValue parent = new WritableValue(Bean.class, null);
 		parent.setValue(new Bean());
-		
-		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm.getDefault(), parent, "set", Bean.class);
-		assertTrue("detail is not an IBeanObservable", detailSet instanceof IBeanObservable);
-		
+
+		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm
+				.getDefault(), parent, "set", Bean.class);
+		assertTrue("detail is not an IBeanObservable",
+				detailSet instanceof IBeanObservable);
+
 		BeanObservableSetDecorator beanObservable = (BeanObservableSetDecorator) detailSet;
-		assertEquals("property descriptor", Bean.class.getMethod("getSet",
-				null), beanObservable.getPropertyDescriptor().getReadMethod());
+		assertEquals("property descriptor", Bean.class
+				.getMethod("getSet", null), beanObservable
+				.getPropertyDescriptor().getReadMethod());
 		assertEquals("observed", parent, beanObservable.getObserved());
-		
-		//DetailObservableSet is package level we can't do a straight instanceof check
-		assertTrue("delegate is the observed", beanObservable.getDelegate().equals(detailSet));
+
+		// DetailObservableSet is package level we can't do a straight
+		// instanceof check
+		assertTrue("delegate is the observed", beanObservable.getDelegate()
+				.equals(detailSet));
 	}
-	
+
+	public void testObservableDetailSetNullOuterElementType() throws Exception {
+		WritableValue parent = new WritableValue(null, new Bean());
+
+		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm
+				.getDefault(), parent, "set", Bean.class);
+
+		assertNull("property descriptor", ((IBeanObservable) detailSet)
+				.getPropertyDescriptor());
+	}
+
 	public void testObserveSetElementType() throws Exception {
 		Bean bean = new Bean();
-		IObservableSet observableSet = BeansObservables.observeSet(Realm.getDefault(), bean, "set", Bean.class);
+		IObservableSet observableSet = BeansObservables.observeSet(Realm
+				.getDefault(), bean, "set", Bean.class);
 		assertEquals(Bean.class, observableSet.getElementType());
 	}
-	
+
 	public void testObserveSetNonInferredElementType() throws Exception {
 		Bean bean = new Bean();
-		IObservableSet observableSet = BeansObservables.observeSet(Realm.getDefault(), bean, "set");
+		IObservableSet observableSet = BeansObservables.observeSet(Realm
+				.getDefault(), bean, "set");
 		assertEquals(Object.class, observableSet.getElementType());
 	}
 }
