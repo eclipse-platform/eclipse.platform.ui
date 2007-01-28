@@ -18,12 +18,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.databinding.observable.masterdetail.DetailObservableValueTest;
 import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
+import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimitiveTest;
@@ -85,9 +85,6 @@ public class BindingTestSuite extends TestSuite {
     }
 
 	public BindingTestSuite() {
-		//org.eclipse.core.databinding.observable.masterdetail
-		addTestSuite(DetailObservableValueTest.class);
-		
 		// org.eclipse.core.databinding.observable.masterdetail
 		addTestSuite(DetailObservableValueTest.class);
 
@@ -95,6 +92,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
 		addTestSuite(WritableMapTest.class);
+		
+		//org.eclipse.core.tests.internal.databinding.observable.masterdetail
+		addTestSuite(DetailObservableValueTest.class);
 		
 		// org.eclipse.core.internal.databinding.internal.beans
 		addTestSuite(JavaBeanObservableValueTest.class);

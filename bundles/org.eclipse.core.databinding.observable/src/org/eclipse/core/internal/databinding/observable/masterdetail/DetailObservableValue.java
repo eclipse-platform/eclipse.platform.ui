@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *******************************************************************************/
-package org.eclipse.core.databinding.observable.masterdetail;
+package org.eclipse.core.internal.databinding.observable.masterdetail;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  * 
  */
-/* package */ class DetailObservableValue extends AbstractObservableValue {
+public class DetailObservableValue extends AbstractObservableValue {
 
 	private boolean updating = false;
 

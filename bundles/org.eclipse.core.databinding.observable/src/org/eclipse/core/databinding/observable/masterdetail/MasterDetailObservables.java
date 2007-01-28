@@ -14,6 +14,9 @@ package org.eclipse.core.databinding.observable.masterdetail;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableList;
+import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableSet;
+import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableValue;
 
 /**
  * @since 3.2

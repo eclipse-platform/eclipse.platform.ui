@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.databinding.observable.masterdetail;
+package org.eclipse.core.internal.databinding.observable.masterdetail;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
@@ -27,7 +28,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 3.2
  * 
  */
-/* package */class DetailObservableSet extends ObservableSet {
+public class DetailObservableSet extends ObservableSet {
 
 	private boolean updating = false;
 

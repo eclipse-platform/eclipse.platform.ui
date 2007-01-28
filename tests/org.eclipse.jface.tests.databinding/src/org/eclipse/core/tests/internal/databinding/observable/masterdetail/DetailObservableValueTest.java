@@ -9,12 +9,14 @@
  *     Brad Reynolds - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.databinding.observable.masterdetail;
+package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
