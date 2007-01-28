@@ -16,21 +16,25 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            name="%AntBuild"
-            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
             category="org.eclipse.ui.externaltools"
+            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
+            delegateDescription="%AntLaunchDelegate.description"
+            delegateName="%AntLaunchDelegate.name"
+            id="org.eclipse.ant.AntLaunchConfigurationType"
+            migrationDelegate="org.eclipse.ant.internal.ui.launchConfigurations.AntMigrationDelegate"
             modes="run, debug"
+            name="%AntBuild"
             sourceLocatorId="org.eclipse.ant.ui.debug.sourceLookupDirector"
-            sourcePathComputerId="org.eclipse.ant.ui.debug.sourcePathComputer"
-			migrationDelegate="org.eclipse.ant.internal.ui.launchConfigurations.AntMigrationDelegate"
-            id="org.eclipse.ant.AntLaunchConfigurationType">
+            sourcePathComputerId="org.eclipse.ant.ui.debug.sourcePathComputer">
       </launchConfigurationType>
       <launchConfigurationType
-            name="%AntBuild"
-            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
             category="org.eclipse.ui.externaltools.builder"
+            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
+            delegateDescription="%AntBuilderLaunchDelegate.description"
+            delegateName="%AntBuilderLaunchDelegate.name"
+            id="org.eclipse.ant.AntBuilderLaunchConfigurationType"
             modes="run"
-            id="org.eclipse.ant.AntBuilderLaunchConfigurationType">
+            name="%AntBuilder">
       </launchConfigurationType>
    </extension>
    <extension
