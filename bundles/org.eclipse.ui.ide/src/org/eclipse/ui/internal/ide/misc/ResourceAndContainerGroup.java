@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -76,6 +78,13 @@ public class ResourceAndContainerGroup implements Listener {
     private ContainerSelectionGroup containerGroup;
 
     private Text resourceNameField;
+    
+    /**
+     * The resource extension for the resource name field.
+     * @see ResourceAndContainerGroup#setResourceExtension(String)
+     * @since 3.3
+     */
+    private String resourceExtension;
 
     // constants
     private static final int SIZING_TEXT_FIELD_WIDTH = 250;
@@ -95,7 +104,7 @@ public class ResourceAndContainerGroup implements Listener {
         this(parent, client, resourceFieldLabel, resourceType, true);
     }
 
-    /**
+	/**
      * Create an instance of the group to allow the user
      * to enter/select a container and specify a resource
      * name.
@@ -190,6 +199,11 @@ public class ResourceAndContainerGroup implements Listener {
         // resource name entry field
         resourceNameField = new Text(nameGroup, SWT.BORDER);
         resourceNameField.addListener(SWT.Modify, this);
+        resourceNameField.addFocusListener(new FocusAdapter() {
+    		public void focusLost(FocusEvent e) {
+    			handleResourceNameFocusLostEvent();
+    		}        	
+        });
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
                 | GridData.GRAB_HORIZONTAL);
         data.widthHint = SIZING_TEXT_FIELD_WIDTH;
@@ -236,12 +250,68 @@ public class ResourceAndContainerGroup implements Listener {
     /**
      * Returns a string that is the name of the chosen resource, or an
      * empty string if no resource has been entered.
+     * <br><br>
+	 * The name will include the resource extension if the 
+	 * preconditions are met.
+	 * @see ResourceAndContainerGroup#setResourceExtension(String)
+	 *  
      * @return The resource name
+     * @since 3.3
      */
     public String getResource() {
-        return resourceNameField.getText();
+    	String resource = resourceNameField.getText();
+    	if (useResourceExtension()) {
+    		return resource + '.' + resourceExtension;
+    	}
+        return resource;
+    }
+    
+    /**
+	 * Returns the resource extension.
+	 * 
+	 * @return The resource extension or <code>null</code>.
+	 * @see ResourceAndContainerGroup#setResourceExtension(String)
+	 * @since 3.3 
+     */
+    public String getResourceExtension() {
+    	return resourceExtension;
+    }
+    
+    /**
+     * Determines whether the resource extension should be added to the 
+     * resource name field.
+     * <br><br>
+     * @see ResourceAndContainerGroup#setResourceExtension(String)
+     * @return <code>true</code> if the preconditions are met; otherwise, 
+     *         <code>false</code>.
+     * @since 3.3
+     */
+    private boolean useResourceExtension() {
+    	String resource = resourceNameField.getText();
+    	if ((resourceExtension != null) &&
+    			(resourceExtension.length() > 0) &&
+    			(resource.length() > 0) &&
+    			(resource.endsWith('.' + resourceExtension) == false)) {
+    		return true;
+    	}
+    	return false;
     }
 
+    /**
+	 * Handle the focus lost event from the resource name field.
+	 * <br>
+	 * Adds the resource extension to the resource name field when it
+     * loses focus (if the preconditions are met).
+	 * @see ResourceNameFocusListener
+	 * @see ResourceAndContainerGroup#setResourceExtension(String)
+     * @since 3.3
+	 */
+	private void handleResourceNameFocusLostEvent() {
+    	if (useResourceExtension()) {
+    		setResource(resourceNameField.getText() + '.' + resourceExtension);
+    	}
+	}    
+    
     /**
      * Handles events for all controls in the group.
      *
@@ -298,6 +368,33 @@ public class ResourceAndContainerGroup implements Listener {
     }
 
     /**
+     * Set the only file extension allowed for the resource name field.
+     * <br><br>
+     * If a resource extension is specified, then it will always be 
+	 * appended with a '.' to the text from the resource name field for 
+	 * validation when the following conditions are met:
+     * <br><br>
+	 * (1) Resource extension length is greater than 0
+	 * <br>
+	 * (2) Resource name field text length is greater than 0
+	 * <br>
+	 * (3) Resource name field text does not already end with a '.' and the 
+	 *     resource extension specified (case sensitive)
+     * <br><br>   
+	 * The resource extension will not be reflected in the actual 
+	 * resource name field until the resource name field loses focus.
+	 * 
+     * @param value
+	 *             The resource extension without the '.' prefix 
+	 *             (e.g. 'java', 'xml')
+     * @since 3.3
+     */
+    public void setResourceExtension(String value) {
+    	resourceExtension = value;
+    	validateControls();
+    }
+
+	/**
      * Returns a <code>boolean</code> indicating whether a container name represents
      * a valid container resource in the workbench.  An error message is stored for
      * future reference if the name does not represent a valid container.
@@ -351,7 +448,7 @@ public class ResourceAndContainerGroup implements Listener {
 		}
 
         IPath path = containerGroup.getContainerFullPath().append(
-                resourceNameField.getText());
+        		getResource());
         return validateFullResourcePath(path);
     }
 
@@ -379,7 +476,7 @@ public class ResourceAndContainerGroup implements Listener {
                 && (workspace.getRoot().getFolder(resourcePath).exists() || workspace
                         .getRoot().getFile(resourcePath).exists())) {
             problemType = PROBLEM_RESOURCE_EXIST;
-            problemMessage = IDEWorkbenchMessages.ResourceGroup_nameExists;
+            problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExists, getResource());
             return false;
         }
         return true;
@@ -393,7 +490,7 @@ public class ResourceAndContainerGroup implements Listener {
      * @return <code>boolean</code> indicating validity of the resource name
      */
     protected boolean validateResourceName() {
-        String resourceName = resourceNameField.getText();
+        String resourceName = getResource();
 
         if (resourceName.length() == 0) {
             problemType = PROBLEM_RESOURCE_EMPTY;

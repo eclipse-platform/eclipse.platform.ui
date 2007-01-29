@@ -100,6 +100,14 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 	// initial value stores
 	private String initialFileName;
+	
+	/**
+	 * The file extension to use for this page's file name field when
+	 * it does not exist yet.
+	 * @see WizardNewFileCreationPage#setFileExtension(String)
+	 * @since 3.3
+	 */
+	private String initialFileExtension;
 
 	private IPath initialContainerFullPath;
 
@@ -204,6 +212,9 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		createAdvancedControls(topLevel);
 		if (initialFileName != null) {
 			resourceGroup.setResource(initialFileName);
+		}
+		if (initialFileExtension != null) {
+			resourceGroup.setResourceExtension(initialFileExtension);
 		}
 		validatePage();
 		// Show description on opening
@@ -448,6 +459,10 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	/**
 	 * Returns the current file name as entered by the user, or its anticipated
 	 * initial value.
+	 * <br><br>
+	 * The current file name will include the file extension if 
+	 * the preconditions are met.
+	 * @see WizardNewFileCreationPage#setFileExtension(String)
 	 * 
 	 * @return the file name, its anticipated initial value, or
 	 *         <code>null</code> if no file name is known
@@ -458,6 +473,20 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		}
 
 		return resourceGroup.getResource();
+	}
+	
+	/**
+	 * Returns the file extension to use when creating the new file.
+	 * 
+	 * @return the file extension or <code>null</code>.
+	 * @see WizardNewFileCreationPage#setFileExtension(String)
+	 * @since 3.3 
+	 */
+	public String getFileExtension() {
+		if (resourceGroup == null) {
+			return initialFileExtension;
+		}
+		return resourceGroup.getResourceExtension();		
 	}
 
 	/**
@@ -584,6 +613,37 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		}
 	}
 
+	/**
+	 * Set the only file extension allowed for this page's file name field.
+	 * If this page's controls do not exist yet, store it for future use.
+	 * <br><br>
+	 * If a file extension is specified, then it will always be 
+	 * appended with a '.' to the text from the file name field for 
+	 * validation when the following conditions are met:
+	 * <br><br>
+	 * (1) File extension length is greater than 0
+	 * <br>
+	 * (2) File name field text length is greater than 0
+	 * <br>
+	 * (3) File name field text does not already end with a '.' and the file 
+	 *     extension specified (case sensitive)
+	 * <br><br>
+	 * The file extension will not be reflected in the actual file
+	 * name field until the file name field loses focus.
+	 * 
+	 * @param value
+	 *             The file extension without the '.' prefix 
+	 *             (e.g. 'java', 'xml') 
+	 * @since 3.3
+	 */
+	public void setFileExtension(String value) {
+		if (resourceGroup == null) {
+			initialFileExtension = value;
+		} else {
+			resourceGroup.setResourceExtension(value);
+		}
+	}
+	
 	/**
 	 * Checks whether the linked resource target is valid. Sets the error
 	 * message accordingly and returns the status.
