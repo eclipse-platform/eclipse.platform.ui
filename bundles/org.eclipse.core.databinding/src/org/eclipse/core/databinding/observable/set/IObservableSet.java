@@ -43,7 +43,7 @@ public interface IObservableSet extends Set, IObservableCollection {
 	public void removeSetChangeListener(ISetChangeListener listener);
 
 	/**
-	 * @return the element type
+	 * @return the element type or <code>null</code> if untyped
 	 */
 	public Object getElementType();
 

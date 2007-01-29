@@ -163,7 +163,7 @@ public interface IObservableList extends List, IObservableCollection {
     public List subList(int fromIndex, int toIndex);
 
 	/**
-	 * @return the type of the elements
+	 * @return the type of the elements or <code>null</code> if untyped
 	 */
 	Object getElementType();
 }
