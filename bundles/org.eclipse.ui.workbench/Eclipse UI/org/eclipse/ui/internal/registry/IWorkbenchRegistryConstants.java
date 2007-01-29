@@ -451,6 +451,13 @@ public interface IWorkbenchRegistryConstants {
 	 * Perspective singleton attribute. Value <code>singleton</code>.
 	 */
 	public static String ATT_SINGLETON = "singleton";//$NON-NLS-1$
+	
+	/**
+	 * Splash id attribute.  Value <code>splashId</code>.
+	 * 
+	 * @since 3.3
+	 */
+	public static String ATT_SPLASH_ID = "splashId"; //$NON-NLS-1$
 
 	/**
 	 * Standalone attribute. Value <code>standalone</code>.
@@ -658,6 +665,11 @@ public interface IWorkbenchRegistryConstants {
 	public static String PL_PROPERTY_PAGES = "propertyPages"; //$NON-NLS-1$
 
 	public static String PL_STARTUP = "startup"; //$NON-NLS-1$
+	
+	/**
+	 * @since 3.3
+	 */
+	public static String PL_SPLASH_HANDLERS = "splashHandlers"; //$NON-NLS-1$
 
 	public static String PL_SYSTEM_SUMMARY_SECTIONS = "systemSummarySections"; //$NON-NLS-1$
 
@@ -1164,7 +1176,23 @@ public interface IWorkbenchRegistryConstants {
 	 * The name of the element storing some state.
 	 */
 	public static String TAG_STATE = "state"; //$NON-NLS-1$
+	
+	
+	/**
+	 * The name of the element describing splash handlers. Value
+	 * <code>splashHandler</code>.
+	 * @since 3.3
+	 */
+	public static String TAG_SPLASH_HANDLER = "splashHandler"; //$NON-NLS-1$
+	
 
+	/**
+	 * The name of the element describing splash handler product bindings. Value
+	 * <code>splashHandlerProductBinding</code>.
+	 * @since 3.3
+	 */
+	public static String TAG_SPLASH_HANDLER_PRODUCT_BINDING = "splashHandlerProductBinding"; //$NON-NLS-1$
+	
 	/**
 	 * Sticky view tag. Value <code>stickyView</code>.
 	 */

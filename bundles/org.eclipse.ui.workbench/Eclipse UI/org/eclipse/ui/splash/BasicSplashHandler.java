@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
  * Basic splash implementation that provides an absolute positioned progress bar
@@ -27,7 +28,7 @@ import org.eclipse.swt.widgets.Label;
  * 
  * @since 3.3
  */
-public class BasicSplashHandler extends AbstractSplashHandler {
+public abstract class BasicSplashHandler extends AbstractSplashHandler {
 
 	/**
 	 * Hacks the progress monitor to have absolute positioning for its controls.
@@ -248,5 +249,32 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 	 */
 	protected Composite getContent() {
 		return (Composite) getBundleProgressMonitor();
+	}
+	
+	/**
+	 * Perform some update on the splash. If called from a non-UI thread it will
+	 * be wrapped by a runnable that may be run before the workbench has been
+	 * fully realized.
+	 * 
+	 * @param r
+	 *            the update runnable
+	 * @throws Throwable
+	 */
+	private void updateUI(final Runnable r) throws Throwable {
+
+		if (Thread.currentThread() == getSplash().getDisplay().getThread())
+			r.run(); // run immediatley if we're on the UI thread
+		else {
+			// wrapper with a StartupRunnable to ensure that it will run before
+			// the
+			// UI is fully initialized
+			StartupRunnable startupRunnable = new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					r.run();
+				}
+			};
+			getSplash().getDisplay().asyncExec(startupRunnable);
+		}
 	}
 }

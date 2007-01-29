@@ -76,6 +76,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
+import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -153,6 +154,7 @@ import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
+import org.eclipse.ui.internal.splash.SplashHandlerFactory;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -534,17 +536,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (background != null)
 					splashShell.setBackgroundImage(background);
 				Dictionary properties = new Hashtable();
-				properties.put("name", "splashscreen"); //$NON-NLS-1$ //$NON-NLS-2$
 				properties.put(Constants.SERVICE_RANKING, Integer.toString(Integer.MAX_VALUE));
 				BundleContext context = WorkbenchPlugin.getDefault().getBundleContext();
-				context.registerService(Runnable.class.getName(), new Runnable() {
-					/* (non-Javadoc)
-					 * @see java.lang.Runnable#run()
-					 */
-					public void run() {
+				context.registerService(StartupMonitor.class.getName(), new StartupMonitor () {
+					
+					public void applicationRunning() {
 						splash.dispose();
 						if (background != null)
 							background.dispose();
+					}
+
+					public void update() {
+						// do nothing -  we come into the picture far too late for this to be relevant
 					}
 				}, properties);
 				
@@ -601,7 +604,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return null;
 		
 		if (splash == null) {
-			splash = new EclipseSplashHandler(); 
+			
+			IProduct product = Platform.getProduct();
+			if (product != null) 
+				splash = SplashHandlerFactory.findSplashHandlerFor(product);
+			
+			if (splash == null)
+				splash = new EclipseSplashHandler();
 		}
 		return splash;
 	}

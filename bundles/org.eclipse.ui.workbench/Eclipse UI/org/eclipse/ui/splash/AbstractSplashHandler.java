@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
  * Baseclass for splash implementations. Please note that methods on this class
@@ -40,6 +39,10 @@ public abstract class AbstractSplashHandler {
 	 * ensure that they call the base implementation of this method at some
 	 * point after their own method is invoked.
 	 * 
+	 * <p>
+	 * Calls to this method will be made from the UI thread.
+	 * </p>
+	 * 
 	 * @param splash
 	 *            the splash shell
 	 */
@@ -51,6 +54,10 @@ public abstract class AbstractSplashHandler {
 	 * Signal the handler to end the splash and dispose of any resources.
 	 * Subclasses should ensure that they call the base implementation of this
 	 * method at some point after their own method is invoked.
+	 * 
+	 * <p>
+	 * Calls to this method will be made from the UI thread.
+	 * </p>
 	 */
 	public void dispose() {
 		shell.close();
@@ -80,32 +87,5 @@ public abstract class AbstractSplashHandler {
 	 */
 	public Shell getSplash() {
 		return shell;
-	}
-	
-	/**
-	 * Perform some update on the splash. If called from a non-UI thread it will
-	 * be wrapped by a runnable that may be run before the workbench has been
-	 * fully realized.
-	 * 
-	 * @param r
-	 *            the update runnable
-	 * @throws Throwable
-	 */
-	protected void updateUI(final Runnable r) throws Throwable {
-
-		if (Thread.currentThread() == shell.getDisplay().getThread())
-			r.run(); // run immediatley if we're on the UI thread
-		else {
-			// wrapper with a StartupRunnable to ensure that it will run before
-			// the
-			// UI is fully initialized
-			StartupRunnable startupRunnable = new StartupRunnable() {
-
-				public void runWithException() throws Throwable {
-					r.run();
-				}
-			};
-			shell.getDisplay().asyncExec(startupRunnable);
-		}
 	}
 }
