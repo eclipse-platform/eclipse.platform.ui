@@ -144,7 +144,7 @@ public class TemplateVariable {
 	/**
 	 * Returns the type of the variable.
 	 *
-	 * @return the type of the variable¨
+	 * @return the type of the variable
 	 * @since 3.3
 	 */
 	public TemplateVariableType getVariableType() {
