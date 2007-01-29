@@ -208,7 +208,7 @@ public final class Colors {
 	 * Returns an array of colors with hues evenly distributed on the hue wheel defined by the <a
 	 * href="http://en.wikipedia.org/wiki/HSV_color_space">HSB color space</a>. The returned array
 	 * has size <code>steps</code>. The distance <var>d</var> between two successive colors is
-	 * in [120°,&nbsp;180°].
+	 * in [120&#176;,&nbsp;180&#176;].
 	 * <p>
 	 * The color at a given <code>index</code> has the hue returned by
 	 * {@linkplain #computeHue(int) computeHue(index)}; i.e. the computed hues are not equidistant,
@@ -235,9 +235,9 @@ public final class Colors {
 	}
 
 	/**
-	 * Returns an indexed hue in [0°,&nbsp;360°), distributing the hues evenly on the hue wheel
+	 * Returns an indexed hue in [0&#176;,&nbsp;360&#176;), distributing the hues evenly on the hue wheel
 	 * defined by the <a href="http://en.wikipedia.org/wiki/HSV_color_space">HSB (or HSV) color
-	 * space</a>. The distance <var>d</var> between two successive colors is in [120°,&nbsp;180°].
+	 * space</a>. The distance <var>d</var> between two successive colors is in [120&#176;,&nbsp;180&#176;].
 	 * <p>
 	 * The first six colors returned correspond to the following {@link SWT} color constants:
 	 * {@link SWT#COLOR_RED red}, {@link SWT#COLOR_GREEN green}, {@link SWT#COLOR_BLUE blue},
@@ -246,7 +246,7 @@ public final class Colors {
 	 * </p>
 	 * 
 	 * @param index the index of the color, must be &gt;= 0
-	 * @return a color hue in [0°,&nbsp;360°)
+	 * @return a color hue in [0&#176;,&nbsp;360&#176;)
 	 * @see RGB#RGB(float, float, float)
 	 */
 	public static float computeHue(final int index) {
