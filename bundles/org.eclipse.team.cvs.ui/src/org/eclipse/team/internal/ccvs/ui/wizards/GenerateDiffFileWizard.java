@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla (b.muskalla@gmx.net) - Bug 149672 [Patch] Create Patch wizard should remember previous settings
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -705,7 +706,7 @@ public class GenerateDiffFileWizard extends Wizard {
          */
         private void initializeDefaultValues() {
 
-            selectedLocation= store.getRadioSelection();
+            selectedLocation= store.getLocationSelection();
             
             updateRadioButtons();
             
@@ -997,9 +998,30 @@ public class GenerateDiffFileWizard extends Wizard {
         
     /**
      * Page to select the options for creating the patch.
+     *
+     * @param pageName the name of the page
+     * @param title the title for this wizard page,
+     *   or <code>null</code> if none
+     * @param titleImage the image descriptor for the title of this wizard page,
+     *   or <code>null</code> if none
+     * @param store the value store where the page stores it's data
      */
     private class OptionsPage extends WizardPage {
        
+    	/**
+    	* The possible file format to save a patch.
+    	*/
+    	public final static int FORMAT_UNIFIED = 1;
+    	public final static int FORMAT_CONTEXT = 2;
+    	public final static int FORMAT_STANDARD = 3;
+
+    	/**
+    	The possible root of the patch
+    	*/
+    	public final static int ROOT_WORKSPACE = 1;
+    	public final static int ROOT_PROJECT = 2;
+    	public final static int ROOT_SELECTION = 3;
+    	
     	private Button unifiedDiffOption;
     	private Button unified_workspaceRelativeOption; //multi-patch format
     	private Button unified_projectRelativeOption; //full project path
@@ -1010,11 +1032,17 @@ public class GenerateDiffFileWizard extends Wizard {
         private boolean patchHasCommonRoot=true;
         protected IPath patchRoot=ResourcesPlugin.getWorkspace().getRoot().getFullPath();
         
+        protected int selectedFormat;
+        protected int selectedRoot;
+        
+        private final DefaultValuesStore store;
+        
         /**
          * Constructor for PatchFileCreationOptionsPage.
          */
-        protected OptionsPage(String pageName, String title, ImageDescriptor titleImage) {
+        protected OptionsPage(String pageName, String title, ImageDescriptor titleImage, DefaultValuesStore store) {
             super(pageName, title, titleImage);
+            this.store = store;
         }
         
         /*
@@ -1067,11 +1095,14 @@ public class GenerateDiffFileWizard extends Wizard {
               
             Dialog.applyDialogFont(parent);
             
+            initializeDefaultValues();
+            
             //add listeners
             unifiedDiffOption.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					setEnableUnifiedGroup(true);
 					updateEnablements();
+					selectedFormat = FORMAT_UNIFIED;
 				}
 			});
             
@@ -1079,6 +1110,7 @@ public class GenerateDiffFileWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					setEnableUnifiedGroup(false);
 					updateEnablements();
+					selectedFormat = FORMAT_CONTEXT;
 				}
 			});
             
@@ -1086,13 +1118,73 @@ public class GenerateDiffFileWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					setEnableUnifiedGroup(false);
 					updateEnablements();
+					selectedFormat = FORMAT_STANDARD;
 				}
 			});
             
+            unified_workspaceRelativeOption
+					.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							selectedRoot = ROOT_WORKSPACE;
+						}
+					});
+
+			unified_projectRelativeOption
+					.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							selectedRoot = ROOT_PROJECT;
+						}
+					});
+
+			unified_selectionRelativeOption
+					.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							selectedRoot = ROOT_SELECTION;
+						}
+					});    
+            	
            calculatePatchRoot();
-           unifiedDiffOption.setSelection(true);
            updateEnablements();
-        }    
+        }
+        
+        public int getFormatSelection() {
+			return selectedFormat;
+		}
+
+		public int getRootSelection() {
+			return selectedRoot;
+		}
+
+		private void initializeDefaultValues() {
+			selectedFormat = store.getFormatSelection();
+			selectedRoot = store.getRootSelection();
+
+			updateRadioButtons();
+		}
+
+		private void updateRadioButtons() {
+			/**
+			 * Radio buttons for format
+			 */
+			unifiedDiffOption.setSelection(selectedFormat == FORMAT_UNIFIED);
+			contextDiffOption.setSelection(selectedFormat == FORMAT_CONTEXT);
+			regularDiffOption.setSelection(selectedFormat == FORMAT_STANDARD);
+
+			if (selectedFormat != FORMAT_UNIFIED) {
+				setEnableUnifiedGroup(false);
+			}
+
+			/**
+			 * Radio buttons for patch root
+			 */
+			unified_workspaceRelativeOption
+					.setSelection(selectedRoot == ROOT_WORKSPACE);
+			unified_projectRelativeOption
+					.setSelection(selectedRoot == ROOT_PROJECT);
+			unified_selectionRelativeOption
+					.setSelection(selectedRoot == ROOT_SELECTION);
+		}
+
         
         protected void updateEnablements() {
 			if (!patchHasCommonRoot){
@@ -1102,7 +1194,8 @@ public class GenerateDiffFileWizard extends Wizard {
 				regularDiffOption.setEnabled(false);
 			}
 			
-			//temporary until we figure out best way to fix synchronize view selection
+			// temporary until we figure out best way to fix synchronize view
+			// selection
 			if (!unifiedSelectionEnabled)
         		unified_selectionRelativeOption.setEnabled(false);
 		}
@@ -1190,12 +1283,6 @@ public class GenerateDiffFileWizard extends Wizard {
             } 
             
             return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
-        }		
-        public void setVisible(boolean visible) {
-            super.setVisible(visible);
-            if (visible) {
-                unified_workspaceRelativeOption.setFocus();
-            }
         }
         protected void setEnableUnifiedGroup(boolean enabled){
         	unified_workspaceRelativeOption.setEnabled(enabled);
@@ -1216,6 +1303,9 @@ public class GenerateDiffFileWizard extends Wizard {
         private static final String PREF_LAST_SELECTION= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.lastselection"; //$NON-NLS-1$
         private static final String PREF_LAST_FS_PATH= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.filesystem.path"; //$NON-NLS-1$
         private static final String PREF_LAST_WS_PATH= "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.PatchFileSelectionPage.workspace.path"; //$NON-NLS-1$
+        private static final String PREF_LAST_AO_FORMAT = "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.OptionsPage.diff.format"; //$NON-NLS-1$
+        private static final String PREF_LAST_AO_ROOT = "org.eclipse.team.internal.ccvs.ui.wizards.GenerateDiffFileWizard.OptionsPage.patch.root"; //$NON-NLS-1$
+
         
         private final IDialogSettings dialogSettings;
         
@@ -1223,7 +1313,7 @@ public class GenerateDiffFileWizard extends Wizard {
             dialogSettings= CVSUIPlugin.getPlugin().getDialogSettings(); 
         }
         
-        public int getRadioSelection() {
+        public int getLocationSelection() {
             int value= LocationPage.CLIPBOARD;
             try {
                 value= dialogSettings.getInt(PREF_LAST_SELECTION);
@@ -1250,7 +1340,42 @@ public class GenerateDiffFileWizard extends Wizard {
             return path != null ? path : ""; //$NON-NLS-1$
         }
         
-        public void storeRadioSelection(int defaultSelection) {
+
+		public int getFormatSelection() {
+			int value = OptionsPage.FORMAT_UNIFIED;
+			try {
+				value = dialogSettings.getInt(PREF_LAST_AO_FORMAT);
+			} catch (NumberFormatException e) {
+			}
+
+			switch (value) {
+			case OptionsPage.FORMAT_UNIFIED:
+			case OptionsPage.FORMAT_CONTEXT:
+			case OptionsPage.FORMAT_STANDARD:
+				return value;
+			default:
+				return OptionsPage.FORMAT_UNIFIED;
+			}
+		}
+
+		public int getRootSelection() {
+			int value = OptionsPage.ROOT_WORKSPACE;
+			try {
+				value = dialogSettings.getInt(PREF_LAST_AO_ROOT);
+			} catch (NumberFormatException e) {
+			}
+
+			switch (value) {
+			case OptionsPage.ROOT_WORKSPACE:
+			case OptionsPage.ROOT_PROJECT:
+			case OptionsPage.ROOT_SELECTION:
+				return value;
+			default:
+				return OptionsPage.ROOT_WORKSPACE;
+			}
+		}  
+        	
+        public void storeLocationSelection(int defaultSelection) {
             dialogSettings.put(PREF_LAST_SELECTION, defaultSelection);
         }
         
@@ -1261,6 +1386,14 @@ public class GenerateDiffFileWizard extends Wizard {
         public void storeWorkspacePath(String path) {
             dialogSettings.put(PREF_LAST_WS_PATH, path);
         }
+        
+		public void storeOutputFormat(int selection) {
+			dialogSettings.put(PREF_LAST_AO_FORMAT, selection);
+		}
+
+		public void storePatchRoot(int selection) {
+			dialogSettings.put(PREF_LAST_AO_ROOT, selection);
+		}
     }
     
     private LocationPage locationPage;
@@ -1292,7 +1425,7 @@ public class GenerateDiffFileWizard extends Wizard {
         
         pageTitle = CVSUIMessages.Advanced_options_19; 
         pageDescription = CVSUIMessages.Configure_the_options_used_for_the_CVS_diff_command_20; 
-        optionsPage = new OptionsPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF));
+        optionsPage = new OptionsPage(pageTitle, pageTitle, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF), defaultValuesStore);
         optionsPage.setDescription(pageDescription);
         addPage(optionsPage);		
     }
@@ -1373,7 +1506,7 @@ public class GenerateDiffFileWizard extends Wizard {
         case LocationPage.WORKSPACE:
             final String workspaceResource= locationPage.getWorkspaceLocation();
             if (workspaceResource != null){
-                defaultValuesStore.storeRadioSelection(LocationPage.WORKSPACE);
+                defaultValuesStore.storeLocationSelection(LocationPage.WORKSPACE);
 	            defaultValuesStore.storeWorkspacePath(workspaceResource);
 	           /* try {
 	                workspaceResource.getParent().refreshLocal(IResource.DEPTH_ONE, null);
@@ -1383,22 +1516,31 @@ public class GenerateDiffFileWizard extends Wizard {
 	            } */
             } else {
             	//Problem with workspace location, open with clipboard next time 
-            	defaultValuesStore.storeRadioSelection(LocationPage.CLIPBOARD);
+            	defaultValuesStore.storeLocationSelection(LocationPage.CLIPBOARD);
             }
             break;
             
         case LocationPage.FILESYSTEM:
             defaultValuesStore.storeFilesystemPath(file.getPath());
-        	defaultValuesStore.storeRadioSelection(LocationPage.FILESYSTEM);
+        	defaultValuesStore.storeLocationSelection(LocationPage.FILESYSTEM);
         	break;
         	
         case LocationPage.CLIPBOARD:
-            defaultValuesStore.storeRadioSelection(LocationPage.CLIPBOARD);
+            defaultValuesStore.storeLocationSelection(LocationPage.CLIPBOARD);
         	break;
         	
         default:
             return false;
         }
+        
+
+		/**
+		 * Save default selections of Options Page
+		 */
+
+		defaultValuesStore.storeOutputFormat(optionsPage.getFormatSelection());
+		defaultValuesStore.storePatchRoot(optionsPage.getRootSelection());
+
         return true;
     }
     
