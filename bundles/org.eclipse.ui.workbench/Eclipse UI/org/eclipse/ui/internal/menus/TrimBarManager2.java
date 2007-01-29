@@ -25,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.WindowTrimProxy;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.TrimLayout;
@@ -33,6 +32,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchWidget;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * <p>
@@ -285,7 +285,23 @@ public class TrimBarManager2 {
 				TrimWidgetProxy proxy = (TrimWidgetProxy) iter.next();
 				fWindow.getTrimManager().removeTrim(proxy);
 
-				proxy.dispose();
+				try {
+					proxy.dispose();
+		        } catch (Throwable e) {
+		            IStatus status = null;
+		            if (e instanceof CoreException) {
+		                status = ((CoreException) e).getStatus();
+		            } else {
+		                status = StatusUtil
+		                        .newStatus(
+		                                IStatus.ERROR,
+		                                "Internal plug-in widget delegate error on dispose.", e); //$NON-NLS-1$
+		            }
+		            StatusUtil
+							.handleStatus(
+									status,
+									"widget delegate failed on dispose: id = " + proxy.getId(), StatusManager.LOG); //$NON-NLS-1$
+		        }
 			}
 
 			// Clear out the old list
@@ -402,8 +418,8 @@ public class TrimBarManager2 {
 	                                IStatus.ERROR,
 	                                "Internal plug-in widget delegate error on dock.", e); //$NON-NLS-1$
 	            }
-	            WorkbenchPlugin.log(
-	                  "widget delegate failed on dock: id = " + proxy.getId(), status); //$NON-NLS-1$
+	            StatusUtil.handleStatus(status, "widget delegate failed on dock: id = " + proxy.getId(), //$NON-NLS-1$
+	            		StatusManager.LOG);
 	        }
 		}
 
@@ -427,7 +443,10 @@ public class TrimBarManager2 {
             		initializedTrim.put(iw, iw);
             	}
 
-            	iw.fill(groupComposite);
+            	if (iw instanceof AbstractWorkbenchTrimWidget)
+            		((AbstractWorkbenchTrimWidget)iw).fill(groupComposite, SWT.DEFAULT, side);
+            	else
+            		iw.fill(groupComposite);
 			}
 		}
 
