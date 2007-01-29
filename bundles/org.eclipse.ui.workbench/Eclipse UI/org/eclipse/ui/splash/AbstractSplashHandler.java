@@ -68,9 +68,11 @@ public abstract class AbstractSplashHandler {
 	 * Return the progress monitor responsible for showing bundle loading.
 	 * Default implementation returns a null progress monitor.
 	 * 
+	 * <p>
 	 * Calls made to methods on this progress monitor may be made from non-UI
 	 * threads so implementors must take care to ensure proper synchronization
 	 * with the UI thread if necessary.
+	 * </p>
 	 * 
 	 * @return the progress monitor
 	 * @see NullProgressMonitor
