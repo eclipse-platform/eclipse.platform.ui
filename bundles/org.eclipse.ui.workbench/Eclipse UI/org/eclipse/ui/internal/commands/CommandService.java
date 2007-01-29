@@ -28,12 +28,12 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.commands.PersistentState;
-import org.eclipse.ui.commands.ICallbackReference;
-import org.eclipse.ui.commands.ICallbackUpdater;
+import org.eclipse.ui.commands.IElementReference;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * <p>
@@ -205,16 +205,16 @@ public final class CommandService implements ICommandService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#refreshCallbacks(java.lang.String,
+	 * @see org.eclipse.ui.commands.ICommandService#refreshElements(java.lang.String,
 	 *      java.util.Map)
 	 */
-	public final void refreshCallbacks(String commandId, Map filter) {
+	public final void refreshElements(String commandId, Map filter) {
 		Command cmd = getCommand(commandId);
 
-		if (!cmd.isDefined() || !(cmd.getHandler() instanceof ICallbackUpdater)) {
+		if (!cmd.isDefined() || !(cmd.getHandler() instanceof IElementUpdater)) {
 			return;
 		}
-		final ICallbackUpdater updater = (ICallbackUpdater) cmd.getHandler();
+		final IElementUpdater updater = (IElementUpdater) cmd.getHandler();
 
 		List callbackRefs = (List) commandCallbacks.get(commandId);
 		if (callbackRefs == null) {
@@ -222,11 +222,11 @@ public final class CommandService implements ICommandService {
 		}
 
 		for (Iterator i = callbackRefs.iterator(); i.hasNext();) {
-			ICallbackReference callbackRef = (ICallbackReference) i.next();
+			IElementReference callbackRef = (IElementReference) i.next();
 			Map parms = Collections
 					.unmodifiableMap(callbackRef.getParameters());
 			if (filter == null) {
-				updater.updateCallback(callbackRef.getCallback(), parms);
+				updater.updateElement(callbackRef.getElement(), parms);
 			} else {
 				boolean match = true;
 				for (Iterator j = filter.entrySet().iterator(); j.hasNext()
@@ -238,7 +238,7 @@ public final class CommandService implements ICommandService {
 					}
 				}
 				if (match) {
-					updater.updateCallback(callbackRef.getCallback(), parms);
+					updater.updateElement(callbackRef.getElement(), parms);
 				}
 			}
 		}
@@ -247,50 +247,50 @@ public final class CommandService implements ICommandService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#registerCallbackForCommand(org.eclipse.core.commands.ParameterizedCommand,
-	 *      org.eclipse.core.runtime.IAdaptable)
+	 * @see org.eclipse.ui.commands.ICommandService#registerElementForCommand(org.eclipse.core.commands.ParameterizedCommand,
+	 *      org.eclipse.ui.menus.UIElement)
 	 */
-	public final ICallbackReference registerCallbackForCommand(
-			ParameterizedCommand command, IAdaptable callback)
+	public final IElementReference registerElementForCommand(
+			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
 		if (!command.getCommand().isDefined()) {
 			throw new NotDefinedException(
 					"Cannot define a callback for undefined command " //$NON-NLS-1$
 							+ command.getCommand().getId());
 		}
-		if (callback == null) {
+		if (element == null) {
 			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
 					+ command.getCommand().getId());
 		}
 
-		CallbackReference ref = new CallbackReference(command.getId(),
-				callback, command.getParameterMap());
-		registerCallback(ref);
+		ElementReference ref = new ElementReference(command.getId(), element,
+				command.getParameterMap());
+		registerElement(ref);
 		return ref;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#registerCallback(org.eclipse.ui.commands.ICallbackReference)
+	 * @see org.eclipse.ui.commands.ICommandService#registerElement(org.eclipse.ui.commands.IElementReference)
 	 */
-	public void registerCallback(ICallbackReference callbackReference) {
+	public void registerElement(IElementReference elementReference) {
 		List parameterizedCommands = (List) commandCallbacks
-				.get(callbackReference.getCommandId());
+				.get(elementReference.getCommandId());
 		if (parameterizedCommands == null) {
 			parameterizedCommands = new ArrayList();
-			commandCallbacks.put(callbackReference.getCommandId(),
+			commandCallbacks.put(elementReference.getCommandId(),
 					parameterizedCommands);
 		}
-		parameterizedCommands.add(callbackReference);
+		parameterizedCommands.add(elementReference);
 
 		// If the active handler wants to update the callback, it can do
 		// so now
-		Command command = getCommand(callbackReference.getCommandId());
+		Command command = getCommand(elementReference.getCommandId());
 		if (command.isDefined()) {
-			if (command.getHandler() instanceof ICallbackUpdater) {
-				((ICallbackUpdater) command.getHandler()).updateCallback(
-						callbackReference.getCallback(), callbackReference
+			if (command.getHandler() instanceof IElementUpdater) {
+				((IElementUpdater) command.getHandler()).updateElement(
+						elementReference.getElement(), elementReference
 								.getParameters());
 			}
 		}
@@ -299,15 +299,15 @@ public final class CommandService implements ICommandService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#unregisterCallback(org.eclipse.ui.commands.ICallbackReference)
+	 * @see org.eclipse.ui.commands.ICommandService#unregisterElement(org.eclipse.ui.commands.IElementReference)
 	 */
-	public void unregisterCallback(ICallbackReference callbackReference) {
+	public void unregisterElement(IElementReference elementReference) {
 		List parameterizedCommands = (List) commandCallbacks
-				.get(callbackReference.getCommandId());
+				.get(elementReference.getCommandId());
 		if (parameterizedCommands != null) {
-			parameterizedCommands.remove(callbackReference);
+			parameterizedCommands.remove(elementReference);
 			if (parameterizedCommands.isEmpty()) {
-				commandCallbacks.remove(callbackReference.getCommandId());
+				commandCallbacks.remove(elementReference.getCommandId());
 			}
 		}
 	}

@@ -17,21 +17,20 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICallbackUpdater;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.menus.ICommandCallback;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * @since 3.3
  * 
  */
 public class ToggleContextHandler extends AbstractHandler implements
-		ICallbackUpdater {
+		IElementUpdater {
 	private static final String TOGGLE_ID = "toggleContext.contextId";
 	Map contextActivations = new HashMap();
 
@@ -67,7 +66,7 @@ public class ToggleContextHandler extends AbstractHandler implements
 				.getService(ICommandService.class);
 		Map filter = new HashMap();
 		filter.put(TOGGLE_ID, contextId);
-		commandService.refreshCallbacks(event.getCommand().getId(), filter);
+		commandService.refreshElements(event.getCommand().getId(), filter);
 		return null;
 	}
 
@@ -77,17 +76,11 @@ public class ToggleContextHandler extends AbstractHandler implements
 	 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
 	 *      java.util.Map)
 	 */
-	public void updateCallback(IAdaptable callback, Map parameters) {
-		// get the standard platform UI feedback object
-		ICommandCallback feedback = (ICommandCallback) callback
-				.getAdapter(ICommandCallback.class);
-		if (feedback == null) {
-			return;
-		}
+	public void updateElement(UIElement element, Map parameters) {
 
 		// the checked state depends on if we have an activation for that
 		// context ID or not
 		String contextId = (String) parameters.get(TOGGLE_ID);
-		feedback.setChecked(contextActivations.get(contextId) != null);
+		element.setChecked(contextActivations.get(contextId) != null);
 	}
 }

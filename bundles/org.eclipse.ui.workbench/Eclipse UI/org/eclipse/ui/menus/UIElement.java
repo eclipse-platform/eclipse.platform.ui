@@ -18,6 +18,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * a MenuItem or ToolItem. Initially used to update properties for UI elements
  * created by the CommandContributionItem.
  * <p>
+ * This class may be extended by clients.
+ * </p>
+ * <p>
  * <strong>PROVISIONAL</strong>. This class or interface has been added as part
  * of a work in progress. There is a guarantee neither that this API will work
  * nor that it will remain the same. Please do not use this API without
@@ -26,38 +29,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  * @since 3.3
  */
-public interface ICommandCallback {
-	/**
-	 * Update the icon on this UI element.
-	 * 
-	 * @param desc
-	 *            The descriptor for the new icon to display.
-	 */
-	public void setIcon(ImageDescriptor desc);
-
-	/**
-	 * Update the disabled icon on this UI element.
-	 * 
-	 * @param desc
-	 *            The descriptor for the new icon to display.
-	 */
-	public void setDisabledIcon(ImageDescriptor desc);
-
-	/**
-	 * Update the hover icon on this UI element.
-	 * 
-	 * @param desc
-	 *            The descriptor for the new icon to display.
-	 */
-	public void setHoverIcon(ImageDescriptor desc);
-
+public abstract class UIElement {
 	/**
 	 * Update the label on this UI element.
 	 * 
 	 * @param text
 	 *            The new label to display.
 	 */
-	public void setText(String text);
+	public abstract void setText(String text);
 
 	/**
 	 * Update the tooltip on this UI element. Tooltips are currently only valid
@@ -66,7 +45,31 @@ public interface ICommandCallback {
 	 * @param text
 	 *            The new tooltip to display.
 	 */
-	public void setTooltip(String text);
+	public abstract void setTooltip(String text);
+
+	/**
+	 * Update the icon on this UI element.
+	 * 
+	 * @param desc
+	 *            The descriptor for the new icon to display.
+	 */
+	public abstract void setIcon(ImageDescriptor desc);
+
+	/**
+	 * Update the disabled icon on this UI element.
+	 * 
+	 * @param desc
+	 *            The descriptor for the new icon to display.
+	 */
+	public abstract void setDisabledIcon(ImageDescriptor desc);
+
+	/**
+	 * Update the hover icon on this UI element.
+	 * 
+	 * @param desc
+	 *            The descriptor for the new icon to display.
+	 */
+	public abstract void setHoverIcon(ImageDescriptor desc);
 
 	/**
 	 * Update the checked state on this UI element. For example, if this was a
@@ -75,5 +78,5 @@ public interface ICommandCallback {
 	 * @param checked
 	 *            true to set toggle on
 	 */
-	public void setChecked(boolean checked);
+	public abstract void setChecked(boolean checked);
 }

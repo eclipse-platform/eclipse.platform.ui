@@ -489,7 +489,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			command.setHandler(null);
 		} else {
 			command.setHandler(activation.getHandler());
-			commandService.refreshCallbacks(commandId, null);
+			commandService.refreshElements(commandId, null);
 		}
 	}
 

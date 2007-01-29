@@ -16,20 +16,19 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICallbackUpdater;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.menus.ICommandCallback;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * @since 3.3
  * 
  */
 public class HelloUpdateHandler extends AbstractHandler implements
-		ICallbackUpdater {
+		IElementUpdater {
 
 	private String myLabelState = null;
 
@@ -47,7 +46,7 @@ public class HelloUpdateHandler extends AbstractHandler implements
 		myLabelState = "My New Item";
 		ICommandService cs = (ICommandService) window
 				.getService(ICommandService.class);
-		cs.refreshCallbacks(event.getCommand().getId(), null);
+		cs.refreshElements(event.getCommand().getId(), null);
 		return null;
 	}
 
@@ -57,14 +56,10 @@ public class HelloUpdateHandler extends AbstractHandler implements
 	 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
 	 *      java.util.Map)
 	 */
-	public void updateCallback(IAdaptable callback, Map parameters) {
+	public void updateElement(UIElement element, Map parameters) {
 		if (myLabelState == null) {
 			return;
 		}
-		ICommandCallback feedback = (ICommandCallback) callback
-				.getAdapter(ICommandCallback.class);
-		if (feedback != null) {
-			feedback.setText(myLabelState);
-		}
+		element.setText(myLabelState);
 	}
 }

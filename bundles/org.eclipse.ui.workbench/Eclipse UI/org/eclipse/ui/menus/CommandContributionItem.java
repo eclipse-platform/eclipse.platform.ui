@@ -24,7 +24,6 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -45,8 +44,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICallbackReference;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -68,8 +67,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.3
  */
-public final class CommandContributionItem extends ContributionItem implements
-		IAdaptable, ICommandCallback {
+public final class CommandContributionItem extends ContributionItem {
 	/**
 	 * A push button tool item or menu item.
 	 */
@@ -116,7 +114,7 @@ public final class CommandContributionItem extends ContributionItem implements
 
 	private String mnemonic;
 
-	private ICallbackReference callbackRef;
+	private IElementReference elementRef;
 
 	private boolean checkedState;
 
@@ -176,8 +174,34 @@ public final class CommandContributionItem extends ContributionItem implements
 
 		if (command != null) {
 			try {
-				callbackRef = commandService.registerCallbackForCommand(
-						command, this);
+				UIElement callback = new UIElement() {
+
+					public void setChecked(boolean checked) {
+						CommandContributionItem.this.setChecked(checked);
+					}
+
+					public void setDisabledIcon(ImageDescriptor desc) {
+						CommandContributionItem.this.setDisabledIcon(desc);
+					}
+
+					public void setHoverIcon(ImageDescriptor desc) {
+						CommandContributionItem.this.setHoverIcon(desc);
+					}
+
+					public void setIcon(ImageDescriptor desc) {
+						CommandContributionItem.this.setIcon(desc);
+					}
+
+					public void setText(String text) {
+						CommandContributionItem.this.setText(text);
+					}
+
+					public void setTooltip(String text) {
+						CommandContributionItem.this.setTooltip(text);
+					}
+				};
+				elementRef = commandService.registerElementForCommand(command,
+						callback);
 				command.getCommand().addCommandListener(getCommandListener());
 			} catch (NotDefinedException e) {
 				WorkbenchPlugin.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
@@ -416,11 +440,11 @@ public final class CommandContributionItem extends ContributionItem implements
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	public void dispose() {
-		if (callbackRef != null) {
-			commandService.unregisterCallback(callbackRef);
-			callbackRef = null;
+		if (elementRef != null) {
+			commandService.unregisterElement(elementRef);
+			elementRef = null;
 		}
-		if (commandListener!=null) {
+		if (commandListener != null) {
 			command.getCommand().removeCommandListener(commandListener);
 			commandListener = null;
 		}
@@ -630,17 +654,5 @@ public final class CommandContributionItem extends ContributionItem implements
 			return command.getCommand().isEnabled();
 		}
 		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == ICommandCallback.class) {
-			return this;
-		}
-		return null;
 	}
 }

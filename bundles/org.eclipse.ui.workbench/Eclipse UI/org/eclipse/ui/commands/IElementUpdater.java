@@ -13,7 +13,7 @@ package org.eclipse.ui.commands;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * An IHandler for a command that expects to provide feedback through the
@@ -28,17 +28,17 @@ import org.eclipse.core.runtime.IAdaptable;
  * @since 3.3
  * 
  */
-public interface ICallbackUpdater {
+public interface IElementUpdater {
 	/**
-	 * Whenever the callbacks for a command are refreshed, this method is called
+	 * Whenever the elements for a command are refreshed, this method is called
 	 * on the active handler for that command.
 	 * 
-	 * @param callback
-	 *            A callback for a specific UI element. Will not be
+	 * @param element
+	 *            An element for a specific UI element. Will not be
 	 *            <code>null</code>.
 	 * @param parameters
 	 *            Any parameters registered with the callback. Will not be
 	 *            <code>null</code>, but it may be empty.
 	 */
-	public void updateCallback(IAdaptable callback, Map parameters);
+	public void updateElement(UIElement element, Map parameters);
 }

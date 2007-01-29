@@ -20,13 +20,13 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.commands.ICallbackUpdater;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * <p>
@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.0
  */
-public final class HandlerProxy extends AbstractHandler implements ICallbackUpdater {
+public final class HandlerProxy extends AbstractHandler implements IElementUpdater {
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -245,11 +245,11 @@ public final class HandlerProxy extends AbstractHandler implements ICallbackUpda
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable, java.util.Map)
+	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
 	 */
-	public void updateCallback(IAdaptable callback, Map parameters) {
-		if (handler!=null && handler instanceof ICallbackUpdater) {
-			((ICallbackUpdater)handler).updateCallback(callback, parameters);
+	public void updateElement(UIElement element, Map parameters) {
+		if (handler!=null && handler instanceof IElementUpdater) {
+			((IElementUpdater)handler).updateElement(element, parameters);
 		}
 	}
 }

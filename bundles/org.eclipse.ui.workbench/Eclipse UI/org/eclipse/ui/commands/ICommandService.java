@@ -22,7 +22,7 @@ import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -277,7 +277,8 @@ public interface ICommandService extends IDisposable {
 	public void setHelpContextId(IHandler handler, String helpContextId);
 
 	/**
-	 * Register this ParameterizedCommand as providing a user callback.
+	 * Register that this element accepts callbacks for this parameterized
+	 * command.
 	 * <p>
 	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API
@@ -288,24 +289,25 @@ public interface ICommandService extends IDisposable {
 	 * @param command
 	 *            The parameterized command that is already specialized. Must
 	 *            not be <code>null</code>.
-	 * @param callback
+	 * @param element
 	 *            The callback to register for this specialized command
 	 *            instance. Must not be <code>null</code>.
-	 * @return A reference for the registered callback that can be used to
+	 * @return A reference for the registered element that can be used to
 	 *         unregister it.
 	 * @throws NotDefinedException
 	 *             If the command included in the ParameterizedCommand is not
-	 *             defined, or the callback is <code>null</code>.
+	 *             defined, or the element is <code>null</code>.
 	 * @since 3.3
 	 */
-	public ICallbackReference registerCallbackForCommand(
-			ParameterizedCommand command, IAdaptable callback)
+	public IElementReference registerElementForCommand(
+			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException;
 
 	/**
-	 * Re-register a callback provided by the ICommandService. This callback
-	 * reference must not currently be held by the ICommandService. i.e. it must
-	 * have been removed using {@link #unregisterCallback(ICallbackReference)}.
+	 * Re-register a callback element provided by the ICommandService. This
+	 * element reference must not currently be held by the ICommandService. i.e.
+	 * it must have been removed using
+	 * {@link #unregisterElement(IElementReference)}.
 	 * <p>
 	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API
@@ -313,16 +315,16 @@ public interface ICommandService extends IDisposable {
 	 * without consulting with the Platform/UI team.
 	 * </p>
 	 * 
-	 * @param callbackReference
+	 * @param elementReference
 	 *            The reference to re-register. Must not be <code>null</code>.
 	 * @since 3.3
 	 */
-	public void registerCallback(ICallbackReference callbackReference);
+	public void registerElement(IElementReference elementReference);
 
 	/**
-	 * Unregister a callback. It will be removed from the ICommandService. The
-	 * same service that is used to register a callback for a command <b>must</b>
-	 * be used to unregister the callback.
+	 * Unregister an element callback. It will be removed from the
+	 * ICommandService. The same service that is used to register an element for
+	 * a command <b>must</b> be used to unregister the element.
 	 * <p>
 	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API
@@ -330,28 +332,28 @@ public interface ICommandService extends IDisposable {
 	 * without consulting with the Platform/UI team.
 	 * </p>
 	 * 
-	 * @param callbackReference
+	 * @param elementReference
 	 *            The callback reference that was provided by the command
 	 *            service on registration. Must not be <code>null</code>.
 	 * @since 3.3
 	 */
-	public void unregisterCallback(ICallbackReference callbackReference);
+	public void unregisterElement(IElementReference elementReference);
 
 	/**
-	 * Refresh any callbacks registered against the command with the given id.
+	 * Refresh any elements registered against the command with the given id.
 	 * It allows the active handler the opportunity to provide user feedback. If
 	 * the command is parameterized, some of the parameters can be specified to
-	 * help narrow down which callbacks to refresh.
+	 * help narrow down which elements to refresh.
 	 * <p>
-	 * The service locator used in registering the callback can also be used to
-	 * scope the search. For example: if you wanted all callbacks for your
+	 * The service locator used in registering the element can also be used to
+	 * scope the search. For example: if you wanted all elements for your
 	 * command but only within the part's workbench window, you could use:
 	 * 
 	 * <pre>
 	 * Map filter = new HashMap();
 	 * filter.put(IServiceScopes.WINDOW_SCOPE, getSite().getPage()
 	 * 		.getWorkbenchWindow());
-	 * commandService.refreshCallbacks(commandId, filter);
+	 * commandService.refreshElements(commandId, filter);
 	 * </pre>
 	 * 
 	 * </p>
@@ -363,12 +365,12 @@ public interface ICommandService extends IDisposable {
 	 * </p>
 	 * 
 	 * @param commandId
-	 *            The command id to refresh if it has registered callbacks.
+	 *            The command id to refresh if it has registered eleemnts.
 	 * @param filter
 	 *            key-value pairs that can narrow down the callbacks to return.
 	 *            The parameters are <b>AND</b>ed together. This may be
 	 *            <code>null</code>.
 	 * @since 3.3
 	 */
-	public void refreshCallbacks(String commandId, Map filter);
+	public void refreshElements(String commandId, Map filter);
 }

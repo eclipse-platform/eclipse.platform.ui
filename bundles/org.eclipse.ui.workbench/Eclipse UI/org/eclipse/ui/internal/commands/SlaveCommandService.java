@@ -25,9 +25,9 @@ import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.commands.ICallbackReference;
+import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * A command service which delegates almost all responsibility to the parent
@@ -134,7 +134,7 @@ public class SlaveCommandService implements ICommandService {
 		if (!fCallbackCache.isEmpty()) {
 			Object[] array = fCallbackCache.toArray();
 			for (int i = 0; i < array.length; i++) {
-				unregisterCallback((ICallbackReference) array[i]);
+				unregisterElement((IElementReference) array[i]);
 			}
 		}
 	}
@@ -257,56 +257,56 @@ public class SlaveCommandService implements ICommandService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#refreshCallbacks(java.lang.String,
+	 * @see org.eclipse.ui.commands.ICommandService#refreshElements(java.lang.String,
 	 *      java.util.Map)
 	 */
-	public void refreshCallbacks(String commandId, Map filter) {
-		fParentService.refreshCallbacks(commandId, filter);
+	public void refreshElements(String commandId, Map filter) {
+		fParentService.refreshElements(commandId, filter);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#registerCallbackForCommand(org.eclipse.core.commands.ParameterizedCommand,
-	 *      org.eclipse.core.runtime.IAdaptable)
+	 * @see org.eclipse.ui.commands.ICommandService#registerElementForCommand(org.eclipse.core.commands.ParameterizedCommand,
+	 *      org.eclipse.ui.menus.UIElement)
 	 */
-	public ICallbackReference registerCallbackForCommand(
-			ParameterizedCommand command, IAdaptable callback)
+	public IElementReference registerElementForCommand(
+			ParameterizedCommand command, UIElement element)
 			throws NotDefinedException {
 		if (!command.getCommand().isDefined()) {
 			throw new NotDefinedException(
 					"Cannot define a callback for undefined command " //$NON-NLS-1$
 							+ command.getCommand().getId());
 		}
-		if (callback == null) {
+		if (element == null) {
 			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
 					+ command.getCommand().getId());
 		}
 
-		CallbackReference ref = new CallbackReference(command.getId(),
-				callback, command.getParameterMap());
-		registerCallback(ref);
+		ElementReference ref = new ElementReference(command.getId(), element,
+				command.getParameterMap());
+		registerElement(ref);
 		return ref;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#registerCallback(org.eclipse.ui.commands.ICallbackReference)
+	 * @see org.eclipse.ui.commands.ICommandService#registerElement(org.eclipse.ui.commands.IElementReference)
 	 */
-	public void registerCallback(ICallbackReference callbackReference) {
-		fCallbackCache.add(callbackReference);
-		callbackReference.getParameters().put(fScopingName, fScopingValue);
-		fParentService.registerCallback(callbackReference);
+	public void registerElement(IElementReference elementReference) {
+		fCallbackCache.add(elementReference);
+		elementReference.getParameters().put(fScopingName, fScopingValue);
+		fParentService.registerElement(elementReference);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#unregisterCallback(org.eclipse.ui.commands.ICallbackReference)
+	 * @see org.eclipse.ui.commands.ICommandService#unregisterElement(org.eclipse.ui.commands.IElementReference)
 	 */
-	public void unregisterCallback(ICallbackReference callbackReference) {
-		fCallbackCache.remove(callbackReference);
-		fParentService.unregisterCallback(callbackReference);
+	public void unregisterElement(IElementReference elementReference) {
+		fCallbackCache.remove(elementReference);
+		fParentService.unregisterElement(elementReference);
 	}
 }

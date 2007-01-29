@@ -14,19 +14,19 @@ package org.eclipse.ui.internal.commands;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.commands.ICallbackReference;
+import org.eclipse.ui.commands.IElementReference;
+import org.eclipse.ui.menus.UIElement;
 
 /**
- * Our callback reference that is used during callback
+ * Our element reference that is used during element
  * registration/unregistration.
  * 
  * @since 3.3
  */
-public class CallbackReference implements ICallbackReference {
+public class ElementReference implements IElementReference {
 
 	private String commandId;
-	private IAdaptable callback;
+	private UIElement element;
 	private HashMap parameters;
 
 	/**
@@ -35,13 +35,13 @@ public class CallbackReference implements ICallbackReference {
 	 * @param id
 	 *            command id. Must not be <code>null</code>.
 	 * @param adapt
-	 *            the callback. Must not be <code>null</code>.
+	 *            the element. Must not be <code>null</code>.
 	 * @param parms.
 	 *            parameters used for filtering. Must not be <code>null</code>.
 	 */
-	public CallbackReference(String id, IAdaptable adapt, Map parms) {
+	public ElementReference(String id, UIElement adapt, Map parms) {
 		commandId = id;
-		callback = adapt;
+		element = adapt;
 		if (parms == null) {
 			parameters = new HashMap();
 		} else {
@@ -52,25 +52,21 @@ public class CallbackReference implements ICallbackReference {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICallbackReference#getCallback()
+	 * @see org.eclipse.ui.commands.IElementReference#getElement()
 	 */
-	public IAdaptable getCallback() {
-		return callback;
+	public UIElement getElement() {
+		return element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.ICallbackReference#getCommandId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.commands.IElementReference#getCommandId()
 	 */
 	public String getCommandId() {
 		return commandId;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.ICallbackReference#getParameters()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.commands.IElementReference#getParameters()
 	 */
 	public Map getParameters() {
 		return parameters;

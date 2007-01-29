@@ -22,13 +22,14 @@ import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICallbackReference;
-import org.eclipse.ui.commands.ICallbackUpdater;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementReference;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -106,7 +107,7 @@ public class CommandCallbackTest extends UITestCase {
 	}
 
 	private static class CallbackHandler extends AbstractHandler implements
-			ICallbackUpdater {
+			IElementUpdater {
 		public int callbacks = 0;
 
 		/*
@@ -115,7 +116,7 @@ public class CommandCallbackTest extends UITestCase {
 		 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
 		 *      java.util.Map)
 		 */
-		public void updateCallback(IAdaptable callback, Map parameters) {
+		public void updateElement(UIElement callback, Map parameters) {
 			callbacks++;
 		}
 
@@ -129,24 +130,88 @@ public class CommandCallbackTest extends UITestCase {
 		}
 	}
 
+	private static class MyElement extends UIElement {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.menus.UIElement#setChecked(boolean)
+		 */
+		public void setChecked(boolean checked) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.menus.UIElement#setDisabledIcon(org.eclipse.jface.resource.ImageDescriptor)
+		 */
+		public void setDisabledIcon(ImageDescriptor desc) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.menus.UIElement#setHoverIcon(org.eclipse.jface.resource.ImageDescriptor)
+		 */
+		public void setHoverIcon(ImageDescriptor desc) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.menus.UIElement#setIcon(org.eclipse.jface.resource.ImageDescriptor)
+		 */
+		public void setIcon(ImageDescriptor desc) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.menus.UIElement#setText(java.lang.String)
+		 */
+		public void setText(String text) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.menus.UIElement#setTooltip(java.lang.String)
+		 */
+		public void setTooltip(String text) {
+			// TODO Auto-generated method stub
+
+		}
+
+	}
+
 	public void testNoParametersNoCallbacks() throws Exception {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 		try {
-			commandService.registerCallbackForCommand(pc1, null);
+			commandService.registerElementForCommand(pc1, null);
 			fail("Callback should not register");
 		} catch (NotDefinedException e) {
 		}
 		try {
-			commandService.registerCallbackForCommand(pc2, null);
+			commandService.registerElementForCommand(pc2, null);
 			fail("Callback 2 should not register");
 		} catch (NotDefinedException e) {
 		}
 
-		commandService.refreshCallbacks(CMD1_ID + ".1", null);
+		commandService.refreshElements(CMD1_ID + ".1", null);
 		assertEquals(0, cmd1Handler.callbacks);
 
-		commandService.refreshCallbacks(CMD1_ID, null);
+		commandService.refreshElements(CMD1_ID, null);
 		assertEquals(0, cmd1Handler.callbacks);
 	}
 
@@ -154,31 +219,23 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		IElementReference cr1 = commandService.registerElementForCommand(pc1,
+				new MyElement());
+		IElementReference cr2 = commandService.registerElementForCommand(pc2,
+				new MyElement());
 
 		try {
 			assertEquals(2, cmd1Handler.callbacks);
 			cmd1Handler.callbacks = 0;
-			commandService.refreshCallbacks(CMD1_ID, null);
+			commandService.refreshElements(CMD1_ID, null);
 			assertEquals(2, cmd1Handler.callbacks);
 		} finally {
-			commandService.unregisterCallback(cr1);
-			commandService.unregisterCallback(cr2);
+			commandService.unregisterElement(cr1);
+			commandService.unregisterElement(cr2);
 		}
 
 		cmd1Handler.callbacks = 0;
-		commandService.refreshCallbacks(CMD1_ID, null);
+		commandService.refreshElements(CMD1_ID, null);
 		assertEquals(0, cmd1Handler.callbacks);
 	}
 
@@ -194,18 +251,10 @@ public class CommandCallbackTest extends UITestCase {
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		IElementReference cr1 = commandService.registerElementForCommand(pc1,
+				new MyElement());
+		IElementReference cr2 = commandService.registerElementForCommand(pc2,
+				new MyElement());
 		try {
 
 			assertEquals(2, cmd2Handler.callbacks);
@@ -213,22 +262,22 @@ public class CommandCallbackTest extends UITestCase {
 			cmd2Handler.callbacks = 0;
 			Map filter = new HashMap();
 			filter.put(PROT_PARAM_ID, "http");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(2, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "www.eclipse.org");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(1, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.remove(PROT_PARAM_ID);
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(1, cmd2Handler.callbacks);
 
 		} finally {
-			commandService.unregisterCallback(cr1);
-			commandService.unregisterCallback(cr2);
+			commandService.unregisterElement(cr1);
+			commandService.unregisterElement(cr2);
 		}
 	}
 
@@ -249,24 +298,12 @@ public class CommandCallbackTest extends UITestCase {
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr3 = commandService.registerCallbackForCommand(pc3,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		IElementReference cr1 = commandService.registerElementForCommand(pc1,
+				new MyElement());
+		IElementReference cr2 = commandService.registerElementForCommand(pc2,
+				new MyElement());
+		IElementReference cr3 = commandService.registerElementForCommand(pc3,
+				new MyElement());
 		try {
 
 			assertEquals(3, cmd2Handler.callbacks);
@@ -274,27 +311,27 @@ public class CommandCallbackTest extends UITestCase {
 			cmd2Handler.callbacks = 0;
 			Map filter = new HashMap();
 			filter.put(PROT_PARAM_ID, "http");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(3, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "www.eclipse.org");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(1, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.remove(PROT_PARAM_ID);
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(1, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "download.eclipse.org");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(2, cmd2Handler.callbacks);
 		} finally {
-			commandService.unregisterCallback(cr1);
-			commandService.unregisterCallback(cr2);
-			commandService.unregisterCallback(cr3);
+			commandService.unregisterElement(cr1);
+			commandService.unregisterElement(cr2);
+			commandService.unregisterElement(cr3);
 		}
 	}
 
@@ -322,66 +359,46 @@ public class CommandCallbackTest extends UITestCase {
 				cmd2,
 				new Parameterization[] { new Parameterization(parmProt, "ftp"),
 						new Parameterization(parmHost, "download.eclipse.org") });
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr3 = commandService.registerCallbackForCommand(pc3,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr4 = commandService.registerCallbackForCommand(pc4,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ICallbackReference cr5 = commandService.registerCallbackForCommand(pc5,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		IElementReference cr1 = commandService.registerElementForCommand(pc1,
+				new MyElement());
+		IElementReference cr2 = commandService.registerElementForCommand(pc2,
+				new MyElement());
+		IElementReference cr3 = commandService.registerElementForCommand(pc3,
+				new MyElement());
+		IElementReference cr4 = commandService.registerElementForCommand(pc4,
+				new MyElement());
+		IElementReference cr5 = commandService.registerElementForCommand(pc5,
+				new MyElement());
 		try {
 			assertEquals(5, cmd2Handler.callbacks);
 			Map filter = new HashMap();
 
 			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "http");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(3, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "ftp");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(2, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "download.eclipse.org");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(1, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.remove(PROT_PARAM_ID);
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(3, cmd2Handler.callbacks);
 
 		} finally {
-			commandService.unregisterCallback(cr1);
-			commandService.unregisterCallback(cr2);
-			commandService.unregisterCallback(cr3);
-			commandService.unregisterCallback(cr4);
-			commandService.unregisterCallback(cr5);
+			commandService.unregisterElement(cr1);
+			commandService.unregisterElement(cr2);
+			commandService.unregisterElement(cr3);
+			commandService.unregisterElement(cr4);
+			commandService.unregisterElement(cr5);
 		}
 	}
 
@@ -400,33 +417,25 @@ public class CommandCallbackTest extends UITestCase {
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		IElementReference cr1 = commandService.registerElementForCommand(pc1,
+				new MyElement());
 		// should be removed when the window goes away
-		cs.registerCallbackForCommand(pc2, new IAdaptable() {
-			public Object getAdapter(Class adapter) {
-				return null;
-			}
-		});
+		cs.registerElementForCommand(pc2, new MyElement());
 		try {
 			assertEquals(2, cmd2Handler.callbacks);
 
 			Map filter = new HashMap();
 			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "http");
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(2, cmd2Handler.callbacks);
 
 			cmd2Handler.callbacks = 0;
 			filter.put(IServiceScopes.WINDOW_SCOPE, window);
-			commandService.refreshCallbacks(CMD2_ID, filter);
+			commandService.refreshElements(CMD2_ID, filter);
 			assertEquals(1, cmd2Handler.callbacks);
 		} finally {
-			commandService.unregisterCallback(cr1);
+			commandService.unregisterElement(cr1);
 		}
 	}
 
@@ -438,27 +447,19 @@ public class CommandCallbackTest extends UITestCase {
 		ICommandService cs = (ICommandService) window
 				.getService(ICommandService.class);
 
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		IElementReference cr1 = commandService.registerElementForCommand(pc1,
+				new MyElement());
 		// should be removed when the window goes away
-		cs.registerCallbackForCommand(pc2, new IAdaptable() {
-			public Object getAdapter(Class adapter) {
-				return null;
-			}
-		});
+		cs.registerElementForCommand(pc2, new MyElement());
 
 		try {
 			assertEquals(2, cmd1Handler.callbacks);
 			cmd1Handler.callbacks = 0;
 			closeAllTestWindows();
-			commandService.refreshCallbacks(CMD1_ID, null);
+			commandService.refreshElements(CMD1_ID, null);
 			assertEquals(1, cmd1Handler.callbacks);
 		} finally {
-			commandService.unregisterCallback(cr1);
+			commandService.unregisterElement(cr1);
 		}
 	}
 }

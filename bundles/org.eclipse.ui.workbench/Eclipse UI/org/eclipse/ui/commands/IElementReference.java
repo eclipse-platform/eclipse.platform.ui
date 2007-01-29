@@ -13,7 +13,7 @@ package org.eclipse.ui.commands;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.menus.UIElement;
 
 /**
  * the ICommandService will return a reference for all callbacks that are
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * @since 3.3
  */
-public interface ICallbackReference {
+public interface IElementReference {
 	/**
 	 * The command id that this callback was registered against.
 	 * 
@@ -45,7 +45,7 @@ public interface ICallbackReference {
 	 * @return Adapts to provide appropriate user feedback. Will not be
 	 *         <code>null</code>.
 	 */
-	public IAdaptable getCallback();
+	public UIElement getElement();
 
 	/**
 	 * Parameters that help scope this callback registration. For example, it
