@@ -215,7 +215,7 @@ public class MessageManager implements IMessageManager {
 			Message message = MessageManager.this.addMessage(getPrefix(), key,
 					text, data, type, controlMessages);
 			message.control = decoration.getControl();
-			if (isAutoRefresh())
+			if (isAutoUpdate())
 				update();
 		}
 
@@ -223,7 +223,7 @@ public class MessageManager implements IMessageManager {
 			Message message = findMessage(key, controlMessages);
 			if (message != null) {
 				controlMessages.remove(message);
-				if (isAutoRefresh())
+				if (isAutoUpdate())
 					update();
 			}
 			return message != null;
@@ -233,7 +233,7 @@ public class MessageManager implements IMessageManager {
 			if (controlMessages.isEmpty())
 				return false;
 			controlMessages.clear();
-			if (isAutoRefresh())
+			if (isAutoUpdate())
 				update();
 			return true;
 		}
@@ -275,8 +275,8 @@ public class MessageManager implements IMessageManager {
 	 */
 	public void addMessage(Object key, String messageText, Object data, int type) {
 		addMessage(null, key, messageText, data, type, messages);
-		if (isAutoRefresh())
-			refreshForm();
+		if (isAutoUpdate())
+			updateForm();
 	}
 
 	/*
@@ -294,8 +294,8 @@ public class MessageManager implements IMessageManager {
 			decorators.put(control, dec);
 		}
 		dec.addMessage(key, messageText, data, type);
-		if (isAutoRefresh())
-			refreshForm();
+		if (isAutoUpdate())
+			updateForm();
 	}
 
 	/*
@@ -307,8 +307,8 @@ public class MessageManager implements IMessageManager {
 		Message message = findMessage(key, messages);
 		if (message != null) {
 			messages.remove(message);
-			if (isAutoRefresh())
-				refreshForm();
+			if (isAutoUpdate())
+				updateForm();
 		}
 	}
 
@@ -320,8 +320,8 @@ public class MessageManager implements IMessageManager {
 	public void removeMessages() {
 		if (!messages.isEmpty()) {
 			messages.clear();
-			if (isAutoRefresh())
-				refreshForm();
+			if (isAutoUpdate())
+				updateForm();
 		}
 	}
 
@@ -336,8 +336,8 @@ public class MessageManager implements IMessageManager {
 		if (dec == null)
 			return;
 		if (dec.removeMessage(key))
-			if (isAutoRefresh())
-				refreshForm();
+			if (isAutoUpdate())
+				updateForm();
 	}
 
 	/*
@@ -349,8 +349,8 @@ public class MessageManager implements IMessageManager {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
 		if (dec != null) {
 			if (dec.removeMessages()) {
-				if (isAutoRefresh())
-					refreshForm();
+				if (isAutoUpdate())
+					updateForm();
 			}
 		}
 	}
@@ -371,8 +371,8 @@ public class MessageManager implements IMessageManager {
 			messages.clear();
 			needsUpdate = true;
 		}
-		if (needsUpdate && isAutoRefresh())
-			refreshForm();
+		if (needsUpdate && isAutoUpdate())
+			updateForm();
 	}
 
 	/*
@@ -412,21 +412,21 @@ public class MessageManager implements IMessageManager {
 	 * 
 	 * @see org.eclipse.ui.forms.IMessageManager#update()
 	 */
-	public void refresh() {
+	public void update() {
 		// Update decorations
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = (ControlDecorator) iter.next();
 			dec.update();
 		}
 		// Update the form
-		refreshForm();
+		updateForm();
 	}
 
 	/*
 	 * Updates the container by rolling the messages up from the controls.
 	 */
 
-	private void refreshForm() {
+	private void updateForm() {
 		ArrayList mergedList = new ArrayList();
 		mergedList.addAll(messages);
 		for (Enumeration enm = decorators.elements(); enm.hasMoreElements();) {
@@ -581,7 +581,7 @@ public class MessageManager implements IMessageManager {
 	 * 
 	 * @see org.eclipse.ui.forms.IMessageManager#isAutoUpdate()
 	 */
-	public boolean isAutoRefresh() {
+	public boolean isAutoUpdate() {
 		return autoUpdate;
 	}
 
@@ -590,10 +590,10 @@ public class MessageManager implements IMessageManager {
 	 * 
 	 * @see org.eclipse.ui.forms.IMessageManager#setAutoUpdate(boolean)
 	 */
-	public void setAutoRefresh(boolean autoUpdate) {
+	public void setAutoUpdate(boolean autoUpdate) {
 		boolean needsUpdate = !this.autoUpdate && autoUpdate;
 		this.autoUpdate = autoUpdate;
 		if (needsUpdate)
-			refresh();
+			update();
 	}
 }

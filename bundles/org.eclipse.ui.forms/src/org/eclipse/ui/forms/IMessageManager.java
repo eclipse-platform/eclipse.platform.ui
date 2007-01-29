@@ -135,34 +135,37 @@ public interface IMessageManager {
 
 	/**
 	 * Updates the message container with the messages currently in the manager.
-	 * Use this method when some of the controls previously managed have been
-	 * disposed. Automatic update on control dispose is not done to avoid an
-	 * attempt to update a container that is itself in the process of being
-	 * disposed.
-	 * <p>
-	 * has been disabled.
+	 * There are two scenarios in which a client may want to use this method:
+	 * <ol>
+	 * <li>When controls previously managed by this manager have been disposed.</li>
+	 * <li>When automatic update has been turned off.</li>
+	 * </ol>
+	 * In all other situations, the manager will keep the form in sync
+	 * automatically.
 	 * 
-	 * @see #setAutoRefresh(boolean)
+	 * @see #setAutoUpdate(boolean)
 	 */
-	void refresh();
+	void update();
 
 	/**
-	 * Controls whether the form is automatically refreshed when messages are
-	 * added or removed. By default, auto refresh is on. Clients can turn it off
-	 * prior to adding or removing a number of messages in a batch. Turning it
-	 * back on will trigger a refresh.
+	 * Controls whether the form is automatically updated when messages are
+	 * added or removed. By default, auto update is on. Clients can turn it off
+	 * prior to adding or removing a number of messages as a batch. Turning it
+	 * back on will trigger an update.
 	 * 
 	 * @param enabled
-	 *            sets the state of the automatic refresh
+	 *            sets the state of the automatic update
 	 */
-	void setAutoRefresh(boolean enabled);
+	void setAutoUpdate(boolean enabled);
 
 	/**
+	 * Tests whether the form will be automatically updated when messages are
+	 * added or removed.
 	 * 
-	 * @return <code>true</code> if auto refresh is active, <code>false</code>
+	 * @return <code>true</code> if auto update is active, <code>false</code>
 	 *         otherwise.
 	 */
-	boolean isAutoRefresh();
+	boolean isAutoUpdate();
 
 	/**
 	 * Sets the alternative message prefix provider. The default prefix provider
