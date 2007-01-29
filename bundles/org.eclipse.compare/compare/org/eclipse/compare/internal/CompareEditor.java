@@ -277,14 +277,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					if (status.isOK()) {
 						// We need to update the saveables list
 						setState(INITIALIZED);
-						Saveable[] saveables = getSaveables();
-						if (saveables.length > 0) {
-							ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
-							if (listener != null) {
-								listener.handleLifecycleEvent(
-										new SaveablesLifecycleEvent(CompareEditor.this, SaveablesLifecycleEvent.POST_OPEN, saveables, false));
-							}
-						}
 						return Status.OK_STATUS;
 					}
 					if (status.getCode() == CompareUIPlugin.NO_DIFFERENCE) {
