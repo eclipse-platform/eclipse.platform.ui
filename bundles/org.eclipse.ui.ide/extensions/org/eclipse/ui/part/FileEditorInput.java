@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import java.net.URI;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -159,7 +160,8 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
 			return location;
 		//this is not a local file, so try to obtain a local file
 		try {
-			IFileStore store = EFS.getStore(file.getLocationURI());
+			final URI locationURI = file.getLocationURI();
+			IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
 			//if no local file is available, obtain a cached file
