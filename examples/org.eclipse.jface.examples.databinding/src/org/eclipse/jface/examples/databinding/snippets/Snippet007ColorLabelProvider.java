@@ -58,102 +58,110 @@ public class Snippet007ColorLabelProvider {
 		persons.add(new Person("Diana Krall", Person.FEMALE));
 		persons.add(new Person("David Gilmour", Person.MALE));
 
-		Shell shell = new Shell();
-		shell.setText("Gender Bender");
-		final Display display = shell.getDisplay();
-		shell.setLayout(new GridLayout());
-		Realm.setDefault(SWTObservables.getRealm(display));
+		final Display display = new Display();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				Shell shell = new Shell(display);
+				shell.setText("Gender Bender");
+				shell.setLayout(new GridLayout());
 
-		Table table = new Table(shell, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
-				| SWT.BORDER);
-		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		table.setLayoutData(gridData);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText("No");
-		column.setWidth(20);
-		column = new TableColumn(table, SWT.NONE);
-		column.setText("Name");
-		column.setWidth(100);
-		final TableViewer viewer = new TableViewer(table);
+				Table table = new Table(shell, SWT.SINGLE | SWT.H_SCROLL
+						| SWT.V_SCROLL | SWT.BORDER);
+				GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+				table.setLayoutData(gridData);
+				table.setHeaderVisible(true);
+				table.setLinesVisible(true);
+				TableColumn column = new TableColumn(table, SWT.NONE);
+				column.setText("No");
+				column.setWidth(20);
+				column = new TableColumn(table, SWT.NONE);
+				column.setText("Name");
+				column.setWidth(100);
+				final TableViewer viewer = new TableViewer(table);
 
-		IObservableList observableList = Observables
-				.staticObservableList(persons);
-		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+				IObservableList observableList = Observables
+						.staticObservableList(persons);
+				ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 
-		viewer.setContentProvider(contentProvider);
+				viewer.setContentProvider(contentProvider);
 
-		// this does not have to correspond to the columns in the table,
-		// we just list all attributes that affect the table content.
-		IObservableMap[] attributes = BeansObservables.observeMaps(
-				contentProvider.getKnownElements(), Person.class, new String[] {
-						"name", "gender" });
+				// this does not have to correspond to the columns in the table,
+				// we just list all attributes that affect the table content.
+				IObservableMap[] attributes = BeansObservables.observeMaps(
+						contentProvider.getKnownElements(), Person.class,
+						new String[] { "name", "gender" });
 
-		class ColorLabelProvider extends ObservableMapLabelProvider implements
-				ITableColorProvider {
-			Color male = display.getSystemColor(SWT.COLOR_BLUE);
+				class ColorLabelProvider extends ObservableMapLabelProvider
+						implements ITableColorProvider {
+					Color male = display.getSystemColor(SWT.COLOR_BLUE);
 
-			Color female = new Color(display, 255, 192, 203);
+					Color female = new Color(display, 255, 192, 203);
 
-			ColorLabelProvider(IObservableMap[] attributes) {
-				super(attributes);
-			}
+					ColorLabelProvider(IObservableMap[] attributes) {
+						super(attributes);
+					}
 
-			// to drive home the point that attributes does not have to match
-			// the columns
-			// in the table, we change the column text as follows:
-			public String getColumnText(Object element, int index) {
-				if (index == 0) {
-					return Integer.toString(persons.indexOf(element) + 1);
+					// to drive home the point that attributes does not have to
+					// match
+					// the columns
+					// in the table, we change the column text as follows:
+					public String getColumnText(Object element, int index) {
+						if (index == 0) {
+							return Integer
+									.toString(persons.indexOf(element) + 1);
+						}
+						return ((Person) element).getName();
+					}
+
+					public Color getBackground(Object element, int index) {
+						return null;
+					}
+
+					public Color getForeground(Object element, int index) {
+						if (index == 0)
+							return null;
+						Person person = (Person) element;
+						return (person.getGender() == Person.MALE) ? male
+								: female;
+					}
+
+					public void dispose() {
+						super.dispose();
+						female.dispose();
+					}
 				}
-				return ((Person) element).getName();
-			}
+				viewer.setLabelProvider(new ColorLabelProvider(attributes));
 
-			public Color getBackground(Object element, int index) {
-				return null;
-			}
+				viewer.setInput(observableList);
 
-			public Color getForeground(Object element, int index) {
-				if (index == 0)
-					return null;
-				Person person = (Person) element;
-				return (person.getGender() == Person.MALE) ? male : female;
-			}
+				table.getColumn(0).pack();
 
-			public void dispose() {
-				super.dispose();
-				female.dispose();
-			}
-		}
-		viewer.setLabelProvider(new ColorLabelProvider(attributes));
+				Button button = new Button(shell, SWT.PUSH);
+				button.setText("Toggle Gender");
+				button.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent arg0) {
+						StructuredSelection selection = (StructuredSelection) viewer
+								.getSelection();
+						if (selection != null && !selection.isEmpty()) {
+							Person person = (Person) selection
+									.getFirstElement();
+							person
+									.setGender((person.getGender() == Person.MALE) ? Person.FEMALE
+											: Person.MALE);
+						}
+					}
+				});
 
-		viewer.setInput(observableList);
+				shell.setSize(300, 400);
+				shell.open();
 
-		table.getColumn(0).pack();
-
-		Button button = new Button(shell, SWT.PUSH);
-		button.setText("Toggle Gender");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent arg0) {
-				StructuredSelection selection = (StructuredSelection) viewer
-						.getSelection();
-				if (selection != null && !selection.isEmpty()) {
-					Person person = (Person) selection.getFirstElement();
-					person
-							.setGender((person.getGender() == Person.MALE) ? Person.FEMALE
-									: Person.MALE);
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
 				}
 			}
 		});
-
-		shell.setSize(300, 400);
-		shell.open();
-
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+		display.dispose();
 	}
 
 	private static class Person {

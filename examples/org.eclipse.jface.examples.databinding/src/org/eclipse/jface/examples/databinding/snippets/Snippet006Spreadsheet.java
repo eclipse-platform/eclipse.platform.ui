@@ -144,150 +144,164 @@ public class Snippet006Spreadsheet {
 	public static void main(String[] args) {
 
 		final Display display = new Display();
-		Shell shell = new Shell(display);
-        Realm.setDefault(SWTObservables.getRealm(display));
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				Shell shell = new Shell(display);
 
-		final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
-				| SWT.FULL_SELECTION | SWT.VIRTUAL);
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
+				final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
+						| SWT.FULL_SELECTION | SWT.VIRTUAL);
+				table.setLinesVisible(true);
+				table.setHeaderVisible(true);
 
-		for (int i = 0; i < NUM_COLUMNS; i++) {
-			TableColumn tableColumn = new TableColumn(table, SWT.NONE);
-			tableColumn.setText(Character.toString((char) ('A' + i)));
-			tableColumn.setWidth(40);
-		}
-		for (int i = 0; i < NUM_ROWS; i++) {
-			new TableItem(table, SWT.NONE);
-			for (int j = 0; j < NUM_COLUMNS; j++) {
-				cellFormulas[i][j] = new WritableValue();
-				cellValues[i][j] = new ComputedCellValue(cellFormulas[i][j]);
-				if (!FUNKY_FORMULAS || i == 0 || j == 0) {
-					cellFormulas[i][j].setValue("");
-				} else {
-					cellFormulas[i][j].setValue("=" + cellReference(i - 1, j)
-							+ "+" + cellReference(i, j - 1));
+				for (int i = 0; i < NUM_COLUMNS; i++) {
+					TableColumn tableColumn = new TableColumn(table, SWT.NONE);
+					tableColumn.setText(Character.toString((char) ('A' + i)));
+					tableColumn.setWidth(40);
 				}
-			}
-		}
-
-		new TableUpdater(table) {
-			protected void updateItem(TableItem item) {
-				int rowIndex = item.getParent().indexOf(item);
-				if (DEBUG_LEVEL >= 1) {
-					System.out.println("updating row " + rowIndex);
-				}
-				for (int j = 0; j < NUM_COLUMNS; j++) {
-					item
-							.setText(j, (String) cellValues[rowIndex][j]
-									.getValue());
-				}
-			}
-		};
-
-		if (FUNKY_COUNTER) {
-			// counter in A1
-			display.asyncExec(new Runnable() {
-				public void run() {
-					cellFormulas[0][1].setValue("" + counter++);
-					display.timerExec(COUNTER_UPDATE_DELAY, this);
-				}
-			});
-		}
-
-		// create a TableCursor to navigate around the table
-		final TableCursor cursor = new TableCursor(table, SWT.NONE);
-		// create an editor to edit the cell when the user hits "ENTER"
-		// while over a cell in the table
-		final ControlEditor editor = new ControlEditor(cursor);
-		editor.grabHorizontal = true;
-		editor.grabVertical = true;
-
-		cursor.addSelectionListener(new SelectionAdapter() {
-			// when the TableEditor is over a cell, select the corresponding row
-			// in
-			// the table
-			public void widgetSelected(SelectionEvent e) {
-				table.setSelection(new TableItem[] { cursor.getRow() });
-			}
-
-			// when the user hits "ENTER" in the TableCursor, pop up a text
-			// editor so that
-			// they can change the text of the cell
-			public void widgetDefaultSelected(SelectionEvent e) {
-				final Text text = new Text(cursor, SWT.NONE);
-				TableItem row = cursor.getRow();
-				int rowIndex = table.indexOf(row);
-				int columnIndex = cursor.getColumn();
-				text.setText((String) cellFormulas[rowIndex][columnIndex]
-						.getValue());
-				text.addKeyListener(new KeyAdapter() {
-					public void keyPressed(KeyEvent e) {
-						// close the text editor and copy the data over
-						// when the user hits "ENTER"
-						if (e.character == SWT.CR) {
-							TableItem row = cursor.getRow();
-							int rowIndex = table.indexOf(row);
-							int columnIndex = cursor.getColumn();
-							cellFormulas[rowIndex][columnIndex].setValue(text
-									.getText());
-							text.dispose();
+				for (int i = 0; i < NUM_ROWS; i++) {
+					new TableItem(table, SWT.NONE);
+					for (int j = 0; j < NUM_COLUMNS; j++) {
+						cellFormulas[i][j] = new WritableValue();
+						cellValues[i][j] = new ComputedCellValue(
+								cellFormulas[i][j]);
+						if (!FUNKY_FORMULAS || i == 0 || j == 0) {
+							cellFormulas[i][j].setValue("");
+						} else {
+							cellFormulas[i][j].setValue("="
+									+ cellReference(i - 1, j) + "+"
+									+ cellReference(i, j - 1));
 						}
-						// close the text editor when the user hits "ESC"
-						if (e.character == SWT.ESC) {
-							text.dispose();
+					}
+				}
+
+				new TableUpdater(table) {
+					protected void updateItem(TableItem item) {
+						int rowIndex = item.getParent().indexOf(item);
+						if (DEBUG_LEVEL >= 1) {
+							System.out.println("updating row " + rowIndex);
+						}
+						for (int j = 0; j < NUM_COLUMNS; j++) {
+							item.setText(j, (String) cellValues[rowIndex][j]
+									.getValue());
+						}
+					}
+				};
+
+				if (FUNKY_COUNTER) {
+					// counter in A1
+					display.asyncExec(new Runnable() {
+						public void run() {
+							cellFormulas[0][1].setValue("" + counter++);
+							display.timerExec(COUNTER_UPDATE_DELAY, this);
+						}
+					});
+				}
+
+				// create a TableCursor to navigate around the table
+				final TableCursor cursor = new TableCursor(table, SWT.NONE);
+				// create an editor to edit the cell when the user hits "ENTER"
+				// while over a cell in the table
+				final ControlEditor editor = new ControlEditor(cursor);
+				editor.grabHorizontal = true;
+				editor.grabVertical = true;
+
+				cursor.addSelectionListener(new SelectionAdapter() {
+					// when the TableEditor is over a cell, select the
+					// corresponding row
+					// in
+					// the table
+					public void widgetSelected(SelectionEvent e) {
+						table.setSelection(new TableItem[] { cursor.getRow() });
+					}
+
+					// when the user hits "ENTER" in the TableCursor, pop up a
+					// text
+					// editor so that
+					// they can change the text of the cell
+					public void widgetDefaultSelected(SelectionEvent e) {
+						final Text text = new Text(cursor, SWT.NONE);
+						TableItem row = cursor.getRow();
+						int rowIndex = table.indexOf(row);
+						int columnIndex = cursor.getColumn();
+						text
+								.setText((String) cellFormulas[rowIndex][columnIndex]
+										.getValue());
+						text.addKeyListener(new KeyAdapter() {
+							public void keyPressed(KeyEvent e) {
+								// close the text editor and copy the data over
+								// when the user hits "ENTER"
+								if (e.character == SWT.CR) {
+									TableItem row = cursor.getRow();
+									int rowIndex = table.indexOf(row);
+									int columnIndex = cursor.getColumn();
+									cellFormulas[rowIndex][columnIndex]
+											.setValue(text.getText());
+									text.dispose();
+								}
+								// close the text editor when the user hits
+								// "ESC"
+								if (e.character == SWT.ESC) {
+									text.dispose();
+								}
+							}
+						});
+						editor.setEditor(text);
+						text.setFocus();
+					}
+				});
+				// Hide the TableCursor when the user hits the "MOD1" or "MOD2"
+				// key.
+				// This alows the user to select multiple items in the table.
+				cursor.addKeyListener(new KeyAdapter() {
+					public void keyPressed(KeyEvent e) {
+						if (e.keyCode == SWT.MOD1 || e.keyCode == SWT.MOD2
+								|| (e.stateMask & SWT.MOD1) != 0
+								|| (e.stateMask & SWT.MOD2) != 0) {
+							cursor.setVisible(false);
 						}
 					}
 				});
-				editor.setEditor(text);
-				text.setFocus();
-			}
-		});
-		// Hide the TableCursor when the user hits the "MOD1" or "MOD2" key.
-		// This alows the user to select multiple items in the table.
-		cursor.addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.MOD1 || e.keyCode == SWT.MOD2
-						|| (e.stateMask & SWT.MOD1) != 0
-						|| (e.stateMask & SWT.MOD2) != 0) {
-					cursor.setVisible(false);
+				// Show the TableCursor when the user releases the "MOD2" or
+				// "MOD1" key.
+				// This signals the end of the multiple selection task.
+				table.addKeyListener(new KeyAdapter() {
+					public void keyReleased(KeyEvent e) {
+						if (e.keyCode == SWT.MOD1
+								&& (e.stateMask & SWT.MOD2) != 0)
+							return;
+						if (e.keyCode == SWT.MOD2
+								&& (e.stateMask & SWT.MOD1) != 0)
+							return;
+						if (e.keyCode != SWT.MOD1
+								&& (e.stateMask & SWT.MOD1) != 0)
+							return;
+						if (e.keyCode != SWT.MOD2
+								&& (e.stateMask & SWT.MOD2) != 0)
+							return;
+
+						TableItem[] selection = table.getSelection();
+						TableItem row = (selection.length == 0) ? table
+								.getItem(table.getTopIndex()) : selection[0];
+						table.showItem(row);
+						cursor.setSelection(row, 0);
+						cursor.setVisible(true);
+						cursor.setFocus();
+					}
+				});
+
+				GridLayoutFactory.fillDefaults().generateLayout(shell);
+				shell.setSize(400, 300);
+				shell.open();
+
+				// The SWT event loop
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
 				}
 			}
 		});
-		// Show the TableCursor when the user releases the "MOD2" or "MOD1" key.
-		// This signals the end of the multiple selection task.
-		table.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				if (e.keyCode == SWT.MOD1 && (e.stateMask & SWT.MOD2) != 0)
-					return;
-				if (e.keyCode == SWT.MOD2 && (e.stateMask & SWT.MOD1) != 0)
-					return;
-				if (e.keyCode != SWT.MOD1 && (e.stateMask & SWT.MOD1) != 0)
-					return;
-				if (e.keyCode != SWT.MOD2 && (e.stateMask & SWT.MOD2) != 0)
-					return;
-
-				TableItem[] selection = table.getSelection();
-				TableItem row = (selection.length == 0) ? table.getItem(table
-						.getTopIndex()) : selection[0];
-				table.showItem(row);
-				cursor.setSelection(row, 0);
-				cursor.setVisible(true);
-				cursor.setFocus();
-			}
-		});
-
-		GridLayoutFactory.fillDefaults().generateLayout(shell);
-		shell.setSize(400, 300);
-		shell.open();
-
-		// The SWT event loop
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-
+		display.dispose();
 	}
 
 	private static String cellReference(int rowIndex, int columnIndex) {

@@ -29,13 +29,13 @@ import org.eclipse.swt.widgets.Display;
  */
 public class WritableListTest extends TestCase {
 	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
+		RealmTester.setDefault(null);
 	}
-	
+
 	public void testClear() {
 		ThreadRealm realm = new ThreadRealm();
 		realm.init(Thread.currentThread());
-		
+
 		WritableList writableList = new WritableList(realm);
 		writableList.add("hello");
 		writableList.add("world");
@@ -43,26 +43,26 @@ public class WritableListTest extends TestCase {
 		writableList.clear();
 		assertEquals(0, writableList.size());
 	}
-	
+
 	public void testSetRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableList list = new WritableList();
 				list.add("");
 				list.set(0, "");
-			}			
+			}
 		});
 	}
-	
+
 	public void testAddRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableList list = new WritableList();
 				list.add("");
-			}			
+			}
 		});
 	}
-	
+
 	public void testAddByIndexRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -71,7 +71,7 @@ public class WritableListTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testAddAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -80,45 +80,45 @@ public class WritableListTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testAddAllByIndexRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableList list = new WritableList();
 				list.addAll(0, Collections.EMPTY_LIST);
-			}			
+			}
 		});
 	}
-	
+
 	public void testRemoveRealmChecks() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
+		RealmTester.setDefault(new CurrentRealm(true));
 		final WritableList list = new WritableList();
 		list.add("");
 		list.add("");
-		
+
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				list.remove("");
-			}			
+			}
 		});
-		Realm.setDefault(null);
+		RealmTester.setDefault(null);
 	}
-	
+
 	public void testRemoveByIndexRealmChecks() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
+		RealmTester.setDefault(new CurrentRealm(true));
 		final WritableList list = new WritableList();
 		list.add("");
 		list.add("");
-		
+
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				list.remove(list.size() - 1);
-			}			
+			}
 		});
-		
-		Realm.setDefault(null);
+
+		RealmTester.setDefault(null);
 	}
-	
+
 	public void testRemoveAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -127,37 +127,37 @@ public class WritableListTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testRetainAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableList list = new WritableList();
 				list.retainAll(Collections.EMPTY_LIST);
-			}			
+			}
 		});
 	}
-	
+
 	public void testClearRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableList list = new WritableList();
 				list.clear();
-			}			
+			}
 		});
 	}
-	
+
 	public void testNullElementType() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		RealmTester.setDefault(SWTObservables.getRealm(Display.getDefault()));
 		WritableList writableList = new WritableList();
 		assertNull(writableList.getElementType());
-		
+
 		writableList = new WritableList(Realm.getDefault());
 		assertNull(writableList.getElementType());
 	}
-	
+
 	public void testWithElementType() throws Exception {
-		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-		
+		RealmTester.setDefault(SWTObservables.getRealm(Display.getDefault()));
+
 		Object elementType = String.class;
 		WritableList list = WritableList.withElementType(elementType);
 		assertNotNull(list);

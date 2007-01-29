@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
@@ -29,12 +28,12 @@ public class AbstractObservableListTest extends TestCase {
 	private AbstractObservableListStub list;
 
 	protected void setUp() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));	
+		RealmTester.setDefault(new CurrentRealm(true));
 		list = new AbstractObservableListStub();
 	}
-	
+
 	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
+		RealmTester.setDefault(null);
 	}
 
 	public void testFireChangeRealmChecks() throws Exception {
@@ -60,29 +59,31 @@ public class AbstractObservableListTest extends TestCase {
 			}
 		});
 	}
-	
-	public void testIteratorGetterCalled() throws Exception {
-		final AbstractObservableListStub list = new  AbstractObservableListStub();
 
-		IObservable[] observables = ObservableTracker.runAndMonitor(new Runnable() {
-			public void run() {
-				list.iterator();		
-			}
-		}, null, null);
-		
+	public void testIteratorGetterCalled() throws Exception {
+		final AbstractObservableListStub list = new AbstractObservableListStub();
+
+		IObservable[] observables = ObservableTracker.runAndMonitor(
+				new Runnable() {
+					public void run() {
+						list.iterator();
+					}
+				}, null, null);
+
 		assertEquals("length", 1, observables.length);
 		assertEquals("observable", list, observables[0]);
 	}
-	
-	public void testListIteratorGetterCalled() throws Exception {
-		final AbstractObservableListStub list = new  AbstractObservableListStub();
 
-		IObservable[] observables = ObservableTracker.runAndMonitor(new Runnable() {
-			public void run() {
-				list.listIterator();		
-			}
-		}, null, null);
-		
+	public void testListIteratorGetterCalled() throws Exception {
+		final AbstractObservableListStub list = new AbstractObservableListStub();
+
+		IObservable[] observables = ObservableTracker.runAndMonitor(
+				new Runnable() {
+					public void run() {
+						list.listIterator();
+					}
+				}, null, null);
+
 		assertEquals("length", 1, observables.length);
 		assertEquals("observable", list, observables[0]);
 	}

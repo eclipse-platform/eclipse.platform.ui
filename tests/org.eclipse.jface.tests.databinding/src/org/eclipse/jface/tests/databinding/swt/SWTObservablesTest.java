@@ -13,9 +13,9 @@ package org.eclipse.jface.tests.databinding.swt;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Shell;
@@ -25,32 +25,32 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SWTObservablesTest extends TestCase {
 	private Shell shell;
-	
+
 	protected void setUp() {
 		shell = new Shell();
-		Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
+		RealmTester.setDefault(SWTObservables.getRealm(shell.getDisplay()));
 	}
-	
+
 	protected void tearDown() throws Exception {
 		if (shell != null && !shell.isDisposed()) {
 			shell.dispose();
 		}
-		
-		Realm.setDefault(null);
-	}	
-	
+
+		RealmTester.setDefault(null);
+	}
+
 	public void testObserveForeground() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeForeground(shell);
 		assertNotNull(value);
 		assertEquals(Color.class, value.getValueType());
 	}
-	
+
 	public void testObserveBackground() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeBackground(shell);
 		assertNotNull(value);
 		assertEquals(Color.class, value.getValueType());
 	}
-	
+
 	public void testObserveFont() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeFont(shell);
 		assertNotNull(value);

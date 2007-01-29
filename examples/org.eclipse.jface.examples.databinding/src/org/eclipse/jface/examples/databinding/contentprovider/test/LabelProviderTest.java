@@ -187,17 +187,21 @@ public class LabelProviderTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Display display = Display.getDefault();
-        Realm.setDefault(SWTObservables.getRealm(display));
-		LabelProviderTest test = new LabelProviderTest();
-		Shell s = test.getShell();
-		s.pack();
-		s.setVisible(true);
+		final Display display = Display.getDefault();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 
-		while (!s.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+			public void run() {
+				LabelProviderTest test = new LabelProviderTest();
+				Shell s = test.getShell();
+				s.pack();
+				s.setVisible(true);
+
+				while (!s.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
+		});
 		display.dispose();
 	}
 

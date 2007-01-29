@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -107,8 +108,8 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected void setUp() throws Exception {
 		realm = SWTObservables.getRealm(Display.getDefault());
-		Realm.setDefault(realm);
-        
+		RealmTester.setDefault(realm);
+
 		composite = new Composite(getShell(), SWT.NONE);
 		composite.setLayout(new FillLayout());
 		SampleData.initializeData(); // test may manipulate the data... let

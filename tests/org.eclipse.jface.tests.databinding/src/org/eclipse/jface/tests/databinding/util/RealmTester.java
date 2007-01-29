@@ -22,11 +22,22 @@ import org.eclipse.core.runtime.AssertionFailedException;
  * @since 3.2
  */
 public class RealmTester {
+
 	/**
-	 * Runs the provided <code>runnable</code> when the realm is both current and not
-	 * current. It checks for AssertionFailedExceptions and if an exception
-	 * occurs or doesn't occur as expected the test fails. The realm of an
-	 * observable created before the method was invoked must be of type
+	 * Sets the default realm without using Realm.runWithDefault() for testing
+	 * purposes.
+	 * 
+	 * @param realm
+	 */
+	public static void setDefault(Realm realm) {
+		CurrentRealm.setDefault(realm);
+	}
+
+	/**
+	 * Runs the provided <code>runnable</code> when the realm is both current
+	 * and not current. It checks for AssertionFailedExceptions and if an
+	 * exception occurs or doesn't occur as expected the test fails. The realm
+	 * of an observable created before the method was invoked must be of type
 	 * {@link CurrentRealm}. The default realm during the runnable invocation
 	 * is set to an instance of {@link CurrentRealm} when the runnable is
 	 * invoked.
@@ -36,32 +47,34 @@ public class RealmTester {
 	public static void exerciseCurrent(Runnable runnable) {
 		CurrentRealm previousRealm = (CurrentRealm) Realm.getDefault();
 		CurrentRealm realm = new CurrentRealm();
-		Realm.setDefault(realm);
+		setDefault(realm);
 
 		try {
 			realm.setCurrent(true);
 			if (previousRealm != null) {
 				previousRealm.setCurrent(true);
 			}
-			
+
 			try {
 				runnable.run();
 			} catch (AssertionFailedException e) {
-				Assert.fail("Correct realm, exception should not have been thrown");
+				Assert
+						.fail("Correct realm, exception should not have been thrown");
 			}
 
 			realm.setCurrent(false);
 			if (previousRealm != null) {
 				previousRealm.setCurrent(false);
 			}
-			
+
 			try {
 				runnable.run();
-				Assert.fail("Incorrect realm, exception should have been thrown");
+				Assert
+						.fail("Incorrect realm, exception should have been thrown");
 			} catch (AssertionFailedException e) {
 			}
 		} finally {
-			Realm.setDefault(previousRealm);
+			setDefault(previousRealm);
 		}
 	}
 
@@ -96,6 +109,10 @@ public class RealmTester {
 
 		public void asyncExec(Runnable runnable) {
 			// do nothing
+		}
+
+		protected static Realm setDefault(Realm realm) {
+			return Realm.setDefault(realm);
 		}
 	}
 }

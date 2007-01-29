@@ -22,18 +22,18 @@ import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class WritableMapTest extends TestCase {
 	protected void setUp() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
+		RealmTester.setDefault(new CurrentRealm(true));
 	}
-	
+
 	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
+		RealmTester.setDefault(null);
 	}
-	
-	public void testPutRealmChecks() throws Exception {		
+
+	public void testPutRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableMap map = new WritableMap();
@@ -41,8 +41,8 @@ public class WritableMapTest extends TestCase {
 			}
 		});
 	}
-	
-	public void testRemoveRealmChecks() throws Exception {		
+
+	public void testRemoveRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				WritableMap map = new WritableMap();
@@ -51,12 +51,12 @@ public class WritableMapTest extends TestCase {
 				realm.setCurrent(true);
 				map.put("", "");
 				realm.setCurrent(current);
-				
+
 				map.remove("");
 			}
 		});
 	}
-	
+
 	public void testClearRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -65,7 +65,7 @@ public class WritableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testPutAllRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {

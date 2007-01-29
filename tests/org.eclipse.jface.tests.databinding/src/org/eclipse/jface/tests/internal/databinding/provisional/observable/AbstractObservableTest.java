@@ -30,153 +30,153 @@ import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
  */
 public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	private ObservableStub observable;
-	
+
 	protected void setUp() throws Exception {
-        super.setUp();
+		super.setUp();
 		observable = new ObservableStub(Realm.getDefault());
 	}
-	
+
 	public void testStaleListener() throws Exception {
 		assertFalse(observable.hasListeners());
-		
+
 		StaleListener listener1 = new StaleListener();
-		
+
 		assertFalse(observable.firstListenerAdded);
 		observable.addStaleListener(listener1);
 		assertTrue(observable.firstListenerAdded);
-		observable.firstListenerAdded = false; //reset
-		
+		observable.firstListenerAdded = false; // reset
+
 		assertTrue(observable.hasListeners());
 		assertEquals(0, listener1.count);
-		
+
 		observable.fireStale();
-		
+
 		assertEquals(1, listener1.count);
 		assertSame(observable, listener1.source);
-		
-		//Add a second stale listener as 1 vs. 2 listener code is different.
+
+		// Add a second stale listener as 1 vs. 2 listener code is different.
 		StaleListener listener2 = new StaleListener();
 		assertEquals(0, listener2.count);
 		observable.addStaleListener(listener2);
 		observable.fireStale();
-		
+
 		assertEquals(2, listener1.count);
 		assertEquals(1, listener2.count);
-		
-		//Add a third stale listener as 2 vs. 3 or greater code is different.
+
+		// Add a third stale listener as 2 vs. 3 or greater code is different.
 		StaleListener listener3 = new StaleListener();
 		observable.addStaleListener(listener3);
 		assertEquals(0, listener3.count);
-		
+
 		observable.fireStale();
-		
+
 		assertEquals(3, listener1.count);
 		assertEquals(2, listener2.count);
 		assertEquals(1, listener3.count);
-		
+
 		assertFalse(observable.lastListenerRemoved);
 		observable.removeStaleListener(listener1);
 		observable.removeStaleListener(listener2);
 		observable.removeStaleListener(listener3);
 		assertTrue(observable.lastListenerRemoved);
-	
+
 		assertFalse(observable.hasListeners());
 	}
-	
+
 	public void testChangeListener() throws Exception {
 		assertFalse(observable.hasListeners());
-		
+
 		ChangeListener listener1 = new ChangeListener();
-		
+
 		assertFalse(observable.firstListenerAdded);
 		observable.addChangeListener(listener1);
 		assertTrue(observable.firstListenerAdded);
 		observable.firstListenerAdded = false;
-		
+
 		assertTrue(observable.hasListeners());
 		assertEquals(0, listener1.count);
-		
+
 		observable.fireChange();
-		
+
 		assertEquals(1, listener1.count);
 		assertSame(observable, listener1.source);
-		
-		//Add a second listener as the 1 vs. 2 listener code is different.
+
+		// Add a second listener as the 1 vs. 2 listener code is different.
 		ChangeListener listener2 = new ChangeListener();
 		observable.addChangeListener(listener2);
 		assertEquals(0, listener2.count);
-		
+
 		observable.fireChange();
 		assertEquals(2, listener1.count);
 		assertEquals(1, listener2.count);
-		
-		//Add a third listener as the 2 vs. 3 or greater code is different.
+
+		// Add a third listener as the 2 vs. 3 or greater code is different.
 		ChangeListener listener3 = new ChangeListener();
 		observable.addChangeListener(listener3);
 		assertEquals(0, listener3.count);
-		
+
 		observable.fireChange();
-		
+
 		assertEquals(3, listener1.count);
 		assertEquals(2, listener2.count);
 		assertEquals(1, listener3.count);
-		
+
 		assertFalse(observable.lastListenerRemoved);
 		observable.removeChangeListener(listener1);
 		observable.removeChangeListener(listener2);
 		observable.removeChangeListener(listener3);
 		assertTrue(observable.lastListenerRemoved);
-		
+
 		assertFalse(observable.hasListeners());
 	}
-	
+
 	public void testHasListenersWithChangeAndStaleListeners() throws Exception {
 		ChangeListener changeListener = new ChangeListener();
 		StaleListener staleListener = new StaleListener();
-		
+
 		assertFalse(observable.hasListeners());
 		assertFalse(observable.firstListenerAdded);
 		assertFalse(observable.lastListenerRemoved);
-		
+
 		observable.addChangeListener(changeListener);
 		assertTrue(observable.hasListeners());
 		assertTrue(observable.firstListenerAdded);
 		assertFalse(observable.lastListenerRemoved);
-		
-		//reset
+
+		// reset
 		observable.firstListenerAdded = false;
 		observable.lastListenerRemoved = false;
-		
+
 		observable.addStaleListener(staleListener);
 		assertTrue(observable.hasListeners());
 		assertFalse(observable.firstListenerAdded);
 		assertFalse(observable.lastListenerRemoved);
-		
+
 		observable.removeChangeListener(changeListener);
 		assertTrue(observable.hasListeners());
 		assertFalse(observable.firstListenerAdded);
 		assertFalse(observable.lastListenerRemoved);
-		
+
 		observable.removeStaleListener(staleListener);
 		assertFalse(observable.hasListeners());
 		assertFalse(observable.firstListenerAdded);
 		assertTrue(observable.lastListenerRemoved);
 	}
-	
+
 	public void testFireStaleRealmChecks() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
-		
+		RealmTester.setDefault(new CurrentRealm(true));
+
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				observable = new ObservableStub();
 				observable.fireStale();
-			}			
+			}
 		});
 	}
-	
+
 	public void testFireChangeRealmChecks() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
-		
+		RealmTester.setDefault(new CurrentRealm(true));
+
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				observable = new ObservableStub();
@@ -184,50 +184,50 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 			}
 		});
 	}
-	
+
 	private class ChangeListener implements IChangeListener {
 		int count;
 		IObservable source;
-		
+
 		public void handleChange(ChangeEvent event) {
 			count++;
 			this.source = event.getObservable();
 		}
 	}
-	
+
 	private class StaleListener implements IStaleListener {
 		int count;
 		IObservable source;
-		
+
 		public void handleStale(StaleEvent event) {
 			count++;
 			this.source = event.getObservable();
 		}
 	}
-	
+
 	private static class ObservableStub extends AbstractObservable {
 		public ObservableStub() {
 			this(Realm.getDefault());
 		}
-		
-		/**
-         * @param realm
-         */
-        public ObservableStub(Realm realm) {
-            super(realm);
-        }
 
-        private boolean firstListenerAdded;
+		/**
+		 * @param realm
+		 */
+		public ObservableStub(Realm realm) {
+			super(realm);
+		}
+
+		private boolean firstListenerAdded;
 		private boolean lastListenerRemoved;
-		
+
 		protected Object doGetValue() {
 			return null;
 		}
-		
+
 		public Object getValueType() {
 			return null;
 		}
-		
+
 		protected void fireStale() {
 			super.fireStale();
 		}
@@ -235,19 +235,19 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		protected void fireChange() {
 			super.fireChange();
 		}
-		
+
 		public boolean isStale() {
 			return false;
 		}
-		
+
 		protected boolean hasListeners() {
 			return super.hasListeners();
 		}
-		
+
 		protected void firstListenerAdded() {
 			firstListenerAdded = true;
 		}
-		
+
 		protected void lastListenerRemoved() {
 			lastListenerRemoved = true;
 		}

@@ -40,65 +40,72 @@ import org.eclipse.swt.widgets.Text;
  * @since 3.2
  */
 public class Snippet004DataBindingContextErrorLabel {
-    public static void main(String[] args) {
-        Shell shell = new Shell();
-        Display display = shell.getDisplay();
-        Realm.setDefault(SWTObservables.getRealm(display));
-        shell.setLayout(new GridLayout(2, false));
+	public static void main(String[] args) {
+		final Display display = new Display();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				Shell shell = new Shell(display);
+				shell.setLayout(new GridLayout(2, false));
 
-        new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");
+				new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");
 
-        Text text = new Text(shell, SWT.BORDER);
-        WritableValue value = WritableValue.withValueType(String.class);
-        new Label(shell, SWT.NONE).setText("Error:");
+				Text text = new Text(shell, SWT.BORDER);
+				WritableValue value = WritableValue.withValueType(String.class);
+				new Label(shell, SWT.NONE).setText("Error:");
 
-        Label errorLabel = new Label(shell, SWT.BORDER);
-        errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
-        GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT).applyTo(errorLabel);
+				Label errorLabel = new Label(shell, SWT.BORDER);
+				errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
+				GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT).applyTo(
+						errorLabel);
 
-        DataBindingContext dbc = new DataBindingContext();
+				DataBindingContext dbc = new DataBindingContext();
 
-		// Bind the text to the value.
-		Binding binding = dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), value,
-				new DefaultBindSpec().addTargetValidator(
-						BindingEvent.PIPELINE_AFTER_CONVERT,
-						new FiveValidator()));
+				// Bind the text to the value.
+				Binding binding = dbc.bindValue(SWTObservables.observeText(
+						text, SWT.Modify), value, new DefaultBindSpec()
+						.addTargetValidator(
+								BindingEvent.PIPELINE_AFTER_CONVERT,
+								new FiveValidator()));
 
-		binding.addBindingEventListener(new IBindingListener() {
-			public IStatus handleBindingEvent(BindingEvent e) {
-				System.out.println(e);
-				return Status.OK_STATUS;
+				binding.addBindingEventListener(new IBindingListener() {
+					public IStatus handleBindingEvent(BindingEvent e) {
+						System.out.println(e);
+						return Status.OK_STATUS;
+					}
+				});
+
+				// Bind the error label to the validation error on the dbc.
+				binding = dbc.bindValue(SWTObservables.observeText(errorLabel),
+						new AggregateValidationStatus(dbc.getBindings(),
+								AggregateValidationStatus.MAX_SEVERITY), null);
+
+				binding.addBindingEventListener(new IBindingListener() {
+					public IStatus handleBindingEvent(BindingEvent e) {
+						System.out.println(e);
+						return Status.OK_STATUS;
+					}
+				});
+
+				shell.pack();
+				shell.open();
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
 			}
-        });
-		
-        // Bind the error label to the validation error on the dbc.
-        binding = dbc.bindValue(SWTObservables.observeText(errorLabel),
-				new AggregateValidationStatus(dbc.getBindings(),
-						AggregateValidationStatus.MAX_SEVERITY), null);
-        
-        binding.addBindingEventListener(new IBindingListener() {
-			public IStatus handleBindingEvent(BindingEvent e) {
-				System.out.println(e);
-				return Status.OK_STATUS;
-			}
-        });
-        
-        shell.pack();
-        shell.open();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch())
-                display.sleep();
-        }
-    }
+		});
+		display.dispose();
+	}
 
-    /**
-     * Validator that returns validation errors for any value other than 5.
-     * 
-     * @since 3.2
-     */
-    private static class FiveValidator implements IValidator {
-        public IStatus validate(Object value) {
-            return ("5".equals(value)) ? Status.OK_STATUS : ValidationStatus.error("the value was '" + value + "', not '5'");
-        }
-    }
+	/**
+	 * Validator that returns validation errors for any value other than 5.
+	 * 
+	 * @since 3.2
+	 */
+	private static class FiveValidator implements IValidator {
+		public IStatus validate(Object value) {
+			return ("5".equals(value)) ? Status.OK_STATUS : ValidationStatus
+					.error("the value was '" + value + "', not '5'");
+		}
+	}
 }

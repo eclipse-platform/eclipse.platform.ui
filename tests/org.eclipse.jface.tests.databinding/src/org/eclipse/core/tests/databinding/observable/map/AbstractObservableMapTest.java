@@ -15,7 +15,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.AbstractObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
@@ -28,12 +27,12 @@ public class AbstractObservableMapTest extends TestCase {
 	private AbstractObservableMapStub map;
 
 	protected void setUp() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
+		RealmTester.setDefault(new CurrentRealm(true));
 		map = new AbstractObservableMapStub();
 	}
 	
 	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
+		RealmTester.setDefault(null);
 	}
 	
 	public void testIsStaleRealmChecks() throws Exception {

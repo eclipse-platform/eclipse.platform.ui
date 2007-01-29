@@ -33,44 +33,49 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet010MasterDetail {
 	public static void main(String[] args) {
-		Shell shell = new Shell();
-		shell.setLayout(new GridLayout());
+		final Display display = new Display();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				Shell shell = new Shell(display);
+				shell.setLayout(new GridLayout());
 
-		Person[] persons = new Person[] { new Person("Me"),
-				new Person("Myself"), new Person("I") };
+				Person[] persons = new Person[] { new Person("Me"),
+						new Person("Myself"), new Person("I") };
 
-		ListViewer viewer = new ListViewer(shell);
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(persons);
+				ListViewer viewer = new ListViewer(shell);
+				viewer.setContentProvider(new ArrayContentProvider());
+				viewer.setInput(persons);
 
-		Text name = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
+				Text name = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
 
-		Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
+				// 1. Observe changes in selection.
+				IObservableValue selection = ViewersObservables
+						.observeSingleSelection(viewer);
 
-		// 1. Observe changes in selection.
-		IObservableValue selection = ViewersObservables
-				.observeSingleSelection(viewer);
+				// 2. Observe the name property of the current selection.
+				IObservableValue detailObservable = BeansObservables
+						.observeDetailValue(Realm.getDefault(), selection,
+								"name", String.class);
 
-		// 2. Observe the name property of the current selection.
-		IObservableValue detailObservable = BeansObservables
-				.observeDetailValue(Realm.getDefault(), selection, "name",
-						String.class);
-		
-		// 3. Bind the Text widget to the name detail (selection's name).
-		new DataBindingContext().bindValue(SWTObservables.observeText(name,
-				SWT.None), detailObservable, new BindSpec().setUpdateModel(false));
+				// 3. Bind the Text widget to the name detail (selection's
+				// name).
+				new DataBindingContext().bindValue(SWTObservables.observeText(
+						name, SWT.None), detailObservable, new BindSpec()
+						.setUpdateModel(false));
 
-		shell.open();
-		Display display = shell.getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+				shell.open();
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
+		});
+		display.dispose();
 	}
 
 	public static class Person {
 		private String name;
-		
+
 		Person(String name) {
 			this.name = name;
 		}

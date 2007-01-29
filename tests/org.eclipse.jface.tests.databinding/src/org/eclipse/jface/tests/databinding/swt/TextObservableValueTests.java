@@ -11,14 +11,13 @@
  *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
-
 package org.eclipse.jface.tests.databinding.swt;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
+import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -31,17 +30,18 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextObservableValueTests extends TestCase {
 	private Text text;
-	
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+
+		RealmTester.setDefault(SWTObservables.getRealm(Display.getDefault()));
 		Shell shell = new Shell();
 		text = new Text(shell, SWT.NONE);
 	}
-	
+
 	/**
-	 * Asserts that only valid SWT event types are accepted on construction of TextObservableValue.
+	 * Asserts that only valid SWT event types are accepted on construction of
+	 * TextObservableValue.
 	 */
 	public void testConstructorUpdateEventTypes() {
 		try {
@@ -52,7 +52,7 @@ public class TextObservableValueTests extends TestCase {
 		} catch (IllegalArgumentException e) {
 			fail();
 		}
-		
+
 		try {
 			new TextObservableValue(text, SWT.Verify);
 			fail();
@@ -60,13 +60,14 @@ public class TextObservableValueTests extends TestCase {
 			assertTrue(true);
 		}
 	}
-    
-    public void testSetValue() throws Exception {
-        TextObservableValue observableValue = new TextObservableValue(text, SWT.NONE);
-        
-        assertEquals("", observableValue.getValue());
-        String value = "value";
-        observableValue.setValue(value);
-        assertEquals("observable value", value, observableValue.getValue());
-    }
+
+	public void testSetValue() throws Exception {
+		TextObservableValue observableValue = new TextObservableValue(text,
+				SWT.NONE);
+
+		assertEquals("", observableValue.getValue());
+		String value = "value";
+		observableValue.setValue(value);
+		assertEquals("observable value", value, observableValue.getValue());
+	}
 }

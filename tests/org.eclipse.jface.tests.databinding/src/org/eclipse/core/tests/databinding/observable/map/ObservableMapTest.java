@@ -16,7 +16,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
@@ -26,54 +25,55 @@ import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class ObservableMapTest extends TestCase {
 	ObservableMapStub map;
-	
+
 	protected void setUp() throws Exception {
-		Realm.setDefault(new CurrentRealm(true));
+		RealmTester.setDefault(new CurrentRealm(true));
 		map = new ObservableMapStub(new HashMap());
 	}
-	
+
 	protected void tearDown() throws Exception {
-		Realm.setDefault(null);
+		RealmTester.setDefault(null);
 	}
-	
+
 	public void testDisposeMapChangeListeners() throws Exception {
 		class MapChangeListener implements IMapChangeListener {
 			int count;
-			
+
 			public void handleMapChange(MapChangeEvent event) {
 				count++;
-			}			
+			}
 		}
-		
+
 		MapChangeListener listener = new MapChangeListener();
 		map.addMapChangeListener(listener);
-		
+
 		assertEquals(0, listener.count);
 		map.fireMapChange(null);
 		assertEquals(1, listener.count);
-		
+
 		map.dispose();
 		try {
 			map.fireMapChange(null);
 		} catch (Exception e) {
 			// do nothing
 		}
-		
-		assertEquals("listener should not have been notified", 1, listener.count);
+
+		assertEquals("listener should not have been notified", 1,
+				listener.count);
 	}
-	
+
 	public void testIsStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				map.isStale();
-			}			
+			}
 		});
 	}
-	
+
 	public void testSetStaleRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -81,7 +81,7 @@ public class ObservableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
 	public void testFireMapChangeRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -89,15 +89,15 @@ public class ObservableMapTest extends TestCase {
 			}
 		});
 	}
-	
+
 	static class ObservableMapStub extends ObservableMap {
 		/**
 		 * @param wrappedMap
 		 */
 		public ObservableMapStub(Map wrappedMap) {
 			super(wrappedMap);
-		}		
-		
+		}
+
 		protected void fireMapChange(MapDiff diff) {
 			super.fireMapChange(diff);
 		}

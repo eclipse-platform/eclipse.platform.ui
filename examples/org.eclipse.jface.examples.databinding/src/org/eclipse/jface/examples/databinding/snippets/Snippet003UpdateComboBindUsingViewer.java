@@ -46,134 +46,146 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  */
 public class Snippet003UpdateComboBindUsingViewer {
-    public static void main(String[] args) {
-        ViewModel viewModel = new ViewModel();
-        Shell shell = new View(viewModel).createShell();
+	public static void main(String[] args) {
+		final Display display = new Display();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				ViewModel viewModel = new ViewModel();
+				Shell shell = new View(viewModel).createShell();
 
-        // The SWT event loop
-        Display display = Display.getCurrent();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
-            }
-        }
+				// The SWT event loop
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch()) {
+						display.sleep();
+					}
+				}
+				// Print the results
+				System.out.println(viewModel.getText());
+			}
+		});
+		display.dispose();
+	}
 
-        // Print the results
-        System.out.println(viewModel.getText());
-    }
+	// Minimal JavaBeans support
+	public static abstract class AbstractModelObject {
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
+				this);
 
-    // Minimal JavaBeans support
-    public static abstract class AbstractModelObject {
-        private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(listener);
+		}
 
-        public void addPropertyChangeListener(PropertyChangeListener listener) {
-            propertyChangeSupport.addPropertyChangeListener(listener);
-        }
+		public void addPropertyChangeListener(String propertyName,
+				PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName,
+					listener);
+		}
 
-        public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-            propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
-        }
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(listener);
+		}
 
-        public void removePropertyChangeListener(PropertyChangeListener listener) {
-            propertyChangeSupport.removePropertyChangeListener(listener);
-        }
+		public void removePropertyChangeListener(String propertyName,
+				PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName,
+					listener);
+		}
 
-        public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-            propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
-        }
+		protected void firePropertyChange(String propertyName, Object oldValue,
+				Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
+					newValue);
+		}
+	}
 
-        protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
-            propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
-        }
-    }
+	// The View's model--the root of our Model graph for this particular GUI.
+	public static class ViewModel extends AbstractModelObject {
+		private String text = "beef";
 
-    // The View's model--the root of our Model graph for this particular GUI.
-    public static class ViewModel extends AbstractModelObject {
-        private String text = "beef";
+		private List choices = new ArrayList();
+		{
+			choices.add("pork");
+			choices.add("beef");
+			choices.add("poultry");
+			choices.add("vegatables");
+		}
 
-        private List choices = new ArrayList();
-        {
-            choices.add("pork");
-            choices.add("beef");
-            choices.add("poultry");
-            choices.add("vegatables");
-        }
+		public List getChoices() {
+			return choices;
+		}
 
-        public List getChoices() {
-            return choices;
-        }
+		public void setChoices(List choices) {
+			this.choices = choices;
+			firePropertyChange("choices", null, null);
+		}
 
-        public void setChoices(List choices) {
-            this.choices = choices;
-            firePropertyChange("choices", null, null);
-        }
+		public String getText() {
+			return text;
+		}
 
-        public String getText() {
-            return text;
-        }
+		public void setText(String text) {
+			String oldValue = this.text;
+			this.text = text;
+			firePropertyChange("test", oldValue, text);
+		}
+	}
 
-        public void setText(String text) {
-            String oldValue = this.text;
-            this.text = text;
-            firePropertyChange("test", oldValue, text);
-        }
-    }
+	// The GUI view
+	static class View {
+		private ViewModel viewModel;
 
-    // The GUI view
-    static class View {
-        private ViewModel viewModel;
+		public View(ViewModel viewModel) {
+			this.viewModel = viewModel;
+		}
 
-        public View(ViewModel viewModel) {
-            this.viewModel = viewModel;
-        }
+		public Shell createShell() {
+			// Build a UI
+			Shell shell = new Shell(Display.getCurrent());
+			shell.setLayout(new RowLayout(SWT.VERTICAL));
 
-        public Shell createShell() {
-            // Build a UI
-            Shell shell = new Shell(Display.getCurrent());
-            Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
-            shell.setLayout(new RowLayout(SWT.VERTICAL));
+			Combo combo = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);
+			ComboViewer viewer = new ComboViewer(combo);
+			Button reset = new Button(shell, SWT.NULL);
+			reset.setText("reset collection");
+			reset.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					List newList = new ArrayList();
+					newList.add("Chocolate");
+					newList.add("Vanilla");
+					newList.add("Mango Parfait");
+					newList.add("beef");
+					newList.add("Cheesecake");
+					viewModel.setChoices(newList);
+				}
+			});
 
-            Combo combo = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);
-            ComboViewer viewer = new ComboViewer(combo);
-            Button reset = new Button(shell, SWT.NULL);
-            reset.setText("reset collection");
-            reset.addSelectionListener(new SelectionAdapter() {
-                public void widgetSelected(SelectionEvent e) {
-                    List newList = new ArrayList();
-                    newList.add("Chocolate");
-                    newList.add("Vanilla");
-                    newList.add("Mango Parfait");
-                    newList.add("beef");
-                    newList.add("Cheesecake");
-                    viewModel.setChoices(newList);
-                }
-            });
+			// Print value out first
+			System.out.println(viewModel.getText());
 
-            // Print value out first
-            System.out.println(viewModel.getText());
+			DataBindingContext dbc = new DataBindingContext();
+			IObservableList list = MasterDetailObservables.detailList(
+					BeansObservables.observeValue(viewModel, "choices"),
+					getListDetailFactory(), String.class);
+			viewer.setContentProvider(new ObservableListContentProvider());
+			viewer.setInput(list);
 
-            DataBindingContext dbc = new DataBindingContext();
-            IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel,
-                    "choices"), getListDetailFactory(), String.class);
-            viewer.setContentProvider(new ObservableListContentProvider());
-            viewer.setInput(list);
-            
-            dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeansObservables.observeValue(viewModel, "text"), null);
+			dbc.bindValue(ViewersObservables.observeSingleSelection(viewer),
+					BeansObservables.observeValue(viewModel, "text"), null);
 
-            // Open and return the Shell
-            shell.pack();
-            shell.open();
-            return shell;
-        }
-    }
+			// Open and return the Shell
+			shell.pack();
+			shell.open();
+			return shell;
+		}
+	}
 
-    private static IObservableFactory getListDetailFactory() {
-        return new IObservableFactory() {
-            public IObservable createObservable(Object target) {
-                WritableList list = WritableList.withElementType(String.class);
-                list.addAll((Collection) target);
-                return list;
-            }
-        };
-    }
+	private static IObservableFactory getListDetailFactory() {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				WritableList list = WritableList.withElementType(String.class);
+				list.addAll((Collection) target);
+				return list;
+			}
+		};
+	}
 }

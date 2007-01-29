@@ -44,19 +44,24 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet002UpdateComboRetainSelection {
     public static void main(String[] args) {
-        ViewModel viewModel = new ViewModel();
-        Shell shell = new View(viewModel).createShell();
-
-        // The SWT event loop
-        Display display = Display.getCurrent();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch()) {
-                display.sleep();
-            }
-        }
-
-        // Print the results
-        System.out.println(viewModel.getText());
+    	final Display display = new Display();
+    	Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+    		public void run() {
+    			ViewModel viewModel = new ViewModel();
+    			Shell shell = new View(viewModel).createShell();
+    			
+    			// The SWT event loop
+    			while (!shell.isDisposed()) {
+    				if (!display.readAndDispatch()) {
+    					display.sleep();
+    				}
+    			}
+    			
+    			// Print the results
+    			System.out.println(viewModel.getText());
+    		}
+    	});
+    	display.dispose();
     }
 
     // Minimal JavaBeans support
@@ -132,7 +137,6 @@ public class Snippet002UpdateComboRetainSelection {
         public Shell createShell() {
             // Build a UI
             Shell shell = new Shell(Display.getCurrent());
-            Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
             shell.setLayout(new RowLayout(SWT.VERTICAL));
 
             Combo combo = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);

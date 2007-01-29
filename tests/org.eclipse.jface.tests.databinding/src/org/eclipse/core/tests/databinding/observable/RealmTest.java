@@ -14,6 +14,7 @@ package org.eclipse.core.tests.databinding.observable;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
 
 /**
@@ -24,7 +25,7 @@ public class RealmTest extends TestCase {
 		Realm oldRealm = new CurrentRealm(true);
 		final Realm newRealm = new CurrentRealm(true);
 		
-		Realm.setDefault(oldRealm);
+		RealmTester.setDefault(oldRealm);
 		Realm.runWithDefault(newRealm, new Runnable() {
 			public void run() {
 				assertEquals("new realm should be default", newRealm, Realm.getDefault());
