@@ -3966,20 +3966,9 @@ public class TextViewer extends Viewer implements
 			if (lineCount >= 20)
 				partitioners= TextUtilities.removeDocumentPartitioners(d);
 
-			// Remember the selection range.
-			IPositionUpdater positionUpdater= new ShiftPositionUpdater(SHIFTING);
-			Position rememberedSelection= new Position(selection.x, selection.y);
-			d.addPositionCategory(SHIFTING);
-			d.addPositionUpdater(positionUpdater);
-			try {
-				d.addPosition(SHIFTING, rememberedSelection);
-			} catch (BadPositionCategoryException ex) {
-				// should not happen
-			}
-
 			// Perform the shift operation.
 			Map map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
-			for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
+				for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= (String[]) selectContentTypePlugin(regions[i].getType(), map);
 				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
 					if (right)
@@ -3987,16 +3976,6 @@ public class TextViewer extends Viewer implements
 					else
 						shiftLeft(lines[j], lines[j + 1], prefixes, ignoreWhitespace);
 				}
-			}
-
-			// Restore the selection.
-			setSelectedRange(rememberedSelection.getOffset(), rememberedSelection.getLength());
-
-			try {
-				d.removePositionUpdater(positionUpdater);
-				d.removePositionCategory(SHIFTING);
-			} catch (BadPositionCategoryException ex) {
-				// should not happen
 			}
 
 		} catch (BadLocationException x) {
