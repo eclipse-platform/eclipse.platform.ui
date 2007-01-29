@@ -80,6 +80,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -182,8 +183,6 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private AbstractFilterJob filterJob;
 
-	private AbstractFilterJob previousFilterJob;
-
 	private ItemsFilter filter;
 
 	private List lastCompletedResult;
@@ -195,6 +194,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	private int selectionMode;
 
 	private Object[] lastRefreshSelection;
+	
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * Creates a new instance of the class
@@ -561,8 +562,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		pattern.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
-					if (pattern.getCaretPosition() == pattern.getCharCount()
-							&& list.getTable().getItemCount() > 0) {
+					if (list.getTable().getItemCount() > 0) {
 						list.getTable().setFocus();
 					}
 				}
@@ -594,8 +594,28 @@ public abstract class FilteredItemsSelectionDialog extends
 						if (element.equals(list.getElementAt(0))) {
 							pattern.setFocus();
 						}
+						if (list.getElementAt(list.getTable()
+								.getSelectionIndex() - 1) instanceof ItemsListSeparator)
+							// list.getTable().deselect(list.getTable().getSelectionIndex()
+							// - 1);
+							list.getTable().setSelection(
+									list.getTable().getSelectionIndex() - 1);
+						list.getTable().notifyListeners(SWT.Selection,
+								new Event());
+
 					}
 				}
+
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					if (list
+							.getElementAt(list.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator)
+						// list.getTable().deselect(list.getTable().getSelectionIndex()
+						// + 1);
+						list.getTable().setSelection(
+								list.getTable().getSelectionIndex() + 1);
+					list.getTable().notifyListeners(SWT.Selection, new Event());
+				}
+
 			}
 		});
 
@@ -668,11 +688,11 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected void handleSelected(StructuredSelection selection) {
 		IStatus status = new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-				IStatus.OK, "", null); //$NON-NLS-1$
+				IStatus.OK, EMPTY_STRING, null);
 
 		if (selection.size() == 0) {
 			status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					IStatus.ERROR, "", null); //$NON-NLS-1$
+					IStatus.ERROR, EMPTY_STRING, null); 
 
 			if (lastSelection != null
 					&& getListSelectionLabelDecorator() != null) {
@@ -683,7 +703,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		} else {
 			status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-					IStatus.ERROR, "", null); //$NON-NLS-1$
+					IStatus.ERROR, EMPTY_STRING, null);
 
 			List items = selection.toList();
 
@@ -702,7 +722,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 				if (tempStatus.isOK()) {
 					status = new Status(IStatus.OK,
-							WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null); //$NON-NLS-1$
+							WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, EMPTY_STRING, null);
 				} else {
 					status = tempStatus;
 					// if any selected element is not valid status is set to
@@ -829,10 +849,10 @@ public abstract class FilteredItemsSelectionDialog extends
 		allJobsCancelled = allJobsCancelled && refreshJobCancelled;
 
 		if (!allJobsCancelled) {
-			Job old = refreshCacheJob;
-			refreshCacheJob = new RefreshCacheJob(old);
-			RefreshJob oldRefreshJob = refreshJob;
-			refreshJob = new RefreshJob(refreshCacheJob, oldRefreshJob);
+		//	Job old = refreshCacheJob;
+			refreshCacheJob = new RefreshCacheJob(refreshCacheJob);
+		//	RefreshJob oldRefreshJob = refreshJob;
+			refreshJob = new RefreshJob(refreshCacheJob, refreshJob);
 		}
 
 		refreshCacheJob.setCheckDuplicates(checkDuplicates);
@@ -1079,7 +1099,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		if (filter.getPattern().length() == 0) {
 			filterJob = new HistoryResultFilterJob(contentProvider, filter);
-		} else if (lastCompletedFilter != null
+		} else if (lastCompletedFilter != null && lastCompletedFilter != filter
 				&& lastCompletedFilter.isSubFilter(filter)) {
 			filterJob = new CachedResultFilterJob(contentProvider, filter,
 					lastCompletedResult);
@@ -1097,11 +1117,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		if (filterJob != null) {
 			filterJob.stop();
-			previousFilterJob = filterJob;
-			filterJob = null;
-		} else {
-			previousFilterJob = null;
 		}
+
 	}
 
 	/**
@@ -1214,7 +1231,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			cancelling = false;
-			if (previousJob != null) {
+			if (previousJob != null && previousJob != this) {
 				try {
 					previousJob.join();
 				} catch (InterruptedException e) {
@@ -1224,7 +1241,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			if (cancelling)
 				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-						IStatus.OK, "", null); //$NON-NLS-1$
+						IStatus.OK, EMPTY_STRING, null);
 
 			if (FilteredItemsSelectionDialog.this != null) {
 				FilteredItemsSelectionDialog.this.refresh();
@@ -1239,7 +1256,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-					IStatus.OK, "", null); //$NON-NLS-1$
+					IStatus.OK, EMPTY_STRING, null);
 		}
 
 		protected void canceling() {
@@ -1279,7 +1296,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				refreshProgressMessageJob.schedule();
 
 			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-					IStatus.OK, "", null); //$NON-NLS-1$
+					IStatus.OK, EMPTY_STRING, null);
 		}
 
 		/*
@@ -1335,7 +1352,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
 			cancelling = false;
-			if (previousJob != null) {
+			if (previousJob != null && previousJob != this) {
 				try {
 					previousJob.join();
 				} catch (InterruptedException e) {
@@ -1344,7 +1361,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 			if (cancelling)
 				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-						IStatus.OK, "", null); //$NON-NLS-1$
+						IStatus.OK, EMPTY_STRING, null);
 
 			if (FilteredItemsSelectionDialog.this != null) {
 				GranualProgressMonitor wrappedMonitor = new GranualProgressMonitor(
@@ -1358,7 +1375,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-					IStatus.OK, "", null); //$NON-NLS-1$
+					IStatus.OK, EMPTY_STRING, null);
 
 		}
 
@@ -1693,6 +1710,13 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * process. It updates progress message and refreshes dialog after concrete
 	 * part of work. State of this monitor illustrates state of filtering or
 	 * cache refreshing process.
+	 * 
+	 * The <code>GranualProgressMonitor</code> progress monitor changes amount
+	 * of work to be done before next update is to be scheduled (increases
+	 * granuality). For 0-10% updates are scheduled for all whole numbers {1, 2,
+	 * 3, . . ., 10 } surpassed. For 10-100% updates are done every 10%.
+	 * 
+	 * @see GranualProgressMonitor#internalWorked(double)
 	 */
 	private static class GranualProgressMonitor extends ProgressMonitorWrapper {
 
@@ -1836,6 +1860,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @param contentProvider
 		 * @param itemsFilter
+		 * @param previousFilterJob
 		 */
 		protected AbstractFilterJob(ContentProvider contentProvider,
 				ItemsFilter itemsFilter) {
@@ -1909,13 +1934,14 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
-
+			
 			this.contentProvider.reset();
 
 			filterContent(monitor);
 
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) 
 				throw new OperationCanceledException();
+			
 			contentProvider.refresh(false);
 		}
 
@@ -1927,7 +1953,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private IStatus ok() {
 			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
-					IStatus.OK, "", null); //$NON-NLS-1$
+					IStatus.OK, EMPTY_STRING, null);
 		}
 	}
 
@@ -1943,6 +1969,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param contentProvider
 		 * @param itemsFilter
 		 * @param lastResult
+		 * @param previousFilterJob
 		 */
 		public CachedResultFilterJob(ContentProvider contentProvider,
 				ItemsFilter itemsFilter, List lastResult) {
@@ -1991,6 +2018,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @param contentProvider
 		 * @param itemsFilter
+		 * @param previousFilterJob
 		 */
 		public FilterJob(ContentProvider contentProvider,
 				ItemsFilter itemsFilter) {
@@ -2004,15 +2032,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		protected void filterContent(GranualProgressMonitor monitor)
 				throws CoreException {
-
-			try {
-				// some dialog implementation could keep state - prevents
-				// crashes of the filtering process
-				if (previousFilterJob != null)
-					previousFilterJob.join();
-			} catch (InterruptedException e) {
-				// ignore
-			}
 
 			if (monitor != null && monitor.isCanceled())
 				return;
@@ -2055,6 +2074,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @param contentProvider
 		 * @param itemsFilter
+		 * @param previousFilterJob
 		 */
 		public HistoryResultFilterJob(ContentProvider contentProvider,
 				ItemsFilter itemsFilter) {
@@ -2253,7 +2273,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected abstract class ItemsFilter {
 
-		private SearchPattern patternMatcher;
+		protected SearchPattern patternMatcher;
 
 		/**
 		 * Creates new instance of SearchFilter
@@ -2347,6 +2367,32 @@ public abstract class FilteredItemsSelectionDialog extends
 		protected boolean matches(String text) {
 			return patternMatcher.matches(text);
 		}
+		
+		public boolean matchesRawNamePattern(String name) {
+			
+			String prefix = patternMatcher.getPattern();
+			String text = name;
+			
+			int textLength= text.length();
+			int prefixLength= prefix.length();
+			if (textLength < prefixLength)
+				return false;
+			for (int i= prefixLength - 1; i >= 0; i--) {
+				if (Character.toLowerCase(prefix.charAt(i)) != Character.toLowerCase(text.charAt(i)))
+					return false;
+			}
+			return true;
+		}
+		
+		/**
+		 * Matches uses during prefix match
+		 * 
+		 * @param item 
+		 * @return
+		 */
+		public boolean matchesRawNamePattern(Object item) {
+			return true;
+		}
 
 		/**
 		 * Matches items against filter conditions
@@ -2387,8 +2433,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Collects filtered elements. Conatains one synchronized sorted set for
 	 * collecting filtered elements. All collected elements are sorted using
 	 * comparator. Comparator is return by getElementComparator() method. To
-	 * filtering elements it use implementation of ItemsFilter. The key function
-	 * of filter used in to filtering is matchsElement(AbstarctListItem item).
+	 * filtering elements it use implementation of ItemsFilter. The keyg function
+	 * of filter used in to filtering is matchsItem(Object item).
 	 * 
 	 * The <code>ContentProvider</code> class also provides item filtering
 	 * methods. The filtering has beeen moved from the standard TableView
@@ -2705,15 +2751,17 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @param itemsFilter
 		 */
-		public void rememberResult(ItemsFilter itemsFilter) {
+		public synchronized void rememberResult(ItemsFilter itemsFilter) {
 			if (itemsFilter == filter && lastCompletedFilter == null) {
 				lastCompletedResult = Collections.synchronizedList(Arrays
 						.asList(getItems(false)));
 				// synchronization
-				if (lastCompletedResult.size() == 0) {
+				if (lastCompletedResult.size() == 0 && itemsFilter != filter) {
 					lastCompletedFilter = null;
+					lastCompletedResult = null;
+				} else {
+					lastCompletedFilter = itemsFilter;
 				}
-				lastCompletedFilter = itemsFilter;
 			}
 
 		}
@@ -3134,12 +3182,54 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 	}
+	
+	/**
+	 * Compares items
+	 * It takes into consideration camelCase 
+	 */
+	private class CamelCaseComparator implements Comparator {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object o1, Object o2) {
+			
+			int leftCategory= getCamelCaseCategory(o1);
+	     	int rightCategory= getCamelCaseCategory(o2);
+	     	if (leftCategory < rightCategory)
+	     		return -1;
+	     	if (leftCategory > rightCategory)
+	     		return +1;
+	     	
+	     	return getItemsComparator().compare(o1, o2);
+		}
+		
+		private int getCamelCaseCategory(Object item) {
+			if (filter == null)
+				return 0;
+			if (!filter.isCamelCasePattern())
+				return 0;
+			return filter.matchesRawNamePattern(item) ? 0 : 1;
+		}
+
+	}
 
 	/**
 	 * Compares items
-	 * 
+	 * It takes into consideration history
 	 */
 	private class HistoryComparator implements Comparator {
+
+		private CamelCaseComparator camelCaseComparator;
+		
+		/**
+		 * 
+		 */
+		public HistoryComparator() {
+			this.camelCaseComparator = new CamelCaseComparator();
+		}
 
 		/*
 		 * (non-Javadoc)
@@ -3149,7 +3239,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		public int compare(Object o1, Object o2) {
 			if ((isHistoryElement(o1) && isHistoryElement(o2))
 					|| (!isHistoryElement(o1) && !isHistoryElement(o2)))
-				return getItemsComparator().compare(o1, o2);
+				return this.camelCaseComparator.compare(o1, o2);
 
 			if (isHistoryElement(o1))
 				return -2;
