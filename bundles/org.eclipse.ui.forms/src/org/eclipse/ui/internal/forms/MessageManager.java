@@ -41,6 +41,7 @@ public class MessageManager implements IMessageManager {
 	private static final DefaultPrefixProvider DEFAULT_PREFIX_PROVIDER = new DefaultPrefixProvider();
 	private ArrayList messages = new ArrayList();
 	private Hashtable decorators = new Hashtable();
+	private boolean autoUpdate = true;
 	private ScrolledForm scrolledForm;
 	private IMessagePrefixProvider prefixProvider = DEFAULT_PREFIX_PROVIDER;
 	private int decorationPosition = SWT.LEFT | SWT.BOTTOM;
@@ -214,14 +215,16 @@ public class MessageManager implements IMessageManager {
 			Message message = MessageManager.this.addMessage(getPrefix(), key,
 					text, data, type, controlMessages);
 			message.control = decoration.getControl();
-			update();
+			if (isAutoRefresh())
+				update();
 		}
 
 		boolean removeMessage(Object key) {
 			Message message = findMessage(key, controlMessages);
 			if (message != null) {
 				controlMessages.remove(message);
-				update();
+				if (isAutoRefresh())
+					update();
 			}
 			return message != null;
 		}
@@ -230,18 +233,18 @@ public class MessageManager implements IMessageManager {
 			if (controlMessages.isEmpty())
 				return false;
 			controlMessages.clear();
-			update();
+			if (isAutoRefresh())
+				update();
 			return true;
 		}
 
-		private void update() {
+		public void update() {
 			if (controlMessages.isEmpty()) {
 				decoration.setDescriptionText(null);
 				decoration.hide();
-			}
-			else {
+			} else {
 				ArrayList peers = createPeers(controlMessages);
-				int type = ((IMessage)peers.get(0)).getMessageType();
+				int type = ((IMessage) peers.get(0)).getMessageType();
 				String description = createDetails(createPeers(peers), true);
 				if (type == IMessageProvider.ERROR)
 					decoration.setImage(standardError.getImage());
@@ -272,7 +275,8 @@ public class MessageManager implements IMessageManager {
 	 */
 	public void addMessage(Object key, String messageText, Object data, int type) {
 		addMessage(null, key, messageText, data, type, messages);
-		update();
+		if (isAutoRefresh())
+			refreshForm();
 	}
 
 	/*
@@ -290,7 +294,8 @@ public class MessageManager implements IMessageManager {
 			decorators.put(control, dec);
 		}
 		dec.addMessage(key, messageText, data, type);
-		update();
+		if (isAutoRefresh())
+			refreshForm();
 	}
 
 	/*
@@ -302,7 +307,8 @@ public class MessageManager implements IMessageManager {
 		Message message = findMessage(key, messages);
 		if (message != null) {
 			messages.remove(message);
-			update();
+			if (isAutoRefresh())
+				refreshForm();
 		}
 	}
 
@@ -314,7 +320,8 @@ public class MessageManager implements IMessageManager {
 	public void removeMessages() {
 		if (!messages.isEmpty()) {
 			messages.clear();
-			update();
+			if (isAutoRefresh())
+				refreshForm();
 		}
 	}
 
@@ -329,7 +336,8 @@ public class MessageManager implements IMessageManager {
 		if (dec == null)
 			return;
 		if (dec.removeMessage(key))
-			update();
+			if (isAutoRefresh())
+				refreshForm();
 	}
 
 	/*
@@ -341,7 +349,8 @@ public class MessageManager implements IMessageManager {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
 		if (dec != null) {
 			if (dec.removeMessages()) {
-				update();
+				if (isAutoRefresh())
+					refreshForm();
 			}
 		}
 	}
@@ -362,8 +371,8 @@ public class MessageManager implements IMessageManager {
 			messages.clear();
 			needsUpdate = true;
 		}
-		if (needsUpdate)
-			update();
+		if (needsUpdate && isAutoRefresh())
+			refreshForm();
 	}
 
 	/*
@@ -403,7 +412,21 @@ public class MessageManager implements IMessageManager {
 	 * 
 	 * @see org.eclipse.ui.forms.IMessageManager#update()
 	 */
-	public void update() {
+	public void refresh() {
+		// Update decorations
+		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
+			ControlDecorator dec = (ControlDecorator) iter.next();
+			dec.update();
+		}
+		// Update the form
+		refreshForm();
+	}
+
+	/*
+	 * Updates the container by rolling the messages up from the controls.
+	 */
+
+	private void refreshForm() {
 		ArrayList mergedList = new ArrayList();
 		mergedList.addAll(messages);
 		for (Enumeration enm = decorators.elements(); enm.hasMoreElements();) {
@@ -492,6 +515,11 @@ public class MessageManager implements IMessageManager {
 		return sw.toString();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#createSummary(org.eclipse.ui.forms.IMessage[])
+	 */
 	public String createSummary(IMessage[] messages) {
 		return createDetails(messages);
 	}
@@ -504,10 +532,20 @@ public class MessageManager implements IMessageManager {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#getMessagePrefixProvider()
+	 */
 	public IMessagePrefixProvider getMessagePrefixProvider() {
 		return prefixProvider;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#setMessagePrefixProvider(org.eclipse.ui.forms.IMessagePrefixProvider)
+	 */
 	public void setMessagePrefixProvider(IMessagePrefixProvider provider) {
 		this.prefixProvider = provider;
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
@@ -516,15 +554,46 @@ public class MessageManager implements IMessageManager {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#getDecorationPosition()
+	 */
 	public int getDecorationPosition() {
 		return decorationPosition;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#setDecorationPosition(int)
+	 */
 	public void setDecorationPosition(int position) {
 		this.decorationPosition = position;
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = (ControlDecorator) iter.next();
 			dec.updatePosition();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#isAutoUpdate()
+	 */
+	public boolean isAutoRefresh() {
+		return autoUpdate;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#setAutoUpdate(boolean)
+	 */
+	public void setAutoRefresh(boolean autoUpdate) {
+		boolean needsUpdate = !this.autoUpdate && autoUpdate;
+		this.autoUpdate = autoUpdate;
+		if (needsUpdate)
+			refresh();
 	}
 }

@@ -139,8 +139,30 @@ public interface IMessageManager {
 	 * disposed. Automatic update on control dispose is not done to avoid an
 	 * attempt to update a container that is itself in the process of being
 	 * disposed.
+	 * <p>
+	 * has been disabled.
+	 * 
+	 * @see #setAutoRefresh(boolean)
 	 */
-	void update();
+	void refresh();
+
+	/**
+	 * Controls whether the form is automatically refreshed when messages are
+	 * added or removed. By default, auto refresh is on. Clients can turn it off
+	 * prior to adding or removing a number of messages in a batch. Turning it
+	 * back on will trigger a refresh.
+	 * 
+	 * @param enabled
+	 *            sets the state of the automatic refresh
+	 */
+	void setAutoRefresh(boolean enabled);
+
+	/**
+	 * 
+	 * @return <code>true</code> if auto refresh is active, <code>false</code>
+	 *         otherwise.
+	 */
+	boolean isAutoRefresh();
 
 	/**
 	 * Sets the alternative message prefix provider. The default prefix provider
