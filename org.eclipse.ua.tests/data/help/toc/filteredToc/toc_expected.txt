@@ -10,7 +10,7 @@
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          <topic
                label="test"
-               href="/org.eclipse.ua.tests/data/help/toc/filteredTOC/simple_page.html">
+               href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          </topic>
       </topic>
       <topic
@@ -18,7 +18,7 @@
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          <topic
                label="test"
-               href="/org.eclipse.ua.tests/data/help/toc/filteredTOC/simple_page.html">
+               href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          </topic>
       </topic>
       <topic
@@ -26,7 +26,7 @@
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          <topic
                label="test"
-               href="/org.eclipse.ua.tests/data/help/toc/filteredTOC/simple_page.html">
+               href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          </topic>
       </topic>
       <topic
@@ -34,7 +34,7 @@
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          <topic
                label="test"
-               href="/org.eclipse.ua.tests/data/help/toc/filteredTOC/simple_page.html">
+               href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          </topic>
       </topic>
       <topic
@@ -42,7 +42,7 @@
             href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          <topic
                label="test"
-               href="/org.eclipse.ua.tests/data/help/toc/filteredTOC/simple_page.html">
+               href="/org.eclipse.ua.tests/data/help/toc/filteredToc/simple_page.html">
          </topic>
       </topic>
       <topic

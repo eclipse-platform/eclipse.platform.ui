@@ -2,5 +2,5 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="test">
-	<topic label="test" href="data/help/toc/filteredTOC/simple_page.html"/>
+	<topic label="test" href="data/help/toc/filteredToc/simple_page.html"/>
 </toc>
