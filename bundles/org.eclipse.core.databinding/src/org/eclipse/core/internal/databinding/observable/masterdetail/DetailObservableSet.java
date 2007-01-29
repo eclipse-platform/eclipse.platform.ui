@@ -90,7 +90,7 @@ public class DetailObservableSet extends ObservableSet {
 				Object innerValueType = innerObservableSet.getElementType();
 
 				Assert.isTrue(elementType.equals(innerValueType),
-						"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
+						"Cannot change value type in a nested observable set"); //$NON-NLS-1$
 			}
 
 			innerObservableSet.addSetChangeListener(innerChangeListener);

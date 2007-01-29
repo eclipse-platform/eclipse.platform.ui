@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * <code>
- * // Displays an updatable value in a label and keeps the label in synch with changes
+ * // Displays an observable value in a label and keeps the label in synch with changes
  * // in the value.
  * IReadableValue someValue = ...
  * final Label myLabel = new Label(parent, SWT.NONE);

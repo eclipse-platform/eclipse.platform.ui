@@ -27,7 +27,7 @@ public interface IBindingListener {
 	 *            The IBindingEvent to handle.
 	 * @return a status object. To abort the operation, a status object with an
 	 *         error or cancel status is returned. The error will be propagated
-	 *         to the data binding context's error message updatable.
+	 *         to the data binding context.
 	 */
 	public IStatus handleBindingEvent(BindingEvent e);
 

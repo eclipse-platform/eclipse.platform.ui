@@ -96,7 +96,7 @@ public class DetailObservableList extends ObservableList {
 			if (detailType != null) {
 				Object innerValueType = innerObservableList.getElementType();
 				Assert.isTrue(getElementType().equals(innerValueType),
-						"Cannot change value type in a nested updatable value"); //$NON-NLS-1$
+						"Cannot change value type in a nested observable list"); //$NON-NLS-1$
 			}
 			innerObservableList.addListChangeListener(innerChangeListener);
 		}
