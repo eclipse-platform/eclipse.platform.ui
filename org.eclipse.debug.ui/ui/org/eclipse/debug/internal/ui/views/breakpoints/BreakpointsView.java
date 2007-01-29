@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
@@ -104,17 +106,18 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		}
 	};
 	private boolean fIsTrackingSelection= false;
-	// Persistance constants
+	// Persistence constants
 	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
 	private static String KEY_VALUE="value"; //$NON-NLS-1$
     private static final String ACTION_REMOVE_FROM_GROUP = "RemoveFromGroup"; //$NON-NLS-1$
 	private BreakpointsContentProvider fContentProvider;
     private Clipboard fClipboard;
+    private IContextActivation fActivatedContext;
     
 	/**
 	 * This memento allows the Breakpoints view to save and restore state
 	 * when it is closed and opened within a session. A different
-	 * memento is supplied by the platform for persistance at
+	 * memento is supplied by the platform for persistence at
 	 * workbench shutdown.
 	 */
 	private static IMemento fgMemento;
@@ -733,7 +736,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
      * @param target target of the paste, either a BreakpointContainer,
      * or a Breakpoint within a BreakpointContainer
      * @param selection breakpoints
-     * @return whehther successful
+     * @return whether successful
      * 
      * TODO remove in favour of using <code>TreeItem</code> as paste target 
      */
@@ -756,4 +759,22 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
     public boolean isShowingGroups() {
         return fContentProvider.isShowingGroups();
     }
+
+	/**
+	 * @see org.eclipse.ui.part.PageBookView#partActivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partActivated(IWorkbenchPart part) {
+		IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+		fActivatedContext = contextService.activateContext(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		super.partActivated(part);
+	}
+
+	/**
+	 * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
+	 */
+	public void partDeactivated(IWorkbenchPart part) {
+		IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+	    contextService.deactivateContext(fActivatedContext);
+		super.partDeactivated(part);
+	}
 }
