@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.tests.internal.localstore;
+package org.eclipse.core.tests.filesystem;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.internal.localstore.LocalStoreTest;
 
 /**
  * Basic tests for the IFileStore API

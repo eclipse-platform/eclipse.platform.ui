@@ -29,6 +29,9 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTestSuite(CreateDirectoryTest.class);
 		suite.addTestSuite(DeleteTest.class);
+		suite.addTest(EFSTest.suite());
+		suite.addTest(FileCacheTest.suite());
+		suite.addTest(FileStoreTest.suite());
 		suite.addTestSuite(OpenOutputStreamTest.class);
 		suite.addTestSuite(PutInfoTest.class);
 		suite.addTestSuite(SymlinkTest.class);

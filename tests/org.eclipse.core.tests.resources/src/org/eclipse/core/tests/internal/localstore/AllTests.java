@@ -29,10 +29,7 @@ public class AllTests extends TestCase {
 		suite.addTest(CaseSensitivityTest.suite());
 		suite.addTest(CopyTest.suite());
 		suite.addTest(DeleteTest.suite());
-		suite.addTest(EFSTest.suite());
-		suite.addTest(FileCacheTest.suite());
 		suite.addTest(FileSystemResourceManagerTest.suite());
-		suite.addTest(FileStoreTest.suite());
 		suite.addTest(HistoryBucketTest.suite());
 		suite.addTest(HistoryStoreTest.suite());
 		suite.addTest(HistoryStoreConversionTest.suite());

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.tests.internal.localstore;
+package org.eclipse.core.tests.filesystem;
 
 import java.io.*;
 import junit.framework.Test;
@@ -23,7 +23,7 @@ import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
 /**
  * Tests the file caching provided by FileStore.toLocalFile.
  */
-public class FileCacheTest extends LocalStoreTest {
+public class FileCacheTest extends FileSystemTest {
 
 	public static Test suite() {
 		return new TestSuite(FileCacheTest.class);

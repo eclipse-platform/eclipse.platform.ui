@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.tests.internal.localstore;
+package org.eclipse.core.tests.filesystem;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -19,7 +19,7 @@ import org.eclipse.core.filesystem.IFileSystem;
  * Tests public API methods of the class EFS.
  * @see EFS
  */
-public class EFSTest extends LocalStoreTest {
+public class EFSTest extends FileSystemTest {
 	public static Test suite() {
 		return new TestSuite(EFSTest.class);
 	}
