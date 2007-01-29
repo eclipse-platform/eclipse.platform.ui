@@ -1165,7 +1165,11 @@ public class TextViewer extends Viewer implements
 			} else if (fStableLine != null) {
 				int stableLine;
 				try {
-					stableLine= fUpdaterDocument.getLineOfOffset(fStableLine.getOffset());
+					int lineStartOffset= fStableLine.getOffset();
+					stableLine= fUpdaterDocument.getLineOfOffset(lineStartOffset);
+					char lineStartChar= getDocument().getChar(lineStartOffset);
+					if (lineStartChar == '\n' || lineStartChar == '\r')
+						stableLine++;
 				} catch (BadLocationException x) {
 					// ignore and return silently
 					return;
