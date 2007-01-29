@@ -17,8 +17,8 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * <p>
@@ -44,11 +44,8 @@ public final class ShowPreferencePageHandler extends AbstractHandler {
 			throws ExecutionException {
 		final String preferencePageId = event
 				.getParameter(PARAMETER_ID_PREFERENCE_PAGE_ID);
-		final IWorkbenchWindow activeWorkbenchWindow = PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null) {
-			throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
-		}
+		final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
 
 		final Shell shell = activeWorkbenchWindow.getShell();
 		if (shell == null) {

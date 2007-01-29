@@ -21,7 +21,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -64,14 +63,16 @@ public final class ShowViewHandler extends AbstractHandler {
     
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
+		IWorkbenchWindow window = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
 		final Object value = parameters.get(PARAMETER_NAME_VIEW_ID);
 		if (value == null) {
-			openOther();
+			openOther(window);
 		} else {
             try {
-                openView((String) value);
+                openView((String) value, window);
             } catch (PartInitException e) {
                 throw new ExecutionException("Part could not be initialized", e); //$NON-NLS-1$
             }
@@ -83,9 +84,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	/**
 	 * Opens a view selection dialog, allowing the user to chose a view.
 	 */
-	private final void openOther() {
-		final IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+	private final void openOther(final IWorkbenchWindow window) {
 		final IWorkbenchPage page = window.getActivePage();
 		if (page == null) {
 			return;
@@ -102,7 +101,7 @@ public final class ShowViewHandler extends AbstractHandler {
 		final IViewDescriptor[] descriptors = dialog.getSelection();
 		for (int i = 0; i < descriptors.length; ++i) {
 			try {
-                openView(descriptors[i].getId());
+                openView(descriptors[i].getId(), window);
 			} catch (PartInitException e) {
 				StatusUtil.handleStatus(e.getStatus(),
 						WorkbenchMessages.ShowView_errorTitle
@@ -120,12 +119,9 @@ public final class ShowViewHandler extends AbstractHandler {
 	 * @throws PartInitException
 	 *             If the part could not be initialized.
 	 */
-	private final void openView(final String viewId) throws PartInitException {
-		final IWorkbenchWindow activeWorkbenchWindow = PlatformUI
-				.getWorkbench().getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null) {
-			return;
-		}
+	private final void openView(final String viewId,
+			final IWorkbenchWindow activeWorkbenchWindow)
+			throws PartInitException {
 
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		if (activePage == null) {

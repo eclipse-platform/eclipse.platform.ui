@@ -41,13 +41,15 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
 		final Object value = parameters.get(PARAMETER_NAME_VIEW_ID);
 		if (value == null) {
-			openOther();
+			openOther(window);
 		} else {
-			openPerspective((String) value);
+			openPerspective((String) value, window);
 		}
 
 		return null;
@@ -59,10 +61,8 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 	 * @throws ExecutionException
 	 *             If the perspective could not be opened.
 	 */
-	private final void openOther() throws ExecutionException {
-		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IWorkbenchWindow activeWorkbenchWindow = workbench
-				.getActiveWorkbenchWindow();
+	private final void openOther(final IWorkbenchWindow activeWorkbenchWindow) 
+			throws ExecutionException {
 		final SelectPerspectiveDialog dialog = new SelectPerspectiveDialog(
 				activeWorkbenchWindow.getShell(), WorkbenchPlugin.getDefault()
 						.getPerspectiveRegistry());
@@ -73,7 +73,7 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 
 		final IPerspectiveDescriptor descriptor = dialog.getSelection();
 		if (descriptor != null) {
-			openPerspective(descriptor.getId());
+			openPerspective(descriptor.getId(), activeWorkbenchWindow);
 		}
 	}
 
@@ -85,14 +85,10 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 	 * @throws ExecutionException
 	 *             If the perspective could not be opened.
 	 */
-	private final void openPerspective(final String perspectiveId)
+	private final void openPerspective(final String perspectiveId,
+			final IWorkbenchWindow activeWorkbenchWindow)
 			throws ExecutionException {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IWorkbenchWindow activeWorkbenchWindow = workbench
-				.getActiveWorkbenchWindow();
-		if (activeWorkbenchWindow == null) {
-			return;
-		}
 
 		IAdaptable input = null;
 

@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -68,7 +68,7 @@ public class CtrlEAction extends AbstractHandler {
 
 	public Object execute(ExecutionEvent executionEvent) {
 
-		window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		window = HandlerUtil.getActiveWorkbenchWindow(executionEvent);
 		if (window == null) {
 			return null;
 		}

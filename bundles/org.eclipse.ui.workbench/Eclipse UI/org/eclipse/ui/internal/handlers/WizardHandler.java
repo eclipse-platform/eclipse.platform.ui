@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.actions.NewWizardAction;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 import org.eclipse.ui.wizards.IWizardRegistry;
 
@@ -114,11 +115,8 @@ public abstract class WizardHandler extends AbstractHandler {
 
 		String wizardId = event.getParameter(getWizardIdParameterId());
 
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (activeWindow == null) {
-			throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
-		}
+		IWorkbenchWindow activeWindow = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
 
 		if (wizardId == null) {
 			IAction wizardAction = createWizardChooserDialogAction(activeWindow);

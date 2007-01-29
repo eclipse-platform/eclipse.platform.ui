@@ -22,7 +22,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.ISetSelectionTarget;
 
 /**
@@ -40,11 +40,8 @@ public class ShowResourceByPathHandler extends AbstractHandler {
 		IResource resource = (IResource) event
 				.getObjectParameterForExecution(PARAM_ID_RESOURCE_PATH);
 
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (activeWindow == null) {
-			throw new ExecutionException("no active workbench window"); //$NON-NLS-1$
-		}
+		IWorkbenchWindow activeWindow = HandlerUtil
+				.getActiveWorkbenchWindowChecked(event);
 
 		IWorkbenchPage activePage = activeWindow.getActivePage();
 		if (activePage == null) {

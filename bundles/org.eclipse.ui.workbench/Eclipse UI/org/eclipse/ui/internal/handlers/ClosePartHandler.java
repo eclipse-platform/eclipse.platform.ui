@@ -14,12 +14,11 @@ package org.eclipse.ui.internal.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Provide a Handler for the Close Part command. This can then be bound to
@@ -35,22 +34,8 @@ public class ClosePartHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchPart part = null;
-		IWorkbenchWindow window = null;
-		if (event.getApplicationContext() instanceof IEvaluationContext) {
-			IEvaluationContext appContext = (IEvaluationContext) event
-					.getApplicationContext();
-			window = (IWorkbenchWindow) appContext
-					.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-			if (window == null) {
-				throw new ExecutionException("No active workbench window"); //$NON-NLS-1$
-			}
-			part = (IWorkbenchPart) appContext
-					.getVariable(ISources.ACTIVE_PART_NAME);
-			if (part == null) {
-				throw new ExecutionException("No active part"); //$NON-NLS-1$
-			}
-		}
+		IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		if (part instanceof IEditorPart) {
 			window.getActivePage().closeEditor((IEditorPart) part, true);
