@@ -90,7 +90,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * <li>Linking of a help context id via <code>getHelpContextId().</code></li>
  * </ul>
  * <p>
- * This class may be subclassed.
+ * This class may be sub-classed.
  * </p>
  * @since 2.0
  */

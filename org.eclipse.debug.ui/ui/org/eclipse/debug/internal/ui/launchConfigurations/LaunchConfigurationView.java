@@ -78,7 +78,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	private CollapseAllLaunchConfigurationAction fCollapseAllAction;
 	
 	/**
-	 * Action for providing filtering to the Launch Configuraiton Dialog
+	 * Action for providing filtering to the Launch Configuration Dialog
 	 * @since 3.2
 	 */
 	private FilterLaunchConfigurationAction fFilterAction;
@@ -331,7 +331,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * This is similar to IWorkbenchPart#createPartControl(Composite), but it is
 	 * called by the launch dialog when creating the launch config tree view.
 	 * Since this view is not contained in the workbench, we cannot do all the
-	 * usual initialzation (toolbars, etc).
+	 * usual initialization (toolbars, etc).
 	 */
 	public void createLaunchDialogControl(Composite parent) {
 		createViewer(parent);

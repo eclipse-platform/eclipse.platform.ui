@@ -45,7 +45,11 @@ public class LaunchablePropertyTester extends PropertyTester {
 		}
 		if("contextlaunchable".equals(property)) { //$NON-NLS-1$
 			try {
-				return ContextRunner.getDefault().getLaunchShortcuts(getResource(receiver)).size() > 0 && ContextRunner.getDefault().isSharedConfig(receiver) == null;
+				IResource res = getResource(receiver);
+				if(res != null) {
+					return ContextRunner.getDefault().getLaunchShortcuts(getResource(receiver)).size() > 0 && ContextRunner.getDefault().isSharedConfig(receiver) == null;
+				}
+				return false;
 			} 
 			catch (CoreException e) {return false;}
 		}

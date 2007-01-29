@@ -148,7 +148,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		// we do not want to set the sync provider from rendering site
 		// to null because Linux GTK unexpectedly fires deactivated event.
 		// If we reset the sync provider upon a deactivated event, it screws
-		// up synchronizatoin on Linux GTK.
+		// up synchronization on Linux GTK.
 	}
 
 	/* (non-Javadoc)
