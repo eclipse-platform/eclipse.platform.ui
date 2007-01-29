@@ -3931,18 +3931,13 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
-
 		if (fUndoManager != null)
 			fUndoManager.beginCompoundChange();
-
-		setRedraw(false);
-		startSequentialRewriteMode(true);
-
+		
 		IDocument d= getDocument();
 		Map partitioners= null;
-
+		DocumentRewriteSession rewriteSession= null;
 		try {
-
 			Point selection= getSelectedRange();
 			IRegion block= getTextBlockFromSelection(selection);
 			ITypedRegion[] regions= TextUtilities.computePartitioning(d, getDocumentPartitioning(), block.getOffset(), block.getLength(), false);
@@ -3961,6 +3956,13 @@ public class TextViewer extends Viewer implements
 				lineCount += lines[j + 1] - lines[j] + 1;
 			}
 
+			if (d instanceof IDocumentExtension4) {
+				IDocumentExtension4 extension= (IDocumentExtension4) d;
+				rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
+			} else {
+				setRedraw(false);
+				startSequentialRewriteMode(true);
+			}
 			if (lineCount >= 20)
 				partitioners= TextUtilities.removeDocumentPartitioners(d);
 
@@ -4005,9 +4007,14 @@ public class TextViewer extends Viewer implements
 
 			if (partitioners != null)
 				TextUtilities.addDocumentPartitioners(d, partitioners);
-
-			stopSequentialRewriteMode();
-			setRedraw(true);
+			
+			if (d instanceof IDocumentExtension4) {
+				IDocumentExtension4 extension= (IDocumentExtension4) d;
+				extension.stopRewriteSession(rewriteSession);
+			} else {
+				stopSequentialRewriteMode();
+				setRedraw(true);
+			}
 
 			if (fUndoManager != null)
 				fUndoManager.endCompoundChange();
