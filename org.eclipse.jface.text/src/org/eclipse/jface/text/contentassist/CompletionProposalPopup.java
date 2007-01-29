@@ -52,7 +52,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IEditingSupport;
 import org.eclipse.jface.text.IEditingSupportRegistry;
@@ -783,10 +786,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 
 		};
-
+		
+		DocumentRewriteSession rewriteSession= null;
+		IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 		try {
-
-			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 
 			if (fViewer instanceof ITextViewerExtension) {
 				ITextViewerExtension extension= (ITextViewerExtension) fViewer;
@@ -795,6 +798,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			if (target != null)
 				target.beginCompoundChange();
+
+			if (document instanceof IDocumentExtension4) {
+				IDocumentExtension4 extension= (IDocumentExtension4)document;
+				rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED_SMALL);
+			}
 
 			if (fViewer instanceof IEditingSupportRegistry) {
 				IEditingSupportRegistry registry= (IEditingSupportRegistry) fViewer;
@@ -837,6 +845,11 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 
 		} finally {
+			if (document instanceof IDocumentExtension4) {
+				IDocumentExtension4 extension= (IDocumentExtension4) document;
+				extension.stopRewriteSession(rewriteSession);
+			}
+			
 			if (target != null)
 				target.endCompoundChange();
 

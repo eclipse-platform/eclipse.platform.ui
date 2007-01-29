@@ -1160,9 +1160,10 @@ public class TextViewer extends Viewer implements
 		 * selection has been updated while in redraw(false) mode, the new selection is revealed.
 		 */
 		private void updateViewport() {
-			if (fSelectionSet) {
+			if (fSelectionSet)
 				revealRange(fSelection.getOffset(), fSelection.getLength());
-			} else if (fStableLine != null) {
+			
+			if (fStableLine != null) {
 				int stableLine;
 				try {
 					int lineStartOffset= fStableLine.getOffset();
