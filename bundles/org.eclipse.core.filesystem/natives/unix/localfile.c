@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - get/setResourceAttribute code
+ *     Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 #include <jni.h>
 #include <sys/types.h>
@@ -17,6 +18,10 @@
 #include <string.h>
 #include "../localfile.h"
 #include <os_custom.h>
+#ifdef LINUX
+#include <limits.h>
+#include <unistd.h>
+#endif
 
 /*
  * Get a null-terminated byte array from a java byte array.
@@ -94,14 +99,31 @@ jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo)
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_EXECUTABLE, JNI_TRUE);
     }
 
-	// sym link?
-//    if ((info.st_mode & S_IFLNK) == S_IFLNK) {
-//	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
-//	    if (mid == 0) return JNI_FALSE;
-//	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_LINK, JNI_TRUE);
-//    }
 	return JNI_TRUE;
 }
+
+#ifdef LINUX
+/*
+ * Set symbolic link information in IFileInfo 
+ */
+jboolean setSymlinkInFileInfo (JNIEnv *env, jobject fileInfo, jstring linkTarget) {
+    jclass cls;
+    jmethodID mid;
+
+    cls = (*env)->GetObjectClass(env, fileInfo);
+    if (cls == 0) return JNI_FALSE;
+
+    // set symlink attribute
+    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
+    if (mid == 0) return JNI_FALSE;
+    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_SYMLINK, JNI_TRUE);
+    
+    // set link target
+    mid = (*env)->GetMethodID(env, cls, "setStringAttribute", "(ILjava/lang/String;)V");
+    if (mid == 0) return JNI_FALSE;
+    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_LINK_TARGET, linkTarget);
+}
+#endif
 
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
@@ -114,10 +136,36 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	jlong result;
 	jint code;
 	jbyte *name;
+	jstring linkTarget = NULL;
 
 	/* get stat */
 	name = getByteArray(env, target);
+#ifdef LINUX
+	//do an lstat first to see if it is a symbolic link
+	code = lstat((const char*)name, &info);
+	if (code == 0 && (info.st_mode & S_IFLNK) == S_IFLNK) {
+		//symbolic link: read link target
+		char buf[PATH_MAX+1];
+		int len;
+		len = readlink((const char*)name, buf, PATH_MAX);
+		if (len>0) {
+			buf[len]=0;
+		} else {
+			buf[0]=0;
+		}
+		//TODO find a way for creating Strings from encodings other than UTF-8
+		//On Linux, UTF8 is fine since this is the default platform encoding.
+		//Other platforms may be problematic since accessing Java classes
+		//(for Converters) doesnt work through the OSGi classloaders.
+		linkTarget = (*env)->NewStringUTF(env, buf);
+		setSymlinkInFileInfo(env, fileInfo, linkTarget);
+
+		//stat link target (will fail for broken links)
+		code = stat((const char*)name, &info);
+	}
+#else
 	code = stat((const char*)name, &info);
+#endif
 	free(name);
 
 	/* test if an error occurred */

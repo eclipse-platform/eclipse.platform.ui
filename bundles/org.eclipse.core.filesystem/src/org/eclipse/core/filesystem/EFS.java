@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem;
 
@@ -145,6 +146,65 @@ public class EFS {
 	 */
 	public static final int ATTRIBUTE_HIDDEN = 1 << 4;
 
+	/**
+	 * Attribute constant (value 1 &lt;&lt;5) indicating that a
+	 * file is a symbolic link.
+	 * </p>
+	 * <p>
+	 * If this attribute is <code>true</code> for a given {@link IFileInfo}
+	 * instance, a String value may be associated with the attribute
+	 * holding the symbolic link target. This link target can be
+	 * retrieved with {@link IFileInfo#getStringAttribute(int)} with attribute
+	 * type {@link #ATTRIBUTE_LINK_TARGET}.
+	 * </p>
+	 * <p>
+	 * Symbolic links are handled transparently, as implemented by the 
+	 * underlying operating system. This means, that all other attributes
+	 * of a {@link IFileInfo} apply to the link target instead of the link.
+	 * Reading or writing a file, or changing attributes applies to the
+	 * link target and not the link itself. In case a symbolic link points
+	 * to another symbolic link, the chain of links is transparently followed
+	 * and operations apply to the actual file or directory being referenced
+	 * by the chain of symbolic links.
+	 * </p>
+	 * <p>
+	 * Broken symbolic links (which do not reference any valid file or directory)
+	 * are being returned by {link {@link IFileStore#childInfos(int, IProgressMonitor)},
+	 * but {link {@link IFileInfo#exists()} returns <code>false</code> for these.
+	 * Operations like reading or writing on broken symbolic links throw 
+	 * a "file not found" exception.  
+	 * </p>
+	 * <p>
+	 * The only operation that does not transparently work on the link target,
+	 * is deletion: {@link IFileStore#delete(int, IProgressMonitor)}
+	 * deletes the symbolic link but not the link target. 
+	 * 
+	 * @see IFileStore#fetchInfo()
+	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
+	 * @see IFileInfo#getAttribute(int)
+	 * @see IFileInfo#setAttribute(int, boolean)
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public static final int ATTRIBUTE_SYMLINK = 1 << 5;
+
+	/**
+	 * Attribute constant (value 1 &lt;&lt;6) for a string attribute indicating the
+	 * target file name of a symbolic link.
+	 * </p>
+	 * <p>
+	 * Note that setting the link target attribute does not cause a symbolic
+	 * link to be created, or changed to link to a different file.  Rather, this
+	 * attribute is set by file system implementations based on the current
+	 * state of a link.
+	 * </p>
+	 * 
+	 * @see IFileInfo#getStringAttribute(int)
+	 * @see FileInfo#setStringAttribute(int, String)
+	 * @see #ATTRIBUTE_SYMLINK
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public static final int ATTRIBUTE_LINK_TARGET = 1 << 6;
+	
 	/**
 	 * Scheme constant (value "file") indicating the local file system scheme.
 	 * @see EFS#getLocalFileSystem()

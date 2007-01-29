@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem;
 
@@ -394,6 +395,7 @@ public interface IFileStore extends IAdaptable {
 	 * whether the file's attributes are changed.  When this flag is specified,
 	 * the <code>EFS#ATTRIBUTE_*</code> values, with
 	 * the exception of <code>EFS#ATTRIBUTE_DIRECTORY</code>
+	 * and <code>EFS#ATTRIBUTE_SYMLINK</code>,
 	 * are set for this file. When this flag is not specified, changed attributes
 	 * on the provided file info are ignored.
 	 * </p>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -87,7 +88,9 @@ public class LocalFileSystem extends FileSystem {
 		String os = getOS();
 		if (os.equals(Platform.OS_WIN32))
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_MACOSX))
+		else if (os.equals(Platform.OS_LINUX))
+			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK;
+		else if (os.equals(Platform.OS_MACOSX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
 		return attributes;
 	}

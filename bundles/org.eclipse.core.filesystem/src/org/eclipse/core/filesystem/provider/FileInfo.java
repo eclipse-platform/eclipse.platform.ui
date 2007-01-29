@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem.provider;
 
@@ -17,7 +18,7 @@ import org.eclipse.core.filesystem.IFileInfo;
  * This class should be used by file system providers in their implementation
  * of API methods that return {@link IFileInfo} objects.
  * <p>
- * This class is not intended to be subclassed.
+ * This class is not intended to be subclassed by clients.
  * </p>
  * @since org.eclipse.core.filesystem 1.0
  */
@@ -51,6 +52,11 @@ public class FileInfo implements IFileInfo {
 	 * The file name.
 	 */
 	private String name = ""; //$NON-NLS-1$
+
+	/**
+	 * The target file name if this is a symbolic link
+	 */
+	private String linkTarget = null; 
 
 	/**
 	 * Creates a new file information object with default values.
@@ -109,6 +115,15 @@ public class FileInfo implements IFileInfo {
 
 	public boolean getAttribute(int attribute) {
 		return isSet(attribute);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.filesystem.IFileInfo#getStringAttribute(int)
+	 */
+	public String getStringAttribute(int attribute) {
+		if (attribute == EFS.ATTRIBUTE_LINK_TARGET)
+			return this.linkTarget;
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -209,6 +224,18 @@ public class FileInfo implements IFileInfo {
 		if (name == null)
 			throw new IllegalArgumentException();
 		this.name = name;
+	}
+
+	/**
+	 * Sets or clears a String attribute, e.g. symbolic link target.
+	 * 
+	 * @param value The String attribute, or <code>null</code> to clear
+	 * the attribute
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public void setStringAttribute(int attribute, String value) {
+		if (attribute == EFS.ATTRIBUTE_LINK_TARGET)
+			this.linkTarget = value;
 	}
 
 	/**

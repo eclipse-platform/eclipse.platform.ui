@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem;
 
@@ -49,6 +50,21 @@ public interface IFileInfo extends Comparable, Cloneable {
 	 * @see IFileSystem#attributes()
 	 */
 	public abstract boolean getAttribute(int attribute);
+
+	/**
+	* Returns the value of the specified attribute for this file.  The attribute
+	 * must be one of the <code>EFS#ATTRIBUTE_*</code>
+	 * constants. Returns <code>null</code> if this file does not exist,
+	 * could not be accessed, or the provided attribute does not apply to this
+	 * file system.	 
+	 * 
+	 * @param attribute The kind of attribute to return.  Currently only
+	 * {@link EFS_ATTRIBUTE_LINK_TARGET} is supported.
+	 * @return the value of the extended String attribute for this file.
+	 * @see IFileSystem#attributes()
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public abstract String getStringAttribute(int attribute);
 
 	/**
 	 * Returns the last modified time for this file, or {@link EFS#NONE}
