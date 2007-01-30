@@ -32,6 +32,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -320,7 +321,30 @@ public class InternalTreeModelViewer extends TreeViewer {
 		super.hookControl(control);
 	}
 
-
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.StructuredViewer#handleInvalidSelection
+     * 
+     * Override the default handler for invalid selection to allow model 
+     * selection policy to select the new selection.
+     */
+	protected void handleInvalidSelection(ISelection selection, ISelection newSelection) {
+	    IModelSelectionPolicy selectionPolicy = getSelectionPolicy(selection);
+	    if (selectionPolicy != null) {
+	    	ISelection temp = newSelection;
+            newSelection = selectionPolicy.replaceInvalidSelection(selection, newSelection);
+            if (temp != newSelection) {
+            	if (newSelection == null) {
+            		newSelection = new StructuredSelection();
+            	}
+            	// call super.setSelection(...) to avoid asking the selection policy
+            	// if the selection should be overridden
+            	super.setSelection(newSelection, false);
+            	return;
+            }
+	    }
+	    super.handleInvalidSelection(selection, newSelection);
+	}
+        
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)

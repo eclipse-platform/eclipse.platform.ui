@@ -65,4 +65,23 @@ public interface IModelSelectionPolicy {
 	 */
 	public boolean isSticky(ISelection selection, IPresentationContext context);
 	
+	/**
+	 * Replaces an invalid selection.
+	 * <p>
+	 * This method is called if a model change picked up by a viewer
+	 * results in an invalid selection. For instance if an element contained in
+	 * the selection has been removed from the viewer, the selection policy associated
+	 * with the invalid selection is free to specify a new selection. The default
+	 * selection policy returns the <code>newSelection</code> as is (with missing
+	 * elements removed). Model selection policies may implement a different strategy
+	 * for picking a new selection when the old selection becomes invalid.
+	 * </p>
+	 * 
+	 * @param invalidSelection
+	 *            the selection before the viewer was updated
+	 * @param newSelection
+	 *            the selection after the update, or <code>null</code> if none
+	 * @return new selection or <code>null</code> if none
+	 */
+    public ISelection replaceInvalidSelection(ISelection invalidSelection, ISelection newSelection);
 }

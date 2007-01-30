@@ -103,4 +103,10 @@ public class DefaultSelectionPolicy implements IModelSelectionPolicy {
 		return false;
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy#handleInvalidSelection(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection)
+     */
+    public ISelection replaceInvalidSelection(ISelection selection, ISelection newSelection) {
+        return newSelection;
+    }
 }
