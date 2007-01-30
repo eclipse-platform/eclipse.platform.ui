@@ -63,14 +63,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  Unambiguously identifies this context type. Use of a qualified name is recommended.
+                  unambiguously identifies this context type. Use of a qualified name is recommended.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateContextType&lt;/code&gt;.
+                  a subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateContextType&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.text.templates.TemplateContextType"/>
@@ -80,7 +80,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  The display name of this context.
+                  the display name of this context
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -103,21 +103,21 @@
          <attribute name="contextTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  References the context type that this resolver is contributed to.
+                  references the context type that this resolver is contributed to
                </documentation>
             </annotation>
          </attribute>
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  The type of this variable resolver. This property will be set on the resolver once it gets created.
+                  the type of this variable resolver. This property will be set on the resolver once it gets created.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  A subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateVariableResolver&lt;/code&gt;.
+                  a subclass of &lt;code&gt;org.eclipse.jface.text.templates.TemplateVariableResolver&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.text.templates.TemplateVariableResolver"/>
@@ -127,7 +127,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  The description of this variable resolver. This property will be set on the resolver once it gets created.
+                  the description of this variable resolver. This property will be set on the resolver once it gets created.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -137,7 +137,7 @@
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  The display name of this resolver.
+                  the display name of this resolver
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -147,7 +147,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  An icon that may be displayed in the user interface.
+                  an icon that may be displayed in the user interface
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -173,21 +173,21 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  Unambiguously identifies this template. Use of a qualified name is recommended.
+                  unambiguously identifies this template. Use of a qualified name is recommended.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="contextTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  References the context type that this template is contributed to.
+                  references the context type that this template is contributed to
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The internationalizable name of the template which will show up in the UI, such as in template proposals.
+                  the internationalizable name of the template which will show up in the UI, such as in template proposals
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -197,7 +197,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  The description of this template.
+                  the description of this template
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -207,7 +207,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  An icon that may be displayed in the UI for this template, for example in content assist proposals.
+                  an icon that may be displayed in the UI for this template, for example in content assist proposals
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -242,7 +242,7 @@
          <attribute name="file" type="string" use="required">
             <annotation>
                <documentation>
-                  The XML file to import templates from.
+                  the XML file to import templates from
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -252,7 +252,7 @@
          <attribute name="translations" type="string">
             <annotation>
                <documentation>
-                  An optional properties file with resources for the templates specified in &lt;tt&gt;file&lt;/tt&gt;.
+                  an optional properties file with resources for the templates specified in &lt;tt&gt;file&lt;/tt&gt;.
 &lt;br&gt;
 &lt;em&gt;Note:&lt;/em&gt; The translation files are not treated as resource bundles and hence the file name has to be left as is i.e. do not add the  locale to the file name. The translated files must be in the &apos;nl&apos; directory i.e. if a [plugin] defines a template translations file in its plugin.xml like:
 &lt;pre&gt;

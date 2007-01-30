@@ -56,28 +56,28 @@ Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.ecl
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique name of this annotation type. This is used whenever an annotation type is referenced, e.g. when specifying an &lt;code&gt;org.eclipse.ui.editors.markerAnnotationSpecification&lt;/code&gt;.
+                  the unique name of this annotation type. This is used whenever an annotation type is referenced, e.g. when specifying an &lt;code&gt;org.eclipse.ui.editors.markerAnnotationSpecification&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="markerType" type="string">
             <annotation>
                <documentation>
-                  The marker type that this annotation type corresponds to, if any.
+                  the marker type that this annotation type corresponds to, if any
                </documentation>
             </annotation>
          </attribute>
          <attribute name="super" type="string">
             <annotation>
                <documentation>
-                  The name of the parent type, if this type is a descendant of another annotation type.
+                  the name of the parent type, if this type is a descendant of another annotation type
                </documentation>
             </annotation>
          </attribute>
          <attribute name="markerSeverity">
             <annotation>
                <documentation>
-                  The optional severity of this annotation type, used for mapping an annotation type to a marker. Any out of IMarker.SEVERITY_INFO, IMarker.SEVERITY_WARNING, SEVERITY_ERROR.
+                  the optional severity of this annotation type, used for mapping an annotation type to a marker. Any out of IMarker.SEVERITY_INFO, IMarker.SEVERITY_WARNING, SEVERITY_ERROR.
                </documentation>
             </annotation>
             <simpleType>

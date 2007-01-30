@@ -59,28 +59,28 @@ Annotation preference types that extend another annotation preference are allowe
          <attribute name="annotationType" type="string" use="required">
             <annotation>
                <documentation>
-                  The annotation type.
+                  the annotation type
                </documentation>
             </annotation>
          </attribute>
          <attribute name="colorPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  The color preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences.
+                  the color preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
                </documentation>
             </annotation>
          </attribute>
          <attribute name="overviewRulerPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  The overview ruler preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences.
+                  the overview ruler preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
                </documentation>
             </annotation>
          </attribute>
          <attribute name="verticalRulerPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  The preference key for the show in vertical ruler preference.
+                  the preference key for the show in vertical ruler preference.
 since: 3.0
                </documentation>
             </annotation>
@@ -88,14 +88,14 @@ since: 3.0
          <attribute name="textPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  The text preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences.
+                  the text preference key must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  The label to be used in the UI.
+                  the label to be used in the UI
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -105,7 +105,7 @@ since: 3.0
          <attribute name="highlightPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  The preference key for highlighting in text.
+                  the preference key for highlighting in text.
 since: 3.0
                </documentation>
             </annotation>
@@ -113,28 +113,28 @@ since: 3.0
          <attribute name="colorPreferenceValue" type="string">
             <annotation>
                <documentation>
-                  The color preference value must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences.
+                  the color preference value must be provided, otherwise this annotation type will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences() and thus not show in the preferences
                </documentation>
             </annotation>
          </attribute>
          <attribute name="presentationLayer" type="string">
             <annotation>
                <documentation>
-                  The default value for the layer in which the marker annotation will be drawn.
+                  the default value for the layer in which the marker annotation will be drawn
                </documentation>
             </annotation>
          </attribute>
          <attribute name="overviewRulerPreferenceValue" type="boolean">
             <annotation>
                <documentation>
-                  The default value telling whether this marker annotation is shown in the overview ruler.
+                  the default value telling whether this marker annotation is shown in the overview ruler
                </documentation>
             </annotation>
          </attribute>
          <attribute name="verticalRulerPreferenceValue" type="boolean">
             <annotation>
                <documentation>
-                  The default value for showing in vertical ruler.
+                  the default value for showing in vertical ruler.
 since: 3.0
                </documentation>
             </annotation>
@@ -142,14 +142,14 @@ since: 3.0
          <attribute name="textPreferenceValue" type="boolean">
             <annotation>
                <documentation>
-                  The default value telling whether this marker annotation is shown in the text.
+                  the default value telling whether this marker annotation is shown in the text
                </documentation>
             </annotation>
          </attribute>
          <attribute name="highlightPreferenceValue" type="boolean">
             <annotation>
                <documentation>
-                  The default value for highlighting in text.
+                  the default value for highlighting in text.
 since: 3.0
                </documentation>
             </annotation>
@@ -157,14 +157,14 @@ since: 3.0
          <attribute name="contributesToHeader" type="boolean">
             <annotation>
                <documentation>
-                  The default value telling whether this marker annotation contributes to the overview ruler&apos;s header summary.
+                  the default value telling whether this marker annotation contributes to the overview ruler&apos;s header summary
                </documentation>
             </annotation>
          </attribute>
          <attribute name="showInNextPrevDropdownToolbarActionKey" type="string">
             <annotation>
                <documentation>
-                  The preference key for the visibility in the next/previous drop down toolbar action.
+                  the preference key for the visibility in the next/previous drop down toolbar action.
 since: 3.0
                </documentation>
             </annotation>
@@ -172,7 +172,7 @@ since: 3.0
          <attribute name="showInNextPrevDropdownToolbarAction" type="boolean">
             <annotation>
                <documentation>
-                  The default value for the visibility in the next/previous drop down toolbar action.
+                  the default value for the visibility in the next/previous drop down toolbar action.
 since: 3.0
                </documentation>
             </annotation>
@@ -180,7 +180,7 @@ since: 3.0
          <attribute name="isGoToNextNavigationTargetKey" type="string">
             <annotation>
                <documentation>
-                  The preference key for go to next navigation enablement.
+                  the preference key for go to next navigation enablement.
 since: 3.0
                </documentation>
             </annotation>
@@ -188,7 +188,7 @@ since: 3.0
          <attribute name="isGoToNextNavigationTarget" type="boolean">
             <annotation>
                <documentation>
-                  The default value for go to next navigation enablement.
+                  the default value for go to next navigation enablement.
 since: 3.0
                </documentation>
             </annotation>
@@ -196,7 +196,7 @@ since: 3.0
          <attribute name="isGoToPreviousNavigationTargetKey" type="string">
             <annotation>
                <documentation>
-                  The preference key for go to previous navigation enablement.
+                  the preference key for go to previous navigation enablement.
 since: 3.0
                </documentation>
             </annotation>
@@ -204,7 +204,7 @@ since: 3.0
          <attribute name="isGoToPreviousNavigationTarget" type="boolean">
             <annotation>
                <documentation>
-                  The default value for go to previous navigation enablement.
+                  the default value for go to previous navigation enablement.
 since: 3.0
                </documentation>
             </annotation>
@@ -212,7 +212,7 @@ since: 3.0
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  The path to the icon to be drawn for annotations of this annotation type. This icon will not
+                  the path to the icon to be drawn for annotations of this annotation type. This icon will not
                   be used if a Quick Fix is available and the &quot;quickFixIcon&quot; attribute has been specified.
                </documentation>
             </annotation>
@@ -220,7 +220,7 @@ since: 3.0
          <attribute name="quickFixIcon" type="string">
             <annotation>
                <documentation>
-                  The path to the quick fix icon to be drawn for annotations that have a quick fix.
+                  the path to the quick fix icon to be drawn for annotations that have a quick fix.
 since: 3.2
                </documentation>
             </annotation>
@@ -228,7 +228,7 @@ since: 3.2
          <attribute name="symbolicIcon">
             <annotation>
                <documentation>
-                  The symbolic name of the image that should be drawn to represent annotation of this annotation type. The image is only used when there is no vertical ruler icon specified for this annotation type. Possible values are: &quot;error&quot;, &quot;warning&quot;, &quot;info&quot;, &quot;task&quot;, &quot;bookmark&quot;.
+                  the symbolic name of the image that should be drawn to represent annotation of this annotation type. The image is only used when there is no vertical ruler icon specified for this annotation type. Possible values are: &quot;error&quot;, &quot;warning&quot;, &quot;info&quot;, &quot;task&quot;, &quot;bookmark&quot;.
                </documentation>
             </annotation>
             <simpleType>
@@ -249,7 +249,7 @@ since: 3.2
          <attribute name="annotationImageProvider" type="string">
             <annotation>
                <documentation>
-                  The optional annotation image provider. Must implement
+                  the optional annotation image provider that implements &lt;code&gt;org.eclipse.ui.texteditor.IAnnotationImageProvider&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -259,7 +259,7 @@ since: 3.2
          <attribute name="textStylePreferenceKey" type="string">
             <annotation>
                <documentation>
-                  The preference key for the text decoration property.
+                  the preference key for the text decoration property
 since: 3.0
                </documentation>
             </annotation>
@@ -267,7 +267,7 @@ since: 3.0
          <attribute name="textStylePreferenceValue">
             <annotation>
                <documentation>
-                  The default value for the &quot;show in text&quot; decoration style.
+                  the default value for the &quot;show in text&quot; decoration style
 since: 3.0
                </documentation>
             </annotation>
@@ -289,7 +289,7 @@ since: 3.0
          <attribute name="includeOnPreferencePage" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  Defines whether this annotation type should be configurable via the standard annotation preference page. Default is true.
+                  defines whether this annotation type should be configurable via the standard annotation preference page. Default is true.
                </documentation>
             </annotation>
          </attribute>
