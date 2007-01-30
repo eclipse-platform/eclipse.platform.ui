@@ -291,8 +291,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 			fIsFilterPending= false;
 
-			Control control= fContentAssistSubjectControlAdapter.getControl();
-			if (control.isDisposed())
+			if (!Helper.okToUse(fContentAssistSubjectControlAdapter.getControl()))
 				return;
 
 			int offset= fContentAssistSubjectControlAdapter.getSelectedRange().x;
