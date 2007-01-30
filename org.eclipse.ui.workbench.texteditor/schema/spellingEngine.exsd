@@ -55,7 +55,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class of the engine, which must implement &lt;code&gt;org.eclipse.ui.texteditor.spelling.ISpellingEngine&lt;/code&gt;.
+                  the class of the engine, which must implement &lt;code&gt;org.eclipse.ui.texteditor.spelling.ISpellingEngine&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -65,7 +65,7 @@
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  The display label for the engine, which will show up in the menu that allows the user to choose the spelling engine.
+                  the display label for the engine, which will show up in the menu that allows the user to choose the spelling engine
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -75,21 +75,21 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  A string uniquely identifying this engine.
+                  a string uniquely identifying this engine
                </documentation>
             </annotation>
          </attribute>
          <attribute name="default" type="boolean">
             <annotation>
                <documentation>
-                  If this flag is set to &lt;code&gt;true&lt;/code&gt;, this spelling engine will be installed per default. If multiple engines are installed with the flag set are encountered, the first one is taken.
+                  if this flag is set to &lt;code&gt;true&lt;/code&gt;, this spelling engine will be installed per default. If multiple engines are installed with the flag set are encountered, the first one is taken.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="preferencesClass" type="string">
             <annotation>
                <documentation>
-                  An implementation of org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock
+                  an implementation of &lt;code&gt;org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jdt.ui.text.folding.IJavaFoldingPreferenceBlock"/>
@@ -135,6 +135,7 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
+         
       </documentation>
    </annotation>
 

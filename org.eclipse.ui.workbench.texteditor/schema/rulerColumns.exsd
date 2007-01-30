@@ -63,14 +63,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique id of this column.
+                  the unique id of this column
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  An optional name of the column, may be used in the user interface (e.g. in preference pages).
+                  an optional name of the column, may be used in the user interface (e.g. in preference pages)
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -80,7 +80,7 @@
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  An optional icon for the column. May be used in the user interface, for example on preference pages.
+                  an optional icon for the column. May be used in the user interface, for example on preference pages.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -90,7 +90,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class implementing the column; must implement &lt;code&gt;org.eclipse.ui.texteditor.rulers.IContributedRulerColumn&lt;/code&gt;.
+                  the class implementing the column; must implement &lt;code&gt;org.eclipse.ui.texteditor.rulers.IContributedRulerColumn&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.rulers.IContributedRulerColumn"/>
@@ -100,21 +100,21 @@
          <attribute name="enabled" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  The default enablement state of this column.
+                  the default enablement state of this column
                </documentation>
             </annotation>
          </attribute>
          <attribute name="global" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  Controls whether toggling the visibility of this column operates on all targeted editors, or only the active editor. If true, the ruler is added to all applicable editors when the user enables the column; if false, the ruler is only added to the active editor.
+                  controls whether toggling the visibility of this column operates on all targeted editors, or only the active editor. If true, the ruler is added to all applicable editors when the user enables the column; if false, the ruler is only added to the active editor.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="includeInMenu" type="boolean" use="default" value="true">
             <annotation>
                <documentation>
-                  Whether to include a &quot;Show/Hide&quot; menu entry for this column in the ruler context menu.
+                  whether to include a &quot;Show/Hide&quot; menu entry for this column in the ruler context menu
                </documentation>
             </annotation>
          </attribute>
@@ -131,7 +131,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The editor id of the target editor.
+                  the editor id of the target editor
                </documentation>
             </annotation>
          </attribute>
@@ -148,7 +148,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the target content type.
+                  the id of the target content type
                </documentation>
             </annotation>
          </attribute>
@@ -165,7 +165,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of a class implementing &lt;code&gt;org.eclipse.ui.texteditor.ITextEditor&lt;/code&gt;. The class does not need to be instantiatable. Note that contributing ruler columns to an internal editor class outside of the contributor&apos;s namespace is considered bad practice, as the class name may change without notice.
+                  the fully qualified name of a class implementing &lt;code&gt;org.eclipse.ui.texteditor.ITextEditor&lt;/code&gt;. The class does not need to be instantiatable. Note that contributing ruler columns to an internal editor class outside of the contributor&apos;s namespace is considered bad practice, as the class name may change without notice.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.ITextEditor"/>
@@ -191,7 +191,7 @@
          <attribute name="gravity" type="string" use="default" value="1.0">
             <annotation>
                <documentation>
-                  The gravity of the ruler, a float number between 0.0 and 1.0. The &lt;i&gt;gravity&lt;/i&gt; measures the attractive force between the ruler and the editor. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns within one placement slot are ordered by their &lt;i&gt;gravity&lt;/i&gt; value. Columns with a lower gravity are placed further away from the editor area (leftwards in left-to-right environments), columns with a higher gravity are placed closer to the editor area (rightwards in left-to-right environments). By default, 1.0 is assumed.
+                  the gravity of the ruler, a float number between 0.0 and 1.0. The &lt;i&gt;gravity&lt;/i&gt; measures the attractive force between the ruler and the editor. After all &lt;i&gt;before&lt;/i&gt; and &lt;i&gt;after&lt;/i&gt; constraints are evaluated, columns within one placement slot are ordered by their &lt;i&gt;gravity&lt;/i&gt; value. Columns with a lower gravity are placed further away from the editor area (leftwards in left-to-right environments), columns with a higher gravity are placed closer to the editor area (rightwards in left-to-right environments). By default, 1.0 is assumed.
                </documentation>
             </annotation>
          </attribute>
@@ -208,7 +208,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution.
+                  the id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution
                </documentation>
             </annotation>
          </attribute>
@@ -225,7 +225,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution.
+                  the id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution
                </documentation>
             </annotation>
          </attribute>
