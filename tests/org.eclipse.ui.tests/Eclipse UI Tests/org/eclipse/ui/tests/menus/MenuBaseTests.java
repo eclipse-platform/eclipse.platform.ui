@@ -39,7 +39,7 @@ public class MenuBaseTests extends MenuTestCase {
 			"MenuTest.Separator",
 			"MenuTest.AfterSeparator",
 			"MenuTest.ParameterItem",
-			"MenuTest.DynamicItem",
+			null, // "MenuTest.DynamicItem",
 			"MenuTest.DynamicMenu",
 			"MenuTest.ItemX1"
 		};
@@ -50,7 +50,7 @@ public class MenuBaseTests extends MenuTestCase {
 			org.eclipse.jface.action.Separator.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.menus.CommandContributionItem.class,
-			org.eclipse.ui.internal.menus.DynamicContributionItem.class,
+			org.eclipse.ui.actions.CompoundContributionItem.class,
 			org.eclipse.jface.action.MenuManager.class,
 			org.eclipse.ui.menus.CommandContributionItem.class
 		};

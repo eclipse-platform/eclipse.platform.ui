@@ -118,7 +118,10 @@ public class MenuTestCase extends UITestCase {
 			if (classes[i] == null)
 				continue;
 			
-			if (classes[i] != items[i].getClass())
+			// minor upgrade ... if the item is an instanceof the class we're good
+			// this handles the case where the item is a subclass of
+			// CompoundContributionItem
+			if (!classes[i].isInstance(items[i]))
 				return i;
 		}
 		return ALL_OK;

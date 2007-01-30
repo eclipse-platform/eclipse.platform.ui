@@ -11,22 +11,21 @@
 
 package org.eclipse.ui.tests.api.workbenchpart;
 
-import java.util.List;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.menus.AbstractDynamicContribution;
+import org.eclipse.ui.actions.CompoundContributionItem;
 
 /**
  * Test implementation for dynamic menu item support.
  * 
  * @since 3.3
- *
+ * 
  */
-public class DynamicItem extends AbstractDynamicContribution {
+public class DynamicItem extends CompoundContributionItem {
 
 	private Action action1;
 	private Action action2;
@@ -39,10 +38,7 @@ public class DynamicItem extends AbstractDynamicContribution {
 	}
 
 	private void showMessage(String message) {
-		MessageDialog.openInformation(
-			null,
-			"Sample View",
-			message);
+		MessageDialog.openInformation(null, "Sample View", message);
 	}
 
 	private void makeActions() {
@@ -53,9 +49,9 @@ public class DynamicItem extends AbstractDynamicContribution {
 		};
 		action1.setText("Dynamic Item 1");
 		action1.setToolTipText("Dynamic Item 1 tooltip");
-		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-			getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
-		
+		action1.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+
 		action2 = new Action() {
 			public void run() {
 				showMessage("Dynamic Item 2 executed");
@@ -63,20 +59,18 @@ public class DynamicItem extends AbstractDynamicContribution {
 		};
 		action2.setText("Dynamic Item 2");
 		action2.setToolTipText("Dynamic Item 2 tooltip");
-		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+				.getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.AbstractDynamicContribution#createContributionItems(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.CompoundContributionItem#getContributionItems()
 	 */
-	public void createContributionItems(List items) {
-		items.clear();
-		
-		ActionContributionItem aci1 = new ActionContributionItem(action1);
-		items.add(aci1);
-		ActionContributionItem aci2 = new ActionContributionItem(action2);
-		items.add(aci2);
+	protected IContributionItem[] getContributionItems() {
+		IContributionItem[] items = { new ActionContributionItem(action1),
+				new ActionContributionItem(action2) };
+		return items;
 	}
-
 }

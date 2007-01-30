@@ -28,10 +28,10 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.AbstractDynamicContribution;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchWidget;
@@ -227,10 +227,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			return null;
 
 		// Attempt to load the addition's EE (creates a new instance)
-		final AbstractDynamicContribution loadedDynamicContribution = (AbstractDynamicContribution) Util
+		final CompoundContributionItem loadedDynamicContribution = (CompoundContributionItem) Util
 				.safeLoadExecutableExtension(dynamicAddition,
 						IWorkbenchRegistryConstants.ATT_CLASS,
-						AbstractDynamicContribution.class);
+						CompoundContributionItem.class);
 
 		// Cache failures
 		if (loadedDynamicContribution == null) {
@@ -238,9 +238,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			return null;
 		}
 
-		// Return a CompoundContribution item wrapping the extension
-		return new DynamicContributionItem(getId(dynamicAddition),
-				loadedDynamicContribution);
+		// TODO provide a proxy IContributionItem that defers instantiation 
+		// adding contribution items in a menu instantiates this object ... 
+		// we need to defer loading until fill(*) is called.
+		return loadedDynamicContribution;
 	}
 
 	/**
