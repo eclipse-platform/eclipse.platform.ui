@@ -87,7 +87,7 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		listener.lastPosition = -1;
 		
 		ValueBinding binding = new ValueBinding(target, model,
-				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+				new BindSpec().setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
 		binding.init(dbc);
 		binding.addBindingEventListener(listener);
 
