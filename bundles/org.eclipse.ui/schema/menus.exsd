@@ -148,10 +148,10 @@ If defined then it can be  used as a reference in the Query part of the location
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  This class is expected to be a subclass of CompoundContributionItem. When an addition of this type is encountered the specified class is instantiated and used to retrieve a list of the IContributionItems to be placed into the menu. The resulting list may be empty if there are no appropriate items to be shown in the current context.
+                  This class is expected to be a subclass of AbstractDynamicContribution. When an addition of this type is encountered the specified class is instantiated and used to retrieve a list of the IContributionItems to be placed into the menu. The resulting list may be empty if there are no appropriate items to be shown in the current context.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.actions.CompoundContributionItem"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.AbstractDynamicContribution"/>
                </appInfo>
             </annotation>
          </attribute>
