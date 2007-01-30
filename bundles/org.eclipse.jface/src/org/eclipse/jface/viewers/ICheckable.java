@@ -45,6 +45,7 @@ public interface ICheckable {
 
     /**
      * Sets the checked state for the given element in this viewer.
+     * Does not fire events to check state listeners.
      *
      * @param element the element
      * @param state <code>true</code> if the item should be checked,

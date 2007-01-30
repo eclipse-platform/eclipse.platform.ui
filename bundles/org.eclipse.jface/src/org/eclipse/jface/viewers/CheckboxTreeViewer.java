@@ -419,6 +419,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      * Sets which elements are checked in this viewer's tree.
      * The given list contains the elements that are to be checked;
      * all other elements are to be unchecked.
+     * Does not fire events to check state listeners.
      * <p>
      * This method is typically used when restoring the interesting
      * state of a viewer captured by an earlier call to <code>getCheckedElements</code>.
@@ -464,6 +465,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
     /**
      * Check and gray the selection rather than calling both
      * setGrayed and setChecked as an optimization.
+     * Does not fire events to check state listeners.
      * @param element the item being checked
      * @param state a boolean indicating selection or deselection
      * @return boolean indicating success or failure.
@@ -541,6 +543,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      * Assumes that the element has been expanded before. To enforce
      * that the item is expanded, call <code>expandToLevel</code>
      * for the element.
+     * Does not fire events to check state listeners.
      *
      * @param element the element
      * @param state <code>true</code> if the item should be checked,
@@ -561,6 +564,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 
     /**
      * Sets to the given value the checked state for all elements in this viewer.
+     * Does not fire events to check state listeners.
      *
      * @param state <code>true</code> if the element should be checked,
      *  and <code>false</code> if it should be unchecked

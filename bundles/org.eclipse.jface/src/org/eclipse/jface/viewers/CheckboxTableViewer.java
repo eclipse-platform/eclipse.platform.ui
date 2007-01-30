@@ -314,6 +314,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 
     /**
      * Sets to the given value the checked state for all elements in this viewer.
+     * Does not fire events to check state listeners.
      *
      * @param state <code>true</code> if the element should be checked,
      *  and <code>false</code> if it should be unchecked
@@ -357,6 +358,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
      * Sets which nodes are checked in this viewer.
      * The given list contains the elements that are to be checked;
      * all other nodes are to be unchecked.
+     * Does not fire events to check state listeners.
      * <p>
      * This method is typically used when restoring the interesting
      * state of a viewer captured by an earlier call to <code>getCheckedElements</code>.
