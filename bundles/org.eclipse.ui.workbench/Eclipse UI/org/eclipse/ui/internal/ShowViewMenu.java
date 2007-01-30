@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.Collator; 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,8 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -37,10 +38,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.handlers.ShowViewHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with Show
@@ -106,16 +109,23 @@ public class ShowViewMenu extends ContributionItem {
 	public ShowViewMenu(IWorkbenchWindow window, String id, final boolean makeFast) {
 		super(id);
 		this.window = window;
+		final IHandlerService handlerService = (IHandlerService) window
+				.getService(IHandlerService.class);
         showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
-            final ShowViewHandler handler = new ShowViewHandler(makeFast);
-
             public void run() {
-                try {
-                    handler.execute(new ExecutionEvent());
-                } catch (final ExecutionException e) {
-                    // Do nothing.
-                }
-            }
+				try {
+					handlerService.executeCommand(
+							"org.eclipse.ui.views.showView", null); //$NON-NLS-1$
+				} catch (final ExecutionException e) {
+					// Do nothing.
+				} catch (NotDefinedException e) {
+					// Do nothing.
+				} catch (NotEnabledException e) {
+					// Do nothing.
+				} catch (NotHandledException e) {
+					// Do nothing.
+				}
+			}
         };
         
         window.getWorkbench().getHelpSystem().setHelp(showDlgAction,

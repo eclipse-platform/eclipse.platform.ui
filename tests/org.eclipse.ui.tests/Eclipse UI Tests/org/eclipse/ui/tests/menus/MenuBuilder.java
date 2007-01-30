@@ -46,6 +46,9 @@ public class MenuBuilder {
 		}
 		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
+		if (menuService==null) {
+			return;
+		}
 		viewMenuAddition = new AbstractContributionFactory(
 				"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions") {
 			public void createContributionItems(IMenuService menuService,
@@ -123,6 +126,9 @@ public class MenuBuilder {
 		}
 		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
+		if (menuService==null) {
+			return;
+		}
 		menuService.removeContributionFactory(viewMenuAddition);
 		viewMenuAddition = null;
 		menuService.removeContributionFactory(viewToolbarAddition);
