@@ -2047,7 +2047,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			return null;
 
 		Rectangle maxBounds= null;
-		if (fContentAssistSubjectControl != null && !fContentAssistSubjectControl.getControl().isDisposed())
+		if (fContentAssistSubjectControl != null && Helper.okToUse(fContentAssistSubjectControl.getControl()))
 			maxBounds= fContentAssistSubjectControl.getControl().getDisplay().getBounds();
 		else {
 			// fallback
