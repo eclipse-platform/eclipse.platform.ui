@@ -12,8 +12,10 @@
 package org.eclipse.ui.internal.editors.text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -393,6 +395,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private java.util.List fInitializers= new ArrayList();
 
 	private InitializerFactory fInitializerFactory= new InitializerFactory();
+	
+	private Map fDomains= new HashMap();
 
 
 	public TextEditorDefaultsPreferencePage() {
@@ -522,10 +526,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		showPrintMarginButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				if (showPrintMarginButton.getSelection()) {
-					IStatus status= printMarginDomain.validate(((Text)printMarginControls[1]).getText());
-					updateStatus(status);
-				}
+				updateStatus(printMarginDomain);
 			}
 		});
 		
@@ -911,12 +912,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 					IStatus status= domain.validate(value);
 					if (!status.matches(IStatus.ERROR))
 						fOverlayStore.setValue(preference.getKey(), value);
-					updateStatus(status);
+					updateStatus(domain);
 				}
 			});
 		}
 
 		fInitializers.add(fInitializerFactory.create(preference, textControl));
+		
+		fDomains.put(domain, textControl);
 
 		return new Control[] {labelControl, textControl};
 	}
@@ -954,6 +957,36 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			return;
 		setValid(!status.matches(IStatus.ERROR));
 		applyToStatusLine(this, status);
+	}
+	
+	void updateStatus(Domain checkedDomain) {
+		if (!fFieldsInitialized)
+			return;
+		
+		if (updateStatusOnError(checkedDomain))
+			return;
+		
+		Iterator iter= fDomains.keySet().iterator();
+		while (iter.hasNext()) {
+			Domain domain= (Domain)iter.next();
+			if (domain.equals(checkedDomain))
+				continue;
+			if (updateStatusOnError(domain))
+				return;
+		}
+		updateStatus(new StatusInfo());
+	}
+	
+	private boolean updateStatusOnError(Domain domain) {
+		Text textWidget= (Text)fDomains.get(domain);
+		if (textWidget.isEnabled()) {
+			IStatus status= domain.validate(textWidget.getText());
+			if (status.matches(IStatus.ERROR)) {
+				updateStatus(status);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
