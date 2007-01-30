@@ -70,11 +70,8 @@ public class ToggleContextHandler extends AbstractHandler implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
-	 *      java.util.Map)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
 	 */
 	public void updateElement(UIElement element, Map parameters) {
 
