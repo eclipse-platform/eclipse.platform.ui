@@ -207,9 +207,12 @@ mkLink(baseStore, "l1", "l2", false);
 			exceptionThrown = true;
 		}
 		i1 = l1.fetchInfo();
-		//FIXME bug: putInfo neither sets attributes nor throws an exception for broken symbolic links
-		//assertTrue(exceptionThrown);
-		//assertTrue(i1.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		boolean fixMeFixed = false;
+		if (fixMeFixed) {
+			//FIXME bug: putInfo neither sets attributes nor throws an exception for broken symbolic links
+			assertTrue(exceptionThrown);
+			assertTrue(i1.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		}
 		assertFalse(i1.exists());
 
 		i1.setLastModified(12345);
