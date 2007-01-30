@@ -9,7 +9,7 @@
          This extension point is used to customize the initialization process of a document for a text file buffer manager by this plug-in&apos;s default text file buffer manager. It allows to specify which document setup participant should be involved in the initialization process for a text file buffer created for a certain file content type, file extension, or file name.
 &lt;p&gt;
 &lt;strong&gt;Note:&lt;/strong&gt; Participants have to be aware of the existence of other participants i.e. they should always setup a document in a way that does not interfere with others. E.g., when a participant wants to install partitioning on the document, it must use the &lt;code&gt;org.eclipse.jface.text.IDocumentExtension3&lt;/code&gt; API and choose a unique partitioning id.
-As of 3.2, a warning is written to the log file if this isn't followed.
+As of 3.2, a warning is written to the log file if this isn&apos;t followed.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -56,7 +56,7 @@ As of 3.2, a warning is written to the log file if this isn't followed.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The fully qualified name of the participant implementation class. This class must implement the org.eclipse.core.filebuffers.IDocumentSetupParticipant interface.
+                  the fully qualified name of the participant implementation class. This class must implement the &lt;code&gt;org.eclipse.core.filebuffers.IDocumentSetupParticipant&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.filebuffers.IDocumentSetupParticipant"/>
@@ -66,21 +66,21 @@ As of 3.2, a warning is written to the log file if this isn't followed.
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  A comma separated list of file extensions for which this participant should be used.
+                  a comma separated list of file extensions for which this participant should be used
                </documentation>
             </annotation>
          </attribute>
          <attribute name="fileNames" type="string">
             <annotation>
                <documentation>
-                  A comma separated list of file names for which this participant should be used.
+                  a comma separated list of file names for which this participant should be used
                </documentation>
             </annotation>
          </attribute>
          <attribute name="contentTypeId" type="string">
             <annotation>
                <documentation>
-                  The id of a content type as defined by the org.eclipse.core.runtime.contentTypes extension point for which this participant should be used.
+                  the id of a content type as defined by the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point for which this participant should be used.
                </documentation>
             </annotation>
          </attribute>
