@@ -46,7 +46,7 @@ public class HyperlinkDetectorsPreferencePage extends AbstractConfigurationBlock
 	 * @see org.eclipse.jface.preference.PreferencePage#createDescriptionLabel(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Label createDescriptionLabel(Composite parent) {
-		return null;
+		return super.createDescriptionLabel(parent);
 	}
 
 	/*

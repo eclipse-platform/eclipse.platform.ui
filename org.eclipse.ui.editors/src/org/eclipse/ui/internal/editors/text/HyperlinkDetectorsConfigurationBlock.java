@@ -209,6 +209,8 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		composite.setLayout(layout);
+		
+		addFiller(composite, 2);
 
 		String label= TextEditorMessages.HyperlinksEnabled_label;
 		fHyperlinksEnabledCheckBox= addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, 0);
