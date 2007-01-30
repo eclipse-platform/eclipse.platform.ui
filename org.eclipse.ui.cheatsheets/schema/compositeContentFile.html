@@ -29,7 +29,7 @@ The root element of a composite cheatsheet</p>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.taskGroup">taskGroup</a> ((<a href="#e.task">task</a> | <a href="#e.taskGroup">taskGroup</a>)+ , <a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.dependency">dependency</a>*)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST taskGroup</p>
-<p class=code id=dtdAttlist>kind&nbsp;CDATA "set"<p class=code id=dtdAttlist>name&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>skip&nbsp;(true | false) "false"&gt;</p>
+<p class=code id=dtdAttlist>kind&nbsp;(set|sequence|choice) "set"<p class=code id=dtdAttlist>name&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>skip&nbsp;(true | false) "false"&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 A task group represents a collection of related tasks. If the kind is "choice" only one of the child tasks need to be completed. If the kind is "set" or "sequence" all children must be completed.</p>
@@ -61,7 +61,13 @@ A leaf task within a composite cheat sheet. A task does not have children, but i
 A parameter to a task within a composite cheatsheet. Each parameter has a name and value, both of which are strings. A task may have any number of parameters, two parameters for a single task may not share the same name.</p>
 <br>
 <ul class=ConfigMarkup id=attlistDesc>
-<li><b>name</b> - The name of this parameter.</li>
+<li><b>name</b> - The name of this parameter. A task of kind="cheatsheet" can have the following parameters:
+
+<p>id: The id of a cheat sheet which has been registered using the extension point org.eclipse.ui.cheatsheets.cheatSheetContent. This identifies the cheatsheet which will be associated with this task. Either the id or the path parameter (but not both) should be specified.</p>
+
+<p>path: The URL of a cheat sheet content file. This may be an absolute URL, or relative to the content file for the composite cheat sheet. If both id and path are specified the path will be used to locate the content file and the id parameter will be ignored.</p> 
+
+<p>showIntro: A boolean parameter with default value of true. If "false" the cheat sheet when started will initially show the first step rather than the introduction.</p></li>
 <li><b>value</b> - The value of this parameter.</li>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.intro">intro</a> (#PCDATA)&gt;</p>

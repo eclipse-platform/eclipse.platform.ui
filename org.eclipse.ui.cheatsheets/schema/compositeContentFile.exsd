@@ -52,12 +52,22 @@
             <element ref="onCompletion" minOccurs="0" maxOccurs="1"/>
             <element ref="dependency" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="kind" type="string" use="default" value="set">
+         <attribute name="kind" use="default" value="set">
             <annotation>
                <documentation>
                   The kind of this task group which can be &quot;set&quot;, &quot;sequence&quot; or &quot;choice&quot;. If the kind is set or sequence this task group is complete when all of its child tasks/task groups have been completed. In addition the subtasks of a sequence must be completed in order. A choice is complete when any of its subtasks has been completed.
                </documentation>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="set">
+                  </enumeration>
+                  <enumeration value="sequence">
+                  </enumeration>
+                  <enumeration value="choice">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -143,7 +153,14 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The name of this parameter.
+                  The name of this parameter. A task of kind=&quot;cheatsheet&quot; can have the following parameters:
+
+&lt;p&gt;id: The id of a cheat sheet which has been registered using the extension point org.eclipse.ui.cheatsheets.cheatSheetContent. This identifies the cheatsheet which will be associated with this task. Either the id or the path parameter (but not both) should be specified.&lt;/p&gt;
+
+&lt;p&gt;path: The URL of a cheat sheet content file. This may be an absolute URL, or relative to the content file for the composite cheat sheet. If both id and path are specified the path will be used to locate the content file and the id parameter will be ignored.&lt;/p&gt; 
+
+&lt;p&gt;showIntro: A boolean parameter with default value of true. If &quot;false&quot; the cheat sheet when started will initially show the first step rather than the introduction.&lt;/p&gt;
+
                </documentation>
             </annotation>
          </attribute>
