@@ -111,6 +111,8 @@ public class BindSpec {
 	private Map modelValidatorsContainers;
 
 	private Integer targetValidatePosition;
+	
+	private Integer modelValidatePosition;
 
 	/**
 	 * Default constructor.  Does not set any values.
@@ -273,7 +275,7 @@ public class BindSpec {
 
 	/**
 	 * @return pipeline position to automatically validate up to on every target
-	 *         change when {@link #getTargetUpdatePolicy()} is
+	 *         change when {@link #getModelUpdatePolicy()} is
 	 *         {@link BindSpec#POLICY_EXPLICIT}, can be <code>null</code>
 	 */
 	public Integer getTargetValidatePolicy() {
@@ -282,7 +284,7 @@ public class BindSpec {
 
 	/**
 	 * Sets the position to validate to automatically on every target change
-	 * when the {@link #getTargetUpdatePolicy()} is
+	 * when the {@link #getModelUpdatePolicy()} is
 	 * {@link BindSpec#POLICY_EXPLICIT}.
 	 * 
 	 * @param pipelinePosition
@@ -442,5 +444,29 @@ public class BindSpec {
 
 			return result;
 		}
+	}
+	
+	/**
+	 * @return pipeline position to automatically validate up to on every model
+	 *         change when {@link #getTargetUpdatePolicy()} is
+	 *         {@link BindSpec#POLICY_EXPLICIT}, can be <code>null</code>
+	 */
+	public Integer getModelValidatePolicy() {
+		return modelValidatePosition;
+	}
+
+	/**
+	 * Sets the position to validate to automatically on every model change
+	 * when the {@link #getTargetUpdatePolicy()} is
+	 * {@link BindSpec#POLICY_EXPLICIT}.
+	 * 
+	 * @param pipelinePosition
+	 *            BindingEvent.PIPELINE_* constant, <code>null</code> for
+	 *            default
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setModelValidatePolicy(Integer pipelinePosition) {
+		this.modelValidatePosition = pipelinePosition;
+		return this;
 	}
 }

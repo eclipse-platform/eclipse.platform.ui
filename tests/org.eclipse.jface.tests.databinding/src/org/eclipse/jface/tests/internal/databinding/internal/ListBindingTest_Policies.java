@@ -45,7 +45,7 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		dbc = new DataBindingContext();
 	}
 
-	public void testUpdateModelPolicyNull() throws Exception {
+	public void testModelUpdatePolicyNull() throws Exception {
 		new ListBinding(target, model, new BindSpec()
 				.setModelUpdatePolicy(null)).init(dbc);
 
@@ -54,7 +54,7 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 				.toArray()));
 	}
 
-	public void testUpdateModelPolicyAutomatic() throws Exception {
+	public void testModelUpdatePolicyAutomatic() throws Exception {
 		new ListBinding(target, model, new BindSpec()
 				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
 
@@ -63,9 +63,9 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 				.toArray()));
 	}
 
-	public void testUpdateModelPolicyExplicit() throws Exception {
-		ListBinding binding = new ListBinding( target, model,
-				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+	public void testModelUpdatePolicyExplicit() throws Exception {
+		ListBinding binding = new ListBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
 		binding.init(dbc);
 
 		target.add("1");
@@ -78,8 +78,8 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 				.toArray()));
 	}
 
-	public void testUpdateTargetPolicyNull() throws Exception {
-		new ListBinding( target, model, new BindSpec()
+	public void testTargetUpdatePolicyNull() throws Exception {
+		new ListBinding(target, model, new BindSpec()
 				.setTargetUpdatePolicy(null)).init(dbc);
 
 		model.add("1");
@@ -87,7 +87,7 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 				.toArray()));
 	}
 
-	public void testUpdateTargetPolicyAutomatic() throws Exception {
+	public void testTargetUpdatePolicyAutomatic() throws Exception {
 		new ListBinding(target, model, new BindSpec()
 				.setTargetUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
 
@@ -96,9 +96,9 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 				.toArray()));
 	}
 
-	public void testUpdateTargetPolicyExplicit() throws Exception {
-		ListBinding binding = new ListBinding(target, model,
-				new BindSpec().setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+	public void testTargetUpdatePolicyExplicit() throws Exception {
+		ListBinding binding = new ListBinding(target, model, new BindSpec()
+				.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
 		binding.init(dbc);
 
 		model.add("1");
@@ -115,9 +115,9 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		TrackLastListener listener = new TrackLastListener();
 		int position = BindingEvent.PIPELINE_BEFORE_CHANGE;
 
-		final ListBinding listBinding = new ListBinding(target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
-				.setTargetValidatePolicy(new Integer(position)));
+		final ListBinding listBinding = new ListBinding(target, model,
+				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
+						.setTargetValidatePolicy(new Integer(position)));
 		listBinding.init(dbc);
 		listBinding
 				.addBindingEventListener(listener);
@@ -129,19 +129,53 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		assertEquals(position, listener.lastPosition);
 	}
 
-	public void testDefaultTargetValidationPosition() throws Exception {
+	public void testTargetValidatePolicyDefault() throws Exception {
 		TrackLastListener listener = new TrackLastListener();
 
-		final ListBinding listBinding = new ListBinding(target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		final ListBinding listBinding = new ListBinding(target, model,
+				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
 		listBinding.init(dbc);
-		listBinding
-				.addBindingEventListener(listener);
+		listBinding.addBindingEventListener(listener);
 
 		listener.lastPosition = -1;
 		String value = "value";
 		target.add(value);
 		assertFalse("target should not equal model", target.equals(model));
-		assertEquals(-1, listener.lastPosition);
+		assertEquals(BindingEvent.PIPELINE_AFTER_GET, listener.lastPosition);
+	}
+
+	public void testModelValidatePolicyDefault() throws Exception {
+		TrackLastListener listener = new TrackLastListener();
+
+		final ListBinding listBinding = new ListBinding(target, model,
+				new BindSpec().setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		listBinding.init(dbc);
+		listBinding.addBindingEventListener(listener);
+
+		listener.lastPosition = -1;
+		String value = "value";
+		model.add(value);
+		assertFalse("model should not equal target", model.equals(target));
+		assertEquals(BindingEvent.PIPELINE_AFTER_GET, listener.lastPosition);
+	}
+
+	public void testIsUpdateTargetFalse() throws Exception {
+		final ListBinding listBinding = new ListBinding(target, model,
+				new BindSpec().setUpdateModel(false));
+		listBinding.init(dbc);
+
+		assertEquals(target, model);
+		target.add("value");
+		assertFalse(target.equals(model));
+	}
+
+	public void testIsUpdateModelFalse() throws Exception {
+		final ListBinding listBinding = new ListBinding(target, model,
+				new BindSpec().setUpdateTarget(false));
+		listBinding.init(dbc);
+
+		assertEquals(target, model);
+		model.add("value");
+		assertFalse(model.equals(target));
 	}
 }

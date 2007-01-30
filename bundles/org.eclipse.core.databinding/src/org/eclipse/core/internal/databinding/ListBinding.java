@@ -74,28 +74,25 @@ public class ListBinding extends Binding {
 
 		fillBindSpecDefaults(bindSpec, targetList, modelList);
 
-		Integer policy = (bindSpec.getModelUpdatePolicy() != null) ? bindSpec
-				.getModelUpdatePolicy() : BindSpec.POLICY_AUTOMATIC;
-		int pipelinePosition = (BindSpec.POLICY_AUTOMATIC.equals(policy)) ? BindingEvent.PIPELINE_AFTER_CHANGE
-				: -1;
-
-		if (BindSpec.POLICY_EXPLICIT.equals(policy)
-				&& bindSpec.getTargetValidatePolicy() != null) {
-			pipelinePosition = bindSpec.getTargetValidatePolicy().intValue();
-		}
-
-		if (pipelinePosition != -1) {
+		if (bindSpec.isUpdateModel()) {
+			int stopPosition = getValidationPolicy(bindSpec
+					.getModelUpdatePolicy(), bindSpec.getTargetValidatePolicy());
 			targetList
-					.addListChangeListener(targetChangeListener = new TargetChangeListener(
-							pipelinePosition));
+					.addListChangeListener(targetChangeListener = new ChangeListener(
+							BindingEvent.EVENT_COPY_TO_MODEL, stopPosition));
 		} else {
 			targetChangeListener = null;
 		}
 
-		policy = bindSpec.getTargetUpdatePolicy();
-
-		if (policy == null || policy.equals(BindSpec.POLICY_AUTOMATIC)) {
-			modelList.addListChangeListener(modelChangeListener);
+		if (bindSpec.isUpdateTarget()) {
+			 int stopPosition = getValidationPolicy(
+					bindSpec.getTargetUpdatePolicy(), bindSpec
+							.getModelValidatePolicy());
+			modelList
+					.addListChangeListener(modelChangeListener = new ChangeListener(
+							BindingEvent.EVENT_COPY_TO_TARGET, stopPosition));
+		} else {
+			modelChangeListener = null;
 		}
 	}
 
@@ -111,25 +108,25 @@ public class ListBinding extends Binding {
 	}
 
 	private final IListChangeListener targetChangeListener;
+	private final IListChangeListener modelChangeListener;
 
-	private class TargetChangeListener implements IListChangeListener {
+	private class ChangeListener implements IListChangeListener {
 		private final int pipelinePosition;
+		private final int copyType;
 
-		TargetChangeListener(int pipelinePosition) {
+		ChangeListener(int copyType, int pipelinePosition) {
 			this.pipelinePosition = pipelinePosition;
+			this.copyType = copyType;
 		}
 
 		public void handleListChange(ListChangeEvent event) {
-			doUpdateModelFromTarget(event.diff, pipelinePosition);
+			if (copyType == BindingEvent.EVENT_COPY_TO_MODEL) {
+				doUpdateModelFromTarget(event.diff, pipelinePosition);
+			} else {
+				doUpdateTargetFromModel(event.diff, pipelinePosition);
+			}
 		}
 	}
-
-	private IListChangeListener modelChangeListener = new IListChangeListener() {
-		public void handleListChange(ListChangeEvent event) {
-			doUpdateTargetFromModel(event.diff,
-					BindingEvent.PIPELINE_AFTER_CHANGE);
-		}
-	};
 
 	/**
 	 * Perform the target to model process up to and including the
@@ -145,7 +142,8 @@ public class ListBinding extends Binding {
 		}
 
 		BindingEvent e = createBindingEvent(diff,
-				BindingEvent.EVENT_COPY_TO_MODEL, BindingEvent.PIPELINE_AFTER_GET);
+				BindingEvent.EVENT_COPY_TO_MODEL,
+				BindingEvent.PIPELINE_AFTER_GET);
 
 		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
 			return;
@@ -332,5 +330,16 @@ public class ListBinding extends Binding {
 	protected void postInit() {
 		updateTargetFromModel();
 	}
-	
+
+	private static int getValidationPolicy(Integer updatePolicy,
+			Integer validationPolicy) {
+		int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
+
+		if (BindSpec.POLICY_EXPLICIT.equals(updatePolicy)) {
+			pipelineStop = (validationPolicy == null) ? BindingEvent.PIPELINE_AFTER_GET
+					: validationPolicy.intValue();
+		}
+
+		return pipelineStop;
+	}
 }

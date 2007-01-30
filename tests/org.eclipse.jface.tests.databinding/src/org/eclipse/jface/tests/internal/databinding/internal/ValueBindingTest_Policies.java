@@ -42,23 +42,23 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		dbc = new DataBindingContext();
 	}
 
-	public void testUpdateModelPolicyNull() throws Exception {
+	public void testModelUpdatePolicyNull() throws Exception {
 		new ValueBinding(target, model, new BindSpec()
 				.setModelUpdatePolicy(null)).init(dbc);
 		target.setValue("1");
 		assertEquals("should be automatic", target.getValue(), model.getValue());
 	}
 
-	public void testUpdateModelPolicyAutomatic() throws Exception {
+	public void testModelUpdatePolicyAutomatic() throws Exception {
 		new ValueBinding(target, model, new BindSpec()
 				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
 		target.setValue("1");
 		assertEquals("should be automatic", target.getValue(), model.getValue());
 	}
 
-	public void testUpdateModelPolicyExplicit() throws Exception {
-		ValueBinding binding = new ValueBinding(target, model,
-				new BindSpec().setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+	public void testModelUpdatePolicyExplicit() throws Exception {
+		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
+				.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
 		binding.init(dbc);
 
 		model.setValue("1");
@@ -68,21 +68,21 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		assertEquals(model.getValue(), target.getValue());
 	}
 
-	public void testUpdateTargetPolicyNull() throws Exception {
+	public void testTargetUpdatePolicyNull() throws Exception {
 		new ValueBinding(target, model, new BindSpec()
 				.setTargetUpdatePolicy(null)).init(dbc);
 		model.setValue("1");
 		assertEquals("should be automatic", model.getValue(), target.getValue());
 	}
 
-	public void testUpdateTargetPolicyAutomatic() throws Exception {
+	public void testTargetUpdatePolicyAutomatic() throws Exception {
 		new ValueBinding(target, model, new BindSpec()
 				.setTargetUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
 		model.setValue("1");
 		assertEquals("should be automatic", model.getValue(), target.getValue());
 	}
 
-	public void testUpdateTargetPolicyDefault() throws Exception {
+	public void testTargetUpdatePolicyDefault() throws Exception {
 		TrackLastListener listener = new TrackLastListener();
 		listener.lastPosition = -1;
 		
@@ -91,10 +91,10 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		binding.init(dbc);
 		binding.addBindingEventListener(listener);
 
-		target.setValue("1");
-		assertFalse(target.getValue().equals(model.getValue()));
-		assertEquals("last position should be -1",
-				-1, listener.lastPosition);
+		model.setValue("1");
+		assertFalse(model.getValue().equals(target.getValue()));
+		assertEquals("last position should be PIPELINE_AFTER_CONVERT",
+				BindingEvent.PIPELINE_AFTER_CONVERT, listener.lastPosition);
 
 		binding.updateModelFromTarget();
 		assertEquals(target.getValue(), model.getValue());
@@ -104,9 +104,9 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		int position = BindingEvent.PIPELINE_AFTER_GET;
 		TrackLastListener listener = new TrackLastListener();
 
-		ValueBinding binding = new ValueBinding(target, model,
-				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
-						.setTargetValidatePolicy(new Integer(position)));
+		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
+				.setTargetValidatePolicy(new Integer(position)));
 		binding.init(dbc);
 		binding.addBindingEventListener(listener);
 
@@ -115,5 +115,20 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 
 		assertFalse(target.getValue().equals(model.getValue()));
 		assertEquals("last position", position, listener.lastPosition);
+	}
+
+	public void testModelUpdatePolicyExplicitValidationDefault()
+			throws Exception {
+		TrackLastListener listener = new TrackLastListener();
+
+		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
+
+		binding.addBindingEventListener(listener);
+		target.setValue("");
+
+		assertEquals("default validation position",
+				BindingEvent.PIPELINE_AFTER_CONVERT, listener.lastPosition);
 	}
 }

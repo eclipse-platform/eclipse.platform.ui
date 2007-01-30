@@ -92,11 +92,12 @@ public class ValueBinding extends Binding {
 						"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			Integer policy = bindSpec.getTargetUpdatePolicy();
+			int pipelineStop = getValidationPolicy(bindSpec
+					.getTargetUpdatePolicy(), bindSpec.getModelValidatePolicy());
 
-			if (policy == null || policy.equals(BindSpec.POLICY_AUTOMATIC)) {
-				model.addValueChangeListener(modelChangeListener);
-			}
+			model
+					.addValueChangeListener(modelChangeListener = new ModelChangeListener(
+							pipelineStop));
 		}
 		if (bindSpec.isUpdateModel()) {
 			targetToModelConverter = bindSpec.getTargetToModelConverter();
@@ -105,21 +106,12 @@ public class ValueBinding extends Binding {
 						"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			Integer policy = bindSpec.getModelUpdatePolicy();
-			int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
+			int pipelineStop = getValidationPolicy(bindSpec
+					.getModelUpdatePolicy(), bindSpec.getTargetValidatePolicy());
 
-			if (BindSpec.POLICY_EXPLICIT.equals(policy)) {
-				Integer targetValidate = bindSpec.getTargetValidatePolicy();
-
-				pipelineStop = (targetValidate == null) ? -1 : targetValidate
-						.intValue();
-			}
-
-			if (pipelineStop != -1) {
-				target
-						.addValueChangeListener(targetChangeListener = new TargetChangeListener(
-								pipelineStop));
-			}
+			target
+					.addValueChangeListener(targetChangeListener = new TargetChangeListener(
+							pipelineStop));
 
 			if (target instanceof IVetoableValue) {
 				((IVetoableValue) target)
@@ -179,7 +171,15 @@ public class ValueBinding extends Binding {
 		}
 	}
 
-	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
+	private IValueChangeListener modelChangeListener;
+
+	private class ModelChangeListener implements IValueChangeListener {
+		private int pipelinePosition;
+
+		ModelChangeListener(int pipelinePosition) {
+			this.pipelinePosition = pipelinePosition;
+		}
+
 		public void handleValueChange(ValueChangeEvent event) {
 			final ValueDiff diff = event.diff;
 			if (updatingModel)
@@ -187,12 +187,11 @@ public class ValueBinding extends Binding {
 			// The model has changed so we must update the target
 			model.getRealm().exec(new Runnable() {
 				public void run() {
-					doUpdateTargetFromModel(diff,
-							BindingEvent.PIPELINE_AFTER_CHANGE);
+					doUpdateTargetFromModel(diff, pipelinePosition);
 				}
 			});
 		}
-	};
+	}
 
 	private boolean updateTarget;
 
@@ -421,4 +420,15 @@ public class ValueBinding extends Binding {
 		}
 	}
 
+	private static int getValidationPolicy(Integer updatePolicy,
+			Integer validationPolicy) {
+		int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
+
+		if (BindSpec.POLICY_EXPLICIT.equals(updatePolicy)) {
+			pipelineStop = (validationPolicy == null) ? BindingEvent.PIPELINE_AFTER_CONVERT
+					: validationPolicy.intValue();
+		}
+
+		return pipelineStop;
+	}
 }
