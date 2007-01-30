@@ -59,7 +59,7 @@ public interface IFileInfo extends Comparable, Cloneable {
 	 * file system.	 
 	 * 
 	 * @param attribute The kind of attribute to return.  Currently only
-	 * {@link EFS_ATTRIBUTE_LINK_TARGET} is supported.
+	 * {@link EFS#ATTRIBUTE_LINK_TARGET} is supported.
 	 * @return the value of the extended String attribute for this file.
 	 * @see IFileSystem#attributes()
 	 * @since org.eclipse.core.filesystem 1.1
