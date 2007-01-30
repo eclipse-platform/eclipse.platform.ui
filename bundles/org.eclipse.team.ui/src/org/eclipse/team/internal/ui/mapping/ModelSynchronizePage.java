@@ -97,6 +97,10 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 			if (savedId != null && ! savedId.equals(ModelSynchronizeParticipant.ALL_MODEL_PROVIDERS_VISIBLE)) {
 				getConfiguration().setProperty(ModelSynchronizeParticipant.P_VISIBLE_MODEL_PROVIDER, savedId);
 			}
+			String layout = pageSettings.get(ITeamContentProviderManager.PROP_PAGE_LAYOUT);
+			if (layout != null) {
+				getConfiguration().setProperty(ITeamContentProviderManager.PROP_PAGE_LAYOUT, layout);
+			}
 		}
 	}
 	
@@ -128,6 +132,20 @@ public class ModelSynchronizePage extends AbstractSynchronizePage {
 				return true;
 			}
 			return false;
+		}
+		if (key.equals(ITeamContentProviderManager.PROP_PAGE_LAYOUT)) {
+			if (!(newValue instanceof String)) {
+				return false;
+			}
+			String currentSetting = (String)configuration.getProperty(ITeamContentProviderManager.PROP_PAGE_LAYOUT);
+			if (currentSetting != null && currentSetting.equals(newValue))
+				return false;
+			
+			IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+			if(pageSettings != null) {
+				pageSettings.put(ITeamContentProviderManager.PROP_PAGE_LAYOUT, (String) newValue);
+			}
+			return true;
 		}
 		return super.aboutToChangeProperty(configuration, key, newValue);
 	}

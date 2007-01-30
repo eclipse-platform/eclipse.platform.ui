@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
@@ -30,7 +25,6 @@ import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
@@ -110,9 +104,6 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	public void init(ICommonContentExtensionSite site) {
 		super.init(site);
 		TeamUIPlugin.getPlugin().getPreferenceStore().addPropertyChangeListener(this);
-		ISynchronizePageConfiguration configuration = getConfiguration();
-		if (configuration != null)
-			configuration.setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, ResourceModelTraversalCalculator.getDefault());
 	}
 	
 	/* (non-Javadoc)

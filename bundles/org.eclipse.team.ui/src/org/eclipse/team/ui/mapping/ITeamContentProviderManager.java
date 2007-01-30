@@ -46,6 +46,7 @@ public interface ITeamContentProviderManager {
 	 * shown in an {@link ISynchronizePage}.
 	 */
 	public static final String P_SYNCHRONIZATION_CONTEXT = TeamUIPlugin.ID + ".synchronizationContext"; //$NON-NLS-1$
+	
 	/**
 	 * Property constant used to store and retrieve the resource mapping scope
 	 * from the {@link org.eclipse.ui.navigator.IExtensionStateModel} used by
@@ -55,6 +56,31 @@ public interface ITeamContentProviderManager {
 	 */
 	public static final String P_SYNCHRONIZATION_SCOPE = TeamUIPlugin.ID + ".synchronizationScope"; //$NON-NLS-1$
 
+	/**
+	 * Property constant used to store and retrieve the page layout
+	 * from the {@link ISynchronizePageConfiguration} when models are being
+	 * shown in an {@link ISynchronizePage}. At this time, there are two layouts,
+	 * TREE_LAYOUT and FLAT_LAYOUT. Other may be added
+	 * @since 3.3
+	 */
+	public static final String PROP_PAGE_LAYOUT = TeamUIPlugin.ID + ".pageLayout"; //$NON-NLS-1$
+	
+	/**
+	 * Value for the PROP_PAGE_LAYOUT that indicates that the models should display 
+	 * their elements in tree form.
+	 * @since 3.3
+	 */
+	public static final String TREE_LAYOUT = TeamUIPlugin.ID + ".treeLayout"; //$NON-NLS-1$
+	
+	/**
+	 * Value for the PROP_PAGE_LAYOUT that indicates that the models should display 
+	 * their elements as a flat list. Only models that indicate in their <code>teamContentProviders</code>
+	 * that they support the flat layout will be enabled when the PROP_PAGE_LAYOUT is set
+	 * to FLAT_LAYOUT.
+	 * @since 3.3
+	 */
+	public static final String FLAT_LAYOUT = TeamUIPlugin.ID + ".flatLayout"; //$NON-NLS-1$
+	
 	/**
 	 * Property constant used during property change notification to indicate
 	 * that one one or more model providers have either been enabled or disabled.

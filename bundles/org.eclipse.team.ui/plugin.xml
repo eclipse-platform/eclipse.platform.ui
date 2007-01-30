@@ -470,7 +470,8 @@
             contentExtensionId="org.eclipse.team.ui.resourceContent"
             icon="/$nl$/icons/full/obj/workspace_obj.gif"
             modelProviderId="org.eclipse.core.resources.modelProvider"
-            preferencePage="org.eclipse.team.internal.ui.preferences.ResourceModelPreferencePage"/>
+            preferencePage="org.eclipse.team.internal.ui.preferences.ResourceModelPreferencePage"
+            supportsFlatLayout="true"/>
    </extension>
    <extension
          point="org.eclipse.team.core.storageMergers">

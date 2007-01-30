@@ -344,12 +344,20 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		}
 		// Include resources that are not in a set
 		ResourceDiffTree tree = getTheRest();
-		IPath[] otherRoots = tree.getChildren(ResourcesPlugin.getWorkspace().getRoot().getFullPath());
-		for (int i = 0; i < otherRoots.length; i++) {
-			IPath path = otherRoots[i];
-			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-			if (project.isAccessible() && hasChildren(TreePath.EMPTY.createChildPath(project)))
-				result.add(project);
+		if (isFlatLayout()) {
+			IResource[] resources = tree.getAffectedResources();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				result.add(resource);
+			}
+		} else {
+			IPath[] otherRoots = tree.getChildren(ResourcesPlugin.getWorkspace().getRoot().getFullPath());
+			for (int i = 0; i < otherRoots.length; i++) {
+				IPath path = otherRoots[i];
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
+				if (project.isAccessible() && hasChildren(TreePath.EMPTY.createChildPath(project)))
+					result.add(project);
+			}
 		}
 		return result.toArray();
 	}

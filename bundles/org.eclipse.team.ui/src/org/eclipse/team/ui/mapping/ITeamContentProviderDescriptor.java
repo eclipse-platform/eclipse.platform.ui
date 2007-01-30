@@ -66,5 +66,13 @@ public interface ITeamContentProviderDescriptor {
 	 * @return a string containing the name or null if no name has been specified
 	 */
 	public String getName();
+	
+	/**
+	 * Return whether the FLAT layout is supported by this content provider.
+	 * @return whether the FLAT layout is supported by this content provider
+	 * @see ITeamContentProviderManager#PROP_PAGE_LAYOUT
+	 * @since 3.3
+	 */
+	public boolean isFlatLayoutSupported();
 
 }

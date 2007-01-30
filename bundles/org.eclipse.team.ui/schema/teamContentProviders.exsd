@@ -83,6 +83,13 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="supportsFlatLayout" type="boolean">
+            <annotation>
+               <documentation>
+                  Indicates whether this content provider supports the flat layout. By default, content providers do not support the flat layout. See the PROP_PAGE_LAYOUT constant in class org.eclipse.team.ui.mapping.ITeamContentProviderManager for more information.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

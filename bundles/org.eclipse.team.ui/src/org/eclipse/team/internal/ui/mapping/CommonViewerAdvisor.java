@@ -250,10 +250,12 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 		ModelSynchronizeParticipant participant = (ModelSynchronizeParticipant)configuration.getParticipant();
 		ModelProvider[] providers = participant.getEnabledModelProviders();
 		Set result = new HashSet();
+		Object property = configuration.getProperty(ITeamContentProviderManager.PROP_PAGE_LAYOUT);
+		boolean isFlatLayout = property != null && property.equals(ITeamContentProviderManager.FLAT_LAYOUT);
 		for (int i = 0; i < providers.length; i++) {
 			ModelProvider provider = providers[i];
 			ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
-			if (desc != null && desc.isEnabled())
+			if (desc != null && desc.isEnabled() && (!isFlatLayout || desc.isFlatLayoutSupported()))
 				result.add(desc.getContentExtensionId());
 		}
 		return (String[]) result.toArray(new String[result.size()]);
@@ -473,6 +475,9 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 					}
 				}
 			}, (StructuredViewer)viewer);
+		} else if (event.getProperty().equals(ITeamContentProviderManager.PROP_PAGE_LAYOUT)) {
+			// TODO
+			enableContentProviders((CommonViewer)getViewer(), getConfiguration());
 		}
 	}
 	

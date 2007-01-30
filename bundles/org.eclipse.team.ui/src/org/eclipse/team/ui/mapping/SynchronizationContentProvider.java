@@ -669,4 +669,18 @@ public abstract class SynchronizationContentProvider implements ICommonContentPr
 		}
 		return elementOrPath;
 	}
+	
+	/**
+	 * Return whether the page has been set to use a flat layout.
+	 * @return whether the page has been set to use a flat layout
+	 * @since 3.3
+	 */
+	protected final boolean isFlatLayout() {
+		ISynchronizePageConfiguration c = getConfiguration();
+		if (c != null) {
+			String p = (String)c.getProperty(ITeamContentProviderManager.PROP_PAGE_LAYOUT);
+			return p != null && p.equals(ITeamContentProviderManager.FLAT_LAYOUT);
+		}
+		return false;
+	}
 }

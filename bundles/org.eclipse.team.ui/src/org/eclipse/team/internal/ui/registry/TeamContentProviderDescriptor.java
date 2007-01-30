@@ -32,6 +32,7 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 	private static final String ATT_CONTENT_EXTENSION_ID = "contentExtensionId"; //$NON-NLS-1$
 	private static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	private static final String ATT_PREFERENCE_PAGE = "preferencePage"; //$NON-NLS-1$
+	private static final String ATT_SUPPORTS_FLAT_LAYOUT = "supportsFlatLayout"; //$NON-NLS-1$
 	
 	private static final String PREF_TEAM_CONTENT_DESCRIPTORS = "teamContentDescriptors"; //$NON-NLS-1$
 	private static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$
@@ -43,6 +44,8 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 	private ImageDescriptor imageDescriptor;
 
 	private IConfigurationElement configElement;
+
+	private boolean supportsFlatLayout;
 
 	public TeamContentProviderDescriptor(IExtension extension) throws CoreException {
 		readExtension(extension);
@@ -63,6 +66,10 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 			if (name.equalsIgnoreCase(TAG_TEAM_CONTENT_PROVIDER)) {
 				modelProviderId = element.getAttribute(ATT_MODEL_PROVIDER_ID);
 				contentExtensionId = element.getAttribute(ATT_CONTENT_EXTENSION_ID);
+				String supportsFlatLayoutString = element.getAttribute(ATT_SUPPORTS_FLAT_LAYOUT);
+				if (supportsFlatLayoutString != null) {
+					supportsFlatLayout = Boolean.valueOf(supportsFlatLayoutString).booleanValue();
+				}
 				contentProviderName = extension.getLabel();
 			}
 			break;
@@ -193,5 +200,12 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 			return contentProviderName;
 		
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor#isFlatLayoutSupported()
+	 */
+	public boolean isFlatLayoutSupported() {
+		return supportsFlatLayout;
 	}
 }

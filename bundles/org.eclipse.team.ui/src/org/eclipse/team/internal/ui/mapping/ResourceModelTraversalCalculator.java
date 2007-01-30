@@ -26,14 +26,28 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.core.subscribers.DiffChangeSet;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
 public class ResourceModelTraversalCalculator {
 
 	public static final String PROP_TRAVERSAL_CALCULATOR = "org.eclipse.team.ui.resourceModelraversalCalculator"; //$NON-NLS-1$
 	private static ResourceModelTraversalCalculator instance;
+	private final ISynchronizePageConfiguration configuration;
+
+	public ResourceModelTraversalCalculator(
+			ISynchronizePageConfiguration configuration) {
+				this.configuration = configuration;
+	}
+
+	public ResourceModelTraversalCalculator() {
+		configuration = null;
+	}
 
 	public int getLayoutDepth(IResource resource, TreePath path) {
+		if (isFlatPageLayout()) {
+			return (resource instanceof IWorkspaceRoot) ? IResource.DEPTH_INFINITE : IResource.DEPTH_ZERO;
+		}
 		if (resource.getType() == IResource.PROJECT)
 			return IResource.DEPTH_INFINITE;
 		if (resource.getType() == IResource.FILE) 
@@ -59,7 +73,13 @@ public class ResourceModelTraversalCalculator {
 				return getTreeChildren(diffTree, resource, children);
 			}
 		}
-		if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
+		if (isFlatPageLayout()) {
+			if (resource instanceof IWorkspaceRoot) {
+				return diffTree.getAffectedResources();
+			} else {
+				return new Object[0];
+			}
+		} else if (getLayout().equals(IPreferenceIds.FLAT_LAYOUT) && resource.getType() == IResource.PROJECT) {
 			return getFlatChildren(diffTree, resource);
 		} else if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) && resource.getType() == IResource.PROJECT) {
 			return getCompressedChildren(diffTree, (IProject)resource, children);
@@ -215,7 +235,12 @@ public class ResourceModelTraversalCalculator {
 		Object element = internalGetElement(elementOrPath);
 		Object parent = internalGetElementParent(elementOrPath);
 		if (element instanceof IResource) {
-			IResource resource = (IResource) element;			
+			IResource resource = (IResource) element;
+			if (isFlatPageLayout()) {
+				IPath path = resource.getFullPath();
+				if (!path.isEmpty())
+					return NLS.bind(TeamUIMessages.ResourceModelLabelProvider_0, resource.getName(), path.toString());
+			}
 			if (getLayout().equals(IPreferenceIds.COMPRESSED_LAYOUT) 
 					&& resource.getType() == IResource.FOLDER
 					&& (parent == null || parent instanceof IProject)) {
@@ -339,6 +364,14 @@ public class ResourceModelTraversalCalculator {
 			return TreePath.EMPTY.createChildPath(provider);
 		return TreePath.EMPTY;
 	}
+	
+	private boolean isFlatPageLayout() {
+		if (configuration != null) {
+			String p = (String)configuration.getProperty(ITeamContentProviderManager.PROP_PAGE_LAYOUT);
+			return p != null && p.equals(ITeamContentProviderManager.FLAT_LAYOUT);
+		}
+		return false;
+	}
 
 	public synchronized static ResourceModelTraversalCalculator getDefault() {
 		if (instance == null)
@@ -351,7 +384,7 @@ public class ResourceModelTraversalCalculator {
 			return ResourceModelTraversalCalculator.getDefault();
 		ResourceModelTraversalCalculator tc = (ResourceModelTraversalCalculator)configuration.getProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR);
 		if (tc == null) {
-			tc = ResourceModelTraversalCalculator.getDefault();
+			tc = new ResourceModelTraversalCalculator(configuration);
 			configuration.setProperty(ResourceModelTraversalCalculator.PROP_TRAVERSAL_CALCULATOR, tc);
 		}
 		return tc;
