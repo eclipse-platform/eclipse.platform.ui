@@ -83,8 +83,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		IConfigurationElement[] items = additionElement.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
-			if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
-				// Menus are special...we have to add any sub menu
+			if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)
+					|| IWorkbenchRegistryConstants.TAG_TOOLBAR.equals(itemType)) {
+				// Menus and toolbars are special...we have to add any sub menu
 				// items into their own cache
 				// If the locationURI is null then this should be a sub menu
 				// addition..create the 'root' URI

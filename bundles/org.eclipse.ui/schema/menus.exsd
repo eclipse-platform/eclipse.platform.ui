@@ -550,11 +550,13 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
             <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
-            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="dynamicContribution" minOccurs="0" maxOccurs="unbounded"/>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="widget" minOccurs="0" maxOccurs="1"/>
+               <element ref="menu" minOccurs="0" maxOccurs="1"/>
+               <element ref="item" minOccurs="0" maxOccurs="1"/>
+               <element ref="separator" minOccurs="0" maxOccurs="1"/>
+               <element ref="dynamicContribution" minOccurs="0" maxOccurs="1"/>
+            </choice>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
@@ -759,6 +761,12 @@ Separator contributions that have an id define the start of a logical group so t
          </appInfo>
       </annotation>
       <complexType>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="item" minOccurs="0" maxOccurs="1"/>
+            <element ref="separator" minOccurs="0" maxOccurs="1"/>
+            <element ref="widget" minOccurs="0" maxOccurs="1"/>
+            <element ref="dynamicContribution" minOccurs="0" maxOccurs="1"/>
+         </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
