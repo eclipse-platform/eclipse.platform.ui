@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -54,12 +56,16 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
     private Map mapPartToActionSetIds = new HashMap();
     
     private Map mapPartToActionSets = new HashMap();
+
+	private IContextService contextService;
     
     /**
      * Creates the action set registry.
      */
     public ActionSetRegistry() {
-        PlatformUI.getWorkbench().getExtensionTracker().registerHandler(
+    	contextService = (IContextService) PlatformUI
+				.getWorkbench().getService(IContextService.class);
+		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(
                 this,
                 ExtensionTracker
                         .createExtensionPointFilter(new IExtensionPoint[] {
@@ -96,12 +102,31 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
     /**
      * Adds an action set.
+     * @param desc
      */
     private void addActionSet(ActionSetDescriptor desc) {
-        children.add(desc);
-    }
+		children.add(desc);
+		Context actionSetContext = contextService.getContext(desc.getId());
+		if (!actionSetContext.isDefined()) {
+			actionSetContext.define(desc.getLabel(), desc.getDescription(),
+					"org.eclipse.ui.contexts.actionSet"); //$NON-NLS-1$
+		}
+	}
 
-    /**
+	/**
+	 * Remove the action set.
+	 * 
+	 * @param desc
+	 */
+	private void removeActionSet(IActionSetDescriptor desc) {
+		Context actionSetContext = contextService.getContext(desc.getId());
+		if (actionSetContext.isDefined()) {
+			actionSetContext.undefine();
+		}
+		children.remove(desc);
+	}
+
+	/**
      * Adds an association between an action set an a part.
      */
     private Object addAssociation(String actionSetId, String partId) {
@@ -324,7 +349,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
             Object object = objects[i];
             if (object instanceof IActionSetDescriptor) {
                 IActionSetDescriptor desc = (IActionSetDescriptor) object;
-                children.remove(desc);
+                removeActionSet(desc);
 
                 // now clean up the part associations
                 // TODO: this is expensive. We should consider another map from
