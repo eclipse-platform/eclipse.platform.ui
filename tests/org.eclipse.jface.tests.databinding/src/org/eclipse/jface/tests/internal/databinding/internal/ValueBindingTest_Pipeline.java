@@ -18,6 +18,8 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.IBindingListener;
+import org.eclipse.core.databinding.observable.value.AbstractVetoableValue;
+import org.eclipse.core.databinding.observable.value.ChangeVetoException;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -72,23 +74,23 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testTargetToModelValidationAfterGet() throws Exception {
-		assertValidation(BindingEvent.PIPELINE_AFTER_GET, -1,
-				BindingEvent.EVENT_COPY_TO_MODEL);
+		assertNull(assertValidation(BindingEvent.PIPELINE_AFTER_GET, -1,
+				BindingEvent.EVENT_COPY_TO_MODEL));
 	}
 
 	public void testTargetToModelValidationAfterConvert() throws Exception {
-		assertValidation(BindingEvent.PIPELINE_AFTER_CONVERT,
+		assertNull(assertValidation(BindingEvent.PIPELINE_AFTER_CONVERT,
 				BindingEvent.PIPELINE_AFTER_GET,
-				BindingEvent.EVENT_COPY_TO_MODEL);
+				BindingEvent.EVENT_COPY_TO_MODEL));
 	}
 
 	public void testTargetToModelValidationBeforeGet() throws Exception {
-		assertValidation(BindingEvent.PIPELINE_BEFORE_CHANGE,
+		assertNull(assertValidation(BindingEvent.PIPELINE_BEFORE_CHANGE,
 				BindingEvent.PIPELINE_AFTER_CONVERT,
-				BindingEvent.EVENT_COPY_TO_MODEL);
+				BindingEvent.EVENT_COPY_TO_MODEL));
 	}
 
-	private void assertValidation(int position, int previousPosition,
+	private Exception assertValidation(int position, int previousPosition,
 			int copyType) throws Exception {
 		TrackLastListener listener = new TrackLastListener();
 		listener.active = false;
@@ -112,12 +114,19 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 
 		binding.addBindingEventListener(listener);
 		listener.active = true;
-		value.setValue("1");
+
+		Exception exception = null;
+		try {
+			value.setValue("1");
+		} catch (Exception e) {
+			exception = e;
+		}
 
 		assertEquals("validator", validator, listener.lastValidator);
 		assertEquals("validator invocation count", 1, validator.count);
 		assertEquals("last binding event position", previousPosition,
 				listener.lastPosition);
+		return exception;
 	}
 
 	public void testModelToTargetPipelinePositionOrder() throws Exception {
@@ -143,20 +152,20 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testModelToTargetValidationAfterGet() throws Exception {
-		assertValidation(BindingEvent.PIPELINE_AFTER_GET, -1,
-				BindingEvent.EVENT_COPY_TO_TARGET);
+		assertNull(assertValidation(BindingEvent.PIPELINE_AFTER_GET, -1,
+				BindingEvent.EVENT_COPY_TO_TARGET));
 	}
 
 	public void testModelToTargetValidationAfterConvert() throws Exception {
-		assertValidation(BindingEvent.PIPELINE_AFTER_CONVERT,
+		assertNull(assertValidation(BindingEvent.PIPELINE_AFTER_CONVERT,
 				BindingEvent.PIPELINE_AFTER_GET,
-				BindingEvent.EVENT_COPY_TO_TARGET);
+				BindingEvent.EVENT_COPY_TO_TARGET));
 	}
 
 	public void testModelToTargetValidationBeforeChange() throws Exception {
-		assertValidation(BindingEvent.PIPELINE_BEFORE_CHANGE,
+		assertNull(assertValidation(BindingEvent.PIPELINE_BEFORE_CHANGE,
 				BindingEvent.PIPELINE_AFTER_CONVERT,
-				BindingEvent.EVENT_COPY_TO_TARGET);
+				BindingEvent.EVENT_COPY_TO_TARGET));
 	}
 
 	public void testUpdateModelFromTargetAfterGet() throws Exception {
@@ -253,5 +262,54 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 		target.setValue("value");
 		assertFalse("status should be in error", ((IStatus) binding
 				.getValidationStatus().getValue()).isOK());
+	}
+
+	public void testTargetToModelPartialValidation() throws Exception {
+		target = new VetoableValueStub();
+		Exception e = assertValidation(BindingEvent.PIPELINE_VALUE_CHANGING,
+				-1, BindingEvent.EVENT_COPY_TO_MODEL);
+		assertNotNull("exception should have been thrown", e);
+		assertTrue("ChangeVetoException", e instanceof ChangeVetoException);
+	}
+
+	public void testPartialValidationErrorStatusValidatorFailure()
+			throws Exception {
+		target = new VetoableValueStub();
+
+		class Listener implements IBindingListener {
+			public IStatus handleBindingEvent(BindingEvent e) {
+				return Status.CANCEL_STATUS;
+			}
+		}
+
+		ValueBinding binding = new ValueBinding(target, model, new BindSpec());
+		binding.init(dbc);
+		binding.addBindingEventListener(new Listener());
+		assertTrue(((IStatus) binding.getPartialValidationStatus().getValue())
+				.isOK());
+		
+		try {
+			target.setValue("1");
+		} catch (ChangeVetoException e) {
+		}
+		
+		assertFalse("status should be in error", ((IStatus) binding
+				.getPartialValidationStatus().getValue()).isOK());
+	}
+
+	static class VetoableValueStub extends AbstractVetoableValue {
+		Object value;
+
+		protected void doSetApprovedValue(Object value) {
+			this.value = value;
+		}
+
+		protected Object doGetValue() {
+			return value;
+		}
+
+		public Object getValueType() {
+			return null;
+		}
 	}
 }

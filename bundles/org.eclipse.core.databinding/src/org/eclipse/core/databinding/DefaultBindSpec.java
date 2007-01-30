@@ -357,14 +357,6 @@ public class DefaultBindSpec extends BindSpec {
 			modelType = ((IObservableCollection) model).getElementType();
 		}
 
-		if (getPartialTargetValidator() == null) {
-			setPartialTargetValidator(new IValidator() {
-				public IStatus validate(Object value) {
-					return Status.OK_STATUS;
-				}
-			});
-		}
-
 		for (Iterator it = BindingEvent.PIPELINE_CONSTANTS.keySet().iterator(); it
 				.hasNext();) {
 			int position = ((Integer) it.next()).intValue();

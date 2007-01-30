@@ -32,10 +32,6 @@ import org.eclipse.core.runtime.Status;
  * model.
  * 
  * @since 1.0
- * 
- * APIREVIEW why are the old-style validators not stored in the map together with the new-style ones?
- * APIREVIEW can we remove getPartialTargetValidator etc.?
- * 
  */
 public class BindSpec {
 	/**
@@ -101,8 +97,6 @@ public class BindSpec {
 	private IConverter modelToTargetConverter;
 
 	private Integer modelUpdatePolicy;
-
-	private IValidator partialTargetValidator;
 
 	private IConverter targetToModelConverter;
 
@@ -171,13 +165,6 @@ public class BindSpec {
 	}
 
 	/**
-	 * @return a validator for validation of partial target values
-	 */
-	public IValidator getPartialTargetValidator() {
-		return partialTargetValidator;
-	}
-
-	/**
 	 * @return true if the model should be updated by the binding
 	 */
 	public boolean isUpdateModel() {
@@ -211,18 +198,6 @@ public class BindSpec {
 	 */
 	public BindSpec setModelUpdatePolicy(Integer modelUpdatePolicy) {
 		this.modelUpdatePolicy = modelUpdatePolicy;
-		return this;
-	}
-
-	/**
-	 * Sets the validator for validating partial target values.
-	 * 
-	 * @param validator
-	 *            the validator, or <code>null</code> for no validation.
-	 * @return this BindSpec, to enable chaining of method calls
-	 */
-	public BindSpec setPartialTargetValidator(IValidator validator) {
-		partialTargetValidator = validator;
 		return this;
 	}
 
@@ -279,9 +254,6 @@ public class BindSpec {
 	 * @param model
 	 */
 	protected void fillBindSpecDefaults(IObservable target, IObservable model) {
-		if (getPartialTargetValidator() == null) {
-			setPartialTargetValidator(new DefaultValidator());
-		}
 		if (getModelToTargetConverter() == null) {
 			setModelToTargetConverter(new DefaultConverter(Object.class,
 					Object.class));

@@ -101,34 +101,34 @@ public class BindingEvent extends EventObject {
 	public static final int EVENT_COPY_TO_MODEL = 1;
 
 	/**
-	 * A constant indicating that this event is occuring during a partial
-	 * validation.
+	 * A constant indication that this event is occurring immediately after a
+	 * value changing event fired of an observable.
 	 */
-	public static final int EVENT_PARTIAL_VALIDATE = 2;
+	public static final int PIPELINE_VALUE_CHANGING = 1;
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the
 	 * value to copy has been gotten from its observable.
 	 */
-	public static final int PIPELINE_AFTER_GET = 0;
+	public static final int PIPELINE_AFTER_GET = 2;
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the
 	 * original value has been converted to the other observable's data type.
 	 */
-	public static final int PIPELINE_AFTER_CONVERT = 1;
+	public static final int PIPELINE_AFTER_CONVERT = 3;
 
 	/**
 	 * A constant indicating that this event is occurring immediately before the
 	 * converted value has been set/changed on the observable.
 	 */
-	public static final int PIPELINE_BEFORE_CHANGE = 2;
+	public static final int PIPELINE_BEFORE_CHANGE = 4;
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the
 	 * converted value has been set/changed on the observable.
 	 */
-	public static final int PIPELINE_AFTER_CHANGE = 3;
+	public static final int PIPELINE_AFTER_CHANGE = 5;
 
 	/**
 	 * A Map of Integer --> String mapping the integer constants for the
@@ -138,6 +138,8 @@ public class BindingEvent extends EventObject {
 	public static final Map PIPELINE_CONSTANTS;
 	static {
 		Map constants = new HashMap();
+		constants.put(new Integer(BindingEvent.PIPELINE_VALUE_CHANGING),
+				"PIPELINE_VALUE_CHANGING"); //$NON-NLS-1$
 		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_GET),
 				"PIPELINE_AFTER_GET"); //$NON-NLS-1$
 		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_CONVERT),
@@ -161,8 +163,6 @@ public class BindingEvent extends EventObject {
 				"EVENT_COPY_TO_TARGET"); //$NON-NLS-1$
 		constants.put(new Integer(BindingEvent.EVENT_COPY_TO_MODEL),
 				"EVENT_COPY_TO_MODEL"); //$NON-NLS-1$
-		constants.put(new Integer(BindingEvent.EVENT_PARTIAL_VALIDATE),
-				"EVENT_PARTIAL_VALIDATE"); //$NON-NLS-1$
 		EVENT_CONSTANTS = Collections.unmodifiableMap(constants);
 	}
 

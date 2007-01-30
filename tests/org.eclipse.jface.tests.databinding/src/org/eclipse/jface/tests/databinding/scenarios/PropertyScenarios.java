@@ -254,7 +254,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(new IdentityConverter(String.class))
                 .setTargetToModelConverter(new IdentityConverter(String.class))
-                .setPartialTargetValidator(validator);
+                .addTargetValidator(BindingEvent.PIPELINE_VALUE_CHANGING, validator);
 
         Binding binding = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),

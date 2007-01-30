@@ -43,8 +43,6 @@ public class ValueBinding extends Binding {
 
 	private final IObservableValue model;
 
-	private IValidator targetPartialValidator;
-
 	private IConverter targetToModelConverter;
 
 	private IConverter modelToTargetConverter;
@@ -62,6 +60,7 @@ public class ValueBinding extends Binding {
 	private Map modelValidators = new HashMap();
 
 	private static final Integer[] VALIDATION_POSITIONS = new Integer[] {
+			new Integer(BindingEvent.PIPELINE_VALUE_CHANGING),
 			new Integer(BindingEvent.PIPELINE_AFTER_GET),
 			new Integer(BindingEvent.PIPELINE_AFTER_CONVERT),
 			new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE) };
@@ -105,10 +104,6 @@ public class ValueBinding extends Binding {
 				throw new BindingException(
 						"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			targetPartialValidator = bindSpec.getPartialTargetValidator();
-			if (targetPartialValidator == null) {
-				throw new BindingException("Missing partial validator"); //$NON-NLS-1$
-			}
 
 			Integer policy = bindSpec.getModelUpdatePolicy();
 			int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
@@ -151,15 +146,13 @@ public class ValueBinding extends Binding {
 			// we are notified of a pending change, do validation
 			// and veto the change if it is not valid
 			Object value = event.diff.getNewValue();
-			final IStatus partialValidationStatus = targetPartialValidator
-					.validate(value);
-			partialValidationErrorObservable.getRealm().exec(new Runnable() {
-				public void run() {
-					partialValidationErrorObservable
-							.setValue(partialValidationStatus);
-				}
-			});
-			if (!partialValidationStatus.isOK()) {
+
+			BindingEvent e = createBindingEvent(event.diff,
+					BindingEvent.EVENT_COPY_TO_MODEL,
+					BindingEvent.PIPELINE_VALUE_CHANGING);
+
+			if (!performPosition(value, BindingEvent.PIPELINE_VALUE_CHANGING,
+					e, BindingEvent.PIPELINE_AFTER_CHANGE)) {
 				event.veto = true;
 			}
 		}
@@ -287,14 +280,22 @@ public class ValueBinding extends Binding {
 
 		final IStatus finalStatus = status;
 
-		Assert.isTrue(partialValidationErrorObservable.getRealm().equals(
-				validationErrorObservable.getRealm()));
-		partialValidationErrorObservable.getRealm().exec(new Runnable() {
-			public void run() {
-				partialValidationErrorObservable.setValue(Status.OK_STATUS);
-				validationErrorObservable.setValue(finalStatus);
-			}
-		});
+		if (position == BindingEvent.PIPELINE_VALUE_CHANGING) {
+			partialValidationErrorObservable.getRealm().exec(new Runnable() {
+				public void run() {
+					partialValidationErrorObservable.setValue(finalStatus);
+				}
+			});
+		} else {
+			Assert.isTrue(partialValidationErrorObservable.getRealm().equals(
+					validationErrorObservable.getRealm()));
+			partialValidationErrorObservable.getRealm().exec(new Runnable() {
+				public void run() {
+					partialValidationErrorObservable.setValue(Status.OK_STATUS);
+					validationErrorObservable.setValue(finalStatus);
+				}
+			});
+		}
 
 		return (status.isOK() && position != lastPosition);
 	}
