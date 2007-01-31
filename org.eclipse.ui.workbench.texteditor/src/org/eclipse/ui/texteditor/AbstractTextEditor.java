@@ -3120,8 +3120,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		// Install drag target
 		DropTargetListener dropTargetListener= new DropTargetAdapter() {
+			
+			private Point fSelection;
+			
 			public void dragEnter(DropTargetEvent event) {
 				fTextDragAndDropToken= null;
+				fSelection= st.getSelection();
 				
 				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
 				if (!fIsTextDragAndDropEnabled) {
@@ -3162,7 +3166,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						return;
 	
 					if (fTextDragAndDropToken != null && event.detail == DND.DROP_MOVE) {
-						// Move in same editor - start compound change
+						// Move in same editor
+						int caretOffset= st.getCaretOffset();
+						if (fSelection.x <= caretOffset && caretOffset <= fSelection.y) {
+							event.detail= DND.DROP_NONE;
+							return;
+						}
+						
+						// Start compound change
 						IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
 						if (target != null)
 							target.beginCompoundChange();
