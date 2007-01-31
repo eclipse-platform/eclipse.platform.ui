@@ -344,10 +344,11 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			treeViewer.getTree().setFocus();
 
 		Dialog.applyDialogFont(outerContainer);
-		selectFileCombo.addModifyListener(new FileTextListener());
+		selectFileCombo.addModifyListener(new FileAndUrlListener());
 		browseFileButton.addSelectionListener(new BrowseListener());
 		selectRegisteredRadio.addSelectionListener(new RadioSelectionListener());
 		selectUrlRadio.addSelectionListener(new RadioSelectionListener());
+		selectUrlCombo.addModifyListener(new FileAndUrlListener());
 		checkRadioButtons();
 		return outerContainer;
 	}
@@ -385,7 +386,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		}
 	}
 	
-	private class FileTextListener implements ModifyListener {
+	private class FileAndUrlListener implements ModifyListener {
 
 		public void modifyText(ModifyEvent e) {
 			setOkButton();
