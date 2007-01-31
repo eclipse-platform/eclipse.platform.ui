@@ -245,7 +245,7 @@ function getPreviousLink(currentLink){
 
 </head>
    
-<body dir="<%=direction%>">
+<body dir="<%=direction%>" onload="showTab('<%=data.getVisibleView()%>')">
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
    <tr>
