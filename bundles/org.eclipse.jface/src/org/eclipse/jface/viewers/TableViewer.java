@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -251,6 +252,15 @@ public class TableViewer extends AbstractTableViewer {
 
 	protected void doClearAll() {
 		table.clearAll();
+	}
+	
+	protected void doResetItem(Item item) {
+		TableItem tableItem = (TableItem) item;
+		int columnCount = Math.max(1, table.getColumnCount());
+		for (int i = 0; i < columnCount; i++) {
+			tableItem.setText(i, ""); //$NON-NLS-1$
+		}
+		tableItem.setImage(new Image[columnCount]);// Clear all images
 	}
 
 	protected void doRemove(int start, int end) {

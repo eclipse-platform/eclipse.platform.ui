@@ -684,9 +684,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				// replaces b->1 with a->1, but this actually removes b->0.
 				// So, if the object associated with this item has changed,
 				// just disassociate it for now, and update it below.
-				// all
-				// images
+				// we also need to reset the item (set its text,images etc. to
+				// default values) because the label decorators rely on this
 				disassociate(item);
+				doResetItem(item);
 			}
 		}
 		// dispose of all items beyond the end of the current elements
@@ -1131,6 +1132,16 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	protected abstract void doClearAll();
 
+	/**
+	 * Resets the given item in the receiver. The text, icon and other attributes
+	 * of the item are set to their default values.
+	 * 
+	 * @param item the item to reset 
+	 * 
+	 * @since 3.3
+	 */
+	protected abstract void doResetItem(Item item);
+	
 	/**
 	 * Removes the items from the receiver which are between the given
 	 * zero-relative start and end indices (inclusive).
