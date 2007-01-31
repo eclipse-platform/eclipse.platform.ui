@@ -322,9 +322,9 @@ public class ListBinding extends Binding {
 
 	protected void preInit() {
 		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), null);
+				.getValidationRealm(), IStatus.class, Status.OK_STATUS);
 		validationErrorObservable = new WritableValue(context
-				.getValidationRealm(), null);
+				.getValidationRealm(), IStatus.class, Status.OK_STATUS);
 	}
 
 	protected void postInit() {
