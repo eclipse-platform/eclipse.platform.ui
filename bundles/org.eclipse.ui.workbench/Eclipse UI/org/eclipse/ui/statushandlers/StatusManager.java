@@ -12,25 +12,23 @@
 package org.eclipse.ui.statushandlers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.statushandlers.StatusHandlerDescriptor;
+import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 
 /**
  * <p>
- * Status manager is responsible for creating status handlers and handling
- * statuses due to the set handling policy.
+ * Status manager is responsible for handling statuses due to the set handling
+ * policy.
  * </p>
  * 
  * <p>
@@ -48,7 +46,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <li>NONE - nothing should be done with the status</li>
  * <li>LOG - the status should be logged</li>
  * <li>SHOW - the status should be shown to an user</li>
- * <li>SHOWANDLOG - the status should be logged and shown to an user</li>
  * </ul>
  * </p>
  * 
@@ -101,12 +98,10 @@ public class StatusManager {
 	 * A handling hint indicating that handlers should show a problem to an user
 	 */
 	public static final int SHOW = 0x02;
-	
+
 	private static StatusManager MANAGER;
 
-	private StatusHandlersMap statusHandlersMap;
-
-	private AbstractStatusHandler defaultHandler;
+	private StatusHandlerRegistry statusHandlerRegistry;
 
 	private AbstractStatusHandler workbenchHandler;
 
@@ -120,101 +115,17 @@ public class StatusManager {
 	public static StatusManager getManager() {
 		if (MANAGER == null) {
 			MANAGER = new StatusManager();
-			MANAGER.initErrorHandlers();
 		}
-
 		return MANAGER;
 	}
 
 	private StatusManager() {
-		statusHandlersMap = new StatusHandlersMap();
+		statusHandlerRegistry = new StatusHandlerRegistry();
 		Platform.addLogListener(new StatusManagerLogListener());
 	}
 
-	private AbstractStatusHandler createStatusHandler(
-			IConfigurationElement configElement) {
-		try {
-
-			configElement.getName();
-
-			AbstractStatusHandler statusHandler = (AbstractStatusHandler) configElement
-					.createExecutableExtension("class"); //$NON-NLS-1$
-
-			statusHandler.setId(configElement.getAttribute("id")); //$NON-NLS-1$
-
-			IConfigurationElement parameters[] = configElement
-					.getChildren("parameter"); //$NON-NLS-1$
-
-			Map params = new HashMap();
-
-			for (int i = 0; i < parameters.length; i++) {
-				params.put(parameters[i].getAttribute("name"), //$NON-NLS-1$
-						parameters[i].getAttribute("value")); //$NON-NLS-1$
-			}
-
-			statusHandler.setParams(params);
-
-			return statusHandler;
-		} catch (CoreException ex) {
-			WorkbenchPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-							IStatus.ERROR, "Status handling initialization problem", ex)); //$NON-NLS-1$
-		}
-
-		return null;
-	}
-
-	private void initErrorHandlers() {
-
-		String productId = Platform.getProduct() != null ? Platform
-				.getProduct().getId() : null;
-
-		List allHandlers = new ArrayList();
-
-		String defaultHandlerId = null;
-
-		IExtension[] extensions = Platform
-				.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.ui.statusHandlers").getExtensions(); //$NON-NLS-1$
-
-		for (int i = 0; i < extensions.length; i++) {
-			IConfigurationElement[] configElements = extensions[i]
-					.getConfigurationElements();
-
-			for (int j = 0; j < configElements.length; j++) {
-				if (configElements[j].getName().equals("statusHandler")) { //$NON-NLS-1$
-					AbstractStatusHandler handler = createStatusHandler(configElements[j]);
-					if (handler != null) {
-						allHandlers.add(handler);
-					}
-				} else if (configElements[j].getName().equals(
-						"statusHandlerProductBinding")) //$NON-NLS-1$	
-				{
-					if (configElements[j]
-							.getAttribute("productId").equals(productId)) //$NON-NLS-1$
-					{
-						defaultHandlerId = configElements[j]
-								.getAttribute("handlerId"); //$NON-NLS-1$
-					}
-				}
-			}
-		}
-
-		AbstractStatusHandler handler = null;
-
-		for (Iterator it = allHandlers.iterator(); it.hasNext();) {
-			handler = (AbstractStatusHandler) it.next();
-
-			if (handler.getId().equals(defaultHandlerId)) {
-				defaultHandler = handler;
-			} else {
-				statusHandlersMap.addHandler(handler);
-			}
-		}
-	}
-
 	/**
-	 * @return the workbech status handler
+	 * @return the workbench status handler
 	 */
 	private AbstractStatusHandler getWorkbenchHandler() {
 		if (workbenchHandler == null) {
@@ -237,26 +148,39 @@ public class StatusManager {
 				hint);
 
 		// tries to handle the problem with default (product) handler
-		if (defaultHandler != null) {
-			boolean shouldContinue = defaultHandler.handle(handlingState);
+		if (statusHandlerRegistry.getDefaultHandlerDescriptor() != null) {
+			try {
+				boolean shouldContinue = statusHandlerRegistry
+						.getDefaultHandlerDescriptor().getStatusHandler()
+						.handle(handlingState);
 
-			if (!shouldContinue) {
-				return;
+				if (!shouldContinue) {
+					return;
+				}
+			} catch (CoreException ex) {
+				logError("Errors during the default handler creating", ex); //$NON-NLS-1$
 			}
 		}
 
 		// tries to handle the problem with any handler due to the prefix policy
-		List okHandlers = statusHandlersMap.getHandlers(status.getPlugin());
+		List okHandlerDescriptors = statusHandlerRegistry
+				.getHandlerDescriptors(status.getPlugin());
 
-		if (okHandlers != null && okHandlers.size() > 0) {
-			AbstractStatusHandler handler = null;
+		if (okHandlerDescriptors != null && okHandlerDescriptors.size() > 0) {
+			StatusHandlerDescriptor handlerDescriptor = null;
 
-			for (Iterator it = okHandlers.iterator(); it.hasNext();) {
-				handler = (AbstractStatusHandler) it.next();
-				boolean shouldContinue = handler.handle(handlingState);
+			for (Iterator it = okHandlerDescriptors.iterator(); it.hasNext();) {
+				handlerDescriptor = (StatusHandlerDescriptor) it.next();
 
-				if (!shouldContinue) {
-					return;
+				try {
+					boolean shouldContinue = handlerDescriptor
+							.getStatusHandler().handle(handlingState);
+
+					if (!shouldContinue) {
+						return;
+					}
+				} catch (CoreException ex) {
+					logError("Errors during the handler creating", ex); //$NON-NLS-1$
 				}
 			}
 		}
@@ -275,128 +199,22 @@ public class StatusManager {
 		handle(status, LOG);
 	}
 
-	/*
-	 * Helper class supporting the prefix based status handling policy.
-	 */
-	private class StatusHandlersMap {
-
-		private final String ASTERISK = "*"; //$NON-NLS-1$
-
-		HashMap map;
-
-		/**
-		 * Creates a new instance of the class
-		 */
-		public StatusHandlersMap() {
-			map = new HashMap();
-		}
-
-		/**
-		 * Adds a new handler to the prefix tree
-		 * 
-		 * @param handler
-		 *            the handler to add
-		 */
-		public void addHandler(AbstractStatusHandler handler) {
-			add(this.map, (String) handler.getParam("prefix"), handler); //$NON-NLS-1$
-		}
-
-		/*
-		 * Recursively searches the tree for the best place for the handler
-		 */
-		private void add(Map map, String prefix, AbstractStatusHandler handler) {
-			if (prefix == null) {
-				if (map.get(ASTERISK) == null) {
-					map.put(ASTERISK, new ArrayList());
-				}
-
-				((List) map.get(ASTERISK)).add(handler);
-			} else {
-				int delimIndex = prefix.indexOf("."); //$NON-NLS-1$
-
-				String pre = null;
-				String post = null;
-
-				if (delimIndex != -1) {
-					pre = prefix.substring(0, delimIndex);
-
-					if (delimIndex < prefix.length() - 1) {
-						post = prefix.substring(delimIndex + 1);
-					}
-				} else {
-					pre = prefix;
-				}
-
-				if (map.get(pre) == null) {
-					map.put(pre, new HashMap());
-				}
-
-				add((Map) map.get(pre), post, handler);
-			}
-		}
-
-		/**
-		 * Returns status handlers whose prefixes are the most specific for
-		 * given pluginId.
-		 * 
-		 * @param pluginId
-		 * @return handlers list
-		 */
-		public List getHandlers(String pluginId) {
-			return get(pluginId, this.map);
-		}
-
-		/*
-		 * Recursively searches the prefix tree for the most specific handler
-		 * for the given pluginId.
-		 */
-		private List get(String pluginId, Map map) {
-			if (pluginId == null) {
-				return getAsteriskList(map);
-			}
-
-			int delimIndex = pluginId.indexOf("."); //$NON-NLS-1$
-
-			String pre = null;
-			String post = null;
-
-			if (delimIndex != -1) {
-				pre = pluginId.substring(0, delimIndex);
-
-				if (delimIndex < pluginId.length() - 1) {
-					post = pluginId.substring(delimIndex + 1);
-				}
-			} else {
-				pre = pluginId;
-			}
-
-			if (map.get(pre) == null) {
-				return getAsteriskList(map);
-			}
-
-			return get(post, (Map) map.get(pre));
-		}
-
-		private List getAsteriskList(Map map) {
-			Object list = map.get(ASTERISK);
-			if (list != null) {
-				return (List) list;
-			}
-
-			return null;
-		}
-	}
-
 	/**
 	 * This method informs the StatusManager that this IStatus is being handled
-	 * by the WorkbenchErrorHandler and to ignore it when it shows up in our
-	 * ILogListener.
+	 * by the handler and to ignore it when it shows up in our ILogListener.
 	 * 
 	 * @param status
 	 *            already handled and logged status
 	 */
 	void addLoggedStatus(IStatus status) {
 		loggedStatuses.add(status);
+	}
+
+	private void logError(String message, Throwable ex) {
+		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+				message, ex);
+		addLoggedStatus(status);
+		WorkbenchPlugin.log(status);
 	}
 
 	/**
