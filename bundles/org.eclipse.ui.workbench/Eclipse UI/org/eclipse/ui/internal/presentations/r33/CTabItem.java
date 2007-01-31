@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Instances of this class represent a selectable user interface object that
@@ -424,9 +422,6 @@ public class CTabItem extends Item {
 			gc.setForeground(CTabFolder.borderColor);
 			gc.drawPolyline(shape);
 
-			if (parent.activationState == StackPresentation.AS_INACTIVE)
-				drawInsetSelectedShape(shape, gc, leftLength, rightLength);
-
 			if (!tabInPaint) {
 				return;
 			}
@@ -637,8 +632,6 @@ public class CTabItem extends Item {
 
 		gc.setForeground(CTabFolder.borderColor);
 		gc.drawPolyline(shape);
-
-		drawInsetUnselectedShape(shape, gc);
 	}
 
 	/**
@@ -708,66 +701,6 @@ public class CTabItem extends Item {
 
 	}
 
-	/**
-	 * Modify the shape to inset one pixel and then draw a lighter line.
-	 * 
-	 * @param shape
-	 * @param gc
-	 */
-	private void drawInsetUnselectedShape(int[] shape, GC gc) {
-
-		for (int i = 0; i < shape.length; i = i + 2) {
-			shape[i]--;
-		}
-		gc.setForeground(PlatformUI.getWorkbench().getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		gc.drawPolyline(shape);
-	}
-
-	/**
-	 * Modify the shape to inset one pixel and then draw a lighter line.
-	 * 
-	 * @param shape
-	 * @param gc
-	 */
-	private void drawInsetSelectedShape(int[] shape, GC gc, int leftSize,
-			int rightSize) {
-
-		// The first and last four are straight lines so shift the y
-
-		if (parent.onBottom) {
-			shape[1] -= 1;
-			shape[3] -= 1;
-		} else {
-			shape[1] += 1;
-			shape[3] += 1;
-		}
-
-		// Shift the x's to the right
-		for (int i = 4; i < leftSize + 4; i += 2) {
-			shape[i]++;
-		}
-
-		int curveEnd = leftSize + 4 + rightSize;
-		// Shift the x's to the left
-		for (int i = 4 + leftSize; i < curveEnd; i += 2) {
-			shape[i]--;
-		}
-
-		// The first and last four are straight lines so shift the y
-
-		if (parent.onBottom) {
-			shape[curveEnd + 1] -= 1;
-			shape[curveEnd + 3] -= 1;
-		} else {
-			shape[curveEnd + 1] += 1;
-			shape[curveEnd + 3] += 1;
-		}
-
-		gc.setForeground(PlatformUI.getWorkbench().getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		gc.drawPolyline(shape);
-	}
 
 	/**
 	 * Returns a rectangle describing the receiver's size and location relative
