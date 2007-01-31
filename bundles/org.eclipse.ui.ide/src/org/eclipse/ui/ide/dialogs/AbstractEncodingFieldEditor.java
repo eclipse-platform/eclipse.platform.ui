@@ -293,7 +293,6 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 	 * @since 3.3
 	 */
 	public void setEnabled(boolean enabled, Composite parent) {
-		super.setEnabled(enabled, parent);
 		if (container != null)
 			container.setEnabled(enabled);
 		if (defaultEncodingButton != null)
@@ -302,6 +301,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			otherEncodingButton.setEnabled(enabled);
 		if (encodingCombo != null)
 			encodingCombo.setEnabled(enabled);
+		
 	}
 
 	/**
