@@ -11,7 +11,6 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -107,7 +106,7 @@ public abstract class Action extends AbstractAction implements IAction {
 	 * @param token
 	 *            the key name
 	 * @return the SWT key code, <code>-1</code> if no match was found
-	 * @see SWT
+	 * @see org.eclipse.swt.SWT
 	 */
 	public static int findKeyCode(String token) {
 		return LegacyActionTools.findKeyCode(token);
@@ -123,7 +122,7 @@ public abstract class Action extends AbstractAction implements IAction {
 	 * @param keyCode
 	 *            the key code to be translated
 	 * @return the string representation of the key code
-	 * @see SWT
+	 * @see org.eclipse.swt.SWT
 	 * @since 2.0
 	 */
 	public static String findKeyString(int keyCode) {
@@ -140,7 +139,7 @@ public abstract class Action extends AbstractAction implements IAction {
 	 * @param token
 	 *            the modifier key name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
-	 * @see SWT
+	 * @see org.eclipse.swt.SWT
 	 */
 	public static int findModifier(String token) {
 		return LegacyActionTools.findModifier(token);
@@ -155,7 +154,7 @@ public abstract class Action extends AbstractAction implements IAction {
 	 *            the SWT modifier bit to be translated
 	 * @return the string representation of the SWT modifier bit, or
 	 *         <code>null</code> if the key code was not an SWT modifier bit
-	 * @see SWT
+	 * @see org.eclipse.swt.SWT
 	 * @since 2.0
 	 */
 	public static String findModifierString(int keyCode) {
