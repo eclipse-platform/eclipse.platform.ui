@@ -40,6 +40,7 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
 import org.eclipse.ui.forms.widgets.Twistie;
+import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
 
 /**
  * Form heading title.
@@ -103,7 +104,7 @@ public class TitleRegion extends Canvas {
 			}
 		}
 	}
-
+	
 	private class TitleRegionLayout extends Layout implements ILayoutExtension {
 
 		protected Point computeSize(Composite composite, int wHint, int hHint,
@@ -297,7 +298,7 @@ public class TitleRegion extends Canvas {
 		this.image = image;
 	}
 
-	public void updateImage(Image newImage, String toolTip, boolean doLayout) {
+	public void updateImage(Image newImage, boolean doLayout) {
 		Image theImage = newImage != null ? newImage : this.image;
 
 		if (theImage != null) {
@@ -310,10 +311,14 @@ public class TitleRegion extends Canvas {
 		}
 		if (busyLabel != null) {
 			busyLabel.setImage(theImage);
-			busyLabel.setToolTipText(toolTip);
 		}
 		if (doLayout)
 			layout();
+	}
+	
+	public void updateToolTip(String toolTip) {
+		if (busyLabel!=null)
+			busyLabel.setToolTipText(toolTip);
 	}
 
 	public void setBackground(Color bg) {
@@ -358,6 +363,9 @@ public class TitleRegion extends Canvas {
 			busyLabel.addMouseMoveListener(listener);
 			if (menuManager != null)
 				busyLabel.setMenu(menuManager.createContextMenu(this));
+			IMessageToolTipManager mng = ((FormHeading)getParent()).getMessageToolTipManager();
+			if (mng!=null)
+				mng.createToolTip(busyLabel, true);
 		}
 	}
 

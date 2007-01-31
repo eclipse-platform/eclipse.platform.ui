@@ -12,9 +12,13 @@ package org.eclipse.ui.forms.examples.internal.rcp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -27,6 +31,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
@@ -39,12 +44,13 @@ import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.ScrolledFormText;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
 
 /**
  * This page shows how to use the message manager to handle errors in a form
@@ -53,6 +59,86 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
  * @since 3.3
  */
 public class ErrorMessagesPage extends FormPage {
+
+	private RichMessageToolTipManager richToolTipMessageManager;
+
+	class RichToolTip extends ToolTip {
+		private IManagedForm mform;
+		private FormText text;
+		private String content;
+
+		public RichToolTip(IManagedForm mform, Control control) {
+			super(control);
+			this.mform = mform;
+			setShift(new Point(10, 10));
+		}
+
+		protected Composite createToolTipContentArea(Event event,
+				Composite parent) {
+			this.text = mform.getToolkit().createFormText(parent, true);
+			configureFormText(mform.getForm().getForm(), text);
+			update();
+			return text;
+		}
+
+		public void update(String content) {
+			if (content == null) {
+				// hide
+				deactivate();
+			} else {
+				activate();
+				this.content = content;
+				update();
+			}
+		}
+
+		private void update() {
+			if (text != null && text.isDisposed())
+				text = null;
+			if (text != null) {
+				if (content != null)
+					text.setText(content, true, false);
+				else
+					text.setText("", false, false);
+			}
+		}
+	}
+
+	class RichMessageToolTipManager implements IMessageToolTipManager {
+		private ArrayList toolTips = new ArrayList();
+		private IManagedForm mform;
+
+		public RichMessageToolTipManager(IManagedForm mform) {
+			this.mform = mform;
+		}
+
+		public void createToolTip(Control control, boolean imageLabel) {
+			ToolTip toolTip = new RichToolTip(mform, control);
+			toolTips.add(toolTip);
+		}
+
+		public void setActive(boolean active) {
+			for (int i = 0; i < toolTips.size(); i++) {
+				RichToolTip toolTip = (RichToolTip) toolTips.get(i);
+				if (active)
+					toolTip.activate();
+				else
+					toolTip.deactivate();
+			}
+		}
+
+		public void update() {
+			IMessage[] messages = mform.getForm().getForm()
+					.getChildrenMessages();
+			String content = mform.getForm().getMessage() == null ? null
+					: createFormTextContent(messages);
+			for (int i = 0; i < toolTips.size(); i++) {
+				RichToolTip toolTip = (RichToolTip) toolTips.get(i);
+				toolTip.update(content);
+			}
+		}
+	}
+
 	/**
 	 * @param id
 	 * @param title
@@ -89,22 +175,35 @@ public class ErrorMessagesPage extends FormPage {
 				 * break; }
 				 */
 				Point hl = ((Control) e.widget).toDisplay(0, 0);
+				hl.x += 10;
+				hl.y += 10;
 				Shell shell = new Shell(form.getShell(), SWT.ON_TOP | SWT.TOOL);
 				shell.setImage(getImage(form.getMessageType()));
 				shell.setText(title);
 				shell.setLayout(new FillLayout());
-				ScrolledFormText stext = new ScrolledFormText(shell, false);
-				stext.setBackground(toolkit.getColors().getBackground());
-				FormText text = toolkit.createFormText(stext, true);
-				stext.setFormText(text);
+				// ScrolledFormText stext = new ScrolledFormText(shell, false);
+				// stext.setBackground(toolkit.getColors().getBackground());
+				FormText text = toolkit.createFormText(shell, true);
+				configureFormText(form.getForm(), text);
+				// stext.setFormText(text);
 				if (href instanceof IMessage[])
-					configureFormText(text, (IMessage[]) href);
+					text.setText(createFormTextContent((IMessage[]) href),
+							true, false);
 				shell.setLocation(hl);
-				Point size = shell.computeSize(400, SWT.DEFAULT);
-				shell.setSize(400, size.y);
+				// Point size = shell.computeSize(400, SWT.DEFAULT);
+				richToolTipMessageManager.setActive(false);
+				shell.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						richToolTipMessageManager.setActive(true);
+					}
+				});
+				shell.pack();
 				shell.open();
 			}
 		});
+
+		richToolTipMessageManager = new RichMessageToolTipManager(managedForm);
+		form.getForm().setMessageToolTipManager(richToolTipMessageManager);
 
 		final IMessageManager mmng = managedForm.getMessageManager();
 
@@ -164,15 +263,29 @@ public class ErrorMessagesPage extends FormPage {
 		return null;
 	}
 
-	private void configureFormText(FormText text, IMessage[] messages) {
+	private void configureFormText(final Form form, FormText text) {
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				System.out.println("Link: " + e.getHref());
+				String is = (String)e.getHref();
+				try {
+					int index = Integer.parseInt(is);
+					IMessage [] messages = form.getChildrenMessages();
+					IMessage message =messages[index];
+					Control c = message.getControl();
+					((FormText)e.widget).getShell().dispose();
+					if (c!=null)
+						c.setFocus();
+				}
+				catch (NumberFormatException ex) {
+				}
 			}
 		});
 		text.setImage("error", getImage(IMessageProvider.ERROR));
 		text.setImage("warning", getImage(IMessageProvider.WARNING));
 		text.setImage("info", getImage(IMessageProvider.INFORMATION));
+	}
+
+	String createFormTextContent(IMessage[] messages) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		pw.println("<form>");
@@ -192,7 +305,7 @@ public class ErrorMessagesPage extends FormPage {
 				break;
 			}
 			pw.print("\"> <a href=\"");
-			pw.print(message.getKey());
+			pw.print(i+"");
 			pw.print("\">");
 			if (message.getPrefix() != null)
 				pw.print(message.getPrefix());
@@ -201,7 +314,7 @@ public class ErrorMessagesPage extends FormPage {
 		}
 		pw.println("</form>");
 		pw.flush();
-		text.setText(sw.toString(), true, false);
+		return sw.toString();
 	}
 
 	private void createDecoratedTextField(String label, FormToolkit toolkit,

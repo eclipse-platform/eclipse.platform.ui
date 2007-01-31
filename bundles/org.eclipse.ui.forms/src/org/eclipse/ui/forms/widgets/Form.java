@@ -30,6 +30,7 @@ import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.internal.forms.widgets.FormHeading;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
+import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
 
 /**
  * Form is a custom control that renders a title and an optional background
@@ -752,6 +753,27 @@ public class Form extends Composite {
 		return head.getMessage();
 	}
 
+	/**
+	 * 
+	 * Sets an alternative manager for handling message tool tips. This manager
+	 * can install rich tool tips that can provide more informations about the
+	 * current messages in the form.
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as part of a
+	 * work in progress. There is no guarantee that this API will work or that
+	 * it will remain the same. Please do not use this API without consulting
+	 * with the Platform UA team.
+	 * </p>
+	 * 
+	 * @param manager
+	 *            the manager to install and manage custom tool tips for
+	 *            messages
+	 * @since 3.3
+	 */
+	public void setMessageToolTipManager(IMessageToolTipManager manager) {
+		head.setMessageToolTipManager(manager);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -759,6 +781,18 @@ public class Form extends Composite {
 	 */
 	public int getMessageType() {
 		return head.getMessageType();
+	}
+
+	/**
+	 * Returns the children messages that the cause of the summary message
+	 * currently set on the form.
+	 * 
+	 * @return an array of children messages or <code>null</code> if not set.
+	 * @see #setMessage(String, int, IMessage[])
+	 * @since 3.3
+	 */
+	public IMessage[] getChildrenMessages() {
+		return head.getChildrenMessages();
 	}
 
 	void setSelectionText(FormText text) {

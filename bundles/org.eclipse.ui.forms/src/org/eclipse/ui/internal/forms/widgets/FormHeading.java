@@ -50,6 +50,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
 import org.eclipse.ui.internal.forms.MessageManager;
+import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
 
 /**
  * Form header moved out of the form class.
@@ -67,6 +68,7 @@ public class FormHeading extends Canvas {
 	private static final int BACKGROUND_IMAGE_TILED = 1 << 3;
 	private static final int SEPARATOR_HEIGHT = 2;
 	private static final int MESSAGE_AREA_LIMIT = 50;
+	static IMessage[] NULL_MESSAGE_ARRAY = new IMessage[] {};
 
 	public static final String COLOR_BASE_BG = "baseBg"; //$NON-NLS-1$
 
@@ -92,7 +94,26 @@ public class FormHeading extends Canvas {
 
 	private MessageRegion messageRegion;
 
+	private IMessageToolTipManager messageToolTipManager = new DefaultMessageToolTipManager();
+
 	private Control headClient;
+
+	private class DefaultMessageToolTipManager implements
+			IMessageToolTipManager {
+		public void createToolTip(Control control, boolean imageLabel) {
+		}
+
+		public void update() {
+			String details = getMessageType() == 0 ? null : MessageManager
+					.createDetails(getChildrenMessages());
+			if (messageRegion != null)
+				messageRegion.updateToolTip(details);
+			if (getMessageType() > 0
+					&& (details == null || details.length() == 0))
+				details = getMessage();
+			titleRegion.updateToolTip(details);
+		}
+	}
 
 	private class GradientInfo {
 		Color[] gradientColors;
@@ -321,6 +342,7 @@ public class FormHeading extends Canvas {
 	private class MessageRegion {
 		private int messageType;
 		private CLabel messageLabel;
+		private IMessage[] messages;
 		private Hyperlink messageHyperlink;
 		private ListenerList listeners;
 		private Color fg;
@@ -354,30 +376,33 @@ public class FormHeading extends Canvas {
 			return needHyperlink() ? fontHeight : fontHeight + 2;
 		}
 
-		public String showMessage(String newMessage, int newType,
+		public void showMessage(String newMessage, int newType,
 				IMessage[] messages) {
 			Control oldControl = getMessageControl();
 			int oldType = messageType;
 			this.messageType = newType;
+			this.messages = messages;
 			if (newMessage == null) {
 				// clearing of the message
 				if (oldControl != null && oldControl.getVisible())
 					oldControl.setVisible(false);
-				return null;
+				return;
 			}
 			ensureControlExists();
-			String details = MessageManager.createDetails(messages);
 			if (needHyperlink()) {
 				messageHyperlink.setText(newMessage);
-				messageHyperlink.setToolTipText(details);
 				messageHyperlink.setHref(messages);
 			} else {
 				messageLabel.setText(newMessage);
-				messageLabel.setToolTipText(details);
 			}
 			if (oldType != newType)
 				updateForeground();
-			return details;
+		}
+
+		public void updateToolTip(String toolTip) {
+			Control control = getMessageControl();
+			if (control != null)
+				control.setToolTipText(toolTip);
 		}
 
 		public String getMessage() {
@@ -388,6 +413,10 @@ public class FormHeading extends Canvas {
 
 		public int getMessageType() {
 			return messageType;
+		}
+
+		public IMessage[] getChildrenMessages() {
+			return messages;
 		}
 
 		public String getDetailedMessage() {
@@ -448,6 +477,8 @@ public class FormHeading extends Canvas {
 					for (int i = 0; i < llist.length; i++)
 						messageHyperlink
 								.addHyperlinkListener((IHyperlinkListener) llist[i]);
+					if (messageToolTipManager != null)
+						messageToolTipManager.createToolTip(messageHyperlink, false);
 				} else
 					messageHyperlink.setVisible(true);
 			} else {
@@ -456,6 +487,8 @@ public class FormHeading extends Canvas {
 					messageHyperlink.setVisible(false);
 				if (messageLabel == null) {
 					messageLabel = new CLabel(FormHeading.this, SWT.NULL);
+					if (messageToolTipManager != null)
+						messageToolTipManager.createToolTip(messageLabel, false);
 				} else
 					messageLabel.setVisible(true);
 			}
@@ -629,10 +662,9 @@ public class FormHeading extends Canvas {
 	public void setImage(Image image) {
 		titleRegion.setImage(image);
 		if (messageRegion != null)
-			titleRegion.updateImage(messageRegion.getMessageImage(),
-					messageRegion.getDetailedMessage(), true);
+			titleRegion.updateImage(messageRegion.getMessageImage(), true);
 		else
-			titleRegion.updateImage(null, null, true);
+			titleRegion.updateImage(null, true);
 	}
 
 	public void setTextBackground(Color[] gradientColors, int[] percents,
@@ -896,6 +928,11 @@ public class FormHeading extends Canvas {
 		return messageRegion != null ? messageRegion.getMessageType() : 0;
 	}
 
+	public IMessage[] getChildrenMessages() {
+		return messageRegion != null ? messageRegion.getChildrenMessages()
+				: NULL_MESSAGE_ARRAY;
+	}
+
 	private void ensureMessageRegionExists() {
 		// ensure message region exists
 		if (messageRegion == null)
@@ -910,9 +947,10 @@ public class FormHeading extends Canvas {
 		} else if (messageRegion.isDisposed())
 			return;
 		ensureMessageRegionExists();
-		String details = messageRegion.showMessage(newMessage, type, messages);
-		titleRegion.updateImage(messageRegion.getMessageImage(),
-				details != null ? details : newMessage, false);
+		messageRegion.showMessage(newMessage, type, messages);
+		titleRegion.updateImage(messageRegion.getMessageImage(), false);
+		if (messageToolTipManager != null)
+			messageToolTipManager.update();
 		layout();
 		redraw();
 	}
@@ -974,5 +1012,14 @@ public class FormHeading extends Canvas {
 	public void addDropSupport(int operations, Transfer[] transferTypes,
 			DropTargetListener listener) {
 		titleRegion.addDropSupport(operations, transferTypes, listener);
+	}
+
+	public IMessageToolTipManager getMessageToolTipManager() {
+		return messageToolTipManager;
+	}
+
+	public void setMessageToolTipManager(
+			IMessageToolTipManager messageToolTipManager) {
+		this.messageToolTipManager = messageToolTipManager;
 	}
 }

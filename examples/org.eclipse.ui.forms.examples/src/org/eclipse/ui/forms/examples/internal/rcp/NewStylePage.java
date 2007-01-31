@@ -436,6 +436,7 @@ public class NewStylePage extends FormPage {
 				}
 			};
 			haction.setChecked(true);
+			haction.setText("Horizontal");
 			haction.setToolTipText("Horizontal orientation");
 			haction.setImageDescriptor(ExamplesPlugin.getDefault()
 					.getImageRegistry().getDescriptor(
@@ -445,6 +446,7 @@ public class NewStylePage extends FormPage {
 				}
 			};
 			vaction.setChecked(false);
+			vaction.setText("Vertical");
 			vaction.setToolTipText("Vertical orientation");
 			vaction.setImageDescriptor(ExamplesPlugin.getDefault()
 					.getImageRegistry().getDescriptor(
