@@ -32,17 +32,24 @@ public class LineReaderTest extends TestCase {
 		LineReader lr= new LineReader(getReader("normal.txt")); //$NON-NLS-1$
 		List inLines= lr.readLines();
 		Assert.assertEquals(3, inLines.size());
-		Assert.assertEquals("[1]\n", inLines.get(0)); //$NON-NLS-1$
-		Assert.assertEquals("[2]\n", inLines.get(1)); //$NON-NLS-1$
-		Assert.assertEquals("[3]\n", inLines.get(2)); //$NON-NLS-1$
+		Assert.assertEquals("[1]\n", convertLineDelimeters(inLines.get(0))); //$NON-NLS-1$
+		Assert.assertEquals("[2]\n", convertLineDelimeters(inLines.get(1))); //$NON-NLS-1$
+		Assert.assertEquals("[3]\n", convertLineDelimeters(inLines.get(2))); //$NON-NLS-1$
+	}
+
+	private String convertLineDelimeters(Object object) {
+		String line = (String)object;
+		if (line.endsWith("\r\n"))
+			return line.substring(0, line.length() - 2) + "\n";
+		return line;
 	}
 
 	public void testReadUnterminatedLastLine() {
 		LineReader lr= new LineReader(getReader("unterminated.txt")); //$NON-NLS-1$
 		List inLines= lr.readLines();
 		Assert.assertEquals(3, inLines.size());
-		Assert.assertEquals("[1]\n", inLines.get(0)); //$NON-NLS-1$
-		Assert.assertEquals("[2]\n", inLines.get(1)); //$NON-NLS-1$
+		Assert.assertEquals("[1]\n", convertLineDelimeters(inLines.get(0))); //$NON-NLS-1$
+		Assert.assertEquals("[2]\n", convertLineDelimeters(inLines.get(1))); //$NON-NLS-1$
 		Assert.assertEquals("[3]", inLines.get(2)); //$NON-NLS-1$
 	}
 
