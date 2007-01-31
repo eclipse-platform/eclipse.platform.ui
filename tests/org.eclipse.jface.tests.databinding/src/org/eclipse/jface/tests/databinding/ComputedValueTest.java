@@ -53,7 +53,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
     }
 
     public void testDependencyValueChange() throws Exception {
-        final WritableValue value = new WritableValue(Integer.TYPE, new Integer(42));
+        final WritableValue value = new WritableValue(new Integer(42), Integer.TYPE);
 
         ComputedValue cv = new ComputedValue() {
             protected Object calculate() {
@@ -70,7 +70,7 @@ public class ComputedValueTest extends AbstractDefaultRealmTestCase {
 
     private static class WritableValueExt extends WritableValue {
         public WritableValueExt(Object valueType, Object initialValue) {
-            super(valueType, initialValue);
+            super(initialValue, valueType);
         }
 
         public boolean hasListeners() {

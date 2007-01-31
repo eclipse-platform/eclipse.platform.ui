@@ -33,7 +33,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNull() throws Exception {
-		WritableValue observableValue = new WritableValue(null, new WritableList(new ArrayList(), Object.class));
+		WritableValue observableValue = new WritableValue(new WritableList(new ArrayList(), Object.class), null);
 
 		class Factory implements IObservableFactory {
 			Object type = Object.class;
@@ -60,8 +60,8 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNotNull() throws Exception {
-		WritableValue observableValue = new WritableValue(null,
-				new WritableList(new ArrayList(), Object.class));
+		WritableValue observableValue = new WritableValue(new WritableList(new ArrayList(), Object.class),
+				null);
 
 		class Factory implements IObservableFactory {
 			Object type = Object.class;

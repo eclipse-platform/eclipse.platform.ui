@@ -44,8 +44,8 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		target = new WritableValue(String.class, null);
-		model = new WritableValue(String.class, null);
+		target = WritableValue.withValueType(String.class);
+		model = WritableValue.withValueType(String.class);
 		dbc = new DataBindingContext();
 	}
 

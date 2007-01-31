@@ -80,7 +80,7 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 		Object type;
 		
 		public IObservable createObservable(Object target) {
-			return innerObservable = new WritableValue(type, target);
+			return innerObservable = new WritableValue(target, type);
 		}		
 	}
 }

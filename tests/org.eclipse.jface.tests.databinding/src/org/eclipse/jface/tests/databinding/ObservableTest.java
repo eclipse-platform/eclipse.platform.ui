@@ -24,7 +24,7 @@ public class ObservableTest extends AbstractDefaultRealmTestCase {
 		 * @param initialValue
 		 */
 		public MyObservable(Object initialValue) {
-			super(null, initialValue);
+			super(initialValue, null);
 		}
 
 		public void fireChange(Object oldValue, Object newValue) {

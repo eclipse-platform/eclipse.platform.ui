@@ -409,9 +409,9 @@ public class ValueBinding extends Binding {
 
 	protected void preInit() {
 		validationErrorObservable = new WritableValue(context
-				.getValidationRealm(), IStatus.class, Status.OK_STATUS);
+				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
 		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), IStatus.class, Status.OK_STATUS);
+				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
 	}
 
 	protected void postInit() {

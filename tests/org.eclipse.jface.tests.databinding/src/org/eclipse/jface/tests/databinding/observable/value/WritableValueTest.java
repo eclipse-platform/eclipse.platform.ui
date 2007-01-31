@@ -67,7 +67,7 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	public void testConstructor() throws Exception {
 		WritableValue value = new WritableValue(SWTObservables.getRealm(Display
-				.getDefault()), null, null);
+				.getDefault()));
 		assertNull(value.getValue());
 		assertNull(value.getValueType());
 	}

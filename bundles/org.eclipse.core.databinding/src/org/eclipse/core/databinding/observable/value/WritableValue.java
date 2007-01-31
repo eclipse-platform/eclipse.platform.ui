@@ -17,8 +17,10 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * @since 1.0
+ * Mutable (writable) implementation of {@link IObservableValue} that will maintain a value and fire
+ * change events when the value changes.
  * 
+ * @since 1.0
  */
 public class WritableValue extends AbstractObservableValue {
 
@@ -35,13 +37,13 @@ public class WritableValue extends AbstractObservableValue {
 	/**
 	 * Constructs a new instance with the default realm.
 	 * 
-	 * @param valueType
-	 *            can be <code>null</code>
 	 * @param initialValue
 	 *            can be <code>null</code>
+	 * @param valueType
+	 *            can be <code>null</code>
 	 */
-	public WritableValue(Object valueType, Object initialValue) {
-		this(Realm.getDefault(), valueType, initialValue);
+	public WritableValue(Object initialValue, Object valueType) {
+		this(Realm.getDefault(), initialValue, valueType);
 	}
 
 	/**
@@ -58,17 +60,17 @@ public class WritableValue extends AbstractObservableValue {
 	 * Constructs a new instance.
 	 * 
 	 * @param realm
-	 * @param valueType
-	 *            can be <code>null</code>
 	 * @param initialValue
 	 *            can be <code>null</code>
+	 * @param valueType
+	 *            can be <code>null</code>
 	 */
-	public WritableValue(Realm realm, Object valueType, Object initialValue) {
+	public WritableValue(Realm realm, Object initialValue, Object valueType) {
 		super(realm);
 		this.valueType = valueType;
 		this.value = initialValue;
 	}
-	
+
 	private Object value = null;
 
 	public Object doGetValue() {
@@ -102,6 +104,6 @@ public class WritableValue extends AbstractObservableValue {
 	 * @return new instance with the default realm and a value of <code>null</code>
 	 */
 	public static WritableValue withValueType(Object elementType) {
-		return new WritableValue(Realm.getDefault(), elementType, null );
+		return new WritableValue(Realm.getDefault(), null, elementType);
 	}
 }

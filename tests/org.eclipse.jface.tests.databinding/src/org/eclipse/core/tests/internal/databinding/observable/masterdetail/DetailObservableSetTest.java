@@ -34,8 +34,8 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNull() throws Exception {
-		WritableValue observableValue = new WritableValue(null,
-				new WritableSet(new HashSet(), Object.class));
+		WritableValue observableValue = new WritableValue(new WritableSet(new HashSet(), Object.class),
+				null);
 
 		class Factory implements IObservableFactory {
 			Object type;
@@ -69,8 +69,8 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testElementTypeNotNull() throws Exception {
-		WritableValue observableValue = new WritableValue(null,
-				new WritableSet(new HashSet(), Object.class));
+		WritableValue observableValue = new WritableValue(new WritableSet(new HashSet(), Object.class),
+				null);
 
 		class Factory implements IObservableFactory {
 			Object type = Object.class;

@@ -69,7 +69,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObserveDetailListElementType() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class, null);
+		WritableValue parent = WritableValue.withValueType(Bean.class);
 		parent.setValue(model);
 		IObservableList list = BeansObservables.observeDetailList(Realm
 				.getDefault(), parent, "list", elementType);
@@ -80,7 +80,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObserveDetailValueIBeanObservable() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class, null);
+		WritableValue parent = WritableValue.withValueType(Bean.class);
 		parent.setValue(new Bean());
 
 		IObservableValue detailValue = BeansObservables.observeDetailValue(
@@ -96,7 +96,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObserveDetailValueNullOuterElementType() throws Exception {
-		WritableValue parent = new WritableValue(null, new Bean());
+		WritableValue parent = new WritableValue(new Bean(), null);
 
 		IObservableValue detailValue = BeansObservables.observeDetailValue(
 				Realm.getDefault(), parent, "value", String.class);
@@ -106,7 +106,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObservableDetailListIBeanObservable() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class, null);
+		WritableValue parent = WritableValue.withValueType(Bean.class);
 		parent.setValue(new Bean());
 
 		IObservableList detailList = BeansObservables.observeDetailList(Realm
@@ -126,7 +126,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObservableDetailListNullOuterElementType() throws Exception {
-		WritableValue parent = new WritableValue(null, new Bean());
+		WritableValue parent = new WritableValue(new Bean(), null);
 
 		IObservableList detailList = BeansObservables.observeDetailList(Realm
 				.getDefault(), parent, "list", Bean.class);
@@ -136,7 +136,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObservableDetailSetIBeanObservable() throws Exception {
-		WritableValue parent = new WritableValue(Bean.class, null);
+		WritableValue parent = WritableValue.withValueType(Bean.class);
 		parent.setValue(new Bean());
 
 		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm
@@ -157,7 +157,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testObservableDetailSetNullOuterElementType() throws Exception {
-		WritableValue parent = new WritableValue(null, new Bean());
+		WritableValue parent = new WritableValue(new Bean(), null);
 
 		IObservableSet detailSet = BeansObservables.observeDetailSet(Realm
 				.getDefault(), parent, "set", Bean.class);

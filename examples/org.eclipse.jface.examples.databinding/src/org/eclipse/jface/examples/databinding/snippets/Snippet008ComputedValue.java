@@ -122,8 +122,8 @@ public class Snippet008ComputedValue {
 		final WritableValue lastName;
 
 		Data() {
-			firstName = new WritableValue(String.class, "");
-			lastName = new WritableValue(String.class, "");
+			firstName = new WritableValue("", String.class);
+			lastName = new WritableValue("", String.class);
 		}
 	}
 

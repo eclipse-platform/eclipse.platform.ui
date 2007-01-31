@@ -47,8 +47,8 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
         DefaultBindSpec spec = new DefaultBindSpec();
         String initialValue = "value";
         
-        WritableValue target = new WritableValue(String.class, null);
-        WritableValue model = new WritableValue(String.class, initialValue);
+        WritableValue target = new WritableValue(null, String.class);
+        WritableValue model = new WritableValue(initialValue, String.class);
         
         DataBindingContext dbc = new DataBindingContext();
         

@@ -51,8 +51,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	public void testBindValue() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
-		IObservableValue target = new WritableValue(String.class, null);
-		IObservableValue model = new WritableValue(String.class, null);
+		IObservableValue target = WritableValue.withValueType(String.class);
+		IObservableValue model = WritableValue.withValueType(String.class);
 
 		Binding binding = dbc.bindValue(target, model, null);
 		assertTrue("binding is of the incorrect type",
@@ -76,8 +76,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testValidationError() throws Exception {
-		WritableValue targetObservable = new WritableValue(String.class, null);
-		WritableValue modelObservable = new WritableValue(String.class, null);
+		WritableValue targetObservable = WritableValue.withValueType(String.class);
+		WritableValue modelObservable = WritableValue.withValueType(String.class);
 
 		final String errorMessage = "error";
 		DataBindingContext dbc = new DataBindingContext();
@@ -121,8 +121,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testBindValueAddBinding() throws Exception {
-		WritableValue targetValue = new WritableValue(String.class, null);
-		WritableValue modelValue = new WritableValue(String.class, null);
+		WritableValue targetValue = WritableValue.withValueType(String.class);
+		WritableValue modelValue = WritableValue.withValueType(String.class);
 
 		DataBindingContext dbc = new DataBindingContext();
 		assertNotNull(dbc.getBindings());

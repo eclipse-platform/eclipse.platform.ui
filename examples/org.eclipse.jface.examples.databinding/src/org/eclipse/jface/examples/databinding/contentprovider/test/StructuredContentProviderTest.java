@@ -197,7 +197,7 @@ public class StructuredContentProviderTest {
 		// We will allow the user to change the current function through a set
 		// of radio buttons
 		currentFunction = new WritableValue(realm, new Integer(
-				SomeMathFunction.OP_MULTIPLY));
+				SomeMathFunction.OP_MULTIPLY), null);
 
 		// mathFunction implements the selected function
 		mathFunction = new SomeMathFunction(inputSet);
