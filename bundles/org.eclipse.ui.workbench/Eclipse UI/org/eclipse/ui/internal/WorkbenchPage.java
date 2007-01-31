@@ -2445,7 +2445,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         } else {
             editor.setInput(input);
         }
-        navigationHistory.markLocation(editor);
+        navigationHistory.markEditor(editor);
     }
 
     /**
