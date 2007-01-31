@@ -52,7 +52,6 @@ public class Patcher {
 	private Set disabledElements = new HashSet();
 	private Map diffResults = new HashMap();
 	private final Map contentCache = new HashMap();
-	private final Map properties = new HashMap();
 	private Set mergedHunks = new HashSet();
 
 	private final PatchConfiguration configuration;
@@ -715,11 +714,11 @@ public class Patcher {
 	}
 	
 	public void setProperty(String key, Object value) {
-		properties.put(key, value);
+		getConfiguration().setProperty(key, value);
 	}
 	
 	public Object getProperty(String key) {
-		return properties.get(key);
+		return getConfiguration().getProperty(key);
 	}
 
 	public boolean isManuallyMerged(Hunk hunk) {
