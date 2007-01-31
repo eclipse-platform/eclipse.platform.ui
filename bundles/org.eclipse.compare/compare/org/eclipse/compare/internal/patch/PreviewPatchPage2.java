@@ -404,7 +404,7 @@ public class PreviewPatchPage2 extends WizardPage {
 				| GridData.GRAB_HORIZONTAL);
 		generateRejects.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				getPatcher().setGenerateRejects(
+				getPatcher().setGenerateRejectFile(
 						generateRejects.getSelection());
 			}
 		});

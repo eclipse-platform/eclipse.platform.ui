@@ -623,7 +623,7 @@ public class Utilities {
 		}
 	}
 	
-	public static String getCharset(IResource resource) {
+	public static String getCharset(Object resource) {
 		if (resource instanceof IEncodedStorage) {
 			try {
 				return ((IEncodedStorage)resource).getCharset();

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -77,14 +78,14 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 			if (element instanceof PatchDiffNode){
 				PatchDiffNode node = (PatchDiffNode) element;
 				if (!node.isEnabled() && image != null) {
-					LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher());
+					LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher().getConfiguration());
 					return imageCache.createImage(createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REMOVED_OVERLAY), IDecoration.TOP_LEFT));
 				}
 			}
 			if (element instanceof HunkDiffNode) {
 				HunkDiffNode node = (HunkDiffNode) element;
 				if (node.isManuallyMerged()) {
-					LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher());
+					LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher().getConfiguration());
 					return imageCache.createImage(PatchCompareEditorInput.createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IS_MERGED_OVERLAY), IDecoration.TOP_LEFT));
 				}
 			}
@@ -123,11 +124,11 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	
 	protected void handleDispose() {
 		super.handleDispose();
-		getImageCache(patcher).dispose();
+		getImageCache(getPatcher().getConfiguration()).dispose();
 	}
 
-	public static LocalResourceManager getImageCache(Patcher patcher) {
-		return (LocalResourceManager)patcher.getProperty(IMAGE_CACHE_KEY);
+	public static LocalResourceManager getImageCache(PatchConfiguration patchConfiguration) {
+		return (LocalResourceManager)patchConfiguration.getProperty(IMAGE_CACHE_KEY);
 	}
 
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -190,7 +191,7 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	private void processProjects(DiffProject[] diffProjects) {
 		//create diffProject nodes
 		for (int i = 0; i < diffProjects.length; i++) {
-			PatchProjectDiffNode projectNode = new PatchProjectDiffNode(getRoot(), diffProjects[i], getPatcher());
+			PatchProjectDiffNode projectNode = new PatchProjectDiffNode(getRoot(), diffProjects[i], getPatcher().getConfiguration());
 			FileDiff[] diffs = diffProjects[i].getFileDiffs();
 			for (int j = 0; j < diffs.length; j++) {
 				FileDiff fileDiff = diffs[j];

@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
+import java.io.InputStream;
 import java.util.List;
 
-import org.eclipse.compare.patch.AbstractHunk;
+import org.eclipse.compare.patch.IHunk;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-public class HunkResult extends AbstractHunk {
+public class HunkResult implements IHunk {
 
 	private static final boolean DEBUG= false;
 	
@@ -45,18 +47,18 @@ public class HunkResult extends AbstractHunk {
 	 */
 	public boolean patch(List lines) {
 		fMatches = false;
-		Patcher patcher = getPatcher();
-		if (patcher.isEnabled(fHunk)) {
-			if (fHunk.tryPatch(patcher, lines, fShift)) {
-				fShift+= fHunk.doPatch(patcher, lines, fShift);
+		PatchConfiguration configuration = getConfiguration();
+		if (isEnabled(configuration)) {
+			if (fHunk.tryPatch(configuration, lines, fShift)) {
+				fShift+= fHunk.doPatch(configuration, lines, fShift);
 				fMatches = true;
 			} else {
 				boolean found= false;
 				int oldShift= fShift;
 				
-				for (int i= 1; i <= patcher.getFuzz(); i++) {
-					if (fHunk.tryPatch(patcher, lines, fShift-i)) {
-						if (patcher.isAdjustShift())
+				for (int i= 1; i <= fDiffResult.getFuzz(); i++) {
+					if (fHunk.tryPatch(configuration, lines, fShift-i)) {
+						if (isAdjustShift())
 							fShift-= i;
 						found= true;
 						break;
@@ -64,9 +66,9 @@ public class HunkResult extends AbstractHunk {
 				}
 				
 				if (! found) {
-					for (int i= 1; i <= patcher.getFuzz(); i++) {
-						if (fHunk.tryPatch(patcher, lines, fShift+i)) {
-							if (patcher.isAdjustShift())
+					for (int i= 1; i <= fDiffResult.getFuzz(); i++) {
+						if (fHunk.tryPatch(configuration, lines, fShift+i)) {
+							if (isAdjustShift())
 								fShift+= i;
 							found= true;
 							break;
@@ -76,16 +78,20 @@ public class HunkResult extends AbstractHunk {
 				
 				if (found) {
 					if (DEBUG) System.out.println("patched hunk at offset: " + (fShift-oldShift)); //$NON-NLS-1$
-					fShift+= fHunk.doPatch(patcher, lines, fShift);
+					fShift+= fHunk.doPatch(configuration, lines, fShift);
 					fMatches = true;
 				}
 			}
 		}
 		return fMatches;
 	}
-	
-	private Patcher getPatcher() {
-		return getDiffResult().getPatcher();
+
+	private boolean isAdjustShift() {
+		return true;
+	}
+
+	private PatchConfiguration getConfiguration() {
+		return getDiffResult().getConfiguration();
 	}
 
 	/**
@@ -98,9 +104,9 @@ public class HunkResult extends AbstractHunk {
 		
 		fMatches= false;
 		int fuzz = 0;
-		Patcher patcher = getPatcher();
-		if (fHunk.tryPatch(patcher, lines, fShift)) {
-			fShift+= fHunk.doPatch(patcher, lines, fShift);
+		PatchConfiguration configuration = getConfiguration();
+		if (fHunk.tryPatch(configuration, lines, fShift)) {
+			fShift+= fHunk.doPatch(configuration, lines, fShift);
 			fMatches = true;
 		} else {
 			int hugeFuzz= lines.size();	// the maximum we need for this file
@@ -110,9 +116,9 @@ public class HunkResult extends AbstractHunk {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				if (fHunk.tryPatch(patcher, lines, fShift-i)) {
+				if (fHunk.tryPatch(configuration, lines, fShift-i)) {
 					fuzz= i;
-					if (patcher.isAdjustShift())
+					if (isAdjustShift())
 						fShift-= i;
 					fMatches= true;
 					break;
@@ -124,9 +130,9 @@ public class HunkResult extends AbstractHunk {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					if (fHunk.tryPatch(patcher, lines, fShift+i)) {
+					if (fHunk.tryPatch(configuration, lines, fShift+i)) {
 						fuzz= i;
-						if (patcher.isAdjustShift())
+						if (isAdjustShift())
 							fShift+= i;
 						fMatches= true;
 						break;
@@ -135,7 +141,7 @@ public class HunkResult extends AbstractHunk {
 			}
 			
 			if (fMatches)
-				fShift+= fHunk.doPatch(patcher, lines, fShift);
+				fShift+= fHunk.doPatch(configuration, lines, fShift);
 		}
 		return fuzz;
 	}
@@ -210,9 +216,16 @@ public class HunkResult extends AbstractHunk {
 			}
 			// Only return the full context if we could apply the hunk
 			if (!problemFound)
-				return getPatcher().createString(lines);
+				return Patcher.createString(fDiffResult.isPreserveLineDelimeters(), lines);
 		}
-		return getHunk().getContents(afterState, getPatcher().isReversed());
+		return getHunk().getContents(afterState, getConfiguration().isReversed());
+	}
+	
+	private boolean isEnabled(PatchConfiguration configuration) {
+		Patcher patcher = Patcher.getPatcher(configuration);
+		if (patcher != null)
+			return patcher.isEnabled(fHunk);
+		return true;
 	}
 
 	public void setMatches(boolean matches) {
@@ -220,6 +233,29 @@ public class HunkResult extends AbstractHunk {
 	}
 
 	public int getStartPosition() {
-		return fHunk.getStart(getPatcher().isReversed()) + fShift;
+		return fHunk.getStart(getConfiguration().isReversed()) + fShift;
+	}
+
+	public String getLabel() {
+		return getHunk().getDescription();
+	}
+
+	public InputStream getOriginalContents() {
+		String contents = getContents(false, false);
+		return asInputStream(contents);
+	}
+
+	protected InputStream asInputStream(String contents) {
+		String charSet = getCharset();
+		return FileDiffResult.asInputStream(contents, charSet);
+	}
+
+	public InputStream getPatchedContents() {
+		String contents = getContents(true, false);
+		return asInputStream(contents);
+	}
+
+	public String getCharset() {
+		return fDiffResult.getCharSet();
 	}
 }

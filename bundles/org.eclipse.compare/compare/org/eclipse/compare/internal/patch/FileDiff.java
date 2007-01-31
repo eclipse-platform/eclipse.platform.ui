@@ -12,18 +12,21 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.*;
 
+import org.eclipse.compare.patch.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.*;
 
 /**
  * A file diff represents a set of hunks that were associated with the
  * same path in a patch file.
  */
-public class FileDiff {
+public class FileDiff implements IFilePatch {
 
 	private IPath fOldPath, fNewPath;
 	private List fHunks= new ArrayList();
 	private DiffProject fProject; //the project that contains this diff
+	private String header;
 	
 	/**
 	 * Create a file diff for the given path and date information.
@@ -167,5 +170,43 @@ public class FileDiff {
 		if (fNewPath != null)
 			length= Math.min(length, fNewPath.segmentCount());
 		return length;
+	}
+
+	public IFilePatchResult apply(IStorage contents,
+			PatchConfiguration configuration, IProgressMonitor monitor) {
+		FileDiffResult result = new FileDiffResult(this, configuration);
+		result.refresh(contents, monitor);
+		return result;
+	}
+
+	public IPath getTargetPath(PatchConfiguration configuration) {
+		return getStrippedPath(configuration.getPrefixSegmentStripCount(), configuration.isReversed());
+	}
+
+	public FileDiff asRelativeDiff() {
+		if (fProject == null)
+			return this;
+		IPath adjustedOldPath = null;
+		if (fOldPath != null) {
+			adjustedOldPath = new Path(null, fProject.getName()).append(fOldPath);
+		}
+		IPath adjustedNewPath = null;
+		if (fNewPath != null) {
+			adjustedNewPath = new Path(null, fProject.getName()).append(fNewPath);
+		}
+		FileDiff diff = new FileDiff(adjustedOldPath, 0, adjustedNewPath, 0);
+		for (Iterator iterator = fHunks.iterator(); iterator.hasNext();) {
+			Hunk hunk = (Hunk) iterator.next();
+			diff.add(hunk);
+		}
+		return diff;
+	}
+
+	public void setHeader(String header) {
+		this.header = header;
+	}
+
+	public String getHeader() {
+		return header;
 	}
 }

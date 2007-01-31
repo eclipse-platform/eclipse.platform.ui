@@ -11,6 +11,7 @@
 package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
 public class HunkDiffNode extends PatchDiffNode {
@@ -50,8 +51,8 @@ public class HunkDiffNode extends PatchDiffNode {
 		return result;
 	}
 
-	protected Patcher getPatcher() {
-		return result.getDiffResult().getPatcher();
+	protected PatchConfiguration getConfiguration() {
+		return result.getDiffResult().getConfiguration();
 	}
 
 	public boolean isManuallyMerged() {

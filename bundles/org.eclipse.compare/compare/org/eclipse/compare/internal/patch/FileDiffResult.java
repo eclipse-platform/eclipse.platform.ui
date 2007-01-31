@@ -10,30 +10,37 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
+import java.io.*;
 import java.util.*;
 
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.patch.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
-public class FileDiffResult {
+public class FileDiffResult implements IFilePatchResult {
 
 	private FileDiff fDiff;
 	private boolean fMatches= false;
 	private boolean fDiffProblem;
 	private String fErrorMessage;
-	private String fRejected;
-	private Patcher fPatcher;
 	private Map fHunkResults = new HashMap();
 	private List fBeforeLines, fAfterLines;
+	private final PatchConfiguration configuration;
+	private String charset;
+	private int fuzz;
 	
-	
-	public FileDiffResult(FileDiff diff, Patcher patcher) {
+	public FileDiffResult(FileDiff diff, PatchConfiguration configuration) {
 		super();
 		fDiff = diff;
-		fPatcher = patcher;
+		this.configuration = configuration;
+	}
+	
+	public PatchConfiguration getConfiguration() {
+		return configuration;
 	}
 	
 	public boolean canApplyHunk(Hunk hunk) {
@@ -48,16 +55,18 @@ public class FileDiffResult {
 	 * Checks to see:
 	 * 1) if the target file specified in fNewPath exists and is patchable
 	 * 2) which hunks contained by this diff can actually be applied to the file
+	 * @param storage the contents being patched or <code>null</code> for an addition
+	 * @param monitor a progress monitor or <code>null</code> if no progress monitoring is desired
 	 */
-	public void refresh() {
+	 public void refresh(IStorage storage, IProgressMonitor monitor) {
 		fMatches= false;
 		fDiffProblem= false;
-		IFile file= getTargetFile();
 		boolean create= false;
+		charset = Utilities.getCharset(storage);
 		//If this diff is an addition, make sure that it doesn't already exist
-		if (fDiff.getDiffType(getPatcher().isReversed()) == Differencer.ADDITION) {
-			IProject project = fPatcher.getTargetProject(fDiff);
-			if ((file == null || !file.exists() || isEmpty(file)) && project != null && project.isAccessible()) {
+		boolean exists = targetExists(storage);
+		if (fDiff.getDiffType(getConfiguration().isReversed()) == Differencer.ADDITION) {
+			if ((!exists || isEmpty(storage)) && canCreateTarget(storage)) {
 				fMatches= true;
 			} else {
 				// file already exists
@@ -67,7 +76,7 @@ public class FileDiffResult {
 			create= true;
 		} else { //This diff is not an addition, try to find a match for it
 			//Ensure that the file described by the path exists and is modifiable
-			if (file != null && file.isAccessible()) {
+			if (exists) {
 				fMatches= true;
 			} else {
 				// file doesn't exist
@@ -89,11 +98,10 @@ public class FileDiffResult {
 			}
 		} else {
 			// If this diff has no problems discovered so far, try applying the patch
-			apply(file, create);
+			patch(getLines(storage, create), monitor);
 		}
 
 		if (containsProblems()) {
-			fRejected= fPatcher.getRejected(getFailedHunks());
 			if (fMatches) {
 				// Check to see if we have at least one hunk that matches
 				fMatches = false;
@@ -110,33 +118,35 @@ public class FileDiffResult {
 		}
 	}
 
-	private boolean isEmpty(IFile file) {
-		if (file == null || !file.exists())
-			return true;
-		return getPatcher().load(file, false).isEmpty();
+	protected boolean canCreateTarget(IStorage storage) {
+		return true;
 	}
 
-	protected IFile getTargetFile() {
-		return fPatcher.getTargetFile(fDiff);
+	protected boolean targetExists(IStorage storage) {
+		return storage != null;
 	}
 	
-	List apply(IFile file, boolean create) {
-		List lines = fPatcher.load(file, create);
-		patch(lines);
-		if (fPatcher.hasCachedContents(fDiff)) {
-			// TODO: We should reapply the patch to see if anything new matches
-			return fPatcher.getCachedLines(fDiff);
-		}
-		return getLines();
+	protected List getLines(IStorage storage, boolean create) {
+		List lines = Patcher.load(storage, create);
+		return lines;
 	}
 	
+	protected boolean isEmpty(IStorage storage) {
+		if (storage == null)
+			return true;
+		return Patcher.load(storage, false).isEmpty();
+	}
+
 	/*
 	 * Tries to patch the given lines with the specified Diff.
 	 * Any hunk that couldn't be applied is returned in the list failedHunks.
 	 */
-	public void patch(List lines) {
+	public void patch(List lines, IProgressMonitor monitor) {
 		fBeforeLines = new ArrayList();
 		fBeforeLines.addAll(lines);
+		if (getConfiguration().getFuzz() == -1) {
+			fuzz = calculateFuzz(fBeforeLines, monitor);
+		}
 		int shift= 0;
 		Hunk[] hunks = fDiff.getHunks();
 		for (int i = 0; i < hunks.length; i++) {
@@ -170,14 +180,10 @@ public class FileDiffResult {
 	}
 	
 	public String getLabel() {
-		String label= fDiff.getStrippedPath(fPatcher.getStripPrefixSegments(), fPatcher.isReversed()).toString();
+		String label= getTargetPath().toString();
 		if (this.fDiffProblem)
 			return NLS.bind(PatchMessages.Diff_2Args, new String[] {label, fErrorMessage});
 		return label;
-	}
-
-	public String isRejected() {
-		return fRejected;
 	}
 	
 	public boolean hasMatches() {
@@ -199,17 +205,19 @@ public class FileDiffResult {
 	 * @return the fuzz factor or <code>-1</code> if no hunks could be matched
 	 */
 	public int calculateFuzz(List lines, IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
 		fBeforeLines = new ArrayList();
 		fBeforeLines.addAll(lines);
 		// TODO: What about deletions?
-		if (fDiff.getDiffType(getPatcher().isReversed()) == Differencer.ADDITION) {
+		if (fDiff.getDiffType(getConfiguration().isReversed()) == Differencer.ADDITION) {
 			// Additions don't need to adjust the fuzz factor
 			// TODO: What about the after lines?
 			return -1;
 		}
 		int shift= 0;
 		int fuzz = 0;
-		String name= fPatcher.getPath(fDiff).lastSegment();
+		String name= getTargetPath().lastSegment();
 		Hunk[] hunks = fDiff.getHunks();
 		for (int j = 0; j < hunks.length; j++) {
 			Hunk h = hunks[j];
@@ -226,6 +234,10 @@ public class FileDiffResult {
 		}
 		fAfterLines = lines;
 		return fuzz;
+	}
+	
+	public IPath getTargetPath() {
+		return fDiff.getStrippedPath(getConfiguration().getPrefixSegmentStripCount(), getConfiguration().isReversed());
 	}
 
 	private HunkResult getHunkResult(Hunk hunk) {
@@ -251,10 +263,6 @@ public class FileDiffResult {
 		return fDiff;
 	}
 
-	Patcher getPatcher() {
-		return fPatcher;
-	}
-
 	List getBeforeLines() {
 		return fBeforeLines;
 	}
@@ -265,6 +273,56 @@ public class FileDiffResult {
 
 	public HunkResult[] getHunkResults() {
 		return (HunkResult[]) fHunkResults.values().toArray(new HunkResult[fHunkResults.size()]);
+	}
+
+	public InputStream getOriginalContents() {
+		String contents = Patcher.createString(isPreserveLineDelimeters(), getBeforeLines());
+		return asInputStream(contents, getCharSet());
+	}
+
+	public InputStream getPatchedContents() {
+		String contents = Patcher.createString(isPreserveLineDelimeters(), getLines());
+		return asInputStream(contents, getCharSet());
+	}
+
+	protected String getCharSet() {
+		return charset;
+	}
+
+	protected boolean isPreserveLineDelimeters() {
+		return false;
+	}
+
+	public IHunk[] getRejects() {
+		List failedHunks = getFailedHunks();
+		return (IHunk[]) failedHunks.toArray(new IHunk[failedHunks.size()]);
+	}
+
+	public boolean hasRejects() {
+		return !getFailedHunks().isEmpty();
+	}
+	
+	public static InputStream asInputStream(String contents, String charSet) {
+		byte[] bytes = null;
+		if (charSet != null) {
+			try {
+				bytes = contents.getBytes(charSet);
+			} catch (UnsupportedEncodingException e) {
+				CompareUIPlugin.log(e);
+			}
+		}
+		if (bytes == null) {
+			bytes = contents.getBytes();
+		}
+		return new ByteArrayInputStream(bytes);
+	}
+
+	public int getFuzz() {
+		int cf = configuration.getFuzz();
+		if (cf == -1) {
+			return fuzz;
+		}
+		return cf;
 	}
 	
 }

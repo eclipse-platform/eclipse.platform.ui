@@ -12,6 +12,7 @@ package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
@@ -19,12 +20,12 @@ import org.eclipse.swt.graphics.Image;
 public class PatchProjectDiffNode extends PatchDiffNode {
 
 	private final DiffProject project;
-	private final Patcher patcher;
+	private final PatchConfiguration configuration;
 
-	public PatchProjectDiffNode(IDiffContainer parent, DiffProject project, Patcher patcher) {
+	public PatchProjectDiffNode(IDiffContainer parent, DiffProject project, PatchConfiguration configuration) {
 		super(project, parent, Differencer.NO_CHANGE);
 		this.project = project;
-		this.patcher = patcher;
+		this.configuration = configuration;
 	}
 	
 	/* (non-Javadoc)
@@ -40,7 +41,7 @@ public class PatchProjectDiffNode extends PatchDiffNode {
 	public Image getImage() {
 		Image image = CompareUI.getImage(project.getProject());
 		if (containsProblems()) {
-			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher());
+			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getConfiguration());
 			image = HunkTypedElement.getHunkErrorImage(image, imageCache, true);
 		}
 		return image;
@@ -65,9 +66,9 @@ public class PatchProjectDiffNode extends PatchDiffNode {
 	public String getType() {
 		return ITypedElement.FOLDER_TYPE;
 	}
-
-	protected Patcher getPatcher() {
-		return patcher;
+	
+	protected PatchConfiguration getConfiguration() {
+		return configuration;
 	}
 
 	public DiffProject getDiffProject() {

@@ -62,11 +62,21 @@ public class ApplyPatchOperation implements Runnable {
 	 * @throws CoreException if an error occurs reading the contents from the storage
 	 */
 	public static boolean isPatch(IStorage storage) throws CoreException {
+		return parsePatch(storage).length > 0;
+	}
+	
+	/**
+	 * Parse the given patch and return the set of file patches that it contains.
+	 * @param storage the storage that contains the patch
+	 * @return the set of file patches that the storage contains
+	 * @throws CoreException if an error occurs reading the contents from the storage
+	 */
+	public static IFilePatch[] parsePatch(IStorage storage) throws CoreException {
 		BufferedReader reader = Patcher.createReader(storage);
 		try {
 			PatchReader patchReader= new PatchReader();
 			patchReader.parse(reader);
-			return patchReader.getDiffs().length > 0;
+			return patchReader.getAdjustedDiffs();
 		} catch (IOException e) {
 			throw new CoreException(new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, e.getMessage(), e));
 		} finally {

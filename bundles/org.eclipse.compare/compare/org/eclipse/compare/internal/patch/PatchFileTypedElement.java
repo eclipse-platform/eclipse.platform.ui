@@ -31,19 +31,19 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 	}
 
 	public Image getImage() {
-		IFile file = result.getPatcher().getTargetFile(result.getDiff());
+		IFile file = getPatcher().getTargetFile(result.getDiff());
 		if (file == null) {
 			// We don't get a target file if the file doesn't exist
 			DiffProject project = result.getDiff().getProject();
 			if (project != null) {
-				file = project.getFile(result.getDiff().getPath(result.getPatcher().isReversed()));
+				file = project.getFile(result.getDiff().getPath(result.getConfiguration().isReversed()));
 			} else {
-				IResource target = result.getPatcher().getTarget();
+				IResource target = getPatcher().getTarget();
 				if (target instanceof IFile) {
 					file =  (IFile) target;
 				} else if (target instanceof IContainer) {
 					IContainer container = (IContainer) target;
-					file = container.getFile(result.getDiff().getStrippedPath(result.getPatcher().getStripPrefixSegments(), result.getPatcher().isReversed()));
+					file = container.getFile(result.getTargetPath());
 				}
 			}
 		}
@@ -52,7 +52,7 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 			image = CompareUI.getImage(file);
 		}
 		if (result.containsProblems()) {
-			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(result.getPatcher());
+			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(result.getConfiguration());
 			image = HunkTypedElement.getHunkErrorImage(image, imageCache, true);
 		}
 		return image;
@@ -62,14 +62,14 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 	 * @see org.eclipse.compare.ITypedElement#getName()
 	 */
 	public String getName() {
-		return result.getDiff().getStrippedPath(result.getPatcher().getStripPrefixSegments(), result.getPatcher().isReversed()).toString();
+		return result.getTargetPath().toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ITypedElement#getType()
 	 */
 	public String getType() {
-		return result.getPatcher().getPath(result.getDiff()).getFileExtension();
+		return result.getTargetPath().getFileExtension();
 	}
 
 	public String getCharset() throws CoreException {
@@ -79,8 +79,8 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 
 	public InputStream getContents() throws CoreException {
 		// If there are cached contents, use them
-		if (isAfterState && result.getPatcher().hasCachedContents(result.getDiff()))
-			return new ByteArrayInputStream(result.getPatcher().getCachedContents(result.getDiff()));
+		if (isAfterState && getPatcher().hasCachedContents(result.getDiff()))
+			return new ByteArrayInputStream(getPatcher().getCachedContents(result.getDiff()));
 		// Otherwise, get the lines from the diff result
 		List lines;
 		if (isAfterState) {
@@ -88,7 +88,7 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 		} else {
 			lines = result.getBeforeLines();
 		}
-		String contents = result.getPatcher().createString(lines);
+		String contents = Patcher.createString(getPatcher().isPreserveLineDelimeters(), lines);
 		String charSet = getCharset();
 		byte[] bytes = null;
 		if (charSet != null) {
@@ -102,6 +102,10 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 			bytes = contents.getBytes();
 		}
 		return new ByteArrayInputStream(bytes);
+	}
+
+	private Patcher getPatcher() {
+		return Patcher.getPatcher(result.getConfiguration());
 	}
 
 }

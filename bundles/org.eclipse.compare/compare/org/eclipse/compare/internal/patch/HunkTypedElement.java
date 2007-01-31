@@ -38,7 +38,7 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	 */
 	public Image getImage() {
 		if (!fHunkResult.isOK()) {
-			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getPatcher());
+			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getConfiguration());
 			return getHunkErrorImage(null, imageCache, false);
 		} 
 		return null;
@@ -51,21 +51,25 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	}
 
 	public boolean isManuallyMerged() {
-		return getHunkResult().getDiffResult().getPatcher().isManuallyMerged(getHunkResult().getHunk());
+		return getPatcher().isManuallyMerged(getHunkResult().getHunk());
+	}
+
+	private Patcher getPatcher() {
+		return Patcher.getPatcher(fHunkResult.getDiffResult().getConfiguration());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ITypedElement#getName()
 	 */
 	public String getName() {
-		return fHunkResult.getHunk().getDescription();
+		return fHunkResult.getLabel();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ITypedElement#getType()
 	 */
 	public String getType() {
-		return fHunkResult.getDiffResult().getPatcher().getPath(fHunkResult.getDiffResult().getDiff()).getFileExtension();
+		return fHunkResult.getDiffResult().getDiff().getTargetPath(fHunkResult.getDiffResult().getConfiguration()).getFileExtension();
 	}
 
 	/* (non-Javadoc)
@@ -73,24 +77,11 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	 */
 	public InputStream getContents() throws CoreException {
 		String contents = fHunkResult.getContents(fIsAfterState, fFullContext);
-		String charSet = getCharset();
-		byte[] bytes = null;
-		if (charSet != null) {
-			try {
-				bytes = contents.getBytes(charSet);
-			} catch (UnsupportedEncodingException e) {
-				CompareUIPlugin.log(e);
-			}
-		}
-		if (bytes == null) {
-			bytes = contents.getBytes();
-		}
-		return new ByteArrayInputStream(bytes);
+		return fHunkResult.asInputStream(contents);
 	}
 
 	public String getCharset() throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
+		return fHunkResult.getCharset();
 	}
 
 	public HunkResult getHunkResult() {

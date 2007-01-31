@@ -16,6 +16,7 @@ import java.util.*;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -34,6 +35,11 @@ public class Patcher {
 
 	static protected final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker"; //$NON-NLS-1$
 
+	/**
+	 * Property used to associate a patcher with a {@link PatchConfiguration}
+	 */
+	public static final String PROP_PATCHER = "org.eclipse.compare.patcher"; //$NON-NLS-1$
+
 	// diff formats
 	//	private static final int CONTEXT= 0;
 	//	private static final int ED= 1;
@@ -43,22 +49,18 @@ public class Patcher {
 	private FileDiff[] fDiffs;
 	private IResource fTarget;
 	// patch options
-	private int fStripPrefixSegments;
-	private int fFuzz;
-	private boolean fIgnoreWhitespace= false;
-	private boolean fIgnoreLineDelimiter= true;
-	private boolean fPreserveLineDelimiters= false;
-	private boolean fReverse= false;
-	private boolean fAdjustShift= true;
-	private boolean fGenerateRejectFile = true;
 	private Set disabledElements = new HashSet();
 	private Map diffResults = new HashMap();
 	private final Map contentCache = new HashMap();
 	private final Map properties = new HashMap();
 	private Set mergedHunks = new HashSet();
+
+	private final PatchConfiguration configuration;
+	private boolean fGenerateRejectFile = true;
 	
 	public Patcher() {
-		// nothing to do
+		configuration = new PatchConfiguration();
+		configuration.setProperty(PROP_PATCHER, this);
 	}
 	
 	/*
@@ -79,43 +81,55 @@ public class Patcher {
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setStripPrefixSegments(int strip) {
-		if (strip != fStripPrefixSegments) {
-			fStripPrefixSegments= strip;
+		if (strip != getConfiguration().getPrefixSegmentStripCount()) {
+			getConfiguration().setPrefixSegmentStripCount(strip);
 			return true;
 		}
 		return false;
 	}
 	
 	int getStripPrefixSegments() {
-		return fStripPrefixSegments;
+		return getConfiguration().getPrefixSegmentStripCount();
 	}
 	
 	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setFuzz(int fuzz) {
-		if (fuzz != fFuzz) {
-			fFuzz= fuzz;
+		if (fuzz != getConfiguration().getFuzz()) {
+			getConfiguration().setFuzz(fuzz);
 			return true;
 		}
 		return false;
 	}
 	
 	int getFuzz(){
-		return fFuzz;
+		return getConfiguration().getFuzz();
 	}
 		
 	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	boolean setIgnoreWhitespace(boolean ignoreWhitespace) {
-		if (ignoreWhitespace != fIgnoreWhitespace) {
-			fIgnoreWhitespace= ignoreWhitespace;
+		if (ignoreWhitespace != getConfiguration().isIgnoreWhitespace()) {
+			getConfiguration().setIgnoreWhitespace(ignoreWhitespace);
 			return true;
 		}
 		return false;
 	}
-		
+	
+	boolean isIgnoreWhitespace() {
+		return getConfiguration().isIgnoreWhitespace();
+	}
+	
+	public boolean isGenerateRejectFile() {
+		return fGenerateRejectFile;
+	}
+
+	public void setGenerateRejectFile(boolean generateRejectFile) {
+		fGenerateRejectFile = generateRejectFile;
+	}
+	
 	//---- parsing patch files
 
 	public void parse(IStorage storage) throws IOException, CoreException {
@@ -210,7 +224,7 @@ public class Patcher {
 					// patch it and collect rejected hunks
 					List result= apply(diff, file, true, failed);
 					if (result != null)
-						store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+						store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.DELETION:
@@ -221,12 +235,12 @@ public class Patcher {
 					// patch it and collect rejected hunks
 					result= apply(diff, file, false, failed);
 					if (result != null)
-						store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+						store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				}
 
-				if (fGenerateRejectFile && failed.size() > 0) {
+				if (isGenerateRejectFile() && failed.size() > 0) {
 					IPath pp = getRejectFilePath(path);
 					file= createPath(container, pp);
 					if (file != null) {
@@ -265,7 +279,7 @@ public class Patcher {
 	 * Reads the contents from the given file and returns them as
 	 * a List of lines.
 	 */
-	List load(IFile file, boolean create) {
+	public static List load(IStorage file, boolean create) {
 		List lines= null;
 		if (!create && file != null) {
 			// read current contents
@@ -302,7 +316,7 @@ public class Patcher {
 		return lines;
 	}
 
-	private List readLines(BufferedReader reader) {
+	private static List readLines(BufferedReader reader) {
 		List lines;
 		LineReader lr= new LineReader(reader);
 		if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
@@ -313,12 +327,17 @@ public class Patcher {
 	
 	List apply(FileDiff diff, IFile file, boolean create, List failedHunks) {
 		FileDiffResult result = getDiffResult(diff);
-		List lines = result.apply(file, create);
+		List lines = Patcher.load(file, create);
+		result.patch(lines, null);
 		failedHunks.addAll(result.getFailedHunks());
-		// Return null if there were no matches
-		if (!result.hasMatches())
+		if (hasCachedContents(diff)) {
+			// Used the cached contents since they would have been provided by the user
+			return getCachedLines(diff);
+		} else if (!result.hasMatches()) {
+			// Return null if there were no matches
 			return null;
-		return lines;
+		}
+		return result.getLines();
 	}
 	
 	/*
@@ -360,10 +379,10 @@ public class Patcher {
 	/*
 	 * Concatenates all strings found in the given List.
 	 */
-	protected String createString(List lines) {
+	public static String createString(boolean preserveLineDelimeters, List lines) {
 		StringBuffer sb= new StringBuffer();
 		Iterator iter= lines.iterator();
-		if (fPreserveLineDelimiters) {
+		if (preserveLineDelimeters) {
 			while (iter.hasNext())
 				sb.append((String)iter.next());
 		} else {
@@ -382,7 +401,11 @@ public class Patcher {
 		return sb.toString();
 	}
 
-	String getRejected(List failedHunks) {
+	protected boolean isPreserveLineDelimeters() {
+		return false;
+	}
+
+	public static String getRejected(List failedHunks) {
 		if (failedHunks.size() <= 0)
 			return null;
 		
@@ -502,10 +525,6 @@ public class Patcher {
 		return length;
 	}
 	
-	public void setGenerateRejects(boolean generateRejects){
-		this.fGenerateRejectFile = generateRejects;
-	}
-	
 	public void addDiff(FileDiff newDiff){
 		FileDiff[] temp = new FileDiff[fDiffs.length + 1];
 		System.arraycopy(fDiffs,0, temp, 0, fDiffs.length);
@@ -548,10 +567,6 @@ public class Patcher {
 		}
 		return null;
 	}
-
-	public boolean isGenerateRejectFile() {
-		return fGenerateRejectFile;
-	}
 	
 	/**
 	 * Calculate the fuzz factor that will allow the most hunks to be matched.
@@ -591,21 +606,21 @@ public class Patcher {
 		for (int i = 0; i < diffs.length; i++) {
 			FileDiff diff = diffs[i];
 			FileDiffResult result = getDiffResult(diff);
-			result.refresh();
+			((WorkspaceFileDiffResult)result).refresh();
 		}
 	}
 	
 	public FileDiffResult getDiffResult(FileDiff diff) {
 		FileDiffResult result = (FileDiffResult)diffResults.get(diff);
 		if (result == null) {
-			result = new FileDiffResult(diff, this);
+			result = new WorkspaceFileDiffResult(diff, getConfiguration());
 			diffResults.put(diff, result);
 		}
 		return result;
 	}
 
-	public boolean isAdjustShift() {
-		return fAdjustShift;
+	public PatchConfiguration getConfiguration() {
+		return configuration;
 	}
 
 	/**
@@ -622,8 +637,8 @@ public class Patcher {
 	 * Returns <code>true</code> if new value differs from old.
 	 */
 	public boolean setReversed(boolean reverse) {
-		if (fReverse != reverse) {
-			fReverse= reverse;
+		if (getConfiguration().isReversed() != reverse) {
+			getConfiguration().setReversed(reverse);
 			refresh();
 			return true;
 		}
@@ -631,15 +646,7 @@ public class Patcher {
 	}
 	
 	public boolean isReversed() {
-		return fReverse;
-	}
-
-	public boolean isIgnoreWhitespace() {
-		return fIgnoreWhitespace;
-	}
-
-	public boolean isIgnoreLineDelimiter() {
-		return fIgnoreLineDelimiter;
+		return getConfiguration().isReversed();
 	}
 	
 	/**
@@ -736,5 +743,9 @@ public class Patcher {
 			return root.getProject(diff.getPath(isReversed()).segment(0));
 		}
 		return tr.getProject();
+	}
+
+	public static Patcher getPatcher(PatchConfiguration configuration) {
+		return (Patcher)configuration.getProperty(PROP_PATCHER);
 	}
 }

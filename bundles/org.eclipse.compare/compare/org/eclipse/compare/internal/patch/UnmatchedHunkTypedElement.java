@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ContentChangeNotifier;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -49,7 +50,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 	 * @see org.eclipse.compare.IEditableContent#isEditable()
 	 */
 	public boolean isEditable() {
-		IFile file = getHunkResult().getDiffResult().getTargetFile();
+		IFile file = ((WorkspaceFileDiffResult)getHunkResult().getDiffResult()).getTargetFile();
 		return file != null && file.isAccessible();
 	}
 
@@ -65,7 +66,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 	 * @see org.eclipse.compare.IEditableContent#setContent(byte[])
 	 */
 	public void setContent(byte[] newContent) {
-		getHunkResult().getDiffResult().getPatcher().setManuallyMerged(getHunkResult().getHunk(), true);
+		getPatcher().setManuallyMerged(getHunkResult().getHunk(), true);
 		getPatcher().cacheContents(getDiff(), newContent);
 		if (changeNotifier != null)
 			changeNotifier.fireContentChanged();
@@ -76,7 +77,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 	}
 
 	private Patcher getPatcher() {
-		return getHunkResult().getDiffResult().getPatcher();
+		return Patcher.getPatcher(getConfiguration());
 	}
 	
 	/* (non-Javadoc)
@@ -88,7 +89,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 			return new ByteArrayInputStream(getPatcher().getCachedContents(getDiff()));
 		// Otherwise return the after state of the diff result
 		List lines = getHunkResult().getDiffResult().getAfterLines();
-		String content = getPatcher().createString(lines);
+		String content = Patcher.createString(getHunkResult().getDiffResult().isPreserveLineDelimeters(), lines);
 		byte[] bytes = null;
 		if (getCharset() != null)
 			try {
@@ -99,5 +100,9 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 		if (bytes == null)
 			bytes = content.getBytes();
 		return new ByteArrayInputStream(bytes);
+	}
+
+	private PatchConfiguration getConfiguration() {
+		return getHunkResult().getDiffResult().getConfiguration();
 	}
 }

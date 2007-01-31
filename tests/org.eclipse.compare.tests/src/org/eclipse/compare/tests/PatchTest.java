@@ -11,15 +11,46 @@
 package org.eclipse.compare.tests;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.patch.*;
+import org.eclipse.compare.patch.*;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 public class PatchTest extends TestCase {
 
+	
+	class StringStorage implements IStorage {
+		String fileName;
+		public StringStorage(String old) {
+			fileName = old;
+		}
+		public Object getAdapter(Class adapter) {
+			return null;
+		}
+		public boolean isReadOnly() {
+			return false;
+		}
+		public String getName() {
+			return fileName;
+		}
+		public IPath getFullPath() {
+			return null;
+		}
+		public InputStream getContents() throws CoreException {
+			return new BufferedInputStream(asInputStream(fileName));
+		}
+	
+	}
+	
 	public PatchTest(String name) {
 		super(name);
 	}
@@ -32,24 +63,37 @@ public class PatchTest extends TestCase {
 		super.tearDown();
 	}
 	
-	public void testCreatePatch() {
+	public void testCreatePatch() throws CoreException, IOException {
 		patch("addition.txt", "patch_addition.txt", "exp_addition.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 	
-	public void testUnterminatedCreatePatch() {
+	public void testUnterminatedCreatePatch() throws CoreException, IOException {
 		patch("addition.txt", "patch_addition2.txt", "exp_addition2.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	public void testContext0Patch() {
+	public void testContext0Patch() throws CoreException, IOException {
 		patch("context.txt", "patch_context0.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	public void testContext1Patch() {
+	public void testContext1Patch() throws CoreException, IOException {
 		patch("context.txt", "patch_context1.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	public void testContext3Patch() {
+	public void testContext3Patch() throws CoreException, IOException {
 		patch("context.txt", "patch_context3.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
+	
+	public void testContext3PatchWithHeader() throws CoreException, IOException {
+		patch("context.txt", "patch_context3_header.txt", "exp_context.txt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		IStorage patchStorage = new StringStorage("patch_context3_header.txt");
+		IFilePatch[] patches = ApplyPatchOperation.parsePatch(patchStorage);
+		String header = patches[0].getHeader();
+		LineReader reader = new LineReader(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(header.getBytes()))));
+		List lines = reader.readLines();
+		List expected = new ArrayList();
+		expected.add("Index: old.txt\n");
+		expected.add("UID: 42\n");
+		assertEquals(Patcher.createString(false, expected), Patcher.createString(false, lines));
 	}
 	
 	//Test creation of new workspace patch 
@@ -91,13 +135,43 @@ public class PatchTest extends TestCase {
 	
 	//Test changing 
 	private BufferedReader getReader(String name) {
-		InputStream resourceAsStream= getClass().getResourceAsStream("patchdata/" + name); //$NON-NLS-1$
+		InputStream resourceAsStream = asInputStream(name);
 		InputStreamReader reader2= new InputStreamReader(resourceAsStream);
 		return new BufferedReader(reader2);
 	}
 
-	private void patch(String old, String patch, String expt) {
+	private InputStream asInputStream(String name) {
+		InputStream resourceAsStream= getClass().getResourceAsStream("patchdata/" + name); //$NON-NLS-1$
+		return resourceAsStream;
+	}
+
+	private void patch(final String old, String patch, String expt) throws CoreException, IOException {
+		patcherPatch(old, patch, expt);
+		filePatch(old, patch, expt);
+	}
+
+	private void filePatch(final String old, String patch, String expt) throws CoreException, IOException {
+		LineReader lr= new LineReader(getReader(expt));
+		List inLines= lr.readLines();
+		String expected = Patcher.createString(false, inLines);
 		
+		IStorage oldStorage = new StringStorage(old);
+		IStorage patchStorage = new StringStorage(patch);
+		IFilePatch[] patches = ApplyPatchOperation.parsePatch(patchStorage);
+		assertTrue(patches.length == 1);
+		IFilePatchResult result = patches[0].apply(oldStorage, new PatchConfiguration(), null);
+		assertTrue(result.hasMatches());
+		assertFalse(result.hasRejects());
+		InputStream actualStream = result.getPatchedContents();
+		String actual = asString(actualStream);
+		assertEquals(expected, actual);
+	}
+
+	private String asString(InputStream exptStream) throws IOException {
+		return Utilities.readString(exptStream, ResourcesPlugin.getEncoding());
+	}
+
+	private void patcherPatch(String old, String patch, String expt) {
 		LineReader lr= new LineReader(getReader(old));
 		List inLines= lr.readLines();
 
@@ -112,7 +186,7 @@ public class PatchTest extends TestCase {
 		Assert.assertEquals(diffs.length, 1);
 		
 		FileDiffResult diffResult = patcher.getDiffResult(diffs[0]);
-		diffResult.patch(inLines);
+		diffResult.patch(inLines, null);
 		
 		LineReader expectedContents= new LineReader(getReader(expt));
 		List expectedLines= expectedContents.readLines();
@@ -158,7 +232,7 @@ public class PatchTest extends TestCase {
 			
 		
 			FileDiffResult diffResult = patcher.getDiffResult(diffs[i]);
-			diffResult.patch(inLines);
+			diffResult.patch(inLines, null);
 			
 			LineReader expectedContents= new LineReader(getReader(expectedOutcomeFiles[i]));
 			List expectedLines= expectedContents.readLines();

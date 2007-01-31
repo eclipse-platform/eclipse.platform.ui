@@ -11,6 +11,7 @@
 package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 
@@ -25,7 +26,7 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 	private static int getKind(FileDiffResult result) {
 		if (!result.hasMatches())
 			return Differencer.NO_CHANGE;
-		return result.getDiff().getDiffType(result.getPatcher().isReversed()) | Differencer.RIGHT;
+		return result.getDiff().getDiffType(result.getConfiguration().isReversed()) | Differencer.RIGHT;
 	}
 
 	private static ITypedElement getRightElement(FileDiffResult result) {
@@ -49,9 +50,9 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 	public FileDiffResult getDiffResult() {
 		return result;
 	}
-
-	protected Patcher getPatcher() {
-		return result.getPatcher();
+	
+	protected PatchConfiguration getConfiguration() {
+		return result.getConfiguration();
 	}
 	
 	/* (non-Javadoc)
@@ -86,7 +87,7 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 	}
 
 	public boolean fileExists() {
-		IFile file = getDiffResult().getTargetFile();
+		IFile file = ((WorkspaceFileDiffResult)getDiffResult()).getTargetFile();
 		return file != null && file.isAccessible();
 	}
 

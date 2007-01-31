@@ -12,6 +12,7 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -152,8 +153,8 @@ public class Hunk {
 	 * The parameter shift is added to the line numbers given
 	 * in the hunk.
 	 */
-	public boolean tryPatch(Patcher patcher, List lines, int shift) {
-		boolean reverse = patcher.isReversed();
+	public boolean tryPatch(PatchConfiguration configuration, List lines, int shift) {
+		boolean reverse = configuration.isReversed();
 		int pos= getStart(reverse) + shift;
 		int deleteMatches= 0;
 		for (int i= 0; i < fLines.length; i++) {
@@ -165,7 +166,7 @@ public class Hunk {
 				while (true) {
 					if (pos < 0 || pos >= lines.size())
 						return false;
-					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+					if (linesMatch(configuration, line, (String) lines.get(pos))) {
 						pos++;
 						break;
 					}
@@ -176,7 +177,7 @@ public class Hunk {
 				while (true) {
 					if (pos < 0 || pos >= lines.size())
 						return false;
-					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+					if (linesMatch(configuration, line, (String) lines.get(pos))) {
 						deleteMatches++;
 						pos++;
 						break;
@@ -215,8 +216,8 @@ public class Hunk {
 		return fNewLength - fOldLength;
 	}
 	
-	int doPatch(Patcher patcher, List lines, int shift) {
-		boolean reverse = patcher.isReversed();
+	int doPatch(PatchConfiguration configuration, List lines, int shift) {
+		boolean reverse = configuration.isReversed();
 		int pos = getStart(reverse) + shift;
 		for (int i= 0; i < fLines.length; i++) {
 			String s= fLines[i];
@@ -226,7 +227,7 @@ public class Hunk {
 			if (controlChar == ' ') {	// context lines
 				while (true) {
 					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in context"); //$NON-NLS-1$
-					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+					if (linesMatch(configuration, line, (String) lines.get(pos))) {
 						pos++;
 						break;
 					}
@@ -236,7 +237,7 @@ public class Hunk {
 				// deleted lines				
 				while (true) {
 					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in deleted lines"); //$NON-NLS-1$
-					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+					if (linesMatch(configuration, line, (String) lines.get(pos))) {
 						break;
 					}
 					pos++;
@@ -267,10 +268,10 @@ public class Hunk {
 	 * Compares two strings.
 	 * If fIgnoreWhitespace is true whitespace is ignored.
 	 */
-	private boolean linesMatch(Patcher patcher, String line1, String line2) {
-		if (patcher.isIgnoreWhitespace())
+	private boolean linesMatch(PatchConfiguration configuration, String line1, String line2) {
+		if (configuration.isIgnoreWhitespace())
 			return stripWhiteSpace(line1).equals(stripWhiteSpace(line2));
-		if (patcher.isIgnoreLineDelimiter()) {
+		if (isIgnoreLineDelimiter()) {
 			int l1= Patcher.length(line1);
 			int l2= Patcher.length(line2);
 			if (l1 != l2)
@@ -280,6 +281,10 @@ public class Hunk {
 		return line1.equals(line2);
 	}
 	
+	private boolean isIgnoreLineDelimiter() {
+		return true;
+	}
+
 	/*
 	 * Returns the given string with all whitespace characters removed.
 	 * Whitespace is defined by <code>Character.isWhitespace(...)</code>.

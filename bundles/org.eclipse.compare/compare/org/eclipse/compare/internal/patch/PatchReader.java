@@ -146,6 +146,7 @@ public class PatchReader {
 		boolean reread= false;
 		String diffArgs= null;
 		String fileName= null;
+		List headerLines = new ArrayList();
 
 		// read leading garbage
 		reread= line!=null;
@@ -155,27 +156,30 @@ public class PatchReader {
 			reread= false;
 			if (line == null)
 				break;
-			if (line.length() < 4)
-				continue;	// too short
 								
 			// remember some infos
 			if (line.startsWith("Index: ")) { //$NON-NLS-1$
 				fileName= line.substring(7).trim();
-				continue;
-			}
-			if (line.startsWith("diff")) { //$NON-NLS-1$
+			} else if (line.startsWith("diff")) { //$NON-NLS-1$
 				diffArgs= line.substring(4).trim();
-				continue;
-			}
-
-			if (line.startsWith("--- ")) { //$NON-NLS-1$
+			} else if (line.startsWith("--- ")) { //$NON-NLS-1$
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
+				if (!headerLines.isEmpty())
+					setHeader((FileDiff)diffs.get(diffs.size() - 1), headerLines);
 				diffArgs= fileName= null;
 				reread= true;
 			} else if (line.startsWith("*** ")) { //$NON-NLS-1$
 				line= readContextDiff(diffs, lr, line, diffArgs, fileName);
+				if (!headerLines.isEmpty())
+					setHeader((FileDiff)diffs.get(diffs.size() - 1), headerLines);
 				diffArgs= fileName= null;
 				reread= true;
+			}
+			
+			// Any lines we read here are header lines.
+			// However, if reread is set, we will add them to the header on the next pass through
+			if (!reread) {
+				headerLines.add(line);
 			}
 		}
 		
@@ -184,6 +188,12 @@ public class PatchReader {
 		fDiffs = (FileDiff[]) diffs.toArray(new FileDiff[diffs.size()]);
 	}
 	
+	private void setHeader(FileDiff diff, List headerLines) {
+		String header = Patcher.createString(false, headerLines);
+		diff.setHeader(header);
+		headerLines.clear();
+	}
+
 	/*
 	 * Returns the next line that does not belong to this diff
 	 */
@@ -616,5 +626,16 @@ public class PatchReader {
 
 	public FileDiff[] getDiffs() {
 		return fDiffs;
+	}
+	
+	public FileDiff[] getAdjustedDiffs() {
+		if (!isWorkspacePatch() || fDiffs.length == 0)
+			return fDiffs;
+		List result = new ArrayList();
+		for (int i = 0; i < fDiffs.length; i++) {
+			FileDiff diff = fDiffs[i];
+			result.add(diff.asRelativeDiff());
+		}
+		return (FileDiff[]) result.toArray(new FileDiff[result.size()]);
 	}
 }

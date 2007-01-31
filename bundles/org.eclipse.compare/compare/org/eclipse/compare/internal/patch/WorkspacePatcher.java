@@ -99,7 +99,7 @@ public class WorkspacePatcher extends Patcher {
 							// patch it and collect rejected hunks
 							List result= apply(diff, file, true, failed);
 							if (result != null)
-								store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+								store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
 						case Differencer.DELETION :
@@ -110,7 +110,7 @@ public class WorkspacePatcher extends Patcher {
 							// patch it and collect rejected hunks
 							result= apply(diff, file, false, failed);
 							if (result != null)
-								store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+								store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
 					}

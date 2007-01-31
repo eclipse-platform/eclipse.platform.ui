@@ -11,6 +11,7 @@
 package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
 
 public abstract class PatchDiffNode extends DiffNode {
@@ -36,11 +37,15 @@ public abstract class PatchDiffNode extends DiffNode {
 		getPatcher().setEnabled(getPatchElement(), enabled);
 	}
 
+	protected final Patcher getPatcher() {
+		return Patcher.getPatcher(getConfiguration());
+	}
+
 	public Object getPatchElement() {
 		return fElement;
 	}
 
-	protected abstract Patcher getPatcher();
+	protected abstract PatchConfiguration getConfiguration();
 	
 	public boolean equals(Object other) {
 		if (other instanceof PatchDiffNode) {
