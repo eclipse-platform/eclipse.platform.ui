@@ -767,9 +767,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 	/**
 	 * @return the <code>TreeViewer</code> for this dialog.
-	 * @since 3.0
+	 * @since 3.3
 	 */
-	protected TreeViewer getTreeViewer() {
+	public TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
 
