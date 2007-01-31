@@ -40,6 +40,8 @@
       <annotation>
          <documentation>
             A task group represents a collection of related tasks. If the kind is &quot;choice&quot; only one of the child tasks need to be completed. If the kind is &quot;set&quot; or &quot;sequence&quot; all children must be completed.
+
+Note that the child elements &amp;lt;task&amp;gt;, &amp;lt;taskGroup&amp;gt;, &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt; and &amp;lt;dependency&amp;gt; may occur in any order. The order of the &amp;lt;task&amp;gt; and &amp;lt;taskGroup&amp;gt; elements determines the order in which they will be displayed and in the case of a sequence the order in which they must be performed.
          </documentation>
       </annotation>
       <complexType>
@@ -100,6 +102,8 @@
       <annotation>
          <documentation>
             A leaf task within a composite cheat sheet. A task does not have children, but it does have a task editor which shows in the lower/right hand pane of the cheat sheet view. The task kind determines which task editor will be opened, a task kind of &quot;cheatsheet&quot; represents a simple cheatsheet. Other task kinds may be contributed.
+
+Note that the child elements &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt;, &amp;lt;param&amp;gt; and &amp;lt;dependency&amp;gt; may occur in any order.
          </documentation>
       </annotation>
       <complexType>
@@ -160,7 +164,6 @@
 &lt;p&gt;path: The URL of a cheat sheet content file. This may be an absolute URL, or relative to the content file for the composite cheat sheet. If both id and path are specified the path will be used to locate the content file and the id parameter will be ignored.&lt;/p&gt; 
 
 &lt;p&gt;showIntro: A boolean parameter with default value of true. If &quot;false&quot; the cheat sheet when started will initially show the first step rather than the introduction.&lt;/p&gt;
-
                </documentation>
             </annotation>
          </attribute>
@@ -250,7 +253,7 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2006, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
