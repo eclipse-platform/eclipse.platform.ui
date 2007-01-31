@@ -101,9 +101,54 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Binds two observable values using converter and validator as specified in
-	 * bindSpec. If bindSpec is null, default converters and validators as
-	 * defined by {@link DefaultBindSpec} will be used.
+	 * Binds two observable values using converters and validators as specified
+	 * in <code>bindSpec</code>. If <code>bindSpec</code> is <code>null</code>,
+	 * default converters and validators as defined by {@link DefaultBindSpec}
+	 * will be used.
+	 * <p>
+	 * The phases performed for a value binding occur in the following order for
+	 * each event: {@link BindingEvent#EVENT_COPY_TO_MODEL} and
+	 * {@link BindingEvent#EVENT_COPY_TO_TARGET}:
+	 * <ol>
+	 * <li>{@link BindingEvent#PIPELINE_VALUE_CHANGING} (target to model only)</li>
+	 * <li>{@link BindingEvent#PIPELINE_AFTER_GET}</li>
+	 * <li>{@link BindingEvent#PIPELINE_AFTER_CONVERT}</li>
+	 * <li>{@link BindingEvent#PIPELINE_BEFORE_CHANGE}</li>
+	 * <li>{@link BindingEvent#PIPELINE_AFTER_CHANGE}</li>
+	 * </ol>
+	 * Multiple validators are honored for every phase except <code>BindingEvent.PIPELINE_AFTER_CHANGE</code>
+	 * (it doesn't make sense to validate after the change is applied).
+	 * Validators will be invoked in the order that they are added and a failure
+	 * in validation will terminate pipeline processing. The provided validation
+	 * status will be propagated to {@link Binding#getValidationStatus()} and
+	 * {@link #getValidationStatusMap()}.
+	 * </p>
+	 * <p>
+	 * All phases perform the duty their name implies except <code>PIPELINE_BEFORE_CHANGE</code>;
+	 * it has no defined role in the pipeline. This phase is provided as a means
+	 * to perform validation during data entry but to defer other validation
+	 * until a copy to the model is to occur. A common use case where this is
+	 * employed is the editing of a model in a dialog. The model should not be
+	 * updated until OK/Apply is selected but common validation (e.g. type and
+	 * range checking) is to be performed as the user is interacting with the
+	 * UI. The following {@link BindSpec} configuration will setup such a use
+	 * case:
+	 * 
+	 * <pre>
+	 * <code>
+	 * new DefaultBindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
+	 * 		.addTargetValidator(BindingEvent.PIPELINE_BEFORE_CHANGE,
+	 * 				new Validator());
+	 * </code>
+	 * </pre>
+	 * 
+	 * By default with a 
+	 * {@link BindSpec#setModelUpdatePolicy(Integer) model update policy} of
+	 * {@link BindSpec#POLICY_EXPLICIT} validation is ran up to and including
+	 * <code>BindingEvent.PIPELINE_AFTER_CONVERT</code> on every change of the
+	 * target. In the above example the provided validator will only be invoked
+	 * on an explicit model updates {@link Binding#updateModelFromTarget()}.
+	 * </p>
 	 * 
 	 * @param targetObservableValue
 	 * @param modelObservableValue
