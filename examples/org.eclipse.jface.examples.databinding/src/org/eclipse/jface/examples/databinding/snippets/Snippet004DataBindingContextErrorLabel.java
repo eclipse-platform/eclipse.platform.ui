@@ -13,11 +13,9 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
-import org.eclipse.core.databinding.IBindingListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -61,30 +59,17 @@ public class Snippet004DataBindingContextErrorLabel {
 				DataBindingContext dbc = new DataBindingContext();
 
 				// Bind the text to the value.
-				Binding binding = dbc.bindValue(SWTObservables.observeText(
-						text, SWT.Modify), value, new DefaultBindSpec()
-						.addTargetValidator(
+				dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
+						value, new DefaultBindSpec().addTargetValidator(
+								BindingEvent.PIPELINE_AFTER_CONVERT,
+								new FiveValidator()).addModelValidator(
 								BindingEvent.PIPELINE_AFTER_CONVERT,
 								new FiveValidator()));
 
-				binding.addBindingEventListener(new IBindingListener() {
-					public IStatus handleBindingEvent(BindingEvent e) {
-						System.out.println(e);
-						return Status.OK_STATUS;
-					}
-				});
-
 				// Bind the error label to the validation error on the dbc.
-				binding = dbc.bindValue(SWTObservables.observeText(errorLabel),
+				dbc.bindValue(SWTObservables.observeText(errorLabel),
 						new AggregateValidationStatus(dbc.getBindings(),
 								AggregateValidationStatus.MAX_SEVERITY), null);
-
-				binding.addBindingEventListener(new IBindingListener() {
-					public IStatus handleBindingEvent(BindingEvent e) {
-						System.out.println(e);
-						return Status.OK_STATUS;
-					}
-				});
 
 				shell.pack();
 				shell.open();
