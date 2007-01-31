@@ -49,8 +49,8 @@ import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
+import org.eclipse.ui.internal.forms.IMessageToolTipManager;
 import org.eclipse.ui.internal.forms.MessageManager;
-import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
 
 /**
  * Form header moved out of the form class.

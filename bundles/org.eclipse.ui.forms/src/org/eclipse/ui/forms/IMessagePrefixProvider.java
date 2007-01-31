@@ -30,7 +30,7 @@ public interface IMessagePrefixProvider {
 	/**
 	 * Returns the computed prefix for the provided control.
 	 * @param control the control to provide the prefix for
-	 * @return the prefix
+	 * @return the computed prefix
 	 */
 	String getPrefix(Control control);
 }

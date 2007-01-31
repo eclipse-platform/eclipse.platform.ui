@@ -40,7 +40,7 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
 import org.eclipse.ui.forms.widgets.Twistie;
-import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
+import org.eclipse.ui.internal.forms.IMessageToolTipManager;
 
 /**
  * Form heading title.

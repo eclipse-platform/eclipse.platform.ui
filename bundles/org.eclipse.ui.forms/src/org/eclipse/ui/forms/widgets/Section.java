@@ -353,7 +353,7 @@ public class Section extends ExpandableComposite {
 		if (border == null)
 			border = fg;
 		int theight = 0;
-		int tvmargin = GAP;
+		int tvmargin = IGAP;
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			Point tsize = null;
 			Point tcsize = null;
@@ -361,11 +361,11 @@ public class Section extends ExpandableComposite {
 				tsize = toggle.getSize();
 			int twidth = bounds.width - marginWidth - marginWidth;
 			if (tsize != null)
-				twidth -= tsize.x + GAP;
+				twidth -= tsize.x + IGAP;
 			if (getTextClient() != null)
 				tcsize = getTextClient().getSize();
 			if (tcsize != null)
-				twidth -= tcsize.x + GAP;
+				twidth -= tcsize.x + IGAP;
 			Point size = textLabel.getSize();
 			if (tsize != null)
 				theight += Math.max(theight, tsize.y);

@@ -178,6 +178,9 @@ public class ExpandableComposite extends Canvas {
 	 *             use it and do not change its value.
 	 */
 	protected int GAP = 4;
+	
+	static final int IGAP = 4;
+	static final int IVGAP = 4;
 
 	private static final Point NULL_SIZE = new Point(0, 0);
 
@@ -234,7 +237,7 @@ public class ExpandableComposite extends Canvas {
 
 			if (hasTitleBar()) {
 				thmargin = titleBarTextMarginWidth;
-				tvmargin = VGAP;
+				tvmargin = IVGAP;
 			}
 			int x = marginWidth + thmargin;
 			int y = marginHeight + tvmargin;
@@ -245,11 +248,11 @@ public class ExpandableComposite extends Canvas {
 			int twidth = clientArea.width - marginWidth - marginWidth
 					- thmargin - thmargin;
 			if (tsize.x > 0)
-				twidth -= tsize.x + GAP;
+				twidth -= tsize.x + IGAP;
 			if (textClient != null)
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			if (tcsize.x > 0)
-				twidth -= tcsize.x + GAP;
+				twidth -= tcsize.x + IGAP;
 			Point size = NULL_SIZE;
 			if (textLabel != null)
 				size = textLabelCache.computeSize(twidth, SWT.DEFAULT);

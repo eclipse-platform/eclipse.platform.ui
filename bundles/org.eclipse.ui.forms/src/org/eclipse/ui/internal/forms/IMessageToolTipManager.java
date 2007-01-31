@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ui.internal.provisional.forms;
+package org.eclipse.ui.internal.forms;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IMessageManager;

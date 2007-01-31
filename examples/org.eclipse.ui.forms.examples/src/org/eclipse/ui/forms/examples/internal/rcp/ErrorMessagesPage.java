@@ -12,13 +12,9 @@ package org.eclipse.ui.forms.examples.internal.rcp;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,7 +27,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
@@ -50,7 +45,6 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
 
 /**
  * This page shows how to use the message manager to handle errors in a form
@@ -60,8 +54,8 @@ import org.eclipse.ui.internal.provisional.forms.IMessageToolTipManager;
  */
 public class ErrorMessagesPage extends FormPage {
 
+	/*
 	private RichMessageToolTipManager richToolTipMessageManager;
-
 	class RichToolTip extends ToolTip {
 		private IManagedForm mform;
 		private FormText text;
@@ -138,6 +132,8 @@ public class ErrorMessagesPage extends FormPage {
 			}
 		}
 	}
+	
+	*/
 
 	/**
 	 * @param id
@@ -191,19 +187,21 @@ public class ErrorMessagesPage extends FormPage {
 							true, false);
 				shell.setLocation(hl);
 				// Point size = shell.computeSize(400, SWT.DEFAULT);
+				/*
 				richToolTipMessageManager.setActive(false);
 				shell.addDisposeListener(new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
 						richToolTipMessageManager.setActive(true);
 					}
 				});
+				*/
 				shell.pack();
 				shell.open();
 			}
 		});
 
-		richToolTipMessageManager = new RichMessageToolTipManager(managedForm);
-		form.getForm().setMessageToolTipManager(richToolTipMessageManager);
+		//richToolTipMessageManager = new RichMessageToolTipManager(managedForm);
+		//form.getForm().setMessageToolTipManager(richToolTipMessageManager);
 
 		final IMessageManager mmng = managedForm.getMessageManager();
 
