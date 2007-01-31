@@ -40,7 +40,7 @@ public abstract class AbstractAction extends EventManager implements IAction {
 	 * @param event
 	 *            the property change event
 	 * 
-	 * @see IPropertyChangeListener#propertyChange
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	protected final void firePropertyChange(final PropertyChangeEvent event) {
 		final Object[] list = getListeners();
@@ -63,7 +63,7 @@ public abstract class AbstractAction extends EventManager implements IAction {
 	 * @param newValue
 	 *            the new value of the property, or <code>null</code> if none
 	 * 
-	 * @see IPropertyChangeListener#propertyChange
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	protected final void firePropertyChange(final String propertyName,
 			final Object oldValue, final Object newValue) {
