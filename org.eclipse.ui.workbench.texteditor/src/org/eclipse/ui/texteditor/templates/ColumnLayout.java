@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,8 @@ import org.eclipse.jface.viewers.ColumnWeightData;
  */
 final class ColumnLayout extends Layout {
 	
+	private static final String RECALCULATE_LAYOUT= "recalculateKey"; //$NON-NLS-1$
+
 	/**
 	 * The number of extra pixels taken as horizontal trim by the table column. 
 	 * To ensure there are N pixels available for the content of the column,
@@ -178,6 +180,11 @@ final class ColumnLayout extends Layout {
         
         if (width > 1)
         	layoutTable(table, width, area, tableWidth < area.width);
+        
+        if( composite.getData(RECALCULATE_LAYOUT) == null ) {
+        	composite.setData(RECALCULATE_LAYOUT, Boolean.FALSE);
+        	composite.layout();
+        }
 	}
 
 	private int computeTrim(Rectangle area, Table table, int tableWidth) {
@@ -195,7 +202,7 @@ final class ColumnLayout extends Layout {
             // if a vertical scrollbar will be required, but is not currently showing
         	// (in which case it is already subtracted above)
             ScrollBar vBar= table.getVerticalBar();
-            if (!vBar.isVisible() || tableWidth <= 1) {
+            if (!vBar.isVisible()) {
             	Point vBarSize= vBar.getSize();
             	trim += vBarSize.x;
             }
