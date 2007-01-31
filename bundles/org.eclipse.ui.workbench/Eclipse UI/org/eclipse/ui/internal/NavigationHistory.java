@@ -89,19 +89,6 @@ public class NavigationHistory implements INavigationHistory {
             		}
             	}
 				updateNavigationHistory(partRef, true);
-				
-				// if there are now no more editors to activate push the active
-				// entry one slot down so that the recently closed editor
-				// appears. Normally this would be handled by the part activated
-				// call but since there wont be such a call (no part to
-				// activate) we'll nudge it here. Covers bug 154431
-				if (partRef != null
-						&& partRef.getPart(false) instanceof IEditorPart
-						&& page.getActiveEditor() == null
-						&& getEntry(activeEntry + 1) != null) {
-					activeEntry++;
-					updateActions();
-				}
             }
 			
 			public void partInputChanged(IWorkbenchPartReference partRef) {
@@ -128,13 +115,13 @@ public class NavigationHistory implements INavigationHistory {
 								info.handlePartClosed();
 							}
                             break;
-                        } else {
-                            info = null;
                         }
+						info = null;
                     }
                     if (info == null) {
 						return;
 					}
+                    boolean isEntryDisposed = false;
                     e = history.iterator();
                     int i = 0;
                     while (e.hasNext()) {
@@ -153,6 +140,7 @@ public class NavigationHistory implements INavigationHistory {
                                     // activeEntry is before item we deleted
                                     i++;
                                 }
+                                isEntryDisposed = true;
                                 e.remove();
                                 disposeEntry(entry);
                             } else {
@@ -160,6 +148,15 @@ public class NavigationHistory implements INavigationHistory {
                             }
 						}
                     }
+                    
+                    /*
+                     * Promote the entry of the last closed editor to be the active
+                     * one, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=154431 
+                     */ 
+                    if (!isEntryDisposed && page.getActiveEditor() == null && activeEntry < history.size()) {
+                    	activeEntry++;
+                    }
+                    
                     updateActions();
                 }
             }
