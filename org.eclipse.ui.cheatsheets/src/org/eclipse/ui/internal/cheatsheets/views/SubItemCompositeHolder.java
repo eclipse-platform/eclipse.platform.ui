@@ -25,7 +25,7 @@ public class SubItemCompositeHolder {
 	private SubItem subItem;
 	private Control skipButton;
 	private Control completeButton;
-	private Label subitemLabel;
+	private Control subitemLabel;
 	
 	SubItemCompositeHolder(SubItem subItem) {
 		super();
@@ -112,11 +112,11 @@ public class SubItemCompositeHolder {
 		}
 	}
 
-	public void setSubitemLabel(Label label) {
+	public void setSubitemLabel(Control label) {
 		this.subitemLabel = label;
 	}
 	
-	public Label getSubitemLabel() {
+	public Control getSubitemLabel() {
 		return subitemLabel;
 	}
 	

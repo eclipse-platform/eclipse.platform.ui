@@ -83,7 +83,6 @@ public class CoreItem extends ViewItem {
 			isActionShown = true;
 			final ImageHyperlink startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			startButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.runPerformExecutable(startButton);
@@ -92,7 +91,6 @@ public class CoreItem extends ViewItem {
 		}
 		if (!isActionShown || executable.isConfirm() || !executable.isRequired()) {
 			final ImageHyperlink completeButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
-			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceItem(completeButton, true);
@@ -101,7 +99,6 @@ public class CoreItem extends ViewItem {
 		}
 		if (item.isSkip()) {
 			final ImageHyperlink skipButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
-			page.getToolkit().adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceItem(skipButton, false);
@@ -185,7 +182,6 @@ public class CoreItem extends ViewItem {
 			isActionShown = true;
 			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			final ImageHyperlink finalStartButton = startButton;
-			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.runSubItemPerformExecutable(finalStartButton, fi);
@@ -196,7 +192,6 @@ public class CoreItem extends ViewItem {
 		if (!isActionShown || subExecutable.isConfirm() || !subExecutable.isRequired()) {
 			added++;
 			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
-			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceSubItem(completeButton, true, fi);
@@ -207,7 +202,6 @@ public class CoreItem extends ViewItem {
 		if (sub.isSkip()) {
 			added++;
 			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
-			page.getToolkit().adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceSubItem(skipButton, false, fi);
@@ -612,7 +606,6 @@ public class CoreItem extends ViewItem {
 					this, 
 					backgroundColor, 
 					getCompletionButtonTooltip(isFinalItem));
-			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceItem(completeButton, true);
@@ -660,7 +653,7 @@ public class CoreItem extends ViewItem {
 	
 	protected void setFocus() {
 		ArrayList list = getListOfSubItemCompositeHolders();
-		Label subitemLabel = null;
+		Control subitemLabel = null;
 		SubItemCompositeHolder holder = null;
         if (list != null) {
         	for (Iterator iter = list.iterator(); iter.hasNext() && subitemLabel == null ;) {

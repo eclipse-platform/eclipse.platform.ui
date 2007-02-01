@@ -69,7 +69,6 @@ public class IntroItem extends ViewItem {
 
 		startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START), this, itemColor, Messages.START_CHEATSHEET_TOOLTIP);
 		startButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		page.getToolkit().adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				viewer.advanceIntroItem();

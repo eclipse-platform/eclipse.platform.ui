@@ -153,7 +153,6 @@ public abstract class ViewItem {
 			// adjust the layout count
 			number++;
 			ImageHyperlink helpButton = createButton(titleComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_HELP), this, itemColor, Messages.HELP_BUTTON_TOOLTIP);
-			page.getToolkit().adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					// If we have a context id, handle this first and ignore an hrefs
