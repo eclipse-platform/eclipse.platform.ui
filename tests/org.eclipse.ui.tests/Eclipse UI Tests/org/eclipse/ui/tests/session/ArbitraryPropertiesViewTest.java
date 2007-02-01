@@ -53,7 +53,7 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 	 * 
 	 * @throws Throwable
 	 */
-	public void testActivateView() throws Throwable {
+	public void test01ActivateView() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
 				.getActivePage();
@@ -73,7 +73,7 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 	 * 
 	 * @throws Throwable
 	 */
-	public void testSecondOpening() throws Throwable {
+	public void test02SecondOpening() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
 				.getActivePage();
@@ -107,7 +107,7 @@ public class ArbitraryPropertiesViewTest extends TestCase {
 	 * 
 	 * @throws Throwable
 	 */
-	public void testPartInstantiation() throws Throwable {
+	public void test03PartInstantiation() throws Throwable {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
 				.getActivePage();
