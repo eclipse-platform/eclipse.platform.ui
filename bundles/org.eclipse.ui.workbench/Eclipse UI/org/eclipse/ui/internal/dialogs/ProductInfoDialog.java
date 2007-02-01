@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -49,7 +50,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 
 public abstract class ProductInfoDialog extends TrayDialog {
-    private static final String ATT_HTTP = "http://"; //$NON-NLS-1$
 
     private AboutItem item;
 
@@ -413,25 +413,56 @@ public abstract class ProductInfoDialog extends TrayDialog {
      * Scan the contents of the about text
      */
     protected AboutItem scan(String s) {
-        int max = s.length();
-        int i = s.indexOf(ATT_HTTP);
         ArrayList linkRanges = new ArrayList();
         ArrayList links = new ArrayList();
-        while (i != -1) {
-            int start = i;
-            // look for the first whitespace character
-            boolean found = false;
-            i += ATT_HTTP.length();
-            while (!found && i < max) {
-                found = Character.isWhitespace(s.charAt(i++));
-            }
-            if (i != max) {
-				i--;
+        
+        // slightly modified version of jface url detection
+        // see org.eclipse.jface.text.hyperlink.URLHyperlinkDetector
+        
+		int urlSeparatorOffset= s.indexOf("://"); //$NON-NLS-1$
+		while(urlSeparatorOffset >= 0) {
+	
+			boolean startDoubleQuote= false;
+	
+			// URL protocol (left to "://")
+			int urlOffset= urlSeparatorOffset;
+			char ch;
+			do {
+				urlOffset--;
+				ch= ' ';
+				if (urlOffset > -1)
+					ch= s.charAt(urlOffset);
+				startDoubleQuote= ch == '"';
+			} while (Character.isUnicodeIdentifierStart(ch));
+			urlOffset++;
+			
+	
+			// Right to "://"
+			StringTokenizer tokenizer= new StringTokenizer(s.substring(urlSeparatorOffset + 3), " \t\n\r\f<>", false); //$NON-NLS-1$
+			if (!tokenizer.hasMoreTokens())
+				return null;
+	
+			int urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffset;
+	
+			if (startDoubleQuote) {
+				int endOffset= -1;
+				int nextDoubleQuote= s.indexOf('"', urlOffset);
+				int nextWhitespace= s.indexOf(' ', urlOffset);
+				if (nextDoubleQuote != -1 && nextWhitespace != -1)
+					endOffset= Math.min(nextDoubleQuote, nextWhitespace);
+				else if (nextDoubleQuote != -1)
+					endOffset= nextDoubleQuote;
+				else if (nextWhitespace != -1)
+					endOffset= nextWhitespace;
+				if (endOffset != -1)
+					urlLength= endOffset - urlOffset;
 			}
-            linkRanges.add(new int[] { start, i - start });
-            links.add(s.substring(start, i));
-            i = s.indexOf(ATT_HTTP, i);
-        }
+			
+			linkRanges.add(new int[] { urlOffset, urlLength });
+			links.add(s.substring(urlOffset, urlOffset+urlLength));
+			
+			urlSeparatorOffset= s.indexOf("://", urlOffset+urlLength+1); //$NON-NLS-1$
+		}
         return new AboutItem(s, (int[][]) linkRanges.toArray(new int[linkRanges
                 .size()][2]), (String[]) links
                 .toArray(new String[links.size()]));
