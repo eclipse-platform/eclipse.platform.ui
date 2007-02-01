@@ -43,7 +43,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	public void refreshStarted(final IRefreshEvent event) {
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (event.getRefreshType() == IRefreshEvent.USER_REFRESH) {
+				if (event.getRefreshType() == IRefreshEvent.USER_REFRESH && event.getParticipant() == participant) {
 					ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
 					if (view != null) {
 						view.display(participant);
