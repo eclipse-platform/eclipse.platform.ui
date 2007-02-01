@@ -12,6 +12,8 @@ package org.eclipse.ui.forms.examples.internal.rcp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.editor.*;
 import org.eclipse.ui.forms.events.*;
@@ -39,24 +41,27 @@ public class SecondPage extends FormPage {
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		form.getBody().setLayout(layout);
-		createTableSection(form, toolkit, "First Table Section");
-		createTableSection(form, toolkit, "Second Table Section");		
+		createTableSection(form, toolkit, "First Table Section", true);
+		createTableSection(form, toolkit, "Second Table Section", false);		
 	}
 	
-	private void createTableSection(final ScrolledForm form, FormToolkit toolkit, String title) {
+	private void createTableSection(final ScrolledForm form, FormToolkit toolkit, String title, boolean addTextClient) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
-				Section.TWISTIE|Section.TITLE_BAR);
+				Section.TWISTIE|Section.TITLE_BAR|Section.IGNORE_TEXT_CLIENT_HEIGHT);
 		section.setActiveToggleColor(
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(
 			toolkit.getColors().getColor(IFormColors.SEPARATOR));
-		//section.setTitleBarForeground(section.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		//section.setTitleBarGradientBackground(section.getDisplay().getSystemColor(SWT.COLOR_GREEN));
-
+		if (addTextClient) {
+			ImageHyperlink link = new ImageHyperlink(section, SWT.NULL);
+			link.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+			link.setBackground(null);
+			section.setTextClient(link);
+		}
 		FormText description = toolkit.createFormText(section, false);
-		description.setText("<form><p>This description has <b>bold</b> text.</p></form>", true, false);
+		description.setText("<form><p>This description uses FormText widget and as a result can have <b>bold</b> text.</p></form>", true, false);
 		section.setDescriptionControl(description);
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
 		GridLayout layout = new GridLayout();

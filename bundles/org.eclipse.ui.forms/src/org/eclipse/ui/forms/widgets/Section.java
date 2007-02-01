@@ -369,7 +369,7 @@ public class Section extends ExpandableComposite {
 			Point size = textLabel.getSize();
 			if (tsize != null)
 				theight += Math.max(theight, tsize.y);
-			if (tcsize != null)
+			if (tcsize != null &&(getExpansionStyle()&IGNORE_TEXT_CLIENT_HEIGHT)==0)
 				theight = Math.max(theight, tcsize.y);
 			theight = Math.max(theight, size.y);
 			theight += tvmargin + tvmargin;

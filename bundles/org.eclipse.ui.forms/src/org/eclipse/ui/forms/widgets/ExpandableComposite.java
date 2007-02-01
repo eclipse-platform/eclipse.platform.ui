@@ -130,6 +130,19 @@ public class ExpandableComposite extends Canvas {
 	 * be positioned after the text control and vertically centered with it.
 	 */
 	public static final int LEFT_TEXT_CLIENT_ALIGNMENT = 1 << 13;
+	
+	/**
+	 * By default, text client height affects the title area height. There
+	 * are situations where it would be beneficial to ignore the text client
+	 * height and allow the text client to slightly overlap the unused white
+	 * space between the head and the content. Use this constant
+	 * to ignore the text client height.
+	 * <p>Note: this option only makes sense with the standard Eclipse 16x16
+	 * icons. Anything larger will start overlapping the description or
+	 * content.
+	 * @since 3.3
+	 */
+	public static final int IGNORE_TEXT_CLIENT_HEIGHT = 1 << 14;	
 
 	/**
 	 * Width of the margin that will be added around the control (default is 0).
@@ -303,7 +316,7 @@ public class ExpandableComposite extends Canvas {
 			int tbarHeight = 0;
 			if (size.y > 0)
 				tbarHeight = size.y;
-			if (tcsize.y > 0)
+			if (tcsize.y > 0 && (expansionStyle&IGNORE_TEXT_CLIENT_HEIGHT)==0)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
 			y += tbarHeight;
 			if (hasTitleBar())
@@ -393,7 +406,7 @@ public class ExpandableComposite extends Canvas {
 				width = size.x;
 			if (tcsize.x > 0)
 				width += GAP + tcsize.x;
-			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
+			height = tcsize.y > 0 && ((expansionStyle&IGNORE_TEXT_CLIENT_HEIGHT)==0)? Math.max(tcsize.y, size.y) : size.y;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
 				if (expanded && client != null)
