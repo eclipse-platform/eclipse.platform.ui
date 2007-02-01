@@ -809,6 +809,18 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public boolean isSaveNeeded() {
 		return fDirty || fDirtyViewers.size() > 0;
 	}
+	
+	/**
+	 * Returns <code>true</code> if there are unsaved changes.
+	 * The method should be called by any parts or dialogs
+	 * that contain the input.
+	 * By default, this method calls {@link #isSaveNeeded()} 
+	 * but subclasses may extend.
+	 * @since 3.3
+	 */
+	public boolean isDirty() {
+		return isSaveNeeded();
+	}
 		
 	/**
 	 * Sets the dirty state of this input to the given

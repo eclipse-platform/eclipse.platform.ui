@@ -149,7 +149,7 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 
 	private boolean isOKEnabled() {
 		if (isInputEditable())
-			return fCompareEditorInput.isSaveNeeded();
+			return fCompareEditorInput.isDirty();
 		if (isElementSelectionDialog())
 			return getSelectedElement() != null;
 		return true;

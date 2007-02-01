@@ -175,8 +175,8 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	 */
 	public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
 		super.registerContextMenu(menu, provider);
-		final Saveable[] saveables = getActiveSaveables();
-		if (saveables.length == 1 && saveables[0] instanceof LocalResourceSaveableComparison) {
+		Saveable saveable = getSaveable();
+		if (saveable instanceof LocalResourceSaveableComparison) {
 			menu.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
 					handleMenuAboutToShow(manager);

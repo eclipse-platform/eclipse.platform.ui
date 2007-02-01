@@ -57,6 +57,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	private final ListenerList inputChangeListeners = new ListenerList(ListenerList.IDENTITY);
 	private Saveable saveable;
 	private IPropertyListener propertyListener;
+	private boolean hasSaveable = false;
 	
 	/**
 	 * Return a typed element that represents a local file. If the element
@@ -135,8 +136,9 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 				IWorkbenchPart part = container.getWorkbenchPart();
 				if (part != null) {
 					ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) part.getSite().getService(ISaveablesLifecycleListener.class);
-					lifecycleListener.handleLifecycleEvent(
-							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
+					if (hasSaveable)
+						lifecycleListener.handleLifecycleEvent(
+								new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
 					if (saveable instanceof LocalResourceSaveableComparison) {
 						LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
 						rsc.dispose();
@@ -311,7 +313,8 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 */
 	public Saveable[] getActiveSaveables() {
 		if (getCompareResult() == null)
-			return new Saveable[0]; 
+			return new Saveable[0];
+		hasSaveable = true;
 		return new Saveable[] { getSaveable() };
 	}
 
@@ -404,8 +407,17 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		return newViewer;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#canRunAsJob()
+	 */
 	public boolean canRunAsJob() {
 		return true;
+	}
+	
+	public boolean isDirty() {
+		if (saveable != null)
+			return saveable.isDirty();
+		return super.isDirty();
 	}
 
 }

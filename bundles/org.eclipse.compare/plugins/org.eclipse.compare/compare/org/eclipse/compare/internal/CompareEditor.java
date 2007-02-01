@@ -465,17 +465,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	 */
 	public boolean isDirty() {
 		IEditorInput input= getEditorInput();
-		if (input instanceof ISaveablesSource) {
-			ISaveablesSource sms= (ISaveablesSource) input;
-			Saveable[] models= sms.getSaveables();
-			for (int i= 0; i < models.length; i++) {
-				Saveable model= models[i];
-				if (model.isDirty())
-					return true;
-			}
-		}
 		if (input instanceof CompareEditorInput)
-			return ((CompareEditorInput)input).isSaveNeeded();
+			return ((CompareEditorInput)input).isDirty();
 		return false;
 	}
 	
