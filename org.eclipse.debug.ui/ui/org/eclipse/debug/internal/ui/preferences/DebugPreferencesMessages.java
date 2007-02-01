@@ -159,9 +159,16 @@ public class DebugPreferencesMessages extends NLS {
 	public static String SimpleLaunchVariablePreferencePage_21;
 	public static String SimpleLaunchVariablePreferencePage_22;
 	public static String SimpleLaunchVariablePreferencePage_23;
+
+	public static String StringVariablePreferencePage_20;
+	public static String StringVariablePreferencePage_21;
+	public static String StringVariablePreferencePage_22;
+	public static String StringVariablePreferencePage_23;
 	public static String StringVariablePreferencePage_24;
 	public static String StringVariablePreferencePage_25;
-	public static String StringVariablePreferencePage_0;
+	public static String StringVariablePreferencePage_26;
+	public static String StringVariablePreferencePage_27;
+	
 	public static String ViewManagementPreferencePage_0;
 	public static String ViewManagementPreferencePage_1;
 	public static String ViewManagementPreferencePage_2;

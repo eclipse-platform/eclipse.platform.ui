@@ -10,12 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.variables;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.variables.IValueVariable;
-import org.eclipse.core.variables.IValueVariableInitializer;
-import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.osgi.util.NLS;
 
 /**
  * Implementation of a value variable.
@@ -28,98 +23,54 @@ public class ValueVariable extends StringVariable implements IValueVariable {
 	private String fValue;
 	
 	/**
-	 * Whether this variable's value has been initialized
+	 * Whether this variable is read only.  If true, users cannot change the value.
 	 */
-	private boolean fInitialized = false;
+	private boolean fReadOnly;
 	
 	/**
-	 * Constructs a new value variable with the given name, description, and
-	 * associated configuration element.
+	 * Constructs a new value variable with the given name, description, read only
+	 * property and string value.  Value can be null.
 	 * 
 	 * @param name variable name
-	 * @param description variable description, or <code>null</code>
-	 * @param configurationElement configuration element or <code>null</code>
+	 * @param description variable description or <code>null</code>
+	 * @param readOnly whether the variable should be a read only variable
+	 * @param value the initial value of the variable or <code>null</code>
 	 */
-	public ValueVariable(String name, String description, IConfigurationElement configurationElement) {
-		super(name, description, configurationElement);
+	public ValueVariable(String name, String description, boolean readOnly, String value) {
+		super(name, description, null);
+		fReadOnly = readOnly;
+		fValue = value;
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariable#setValue(java.lang.String)
+	 * @see org.eclipse.core.variables.IValueVariable#setValue(java.lang.String)
 	 */
 	public void setValue(String value) {
-		fValue = value;
-		setInitialized(true);
-		StringVariableManager.getDefault().notifyChanged(this);
+		if (!isReadOnly()){
+			fValue = value;
+			StringVariableManager.getDefault().notifyChanged(this);
+		}
 	}
-
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariable#getValue()
+	 * @see org.eclipse.core.variables.IValueVariable#getValue()
 	 */
 	public String getValue() {
-		if (!isInitialized()) {
-			initialize();
-		}
 		return fValue;
 	}
 
-	/**
-	 * Initialize this variable's value.
-	 */
-	private void initialize() {
-		if (getConfigurationElement() != null) {
-			// check for a explicit value specified in plug-in XML
-			String value = getConfigurationElement().getAttribute("initialValue"); //$NON-NLS-1$
-			if (value == null) {
-				// check for initializer
-				String className = getConfigurationElement().getAttribute("initializerClass"); //$NON-NLS-1$
-				if (className != null) {
-					try {
-						Object object = getConfigurationElement().createExecutableExtension("initializerClass"); //$NON-NLS-1$
-						if (object instanceof IValueVariableInitializer) {
-							IValueVariableInitializer initializer = (IValueVariableInitializer)object;
-							initializer.initialize(this);
-						} else {
-							VariablesPlugin.logMessage(NLS.bind("Unable to initialize variable {0} - initializer must be an instance of IValueVariableInitializer.", new String[]{getName()}), null); //$NON-NLS-1$
-						}
-					} catch (CoreException e) {
-						VariablesPlugin.logMessage(NLS.bind("Unable to initialize variable {0}",new String[]{getName()}), e); //$NON-NLS-1$
-					}
-				}
-			} else {
-				setValue(value);
-			}
-		}
-		setInitialized(true);
-	}
-
-	/**
-	 * Returns whether this variable has been initialized with a value by one of:
-	 * <ul>
-	 * <li><code>setValue(String)</code></li>
-	 * <li>its configuration element's <code>initialValue</code> attribute</li>
-	 * <li>its configuration element's initializer</li>
-	 * </ul>
-	 * @return whether this variable has been initialized with a value
-	 */	
-	protected boolean isInitialized() {
-		return fInitialized;
-	} 
-	
-	/**
-	 * Sets whether this variable has been initialized with a value.
-	 *  
-	 * @param initialized whether this variable has been initialized
-	 */
-	protected void setInitialized(boolean initialized) {
-		fInitialized = initialized;
-	}
-
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.stringsubstitution.IValueVariable#isContributed()
+	 * @see org.eclipse.core.variables.IValueVariable#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		return fReadOnly;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.variables.IValueVariable#isContributed()
 	 */
 	public boolean isContributed() {
-		return getConfigurationElement() != null;
+		return false;
 	}
 
 }

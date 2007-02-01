@@ -15,7 +15,12 @@ package org.eclipse.core.variables;
  * a value variable is referenced does not effect the value of the variable.
  * A value variable can be contributed by an extension or created programmatically.
  * A contributor may optionally specify an initial value for a variable, or
- * provide a delegate that will initialize the variable with a value. 
+ * provide a delegate that will initialize the variable with a value.
+ * <p>
+ * Since 3.3, a variable can be specified as a "read only" preventing users from changing
+ * the value after it has been initialized.  Furthermore, a read only variable that is
+ * contributed by an extension will always load the value from the extension.
+ * </p>
  * <p>
  * Example of a value variable contribution with an initial value, the specified
  * variable is created with the initial value "/usr/local/foo".
@@ -49,10 +54,10 @@ package org.eclipse.core.variables;
 public interface IValueVariable extends IStringVariable {
 
 	/**
-	 * Sets the value of this variable to the given value. A value of
-	 * <code>null</code> indicates the value of this variable is undefined.
-	 * 
-	 * @param value variable value, possibly <code>null</code>
+	 * Sets the value of this variable to the given value.
+	 * Since 3.3, this has no effect if this variable is read only.
+	 *
+	 * @param variable value
 	 */
 	public void setValue(String value);
 	
@@ -71,9 +76,18 @@ public interface IValueVariable extends IStringVariable {
 	public boolean isContributed();
 	
 	/**
+	 * Returns whether this variable is read only.
+	 * 
+	 * @return whether this variable is read only
+	 * @since 3.3
+	 */
+	public boolean isReadOnly();
+	
+	/**
 	 * Sets the description of this variable to the given value.
 	 * 
 	 * @param description variable description, possibly <code>null</code>
 	 */
 	public void setDescription(String description);	
+	
 }

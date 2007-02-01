@@ -122,14 +122,27 @@ public interface IStringVariableManager {
 	public void validateStringVariables(String expression) throws CoreException;
 	
 	/**
-	 * Returns a new value variable with the given name and description.
+	 * Returns a new read-write value variable with the given name and description
+	 * with a <code>null</code> value.
 	 * 
 	 * @param name variable name, cannot be <code>null</code>
 	 * @param description variable description, possibly <code>null</code>
-	 * @return a new variable
-	 * @exception CoreException if a variable already exists with the given name
+	 * @return a new value variable
 	 */
 	public IValueVariable newValueVariable(String name, String description);
+
+	/**
+	 * Returns a new value variable with the given properties.
+	 * 
+	 * @param name variable name, cannot be <code>null</code>
+	 * @param description variable description, possibly <code>null</code>
+	 * @param readOnly whether this variable is to be a read only variable
+	 * @param value the string value to initialize this variable to - should
+	 * 	not be <code>null</code> for read-only variables
+	 * @return a new value variable
+	 * @since 3.3
+	 */
+	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value);
 	
 	/**
 	 * Adds the given variables to the variable registry.

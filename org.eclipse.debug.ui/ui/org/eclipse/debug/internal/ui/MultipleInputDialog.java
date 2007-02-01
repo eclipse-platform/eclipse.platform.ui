@@ -17,11 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -317,22 +315,6 @@ public class MultipleInputDialog extends Dialog {
 		}
 		getButton(IDialogConstants.OK_ID).setEnabled(true);
 	}
-	
-	private String getDialogSettingsSectionName() {
-		return IDebugUIConstants.PLUGIN_ID + ".MULTIPLE_INPUT_DIALOG_2"; //$NON-NLS-1$
-	}
-	
-	 /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-     */
-    protected IDialogSettings getDialogBoundsSettings() {
-    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-         if (section == null) {
-             section = settings.addNewSection(getDialogSettingsSectionName());
-         } 
-         return section;
-    }
     
 	protected class FieldSummary {
 		int type;

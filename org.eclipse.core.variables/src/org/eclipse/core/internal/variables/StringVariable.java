@@ -34,10 +34,11 @@ public abstract class StringVariable implements IStringVariable {
 	private IConfigurationElement fConfigurationElement;
 
 	/**
-	 * Constructs a new variable with the given name and description.
+	 * Constructs a new variable with the given name, description and configuration element.
 	 * 
 	 * @param name variable name
 	 * @param description variable description, or <code>null</code>
+	 * @param configurationElement configuration element or <code>null</code>
 	 */
 	public StringVariable(String name, String description, IConfigurationElement configurationElement) {
 		fName = name;

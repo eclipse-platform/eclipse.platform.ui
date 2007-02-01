@@ -93,14 +93,15 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	
 	// Variable extension point constants
 	private static final String ATTR_NAME= "name"; //$NON-NLS-1$
-	private static final String ATTR_DESCRIPTION="description"; //$NON-NLS-1$	
+	private static final String ATTR_DESCRIPTION="description"; //$NON-NLS-1$
+	private static final String ATTR_READ_ONLY="readOnly"; //$NON-NLS-1$	
 	// Persisted variable XML constants
 	private static final String VALUE_VARIABLES_TAG= "valueVariables"; //$NON-NLS-1$
 	private static final String VALUE_VARIABLE_TAG= "valueVariable"; //$NON-NLS-1$
 	private static final String NAME_TAG= "name"; //$NON-NLS-1$
 	private static final String VALUE_TAG= "value"; //$NON-NLS-1$
 	private static final String DESCRIPTION_TAG="description"; //$NON-NLS-1$
-	private static final String INITIALIZED_TAG="contributed"; //$NON-NLS-1$
+	private static final String READ_ONLY_TAG="readOnly"; //$NON-NLS-1$
 	// XML values
 	private static final String TRUE_VALUE= "true"; //$NON-NLS-1$
 	private static final String FALSE_VALUE= "false"; //$NON-NLS-1$
@@ -200,8 +201,8 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			fInternalChange = true;
 			fDynamicVariables = new HashMap(5);
 			fValueVariables = new HashMap(5);
-			loadPersistedValueVariables();
 			loadContributedValueVariables();
+			loadPersistedValueVariables();
 			loadDynamicVariables();
 			VariablesPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
 			fInternalChange = false;
@@ -228,7 +229,32 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	}
 
 	/**
-	 * Loads any persisted value variables from the preference store.
+	 * Loads contributed value variables. This is done before loading persisted values.
+	 */
+	private void loadContributedValueVariables() {
+		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(VariablesPlugin.PI_CORE_VARIABLES, EXTENSION_POINT_VALUE_VARIABLES);
+		IConfigurationElement elements[]= point.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];
+			String name= element.getAttribute(ATTR_NAME);
+			if (name == null) {
+				VariablesPlugin.logMessage(NLS.bind("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
+				continue;
+			}
+			String description= element.getAttribute(ATTR_DESCRIPTION);
+			boolean isReadOnly = TRUE_VALUE.equals(element.getAttribute(ATTR_READ_ONLY));
+			
+			IValueVariable variable = new ContributedValueVariable(name, description, isReadOnly, element);
+			fValueVariables.put(name, variable);		
+		}		
+	}
+
+	/**
+	 * Loads persisted value variables from the preference store.  This is done after
+	 * loading value variables from the extension point.  If a persisted variable has the 
+	 * same name as a extension contributed variable the variable's value will be set to
+	 * the persisted value unless either a) The persisted value is <code>null</code>, or
+	 * b) the variable is read-only.
 	 */
 	private void loadPersistedValueVariables() {
 		String variablesString= VariablesPlugin.getDefault().getPluginPreferences().getString(PREF_VALUE_VARIABLES);
@@ -274,47 +300,22 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 				if (name.length() > 0) {
 					String value= element.getAttribute(VALUE_TAG);
 					String description= element.getAttribute(DESCRIPTION_TAG);
-					boolean initialized= TRUE_VALUE.equals(element.getAttribute(INITIALIZED_TAG));
-					ValueVariable variable= new ValueVariable(name, description, null);
-					if (initialized) {
-						variable.setValue(value);
+					boolean readOnly= TRUE_VALUE.equals(element.getAttribute(READ_ONLY_TAG));
+				
+					IValueVariable existing = getValueVariable(name);
+					if (existing == null){
+						ValueVariable variable = new ValueVariable(name, description, readOnly, value);
+						fValueVariables.put(name, variable);
+					} else if (!existing.isReadOnly() && value != null){
+						existing.setValue(value);
 					}
-					fValueVariables.put(name, variable);
 				} else {
 					VariablesPlugin.logMessage("Invalid variable entry encountered while loading value variables. Variable name is null.", null); //$NON-NLS-1$
 				}
 			}
 		}		
 	}
-
-	/**
-	 * Loads contributed value variables. This is done after the persisted value
-	 * variables are restored. Any contributed variables with the same name are
-	 * merged with existing persisted values.
-	 */
-	private void loadContributedValueVariables() {
-		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(VariablesPlugin.PI_CORE_VARIABLES, EXTENSION_POINT_VALUE_VARIABLES);
-		IConfigurationElement elements[]= point.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			String name= element.getAttribute(ATTR_NAME);
-			if (name == null) {
-				VariablesPlugin.logMessage(NLS.bind("Variable extension missing required 'name' attribute: {0}", new String[] {element.getDeclaringExtension().getLabel()}), null); //$NON-NLS-1$
-				continue;
-			}
-			String description= element.getAttribute(ATTR_DESCRIPTION);
-			ValueVariable variable= new ValueVariable(name, description, element);
-			// if already present, merge with persisted value
-			ValueVariable existing = (ValueVariable)getValueVariable(name);
-			if (existing != null) {
-				if (existing.isInitialized()) {
-					variable.setValue(existing.getValue());
-				}					
-			}
-			fValueVariables.put(variable.getName(), variable);
-		}		
-	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#getVariables()
 	 */
@@ -353,14 +354,16 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String)
 	 */
 	public IValueVariable newValueVariable(String name, String description) {
-		IConfigurationElement element = null;
-		ValueVariable existing = (ValueVariable)getValueVariable(name);
-		if (existing != null && existing.isContributed()) {
-			element = existing.getConfigurationElement();
-		}
-		return new ValueVariable(name, description, element);
+		return newValueVariable(name, description, false, null);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.variables.IStringVariableManager#newValueVariable(java.lang.String, java.lang.String, boolean, java.lang.String)
+	 */
+	public IValueVariable newValueVariable(String name, String description, boolean readOnly, String value) {
+		return new ValueVariable(name, description, readOnly, value);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#addVariables(org.eclipse.debug.internal.core.stringsubstitution.IValueVariable[])
 	 */
@@ -447,19 +450,24 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 		Element rootElement= document.createElement(VALUE_VARIABLES_TAG);
 		document.appendChild(rootElement);
 		for (int i = 0; i < variables.length; i++) {
-			ValueVariable variable = (ValueVariable)variables[i];
-			Element element= document.createElement(VALUE_VARIABLE_TAG);
-			element.setAttribute(NAME_TAG, variable.getName());
-			String value= variable.getValue();
-			if (value != null) {
-				element.setAttribute(VALUE_TAG, value);
+			IValueVariable variable = variables[i];
+			if (!variable.isReadOnly()){
+				// don't persist read-only variables or un-initialized contributed variables 
+				if (!variable.isContributed() || ((ContributedValueVariable)variable).isInitialized()) {
+					Element element= document.createElement(VALUE_VARIABLE_TAG);
+					element.setAttribute(NAME_TAG, variable.getName());
+					String value= variable.getValue();
+					if (value != null) {
+						element.setAttribute(VALUE_TAG, value);
+					}
+					element.setAttribute(READ_ONLY_TAG, variable.isReadOnly() ? TRUE_VALUE : FALSE_VALUE);
+					String description= variable.getDescription();
+					if (description != null) {
+						element.setAttribute(DESCRIPTION_TAG, description);
+					}
+					rootElement.appendChild(element);
+				}
 			}
-			String description= variable.getDescription();
-			if (description != null) {
-				element.setAttribute(DESCRIPTION_TAG, description);
-			}
-			element.setAttribute(INITIALIZED_TAG, variable.isInitialized() ? TRUE_VALUE : FALSE_VALUE);
-			rootElement.appendChild(element);
 		}
 		return serializeDocument(document);
 	}
@@ -527,7 +535,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	 * 
 	 * @param variable the variable that has changed
 	 */
-	protected void notifyChanged(ValueVariable variable) {
+	protected void notifyChanged(IValueVariable variable) {
 		if (!fInternalChange) {
 			IValueVariable existing = getValueVariable(variable.getName());
 			if (variable.equals(existing)) {
