@@ -3219,6 +3219,16 @@
             name="Text Context X2"
             parentId="org.eclipse.ui.contexts.window">
       </context>
+      <context
+            id="org.eclipse.ui.command.contexts.enablement_test1"
+            name="Handler Enablement 1"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+      <context
+            id="org.eclipse.ui.command.contexts.enablement_test2"
+            name="Handler Enablement 2"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

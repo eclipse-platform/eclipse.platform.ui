@@ -109,6 +109,14 @@ public final class Command extends NamedHandleObjectWithState implements
 	private ParameterType returnType = null;
 
 	/**
+	 * Our command will listen to the active handler for enablement changes so
+	 * that they can be fired from the command itself.
+	 * 
+	 * @since 3.3
+	 */
+	private IHandlerListener handlerListener;
+
+	/**
 	 * Constructs a new instance of <code>Command</code> based on the given
 	 * identifier. When a command is first constructed, it is undefined.
 	 * Commands should only be constructed by the <code>CommandManager</code>
@@ -443,7 +451,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (!isDefined()) {
 			final NotDefinedException exception = new NotDefinedException(
 					"Trying to execute a command that is not defined. " //$NON-NLS-1$
-					+ id);
+							+ id);
 			fireNotDefined(exception);
 			throw exception;
 		}
@@ -655,7 +663,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (!isDefined()) {
 			throw new NotDefinedException(
 					"Cannot get the category from an undefined command. " //$NON-NLS-1$
-					+ id);
+							+ id);
 		}
 
 		return category;
@@ -663,7 +671,11 @@ public final class Command extends NamedHandleObjectWithState implements
 
 	/**
 	 * Returns the current handler for this command. This is used by the command
-	 * manager for determining the appropriate help context identifiers.
+	 * manager for determining the appropriate help context identifiers and by
+	 * the command service to allow handlers to update elements.
+	 * <p>
+	 * This value can change at any time and should never be cached.
+	 * </p>
 	 * 
 	 * @return The current handler for this command; may be <code>null</code>.
 	 * @since 3.2
@@ -702,7 +714,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (!isDefined()) {
 			throw new NotDefinedException(
 					"Cannot get a parameter from an undefined command. " //$NON-NLS-1$
-					+ id);
+							+ id);
 		}
 
 		if (parameters == null) {
@@ -732,7 +744,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (!isDefined()) {
 			throw new NotDefinedException(
 					"Cannot get the parameters from an undefined command. " //$NON-NLS-1$
-					+ id);
+							+ id);
 		}
 
 		if ((parameters == null) || (parameters.length == 0)) {
@@ -785,7 +797,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (!isDefined()) {
 			throw new NotDefinedException(
 					"Cannot get the return type of an undefined command. " //$NON-NLS-1$
-					+ id);
+							+ id);
 		}
 
 		return returnType;
@@ -803,7 +815,7 @@ public final class Command extends NamedHandleObjectWithState implements
 			return false;
 		}
 
-		return handler.isHandled() && handler.isEnabled();
+		return handler.isEnabled();
 	}
 
 	/**
@@ -910,8 +922,16 @@ public final class Command extends NamedHandleObjectWithState implements
 			}
 		}
 
+		boolean enabled = isEnabled();
+		if (this.handler != null) {
+			this.handler.removeHandlerListener(getHandlerListener());
+		}
+
 		// Update the handler, and flush the string representation.
 		this.handler = handler;
+		if (this.handler != null) {
+			this.handler.addHandlerListener(getHandlerListener());
+		}
 		string = null;
 
 		// Debugging output
@@ -933,9 +953,27 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		// Send notification
 		fireCommandChanged(new CommandEvent(this, false, false, false, true,
-				false, false, false));
+				false, false, false, false, enabled != isEnabled()));
 
 		return true;
+	}
+
+	/**
+	 * @return
+	 */
+	private IHandlerListener getHandlerListener() {
+		if (handlerListener == null) {
+			handlerListener = new IHandlerListener() {
+				public void handlerChanged(HandlerEvent handlerEvent) {
+					boolean enabledChanged = handlerEvent.isEnabledChanged();
+					boolean handledChanged = handlerEvent.isHandledChanged();
+					fireCommandChanged(new CommandEvent(Command.this, false,
+							false, false, handledChanged, false, false, false,
+							false, enabledChanged));
+				}
+			};
+		}
+		return handlerListener;
 	}
 
 	/**
@@ -975,6 +1013,8 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * state and disposes of it. Notification is sent to all listeners.
 	 */
 	public final void undefine() {
+		boolean enabledChanged = isEnabled();
+
 		string = null;
 
 		final boolean definedChanged = defined;
@@ -1019,6 +1059,6 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		fireCommandChanged(new CommandEvent(this, categoryChanged,
 				definedChanged, descriptionChanged, false, nameChanged,
-				parametersChanged, returnTypeChanged));
+				parametersChanged, returnTypeChanged, false, enabledChanged));
 	}
 }
