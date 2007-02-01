@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.multieditor;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import junit.framework.TestSuite;
 
@@ -167,7 +168,7 @@ public class MultiEditorTest extends UITestCase {
 		// listHistory(((TiledEditor) multiEditor).callHistory);
 
 		// check the public API called for opening the TiledEditor
-//		((TiledEditor) multiEditor).callHistory.printToConsole();
+		// ((TiledEditor) multiEditor).callHistory.printToConsole();
 		assertTrue("The editor open trace was incorrect",
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorOpenTrace));
@@ -306,10 +307,10 @@ public class MultiEditorTest extends UITestCase {
 		// 3.0, fails in 3.1
 		assertEquals("The Outline view is not talking to the correct editor",
 				multiEditor.getActiveEditor(), outlineEditor);
-		
+
 		page.closeEditor(editor, false);
 		chewUpEvents();
-		
+
 		view = (IContributedContentsView) outline
 				.getAdapter(IContributedContentsView.class);
 		assertNull(view.getContributingPart());
@@ -425,8 +426,15 @@ public class MultiEditorTest extends UITestCase {
 			// assertFalse("The editor never actualized",
 			// editorPart instanceof ErrorEditorPart);
 
-			assertTrue("Creation error: " + fErrorListener.fErrorMsg,
-					fErrorListener.fNoError);
+			if (fErrorListener.messages.size() > 0) {
+				String[] msgs = (String[]) fErrorListener.messages
+						.toArray(new String[fErrorListener.messages.size()]);
+				for (int i = 0; i < msgs.length; i++) {
+					if (msgs[i].indexOf("The proxied handler for")==-1) {
+						fail("Failed with: " + msgs[i]);
+					}
+				}
+			}
 		} finally {
 			removeErrorListener();
 		}
@@ -508,17 +516,16 @@ public class MultiEditorTest extends UITestCase {
 	 * 
 	 */
 	public static class EditorErrorListener implements ILogListener {
-		public boolean fNoError = true;
 
-		public String fErrorMsg = null;
+		public ArrayList messages = new ArrayList();
 
 		public void logging(IStatus status, String plugin) {
-			fNoError = false;
-			fErrorMsg = status.getMessage();
+			String msg = status.getMessage();
 			Throwable ex = status.getException();
 			if (ex != null) {
-				fErrorMsg += ": " + ex.getMessage();
+				msg += ": " + ex.getMessage();
 			}
+			messages.add(msg);
 		}
 	}
 }
