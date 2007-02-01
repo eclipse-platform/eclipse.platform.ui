@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,16 +59,21 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                 if(!monitor.isCanceled()) {
-                    manager.setEnabled(!manager.isEnabled());
+                	if(fAction != null) {
+                		manager.setEnabled(!fAction.isChecked());
+                	}
+                	else {
+                		manager.setEnabled(!isChecked());
+                	}
                 } 
             }
         };
         
         try {
             DebugUIPlugin.getDefault().getWorkbench().getProgressService().busyCursorWhile(runnable);
-        } catch (InvocationTargetException e) {
-        } catch (InterruptedException e) {
-        }
+        } 
+        catch (InvocationTargetException e) {}
+        catch (InterruptedException e) {}
 	}
 	
 	/**
@@ -118,7 +123,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		fAction= action;
+		fAction = action;
 	}
 
 	/* (non-Javadoc)
