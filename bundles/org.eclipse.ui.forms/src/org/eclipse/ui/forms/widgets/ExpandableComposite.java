@@ -139,7 +139,11 @@ public class ExpandableComposite extends Canvas {
 	 * to ignore the text client height.
 	 * <p>Note: this option only makes sense with the standard Eclipse 16x16
 	 * icons. Anything larger will start overlapping the description or
-	 * content.
+	 * content. ToolBar controls can be used in combination with this flag,
+	 * but only if description is not set, otherwise tool bar control can
+	 * cut the description text off. If you need description, make it 
+	 * part of the body with enough top margin to clear the local tool
+	 * bar.
 	 * @since 3.3
 	 */
 	public static final int IGNORE_TEXT_CLIENT_HEIGHT = 1 << 14;	

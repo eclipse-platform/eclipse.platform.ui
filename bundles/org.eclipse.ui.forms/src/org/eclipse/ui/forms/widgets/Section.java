@@ -353,6 +353,7 @@ public class Section extends ExpandableComposite {
 		if (border == null)
 			border = fg;
 		int theight = 0;
+		int realtheight =0;
 		int tvmargin = IGAP;
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			Point tsize = null;
@@ -369,10 +370,16 @@ public class Section extends ExpandableComposite {
 			Point size = textLabel.getSize();
 			if (tsize != null)
 				theight += Math.max(theight, tsize.y);
-			if (tcsize != null &&(getExpansionStyle()&IGNORE_TEXT_CLIENT_HEIGHT)==0)
-				theight = Math.max(theight, tcsize.y);
+			realtheight = theight;
+			if (tcsize != null) {
+				realtheight = Math.max(realtheight, tcsize.y);
+				if ((getExpansionStyle()&IGNORE_TEXT_CLIENT_HEIGHT)==0)
+					theight = Math.max(theight, tcsize.y);
+			}
 			theight = Math.max(theight, size.y);
+			realtheight = Math.max(realtheight, size.y);
 			theight += tvmargin + tvmargin;
+			realtheight += tvmargin + tvmargin;
 		} else {
 			theight = 5;
 		}
@@ -380,7 +387,7 @@ public class Section extends ExpandableComposite {
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			//if (isExpanded() && getBackgroundImage() == null)
 			if (getBackgroundImage() == null)
-				updateHeaderImage(bg, bounds, theight);
+				updateHeaderImage(bg, bounds, theight, realtheight);
 			gc.setBackground(getBackground());
 			gc.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
 			//if (isExpanded()) {
@@ -477,12 +484,12 @@ public class Section extends ExpandableComposite {
 	}
 
 	private void updateHeaderImage(Color bg, Rectangle bounds,
-			int theight) {
-		Image image = new Image(getDisplay(), 1, theight);
+			int theight, int realtheight) {
+		Image image = new Image(getDisplay(), 1, realtheight);
 		image.setBackground(getBackground());
 		GC gc = new GC(image);
 		gc.setBackground(getBackground());
-		gc.fillRectangle(0, 0, 1, theight);
+		gc.fillRectangle(0, 0, 1, realtheight);
 		gc.setForeground(bg);
 		gc.setBackground(getBackground());
 		gc.fillGradientRectangle(0, marginHeight+2, 1, theight-2, true);
