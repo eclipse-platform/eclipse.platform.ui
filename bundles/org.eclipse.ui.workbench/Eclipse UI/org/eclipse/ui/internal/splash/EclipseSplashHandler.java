@@ -67,16 +67,18 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 		// the following code will be removed for release time
 		if (PrefUtil.getInternalPreferenceStore().getBoolean(
 				"SHOW_BUILDID_ON_STARTUP")) { //$NON-NLS-1$
-			final String buildId = System.getProperty("eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
-			
+			final String buildId = System.getProperty(
+					"eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
+
 			getContent().addPaintListener(new PaintListener() {
 
 				public void paintControl(PaintEvent e) {
 					e.gc.setForeground(getForeground());
 					// hardcoded to be sensible with our current Europa Graphic
 					e.gc.drawText(buildId, 322, 190, true);
-					
-				}});
+
+				}
+			});
 		}
 	}
 

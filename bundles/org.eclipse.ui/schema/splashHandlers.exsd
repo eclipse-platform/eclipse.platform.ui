@@ -124,6 +124,7 @@
             productId=&quot;com.xyz.product&quot;
             splashId=&quot;com.xyz.splash&quot;&gt;
       &lt;/splashHandlerProductBinding&gt;
+   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
