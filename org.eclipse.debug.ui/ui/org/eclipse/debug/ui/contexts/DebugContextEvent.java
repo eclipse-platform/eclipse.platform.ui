@@ -24,12 +24,6 @@ import org.eclipse.jface.viewers.ISelection;
  * @see IDebugContextListener
  * @see IDebugContextProvider
  * @since 3.3
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  */
 public class DebugContextEvent extends EventObject {
 
@@ -64,7 +58,8 @@ public class DebugContextEvent extends EventObject {
 	 * 
 	 * @param source source of the event - a debug context provider
 	 * @param context the relevant context
-	 * @param flags bit mask indicating how the context has changed
+	 * @param flags bit mask indicating how the context has changed - see change constants
+	 * 	defined in this class
 	 */
 	public DebugContextEvent(IDebugContextProvider source, ISelection context, int flags) {
 		super(source);
@@ -83,6 +78,7 @@ public class DebugContextEvent extends EventObject {
 	
 	/**
 	 * Returns flags which describe in more detail how a context has changed.
+	 * See change constants defined in this class.
 	 * 
 	 * @return event flags
 	 */

@@ -22,12 +22,6 @@ import org.eclipse.ui.IWorkbenchPart;
  * Clients implementing context providers should subclass this class.
  * </p>
  * @since 3.3
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  */
 public abstract class AbstractDebugContextProvider implements IDebugContextProvider {
 	
@@ -72,7 +66,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	}
 
 	/**
-	 * Fires the given context event to all listeners.
+	 * Fires the given context event to all registered listeners.
 	 * 
 	 * @param event debug context event
 	 */
