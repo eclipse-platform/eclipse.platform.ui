@@ -242,10 +242,11 @@ public abstract class PluginActionBuilder extends RegistryReader {
             String label = menuElement.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
             String path = menuElement.getAttribute(IWorkbenchRegistryConstants.ATT_PATH);
             if (label == null) {
-                WorkbenchPlugin
-                        .log("Invalid Menu Extension (label == null): " + id); //$NON-NLS-1$
-                return;
-            }
+				WorkbenchPlugin.log("Plugin \'" //$NON-NLS-1$
+						+ menuElement.getContributor().getName()
+						+ "\' invalid Menu Extension (label == null): " + id); //$NON-NLS-1$
+				return;
+			}
 
             // Calculate menu path and group.
             String group = null;
@@ -267,10 +268,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (path != null) {
                 parent = mng.findMenuUsingPath(path);
                 if (parent == null) {
-                    WorkbenchPlugin
-                            .log("Invalid Menu Extension (Path is invalid): " + id); //$NON-NLS-1$
-                    return;
-                }
+					WorkbenchPlugin
+							.log("Plugin \'" //$NON-NLS-1$
+									+ menuElement.getContributor().getName()
+									+ "\' invalid Menu Extension (Path \'"  //$NON-NLS-1$
+									+ path + "\' is invalid): " + id); //$NON-NLS-1$
+					return;
+				}
             }
 
             // Find reference group.
@@ -283,7 +287,10 @@ public abstract class PluginActionBuilder extends RegistryReader {
 					addGroup(parent, group);
 				} else {
                     WorkbenchPlugin
-                            .log("Invalid Menu Extension (Group is invalid): " + id); //$NON-NLS-1$
+                            .log("Plugin \'" //$NON-NLS-1$
+									+ menuElement.getContributor().getName()
+									+ "\' invalid Menu Extension (Group \'"  //$NON-NLS-1$
+									+ group + "\' is invalid): " + id); //$NON-NLS-1$
                     return;
                 }
             }
@@ -299,7 +306,10 @@ public abstract class PluginActionBuilder extends RegistryReader {
                 insertAfter(parent, group, newMenu);
             } catch (IllegalArgumentException e) {
                 WorkbenchPlugin
-                        .log("Invalid Menu Extension (Group is missing): " + id); //$NON-NLS-1$
+                        .log("Plugin \'" //$NON-NLS-1$
+								+ menuElement.getContributor().getName()
+								+ "\' invalid Menu Extension (Group \'"  //$NON-NLS-1$
+								+ group + "\' is missing): " + id); //$NON-NLS-1$
             }
 
             // Get the menu again as it may be wrapped, otherwise adding
@@ -333,14 +343,13 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (mpath == null && mgroup == null) {
 				return;
 			}
-
             // Find parent menu.
             IMenuManager parent = menu;
             if (mpath != null) {
                 parent = parent.findMenuUsingPath(mpath);
                 if (parent == null) {
                     WorkbenchPlugin
-                            .log("Invalid Menu Extension (Path is invalid): " + ad.getId()); //$NON-NLS-1$
+                            .log("Plug-in '" + ad.getPluginId() + "' contributed an invalid Menu Extension (Path: '" + mpath + "' is invalid): " + ad.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     return;
                 }
             }
@@ -355,7 +364,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 					addGroup(parent, mgroup);
 				} else {
                     WorkbenchPlugin
-                            .log("Invalid Menu Extension (Group is invalid): " + ad.getId()); //$NON-NLS-1$
+                            .log("Plug-in '" + ad.getPluginId() + "' contributed an invalid Menu Extension (Group: '" + mgroup + "' is invalid): " + ad.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     return;
                 }
             }
@@ -365,7 +374,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
                 insertAfter(parent, mgroup, ad.getAction());
             } catch (IllegalArgumentException e) {
                 WorkbenchPlugin
-                        .log("Invalid Menu Extension (Group is missing): " + ad.getId()); //$NON-NLS-1$
+                        .log("Plug-in '" + ad.getPluginId() + "' contributed an invalid Menu Extension (Group: '" + mgroup + "' is missing): " + ad.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             }
         }
 
@@ -426,7 +435,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
                     addGroup(toolbar, tgroup);
                 } else {
                     WorkbenchPlugin
-                            .log("Invalid Toolbar Extension (Group is invalid): " + ad.getId()); //$NON-NLS-1$
+                            .log("Plug-in '" + ad.getPluginId()  //$NON-NLS-1$
+                            		+ "' invalid Toolbar Extension (Group \'" //$NON-NLS-1$
+                            		+ tgroup + "\' is invalid): " + ad.getId()); //$NON-NLS-1$
                     return;
                 }
             }
@@ -435,7 +446,9 @@ public abstract class PluginActionBuilder extends RegistryReader {
                 insertAfter(toolbar, tgroup, ad.getAction());
             } catch (IllegalArgumentException e) {
                 WorkbenchPlugin
-                        .log("Invalid Toolbar Extension (Group is missing): " + ad.getId()); //$NON-NLS-1$
+                        .log("Plug-in '" + ad.getPluginId()  //$NON-NLS-1$
+                        		+ "' invalid Toolbar Extension (Group \'" //$NON-NLS-1$
+                        		+ tgroup + "\' is missing): " + ad.getId()); //$NON-NLS-1$
             }
         }
 
