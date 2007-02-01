@@ -100,21 +100,21 @@ final class MenuPersistence extends RegistryPersistence {
 			return;
 		
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		final IConfigurationElement[] groups = registry
+		final IConfigurationElement[] configElements = registry
 				.getConfigurationElementsFor(EXTENSION_MENUS);
 
 		// Create a cache entry for every menu addition
-		for (int i = 0; i < groups.length; i++) {
+		for (int i = 0; i < configElements.length; i++) {
 			// Only process 'group' entries
-			if (!TAG_GROUP.equals(groups[i].getName()))
+			if (!TAG_GROUP.equals(configElements[i].getName()))
 				continue;
 			
-			String id = groups[i].getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+			String id = configElements[i].getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 			
 			// Define the initial URI spec
 			String uriSpec = "toolbar:" + id; //$NON-NLS-1$
-			if (groups[i].getChildren(TAG_LOCATION).length > 0) {
-				IConfigurationElement location = groups[i].getChildren(TAG_LOCATION)[0];
+			if (configElements[i].getChildren(TAG_LOCATION).length > 0) {
+				IConfigurationElement location = configElements[i].getChildren(TAG_LOCATION)[0];
 				if (location.getChildren(TAG_ORDER).length > 0) {
 					IConfigurationElement order = location.getChildren(TAG_ORDER)[0];
 					
@@ -132,7 +132,7 @@ final class MenuPersistence extends RegistryPersistence {
 					//      new MenuCacheEntry and addCacheForURI(*)
 					// OK, add the addition to this area
 					uri = new MenuLocationURI(uriSpec);
-					trimAdditions.add(new TrimAdditionCacheEntry(groups[i], uri, menuService));
+					trimAdditions.add(new TrimAdditionCacheEntry(configElements[i], uri, menuService));
 				}
 				else {
 					// Must be a default group; make a new entry cache

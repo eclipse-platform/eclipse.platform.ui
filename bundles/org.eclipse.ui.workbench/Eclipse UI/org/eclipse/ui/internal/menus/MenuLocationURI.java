@@ -82,7 +82,7 @@ public class MenuLocationURI {
 	/**
 	 * @return the full URI definition string
 	 */
-	public Object getRawString() {
+	public String getRawString() {
 		return rawString;
 	}
 }

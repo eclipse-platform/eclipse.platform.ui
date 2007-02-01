@@ -248,7 +248,20 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 *      org.eclipse.ui.internal.IWindowTrim)
 	 */
 	public void addTrim(int areaId, IWindowTrim trim) {
-		addTrim(areaId, trim, null);
+		// If we're adding trim to the same side that it's
+		// already on then don't change its order
+		IWindowTrim insertBefore = null;
+		List trimDescs = getAreaTrim(areaId);
+		for (Iterator trimIter = trimDescs.iterator(); trimIter.hasNext();) {
+			IWindowTrim curTrim = (IWindowTrim) trimIter.next();
+			if (curTrim.getId().equals(trim.getId())) {
+				if (trimIter.hasNext()) {
+					insertBefore = (IWindowTrim) trimIter.next();
+				}
+			}
+		}
+		
+		addTrim(areaId, trim, insertBefore);
 	}
 
 	/*

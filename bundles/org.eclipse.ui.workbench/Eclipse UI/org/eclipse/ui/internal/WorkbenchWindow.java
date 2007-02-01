@@ -116,6 +116,7 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
+import org.eclipse.ui.internal.menus.TrimContributionManager;
 import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
@@ -172,8 +173,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private TrimLayout defaultLayout;
 
 	ProgressRegion progressRegion = null;
-	
+
+	// Legacy (3.2) contribution handling
 	private TrimBarManager2 trimMgr2 = null;
+	
+	// 3.3 Trim Contribution handling
+	private TrimContributionManager trimContributionMgr = null;
 	
 	/**
 	 * The map of services maintained by the workbench window. These services
@@ -996,12 +1001,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		
 		// Insert any contributed trim into the layout
-		// TODO: Hook this up with the Menu and/or CoolBar manager
-		// to allow for 'update' calls...
-//		if (Policy.EXPERIMENTAL_MENU)
+		// Legacy (3.2) trim
 		trimMgr2 = new TrimBarManager2(this);
-//		else
-//			trimMgr = new TrimBarManager(this, ((Workbench)getWorkbench()).getSMenuManager());
+		
+		// 3.3 Trim contributions
+		trimContributionMgr = new TrimContributionManager(this);
 		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);
@@ -1509,10 +1513,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			DragUtil.removeDragTarget(null, trimDropTarget);
 			DragUtil.removeDragTarget(getShell(), trimDropTarget);
 			trimDropTarget = null;
-						
+			
 			if (trimMgr2 != null) {
 				trimMgr2.dispose();
 				trimMgr2 = null;
+			}
+			
+			if (trimContributionMgr != null) {
+				trimContributionMgr.dispose();
+				trimContributionMgr = null;
 			}
 		} finally {
 			result = super.close();
@@ -2629,11 +2638,22 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			// get the trim manager to re-locate any -newly contributed-
 			// trim widgets
+			// Legacy (3.2) trim
 			if (trimMgr2 != null) {
 				StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 					public void runWithException() throws Throwable {
 						trimMgr2.updateLocations(knownIds);
+					}});
+				
+			}
+			
+			// 3.3 Trim Contributions
+			if (trimContributionMgr != null) {
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() throws Throwable {
+						trimContributionMgr.updateLocations(knownIds);
 					}});
 				
 			}
@@ -3437,6 +3457,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Re-populate the trim elements
 		if (trimMgr2 != null)
 			trimMgr2.update(true, false, !topBar.getVisible());
+		if (trimContributionMgr != null)
+			trimContributionMgr.update(true,  !topBar.getVisible());
 	}
 
 	public boolean getShowFastViewBars() {
