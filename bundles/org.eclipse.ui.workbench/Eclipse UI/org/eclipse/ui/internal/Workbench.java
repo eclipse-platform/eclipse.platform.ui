@@ -2086,6 +2086,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			synchronizer = new UISynchronizer(display, uiLockListener);
 			display
 					.setSynchronizer(synchronizer);
+			// declare the main thread to be a startup thread.
+			UISynchronizer.startupThread.set(Boolean.TRUE);
 		}
 		else 
 			synchronizer = null;
@@ -2135,8 +2137,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 			final boolean [] initOK = new boolean[1];
 			
 			if (getSplash() != null) {
-				// declare the main thread to be a startup thread.
-				UISynchronizer.startupThread.set(Boolean.TRUE);
 				
 				Thread initThread = new Thread() {
 				/* (non-Javadoc)
