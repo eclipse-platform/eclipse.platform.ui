@@ -394,8 +394,9 @@ public interface IFileStore extends IAdaptable {
 	 * The {@link EFS#SET_ATTRIBUTES} update flag controls 
 	 * whether the file's attributes are changed.  When this flag is specified,
 	 * the <code>EFS#ATTRIBUTE_*</code> values, with
-	 * the exception of <code>EFS#ATTRIBUTE_DIRECTORY</code>
-	 * and <code>EFS#ATTRIBUTE_SYMLINK</code>,
+	 * the exception of <code>EFS#ATTRIBUTE_DIRECTORY</code>,
+	 * <code>EFS#ATTRIBUTE_SYMLINK</code> and
+	 * <code>EFS#ATTRIBUTE_LINK_TARGET</code>,
 	 * are set for this file. When this flag is not specified, changed attributes
 	 * on the provided file info are ignored.
 	 * </p>

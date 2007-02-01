@@ -41,6 +41,24 @@ jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
 	return result;
 }
 
+#ifdef LINUX
+/*
+ * Get a Java String from a java byte array, using the default charset.
+ * Uses Convert.fromPlatformBytes([B).
+ */
+jstring getString(JNIEnv *env, jbyteArray source) {
+	static jclass clsConvert = 0;
+	static jmethodID midFromPlatformBytes = 0;
+    if (midFromPlatformBytes == 0) {
+    	clsConvert = (*env)->FindClass(env, "org/eclipse/core/internal/filesystem/local/Convert");
+    	if (clsConvert == 0) return NULL;
+    	midFromPlatformBytes = (*env)->GetStaticMethodID(env, clsConvert, "fromPlatformBytes", "([B)Ljava/lang/String;");
+    	if (midFromPlatformBytes == 0) return NULL;
+    }
+    return (*env)->CallStaticObjectMethod(env, clsConvert, midFromPlatformBytes, source);
+}
+#endif
+
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
  * Method:    internalIsUnicode
@@ -147,17 +165,15 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 		//symbolic link: read link target
 		char buf[PATH_MAX+1];
 		int len;
+		jbyteArray barr;
 		len = readlink((const char*)name, buf, PATH_MAX);
 		if (len>0) {
-			buf[len]=0;
+			barr = (*env)->NewByteArray(env, len);
+			(*env)->SetByteArrayRegion(env, barr, 0, len, buf);
 		} else {
-			buf[0]=0;
+			barr = (*env)->NewByteArray(env, 0);
 		}
-		//TODO find a way for creating Strings from encodings other than UTF-8
-		//On Linux, UTF8 is fine since this is the default platform encoding.
-		//Other platforms may be problematic since accessing Java classes
-		//(for Converters) doesnt work through the OSGi classloaders.
-		linkTarget = (*env)->NewStringUTF(env, buf);
+		linkTarget = getString(env, barr);
 		setSymlinkInFileInfo(env, fileInfo, linkTarget);
 
 		//stat link target (will fail for broken links)

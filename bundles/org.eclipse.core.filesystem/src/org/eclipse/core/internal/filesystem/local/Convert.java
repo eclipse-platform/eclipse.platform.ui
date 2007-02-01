@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -66,6 +67,26 @@ public class Convert {
 		}
 
 		return longValue;
+	}
+
+	/**
+	 * Calling new String(byte[] s) creates a new encoding object and other garbage.
+	 * This can be avoided by calling new String(byte[] s, String encoding) instead.
+	 * @param source String in platform bytes
+	 * @return converted Java String
+	 * @since org.eclipse.core.filesystem 1.1
+	 */
+	public static String fromPlatformBytes(byte[] source) {
+		if (defaultEncoding == null)
+			return new String(source);
+		// try to use the default encoding
+		try {
+			return new String(source, defaultEncoding);
+		} catch (UnsupportedEncodingException e) {
+			// null the default encoding so we don't try it again
+			defaultEncoding = null;
+			return new String(source);
+		}
 	}
 
 	/**

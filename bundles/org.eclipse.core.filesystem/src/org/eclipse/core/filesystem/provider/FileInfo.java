@@ -229,6 +229,8 @@ public class FileInfo implements IFileInfo {
 	/**
 	 * Sets or clears a String attribute, e.g. symbolic link target.
 	 * 
+	 * @param attribute The kind of attribute to set. Currently only
+	 * {@link EFS#ATTRIBUTE_LINK_TARGET} is supported.
 	 * @param value The String attribute, or <code>null</code> to clear
 	 * the attribute
 	 * @since org.eclipse.core.filesystem 1.1
