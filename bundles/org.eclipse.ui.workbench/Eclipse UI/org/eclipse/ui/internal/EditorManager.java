@@ -86,6 +86,7 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
@@ -931,11 +932,6 @@ public class EditorManager implements IExtensionChangeHandler {
 				// findReusableEditor(...) checks pinned and saves editor if
 				// necessary
 				IEditorReference ref = new EditorReference(this, input, desc);
-				IPreferenceStore store = ((Workbench)page.getWorkbenchWindow().getWorkbench()).getPreferenceStore();
-		    	if (store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
-					NavigationHistory history = (NavigationHistory) page.getNavigationHistory();
-					history.updateCookieForTab(site.getPane(), ((EditorReference)ref).getPane());
-		    	}
 				reusableEditor.getEditorSite().getPage().closeEditor(
 						reusableEditor, false);
 				return ref;
@@ -1038,41 +1034,42 @@ public class EditorManager implements IExtensionChangeHandler {
 		if (areaMem != null) {
 			result.add(editorPresentation.restorePresentationState(areaMem));
 		}
+		try {
+			StartupThreading.runWithThrowable(new StartupRunnable(){
 
-		SafeRunner.run(new SafeRunnable() {
-			public void run() {
-				// Update each workbook with its visible editor.
-				for (int i = 0; i < visibleEditors.size(); i++) {
-					setVisibleEditor((IEditorReference) visibleEditors.get(i),
-							false);
-				}
-
-				// Update the active workbook
-				if (activeWorkbookID[0] != null) {
-					editorPresentation
-							.setActiveEditorWorkbookFromID(activeWorkbookID[0]);
-				}
-
-				if (activeEditor[0] != null) {
-					IWorkbenchPart editor = activeEditor[0].getPart(true);
-
-					if (editor != null) {
-						page.activate(editor);
+				public void runWithException() throws Throwable {
+					// Update each workbook with its visible editor.
+					for (int i = 0; i < visibleEditors.size(); i++) {
+						setVisibleEditor((IEditorReference) visibleEditors.get(i),
+								false);
 					}
-				}
-			}
 
-			public void handleException(Throwable e) {
-				// The exception is already logged.
-				result
-						.add(new Status(
-								IStatus.ERROR,
-								PlatformUI.PLUGIN_ID,
-								0,
-								WorkbenchMessages.EditorManager_exceptionRestoringEditor,
-								e));
-			}
-		});
+					// Update the active workbook
+					if (activeWorkbookID[0] != null) {
+						editorPresentation
+								.setActiveEditorWorkbookFromID(activeWorkbookID[0]);
+					}
+
+					if (activeEditor[0] != null) {
+						IWorkbenchPart editor = activeEditor[0].getPart(true);
+
+						if (editor != null) {
+							page.activate(editor);
+						}
+					}
+				}});
+		}
+		catch (Throwable t) {
+			// The exception is already logged.
+			result
+					.add(new Status(
+							IStatus.ERROR,
+							PlatformUI.PLUGIN_ID,
+							0,
+							WorkbenchMessages.EditorManager_exceptionRestoringEditor,
+							t));
+		}
+		
 		return result;
 	}
 
@@ -1544,16 +1541,21 @@ public class EditorManager implements IExtensionChangeHandler {
 			MultiStatus result) {
 		// String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
 		// boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
-		EditorReference e = new EditorReference(this, editorMem);
+		final EditorReference e = new EditorReference(this, editorMem);
 
 		// if the editor is not visible, ensure it is put in the correct
 		// workbook. PR 24091
 
-		String workbookID = editorMem
+		final String workbookID = editorMem
 				.getString(IWorkbenchConstants.TAG_WORKBOOK);
 
 		try {
-			createEditorTab(e, workbookID);
+			StartupThreading.runWithPartInitExceptions(new StartupRunnable () {
+
+				public void runWithException() throws Throwable {
+					createEditorTab(e, workbookID);
+				}});
+			
 		} catch (PartInitException ex) {
 			result.add(ex.getStatus());
 		}

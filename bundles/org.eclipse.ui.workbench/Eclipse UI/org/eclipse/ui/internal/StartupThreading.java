@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
@@ -34,7 +35,7 @@ public final class StartupThreading {
 		}
 
 		public abstract void runWithException() throws Throwable;
-		
+
 		public Throwable getThrowable() {
 			return throwable;
 		}
@@ -61,7 +62,25 @@ public final class StartupThreading {
 			}
 		}
 	}
-	
+
+	public static void runWithPartInitExceptions(StartupRunnable r)
+			throws PartInitException {
+		workbench.getDisplay().syncExec(r);
+		Throwable throwable = r.getThrowable();
+		if (throwable != null) {
+			if (throwable instanceof Error) {
+				throw (Error) throwable;
+			} else if (throwable instanceof RuntimeException) {
+				throw (RuntimeException) throwable;
+			} else if (throwable instanceof WorkbenchException) {
+				throw (PartInitException) throwable;
+			} else {
+				throw new PartInitException(StatusUtil.newStatus(
+						WorkbenchPlugin.PI_WORKBENCH, throwable));
+			}
+		}
+	}
+
 	public static void runWithThrowable(StartupRunnable r) throws Throwable {
 		workbench.getDisplay().syncExec(r);
 		Throwable throwable = r.getThrowable();
@@ -70,7 +89,8 @@ public final class StartupThreading {
 		}
 	}
 
-	public static void runWithoutExceptions(StartupRunnable r) throws RuntimeException {
+	public static void runWithoutExceptions(StartupRunnable r)
+			throws RuntimeException {
 		workbench.getDisplay().syncExec(r);
 		Throwable throwable = r.getThrowable();
 		if (throwable != null) {

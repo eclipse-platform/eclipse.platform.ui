@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
@@ -43,16 +44,13 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		//Determine the high contrast setting before
 		//any access to preferences
 		final boolean[] highContrast = new boolean[1];
-		Display.getCurrent().syncExec(new Runnable(){
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() throws Throwable {
 				highContrast[0] = Display.getCurrent().getHighContrast();
 				
-			}
-		});
-
+			}});
+		
 		IScopeContext context = new DefaultScope();
 		IEclipsePreferences node = context.getNode(UIPlugin.getDefault()
 				.getBundle().getSymbolicName());

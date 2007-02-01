@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 
@@ -77,14 +78,14 @@ public class ViewSashContainer extends PartSashContainer {
         IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_INFO);
 
         // Create a part ID to part hashtable.
-        Map mapIDtoPart = new HashMap(children.length);
+        final Map mapIDtoPart = new HashMap(children.length);
 
         // Loop through the info elements.
         for (int i = 0; i < children.length; i++) {
             // Get the info details.
             IMemento childMem = children[i];
             String partID = childMem.getString(IWorkbenchConstants.TAG_PART);
-            String relativeID = childMem
+            final String relativeID = childMem
                     .getString(IWorkbenchConstants.TAG_RELATIVE);
             int relationship = 0;
             float ratio = 0.0f;
@@ -130,22 +131,31 @@ public class ViewSashContainer extends PartSashContainer {
             // 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
             part.setContainer(this);
 
-            // Add the part to the layout
-            if (relativeID == null) {
-                add(part);
-            } else {
-                LayoutPart refPart = (LayoutPart) mapIDtoPart.get(relativeID);
-                if (refPart != null) {
-                    if (left != 0) {
-						add(part, relationship, left, right, refPart);
-					} else {
-						add(part, relationship, ratio, refPart);
-					}
-                } else {
-                    WorkbenchPlugin
-                            .log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
-                }
-            }
+            final int myLeft = left, myRight= right, myRelationship = relationship;
+            final float myRatio = ratio;
+            final LayoutPart myPart = part;
+            
+            StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					// Add the part to the layout
+		            if (relativeID == null) {
+		                add(myPart);
+		            } else {
+		                LayoutPart refPart = (LayoutPart) mapIDtoPart.get(relativeID);
+		                if (refPart != null) {
+		                    if (myLeft != 0) {
+								add(myPart, myRelationship, myLeft, myRight, refPart);
+							} else {
+								add(myPart, myRelationship, myRatio, refPart);
+							}
+		                } else {
+		                    WorkbenchPlugin
+		                            .log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
+		                }
+		            }
+				}});
+            
             mapIDtoPart.put(partID, part);
         }
         return result;

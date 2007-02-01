@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -290,30 +291,35 @@ public class EditorSashContainer extends PartSashContainer {
         // Remove the default editor workbook that is
         // initialy created with the editor area.
         if (children != null) {
-            EditorStack defaultWorkbook = null;
-            for (int i = 0; i < children.size(); i++) {
-                LayoutPart child = (LayoutPart) children.get(i);
-                if (child.getID() == DEFAULT_WORKBOOK_ID) {
-                    defaultWorkbook = (EditorStack) child;
-                    if (defaultWorkbook.getItemCount() > 0) {
-						defaultWorkbook = null;
+        	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					EditorStack defaultWorkbook = null;
+		            for (int i = 0; i < children.size(); i++) {
+		                LayoutPart child = (LayoutPart) children.get(i);
+		                if (child.getID() == DEFAULT_WORKBOOK_ID) {
+		                    defaultWorkbook = (EditorStack) child;
+		                    if (defaultWorkbook.getItemCount() > 0) {
+								defaultWorkbook = null;
+							}
+		                }
+		            }
+		            if (defaultWorkbook != null) {
+						remove(defaultWorkbook);
 					}
-                }
-            }
-            if (defaultWorkbook != null) {
-				remove(defaultWorkbook);
-			}
+				}});
+            
         }
 
         // Restore the relationship/layout
         IMemento[] infos = memento.getChildren(IWorkbenchConstants.TAG_INFO);
-        Map mapIDtoPart = new HashMap(infos.length);
+        final Map mapIDtoPart = new HashMap(infos.length);
 
         for (int i = 0; i < infos.length; i++) {
             // Get the info details.
             IMemento childMem = infos[i];
-            String partID = childMem.getString(IWorkbenchConstants.TAG_PART);
-            String relativeID = childMem
+            final String partID = childMem.getString(IWorkbenchConstants.TAG_PART);
+            final String relativeID = childMem
                     .getString(IWorkbenchConstants.TAG_RELATIVE);
             int relationship = 0;
             int left = 0, right = 0;
@@ -335,36 +341,49 @@ public class EditorSashContainer extends PartSashContainer {
                 }
             }
 
-            // Create the part.
-            EditorStack workbook = EditorStack.newEditorWorkbook(this, page);
-            workbook.setID(partID);
-            // 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
-            workbook.setContainer(this);
+            final EditorStack workbook [] = new EditorStack[1];
+            StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					// Create the part.
+		            workbook[0] = EditorStack.newEditorWorkbook(EditorSashContainer.this, page);
+		            workbook[0].setID(partID);
+		            // 1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
+		            workbook[0].setContainer(EditorSashContainer.this);
+				}});
+            
 
             IMemento workbookMemento = childMem
                     .getChild(IWorkbenchConstants.TAG_FOLDER);
             if (workbookMemento != null) {
-                result.add(workbook.restoreState(workbookMemento));
+                result.add(workbook[0].restoreState(workbookMemento));
             }
 
-            // Add the part to the layout
-            if (relativeID == null) {
-                add(workbook);
-            } else {
-                LayoutPart refPart = (LayoutPart) mapIDtoPart.get(relativeID);
-                if (refPart != null) {
-                    //$TODO pass in left and right
-                    if (left == 0 || right == 0) {
-						add(workbook, relationship, ratio, refPart);
-					} else {
-						add(workbook, relationship, left, right, refPart);
-					}
-                } else {
-                    WorkbenchPlugin
-                            .log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
-                }
-            }
-            mapIDtoPart.put(partID, workbook);
+            final int myLeft = left, myRight = right, myRelationship = relationship;
+            final float myRatio = ratio;
+            StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					// Add the part to the layout
+		            if (relativeID == null) {
+		                add(workbook[0]);
+		            } else {
+		                LayoutPart refPart = (LayoutPart) mapIDtoPart.get(relativeID);
+		                if (refPart != null) {
+		                    //$TODO pass in left and right
+		                    if (myLeft == 0 || myRight == 0) {
+								add(workbook[0], myRelationship, myRatio, refPart);
+							} else {
+								add(workbook[0], myRelationship, myLeft, myRight, refPart);
+							}
+		                } else {
+		                    WorkbenchPlugin
+		                            .log("Unable to find part for ID: " + relativeID);//$NON-NLS-1$
+		                }
+		            }
+				}});
+            
+            mapIDtoPart.put(partID, workbook[0]);
         }
 
         // Trim Stack Support
@@ -590,14 +609,19 @@ public class EditorSashContainer extends PartSashContainer {
      */
     public IStatus restorePresentationState(IMemento areaMem) {
         for (Iterator i = getEditorWorkbooks().iterator(); i.hasNext();) {
-            EditorStack workbook = (EditorStack) i.next();
-            IMemento memento = workbook.getSavedPresentationState();
+            final EditorStack workbook = (EditorStack) i.next();
+            final IMemento memento = workbook.getSavedPresentationState();
             if (memento == null) {
 				continue;
 			}
-            PresentationSerializer serializer = new PresentationSerializer(
+            final PresentationSerializer serializer = new PresentationSerializer(
                     workbook.getPresentableParts());
-            workbook.getPresentation().restoreState(serializer, memento);
+            StartupThreading.runWithoutExceptions(new StartupRunnable(){
+
+				public void runWithException() throws Throwable {
+					 workbook.getPresentation().restoreState(serializer, memento);
+				}});
+           
         }
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }

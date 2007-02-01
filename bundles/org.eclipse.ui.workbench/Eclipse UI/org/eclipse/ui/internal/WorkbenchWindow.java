@@ -97,6 +97,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -1655,7 +1656,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			IPerspectiveDescriptor activeDescriptor) {
 		Assert.isNotNull(getShell());
 
-		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
+		final MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
 				WorkbenchMessages.WorkbenchWindow_problemsRestoringWindow, null);
 
 		// Restore the window advisor state.
@@ -1674,14 +1675,25 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		// Read window's bounds and state.
-		Rectangle displayBounds = getShell().getDisplay().getBounds();
-		Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
+		final Rectangle [] displayBounds = new Rectangle[1];
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-		IMemento fastViewMem = memento
+			public void runWithException() {
+				displayBounds[0] = getShell().getDisplay().getBounds();
+				
+			}});
+		final Rectangle shellBounds = new Rectangle(0, 0, 0, 0);
+
+		final IMemento fastViewMem = memento
 				.getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
 		if (fastViewMem != null) {
 			if (fastViewBar != null) {
-				fastViewBar.restoreState(fastViewMem);
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() {
+						fastViewBar.restoreState(fastViewMem);
+					}});
+				
 			}
 		}
 		Integer bigInt = memento.getInteger(IWorkbenchConstants.TAG_X);
@@ -1693,15 +1705,24 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
 		shellBounds.height = bigInt == null ? 0 : bigInt.intValue();
 		if (!shellBounds.isEmpty()) {
-			if (!shellBounds.intersects(displayBounds)) {
-				Rectangle clientArea = getShell().getDisplay().getClientArea();
-				shellBounds.x = clientArea.x;
-				shellBounds.y = clientArea.y;
-			}
-			getShell().setBounds(shellBounds);
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() {
+					if (!shellBounds.intersects(displayBounds[0])) {
+						Rectangle clientArea = getShell().getDisplay().getClientArea();
+						shellBounds.x = clientArea.x;
+						shellBounds.y = clientArea.y;
+					}
+					getShell().setBounds(shellBounds);
+				}});
 		}
 		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MAXIMIZED))) { //$NON-NLS-1$
-			getShell().setMaximized(true);
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() {
+					getShell().setMaximized(true);
+				}});
+			
 		}
 		if ("true".equals(memento.getString(IWorkbenchConstants.TAG_MINIMIZED))) { //$NON-NLS-1$
 			// getShell().setMinimized(true);
@@ -1717,19 +1738,24 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// This needs to be done before pages are created to ensure proper
 		// canonical creation
 		// of cool items
-		ICoolBarManager2 coolBarMgr = (ICoolBarManager2) getCoolBarManager2();
+		final ICoolBarManager2 coolBarMgr = (ICoolBarManager2) getCoolBarManager2();
         if (coolBarMgr != null) {
 			IMemento coolBarMem = memento
 					.getChild(IWorkbenchConstants.TAG_COOLBAR_LAYOUT);
 			if (coolBarMem != null) {
 				// Check if the layout is locked
-				Integer lockedInt = coolBarMem
+				final Integer lockedInt = coolBarMem
 						.getInteger(IWorkbenchConstants.TAG_LOCKED);
-				if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
-					coolBarMgr.setLockLayout(true);
-				} else {
-					coolBarMgr.setLockLayout(false);
-				}
+				StartupThreading.runWithoutExceptions(new StartupRunnable(){
+
+					public void runWithException() {
+						if ((lockedInt != null) && (lockedInt.intValue() == 1)) {
+							coolBarMgr.setLockLayout(true);
+						} else {
+							coolBarMgr.setLockLayout(false);
+						}
+					}});
+				
 				// The new layout of the cool bar manager
 				ArrayList coolBarLayout = new ArrayList();
 				// Traverse through all the cool item in the memento
@@ -1873,10 +1899,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 				// Set the cool bar layout to the given layout.
 				finalLayout.addAll(coolBarLayout);
-				IContributionItem[] itemsToSet = new IContributionItem[finalLayout
+				final IContributionItem[] itemsToSet = new IContributionItem[finalLayout
 						.size()];
 				finalLayout.toArray(itemsToSet);
-				coolBarMgr.setItems(itemsToSet);
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() {
+						coolBarMgr.setItems(itemsToSet);
+					}});
+				
 			} else {
 				// For older workbenchs
 				coolBarMem = memento
@@ -1893,17 +1924,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		IMemento[] pageArray = memento
 				.getChildren(IWorkbenchConstants.TAG_PAGE);
 		for (int i = 0; i < pageArray.length; i++) {
-			IMemento pageMem = pageArray[i];
+			final IMemento pageMem = pageArray[i];
 			String strFocus = pageMem.getString(IWorkbenchConstants.TAG_FOCUS);
 			if (strFocus == null || strFocus.length() == 0) {
 				continue;
 			}
 
 			// Get the input factory.
-			IAdaptable input = null;
-			IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
+			final IAdaptable [] input = new IAdaptable[1];
+			final IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
 			if (inputMem != null) {
-				String factoryID = inputMem
+				final String factoryID = inputMem
 						.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 				if (factoryID == null) {
 					WorkbenchPlugin
@@ -1914,18 +1945,27 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				try {
 					UIStats.start(UIStats.RESTORE_WORKBENCH,
 							"WorkbenchPageFactory"); //$NON-NLS-1$
-					IElementFactory factory = PlatformUI.getWorkbench()
-							.getElementFactory(factoryID);
-					if (factory == null) {
-						WorkbenchPlugin
-								.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
-						result.add(unableToRestorePage(pageMem));
-						continue;
-					}
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
 
-					// Get the input element.
-					input = factory.createElement(inputMem);
-					if (input == null) {
+								public void runWithException() throws Throwable {
+									IElementFactory factory = PlatformUI
+											.getWorkbench().getElementFactory(
+													factoryID);
+									if (factory == null) {
+										WorkbenchPlugin
+												.log("Unable to restore page - cannot instantiate input factory: " + factoryID); //$NON-NLS-1$
+										result
+												.add(unableToRestorePage(pageMem));
+										return;
+									}
+
+									// Get the input element.
+									input[0] = factory.createElement(inputMem);
+								}
+							});
+					
+					if (input[0] == null) {
 						WorkbenchPlugin
 								.log("Unable to restore page - cannot instantiate input element: " + factoryID); //$NON-NLS-1$
 						result.add(unableToRestorePage(pageMem));
@@ -1937,12 +1977,23 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				}
 			}
 			// Open the perspective.
-			WorkbenchPage newPage = null;
+			final IAdaptable finalInput = input[0];
+			final WorkbenchPage [] newPage = new WorkbenchPage[1];
 			try {
-				newPage = new WorkbenchPage(this, input);
-				result.add(newPage.restoreState(pageMem, activeDescriptor));
-				pageList.add(newPage);
-				firePageOpened(newPage);
+				StartupThreading.runWithWorkbenchExceptions(new StartupRunnable(){
+
+					public void runWithException() throws WorkbenchException {
+						newPage[0] = new WorkbenchPage(WorkbenchWindow.this, finalInput);
+					}});
+				
+				result.add(newPage[0].restoreState(pageMem, activeDescriptor));
+				pageList.add(newPage[0]);
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() throws Throwable {
+						firePageOpened(newPage[0]);
+					}});
+				
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin
 						.log(
@@ -1952,7 +2003,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 
 			if (strFocus != null && strFocus.length() > 0) {
-				newActivePage = newPage;
+				newActivePage = newPage[0];
 			}
 		}
 
@@ -1985,8 +2036,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (newActivePage == null) {
 			newActivePage = pageList.getNextActive();
 		}
+		final IWorkbenchPage myPage = newActivePage;
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-		setActivePage(newActivePage);
+			public void runWithException() throws Throwable {
+				setActivePage(myPage);
+			}});
+		
 
 		IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
 		if (introMem != null) {
@@ -2539,7 +2595,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// We need to remember all the trim that was repositioned
 			// here so we can re-site -newly contributed- trim after
 			// we're done
-			List knownIds = new ArrayList();
+			final List knownIds = new ArrayList();
 			
 			List[] trimOrder = new List[areas.length];
 			for (int i = 0; i < areas.length; i++) {
@@ -2561,14 +2617,26 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// second pass applies all of the window trim
 			for (int i = 0; i < areas.length; i++) {
 				IMemento area = areas[i];
-				int id = Integer.parseInt(area.getID());
-				defaultLayout.updateAreaTrim(id, trimOrder[i], false);
+				final int id = Integer.parseInt(area.getID());
+				final List myTrimOrderList = trimOrder[i];
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() throws Throwable {
+						defaultLayout.updateAreaTrim(id, myTrimOrderList, false);
+					}});
+				
 			}
 
 			// get the trim manager to re-locate any -newly contributed-
 			// trim widgets
-			if (trimMgr2 != null)
-				trimMgr2.updateLocations(knownIds);
+			if (trimMgr2 != null) {
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() throws Throwable {
+						trimMgr2.updateLocations(knownIds);
+					}});
+				
+			}
 		}
 		else {
 			// No 3.2 state...check if the FVB has state
@@ -2576,11 +2644,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					.getChild(IWorkbenchConstants.TAG_FAST_VIEW_DATA);
 			if (fastViewMem != null) {
 				if (fastViewBar != null) {
-			        Integer bigInt;
-			        bigInt = fastViewMem.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
+			        final Integer bigInt = fastViewMem.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
 			        if (bigInt != null) {
-			        	fastViewBar.dock(bigInt.intValue());
-			        	getTrimManager().addTrim(bigInt.intValue(), fastViewBar);
+			        	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+							public void runWithException() throws Throwable {
+								fastViewBar.dock(bigInt.intValue());
+					        	getTrimManager().addTrim(bigInt.intValue(), fastViewBar);
+							}});
+			        	
 			        }
 				}
 			}

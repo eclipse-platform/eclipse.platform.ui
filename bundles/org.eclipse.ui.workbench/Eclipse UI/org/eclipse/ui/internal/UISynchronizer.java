@@ -10,18 +10,107 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Synchronizer;
 
 public class UISynchronizer extends Synchronizer {
     protected UILockListener lockListener;
+    
+    /**
+	 * Indicates that the UI is in startup mode and that no non-workbench
+	 * runnables should be invoked.
+	 */
+	protected boolean isStarting = true;
 
+	/**
+	 * List of non-workbench Runnables that need executing at some point in the future
+	 */
+	protected List pendingStartup = new ArrayList();
+
+	/**
+	 * Setting this variable to the value {@link Boolean.TRUE} will allow a
+	 * thread to execute code during the startup sequence.
+	 */
+	public static final ThreadLocal startupThread = new ThreadLocal() {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.ThreadLocal#initialValue()
+		 */
+		protected Object initialValue() {
+			return Boolean.FALSE;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.ThreadLocal#set(java.lang.Object)
+		 */
+		public void set(Object value) {
+			if (value != Boolean.TRUE && value != Boolean.FALSE)
+				throw new IllegalArgumentException();
+			super.set(value);
+		}
+	};
+	
     public UISynchronizer(Display display, UILockListener lock) {
         super(display);
         this.lockListener = lock;
     }
+    
+    public void started() {
+    	synchronized (this) {
+			if (!isStarting)
+				throw new IllegalStateException();
+			isStarting = false;
+			for (Iterator i = pendingStartup.iterator(); i.hasNext();) {
+				Runnable runnable = (Runnable) i.next();
+				try {
+					//queue up all pending asyncs
+					super.asyncExec(runnable);
+				} catch (RuntimeException e) {
+					// do nothing
+				}
+			}
+			pendingStartup = null;
+			// wake up all pending syncExecs
+			this.notifyAll();
+    	}    	
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.widgets.Synchronizer#asyncExec(java.lang.Runnable)
+     */
+    protected void asyncExec(Runnable runnable) {
+    	if (runnable != null) {
+			synchronized (this) {
+				if (isStarting
+						&& UISynchronizer.startupThread.get() == Boolean.FALSE) {
+					pendingStartup.add(runnable);
+					
+					return;
+				}
+			}
+		}
+    	super.asyncExec(runnable);
+    }
 
-    public void syncExec(Runnable runnable) {
+	public void syncExec(Runnable runnable) {
+		
+		synchronized (this) {
+			if (isStarting && UISynchronizer.startupThread.get() == Boolean.FALSE) {
+				do {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+					}
+				} while (isStarting);
+			}
+		}
+		
         //if this thread is the UI or this thread does not own any locks, just do the syncExec
         if ((runnable == null) || lockListener.isUI()
                 || !lockListener.isLockOwner()) {

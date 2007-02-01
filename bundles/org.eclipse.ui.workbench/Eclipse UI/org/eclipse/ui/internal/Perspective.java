@@ -50,6 +50,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.ITrimManager;
@@ -1019,30 +1020,46 @@ public class Perspective {
         IMemento memento = this.memento;
         this.memento = null;
 
-        IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
+        final IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
         if (boundsMem != null) {
-            Rectangle r = new Rectangle(0, 0, 0, 0);
+        	final Rectangle r = new Rectangle(0, 0, 0, 0);
             r.x = boundsMem.getInteger(IWorkbenchConstants.TAG_X).intValue();
             r.y = boundsMem.getInteger(IWorkbenchConstants.TAG_Y).intValue();
             r.height = boundsMem.getInteger(IWorkbenchConstants.TAG_HEIGHT)
                     .intValue();
             r.width = boundsMem.getInteger(IWorkbenchConstants.TAG_WIDTH)
                     .intValue();
-            if (page.getWorkbenchWindow().getPages().length == 0) {
-                page.getWorkbenchWindow().getShell().setBounds(r);
-            }
+        	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					if (page.getWorkbenchWindow().getPages().length == 0) {
+		                page.getWorkbenchWindow().getShell().setBounds(r);
+		            }
+				}
+			});
+
         }
 
         // Create an empty presentation..
-        ViewSashContainer mainLayout = new ViewSashContainer(page, getClientComposite());
-        PerspectiveHelper pres = new PerspectiveHelper(page, mainLayout, this);
+        final PerspectiveHelper [] presArray = new PerspectiveHelper[1];
+        StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() throws Throwable {
+				ViewSashContainer mainLayout = new ViewSashContainer(page, getClientComposite());
+				presArray[0] = new PerspectiveHelper(page, mainLayout, Perspective.this);
+			}});
+        final PerspectiveHelper pres = presArray[0];
 
         // Read the layout.
         result.merge(pres.restoreState(memento
                 .getChild(IWorkbenchConstants.TAG_LAYOUT)));
 
-        // Add the editor workbook. Do not hide it now.
-        pres.replacePlaceholderWithPart(editorArea);
+        StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() throws Throwable {
+				// Add the editor workbook. Do not hide it now.
+		        pres.replacePlaceholderWithPart(editorArea);
+			}});
 
         // Add the visible views.
         IMemento[] views = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
@@ -1061,6 +1078,7 @@ public class Perspective {
 				continue;
 			}
 
+            
             // Create and open the view.
             IViewReference viewRef = viewFactory.getView(id, secondaryId);
             WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;

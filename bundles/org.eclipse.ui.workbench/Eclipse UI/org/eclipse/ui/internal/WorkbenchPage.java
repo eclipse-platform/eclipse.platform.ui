@@ -89,6 +89,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -1466,11 +1467,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Creates the client composite.
      */
     private void createClientComposite() {
-        Composite parent = window.getPageComposite();
-        composite = new Composite(parent, SWT.NONE);
-        composite.setVisible(false); // Make visible on activate.
-        // force the client composite to be layed out
-        parent.layout();
+        final Composite parent = window.getPageComposite();
+        StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				composite = new Composite(parent, SWT.NONE);
+				composite.setVisible(false); // Make visible on activate.
+				// force the client composite to be layed out
+				parent.layout();
+			}
+		});
+       
     }
 
     /**
@@ -2794,9 +2801,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * old perspective.
      */
     public IStatus restoreState(IMemento memento,
-            IPerspectiveDescriptor activeDescriptor) {
+            final IPerspectiveDescriptor activeDescriptor) {
+        StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() throws Throwable {
+				deferUpdates(true);
+			}});
         
-        deferUpdates(true);
         try {
             // Restore working set
             String pageName = memento.getString(IWorkbenchConstants.TAG_LABEL);
@@ -2811,7 +2822,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (pageName == null) {
 					pageName = ""; //$NON-NLS-1$
 				}
-                MultiStatus result = new MultiStatus(
+                final MultiStatus result = new MultiStatus(
                         PlatformUI.PLUGIN_ID,
                         IStatus.OK,
                         NLS.bind(WorkbenchMessages.WorkbenchPage_unableToRestorePerspective, pageName ), 
@@ -2875,33 +2886,45 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                         activePartID = ViewFactory.extractPrimaryId(activePartID);
                     }
                 }
-                String activePerspectiveID = childMem
+                final String activePerspectiveID = childMem
                         .getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
     
                 // Restore perspectives.
-                IMemento perspMems[] = childMem
+                final IMemento perspMems[] = childMem
                         .getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
-                Perspective activePerspective = null;
+                final Perspective activePerspectiveArray [] = new Perspective[1];
+                
                 for (int i = 0; i < perspMems.length; i++) {
-                    try {
-                        Perspective persp = new Perspective(null, this);
-                        result.merge(persp.restoreState(perspMems[i]));
-                        IPerspectiveDescriptor desc = persp.getDesc();
-                        if (desc.equals(activeDescriptor)) {
-							activePerspective = persp;
-						} else if ((activePerspective == null)
-                                && desc.getId().equals(activePerspectiveID)) {
-							activePerspective = persp;
-						}
-                        perspList.add(persp);
-                        window.firePerspectiveOpened(this, desc);
-                    } catch (WorkbenchException e) {
-                    }
+                    
+                        final IMemento current = perspMems[i];
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
+
+								public void runWithException() throws Throwable {
+									Perspective persp = new Perspective(null,
+											WorkbenchPage.this);
+									result.merge(persp.restoreState(current));
+									final IPerspectiveDescriptor desc = persp
+											.getDesc();
+									if (desc.equals(activeDescriptor)) {
+										activePerspectiveArray[0] = persp;
+									} else if ((activePerspectiveArray[0] == null)
+											&& desc.getId().equals(
+													activePerspectiveID)) {
+										activePerspectiveArray[0] = persp;
+									}
+									perspList.add(persp);
+									window.firePerspectiveOpened(
+											WorkbenchPage.this, desc);
+								}
+							});
                 }
+                Perspective activePerspective = activePerspectiveArray[0];
                 boolean restoreActivePerspective = false;
                 if (activeDescriptor == null) {
 					restoreActivePerspective = true;
-				} else if (activePerspective != null
+
+                } else if (activePerspective != null
                         && activePerspective.getDesc().equals(activeDescriptor)) {
                     restoreActivePerspective = true;
                 } else {
@@ -2933,18 +2956,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 				}
     
                 if (activePerspective != null) {
-                    window.firePerspectiveActivated(this, activePerspective
-                            .getDesc());
-    
-                    // Restore active part.
-                    if (activePartID != null) {
-                        IViewReference ref = activePerspective.findView(
-                                activePartID, activePartSecondaryID);
-                        
-                        if (ref != null) {
-                            activationList.setActive(ref);
-                        }
-                    }
+                	final Perspective myPerspective = activePerspective;
+                	final String myActivePartId = activePartID, mySecondaryId = activePartSecondaryID;
+                	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+						public void runWithException() throws Throwable {
+							window.firePerspectiveActivated(WorkbenchPage.this, myPerspective
+		                            .getDesc());
+		    
+		                    // Restore active part.
+		                    if (myActivePartId != null) {
+		                        IViewReference ref = myPerspective.findView(
+		                        		myActivePartId, mySecondaryId);
+		                        
+		                        if (ref != null) {
+		                            activationList.setActive(ref);
+		                        }
+		                    }
+						}});
+                    
                 }
     
                 childMem = memento
@@ -2980,7 +3010,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 UIStats.end(UIStats.RESTORE_WORKBENCH, blame, "WorkbenchPage" + label); //$NON-NLS-1$
             }
         } finally {
-            deferUpdates(false);
+        	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					deferUpdates(false);
+				}
+			});
         }
     }
 

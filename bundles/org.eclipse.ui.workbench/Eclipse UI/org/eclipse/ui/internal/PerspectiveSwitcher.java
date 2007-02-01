@@ -50,6 +50,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -1136,12 +1137,16 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			size = attributes.getChild(IWorkbenchConstants.TAG_ITEM_SIZE);
 		}
         if (size != null && currentLocation == TOP_RIGHT && topBar != null) {
-            Integer x = size.getInteger(IWorkbenchConstants.TAG_X);
-            if (x != null) {
-				topBar.setRightWidth(x.intValue());
-			} else {
-				topBar.setRightWidth(getDefaultWidth());
-			}
+            final Integer x = size.getInteger(IWorkbenchConstants.TAG_X);
+            StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() {
+					if (x != null) {
+						topBar.setRightWidth(x.intValue());
+					} else {
+						topBar.setRightWidth(getDefaultWidth());
+					}
+				}});
         }
     }
 

@@ -121,6 +121,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.commands.CommandImageManager;
@@ -154,7 +155,6 @@ import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
-import org.eclipse.ui.internal.splash.SplashHandlerFactory;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -604,13 +604,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return null;
 		
 		if (splash == null) {
-			
-			IProduct product = Platform.getProduct();
-			if (product != null) 
-				splash = SplashHandlerFactory.findSplashHandlerFor(product);
-			
-			if (splash == null)
-				splash = new EclipseSplashHandler();
+			splash = new EclipseSplashHandler(); 
 		}
 		return splash;
 	}
@@ -951,25 +945,41 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * 
 	 * Assumes that busy cursor is active.
 	 */
-	private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID,
-			IAdaptable input) throws WorkbenchException {
+	private IWorkbenchWindow busyOpenWorkbenchWindow(final String perspID,
+			final IAdaptable input) throws WorkbenchException {
 		// Create a workbench window (becomes active window)
-		WorkbenchWindow newWindow = newWorkbenchWindow();
-		newWindow.create(); // must be created before adding to window manager
+		final WorkbenchWindow newWindow = newWorkbenchWindow();
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				newWindow.create(); // must be created before adding to window manager
+			}});
 		windowManager.add(newWindow);
 
+		final WorkbenchException [] exceptions = new WorkbenchException[1];
 		// Create the initial page.
 		if (perspID != null) {
-			try {
-				newWindow.busyOpenPage(perspID, input);
-			} catch (WorkbenchException e) {
-				windowManager.remove(newWindow);
-				throw e;
-			}
+			StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
+
+				public void runWithException() throws WorkbenchException {
+					try {
+						newWindow.busyOpenPage(perspID, input);
+					} catch (WorkbenchException e) {
+						windowManager.remove(newWindow);
+						exceptions[0] = e;
+					}
+				}});	
 		}
+		if (exceptions[0] != null)
+			throw exceptions[0];
 
 		// Open window after opening page, to avoid flicker.
-		newWindow.open();
+		StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				newWindow.open();
+			}
+		});
 
 		return newWindow;
 	}
@@ -1238,8 +1248,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// now that the workbench is sufficiently initialized, let the advisor
 		// have a turn.
-		advisor.internalBasicInitialize(getWorkbenchConfigurer());
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+			public void runWithException() {
+				advisor.internalBasicInitialize(getWorkbenchConfigurer());
+			}
+		});
+		
 		// configure use of color icons in toolbars
 		boolean useColorIcons = PrefUtil.getInternalPreferenceStore()
 				.getBoolean(IPreferenceConstants.COLOR_ICONS);
@@ -1290,11 +1305,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void initializeApplicationColors() {
-		ColorDefinition[] colorDefinitions = WorkbenchPlugin.getDefault()
-				.getThemeRegistry().getColors();
-		ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
-				IThemeManager.DEFAULT_THEME), colorDefinitions, PrefUtil
-				.getInternalPreferenceStore());
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				ColorDefinition[] colorDefinitions = WorkbenchPlugin
+						.getDefault().getThemeRegistry().getColors();
+				ThemeElementHelper.populateRegistry(getThemeManager().getTheme(
+						IThemeManager.DEFAULT_THEME), colorDefinitions,
+						PrefUtil.getInternalPreferenceStore());
+			}
+		});
 	}
 
 	private void initializeSingleClickOption() {
@@ -1323,12 +1343,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * Initializes the workbench fonts with the stored values.
 	 */
 	private void initializeFonts() {
-		FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault()
-				.getThemeRegistry().getFonts();
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-		ThemeElementHelper.populateRegistry(
-				getThemeManager().getCurrentTheme(), fontDefinitions, PrefUtil
+			public void runWithException() {
+				FontDefinition[] fontDefinitions = WorkbenchPlugin.getDefault()
+						.getThemeRegistry().getFonts();
+
+				ThemeElementHelper.populateRegistry(getThemeManager()
+						.getCurrentTheme(), fontDefinitions, PrefUtil
 						.getInternalPreferenceStore());
+			}
+		});
 	}
 
 	/*
@@ -1371,8 +1396,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	private void initializeColors() {
-		// @issue some colors are generic; some are app-specific
-		WorkbenchColors.startup();
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+			public void runWithException() {
+				WorkbenchColors.startup();
+			}});
 	}
 
 	/*
@@ -1389,47 +1416,82 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private final void initializeDefaultServices() {
 
-		serviceLocator.registerService(ISaveablesLifecycleListener.class,
-				new SaveablesList());
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+			public void runWithException() {
+				serviceLocator.registerService(ISaveablesLifecycleListener.class,
+						new SaveablesList());
+			}});
+		
 		/*
 		 * Phase 1 of the initialization of commands. When this phase completes,
 		 * all the services and managers will exist, and be accessible via the
 		 * getService(Object) method.
 		 */
-		Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
-		commandManager = new CommandManager();
-		final CommandService commandService = new CommandService(commandManager);
-		commandService.readRegistry();
-		serviceLocator.registerService(ICommandService.class, commandService);
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-		ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
-		contextManager = new ContextManager();
+			public void runWithException() {
+				Command.DEBUG_COMMAND_EXECUTION = Policy.DEBUG_COMMANDS;
+				commandManager = new CommandManager();
+			}});
+		
+		final CommandService [] commandService = new CommandService[1];
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				commandService[0] = new CommandService(commandManager);
+				commandService[0].readRegistry();
+				serviceLocator.registerService(ICommandService.class, commandService[0]);
+
+			}});
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				ContextManager.DEBUG = Policy.DEBUG_CONTEXTS;
+				contextManager = new ContextManager();
+				}});
+		
 		final IContextService contextService = new ContextService(
 				contextManager);
 		contextService.readRegistry();
 		serviceLocator.registerService(IContextService.class, contextService);
+	
+		
+		final IHandlerService [] handlerService = new IHandlerService[1];
+	
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-		final IHandlerService handlerService = new HandlerService(
-				commandService);
-		handlerService.readRegistry();
-		serviceLocator.registerService(IHandlerService.class, handlerService);
+			public void runWithException() {
+				handlerService[0] = new HandlerService(
+						commandService[0]);	
+			}});
+		handlerService[0].readRegistry();
+		serviceLocator.registerService(IHandlerService.class, handlerService[0]);
 
-		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
-		bindingManager = new BindingManager(contextManager, commandManager);
-		final IBindingService bindingService = new BindingService(
-				bindingManager, commandService, this);
-		bindingService.readRegistryAndPreferences(commandService);
-		serviceLocator.registerService(IBindingService.class, bindingService);
+		final IBindingService [] bindingService = new BindingService[1];
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
+				bindingManager = new BindingManager(contextManager, commandManager);
+				bindingService[0] = new BindingService(
+						bindingManager, commandService[0], Workbench.this);
+				
+			}});
+		
+		bindingService[0].readRegistryAndPreferences(commandService[0]);
+		serviceLocator.registerService(IBindingService.class, bindingService[0]);
 
 		final CommandImageManager commandImageManager = new CommandImageManager();
 		final CommandImageService commandImageService = new CommandImageService(
-				commandImageManager, commandService);
+				commandImageManager, commandService[0]);
 		commandImageService.readRegistry();
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
 		
-		WorkbenchMenuService menuService = new WorkbenchMenuService();
+		final WorkbenchMenuService menuService = new WorkbenchMenuService();
 		menuService.readRegistry();
 		serviceLocator.registerService(IMenuService.class, menuService);
 
@@ -1442,40 +1504,58 @@ public final class Workbench extends EventManager implements IWorkbench {
 		final ISourceProviderService sourceProviderService = new SourceProviderService();
 		serviceLocator.registerService(ISourceProviderService.class,
 				sourceProviderService);
-		final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
-				this);
-		handlerService.addSourceProvider(activeShellSourceProvider);
-		contextService.addSourceProvider(activeShellSourceProvider);
-		menuService.addSourceProvider(activeShellSourceProvider);
-		sourceProviderService.registerProvider(activeShellSourceProvider);
-		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
-				this);
-		handlerService.addSourceProvider(activePartSourceProvider);
-		contextService.addSourceProvider(activePartSourceProvider);
-		menuService.addSourceProvider(activePartSourceProvider);
-		sourceProviderService.registerProvider(activePartSourceProvider);
-		final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
-				contextService);
-		handlerService.addSourceProvider(activeContextSourceProvider);
-		menuService.addSourceProvider(activeContextSourceProvider);
-		sourceProviderService.registerProvider(activeContextSourceProvider);
-		final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
-				this);
-		handlerService.addSourceProvider(currentSelectionSourceProvider);
-		contextService.addSourceProvider(currentSelectionSourceProvider);
-		menuService.addSourceProvider(currentSelectionSourceProvider);
-		sourceProviderService.registerProvider(currentSelectionSourceProvider);
-		actionSetSourceProvider = new ActionSetSourceProvider(contextService);
-		handlerService.addSourceProvider(actionSetSourceProvider);
-		contextService.addSourceProvider(actionSetSourceProvider);
-		menuService.addSourceProvider(actionSetSourceProvider);
-		sourceProviderService.registerProvider(actionSetSourceProvider);
-		menuSourceProvider = new MenuSourceProvider();
-		handlerService.addSourceProvider(menuSourceProvider);
-		contextService.addSourceProvider(menuSourceProvider);
-		menuService.addSourceProvider(menuSourceProvider);
-		sourceProviderService.registerProvider(menuSourceProvider);
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+			public void runWithException() {
+				final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
+						Workbench.this);
+				handlerService[0].addSourceProvider(activeShellSourceProvider);
+				contextService.addSourceProvider(activeShellSourceProvider);
+				menuService.addSourceProvider(activeShellSourceProvider);
+				sourceProviderService.registerProvider(activeShellSourceProvider);		
+			}});
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
+						Workbench.this);
+				handlerService[0].addSourceProvider(activePartSourceProvider);
+				contextService.addSourceProvider(activePartSourceProvider);
+				menuService.addSourceProvider(activePartSourceProvider);
+				sourceProviderService.registerProvider(activePartSourceProvider);
+			}});
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
+						contextService);
+				handlerService[0].addSourceProvider(activeContextSourceProvider);
+				menuService.addSourceProvider(activeContextSourceProvider);
+				sourceProviderService.registerProvider(activeContextSourceProvider);
+			}});
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
+						Workbench.this);
+				handlerService[0].addSourceProvider(currentSelectionSourceProvider);
+				contextService.addSourceProvider(currentSelectionSourceProvider);
+				menuService.addSourceProvider(currentSelectionSourceProvider);
+				sourceProviderService.registerProvider(currentSelectionSourceProvider);
+				actionSetSourceProvider = new ActionSetSourceProvider(contextService);
+				handlerService[0].addSourceProvider(actionSetSourceProvider);
+				contextService.addSourceProvider(actionSetSourceProvider);
+				menuService.addSourceProvider(actionSetSourceProvider);
+				sourceProviderService.registerProvider(actionSetSourceProvider);
+				menuSourceProvider = new MenuSourceProvider();
+				handlerService[0].addSourceProvider(menuSourceProvider);
+				contextService.addSourceProvider(menuSourceProvider);
+				menuService.addSourceProvider(menuSourceProvider);
+				sourceProviderService.registerProvider(menuSourceProvider);
+
+			}});
+		
 		/*
 		 * Phase 3 of the initialization of commands. This handles the creation
 		 * of wrappers for legacy APIs. By the time this phase completes, any
@@ -1484,7 +1564,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,
-				commandManager, contextManager, handlerService);
+				commandManager, contextManager, handlerService[0]);
 		initializeCommandResolver();
 
 		addWindowListener(windowListener);
@@ -1717,15 +1797,22 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			}
 
-			public void handleException(Throwable e) {
-				super.handleException(e);
-				String msg = e.getMessage() == null ? "" : e.getMessage(); //$NON-NLS-1$
-				result[0] = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH,
-						IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, e);
-				stateFile.delete();
-			}
+			public void handleException(final Throwable e) {
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
+					public void runWithException() {
+						handle(e);
+						String msg = e.getMessage() == null ? "" : e.getMessage(); //$NON-NLS-1$
+						result[0] = new Status(IStatus.ERROR,
+								WorkbenchPlugin.PI_WORKBENCH,
+								IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, e);
+						stateFile.delete();
+					}});
+			}
+			
+			private void handle(final Throwable e) {
+				super.handleException(e);
+			}
 		});
 		// ensure at least one window was opened
 		if (result[0].isOK() && windowManager.getWindows().length == 0) {
@@ -1967,10 +2054,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	private int runUI() {
-		// prime the splash nice and early
-		if (createSplash)
-			createSplashWrapper();
-
 		UIStats.start(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 
 		// deadlock code
@@ -1983,12 +2066,21 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 
+		final UISynchronizer synchronizer;
+		
 		if (avoidDeadlock) {
 			UILockListener uiLockListener = new UILockListener(display);
 			Platform.getJobManager().setLockListener(uiLockListener);
+			synchronizer = new UISynchronizer(display, uiLockListener);
 			display
-					.setSynchronizer(new UISynchronizer(display, uiLockListener));
+					.setSynchronizer(synchronizer);
 		}
+		else 
+			synchronizer = null;
+		
+		// prime the splash nice and early
+		if (createSplash)
+			createSplashWrapper();
 
 		// ModalContext should not spin the event loop (there is no UI yet to
 		// block)
@@ -2028,18 +2120,42 @@ public final class Workbench extends EventManager implements IWorkbench {
 			// install backstop to catch exceptions thrown out of event loop
 			Window.setExceptionHandler(handler);
 
-			// initialize workbench and restore or open one window
-			boolean initOK = init();
+			final boolean [] initOK = new boolean[1];
+			
+			if (getSplash() != null) {
+				// declare the main thread to be a startup thread.
+				UISynchronizer.startupThread.set(Boolean.TRUE);
+				
+				Thread initThread = new Thread() {
+				/* (non-Javadoc)
+				 * @see java.lang.Thread#run()
+				 */
+				public void run() {
+					//declare us to be a startup thread so that our syncs will be executed 
+					UISynchronizer.startupThread.set(Boolean.TRUE);
+					initOK[0] = Workbench.this.init();
+				}};
+				initThread.start();
+				while (true) {
+					if (!display.readAndDispatch())
+						if (!initThread.isAlive())
+							break;
+				}
+			}
+			else {
+				// initialize workbench and restore or open one window
+				initOK[0] = init();
 
+			}
 			// drop the splash screen now that a workbench window is up
 			Platform.endSplash();
 
 			// let the advisor run its start up code
-			if (initOK) {
+			if (initOK[0]) {
 				advisor.postStartup(); // may trigger a close/restart
 			}
 
-			if (initOK && runEventLoop) {
+			if (initOK[0] && runEventLoop) {
 				// start eager plug-ins
 				startPlugins();
 				addStartupRegistryListener();
@@ -2059,6 +2175,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				ModalContext.setAllowReadAndDispatch(true);
 				isStarting = false;
 
+				if (synchronizer != null)
+					synchronizer.started();
 				// the event loop
 				runEventLoop(handler, display);
 			}
@@ -3016,9 +3134,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Read the workbench windows.
 		for (int i = 0; i < children.length; i++) {
 			childMem = children[i];
-			WorkbenchWindow newWindow = newWorkbenchWindow();
+			final WorkbenchWindow newWindow = newWorkbenchWindow();
 			createdWindows[i] = newWindow;
-			newWindow.create();
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() {
+					newWindow.create();	
+				}});
+			
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
@@ -3052,7 +3175,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 					// null the window in newWindowHolder so that it won't be
 					// opened later on
 					createdWindows[i] = null;
-					newWindow.close();
+					StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+						public void runWithException() throws Throwable {
+							newWindow.close();
+						}});
 				}
 			}
 		}
@@ -3066,15 +3193,20 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// closed them above)
 		for (int i = 0; i < createdWindows.length; i++) {
 			if (createdWindows[i] != null) {
-				boolean opened = false;
-				try {
-					createdWindows[i].open();
-					opened = true;
-				} finally {
-					if (!opened) {
-						createdWindows[i].close();
-					}
-				}
+				final WorkbenchWindow myWindow = createdWindows[i];
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() throws Throwable {
+						boolean opened = false;
+						try {
+							myWindow.open();
+							opened = true;
+						} finally {
+							if (!opened) {
+								myWindow.close();
+							}
+						}
+					}});
 			}
 		}
 		createdWindows = null;
