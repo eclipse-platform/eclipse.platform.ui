@@ -397,6 +397,35 @@
             <bar path="org.eclipse.ui.examples.readmetool.readmeTrimGroup" type="trim"/>
          </location>
       </widget>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.trim.vertical1">
+         <toolbar
+               id="org.eclipse.ui.examples.readmetool.verticalTrim">
+            <item
+                  commandId="org.eclipse.ui.examples.readmetool.item2"
+                  icon="icons/obj16/editor.gif"
+                  id="readmeTool.trimItem"
+                  label="Trim Item"
+                  style="push"
+                  tooltip="TrimItem ToolTip">
+            </item>
+            <item
+                  commandId="org.eclipse.ui.examples.readmetool.item2"
+                  icon="icons/obj16/editor.gif"
+                  id="readmeTool.trimItem2"
+                  label="Trim Item 2"
+                  style="push"
+                  tooltip="TrimItem 2 ToolTip">
+            </item>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.ui.examples.readmetool.item2"
+            name="%CmdLabel">
+      </command>
    </extension>
 
 
