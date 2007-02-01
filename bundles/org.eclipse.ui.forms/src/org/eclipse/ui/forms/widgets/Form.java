@@ -66,7 +66,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * <p>
  * Form has a custom layout manager that is wrap-enabled. If a form is placed in
  * a composite whose layout manager implements ILayoutExtension, the body of the
- * worm will participate in wrapping as long as its layout manager implements
+ * form will participate in wrapping as long as its layout manager implements
  * ILayoutExtension as well.
  * <p>
  * Children of the form should typically be created using FormToolkit to match
