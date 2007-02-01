@@ -55,12 +55,18 @@ public class SecondPage extends FormPage {
 		section.setToggleColor(
 			toolkit.getColors().getColor(IFormColors.SEPARATOR));
 		if (addTextClient) {
-			ImageHyperlink link = new ImageHyperlink(section, SWT.NULL);
-			link.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
-			link.setBackground(null);
-			section.setTextClient(link);
+			ToolBar tbar = new ToolBar(section, SWT.FLAT|SWT.HORIZONTAL);
+			ToolItem titem = new ToolItem(tbar, SWT.NULL);
+			titem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_CUT));
+			titem = new ToolItem(tbar, SWT.PUSH);
+			titem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_COPY));
+			titem = new ToolItem(tbar, SWT.SEPARATOR);
+			titem = new ToolItem(tbar, SWT.PUSH);
+			titem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_TOOL_DELETE));			
+			section.setTextClient(tbar);
 		}
 		FormText description = toolkit.createFormText(section, false);
+		description.marginHeight = 4;
 		description.setText("<form><p>This description uses FormText widget and as a result can have <b>bold</b> text.</p></form>", true, false);
 		section.setDescriptionControl(description);
 		Composite client = toolkit.createComposite(section, SWT.WRAP);
