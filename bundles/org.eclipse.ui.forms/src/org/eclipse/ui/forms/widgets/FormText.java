@@ -1554,7 +1554,7 @@ public class FormText extends Canvas {
 		Image textBuffer = new Image(getDisplay(), width, height);
 		Color bg = getBackground();
 		Color fg = getForeground();
-		if (!isEnabled()) {
+		if (!getEnabled()) {
 			bg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			fg = getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		}
