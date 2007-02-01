@@ -675,6 +675,9 @@ public class JobManager implements IJobManager {
 			//don't join a waiting or sleeping job when suspended (deadlock risk)
 			if (suspended && state != Job.RUNNING)
 				return;
+			//it's an error for a job to join itself
+			if (state == Job.RUNNING && job.getThread() == Thread.currentThread())
+				throw new IllegalStateException("Job attempted to join itself"); //$NON-NLS-1$
 			//the semaphore will be released when the job is done
 			barrier = new Semaphore(null);
 			listener = new JobChangeAdapter() {

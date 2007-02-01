@@ -638,6 +638,32 @@ public class JobTest extends TestCase {
 		//wait until the join succeeds
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 	}
+	
+	/**
+	 * Tests that a job joining itself is an error.
+	 */
+	public void testJoinSelf() {
+		final Exception[] failure = new Exception[1];
+		Job selfJoiner = new Job("testJoinSelf") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					this.join();
+				} catch (RuntimeException e) {
+					failure[0] = e;
+				} catch (InterruptedException e) {
+					failure[0] = e;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		selfJoiner.schedule();
+		try {
+			selfJoiner.join();
+		} catch (InterruptedException e) {
+			fail("Unexpected interrupt");
+		}
+		assertTrue("1.0", failure[0] != null);
+	}
 
 	/**
 	 * This is a regression test for bug 60323. If a job change listener
