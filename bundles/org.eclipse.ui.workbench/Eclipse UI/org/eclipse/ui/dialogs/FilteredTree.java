@@ -250,10 +250,11 @@ public class FilteredTree extends Composite {
     protected Composite createFilterControls(Composite parent){
         createFilterText(parent);
         createClearText(parent);
-
+        if (filterToolBar != null) {
         filterToolBar.update(false);
         // initially there is no text to clear
         filterToolBar.getControl().setVisible(false);
+        }
         return parent;
     }
     
@@ -540,19 +541,26 @@ public class FilteredTree extends Composite {
         	}
         });
 
-        filterText.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+        GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		// if the text widget supported cancel then it will have it's own
+		// integrated button. We can take all of the space.
+		if ((filterText.getStyle() & SWT.CANCEL) != 0)
+			gridData.horizontalSpan = 2;
+		filterText.setLayoutData(gridData);
 	}
 
 	/**
-	 * Creates the text control for entering the filter text.  Subclasses may override.
+	 * Creates the text control for entering the filter text. Subclasses may
+	 * override.
 	 * 
-	 * @param parent the parent composite
+	 * @param parent
+	 *            the parent composite
 	 * @return the text widget
 	 * 
 	 * @since 3.3
 	 */
 	protected Text doCreateFilterText(Composite parent) {
-		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH);
+		return new Text(parent, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.CANCEL);
 	}
 
 	private String previousFilterText;
@@ -591,34 +599,37 @@ public class FilteredTree extends Composite {
      * @param parent parent <code>Composite</code> of toolbar button 
      */
     private void createClearText(Composite parent) {
-        filterToolBar = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
-        filterToolBar.createControl(parent);
+    	// only create the button if the text widget doesn't support one natively
+    	if ((filterText.getStyle() & SWT.CANCEL) == 0) {
+			filterToolBar = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
+			filterToolBar.createControl(parent);
 
-        IAction clearTextAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.jface.action.Action#run()
-             */
-            public void run() {
-                clearText();
-            }
-        };
+			IAction clearTextAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.action.Action#run()
+				 */
+				public void run() {
+					clearText();
+				}
+			};
 
-        clearTextAction
-				.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
-        clearTextAction.setImageDescriptor(JFaceResources.getImageRegistry()
-                .getDescriptor(CLEAR_ICON));
-        clearTextAction.setDisabledImageDescriptor(JFaceResources
-                .getImageRegistry().getDescriptor(DCLEAR_ICON));
+			clearTextAction
+					.setToolTipText(WorkbenchMessages.FilteredTree_ClearToolTip);
+			clearTextAction.setImageDescriptor(JFaceResources
+					.getImageRegistry().getDescriptor(CLEAR_ICON));
+			clearTextAction.setDisabledImageDescriptor(JFaceResources
+					.getImageRegistry().getDescriptor(DCLEAR_ICON));
 
-        filterToolBar.add(clearTextAction);
+			filterToolBar.add(clearTextAction);
+		}
     }
 
     /**
-     * Clears the text in the filter text widget.  Also removes the optional 
-     * additional filter that is provided via addFilter(ViewerFilter).
-     */
+	 * Clears the text in the filter text widget. Also removes the optional
+	 * additional filter that is provided via addFilter(ViewerFilter).
+	 */
     protected void clearText() {
         setFilterText(""); //$NON-NLS-1$
         textChanged();
