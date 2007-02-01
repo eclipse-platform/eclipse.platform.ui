@@ -357,14 +357,26 @@ public class PageLayout implements IPageLayout {
      */
     public void addView(String viewId, int relationship, float ratio,
             String refId) {
-        addView(viewId, relationship, ratio, refId, false, true);
+        addView(viewId, relationship, ratio, refId, false, false, true);
+    }
+
+    /**
+     * Convenience method to allow setting the initial minimized
+     * state if a new stack is created. Used by the 'perspectiveExtension'
+     * reader.
+     * 
+     *  @since 3.3
+     */
+    public void addView(String viewId, int relationship, float ratio,
+            String refId, boolean minimized) {
+        addView(viewId, relationship, ratio, refId, minimized, false, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IPageLayout#addView(java.lang.String, int, float, java.lang.String)
      */
     private void addView(String viewId, int relationship, float ratio,
-            String refId, boolean standalone, boolean showTitle) {
+            String refId, boolean minimized, boolean standalone, boolean showTitle) {
         if (checkPartInLayout(viewId)) {
 			return;
 		}
@@ -392,6 +404,10 @@ public class PageLayout implements IPageLayout {
                 addPart(newFolder, viewId, relationship, ratio, refId);
                 // force creation of the view layout rec
                 getViewLayoutRec(viewId, true);
+                
+                if (minimized) {
+                	newFolder.setMinimized(true);
+                }
             }
         } catch (PartInitException e) {
             WorkbenchPlugin.log(getClass(), "addView", e); //$NON-NLS-1$
@@ -814,7 +830,7 @@ public class PageLayout implements IPageLayout {
      */
     public void addStandaloneView(String viewId, boolean showTitle,
             int relationship, float ratio, String refId) {
-        addView(viewId, relationship, ratio, refId, true, showTitle);
+        addView(viewId, relationship, ratio, refId, false, true, showTitle);
         ViewLayoutRec rec = getViewLayoutRec(viewId, true);
         rec.isStandalone = true;
         rec.showTitle = showTitle;

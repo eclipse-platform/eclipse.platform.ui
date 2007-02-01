@@ -1209,7 +1209,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	Perspective persp = getPage().getActivePerspective();
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (minimized && useNewMinMax && this instanceof ViewStack) {
+    	if (minimized && useNewMinMax && persp != null && this instanceof ViewStack) {
     		// Make a one element list to pass on
     		List stacks = new ArrayList();
     		stacks.add(this);

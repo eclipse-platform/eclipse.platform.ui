@@ -295,6 +295,12 @@ public interface IWorkbenchRegistryConstants {
 	public static String ATT_MNEMONIC = "mnemonic"; //$NON-NLS-1$
 
 	/**
+	 * The name of the minimized attribute, which appears
+	 * when adding a view in a perspectiveExtension.
+	 */
+	public static String ATT_MINIMIZED = "minimized"; //$NON-NLS-1$
+
+	/**
 	 * Sticky view moveable attribute. Value <code>moveable</code>.
 	 */
 	public static String ATT_MOVEABLE = "moveable"; //$NON-NLS-1$

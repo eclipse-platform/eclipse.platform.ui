@@ -68,7 +68,8 @@ are appended to the initial definition.
          <attribute name="targetID" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier of the perspective (as specified in the registry) into which the contribution is made.
+                  the unique identifier of the perspective (as specified in the registry) into which the contribution is made. If the value is set to &quot;*&quot; the extension is applied to all perspectives.
+
                </documentation>
             </annotation>
          </attribute>
@@ -224,6 +225,13 @@ If this attribute is not used, the view will be moveable, unless the perspective
             <annotation>
                <documentation>
                   whether the view&apos;s title is shown.  This attribute should have a value of &quot;true&quot; or &quot;false&quot; if used.  This attribute only applies to standalone views.  If this attribute is not used, the view&apos;s title will be shown (default is &quot;true&quot;).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="minimized" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  If the perspective extension will result in a new view stack being created (i.e. the &apos;relationship&apos; attribute is one of left, right, top or bottom) this field determines the new stack&apos;s initial display state.
                </documentation>
             </annotation>
          </attribute>

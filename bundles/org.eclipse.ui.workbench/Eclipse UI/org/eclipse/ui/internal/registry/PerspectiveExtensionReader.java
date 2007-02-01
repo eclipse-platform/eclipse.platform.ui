@@ -173,6 +173,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
         String moveable = element.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
         String standalone = element.getAttribute(IWorkbenchRegistryConstants.ATT_STANDALONE);
         String showTitle = element.getAttribute(IWorkbenchRegistryConstants.ATT_SHOW_TITLE);
+        boolean minimized = !VAL_FALSE.equals(element.getAttribute(IWorkbenchRegistryConstants.ATT_MINIMIZED));
 
         float ratio;
 
@@ -264,7 +265,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
                     pageLayout.addStandaloneView(id, !VAL_FALSE
                             .equals(showTitle), intRelation, ratio, relative);
                 } else {
-                    pageLayout.addView(id, intRelation, ratio, relative);
+                    pageLayout.addView(id, intRelation, ratio, relative, minimized);
                 }
             } else {
 				// Fix for 99155, CGross (schtoo@schtoo.com)
@@ -315,7 +316,7 @@ public class PerspectiveExtensionReader extends RegistryReader {
         String type = element.getName();
         if (type.equals(IWorkbenchRegistryConstants.TAG_PERSPECTIVE_EXTENSION)) {
             String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_TARGET_ID);
-            if (targetID.equals(id)) {
+            if (targetID.equals(id) || "*".equals(id)) { //$NON-NLS-1$
             	if (tracker != null) {
 					tracker.registerObject(element.getDeclaringExtension(), new DirtyPerspectiveMarker(id), IExtensionTracker.REF_STRONG);
 				}
