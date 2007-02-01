@@ -1454,7 +1454,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 		
 		final IContextService contextService = new ContextService(
 				contextManager);
-		contextService.readRegistry();
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				contextService.readRegistry();
+				}});
+		
 		serviceLocator.registerService(IContextService.class, contextService);
 	
 		
@@ -1464,9 +1470,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			public void runWithException() {
 				handlerService[0] = new HandlerService(
-						commandService[0]);	
+						commandService[0]);
+				handlerService[0].readRegistry();
 			}});
-		handlerService[0].readRegistry();
+		
 		serviceLocator.registerService(IHandlerService.class, handlerService[0]);
 
 		final IBindingService [] bindingService = new BindingService[1];
@@ -1492,7 +1499,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 				commandImageService);
 		
 		final WorkbenchMenuService menuService = new WorkbenchMenuService();
-		menuService.readRegistry();
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				menuService.readRegistry();
+			}});
 		serviceLocator.registerService(IMenuService.class, menuService);
 
 		/*
