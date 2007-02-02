@@ -540,7 +540,6 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		if (!isShowingChangeInformation())
 			installChangeRulerModel(fDelegate); // FIXME pass provider id
 		
-		
 		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
 		IAnnotationModel oldDiffer= getDiffer();
 		if (oldDiffer == null && annotationModel != null)
@@ -558,18 +557,18 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 				((ILineDifferExtension) oldDiffer).resume();
 			return true;
 		}
-		
+
 		// Check whether the desired provider is available at all
 		IAnnotationModel newDiffer= util.createQuickDiffAnnotationModel(getEditor(), diffProviderId);
-		if (!util.getConfiguredQuickDiffProvider(newDiffer).equals(diffProviderId)) {
+		if (util.getConfiguredQuickDiffProvider(newDiffer).equals(oldDifferId)) {
 			if (oldDiffer instanceof ILineDifferExtension)
 				((ILineDifferExtension) oldDiffer).resume();
-			return true;
+				return true;
 		}
 		
 		// quick diff is showing with the wrong provider - ask the user whether he wants to switch
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
-		if (!store.getString(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH_KEY).equals(MessageDialogWithToggle.ALWAYS)) {
+		if (oldDiffer != null && !store.getString(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH_KEY).equals(MessageDialogWithToggle.ALWAYS)) {
 			MessageDialogWithToggle toggleDialog= MessageDialogWithToggle.openOkCancelConfirm(
 					fViewer.getTextWidget().getShell(),
 					RulerMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_title,
@@ -601,8 +600,13 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 	 */
 	private void installChangeRulerModel(IVerticalRulerColumn column) {
 		if (column instanceof IChangeRulerColumn) {
-			getOrCreateDiffer();
-			((IChangeRulerColumn) column).setModel(fViewer.getAnnotationModel());
+			IAnnotationModel model= getAnnotationModelWithDiffer();
+			((IChangeRulerColumn) column).setModel(model);
+			if (model != null) {
+				ISourceViewer viewer= fViewer;
+				if (viewer != null && viewer.getAnnotationModel() == null)
+					viewer.showAnnotations(true);
+				}
 		}
 	}
 
@@ -617,15 +621,31 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		IAnnotationModel model= getDiffer();
 		if (model instanceof ILineDifferExtension)
 			((ILineDifferExtension) model).suspend();
+
+		ISourceViewer viewer= fViewer;
+		if (viewer != null && viewer.getAnnotationModel() == null)
+			viewer.showAnnotations(false);
 	}
 
 	/**
+	 * Returns the annotation model that contains the quick diff annotation model.
+	 * <p>
 	 * Extracts the line differ from the displayed document's annotation model. If none can be found,
-	 * a new differ is created and attached to the annotation model.
+	 * a new differ is created and attached to the annotation model.</p>
 	 *
-	 * @return the line differ, or <code>null</code> if none could be found or created
+	 * @return the annotation model that contains the line differ, or <code>null</code> if none could be found or created
+	 * @see IChangeRulerColumn#QUICK_DIFF_MODEL_ID
 	 */
-	private IAnnotationModel getOrCreateDiffer() {
+	private IAnnotationModel getAnnotationModelWithDiffer() {
+		ISourceViewer viewer= fViewer;
+		if (viewer == null)
+			return null;
+		
+		IAnnotationModel m= viewer.getAnnotationModel();
+		IAnnotationModelExtension model= null;
+		if (m instanceof IAnnotationModelExtension)
+			model= (IAnnotationModelExtension) m;
+		
 		IAnnotationModel differ= getDiffer();
 		// create diff model if it doesn't
 		if (differ == null) {
@@ -634,16 +654,8 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 				String defaultId= store.getString(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_DEFAULT_PROVIDER);
 				differ= new QuickDiff().createQuickDiffAnnotationModel(getEditor(), defaultId);
 				if (differ != null) {
-					ISourceViewer viewer= fViewer;
-					if (viewer == null)
-						return null;
-
-					IAnnotationModel m= viewer.getAnnotationModel();
-					IAnnotationModelExtension model;
-					if (m instanceof IAnnotationModelExtension)
-						model= (IAnnotationModelExtension) m;
-					else
-						return null;
+					if (model == null)
+						model= new AnnotationModel();
 					model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
 				}
 			}
@@ -653,8 +665,8 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		} else if (differ instanceof ILineDifferExtension) {
 			((ILineDifferExtension) differ).resume();
 		}
-
-		return differ;
+		
+		return (IAnnotationModel)model;
 	}
 
 	/**
@@ -670,11 +682,13 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 			return null;
 
 		IAnnotationModel m= viewer.getAnnotationModel();
-		IAnnotationModelExtension model;
-		if (m instanceof IAnnotationModelExtension)
-			model= (IAnnotationModelExtension) m;
-		else
+		if (m == null && fDelegate instanceof IChangeRulerColumn)
+			m= ((IChangeRulerColumn)fDelegate).getModel();
+		
+		if (!(m instanceof IAnnotationModelExtension))
 			return null;
+		
+		IAnnotationModelExtension model= (IAnnotationModelExtension)m;
 
 		// get diff model if it exists already
 		return model.getAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
