@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractIndexProvider;
-import org.eclipse.help.IndexContribution;
+import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /*
@@ -44,7 +44,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(String)
 	 */
-	public IndexContribution[] getIndexContributions(String locale) {
+	public IIndexContribution[] getIndexContributions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
@@ -72,6 +72,6 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 				}
 			}
 		}
-		return new IndexContribution[0];
+		return new IIndexContribution[0];
 	}
 }

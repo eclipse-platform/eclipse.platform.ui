@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractIndexProvider;
-import org.eclipse.help.IndexContribution;
+import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
@@ -32,13 +32,13 @@ public class IndexFileProvider extends AbstractIndexProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(java.lang.String)
 	 */
-	public IndexContribution[] getIndexContributions(String locale) {
+	public IIndexContribution[] getIndexContributions(String locale) {
 		List contributions = new ArrayList();
 		IndexFile[] indexFiles = getIndexFiles(locale);
 		IndexFileParser parser = new IndexFileParser();
 		for (int i=0;i<indexFiles.length;++i) {
 			try {
-				IndexContribution toc = parser.parse(indexFiles[i]);
+				IIndexContribution toc = parser.parse(indexFiles[i]);
 				contributions.add(toc);
 			}
 			catch (Throwable t) {
@@ -46,7 +46,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 				HelpPlugin.logError(msg, t);
 			}
 		}
-		return (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
+		return (IIndexContribution[])contributions.toArray(new IIndexContribution[contributions.size()]);
 	}
 
 	/*

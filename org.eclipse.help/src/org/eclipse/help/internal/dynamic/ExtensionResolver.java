@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,10 +18,12 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.HelpSystem;
-import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.eclipse.help.internal.extension.ContentExtensionManager;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /*
@@ -34,8 +36,8 @@ public class ExtensionResolver {
 	private static final String ELEMENT_BODY = "body"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
-	private NodeProcessor processor;
-	private NodeReader reader;
+	private DocumentProcessor processor;
+	private DocumentReader reader;
 	private String locale;
 	private ContentExtensionManager manager;
 	
@@ -43,7 +45,7 @@ public class ExtensionResolver {
 	 * Creates the resolver. The processor is needed to process the extension
 	 * content, and locale because we're pulling in content from other documents.
 	 */
-	public ExtensionResolver(NodeProcessor processor, NodeReader reader, String locale) {
+	public ExtensionResolver(DocumentProcessor processor, DocumentReader reader, String locale) {
 		this.processor = processor;
 		this.reader = reader;
 		this.locale = locale;
@@ -129,15 +131,21 @@ public class ExtensionResolver {
 		InputStream in = HelpSystem.getHelpContent(href, locale);
 		try {
 			if (nodeId != null) {
-				Node node = findNode(in, nodeId);
-				processor.process(node, href);
-				return new Node[] { node };
+				Element element = findElement(in, nodeId);
+				processor.process(new UAElement(element), href);
+				return new Node[] { element };
 			}
-			Node[] nodes = findBody(in);
-			for (int i=0;i<nodes.length;++i) {
-				processor.process(nodes[i], href);
+			Element body = findBody(in);
+			List children = new ArrayList();
+			Node node = body.getFirstChild();
+			while (node != null) {
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					processor.process(new UAElement((Element)node), href);
+				}
+				children.add(node);
+				node = node.getNextSibling();
 			}
-			return nodes;
+			return (Node[])children.toArray(new Node[children.size()]);
 		}
 		finally {
 			try {
@@ -148,56 +156,58 @@ public class ExtensionResolver {
 	}
 	
 	/*
-	 * Finds and returns the node with the given nodeId from the XML input
+	 * Finds and returns the element with the given elementId from the XML input
 	 * stream, or null if not found.
 	 */
-	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
-		Node node = reader.read(in);
-		return findNode(node, nodeId);
+	private Element findElement(InputStream in, String elementId) throws IOException, SAXException, ParserConfigurationException {
+		return findElement(reader.read(in).element, elementId);
 	}
 	
 	/*
-	 * Finds and returns the node with the given nodeId from the under the
-	 * given node, or null if not found.
+	 * Finds and returns the element with the given elementId from the under the
+	 * given element, or null if not found.
 	 */
-	private Node findNode(Node node, String nodeId) {
-		String id = node.getAttribute(ATTRIBUTE_ID);
-		if (id != null && id.equals(nodeId)) {
-			return node;
+	private Element findElement(Element element, String elementId) {
+		String id = element.getAttribute(ATTRIBUTE_ID);
+		if (id != null && id.equals(elementId)) {
+			return element;
 		}
-		Node[] children = node.getChildNodes();
-		for (int i=0;i<children.length;++i) {
-			Node result = findNode(children[i], nodeId);
-			if (result != null) {
-				return result;
+		Node node = element.getFirstChild();
+		while (node != null) {
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				element = findElement((Element)node, elementId);
+				if (element != null) {
+					return element;
+				}
 			}
+			node = node.getNextSibling();
 		}
 		return null;
 	}
 	
 	/*
-	 * Extracts and returns the contents of the first body node (excluding
-	 * the body node itself) in the given XML input stream.
+	 * Finds and returns the body node in the given XML input.
 	 */
-	private Node[] findBody(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-		Node node = reader.read(in);
-		return findBody(node);
+	private Element findBody(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+		return findBody(reader.read(in).element);
 	}
 	
 	/*
-	 * Finds and returns the contents of the first body node under the
-	 * given node (excluding the body node itself).
+	 * Finds and returns the body node under the given node.
 	 */
-	private Node[] findBody(Node node) {
-		if (ELEMENT_BODY.equals(node.getNodeName())) {
-			return node.getChildNodes();
+	private Element findBody(Element element) {
+		if (ELEMENT_BODY.equals(element.getNodeName())) {
+			return element;
 		}
-		Node[] children = node.getChildNodes();
-		for (int i=0;i<children.length;++i) {
-			Node[] result = findBody(children[i]);
-			if (result != null) {
-				return result;
+		Node node = element.getFirstChild();
+		while (node != null) {
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element body = findBody((Element)node);
+				if (body != null) {
+					return body;
+				}
 			}
+			node = node.getNextSibling();
 		}
 		return null;
 	}

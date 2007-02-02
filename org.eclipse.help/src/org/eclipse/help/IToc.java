@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ package org.eclipse.help;
  * 
  * @since 2.0
  */
-public interface IToc extends IHelpResource {
+public interface IToc extends IUAElement, IHelpResource {
 	/**
 	 * This is element name used for TOC in XML files.
 	 */
@@ -27,11 +27,19 @@ public interface IToc extends IHelpResource {
 	public final static String TOPIC = "topic"; //$NON-NLS-1$
 
 	/**
+	 * Returns the path to the anchor in another toc into which this
+	 * one should be linked into.
+	 * 
+	 * @return the link-to path
+	 */
+	public String getLinkTo();
+	
+	/**
 	 * Returns the contribution from which this toc was contributed.
 	 * 
 	 * @return the toc's contribution
 	 */
-	public TocContribution getTocContribution();
+	public ITocContribution getTocContribution();
 	
 	/**
 	 * Obtains the topics directly contained by a toc.
@@ -49,8 +57,7 @@ public interface IToc extends IHelpResource {
 	 * null if there is no description topic for the TOC.
 	 * </p>
 	 * 
-	 * @param href
-	 *            the topic's URL or null
+	 * @param href the topic's URL or null
 	 * @return ITopic or null
 	 */
 	public ITopic getTopic(String href);

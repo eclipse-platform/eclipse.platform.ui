@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.UAContentFilter;
-import org.eclipse.help.internal.dynamic.DocumentNode;
+import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -328,7 +328,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     	ListIterator iter = children.listIterator();
         while (iter.hasNext()) {
             AbstractIntroElement child = (AbstractIntroElement)iter.next();
-            if (UAContentFilter.isFiltered(new DocumentNode(child.getElement()), IntroEvaluationContext.getContext())) {
+            if (UAContentFilter.isFiltered(UAElementFactory.newElement(child.getElement()), IntroEvaluationContext.getContext())) {
             	iter.remove();
             }
             else if (child.getType() == AbstractIntroElement.INCLUDE) {

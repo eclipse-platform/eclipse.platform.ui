@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,11 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.eclipse.help.internal.search.HTMLDocParser;
 import org.xml.sax.SAXException;
@@ -55,8 +55,8 @@ public class DynamicXHTMLProcessor {
 			String charset = HTMLDocParser.getCharsetFromHTML(new ByteArrayInputStream(buffer));
 			if (filter) {
 				if (xmlProcessor == null) {
-					NodeReader reader = new NodeReader();
-					xmlProcessor = new XMLProcessor(new NodeHandler[] {
+					DocumentReader reader = new DocumentReader();
+					xmlProcessor = new XMLProcessor(new ProcessorHandler[] {
 							new IncludeHandler(reader, locale),
 							new ExtensionHandler(reader, locale),
 							new XHTMLCharsetHandler(),
@@ -66,8 +66,8 @@ public class DynamicXHTMLProcessor {
 				return xmlProcessor.process(buf, href, charset);
 			}
 			if (xmlProcessorNoFilter == null) {
-				NodeReader reader = new NodeReader();
-				xmlProcessorNoFilter = new XMLProcessor(new NodeHandler[] {
+				DocumentReader reader = new DocumentReader();
+				xmlProcessorNoFilter = new XMLProcessor(new ProcessorHandler[] {
 						new IncludeHandler(reader, locale),
 						new ExtensionHandler(reader, locale),
 						new XHTMLCharsetHandler()

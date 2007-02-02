@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractTocProvider;
-import org.eclipse.help.TocContribution;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
@@ -36,13 +36,13 @@ public class TocFileProvider extends AbstractTocProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
-	public TocContribution[] getTocContributions(String locale) {
+	public ITocContribution[] getTocContributions(String locale) {
 		List contributions = new ArrayList();
 		TocFile[] tocFiles = getTocFiles(locale);
 		TocFileParser parser = new TocFileParser();
 		for (int i=0;i<tocFiles.length;++i) {
 			try {
-				TocContribution toc = parser.parse(tocFiles[i]);
+				ITocContribution toc = parser.parse(tocFiles[i]);
 				contributions.add(toc);
 			}
 			catch (Throwable t) {
@@ -50,7 +50,7 @@ public class TocFileProvider extends AbstractTocProvider {
 				HelpPlugin.logError(msg, t);
 			}
 		}
-		return (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
+		return (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
 	}
 
 	/*

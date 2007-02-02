@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,36 +13,27 @@ package org.eclipse.help.internal.index;
 
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
-import org.eclipse.help.Node;
-import org.eclipse.help.internal.NodeAdapter;
+import org.eclipse.help.internal.UAElement;
+import org.w3c.dom.Element;
 
-/*
- * Adapts a "index" Node as an IIndex. All methods operate on the
- * underlying adapted Node.
- */
-public class Index extends NodeAdapter implements IIndex {
+public class Index extends UAElement implements IIndex {
     
 	public static final String NAME = "index"; //$NON-NLS-1$
 
-	/*
-	 * Constructs a new index adapter for an empty index node.
-	 */
 	public Index() {
-		super();
-		setNodeName(NAME);
+		super(NAME);
 	}
 	
-	/*
-	 * Constructs a new index adapter for the given index node.
-	 */
-	public Index(Node node) {
-		super(node);
+	public Index(IIndex src) {
+		super(NAME, src);
+		appendChildren(src.getChildren());
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IIndex#getEntries()
-	 */
+	public Index(Element src) {
+		super(src);
+	}
+
 	public IIndexEntry[] getEntries() {
-		return (IndexEntry[])getChildNodes(IndexEntry.NAME, IndexEntry.class);
+		return (IIndexEntry[])getChildren(IIndexEntry.class);
 	}
 }

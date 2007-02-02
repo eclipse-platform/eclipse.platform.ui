@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,18 +13,15 @@ package org.eclipse.help.internal.toc;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.help.IToc;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.Node;
-import org.eclipse.help.TocContribution;
-import org.eclipse.help.internal.NodeAdapter;
-import org.eclipse.help.internal.Topic;
+import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.UAElement;
+import org.w3c.dom.Element;
 
-/*
- * Adapts a "toc" Node as an IToc. All methods operate on the
- * underlying adapted Node.
- */
-public class Toc extends NodeAdapter implements IToc {
+public class Toc extends UAElement implements IToc {
 
 	public static final String NAME = "toc"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_LABEL = "label"; //$NON-NLS-1$
@@ -33,22 +30,25 @@ public class Toc extends NodeAdapter implements IToc {
 	public static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
+	private ITocContribution contribution;
 	private ITopic topic;
 	private Map href2TopicMap;
 
-	/*
-	 * Constructs a new toc adapter for an empty toc node.
-	 */
-	public Toc() {
-		super();
-		setNodeName(NAME);
+	public Toc(IToc src) {
+		super(NAME, src);
+		setHref(src.getHref());
+		setLabel(src.getLabel());
+		setLinkTo(src.getLinkTo());
+		setTocContribution(src.getTocContribution());
+		ITopic topic = src.getTopic(null);
+		if (topic != null) {
+			setTopic(topic.getHref());
+		}
+		appendChildren(src.getChildren());
 	}
-
-	/*
-	 * Constructs a new toc adapter for the given toc node.
-	 */
-	public Toc(Node node) {
-		super(node);
+	
+	public Toc(Element src) {
+		super(src);
 	}
 	
 	/*
@@ -82,15 +82,8 @@ public class Toc extends NodeAdapter implements IToc {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IHelpResource#getHref()
-	 */
 	public String getHref() {
-		Node parent = node.getParentNode();
-		if (parent != null) {
-			return parent.getAttribute(ATTRIBUTE_ID);
-		}
-		return null;
+		return getAttribute(ATTRIBUTE_HREF);
 	}
 
 	/*
@@ -103,37 +96,18 @@ public class Toc extends NodeAdapter implements IToc {
 		return href2TopicMap;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IHelpResource#getLabel()
-	 */
 	public String getLabel() {
-		return node.getAttribute(ATTRIBUTE_LABEL);
+		return getAttribute(ATTRIBUTE_LABEL);
 	}
 	
-	/*
-	 * Returns the path to the toc and anchor to link this toc into.
-	 */
 	public String getLinkTo() {
-		return node.getAttribute(ATTRIBUTE_LINK_TO);
+		return getAttribute(ATTRIBUTE_LINK_TO);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IToc#getTocContribution()
-	 */
-	public TocContribution getTocContribution() {
-		return (TocContribution)node.getParentNode();
-	}
-	
-	/*
-	 * Returns the toc's own topic href.
-	 */
 	public String getTopic() {
-		return node.getAttribute(ATTRIBUTE_TOPIC);
+		return getAttribute(ATTRIBUTE_TOPIC);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IToc#getTopic(java.lang.String)
-	 */
 	public ITopic getTopic(String href) {
 		if (href == null) {
 			if (topic == null) {
@@ -147,6 +121,12 @@ public class Toc extends NodeAdapter implements IToc {
 					public ITopic[] getSubtopics() {
 						return getTopics();
 					}
+					public boolean isEnabled(IEvaluationContext context) {
+						return isEnabled(context);
+					}
+					public IUAElement[] getChildren() {
+						return getChildren();
+					}
 				};
 			}
 			return topic;
@@ -156,31 +136,31 @@ public class Toc extends NodeAdapter implements IToc {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IToc#getTopics()
-	 */
 	public ITopic[] getTopics() {
-		return (Topic[])getChildNodes(Topic.NAME, Topic.class);
+		return (ITopic[])getChildren(ITopic.class);
 	}
 	
-	/*
-	 * Sets the toc's label.
-	 */
 	public void setLabel(String label) {
-		node.setAttribute(ATTRIBUTE_LABEL, label);
+		setAttribute(ATTRIBUTE_LABEL, label);
 	}
 
-	/*
-	 * Sets the toc's link_to target.
-	 */
 	public void setLinkTo(String linkTo) {
-		node.setAttribute(ATTRIBUTE_LINK_TO, linkTo);
+		setAttribute(ATTRIBUTE_LINK_TO, linkTo);
 	}
 
-	/*
-	 * Sets the toc's own topic href.
-	 */
 	public void setTopic(String href) {
-		node.setAttribute(ATTRIBUTE_TOPIC, href);
+		setAttribute(ATTRIBUTE_TOPIC, href);
+	}
+	
+	public void setHref(String href) {
+		setAttribute(ATTRIBUTE_HREF, href);
+	}
+	
+	public ITocContribution getTocContribution() {
+		return contribution;
+	}
+	
+	public void setTocContribution(ITocContribution contribution) {
+		this.contribution = contribution;
 	}
 }

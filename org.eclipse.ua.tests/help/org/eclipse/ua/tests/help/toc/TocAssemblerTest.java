@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.help.TocContribution;
-import org.eclipse.help.internal.dynamic.NodeWriter;
+import org.eclipse.help.internal.dynamic.DocumentWriter;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.toc.TocAssembler;
+import org.eclipse.help.internal.toc.TocContribution;
 import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.internal.toc.TocFileParser;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
+import org.eclipse.ua.tests.util.XMLUtil;
 
 public class TocAssemblerTest extends TestCase {
 	
@@ -46,7 +48,7 @@ public class TocAssemblerTest extends TestCase {
 		assertEquals(1, contributions.size());
 		String expected = serialize(result_b_c);
 		String actual = serialize((TocContribution)contributions.get(0));
-		assertEquals(expected, actual);
+		XMLUtil.assertXMLEquals("Assembled TOC did not match expected result", expected, actual);
 
 		TocContribution a = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/a.xml", true, "en", null, null));
 		b = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/b.xml", true, "en", null, null));
@@ -57,16 +59,14 @@ public class TocAssemblerTest extends TestCase {
 		contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c, d }));
 		contributions = assembler.assemble(contributions);
 		assertEquals(1, contributions.size());
+		
 		expected = serialize(result_a_b_c_d);
 		actual = serialize((TocContribution)contributions.get(0));
-		assertEquals(expected, actual);
+		XMLUtil.assertXMLEquals("Assembled TOC did not match expected result", expected, actual);
 	}
 
-	private String serialize(TocContribution contribution) {
-		StringBuffer buf = new StringBuffer();
-		String indent = "";
-		NodeWriter writer = new NodeWriter();
-		writer.write(contribution.getToc(), buf, true, indent, false);
-		return buf.toString();
+	private String serialize(TocContribution contribution) throws Exception {
+		DocumentWriter writer = new DocumentWriter();
+		return new String(writer.writeString((Toc)contribution.getToc(), true));
 	}
 }

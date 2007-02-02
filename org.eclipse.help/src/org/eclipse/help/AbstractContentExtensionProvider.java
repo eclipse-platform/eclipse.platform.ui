@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,16 +24,13 @@ import org.eclipse.help.internal.HelpPlugin;
 public abstract class AbstractContentExtensionProvider {
 	
 	/**
-	 * Returns all extensions for this provider. The document model must
-	 * conform to the schema for content extension XML, with the exception that
-	 * the <code>content</code> attribute must be a full href with a leading
-	 * plug-in id. Providers are free to provide any number of contributions
-	 * (zero or more).
+	 * Returns all extensions for this provider. Providers are free to
+	 * provide any number of contributions (zero or more).
 	 * 
 	 * @param locale the locale for which to get contributions
 	 * @return all the content extensions for this provider
 	 */
-	public abstract Node[] getContentExtensions(String locale);
+	public abstract IContentExtension[] getContentExtensions(String locale);
 	
 	/**
 	 * Notifies the platform that the content managed by this provider may

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,13 +22,13 @@ import org.eclipse.help.internal.HelpPlugin;
 public abstract class AbstractIndexProvider {
 
 	/**
-	 * Returns all <code>IndexContribution</code>s for this provider. Providers
+	 * Returns all index contributions for this provider. Providers
 	 * are free to provide any number of contributions (zero or more).
 	 * 
 	 * @param locale the locale for which to get contributions
 	 * @return all the index contributions for this provider
 	 */
-	public abstract IndexContribution[] getIndexContributions(String locale);
+	public abstract IIndexContribution[] getIndexContributions(String locale);
 	
 	/**
 	 * Notifies the platform that the content managed by this provider may

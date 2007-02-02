@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContentExtensionProvider;
-import org.eclipse.help.Node;
+import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.UAElementFactory;
 
 /*
  * Manages content extensions (contributions into anchors and element
@@ -96,39 +97,24 @@ public class ContentExtensionManager {
 		replacesByPath = new HashMap();
 		contentExtensionProviders = getContentExtensionProviders();
 		for (int i=0;i<contentExtensionProviders.length;++i) {
-			ContentExtension[] extensions;
-			try {
-				Node[] nodes = contentExtensionProviders[i].getContentExtensions(locale);
-				List list = new ArrayList();
-				for (int j=0;j<nodes.length;++j) {
-					ContentExtension ext = new ContentExtension(nodes[j]);
-					if (ext.getContent() != null && ext.getPath() != null) {
-						ext.setContent(normalizePath(ext.getContent()));
-						ext.setPath(normalizePath(ext.getPath()));
-						list.add(ext);
-					}
-				}
-				extensions = (ContentExtension[])list.toArray(new ContentExtension[list.size()]);
-			}
-			catch (Throwable t) {
-				String msg = "An error occured while querying one of the user assistance content extension providers (" + contentExtensionProviders[i] + ')'; //$NON-NLS-1$
-				HelpPlugin.logError(msg, t);
-				continue;
-			}
+			IContentExtension[] extensions = contentExtensionProviders[i].getContentExtensions(locale);
 			for (int j=0;j<extensions.length;++j) {
-				try {
-					ContentExtension ext = extensions[j];
-					Map map = (ext.getType() == ContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
-					List list = (List)map.get(ext.getPath());
+				ContentExtension extension = (extensions[j] instanceof ContentExtension ? (ContentExtension)extensions[j] : (ContentExtension)UAElementFactory.newElement(extensions[j]));
+				String content = extension.getContent();
+				String path = extension.getPath();
+				if (content != null && path != null) {
+					int type = extension.getType();
+					Map map = (type == IContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
+					content = normalizePath(content);
+					path = normalizePath(path);
+					extension.setContent(content);
+					extension.setPath(path);
+					List list = (List)map.get(path);
 					if (list == null) {
 						list = new ArrayList();
-						map.put(ext.getPath(), list);
+						map.put(path, list);
 					}
-					list.add(ext);
-				}
-				catch (Throwable t) {
-					String msg = "An error occured while querying one of the user assistance content extension providers (" + contentExtensionProviders[i] + ')'; //$NON-NLS-1$
-					HelpPlugin.logError(msg, t);					
+					list.add(extension);
 				}
 			}
 		}		

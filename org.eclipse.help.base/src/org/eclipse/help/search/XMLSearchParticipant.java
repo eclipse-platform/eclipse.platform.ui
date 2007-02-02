@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,10 @@ import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -374,9 +374,8 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	 */
 	protected InputStream preprocess(InputStream in, String name, String locale) {
 		if (processor == null) {
-			NodeReader reader = new NodeReader();
-			reader.setIgnoreWhitespaceNodes(true);
-			processor = new XMLProcessor(new NodeHandler[] {
+			DocumentReader reader = new DocumentReader();
+			processor = new XMLProcessor(new ProcessorHandler[] {
 				new IncludeHandler(reader, locale),
 				new ExtensionHandler(reader, locale)
 			});

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,11 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.dynamic.DocumentNode;
-import org.eclipse.help.internal.dynamic.NodeProcessor;
-import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.UAElementFactory;
+import org.eclipse.help.internal.dynamic.DocumentProcessor;
 import org.eclipse.help.internal.dynamic.FilterHandler;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -77,7 +78,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     // content.
     private Document dom;
     
-    private NodeProcessor domProcessor;
+    private DocumentProcessor domProcessor;
 
     // set when the content file is loaded (ie: loadChildren is called)
     private boolean isXHTMLPage;
@@ -653,10 +654,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // filter the content
         if (domProcessor == null) {
-        	domProcessor = new NodeProcessor(new NodeHandler[] { new FilterHandler(IntroEvaluationContext.getContext()) });
+        	domProcessor = new DocumentProcessor(new ProcessorHandler[] { new FilterHandler(IntroEvaluationContext.getContext()) });
         }
-        DocumentNode node = new DocumentNode(dom);
-        domProcessor.process(node, null);
+        UAElement element = UAElementFactory.newElement(dom.getDocumentElement());
+        domProcessor.process(element, null);
         
         // and resolve includes.
         resolveIncludes();

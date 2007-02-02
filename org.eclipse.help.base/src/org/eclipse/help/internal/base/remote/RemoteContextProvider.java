@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.eclipse.help.AbstractContextProvider;
-import org.eclipse.help.Node;
+import org.eclipse.help.IContext;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.context.Context;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 
 /*
  * Provides the context-sensitive help data that is located on the remote
@@ -31,12 +32,9 @@ public class RemoteContextProvider extends AbstractContextProvider {
 	private static final String PARAM_ID = "id"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 
-	private NodeReader reader;
+	private DocumentReader reader;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.AbstractContextProvider#getContext(java.lang.String, java.lang.String)
-	 */
-	public Node getContext(String id, String locale) {
+	public IContext getContext(String id, String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
@@ -45,10 +43,9 @@ public class RemoteContextProvider extends AbstractContextProvider {
 				if (connection.getResponseCode() == 200) {
 					in = connection.getInputStream();
 					if (reader == null) {
-						reader = new NodeReader();
-						reader.setIgnoreWhitespaceNodes(true);
+						reader = new DocumentReader();
 					}
-					return reader.read(in);
+					return (Context)reader.read(in);
 				}
 			}
 			catch (IOException e) {

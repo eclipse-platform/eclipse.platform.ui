@@ -2,14 +2,12 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc href="/org.eclipse.ua.tests/data/help/toc/assembler/a.xml" label="A">
-   <topic href="/org.eclipse.ua.tests/A_topic.html" filter="ws=invalid" label="A_topic"/>
-   <topic href="/org.eclipse.ua.tests/B_topic1.html" label="B_topic1">
-      <topic href="/org.eclipse.ua.tests/B_topic2.html" label="B_topic2"/>
-      <topic href="/org.eclipse.ua.tests/C_topic.html" label="C_topic"/>
-   </topic>
-   <topic href="/org.eclipse.ua.tests/D_topic.html" label="D_topic"/>
-   <topic href="/org.eclipse.ua.tests/B_topic3.html" label="B_topic3">
-      <filter name="os" value="!invalid"/>
-   </topic>
-   <topic href="/org.eclipse.ua.tests/D_topic.html" label="D_topic"/>
+	<topic filter="ws=invalid" href="/org.eclipse.ua.tests/A_topic.html" label="A_topic"/>
+	<topic href="/org.eclipse.ua.tests/B_topic1.html" label="B_topic1">
+		<topic href="/org.eclipse.ua.tests/B_topic2.html" label="B_topic2"/>
+		<topic href="/org.eclipse.ua.tests/C_topic.html" label="C_topic"/>
+	</topic><topic href="/org.eclipse.ua.tests/D_topic.html" label="D_topic"/><topic href="/org.eclipse.ua.tests/B_topic3.html" label="B_topic3">
+		<filter name="os" value="!invalid"/>
+	</topic>
+	<topic href="/org.eclipse.ua.tests/D_topic.html" label="D_topic"/>
 </toc>

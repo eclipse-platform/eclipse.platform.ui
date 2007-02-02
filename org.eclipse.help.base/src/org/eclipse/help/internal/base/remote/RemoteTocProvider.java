@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractTocProvider;
-import org.eclipse.help.TocContribution;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /*
@@ -44,7 +44,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
-	public TocContribution[] getTocContributions(String locale) {
+	public ITocContribution[] getTocContributions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
@@ -74,6 +74,6 @@ public class RemoteTocProvider extends AbstractTocProvider {
 				}
 			}
 		}
-		return new TocContribution[0];
+		return new ITocContribution[0];
 	}
 }

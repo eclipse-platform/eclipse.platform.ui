@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.IndexContribution;
-import org.eclipse.help.Node;
-import org.eclipse.help.internal.dynamic.NodeWriter;
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexAssembler;
+import org.eclipse.help.internal.index.IndexContribution;
 import org.eclipse.help.internal.index.IndexFile;
 import org.eclipse.help.internal.index.IndexFileParser;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
@@ -48,15 +48,12 @@ public class IndexAssemblerTest extends TestCase {
 		List contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c }));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());
 		
-		String expected = serialize(result_a_b_c.getIndex());
+		String expected = serialize((UAElement)result_a_b_c.getIndex());
 		String actual = serialize(assembled);
 		assertEquals(expected, actual);
 	}
-	private String serialize(Node node) {
-		StringBuffer buf = new StringBuffer();
-		String indent = "";
-		NodeWriter writer = new NodeWriter();
-		writer.write(node, buf, true, indent, false);
-		return buf.toString();
+	private String serialize(UAElement element) throws Exception {
+		DocumentWriter writer = new DocumentWriter();
+		return writer.writeString(element, true);
 	}
 }

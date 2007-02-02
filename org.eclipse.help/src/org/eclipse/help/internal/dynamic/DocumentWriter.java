@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -22,35 +22,61 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
 
-/*
- * A utility class that converts Documents (DOMs) into XML.
- */
 public class DocumentWriter {
 
 	private Transformer transformer;
 
-	/*
-	 * Convert the given DOM into an input stream that will contain XML.
-	 */
-	public InputStream write(Document document) throws TransformerException, TransformerConfigurationException {
+	public String writeString(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
+		return writeString(element.element, xmlDecl);
+	}
+	
+	public String writeString(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
+        byte[] bytes = writeBytes(element, xmlDecl);
+        String encoding = transformer.getOutputProperty(OutputKeys.ENCODING);
+        if (encoding == null) {
+        	encoding = "UTF-8"; //$NON-NLS-1$
+        }
+        try {
+        	return new String(bytes, encoding);
+        }
+        catch (UnsupportedEncodingException e) {
+        	return new String(bytes);
+        }
+	}
+	
+	public byte[] writeBytes(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
+		return writeBytes(element.element, xmlDecl);
+	}
+
+	public byte[] writeBytes(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
+		Document document = element.getOwnerDocument();
 		if (transformer == null) {
 	        TransformerFactory factory = TransformerFactory.newInstance();
 	        transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-			DocumentType docType = document.getDoctype();
-			if (docType != null) {
-				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, docType.getPublicId());
-				transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM, docType.getSystemId());
-			}			
 		}
-        DOMSource source = new DOMSource(document);
+		DocumentType docType = document.getDoctype();
+		Properties props = transformer.getOutputProperties();
+		if (docType != null) {
+			props.setProperty(OutputKeys.DOCTYPE_PUBLIC, docType.getPublicId());
+			props.setProperty(OutputKeys.DOCTYPE_SYSTEM, docType.getSystemId());
+		}
+		else {
+			props.remove(OutputKeys.DOCTYPE_PUBLIC);
+			props.remove(OutputKeys.DOCTYPE_SYSTEM);
+		}
+		props.setProperty(OutputKeys.OMIT_XML_DECLARATION, xmlDecl ? "no" : "yes"); //$NON-NLS-1$ //$NON-NLS-2$
+		transformer.setOutputProperties(props);
+		
+		DOMSource source = new DOMSource(element);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(out);
         transformer.transform(source, result);
-        byte[] buf = out.toByteArray();
-        return new ByteArrayInputStream(buf);
+        return out.toByteArray();
 	}
 }

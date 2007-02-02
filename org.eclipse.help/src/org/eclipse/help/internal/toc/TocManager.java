@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,11 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractTocProvider;
-import org.eclipse.help.TocContribution;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.help.internal.util.ProductPreferences;
 
 /*
@@ -59,13 +61,13 @@ public class TocManager {
 			List orderedTocs = new ArrayList(ordered.length);
 			for (int i=0;i<ordered.length;++i) {
 				try {
-					Toc toc = new Toc(ordered[i].getToc());
+					Toc toc = (Toc)ordered[i].getToc();
 					orderedTocs.add(toc);
 					tocsById.put(ordered[i].getId(), toc);
 				}
 				catch (Throwable t) {
 					// log and skip
-					String msg = "Error getting " + Toc.class.getName() + " from " + TocContribution.class.getName() + ": " + ordered[i]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting " + Toc.class.getName() + " from " + ITocContribution.class.getName() + ": " + ordered[i]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg, t);
 				}
 			}
@@ -89,7 +91,7 @@ public class TocManager {
 			tocsByTopic = new HashMap();
 			Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 			for (int i=0;i<tocs.length;++i) {
-				TocContribution contribution = tocs[i].getTocContribution();
+				ITocContribution contribution = tocs[i].getTocContribution();
 				String[] extraDocuments = contribution.getExtraDocuments();
 				for (int j=0;j<extraDocuments.length;++j) {
 					tocsByTopic.put(extraDocuments[j], tocs[i]);
@@ -109,7 +111,7 @@ public class TocManager {
 			List contributions = new ArrayList();
 			AbstractTocProvider[] providers = getTocProviders();
 			for (int i=0;i<providers.length;++i) {
-				TocContribution[] contrib;
+				ITocContribution[] contrib;
 				try {
 					contrib = providers[i].getTocContributions(locale);
 				}
@@ -120,23 +122,17 @@ public class TocManager {
 					continue;
 				}
 				
-				// check for nulls and root element
 				for (int j=0;j<contrib.length;++j) {
-					if (contrib[j] == null) {
-						String msg = "Help table of contents provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-						HelpPlugin.logError(msg);
-					}
-					else if (contrib[j].getToc() == null) {
-						String msg = "Help table of contents provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Toc.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						HelpPlugin.logError(msg);
-					}
-					else if (!Toc.NAME.equals(contrib[j].getToc().getNodeName())) {
-						String msg = "Required root element \"" + Toc.NAME + "\" missing from help table of contents \"" + contrib[j].getId() + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						HelpPlugin.logError(msg);
-					}
-					else {
-						contributions.add(contrib[j]);
-					}
+					TocContribution contribution = new TocContribution();
+					contribution.setCategoryId(contrib[j].getCategoryId());
+					contribution.setContributorId(contrib[j].getContributorId());
+					contribution.setExtraDocuments(contrib[j].getExtraDocuments());
+					contribution.setId(contrib[j].getId());
+					contribution.setLocale(contrib[j].getLocale());
+					contribution.setPrimary(contrib[j].isPrimary());
+					IToc toc = contrib[j].getToc();
+					contribution.setToc(toc instanceof Toc ? (Toc)toc : (Toc)UAElementFactory.newElement(toc));
+					contributions.add(contribution);
 				}
 			}
 			cached = (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
@@ -201,7 +197,7 @@ public class TocManager {
 		Set ignoredHrefs = new HashSet();
 		Set notIgnoredHrefs = new HashSet();
 		for (int i=0;i<unfiltered.length;++i) {
-			Toc toc = new Toc(unfiltered[i].getToc());
+			Toc toc = (Toc)unfiltered[i].getToc();
 			Set hrefs = toc.getHref2TopicMap().keySet();
 			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
 					!tocsToFilter.contains(unfiltered[i].getCategoryId())) {
@@ -271,14 +267,14 @@ public class TocManager {
 		Map categorized = new HashMap();
 		Iterator iter = tocs.iterator();
 		while (iter.hasNext()) {
-			TocContribution toc = (TocContribution)iter.next();
+			ITocContribution toc = (ITocContribution)iter.next();
 			String categoryId;
 			try {
 				categoryId = toc.getCategoryId();
 			}
 			catch (Throwable t) {
 				// log and skip
-				String msg = "Error retrieving categoryId from " + TocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+				String msg = "Error retrieving categoryId from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
 				HelpPlugin.logError(msg, t);
 				continue;
 			}
@@ -301,7 +297,7 @@ public class TocManager {
 				}
 				catch (Throwable t) {
 					// log and skip
-					String msg = "Error retrieving id from " + TocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+					String msg = "Error retrieving id from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
@@ -321,7 +317,7 @@ public class TocManager {
 		Iterator iter = entries.iterator();
 		while (iter.hasNext()) {
 			Object entry = iter.next();
-			if (entry instanceof TocContribution) {
+			if (entry instanceof ITocContribution) {
 				expanded.add(entry);
 			}
 			else if (entry instanceof TocCategory) {

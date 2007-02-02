@@ -17,14 +17,14 @@
 
 	
 	<extendedContent id="content">
-      This is the first element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+      This is the first element from /org.eclipse.ua.tests/data/help/dynamic/extension/content.xml
    </extendedContent>
 
 	
 	<extendedContent id="content2">
-      This is the second element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+      This is the second element from /org.eclipse.ua.tests/data/help/dynamic/extension/content.xml
    </extendedContent><extendedContent id="content3">
-      This is the third element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+      This is the third element from /org.eclipse.ua.tests/data/help/dynamic/extension/content.xml
    </extendedContent>
 
 	
@@ -78,7 +78,7 @@ heading above.
 
 	
 	<extendedContent id="content">
-      This is the first element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+      This is the first element from /org.eclipse.ua.tests/data/help/dynamic/extension/content.xml
    </extendedContent>
 
 	

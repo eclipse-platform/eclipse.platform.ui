@@ -20,15 +20,17 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.help.Node;
-import org.eclipse.help.TocContribution;
+import org.eclipse.help.ITocContribution;
+import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.dynamic.DocumentProcessor;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeProcessor;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.dynamic.ValidationHandler;
 
 /*
@@ -37,14 +39,8 @@ import org.eclipse.help.internal.dynamic.ValidationHandler;
  */
 public class TocAssembler {
 
-	private static final String ELEMENT_LINK = "link"; //$NON-NLS-1$
-	private static final String ELEMENT_ANCHOR = "anchor"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_TOC = "toc"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	
-	private NodeProcessor processor;
-	private NodeHandler[] handlers;
+	private DocumentProcessor processor;
+	private ProcessorHandler[] handlers;
 	
 	private List contributions;
 	private Map contributionsById;
@@ -57,7 +53,7 @@ public class TocAssembler {
 	 * books. The originals are not modified.
 	 */
 	public List assemble(List contributions) {
-		this.contributions = copy(contributions);
+		this.contributions = contributions;
 		contributionsById = null;
 		contributionsByLinkTo = null;
 		processedContributions = null;
@@ -69,43 +65,6 @@ public class TocAssembler {
 			process(book);
 		}
 		return books;
-	}
-	
-	/*
-	 * Performs a deep copy of all the contributions in the given list
-	 * and returns a new list.
-	 */
-	private List copy(List contributions) {
-		List copies = new ArrayList(contributions.size());
-		Iterator iter = contributions.iterator();
-		while (iter.hasNext()) {
-			Node node = (Node)iter.next();
-			copies.add(copy(node));
-		}
-		return copies;
-	}
-
-	/*
-	 * Performs a deep copy of the given node and all its children.
-	 */
-	private Node copy(Node node) {
-		// copy node
-		Node copy = node instanceof TocContribution ? new TocContribution() : new Node();
-		copy.setNodeName(node.getNodeName());
-		copy.setNodeValue(node.getNodeValue());
-		Iterator iter = node.getAttributes().iterator();
-		while (iter.hasNext()) {
-			String name = (String)iter.next();
-			String value = node.getAttribute(name);
-			copy.setAttribute(name, value);
-		}
-		
-		// copy children
-		Node[] children = node.getChildNodes();
-		for (int i=0;i<children.length;++i) {
-			copy.appendChild(copy(children[i]));
-		}
-		return copy;
 	}
 	
 	/*
@@ -123,7 +82,7 @@ public class TocAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			if (contrib.isPrimary() && contrib.getToc().getAttribute(ATTRIBUTE_LINK_TO) == null && !linkedContributionIds.contains(contrib.getId())) {
+			if (contrib.isPrimary() && contrib.getToc().getLinkTo() == null && !linkedContributionIds.contains(contrib.getId())) {
 				books.add(contrib);
 			}
 		}
@@ -137,15 +96,16 @@ public class TocAssembler {
 	 */
 	private Set getLinkedContributionIds(List contributions) {
 		if (processor == null) {
-			processor = new NodeProcessor();
+			processor = new DocumentProcessor();
 		}
 		final Set linkedContributionIds = new HashSet();
-		NodeHandler[] linkFinder = new NodeHandler[] {
+		ProcessorHandler[] linkFinder = new ProcessorHandler[] {
 			new ValidationHandler(getRequiredAttributes()),
-			new NodeHandler() {
-				public short handle(Node node, String id) {
-					if (ELEMENT_LINK.equals(node.getNodeName())) {
-						String toc = node.getAttribute(ATTRIBUTE_TOC);
+			new ProcessorHandler() {
+				public short handle(UAElement element, String id) {
+					if (element instanceof Link) {
+						Link link = (Link)element;
+						String toc = link.getToc();
 						if (toc != null) {
 							TocContribution srcContribution = getContribution(id);
 							linkedContributionIds.add(HrefUtil.normalizeHref(srcContribution.getContributorId(), toc));
@@ -160,7 +120,7 @@ public class TocAssembler {
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
 			try {
-				processor.process(contrib.getToc(), contrib.getId());
+				processor.process((Toc)contrib.getToc(), contrib.getId());
 			}
 			catch (Throwable t) {
 				iter.remove();
@@ -182,19 +142,18 @@ public class TocAssembler {
 	 * 3. Anchor contributions are resolved, tocs with link_to's are inserted
 	 *    at anchors and extra docs merged.
 	 */
-	private void process(TocContribution contribution) {
+	private void process(ITocContribution contribution) {
 		if (processedContributions == null) {
 			processedContributions = new HashSet();
 		}
 		// don't process the same one twice
 		if (!processedContributions.contains(contribution)) {
 			if (processor == null) {
-				processor = new NodeProcessor();
+				processor = new DocumentProcessor();
 			}
 			if (handlers == null) {
-				NodeReader reader = new NodeReader();
-				reader.setIgnoreWhitespaceNodes(true);
-				handlers = new NodeHandler[] {
+				DocumentReader reader = new DocumentReader();
+				handlers = new ProcessorHandler[] {
 					new NormalizeHandler(),
 					new LinkHandler(),
 					new AnchorHandler(),
@@ -203,7 +162,7 @@ public class TocAssembler {
 				};
 			}
 			processor.setHandlers(handlers);
-			processor.process(contribution.getToc(), contribution.getId());
+			processor.process((Toc)contribution.getToc(), contribution.getId());
 			processedContributions.add(contribution);
 		}
 	}
@@ -234,10 +193,10 @@ public class TocAssembler {
 			Iterator iter = contributions.iterator();
 			while (iter.hasNext()) {
 				TocContribution srcContribution = (TocContribution)iter.next();
-				String linkTo = srcContribution.getToc().getAttribute(ATTRIBUTE_LINK_TO);
+				String linkTo = srcContribution.getToc().getLinkTo();
 				if (linkTo != null) {
 					String destAnchorPath = HrefUtil.normalizeHref(srcContribution.getContributorId(), linkTo);
-					TocContribution[] array = (TocContribution[])contributionsByLinkTo.get(destAnchorPath);
+					ITocContribution[] array = (ITocContribution[])contributionsByLinkTo.get(destAnchorPath);
 					if (array == null) {
 						array = new TocContribution[] { srcContribution };
 					}
@@ -294,24 +253,25 @@ public class TocAssembler {
 	 * Handler that resolves link elements (replaces the link element with
 	 * the linked-to toc's children.
 	 */
-	private class LinkHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (ELEMENT_LINK.equals(node.getNodeName())) {
-				Node parent = node.getParentNode();
+	private class LinkHandler extends ProcessorHandler {
+		public short handle(UAElement element, String id) {
+			if (element instanceof Link) {
+				Link link = (Link)element;
+				UAElement parent = link.getParentElement();
 				if (parent != null) {
-					String toc = node.getAttribute(ATTRIBUTE_TOC);
+					String toc = link.getToc();
 					if (toc != null) {
 						TocContribution destContribution = getContribution(id);
 						TocContribution srcContribution = getContribution(HrefUtil.normalizeHref(destContribution.getContributorId(), toc));
 						if (srcContribution != null) {
 							process(srcContribution);
-							Node[] children = srcContribution.getToc().getChildNodes();
+							IUAElement[] children = srcContribution.getToc().getChildren();
 							for (int i=0;i<children.length;++i) {
-								parent.insertBefore(copy(children[i]), node);
+								parent.insertBefore((UAElement)children[i], link);
 							}
 							addExtraDocuments(destContribution, srcContribution.getExtraDocuments());
 						}
-						parent.removeChild(node);
+						parent.removeChild(link);
 					}
 				}
 				return HANDLED_SKIP;
@@ -324,21 +284,22 @@ public class TocAssembler {
 	 * Handles anchor contributions. If any contribution's toc wants to link
 	 * into this one at the current anchor, link it in.
 	 */
-	private class AnchorHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (ELEMENT_ANCHOR.equals(node.getNodeName())) {
-				Node parent = node.getParentNode();
+	private class AnchorHandler extends ProcessorHandler {
+		public short handle(UAElement element, String id) {
+			if (element instanceof Anchor) {
+				Anchor anchor = (Anchor)element;
+				UAElement parent = anchor.getParentElement();
 				if (parent != null) {
-					String anchorId = node.getAttribute(ATTRIBUTE_ID);
+					String anchorId = anchor.getId();
 					if (anchorId != null) {
 						TocContribution destContribution = getContribution(id);
 						if (destContribution != null) {
 							TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
 							for (int i=0;i<srcContributions.length;++i) {
 								process(srcContributions[i]);
-								Node[] children = srcContributions[i].getToc().getChildNodes();
+								IUAElement[] children = srcContributions[i].getToc().getChildren();
 								for (int j=0;j<children.length;++j) {
-									parent.insertBefore(copy(children[j]), node);
+									parent.insertBefore((UAElement)children[j], anchor);
 								}
 								addExtraDocuments(destContribution, srcContributions[i].getExtraDocuments());
 							}
@@ -355,20 +316,22 @@ public class TocAssembler {
 	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
 	 */
-	private class NormalizeHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getNodeName())) {
-				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
+	private class NormalizeHandler extends ProcessorHandler {
+		public short handle(UAElement element, String id) {
+			if (element instanceof Topic) {
+				Topic topic = (Topic)element;
+				String href = topic.getHref();
 				if (href != null) {
-					node.setAttribute(Topic.ATTRIBUTE_HREF, normalize(href, id));
+					topic.setHref(normalize(href, id));
 				}
 				return HANDLED_CONTINUE;
 			}
-			else if (Toc.NAME.equals(node.getNodeName())) {
-				node.setAttribute(Toc.ATTRIBUTE_HREF, id);
-				String topic = node.getAttribute(Toc.ATTRIBUTE_TOPIC);
+			else if (element instanceof Toc) {
+				Toc toc = (Toc)element;
+				toc.setHref(id);
+				String topic = toc.getTopic();
 				if (topic != null) {
-					node.setAttribute(Toc.ATTRIBUTE_TOPIC, normalize(topic, id));
+					toc.setTopic(normalize(topic, id));
 				}
 				return HANDLED_CONTINUE;
 			}
@@ -376,7 +339,7 @@ public class TocAssembler {
 		}
 		
 		private String normalize(String href, String id) {
-			TocContribution contribution = getContribution(id);
+			ITocContribution contribution = getContribution(id);
 			if (contribution != null) {
 				String pluginId = contribution.getContributorId();
 				return HrefUtil.normalizeHref(pluginId, href);

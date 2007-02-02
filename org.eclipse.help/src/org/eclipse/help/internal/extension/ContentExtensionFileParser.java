@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,11 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.help.Node;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeProcessor;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.dynamic.DocumentProcessor;
+import org.eclipse.help.internal.dynamic.DocumentReader;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.dynamic.ValidationHandler;
 import org.osgi.framework.Bundle;
 import org.xml.sax.SAXException;
@@ -34,37 +34,32 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class ContentExtensionFileParser extends DefaultHandler {
 
-	private NodeReader reader;
-	private NodeProcessor processor;
+	private DocumentReader reader;
+	private DocumentProcessor processor;
 	private Map requiredAttributes;
 	private Map deprecatedElements;
 	
 	/*
 	 * Parses the specified content extension XML file into model elements.
 	 */
-    public Node[] parse(Bundle bundle, String path) throws IOException, SAXException, ParserConfigurationException {
+    public ContentExtension[] parse(Bundle bundle, String path) throws IOException, SAXException, ParserConfigurationException {
     	if (reader == null) {
-    		reader = new NodeReader();
-    		reader.setIgnoreWhitespaceNodes(true);
+    		reader = new DocumentReader();
     	}
 		URL url = bundle.getEntry(path);
 		if (url != null) {
 			InputStream in = url.openStream();
-	    	Node node = reader.read(in);
-			if ("contentExtension".equals(node.getNodeName())) { //$NON-NLS-1$
-				if (processor == null) {
-					processor = new NodeProcessor(new NodeHandler[] {
-						new ValidationHandler(getRequiredAttributes(), getDeprecatedElements())
-					});
-				}
-				processor.process(node, '/' + bundle.getSymbolicName() + '/' + path);
-		    	return node.getChildNodes();
+			UAElement extension = (UAElement)reader.read(in);
+			if (processor == null) {
+				processor = new DocumentProcessor(new ProcessorHandler[] {
+					new ValidationHandler(getRequiredAttributes(), getDeprecatedElements())
+				});
 			}
-			else {
-				String msg = "Required root element \"contentExtension\" missing from user assistance content extension file \"/" + bundle.getSymbolicName() + '/' + path + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg);
-				return new Node[0];
-			}
+			processor.process(extension, '/' + bundle.getSymbolicName() + '/' + path);
+			IUAElement[] children = extension.getChildren();
+			ContentExtension[] result = new ContentExtension[children.length];
+			System.arraycopy(children, 0, result, 0, children.length);
+	    	return result;
 		}
 		else {
 			throw new FileNotFoundException();

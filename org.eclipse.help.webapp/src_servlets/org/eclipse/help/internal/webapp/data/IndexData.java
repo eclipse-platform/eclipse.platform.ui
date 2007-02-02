@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eclipse.help.internal.webapp.data;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -25,13 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.Node;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
-import org.eclipse.help.internal.index.Index;
-import org.eclipse.help.internal.index.IndexEntry;
 
 /**
  * Helper class for Index view initialization
@@ -75,15 +71,7 @@ public class IndexData extends ActivitiesData {
 		plusMinusImage = expandAll ? "/minus.gif" : "/plus.gif"; //$NON-NLS-1$ //$NON-NLS-2$
 		expandedCollapsed = expandAll ? "expanded" : "collapsed"; //$NON-NLS-1$ //$NON-NLS-2$
 		isRTL = UrlUtil.isRTL(request, response);
-
-		loadIndex();
-	}
-
-	/**
-	 * Loads help index
-	 */
-	private void loadIndex() {
-		index = extractEnabled(HelpPlugin.getIndexManager().getIndex(getLocale()));
+		index = HelpPlugin.getIndexManager().getIndex(getLocale());
 	}
 
 	/**
@@ -123,7 +111,9 @@ public class IndexData extends ActivitiesData {
 		this.out = out;
 		IIndexEntry[] entries = index.getEntries();
 		for (int i=0;i<entries.length;++i) {
-			generateEntry(entries[i], 0);
+			if (isEnabled(entries[i])) {
+				generateEntry(entries[i], 0);
+			}
 		}
 	}
 
@@ -151,8 +141,8 @@ public class IndexData extends ActivitiesData {
 	 */
 	private void generateEntry(IIndexEntry entry, int level) throws IOException {
 		if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
-			ITopic[] topics = entry.getTopics();
-			IIndexEntry[] subentries = entry.getSubentries();
+			ITopic[] topics = getEnabled(entry.getTopics());
+			IIndexEntry[] subentries = getEnabled(entry.getSubentries());
 			boolean multipleTopics = topics.length > 1;
 			boolean singleTopic = topics.length == 1;
 	
@@ -373,71 +363,56 @@ public class IndexData extends ActivitiesData {
 		}
 	}
 
-	/**
-	 * Get index built from the given containing not filtered entries.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	private IIndex extractEnabled(IIndex index) {
-		if (!advancedUI) {
-			// activities never filtered for basic browsers
-			return index;
-		}
-		Index enabledIndex = new Index();
-		IIndexEntry[] entries = index.getEntries();
-		for (int i=0;i<entries.length;++i) {
-			IndexEntry entry = extractEnabled(entries[i]);
-			if (entry != null) {
-				enabledIndex.appendChild(entry);
-			}
-		}
-		return enabledIndex;
-	}
-
-	/**
-	 * Get index entry built from the given containing not filtered
-	 * topics and subentries. Returns null if all topics and subentries
-	 * are filtered.
-	 * 
-	 * @param entry
-	 * @return
-	 */
-	private IndexEntry extractEnabled(IIndexEntry entry) {
-		if (isEnabled(entry)) {
-			List enabledChildren = new ArrayList();
-			ITopic[] topics = entry.getTopics();
-			for (int i=0;i<topics.length;++i) {
-				if (isEnabled(topics[i])) {
-					enabledChildren.add(topics[i]);
-				}
-			}
-			IIndexEntry[] subentries = entry.getSubentries();
-			for (int i=0;i<subentries.length;++i) {
-				IIndexEntry subentry = extractEnabled(subentries[i]); 
-				if (subentry != null) {
-					enabledChildren.add(subentry);
-				}
-			}
-	
-			if (!enabledChildren.isEmpty()) {
-				IndexEntry newEntry = new IndexEntry();
-				newEntry.setKeyword(entry.getKeyword());
-				Iterator iter = enabledChildren.iterator();
-				while (iter.hasNext()) {
-					newEntry.appendChild((Node)iter.next());
-				}
-				return newEntry;
-			}
-		}
-		return null;
-	}
-
 	private boolean isEnabled(ITopic topic) {
-		return isEnabled((Object)topic) && HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
+		if (UAContentFilter.isFiltered(topic, HelpEvaluationContext.getContext())) {
+			return false;
+		}
+		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
 	}
 	
-	private boolean isEnabled(Object obj) {
-		return !UAContentFilter.isFiltered(obj, HelpEvaluationContext.getContext());
+	/*
+	 * Enabled if entry passes filter and has at least one enabled topic.
+	 */
+	private boolean isEnabled(IIndexEntry entry) {
+		if (UAContentFilter.isFiltered(entry, HelpEvaluationContext.getContext())) {
+			return false;
+		}
+		ITopic[] topics = entry.getTopics();
+		for (int i=0;i<topics.length;++i) {
+			if (isEnabled(topics[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private IIndexEntry[] getEnabled(IIndexEntry[] entries) {
+		for (int i=0;i<entries.length;++i) {
+			if (!isEnabled(entries[i])) {
+				List list = new ArrayList(entries.length);
+				for (int j=0;j<entries.length;++i) {
+					if (j < i || isEnabled(entries[j])) {
+						list.add(entries[j]);
+					}
+				}
+				return (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
+			}
+		}
+		return entries;
+	}
+	
+	private ITopic[] getEnabled(ITopic[] topics) {
+		for (int i=0;i<topics.length;++i) {
+			if (!isEnabled(topics[i])) {
+				List list = new ArrayList(topics.length);
+				for (int j=0;j<topics.length;++i) {
+					if (j < i || isEnabled(topics[j])) {
+						list.add(topics[j]);
+					}
+				}
+				return (ITopic[])list.toArray(new ITopic[list.size()]);
+			}
+		}
+		return topics;
 	}
 }

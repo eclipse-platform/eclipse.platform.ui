@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.IIndex;
-import org.eclipse.help.IndexContribution;
+import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 
@@ -66,7 +66,7 @@ public class IndexManager {
 			List contributions = new ArrayList();
 			AbstractIndexProvider[] providers = getIndexProviders();
 			for (int i=0;i<providers.length;++i) {
-				IndexContribution[] contrib;
+				IIndexContribution[] contrib;
 				try {
 					contrib = providers[i].getIndexContributions(locale);
 				}
@@ -85,10 +85,6 @@ public class IndexManager {
 					}
 					else if (contrib[j].getIndex() == null) {
 						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						HelpPlugin.logError(msg);
-					}
-					else if (!Index.NAME.equals(contrib[j].getIndex().getNodeName())) {
-						String msg = "Required root element \"" + Index.NAME + "\" missing from help keyword index \"" + contrib[j].getId() + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						HelpPlugin.logError(msg);
 					}
 					else {
@@ -162,7 +158,7 @@ public class IndexManager {
 		Set indexesToFilter = getIgnoredIndexContributions();
 		ListIterator iter = unfiltered.listIterator();
 		while (iter.hasNext()) {
-			IndexContribution contribution = (IndexContribution)iter.next();
+			IIndexContribution contribution = (IIndexContribution)iter.next();
 			if (indexesToFilter.contains(contribution.getId())) {
 				iter.remove();
 			}

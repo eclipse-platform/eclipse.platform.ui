@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,30 +17,27 @@ import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.help.IndexContribution;
-import org.eclipse.help.Node;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class IndexFileParser extends DefaultHandler {
 
-	private NodeReader reader;
+	private DocumentReader reader;
 	
     public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
-    	if (reader == null) {
-    		reader = new NodeReader();
-    		reader.setIgnoreWhitespaceNodes(true);
-    	}
-    	InputStream in = indexFile.getInputStream();
-    	if (in != null) {
-	    	Node node = reader.read(indexFile.getInputStream());
-	    	IndexContribution contribution = new IndexContribution();
-	    	contribution.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
-	    	contribution.setIndex(node);
-	    	contribution.setLocale(indexFile.getLocale());
-	    	return contribution;
-    	}
+		if (reader == null) {
+			reader = new DocumentReader();
+		}
+		InputStream in = indexFile.getInputStream();
+		if (in != null) {
+			Index index = (Index)reader.read(in);
+			IndexContribution contrib = new IndexContribution();
+	    	contrib.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
+			contrib.setIndex(index);
+			contrib.setLocale(indexFile.getLocale());
+			return contrib;
+		}
     	else {
     		throw new FileNotFoundException();
     	}

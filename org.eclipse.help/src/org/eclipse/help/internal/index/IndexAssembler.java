@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,16 +21,15 @@ import java.util.Set;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.IndexContribution;
-import org.eclipse.help.Node;
+import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.dynamic.DocumentProcessor;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeProcessor;
-import org.eclipse.help.internal.dynamic.NodeReader;
-import org.eclipse.help.internal.dynamic.ValidationHandler;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.toc.HrefUtil;
 
 /*
@@ -39,10 +38,9 @@ import org.eclipse.help.internal.toc.HrefUtil;
  */
 public class IndexAssembler {
 
-	private NodeProcessor processor;
+	private DocumentProcessor processor;
 	private Comparator comparator;
 	private String locale;
-	private Map requiredAttributes;
 
 	/*
 	 * Assembles the given index contributions into a complete, sorted index.
@@ -64,7 +62,7 @@ public class IndexAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			IndexContribution contribution = (IndexContribution)iter.next();
-			mergeChildren(index, contribution.getIndex());
+			mergeChildren(index, (Index)contribution.getIndex());
 		}
 		return index;
 	}
@@ -75,30 +73,30 @@ public class IndexAssembler {
 	 * recursively. If multiple topics exist with the same href, only the
 	 * first one found is kept.
 	 */
-	private void mergeChildren(Node a, Node b) {
+	private void mergeChildren(UAElement a, UAElement b) {
 		// create data structures for fast lookup
 		Map entriesByKeyword = new HashMap();
 		Set topicHrefs = new HashSet();
-		Node[] childrenA = a.getChildNodes();
+		IUAElement[] childrenA = a.getChildren();
 		for (int i=0;i<childrenA.length;++i) {
-			Node childA = childrenA[i];
-			if (IndexEntry.NAME.equals(childA.getNodeName())) {
+			UAElement childA = (UAElement)childrenA[i];
+			if (childA instanceof IndexEntry) {
 				entriesByKeyword.put(childA.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD), childA);
 			}
-			else if (Topic.NAME.equals(childA.getNodeName())) {
+			else if (childA instanceof Topic) {
 				topicHrefs.add(childA.getAttribute(Topic.ATTRIBUTE_HREF));
 			}
 		}
 		
 		// now do the merge
-		Node[] childrenB = b.getChildNodes();
+		IUAElement[] childrenB = b.getChildren();
 		for (int i=0;i<childrenB.length;++i) {
-			Node childB = childrenB[i];
-			if (IndexEntry.NAME.equals(childB.getNodeName())) {
+			UAElement childB = (UAElement)childrenB[i];
+			if (childB instanceof IndexEntry) {
 				String keyword = childB.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 				if (entriesByKeyword.containsKey(keyword)) {
 					// duplicate keyword; merge children
-					mergeChildren((Node)entriesByKeyword.get(keyword), childB);
+					mergeChildren((IndexEntry)entriesByKeyword.get(keyword), childB);
 				}
 				else {
 					// wasn't a duplicate
@@ -106,7 +104,7 @@ public class IndexAssembler {
 					entriesByKeyword.put(keyword, childB);
 				}
 			}
-			else if (Topic.NAME.equals(childB.getNodeName())) {
+			else if (childB instanceof Topic) {
 				String href = childB.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (!topicHrefs.contains(href)) {
 					// add topic only if href doesn't exist yet
@@ -116,13 +114,11 @@ public class IndexAssembler {
 			}
 		}
 	}
-	
+
 	private void process(List contributions) {
 		if (processor == null) {
-			NodeReader reader = new NodeReader();
-			reader.setIgnoreWhitespaceNodes(true);
-			processor = new NodeProcessor(new NodeHandler[] {
-				new ValidationHandler(getRequiredAttributes()),
+			DocumentReader reader = new DocumentReader();
+			processor = new DocumentProcessor(new ProcessorHandler[] {
 				new NormalizeHandler(),
 				new LabelHandler(),
 				new IncludeHandler(reader, locale),
@@ -132,64 +128,54 @@ public class IndexAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			IndexContribution contribution = (IndexContribution)iter.next();
-			processor.process(contribution.getIndex(), contribution.getId());
+			processor.process((Index)contribution.getIndex(), contribution.getId());
 		}
 	}
 
 	/*
 	 * Sort the given node's descendants recursively.
 	 */
-	private void sort(Node node) {
+	private void sort(UAElement element) {
 		if (comparator == null) {
 			comparator = new IndexComparator();
 		}
-		sort(node, comparator);
+		sort(element, comparator);
 	}
 	
 	/*
 	 * Sort the given node's descendants recursively using the given
 	 * Comparator.
 	 */
-	private void sort(Node node, Comparator comparator) {
+	private void sort(UAElement element, Comparator comparator) {
 		// sort children
-		Node[] children = node.getChildNodes();
+		IUAElement[] children = element.getChildren();
 		for (int i=0;i<children.length;++i) {
-			node.removeChild(children[i]);
+			element.removeChild((UAElement)children[i]);
 		}
 		Arrays.sort(children, comparator);
 		for (int i=0;i<children.length;++i) {
-			node.appendChild(children[i]);
+			element.appendChild((UAElement)children[i]);
 		}
 		// sort children's children
 		for (int i=0;i<children.length;++i) {
-			sort(children[i], comparator);
+			sort((UAElement)children[i], comparator);
 		}
-	}
-
-	private Map getRequiredAttributes() {
-		if (requiredAttributes == null) {
-			requiredAttributes = new HashMap();
-			requiredAttributes.put(IndexEntry.NAME, new String[] { IndexEntry.ATTRIBUTE_KEYWORD });
-			requiredAttributes.put(Topic.NAME, new String[] { Topic.ATTRIBUTE_HREF });
-			requiredAttributes.put("anchor", new String[] { "id" }); //$NON-NLS-1$ //$NON-NLS-2$
-			requiredAttributes.put("include", new String[] { "path" }); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return requiredAttributes;
 	}
 	
 	/*
 	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
 	 */
-	private class NormalizeHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getNodeName())) {
-				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
+	private class NormalizeHandler extends ProcessorHandler {
+		public short handle(UAElement element, String id) {
+			if (element instanceof Topic) {
+				Topic topic = (Topic)element;
+				String href = topic.getHref();
 				if (href != null) {
 					int index = id.indexOf('/', 1);
 					if (index != -1) {
 						String pluginId = id.substring(1, index);
-						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+						topic.setHref(HrefUtil.normalizeHref(pluginId, href));
 					}
 				}
 			}
@@ -197,10 +183,10 @@ public class IndexAssembler {
 		}
 	}
 
-	private class LabelHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getNodeName())) {
-				Topic topic = node instanceof Topic ? (Topic)node : new Topic(node);
+	private class LabelHandler extends ProcessorHandler {
+		public short handle(UAElement element, String id) {
+			if (element instanceof Topic) {
+				Topic topic = (Topic)element;
 				String label = topic.getLabel();
 				String href = topic.getHref();
 				boolean isLabelEmpty = (label == null || label.length() == 0);
@@ -214,11 +200,11 @@ public class IndexAssembler {
 							break;
 			            }
 			        }
-		        }
+				}
 				if(isLabelEmpty) {
-					Node parent = node.getParentNode();
+					UAElement parent = element.getParentElement();
 					if (parent != null) {
-						parent.removeChild(node);
+						parent.removeChild(element);
 					}
 					String msg = "Unable to look up label for help keyword index topic \"" + href + "\" with missing \"" + Topic.ATTRIBUTE_LABEL + "\" attribute (topic does not exist in table of contents; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg);
@@ -235,12 +221,12 @@ public class IndexAssembler {
 			 * topics first, then entries, etc. Then within each
 			 * group, sort alphabetically.
 			 */
-			int c1 = getCategory((Node)o1);
-			int c2 = getCategory((Node)o2);
+			int c1 = getCategory((UAElement)o1);
+			int c2 = getCategory((UAElement)o2);
 			if (c1 == c2) {
 				// same type of object; compare alphabetically
-				String s1 = getLabel((Node)o1).toLowerCase();
-				String s2 = getLabel((Node)o2).toLowerCase();
+				String s1 = getLabel((UAElement)o1).toLowerCase();
+				String s2 = getLabel((UAElement)o2).toLowerCase();
 				return s1.compareTo(s2);
 			}
 			else {
@@ -257,12 +243,12 @@ public class IndexAssembler {
 		 * 4. entries starting with alpha
 		 * 5. other
 		 */
-		private static int getCategory(Node node) {
-			if (Topic.NAME.equals(node.getNodeName())) {
+		private static int getCategory(UAElement element) {
+			if (element instanceof Topic) {
 				return 0;
 			}
-			else if (IndexEntry.NAME.equals(node.getNodeName())) {
-				String keyword = node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
+			else if (element instanceof IndexEntry) {
+				String keyword = ((IndexEntry)element).getKeyword();
 				if (keyword != null && keyword.length() > 0) {
 					char c = keyword.charAt(0);
 					if (Character.isDigit(c)) {
@@ -284,16 +270,14 @@ public class IndexAssembler {
 		 * Returns the string that will be displayed for the given object,
 		 * used for sorting.
 		 */
-		private static String getLabel(Node node) {
-			if (Topic.NAME.equals(node.getNodeName())) {
-				return node.getAttribute(Topic.ATTRIBUTE_LABEL);
+		private static String getLabel(UAElement element) {
+			if (element instanceof Topic) {
+				return ((Topic)element).getLabel();
 			}
-			else if (IndexEntry.NAME.equals(node.getNodeName())) {
-				return node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
+			else if (element instanceof IndexEntry) {
+				return ((IndexEntry)element).getKeyword();
 			}
-			else {
-				return node.getNodeName();
-			}
+			return null;
 		}
 	};
 }

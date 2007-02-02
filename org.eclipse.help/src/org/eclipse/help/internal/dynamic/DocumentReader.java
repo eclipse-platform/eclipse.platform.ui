@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,23 +19,22 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.UAElementFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-/*
- * A utility class that converts an input stream of XML into a Document
- * (a DOM) for processing.
- */
 public class DocumentReader {
 
 	private DocumentBuilder builder;
 
-	/*
-	 * Converts the given input stream into a DOM.
-	 */
-	public Document read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
+	public UAElement read(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+		return read(in, null);
+	}
+	
+	public UAElement read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
 		if (builder == null) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(false);
@@ -54,6 +53,7 @@ public class DocumentReader {
 		else {
 			input = new InputSource(in);
 		}
-		return builder.parse(input);
+		Document document = builder.parse(input);
+		return UAElementFactory.newElement(document.getDocumentElement());
 	}
 }

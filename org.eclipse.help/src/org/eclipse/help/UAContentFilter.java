@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help;
 
-import java.util.Iterator;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.core.expressions.EvaluationContext;
-import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.core.expressions.ExpressionConverter;
-import org.eclipse.core.expressions.ExpressionTagNames;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.dynamic.FilterResolver;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 /**
  * <p>
@@ -39,15 +27,8 @@ import org.w3c.dom.Element;
  */
 public class UAContentFilter {
 	
-	private static final String ELEMENT_FILTER = "filter"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_FILTER = "filter"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
 	private static final String VARIABLE_PLATFORM = "platform"; //$NON-NLS-1$
-
-	private static FilterResolver filterResolver;
-	private static EvaluationContext defaultContext;
-	private static Document document;
+	private static IEvaluationContext defaultContext;
 
 	/**
 	 * <p>
@@ -94,111 +75,16 @@ public class UAContentFilter {
 	 * @param context the evaluation context for evaluating expressions
 	 * @return whether or not the element should be filtered out
 	 */
-	public static boolean isFiltered(Object element, EvaluationContext context) {
-		if (element instanceof Node) {
-			Node node = (Node)element;
-			if (node.getAttribute(ATTRIBUTE_FILTER) != null) {
-				return handleFilterAttribute(node);
+	public static boolean isFiltered(Object element, IEvaluationContext context) {
+		if (element instanceof IUAElement) {
+			try {
+				return !((IUAElement)element).isEnabled(context);
 			}
-			Node[] children = node.getChildNodes();
-			for (int i=0;i<children.length;++i) {
-				if (ELEMENT_FILTER.equals(children[i].getNodeName())) {
-					return handleFilterNodes(node);
-				}
-				if (ExpressionTagNames.ENABLEMENT.equals(children[i].getNodeName())) {
-					return handleEnablementNode(children[i], context);
-				}
+			catch (Throwable t) {
+				String msg = "Error while checking element filter"; //$NON-NLS-1$
+				HelpPlugin.logError(msg, t);
 			}
 		}
 		return false;
-	}
-
-	/*
-	 * Handle the filter attribute case.
-	 */
-	private static boolean handleFilterAttribute(Node node) {
-		String expression = node.getAttribute(ATTRIBUTE_FILTER);
-		if (filterResolver == null) {
-			filterResolver = new FilterResolver();
-		}
-		return filterResolver.isFiltered(expression);
-	}
-	
-	/*
-	 * Handle the child filter node case.
-	 */
-	private static boolean handleFilterNodes(Node node) {
-		boolean hasFilteredYet = false;
-		Node[] children = node.getChildNodes();
-		for (int i=0;i<children.length;++i) {
-			Node child = children[i];
-			// is it a filter node?
-			if (ELEMENT_FILTER.equals(child.getNodeName())) {
-				// if it already filtered, don't bother evaluating the rest
-				if (!hasFilteredYet) {
-					String name = child.getAttribute(ATTRIBUTE_NAME);
-					String value = child.getAttribute(ATTRIBUTE_VALUE);
-					if (name != null && value != null && name.length() > 0 && value.length() > 0) {
-						boolean not = (value.charAt(0) == '!');
-						if (not) {
-							value = value.substring(1);
-						}
-						if (filterResolver == null) {
-							filterResolver = new FilterResolver();
-						}
-						hasFilteredYet = filterResolver.isFiltered(name, value, not);
-					}
-				}
-			}
-		}
-		return hasFilteredYet;
-	}
-	
-	/*
-	 * Handle the child enablement node case.
-	 */
-	private static boolean handleEnablementNode(Node node, EvaluationContext context) {
-		if (document == null) {
-			try {
-				document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-			}
-			catch (ParserConfigurationException e) {
-				String msg = "Error while evaluating UA document element enablement"; //$NON-NLS-1$
-				HelpPlugin.logError(msg, e);
-			}
-		}
-		Element element = convertNode(node);
-		try {
-			Expression expression = ExpressionConverter.getDefault().perform(element);
-			return expression.evaluate(context) == EvaluationResult.FALSE;
-		}
-		catch (CoreException e) {
-			/*
-			 * This can happen when attempting to resolve a UI variable (e.g. "workbench")
-			 * in a non-UI environment (infocenter mode). Fail silently.
-			 */
-			return false;
-		}
-	}
-
-	/*
-	 * Converts the given element node to a DOM element node.
-	 */
-	private static Element convertNode(Node node) {
-		Element element = document.createElement(node.getNodeName());
-		Iterator iter = node.getAttributes().iterator();
-		while (iter.hasNext()) {
-			String name = (String)iter.next();
-			String value = node.getAttribute(name);
-			element.setAttribute(name, value);
-		}
-		Node[] children = node.getChildNodes();
-		for (int i=0;i<children.length;++i) {
-			boolean isElement = (children[i].getNodeName() != null && children[i].getNodeValue() == null);
-			if (isElement) {
-				element.appendChild(convertNode(children[i]));
-			}
-		}
-		return element;
 	}
 }

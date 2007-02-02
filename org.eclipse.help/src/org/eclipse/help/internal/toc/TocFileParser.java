@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,35 +16,29 @@ import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.help.Node;
-import org.eclipse.help.TocContribution;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class TocFileParser extends DefaultHandler {
 
-	private NodeReader reader;
+	private DocumentReader reader;
 
-	/*
-	 * Parses the given toc XML file into model objects (a TocContribution).
-	 */
-    public TocContribution parse(TocFile tocFile) throws IOException, SAXException, ParserConfigurationException {
-    	if (reader == null) {
-    		reader = new NodeReader();
-    		reader.setIgnoreWhitespaceNodes(true);
-    	}
-    	InputStream in = tocFile.getInputStream();
+	public TocContribution parse(TocFile tocFile) throws IOException, SAXException, ParserConfigurationException {
+		if (reader == null) {
+			reader = new DocumentReader();
+		}
+		InputStream in = tocFile.getInputStream();
     	if (in != null) {
-			Node node = reader.read(in);
+			Toc toc = (Toc)reader.read(in);
 			TocContribution contribution = new TocContribution();
 			contribution.setCategoryId(tocFile.getCategory());
 			contribution.setContributorId(tocFile.getPluginId());
 			contribution.setExtraDocuments(DocumentFinder.collectExtraDocuments(tocFile));
 			contribution.setId(HrefUtil.normalizeHref(tocFile.getPluginId(), tocFile.getFile()));
 			contribution.setLocale(tocFile.getLocale());
+			contribution.setToc(toc);
 			contribution.setPrimary(tocFile.isPrimary());
-			contribution.setToc(node);
 	    	return contribution;
     	}
     	else {

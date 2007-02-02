@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -17,7 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.w3c.dom.Document;
+import org.eclipse.help.internal.UAElement;
 import org.xml.sax.SAXException;
 
 /*
@@ -26,15 +27,15 @@ import org.xml.sax.SAXException;
  */
 public class XMLProcessor {
 
-	private NodeProcessor processor;
+	private DocumentProcessor processor;
 	private DocumentReader reader;
 	private DocumentWriter writer;
 	
 	/*
 	 * Creates the processor, which will use the given handlers.
 	 */
-	public XMLProcessor(NodeHandler[] handlers) {
-		processor = new NodeProcessor(handlers);
+	public XMLProcessor(ProcessorHandler[] handlers) {
+		this.processor = new DocumentProcessor(handlers);
 	}
 	
 	/*
@@ -45,12 +46,11 @@ public class XMLProcessor {
 		if (reader == null) {
 			reader = new DocumentReader();
 		}
-		Document document = reader.read(in, charset);
-		DocumentNode node = new DocumentNode(document);
-		processor.process(node, id);
+		UAElement element = reader.read(in, charset);
+		processor.process(element, id);
 		if (writer == null) {
 			writer = new DocumentWriter();
 		}
-		return writer.write(document);
+		return new ByteArrayInputStream(writer.writeBytes(element, true));
 	}
 }

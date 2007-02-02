@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,47 +10,42 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
-import org.eclipse.help.Node;
+import org.eclipse.help.internal.Include;
+import org.eclipse.help.internal.UAElement;
 
 /*
  * The handler responsible for processing includes, where a node is pulled
  * in from another document.
  */
-public class IncludeHandler extends NodeHandler {
+public class IncludeHandler extends ProcessorHandler {
 
-	private static final String ELEMENT_INCLUDE = "include"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-	
 	private IncludeResolver resolver;
-	private NodeReader reader;
+	private DocumentReader reader;
 	private String locale;
 	
 	/*
 	 * Creates the handler. It needs to know which locale the current document
 	 * is in in order to pull content from the correct locale.
 	 */
-	public IncludeHandler(NodeReader reader, String locale) {
+	public IncludeHandler(DocumentReader reader, String locale) {
 		this.reader = reader;
 		this.locale = locale;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.dynamic.DocumentProcessorHandler#handle(org.eclipse.help.Node, java.lang.String)
-	 */
-	public short handle(Node node, String id) {
-		if (ELEMENT_INCLUDE.equals(node.getNodeName())) {
-			String path = node.getAttribute(ATTRIBUTE_PATH);
+	public short handle(UAElement element, String id) {
+		if (element instanceof Include) {
+			String path = ((Include)element).getPath();
 			if (path != null && path.length() > 0) {
 				String bundleId = getBundleId(path);
 				String relativePath = getRelativePath(path);
 				String elementId = getElementId(path);
 				if (bundleId != null && relativePath != null && elementId != null) {
-					resolveInclude(bundleId, relativePath, elementId, node, locale);
+					resolveInclude(bundleId, relativePath, elementId, element, locale);
 				}
 			}
 			else {
 				// remove invalid includes
-				node.getParentNode().removeChild(node);
+				element.getParentElement().removeChild(element);
 			}
 			return HANDLED_SKIP;
 		}
@@ -58,23 +53,23 @@ public class IncludeHandler extends NodeHandler {
 	}
 	
 	/*
-	 * Processes the include; replaces the node with the one described by
+	 * Processes the include; replaces the element with the one described by
 	 * the parameters.
 	 */
-	private void resolveInclude(String bundleId, String relativePath, String elementId, Node node, String locale) {
+	private void resolveInclude(String bundleId, String relativePath, String elementId, UAElement element, String locale) {
 		if (resolver == null) {
 			resolver = new IncludeResolver(getProcessor(), reader, locale);
 		}
-		Node parent = node.getParentNode();
+		UAElement parent = element.getParentElement();
 		if (parent != null) {
 			try {
-				Node nodeToInclude = resolver.resolve(bundleId, relativePath, elementId);
-				parent.insertBefore(nodeToInclude, node);
-				parent.removeChild(node);
+				UAElement nodeToInclude = resolver.resolve(bundleId, relativePath, elementId);
+				parent.insertBefore(nodeToInclude, element);
+				parent.removeChild(element);
 			}
 			catch (Throwable t) {
 				// remove invalid includes
-				parent.removeChild(node);
+				parent.removeChild(element);
 			}
 		}
 	}

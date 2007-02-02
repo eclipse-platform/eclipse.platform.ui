@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,100 +13,92 @@ package org.eclipse.help.internal.context;
 
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.Node;
-import org.eclipse.help.internal.NodeAdapter;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
-/*
- * Adapts a "context" Node as an IContext. All methods operate on the
- * underlying adapted Node.
- */
-public class Context extends NodeAdapter implements IContext {
+public class Context extends UAElement implements IContext {
 
 	public static final String NAME = "context"; //$NON-NLS-1$
 	public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	
-	/*
-	 * Constructs a new context adapter for an empty context node.
-	 */
-	public Context() {
-		super();
-		setNodeName(NAME);
+	public Context(IContext src) {
+		super(NAME);
+		setText(src.getText());
+		IHelpResource[] topics = src.getRelatedTopics();
+		for (int i=0;i<topics.length;++i) {
+			if (topics[i] instanceof ITopic) {
+				appendChild(new Topic((ITopic)topics[i]));
+			}
+			else {
+				Topic topic = new Topic();
+				topic.setHref(topics[i].getHref());
+				topic.setLabel(topics[i].getLabel());
+				appendChild(topic);
+			}
+		}
+	}
+	
+	public Context(Element src) {
+		super(src);
 	}
 
-	/*
-	 * Constructs a new context adapter for the given context node.
-	 */
-	public Context(Node node) {
-		super(node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContext#getRelatedTopics()
-	 */
 	public IHelpResource[] getRelatedTopics() {
-		return (Topic[])getChildNodes(Topic.NAME, Topic.class);
+		return (IHelpResource[])getChildren(IHelpResource.class);
 	}
 	
-	/*
-	 * Returns the Context's short id. 
-	 */
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
 	
-	/*
-	 * Returns the Context's source plug-in. 
-	 */
 	public String getPluginId() {
 		return getAttribute(ATTRIBUTE_PLUGIN_ID);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContext#getText()
-	 */
+	
 	public String getText() {
-		Node[] children = getChildNodes();
-		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getNodeName())) {
-			Node description = children[0];
-			Node[] descriptionChildren = description.getChildNodes();
-			if (descriptionChildren.length > 0) {
-				return descriptionChildren[0].getNodeValue();
+		Node node = element.getFirstChild();
+		while (node != null) {
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				if (ELEMENT_DESCRIPTION.equals(node.getNodeName())) {
+					node.normalize();
+					Node text = node.getFirstChild();
+					if (text.getNodeType() == Node.TEXT_NODE) {
+						return text.getNodeValue();
+					}
+				}
+				return new String();
 			}
+			node = node.getNextSibling();
 		}
-		return null;
+		return new String();
 	}
-
-	/*
-	 * Sets the Context's short id.
-	 */
+		
 	public void setId(String id) {
 		setAttribute(ATTRIBUTE_ID, id);
 	}
 
-	/*
-	 * Sets the Context's source plug-in id.
-	 */
 	public void setPluginId(String pluginId) {
 		setAttribute(ATTRIBUTE_PLUGIN_ID, pluginId);
 	}
-
-	/*
-	 * Sets the Context's description text.
-	 */
+	
 	public void setText(String text) {
-		Node[] children = getChildNodes();
-		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getNodeName())) {
-			Node description = children[0];
-			Node[] descriptionChildren = description.getChildNodes();
-			for (int i=0;i<descriptionChildren.length;++i) {
-				description.removeChild(descriptionChildren[i]);
+		Node node = element.getFirstChild();
+		while (node != null) {
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				if (ELEMENT_DESCRIPTION.equals(node.getNodeName())) {
+					element.removeChild(node);
+					break;
+				}
 			}
-			Node textNode = new Node();
-			textNode.setNodeValue(text);
-			description.appendChild(textNode);
+			node = node.getNextSibling();
 		}
+		Document document = element.getOwnerDocument();
+		Node description = element.appendChild(document.createElement(ELEMENT_DESCRIPTION));
+		description.appendChild(document.createTextNode(text));
 	}
 }

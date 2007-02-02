@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,15 @@ package org.eclipse.help.internal.dynamic;
 
 import java.util.Map;
 
-import org.eclipse.help.Node;
-import org.eclipse.help.TocContribution;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.UAElement;
 
 /*
  * A handler that ensures that specified attributes are there for certain nodes,
  * or removes the node and logs an error. Also logs warnings for deprecated elements.
  */
-public class ValidationHandler extends NodeHandler {
+public class ValidationHandler extends ProcessorHandler {
 
 	private Map requiredAttributes;
 	private Map deprecatedElements;
@@ -43,29 +43,26 @@ public class ValidationHandler extends NodeHandler {
 		this.deprecatedElements = deprecatedElements;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.dynamic.NodeHandler#handle(org.eclipse.help.Node, java.lang.String)
-	 */
-	public short handle(Node node, String id) {
+	public short handle(UAElement element, String id) {
 		if (deprecatedElements != null) {
-			String suggestion = (String)deprecatedElements.get(node.getNodeName());
+			String suggestion = (String)deprecatedElements.get(element.element.getNodeName());
 			if (suggestion != null) {
-				String msg = "The \"" + node.getNodeName() + "\" element is deprecated in \"" + id + "\"; use \"" + suggestion + "\" instead."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				String msg = "The \"" + element.element.getNodeName() + "\" element is deprecated in \"" + id + "\"; use \"" + suggestion + "\" instead."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				HelpPlugin.logWarning(msg);
 			}
 		}
-		String[] attributes = (String[])requiredAttributes.get(node.getNodeName());
+		String[] attributes = (String[])requiredAttributes.get(element.element.getNodeName());
 		if (attributes != null) {
 			for (int i=0;i<attributes.length;++i) {
-				if (node.getAttribute(attributes[i]) == null) {
-					String msg = "Required attribute \"" + attributes[i] + "\" missing from \"" + node.getNodeName() + "\" element"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (element.getAttribute(attributes[i]) == null) {
+					String msg = "Required attribute \"" + attributes[i] + "\" missing from \"" + element.element.getNodeName() + "\" element"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					if (id != null) {
 						msg += " in \"" + id + '"'; //$NON-NLS-1$
 					}
-					Node parent = node.getParentNode();
-					if (parent != null && !(parent instanceof TocContribution)) {
+					UAElement parent = element.getParentElement();
+					if (parent != null && !(parent instanceof ITocContribution)) {
 						msg += " (skipping element)"; //$NON-NLS-1$
-						parent.removeChild(node);
+						parent.removeChild(element);
 						HelpPlugin.logError(msg);
 						return HANDLED_SKIP;
 					}

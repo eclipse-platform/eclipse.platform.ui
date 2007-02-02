@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,21 +17,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContextProvider;
-import org.eclipse.help.Node;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.dynamic.DocumentProcessor;
+import org.eclipse.help.internal.dynamic.DocumentReader;
+import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeProcessor;
-import org.eclipse.help.internal.dynamic.NodeReader;
-import org.eclipse.help.internal.dynamic.NodeWriter;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.dynamic.ValidationHandler;
 import org.eclipse.help.internal.toc.HrefUtil;
 import org.eclipse.help.internal.util.ResourceLocator;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /*
  * Provides context-sensitive help data to the help system, contributed from
@@ -40,7 +47,6 @@ import org.eclipse.help.internal.util.ResourceLocator;
 public class ContextFileProvider extends AbstractContextProvider {
 
 	private static final String EXTENSION_POINT_CONTEXTS = "org.eclipse.help.contexts"; //$NON-NLS-1$
-	private static final String ELEMENT_CONTEXT = "context"; //$NON-NLS-1$
 	private static final String ELEMENT_CONTEXTS = "contexts"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PLUGIN = "plugin"; //$NON-NLS-1$
@@ -54,15 +60,12 @@ public class ContextFileProvider extends AbstractContextProvider {
 	// locale -> Map(ContextFile -> Map(shortContextId -> Context))
 	private Map contextFilesByLocale;
 	
-	private NodeProcessor processor;
-	private NodeReader reader;
-	private NodeWriter writer;
+	private DocumentProcessor processor;
+	private DocumentReader reader;
+	private DocumentWriter writer;
 	private Map requiredAttributes;
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.AbstractContextProvider#getContext(java.lang.String, java.lang.String)
-	 */
-	public Node getContext(String contextId, String locale) {
+	public IContext getContext(String contextId, String locale) {
 		int index = contextId.lastIndexOf('.');
 		String pluginId = contextId.substring(0, index);
 		String shortContextId = contextId.substring(index + 1);
@@ -180,14 +183,13 @@ public class ContextFileProvider extends AbstractContextProvider {
 			InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale);
 	    	if (in != null) {
 				if (reader == null) {
-					reader = new NodeReader();
-					reader.setIgnoreWhitespaceNodes(true);
+					reader = new DocumentReader();
 				}
-				Node root = reader.read(in);
-				if ("contexts".equals(root.getNodeName())) { //$NON-NLS-1$
+				UAElement root = reader.read(in);
+				if ("contexts".equals(root.getElementName())) { //$NON-NLS-1$
 					// process dynamic content
 					if (processor == null) {
-						processor = new NodeProcessor(new NodeHandler[] {
+						processor = new DocumentProcessor(new ProcessorHandler[] {
 							new ValidationHandler(getRequiredAttributes()),
 							new NormalizeHandler(),
 							new IncludeHandler(reader, locale),
@@ -197,11 +199,11 @@ public class ContextFileProvider extends AbstractContextProvider {
 					processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
 					
 					// build map
-					Node[] children = root.getChildNodes();
+					IUAElement[] children = root.getChildren();
 					Map contexts = new HashMap();
 					for (int i=0;i<children.length;++i) {
-						if (ELEMENT_CONTEXT.equals(children[i].getNodeName())) {
-							Context context = children[i] instanceof Context ? (Context)children[i] : new Context(children[i]);
+						if (children[i] instanceof Context) {
+							Context context = (Context)children[i];
 							String id = context.getId();
 							if (id != null) {
 								contexts.put(id, context);
@@ -244,31 +246,47 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 * 2. Related topic hrefs - convert from relative (e.g. "path/file.html") to absolute hrefs
 	 *    (e.g. "/plugin.id/path/file.html"). 
 	 */
-	private class NormalizeHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (Context.NAME.equals(node.getNodeName())) {
-				Context context = node instanceof Context ? (Context)node : new Context(node);
-				Node[] children = context.getChildNodes();
-				if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(children[0].getNodeName())) {
-					Node description = children[0];
-					Node[] descriptionChildren = description.getChildNodes();
-					if (writer == null) {
-						writer = new NodeWriter();
-					}
+	private class NormalizeHandler extends ProcessorHandler {
+		public short handle(UAElement element, String id) {
+			if (element instanceof Context) {
+				Context context = (Context)element;
+				IUAElement[] children = context.getChildren();
+				if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(((UAElement)children[0]).getElementName())) {
 					StringBuffer buf = new StringBuffer();
-					for (int i=0;i<descriptionChildren.length;++i) {
-						writer.write(descriptionChildren[i], buf, false, null, false);
+					Element description = ((UAElement)children[0]).element;
+					Node node = description.getFirstChild();
+					while (node != null) {
+						if (node.getNodeType() == Node.TEXT_NODE) {
+							buf.append(node.getNodeValue());
+						}
+						else if (node.getNodeType() == Node.ELEMENT_NODE) {
+							if (writer == null) {
+								writer = new DocumentWriter();
+							}
+							try {
+								buf.append(writer.writeString((Element)node, false));
+							}
+							catch (TransformerException e) {
+								String msg = "Internal error while normalizing context-sensitive help descriptions"; //$NON-NLS-1$
+								HelpPlugin.logError(msg, e);
+							}
+						}
+						Node old = node;
+						node = node.getNextSibling();
+						description.removeChild(old);
 					}
-					context.setText(buf.toString());
+					Document document = description.getOwnerDocument();
+					description.appendChild(document.createTextNode(buf.toString()));
 				}
 			}
-			else if (Topic.NAME.equals(node.getNodeName())) {
-				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
+			else if (element instanceof Topic) {
+				Topic topic = (Topic)element;
+				String href = topic.getHref();
 				if (href != null) {
 					int index = id.indexOf('/', 1);
 					if (index != -1) {
 						String pluginId = id.substring(1, index);
-						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+						topic.setHref(HrefUtil.normalizeHref(pluginId, href));
 					}
 				}
 			}

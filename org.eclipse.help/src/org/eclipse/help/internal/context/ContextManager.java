@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContextProvider;
 import org.eclipse.help.IContext;
-import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
@@ -62,7 +61,7 @@ public class ContextManager {
 	/*
 	 * Returns the Context for the given id and locale.
 	 */
-	public Context getContext(String contextId, String locale) {
+	public IContext getContext(String contextId, String locale) {
 		// first check for dynamic context definitions
 		Context dynamicContext = (Context)contextsById.get(contextId);
 		if (dynamicContext != null) {
@@ -77,12 +76,7 @@ public class ContextManager {
 			while (iter.hasNext()) {
 				AbstractContextProvider provider = (AbstractContextProvider)iter.next();
 				try {
-					Node node = provider.getContext(contextId, locale);
-					if (node != null) {
-						Context context = node instanceof Context ? (Context)node : new Context(node);
-						context.setPluginId(pluginId);
-						return context;
-					}
+					return provider.getContext(contextId, locale);
 				}
 				catch (Throwable t) {
 					// log and skip

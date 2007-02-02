@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IToc;
+import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.TocContribution;
+import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableTocsArray;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -306,9 +308,6 @@ public class InfoCenterPage extends RootScopePage {
 		for (int i = 0; i < engines.getLength(); i++) {
 			final Node node = engines.item(i);
 			IToc toc = new IToc() {
-				public TocContribution getTocContribution() {
-					return null;
-				}
 				public ITopic[] getTopics() {
 					return new ITopic[0];
 				}
@@ -322,6 +321,18 @@ public class InfoCenterPage extends RootScopePage {
 				public String getLabel() {
 					return node.getAttributes().getNamedItem("label") //$NON-NLS-1$
 							.getNodeValue();
+				}
+				public IUAElement[] getChildren() {
+					return new IUAElement[0];
+				}
+				public String getLinkTo() {
+					return null;
+				}
+				public boolean isEnabled(IEvaluationContext context) {
+					return true;
+				}
+				public ITocContribution getTocContribution() {
+					return null;
 				}
 			};
 			list.add(toc);

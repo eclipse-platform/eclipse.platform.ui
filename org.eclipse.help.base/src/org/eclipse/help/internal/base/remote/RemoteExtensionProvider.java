@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,16 @@ import java.net.URL;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractContentExtensionProvider;
-import org.eclipse.help.Node;
+import org.eclipse.help.IContentExtension;
+import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 
 public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 
 	private static final String PATH_EXTENSIONS = "/extension"; //$NON-NLS-1$
 
-	private NodeReader reader;
+	private DocumentReader reader;
 
 	public RemoteExtensionProvider() {
 		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
@@ -35,18 +36,17 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 		});
 	}
 	
-	public Node[] getContentExtensions(String locale) {
+	public IContentExtension[] getContentExtensions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
 				URL url = RemoteHelp.getURL(PATH_EXTENSIONS);
 				in = url.openStream();
 				if (reader == null) {
-					reader = new NodeReader();
-					reader.setIgnoreWhitespaceNodes(true);
+					reader = new DocumentReader();
 				}
-				Node node = reader.read(in);
-				return node.getChildNodes();
+				UAElement element = reader.read(in);
+				return (IContentExtension[])element.getChildren(IContentExtension.class);
 			}
 			catch (IOException e) {
 				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
@@ -67,6 +67,6 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 				}
 			}
 		}
-		return new Node[0];
+		return new IContentExtension[0];
 	}
 }

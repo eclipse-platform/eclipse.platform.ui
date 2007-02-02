@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContentExtensionProvider;
-import org.eclipse.help.Node;
+import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.HelpPlugin;
 import org.osgi.framework.Bundle;
 
@@ -35,7 +35,7 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContentExtensionProvider#getContentExtensions(java.lang.String)
 	 */
-	public Node[] getContentExtensions(String locale) {
+	public IContentExtension[] getContentExtensions(String locale) {
 		List extensions = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ContentExtensionFileParser parser = new ContentExtensionFileParser();
@@ -46,7 +46,7 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 				String bundleId = elements[i].getContributor().getName();
 				Bundle bundle = Platform.getBundle(bundleId);
 				try {
-					Node[] ext = parser.parse(bundle, file);
+					ContentExtension[] ext = parser.parse(bundle, file);
 					for (int j=0;j<ext.length;++j) {
 						String content = ext[j].getAttribute(ATTRIBUTE_CONTENT);
 						if (content != null) {
@@ -61,6 +61,6 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 				}
 			}
 		}
-		return (Node[])extensions.toArray(new Node[extensions.size()]);
+		return (IContentExtension[])extensions.toArray(new IContentExtension[extensions.size()]);
 	}
 }

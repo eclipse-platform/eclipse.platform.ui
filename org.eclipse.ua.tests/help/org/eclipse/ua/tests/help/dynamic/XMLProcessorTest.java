@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,11 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
@@ -46,8 +46,8 @@ public class XMLProcessorTest extends TestCase {
 	}
 	
 	public void testXMLProcessor() throws Exception {
-		NodeReader reader = new NodeReader();
-		NodeHandler[] handlers = new NodeHandler[] {
+		DocumentReader reader = new DocumentReader();
+		ProcessorHandler[] handlers = new ProcessorHandler[] {
 				new IncludeHandler(reader, Platform.getNL()),
 				new ExtensionHandler(reader, Platform.getNL()),
 				new FilterHandler(HelpEvaluationContext.getContext())

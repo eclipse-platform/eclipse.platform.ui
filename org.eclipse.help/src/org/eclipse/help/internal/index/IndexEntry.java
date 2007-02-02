@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,59 +13,37 @@ package org.eclipse.help.internal.index;
 
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.Node;
-import org.eclipse.help.internal.NodeAdapter;
-import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
+import org.w3c.dom.Element;
 
-/*
- * Adapts a "entry" Node as an IIndexEntry. All methods operate on the
- * underlying adapted Node.
- */
-public class IndexEntry extends NodeAdapter implements IIndexEntry {
+public class IndexEntry extends UAElement implements IIndexEntry {
 	
 	public static final String NAME = "entry"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_KEYWORD = "keyword"; //$NON-NLS-1$
 	
-	/*
-	 * Constructs a new index entry adapter for an empty entry node.
-	 */
-	public IndexEntry() {
-		super();
-		setNodeName(NAME);
+	public IndexEntry(IIndexEntry src) {
+		super(NAME, src);
+		setKeyword(src.getKeyword());
+		appendChildren(src.getChildren());
+	}
+	
+	public IndexEntry(Element src) {
+		super(src);
 	}
 
-	/*
-	 * Constructs a new index entry adapter for the given entry node.
-	 */
-	public IndexEntry(Node node) {
-		super(node);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IIndexEntry#getKeyword()
-	 */
 	public String getKeyword() {
-		return node.getAttribute(ATTRIBUTE_KEYWORD);
+		return getAttribute(ATTRIBUTE_KEYWORD);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IIndexEntry#getSubentries()
-	 */
 	public IIndexEntry[] getSubentries() {
-		return (IIndexEntry[])getChildNodes(NAME, IndexEntry.class);
+		return (IIndexEntry[])getChildren(IIndexEntry.class);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IIndexEntry#getTopics()
-	 */
 	public ITopic[] getTopics() {
-		return (ITopic[])getChildNodes(Topic.NAME, Topic.class);
+		return (ITopic[])getChildren(ITopic.class);
 	}
 	
-	/*
-	 * Sets the entry's keyword.
-	 */
 	public void setKeyword(String keyword) {
-		node.setAttribute(ATTRIBUTE_KEYWORD, keyword);
+		setAttribute(ATTRIBUTE_KEYWORD, keyword);
 	}
 }

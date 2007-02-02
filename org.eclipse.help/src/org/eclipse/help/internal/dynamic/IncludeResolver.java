@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,8 @@ import java.io.InputStream;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.HelpSystem;
-import org.eclipse.help.Node;
+import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.UAElement;
 import org.xml.sax.SAXException;
 
 /*
@@ -27,15 +28,11 @@ public class IncludeResolver {
 	
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
-	private NodeProcessor processor;
-	private NodeReader reader;
+	private DocumentProcessor processor;
+	private DocumentReader reader;
 	private String locale;
 	
-	/*
-	 * Creates the resolver. It must have a DOMProcessor for processing the
-	 * included content, and must know the locale of the content to include.
-	 */
-	public IncludeResolver(NodeProcessor processor, NodeReader reader, String locale) {
+	public IncludeResolver(DocumentProcessor processor, DocumentReader reader, String locale) {
 		this.processor = processor;
 		this.reader = reader;
 		this.locale = locale;
@@ -44,13 +41,13 @@ public class IncludeResolver {
 	/*
 	 * Resolves the include target to a processed Element.
 	 */
-	public Node resolve(String bundleId, String relativePath, String nodeId) throws IOException, SAXException, ParserConfigurationException {
+	public UAElement resolve(String bundleId, String relativePath, String elementId) throws IOException, SAXException, ParserConfigurationException {
 		String href = '/' + bundleId + '/' + relativePath;
 		InputStream in = HelpSystem.getHelpContent(href, locale);
 		try {
-			Node node = findNode(in, nodeId);
-			processor.process(node, href);
-			return node;
+			UAElement element = findElement(in, elementId);
+			processor.process(element, href);
+			return element;
 		}
 		finally {
 			try {
@@ -61,24 +58,24 @@ public class IncludeResolver {
 	}
 	
 	/*
-	 * Finds the specified node from the given XML input stream.
+	 * Finds the specified element from the given XML input stream.
 	 */
-	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
-		Node node = reader.read(in);
-		return findNode(node, nodeId);
+	private UAElement findElement(InputStream in, String elementId) throws IOException, SAXException, ParserConfigurationException {
+		UAElement element = reader.read(in);
+		return findElement(element, elementId);
 	}
 	
 	/*
-	 * Finds the specified node under the given subtree.
+	 * Finds the specified element under the given subtree.
 	 */
-	private Node findNode(Node node, String nodeId) {
-		String id = node.getAttribute(ATTRIBUTE_ID);
-		if (id != null && id.equals(nodeId)) {
-			return node;
+	private UAElement findElement(UAElement element, String elementId) {
+		String id = element.getAttribute(ATTRIBUTE_ID);
+		if (id != null && id.equals(elementId)) {
+			return element;
 		}
-		Node[] children = node.getChildNodes();
+		IUAElement[] children = element.getChildren();
 		for (int i=0;i<children.length;++i) {
-			Node result = findNode(children[i], nodeId);
+			UAElement result = findElement((UAElement)children[i], elementId);
 			if (result != null) {
 				return result;
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.help.UAContentFilter;
-import org.eclipse.help.internal.dynamic.DocumentNode;
+import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -479,7 +479,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (extensionContentElement == null)
             // no extensionContent defined.
             return null;
-        if (UAContentFilter.isFiltered(new DocumentNode(extensionContentElement), IntroEvaluationContext.getContext())) {
+        if (UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
             // whole extension was filtered
         	return null;
         }

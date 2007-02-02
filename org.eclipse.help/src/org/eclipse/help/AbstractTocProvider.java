@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,13 +22,13 @@ import org.eclipse.help.internal.HelpPlugin;
 public abstract class AbstractTocProvider {
 
 	/**
-	 * Returns all <code>TocContribution</code>s for this provider. Providers
+	 * Returns all toc contributions for this provider. Providers
 	 * are free to provide any number of contributions (zero or more).
 	 * 
 	 * @param locale the locale for which to get contributions
 	 * @return all the contributions for this provider
 	 */
-	public abstract TocContribution[] getTocContributions(String locale);
+	public abstract ITocContribution[] getTocContributions(String locale);
 	
 	/**
 	 * Notifies the platform that the content managed by this provider may
