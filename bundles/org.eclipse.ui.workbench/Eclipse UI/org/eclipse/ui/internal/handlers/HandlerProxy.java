@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.UIElement;
 
 /**
@@ -39,7 +40,8 @@ import org.eclipse.ui.menus.UIElement;
  * 
  * @since 3.0
  */
-public final class HandlerProxy extends AbstractHandler implements IElementUpdater {
+public final class HandlerProxy extends AbstractHandler implements
+		IElementUpdater {
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -163,10 +165,11 @@ public final class HandlerProxy extends AbstractHandler implements IElementUpdat
 			try {
 				final EvaluationResult result = enabledWhenExpression
 						.evaluate(handlerService.getCurrentState());
-				if (result == EvaluationResult.TRUE) {
-					if (loadHandler()) {
-						return handler.isEnabled();
-					}
+				if (result == EvaluationResult.FALSE) {
+					return false;
+				}
+				if (isOkToLoad() && loadHandler()) {
+					return handler.isEnabled();
 				}
 			} catch (final CoreException e) {
 				// We will just fall through an let it return false.
@@ -179,21 +182,25 @@ public final class HandlerProxy extends AbstractHandler implements IElementUpdat
 				WorkbenchPlugin.log(message, status);
 			}
 
-			return false;
+			return true;
 		}
 
 		/*
 		 * There is no enabled when expression, so we just need to consult the
 		 * handler.
 		 */
-		if (loadHandler()) {
+		if (isOkToLoad() && loadHandler()) {
 			return handler.isEnabled();
 		}
-		return false;
+		return true;
 	}
 
 	public final boolean isHandled() {
-		if (loadHandler()) {
+		if (configurationElement!=null) {
+			return true;
+		}
+		
+		if (isOkToLoad() && loadHandler()) {
 			return handler.isHandled();
 		}
 
@@ -211,17 +218,19 @@ public final class HandlerProxy extends AbstractHandler implements IElementUpdat
 		if (handler == null) {
 			// Load the handler.
 			try {
-				handler = (IHandler) configurationElement
-						.createExecutableExtension(handlerAttributeName);
-				configurationElement = null;
-				return true;
+				if (configurationElement != null) {
+					handler = (IHandler) configurationElement
+							.createExecutableExtension(handlerAttributeName);
+					configurationElement = null;
+					return true;
+				}
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied handler was the wrong class"; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.ERROR,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
-				return false;
+				configurationElement = null;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied handler for '" + configurationElement.getAttribute(handlerAttributeName) //$NON-NLS-1$
@@ -229,8 +238,9 @@ public final class HandlerProxy extends AbstractHandler implements IElementUpdat
 				IStatus status = new Status(IStatus.ERROR,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
-				return false;
+				configurationElement = null;
 			}
+			return false;
 		}
 
 		return true;
@@ -244,12 +254,24 @@ public final class HandlerProxy extends AbstractHandler implements IElementUpdat
 		return handler.toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement, java.util.Map)
+	private boolean isOkToLoad() {
+		if (configurationElement != null) {
+			final String bundleId = configurationElement.getContributor()
+					.getName();
+			return BundleUtility.isActive(bundleId);
+		}
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.IElementUpdater#updateElement(org.eclipse.ui.menus.UIElement,
+	 *      java.util.Map)
 	 */
 	public void updateElement(UIElement element, Map parameters) {
-		if (handler!=null && handler instanceof IElementUpdater) {
-			((IElementUpdater)handler).updateElement(element, parameters);
+		if (handler != null && handler instanceof IElementUpdater) {
+			((IElementUpdater) handler).updateElement(element, parameters);
 		}
 	}
 }
