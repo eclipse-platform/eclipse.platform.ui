@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.revisions.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ui.TeamUIMessages;
@@ -26,7 +28,6 @@ import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
@@ -117,7 +118,7 @@ public abstract class RevisionAnnotationController {
 				page.closeEditor(part, false);
 			}
 			//open file in default text editor	
-			IEditorPart part = page.openEditor(input, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+			IEditorPart part = page.openEditor(input, EditorsUI.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
 			AbstractDecoratedTextEditor te = findTextEditorPart(page, part, input);
 			if (te != null)
 				return te;
@@ -276,24 +277,34 @@ public abstract class RevisionAnnotationController {
         return null;
 	}
 	
-	private static ISelectionProvider findEditorRevisonSelectionProvider(IWorkbenchPage page, Object object) {
+	private static IRevisionRulerColumnExtension findEditorRevisonRulerColumn(IWorkbenchPage page, Object object) {
 		ITextEditor editor= findOpenTextEditorFor(page, object);
 		if (editor == null)
 			return null;
 
 		IRevisionRulerColumn column= (IRevisionRulerColumn) editor.getAdapter(IRevisionRulerColumn.class);
 		if (column instanceof IRevisionRulerColumnExtension)
-			return ((IRevisionRulerColumnExtension) column).getRevisionSelectionProvider();
+			return (IRevisionRulerColumnExtension) column;
+		
 		return null;
 	}
 	
-	private RevisionAnnotationController(ISelectionProvider revisionRuler, ISelectionProvider historyList) {
+	private RevisionAnnotationController(IRevisionRulerColumnExtension revisionRuler, ISelectionProvider historyList) {
 		fHistoryListSelectionProvider = historyList;
-		fRulerSelectionProvider= revisionRuler;
-		if (fRulerSelectionProvider != null) {
-			fRulerSelectionProvider.addSelectionChangedListener(rulerListener);
-			fHistoryListSelectionProvider.addSelectionChangedListener(historyListListener);
+		if (revisionRuler == null) {
+			fRulerSelectionProvider = null;
+			return;
 		}
+		
+		fRulerSelectionProvider= revisionRuler.getRevisionSelectionProvider();
+		fRulerSelectionProvider.addSelectionChangedListener(rulerListener);
+		fHistoryListSelectionProvider.addSelectionChangedListener(historyListListener);
+		
+		((IRevisionRulerColumn)revisionRuler).getControl().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
+			}
+		});
 	}
 	
 	/**
@@ -303,7 +314,7 @@ public abstract class RevisionAnnotationController {
 	 * @param historyList the history list selection provider
 	 */
 	public RevisionAnnotationController(IWorkbenchPage page, IFile file, ISelectionProvider historyList) {
-		this(findEditorRevisonSelectionProvider(page, file), historyList);
+		this(findEditorRevisonRulerColumn(page, file), historyList);
 	}
 	
 	/**
@@ -314,7 +325,7 @@ public abstract class RevisionAnnotationController {
 	 */
 	public RevisionAnnotationController(IWorkbenchPage page, IStorageEditorInput editorInput,
 			ISelectionProvider historyList) {
-		this(findEditorRevisonSelectionProvider(page, editorInput), historyList);
+		this(findEditorRevisonRulerColumn(page, editorInput), historyList);
 	}
 
 	/**
