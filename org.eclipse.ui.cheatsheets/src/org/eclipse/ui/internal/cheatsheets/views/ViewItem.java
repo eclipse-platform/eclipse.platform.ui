@@ -401,8 +401,8 @@ public abstract class ViewItem {
 	public void setAsCurrentActiveItem() {
 		setColorAsCurrent(true);
 		setButtonsVisible(true);
-		setExpanded();
 		setBold(true);
+		setExpanded();
 		setFocus();
 	}
 
