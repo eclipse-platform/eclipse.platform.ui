@@ -324,7 +324,7 @@ public class SymlinkTest extends FileSystemTest {
 	/**
 	 * TODO Fix this test.  See https://bugs.eclipse.org/bugs/show_bug.cgi?id=172346
 	 */
-	public void testSymlinkExtendedChars() throws Exception {
+	public void _testSymlinkExtendedChars() throws Exception {
 		if (!isTestablePlatform())
 			return;
 		IFileStore childDir = baseStore.getChild(specialCharName);
@@ -334,18 +334,19 @@ public class SymlinkTest extends FileSystemTest {
 		mkLink(baseStore, "l" + specialCharName, specialCharName, true);
 		mkLink(baseStore, "lf" + specialCharName, "ff" + specialCharName, false);
 		IFileInfo[] infos = baseStore.childInfos(EFS.NONE, getMonitor());
-		assertEquals(infos.length, 4);
+		assertEquals("0.1", infos.length, 4);
 		for (int i = 0; i < infos.length; i++) {
-			assertTrue(infos[i].getName().endsWith(specialCharName));
-			assertTrue(infos[i].exists());
+			String infoName = infos[i].getName();
+			assertTrue("1." + infoName, infoName.endsWith(specialCharName));
+			assertTrue("2." + infoName, infos[i].exists());
 			if (infos[i].getName().charAt(1) == 'f') {
-				assertFalse(infos[i].isDirectory());
+				assertFalse("3." + infoName, infos[i].isDirectory());
 			} else {
-				assertTrue(infos[i].isDirectory());
+				assertTrue("4." + infoName, infos[i].isDirectory());
 			}
 			if (haveSymlinks() && infos[i].getName().charAt(0) == 'l') {
-				assertTrue(infos[i].getAttribute(EFS.ATTRIBUTE_SYMLINK));
-				assertTrue(infos[i].getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET).endsWith(specialCharName));
+				assertTrue("5." + infoName, infos[i].getAttribute(EFS.ATTRIBUTE_SYMLINK));
+				assertTrue("6." + infoName, infos[i].getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET).endsWith(specialCharName));
 			}
 		}
 	}
