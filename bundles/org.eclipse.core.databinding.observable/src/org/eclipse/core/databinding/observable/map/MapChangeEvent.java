@@ -40,7 +40,7 @@ public class MapChangeEvent extends ObservableEvent {
 	}
 	
 	/**
-	 * @return
+	 * @return the observable map from which this event originated
 	 */
 	public IObservableMap getObservableMap() {
 		return (IObservableMap) getSource();

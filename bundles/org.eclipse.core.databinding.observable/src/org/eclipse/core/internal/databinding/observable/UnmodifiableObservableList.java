@@ -60,7 +60,6 @@ public class UnmodifiableObservableList extends ObservableList {
 	/**
 	 * Because this instance is immutable staleness cannot be changed.
 	 * 
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList#setStale(boolean)
 	 */
 	public void setStale(boolean stale) {
 		throw new UnsupportedOperationException();

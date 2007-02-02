@@ -98,81 +98,51 @@ public final class AggregateValidationStatus implements IObservableValue {
 		implementation.addValueChangeListener(listener);
 	}
 
-	/**
-	 * 
-	 * @see org.eclipse.core.databinding.observable.IObservable#dispose()
-	 */
 	public void dispose() {
 		implementation.dispose();
 	}
 
-	/**
-	 * @return
-	 * @see org.eclipse.core.databinding.observable.IObservable#getRealm()
-	 */
 	public Realm getRealm() {
 		return implementation.getRealm();
 	}
 
-	/**
-	 * @return
-	 * @see org.eclipse.core.databinding.observable.value.IObservableValue#getValue()
-	 */
 	public Object getValue() {
 		return implementation.getValue();
 	}
 
-	/**
-	 * @return
-	 * @see org.eclipse.core.databinding.observable.value.IObservableValue#getValueType()
-	 */
 	public Object getValueType() {
 		return implementation.getValueType();
 	}
 
-	/**
-	 * @return
-	 * @see org.eclipse.core.databinding.observable.IObservable#isStale()
-	 */
 	public boolean isStale() {
 		return implementation.isStale();
 	}
 
-	/**
-	 * @param listener
-	 * @see org.eclipse.core.databinding.observable.IObservable#removeChangeListener(org.eclipse.core.databinding.observable.IChangeListener)
-	 */
 	public void removeChangeListener(IChangeListener listener) {
 		implementation.removeChangeListener(listener);
 	}
 
-	/**
-	 * @param listener
-	 * @see org.eclipse.core.databinding.observable.IObservable#removeStaleListener(org.eclipse.core.databinding.observable.IStaleListener)
-	 */
 	public void removeStaleListener(IStaleListener listener) {
 		implementation.removeStaleListener(listener);
 	}
 
-	/**
-	 * @param listener
-	 * @see org.eclipse.core.databinding.observable.value.IObservableValue#removeValueChangeListener(org.eclipse.core.databinding.observable.value.IValueChangeListener)
-	 */
 	public void removeValueChangeListener(IValueChangeListener listener) {
 		implementation.removeValueChangeListener(listener);
 	}
 
-	/**
-	 * @param value
-	 * @see org.eclipse.core.databinding.observable.value.IObservableValue#setValue(java.lang.Object)
-	 */
 	public void setValue(Object value) {
 		implementation.setValue(value);
 	}
 
 	/**
+	 * Returns a status object that merges multiple non-OK status objects in a
+	 * {@link MultiStatus}. Returns an OK status result if all statuses from
+	 * the given bindings are the an OK status. Returns a single status if there
+	 * is only one non-OK status.
+	 * 
 	 * @param bindings
-	 * @return
+	 *            a collection of bindings
+	 * @return a merged status
 	 */
 	public static IStatus getStatusMerged(Collection bindings) {
 		List statuses = new ArrayList();
@@ -204,8 +174,14 @@ public final class AggregateValidationStatus implements IObservableValue {
 	}
 
 	/**
+	 * Returns a status that always returns the most severe status from the
+	 * given bindings. If there is more than one status at the same severity
+	 * level, it picks the first one it encounters.
+	 * 
 	 * @param bindings
-	 * @return
+	 *            a collection of bindings
+	 * @return a single status reflecting the most severe status from the given
+	 *         bindings
 	 */
 	public static IStatus getStatusMaxSeverity(Collection bindings) {
 		int maxSeverity = IStatus.OK;

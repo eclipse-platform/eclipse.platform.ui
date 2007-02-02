@@ -31,8 +31,6 @@ public class WritableSet extends ObservableSet {
 	 * Constructs a new instance with the default realm, empty list, and a
 	 * <code>null</code> element type.
 	 * 
-	 * @param realm
-	 * @param wrappedSet
 	 */
 	public WritableSet() {
 		this(Realm.getDefault());
@@ -41,7 +39,6 @@ public class WritableSet extends ObservableSet {
 	/**
 	 * Construts a new instance with the default realm.
 	 * 
-	 * @param realm
 	 * @param c
 	 * @param elementType
 	 *            can be <code>null</code>
@@ -54,7 +51,6 @@ public class WritableSet extends ObservableSet {
 	 * Constructs a new instance with an empty list and a <code>null</code> element type.
 	 * 
 	 * @param realm
-	 * @param wrappedSet
 	 */
 	public WritableSet(Realm realm) {
 		this(realm, new HashSet(), null);

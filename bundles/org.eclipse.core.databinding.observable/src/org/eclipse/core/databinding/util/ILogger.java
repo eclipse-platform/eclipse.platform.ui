@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.IStatus;
  * from within JFace Data Binding.
  * </p>
  * 
- * @see org.eclipse.jface.util.Policy#getLog()
- * @see org.eclipse.jface.util.Policy#setLog(ILogger)
+ * @see Policy#getLog()
+ * @see Policy#setLog(ILogger)
  * @since 1.1
  */
 public interface ILogger {

@@ -43,7 +43,6 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private IObservable[] dependencies = new IObservable[0];
 
 	/**
-	 * @param realm 
 	 * 
 	 */
 	public ComputedValue() {
@@ -51,7 +50,6 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	}
 
 	/**
-	 * @param realm 
 	 * @param valueType can be <code>null</code>
 	 */
 	public ComputedValue(Object valueType) {

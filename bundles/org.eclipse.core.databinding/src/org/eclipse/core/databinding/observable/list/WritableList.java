@@ -34,7 +34,6 @@ public class WritableList extends ObservableList {
 	 * Creates an empty writable list in the default realm with a
 	 * <code>null</code> element type.
 	 * 
-	 * @param realm
 	 */
 	public WritableList() {
 		this(Realm.getDefault());

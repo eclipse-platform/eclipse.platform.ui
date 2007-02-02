@@ -42,7 +42,7 @@ public class ValueChangeEvent extends ObservableEvent {
 	}
 	
 	/**
-	 * @return
+	 * @return returns the observable value from which this event originated
 	 */
 	public IObservableValue getObservableValue() {
 		return (IObservableValue) source;

@@ -50,7 +50,6 @@ public class DetailObservableValue extends AbstractObservableValue {
 	 * @param outerObservableValue
 	 * @param factory
 	 * @param detailType
-	 * @param realm 
 	 */
 	public DetailObservableValue(IObservableValue outerObservableValue,
 			IObservableFactory factory, Object detailType) {

@@ -34,7 +34,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 public interface IObservableCollection extends IObservable, Collection {
 
 	/**
-	 * @return
+	 * @return the element type of this observable value, or <code>null</code>
+	 *         if this observable collection is untyped.
 	 */
 	Object getElementType();
 

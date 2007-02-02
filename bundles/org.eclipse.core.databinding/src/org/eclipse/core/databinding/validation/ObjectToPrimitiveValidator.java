@@ -54,11 +54,6 @@ public class ObjectToPrimitiveValidator implements IValidator {
 		return ValidationStatus.error(getNullHint());
 	}
 
-	/**
-	 * @param toType2
-	 * @param class1
-	 * @return
-	 */
 	private boolean mapContainsValues(Class toType, Class fromType) {
 		for (int i = 0; i < primitiveMap.length; i++) {
 			if ((primitiveMap[i][0].equals(toType))
@@ -70,14 +65,14 @@ public class ObjectToPrimitiveValidator implements IValidator {
 	}
 
 	/**
-	 * @return
+	 * @return a hint string
 	 */
 	public String getNullHint() {
 		return BindingMessages.getString("Validate_ConversionToPrimitive"); //$NON-NLS-1$
 	}
 
 	/**
-	 * @return
+	 * @return a hint string
 	 */
 	public String getClassHint() {
 		return BindingMessages

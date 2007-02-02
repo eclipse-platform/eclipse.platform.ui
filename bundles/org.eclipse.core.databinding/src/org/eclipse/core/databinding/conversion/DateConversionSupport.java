@@ -86,6 +86,8 @@ public abstract class DateConversionSupport {
 	
 	/**
 	 * Formats the given date with the default formatter according to the default locale.
+	 * @param date a date
+	 * @return a string representation of the given date according to the default locale
 	 */
 	protected String format(Date date) {
 		return format(date,DEFAULT_FORMATTER_INDEX);

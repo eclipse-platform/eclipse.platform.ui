@@ -169,8 +169,7 @@ public class BindingEvent extends EventObject {
 	/**
 	 * (Non-API Method) Construct a BindingEvent.
 	 * 
-	 * @param model
-	 * @param target
+	 * @param binding
 	 * @param diff
 	 * @param copyType
 	 * @param pipelinePosition

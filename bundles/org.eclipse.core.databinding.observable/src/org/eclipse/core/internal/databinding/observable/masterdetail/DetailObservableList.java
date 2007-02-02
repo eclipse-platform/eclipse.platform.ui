@@ -53,10 +53,8 @@ public class DetailObservableList extends ObservableList {
 	private Object detailType;
 
 	/**
-	 * @param realm
 	 * @param factory
 	 * @param outerObservableValue
-	 * @param feature
 	 * @param detailType
 	 */
 	public DetailObservableList(IObservableFactory factory,

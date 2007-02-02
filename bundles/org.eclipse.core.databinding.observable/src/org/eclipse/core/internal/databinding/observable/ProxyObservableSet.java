@@ -39,7 +39,6 @@ public final class ProxyObservableSet extends AbstractObservableSet {
 	
 	/**
 	 * Constructs a DelegatingObservableSet that tracks the state of the given set.
-	 * @param realm 
 	 * 
 	 * @param toDelegate
 	 */

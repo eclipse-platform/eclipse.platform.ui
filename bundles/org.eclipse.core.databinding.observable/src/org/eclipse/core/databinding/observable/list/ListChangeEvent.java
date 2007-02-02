@@ -24,7 +24,7 @@ public class ListChangeEvent extends ObservableEvent {
 	 * 
 	 */
 	private static final long serialVersionUID = -9154315534258776672L;
-	
+
 	static final Object TYPE = new Object();
 	/**
 	 * 
@@ -41,14 +41,14 @@ public class ListChangeEvent extends ObservableEvent {
 	}
 
 	/**
-	 * @return
+	 * @return the observable list from which this event originated
 	 */
 	public IObservableList getObservableList() {
 		return (IObservableList) getSource();
 	}
 
 	protected void dispatch(IObservablesListener listener) {
-		((IListChangeListener)listener).handleListChange(this);
+		((IListChangeListener) listener).handleListChange(this);
 	}
 
 	protected Object getListenerType() {

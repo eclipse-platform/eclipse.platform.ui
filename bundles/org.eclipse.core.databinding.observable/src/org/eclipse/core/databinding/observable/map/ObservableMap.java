@@ -31,7 +31,6 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	private boolean stale = false;
 	
 	/**
-	 * @param realm 
 	 * @param wrappedMap
 	 */
 	public ObservableMap(Map wrappedMap) {

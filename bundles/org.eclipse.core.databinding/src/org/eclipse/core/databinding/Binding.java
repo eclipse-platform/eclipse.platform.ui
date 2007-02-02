@@ -37,7 +37,6 @@ public abstract class Binding {
 	/**
 	 * Creates a new binding.
 	 * 
-	 * @param context
 	 */
 	public Binding() {
 	}
@@ -213,10 +212,11 @@ public abstract class Binding {
 	/**
 	 * Returns a new BindingEvent object.
 	 * 
-	 * @param model
-	 * @param target
 	 * @param diff
+	 *            a diff object representing the change
 	 * @param copyType
+	 *            one of {@link BindingEvent#EVENT_COPY_TO_MODEL} or
+	 *            {@link BindingEvent#EVENT_COPY_TO_TARGET}
 	 * @param pipelinePosition
 	 *            The initial processing pipeline position.
 	 * @return the new binding event

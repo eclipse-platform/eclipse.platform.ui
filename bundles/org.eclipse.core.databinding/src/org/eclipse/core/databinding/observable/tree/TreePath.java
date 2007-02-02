@@ -128,9 +128,6 @@ public final class TreePath {
 	 * 
 	 * @param treePath
 	 *            path to compare to
-	 * @param comparer
-	 *            the comparer to use, or <code>null</code> if equals() should
-	 *            be used to compare segments
 	 * @return whether the given path is a prefix of this path, or the same as
 	 *         this path
 	 */

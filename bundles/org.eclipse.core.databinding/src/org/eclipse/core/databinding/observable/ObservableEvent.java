@@ -32,7 +32,7 @@ public abstract class ObservableEvent extends EventObject {
 	private static final long serialVersionUID = 7693906965267871813L;
 
 	/**
-	 * @return
+	 * @return the observable that generated this event
 	 */
 	public IObservable getObservable() {
 		return (IObservable) getSource();
@@ -45,7 +45,7 @@ public abstract class ObservableEvent extends EventObject {
 	protected abstract void dispatch(IObservablesListener listener);
 
 	/**
-	 * @return
+	 * @return a unique object representing the concrete type of this event.
 	 */
 	protected abstract Object getListenerType();
 

@@ -79,7 +79,6 @@ public class BidirectionalMap extends ObservableMap {
 	/**
 	 * @param functionValue
 	 * @param element
-	 * @param b
 	 */
 	private void removeMapping(Object functionValue, Object element) {
 		Object elementOrSet = valueToElements.get(functionValue);

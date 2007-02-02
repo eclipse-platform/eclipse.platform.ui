@@ -72,7 +72,6 @@ public class Observables {
 	 * Returns an empty observable set. The returned set continues to work after
 	 * it has been disposed of and can be disposed of multiple times.
 	 * 
-	 * @param realm
 	 * @return an empty observable set.
 	 */
 	public static IObservableSet emptyObservableSet() {
@@ -91,7 +90,6 @@ public class Observables {
 	}
 
 	/**
-	 * @param realm
 	 * @param set
 	 * @return Returns an observableSet backed by the given set
 	 */
@@ -140,7 +138,6 @@ public class Observables {
 	}
 
 	/**
-	 * @param realm
 	 * @param list
 	 * @return an observable list that never fires events
 	 */

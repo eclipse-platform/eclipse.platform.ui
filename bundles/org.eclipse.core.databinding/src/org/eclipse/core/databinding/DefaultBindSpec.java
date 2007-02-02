@@ -215,10 +215,7 @@ public class DefaultBindSpec extends BindSpec {
 	 * Tries to create a converter that can convert from values of type
 	 * fromType. Returns <code>null</code> if no converter could be created.
 	 * Either toType or modelDescription can be <code>null</code>, but not
-	 * both. The implementation of this method will iterate over the registered
-	 * bind support factories in reverse order, passing the given arguments to
-	 * {@link BindSupportFactory#createConverter(Object, Object)}. The first
-	 * non-null converter will be returned.
+	 * both.
 	 * 
 	 * @param fromType
 	 * @param toType
@@ -289,7 +286,7 @@ public class DefaultBindSpec extends BindSpec {
 	}
 
 	/**
-	 * @param pipeline
+	 * @param pipelinePosition
 	 *            position BindingEvent.PIPELINE_* constant
 	 * @param modelType
 	 * @return an IValidator, or null if unsuccessful
@@ -305,15 +302,10 @@ public class DefaultBindSpec extends BindSpec {
 	/**
 	 * Tries to create a validator that can validate values of type fromType.
 	 * Returns <code>null</code> if no validator could be created. Either
-	 * toType or modelDescription can be <code>null</code>, but not both. The
-	 * implementation of this method will iterate over the registered bind
-	 * support factories in reverse order, passing the given arguments to
-	 * {@link BindSupportFactory#createValidator(Class, Class, Object)}. The
-	 * first non-null validator will be returned.
+	 * toType or modelDescription can be <code>null</code>, but not both.
 	 * 
 	 * @param fromType
 	 * @param toType
-	 * @param modelDescription
 	 * @return an IValidator, or <code>null</code> if unsuccessful
 	 */
 	protected IValidator createValidator(Object fromType, Object toType) {
@@ -338,8 +330,6 @@ public class DefaultBindSpec extends BindSpec {
 	 * This implementation of
 	 * {@link #fillBindSpecDefaults(IObservable, IObservable)}
 	 * 
-	 * @param dataBindingContext
-	 * @param bindSpec
 	 * @param target
 	 * @param model
 	 */

@@ -53,9 +53,7 @@ public class ListBinding extends Binding {
 
 	/**
 	 * @param targetList
-	 * @param target
 	 * @param modelList
-	 * @param model
 	 * @param bindSpec
 	 */
 	public ListBinding(IObservableList targetList,
@@ -222,7 +220,6 @@ public class ListBinding extends Binding {
 	/**
 	 * Performs the necessary processing for the position.
 	 * 
-	 * @param value
 	 * @param pipelinePosition
 	 * @param e
 	 * @param lastPosition

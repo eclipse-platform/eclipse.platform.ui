@@ -40,7 +40,7 @@ public class SetChangeEvent extends ObservableEvent {
 	}
 	
 	/**
-	 * @return
+	 * @return the observable set from which this event originated
 	 */
 	public IObservableSet getObservableSet() {
 		return (IObservableSet) getSource();

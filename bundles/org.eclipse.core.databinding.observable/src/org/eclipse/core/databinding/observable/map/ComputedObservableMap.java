@@ -100,9 +100,7 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	}
 
 	/**
-	 * @param realm
 	 * @param keySet
-	 * @param wrappedMap
 	 */
 	public ComputedObservableMap(IObservableSet keySet) {
 		super(keySet.getRealm());

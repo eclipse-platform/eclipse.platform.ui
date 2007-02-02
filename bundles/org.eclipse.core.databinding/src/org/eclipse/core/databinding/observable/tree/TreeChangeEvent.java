@@ -38,7 +38,7 @@ public class TreeChangeEvent extends EventObject {
 	}
 
 	/**
-	 * @return
+	 * @return the observable tree from which this event originated
 	 */
 	public IObservableTree getObservable() {
 		return (IObservableTree) getSource();

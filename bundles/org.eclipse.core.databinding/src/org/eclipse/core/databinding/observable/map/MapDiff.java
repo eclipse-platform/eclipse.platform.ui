@@ -39,7 +39,6 @@ public abstract class MapDiff {
 	 * {@link #getRemovedKeys()} or {@link #getChangedKeys()}.
 	 * 
 	 * @param key
-	 * @param indices
 	 * @return the old value for the given key.
 	 */
 	public abstract Object getOldValue(Object key);
@@ -49,7 +48,6 @@ public abstract class MapDiff {
 	 * {@link #getChangedKeys()} or {@link #getAddedKeys()}.
 	 * 
 	 * @param key
-	 * @param indices
 	 * @return the new value for the given key.
 	 */
 	public abstract Object getNewValue(Object key);

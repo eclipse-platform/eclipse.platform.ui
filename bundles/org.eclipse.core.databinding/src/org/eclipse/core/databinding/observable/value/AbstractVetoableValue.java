@@ -22,7 +22,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		implements IVetoableValue {
 
 	/**
-	 * @param realm
+	 * Creates a new vetoable value.
 	 */
 	public AbstractVetoableValue() {
 		this(Realm.getDefault());

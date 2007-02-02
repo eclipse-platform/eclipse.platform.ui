@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -248,7 +247,7 @@ public class BindSpec {
 
 	/**
 	 * Fills any values not explicitly set with defaults. This implementation of
-	 * {@link #fillBindSpecDefaults(IObservableValue, IObservableValue)} creates
+	 * {@link #fillBindSpecDefaults(IObservable, IObservable)} creates
 	 * validators that always return {@link Status#OK_STATUS}, and converters
 	 * that perform no conversion.
 	 * 
