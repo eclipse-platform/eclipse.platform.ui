@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.HelpPlugin;
@@ -114,13 +113,12 @@ public class IndexAssembler {
 			}
 		}
 	}
-
+	
 	private void process(List contributions) {
 		if (processor == null) {
 			DocumentReader reader = new DocumentReader();
 			processor = new DocumentProcessor(new ProcessorHandler[] {
 				new NormalizeHandler(),
-				new LabelHandler(),
 				new IncludeHandler(reader, locale),
 				new ExtensionHandler(reader, locale),
 			});
@@ -177,37 +175,6 @@ public class IndexAssembler {
 						String pluginId = id.substring(1, index);
 						topic.setHref(HrefUtil.normalizeHref(pluginId, href));
 					}
-				}
-			}
-			return UNHANDLED;
-		}
-	}
-
-	private class LabelHandler extends ProcessorHandler {
-		public short handle(UAElement element, String id) {
-			if (element instanceof Topic) {
-				Topic topic = (Topic)element;
-				String label = topic.getLabel();
-				String href = topic.getHref();
-				boolean isLabelEmpty = (label == null || label.length() == 0);
-		        if (isLabelEmpty) {
-		        	IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
-					for (int j=0;j<tocs.length;j++) {
-			            ITopic t = tocs[j].getTopic(href);
-			            if (t != null) {
-							topic.setLabel(t.getLabel());
-							isLabelEmpty = false;
-							break;
-			            }
-			        }
-				}
-				if(isLabelEmpty) {
-					UAElement parent = element.getParentElement();
-					if (parent != null) {
-						parent.removeChild(element);
-					}
-					String msg = "Unable to look up label for help keyword index topic \"" + href + "\" with missing \"" + Topic.ATTRIBUTE_LABEL + "\" attribute (topic does not exist in table of contents; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					HelpPlugin.logError(msg);
 				}
 			}
 			return UNHANDLED;
@@ -272,7 +239,19 @@ public class IndexAssembler {
 		 */
 		private static String getLabel(UAElement element) {
 			if (element instanceof Topic) {
-				return ((Topic)element).getLabel();
+				Topic topic = (Topic)element;
+				if (topic.getLabel() == null) {
+					ITopic topic2 = HelpPlugin.getTocManager().getTopic(topic.getHref());
+					if (topic2 != null) {
+						topic.setLabel(topic2.getLabel());
+					}
+					else {
+						String msg = "Unable to look up label for help keyword index topic \"" + topic.getHref() + "\" with missing \"" + Topic.ATTRIBUTE_LABEL + "\" attribute (topic does not exist in table of contents; using href as label)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						HelpPlugin.logError(msg);
+						topic.setLabel(topic.getHref());
+					}
+				}
+				return topic.getLabel();
 			}
 			else if (element instanceof IndexEntry) {
 				return ((IndexEntry)element).getKeyword();

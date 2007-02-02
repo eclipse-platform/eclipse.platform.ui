@@ -4,12 +4,13 @@
       <topic href="data/help/index/topic1.html"/>
    </entry>
    <entry keyword="keyword2">
-      <topic href="data/help/index/topic2.html"/>
+      <topic href="data/help/index/topic2.html#someAnchor"/>
    </entry>
    <entry keyword="keyword3">
-      <topic href="data/help/index/topic3.html"/>
+      <topic href="data/help/index/topic2.html"/>
+      <topic href="data/help/index/topic3.html#someAnchor"/>
    </entry>
    <entry keyword="keyword4">
-      <topic href="data/help/index/topic4.html"/>
+      <topic href="data/help/index/topicDoesntExist.html"/>
    </entry>
 </index>

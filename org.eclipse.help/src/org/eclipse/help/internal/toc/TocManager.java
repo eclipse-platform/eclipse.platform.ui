@@ -30,6 +30,7 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.help.internal.util.ProductPreferences;
 
@@ -99,6 +100,21 @@ public class TocManager {
 			}
 		}
 		return (Toc)tocsByTopic.get(href);
+	}
+	
+	public synchronized Topic getTopic(String href) {
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+		for (int i=0;i<tocs.length;++i) {
+			Topic topic = (Topic)tocs[i].getTopic(href);
+			if (topic != null) {
+				return topic;
+			}
+		}
+		int index = href.indexOf('#');
+		if (index != -1) {
+			return getTopic(href.substring(0, index));
+		}
+		return null;
 	}
 	
 	/*
