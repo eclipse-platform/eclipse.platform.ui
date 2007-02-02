@@ -206,7 +206,7 @@ public class StatusManager {
 	 * @param status
 	 *            already handled and logged status
 	 */
-	void addLoggedStatus(IStatus status) {
+	public void addLoggedStatus(IStatus status) {
 		loggedStatuses.add(status);
 	}
 

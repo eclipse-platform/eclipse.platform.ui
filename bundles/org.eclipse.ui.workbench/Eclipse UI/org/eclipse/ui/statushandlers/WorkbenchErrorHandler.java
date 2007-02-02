@@ -39,7 +39,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 		}
 
 		if ((handlingState.getHandlingHint() & StatusManager.LOG) == StatusManager.LOG) {
-			addLoggedStatus(handlingState.getStatus());
+			StatusManager.getManager().addLoggedStatus(handlingState.getStatus());
 			WorkbenchPlugin.getDefault().getLog()
 					.log(handlingState.getStatus());
 		}
