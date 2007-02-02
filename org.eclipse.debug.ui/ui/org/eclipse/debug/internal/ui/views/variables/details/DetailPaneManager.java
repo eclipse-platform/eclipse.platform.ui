@@ -447,6 +447,7 @@ public class DetailPaneManager {
 	 * @param preferredDetailsAreaID The preferred ID in the set.
 	 */
 	public void setPreferredDetailPane(Set possibleDetailsAreaIDs, String preferredDetailsAreaID){
+		if (possibleDetailsAreaIDs == null) return;
 		if (fPreferredDetailPanes == null){
 			loadPreferredDetailsAreas();
 		}
