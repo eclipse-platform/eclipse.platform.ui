@@ -552,7 +552,16 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 			return false;
 
 		QuickDiff util= new QuickDiff();
-		if (util.getConfiguredQuickDiffProvider(oldDiffer).equals(diffProviderId)) {
+		Object oldDifferId= util.getConfiguredQuickDiffProvider(oldDiffer);
+		if (oldDifferId.equals(diffProviderId)) {
+			if (oldDiffer instanceof ILineDifferExtension)
+				((ILineDifferExtension) oldDiffer).resume();
+			return true;
+		}
+		
+		// Check whether the desired provider is available at all
+		IAnnotationModel newDiffer= util.createQuickDiffAnnotationModel(getEditor(), diffProviderId);
+		if (!util.getConfiguredQuickDiffProvider(newDiffer).equals(diffProviderId)) {
 			if (oldDiffer instanceof ILineDifferExtension)
 				((ILineDifferExtension) oldDiffer).resume();
 			return true;
@@ -576,7 +585,6 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		IAnnotationModelExtension modelExtension=(IAnnotationModelExtension) annotationModel;
 		modelExtension.removeAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 		
-		IAnnotationModel newDiffer= util.createQuickDiffAnnotationModel(getEditor(), diffProviderId);
 
 		modelExtension.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, newDiffer);
 		
