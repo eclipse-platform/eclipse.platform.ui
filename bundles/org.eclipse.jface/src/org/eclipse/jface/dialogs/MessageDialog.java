@@ -11,7 +11,6 @@
 package org.eclipse.jface.dialogs;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -314,8 +313,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *            the message
 	 */
 	public static void openError(Shell parent, String title, String message) {
-		IStatus status = new Status(IStatus.ERROR, Policy.JFACE, message);
-		Policy.getLogDialog().log(parent, title, status);
+		Policy.getLogDialog().log(parent, IStatus.ERROR, title, message);
 	}
 
     /**
@@ -330,8 +328,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 */
 	public static void openInformation(Shell parent, String title,
 			String message) {
-		IStatus status = new Status(IStatus.INFO, Policy.JFACE, message);
-		Policy.getLogDialog().log(parent, title, status);
+		Policy.getLogDialog().log(parent, IStatus.INFO, title, message);
 	}
 
     /**
@@ -371,8 +368,7 @@ public class MessageDialog extends IconAndMessageDialog {
 	 *            the message
 	 */
 	public static void openWarning(Shell parent, String title, String message) {
-		IStatus status = new Status(IStatus.WARNING, Policy.JFACE, message);
-		Policy.getLogDialog().log(parent, title, status);
+		Policy.getLogDialog().log(parent, IStatus.WARNING, title, message);
 	}
 
     /*

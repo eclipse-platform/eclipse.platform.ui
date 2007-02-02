@@ -16,6 +16,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.AnimatorFactory;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -81,27 +82,46 @@ public class Policy {
 	 */
 	private static ILogDialog getJFaceLogDialog() {
 		return new ILogDialog() {
+
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.util.ILogger#log(org.eclipse.core.runtime.IStatus)
+			 * @see org.eclipse.jface.util.ILogDialog#log(org.eclipse.swt.widgets.Shell,
+			 *      java.lang.String, java.lang.String,
+			 *      org.eclipse.core.runtime.IStatus, int)
 			 */
-			public void log(Shell parent, String title, IStatus status) {
+			public int log(Shell parent, String title, String message,
+					IStatus status, int displayMask) {
+				ErrorDialog dialog = new ErrorDialog(parent, title, message,
+						status, displayMask);
+				return dialog.open();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.ILogDialog#log(org.eclipse.swt.widgets.Shell,
+			 *      int, java.lang.String, java.lang.String, int)
+			 */
+			public int log(Shell parent, int severity, String title,
+					String message) {
 				int dialogConstant = MessageDialog.NONE;
-				if (status.getSeverity() == IStatus.ERROR) {
+				if (severity == IStatus.ERROR) {
 					dialogConstant = MessageDialog.ERROR;
-				} else if (status.getSeverity() == IStatus.WARNING) {
+				}
+				if (severity == IStatus.WARNING) {
 					dialogConstant = MessageDialog.WARNING;
-				} else if (status.getSeverity() == IStatus.INFO) {
+				} else if (severity == IStatus.INFO) {
 					dialogConstant = MessageDialog.INFORMATION;
 				}
 				MessageDialog dialog = new MessageDialog(parent, title,
 						null, // accept the default window icon
-						status.getMessage(), dialogConstant,
-						new String[] { IDialogConstants.OK_LABEL }, 0); // ok is
+						message, dialogConstant,
+						new String[] { IDialogConstants.OK_LABEL }, 0); // ok
+				// is
 				// the
 				// default
-				dialog.open();
+				return dialog.open();
 			}
 		};
 	}
@@ -149,7 +169,7 @@ public class Policy {
 	/**
 	 * Returns the dialog used by JFace to show errors and warnings.
 	 * <p>
-	 * The default dialog shows the status in JFace MessageDialog 
+	 * The default dialog shows the status in JFace MessageDialog
 	 * </p>
 	 * 
 	 * @return the dialog

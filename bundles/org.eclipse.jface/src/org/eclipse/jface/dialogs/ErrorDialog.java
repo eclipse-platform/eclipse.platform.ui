@@ -15,6 +15,7 @@ package org.eclipse.jface.dialogs;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -354,19 +355,20 @@ public class ErrorDialog extends IconAndMessageDialog {
      * @see org.eclipse.core.runtime.IStatus#matches(int)
      */
     public static int openError(Shell parentShell, String title,
-            String message, IStatus status, int displayMask) {
-        ErrorDialog dialog = new ErrorDialog(parentShell, title, message,
-                status, displayMask);
-        return dialog.open();
-    }
+			String message, IStatus status, int displayMask) {
+		return Policy.getLogDialog().log(parentShell, title, message, status,
+				displayMask);
+	}
 
     /**
-     * Populates the list using this error dialog's status object. This walks
-     * the child static of the status object and displays them in a list. The
-     * format for each entry is status_path : status_message If the status's
-     * path was null then it (and the colon) are omitted.
-     * @param listToPopulate The list to fill.
-     */
+	 * Populates the list using this error dialog's status object. This walks
+	 * the child static of the status object and displays them in a list. The
+	 * format for each entry is status_path : status_message If the status's
+	 * path was null then it (and the colon) are omitted.
+	 * 
+	 * @param listToPopulate
+	 *            The list to fill.
+	 */
     private void populateList(List listToPopulate) {
         populateList(listToPopulate, status, 0, shouldIncludeTopLevelErrorInDetails);
     }
