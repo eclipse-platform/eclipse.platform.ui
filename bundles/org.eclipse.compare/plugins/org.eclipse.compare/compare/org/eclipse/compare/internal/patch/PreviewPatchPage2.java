@@ -83,6 +83,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
 		setControl(composite);
+		updateEnablements();
 		
 	}
 	
