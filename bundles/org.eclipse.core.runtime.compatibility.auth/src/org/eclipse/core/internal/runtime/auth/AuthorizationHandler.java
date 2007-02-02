@@ -67,6 +67,15 @@ public class AuthorizationHandler {
 		}
 		keyringTimeStamp = new File(keyringFile).lastModified();
 	}
+	
+	/**
+	 * Saves the keyring file to disk.
+	 * @exception CoreException 
+	 */
+	private static void saveKeyring() throws CoreException {
+		keyring.save();
+		keyringTimeStamp = new File(keyringFile).lastModified();
+	}
 
 	/**
 	 * Adds the given authorization information to the key ring. The
@@ -95,10 +104,10 @@ public class AuthorizationHandler {
 	 * </ul>
 	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+	public static synchronized void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
 		loadKeyring();
 		keyring.addAuthorizationInfo(serverUrl, realm, authScheme, new HashMap(info));
-		keyring.save();
+		saveKeyring();
 	}
 
 	/**
@@ -119,10 +128,10 @@ public class AuthorizationHandler {
 	 * </ul>
 	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
+	public static synchronized void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		loadKeyring();
 		keyring.addProtectionSpace(resourceUrl, realm);
-		keyring.save();
+		saveKeyring();
 	}
 
 	/**
@@ -146,10 +155,10 @@ public class AuthorizationHandler {
 	 * </ul>
 	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
+	public static synchronized void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		loadKeyring();
 		keyring.flushAuthorizationInfo(serverUrl, realm, authScheme);
-		keyring.save();
+		saveKeyring();
 	}
 
 	/**
@@ -170,7 +179,7 @@ public class AuthorizationHandler {
 	 *		such information exists
 	 *XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+	public static synchronized Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		Map info = null;
 		try {
 			loadKeyring();
@@ -191,7 +200,7 @@ public class AuthorizationHandler {
 	 *		<code>null</code> if the realm is unknown
 	 *	 * XXX Move to a plug-in to be defined (JAAS plugin).
 	 */
-	public static String getProtectionSpace(URL resourceUrl) {
+	public static synchronized String getProtectionSpace(URL resourceUrl) {
 		try {
 			loadKeyring();
 		} catch (CoreException e) {
