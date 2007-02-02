@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
-import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * @version 1.0
@@ -710,7 +716,7 @@ public class TextSegment extends ParagraphSegment {
 	}
 	
 	public void clearCache(String fontId) {
-		if (fontId==null && this.fontId==null)
+		if (fontId==null && (this.fontId==null||this.fontId.equals(FormTextModel.BOLD_FONT_ID)))
 			textFragments = null;
 		else if (fontId!=null && this.fontId!=null && fontId.equals(this.fontId))
 			textFragments = null;

@@ -130,23 +130,6 @@ public class ExpandableComposite extends Canvas {
 	 * be positioned after the text control and vertically centered with it.
 	 */
 	public static final int LEFT_TEXT_CLIENT_ALIGNMENT = 1 << 13;
-	
-	/**
-	 * By default, text client height affects the title area height. There
-	 * are situations where it would be beneficial to ignore the text client
-	 * height and allow the text client to slightly overlap the unused white
-	 * space between the head and the content. Use this constant
-	 * to ignore the text client height.
-	 * <p>Note: this option only makes sense with the standard Eclipse 16x16
-	 * icons. Anything larger will start overlapping the description or
-	 * content. ToolBar controls can be used in combination with this flag,
-	 * but only if description is not set, otherwise tool bar control can
-	 * cut the description text off. If you need description, make it 
-	 * part of the body with enough top margin to clear the local tool
-	 * bar.
-	 * @since 3.3
-	 */
-	public static final int IGNORE_TEXT_CLIENT_HEIGHT = 1 << 14;	
 
 	/**
 	 * Width of the margin that will be added around the control (default is 0).
@@ -164,6 +147,16 @@ public class ExpandableComposite extends Canvas {
 	 * (default is 3).
 	 */
 	public int clientVerticalSpacing = 3;
+
+	/**
+	 * Vertical spacing between the title area and the description control
+	 * (default is 0). The description control is normally placed at the new
+	 * line as defined in the font used to render it. This value will be added
+	 * to it.
+	 * 
+	 * @since 3.3
+	 */
+	public int descriptionVerticalSpacing = 0;
 
 	/**
 	 * Horizontal margin around the inside of the title bar area when TITLE_BAR
@@ -195,7 +188,7 @@ public class ExpandableComposite extends Canvas {
 	 *             use it and do not change its value.
 	 */
 	protected int GAP = 4;
-	
+
 	static final int IGAP = 4;
 	static final int IVGAP = 4;
 
@@ -320,7 +313,7 @@ public class ExpandableComposite extends Canvas {
 			int tbarHeight = 0;
 			if (size.y > 0)
 				tbarHeight = size.y;
-			if (tcsize.y > 0 && (expansionStyle&IGNORE_TEXT_CLIENT_HEIGHT)==0)
+			if (tcsize.y > 0)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
 			y += tbarHeight;
 			if (hasTitleBar())
@@ -348,6 +341,7 @@ public class ExpandableComposite extends Canvas {
 					if (desc != null) {
 						dsize = descriptionCache.computeSize(areaWidth,
 								SWT.DEFAULT);
+						y += descriptionVerticalSpacing;
 						descriptionCache.setBounds(cx, y, areaWidth, dsize.y);
 						y += dsize.y + clientVerticalSpacing;
 					} else {
@@ -410,7 +404,7 @@ public class ExpandableComposite extends Canvas {
 				width = size.x;
 			if (tcsize.x > 0)
 				width += GAP + tcsize.x;
-			height = tcsize.y > 0 && ((expansionStyle&IGNORE_TEXT_CLIENT_HEIGHT)==0)? Math.max(tcsize.y, size.y) : size.y;
+			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
 				if (expanded && client != null)
@@ -442,7 +436,8 @@ public class ExpandableComposite extends Canvas {
 				if (dsize != null) {
 					width = Math.max(width, dsize.x);
 					if (expanded)
-						height += dsize.y + clientVerticalSpacing;
+						height += descriptionVerticalSpacing + dsize.y
+								+ clientVerticalSpacing;
 				} else {
 					height += clientVerticalSpacing;
 					if (getSeparatorControl() != null)
@@ -923,6 +918,34 @@ public class ExpandableComposite extends Canvas {
 		this.textClient = textClient;
 	}
 
+	/**
+	 * Returns the difference in height between the text and the text client (if
+	 * set). This difference can cause vertical alignment problems when two
+	 * expandable composites are placed side by side, one with and one without
+	 * the text client. Use this method obtain the value to add to either
+	 * <code>descriptionVerticalSpacing</code> (if you have description) or
+	 * <code>clientVerticalSpacing</code> to correct the alignment of the
+	 * expandable without the text client.
+	 * 
+	 * @return the difference in height between the text and the text client or
+	 *         0 if no corrective action is needed.
+	 * @since 3.3
+	 */
+	public int getTextClientHeightDifference() {
+		if (textClient == null || textLabel == null)
+			return 0;
+		int theight = textLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		int tcheight = textClient.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		return Math.max(tcheight - theight, 0);
+	}
+
+	/**
+	 * Tests if this expandable composite renders a title bar around the text.
+	 * 
+	 * @return <code>true</code> for <code>TITLE_BAR</code> or
+	 *         <code>SHORT_TITLE_BAR</code> styles, <code>false</code>
+	 *         otherwise.
+	 */
 	protected boolean hasTitleBar() {
 		return (getExpansionStyle() & TITLE_BAR) != 0
 				|| (getExpansionStyle() & SHORT_TITLE_BAR) != 0;
@@ -947,9 +970,9 @@ public class ExpandableComposite extends Canvas {
 	public Color getTitleBarForeground() {
 		return titleBarForeground;
 	}
-	
+
 	// end of APIs
-	
+
 	private void toggleState() {
 		boolean newState = !isExpanded();
 		fireExpanding(newState, true);
@@ -958,8 +981,7 @@ public class ExpandableComposite extends Canvas {
 		if (newState)
 			FormUtil.ensureVisible(this);
 	}
-	
-	
+
 	private void fireExpanding(boolean state, boolean before) {
 		int size = listeners.size();
 		if (size == 0)
@@ -972,7 +994,7 @@ public class ExpandableComposite extends Canvas {
 			else
 				listener.expansionStateChanged(e);
 		}
-	}	
+	}
 
 	private void verticalMove(boolean down) {
 		Composite parent = getParent();
