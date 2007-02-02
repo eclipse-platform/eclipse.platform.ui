@@ -21,14 +21,16 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.IWorkbenchWidget;
-import org.eclipse.ui.menus.WidgetContributionItem;
+import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.tests.api.workbenchpart.TextWidget;
 import org.eclipse.ui.tests.commands.ActiveActionSetExpression;
 
 /**
@@ -102,11 +104,12 @@ public class MenuBuilder {
 						null, null, "Item X25", null, null,
 						CommandContributionItem.STYLE_PUSH);
 				additions.add(item);
-				WidgetContributionItem widget = new WidgetContributionItem(
+				WorkbenchWindowControlContribution widget = new WorkbenchWindowControlContribution(
 						"org.eclipse.ui.tests.menus.itemX26") {
-
-					public IWorkbenchWidget createWidget() {
-						return new TextWidget();
+					protected Control createControl(Composite parent) {
+						Text textCtrl = new Text(parent, SWT.BORDER);
+						textCtrl.setText("ABCDEFGHI");
+						return textCtrl;
 					}
 				};
 				additions.add(widget);

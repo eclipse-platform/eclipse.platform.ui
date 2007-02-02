@@ -1265,6 +1265,11 @@ public interface IWorkbenchRegistryConstants {
 	public static String TAG_WIDGET = "widget"; //$NON-NLS-1$
 
 	/**
+	 * The name of the element storing a control hosted in a ToolBar.
+	 */
+	public static String TAG_CONTROL = "control"; //$NON-NLS-1$
+
+	/**
 	 * Wizard tag. Value <code>wizard</code>.
 	 */
 	public static String TAG_WIZARD = "wizard";//$NON-NLS-1$

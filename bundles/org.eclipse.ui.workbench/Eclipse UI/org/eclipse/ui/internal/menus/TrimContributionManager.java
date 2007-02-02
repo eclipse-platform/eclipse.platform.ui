@@ -70,6 +70,18 @@ public class TrimContributionManager extends ContributionManager {
 			// Create the new control, manager...
 			tbm = new ToolBarManager(SWT.FLAT | orientation);
 			menuService.populateContributionManager(tbm, uriSpec);
+			
+			// Set the state for any Control entries
+			IContributionItem[] items = tbm.getItems();
+			for (int i = 0; i < items.length; i++) {
+				if (items[i] instanceof InternalControlContribution) {
+					InternalControlContribution wbwcc = (InternalControlContribution) items[i];
+					wbwcc.setWorkbenchWindow(wbw);
+					wbwcc.setCurSide(dropSide);
+				}
+			}
+			
+			// OK, create the ToolBar (causes an 'update(true)'
 			tb = tbm.createControl(wbw.getShell());
 		}
 

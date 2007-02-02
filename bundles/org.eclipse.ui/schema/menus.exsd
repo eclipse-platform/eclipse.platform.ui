@@ -620,7 +620,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endOf&apos; value).
+                  The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element.
                </documentation>
             </annotation>
          </attribute>
@@ -764,14 +764,47 @@ Separator contributions that have an id define the start of a logical group so t
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="item" minOccurs="0" maxOccurs="1"/>
             <element ref="separator" minOccurs="0" maxOccurs="1"/>
-            <element ref="widget" minOccurs="0" maxOccurs="1"/>
             <element ref="dynamicContribution" minOccurs="0" maxOccurs="1"/>
+            <element ref="control" minOccurs="0" maxOccurs="1"/>
          </choice>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The &apos;id&apos; of this toolbar contribution. If defined then it can be extended through other &apos;menuAddition&apos; elements or the id can be used as a reference in the Query part of the location defining whether the additions are to go before or after this element.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="control">
+      <annotation>
+         <documentation>
+            
+Used to contribute controls to ToolBars in the workbench. The &apos;class&apos; attribute must be a derivative of the
+WorkbenchWindowControlContribution base class.
+
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The &apos;id&apos; of this menu contribution. If defined then it can be used as a reference in the Query part of the location defining whether the additions are to go before or after this element.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+The class which will be used to create the control that is to be hosted in a ToolBar. This must be a subclass of
+WorkbenchWindowControlContribution which provides information as to the control&apos;s location (i.e. which workbench window it&apos;s being hosted in and the side of the window that it is currently being displayed on.
+
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.WorkbenchWindowControlContribution"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

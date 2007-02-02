@@ -34,8 +34,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.IWorkbenchWidget;
-import org.eclipse.ui.menus.WidgetContributionItem;
+import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -156,8 +155,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC_CONTRIBUTION
 					.equals(itemType)) {
 				newItem = createDynamicAdditionContribution(items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_WIDGET.equals(itemType)) {
-				newItem = createWidgetAdditionContribution(items[i]);
+			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
+				newItem = createControlAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(itemType)) {
 				newItem = createSeparatorAdditionContribution(items[i]);
@@ -247,7 +246,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	/**
 	 * @return
 	 */
-	private IContributionItem createWidgetAdditionContribution(
+	private IContributionItem createControlAdditionContribution(
 			final IConfigurationElement widgetAddition) {
 		// If we've already tried (and failed) to load the
 		// executable extension then skip this addirion.
@@ -255,10 +254,11 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			return null;
 
 		// Attempt to load the addition's EE (creates a new instance)
-		final IWorkbenchWidget loadedWidget = (IWorkbenchWidget) Util
+		final WorkbenchWindowControlContribution loadedWidget = (
+				WorkbenchWindowControlContribution) Util
 				.safeLoadExecutableExtension(widgetAddition,
 						IWorkbenchRegistryConstants.ATT_CLASS,
-						IWorkbenchWidget.class);
+						WorkbenchWindowControlContribution.class);
 
 		// Cache failures
 		if (loadedWidget == null) {
@@ -266,12 +266,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			return null;
 		}
 
-		return new WidgetContributionItem(getId(widgetAddition)) {
-			public IWorkbenchWidget createWidget() {
-				return loadedWidget;
-			}
-
-		};
+		// explicitly set the id
+		((InternalControlContribution)loadedWidget).setId(getId(widgetAddition));
+		
+		return loadedWidget;
 	}
 
 	/**

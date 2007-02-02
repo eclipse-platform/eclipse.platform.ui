@@ -398,7 +398,7 @@
          </location>
       </widget>
       <menuContribution
-            locationURI="toolbar:org.eclipse.ui.trim.vertical1">
+            locationURI="toolbar:org.eclipse.ui.trim.status">
          <toolbar
                id="org.eclipse.ui.examples.readmetool.verticalTrim">
             <item
@@ -409,6 +409,10 @@
                   style="push"
                   tooltip="TrimItem ToolTip">
             </item>
+            <control
+                  class="org.eclipse.ui.examples.readmetool.ReadmeControlContribution"
+                  id="readmeTool.controlContrib1">
+            </control>
             <item
                   commandId="org.eclipse.ui.examples.readmetool.item2"
                   icon="icons/obj16/editor.gif"
