@@ -747,4 +747,13 @@ public class Patcher {
 	public static Patcher getPatcher(PatchConfiguration configuration) {
 		return (Patcher)configuration.getProperty(PROP_PATCHER);
 	}
+	
+	public boolean hasRejects() {
+		for (Iterator iterator = diffResults.values().iterator(); iterator.hasNext();) {
+			FileDiffResult result = (FileDiffResult) iterator.next();
+			if (result.hasRejects())
+				return true;
+		}
+		return false;
+	}
 }

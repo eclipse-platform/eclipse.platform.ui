@@ -29,6 +29,8 @@ public final class PatchMessages extends NLS {
 	public static String PatcherCompareEditorInput_NotIncluded;
 	public static String PatcherCompareEditorInput_PatchContents;
 	public static String PatchTargetPage_0;
+	public static String PatchWizard_0;
+	public static String PatchWizard_1;
 	public static String PatchWizard_title;
 	public static String PatchWizard_unexpectedException_message;
 	public static String InputPatchPage_title;

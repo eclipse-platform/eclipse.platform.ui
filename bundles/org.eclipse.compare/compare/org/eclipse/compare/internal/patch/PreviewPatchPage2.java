@@ -83,8 +83,6 @@ public class PreviewPatchPage2 extends WizardPage {
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
 		setControl(composite);
-		updateEnablements();
-		
 	}
 	
 	/**
@@ -245,6 +243,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			fillSegmentCombo();
 			// TODO: We should only do this if the tree needs to be rebuilt
 			rebuildTree();
+			updateEnablements();
 		}
 	}
 	

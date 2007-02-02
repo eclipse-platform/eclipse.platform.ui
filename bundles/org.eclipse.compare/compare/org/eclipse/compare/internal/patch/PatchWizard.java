@@ -115,12 +115,19 @@ public class PatchWizard extends Wizard {
 			// make sure that the patch has been read
 			if (!fPatchWizardPage.isPatchRead())
 				fPatchWizardPage.readInPatch();
+			fPatcher.refresh();
 		} else {
 			//either we have a patch from the patch input page or one has
 			//been specified; double check this
 			Assert.isNotNull(patch);
 			//make sure that the patch has been read in
 			Assert.isTrue(patchReadIn);
+		}
+		
+		if (!currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME) && fPatcher.hasRejects()){
+			if (!MessageDialog.openConfirm(getShell(), PatchMessages.PatchWizard_0, PatchMessages.PatchWizard_1)) {
+				return false;
+			}
 		}
 		
 		try {
