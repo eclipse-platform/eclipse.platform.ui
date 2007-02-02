@@ -180,8 +180,8 @@ public class LeafNodesSet extends AbstractObservableSet {
 	 * Called when an element is removed from the tree. The given HashSet will
 	 * be filled in with all removed leaf nodes.
 	 * 
-	 * @param input2
-	 * @param additions
+	 * @param treePath
+	 * @param removals
 	 */
 	private void elementRemoved(TreePath treePath, Set removals) {
 		NodeInfo newNode = (NodeInfo) mapElementsOntoNodeInfo.get(treePath);
@@ -210,7 +210,7 @@ public class LeafNodesSet extends AbstractObservableSet {
 	 * Called when a new element is discovered in the tree. The given HashSet
 	 * will be filled in with all newly discovered leaf nodes.
 	 * 
-	 * @param input2
+	 * @param treePath
 	 * @param additions
 	 */
 	private void elementDiscovered(TreePath treePath, HashSet additions) {

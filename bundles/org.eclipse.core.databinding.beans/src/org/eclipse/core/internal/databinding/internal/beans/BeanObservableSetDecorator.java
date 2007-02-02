@@ -161,7 +161,7 @@ public class BeanObservableSetDecorator implements IObservableSet, IBeanObservab
 	}
 
 	/**
-	 * @return
+	 * @return the wrapped set
 	 */
 	public IObservableSet getDelegate() {
 		return delegate;

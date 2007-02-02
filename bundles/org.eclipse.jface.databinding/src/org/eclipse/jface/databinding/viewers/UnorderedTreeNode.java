@@ -101,7 +101,7 @@ import org.eclipse.jface.viewers.TreePath;
      * Returns the set of children for this node. If new children are discovered later, they
      * will be added directly to the viewer.
      *  
-     * @return
+     * @return the set of children
      */
     public Set getChildren() {
         if (!listeningToChildren) {
@@ -121,7 +121,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
     
     /**
-     * @return
+     * @return the observable set of children
      */
     public IObservableSet getChildrenSet() {
         return children;
@@ -137,7 +137,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
     
     /**
-     * @return
+     * @return <code>true</code> if the children of this node will change soon
      */
     public boolean isStale() {
         return isStale;
@@ -147,7 +147,7 @@ import org.eclipse.jface.viewers.TreePath;
      * Returns true if the viewer should show a plus sign for expanding this 
      * node. 
      * 
-     * @return
+     * @return <code>true</code> if this node may have children
      */
     public boolean shouldShowPlus() {
         if (children == null) {
@@ -184,7 +184,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
     
     /**
-     * @return
+     * @return <code>true</code> if this node is disposed
      */
     public boolean isDisposed() {
         return children == null;
@@ -194,14 +194,14 @@ import org.eclipse.jface.viewers.TreePath;
      * Returns one representative parent, or null if this node is unparented. Use
      * getParents() to get the complete set of known parents.
      * 
-     * @return
+     * @return a parent node, or null
      */
     public Object getParent() {
         return parent;
     }
     
     /**
-     * @return
+     * @return the set of known parent nodes
      */
     public Set getParents() {
         if (parents == null) {
@@ -267,7 +267,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
 
     /**
-     * @return
+     * @return the element
      */
     public Object getElement() {
         return treePath;

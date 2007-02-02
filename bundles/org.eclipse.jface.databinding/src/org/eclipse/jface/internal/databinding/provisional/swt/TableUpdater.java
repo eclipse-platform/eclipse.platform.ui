@@ -165,6 +165,7 @@ public abstract class TableUpdater {
 	 * Subclasses should overload this method to provide any code that changes
 	 * the appearance of the widget.
 	 * </p>
+	 * @param item the item to update
 	 */
 	protected abstract void updateItem(TableItem item);
 

@@ -32,7 +32,6 @@ public class ListObservableValue extends AbstractSWTObservableValue {
 
 	/**
 	 * @param list
-	 * @param attribute
 	 */
 	public ListObservableValue(List list) {
 		super(list);

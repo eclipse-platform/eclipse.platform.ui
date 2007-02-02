@@ -109,7 +109,7 @@ import org.eclipse.jface.viewers.TreePath;
 	 * Returns the list of children for this node. If new children are
 	 * discovered later, they will be added directly to the viewer.
 	 * 
-	 * @return
+	 * @return the list of children of this node
 	 */
 	public List getChildren() {
 		if (!listeningToChildren) {
@@ -129,7 +129,7 @@ import org.eclipse.jface.viewers.TreePath;
 	}
 
 	/**
-	 * @return
+	 * @return the observable list of children for this node
 	 */
 	public IObservableList getChildrenList() {
 		return children;
@@ -145,7 +145,7 @@ import org.eclipse.jface.viewers.TreePath;
 	}
 
 	/**
-	 * @return
+	 * @return whether this node's children will change soon
 	 */
 	public boolean isStale() {
 		return isStale;
@@ -155,7 +155,7 @@ import org.eclipse.jface.viewers.TreePath;
 	 * Returns true if the viewer should show a plus sign for expanding this
 	 * node.
 	 * 
-	 * @return
+	 * @return <code>true</code> if this node has children
 	 */
 	public boolean shouldShowPlus() {
 		if (children == null) {
@@ -193,7 +193,7 @@ import org.eclipse.jface.viewers.TreePath;
 	}
 
 	/**
-	 * @return
+	 * @return <code>true</code> if this node is disposed
 	 */
 	public boolean isDisposed() {
 		return children == null;
@@ -203,14 +203,14 @@ import org.eclipse.jface.viewers.TreePath;
 	 * Returns one representative parent, or null if this node is unparented.
 	 * Use getParents() to get the complete set of known parents.
 	 * 
-	 * @return
+	 * @return a parent node, or <code>null</code>
 	 */
 	public Object getParent() {
 		return parent;
 	}
 
 	/**
-	 * @return
+	 * @return the set of known parent nodes
 	 */
 	public Set getParents() {
 		if (parents == null) {
@@ -284,7 +284,7 @@ import org.eclipse.jface.viewers.TreePath;
 	}
 
 	/**
-	 * @return
+	 * @return the element
 	 */
 	public Object getElement() {
 		return element;

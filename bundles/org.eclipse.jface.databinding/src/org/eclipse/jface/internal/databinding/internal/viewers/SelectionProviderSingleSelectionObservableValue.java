@@ -105,7 +105,7 @@ public class SelectionProviderSingleSelectionObservableValue extends
 	 * If a subclass overrides this method it must not depend upon the subclass
 	 * to have been fully initialized before this method is invoked.
 	 * <code>doGetValue()</code> is invoked by the
-	 * {@link #SelectionProviderSingleSelectionObservableValue(ISelectionProvider) constructor}
+	 * {@link #SelectionProviderSingleSelectionObservableValue(Realm, ISelectionProvider) constructor}
 	 * which means the subclass's constructor will not have fully executed
 	 * before this method is invoked.
 	 * </p>
@@ -113,7 +113,7 @@ public class SelectionProviderSingleSelectionObservableValue extends
 	 * @return selection will be an instance of
 	 *         <code>IStructuredSelection</code> if a selection exists,
 	 *         <code>null</code> if no selection
-	 * @see #SelectionProviderSingleSelectionObservableValue(ISelectionProvider)
+	 * @see #SelectionProviderSingleSelectionObservableValue(Realm, ISelectionProvider)
 	 */
 	protected Object doGetValue() {
 		ISelection selection = selectionProvider.getSelection();

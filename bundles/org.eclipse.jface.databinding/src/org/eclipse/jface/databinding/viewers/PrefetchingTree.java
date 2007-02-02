@@ -25,7 +25,7 @@ package org.eclipse.jface.databinding.viewers;
     
     /**
      * @param treeProvider
-     * @return
+     * @return a prefetching tree
      */
     public static IPrefetchingTree getPrefetchingTree(Object treeProvider) {
         if (treeProvider instanceof IPrefetchingTree) {

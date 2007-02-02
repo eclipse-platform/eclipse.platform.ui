@@ -48,7 +48,6 @@ public class UnorderedTreeContentProvider implements ITreePathContentProvider {
 	class KnownElementsSet extends AbstractObservableSet {
 
 		/**
-		 * @param elementType
 		 */
 		protected KnownElementsSet() {
 			super(provider.getRealm());

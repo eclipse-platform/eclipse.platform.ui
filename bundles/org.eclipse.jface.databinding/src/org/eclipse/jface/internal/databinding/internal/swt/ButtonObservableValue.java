@@ -39,7 +39,6 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 
 	/**
 	 * @param button
-	 * @param updatePolicy
 	 */
 	public ButtonObservableValue(Button button) {
 		super(button);

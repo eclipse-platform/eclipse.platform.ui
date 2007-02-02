@@ -50,7 +50,6 @@ public class OrderedTreeContentProvider implements ITreePathContentProvider {
 	class KnownElementsSet extends AbstractObservableSet {
 
 		/**
-		 * @param elementType
 		 */
 		protected KnownElementsSet() {
 			super(provider.getRealm());
@@ -221,7 +220,7 @@ public class OrderedTreeContentProvider implements ITreePathContentProvider {
 	 * Ensures that the given set of children have the given parent as one of
 	 * their parents.
 	 * 
-	 * @param parent
+	 * @param parentPath
 	 * @param children
 	 */
 	private void addParent(TreePath parentPath, List children) {

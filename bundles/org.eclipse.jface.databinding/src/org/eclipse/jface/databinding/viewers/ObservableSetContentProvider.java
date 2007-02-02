@@ -87,7 +87,6 @@ public final class ObservableSetContentProvider implements
 	};
 
 	/**
-	 * @param realm 
 	 * 
 	 */
 	public ObservableSetContentProvider() {

@@ -25,7 +25,8 @@ public class ViewersObservables {
 
 	/**
 	 * @param selectionProvider
-	 * @return
+	 * @return the observable value tracking the (single) selection of the given
+	 *         selection provider
 	 */
 	public static IObservableValue observeSingleSelection(
 			ISelectionProvider selectionProvider) {
@@ -33,32 +34,5 @@ public class ViewersObservables {
 				SWTObservables.getRealm(Display.getDefault()),
 				selectionProvider);
 	}
-
-	// public IObservable createObservable(Object description) {
-	// if (description instanceof Property) {
-	// Object object = ((Property) description).getObject();
-	// Object attribute = ((Property) description).getPropertyID();
-	// if (object instanceof ISelectionProvider
-	// && ViewersProperties.SINGLE_SELECTION.equals(attribute)) {
-	// return new SelectionProviderSingleSelectionObservableValue(
-	// (ISelectionProvider) object);
-	// } else if (object instanceof AbstractListViewer
-	// && ViewersProperties.CONTENT.equals(attribute)) {
-	// return new AbstractListViewerObservableCollectionWithLabels(
-	// (AbstractListViewer) object);
-	// } else if (object instanceof TableViewer
-	// && ViewersProperties.CONTENT.equals(attribute)) {
-	// return new TableViewerObservableCollectionWithLabels(
-	// (TableViewer) object);
-	// }
-	// } else if (description instanceof AbstractListViewer) {
-	// return new AbstractListViewerObservableCollectionWithLabels(
-	// (AbstractListViewer) description);
-	// } else if (description instanceof TableViewer) {
-	// return new TableViewerObservableCollectionWithLabels(
-	// (TableViewer) description);
-	// }
-	// return null;
-	// }
 
 }
