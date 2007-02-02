@@ -179,7 +179,7 @@ public class FormColors {
 	 * 
 	 * @since 3.3
 	 */
-	private void initializeFormHeaderColors() {
+	protected void initializeFormHeaderColors() {
 		if (colorRegistry.containsKey(IFormColors.H_BOTTOM_KEYLINE2))
 			return;
 		createFormHeaderColors();

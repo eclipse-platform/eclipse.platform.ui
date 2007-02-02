@@ -11,7 +11,7 @@
 package org.eclipse.ui.forms;
 
 /**
- * A place to hold all color constants used in the forms package.
+ * A place to hold all the color constants used in the forms package.
  * 
  * @since 3.3
  */

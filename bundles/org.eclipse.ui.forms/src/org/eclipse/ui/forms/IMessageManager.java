@@ -23,7 +23,7 @@ import org.eclipse.ui.forms.widgets.Form;
  * <ul>
  * <li>Bridging the concept of typed messages and control decorations</li>
  * <li>Adding one or more messages per control in a form</li>
- * <li>Rolling up local messages to the form header</li>
+ * <li>Rolling the local messages up to the form header</li>
  * <li>Adding one or more general messages to the form header</li>
  * </ul>
  * <p>
