@@ -229,6 +229,30 @@ class FilterTransform {
 			}
 			return false;
 		}
+		
+		/**
+		 * Sets the child count for this element, trimming any filtered elements
+		 * that were above this count.
+		 * 
+		 * @param childCount new child count
+		 */
+		void setModelChildCount(int childCount) {
+			if (filteredChildren != null) {
+				for (int i = 0; i < filteredChildren.length; i++) {
+					if (filteredChildren[i] >= childCount) {
+						// trim
+						if (i == 0) {
+							filteredChildren = null;
+							return;
+						} else {
+							int[] temp = new int[i + 1];
+							System.arraycopy(filteredChildren, 0, temp, 0, temp.length);
+							filteredChildren = temp;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -361,5 +385,18 @@ class FilterTransform {
 			return null;
 		}
 		return parentNode.filteredChildren;
+	}
+	
+	/**
+	 * Clears any filters for the given parent above the given count.
+	 * 
+	 * @param parentPath path to parent element
+	 * @param childCount child count
+	 */
+	public synchronized void setModelChildCount(TreePath parentPath, int childCount) {
+		Node parentNode = root.find(parentPath, 0);
+		if (parentNode != null) {
+			parentNode.setModelChildCount(childCount);
+		}
 	}
 }

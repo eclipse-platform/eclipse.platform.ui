@@ -37,6 +37,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		if (viewCount == 0) {
 			getContentProvider().clearFilters(elementPath);
 		} else {
+			getContentProvider().setModelChildCount(elementPath, fCount);
 			viewCount = getContentProvider().modelToViewChildCount(elementPath, fCount);
 		}
 		if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {

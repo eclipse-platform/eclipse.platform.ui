@@ -734,6 +734,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	}
 	
 	/**
+	 * The child count for a parent has been computed. Ensure any filtered items
+	 * above the given count are cleared.
+	 * 
+	 * @param parentPath path to parent element
+	 * @param childCount number of children
+	 */
+	protected void setModelChildCount(TreePath parentPath, int childCount) {
+		fTransform.setModelChildCount(parentPath, childCount);
+	}
+	
+	/**
 	 * Returns whether the given element is filtered.
 	 * 
 	 * @param parentElementOrTreePath
