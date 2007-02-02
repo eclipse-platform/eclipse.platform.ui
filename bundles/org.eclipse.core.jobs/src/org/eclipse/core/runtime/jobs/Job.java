@@ -402,7 +402,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * should finish its execution at the earliest convenience and return a result
 	 * status of severity <code>IStatus.CANCEL</code>.  The singleton
 	 * cancel status <code>Status.CANCEL_STATUS</code> can be used for
-	 * this purpose.
+	 * this purpose.  The monitor is only valid for the duration of the invocation
+	 * of this method.
 	 * <p>
 	 * This method must not be called directly by clients.  Clients should call
 	 * <code>schedule</code>, which will in turn cause this method to be called.
