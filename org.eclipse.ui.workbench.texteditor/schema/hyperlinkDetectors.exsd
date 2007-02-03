@@ -7,9 +7,6 @@
       </appInfo>
       <documentation>
          This extension point is used to plug-in hyperlink detectors.
-&lt;p&gt;
-&lt;em&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/em&gt;
-&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -67,7 +64,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  the translatable description for this hyperlink detector
+                  the translatable description for this hyperlink detector. Currently this description isn&apos;t displayed anywhere in the UI by the Eclipse SDK.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
