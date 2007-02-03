@@ -14,13 +14,15 @@ package org.eclipse.core.databinding.observable.masterdetail;
 import org.eclipse.core.databinding.observable.IObservable;
 
 /**
- * @since 3.2
- *
+ * Generates an {@link IObservable} when passed a target instance.
+ * 
+ * @since 1.0
  */
 public interface IObservableFactory {
-	
+
 	/**
 	 * Creates an observable for the given target object.
+	 * 
 	 * @param target
 	 * @return the new observable
 	 */

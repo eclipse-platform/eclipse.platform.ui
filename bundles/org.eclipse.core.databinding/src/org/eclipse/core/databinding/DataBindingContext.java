@@ -172,6 +172,42 @@ public class DataBindingContext {
 	 * Binds two observable lists using converter and validator as specified in
 	 * bindSpec. If bindSpec is null, default converters and validators as
 	 * defined by {@link DefaultBindSpec} will be used.
+	 * <p>
+	 * The phases performed for a list binding occur in the following order for
+	 * each event: {@link BindingEvent#EVENT_COPY_TO_MODEL} and
+	 * {@link BindingEvent#EVENT_COPY_TO_TARGET}:
+	 * <ol>
+	 * <li>{@link BindingEvent#PIPELINE_AFTER_GET}</li>
+	 * <li>{@link BindingEvent#PIPELINE_BEFORE_CHANGE}</li>
+	 * <li>{@link BindingEvent#PIPELINE_AFTER_CHANGE}</li>
+	 * </ol>
+	 * Multiple validators are honored for every phase except
+	 * <code>BindingEvent.PIPELINE_AFTER_CHANGE</code> (it doesn't make sense
+	 * to validate after the change is applied). Validators will be invoked in
+	 * the order that they are added and a failure in validation will terminate
+	 * pipeline processing. The provided validation status will be propagated to
+	 * {@link Binding#getValidationStatus()} and
+	 * {@link #getValidationStatusMap()}.
+	 * </p>
+	 * <p>
+	 * All phases perform the duty their name implies except
+	 * <code>PIPELINE_BEFORE_CHANGE</code>; it has no defined role in the
+	 * pipeline. This phase is provided as a means to perform validation during
+	 * data entry but to defer other validation until a copy to the model is to
+	 * occur. A common use case where this is employed is the editing of a model
+	 * in a dialog. The model should not be updated until OK/Apply is selected
+	 * but common validation (e.g. type and range checking) is to be performed
+	 * as the user is interacting with the UI. The following {@link BindSpec}
+	 * configuration will setup such a use case:
+	 * 
+	 * <pre>
+	 * <code>
+	 * new DefaultBindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
+	 * 		.addTargetValidator(BindingEvent.PIPELINE_BEFORE_CHANGE,
+	 * 				new Validator());
+	 * </code>
+	 * </pre>
+	 * </p>
 	 * 
 	 * @param targetObservableList
 	 * @param modelObservableList

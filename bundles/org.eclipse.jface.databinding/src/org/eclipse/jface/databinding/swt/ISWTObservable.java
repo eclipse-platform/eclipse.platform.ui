@@ -15,6 +15,8 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.swt.widgets.Widget;
 
 /**
+ * {@link IObservable} observing an SWT widget.
+ * 
  * @since 1.1
  *
  */

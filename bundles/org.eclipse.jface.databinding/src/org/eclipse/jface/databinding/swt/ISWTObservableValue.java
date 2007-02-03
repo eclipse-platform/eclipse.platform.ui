@@ -14,7 +14,9 @@ package org.eclipse.jface.databinding.swt;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
- * @since 3.2
+ * {@link IObservableValue} observing an SWT widget.
+ * 
+ * @since 1.0
  *
  */
 public interface ISWTObservableValue extends ISWTObservable, IObservableValue {

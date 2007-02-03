@@ -20,8 +20,10 @@ import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObser
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableValue;
 
 /**
- * @since 3.2
+ * Allows for the observation of an attribute, the detail, of an observable
+ * representing selection or another transient instance, the master.
  * 
+ * @since 1.0
  */
 public class MasterDetailObservables {
 	
