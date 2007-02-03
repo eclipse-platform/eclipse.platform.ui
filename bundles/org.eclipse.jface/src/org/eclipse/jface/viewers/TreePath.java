@@ -212,8 +212,10 @@ public final class TreePath {
 	 */
 	public TreePath getParentPath() {
 		int segmentCount = getSegmentCount();
-		if (segmentCount <= 1) {
+		if (segmentCount < 1) {
 			return null;
+		} else if (segmentCount == 1) {
+			return EMPTY;
 		}
 		Object[] parentSegments = new Object[segmentCount - 1];
 		System.arraycopy(segments, 0, parentSegments, 0, segmentCount - 1);
