@@ -190,7 +190,7 @@ public class ExpandableComposite extends Canvas {
 	protected int GAP = 4;
 
 	static final int IGAP = 4;
-	static final int IVGAP = 4;
+	static final int IVGAP = 3;
 
 	private static final Point NULL_SIZE = new Point(0, 0);
 
@@ -289,7 +289,7 @@ public class ExpandableComposite extends Canvas {
 				ty += marginHeight + tvmargin;
 				toggle.setLocation(x, ty);
 				toggle.setSize(tsize);
-				x += tsize.x + GAP;
+				x += tsize.x + IGAP;
 			}
 			if (textLabel != null) {
 				int ty = y;
@@ -366,14 +366,14 @@ public class ExpandableComposite extends Canvas {
 			int twidth = 0;
 			if (toggle != null) {
 				tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				twidth = tsize.x + GAP;
+				twidth = tsize.x + IGAP;
 			}
 			int thmargin = 0;
 			int tvmargin = 0;
 
 			if (hasTitleBar()) {
 				thmargin = titleBarTextMarginWidth;
-				tvmargin = VGAP;
+				tvmargin = IVGAP;
 			}
 			int innerwHint = wHint;
 			if (innerwHint != SWT.DEFAULT)
@@ -386,7 +386,7 @@ public class ExpandableComposite extends Canvas {
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				if (innertHint != SWT.DEFAULT)
-					innertHint -= GAP + tcsize.x;
+					innertHint -= IGAP + tcsize.x;
 			}
 			Point size = NULL_SIZE;
 
@@ -403,7 +403,7 @@ public class ExpandableComposite extends Canvas {
 			if (size.x > 0)
 				width = size.x;
 			if (tcsize.x > 0)
-				width += GAP + tcsize.x;
+				width += IGAP + tcsize.x;
 			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
