@@ -119,7 +119,9 @@ public class BusyIndicator extends Canvas {
 					getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if (!isDisposed())
-								drawBackground(offScreenImageGC, 0, 0, loader.logicalScreenWidth, loader.logicalScreenHeight);
+								drawBackground(offScreenImageGC, 0, 0,
+										loader.logicalScreenWidth,
+										loader.logicalScreenHeight);
 						}
 					});
 					if (isDisposed())
@@ -153,9 +155,18 @@ public class BusyIndicator extends Canvas {
 								 * Fill with the background color before
 								 * drawing.
 								 */
-								offScreenImageGC.fillRectangle(imageData.x,
-										imageData.y, imageData.width,
-										imageData.height);
+								/*
+								 * offScreenImageGC.fillRectangle(imageData.x,
+								 * imageData.y, imageData.width,
+								 * imageData.height);
+								 */
+								final ImageData fimageData = imageData;
+								getDisplay().syncExec(new Runnable() {
+									public void run() {
+								drawBackground(offScreenImageGC, fimageData.x,
+										fimageData.y, fimageData.width,
+										fimageData.height);
+									}});
 								break;
 							case SWT.DM_FILL_PREVIOUS:
 								/* Restore the previous image before drawing. */
@@ -206,8 +217,8 @@ public class BusyIndicator extends Canvas {
 								repeatCount--;
 						}
 					} catch (SWTException ex) {
-						//System.out
-						//		.println("There was an error animating the GIF");
+						// System.out
+						// .println("There was an error animating the GIF");
 					} finally {
 						if (offScreenImage != null
 								&& !offScreenImage.isDisposed())
@@ -262,8 +273,8 @@ public class BusyIndicator extends Canvas {
 	 * Process the paint event
 	 */
 	protected void onPaint(PaintEvent event) {
-		if (animationImage!=null && animationImage.isDisposed()) {
-			animationImage=null;
+		if (animationImage != null && animationImage.isDisposed()) {
+			animationImage = null;
 		}
 		Rectangle rect = getClientArea();
 		if (rect.width == 0 || rect.height == 0)
