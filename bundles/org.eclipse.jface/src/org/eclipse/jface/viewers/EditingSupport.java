@@ -30,29 +30,29 @@ public abstract class EditingSupport {
 	/**
 	 * Tabing from cell to cell is turned off
 	 */
-	public static final int TABING_NONE = 1;
+	public static final int TABBING_NONE = 1;
 
 	/**
 	 * Should if the end of the row is reach started from the start/end of the
 	 * row below/above
 	 */
-	public static final int TABING_MOVE_TO_ROW_NEIGHBOR = 1 << 1;
+	public static final int TABBING_MOVE_TO_ROW_NEIGHBOR = 1 << 1;
 
 	/**
 	 * Should if the end of the row is reach started from the beginning in the
 	 * same row
 	 */
-	public static final int TABING_CYCLE_IN_ROW = 1 << 2;
+	public static final int TABBING_CYCLE_IN_ROW = 1 << 2;
 
 	/**
 	 * Support tabing to Cell above/below the current cell
 	 */
-	public static final int TABING_VERTICAL = 1 << 3;
+	public static final int TABBING_VERTICAL = 1 << 3;
 
 	/**
 	 * Should tabing from column to column with in one row be supported
 	 */
-	public static final int TABING_HORIZONTAL = 1 << 4;
+	public static final int TABBING_HORIZONTAL = 1 << 4;
 
 	private ColumnViewer viewer;
 
@@ -108,7 +108,7 @@ public abstract class EditingSupport {
 	 * @return <code>true</code> if tabing supported
 	 */
 	protected boolean isTabingSupported() {
-		return (TABING_NONE & getTabingStyle()) != TABING_NONE;
+		return (TABBING_NONE & getTabingStyle()) != TABBING_NONE;
 	}
 
 	/**
@@ -123,10 +123,10 @@ public abstract class EditingSupport {
 	 * of the implemented strategy. The default implementation uses the style
 	 * constants
 	 * <ul>
-	 * <li>{@link #TABING_MOVE_TO_ROW_NEIGHBOR}</li>
-	 * <li>{@link #TABING_CYCLE_IN_ROW}</li>
-	 * <li>{@link #TABING_VERTICAL}</li>
-	 * <li>{@link #TABING_HORIZONTAL}</li>
+	 * <li>{@link #TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
+	 * <li>{@link #TABBING_CYCLE_IN_ROW}</li>
+	 * <li>{@link #TABBING_VERTICAL}</li>
+	 * <li>{@link #TABBING_HORIZONTAL}</li>
 	 * </ul>
 	 * 
 	 * <p>
@@ -150,9 +150,9 @@ public abstract class EditingSupport {
 			event.doit = false;
 
 			if ((event.stateMask & SWT.CTRL) == SWT.CTRL
-					&& (getTabingStyle() & TABING_VERTICAL) == TABING_VERTICAL) {
+					&& (getTabingStyle() & TABBING_VERTICAL) == TABBING_VERTICAL) {
 				cell2edit = searchCellAboveBelow(row, viewer, columnIndex, true);
-			} else if ((getTabingStyle() & TABING_HORIZONTAL) == TABING_HORIZONTAL) {
+			} else if ((getTabingStyle() & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
 				cell2edit = searchPreviousCell(row, viewer, columnIndex,
 						columnIndex);
 			}
@@ -160,10 +160,10 @@ public abstract class EditingSupport {
 			event.doit = false;
 
 			if ((event.stateMask & SWT.CTRL) == SWT.CTRL
-					&& (getTabingStyle() & TABING_VERTICAL) == TABING_VERTICAL) {
+					&& (getTabingStyle() & TABBING_VERTICAL) == TABBING_VERTICAL) {
 				cell2edit = searchCellAboveBelow(row, viewer, columnIndex,
 						false);
-			} else if ((getTabingStyle() & TABING_HORIZONTAL) == TABING_HORIZONTAL) {
+			} else if ((getTabingStyle() & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
 				cell2edit = searchNextCell(row, viewer, columnIndex,
 						columnIndex);
 			}
@@ -216,7 +216,7 @@ public abstract class EditingSupport {
 						startIndex);
 			}
 		} else {
-			if ((getTabingStyle() & TABING_CYCLE_IN_ROW) == TABING_CYCLE_IN_ROW) {
+			if ((getTabingStyle() & TABBING_CYCLE_IN_ROW) == TABBING_CYCLE_IN_ROW) {
 				// Check that we don't get into endless loop
 				if (columnIndex - 1 != startIndex) {
 					// Don't subtract -1 from getColumnCount() we need to
@@ -225,7 +225,7 @@ public abstract class EditingSupport {
 					rv = searchPreviousCell(row, viewer, row.getColumnCount(),
 							startIndex);
 				}
-			} else if ((getTabingStyle() & TABING_MOVE_TO_ROW_NEIGHBOR) == TABING_MOVE_TO_ROW_NEIGHBOR) {
+			} else if ((getTabingStyle() & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
 				ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE,false);
 				if (rowAbove != null) {
 					rv = searchPreviousCell(rowAbove, viewer, rowAbove
@@ -251,14 +251,14 @@ public abstract class EditingSupport {
 				rv = searchNextCell(row, viewer, columnIndex + 1, startIndex);
 			}
 		} else {
-			if ((getTabingStyle() & TABING_CYCLE_IN_ROW) == TABING_CYCLE_IN_ROW) {
+			if ((getTabingStyle() & TABBING_CYCLE_IN_ROW) == TABBING_CYCLE_IN_ROW) {
 				// Check that we don't get into endless loop
 				if (columnIndex + 1 != startIndex) {
 					// Start from -1 from the virtual column before the
 					// first one
 					rv = searchNextCell(row, viewer, -1, startIndex);
 				}
-			} else if ((getTabingStyle() & TABING_MOVE_TO_ROW_NEIGHBOR) == TABING_MOVE_TO_ROW_NEIGHBOR) {
+			} else if ((getTabingStyle() & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
 				ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW,false);
 				if (rowBelow != null) {
 					rv = searchNextCell(rowBelow, viewer, -1, startIndex);

@@ -48,7 +48,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private AbstractViewerEditor viewerEditor;
 
-	private int tabEditingStyle = EditingSupport.TABING_NONE;
+	private int tabEditingStyle = EditingSupport.TABBING_NONE;
 	
 	/**
 	 * Create a new instance of the receiver.

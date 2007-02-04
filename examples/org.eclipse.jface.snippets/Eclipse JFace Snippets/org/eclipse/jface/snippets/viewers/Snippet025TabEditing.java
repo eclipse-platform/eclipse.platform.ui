@@ -111,7 +111,7 @@ public class Snippet025TabEditing {
 		
 		v.setColumnProperties(new String[] { "column1", "column2" });
 		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()), new TextCellEditor(v.getTable()) });
-		v.setTabEditingStyle(EditingSupport.TABING_HORIZONTAL|EditingSupport.TABING_MOVE_TO_ROW_NEIGHBOR|EditingSupport.TABING_VERTICAL);
+		v.setTabEditingStyle(EditingSupport.TABBING_HORIZONTAL|EditingSupport.TABBING_MOVE_TO_ROW_NEIGHBOR|EditingSupport.TABBING_VERTICAL);
 		
 		
 		MyModel[] model = createModel();
