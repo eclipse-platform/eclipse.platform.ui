@@ -22,8 +22,8 @@ package org.eclipse.core.databinding.observable;
  * </p>
  * <p>
  * Implementations must not manage listeners themselves, listener management
- * should be delegated to a private instance of type {@link ChangeSupport}, or
- * inherited from {@link ChangeManager}.
+ * must be delegated to a private instance of type {@link ChangeSupport} if
+ * it is not inherited from {@link AbstractObservable}.
  * </p>
  * 
  * @since 1.0
