@@ -158,6 +158,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				goButton.setText(Messages.SearchPart_stop);
 			else
 				goButton.setText(Messages.SearchPart_go);
+			parent.getForm().getForm().setBusy(searchInProgress);
 			goButton.getParent().layout();
 		}
 	}
