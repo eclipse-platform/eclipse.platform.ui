@@ -2388,7 +2388,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Matches uses during prefix match
 		 * 
 		 * @param item 
-		 * @return
+		 * @return whether the item matches the raw name pattern
 		 */
 		public boolean matchesRawNamePattern(Object item) {
 			return true;

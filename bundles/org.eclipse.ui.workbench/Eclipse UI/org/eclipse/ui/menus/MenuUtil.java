@@ -45,7 +45,7 @@ public class MenuUtil {
 	}
 	
 	/**
-	 * @param The id of the menu
+	 * @param id The id of the menu
 	 * @param location The relative location specifier
 	 * @param refId The id of the menu element to be relative to
 	 * @return
@@ -76,7 +76,7 @@ public class MenuUtil {
 	}
 	
 	/**
-	 * @param The id of the toolbar
+	 * @param id The id of the toolbar
 	 * @param location The relative location specifier
 	 * @param refId The id of the toolbar element to be relative to
 	 * @return
