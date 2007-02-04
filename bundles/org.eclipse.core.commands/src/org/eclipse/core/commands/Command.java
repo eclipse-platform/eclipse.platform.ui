@@ -13,7 +13,9 @@ package org.eclipse.core.commands;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.internal.commands.util.Util;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 
 /**
  * <p>
@@ -496,7 +498,14 @@ public final class Command extends NamedHandleObjectWithState implements
 		final Object[] listeners = getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			final ICommandListener listener = (ICommandListener) listeners[i];
-			listener.commandChanged(commandEvent);
+			SafeRunner.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+				}
+
+				public void run() throws Exception {
+					listener.commandChanged(commandEvent);
+				}
+			});
 		}
 	}
 

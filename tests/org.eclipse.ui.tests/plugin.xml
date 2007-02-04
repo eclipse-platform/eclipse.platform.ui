@@ -3095,14 +3095,15 @@
                id="toggle.test.t2"
                label="Toggle Test2"
                mnemonic="g"
-               style="toggle">
+               style="toggle"
+               tooltip="Toggle contexts.test2">
             <parameter
                   name="toggleContext.contextId"
                   value="org.eclipse.ui.menus.contexts.test2">
             </parameter>
          </item>
          <item
-               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               commandId="org.eclipse.ui.tests.menus.enabledWhenWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
                label="Basic Cmd"
@@ -3204,6 +3205,11 @@
                   id="org.eclipse.ui.tests.menus.itemX5"
                   label="Menu Item X5">
             </item>
+            <item
+                  commandId="org.eclipse.ui.tests.menus.enabledWhenExpression"
+                  id="org.eclipse.ui.tests.menus.itemX6"
+                  label="Menu Expression">
+            </item>
          </menu>
       </menuContribution>
    </extension>
@@ -3240,6 +3246,16 @@
       </command>
       <command
             categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.menus.enabledWhenWorld"
+            name="Howdy">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.menus.enabledWhenExpression"
+            name="Howdy Expression">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
             defaultHandler="org.eclipse.ui.tests.menus.HelloDHandler"
             id="org.eclipse.ui.tests.menus.disabledWorld"
             name="Hello">
@@ -3263,7 +3279,66 @@
          </commandParameter>
       </command>
    </extension>
-  
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="tests.commands.CCT.cmd1"
+            name="cmd1">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="tests.commands.CCT.cmd2"
+            name="cmd2">
+         <commandParameter
+               id="protocol"
+               name="Protocol"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="host"
+               name="Server"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.tests.menus.ChangeEnablementHandler"
+            commandId="org.eclipse.ui.tests.menus.enabledWhenWorld">
+            <!--
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eclipse.ui.menus.contexts.test2">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+         -->
+      </handler>
+      <handler
+            class="org.eclipse.ui.tests.menus.HelloEHandler"
+            commandId="org.eclipse.ui.tests.menus.enabledWhenExpression">
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eclipse.ui.menus.contexts.test2">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+
+
    <!-- org.eclipse.ui.menus extension point test input
         do -NOT- change the structure of the contributions
         without fixing the tests in 'MenusTestSuite' -->
@@ -3362,28 +3437,7 @@
          </item>
       </menuContribution>
    </extension>
-   <extension
-         point="org.eclipse.ui.commands">
-      <command
-            categoryId="org.eclipse.ui.category.window"
-            id="tests.commands.CCT.cmd1"
-            name="cmd1">
-      </command>
-      <command
-            categoryId="org.eclipse.ui.category.window"
-            id="tests.commands.CCT.cmd2"
-            name="cmd2">
-         <commandParameter
-               id="protocol"
-               name="Protocol"
-               optional="false">
-         </commandParameter>
-         <commandParameter
-               id="host"
-               name="Server"
-               optional="false">
-         </commandParameter>
-      </command>
-   </extension>
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
+   
+   
 </plugin>            

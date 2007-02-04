@@ -16,7 +16,9 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
@@ -77,6 +79,8 @@ public final class HandlerProxy extends AbstractHandler implements
 	 * <code>null</code>.
 	 */
 	private final IHandlerService handlerService;
+
+	private IHandlerListener handlerListener;
 
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
@@ -147,7 +151,12 @@ public final class HandlerProxy extends AbstractHandler implements
 	 */
 	public final void dispose() {
 		if (handler != null) {
+			if (handlerListener != null) {
+				handler.removeHandlerListener(handlerListener);
+				handlerListener = null;
+			}
 			handler.dispose();
+			handler = null;
 		}
 	}
 
@@ -196,10 +205,10 @@ public final class HandlerProxy extends AbstractHandler implements
 	}
 
 	public final boolean isHandled() {
-		if (configurationElement!=null) {
+		if (configurationElement != null) {
 			return true;
 		}
-		
+
 		if (isOkToLoad() && loadHandler()) {
 			return handler.isHandled();
 		}
@@ -222,6 +231,7 @@ public final class HandlerProxy extends AbstractHandler implements
 					handler = (IHandler) configurationElement
 							.createExecutableExtension(handlerAttributeName);
 					configurationElement = null;
+					handler.addHandlerListener(getHandlerListener());
 					return true;
 				}
 
@@ -244,6 +254,22 @@ public final class HandlerProxy extends AbstractHandler implements
 		}
 
 		return true;
+	}
+
+	/**
+	 * @return
+	 */
+	private IHandlerListener getHandlerListener() {
+		if (handlerListener == null) {
+			handlerListener = new IHandlerListener() {
+				public void handlerChanged(HandlerEvent handlerEvent) {
+					fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
+							handlerEvent.isEnabledChanged(), handlerEvent
+									.isHandledChanged()));
+				}
+			};
+		}
+		return handlerListener;
 	}
 
 	public final String toString() {

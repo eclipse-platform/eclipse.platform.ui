@@ -217,8 +217,12 @@ public final class CommandContributionItem extends ContributionItem {
 		if (commandListener == null) {
 			commandListener = new ICommandListener() {
 				public void commandChanged(CommandEvent commandEvent) {
-					if (commandEvent.isHandledChanged()) {
-						update(null);
+					if (commandEvent.isHandledChanged()
+							|| commandEvent.isEnabledChanged()
+							|| commandEvent.isDefinedChanged()) {
+						if (commandEvent.getCommand().isDefined()) {
+							update(null);
+						}
 					}
 				}
 			};
@@ -449,6 +453,7 @@ public final class CommandContributionItem extends ContributionItem {
 			commandListener = null;
 		}
 		command = null;
+		commandService = null;
 		disposeOldImages();
 		super.dispose();
 	}

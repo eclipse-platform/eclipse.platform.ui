@@ -97,11 +97,6 @@ public final class WorkbenchMenuService implements IMenuService {
 		return uri.getScheme() + ":" + uri.getPath(); //$NON-NLS-1$;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(org.eclipse.ui.internal.menus.MenuLocationURI)
-	 */
 	public List getAdditionsForURI(MenuLocationURI uri) {
 		if (uri == null)
 			return null;

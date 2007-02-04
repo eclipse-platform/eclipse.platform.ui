@@ -133,6 +133,7 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IServiceScopes;
 
@@ -3177,12 +3178,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					.getService(IMenuService.class);
 			menuService.populateContributionManager(
 					(ContributionManager) getActionBars().getMenuManager(),
-					"menu:org.eclipse.ui.main.menu"); //$NON-NLS-1$
+					MenuUtil.MAIN_MENU);
 			ICoolBarManager coolbar = getActionBars().getCoolBarManager();
 			if (coolbar != null) {
 				menuService.populateContributionManager(
 						(ContributionManager) coolbar,
-						"toolbar:org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+						MenuUtil.MAIN_TOOLBAR);
 			}
 			// 3.3 end
 		} finally {
