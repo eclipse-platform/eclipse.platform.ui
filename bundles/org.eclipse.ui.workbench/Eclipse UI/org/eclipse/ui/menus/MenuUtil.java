@@ -25,7 +25,7 @@ public class MenuUtil {
 	public final static String MAIN_TOOLBAR = "toolbar:org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
 
 	/** -Any- Popup Menu */
-	public final static String ANY_POPUP = "popup:org.eclipse.ui.any.popup"; //$NON-NLS-1$
+	public final static String ANY_POPUP = "popup:org.eclipse.ui.popup.any"; //$NON-NLS-1$
 	
 	/** Top Left Trim Area */
 	public final static String TRIM_COMMAND1 = "toolbar:org.eclipse.ui.trim.command1"; //$NON-NLS-1$
