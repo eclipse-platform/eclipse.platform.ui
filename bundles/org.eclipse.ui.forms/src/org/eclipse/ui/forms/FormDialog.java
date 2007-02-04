@@ -100,8 +100,11 @@ public class FormDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createButtonBar(Composite parent) {
-		Label sep = new Label(parent, SWT.HORIZONTAL | SWT.SEPARATOR);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		//Composite sep = new Composite(parent, SWT.NULL);
+		//sep.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		//gd.heightHint = 1;
+		Label sep = new Label(parent, SWT.HORIZONTAL|SWT.SEPARATOR);
 		sep.setLayoutData(gd);
 		Control bar = super.createButtonBar(parent);
 		return bar;
