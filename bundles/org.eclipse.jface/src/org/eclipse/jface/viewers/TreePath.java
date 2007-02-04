@@ -69,7 +69,8 @@ public final class TreePath {
 	}
 
 	/**
-	 * Returns the first element in this path.
+	 * Returns the first element in this path, or <code>null</code> if this
+	 * path has no segments.
 	 * 
 	 * @return the first element in this path
 	 */
@@ -81,7 +82,8 @@ public final class TreePath {
 	}
 
 	/**
-	 * Returns the last element in this path.
+	 * Returns the last element in this path, or <code>null</code> if this
+	 * path has no segments.
 	 * 
 	 * @return the last element in this path
 	 */
