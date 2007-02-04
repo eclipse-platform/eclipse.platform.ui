@@ -948,12 +948,22 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private IWorkbenchWindow busyOpenWorkbenchWindow(final String perspID,
 			final IAdaptable input) throws WorkbenchException {
 		// Create a workbench window (becomes active window)
-		final WorkbenchWindow newWindow = newWorkbenchWindow();
+		final WorkbenchWindow newWindowArray[] = new WorkbenchWindow[1];
+		StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
+			public void runWithException() {
+				newWindowArray[0] = newWorkbenchWindow();
+			}
+		});
+
+		final WorkbenchWindow newWindow = newWindowArray[0];
+		
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				newWindow.create(); // must be created before adding to window manager
-			}});
+				newWindow.create(); // must be created before adding to window
+									// manager
+			}
+		});
 		windowManager.add(newWindow);
 
 		final WorkbenchException [] exceptions = new WorkbenchException[1];
