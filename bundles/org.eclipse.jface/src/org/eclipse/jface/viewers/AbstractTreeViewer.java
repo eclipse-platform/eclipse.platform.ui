@@ -14,13 +14,12 @@ package org.eclipse.jface.viewers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -1815,9 +1814,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void internalRemove(Object[] elementsOrPaths) {
 		Object input = getInput();
-		// Note: do not use the comparer here since the hashtable
-		// contains SWT Items, not model elements.
-		CustomHashtable parentItems = new CustomHashtable(5);
 		for (int i = 0; i < elementsOrPaths.length; ++i) {
 			Object element = elementsOrPaths[i];
 			if (equals(element, input)) {
@@ -1828,35 +1824,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			for (int j = 0; j < childItems.length; j++) {
 				Widget childItem = childItems[j];
 				if (childItem instanceof Item) {
-					Item parentItem = getParentItem((Item) childItem);
-					if (parentItem != null) {
-						parentItems.put(parentItem, parentItem);
-					}
 					disassociate((Item) childItem);
 					childItem.dispose();
-				}
-			}
-		}
-		internalReconcileParentItems(parentItems);
-	}
-
-	/**
-	 * @param parentItems
-	 */
-	private void internalReconcileParentItems(CustomHashtable parentItems) {
-		Control tree = getControl();
-		for (Enumeration e = parentItems.keys(); e.hasMoreElements();) {
-			Item parentItem = (Item) e.nextElement();
-			if (parentItem.isDisposed()) {
-				continue;
-			}
-			if (!getExpanded(parentItem) && getItemCount(parentItem) == 0) {
-				// append a dummy if necessary
-				if (isExpandable(parentItem, null, parentItem.getData())) {
-					newItem(parentItem, SWT.NULL, -1);
-				} else {
-					// XXX: Workaround (PR missing)
-					tree.redraw();
 				}
 			}
 		}
@@ -1877,18 +1846,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		for (int i = 0; i < elements.length; i++) {
 			toRemove.put(elements[i], elements[i]);
 		}
-		// Note: do not use the comparer here since the hashtable
-		// contains SWT Items, not model elements.
-		CustomHashtable parentItems = new CustomHashtable(5);
 
 		// Find each place the parent appears in the tree
 		Widget[] parentItemArray = findItems(parent);
 		for (int i = 0; i < parentItemArray.length; i++) {
 			Widget parentItem = parentItemArray[i];
-
-			if (parentItem instanceof Item) {
-				parentItems.put(parentItem, parentItem);
-			}
 
 			// Iterate over the child items and remove each one
 			Item[] children = getChildren(parentItem);
@@ -1903,7 +1865,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				}
 			}
 		}
-		internalReconcileParentItems(parentItems);
 	}
 
 	/**
