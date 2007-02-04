@@ -155,8 +155,7 @@ public class MessageManager implements IMessageManager {
 						if (ltext != null) {
 							if (!ltext.endsWith(":")) //$NON-NLS-1$
 								return ltext + ": "; //$NON-NLS-1$
-							else
-								return ltext + " "; //$NON-NLS-1$
+							return ltext + " "; //$NON-NLS-1$
 						}
 					}
 					break;
