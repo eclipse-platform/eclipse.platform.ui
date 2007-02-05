@@ -155,7 +155,7 @@ public class DiffTree implements IDiffTree {
 	 * 
 	 * @param path the path to remove
 	 */
-	public synchronized void remove(IPath path) {
+	public void remove(IPath path) {
 		try {
 			beginInput();
 			IDiff delta = getDiff(path);
@@ -171,7 +171,7 @@ public class DiffTree implements IDiffTree {
 	/**
 	 * Clear the contents of the set
 	 */
-	public synchronized void clear() {
+	public void clear() {
 		try {
 			beginInput();
 			pathTree.clear();
@@ -226,16 +226,12 @@ public class DiffTree implements IDiffTree {
 	}
 
 	private void fireChanges(final IProgressMonitor monitor) {
-		// Use a synchronized block to ensure that the event we send is static
-		final DiffChangeEvent event;
-		final Map propertyChanges;
 		
-		synchronized(this) {
-			event = getChangeEvent();
-			resetChanges();
-			propertyChanges = this.propertyChanges;
-			this.propertyChanges = new HashMap();
-		}
+		final DiffChangeEvent event = getChangeEvent();
+		resetChanges();
+		final Map propertyChanges = this.propertyChanges;
+		this.propertyChanges = new HashMap();
+		
 		if(event.isEmpty() && ! event.isReset() && propertyChanges.isEmpty()) return;
 		Object[] listeners = this.listeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
