@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
  *												   fix in bug 163317
- *												   fix in bug 151295, bug 167323
+ *												   fix in bug 151295, bug 167323, bug 167858
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -557,4 +557,23 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * @since 3.3
 	 */
 	protected abstract int doGetColumnCount();
+
+	/**
+	 * Returns the label provider associated with the column at the given index
+	 * or <code>null</code> if no column with this index is known.
+	 * 
+	 * @param columnIndex
+	 *            the column index
+	 * @return the label provider associated with the column or
+	 *         <code>null</code> if no column with this index is known
+	 * 
+	 * @since 3.3
+	 */
+	public CellLabelProvider getLabelProvider(int columnIndex) {
+		ViewerColumn column = getViewerColumn(columnIndex);
+		if (column != null) {
+			return column.getLabelProvider();
+		}
+		return null;
+	}
 }
