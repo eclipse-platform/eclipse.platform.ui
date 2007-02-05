@@ -52,9 +52,9 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public abstract class RevisionAnnotationController {
 
-	private final ISelectionProvider fRulerSelectionProvider;
-	private final ISelectionProvider fHistoryListSelectionProvider;
-	private final ISelectionChangedListener rulerListener = new ISelectionChangedListener() {
+	private ISelectionProvider fRulerSelectionProvider;
+	private ISelectionProvider fHistoryListSelectionProvider;
+	private ISelectionChangedListener rulerListener = new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection= event.getSelection();
 			Revision selected= null;
@@ -67,7 +67,7 @@ public abstract class RevisionAnnotationController {
 			revisionSelected(selected);
 		}
 	};
-	private final ISelectionChangedListener historyListListener = new ISelectionChangedListener() {
+	private ISelectionChangedListener historyListListener = new ISelectionChangedListener() {
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection= event.getSelection();
 			if (selection instanceof IStructuredSelection) {
@@ -335,6 +335,10 @@ public abstract class RevisionAnnotationController {
 		if (fRulerSelectionProvider != null) {
 			fRulerSelectionProvider.removeSelectionChangedListener(rulerListener);
 			fHistoryListSelectionProvider.removeSelectionChangedListener(historyListListener);
+			rulerListener= null;
+			fRulerSelectionProvider= null;
+			historyListListener= null;
+			fHistoryListSelectionProvider= null;
 		}
 	}
 
@@ -353,7 +357,7 @@ public abstract class RevisionAnnotationController {
 			if (fHistoryListSelectionProvider instanceof Viewer) {
 				Viewer v = (Viewer) fHistoryListSelectionProvider;
 				v.setSelection(selection, true);
-			} else {
+			} else if (fHistoryListSelectionProvider != null) {
 				fHistoryListSelectionProvider.setSelection(selection);
 			}
 		}
