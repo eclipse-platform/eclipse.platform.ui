@@ -176,11 +176,11 @@ public final class RevisionPainter {
 					rgb= gradient[gradient.length - index - 1];
 				}
 				scale= 0.99f;
-			} else if (fRenderingMode == IRevisionRulerColumnExtension.COMMITTER) {
+			} else if (fRenderingMode == IRevisionRulerColumnExtension.AUTHOR) {
 				rgb= revision.getColor();
 				rgb= Colors.adjustBrightness(rgb, AVERAGE_INTENSITY);
 				scale= 0.6f;
-			} else if (fRenderingMode == IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE) {
+			} else if (fRenderingMode == IRevisionRulerColumnExtension.AUTHOR_SHADED_BY_AGE) {
 				rgb= revision.getColor();
 				rgb= Colors.adjustBrightness(rgb, AVERAGE_INTENSITY);
 				int index= computeAgeIndex(revision);
@@ -559,7 +559,7 @@ public final class RevisionPainter {
 	/**
 	 * The revision rendering mode.
 	 */
-	private RenderingMode fRenderingMode= IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE;
+	private RenderingMode fRenderingMode= IRevisionRulerColumnExtension.AUTHOR_SHADED_BY_AGE;
 	/**
 	 * The required with in characters.
 	 * @since 3.3
@@ -576,7 +576,7 @@ public final class RevisionPainter {
 	 */
 	private boolean fShowRevision= false;
 	/**
-	 * <code>true</code> to show committers, <code>false</code> otherwise.
+	 * <code>true</code> to show the author, <code>false</code> otherwise.
 	 * @since 3.3
 	 */
 	private boolean fShowAuthor= false;
@@ -673,7 +673,7 @@ public final class RevisionPainter {
 		if (!isConnected())
 			return;
 
-		// compute the horizontal indent of the committer for the case that we show both committer
+		// compute the horizontal indent of the author for the case that we show revision
 		// and author
 		if (fShowAuthor && fShowRevision) {
 			char[] string= new char[fRevisionIdChars + 1];

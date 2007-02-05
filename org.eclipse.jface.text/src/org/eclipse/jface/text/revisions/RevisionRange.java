@@ -14,11 +14,9 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.source.ILineRange;
 
+
 /**
  * An unmodifiable line range that belongs to a {@link Revision}.
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  * 
  * @since 3.3
  */
@@ -56,7 +54,7 @@ public final class RevisionRange implements ILineRange {
 	public int getNumberOfLines() {
 		return fNumberOfLines;
 	}
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 */

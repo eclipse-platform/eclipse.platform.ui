@@ -12,15 +12,17 @@ package org.eclipse.jface.text.revisions;
 
 import org.eclipse.core.runtime.Assert;
 
+
 /**
- * Informs about a change of revision information. Clients may use but not instantiate this class.
+ * Informs about a change of revision information.
  * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+ * Clients may use but not instantiate this class.
  * </p>
  * 
  * @since 3.3
  */
 public final class RevisionEvent {
+	
 	private final RevisionInformation fInformation;
 
 	/**

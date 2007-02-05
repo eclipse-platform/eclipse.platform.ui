@@ -66,9 +66,6 @@ import org.eclipse.jface.text.TextEvent;
  * <li>The {@link #setDefaultBackground(Color) default background color} of the ruler.</li>
  * <li>The {@link #setWidth(int) width} of the ruler.</li>
  * </ul>
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  *
  * @since 3.3
  */
@@ -233,7 +230,6 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * desired style bits.</p>
 	 * 
 	 * @return the SWT style bits, or <code>SWT.NONE</code> if none
-	 * @since 3.3
 	 */
 	protected int getCanvasStyle() {
 		return SWT.NO_BACKGROUND;

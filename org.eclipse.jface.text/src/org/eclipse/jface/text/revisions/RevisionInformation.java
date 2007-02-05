@@ -72,9 +72,6 @@ public final class RevisionInformation {
 	 * at the moment it is returned, and may change as the annotated document is modified. See
 	 * {@link IRevisionListener} for a way to be informed when the revision information changes. The
 	 * returned list is sorted by document offset.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @return an unmodifiable view of the line ranges (element type: {@link RevisionRange})
 	 * @see IRevisionListener

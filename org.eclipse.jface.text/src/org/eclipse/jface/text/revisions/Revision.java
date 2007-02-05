@@ -140,12 +140,9 @@ public abstract class Revision {
 	}
 
 	/**
-	 * Returns the display string for the author (committer) of the receiver.
+	 * Returns the display string for the author of this revision.
 	 * <p>
 	 * Subclasses should replace - the default implementation returns the empty string.
-	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @return the author name
