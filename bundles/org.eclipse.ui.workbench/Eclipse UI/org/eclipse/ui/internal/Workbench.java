@@ -1719,12 +1719,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 		try {
 			busyOpenWorkbenchWindow(getPerspectiveRegistry()
 					.getDefaultPerspective(), getDefaultPageInput());
-		} catch (WorkbenchException e) {
+		} catch (final WorkbenchException e) {
 			// Don't use the window's shell as the dialog parent,
 			// as the window is not open yet (bug 76724).
-			ErrorDialog.openError(null,
-					WorkbenchMessages.Problems_Opening_Page, e.getMessage(), e
-							.getStatus());
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					ErrorDialog.openError(null,
+							WorkbenchMessages.Problems_Opening_Page, e.getMessage(), e
+									.getStatus());
+				}});
 		}
 	}
 
@@ -1809,13 +1813,22 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 
 				// Restore the saved state
-				IStatus restoreResult = restoreState(memento);
+				final IStatus restoreResult = restoreState(memento);
 				reader.close();
 				if (restoreResult.getSeverity() == IStatus.ERROR) {
-					ErrorDialog.openError(null,
-							WorkbenchMessages.Workspace_problemsTitle,
-							WorkbenchMessages.Workbench_problemsRestoringMsg,
-							restoreResult);
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
+
+								public void runWithException() throws Throwable {
+									ErrorDialog
+											.openError(
+													null,
+													WorkbenchMessages.Workspace_problemsTitle,
+													WorkbenchMessages.Workbench_problemsRestoringMsg,
+													restoreResult);
+								}
+							});
+
 				}
 			}
 
@@ -1915,13 +1928,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private XMLMemento recordWorkbenchState() {
 		XMLMemento memento = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
-		IStatus status = saveState(memento);
+		final IStatus status = saveState(memento);
 		if (status.getSeverity() != IStatus.OK) {
 			// don't use newWindow as parent because it has not yet been opened
 			// (bug 76724)
-			ErrorDialog.openError(null,
-					WorkbenchMessages.Workbench_problemsSaving,
-					WorkbenchMessages.Workbench_problemsSavingMsg, status);
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					ErrorDialog.openError(null,
+							WorkbenchMessages.Workbench_problemsSaving,
+							WorkbenchMessages.Workbench_problemsSavingMsg, status);
+				}});
+			
 		}
 		return memento;
 	}
