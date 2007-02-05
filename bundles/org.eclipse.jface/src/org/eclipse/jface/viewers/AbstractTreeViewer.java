@@ -2794,7 +2794,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			add(parentElementOrTreePath, new Object[] { element });
 			return;
 		}
-		Widget[] items = internalFindItems(parentElementOrTreePath);
+		Widget[] items;
+		if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
+			items = new Widget[] { getControl() };
+		} else {
+			items = internalFindItems(parentElementOrTreePath);
+		}
 
 		for (int i = 0; i < items.length; i++) {
 			Widget widget = items[i];
