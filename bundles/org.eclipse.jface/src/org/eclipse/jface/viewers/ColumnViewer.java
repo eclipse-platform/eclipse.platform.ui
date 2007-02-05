@@ -46,7 +46,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	private ViewerCell cell = new ViewerCell(null, 0);
 
-	private AbstractViewerEditor viewerEditor;
+	private ColumnViewerEditor viewerEditor;
 
 	private int tabEditingStyle = EditingSupport.TABBING_NONE;
 	
@@ -87,7 +87,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * 
 	 * @return the editor, or <code>null</code> if this viewer does not support editing cell contents.
 	 */
-	protected abstract AbstractViewerEditor createViewerEditor();
+	protected abstract ColumnViewerEditor createViewerEditor();
 
 	/**
 	 * Returns the viewer cell at the given widget-relative coordinates, or

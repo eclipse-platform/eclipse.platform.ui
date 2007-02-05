@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Item;
  *        Platform/UI team.
  * 
  */
-public abstract class AbstractViewerEditor {
+public abstract class ColumnViewerEditor {
 	private CellEditor cellEditor;
 
 	private CellEditor[] cellEditors;
@@ -68,7 +68,7 @@ public abstract class AbstractViewerEditor {
 	 * @param viewer
 	 *            the column viewer
 	 */
-	public AbstractViewerEditor(ColumnViewer viewer) {
+	public ColumnViewerEditor(ColumnViewer viewer) {
 		this.viewer = viewer;
 		initCellEditorListener();
 	}
@@ -81,11 +81,11 @@ public abstract class AbstractViewerEditor {
 			}
 
 			public void cancelEditor() {
-				AbstractViewerEditor.this.cancelEditing();
+				ColumnViewerEditor.this.cancelEditing();
 			}
 
 			public void applyEditorValue() {
-				AbstractViewerEditor.this.applyEditorValue();
+				ColumnViewerEditor.this.applyEditorValue();
 			}
 		};
 	}

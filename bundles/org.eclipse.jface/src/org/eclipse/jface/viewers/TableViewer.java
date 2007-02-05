@@ -127,8 +127,8 @@ public class TableViewer extends AbstractTableViewer {
 		return table;
 	}
 	
-	protected AbstractViewerEditor createViewerEditor() {
-		return new AbstractViewerEditor(this) {
+	protected ColumnViewerEditor createViewerEditor() {
+		return new ColumnViewerEditor(this) {
 
 			protected StructuredSelection createSelection(Object element) {
 				return new StructuredSelection(element);

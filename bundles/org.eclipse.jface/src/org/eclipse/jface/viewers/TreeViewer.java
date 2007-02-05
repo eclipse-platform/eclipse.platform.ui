@@ -273,8 +273,8 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
-	protected AbstractViewerEditor createViewerEditor() {
-		return new AbstractViewerEditor(this) {
+	protected ColumnViewerEditor createViewerEditor() {
+		return new ColumnViewerEditor(this) {
 
 			protected StructuredSelection createSelection(Object element) {
 				if (element instanceof TreePath) {
