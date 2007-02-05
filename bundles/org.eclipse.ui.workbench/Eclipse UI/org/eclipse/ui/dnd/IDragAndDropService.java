@@ -65,4 +65,11 @@ public interface IDragAndDropService {
 	 *            The listener controlling the target's behaviour
 	 */
 	public void addMergedDropTarget(Control control, int ops, Transfer[] transfers, DropTargetListener listener);
+	
+	/**
+	 * Remove any previously 'merged' drop target for this Control
+	 * 
+	 * @param control The control to remove the drop target for
+	 */
+	public void removeMergedDropTarget(Control control);
 }

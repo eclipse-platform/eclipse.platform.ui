@@ -152,10 +152,34 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
         Transfer[] editorSiteTransfers = winConfigurer.getTransfers();
         DropTargetListener editorSiteListener = winConfigurer.getDropTargetListener();
         
-        // Create a new 'merged' drop Listener using hte 
+        // Create a new 'merged' drop Listener using combination of the desired
+        // transfers and the ones used by the EditorArea
 		MergedDropTarget newTarget = new MergedDropTarget(control, ops, transfers, listener,
 				editorSiteOps, editorSiteTransfers, editorSiteListener);
 		addedListeners.add(newTarget);
+	}
+
+	private MergedDropTarget findMergedDropTarget(Control control) {
+		// Clean up the listeners
+		for (Iterator iterator = addedListeners.iterator(); iterator.hasNext();) {
+			MergedDropTarget target = (MergedDropTarget) iterator.next();
+			if (target.realDropTarget.getControl() == control) {
+				return target;
+			}
+		}
+		
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dnd.IDragAndDropService#removeMergedDropTarget(org.eclipse.swt.widgets.Control)
+	 */
+	public void removeMergedDropTarget(Control control) {
+		MergedDropTarget targetForControl = findMergedDropTarget(control);
+		if (targetForControl != null) {
+			targetForControl.dispose();
+			addedListeners.remove(targetForControl);
+		}
 	}
 
 	/* (non-Javadoc)
