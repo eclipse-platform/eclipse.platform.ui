@@ -17,7 +17,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
@@ -92,7 +92,7 @@ public class PageFormWithNavigation extends PageForm {
         for (int i = 0; i < links.length; i++) {
             Label text = toolkit.createLabel(parent, links[i].getLabel());
             text.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
-            text.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+            text.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
         }
     }
 

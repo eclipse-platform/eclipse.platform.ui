@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -417,7 +417,7 @@ public class PageWidgetFactory {
         if (fg!=null)
         	l.setBackground(fg);
         else
-        	l.setBackground(toolkit.getColors().getColor(FormColors.SEPARATOR));
+        	l.setBackground(toolkit.getColors().getColor(IFormColors.SEPARATOR));
         TableWrapData td = new TableWrapData(TableWrapData.FILL,
                 TableWrapData.FILL);
         td.grabHorizontal = true;

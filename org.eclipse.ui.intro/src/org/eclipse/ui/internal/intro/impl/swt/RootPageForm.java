@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
@@ -327,7 +327,7 @@ public class RootPageForm implements IIntroConstants {
             .toString();
         Color fg = rootPageStyleManager.getColor(toolkit, key);
         if (fg == null)
-            fg = toolkit.getColors().getColor(FormColors.TITLE);
+            fg = toolkit.getColors().getColor(IFormColors.TITLE);
         label.setForeground(fg);
         label.setAlignment(SWT.CENTER);
         label.setFont(PageStyleManager.getBannerFont());
