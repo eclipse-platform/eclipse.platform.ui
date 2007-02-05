@@ -57,7 +57,7 @@ public interface IValueVariable extends IStringVariable {
 	 * Sets the value of this variable to the given value.
 	 * Since 3.3, this has no effect if this variable is read only.
 	 *
-	 * @param variable value
+	 * @param value variable value
 	 */
 	public void setValue(String value);
 	
