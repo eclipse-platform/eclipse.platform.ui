@@ -774,10 +774,10 @@ public final class RevisionPainter {
 	/**
 	 * Sets the line differ.
 	 * 
-	 * @param differ the line differ
+	 * @param differ the line differ or <code>null</code> if none
 	 */
 	private void setDiffer(IAnnotationModel differ) {
-		if (differ instanceof ILineDiffer) {
+		if (differ instanceof ILineDiffer || differ == null) {
 			if (fLineDiffer != differ) {
 				if (fLineDiffer != null)
 					((IAnnotationModel) fLineDiffer).removeAnnotationModelListener(fAnnotationListener);
