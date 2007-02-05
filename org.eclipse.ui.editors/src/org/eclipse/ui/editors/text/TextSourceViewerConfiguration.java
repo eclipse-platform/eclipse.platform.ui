@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -229,9 +229,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	/**
 	 * Returns the registered hyperlink detectors which are used to detect
 	 * hyperlinks in the given source viewer.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return an array with hyperlink detectors or <code>null</code> if no hyperlink detectors are registered
@@ -258,7 +255,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * Returns the hyperlink detector targets supported by the
 	 * given source viewer.
 	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * Subclasses are allowed to modify the returned map. 
 	 * </p>
 	 * 
 	 * @param sourceViewer the source viewer to be configured by this configuration
@@ -367,12 +364,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * This implementation currently returns a {@link MonoReconciler} which
 	 * is responsible for spell checking. In the future a different reconciler
 	 * taking over more responsibilities might be returned.</p>
-	 * <p>
-	 * <b>NOTE:</b> In order to enable this new API you need to set <code>RUN_PROVISIONAL_CODE</code>
-	 * to <code>true</code></p>
-	 * <p> 
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
+	 * 
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
 	 * @since 3.3
 	 */

@@ -38,9 +38,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * Reconcile strategy used for spell checking.
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  * 
  * @since 3.3
  */

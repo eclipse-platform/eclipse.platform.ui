@@ -32,11 +32,6 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
  * Hyperlink detector registry that manages the detectors
  * contributed by the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code> extension point for
  * targets contributed by the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets</code> extension point.
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
- * 
- * XXX: must take a preference store to disable detectors via preference page
  * 
  * @since 3.3
  */

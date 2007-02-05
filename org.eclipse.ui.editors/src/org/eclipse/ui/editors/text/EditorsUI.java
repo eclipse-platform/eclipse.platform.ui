@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,9 +174,6 @@ public final class EditorsUI {
 	 * Returns the registry that contains the hyperlink detectors contributed
 	 * by  the <code>org.eclipse.ui.workbench.texteditor.hyperlinkDetectors</code>
 	 * extension point.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @return the hyperlink detector registry
 	 * @since 3.3
@@ -206,9 +203,6 @@ public final class EditorsUI {
 	 * validation failed.
 	 * <p>
 	 * Value: {@value}</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
 	 * @since 3.3
@@ -220,9 +214,6 @@ public final class EditorsUI {
 	 * a resource is marked derived.
 	 * <p>
 	 * Value: {@value}</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @see IResource#isDerived()
 	 * @since 3.3

@@ -30,9 +30,6 @@ import org.eclipse.ui.internal.texteditor.spelling.NoCompletionsProposal;
 /**
  * Spelling correction processor used to show quick
  * fixes for spelling problems.
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  *
  * @since 3.3
  */

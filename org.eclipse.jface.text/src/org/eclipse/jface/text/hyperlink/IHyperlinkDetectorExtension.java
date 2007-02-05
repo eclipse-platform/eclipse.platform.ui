@@ -17,9 +17,6 @@ package org.eclipse.jface.text.hyperlink;
  * <p>
  * Clients may implement this interface.
  * </p>
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  * 
  * @since 3.3
  */

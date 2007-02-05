@@ -20,9 +20,6 @@ import org.eclipse.jface.text.source.LineRange;
  * <p>
  * This class is neither intended to be instantiated nor instantiated.
  * </p>
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  * 
  * @since 3.3
  */
