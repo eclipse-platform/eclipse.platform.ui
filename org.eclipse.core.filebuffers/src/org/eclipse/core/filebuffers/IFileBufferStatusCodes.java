@@ -52,9 +52,6 @@ public interface IFileBufferStatusCodes {
 	 * validation failed.
 	 * <p>
 	 * Value: {@value}</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @see IFileBuffer#validateState(org.eclipse.core.runtime.IProgressMonitor, Object)
 	 * @since 3.3
@@ -66,9 +63,6 @@ public interface IFileBufferStatusCodes {
 	 * a resource is marked derived.
 	 * <p>
 	 * Value: {@value}</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @see IResource#isDerived()
 	 * @since 3.3
