@@ -17,14 +17,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 
 /**
- * Helper class that for contributions to the
+ * Helper class for contributions to the
  * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point.
  * <p>
  * Subclasses must have a zero-argument constructor so that they can be created by
  * {@link IConfigurationElement#createExecutableExtension(String)}.</p>
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
- * </p>
  * 
  * @since 3.3
  */

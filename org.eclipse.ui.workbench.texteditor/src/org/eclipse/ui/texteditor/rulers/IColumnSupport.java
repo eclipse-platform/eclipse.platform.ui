@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.rulers;
 
-import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * Captures the vertical and overview ruler support of an {@link ITextEditor}.
+ * Provides support to modify and query the visibility of
+ * ruler columns and test whether a ruler column is supported.
  * <p>
  * This interface must not be implemented by clients.
- * </p>
- * <p>
- * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
  * </p>
  * 
  * @since 3.3
