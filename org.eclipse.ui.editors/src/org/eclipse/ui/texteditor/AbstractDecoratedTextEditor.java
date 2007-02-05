@@ -303,6 +303,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		fAnnotationAccess= null;
 		fAnnotationPreferences= null;
 		
+		fLineNumberRulerColumn= null;
+		fLineColumn= null;
+		
 		super.dispose();
 	}
 
