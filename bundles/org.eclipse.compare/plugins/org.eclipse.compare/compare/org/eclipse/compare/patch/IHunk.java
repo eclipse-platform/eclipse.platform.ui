@@ -2,6 +2,8 @@ package org.eclipse.compare.patch;
 
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
@@ -50,6 +52,23 @@ public interface IHunk {
 	 * @return the contents that contain the modifications for this hunk
 	 */
 	public InputStream getPatchedContents();
+	
+	/**
+	 * Returns the name of a charset encoding to be used when decoding the contents 
+	 * of this hunk into characters. Returns <code>null</code> if a proper 
+	 * encoding cannot be determined.
+	 * <p>
+	 * Note that this method does not check whether the result is a supported
+	 * charset name. Callers should be prepared to handle 
+	 * <code>UnsupportedEncodingException</code> where this charset is used. 
+	 * </p>
+	 *
+	 * @return the name of a charset, or <code>null</code>
+	 * @exception CoreException if an error happens while determining 
+	 * the charset. See any refinements for more information.
+	 * @see IEncodedStorage
+	 */
+	public String getCharset() throws CoreException;
 	
 	
 }

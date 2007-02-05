@@ -277,15 +277,15 @@ public class FileDiffResult implements IFilePatchResult {
 
 	public InputStream getOriginalContents() {
 		String contents = Patcher.createString(isPreserveLineDelimeters(), getBeforeLines());
-		return asInputStream(contents, getCharSet());
+		return asInputStream(contents, getCharset());
 	}
 
 	public InputStream getPatchedContents() {
 		String contents = Patcher.createString(isPreserveLineDelimeters(), getLines());
-		return asInputStream(contents, getCharSet());
+		return asInputStream(contents, getCharset());
 	}
 
-	protected String getCharSet() {
+	public String getCharset() {
 		return charset;
 	}
 

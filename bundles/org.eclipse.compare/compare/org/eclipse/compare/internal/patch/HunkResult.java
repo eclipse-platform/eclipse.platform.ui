@@ -256,6 +256,6 @@ public class HunkResult implements IHunk {
 	}
 
 	public String getCharset() {
-		return fDiffResult.getCharSet();
+		return fDiffResult.getCharset();
 	}
 }

@@ -12,6 +12,9 @@ package org.eclipse.compare.patch;
 
 import java.io.InputStream;
 
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * A file patch result provides the results of an attempt to apply an
  * {@link IFilePatch} to the contents of a file. *
@@ -72,5 +75,22 @@ public interface IFilePatchResult {
 	 * @see #getPatchedContents()
 	 */
 	public IHunk[] getRejects();
+	
+	/**
+	 * Returns the name of a charset encoding to be used when decoding the contents 
+	 * of this result into characters. Returns <code>null</code> if a proper 
+	 * encoding cannot be determined.
+	 * <p>
+	 * Note that this method does not check whether the result is a supported
+	 * charset name. Callers should be prepared to handle 
+	 * <code>UnsupportedEncodingException</code> where this charset is used. 
+	 * </p>
+	 *
+	 * @return the name of a charset, or <code>null</code>
+	 * @exception CoreException if an error happens while determining 
+	 * the charset. See any refinements for more information.
+	 * @see IEncodedStorage
+	 */
+	public String getCharset() throws CoreException;
 
 }
