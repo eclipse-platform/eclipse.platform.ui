@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -40,6 +41,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
 
 /**
  * This class extends a single popup menu
@@ -110,23 +113,61 @@ public class PopupMenuExtender implements IMenuListener2,
     public PopupMenuExtender(final String id, final MenuManager menu,
             final ISelectionProvider prov, final IWorkbenchPart part,
             final boolean includeEditorInput) {
-        super();
-        this.menu = menu;
-        this.selProvider = prov;
-        this.part = part;
-        if (includeEditorInput) {
-            bitSet |= INCLUDE_EDITOR_INPUT;
-        }
-        menu.addMenuListener(this);
-        if (!menu.getRemoveAllWhenShown()) {
-            menuWrapper = new SubMenuManager(menu);
-            menuWrapper.setVisible(true);
-        }
-        readStaticActionsFor(id);
-        Platform.getExtensionRegistry().addRegistryChangeListener(this);
-    }
+		super();
+		this.menu = menu;
+		this.selProvider = prov;
+		this.part = part;
+		if (includeEditorInput) {
+			bitSet |= INCLUDE_EDITOR_INPUT;
+		}
+		menu.addMenuListener(this);
+		if (!menu.getRemoveAllWhenShown()) {
+			menuWrapper = new SubMenuManager(menu);
+			menuWrapper.setVisible(true);
+		}
+		readStaticActionsFor(id);
+		
+		final IMenuService menuService = (IMenuService) part.getSite()
+				.getService(IMenuService.class);
+		addMenuContributions(menuService, menu, MenuUtil.ANY_POPUP);
+		addMenuContributions(id);
+		
+		Platform.getExtensionRegistry().addRegistryChangeListener(this);
+	}
 
-    // getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
+	/**
+	 * @param menuService
+	 * @param menuManager
+	 * @param loc
+	 */
+	private static void addMenuContributions(final IMenuService menuService,
+			final MenuManager menuManager, final String loc) {
+		if (menuManager.getRemoveAllWhenShown()) {
+			menuManager.addMenuListener(new IMenuListener() {
+				public void menuAboutToShow(IMenuManager manager) {
+					menuService.populateContributionManager(menuManager, loc);
+				}
+			});
+		} else {
+			menuService.populateContributionManager(menuManager, loc);
+		}
+	}
+
+    /**
+	 * @param id
+	 */
+	private void addMenuContributions(String id) {
+		if (id == null || id.length() == 0) {
+			return;
+		}
+
+		final IMenuService menuService = (IMenuService) part.getSite()
+				.getService(IMenuService.class);
+		String loc = "popup:" + id; //$NON-NLS-1$
+		addMenuContributions(menuService, menu, loc);
+	}
+
+	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
     /**
      * Return the menu identifiers for this extender.
      * 
@@ -162,7 +203,11 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     public final void addMenuId(final String menuId) {
 		bitSet &= ~STATIC_ACTION_READ;
+		boolean contribute = !getMenuIds().contains(menuId);
 		readStaticActionsFor(menuId);
+		if (contribute) {
+			addMenuContributions(menuId);
+		}
 	}
 
     /**
@@ -393,12 +438,17 @@ public class PopupMenuExtender implements IMenuListener2,
      * is disposed.
      */
     public void dispose() {
-    	clearStaticActions();
-        Platform.getExtensionRegistry().removeRegistryChangeListener(this);
-        menu.removeMenuListener(this);
-    }
+		clearStaticActions();
+		final IMenuService menuService = (IMenuService) part.getSite()
+				.getService(IMenuService.class);
+		menuService.releaseContributions(menu);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
+		menu.removeMenuListener(this);
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
 	 */
 	public void registryChanged(final IRegistryChangeEvent event) {

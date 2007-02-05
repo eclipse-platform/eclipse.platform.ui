@@ -13,16 +13,12 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Display;
@@ -45,7 +41,6 @@ import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
-import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
@@ -121,22 +116,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			menuExtenders.add(new PopupMenuExtender(menuId, menuManager,
 					selectionProvider, part, includeEditorInput));
 		}
-		
-		//
-		// 3.3 start
-		final IMenuService menuService = (IMenuService) part.getSite().getService(
-				IMenuService.class);
-		final String loc = "popup:" + menuId; //$NON-NLS-1$
-		if (menuManager.getRemoveAllWhenShown()) {
-			menuManager.addMenuListener(new IMenuListener() {
-				public void menuAboutToShow(IMenuManager manager) {
-					menuService.populateContributionManager(menuManager, loc);
-				}
-			});
-		} else {
-			menuService.populateContributionManager(menuManager, loc);
-		}
-		// 3.3 end
 	}
 
 	private IWorkbenchPartReference partReference;
@@ -218,20 +197,11 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	public void dispose() {
 		if (menuExtenders != null) {
-			HashSet managers = new HashSet();
 			for (int i = 0; i < menuExtenders.size(); i++) {
 				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
-				managers.add(ext.getManager());
 				ext.dispose();
 			}
-			Iterator i = managers.iterator();
-			final IMenuService menuService = (IMenuService) getService(
-					IMenuService.class);
-			while (i.hasNext()) {
-				menuService.releaseContributions((ContributionManager) i.next());
-			}
 			menuExtenders = null;
-			
 		}
 
 		 if (keyBindingService != null) {
