@@ -1694,6 +1694,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void dispose() {
 			for (Iterator iter= new ArrayList(fColumns).iterator(); iter.hasNext();)
 				removeColumn(getRuler(), (IContributedRulerColumn)iter.next());
+			fColumns.clear();
 		}
 	}
 
@@ -2167,7 +2168,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * This editor's savable.
 	 * @since 3.3
 	 */
-	private Saveable fSavable;
+	private TextEditorSavable fSavable;
 	/**
 	 * Tells whether text drag and drop is enabled.
 	 * <p>
@@ -3555,6 +3556,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (fSavable != null) {
 				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
+				fSavable.disconnectEditor();
 				fSavable= null;
 			}
 			
@@ -3562,6 +3564,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			boolean mustSendLifeCycleEvent= false;
 			if (fSavable != null) {
 				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
+				fSavable.disconnectEditor();
 				fSavable= null;
 				mustSendLifeCycleEvent= true;
 			}
@@ -3763,9 +3766,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		if (fSavable != null) {
-//			ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
-//			if (listener != null)
-//				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
+			fSavable.disconnectEditor();
 			fSavable= null;
 		}
 		
@@ -6333,7 +6334,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public Saveable[] getSaveables() {
 		if (fSavable == null)
-			fSavable= new TextEditorSavable();
+			fSavable= new TextEditorSavable(this);
 
 		return new Saveable[] { fSavable };
 	}
@@ -6351,8 +6352,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @since 3.3
 	 */
-	protected class TextEditorSavable extends Saveable {
+	protected static class TextEditorSavable extends Saveable {
 		
+		/** The cached editor. */
+		private ITextEditor fTextEditor;
 		/** The cached editor input. */
 		private IEditorInput fEditorInput;
 		/** The cached document. */
@@ -6360,10 +6363,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/**
 		 * Creates a new savable for this text editor.
+		 * 
+		 * @param textEditor the text editor 
 		 */
-		public TextEditorSavable() {
-			fEditorInput= getEditorInput();
+		public TextEditorSavable(ITextEditor textEditor) {
+			Assert.isLegal(textEditor != null);
+			fTextEditor= textEditor;
+			fEditorInput= fTextEditor.getEditorInput();
 			Assert.isLegal(fEditorInput != null);
+		}
+
+		/**
+		 * Disconnects the editor from this savable.
+		 */
+		public void disconnectEditor() {
+			getAdapter(IDocument.class); // make sure the document is cached
+			fTextEditor= null;
 		}
 
 		/*
@@ -6392,11 +6407,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 3.3
 		 */
 		public void doSave(IProgressMonitor monitor) throws CoreException {
-			AbstractTextEditor.this.doSave(monitor);
+			fTextEditor.doSave(monitor);
 		}
 
 		public boolean isDirty() {
-			return AbstractTextEditor.this.isDirty();
+			return fTextEditor.isDirty();
 		}
 
 		/*
@@ -6444,7 +6459,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public Object getAdapter(Class adapter) {
 			if (adapter == IDocument.class) {
 				if (fDocument == null) {
-					IDocumentProvider documentProvider= getDocumentProvider();
+					IDocumentProvider documentProvider= fTextEditor.getDocumentProvider();
 					if (documentProvider != null)
 						fDocument= documentProvider.getDocument(fEditorInput);
 				}
