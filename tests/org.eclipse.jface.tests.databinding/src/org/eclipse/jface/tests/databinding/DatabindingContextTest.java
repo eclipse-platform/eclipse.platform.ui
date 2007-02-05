@@ -213,7 +213,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		DataBindingContext context;
 
 		public BindingStub() {
-			super();
+			super(new WritableValue(), new WritableValue());
 		}
 
 		public IObservableValue getPartialValidationStatus() {

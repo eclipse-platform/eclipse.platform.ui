@@ -33,12 +33,18 @@ public abstract class Binding {
 	private List bindingEventListeners = new ArrayList();
 
 	protected DataBindingContext context;
-
+	private IObservable target;
+	private IObservable model;
+	
 	/**
 	 * Creates a new binding.
 	 * 
+	 * @param target target observable
+	 * @param model model observable
 	 */
-	public Binding() {
+	public Binding(IObservable target, IObservable model) {
+		this.target = target;
+		this.model = model;
 	}
 	
 	/**
@@ -174,6 +180,8 @@ public abstract class Binding {
 			context.removeBinding(this);
 		}
 		context = null;
+		target = null;
+		model = null;
 		disposed = true;
 	}
 
@@ -223,5 +231,19 @@ public abstract class Binding {
 	 */
 	protected BindingEvent createBindingEvent(IDiff diff, int copyType, int pipelinePosition) {
 		return new BindingEvent(this, diff, copyType, pipelinePosition);
+	}
+	
+	/**
+	 * @return target observable
+	 */
+	public IObservable getTarget() {
+		return target;
+	}
+	
+	/**
+	 * @return model observable
+	 */
+	public IObservable getModel() {
+		return model;
 	}
 }

@@ -13,6 +13,7 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal;
 
+import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
@@ -57,6 +58,22 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
         
         assertEquals(target.getValue(), model.getValue());
     }
+    
+    public void testGetTarget() throws Exception {
+    	WritableValue target = new WritableValue();
+    	WritableValue model = new WritableValue();
+		ValueBinding valueBinding = new ValueBinding(target, model, new BindSpec());
+    	
+		assertEquals(target, valueBinding.getTarget());
+	}
+    
+    public void testGetModel() throws Exception {
+    	WritableValue target = new WritableValue();
+    	WritableValue model = new WritableValue();
+		ValueBinding valueBinding = new ValueBinding(target, model, new BindSpec());
+    	
+		assertEquals(model, valueBinding.getModel());
+	}
 
 	private static class ObservableValueStub extends AbstractObservableValue {
 		protected Object doGetValue() {

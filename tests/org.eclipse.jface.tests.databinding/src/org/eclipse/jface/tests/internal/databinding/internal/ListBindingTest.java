@@ -80,4 +80,15 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		assertEquals("model should not have changed", modelCopy, model);
 		assertEquals("model != target", model, target);
 	}
+	
+	public void testGetTarget() throws Exception {
+		ListBinding binding = new ListBinding(target, model,
+				new BindSpec());
+		assertEquals(target, binding.getTarget());
+	}
+	
+	public void testGetModel() throws Exception {
+		ListBinding binding = new ListBinding(target, model, new BindSpec());
+		assertEquals(model, binding.getModel());
+	}
 }

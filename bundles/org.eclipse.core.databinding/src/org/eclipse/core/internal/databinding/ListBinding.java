@@ -58,6 +58,8 @@ public class ListBinding extends Binding {
 	 */
 	public ListBinding(IObservableList targetList,
 			IObservableList modelList, BindSpec bindSpec) {
+		super(targetList, modelList);
+		
 		this.targetList = targetList;
 		this.modelList = modelList;
 

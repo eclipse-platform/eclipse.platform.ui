@@ -72,6 +72,8 @@ public class ValueBinding extends Binding {
 	 */
 	public ValueBinding(IObservableValue target,
 			IObservableValue model, BindSpec bindSpec) {
+		super(target, model);
+		
 		this.target = target;
 		this.model = model;
 		fillBindSpecDefaults(bindSpec, target, model);
