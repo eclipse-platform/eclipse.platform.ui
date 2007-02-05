@@ -368,4 +368,16 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	public void removeRevisionListener(IRevisionListener listener) {
 		fRevisionPainter.removeRevisionListener(listener);
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#handleDispose()
+	 * @since 3.3
+	 */
+	protected void handleDispose() {
+		fRevisionPainter.setParentRuler(null);
+		fRevisionPainter.setModel(null);
+		fDiffPainter.setParentRuler(null);
+		fDiffPainter.setModel(null);
+		super.handleDispose();
+	}
 }
