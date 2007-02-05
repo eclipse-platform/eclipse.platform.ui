@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -321,8 +322,14 @@ public class CtrlEAction extends AbstractHandler {
 		}
 
 		public void setInput(Object information) {
-			getTreeViewer().setAutoExpandLevel(2);
 			getTreeViewer().setInput(information);
+			PreviousPicksProvider previousPicks = (PreviousPicksProvider) providers[0];
+			AbstractElement[] picks = previousPicks.getElements();
+			if (picks.length > 0) {
+				getTreeViewer().setSelection(
+						new TreeSelection(new TreePath(new Object[] {
+								previousPicks, picks[0] })));
+			}
 		}
 	}
 

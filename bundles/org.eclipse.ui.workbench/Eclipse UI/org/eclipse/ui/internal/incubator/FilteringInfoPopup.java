@@ -375,7 +375,11 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 		// refresh viewer to re-filter
 		treeViewer.getControl().setRedraw(false);
 		treeViewer.refresh();
-		treeViewer.expandAll();
+		if (matcher==null) {
+			treeViewer.collapseAll();
+		} else {
+			treeViewer.expandAll();
+		}
 		selectFirstMatch();
 		treeViewer.getControl().setRedraw(true);
 	}
