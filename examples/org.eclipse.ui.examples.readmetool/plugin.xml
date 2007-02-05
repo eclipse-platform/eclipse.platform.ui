@@ -384,43 +384,30 @@
    
    <extension
          point="org.eclipse.ui.menus">
-      <group
-            id="org.eclipse.ui.examples.readmetool.readmeTrimGroup">
-         <location>
-            <bar type="trim"/>
-            <order position="before" relativeTo="status"/>
-         </location>
-      </group>
-      <widget class="org.eclipse.ui.examples.readmetool.ReadmeTrimWidget" 
-      		  id="org.eclipse.ui.examples.readmetool.readmeTrimWidget">
-         <location>
-            <bar path="org.eclipse.ui.examples.readmetool.readmeTrimGroup" type="trim"/>
-         </location>
-      </widget>
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.trim.status">
          <toolbar
                id="org.eclipse.ui.examples.readmetool.verticalTrim">
-            <item
+            <command
                   commandId="org.eclipse.ui.examples.readmetool.item2"
                   icon="icons/obj16/editor.gif"
                   id="readmeTool.trimItem"
                   label="Trim Item"
                   style="push"
                   tooltip="TrimItem ToolTip">
-            </item>
+            </command>
             <control
                   class="org.eclipse.ui.examples.readmetool.ReadmeControlContribution"
                   id="readmeTool.controlContrib1">
             </control>
-            <item
+            <command
                   commandId="org.eclipse.ui.examples.readmetool.item2"
                   icon="icons/obj16/editor.gif"
                   id="readmeTool.trimItem2"
                   label="Trim Item 2"
                   style="push"
                   tooltip="TrimItem 2 ToolTip">
-            </item>
+            </command>
          </toolbar>
       </menuContribution>
    </extension>

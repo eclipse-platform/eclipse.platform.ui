@@ -2947,51 +2947,47 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
                label="Inserted Before"
                mnemonic="B">
-         </item>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?after=MenuTest.Advanced">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
                label="Inserted After"
                mnemonic="A">
-         </item>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
                label="Basic Cmd"
                mnemonic="B">
-         </item>
-         <widget
-               class="non.existant.NonExistantClass"
-               id="MenuTest.popup.BasicWidgetItem">
-         </widget>
+         </command>
          <menu
                icon="icons/binary_co.gif"
                id="MenuTest.popup.BasicMenuItem"
                label="Basic Menu">
-            <item
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   label="Sub Item">
-            </item>
+            </command>
          </menu>
          <separator
                name="MenuTest.Advanced"
                visible="true">
          </separator>
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                label="Parameter Cmd"
                mnemonic="C">
@@ -2999,8 +2995,8 @@
                   name="Greeting"
                   value="Hi There!">
             </parameter>
-         </item>
-         <item
+         </command>
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/binary_co.gif"
                label="Foo Cmd"
@@ -3008,45 +3004,45 @@
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
-         </item>
+         </command>
          <menu
                icon="icons/dynamic.gif"
                id="MenuTest.popup.dynamicMenu"
                label="Dynamic Menu">
-            <dynamicContribution
+            <dynamic
                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
                id="MenuText.popup.DynamicItem">
-            </dynamicContribution>
+            </dynamic>
          </menu>
       </menuContribution>
 
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.api.MenuTestHarness">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
                label="Basic Cmd"
                mnemonic="B">
-         </item>
-         <widget
+         </command>
+         <control
                class="org.eclipse.ui.tests.api.workbenchpart.TextWidget"
                id="MenuTest.popup.BasicWidgetItem">
-         </widget>
+         </control>
          <menu
                icon="icons/binary_co.gif"
                id="MenuTest.popup.BasicMenuItem"
                label="Basic Menu">
-            <item
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   label="Sub Item">
-            </item>
+            </command>
          </menu>
          <separator
                name="MenuTest.Advanced"
                visible="true">
          </separator>
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                label="Parameter Cmd"
                mnemonic="C">
@@ -3054,8 +3050,8 @@
                   name="Greeting"
                   value="Hi There!">
             </parameter>
-         </item>
-         <item
+         </command>
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/binary_co.gif"
                label="Foo Cmd"
@@ -3063,33 +3059,33 @@
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
-         </item>
-            <dynamicContribution
-               class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
-               id="MenuText.popup.DynamicItem">
-            </dynamicContribution>
+         </command>
+         <dynamic
+            class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+            id="MenuText.popup.DynamicItem">
+         </dynamic>
          <menu
                icon="icons/dynamic.gif"
                id="MenuTest.popup.dynamicMenu"
                label="Dynamic Menu">
-            <dynamicContribution
+            <dynamic
                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
                id="MenuText.popup.DynamicItem">
-            </dynamicContribution>
+            </dynamic>
          </menu>
       </menuContribution>
       
       <menuContribution
             locationURI="menu:MenuTest.toolbar.DropItem">
-            <item
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   label="Dropdown Item">
-            </item>
+            </command>
       </menuContribution>
       
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.toggleContext"
                icon="icons/binary_co.gif"
                id="toggle.test.t2"
@@ -3101,31 +3097,31 @@
                   name="toggleContext.contextId"
                   value="org.eclipse.ui.menus.contexts.test2">
             </parameter>
-         </item>
-         <item
+         </command>
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWhenWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
                label="Basic Cmd"
                mnemonic="B">
-         </item>
-         <widget
+         </command>
+         <control
                class="org.eclipse.ui.tests.api.workbenchpart.TextWidget"
                id="MenuTest.popup.BasicWidgetItem">
-         </widget>
-         <item
+         </control>
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.toolbar.DropItem"
                label="Toolbar Dropdown"
                style="pulldown"
                mnemonic="D">
-         </item>
+         </command>
          <separator
                name="MenuTest.Advanced"
                visible="true">
          </separator>
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                label="Parameter Cmd"
                mnemonic="C">
@@ -3133,8 +3129,8 @@
                   name="Greeting"
                   value="Hi There!">
             </parameter>
-         </item>
-         <item
+         </command>
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/binary_co.gif"
                label="Foo Cmd"
@@ -3142,20 +3138,24 @@
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
-         </item>
+         </command>
+         <dynamic
+            class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+            id="MenuText.toolbar.DynamicItem">
+         </dynamic>
          <menu
                icon="icons/dynamic.gif"
                id="MenuTest.popup.dynamicMenu"
                label="Dynamic Menu">
-            <dynamicContribution
+            <dynamic
                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
                id="MenuText.popup.DynamicItem">
-            </dynamicContribution>
+            </dynamic>
          </menu>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.api.MenuTestHarness">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                id="org.eclipse.ui.tests.menus.itemX1"
                label="Menu Item X1">
@@ -3171,19 +3171,19 @@
                   </iterate>
                </with>
             </visibleWhen>
-         </item>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="org.eclipse.ui.tests.mainMenu.MenuX2"
                label="Menu X2">
-            <item
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   id="org.eclipse.ui.tests.menus.itemX3"
                   label="Menu Item X3">
-            </item>
-            <item
+            </command>
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   id="org.eclipse.ui.tests.menus.itemX4"
                   label="Menu Item X4">
@@ -3199,17 +3199,17 @@
                   </iterate>
                </with>
             </visibleWhen>
-            </item>
-            <item
+            </command>
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   id="org.eclipse.ui.tests.menus.itemX5"
                   label="Menu Item X5">
-            </item>
-            <item
+            </command>
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWhenExpression"
                   id="org.eclipse.ui.tests.menus.itemX6"
                   label="Menu Expression">
-            </item>
+            </command>
          </menu>
       </menuContribution>
    </extension>
@@ -3347,52 +3347,52 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests?before=MenuTest.Separator">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.BeforeSeparator"
                label="Inserted Before"
                mnemonic="B">
-         </item>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests?after=MenuTest.Separator">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.AfterSeparator"
                label="Inserted After"
                mnemonic="A">
-         </item>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.BasicCmdItem"
                label="Basic Cmd"
                mnemonic="B">
-         </item>
-         <widget
+         </command>
+         <control
                class="non.existant.NonExistantClass"
                id="MenuTest.brokenWidget">
-         </widget>
+         </control>
          <menu
                icon="icons/binary_co.gif"
                id="MenuTest.BasicMenu"
                label="Basic Menu">
-            <item
+            <command
                   commandId="org.eclipse.ui.tests.menus.enabledWorld"
                   id="MenuTest.BasicMenu.SubItem"
                   label="Sub Item">
-            </item>
+            </command>
          </menu>
          <separator
                name="MenuTest.Separator"
                visible="true">
          </separator>
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                id="MenuTest.ParameterItem"
                label="Parameter Cmd"
@@ -3401,24 +3401,24 @@
                   name="Greeting"
                   value="Hi There!">
             </parameter>
-         </item>
-         <dynamicContribution
+         </command>
+         <dynamic
             class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
             id="MenuTest.DynamicItem">
-         </dynamicContribution>
+         </dynamic>
          <menu
                icon="icons/dynamic.gif"
                id="MenuTest.DynamicMenu"
                label="Dynamic Menu">
-            <dynamicContribution
+            <dynamic
                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
                id="MenuTest.DynamicSubItem">
-            </dynamicContribution>
+            </dynamic>
          </menu>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
-         <item
+         <command
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                id="MenuTest.ItemX1"
                label="Menu Item X1">
@@ -3434,7 +3434,7 @@
                   </iterate>
                </with>
             </visibleWhen>
-         </item>
+         </command>
       </menuContribution>
    </extension>
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
