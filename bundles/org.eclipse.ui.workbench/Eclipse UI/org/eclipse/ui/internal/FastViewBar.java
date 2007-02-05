@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kiryl Kazakevich, Intel - bug 88359
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -126,6 +127,8 @@ public class FastViewBar implements IWindowTrim {
         }
     };
 	private int fCurrentSide = SWT.DEFAULT;
+
+	private boolean hasNewFastViewDisabled = false;
 
     class ViewDropTarget extends AbstractDropTarget {
         List panes;
@@ -263,20 +266,26 @@ public class FastViewBar implements IWindowTrim {
            }
         });
 
+        hasNewFastViewDisabled = PrefUtil.getAPIPreferenceStore().getBoolean(
+        		IWorkbenchPreferenceConstants.DISABLE_NEW_FAST_VIEW);
+
         // Construct the context menu for the fast view bar area
         fastViewBarMenuManager = new MenuManager();
         contextContributionItem = new FastViewBarContextMenuContribution(this);
-        showViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
-        IContributionItem showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
-        showViewMenuMgr.add(showViewMenu);
-        
         fastViewBarMenuManager.add(contextContributionItem);
-        fastViewBarMenuManager.add(showViewMenuMgr);
 
-        // Construct the context menu for the "New Fast View" 'button'
-        newFastViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
-        showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
-        newFastViewMenuMgr.add(showViewMenu);
+        if (!hasNewFastViewDisabled) {
+        	// Add "New Fast View" submenu
+        	showViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
+        	IContributionItem showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
+        	showViewMenuMgr.add(showViewMenu);
+        	fastViewBarMenuManager.add(showViewMenuMgr);
+
+        	// Construct the context menu for the "New Fast View" 'button'
+        	newFastViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
+        	showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
+        	newFastViewMenuMgr.add(showViewMenu);
+        }
     }
 
     /**
@@ -374,7 +383,20 @@ public class FastViewBar implements IWindowTrim {
      * @param parent enclosing SWT composite
      */
     public void createControl(Composite parent) {
-        fvbComposite = new Composite(parent, SWT.NONE);
+        fvbComposite = new Composite(parent, SWT.NONE) {
+        	public Point computeSize(int wHint, int hHint, boolean changed) {
+				Point size = super.computeSize(wHint, hHint, changed);
+				if (Geometry.isHorizontal(getSide())) {
+					if (size.y < TrimUtil.TRIM_DEFAULT_HEIGHT) {
+						size.y = TrimUtil.TRIM_DEFAULT_HEIGHT;
+					}
+				} else {
+					if (size.x < TrimUtil.TRIM_DEFAULT_HEIGHT) {
+						size.x = TrimUtil.TRIM_DEFAULT_HEIGHT;
+					}
+				}
+				return size;
+			}};
         String tip = WorkbenchMessages.FastViewBar_0; 
         fvbComposite.setToolTipText(tip);
 
@@ -414,44 +436,46 @@ public class FastViewBar implements IWindowTrim {
         // Set up the composite for the new orientation
         fvbComposite.setLayout(controlLayout);
 
-        // Create a toolbar to show an 'Add FastView' menu 'button'
-        menuTB = new ToolBar(fvbComposite, SWT.FLAT | orientation);
+        if (!hasNewFastViewDisabled) {
+        	// Create a toolbar to show an 'Add FastView' menu 'button'
+        	menuTB = new ToolBar(fvbComposite, SWT.FLAT | orientation);
 
-        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
-        menuItem = new  ToolItem(menuTB, SWT.PUSH, 0);
-        
-        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
-        menuItem.setImage(tbImage);
-        
-        String menuTip = WorkbenchMessages.FastViewBar_0;
-        menuItem.setToolTipText(menuTip);
-        //new ToolItem(menuTB, SWT.SEPARATOR, 1);
-        
-        // Now that the ToolBar is populated calculate its size...
-        Point size = menuTB.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-        menuTB.setBounds(0, 0, size.x, size.y);
-        
-        // Bring up the 'Add Fast View' menu on a left -or- right button click
-        // Right click (context menu)
-        menuItem.addListener(SWT.MenuDetect, addMenuListener);        
-        menuTB.addListener(SWT.MenuDetect, addMenuListener);
-        
-        // Left Click...
-        menuItem.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				Rectangle bb = DragUtil.getDisplayBounds(menuTB);
-				showAddFastViewPopup(new Point(bb.x,bb.y+bb.height));
-			}
+        	// Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
+        	menuItem = new  ToolItem(menuTB, SWT.PUSH, 0);
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-        	
-        });
-        
-        // try to get the layout correct...
-        toolBarData = new CellData();
-        toolBarData.align(SWT.FILL, SWT.FILL);
-        menuTB.setLayoutData(toolBarData);
+        	Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
+        	menuItem.setImage(tbImage);
+
+        	String menuTip = WorkbenchMessages.FastViewBar_0;
+        	menuItem.setToolTipText(menuTip);
+        	//new ToolItem(menuTB, SWT.SEPARATOR, 1);
+
+        	// Now that the ToolBar is populated calculate its size...
+        	Point size = menuTB.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+        	menuTB.setBounds(0, 0, size.x, size.y);
+
+        	// Bring up the 'Add Fast View' menu on a left -or- right button click
+        	// Right click (context menu)
+        	menuItem.addListener(SWT.MenuDetect, addMenuListener);        
+        	menuTB.addListener(SWT.MenuDetect, addMenuListener);
+
+        	// Left Click...
+        	menuItem.addSelectionListener(new SelectionListener() {
+        		public void widgetSelected(SelectionEvent e) {
+        			Rectangle bb = DragUtil.getDisplayBounds(menuTB);
+        			showAddFastViewPopup(new Point(bb.x,bb.y+bb.height));
+        		}
+
+        		public void widgetDefaultSelected(SelectionEvent e) {
+        		}
+
+        	});
+
+        	// try to get the layout correct...
+        	toolBarData = new CellData();
+        	toolBarData.align(SWT.FILL, SWT.FILL);
+        	menuTB.setLayoutData(toolBarData);
+        }
 
         // Construct the ToolBar containing the 'Fast' views
         fastViewBar = new ToolBarManager(SWT.FLAT | SWT.WRAP | orientation);
@@ -677,9 +701,11 @@ public class FastViewBar implements IWindowTrim {
     protected void disposeChildControls() {
         fastViewBar.dispose();
         fastViewBar = null;
-        
-        menuItem.dispose();
-        menuTB.dispose();
+
+        if (menuItem != null) {
+        	menuItem.dispose();
+        	menuTB.dispose();
+        }
         
         oldLength = 0;
     }

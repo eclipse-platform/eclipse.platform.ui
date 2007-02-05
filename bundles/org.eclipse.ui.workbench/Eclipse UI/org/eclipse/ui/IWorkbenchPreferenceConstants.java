@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kiryl Kazakevich, Intel - bug 88359
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -436,4 +437,18 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.3
      */
     public static final String ENABLE_NEW_MIN_MAX = "ENABLE_MIN_MAX"; //$NON-NLS-1$
+
+    /**                                                                                   
+	 * A named preference for disabling opening a new fast view
+	 * from the fast view bar controls ("Show View as a fast view" button
+	 * or "New Fast View" submenu).
+	 * <p>
+	 * Value is of type <code>boolean</code>.
+	 * </p><p>
+	 * The default is <code>false</code>.
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String DISABLE_NEW_FAST_VIEW = "disableNewFastView"; //$NON-NLS-1$
 }

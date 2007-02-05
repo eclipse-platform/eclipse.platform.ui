@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kiryl Kazakevich, Intel - bug 88359
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -147,6 +148,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Default the min/max behaviour to the old (3.2) style
 		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 		
+		// By default the Fast View Bar allows to select a new fast view from the view list
+		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_NEW_FAST_VIEW, false);
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
