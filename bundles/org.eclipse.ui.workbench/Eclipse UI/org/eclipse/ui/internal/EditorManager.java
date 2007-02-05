@@ -1580,6 +1580,9 @@ public class EditorManager implements IExtensionChangeHandler {
 		final IEditorPart editor = ed.getEditor(false);
 		final IMemento memento = mem;
 		final MultiStatus result = res;
+		if (!(editor.getEditorSite() instanceof EditorSite)) {
+			return;
+		}
 		final EditorSite site = (EditorSite) editor.getEditorSite();
 		if (site.getPane() instanceof MultiEditorInnerPane) {
 			return;
