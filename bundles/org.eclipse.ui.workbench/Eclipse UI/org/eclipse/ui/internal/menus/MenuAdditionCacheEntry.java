@@ -150,15 +150,13 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			String itemType = items[i].getName();
 			IContributionItem newItem = null;
 
-			if (IWorkbenchRegistryConstants.TAG_ITEM.equals(itemType)) {
-				newItem = createItemAdditionContribution(items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC_CONTRIBUTION
-					.equals(itemType)) {
+			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
+				newItem = createCommandAdditionContribution(items[i]);
+			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
 				newItem = createDynamicAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
 				newItem = createControlAdditionContribution(items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
-					.equals(itemType)) {
+			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR.equals(itemType)) {
 				newItem = createSeparatorAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				newItem = createMenuAdditionContribution(items[i]);
@@ -276,14 +274,14 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 * @param configurationElement
 	 * @return
 	 */
-	private IContributionItem createItemAdditionContribution(
-			final IConfigurationElement itemAddition) {
-		return new CommandContributionItem(getId(itemAddition),
-				getCommandId(itemAddition), getParameters(itemAddition),
-				getIconDescriptor(itemAddition),
-				getDisabledIconDescriptor(itemAddition),
-				getHoverIconDescriptor(itemAddition), getLabel(itemAddition),
-				null, getTooltip(itemAddition), getStyle(itemAddition));
+	private IContributionItem createCommandAdditionContribution(
+			final IConfigurationElement commandAddition) {
+		return new CommandContributionItem(getId(commandAddition),
+				getCommandId(commandAddition), getParameters(commandAddition),
+				getIconDescriptor(commandAddition),
+				getDisabledIconDescriptor(commandAddition),
+				getHoverIconDescriptor(commandAddition), getLabel(commandAddition),
+				null, getTooltip(commandAddition), getStyle(commandAddition));
 	}
 
 	/*
