@@ -844,6 +844,10 @@
             	id="org.eclipse.ui.views.showView.viewId" 
             	value="org.eclipse.ui.views.ContentOutline" />
       </key>
+      <key
+            commandId="org.eclipse.ui.window.quickAccess"
+            sequence="M1+E"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
    </extension>
 
    <extension

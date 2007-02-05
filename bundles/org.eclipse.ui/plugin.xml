@@ -220,10 +220,6 @@
             sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
-            commandId="org.eclipse.ui.window.quickAccess"
-            sequence="M1+E"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
-      <key
             commandId="org.eclipse.ui.window.switchToEditor"
             sequence="M1+M2+E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
