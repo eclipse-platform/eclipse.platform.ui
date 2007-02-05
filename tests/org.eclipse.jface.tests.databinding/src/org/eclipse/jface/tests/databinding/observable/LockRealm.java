@@ -39,7 +39,7 @@ public class LockRealm extends Realm {
 				for (Runnable runnable; (runnable = dequeue()) != null;) {
 					acquireLock();
 					try {
-						runnable.run();
+						safeRun(runnable);
 					} finally {
 						releaseLock();
 					}
@@ -53,7 +53,7 @@ public class LockRealm extends Realm {
 	protected void syncExec(Runnable runnable) {
 		acquireLock();
 		try {
-			runnable.run();
+			safeRun(runnable);
 		} finally {
 			releaseLock();
 		}

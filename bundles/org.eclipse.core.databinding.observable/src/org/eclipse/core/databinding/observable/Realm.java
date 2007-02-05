@@ -15,6 +15,11 @@ package org.eclipse.core.databinding.observable;
 import java.util.LinkedList;
 
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A realm defines a context from which objects implementing {@link IObservable}
@@ -110,18 +115,55 @@ public abstract class Realm {
 	private Thread workerThread;
 
 	LinkedList workQueue = new LinkedList();
+	
+	/**
+	 * Runs the given runnable. If an exception occurs within the runnable, it
+	 * is logged and not re-thrown. If the runnable implements
+	 * {@link ISafeRunnable}, the exception is passed to its
+	 * <code>handleException<code> method.
+	 * 
+	 * @param runnable
+	 */
+	protected static void safeRun(final Runnable runnable) {
+		ISafeRunnable safeRunnable;
+		if (runnable instanceof ISafeRunnable) {
+			safeRunnable = (ISafeRunnable) runnable;
+		} else {
+			safeRunnable = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.ERROR,
+											Policy.JFACE_DATABINDING,
+											IStatus.OK,
+											"Unhandled exception: " + exception.getMessage(), exception)); //$NON-NLS-1$
+				}
+				public void run() throws Exception {
+					runnable.run();
+				}
+			};
+		}
+		SafeRunner.run(safeRunnable);
+	}
 
 	/**
 	 * Causes the <code>run()</code> method of the runnable to be invoked from
 	 * within this realm. If the caller is executing in this realm, the
 	 * runnable's run method is invoked directly, otherwise it is run at the
 	 * next reasonable opportunity using asyncExec.
+	 * <p>
+	 * If the given runnable is an instance of {@link ISafeRunnable}, its
+	 * exception handler method will be called if any exceptions occur while
+	 * running it. Otherwise, the exception will be logged.
+	 * </p>
 	 * 
 	 * @param runnable
 	 */
 	public void exec(Runnable runnable) {
 		if (isCurrent()) {
-			runnable.run();
+			safeRun(runnable);
 		} else {
 			asyncExec(runnable);
 		}
@@ -132,6 +174,14 @@ public abstract class Realm {
 	 * within this realm at the next reasonable opportunity. The caller of this
 	 * method continues to run in parallel, and is not notified when the
 	 * runnable has completed.
+	 * <p>
+	 * If the given runnable is an instance of {@link ISafeRunnable}, its
+	 * exception handler method will be called if any exceptions occur while
+	 * running it. Otherwise, the exception will be logged.
+	 * </p>
+	 * <p>
+	 * Subclasses should use {@link #safeRun(Runnable)} to run the runnable.
+	 * </p>
 	 * 
 	 * @param runnable
 	 */
@@ -175,6 +225,14 @@ public abstract class Realm {
 	 * within this realm at the next reasonable opportunity. This method is
 	 * blocking the caller until the runnable completes.
 	 * <p>
+	 * If the given runnable is an instance of {@link ISafeRunnable}, its
+	 * exception handler method will be called if any exceptions occur while
+	 * running it. Otherwise, the exception will be logged.
+	 * </p>
+	 * <p>
+	 * Subclasses should use {@link #safeRun(Runnable)} to run the runnable.
+	 * </p>
+	 * <p>
 	 * Note: This class is not meant to be called by clients and therefore has
 	 * only protected access.
 	 * </p>
@@ -205,10 +263,13 @@ public abstract class Realm {
 		}
 
 		public void run() {
-			runnable.run();
-			synchronized (this) {
-				hasRun = true;
-				this.notifyAll();
+			try {
+				safeRun(runnable);
+			} finally {
+				synchronized (this) {
+					hasRun = true;
+					this.notifyAll();
+				}
 			}
 		}
 	}

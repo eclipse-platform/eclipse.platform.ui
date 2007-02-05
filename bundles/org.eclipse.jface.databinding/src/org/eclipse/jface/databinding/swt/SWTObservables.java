@@ -276,8 +276,13 @@ public class SWTObservables {
 			return Display.getCurrent() == display;
 		}
 
-		public void asyncExec(Runnable runnable) {
-			display.asyncExec(runnable);
+		public void asyncExec(final Runnable runnable) {
+			Runnable safeRunnable = new Runnable() {
+				public void run() {
+					safeRun(runnable);
+				}
+			};
+			display.asyncExec(safeRunnable);
 		}
 
 		/*

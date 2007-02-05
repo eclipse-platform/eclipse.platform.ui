@@ -93,7 +93,7 @@ public class ThreadRealm extends Realm {
                 }
 
                 if (runnable != null) {
-                    runnable.run();
+                    safeRun(runnable);
                     runnable = null;
                 }
             }
