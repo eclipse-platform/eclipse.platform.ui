@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  */
 public abstract class AbstractHyperlink extends Canvas {
 	private boolean hasFocus;
+	boolean paintFocus=true;
 
 	private ListenerList listeners;
 
@@ -264,7 +265,7 @@ public abstract class AbstractHyperlink extends Canvas {
 		if (clientArea.width == 0 || clientArea.height == 0)
 			return;
 		paintHyperlink(gc);
-		if (hasFocus) {
+		if (paintFocus && hasFocus) {
 			Rectangle carea = getClientArea();
 			gc.setForeground(getForeground());
 			gc.drawFocus(0, 0, carea.width, carea.height);

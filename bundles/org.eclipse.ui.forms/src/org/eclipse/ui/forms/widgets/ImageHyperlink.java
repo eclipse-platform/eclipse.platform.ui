@@ -72,7 +72,10 @@ public class ImageHyperlink extends Hyperlink {
 	 * @see org.eclipse.ui.forms.widgets.AbstractHyperlink#paintHyperlink(org.eclipse.swt.events.PaintEvent)
 	 */
 	protected void paintHyperlink(GC gc) {
-		Rectangle clientArea = getClientArea();
+		paintHyperlink(gc, getClientArea());
+	}
+	
+	protected void paintHyperlink(GC gc, Rectangle bounds) {
 		Image image = null;
 		if ((state & ACTIVE) != 0)
 			image = activeImage;
@@ -83,21 +86,21 @@ public class ImageHyperlink extends Hyperlink {
 		Rectangle ibounds = image != null ? image.getBounds() : new Rectangle(0, 0, 0, 0);
 		Point maxsize = computeMaxImageSize();
 		int spacing = image!=null?textSpacing:0;		
-		int textWidth = clientArea.width - maxsize.x - spacing
+		int textWidth = bounds.width - maxsize.x - spacing
 				- marginWidth - marginWidth;
-		int y = marginHeight + maxsize.y / 2 - ibounds.height / 2;
+		int y = bounds.y+marginHeight + maxsize.y / 2 - ibounds.height / 2;
 
 		if (horizontalAlignment == SWT.LEFT) {
-			int x = marginWidth + maxsize.x / 2 - ibounds.width / 2;
-			int textX = marginWidth + maxsize.x + spacing;
+			int x = bounds.x+marginWidth + maxsize.x / 2 - ibounds.width / 2;
+			int textX = bounds.x + marginWidth + maxsize.x + spacing;
 			if (image != null)
 				gc.drawImage(image, x, y);
 			if (getText() != null)
-				drawText(gc, clientArea, textX, textWidth);
+				drawText(gc, bounds, textX, textWidth);
 		} else if (horizontalAlignment == SWT.RIGHT) {
-			int x = marginWidth;
+			int x = bounds.x+marginWidth;
 			if (getText() != null) {
-				x += drawText(gc, clientArea, x, textWidth);
+				x += drawText(gc, bounds, x, textWidth);
 			}
 			x += maxsize.x / 2 - ibounds.width / 2 + spacing;
 			if (image != null)

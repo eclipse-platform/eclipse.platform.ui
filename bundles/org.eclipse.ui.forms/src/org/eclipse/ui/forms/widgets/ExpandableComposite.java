@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
-import java.util.Vector;
-
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.PaintEvent;
@@ -206,7 +207,7 @@ public class ExpandableComposite extends Canvas {
 
 	private Control client;
 
-	private Vector listeners;
+	private ListenerList listeners = new ListenerList();
 
 	private Color titleBarForeground;
 
@@ -503,7 +504,6 @@ public class ExpandableComposite extends Canvas {
 		if ((expansionStyle & TITLE_BAR) != 0)
 			setBackgroundMode(SWT.INHERIT_DEFAULT);
 		super.setLayout(new ExpandableLayout());
-		listeners = new Vector();
 		if (hasTitleBar()) {
 			this.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent e) {
@@ -545,6 +545,18 @@ public class ExpandableComposite extends Canvas {
 					}
 				}
 			});
+			if ((getExpansionStyle()&FOCUS_TITLE)==0) {
+				toggle.paintFocus=false;
+				toggle.addFocusListener(new FocusListener() {
+					public void focusGained(FocusEvent e) {
+						textLabel.redraw();
+					}
+
+					public void focusLost(FocusEvent e) {
+						textLabel.redraw();
+					}
+				});
+			}
 		}
 		if ((expansionStyle & FOCUS_TITLE) != 0) {
 			Hyperlink link = new Hyperlink(this, SWT.WRAP);
@@ -585,6 +597,11 @@ public class ExpandableComposite extends Canvas {
 								toggle.redraw();
 							}
 							break;
+						case SWT.Paint:
+							if (toggle != null) {
+								paintTitleFocus(e.gc);
+							}
+							break;
 						}
 					}
 				};
@@ -592,6 +609,7 @@ public class ExpandableComposite extends Canvas {
 				label.addListener(SWT.MouseUp, listener);
 				label.addListener(SWT.MouseEnter, listener);
 				label.addListener(SWT.MouseExit, listener);
+				label.addListener(SWT.Paint, listener);
 			}
 			textLabel = label;
 		}
@@ -812,8 +830,7 @@ public class ExpandableComposite extends Canvas {
 	 *            the listener to add
 	 */
 	public void addExpansionListener(IExpansionListener listener) {
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+		listeners.add(listener);
 	}
 
 	/**
@@ -823,8 +840,7 @@ public class ExpandableComposite extends Canvas {
 	 *            the listner to remove
 	 */
 	public void removeExpansionListener(IExpansionListener listener) {
-		if (listeners.contains(listener))
-			listeners.remove(listener);
+		listeners.remove(listener);
 	}
 
 	/**
@@ -987,8 +1003,9 @@ public class ExpandableComposite extends Canvas {
 		if (size == 0)
 			return;
 		ExpansionEvent e = new ExpansionEvent(this, state);
+		Object [] listenerList = listeners.getListeners();
 		for (int i = 0; i < size; i++) {
-			IExpansionListener listener = (IExpansionListener) listeners.get(i);
+			IExpansionListener listener = (IExpansionListener) listenerList[i];
 			if (before)
 				listener.expansionStateChanging(e);
 			else
@@ -1027,5 +1044,13 @@ public class ExpandableComposite extends Canvas {
 		if (toggle != null)
 			toggle.setExpanded(!toggle.isExpanded());
 		toggleState();
+	}
+	
+	private void paintTitleFocus(GC gc) {
+		Point size = textLabel.getSize();
+		gc.setBackground(textLabel.getBackground());
+		gc.setForeground(textLabel.getForeground());
+		if (toggle.isFocusControl())
+			gc.drawFocus(0, 0, size.x, size.y);
 	}
 }

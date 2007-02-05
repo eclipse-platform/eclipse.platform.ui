@@ -53,7 +53,7 @@ public class TreeNode extends ToggleHyperlink {
 		if (!isExpanded()) {
 			gc.drawLine(box.x + 4, box.y + 2, box.x + 4, box.y + 6);
 		}
-		if (getSelection()) {
+		if (paintFocus && getSelection()) {
 			gc.setForeground(getForeground());
 			gc.drawFocus(box.x - 1, box.y - 1, box.width + 3, box.height + 3);
 		}

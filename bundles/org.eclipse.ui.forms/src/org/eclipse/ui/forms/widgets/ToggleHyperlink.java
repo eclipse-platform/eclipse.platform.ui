@@ -14,6 +14,7 @@ import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.events.*;
+import org.eclipse.ui.internal.forms.Messages;
 /**
  * A custom selectable control that can be used to control areas that can be
  * expanded or collapsed.
@@ -155,6 +156,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 */
 	public void setExpanded(boolean expanded) {
 		this.expanded = expanded;
+		getAccessible().selectionChanged();
 		redraw();
 	}
 	private void initAccessible() {
@@ -163,15 +165,15 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 				e.result = getToolTipText();
 			}
 			public void getName(AccessibleEvent e) {
+				String name=Messages.ToggleHyperlink_accessibleName;
 				if (getParent() instanceof ExpandableComposite) {
-					String name = ((ExpandableComposite)getParent()).getText();
+					name += Messages.ToggleHyperlink_accessibleColumn+((ExpandableComposite)getParent()).getText();
 					int index = name.indexOf('&');
 					if (index != -1) {
 						name = name.substring(0, index) + name.substring(index + 1);
 					}
-					e.result = name;
 				}
-					
+				e.result = name;
 			}
 			public void getDescription(AccessibleEvent e) {
 				getName(e);
@@ -193,6 +195,15 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 						e.width = location.width;
 						e.height = location.height;
 					}
+					public void getSelection (AccessibleControlEvent e) {
+						if (ToggleHyperlink.this.getSelection()) 
+							e.childID = ACC.CHILDID_SELF;
+					}
+					
+					public void getFocus (AccessibleControlEvent e) {
+						if (ToggleHyperlink.this.getSelection()) 
+							e.childID = ACC.CHILDID_SELF;
+					}					
 					public void getChildCount(AccessibleControlEvent e) {
 						e.detail = 0;
 					}
@@ -200,12 +211,13 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 						e.detail = ACC.ROLE_TREE;
 					}
 					public void getState(AccessibleControlEvent e) {
-						e.detail = ToggleHyperlink.this.isExpanded()
+						int state = ACC.STATE_FOCUSABLE;
+						if (ToggleHyperlink.this.getSelection())
+							state |= ACC.STATE_FOCUSED;
+						state |= ToggleHyperlink.this.isExpanded()
 								? ACC.STATE_EXPANDED
 								: ACC.STATE_COLLAPSED;
-					}
-					public void getValue(AccessibleControlEvent e) {
-						e.result = "0"; //$NON-NLS-1$
+						e.detail = state;
 					}
 				});
 	}
