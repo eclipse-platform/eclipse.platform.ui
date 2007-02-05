@@ -35,7 +35,7 @@ public class CVSFileHistory extends FileHistory {
 	
 	public static final int REFRESH_ALL = REFRESH_LOCAL | REFRESH_REMOTE;
 	
-	protected ICVSFile cvsFile;
+	private final ICVSFile cvsFile;
 	//used to hold all revisions (changes based on filtering)
 	protected IFileRevision[] revisions;
 	//used to hold all of the remote revisions
@@ -53,6 +53,7 @@ public class CVSFileHistory extends FileHistory {
 	 * Creates a new CVSFile history that will fetch remote revisions by default.
 	 */
 	public CVSFileHistory(ICVSFile file) {
+		Assert.isNotNull(file);
 		this.cvsFile = file;
 		this.includeLocalRevisions = false;
 		this.includeRemoteRevisions = true;
@@ -66,6 +67,7 @@ public class CVSFileHistory extends FileHistory {
 	 * The flag passed can be IFileHistoryProvider.SINGLE_REVISION or IFileHistoryProvider.SINGLE_LINE_OF_DESCENT
 	 */
 	public CVSFileHistory(ICVSFile file, int flag) {
+		Assert.isNotNull(file);
 		this.cvsFile = file;
 		this.includeLocalRevisions = false;
 		this.includeRemoteRevisions = true;
