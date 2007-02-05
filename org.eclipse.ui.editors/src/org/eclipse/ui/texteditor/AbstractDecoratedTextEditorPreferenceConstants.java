@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -339,9 +339,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 *
 	 * @since 3.3
 	 */
@@ -391,11 +388,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	/**
 	 * A named preference that controls the rendering mode of the revision ruler.
 	 * <p>
-	 * Value is of type <code>String</code> and should contains the name of a
+	 * Value is of type <code>String</code> and should contain the name of a
 	 * {@link org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode}.
-	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 * 
 	 * @since 3.3
@@ -407,9 +401,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @since 3.3
 	 */
@@ -420,9 +411,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @since 3.3
 	 */
@@ -432,9 +420,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * A named preference that controls whether text drag and drop is enabled.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 *
 	 * @since 3.3
