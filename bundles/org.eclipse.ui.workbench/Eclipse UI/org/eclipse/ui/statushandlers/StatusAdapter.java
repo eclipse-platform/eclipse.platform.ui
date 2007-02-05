@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.statushandlers;
 
-import org.eclipse.core.runtime.Assert;
+import java.util.HashMap;
+
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -32,23 +34,44 @@ import org.eclipse.core.runtime.IStatus;
  * 
  * @since 3.3
  */
-public class StatusHandlingState {
+public class StatusAdapter implements IAdaptable {
 
 	private IStatus status;
+
+	private HashMap adapters;
 
 	private int handlingHint;
 
 	/**
+	 * Creates an instance of this class.
+	 * 
 	 * @param status
-	 *            not null
-	 * @param handlingHint
-	 *            one of the values defined in {@link StatusManager}, for
-	 *            instance StatusManager.SHOW
+	 *            the status set in the adapter
 	 */
-	public StatusHandlingState(IStatus status, int handlingHint) {
-		Assert.isNotNull(status);
+	public StatusAdapter(IStatus status) {
 		this.status = status;
-		this.handlingHint = handlingHint;
+		adapters = new HashMap();
+	}
+
+	/**
+	 * Adds new adapter.
+	 * 
+	 * @param adapter
+	 *            the adapter class
+	 * @param object
+	 *            the adapter instance
+	 */
+	public void addAdapter(Class adapter, Object object) {
+		adapters.put(adapter, object);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return adapters.get(adapter);
 	}
 
 	/**
@@ -60,10 +83,9 @@ public class StatusHandlingState {
 
 	/**
 	 * @param status
-	 *            The status to set, not null.
+	 *            The status to set.
 	 */
 	public void setStatus(IStatus status) {
-		Assert.isNotNull(status);
 		this.status = status;
 	}
 

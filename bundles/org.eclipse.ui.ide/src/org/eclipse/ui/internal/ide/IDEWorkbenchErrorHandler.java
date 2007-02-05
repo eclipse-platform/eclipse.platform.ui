@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.internal.ide.dialogs.InternalErrorDialog;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.statushandlers.StatusHandlingState;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 
 import com.ibm.icu.text.MessageFormat;
@@ -78,10 +78,10 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.statushandling.AbstractStatusHandler#handle(org.eclipse.ui.statushandling.StatusHandlingState)
+	 * @see org.eclipse.ui.statushandlers.WorkbenchErrorHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
-	public boolean handle(final StatusHandlingState handlingState) {
-		if (handlingState.getStatus().getException() != null) {
+	public boolean handle(final StatusAdapter statusAdapter) {
+		if (statusAdapter.getStatus().getException() != null) {
 			UIJob handlingExceptionJob = new UIJob("IDE Exception Handler") //$NON-NLS-1$
 			{
 				/*
@@ -90,7 +90,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 				 */
 				public IStatus runInUIThread(IProgressMonitor monitor) {
-					handleException(handlingState.getStatus().getException());
+					handleException(statusAdapter.getStatus().getException());
 					return new Status(
 							IStatus.OK,
 							IDEWorkbenchPlugin.IDE_WORKBENCH,
@@ -103,7 +103,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 			handlingExceptionJob.schedule();
 		}
 
-		return super.handle(handlingState);
+		return super.handle(statusAdapter);
 	}
 
 	private Shell getParentShell() {

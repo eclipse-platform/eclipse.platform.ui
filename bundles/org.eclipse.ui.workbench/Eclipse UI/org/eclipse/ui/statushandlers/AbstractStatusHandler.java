@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * <p>
  * All status handlers are <code>AbstractStatusHandler</code> subclasses. Each
- * handler has to have <code>handle(StatusHandlingState status)</code>
+ * handler has to have <code>handle(StatusAdapter status)</code>
  * implemented. This method handles the status due to handling hint. The hint
  * indicates how status handler should handle a status but this is only a
  * suggestion.
@@ -65,15 +65,16 @@ public abstract class AbstractStatusHandler {
 	private String id;
 
 	/**
-	 * Handles {@link StatusHandlingState} objects. This method can modify
-	 * status and hint. Each handler can suggest the facility to stop handling a
-	 * problem. If handling policy respects it, handling will be stopped.
+	 * Handles {@link StatusAdapter} objects. This method can modify status and
+	 * hint. Each handler can suggest the facility to stop handling a problem.
+	 * If handling policy respects it, handling will be stopped.
 	 * 
-	 * @param handlingState
-	 *            the handling state
-	 * @return <code>false</code> if handling should be stopped, <code>true</code> otherwise
+	 * @param statusAdapter
+	 *            the status adapter
+	 * @return <code>false</code> if handling should be stopped,
+	 *         <code>true</code> otherwise
 	 */
-	abstract public boolean handle(StatusHandlingState handlingState);
+	abstract public boolean handle(StatusAdapter statusAdapter);
 
 	/**
 	 * @return Returns the params.

@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
-import org.eclipse.ui.statushandlers.StatusHandlingState;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 
 /**
  * A proxy handler which passes all statuses to handler assigned to current
@@ -29,10 +29,10 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.errors.AbstractErrorHandler#handle(org.eclipse.ui.errors.HandlingStatusState)
+	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
-	public boolean handle(StatusHandlingState handlingState) {
+	public boolean handle(StatusAdapter statusAdapter) {
 		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler()
-				.handle(handlingState);
+				.handle(statusAdapter);
 	}
 }

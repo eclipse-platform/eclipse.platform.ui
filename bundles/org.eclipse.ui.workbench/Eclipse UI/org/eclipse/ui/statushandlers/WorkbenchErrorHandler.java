@@ -30,18 +30,19 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.statushandling.AbstractStatusHandler#handle(org.eclipse.ui.statushandling.StatusHandlingState)
+	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
-	public boolean handle(final StatusHandlingState handlingState) {
-		if ((handlingState.getHandlingHint() & StatusManager.SHOW) == StatusManager.SHOW) {
+	public boolean handle(final StatusAdapter statusAdapter) {
+		if ((statusAdapter.getHandlingHint() & StatusManager.SHOW) == StatusManager.SHOW) {
 			StatusNotificationManager.getInstance().addError(
-					handlingState.getStatus(), null);
+					statusAdapter.getStatus(), null);
 		}
 
-		if ((handlingState.getHandlingHint() & StatusManager.LOG) == StatusManager.LOG) {
-			StatusManager.getManager().addLoggedStatus(handlingState.getStatus());
+		if ((statusAdapter.getHandlingHint() & StatusManager.LOG) == StatusManager.LOG) {
+			StatusManager.getManager().addLoggedStatus(
+					statusAdapter.getStatus());
 			WorkbenchPlugin.getDefault().getLog()
-					.log(handlingState.getStatus());
+					.log(statusAdapter.getStatus());
 		}
 		return true;
 	}

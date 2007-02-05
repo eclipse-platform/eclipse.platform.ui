@@ -136,6 +136,61 @@ public class StatusManager {
 	}
 
 	/**
+	 * Handles status adapter due to the prefix policy.
+	 * 
+	 * @param statusAdapter
+	 */
+	public void handle(StatusAdapter statusAdapter) {
+		try {
+			// tries to handle the problem with default (product) handler
+			if (statusHandlerRegistry.getDefaultHandlerDescriptor() != null) {
+				try {
+					boolean shouldContinue = statusHandlerRegistry
+							.getDefaultHandlerDescriptor().getStatusHandler()
+							.handle(statusAdapter);
+
+					if (!shouldContinue) {
+						return;
+					}
+				} catch (CoreException ex) {
+					logError("Errors during the default handler creating", ex); //$NON-NLS-1$
+				}
+			}
+
+			// tries to handle the problem with any handler due to the prefix
+			// policy
+			List okHandlerDescriptors = statusHandlerRegistry
+					.getHandlerDescriptors(statusAdapter.getStatus()
+							.getPlugin());
+
+			if (okHandlerDescriptors != null && okHandlerDescriptors.size() > 0) {
+				StatusHandlerDescriptor handlerDescriptor = null;
+
+				for (Iterator it = okHandlerDescriptors.iterator(); it
+						.hasNext();) {
+					handlerDescriptor = (StatusHandlerDescriptor) it.next();
+
+					try {
+						boolean shouldContinue = handlerDescriptor
+								.getStatusHandler().handle(statusAdapter);
+
+						if (!shouldContinue) {
+							return;
+						}
+					} catch (CoreException ex) {
+						logError("Errors during the handler creating", ex); //$NON-NLS-1$
+					}
+				}
+			}
+
+			// delegates the problem to workbench handler
+			getWorkbenchHandler().handle(statusAdapter);
+		} catch (Throwable ex) {
+			logError("Errors during status handling", ex); //$NON-NLS-1$
+		}
+	}
+
+	/**
 	 * Handles status due to the prefix policy.
 	 * 
 	 * @param status
@@ -144,49 +199,9 @@ public class StatusManager {
 	 *            handling hint
 	 */
 	public void handle(IStatus status, int hint) {
-		StatusHandlingState handlingState = new StatusHandlingState(status,
-				hint);
-
-		// tries to handle the problem with default (product) handler
-		if (statusHandlerRegistry.getDefaultHandlerDescriptor() != null) {
-			try {
-				boolean shouldContinue = statusHandlerRegistry
-						.getDefaultHandlerDescriptor().getStatusHandler()
-						.handle(handlingState);
-
-				if (!shouldContinue) {
-					return;
-				}
-			} catch (CoreException ex) {
-				logError("Errors during the default handler creating", ex); //$NON-NLS-1$
-			}
-		}
-
-		// tries to handle the problem with any handler due to the prefix policy
-		List okHandlerDescriptors = statusHandlerRegistry
-				.getHandlerDescriptors(status.getPlugin());
-
-		if (okHandlerDescriptors != null && okHandlerDescriptors.size() > 0) {
-			StatusHandlerDescriptor handlerDescriptor = null;
-
-			for (Iterator it = okHandlerDescriptors.iterator(); it.hasNext();) {
-				handlerDescriptor = (StatusHandlerDescriptor) it.next();
-
-				try {
-					boolean shouldContinue = handlerDescriptor
-							.getStatusHandler().handle(handlingState);
-
-					if (!shouldContinue) {
-						return;
-					}
-				} catch (CoreException ex) {
-					logError("Errors during the handler creating", ex); //$NON-NLS-1$
-				}
-			}
-		}
-
-		// delegates the problem to workbench handler
-		getWorkbenchHandler().handle(handlingState);
+		StatusAdapter statusAdapter = new StatusAdapter(status);
+		statusAdapter.setHandlingHint(hint);
+		handle(statusAdapter);
 	}
 
 	/**
