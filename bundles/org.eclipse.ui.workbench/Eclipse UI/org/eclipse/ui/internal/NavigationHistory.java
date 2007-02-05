@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.INavigationLocation;
@@ -185,17 +186,19 @@ public class NavigationHistory implements INavigationHistory {
         getDisplay().asyncExec(new Runnable() {
             public void run() {
                 if (--ignoreEntries == 0) {
-	                EditorSite site = (EditorSite) (part.getEditorSite());
-	                Control c = site.getPane().getControl();
-	                if (c == null || c.isDisposed()) {
-						return;
-					}
-	                NavigationHistoryEntry e = getEntry(activeEntry);
-	                if (e != null
-	                        && part.getEditorInput() != e.editorInfo.editorInput) {
-						updateEntry(e);
-					}
-	                addEntry(part);
+	                if (part.getEditorSite() instanceof EditorSite) {
+						EditorSite site = (EditorSite) part.getEditorSite();
+		                Control c = site.getPane().getControl();
+		                if (c == null || c.isDisposed()) {
+							return;
+						}
+		                NavigationHistoryEntry e = getEntry(activeEntry);
+		                if (e != null
+		                        && part.getEditorInput() != e.editorInfo.editorInput) {
+							updateEntry(e);
+						}
+		                addEntry(part);
+	                }
                 }
             }
         });
