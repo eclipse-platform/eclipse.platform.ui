@@ -169,7 +169,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		ILaunchConfiguration lastLaunched = getLastLaunch();
 		String tooltip = null;
 		if (lastLaunched == null) {
-			tooltip = DebugUIPlugin.removeAccelerators(getLaunchHistory().getLaunchGroup().getLabel());
+			tooltip = DebugUIPlugin.removeAccelerators(internalGetHistory().getLaunchGroup().getLabel());
 		} else {
 			tooltip = getToolTip(lastLaunched); 
 		}
@@ -293,8 +293,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @param menu the menu to fill
 	 */
 	protected void fillMenu(Menu menu) {	
-		ILaunchConfiguration[] historyList= LaunchConfigurationManager.filterConfigs(getLaunchHistory().getHistory());
-		ILaunchConfiguration[] favoriteList = LaunchConfigurationManager.filterConfigs(getLaunchHistory().getFavorites());
+		ILaunchConfiguration[] historyList= getHistory();
+		ILaunchConfiguration[] favoriteList = getFavorites();
 		
 		// Add favorites
 		int accelerator = 1;
@@ -356,10 +356,51 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * Returns the launch history associated with this action's launch group.
 	 * 
 	 * @return the launch history associated with this action's launch group
+	 * @deprecated this method returns a class that is not API and is not intended
+	 *  for clients of the debug platform. Instead, use <code>getHistory()</code>,
+	 *  <code>getFavorites()</code>, and <code>getLastLaunch()</code>.
 	 */
 	protected LaunchHistory getLaunchHistory() {
 		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
 	} 
+	
+	/**
+	 * Returns the launch history associated with this action's launch group.
+	 * 
+	 * @return the launch history associated with this action's launch group
+	 * @since 3.3
+	 */
+	private LaunchHistory internalGetHistory() {
+		return getLaunchConfigurationManager().getLaunchHistory(getLaunchGroupIdentifier());
+	}
+	
+	/**
+	 * Returns the launch history associated with this action's launch mode and group in most
+	 * recently launched order. Configurations associated with disabled activities are not included
+	 * in the list. As well, configurations are filtered based on workspace preference settings
+	 * to filter configurations from closed projects, deleted projects, working sets and to filter
+	 * specific launch configuration types.
+	 *  
+	 * @return launch history
+	 * @since 3.3
+	 */
+	protected ILaunchConfiguration[] getHistory() {
+		return LaunchConfigurationManager.filterConfigs(internalGetHistory().getHistory());
+	}
+	
+	/**
+	 * Returns the launch favorites associated with this action's launch mode and group in user
+	 * preference order. Configurations associated with disabled activities are not included
+	 * in the list. As well, configurations are filtered based on workspace preference settings
+	 * to filter configurations from closed projects, deleted projects, working sets and to filter
+	 * specific launch configuration types.
+	 * 
+	 * @return favorite launch configurations
+	 * @since 3.3
+	 */
+	protected ILaunchConfiguration[] getFavorites() {
+		return LaunchConfigurationManager.filterConfigs(internalGetHistory().getFavorites());
+	}
 		
 	/**
 	 * Returns the mode (e.g., 'run' or 'debug') of this drop down.
@@ -367,7 +408,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @return the mode of this action
 	 */
 	protected String getMode() {
-		return getLaunchHistory().getLaunchGroup().getMode();
+		return internalGetHistory().getLaunchGroup().getMode();
 	}
 	
 	/**
