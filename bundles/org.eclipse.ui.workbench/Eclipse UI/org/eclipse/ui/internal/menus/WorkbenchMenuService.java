@@ -19,8 +19,13 @@ import java.util.Map;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.util.Util;
@@ -81,6 +86,12 @@ public final class WorkbenchMenuService implements IMenuService {
 	// 3.3 common menu service information
 	//
 	private Map uriToManager = new HashMap();
+
+	private Map contributionManagerTracker = new HashMap();
+
+	private IMenuListener menuTrackerListener;
+
+	private Map cacheTracker = new HashMap();
 
 	/**
 	 * Construct an 'id' string from the given URI. The resulting 'id' is the
@@ -162,6 +173,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		// If we have any then add them at the correct location
 		if (ciList.size() > 0) {
+			track(mgr, cache, ciList);
 			for (Iterator ciIter = ciList.iterator(); ciIter.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
 
@@ -170,6 +182,90 @@ public final class WorkbenchMenuService implements IMenuService {
 		}
 
 		return true;
+	}
+
+	/**
+	 * @param mgr
+	 * @param cache
+	 * @param ciList
+	 */
+	private void track(ContributionManager mgr,
+			AbstractContributionFactory cache, List ciList) {
+		List contributions = (List) contributionManagerTracker.get(mgr);
+		if (contributions == null) {
+			contributions = new ArrayList();
+			contributionManagerTracker.put(mgr, contributions);
+			if (mgr instanceof IMenuManager) {
+				IMenuManager m = (IMenuManager) mgr;
+				if (m.getRemoveAllWhenShown()) {
+					m.addMenuListener(getMenuTrackerListener());
+				}
+			}
+		}
+		contributions.add(ciList);
+
+		cacheTracker.put(ciList, cache);
+	}
+
+	/**
+	 * @return
+	 */
+	private IMenuListener getMenuTrackerListener() {
+		if (menuTrackerListener == null) {
+			menuTrackerListener = new IMenuListener() {
+				public void menuAboutToShow(IMenuManager manager) {
+					sweepContributions(manager);
+				}
+			};
+		}
+		return menuTrackerListener;
+	}
+
+	/**
+	 * @param manager
+	 */
+	protected void sweepContributions(IMenuManager manager) {
+		List contributions = (List) contributionManagerTracker.get(manager);
+		if (contributions == null) {
+			return;
+		}
+		Iterator i = contributions.iterator();
+		while (i.hasNext()) {
+			final List items = (List) i.next();
+			boolean removed = false;
+			Iterator j = items.iterator();
+			while (j.hasNext()) {
+				IContributionItem item = (IContributionItem) j.next();
+				if (item instanceof ContributionItem
+						&& ((ContributionItem) item).getParent() == null) {
+					removed = true;
+					releaseItem(item);
+				}
+			}
+			if (removed) {
+				releaseCache(items);
+				i.remove();
+			}
+		}
+	}
+
+	/**
+	 * @param items
+	 */
+	private void releaseCache(final List items) {
+		final AbstractContributionFactory cache = (AbstractContributionFactory) cacheTracker
+				.remove(items);
+		if (cache != null) {
+			SafeRunner.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+				}
+
+				public void run() throws Exception {
+					cache.releaseContributionItems(WorkbenchMenuService.this,
+							items);
+				}
+			});
+		}
 	}
 
 	/*
@@ -304,16 +400,42 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
-		IContributionItem[] items = mgr.getItems();
-		for (int i = 0; i < items.length; i++) {
-			menuAuthority.removeContribition(items[i]);
-			if (items[i] instanceof ContributionManager) {
-				releaseContributions((ContributionManager) items[i]);
-			} else if (items[i] instanceof IToolBarContributionItem) {
-				IToolBarContributionItem tbci = (IToolBarContributionItem) items[i];
-				releaseContributions((ContributionManager) tbci
-						.getToolBarManager());
+		List contributions = (List) contributionManagerTracker.remove(mgr);
+		if (contributions == null) {
+			return;
+		}
+
+		if (mgr instanceof IMenuManager) {
+			IMenuManager m = (IMenuManager) mgr;
+			if (m.getRemoveAllWhenShown()) {
+				m.removeMenuListener(getMenuTrackerListener());
 			}
+		}
+
+		Iterator i = contributions.iterator();
+		while (i.hasNext()) {
+			final List items = (List) i.next();
+			Iterator j = items.iterator();
+			while (j.hasNext()) {
+				IContributionItem item = (IContributionItem) j.next();
+				releaseItem(item);
+			}
+			releaseCache(items);
+		}
+		contributions.clear();
+	}
+
+	/**
+	 * @param item
+	 */
+	private void releaseItem(IContributionItem item) {
+		unregisterVisibleWhen(item);
+		if (item instanceof ContributionManager) {
+			releaseContributions((ContributionManager) item);
+		} else if (item instanceof IToolBarContributionItem) {
+			IToolBarContributionItem tbci = (IToolBarContributionItem) item;
+			releaseContributions((ContributionManager) tbci
+					.getToolBarManager());
 		}
 	}
 }
