@@ -64,13 +64,13 @@ public class ContextServlet extends HttpServlet {
 		for (int i=0;i<topics.length;++i) {
 			out.write("   <" + Topic.NAME); //$NON-NLS-1$
 			if (topics[i].getLabel() != null) {
-				out.write("\n         " + Topic.ATTRIBUTE_LABEL + '=' + topics[i].getLabel()); //$NON-NLS-1$
+				out.write("\n         " + Topic.ATTRIBUTE_LABEL + "=\"" + topics[i].getLabel() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (topics[i].getHref() != null) {
-				out.write("\n         " + Topic.ATTRIBUTE_HREF + '=' + topics[i].getHref()); //$NON-NLS-1$
+				out.write("\n         " + Topic.ATTRIBUTE_HREF + "=\"" + topics[i].getHref() + '"'); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			out.write(">\n   </topic>"); //$NON-NLS-1$
 		}
-		out.write("</" + Context.NAME + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		out.write("</" + Context.NAME + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

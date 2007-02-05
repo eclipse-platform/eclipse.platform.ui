@@ -74,8 +74,8 @@ public class IndexServlet extends HttpServlet {
 		for (int i=0;i<contributions.length;++i) {
 			IndexContribution contrib = contributions[i];
 			buf.append("<indexContribution\n"); //$NON-NLS-1$
-			buf.append("      id=" + contrib.getId()); //$NON-NLS-1$
-			buf.append("      locale=" + contrib.getLocale() + ">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append("      id=\"" + contrib.getId() + '"'); //$NON-NLS-1$
+			buf.append("      locale=\"" + contrib.getLocale() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			buf.append(writer.writeString((Index)contrib.getIndex(), false));
 			buf.append("</indexContribution>\n"); //$NON-NLS-1$
 		}
