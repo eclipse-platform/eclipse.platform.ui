@@ -63,6 +63,7 @@ EM.CodeName {
 }
 UL.NavList {
 	margin-left: 1.5em;
+	padding-left: 0px;
 	list-style-type: none;
 }
 
