@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="rulerColumns" name="Ruler Column"/>
       </appInfo>
       <documentation>
-         Ruler column contributions are line based information areas shown at text editor sides. &lt;b&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/b&gt;
+         Ruler column contributions are line based information areas that are normally shown in the vertical ruler area of a textual editor. 
       </documentation>
    </annotation>
 
@@ -178,7 +178,7 @@
    <element name="placement">
       <annotation>
          <documentation>
-            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their gravity within the slot. If the ordering imposed by all &lt;tt&gt;rulerColumn&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
+            Describes the placement of a contributed ruler column relative to other columns. A column may request to be placed &lt;em&gt;before&lt;/em&gt; or &lt;em&gt;after&lt;/em&gt; other known columns (identified by their id). If the ordering imposed by all &lt;tt&gt;rulerColumns&lt;/tt&gt; contributions is underspecified (i.e. there are multiple columns in the same slot), the columns are ordered by their gravity within the slot. If the ordering imposed by all &lt;tt&gt;rulerColumns&lt;/tt&gt; contributions is overspecified and there is no ordering that fulfills all placement requests, some placement requirements are automatically dropped. Columns with underspecified or no placement requests are placed at an arbitrary but consistent location.
          </documentation>
       </annotation>
       <complexType>
@@ -208,7 +208,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution
+                  the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
                </documentation>
             </annotation>
          </attribute>
@@ -225,7 +225,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the id of another &lt;tt&gt;rulerColumn&lt;/tt&gt; contribution
+                  the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
                </documentation>
             </annotation>
          </attribute>
@@ -275,8 +275,6 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         &lt;b&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/b&gt;
-
 The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances.
 &lt;p&gt;Editors that want to support the extension point need to provide an adapter for &lt;code&gt;IColumnSupport&lt;/code&gt;. &lt;code&gt;AbstractTextEditor&lt;/code&gt; already adapts to &lt;code&gt;IColumnSupport&lt;/code&gt; and hence its subclasses should override &lt;code&gt;createColumnSupport()&lt;/code&gt; with the suggested implementation, rather than providing the adapter again. Subclasses of &lt;code&gt;AbstractDecoratedTextEditor&lt;/code&gt; automatically have this support installed.&lt;/p&gt;
       </documentation>

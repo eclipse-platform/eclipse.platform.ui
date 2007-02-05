@@ -1511,9 +1511,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	
 	/**
-	 * Captures the vertical and overview ruler support of an {@link ITextEditor}.
+	 * Implements the ruler column support of for the given editor.
 	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * This is currently only used to support vertical ruler columns.
 	 * </p>
 	 * 
 	 * @since 3.3
@@ -1812,9 +1812,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * A named preference that controls the visible ruler column contributions.
 	 * <p>
 	 * Value is of type <code>String</code> and should be read using a {@link RulerColumnPreferenceAdapter}.
-	 * </p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
 	 * </p>
 	 *
 	 * @since 3.3
@@ -2738,10 +2735,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Adds enabled ruler contributions to the vertical ruler. Clients may extend or replace.
+	 * Adds enabled ruler contributions to the vertical ruler.
 	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
+	 * Clients may extend or replace.</p>
+	 * 
 	 * @param ruler the composite ruler to add contributions to
 	 * @since 3.3
 	 */
@@ -2773,9 +2770,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * <p>
 	 * Out of the box this class does not install this support and hence this
 	 * implementation always returns <code>null</code>.</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 *
 	 * @return the column support or <code>null</code> if none
 	 * @since 3.3
@@ -3036,10 +3030,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Installs text drag and drop.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
+	 * Installs text drag and drop on the given source viewer.
 	 * 
 	 * @param viewer the viewer
 	 * @since 3.3
@@ -3199,10 +3190,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Uninstalls text drag and drop.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
+	 * Uninstalls text drag and drop from the given source viewer.
 	 * 
 	 * @param viewer the viewer
 	 * @since 3.3
@@ -6287,9 +6275,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/*
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * @see org.eclipse.ui.IEditorPersistable#restoreState(org.eclipse.ui.IMemento)
 	 * @since 3.3
 	 */
@@ -6298,9 +6283,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/*
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
 	 * @since 3.3
 	 */
@@ -6316,9 +6298,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Returns whether the given memento contains saved state
 	 * <p>
 	 * Subclasses may extend or override this method.</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @param memento the saved state of this editor
 	 * @return <code>true</code> if the given memento contains saved state
@@ -6332,9 +6311,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Restores this editor's state using the given memento.
 	 * <p>
 	 * Subclasses may extend or override this method.</p>
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @param memento the saved state of this editor
 	 * @since 3.3
@@ -6352,9 +6328,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/*
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
 	 * @since 3.3
 	 */
@@ -6366,9 +6339,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/*
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
 	 * @since 3.3
 	 */
@@ -6378,9 +6348,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * This text editor's savable.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
 	 * 
 	 * @since 3.3
 	 */

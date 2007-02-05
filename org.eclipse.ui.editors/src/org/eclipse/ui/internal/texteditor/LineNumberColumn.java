@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -409,7 +409,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 	private void updateRevisionRenderingMode(IPreferenceStore store, IVerticalRulerColumn column) {
 		if (column instanceof IRevisionRulerColumnExtension) {
 			String option= store.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
-			RenderingMode[] modes= { IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE };
+			RenderingMode[] modes= { IRevisionRulerColumnExtension.AUTHOR, IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.AUTHOR_SHADED_BY_AGE };
 			for (int i= 0; i < modes.length; i++) {
 				if (modes[i].name().equals(option)) {
 					((IRevisionRulerColumnExtension) column).setRevisionRenderingMode(modes[i]);

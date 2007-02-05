@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1055,7 +1055,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.CycleRevisionRenderingAction.") { //$NON-NLS-1$
 			public void run() {
-				final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE};
+				final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.AUTHOR, IRevisionRulerColumnExtension.AUTHOR_SHADED_BY_AGE};
 				IPreferenceStore store= EditorsUI.getPreferenceStore();
 				String current= store.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
 				for (int i= 0; i < modes.length; i++) {
@@ -1383,8 +1383,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			revisionMenu.add(hideRevisionInfoAction);
 			revisionMenu.add(new Separator());
 			
-			String[] labels= { TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_date, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer_and_date };
-			final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE};
+			String[] labels= { TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_date, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_author, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_author_and_date };
+			final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.AUTHOR, IRevisionRulerColumnExtension.AUTHOR_SHADED_BY_AGE};
 			final IPreferenceStore uiStore= EditorsUI.getPreferenceStore();
 			String current= uiStore.getString(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE);
 			for (int i= 0; i < modes.length; i++) {
