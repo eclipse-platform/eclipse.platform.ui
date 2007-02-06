@@ -196,7 +196,7 @@ The following is an example of the definition for handler with prefix parameter.
 &lt;extension
  point=&quot;org.eclipse.ui.statusHandlers&quot;&gt;
  &lt;statusHandler
- class=&quot;org.eclipse.ui.statushandling.SampleStatusHandler&quot;
+ class=&quot;org.eclipse.ui.statushanders.SampleStatusHandler&quot;
  id=&quot;sampleStatusHandler&quot;&gt;
   &lt;parameter
   name=&quot;prefix&quot;
@@ -214,7 +214,7 @@ The following is an example of the definition for default (product) handler. The
 &lt;extension
  point=&quot;org.eclipse.ui.statusHandlers&quot;&gt;
  &lt;statusHandler
- class=&quot;org.eclipse.ui.statushandling.SampleStatusHandler&quot;
+ class=&quot;org.eclipse.ui.statushandlers.SampleStatusHandler&quot;
  id=&quot;sampleStatusHandler&quot;&gt;
  &lt;/statusHandler&gt;
  &lt;statusHandlerProductBinding
@@ -287,7 +287,7 @@ In the default policy new error handlers are put into status handling flow using
       <documentation>
          &lt;p&gt;
 The platform supplies basic implementations of 
-&lt;code&gt;org.eclipse.ui.statushandling.AbstractStatusHandler&lt;/code&gt;.
+&lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -296,7 +296,7 @@ a proxy which passes all handling calls to handler assigned to current applicati
 &lt;/p&gt;
 
 &lt;p&gt;
-There are two other implementation of handlers  &lt;code&gt;org.eclipse.ui.statushandling.WorkbenchErrorHandler&lt;/code&gt; which is assigned to &lt;code&gt;WorkbenchAdvisor&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler&lt;/code&gt; assigned to
+There are two other implementation of handlers  &lt;code&gt;org.eclipse.ui.statushandlers.WorkbenchErrorHandler&lt;/code&gt; which is assigned to &lt;code&gt;WorkbenchAdvisor&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler&lt;/code&gt; assigned to
 &lt;code&gt;IDEWorkbenchAdvisor&lt;/code&gt;. Due to advisor which is actually used 
 &lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt; handler 
 delegates handling to one of them. 
