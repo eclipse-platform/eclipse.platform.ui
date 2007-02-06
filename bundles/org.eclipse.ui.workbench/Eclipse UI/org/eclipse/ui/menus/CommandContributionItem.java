@@ -552,12 +552,7 @@ public final class CommandContributionItem extends ContributionItem {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.menus.ICommandCallback#setIcon(org.eclipse.jface.resource.ImageDescriptor)
-	 */
-	public void setIcon(ImageDescriptor desc) {
+	private void setIcon(ImageDescriptor desc) {
 		icon = desc;
 		updateIcons();
 	}
@@ -586,12 +581,7 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.menus.ICommandCallback#setLabel(java.lang.String)
-	 */
-	public void setText(String text) {
+	private void setText(String text) {
 		label = text;
 		if (widget instanceof MenuItem) {
 			((MenuItem) widget).setText(text);
@@ -600,12 +590,7 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.menus.ICommandCallback#setChecked(boolean)
-	 */
-	public void setChecked(boolean checked) {
+	private void setChecked(boolean checked) {
 		if (checkedState == checked) {
 			return;
 		}
@@ -617,34 +602,19 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.menus.ICommandCallback#setTooltip(java.lang.String)
-	 */
-	public void setTooltip(String text) {
+	private void setTooltip(String text) {
 		tooltip = text;
 		if (widget instanceof ToolItem) {
 			((ToolItem) widget).setToolTipText(text);
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.menus.ICommandCallback#setDisabledIcon(org.eclipse.jface.resource.ImageDescriptor)
-	 */
-	public void setDisabledIcon(ImageDescriptor desc) {
+	private void setDisabledIcon(ImageDescriptor desc) {
 		disabledIcon = desc;
 		updateIcons();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.menus.ICommandCallback#setHoverIcon(org.eclipse.jface.resource.ImageDescriptor)
-	 */
-	public void setHoverIcon(ImageDescriptor desc) {
+	private void setHoverIcon(ImageDescriptor desc) {
 		hoverIcon = desc;
 		updateIcons();
 	}
