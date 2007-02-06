@@ -198,7 +198,7 @@ public class StatusNotificationManager {
 				&& ((Workbench) workbench).isClosing()) {
 			return Status.CANCEL_STATUS;
 		}
-		dialog = new StatusDialog(ProgressManagerUtil.getNonModalShell(),
+		dialog = new StatusDialog(ProgressManagerUtil.getDefaultParent(),
 				title, msg, statusInfo, IStatus.OK | IStatus.INFO
 						| IStatus.WARNING | IStatus.ERROR);
 

@@ -86,8 +86,7 @@ public class StatusDialog extends ErrorDialog {
 			StatusInfo statusInfo, int displayMask) {
 		super(parentShell, (title == null ? statusInfo.getStatus().getMessage()
 				: title), msg, statusInfo.getStatus(), displayMask);
-		setShellStyle(SWT.DIALOG_TRIM | SWT.MODELESS | SWT.RESIZE | SWT.MIN
-				| getDefaultOrientation()); // Do not want this one to be modal
+		setShellStyle(SWT.RESIZE | SWT.MIN | getShellStyle());
 		this.selectedStatus = statusInfo;
 		setBlockOnOpen(false);
 	}
