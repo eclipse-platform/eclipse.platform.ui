@@ -387,7 +387,7 @@ public class DetailPaneManager {
 		if (preferredID == null){
 			// If there is no preferred pane already set, check the factories to see there is a default pane
 			Iterator factoryIterator = enabledFactories.iterator();
-			while (factoryIterator.hasNext()) {
+			while (preferredID == null && factoryIterator.hasNext()) {
 				IDetailPaneFactory currentFactory = (IDetailPaneFactory) factoryIterator.next();
 				preferredID = currentFactory.getDefaultDetailPane(selection);
 			}
