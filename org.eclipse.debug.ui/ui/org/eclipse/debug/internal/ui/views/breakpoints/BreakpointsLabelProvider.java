@@ -68,7 +68,7 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
 	/**
      * Computes and return common adornment flags for the given category.
      * 
-     * @param element breakoint category
+     * @param element breakpoint category
      * @return adornment flags defined in CompositeDebugImageDescriptor
      */
     private int computeAdornmentFlags() {
