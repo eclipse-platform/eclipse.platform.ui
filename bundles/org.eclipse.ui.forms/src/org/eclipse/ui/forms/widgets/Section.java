@@ -381,7 +381,6 @@ public class Section extends ExpandableComposite {
 		} else {
 			theight = 5;
 		}
-		gc.setAntialias(SWT.ON);
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			//if (isExpanded() && getBackgroundImage() == null)
 			if (getBackgroundImage() == null)
@@ -405,6 +404,7 @@ public class Section extends ExpandableComposite {
 					- marginWidth - marginWidth, theight, true);
 		}
 		gc.setBackground(getBackground());
+		gc.setAntialias(SWT.ON);
 		//if (isExpanded()) {
 			// repair the upper left corner
 			gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
