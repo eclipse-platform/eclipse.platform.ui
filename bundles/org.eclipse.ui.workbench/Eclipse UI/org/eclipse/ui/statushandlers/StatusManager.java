@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -108,11 +109,15 @@ public class StatusManager {
 	private List loggedStatuses = new ArrayList();
 
 	/**
-	 * Returns StatusManager singleton instance
+	 * Returns StatusManager singleton instance. Because the facility depends on
+	 * Workbench, this method will return null, if Workbench isn't initialized.
 	 * 
 	 * @return StatusManager instance
 	 */
 	public static StatusManager getManager() {
+		if (!PlatformUI.isWorkbenchRunning()) 
+			return null;
+
 		if (MANAGER == null) {
 			MANAGER = new StatusManager();
 		}
