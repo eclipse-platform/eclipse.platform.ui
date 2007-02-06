@@ -16,6 +16,11 @@ This extension point is used to register action definitions. Accelerators (see t
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="actionDefinition" minOccurs="0" maxOccurs="unbounded"/>

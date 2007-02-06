@@ -18,6 +18,11 @@ An accelerator set is registered with an accelerator configuration (see the Acce
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="acceleratorSet" minOccurs="0" maxOccurs="unbounded"/>

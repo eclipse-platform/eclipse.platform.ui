@@ -22,6 +22,11 @@ Note the accelerator configuration name presented to the user is the same as the
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="acceleratorConfiguration" minOccurs="0" maxOccurs="unbounded"/>

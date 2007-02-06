@@ -18,6 +18,11 @@ An accelerator set declares what scope it is applicable for by listing the scope
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="acceleratorScope" minOccurs="0" maxOccurs="unbounded"/>
