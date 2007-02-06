@@ -155,6 +155,7 @@ import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
+import org.eclipse.ui.internal.splash.SplashHandlerFactory;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -604,7 +605,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return null;
 		
 		if (splash == null) {
-			splash = new EclipseSplashHandler(); 
+			
+			IProduct product = Platform.getProduct();
+			if (product != null) 
+				splash = SplashHandlerFactory.findSplashHandlerFor(product);
+			
+			if (splash == null)
+				splash = new EclipseSplashHandler();
 		}
 		return splash;
 	}
