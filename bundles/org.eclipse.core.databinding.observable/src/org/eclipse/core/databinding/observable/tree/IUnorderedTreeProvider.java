@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.observable.tree;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.internal.databinding.observable.tree.TreePath;
 
 /**
  * Objects that implement this interface are capable of describing a tree by

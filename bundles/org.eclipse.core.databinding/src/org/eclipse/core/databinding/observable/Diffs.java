@@ -24,11 +24,11 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.SetDiff;
-import org.eclipse.core.databinding.observable.tree.TreeDiff;
-import org.eclipse.core.databinding.observable.tree.TreeDiffNode;
-import org.eclipse.core.databinding.observable.tree.TreePath;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.internal.databinding.Util;
+import org.eclipse.core.internal.databinding.observable.tree.TreeDiff;
+import org.eclipse.core.internal.databinding.observable.tree.TreeDiffNode;
+import org.eclipse.core.internal.databinding.observable.tree.TreePath;
 
 /**
  * @since 1.0
