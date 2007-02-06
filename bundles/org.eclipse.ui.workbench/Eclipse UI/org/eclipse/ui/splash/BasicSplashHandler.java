@@ -245,6 +245,13 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * This will not have a layout set and clients are responsible for setting
 	 * the location of child controls manually.
 	 * 
+	 * <p>
+	 * This method must be called in the
+	 * {@link #init(org.eclipse.swt.widgets.Shell)} method of a subclasses to
+	 * ensure proper creation of controls
+	 * </p>
+	 * 
+	 * @see #init(org.eclipse.swt.widgets.Shell)
 	 * @return the composite
 	 */
 	protected Composite getContent() {

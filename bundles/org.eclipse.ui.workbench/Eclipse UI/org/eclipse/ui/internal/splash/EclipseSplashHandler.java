@@ -80,9 +80,14 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 				}
 			});
 		}
+		else {
+			getContent(); // ensure creation of the progress
+		}
 	}
 
 	private Rectangle parseRect(String string) {
+		if (string == null)
+			return null;
 		int x, y, w, h;
 		int lastPos = 0;
 		try {
