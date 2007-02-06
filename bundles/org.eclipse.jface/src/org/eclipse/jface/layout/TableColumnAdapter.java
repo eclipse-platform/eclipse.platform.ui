@@ -21,6 +21,13 @@ import org.eclipse.swt.widgets.TableColumn;
  * 
  * @since 3.3
  * @see AbstractColumnAdapter
+ * 
+ * @deprecated This class will be replaced during the 3.3 M6 development cycle -
+ *             for details see bug 171824
+ * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
+ *        added as part of a work in progress. This API may change at any given
+ *        time. Please do not use this API without consulting with the
+ *        Platform/UI team.
  */
 public class TableColumnAdapter extends AbstractColumnAdapter {
 
