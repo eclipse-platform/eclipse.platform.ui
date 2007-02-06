@@ -15,12 +15,14 @@ import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetCommand;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 
@@ -42,6 +44,18 @@ public class CommandRunner {
 		return null;
 	}
 	
+	private IHandlerService getHandlerService() {
+		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		if (wb != null) {
+			Object serviceObject = wb.getAdapter(IHandlerService.class);
+		    if (serviceObject != null) {
+			    IHandlerService service = (IHandlerService)serviceObject;
+			    return service;
+		    }
+		}
+		return null;
+	}
+	
 	/**
 	 * Attempt to execute a command 
 	 * @param command a CheatSheetCommand created by the parser
@@ -50,8 +64,9 @@ public class CommandRunner {
 	 * an error status
 	 */
 	public IStatus executeCommand(CheatSheetCommand command, CheatSheetManager csm) {
-		ICommandService service = getCommandService();
-		if (service == null) {
+		ICommandService commandService = getCommandService();
+		IHandlerService handlerService = getHandlerService();
+		if (commandService == null || handlerService == null) {
 			return new Status
 			(IStatus.ERROR, 
 			ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, 0,
@@ -63,8 +78,9 @@ public class CommandRunner {
 		String rawSerialization = command.getSerialization();
 		try {
 			String substitutedSerialization = csm.performVariableSubstitution(rawSerialization);
-			selectedCommand = service.deserialize(substitutedSerialization);
-			result = selectedCommand.executeWithChecks(null, null);
+			selectedCommand = commandService.deserialize(substitutedSerialization);
+			IEvaluationContext state = handlerService.getCurrentState();
+			result = selectedCommand.executeWithChecks(null, state);
 			
 			String returnsAttribute = command.getReturns();
 			if ((returnsAttribute != null) && (result != null)) {
