@@ -13,10 +13,12 @@ package org.eclipse.ui.tests.api.workbenchpart;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
+import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 /**
  * Basic widget wrapping an SWT Text Control.
@@ -24,62 +26,53 @@ import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
  * @since 3.3
  *
  */
-public class TextWidget extends AbstractWorkbenchTrimWidget {
-	Text tw;
-
-	/**
-	 * Provide access to the control to add listeners, format...
-	 * 
-	 * @return The control after it has been initialized to
-	 * the default settings.
-	 */
-	public Control getControl() {
-		return tw;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.AbstractWorkbenchWidget#fill(org.eclipse.swt.widgets.Composite)
-	 */
-	public void fill(Composite parent) {
-		tw = new Text(parent, SWT.BORDER);
+public class TextWidget extends WorkbenchWindowControlContribution {
+	public TextWidget() {
 		
-		// set the initial bounds.
-		setInitialBounds();
-		tw.setText("Test String");
 	}
 	
 	/**
-	 * Set the initial size and location of the conrol within its
-	 * enclosing Composite.
+	 * @param id
 	 */
-	private void setInitialBounds() {
-		// Magic code wrning; the size and location offsets
-		// were tuned to the defaults on Widnows XP
-		Point prefSize = getPreferredSize();
-		prefSize.y -= 1;
-		tw.setSize(prefSize);
-		tw.setLocation(0,2);
+	protected TextWidget(String id) {
+		super(id);
+		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.AbstractWorkbenchWidget#getPreferredSize()
+	 * @see org.eclipse.jface.action.ControlContribution#createControl(org.eclipse.swt.widgets.Composite)
 	 */
-	public Point getPreferredSize() {
-		return tw.computeSize(100, SWT.DEFAULT, true);
-	}
+	protected Control createControl(Composite parent) {
+		Composite textHolder = new Composite(parent, SWT.NONE);
+		textHolder.setLayout(new Layout() {
+			protected Point computeSize(Composite composite, int wHint,
+					int hHint, boolean flushCache) {
+				Text tw = (Text) composite.getChildren()[0];
+				Point twSize = tw.computeSize(wHint, hHint, flushCache);
+				
+				// Forst it to be at least 100 pixels
+				if (twSize.x < 200)
+					twSize.x = 200;
+				
+				return twSize;
+			}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.AbstractTrimWidget#dispose()
-	 */
-	public void dispose() {
-		// TODO Auto-generated method stub
+			protected void layout(Composite composite, boolean flushCache) {
+				Text tw = (Text) composite.getChildren()[0];
+				Point twSize = tw.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
+				Rectangle bb = composite.getBounds();
+				int yOffset = ((bb.height-twSize.y) / 2) + 1;
+				if (yOffset < 0) yOffset = 0;
+				
+				// Set the tw's size to the composite's width and the default height (centered)
+				tw.setBounds(0, yOffset, bb.width, twSize.y);
+			}
+		});
 		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.menus.AbstractTrimWidget#fill(org.eclipse.swt.widgets.Composite, int, int)
-	 */
-	public void fill(Composite parent, int oldSide, int newSide) {
-		fill(parent);
+		Text tw = new Text(textHolder, SWT.BORDER);
+		tw.setText("Test Text Eric was here...XXXXXX");
+		
+		textHolder.setSize(181, 22);
+		return textHolder;
 	}
 }
