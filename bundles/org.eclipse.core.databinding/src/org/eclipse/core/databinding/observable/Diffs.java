@@ -26,9 +26,6 @@ import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.internal.databinding.Util;
-import org.eclipse.core.internal.databinding.observable.tree.TreeDiff;
-import org.eclipse.core.internal.databinding.observable.tree.TreeDiffNode;
-import org.eclipse.core.internal.databinding.observable.tree.TreePath;
 
 /**
  * @since 1.0
@@ -397,37 +394,4 @@ public class Diffs {
 		};
 	}
 	
-	/**
-	 * @param element the element that was added, or removed
-	 * @param changeType one of {@link TreeDiffNode#ADDED} or {@link TreeDiffNode#REMOVED}
-	 * @return a tree diff representing an added or removed element
-	 */
-	public static TreeDiff createTreeDiffSingleElement(final Object element, final int changeType) {
-		return new TreeDiff() {
-
-			public TreePath getParentPath() {
-				return null;
-			}
-
-			public int getChangeType() {
-				return changeType;
-			}
-
-			public TreeDiffNode[] getChildren() {
-				return TreeDiffNode.NO_CHILDREN;
-			}
-
-			public int getIndex() {
-				return TreeDiffNode.INDEX_UNKNOWN;
-			}
-
-			public Object getNewElement() {
-				return element;
-			}
-
-			public Object getOldElement() {
-				return null;
-			}
-		};
-	}
 }
