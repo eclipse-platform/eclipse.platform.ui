@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -315,14 +316,15 @@ public class IntroURL implements IIntroURL {
 	 */
 	private boolean executeCommand(String command, String standbyState) {
 		ICommandService commandService = getCommandService();
-		if (commandService == null) {
-			Log.error("Could not get ICommandService while trying to execute: " + command, null); //$NON-NLS-1$
+		IHandlerService handlerService = getHandlerService();
+		if (commandService == null || handlerService == null) {
+			Log.error("Could not get ICommandService or IHandlerService while trying to execute: " + command, null); //$NON-NLS-1$
 			return false;
 		}
 
 		try {
 			ParameterizedCommand pCommand = commandService.deserialize(command);
-			pCommand.executeWithChecks(null, null);
+			pCommand.executeWithChecks(null, handlerService.getCurrentState());
 
 			// Executed command successfully. Now set intro standby if needed.
 			if (standbyState == null)
@@ -346,6 +348,17 @@ public class IntroURL implements IIntroURL {
 		return null;
 	}
 
+	private IHandlerService getHandlerService() {
+		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		if (wb != null) {
+			Object serviceObject = wb.getAdapter(IHandlerService.class);
+		    if (serviceObject != null) {
+			    IHandlerService service = (IHandlerService)serviceObject;
+			    return service;
+		    }
+		}
+		return null;
+	}
 
     /**
      * Open a help topic. If embed="true", open the help href as an intro page.

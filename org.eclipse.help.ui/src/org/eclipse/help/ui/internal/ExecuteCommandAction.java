@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * Executes a serialized parameterized command using the workbench command
@@ -111,8 +112,9 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 	private void executeSerializedCommand() {
 		try {
 			ICommandService commandService = getCommandService();
+			IHandlerService handlerService = getHandlerService();
 			ParameterizedCommand command = commandService.deserialize(serializedCommand);
-			command.executeWithChecks(null, null);
+			command.executeWithChecks(null, handlerService.getCurrentState());
 		} catch (CommandException ex) {
 			HelpUIPlugin.logError("There was an error executing the command: " + serializedCommand, ex); //$NON-NLS-1$
 		}
@@ -128,4 +130,15 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 		return null;
 	}
 
+	private IHandlerService getHandlerService() {
+		IWorkbench wb =	PlatformUI.getWorkbench(); 
+		if (wb != null) {
+			Object serviceObject = wb.getAdapter(IHandlerService.class);
+		    if (serviceObject != null) {
+			    IHandlerService service = (IHandlerService)serviceObject;
+			    return service;
+		    }
+		}
+		return null;
+	}
 }
