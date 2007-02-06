@@ -746,7 +746,7 @@
                definitionId="org.eclipse.ui.edit.paste"
                enablesFor="*"
                id="org.eclipse.team.cvs.ui.patch.pasteConnection"
-               label="&amp;Paste Connection"
+               label="%PasteConnectionaction.label"
                menubarPath="miscGroup"/>
       </viewerContribution>
    </extension>
