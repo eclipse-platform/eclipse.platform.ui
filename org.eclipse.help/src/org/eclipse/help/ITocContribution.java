@@ -57,6 +57,14 @@ public interface ITocContribution {
 	public String getLocale();
 	
 	/**
+	 * Returns the path to the anchor in another toc into which this
+	 * one should be linked into.
+	 * 
+	 * @return the link-to path
+	 */
+	public String getLinkTo();
+
+	/**
 	 * Returns the table of contents data for this contribution.
 	 * 
 	 * @return the toc data for this contribution

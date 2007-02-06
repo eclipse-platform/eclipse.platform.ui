@@ -29,14 +29,14 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.help.IToc;
-import org.eclipse.help.ITopic;
 import org.eclipse.help.ITocContribution;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.util.HelpProperties;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.toc.TocFileProvider;
 import org.eclipse.help.search.LuceneSearchParticipant;
 
@@ -460,7 +460,7 @@ class IndexingOperation {
 	private Set getAllDocuments(String locale) {
 		// Add documents from TOCs
 		HashSet hrefs = new HashSet();
-		IToc[] tocs = index.getTocManager().getTocs(locale);
+		Toc[] tocs = index.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
 			for (int j = 0; j < topics.length; j++) {

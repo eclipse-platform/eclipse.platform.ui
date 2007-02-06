@@ -25,21 +25,6 @@ public interface IToc extends IUAElement, IHelpResource {
 	 * This is the attribute used for description topic in XML files.
 	 */
 	public final static String TOPIC = "topic"; //$NON-NLS-1$
-
-	/**
-	 * Returns the path to the anchor in another toc into which this
-	 * one should be linked into.
-	 * 
-	 * @return the link-to path
-	 */
-	public String getLinkTo();
-	
-	/**
-	 * Returns the contribution from which this toc was contributed.
-	 * 
-	 * @return the toc's contribution
-	 */
-	public ITocContribution getTocContribution();
 	
 	/**
 	 * Obtains the topics directly contained by a toc.

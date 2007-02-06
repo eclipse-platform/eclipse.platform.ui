@@ -38,8 +38,6 @@ public class Toc extends UAElement implements IToc {
 		super(NAME, src);
 		setHref(src.getHref());
 		setLabel(src.getLabel());
-		setLinkTo(src.getLinkTo());
-		setTocContribution(src.getTocContribution());
 		ITopic topic = src.getTopic(null);
 		if (topic != null) {
 			setTopic(topic.getHref());

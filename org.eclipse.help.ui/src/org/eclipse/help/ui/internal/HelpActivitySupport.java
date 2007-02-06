@@ -18,10 +18,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpActivitySupport;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IIdentifier;
@@ -207,7 +207,7 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 		}
 		// Find out if description topic for enabled top level TOCs matches the
 		// topic
-		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int t = 0; t < tocs.length; t++) {
 			String descriptionHref = tocs[t].getTopic(null).getHref();
 			if (descriptionHref != null
@@ -228,9 +228,9 @@ public class HelpActivitySupport implements IHelpActivitySupport {
 	 *            List of IToc
 	 * @return true if given topic belongs to one of enabled ITocs
 	 */
-	private boolean isInTocSubtree(String href, IToc[] tocList) {
+	private boolean isInTocSubtree(String href, Toc[] tocList) {
 		for (int i=0;i<tocList.length;++i) {
-			IToc toc = tocList[i];
+			Toc toc = tocList[i];
 			if (!HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref())) {
 				// TOC is not enabled, check other TOCs
 				continue;

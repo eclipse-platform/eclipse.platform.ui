@@ -29,7 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IToc;
-import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
@@ -325,14 +324,8 @@ public class InfoCenterPage extends RootScopePage {
 				public IUAElement[] getChildren() {
 					return new IUAElement[0];
 				}
-				public String getLinkTo() {
-					return null;
-				}
 				public boolean isEnabled(IEvaluationContext context) {
 					return true;
-				}
-				public ITocContribution getTocContribution() {
-					return null;
 				}
 			};
 			list.add(toc);

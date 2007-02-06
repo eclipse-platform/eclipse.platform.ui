@@ -82,7 +82,7 @@ public class TocAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			if (contrib.isPrimary() && contrib.getToc().getLinkTo() == null && !linkedContributionIds.contains(contrib.getId())) {
+			if (contrib.isPrimary() && contrib.getLinkTo() == null && !linkedContributionIds.contains(contrib.getId())) {
 				books.add(contrib);
 			}
 		}
@@ -193,7 +193,7 @@ public class TocAssembler {
 			Iterator iter = contributions.iterator();
 			while (iter.hasNext()) {
 				TocContribution srcContribution = (TocContribution)iter.next();
-				String linkTo = srcContribution.getToc().getLinkTo();
+				String linkTo = srcContribution.getLinkTo();
 				if (linkTo != null) {
 					String destAnchorPath = HrefUtil.normalizeHref(srcContribution.getContributorId(), linkTo);
 					ITocContribution[] array = (ITocContribution[])contributionsByLinkTo.get(destAnchorPath);

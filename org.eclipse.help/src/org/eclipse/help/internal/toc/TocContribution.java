@@ -63,6 +63,14 @@ public class TocContribution implements ITocContribution {
 		this.locale = locale;
 	}
 	
+	public String getLinkTo() {
+		return toc.getLinkTo();
+	}
+	
+	public void setLinkTo(String linkTo) {
+		toc.setLinkTo(linkTo);
+	}
+	
 	public IToc getToc() {
 		return toc;
 	}
