@@ -31,6 +31,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
  * Implementation of the back and forward actions.
@@ -619,11 +620,15 @@ public class NavigationHistory implements INavigationHistory {
 			}
         }
 
-        NavigationHistoryEntry entry = getEntry(activeEntry);
+        final NavigationHistoryEntry entry = getEntry(activeEntry);
         if (entry != null && entry.editorInfo.editorInput != null) {
             if (page.getActiveEditor() == page
                     .findEditor(entry.editorInfo.editorInput)) {
-				gotoEntry(entry);
+            	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+					public void runWithException() throws Throwable {
+						gotoEntry(entry);
+					}});		
 			}
         }
     }
