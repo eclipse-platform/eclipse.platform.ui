@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.forms;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * This class implements the 'master/details' UI pattern suitable for inclusion
@@ -55,6 +64,68 @@ public abstract class MasterDetailsBlock {
 	 * allows users to change the ratio between the two parts.
 	 */
 	protected SashForm sashForm;
+	
+	static final int DRAGGER_SIZE = 40;
+	
+	class MDSashForm extends SashForm {
+		ArrayList sashes = new ArrayList();
+		Listener listener = new Listener () {
+			public void handleEvent(Event e) {
+				switch (e.type) {
+				case SWT.MouseEnter:
+					e.widget.setData("hover", Boolean.TRUE); //$NON-NLS-1$
+					((Control)e.widget).redraw();
+					break;
+				case SWT.MouseExit:
+					e.widget.setData("hover", null); //$NON-NLS-1$
+					((Control)e.widget).redraw();
+					break;
+				case SWT.Paint:
+					onSashPaint(e);
+				break;
+				case SWT.Resize:
+					hookSashListeners();
+				break;
+				}
+			}
+		};
+		public MDSashForm(Composite parent, int style) {
+			super(parent, style);
+		}
+		
+		public void layout(boolean changed) {
+			super.layout(changed);
+			//hookSashListeners();
+		}
+		
+		public void layout(Control [] children) {
+			super.layout(children);
+			//hookSashListeners();
+		}
+
+		private void hookSashListeners() {
+			purgeSashes();
+			Control [] children = getChildren();
+			for (int i=0; i<children.length; i++) {
+				if (children[i] instanceof Sash) {
+					Sash sash = (Sash)children[i];
+					if (sashes.contains(sash))
+						continue;
+					sash.addListener(SWT.Paint, listener);
+					sash.addListener(SWT.MouseEnter, listener);
+					sash.addListener(SWT.MouseExit, listener);
+					sashes.add(sash);
+				}
+			}
+		}
+		private void purgeSashes() {
+			for (Iterator iter=sashes.iterator(); iter.hasNext();) {
+				Sash sash = (Sash)iter.next();
+				if (sash.isDisposed())
+					iter.remove();
+			}
+		}
+	}
 
 	/**
 	 * Creates the content of the master/details block inside the managed form.
@@ -70,14 +141,27 @@ public abstract class MasterDetailsBlock {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		form.getBody().setLayout(layout);
-		sashForm = new SashForm(form.getBody(), SWT.NULL);
+		sashForm = new MDSashForm(form.getBody(), SWT.NULL);
+		sashForm.setData("form", managedForm); //$NON-NLS-1$
 		toolkit.adapt(sashForm, false, false);
 		sashForm.setMenu(form.getBody().getMenu());
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createMasterPart(managedForm, sashForm);
 		createDetailsPart(managedForm, sashForm);
+		hookResizeListener();
 		createToolBarActions(managedForm);
 		form.updateToolBar();
+	}
+	
+	private void hookResizeListener() {
+		/*
+		Listener listener = ((MDSashForm)sashForm).listener;
+		Control [] children = sashForm.getChildren();
+		for (int i=0; i<children.length; i++) {
+			if (children[i] instanceof Sash) continue;
+			children[i].addListener(SWT.Resize, listener);
+		}
+		*/
 	}
 
 	/**
@@ -115,5 +199,29 @@ public abstract class MasterDetailsBlock {
 		detailsPart = new DetailsPart(mform, parent, SWT.NULL);
 		mform.addPart(detailsPart);
 		registerPages(detailsPart);
+	}
+	
+	private void onSashPaint(Event e) {
+		/*
+		Sash sash = (Sash)e.widget;
+		IManagedForm form = (IManagedForm)sash.getParent().getData("form"); //$NON-NLS-1$
+		FormColors colors = form.getToolkit().getColors();
+		boolean vertical = (sash.getStyle() & SWT.VERTICAL)!=0;
+		GC gc = e.gc;
+		Boolean hover = (Boolean)sash.getData("hover"); //$NON-NLS-1$
+		gc.setBackground(colors.getColor(IFormColors.TB_BG));
+		gc.setForeground(colors.getColor(IFormColors.TB_BORDER));
+		Point size = sash.getSize();
+		if (vertical) {
+			if (hover!=null)
+				gc.fillRectangle(0, size.y/2-DRAGGER_SIZE/2-1, size.x, DRAGGER_SIZE);
+			gc.drawRectangle(0, size.y/2-DRAGGER_SIZE/2-1, size.x-1, DRAGGER_SIZE);
+		}
+		else {
+			if (hover!=null)
+				gc.fillRectangle(size.x/2-DRAGGER_SIZE/2-1, 0, DRAGGER_SIZE, size.y);
+			gc.drawRectangle(size.x/2-DRAGGER_SIZE/2-1, 0, DRAGGER_SIZE, size.y-1);
+		}
+		*/
 	}
 }
