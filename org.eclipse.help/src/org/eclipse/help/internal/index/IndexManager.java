@@ -33,6 +33,7 @@ import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.UAElementFactory;
 
 public class IndexManager {
 
@@ -88,7 +89,12 @@ public class IndexManager {
 						HelpPlugin.logError(msg);
 					}
 					else {
-						contributions.add(contrib[j]);
+						IndexContribution contribution = new IndexContribution();
+						contribution.setId(contrib[j].getId());
+						contribution.setLocale(contrib[j].getLocale());
+						IIndex index = contrib[j].getIndex();
+						contribution.setIndex(index instanceof Index ? (Index)index : (Index)UAElementFactory.newElement(index));
+						contributions.add(contribution);
 					}
 				}
 			}
