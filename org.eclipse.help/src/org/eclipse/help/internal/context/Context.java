@@ -27,9 +27,10 @@ public class Context extends UAElement implements IContext {
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	
-	public Context(IContext src) {
+	public Context(IContext src, String id) {
 		super(NAME);
 		setText(src.getText());
+		setId(id);
 		IHelpResource[] topics = src.getRelatedTopics();
 		for (int i=0;i<topics.length;++i) {
 			if (topics[i] instanceof ITopic) {
@@ -56,10 +57,6 @@ public class Context extends UAElement implements IContext {
 		return getAttribute(ATTRIBUTE_ID);
 	}
 	
-	public String getPluginId() {
-		return getAttribute(ATTRIBUTE_PLUGIN_ID);
-	}
-	
 	public String getText() {
 		Node node = element.getFirstChild();
 		while (node != null) {
@@ -82,10 +79,6 @@ public class Context extends UAElement implements IContext {
 		setAttribute(ATTRIBUTE_ID, id);
 	}
 
-	public void setPluginId(String pluginId) {
-		setAttribute(ATTRIBUTE_PLUGIN_ID, pluginId);
-	}
-	
 	public void setText(String text) {
 		Node node = element.getFirstChild();
 		while (node != null) {

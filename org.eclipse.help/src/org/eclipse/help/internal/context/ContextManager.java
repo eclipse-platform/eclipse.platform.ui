@@ -76,7 +76,7 @@ public class ContextManager {
 			while (iter.hasNext()) {
 				AbstractContextProvider provider = (AbstractContextProvider)iter.next();
 				try {
-					return provider.getContext(contextId, locale);
+					return new Context(provider.getContext(contextId, locale), contextId);
 				}
 				catch (Throwable t) {
 					// log and skip
