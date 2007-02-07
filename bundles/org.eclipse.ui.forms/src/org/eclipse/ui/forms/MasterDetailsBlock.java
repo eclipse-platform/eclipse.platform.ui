@@ -15,6 +15,8 @@ import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -95,12 +97,12 @@ public abstract class MasterDetailsBlock {
 		
 		public void layout(boolean changed) {
 			super.layout(changed);
-			//hookSashListeners();
+			hookSashListeners();
 		}
 		
 		public void layout(Control [] children) {
 			super.layout(children);
-			//hookSashListeners();
+			hookSashListeners();
 		}
 
 		private void hookSashListeners() {
@@ -154,14 +156,12 @@ public abstract class MasterDetailsBlock {
 	}
 	
 	private void hookResizeListener() {
-		/*
 		Listener listener = ((MDSashForm)sashForm).listener;
 		Control [] children = sashForm.getChildren();
 		for (int i=0; i<children.length; i++) {
 			if (children[i] instanceof Sash) continue;
 			children[i].addListener(SWT.Resize, listener);
 		}
-		*/
 	}
 
 	/**
@@ -202,7 +202,6 @@ public abstract class MasterDetailsBlock {
 	}
 	
 	private void onSashPaint(Event e) {
-		/*
 		Sash sash = (Sash)e.widget;
 		IManagedForm form = (IManagedForm)sash.getParent().getData("form"); //$NON-NLS-1$
 		FormColors colors = form.getToolkit().getColors();
@@ -214,14 +213,15 @@ public abstract class MasterDetailsBlock {
 		Point size = sash.getSize();
 		if (vertical) {
 			if (hover!=null)
-				gc.fillRectangle(0, size.y/2-DRAGGER_SIZE/2-1, size.x, DRAGGER_SIZE);
-			gc.drawRectangle(0, size.y/2-DRAGGER_SIZE/2-1, size.x-1, DRAGGER_SIZE);
+				//gc.fillRectangle(0, 0, size.x, size.y);
+			//else
+				gc.drawLine(1, 0, 1, size.y-1);
 		}
 		else {
 			if (hover!=null)
-				gc.fillRectangle(size.x/2-DRAGGER_SIZE/2-1, 0, DRAGGER_SIZE, size.y);
-			gc.drawRectangle(size.x/2-DRAGGER_SIZE/2-1, 0, DRAGGER_SIZE, size.y-1);
+				//gc.fillRectangle(0, 0, size.x, size.y);
+			//else
+				gc.drawLine(0, 1, size.x-1, 1);				
 		}
-		*/
 	}
 }
