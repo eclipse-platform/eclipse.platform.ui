@@ -89,8 +89,13 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * @return a list of models
 	 */
 	public Saveable[] getOpenModels() {
-		return (Saveable[]) modelRefCounts.keySet().toArray(
-				new Saveable[modelRefCounts.size()]);
+		Set allDistinctModels = new HashSet();
+		Iterator saveables = modelMap.values().iterator();
+		while (saveables.hasNext())
+			allDistinctModels.addAll((Set)saveables.next());
+		
+		return (Saveable[]) allDistinctModels.toArray(
+				new Saveable[allDistinctModels.size()]);
 	}
 
 	// returns true if this model has not yet been in getModels()
