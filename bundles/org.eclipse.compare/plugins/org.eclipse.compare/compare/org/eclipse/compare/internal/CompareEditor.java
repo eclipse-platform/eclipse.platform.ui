@@ -11,6 +11,8 @@
 package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.eclipse.compare.*;
 import org.eclipse.core.runtime.*;
@@ -40,7 +42,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, IPropertyChangeListener {
+public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, IPropertyChangeListener, ISaveablesLifecycleListener {
 
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 
@@ -69,6 +71,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private Control emptyPage;
 	
 	private int state = UNINITIALIZED;
+	private HashSet knownSaveables;
 
 	private final EditorCompareContainer fContainer = new EditorCompareContainer();
 
@@ -250,7 +253,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
         if (oldInput != null) {
         	ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
         	lifecycleListener.handleLifecycleEvent(
-        		new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
+        		new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, internalGetSaveables(true), false));
         }
 	}
 
@@ -261,9 +264,12 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 				((IPropertyChangeNotifier)oldInput).removePropertyChangeListener(this);
 			
 			// Let the workbench know that the old input's saveables are no longer needed
-			ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
-			lifecycleListener.handleLifecycleEvent(
-					new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(oldInput), false));
+			if (knownSaveables != null && !knownSaveables.isEmpty()) {
+				ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
+				lifecycleListener.handleLifecycleEvent(
+						new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, (Saveable[]) knownSaveables.toArray(new Saveable[knownSaveables.size()]), false));
+				knownSaveables.clear();
+			}
 		}
 	}
 	
@@ -491,8 +497,38 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	 * @see org.eclipse.ui.ISaveablesSource#getModels()
 	 */
 	public Saveable[] getSaveables() {
+		return internalGetSaveables(knownSaveables == null);
+	}
+
+	private Saveable[] internalGetSaveables(boolean init) {
 		IEditorInput input= getEditorInput();
-		return getSaveables(input);
+		Saveable[] sourceSaveables = getSaveables(input);
+		if (init || knownSaveables == null) {
+			recordSaveables(sourceSaveables);
+		} else {
+			for (int i = 0; i < sourceSaveables.length; i++) {
+				Saveable saveable = sourceSaveables[i];
+				if (!knownSaveables.contains(saveable)) {
+					CompareUIPlugin.logErrorMessage(NLS.bind("Saveable {0} was not added using a saveables lifecycle event.", saveable.getName())); //$NON-NLS-1$
+					knownSaveables.add(saveable);
+				}
+			}
+			if (sourceSaveables.length != knownSaveables.size()) {
+				CompareUIPlugin.logErrorMessage("Saveables were removed without an appropriate event"); //$NON-NLS-1$
+				knownSaveables.clear();
+				recordSaveables(sourceSaveables);
+			}
+		}
+		return sourceSaveables;
+	}
+
+	private void recordSaveables(Saveable[] sourceSaveables) {
+		if (knownSaveables == null)
+			knownSaveables = new HashSet();
+		for (int i = 0; i < sourceSaveables.length; i++) {
+			Saveable saveable = sourceSaveables[i];
+			knownSaveables.add(saveable);
+		}
 	}
 
 	private Saveable[] getSaveables(IEditorInput input) {
@@ -588,6 +624,33 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 
 	private int getState() {
 		return state;
+	}
+
+	public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
+		ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
+		if (event.getEventType() == SaveablesLifecycleEvent.POST_CLOSE) {
+			// We may get a post close for a saveable that is not known to the workbench.
+			// Only pass on the event for known saveables
+			if (knownSaveables == null || knownSaveables.isEmpty())
+				return;
+			java.util.List result = new ArrayList();
+			Saveable[] all = event.getSaveables();
+			for (int i = 0; i < all.length; i++) {
+				Saveable saveable = all[i];
+				if (knownSaveables.contains(saveable))
+					result.add(saveable);
+					knownSaveables.remove(saveable);
+			}
+			if (result.isEmpty())
+				return;
+			event = new SaveablesLifecycleEvent(this, 
+					SaveablesLifecycleEvent.POST_CLOSE, 
+					(Saveable[]) result.toArray(new Saveable[result.size()]),
+					false);
+		} else if (event.getEventType() == SaveablesLifecycleEvent.POST_OPEN) {
+			recordSaveables(event.getSaveables());
+		}
+		lifecycleListener.handleLifecycleEvent(event);
 	}
 	
 }

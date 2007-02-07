@@ -57,7 +57,6 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	private final ListenerList inputChangeListeners = new ListenerList(ListenerList.IDENTITY);
 	private Saveable saveable;
 	private IPropertyListener propertyListener;
-	private boolean hasSaveable = false;
 	
 	/**
 	 * Return a typed element that represents a local file. If the element
@@ -135,10 +134,9 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 				ICompareContainer container = getContainer();
 				IWorkbenchPart part = container.getWorkbenchPart();
 				if (part != null) {
-					ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) part.getSite().getService(ISaveablesLifecycleListener.class);
-					if (hasSaveable)
-						lifecycleListener.handleLifecycleEvent(
-								new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
+					ISaveablesLifecycleListener lifecycleListener= getSaveablesLifecycleListener(part);
+					lifecycleListener.handleLifecycleEvent(
+							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
 					if (saveable instanceof LocalResourceSaveableComparison) {
 						LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
 						rsc.dispose();
@@ -163,6 +161,14 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 			scm.addPropertyListener(propertyListener);
 		}
 		setDirty(saveable.isDirty());
+	}
+
+	private ISaveablesLifecycleListener getSaveablesLifecycleListener(
+			IWorkbenchPart part) {
+		ISaveablesLifecycleListener listener = (ISaveablesLifecycleListener)Utils.getAdapter(part, ISaveablesLifecycleListener.class);
+		if (listener == null)
+			listener = (ISaveablesLifecycleListener) part.getSite().getService(ISaveablesLifecycleListener.class);
+		return listener;
 	}
 	
 	/* (non-Javadoc)
@@ -314,7 +320,6 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	public Saveable[] getActiveSaveables() {
 		if (getCompareResult() == null)
 			return new Saveable[0];
-		hasSaveable = true;
 		return new Saveable[] { getSaveable() };
 	}
 
