@@ -655,7 +655,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="label" type="string" use="required">
+         <attribute name="label" type="string">
             <annotation>
                <documentation>
                   The label to be displayed for this element when it is placed in either a menu. This value should be translatable.
@@ -812,7 +812,6 @@ WorkbenchWindowControlContribution which provides information as to the control&
       <annotation>
          <documentation>
             The element provides a mechanism that will call back into the defined class to fill a list with the IContributionItems to be shown when the menu or toolbar is built. The defined class must be a derivative of the org.eclipse.ui.actions.CompoundContributionItem base class that provides an implementation for the abstract &lt;code&gt;getContributionItems&lt;/code&gt; method.
-
          </documentation>
       </annotation>
       <complexType>
