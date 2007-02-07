@@ -2054,17 +2054,23 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}});
 		
 
-		IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
+		final IMemento introMem = memento.getChild(IWorkbenchConstants.TAG_INTRO);
 		if (introMem != null) {
-			getWorkbench()
-					.getIntroManager()
-					.showIntro(
-							this,
-							Boolean
-									.valueOf(
-											introMem
-													.getString(IWorkbenchConstants.TAG_STANDBY))
-									.booleanValue());
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					getWorkbench()
+							.getIntroManager()
+							.showIntro(
+									WorkbenchWindow.this,
+									Boolean
+											.valueOf(
+													introMem
+															.getString(IWorkbenchConstants.TAG_STANDBY))
+											.booleanValue());
+				}
+			});
+
 		}
 		
 		// Only restore the trim state if we're using the default layout
