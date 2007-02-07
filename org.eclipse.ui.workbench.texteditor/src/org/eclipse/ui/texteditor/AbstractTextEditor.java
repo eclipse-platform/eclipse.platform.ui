@@ -2171,18 +2171,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private TextEditorSavable fSavable;
 	/**
 	 * Tells whether text drag and drop is enabled.
-	 * <p>
-	 * <strong>Note:</strong> This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
-	 * </p>
 	 * @since 3.3
 	 */
-	private boolean fIsTextDragAndDropEnabled;
+	private boolean fIsTextDragAndDropEnabled= false;
+	/**
+	 * Tells whether text drag and drop has been installed on the control.
+	 * @since 3.3
+	 */
+	private boolean fIsTextDragAndDropInstalled= false;
 	/**
 	 * Helper token to decide whether drag and
 	 * drop happens inside the same editor.
-	 * <p>
-	 * <strong>Note:</strong> This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=169534
-	 * </p>
 	 * @since 3.3
 	 */
 	private Object fTextDragAndDropToken;
@@ -3037,17 +3036,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	protected void installTextDragAndDrop(ISourceViewer viewer) {
+		if (fIsTextDragAndDropEnabled || viewer == null)
+			return;
+		
+		if (fIsTextDragAndDropInstalled) {
+			fIsTextDragAndDropEnabled= true;
+			return;
+		}
+		
 		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
-		if (dndService == null || viewer == null)
+		if (dndService == null)
 			return;
 
-		// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
 		fIsTextDragAndDropEnabled= true;
 		
 		final StyledText st= viewer.getTextWidget();
-		final ISelectionProvider selectionProvider= viewer.getSelectionProvider();
-
+		
 		// Install drag source
+		final ISelectionProvider selectionProvider= viewer.getSelectionProvider();
 		final DragSource source= new DragSource(st, DND.DROP_COPY | DND.DROP_MOVE);
 		source.setTransfer(new Transfer[] {TextTransfer.getInstance()});
 		source.addDragListener(new DragSourceAdapter() {
@@ -3185,11 +3191,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			}
 		};
-		
 		dndService.addMergedDropTarget(st, DND.DROP_MOVE | DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, dropTargetListener);
 
+		fIsTextDragAndDropInstalled= true;
+		fIsTextDragAndDropEnabled= true;
 	}
-	
+
 	/**
 	 * Uninstalls text drag and drop from the given source viewer.
 	 * 
