@@ -216,7 +216,7 @@ public class FileDiffResult implements IFilePatchResult {
 			return -1;
 		}
 		int shift= 0;
-		int fuzz = 0;
+		int fuzz1 = 0;
 		String name= getTargetPath().lastSegment();
 		Hunk[] hunks = fDiff.getHunks();
 		for (int j = 0; j < hunks.length; j++) {
@@ -228,12 +228,12 @@ public class FileDiffResult implements IFilePatchResult {
 			if (f >= 0) {
 				shift = result.getShift();
 			}
-			if (f>fuzz)
-				fuzz= f;
+			if (f>fuzz1)
+				fuzz1= f;
 			monitor.worked(1);
 		}
 		fAfterLines = lines;
-		return fuzz;
+		return fuzz1;
 	}
 	
 	public IPath getTargetPath() {
@@ -257,6 +257,16 @@ public class FileDiffResult implements IFilePatchResult {
 				failedHunks.add(result.getHunk());
 		}
 		return failedHunks;
+	}
+	
+	private HunkResult[] getFailedHunkResults() {
+		List failedHunks = new ArrayList();
+		for (Iterator iterator = fHunkResults.values().iterator(); iterator.hasNext();) {
+			HunkResult result = (HunkResult) iterator.next();
+			if (!result.isOK())
+				failedHunks.add(result);
+		}
+		return (HunkResult[]) failedHunks.toArray(new HunkResult[failedHunks.size()]);
 	}
 
 	public FileDiff getDiff() {
@@ -294,12 +304,11 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public IHunk[] getRejects() {
-		List failedHunks = getFailedHunks();
-		return (IHunk[]) failedHunks.toArray(new IHunk[failedHunks.size()]);
+		return getFailedHunkResults();
 	}
 
 	public boolean hasRejects() {
-		return !getFailedHunks().isEmpty();
+		return getFailedHunkResults().length > 0;
 	}
 	
 	public static InputStream asInputStream(String contents, String charSet) {
