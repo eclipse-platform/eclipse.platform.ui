@@ -387,9 +387,14 @@ public class EditorSashContainer extends PartSashContainer {
         }
 
         // Trim Stack Support
-    	Integer trimState = memento.getInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE);
-    	if (trimState != null && trimState.intValue() != LayoutPart.TRIMSTATE_NORMAL)
-    		setTrimState(trimState.intValue());
+    	final Integer trimState = memento.getInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE);
+    	if (trimState != null && trimState.intValue() != LayoutPart.TRIMSTATE_NORMAL) {
+    		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					setTrimState(trimState.intValue());
+				}});
+    	}
 
     	return result;
     }
