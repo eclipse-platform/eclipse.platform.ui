@@ -501,4 +501,13 @@ public class FormUtil {
 		if (scomp!=null)
 			scomp.setData(FormUtil.FOCUS_SCROLLING, enabled?null:Boolean.FALSE);
 	}
+	
+	public static void setAntialias(GC gc, int style) {
+		if (!gc.getAdvanced()) {
+			gc.setAdvanced(true);
+			if (!gc.getAdvanced())
+				return;
+		}
+		gc.setAntialias(style);
+	}
 }

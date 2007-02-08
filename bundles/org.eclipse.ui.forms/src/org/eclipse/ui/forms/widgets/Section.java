@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 /**
  * A variation of the expandable composite that adds optional description below
@@ -404,7 +405,7 @@ public class Section extends ExpandableComposite {
 					- marginWidth - marginWidth, theight, true);
 		}
 		gc.setBackground(getBackground());
-		gc.setAntialias(SWT.ON);
+		FormUtil.setAntialias(gc, SWT.ON);
 		//if (isExpanded()) {
 			// repair the upper left corner
 			gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,

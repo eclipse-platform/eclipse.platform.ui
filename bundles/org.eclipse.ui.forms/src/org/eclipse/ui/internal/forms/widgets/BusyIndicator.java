@@ -115,7 +115,7 @@ public class BusyIndicator extends Canvas {
 							loader.logicalScreenWidth,
 							loader.logicalScreenHeight);
 					final GC offScreenImageGC = new GC(offScreenImage);
-					offScreenImageGC.setAntialias(SWT.ON);
+					FormUtil.setAntialias(offScreenImageGC, SWT.ON);
 					getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if (!isDisposed())

@@ -33,8 +33,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
@@ -63,6 +65,7 @@ public class TitleRegion extends Canvas {
 	private MenuHyperlink menuHyperlink;
 	private MenuManager menuManager;
 	private DragSource dragSource;
+	private Image dragImage;
 
 	private class HoverListener implements MouseTrackListener,
 			MouseMoveListener {
@@ -104,7 +107,7 @@ public class TitleRegion extends Canvas {
 			}
 		}
 	}
-	
+
 	private class TitleRegionLayout extends Layout implements ILayoutExtension {
 
 		protected Point computeSize(Composite composite, int wHint, int hHint,
@@ -130,7 +133,8 @@ public class TitleRegion extends Canvas {
 				bsize = busyLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			if (menuManager != null) {
-				menuHyperlink.setVisible(!menuManager.isEmpty()&&titleLabel.getVisible());
+				menuHyperlink.setVisible(!menuManager.isEmpty()
+						&& titleLabel.getVisible());
 				if (menuHyperlink.getVisible())
 					msize = menuHyperlink.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
@@ -221,6 +225,14 @@ public class TitleRegion extends Canvas {
 		titleCache = new SizeCache();
 		super.setLayout(new TitleRegionLayout());
 		hookHoverListeners();
+		addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event e) {
+				if (dragImage != null) {
+					dragImage.dispose();
+					dragImage = null;
+				}
+			}
+		});
 	}
 
 	private Color getColor(String key) {
@@ -249,10 +261,10 @@ public class TitleRegion extends Canvas {
 		Rectangle carea = getClientArea();
 		gc.setBackground(bg);
 		int savedAntialias = gc.getAntialias();
-		gc.setAntialias(SWT.ON);
-		gc.fillRoundRectangle(carea.x + HMARGIN, carea.y+2, carea.width - HMARGIN
-				* 2, carea.height-4, ARC_WIDTH, ARC_HEIGHT);
-		gc.setAntialias(savedAntialias);
+		FormUtil.setAntialias(gc, SWT.ON);
+		gc.fillRoundRectangle(carea.x + HMARGIN, carea.y + 2, carea.width
+				- HMARGIN * 2, carea.height - 4, ARC_WIDTH, ARC_HEIGHT);
+		FormUtil.setAntialias(gc, savedAntialias);
 	}
 
 	private Color getHoverBackground() {
@@ -315,9 +327,9 @@ public class TitleRegion extends Canvas {
 		if (doLayout)
 			layout();
 	}
-	
+
 	public void updateToolTip(String toolTip) {
-		if (busyLabel!=null)
+		if (busyLabel != null)
 			busyLabel.setToolTipText(toolTip);
 	}
 
@@ -363,8 +375,9 @@ public class TitleRegion extends Canvas {
 			busyLabel.addMouseMoveListener(listener);
 			if (menuManager != null)
 				busyLabel.setMenu(menuManager.createContextMenu(this));
-			IMessageToolTipManager mng = ((FormHeading)getParent()).getMessageToolTipManager();
-			if (mng!=null)
+			IMessageToolTipManager mng = ((FormHeading) getParent())
+					.getMessageToolTipManager();
+			if (mng != null)
 				mng.createToolTip(busyLabel, true);
 		}
 	}
@@ -391,12 +404,12 @@ public class TitleRegion extends Canvas {
 	public boolean setBusy(boolean busy) {
 		if (busy)
 			ensureBusyLabelExists();
-		else if (busyLabel==null)
+		else if (busyLabel == null)
 			return false;
 		if (busy == busyLabel.isBusy())
 			return false;
 		busyLabel.setBusy(busy);
-		if (busyLabel.getImage()==null) {
+		if (busyLabel.getImage() == null) {
 			layout();
 			return true;
 		}
@@ -438,21 +451,35 @@ public class TitleRegion extends Canvas {
 
 	public void addDragSupport(int operations, Transfer[] transferTypes,
 			DragSourceListener listener) {
-		dragSource = addDragSupport(titleLabel, operations, transferTypes, listener);
+		dragSource = addDragSupport(titleLabel, operations, transferTypes,
+				listener);
 		addDragSupport(this, operations, transferTypes, listener);
-		if (busyLabel!=null)
+		if (busyLabel != null)
 			addDragSupport(busyLabel, operations, transferTypes, listener);
-		if (menuHyperlink!=null)
+		if (menuHyperlink != null)
 			addDragSupport(menuHyperlink, operations, transferTypes, listener);
 	}
 
-	private DragSource addDragSupport(Control control, int operations, Transfer[] transferTypes,
-			DragSourceListener listener) {
+	private DragSource addDragSupport(Control control, int operations,
+			Transfer[] transferTypes, DragSourceListener listener) {
 		DragSource source = new DragSource(control, operations);
 		source.setTransfer(transferTypes);
 		source.addDragListener(listener);
+		/*
+		 * source.setDragSourceEffect(new DragSourceEffect(control) { public
+		 * void dragStart(DragSourceEvent event){ event.image =
+		 * createDragEffectImage(); } });
+		 */
 		return source;
-	}	
+	}
+
+	/*
+	 * private Image createDragEffectImage() { if (dragImage!=null) {
+	 * dragImage.dispose(); } GC gc = new GC(getDisplay()); Point size =
+	 * getSize(); dragImage = new Image(getDisplay(), size.x, size.y); Point loc =
+	 * toDisplay(0, 0); gc.copyArea(dragImage, loc.x, loc.y); gc.dispose();
+	 * return dragImage; }
+	 */
 
 	public void addDropSupport(int operations, Transfer[] transferTypes,
 			DropTargetListener listener) {
