@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="hyperlinkDetectorTargets" name="Hyperlink Detector Targets"/>
       </appInfo>
       <documentation>
-         This extension point is used to plug-in hyperlink detector targets.
+         This extension point is used to plug in hyperlink detector targets.
       </documentation>
    </annotation>
 
@@ -82,7 +82,7 @@
          <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
-                  a hyperlink detector target context that can be access through &lt;code&gt;org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector.getAdapter(...)&lt;/code&gt;
+                  a hyperlink detector target context that can be accessed through &lt;code&gt;org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector.getAdapter(...)&lt;/code&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>

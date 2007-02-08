@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.workbench.texteditor" id="hyperlinkDetectors" name="Hyperlink Detectors"/>
       </appInfo>
       <documentation>
-         This extension point is used to plug-in hyperlink detectors.
+         This extension point is used to plug in hyperlink detectors.
       </documentation>
    </annotation>
 
@@ -64,7 +64,7 @@
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  the translatable description for this hyperlink detector. Currently this description isn&apos;t displayed anywhere in the UI by the Eclipse SDK.
+                  the translatable description for this hyperlink detector. Currently, this description isn&apos;t displayed anywhere in the UI by the Eclipse SDK.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -107,12 +107,12 @@
 
 &lt;pre&gt;
 &lt;extension
-  point=&quot;org.eclipse.ui.workbench.texteditor&quot;&gt;
+  point=&quot;org.eclipse.ui.workbench.texteditor.hyperlinkDetectors&quot;&gt;
   &lt;hyperlinkDetector
     id=&quot;org.eclipse.example.jdt.internal.debug.ui.JavaHyperlinkDetector&quot;
     targetId=&quot;org.eclipse.jdt.ui.javaCode&quot;
     class=&quot;org.eclipse.example.jdt.internal.debug.ui.JavaHyperlinkDetector&quot;
-    name=&quot;%javaHyperlinkDetector&quot;/&gt;
+    name=&quot;%javaHyperlinkDetector&quot;&gt;
   &lt;/hyperlinkDetector&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
