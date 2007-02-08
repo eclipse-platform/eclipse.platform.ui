@@ -354,7 +354,7 @@ public class Section extends ExpandableComposite {
 		if (border == null)
 			border = fg;
 		int theight = 0;
-		int gradientheight =0;
+		int gradientheight = 0;
 		int tvmargin = IGAP;
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			Point tsize = null;
@@ -383,21 +383,18 @@ public class Section extends ExpandableComposite {
 			theight = 5;
 		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
-			//if (isExpanded() && getBackgroundImage() == null)
 			if (getBackgroundImage() == null)
 				updateHeaderImage(bg, bounds, gradientheight, theight);
 			gc.setBackground(getBackground());
 			gc.fillRectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-			//if (isExpanded()) {
-				drawBackground(gc, bounds.x, bounds.y, bounds.width, theight);
-				if (marginWidth > 0) {
-					// fix up margins
-					gc.setBackground(getBackground());
-					gc.fillRectangle(0, 0, marginWidth, theight);
-					gc.fillRectangle(bounds.x + bounds.width - marginWidth, 0,
-							marginWidth, theight);
-				}
-			//}
+			drawBackground(gc, bounds.x, bounds.y, bounds.width, theight);
+			if (marginWidth > 0) {
+				// fix up margins
+				gc.setBackground(getBackground());
+				gc.fillRectangle(0, 0, marginWidth, theight);
+				gc.fillRectangle(bounds.x + bounds.width - marginWidth, 0,
+						marginWidth, theight);
+			}
 		} else if (isExpanded()) {
 			gc.setForeground(bg);
 			gc.setBackground(getBackground());
@@ -406,17 +403,15 @@ public class Section extends ExpandableComposite {
 		}
 		gc.setBackground(getBackground());
 		FormUtil.setAntialias(gc, SWT.ON);
-		//if (isExpanded()) {
-			// repair the upper left corner
-			gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
-					marginHeight + 2, marginWidth + 2, marginHeight });
-			// repair the upper right corner
-			gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
-					marginHeight, bounds.width - marginWidth, marginHeight,
-					bounds.width - marginWidth, marginHeight + 3 });
-		//}
+		// repair the upper left corner
+		gc.fillPolygon(new int[] { marginWidth, marginHeight, marginWidth,
+				marginHeight + 2, marginWidth + 2, marginHeight });
+		// repair the upper right corner
+		gc.fillPolygon(new int[] { bounds.width - marginWidth - 3,
+				marginHeight, bounds.width - marginWidth, marginHeight,
+				bounds.width - marginWidth, marginHeight + 3 });
 		gc.setForeground(border);
-		if (isExpanded() || (getExpansionStyle()&TITLE_BAR)!=0) {
+		if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
 			// top left curve
 			gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
 					marginHeight);
@@ -432,7 +427,7 @@ public class Section extends ExpandableComposite {
 			gc.drawLine(marginWidth, marginHeight, bounds.width - 1,
 					marginHeight);
 		}
-		if ((getExpansionStyle() & TITLE_BAR)!=0 || isExpanded()) {
+		if ((getExpansionStyle() & TITLE_BAR) != 0 || isExpanded()) {
 			// left vertical edge gradient
 			gc.fillGradientRectangle(marginWidth, marginHeight + 2, 1,
 					gradientheight - 2, true);
@@ -441,29 +436,27 @@ public class Section extends ExpandableComposite {
 					marginHeight + 2, 1, gradientheight - 2, true);
 		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
-			//if (isExpanded()) {
-				// New in 3.3 - edge treatmant
-				gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
-				gc.drawPolyline(new int[] { marginWidth + 1,
-						marginHeight + gradientheight - 1, marginWidth + 1,
-						marginHeight + 2, marginWidth + 2, marginHeight + 2,
-						marginWidth + 2, marginHeight + 1,
-						bounds.width - marginWidth - 3, marginHeight + 1,
-						bounds.width - marginWidth - 3, marginHeight + 2,
-						bounds.width - marginWidth - 2, marginHeight + 2,
-						bounds.width - marginWidth - 2,
-						marginHeight + gradientheight - 1 });
+			// New in 3.3 - edge treatmant
+			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			gc.drawPolyline(new int[] { marginWidth + 1,
+					marginHeight + gradientheight - 1, marginWidth + 1,
+					marginHeight + 2, marginWidth + 2, marginHeight + 2,
+					marginWidth + 2, marginHeight + 1,
+					bounds.width - marginWidth - 3, marginHeight + 1,
+					bounds.width - marginWidth - 3, marginHeight + 2,
+					bounds.width - marginWidth - 2, marginHeight + 2,
+					bounds.width - marginWidth - 2,
+					marginHeight + gradientheight - 1 });
 		}
 		if (buffer != null) {
-			// e.gc.drawImage(buffer, bounds.x, bounds.y);
 			e.gc.drawImage(buffer, 0, 0);
 			gc.dispose();
 			buffer.dispose();
 		}
 	}
 
-	private void updateHeaderImage(Color bg, Rectangle bounds,
-			int theight, int realtheight) {
+	private void updateHeaderImage(Color bg, Rectangle bounds, int theight,
+			int realtheight) {
 		Image image = new Image(getDisplay(), 1, realtheight);
 		image.setBackground(getBackground());
 		GC gc = new GC(image);
@@ -471,7 +464,7 @@ public class Section extends ExpandableComposite {
 		gc.fillRectangle(0, 0, 1, realtheight);
 		gc.setForeground(bg);
 		gc.setBackground(getBackground());
-		gc.fillGradientRectangle(0, marginHeight+2, 1, theight-2, true);
+		gc.fillGradientRectangle(0, marginHeight + 2, 1, theight - 2, true);
 		gc.dispose();
 		super.setBackgroundImage(image);
 	}

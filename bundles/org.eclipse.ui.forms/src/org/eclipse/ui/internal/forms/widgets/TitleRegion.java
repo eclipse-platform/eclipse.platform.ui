@@ -14,6 +14,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceEffect;
+import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
@@ -255,11 +257,9 @@ public class TitleRegion extends Canvas {
 	private void onPaint(PaintEvent e) {
 		if (hoverState == STATE_NORMAL)
 			return;
-		Color bg = getColor(hoverState == STATE_HOVER_FULL ? IFormColors.H_HOVER_FULL
-				: IFormColors.H_HOVER_LIGHT);
 		GC gc = e.gc;
 		Rectangle carea = getClientArea();
-		gc.setBackground(bg);
+		gc.setBackground(getHoverBackground());
 		int savedAntialias = gc.getAntialias();
 		FormUtil.setAntialias(gc, SWT.ON);
 		gc.fillRoundRectangle(carea.x + HMARGIN, carea.y + 2, carea.width
@@ -270,8 +270,14 @@ public class TitleRegion extends Canvas {
 	private Color getHoverBackground() {
 		if (hoverState == STATE_NORMAL)
 			return null;
-		return getColor(hoverState == STATE_HOVER_FULL ? IFormColors.H_HOVER_FULL
+		Color color = getColor(hoverState == STATE_HOVER_FULL ? IFormColors.H_HOVER_FULL
 				: IFormColors.H_HOVER_LIGHT);
+		if (color == null)
+			color = getDisplay()
+					.getSystemColor(
+							hoverState == STATE_HOVER_FULL ? SWT.COLOR_WIDGET_BACKGROUND
+									: SWT.COLOR_WIDGET_LIGHT_SHADOW);
+		return color;
 	}
 
 	public void setHoverState(int state) {
@@ -465,21 +471,23 @@ public class TitleRegion extends Canvas {
 		DragSource source = new DragSource(control, operations);
 		source.setTransfer(transferTypes);
 		source.addDragListener(listener);
-		/*
-		 * source.setDragSourceEffect(new DragSourceEffect(control) { public
-		 * void dragStart(DragSourceEvent event){ event.image =
-		 * createDragEffectImage(); } });
-		 */
+		source.setDragSourceEffect(new DragSourceEffect(control) {
+			public void dragStart(DragSourceEvent event) {
+				event.image = createDragEffectImage();
+			}
+		});
 		return source;
 	}
 
-	/*
-	 * private Image createDragEffectImage() { if (dragImage!=null) {
-	 * dragImage.dispose(); } GC gc = new GC(getDisplay()); Point size =
-	 * getSize(); dragImage = new Image(getDisplay(), size.x, size.y); Point loc =
-	 * toDisplay(0, 0); gc.copyArea(dragImage, loc.x, loc.y); gc.dispose();
-	 * return dragImage; }
-	 */
+	private Image createDragEffectImage() {
+		/*
+		 * if (dragImage != null) { dragImage.dispose(); } GC gc = new GC(this);
+		 * Point size = getSize(); dragImage = new Image(getDisplay(), size.x,
+		 * size.y); gc.copyArea(dragImage, 0, 0); gc.dispose(); return
+		 * dragImage;
+		 */
+		return null;
+	}
 
 	public void addDropSupport(int operations, Transfer[] transferTypes,
 			DropTargetListener listener) {
