@@ -197,8 +197,8 @@ public class FileDiff implements IFilePatch {
 		FileDiff diff = new FileDiff(adjustedOldPath, 0, adjustedNewPath, 0);
 		for (Iterator iterator = fHunks.iterator(); iterator.hasNext();) {
 			Hunk hunk = (Hunk) iterator.next();
-			Hunk hunkCopy = new Hunk(diff, hunk);
-			diff.add(hunkCopy);
+			// Creating the hunk adds it to the parent diff
+			new Hunk(diff, hunk);
 		}
 		return diff;
 	}
