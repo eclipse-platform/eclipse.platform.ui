@@ -3181,14 +3181,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// Read the workbench windows.
 		for (int i = 0; i < children.length; i++) {
 			childMem = children[i];
-			final WorkbenchWindow newWindow = newWorkbenchWindow();
-			createdWindows[i] = newWindow;
+			final WorkbenchWindow [] newWindow = new WorkbenchWindow[1];
+			
 			StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 				public void runWithException() {
-					newWindow.create();	
+					newWindow[0] = newWorkbenchWindow();
+					newWindow[0].create();	
 				}});
-			
+			createdWindows[i] = newWindow[0];
 
 			// allow the application to specify an initial perspective to open
 			// @issue temporary workaround for ignoring initial perspective
@@ -3201,7 +3202,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			// }
 			// add the window so that any work done in newWindow.restoreState
 			// that relies on Workbench methods has windows to work with
-			windowManager.add(newWindow);
+			windowManager.add(newWindow[0]);
 
 			// now that we've added it to the window manager we need to listen
 			// for any exception that might hose us before we get a chance to
@@ -3209,9 +3210,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			// Assume that the new window is a phantom for now
 			boolean restored = false;
 			try {
-				status.merge(newWindow.restoreState(childMem, null));
+				status.merge(newWindow[0].restoreState(childMem, null));
 				try {
-					newWindow.fireWindowRestored();
+					newWindow[0].fireWindowRestored();
 				} catch (WorkbenchException e) {
 					status.add(e.getStatus());
 				}
@@ -3225,7 +3226,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 						public void runWithException() throws Throwable {
-							newWindow.close();
+							newWindow[0].close();
 						}});
 				}
 			}
