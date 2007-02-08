@@ -31,6 +31,20 @@ public class Hunk {
 	private String[] fLines;
 	private int hunkType;
 	
+    public Hunk(FileDiff parent, Hunk toCopy) {
+        fParent = parent;
+        if (fParent != null) {
+            fParent.add(this);
+        }
+        
+        fOldStart = toCopy.fOldStart;
+        fOldLength = toCopy.fOldLength;
+        fNewStart = toCopy.fNewStart;
+        fNewLength = toCopy.fOldLength;
+        fLines = toCopy.fLines;
+        hunkType = toCopy.hunkType;
+    }
+    
 	public Hunk(FileDiff parent, int[] oldRange, int[] newRange, List lines, boolean encounteredPlus, boolean encounteredMinus, boolean encounteredSpace) {
 		
 		fParent= parent;
