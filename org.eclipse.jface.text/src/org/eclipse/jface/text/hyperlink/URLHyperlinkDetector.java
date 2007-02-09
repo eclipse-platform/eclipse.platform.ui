@@ -73,31 +73,38 @@ public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 
 		int offsetInLine= offset - lineInfo.getOffset();
 
-		int urlSeparatorOffset= line.indexOf("://"); //$NON-NLS-1$
-		if (urlSeparatorOffset < 0)
-			return null;
-
 		boolean startDoubleQuote= false;
+		int urlOffsetInLine= 0;
+		int urlLength= 0;
+		
+		int urlSeparatorOffset= line.indexOf("://"); //$NON-NLS-1$
+		while (urlSeparatorOffset >= 0) {
 
-		// URL protocol (left to "://")
-		int urlOffsetInLine= urlSeparatorOffset;
-		char ch;
-		do {
-			urlOffsetInLine--;
-			ch= ' ';
-			if (urlOffsetInLine > -1)
-				ch= line.charAt(urlOffsetInLine);
-			startDoubleQuote= ch == '"';
-		} while (Character.isUnicodeIdentifierStart(ch));
-		urlOffsetInLine++;
+			// URL protocol (left to "://")
+			urlOffsetInLine= urlSeparatorOffset;
+			char ch;
+			do {
+				urlOffsetInLine--;
+				ch= ' ';
+				if (urlOffsetInLine > -1)
+					ch= line.charAt(urlOffsetInLine);
+				startDoubleQuote= ch == '"';
+			} while (Character.isUnicodeIdentifierStart(ch));
+			urlOffsetInLine++;
 
-		// Right to "://"
-		StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3), " \t\n\r\f<>", false); //$NON-NLS-1$
-		if (!tokenizer.hasMoreTokens())
-			return null;
+			// Right to "://"
+			StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3), " \t\n\r\f<>", false); //$NON-NLS-1$
+			if (!tokenizer.hasMoreTokens())
+				return null;
 
-		int urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffsetInLine;
-		if (offsetInLine < urlOffsetInLine || offsetInLine > urlOffsetInLine + urlLength)
+			urlLength= tokenizer.nextToken().length() + 3 + urlSeparatorOffset - urlOffsetInLine;
+			if (offsetInLine >= urlOffsetInLine && offsetInLine <= urlOffsetInLine + urlLength)
+				break;
+		
+			urlSeparatorOffset= line.indexOf("://", urlSeparatorOffset + 1); //$NON-NLS-1$
+		}
+		
+		if (urlSeparatorOffset < 0)
 			return null;
 
 		if (startDoubleQuote) {
