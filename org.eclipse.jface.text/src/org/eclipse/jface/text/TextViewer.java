@@ -4313,11 +4313,7 @@ public class TextViewer extends Viewer implements
 	 * @see ITextViewer#setTextColor(Color, start, length, boolean)
 	 */
 	public void setTextColor(Color color, int start, int length, boolean controlRedraw) {
-
 		if (fTextWidget != null) {
-
-			if (controlRedraw)
-				fTextWidget.setRedraw(false);
 
 			StyleRange s= new StyleRange();
 			s.foreground= color;
@@ -4326,14 +4322,14 @@ public class TextViewer extends Viewer implements
 
 			s= modelStyleRange2WidgetStyleRange(s);
 			if (s != null) {
-
 				if (controlRedraw)
 					fTextWidget.setRedraw(false);
-
-				fTextWidget.setStyleRange(s);
-
-				if (controlRedraw)
-					fTextWidget.setRedraw(true);
+				try {
+					fTextWidget.setStyleRange(s);
+				} finally {
+					if (controlRedraw)
+						fTextWidget.setRedraw(true);
+				}
 			}
 		}
 	}
