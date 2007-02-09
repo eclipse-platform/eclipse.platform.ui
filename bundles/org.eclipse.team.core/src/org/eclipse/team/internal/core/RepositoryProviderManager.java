@@ -53,7 +53,7 @@ public class RepositoryProviderManager implements IRepositoryProviderListener {
 	}
 	
 	public void removeListener(IRepositoryProviderListener listener) {
-		listeners.add(listener);
+		listeners.remove(listener);
 	}
 	
 	
