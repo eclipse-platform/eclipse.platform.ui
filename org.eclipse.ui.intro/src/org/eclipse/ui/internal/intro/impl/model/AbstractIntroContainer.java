@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -325,16 +324,16 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * resolved on a per container basis, when the container is resolved.
      */
     protected void resolveChildren() {
-    	ListIterator iter = children.listIterator();
-        while (iter.hasNext()) {
-            AbstractIntroElement child = (AbstractIntroElement)iter.next();
+    	AbstractIntroElement[] array = (AbstractIntroElement[])children.toArray(new AbstractIntroElement[children.size()]);
+    	for (int i=0;i<array.length;++i) {
+            AbstractIntroElement child = array[i];
             if (UAContentFilter.isFiltered(UAElementFactory.newElement(child.getElement()), IntroEvaluationContext.getContext())) {
-            	iter.remove();
+            	children.remove(child);
             }
             else if (child.getType() == AbstractIntroElement.INCLUDE) {
                 resolveInclude((IntroInclude) child);
             }
-        }
+    	}
         resolved = true;
     }
 
