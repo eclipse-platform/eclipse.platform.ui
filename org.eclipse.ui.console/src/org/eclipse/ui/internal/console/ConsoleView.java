@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -177,11 +180,20 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	private void activateParticipants(IConsole console) {
 		// activate
 		if (console != null && fActive) {
-			IConsolePageParticipant[] participants = getParticipants(console);
-			if (participants != null) {
+			final ListenerList listeners = getParticipants(console);
+			if (listeners != null) {
+				Object[] participants = listeners.getListeners();
 			    for (int i = 0; i < participants.length; i++) {
-			        // TODO: safe runnable
-			        participants[i].activated();
+			    	final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+			    	SafeRunner.run(new ISafeRunnable() {
+						public void run() throws Exception {
+							participant.activated();
+						}
+						public void handleException(Throwable exception) {
+							ConsolePlugin.log(exception);
+							listeners.remove(participant);
+						}
+					});
 			    }
 			}
 		}
@@ -232,12 +244,21 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    IConsole console = (IConsole)fPartToConsole.get(part);
 	    
 		// dispose page participants
-		IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.remove(console);
-		for (int i = 0; i < participants.length; i++) {
-            IConsolePageParticipant participant = participants[i];
-            // TODO: this should be done in a safe runnable
-            participant.dispose();
-        }
+		ListenerList listeners = (ListenerList) fConsoleToPageParticipants.remove(console);
+		if (listeners != null) {
+			Object[] participants = listeners.getListeners();
+			for (int i = 0; i < participants.length; i++) {
+	            final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+	            SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						participant.dispose();
+					}
+					public void handleException(Throwable exception) {
+						ConsolePlugin.log(exception);
+					}
+				});
+	        }
+		}
 
 		IPage page = pageRecord.page;
 		page.dispose();
@@ -261,8 +282,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * @param console
 	 * @return registered page participants or <code>null</code>
 	 */
-	private IConsolePageParticipant[] getParticipants(IConsole console) {
-	    return (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
+	private ListenerList getParticipants(IConsole console) {
+	    return (ListenerList) fConsoleToPageParticipants.get(console);
 	}
 
 	/* (non-Javadoc)
@@ -270,19 +291,31 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	protected PageRec doCreatePage(IWorkbenchPart dummyPart) {
 		ConsoleWorkbenchPart part = (ConsoleWorkbenchPart)dummyPart;
-		IConsole console = part.getConsole();
-		IPageBookViewPage page = console.createPage(this);
+		final IConsole console = part.getConsole();
+		final IPageBookViewPage page = console.createPage(this);
 		initPage(page);
 		page.createControl(getPageBook());
 		console.addPropertyChangeListener(this);
 		
 		// initialize page participants
-		IConsolePageParticipant[] participants = ((ConsoleManager)getConsoleManager()).getPageParticipants(console);
+		IConsolePageParticipant[] consoleParticipants = ((ConsoleManager)getConsoleManager()).getPageParticipants(console);
+		final ListenerList participants = new ListenerList();
+		for (int i = 0; i < consoleParticipants.length; i++) {
+			participants.add(consoleParticipants[i]);
+		}
 		fConsoleToPageParticipants.put(console, participants);
-		for (int i = 0; i < participants.length; i++) {
-            IConsolePageParticipant participant = participants[i];
-            // TODO: this should be done in a safe runnable
-            participant.init(page, console);
+		Object[] listeners = participants.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+            final IConsolePageParticipant participant = (IConsolePageParticipant) listeners[i];
+            SafeRunner.run(new ISafeRunnable() {
+				public void run() throws Exception {
+					participant.init(page, console);
+				}
+				public void handleException(Throwable exception) {
+					ConsolePlugin.log(exception);
+					participants.remove(participant);
+				}
+			});
         }
 		
 		PageRec rec = new PageRec(dummyPart, page);
@@ -528,11 +561,12 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
         if (adpater == null) {
             IConsole console = getConsole();
             if (console != null) {
-                IConsolePageParticipant[] participants = (IConsolePageParticipant[]) fConsoleToPageParticipants.get(console);
+                ListenerList listeners = getParticipants(console);
                 // an adapter can be asked for before the console participants are created
-                if (participants != null) {
+                if (listeners != null) {
+                	Object[] participants = listeners.getListeners();
                     for (int i = 0; i < participants.length; i++) {
-                        IConsolePageParticipant participant = participants[i];
+                        IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
                         adpater = participant.getAdapter(key);
                         if (adpater != null) {
                             return adpater;
@@ -602,11 +636,20 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	private void deactivateParticipants(IConsole console) {
 		// deactivate
 	    if (console != null) {
-			IConsolePageParticipant[] participants = getParticipants(console);
-			if (participants != null) {
+			final ListenerList listeners = getParticipants(console);
+			if (listeners != null) {
+				Object[] participants = listeners.getListeners();
 			    for (int i = 0; i < participants.length; i++) {
-			        // TODO: safe runnable
-                    participants[i].deactivated();
+			    	final IConsolePageParticipant participant = (IConsolePageParticipant) participants[i];
+			    	SafeRunner.run(new ISafeRunnable() {
+						public void run() throws Exception {
+							participant.deactivated();
+						}
+						public void handleException(Throwable exception) {
+							ConsolePlugin.log(exception);
+							listeners.remove(participant);
+						}
+					});
                 }
 			}
 	    }

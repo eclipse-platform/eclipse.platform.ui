@@ -82,7 +82,11 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		log(newErrorStatus("Error logged from Console plug-in: ", t)); //$NON-NLS-1$
+		if (t instanceof CoreException) {
+			log(((CoreException)t).getStatus());
+		} else {
+			log(newErrorStatus("Error logged from Console plug-in: ", t)); //$NON-NLS-1$
+		}
 	}
 	
 	/**
