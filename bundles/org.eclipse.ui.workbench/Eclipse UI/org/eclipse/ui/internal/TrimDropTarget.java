@@ -29,6 +29,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimDescriptor;
 import org.eclipse.ui.internal.layout.TrimLayout;
+import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
 /**
  */
@@ -363,7 +364,9 @@ import org.eclipse.ui.internal.layout.TrimLayout;
            	
            	// Create a new dragging border onto the dragged trim
         	// Special check for TrimPart...should be generalized
-           	border = new DragBorder(windowComposite, draggedTrim.getControl(), !(draggedTrim instanceof TrimPart));
+        	boolean wantsFrame = !(draggedTrim instanceof TrimToolBarBase) &&
+        						!(draggedTrim instanceof TrimPart);
+           	border = new DragBorder(windowComposite, draggedTrim.getControl(), wantsFrame);
 
            	dockedArea = SWT.NONE;
         }
