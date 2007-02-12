@@ -18,6 +18,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 
 /**
  * This manager controls the layout, content, and visibility of an information
@@ -179,6 +184,10 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 						setInformation(null, null);
 					}
 					hasFinished= true;
+				} catch (RuntimeException ex) {
+					String PLUGIN_ID= "org.eclipse.jface.text"; //$NON-NLS-1$
+					ILog log= Platform.getLog(Platform.getBundle(PLUGIN_ID));
+					log.log(new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, "Unexpected runtime error while computing a text hover", ex)); //$NON-NLS-1$
 				} finally {
 					synchronized (fMutex) {
 						if (fTextViewer != null)
