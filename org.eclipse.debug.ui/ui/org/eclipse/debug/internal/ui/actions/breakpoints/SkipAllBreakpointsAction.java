@@ -59,12 +59,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                 if(!monitor.isCanceled()) {
-                	if(fAction != null) {
-                		manager.setEnabled(!fAction.isChecked());
-                	}
-                	else {
-                		manager.setEnabled(!isChecked());
-                	}
+                	manager.setEnabled(!manager.isEnabled());
                 } 
             }
         };
