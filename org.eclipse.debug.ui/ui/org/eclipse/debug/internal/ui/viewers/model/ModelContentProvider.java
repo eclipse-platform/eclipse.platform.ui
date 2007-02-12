@@ -198,7 +198,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param newInput
 	 */
-	protected void restoreViewerState(final Object input) {
+	protected synchronized void restoreViewerState(final Object input) {
 		fPendingState = null;
 		final IElementMementoProvider defaultProvider = getViewerStateAdapter(input);
 		if (defaultProvider != null) {
@@ -280,7 +280,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param path
 	 */
-	protected void doRestore(final TreePath path) {
+	protected synchronized void doRestore(final TreePath path) {
 		if (fPendingState == null) { 
 			return;
 		}
@@ -803,9 +803,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		fTransform.clear(parent);
 	}
 
-
-	
-	protected void checkIfRestoreComplete() {
+	protected synchronized void checkIfRestoreComplete() {
+		if (fPendingState == null) {
+			return;
+		}
 		CheckState state = new CheckState();
 		fPendingState.accept(state);
 		if (state.isComplete()) {
