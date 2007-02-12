@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.themes.ColorUtil;
@@ -72,6 +73,8 @@ public class TrimFrame {
                 // Are we horizontally or vertically aligned
                 boolean flipXY = false;                
                 if (child instanceof ToolBar && (((ToolBar)child).getStyle() & SWT.VERTICAL) != 0)
+                    flipXY = true;
+                else if (child instanceof CoolBar && (((CoolBar)child).getStyle() & SWT.VERTICAL) != 0)
                     flipXY = true;
                 
                 Rectangle bb = canvas.getBounds();

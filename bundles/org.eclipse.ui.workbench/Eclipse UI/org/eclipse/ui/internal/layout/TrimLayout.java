@@ -284,7 +284,8 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		TrimDescriptor desc = new TrimDescriptor(trim, areaId);
 
 		// If the trim can be relocated then add a docking handle
-		if (!trimLocked && trim.getValidSides() != SWT.NONE) {
+		boolean isAlreadyAHandle = trim instanceof TrimToolBarBase;
+		if (!trimLocked && trim.getValidSides() != SWT.NONE && !isAlreadyAHandle) {
 			// Create a 'docking' handle to allow dragging the trim
 			Composite dockingHandle = new TrimCommonUIHandle(this, trim, areaId);
 			desc.setDockingCache(new SizeCache(dockingHandle));
