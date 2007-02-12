@@ -45,8 +45,8 @@ public class StackFrameEventHandler extends DebugEventHandler {
 	 */
 	protected void handleChange(DebugEvent event) {
 		IStackFrame frame = (IStackFrame) event.getSource();
-		ModelDelta delta = fThreadHandler.buildRootDelta();
-		delta = fThreadHandler.addPathToThread(delta, frame.getThread());
+		ModelDelta root = fThreadHandler.buildRootDelta();
+		ModelDelta delta = fThreadHandler.addPathToThread(root, frame.getThread());
 		delta = delta.addNode(frame.getThread(), IModelDelta.NO_CHANGE);
 		int flags = IModelDelta.NO_CHANGE;
 		if (event.getDetail() == DebugEvent.CONTENT) {
@@ -55,7 +55,7 @@ public class StackFrameEventHandler extends DebugEventHandler {
 			flags = flags | IModelDelta.STATE;
 		}
 		delta = delta.addNode(frame, flags);
-		fireDelta(delta);
+		fireDelta(root);
 	}
 
 }
