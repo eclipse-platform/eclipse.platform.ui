@@ -1290,6 +1290,26 @@
                id="ACTIVE_HYPERLINK_COLOR"
                value="COLOR_LIST_FOREGROUND"/>
       </theme>
+      <theme
+            id="org.eclipse.ui.r33"
+            name="%ThemeName.R33">
+         <colorOverride
+               id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"
+               value="COLOR_LIST_BACKGROUND">
+         </colorOverride>
+         <colorOverride
+               id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
+               value="COLOR_TITLE_BACKGROUND">
+         </colorOverride>
+         <data
+               name="org.eclipse.ui.workbench.ACTIVE_TAB_PERCENT"
+               value="75">
+         </data>
+         <colorOverride
+               id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"
+               value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+      </theme>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
