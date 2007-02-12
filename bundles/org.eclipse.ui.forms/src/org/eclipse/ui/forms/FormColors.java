@@ -555,14 +555,14 @@ public class FormColors {
 			tbBg = blend(tbBg, bg, 20);
 
 		// Group 3
-		// Rule: If at least 2 of the RGB values are equal to or between 0 and
-		// 120, then apply specified opacity for Group 3
+		// Rule: Everything else
 		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
 		// Aqua, Wn High Con White, Wn High Con #1
 		// Gradient Bottom = TITLE_BACKGROUND @ 10% Opacity over LIST_BACKGROUND
 		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
-		else if (testTwoPrimaryColors(tbBg, -1, 121))
+		else {
 			tbBg = blend(tbBg, bg, 10);
+		}
 
 		createColor(IFormColors.TB_BG, tbBg);
 	}
@@ -589,14 +589,14 @@ public class FormColors {
 			tbBorder = blend(tbBorder, bg, 50);
 
 		// Group 3
-		// Rule: If at least 2 of the RGB values are equal to or between 0 and
-		// 120, then apply specified opacity for Group 3
+		// Rule: Everything else
 		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
 		// Aqua, Wn High Con White, Wn High Con #1
 
 		// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
-		else if (testTwoPrimaryColors(tbBorder, -1, 121))
+		else {
 			tbBorder = blend(tbBorder, bg, 30);
+		}
 		createColor(FormColors.TB_BORDER, tbBorder);
 	}
 
