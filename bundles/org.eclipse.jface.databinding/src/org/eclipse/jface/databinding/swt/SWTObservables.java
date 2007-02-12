@@ -282,7 +282,9 @@ public class SWTObservables {
 					safeRun(runnable);
 				}
 			};
-			display.asyncExec(safeRunnable);
+			if (!display.isDisposed()) {
+				display.asyncExec(safeRunnable);
+			}
 		}
 
 		/*

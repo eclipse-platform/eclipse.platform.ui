@@ -60,13 +60,22 @@ import org.eclipse.core.runtime.ListenerList;
 			}
 			listenerTypes[length] = listenerType;
 			listenerLists[length] = new ListenerList();
+			boolean hadListeners = hasListeners();
 			listenerLists[length].add(listener);
-			if (length == 0) {
+			if (!hadListeners) {
 				this.firstListenerAdded();
 			}
 			return;
 		}
-		listenerLists[listenerTypeIndex].add(listener);
+		ListenerList listenerList = listenerLists[listenerTypeIndex];
+		boolean hadListeners = true;
+		if (listenerList.size() == 0) {
+			hadListeners = hasListeners();
+		}
+		listenerList.add(listener);
+		if (!hadListeners) {
+			firstListenerAdded();
+		}
 	}
 
 	/**
