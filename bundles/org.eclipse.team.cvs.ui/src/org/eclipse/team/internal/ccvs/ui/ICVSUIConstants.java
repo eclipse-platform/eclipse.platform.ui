@@ -187,6 +187,7 @@ public interface ICVSUIConstants {
 	public final String PREF_UPDATE_PREVIEW_IN_SYNCVIEW = "syncView"; //$NON-NLS-1$
 	
 	public final String PREF_ENABLE_MODEL_SYNC = "enableModelSync"; //$NON-NLS-1$
+	public final String PREF_OPEN_COMPARE_EDITOR_FOR_SINGLE_FILE = "openCompareEditorForSingleFile"; //$NON-NLS-1$
 	
     public final String PREF_USE_PROXY = "proxyEnabled"; //$NON-NLS-1$
     public final String PREF_PROXY_TYPE = "proxyType"; //$NON-NLS-1$

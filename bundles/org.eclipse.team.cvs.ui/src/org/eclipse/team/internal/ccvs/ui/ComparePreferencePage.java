@@ -68,6 +68,11 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		        CVSUIMessages.ComparePreferencePage_7, 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
+		addField(new BooleanFieldEditor(
+		        ICVSUIConstants.PREF_OPEN_COMPARE_EDITOR_FOR_SINGLE_FILE, 
+		        CVSUIMessages.ComparePreferencePage_8, 
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
         
         IPreferencePageContainer container = getContainer();
         if (container instanceof IWorkbenchPreferenceContainer) {

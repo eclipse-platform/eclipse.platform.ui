@@ -582,6 +582,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		store.setDefault(ICVSUIConstants.PREF_UPDATE_PREVIEW, ICVSUIConstants.PREF_UPDATE_PREVIEW_IN_SYNCVIEW);
 		
 		store.setDefault(ICVSUIConstants.PREF_ENABLE_MODEL_SYNC, true);
+		store.setDefault(ICVSUIConstants.PREF_OPEN_COMPARE_EDITOR_FOR_SINGLE_FILE, true);
 		
 		// Set the watch/edit preferences defaults and values
 		store.setDefault(ICVSUIConstants.PREF_CHECKOUT_READ_ONLY, corePrefs.getDefaultBoolean(CVSProviderPlugin.READ_ONLY));
