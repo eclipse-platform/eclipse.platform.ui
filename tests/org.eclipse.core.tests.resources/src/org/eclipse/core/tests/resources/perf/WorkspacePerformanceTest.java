@@ -26,8 +26,8 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class WorkspacePerformanceTest extends ResourceTest {
 	private static final String chars = "abcdefghijklmnopqrstuvwxyz";
 	static final int REPEATS = 5;
-	private static final int TOTAL_RESOURCES = 10000;
 	private static final int TREE_WIDTH = 10;
+	private static final int DEFAULT_TOTAL_RESOURCES = 10000;
 
 	private final Random random = new Random();
 	IFolder testFolder;
@@ -35,6 +35,9 @@ public class WorkspacePerformanceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(WorkspacePerformanceTest.class);
+//		TestSuite suite = new TestSuite();
+//		suite.addTest(new WorkspacePerformanceTest("testRefreshProject"));
+//		return suite;
 	}
 
 	public WorkspacePerformanceTest() {
@@ -58,13 +61,13 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	/**
 	 * Creates a project and fills it with contents
 	 */
-	void createAndPopulateProject() {
+	void createAndPopulateProject(final int totalResources) {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
 					testProject.create(getMonitor());
 					testProject.open(getMonitor());
-					createFolder(testFolder);
+					createFolder(testFolder, totalResources);
 				}
 			}, getMonitor());
 		} catch (CoreException e) {
@@ -81,10 +84,10 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	/**
 	 * Creates and returns a folder with lots of contents
 	 */
-	IFolder createFolder(IFolder topFolder) throws CoreException {
+	IFolder createFolder(IFolder topFolder, int totalResources) throws CoreException {
 		topFolder.create(IResource.NONE, true, getMonitor());
 		//tree depth is log of total resource count with the width as the log base
-		int depth = (int) (Math.log(TOTAL_RESOURCES) / Math.log(TREE_WIDTH));
+		int depth = (int) (Math.log(totalResources) / Math.log(TREE_WIDTH));
 		recursiveCreateChildren(topFolder, depth - 1);
 		return topFolder;
 	}
@@ -96,6 +99,19 @@ public class WorkspacePerformanceTest extends ResourceTest {
 			buf.append(chars.charAt(random.nextInt(chars.length())));
 		}
 		return buf.toString();
+	}
+
+	/**
+	 * Deletes the test project without deleting content, and then recreates
+	 * the project without discovering content on disk.  This sets us up
+	 * for benchmarking performance of refresh local.
+	 */
+	void deleteAndRecreateProject() throws CoreException {
+		//delete without deleting contents
+		testProject.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, null);
+		//recreate project but don't discover content
+		testProject.create(null);
+		testProject.open(IResource.NONE, null);
 	}
 
 	IFolder moveFolder() {
@@ -146,7 +162,7 @@ public class WorkspacePerformanceTest extends ResourceTest {
 			}
 
 			protected void test() {
-				createAndPopulateProject();
+				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 			}
 		}.run(this, REPEATS, 1);
 	}
@@ -155,7 +171,7 @@ public class WorkspacePerformanceTest extends ResourceTest {
 		//create the project contents
 		new PerformanceTestRunner() {
 			protected void setUp() {
-				createAndPopulateProject();
+				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 				waitForBackgroundActivity();
 			}
 
@@ -173,7 +189,7 @@ public class WorkspacePerformanceTest extends ResourceTest {
 		//create the project contents
 		new PerformanceTestRunner() {
 			protected void setUp() {
-				createAndPopulateProject();
+				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 				waitForBackgroundActivity();
 			}
 
@@ -191,7 +207,7 @@ public class WorkspacePerformanceTest extends ResourceTest {
 		//create the project contents
 		new PerformanceTestRunner() {
 			protected void setUp() {
-				createAndPopulateProject();
+				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 				waitForBackgroundActivity();
 			}
 
@@ -201,6 +217,28 @@ public class WorkspacePerformanceTest extends ResourceTest {
 
 			protected void test() {
 				moveFolder();
+			}
+		}.run(this, REPEATS, 1);
+	}
+
+	public void testRefreshProject() {
+		new PerformanceTestRunner() {
+			protected void setUp() throws CoreException {
+				createAndPopulateProject(50000);
+				deleteAndRecreateProject();
+				waitForBackgroundActivity();
+			}
+
+			protected void tearDown() throws CoreException {
+				testProject.delete(IResource.FORCE, null);
+			}
+
+			protected void test() {
+				try {
+					testProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					fail("Failed to refresh during testRefreshProject", e);
+				}
 			}
 		}.run(this, REPEATS, 1);
 	}
