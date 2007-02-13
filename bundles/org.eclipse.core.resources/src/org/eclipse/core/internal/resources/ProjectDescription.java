@@ -66,28 +66,26 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * Returns a copy of the given array with all duplicates removed
 	 */
-	private IProject[] copyAndRemoveDuplicates(IProject[] projects) {
-		IProject[] result = new IProject[projects.length];
-		int count = 0;
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			boolean found = false;
-			// scan to see if there are any other projects by the same name
-			for (int j = 0; j < count; j++)
-				if (project.equals(result[j]))
-					found = true;
-			if (!found)
-				result[count++] = project;
-		}
-		if (count < projects.length) {
-			//shrink array
-			IProject[] reduced = new IProject[count];
-			System.arraycopy(result, 0, reduced, 0, count);
-			return reduced;
-		}
-		return result;
-	}
-
+    private IProject[] copyAndRemoveDuplicates(IProject[] projects) {
+        IProject[] result = new IProject[projects.length];
+        int count = 0;
+        next: for (int i = 0; i < projects.length; i++) {
+                IProject project = projects[i];
+                // scan to see if there are any other projects by the same name
+                for (int j = 0; j < count; j++)
+                        if (project.equals(result[j]))
+                                continue next;
+                // not found
+                result[count++] = project;
+        }
+        if (count < projects.length) {
+                //shrink array
+                IProject[] reduced = new IProject[count];
+                System.arraycopy(result, 0, reduced, 0, count);
+                return reduced;
+        }
+        return result;
+}
 	/**
 	 * Returns the union of the description's static and dynamic project references,
 	 * with duplicates omitted. The calculation is optimized by caching the result
