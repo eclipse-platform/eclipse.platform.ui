@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,15 @@ import org.eclipse.core.tests.resources.ContentDescriptionManagerTest;
 import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
+/**
+ * Tests that the content description cache is preserved across sessions.
+ * 
+ * Note that this test is sensitive to the platform state stamp.  If the test
+ * starts failing, it might mean bundles are being re-installed unnecessarily
+ * in the second session.  For details, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=94859.
+ * @since 3.2
+ *
+ */
 public class TestBug93473 extends WorkspaceSessionTest {
 
 	public static Test suite() {
@@ -29,7 +38,6 @@ public class TestBug93473 extends WorkspaceSessionTest {
 
 	public TestBug93473(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
 	public void test1stSession() {
@@ -73,7 +81,7 @@ public class TestBug93473 extends WorkspaceSessionTest {
 	}
 
 	public void test2ndSession() {
-		// cache should preserve state accross sessions
+		// cache should preserve state across sessions
 		assertEquals("1.0", ContentDescriptionManager.USED_CACHE, ((Workspace) getWorkspace()).getContentDescriptionManager().getCacheState());
 	}
 
