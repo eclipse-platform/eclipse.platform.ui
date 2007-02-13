@@ -664,7 +664,13 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				if (ss.size() == 1) {
 					Object obj = ss.getFirstElement();
 					if (obj instanceof IDebugTarget || obj instanceof IProcess) {
-						getViewer().setSelection(selection, true);
+						Viewer viewer = getViewer();
+						if (viewer instanceof InternalTreeModelViewer) {
+							InternalTreeModelViewer tv = (InternalTreeModelViewer) viewer;
+							tv.setSelection(selection, true, true);
+						} else {
+							viewer.setSelection(selection, true);
+						}
 						return true;
 					}
 				}
