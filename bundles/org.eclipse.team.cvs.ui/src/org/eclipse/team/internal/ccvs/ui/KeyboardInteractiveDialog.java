@@ -16,9 +16,14 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.internal.ui.ITeamUIImages;
+import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -27,7 +32,11 @@ import org.eclipse.ui.PlatformUI;
 public class KeyboardInteractiveDialog extends TrayDialog {
   // widgets
   private Text[] texts;
+  protected Image keyLockImage;
+  protected Button allowCachingButton;
+  protected Text usernameField;
 
+  protected String userName;
   protected String domain;
   protected String destination;
   protected String name;
@@ -37,6 +46,10 @@ public class KeyboardInteractiveDialog extends TrayDialog {
   protected boolean[] echo;
   private String message;
   private String[] result;
+  protected boolean allowCaching=false;
+  
+  private boolean isPasswordAuth=false;
+
 
   /**
    * Creates a nwe KeyboardInteractiveDialog.
@@ -52,6 +65,7 @@ public class KeyboardInteractiveDialog extends TrayDialog {
 				   String location,
 				   String destination,
 				   String name,
+				   String userName, 
 				   String instruction,
 				   String[] prompt,
 				   boolean[] echo){
@@ -59,85 +73,192 @@ public class KeyboardInteractiveDialog extends TrayDialog {
     this.domain=location;
     this.destination=destination;
     this.name=name;
+    this.userName=userName;
     this.instruction=instruction;
     this.prompt=prompt;
     this.echo=echo;
     this.message=NLS.bind(CVSUIMessages.KeyboradInteractiveDialog_message, new String[] { destination+(name!=null && name.length()>0 ? ": "+name : "") }); //NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ 
+ 
+    if(KeyboardInteractiveDialog.isPasswordAuth(prompt)){
+        isPasswordAuth=true;
+      }
   }
   /**
    * @see Window#configureShell
    */
   protected void configureShell(Shell newShell) {
-    super.configureShell(newShell);
-    newShell.setText(message);
-  }
-  /**                                                                                           
-   * @see Window#create                                                                         
-   */
+		super.configureShell(newShell);
+		if (isPasswordAuth) {
+			newShell.setText(CVSUIMessages.UserValidationDialog_required);
+		} else {
+			newShell.setText(message);
+		}
+
+		// set F1 help
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
+				IHelpContextIds.KEYBOARD_INTERACTIVE_DIALOG);
+	}
+  /**
+	 * @see Window#create
+	 */
   public void create() {
-    super.create();
-    if(texts.length>0){
-      texts[0].setFocus();
-    }
-  }
-  /**                                                                                           
-   * @see Dialog#createDialogArea                                                               
-   */
+		super.create();
+
+		if (isPasswordAuth && usernameField != null && userName != null) {
+			usernameField.setText(userName);
+			usernameField.setEditable(false);
+		}
+
+		if (texts.length > 0) {
+			texts[0].setFocus();
+		}
+	}
+  /**
+	 * @see Dialog#createDialogArea
+	 */
   protected Control createDialogArea(Composite parent) {
-    Composite main=new Composite(parent, SWT.NONE);
-    GridLayout layout=new GridLayout();
-    layout.numColumns=3;
-    main.setLayout(layout);
-    main.setLayoutData(new GridData(GridData.FILL_BOTH));
-    
-	// set F1 help
-    PlatformUI.getWorkbench().getHelpSystem().setHelp(main, IHelpContextIds.KEYBOARD_INTERACTIVE_DIALOG);
-	
-    if (message!=null) {
-      Label messageLabel=new Label(main, SWT.WRAP);
-      messageLabel.setText(message);
-      GridData data=new GridData(GridData.FILL_HORIZONTAL);
-      data.horizontalSpan=3;
-      messageLabel.setLayoutData(data);
-    }
-    if(domain!=null){
-      Label label = new Label(main, SWT.WRAP);
-      label.setText(NLS.bind(CVSUIMessages.KeyboardInteractiveDialog_labelRepository, new String[] { domain })); 
-      GridData data=new GridData(GridData.FILL_HORIZONTAL);
-      data.horizontalSpan=3;
-      label.setLayoutData(data);
-    }
-    if (instruction!=null && instruction.length()>0) {
-      Label messageLabel=new Label(main, SWT.WRAP);
-      messageLabel.setText(instruction);
-      GridData data=new GridData(GridData.FILL_HORIZONTAL);
-      data.horizontalSpan=3;
-      messageLabel.setLayoutData(data);
-    }
-    createPasswordFields(main);
-    return main;
-  }
-  /**                                                                                           
-   * Creates the widgets that represent the entry area.                          
-   *                                                                                            
-   * @param parent  the parent of the widgets                                                   
+		Composite top = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+
+		top.setLayout(layout);
+		top.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Composite imageComposite = new Composite(top, SWT.NONE);
+		layout = new GridLayout();
+		imageComposite.setLayout(layout);
+		imageComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+		Composite main = new Composite(top, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 3;
+		main.setLayout(layout);
+		main.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		Label imageLabel = new Label(imageComposite, SWT.NONE);
+		keyLockImage = TeamImages
+				.getImageDescriptor(ITeamUIImages.IMG_KEY_LOCK).createImage();
+		imageLabel.setImage(keyLockImage);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL);
+		imageLabel.setLayoutData(data);
+
+		if (message != null) {
+			Label messageLabel = new Label(main, SWT.WRAP);
+			messageLabel.setText(message);
+			data = new GridData(GridData.FILL_HORIZONTAL
+					| GridData.GRAB_HORIZONTAL);
+			data.horizontalSpan = 3;
+			data.widthHint = 300;
+			messageLabel.setLayoutData(data);
+		}
+		
+		if (domain != null) {
+			Label d = new Label(main, SWT.WRAP);
+			d.setText(CVSUIMessages.UserValidationDialog_5);
+			data = new GridData();
+			d.setLayoutData(data);
+			Label label = new Label(main, SWT.WRAP);
+
+			label.setText(NLS.bind(
+					CVSUIMessages.UserValidationDialog_labelUser,
+					new String[] { domain }));
+
+			data = new GridData(GridData.FILL_HORIZONTAL
+					| GridData.GRAB_HORIZONTAL);
+			data.horizontalSpan = 2;
+			data.widthHint = 300;
+			label.setLayoutData(data);
+		}
+		
+		if (instruction != null && instruction.length() > 0) {
+			Label label = new Label(main, SWT.WRAP);
+			label.setText(instruction);
+			data = new GridData(GridData.FILL_HORIZONTAL
+					| GridData.GRAB_HORIZONTAL);
+			data.horizontalSpan = 3;
+			data.widthHint = 300;
+			label.setLayoutData(data);
+		}
+		
+		if (isPasswordAuth) {
+			createUsernameFields(main);
+		}
+
+		createPasswordFields(main);
+
+		if (isPasswordAuth) {
+			allowCachingButton = new Button(main, SWT.CHECK);
+			allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6);
+			data = new GridData(GridData.FILL_HORIZONTAL
+					| GridData.GRAB_HORIZONTAL);
+			data.horizontalSpan = 3;
+			allowCachingButton.setLayoutData(data);
+			allowCachingButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					allowCaching = allowCachingButton.getSelection();
+				}
+			});
+			Composite warningComposite = new Composite(main, SWT.NONE);
+			layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = 0;
+			layout.marginHeight = 0;
+			warningComposite.setLayout(layout);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.horizontalSpan = 3;
+			warningComposite.setLayoutData(data);
+			Label warningLabel = new Label(warningComposite, SWT.NONE);
+			warningLabel.setImage(getImage(DLG_IMG_MESSAGE_WARNING));
+			warningLabel.setLayoutData(new GridData(
+					GridData.VERTICAL_ALIGN_BEGINNING
+							| GridData.HORIZONTAL_ALIGN_BEGINNING));
+			Label warningText = new Label(warningComposite, SWT.WRAP);
+			warningText.setText(CVSUIMessages.UserValidationDialog_7);
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint = 300;
+			warningText.setLayoutData(data);
+		}
+
+		Dialog.applyDialogFont(parent);
+		return main;
+	}
+  
+  /**
+   * Creates the three widgets that represent the user name entry area.
+   * 
+   * @param parent  the parent of the widgets
    */
+  protected void createUsernameFields(Composite parent){
+    new Label(parent, SWT.NONE).setText(CVSUIMessages.UserValidationDialog_user);
+
+    usernameField=new Text(parent, SWT.BORDER);
+    GridData data=new GridData(GridData.FILL_HORIZONTAL);
+    data.horizontalSpan=2;
+    data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
+    usernameField.setLayoutData(data);
+  }
+  
+  /**
+	 * Creates the widgets that represent the entry area.
+	 * 
+	 * @param parent
+	 *            the parent of the widgets
+	 */
   protected void createPasswordFields(Composite parent) {
-    texts=new Text[prompt.length];
+	    texts=new Text[prompt.length];
 
-    for(int i=0; i<prompt.length; i++){
-      new Label(parent, SWT.NONE).setText(prompt[i]);
-      texts[i]=new Text(parent, SWT.BORDER);
-      GridData data=new GridData(GridData.FILL_HORIZONTAL);
-      data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
-      texts[i].setLayoutData(data);
-
-      if(!echo[i]){
-	texts[i].setEchoChar('*');
-      }
-      new Label(parent, SWT.NONE);
-    }
-
+	    for(int i=0; i<prompt.length; i++){
+	      new Label(parent, SWT.NONE).setText(prompt[i]);
+	      texts[i]=new Text(parent, SWT.BORDER|SWT.PASSWORD); 
+	      GridData data=new GridData(GridData.FILL_HORIZONTAL);
+	      data.horizontalSpan=2;
+	      data.widthHint=convertHorizontalDLUsToPixels(IDialogConstants.ENTRY_FIELD_WIDTH);
+	      texts[i].setLayoutData(data);
+	      if(!echo[i]){
+	        texts[i].setEchoChar('*');
+	      }     
+	    }
   }
   /**                                                                                           
    * Returns the entered values, or null                                          
@@ -148,6 +269,16 @@ public class KeyboardInteractiveDialog extends TrayDialog {
   public String[] getResult() {
     return result;
   }
+  
+  /**
+   * Returns <code>true</code> if the save password checkbox was selected.
+   * @return <code>true</code> if the save password checkbox was selected and <code>false</code>
+   * otherwise.
+   */
+  public boolean getAllowCaching(){
+    return allowCaching;
+  }
+  
   /**                                                                                           
    * Notifies that the ok button of this dialog has been pressed.                               
    * <p>                                                                                        
@@ -175,4 +306,24 @@ public class KeyboardInteractiveDialog extends TrayDialog {
     result=null;
     super.cancelPressed();
   }
+    
+  /* (non-Javadoc)
+   * @see org.eclipse.jface.dialogs.Dialog#close()
+   */
+  public boolean close(){
+    if(keyLockImage!=null){
+      keyLockImage.dispose();
+    }
+    return super.close();
+  }
+  
+  /**
+   * Guesses if this dialog is used for password authentication.
+   * @param prompt promts for keyboard-interactice auth method.
+   * @return <code>true</code> if this dialg is used for password authentication.
+   */
+  static boolean isPasswordAuth(String[] prompt) {
+		return prompt != null && prompt.length == 1
+				&& prompt[0].trim().equalsIgnoreCase("password:"); //$NON-NLS-1$
+	}
 }

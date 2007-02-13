@@ -41,9 +41,9 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 			}
 		}
 		if (!found) return;
-		IFileTypeInfo[] types = Team.getAllTypes();
-		for (int i = 0; i < types.length; i++) {
-			if (types[i].getExtension().equals("notes")) { //$NON-NLS-1$
+		IStringMapping[] mappings = Team.getFileContentManager().getExtensionMappings();
+		for (int i = 0; i < mappings.length; i++) {
+			if (mappings[i].getString().equals("notes")) { //$NON-NLS-1$
 				USE_ALTERNATE_PROMPTER = true;
 				return;
 			}
@@ -141,19 +141,25 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						     final String[] prompt,
 						     final boolean[] echo) throws CVSException {
 	    final String[][] result = new String[1][];
+	    final boolean[] allowCaching=new boolean[1];
 	    Display display = Display.getCurrent();
 	    if (display != null) {
-		result[0]=_promptForUserInteractive(location, destination, name, instruction, prompt, echo);
+		result[0]=_promptForUserInteractive(location, destination, name, instruction, prompt, echo, allowCaching);
 	    } 
 	    else {
 	    	// sync exec in default thread
 	    	Display.getDefault().syncExec(new Runnable() {
 	    		public void run() {
-	    			result[0]=_promptForUserInteractive(location, destination, name, instruction, prompt, echo);
+	    			result[0]=_promptForUserInteractive(location, destination, name, instruction, prompt, echo, allowCaching);
 	    		}
 		    });
 	    }
-	    return result[0];
+	    if (result[0] != null && location != null && 
+	    		KeyboardInteractiveDialog.isPasswordAuth(prompt)) {
+			location.setPassword(result[0][0]);
+			location.setAllowCaching(allowCaching[0]);
+		}
+		return result[0];
 	}
 
 	private String[] _promptForUserInteractive(final ICVSRepositoryLocation location, 
@@ -161,18 +167,24 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						   final String name,
 						   final String instruction,
 						   final String[] prompt,
-						   final boolean[] echo) {
+						   final boolean[] echo,
+						   final boolean[] allowCaching) {
 	
 		String domain = location == null ? null : location.getLocation(true);
+		String userName = location == null ? null : location.getUsername();
 		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
 										 domain,
 										 destination,
 										 name,
+										 userName, 
 										 instruction,
 										 prompt,
 										 echo);
 		dialog.open();
-		return dialog.getResult();
+	    String[] _result=dialog.getResult();
+	    if(_result!=null)
+	      allowCaching[0]=dialog.getAllowCaching();
+	    return _result;
 	}
 	
 	/**
