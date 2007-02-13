@@ -24,7 +24,7 @@ public class SyncUpdate extends Update {
     protected void sendFileStructure(Session session, ICVSResource[] resources,
             LocalOption[] localOptions, boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
 			
-		checkResourcesManaged(resources);
+		checkResourcesManaged(session, resources);
 		new FileStructureVisitor(session, localOptions, emptyFolders, true, false).visit(session, resources, monitor);
 	}
 	

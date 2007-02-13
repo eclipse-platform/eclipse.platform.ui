@@ -247,7 +247,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 				throw e;
 			} catch (TeamException e) {
 				// XXX why does getLogEntries throw TeamException?
-				throw new CVSException("", e); //$NON-NLS-1$
+				throw CVSException.wrapException(e);
 			}
 		}
 

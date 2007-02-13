@@ -16,6 +16,7 @@ import java.nio.channels.FileChannel;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -98,7 +99,8 @@ public class FileDiffOperation extends DiffOperation {
 			os = new FileOutputStream(tempFile);
 			return new PrintStream(os);
 		} catch (FileNotFoundException e) {
-			throw new CVSException(CVSUIMessages.GenerateDiffFileOperation_0, e); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, CVSUIMessages.GenerateDiffFileOperation_0, e);
+			throw new CVSException(status); 
 		}
 	}
 

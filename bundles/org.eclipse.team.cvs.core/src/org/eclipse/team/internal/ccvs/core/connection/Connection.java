@@ -15,6 +15,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import java.io.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 
@@ -72,7 +73,7 @@ public class Connection {
 			// Generally, errors on close are of no interest.
 			// However, log them if debugging is on
 			if (CVSProviderPlugin.getPlugin().isDebugging()) {
-				CVSProviderPlugin.log(new CVSCommunicationException(CVSMessages.Connection_cannotClose, ex));
+				CVSProviderPlugin.log(new CVSCommunicationException(CVSMessages.Connection_cannotClose, fCVSRoot, ex));
 			}
 		} finally {
 			fResponseStream = null;
@@ -88,7 +89,7 @@ public class Connection {
 		try {
 			getOutputStream().flush();	
 		} catch(IOException e) {
-			throw new CVSCommunicationException(e);
+			throw new CVSCommunicationException(fCVSRoot,e);
 		}
 	}
 	
@@ -130,17 +131,17 @@ public class Connection {
 		try {
 			serverConnection.open(monitor);
 		} catch (IOException e) {
-			throw new CVSCommunicationException(NLS.bind(CVSMessages.Connection_0, new String[] { fCVSRoot.getLocation(true), CVSCommunicationException.getMessageFor(e) }), e); 
+			throw new CVSCommunicationException(NLS.bind(CVSMessages.Connection_0, new String[] { fCVSRoot.getLocation(true), CVSCommunicationException.getMessageFor(e) }), fCVSRoot, e); 
 		}
-		fIsEstablished= true;
+		fIsEstablished= true; 
 	}
 	/**
 	 * Reads a line from the response stream.
 	 */
 	public String readLine() throws CVSException {
 		if (!isEstablished())
-			throw new CVSCommunicationException(CVSMessages.Connection_readUnestablishedConnection);
-		try {
+			throw new CVSCommunicationException(CVSMessages.Connection_readUnestablishedConnection,fCVSRoot,null);
+		try { 
 			InputStream in = getInputStream();
 			int index = 0;
 			int r;
@@ -153,7 +154,7 @@ public class Connection {
 			if (Policy.isDebugProtocol()) Policy.printProtocolLine(result);
 			return result;
 		} catch (IOException e) {
-			throw new CVSCommunicationException(e);
+			throw new CVSCommunicationException(fCVSRoot,e);
 		}
 	}
 	
@@ -182,7 +183,8 @@ public class Connection {
         try {
 			write(s.getBytes(fServerEncoding), false);
 		} catch (UnsupportedEncodingException e) {
-			throw new CVSException (e.getMessage());
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, e.getMessage(), e, fCVSRoot);
+			throw new CVSException (status);
 		}
 	}
 	
@@ -201,7 +203,8 @@ public class Connection {
 		try {
 			write(s.getBytes(fServerEncoding), true);
 		} catch (UnsupportedEncodingException e) {
-			throw new CVSException (e.getMessage());
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, e.getMessage(), e, fCVSRoot);
+			throw new CVSException (status);
 		}
 	}
 
@@ -215,7 +218,7 @@ public class Connection {
 	 */
 	void write(byte[] b, int off, int len, boolean newline) throws CVSException {
 		if (!isEstablished())
-			throw new CVSCommunicationException(CVSMessages.Connection_writeUnestablishedConnection);
+			throw new CVSCommunicationException(CVSMessages.Connection_writeUnestablishedConnection,fCVSRoot,null);
 			
 		if (Policy.isDebugProtocol())
 		    Policy.printProtocol(new String(b, off, len), newline);
@@ -227,7 +230,7 @@ public class Connection {
 				out.write(NEWLINE);
 			
 		} catch (IOException e) {
-			throw new CVSCommunicationException(e);
+			throw new CVSCommunicationException(fCVSRoot,e);
 		}
 	}
 }

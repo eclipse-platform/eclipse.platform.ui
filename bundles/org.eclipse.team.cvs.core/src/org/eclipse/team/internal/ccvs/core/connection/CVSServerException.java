@@ -55,6 +55,9 @@ public class CVSServerException extends CVSException {
 		return false;
 	}
 	
+	/** The status should have a status code of CVSStatus.SERVER_ERROR
+	 * @param status
+	 */
 	public CVSServerException(IStatus status) {
 		super(status);
 	}

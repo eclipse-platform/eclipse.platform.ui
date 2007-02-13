@@ -34,7 +34,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 
         private final JSchException e;
 
-        private SSH2IOException(String s, JSchException e) {
+        SSH2IOException(String s, JSchException e) {
             super(s);
             this.e = e;
         }
@@ -148,13 +148,13 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			}
 			int timeout = location.getTimeout();
 			inputStream = new PollingInputStream(new TimeoutInputStream(new FilterInputStream(channel_in) {
-						public void close() throws IOException {
+						public void close() {
 							// Don't close the underlying stream as it belongs to the session
 						}
 					},
 					8192 /*bufferSize*/, 1000 /*readTimeout*/, -1 /*closeTimeout*/, true /* growWhenFull */), timeout > 0 ? timeout : 1, monitor);
 			outputStream = new PollingOutputStream(new TimeoutOutputStream(new FilterOutputStream(channel_out) {
-						public void close() throws IOException {
+						public void close() {
 							// Don't close the underlying stream as it belongs to the session
 						}
 					},
@@ -170,7 +170,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			    String message = e.getMessage();
 			    if (JSchSession.isAuthenticationFailure(e)) {
                     // Do not retry as the Jsh library has it's own retry logic
-                    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_0, CVSAuthenticationException.NO_RETRY, e); 
+                    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_0, CVSAuthenticationException.NO_RETRY,location, e); 
 			    } else if (message.startsWith("Session.connect: ")) { //$NON-NLS-1$
 			        // Jsh has messages formatted like "Session.connect: java.net.NoRouteToHostException: ..."
 			        // Strip of the exception and try to convert it to a more meaningfull string

@@ -51,7 +51,7 @@ public class TemplateHandler extends ResponseHandler {
                 templateFile = CVSWorkspaceRoot.getCVSFileFor(SyncFileWriter.getTemplateFile(container));
             } catch (CVSException e) {
                 // Log the inability to create the template file
-                CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, "Could not write template file in " + container.getFullPath() + ": " + e.getMessage(), e)); //$NON-NLS-1$ //$NON-NLS-2$
+                CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, "Could not write template file in " + container.getFullPath() + ": " + e.getMessage(), e, session.getLocalRoot())); //$NON-NLS-1$ //$NON-NLS-2$
             }
 		}
 		if (container == null || templateFile == null) {

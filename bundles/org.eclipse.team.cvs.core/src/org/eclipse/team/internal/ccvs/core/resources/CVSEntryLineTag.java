@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 
 public class CVSEntryLineTag extends CVSTag {
@@ -61,7 +62,7 @@ public class CVSEntryLineTag extends CVSTag {
 		    entryLineDateTagFormatter.setTimeZone(TimeZone.getTimeZone("GMT")); //$NON-NLS-1$
 			return entryLineDateTagFormatter.parse(text);
 		} catch (ParseException e) {
-			CVSProviderPlugin.log(new CVSException("Tag name " + text + " is not of the expected format " + ENTRY_LINE_DATE_TAG_FORMAT, e)); //$NON-NLS-1$ //$NON-NLS-2$
+			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, "Tag name " + text + " is not of the expected format " + ENTRY_LINE_DATE_TAG_FORMAT, e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}		
 	}

@@ -76,6 +76,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 				ssh_port = Integer.parseInt(ssh_host.substring(ssh_host.lastIndexOf('#') + 1));
 				ssh_host = ssh_host.substring(0, ssh_host.lastIndexOf('#'));
 			} catch (Exception e) {
+				// Ignore
 			}
 		}
 
@@ -97,6 +98,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 							String foo = list[i].substring(0, list[i].indexOf(':'));
 							lport = Integer.parseInt(foo);
 						} catch (Exception ee) {
+							// Ignore
 						}
 						done = true;
 						break;
@@ -109,7 +111,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			} catch (JSchException ee) {
 				  retry--;
 				  if(retry<0){
-				    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_3, CVSAuthenticationException.NO_RETRY); 
+				    throw new CVSAuthenticationException(CVSSSH2Messages.CVSSSH2ServerConnection_3, CVSAuthenticationException.NO_RETRY, location); 
 				  }
 				  if(session != null && session.isConnected()){
 				    session.disconnect();
@@ -140,7 +142,7 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 			IConnectionMethod method = cvsrl.getMethod();
 			psc = method.createConnection(cvsrl, _password);
 		} catch (Exception e) {
-			throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
+			throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY, location);
 		}
 		psc.open(monitor);
 	}

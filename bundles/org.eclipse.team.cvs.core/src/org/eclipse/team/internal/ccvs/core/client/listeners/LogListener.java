@@ -96,7 +96,7 @@ public class LogListener extends CommandOutputListener {
     		// look for the following condition
     		// E cvs server: nothing known about fileName
     		if (serverMessage.startsWith(NOTHING_KNOWN_ABOUT)) {
-    			return new CVSStatus(IStatus.ERROR, CVSStatus.DOES_NOT_EXIST, commandRoot, line);
+    			return new CVSStatus(IStatus.ERROR, CVSStatus.DOES_NOT_EXIST, line, commandRoot);
     		}
     	}
     	return OK;

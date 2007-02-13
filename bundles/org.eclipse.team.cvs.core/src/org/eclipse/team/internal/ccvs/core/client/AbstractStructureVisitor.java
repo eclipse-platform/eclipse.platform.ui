@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -128,7 +125,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		// Send the directory to the server
 		String remotePath = mFolder.getRemoteLocation(session.getLocalRoot());
 		if (remotePath == null) {
-			throw new CVSException(CVSMessages.AbstractStructureVisitor_noRemote); 
+			IStatus status = new CVSStatus(IStatus.ERROR,CVSStatus.ERROR, CVSMessages.AbstractStructureVisitor_noRemote, session.getLocalRoot());
+			throw new CVSException(status); 
 		}
 		session.sendDirectory(localPath, remotePath);
 
@@ -192,7 +190,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		    final IResource resource = mFile.getIResource();
             try {
                 if (resource != null)
-                    Platform.getJobManager().beginRule(resource, monitor);
+                    Job.getJobManager().beginRule(resource, monitor);
 		        
 				sendEntryLineToServer(mFile, syncBytes);
 				if (mFile.exists() && mFile.isModified(null)) {
@@ -207,7 +205,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 				}
 		    } finally {
 		        if (resource != null)
-		            Platform.getJobManager().endRule(resource);
+		            Job.getJobManager().endRule(resource);
 		    }
 		} else {
 		    sendEntryLineToServer(mFile, syncBytes);

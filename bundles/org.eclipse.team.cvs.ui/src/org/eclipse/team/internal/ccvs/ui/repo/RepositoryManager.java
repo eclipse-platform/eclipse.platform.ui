@@ -475,9 +475,11 @@ public class RepositoryManager {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(new InputSource(stream), new RepositoriesViewContentHandler(this));
 		} catch (SAXException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex);
+			throw new CVSException(status); 
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { REPOSITORIES_VIEW_FILE }), ex);
+			throw new CVSException(status); 
 		}
 	}
 	
@@ -487,9 +489,11 @@ public class RepositoryManager {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(new InputSource(stream), new CommentHistoryContentHandler());
 		} catch (SAXException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex);
+			throw new CVSException(status); 
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSUIMessages.RepositoryManager_parsingProblem, new String[] { COMMENT_HIST_FILE }), ex);
+			throw new CVSException(status);  
 		}
 	}
 	
@@ -892,13 +896,15 @@ public class RepositoryManager {
 			parser.parse(new InputSource(stream),
 					new CommentTemplatesContentHandler());
 		} catch (SAXException ex) {
-			throw new CVSException(NLS.bind(
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(
 					CVSUIMessages.RepositoryManager_parsingProblem,
 					new String[] { COMMENT_TEMPLATES_FILE }), ex);
+			throw new CVSException(status);
 		} catch (ParserConfigurationException ex) {
-			throw new CVSException(NLS.bind(
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(
 					CVSUIMessages.RepositoryManager_parsingProblem,
 					new String[] { COMMENT_TEMPLATES_FILE }), ex);
+			throw new CVSException(status);
 		}
 	}
 	

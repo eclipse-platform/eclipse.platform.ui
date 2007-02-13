@@ -197,7 +197,8 @@ public class RemoteFolderTreeBuilder {
 				// We cannot handle the case where a project (i.e. the top-most CVS folder)
 				// has been deleted directly on the sever (i.e. deleted using rm -rf)
 				if (root.isCVSFolder() && ! root.isManaged()) {
-					throw new CVSException(NLS.bind(CVSMessages.RemoteFolderTreeBuild_folderDeletedFromServer, new String[] { root.getFolderSyncInfo().getRepository() })); 
+					IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.RemoteFolderTreeBuild_folderDeletedFromServer, new String[] { root.getFolderSyncInfo().getRepository() }),root);
+					throw new CVSException(status); 
 				} else {
 					return false;
 				}
@@ -226,7 +227,8 @@ public class RemoteFolderTreeBuilder {
 		        } else {
 		            path = resource.getFullPath().toString();
 		        }
-                throw new CVSException(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_0, new String[] { path })); 
+		        IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.RemoteFolderTreeBuilder_0, new String[] { path }), root);
+                throw new CVSException(status); 
 		    } else {
 		        // Just return. The remote tree will be null
 		        return;
@@ -775,7 +777,8 @@ public class RemoteFolderTreeBuilder {
 	private void updateRevision(String path, String revision) throws CVSException {
 		RemoteFolderTree folder = getRecoredRemoteFolder(Util.removeLastSegment(path));
 		if (folder == null) {
-			throw new CVSException(NLS.bind(CVSMessages.RemoteFolderTreeBuilder_missingParent, new String[] { path.toString(), revision }));
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.RemoteFolderTreeBuilder_missingParent, new String[] { path.toString(), revision }), root);
+			throw new CVSException(status);
 		}
 		((RemoteFile)folder.getFile(Util.getLastSegment(path))).setRevision(revision);
 	}

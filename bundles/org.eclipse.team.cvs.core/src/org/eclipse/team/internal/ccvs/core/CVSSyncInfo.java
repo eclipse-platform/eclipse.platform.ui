@@ -234,7 +234,7 @@ public class CVSSyncInfo extends SyncInfo {
 		if(info!=null) {
 			FolderSyncInfo parentInfo = local.getParent().getFolderSyncInfo();
 			if (parentInfo == null) {
-				return new CVSStatus(IStatus.ERROR, PARENT_NOT_MANAGED, NLS.bind(CVSMessages.CVSSyncInfo_9, new String[] { getLocal().getFullPath().toString() })); 
+				return new CVSStatus(IStatus.ERROR, PARENT_NOT_MANAGED, NLS.bind(CVSMessages.CVSSyncInfo_9, new String[] { getLocal().getFullPath().toString()}), getLocal()); 
 			}
 			info.setTag(parentInfo.getTag());
 		}
@@ -269,19 +269,19 @@ public class CVSSyncInfo extends SyncInfo {
 	 	
 	 	// Only works on folders
 		if (getLocal().getType() == IResource.FILE) {
-			return new CVSStatus(IStatus.WARNING, INVALID_RESOURCE_TYPE, NLS.bind(CVSMessages.CVSSyncInfo_7, new String[] { getLocal().getFullPath().toString() })); 
-		}
+			return new CVSStatus(IStatus.WARNING, INVALID_RESOURCE_TYPE, NLS.bind(CVSMessages.CVSSyncInfo_7, new String[] { getLocal().getFullPath().toString()}), getLocal()); 
+		} 
 	 	
 		// Only works on outgoing and conflicting changes
 		boolean outgoing = (getKind() & DIRECTION_MASK) == OUTGOING;
 		if (outgoing) {
-			return new CVSStatus(IStatus.WARNING, INVALID_SYNC_KIND, NLS.bind(CVSMessages.CVSSyncInfo_8, new String[] { getLocal().getFullPath().toString() })); 
+			return new CVSStatus(IStatus.WARNING, INVALID_SYNC_KIND, NLS.bind(CVSMessages.CVSSyncInfo_8, new String[] { getLocal().getFullPath().toString() }), getLocal()); 
 		}
 		
 		// The parent must be managed
 		ICVSFolder local = CVSWorkspaceRoot.getCVSFolderFor((IContainer)getLocal());
 		if (getLocal().getType() == IResource.FOLDER && ! local.getParent().isCVSFolder())
-			return new CVSStatus(IStatus.ERROR, PARENT_NOT_MANAGED, NLS.bind(CVSMessages.CVSSyncInfo_9, new String[] { getLocal().getFullPath().toString() })); 
+			return new CVSStatus(IStatus.ERROR, PARENT_NOT_MANAGED, NLS.bind(CVSMessages.CVSSyncInfo_9, new String[] { getLocal().getFullPath().toString() }), getLocal()); 
 		
 		// Ensure that the folder exists locally
 		if (! local.exists()) {
@@ -297,9 +297,9 @@ public class CVSSyncInfo extends SyncInfo {
 			FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 			FolderSyncInfo localInfo = local.getFolderSyncInfo();
 			if ( ! localInfo.getRoot().equals(remoteInfo.getRoot())) {
-				return new CVSStatus(IStatus.ERROR, SYNC_INFO_CONFLICTS, NLS.bind(CVSMessages.CVSRemoteSyncElement_rootDiffers, (new Object[] {local.getName(), remoteInfo.getRoot(), localInfo.getRoot()})));
+				return new CVSStatus(IStatus.ERROR, SYNC_INFO_CONFLICTS, NLS.bind(CVSMessages.CVSRemoteSyncElement_rootDiffers, (new Object[] {local.getName(), remoteInfo.getRoot(), localInfo.getRoot()})),getLocal());
 			} else if ( ! localInfo.getRepository().equals(remoteInfo.getRepository())) {
-				return new CVSStatus(IStatus.ERROR, SYNC_INFO_CONFLICTS, NLS.bind(CVSMessages.CVSRemoteSyncElement_repositoryDiffers, (new Object[] {local.getName(), remoteInfo.getRepository(), localInfo.getRepository()})));
+				return new CVSStatus(IStatus.ERROR, SYNC_INFO_CONFLICTS, NLS.bind(CVSMessages.CVSRemoteSyncElement_repositoryDiffers, (new Object[] {local.getName(), remoteInfo.getRepository(), localInfo.getRepository()})),getLocal());
 			}
 			// The folders are in sync so just return
 			return Status.OK_STATUS;
@@ -307,7 +307,7 @@ public class CVSSyncInfo extends SyncInfo {
 		
 		// The remote must exist if the local is not managed
 		if (remote == null) {
-			return new CVSStatus(IStatus.ERROR, REMOTE_DOES_NOT_EXIST, NLS.bind(CVSMessages.CVSSyncInfo_10, new String[] { getLocal().getFullPath().toString() })); 
+			return new CVSStatus(IStatus.ERROR, REMOTE_DOES_NOT_EXIST, NLS.bind(CVSMessages.CVSSyncInfo_10, new String[] { getLocal().getFullPath().toString() }),getLocal()); 
 		}
 		
 		// Since the parent is managed, this will also set the resource sync info. It is

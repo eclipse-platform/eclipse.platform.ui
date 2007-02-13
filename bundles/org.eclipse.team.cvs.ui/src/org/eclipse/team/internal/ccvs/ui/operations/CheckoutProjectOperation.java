@@ -17,8 +17,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
@@ -156,7 +155,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				// One of the projects is mapped to a provider that locks the workspace.
 				// Just return the workspace root rule
 				try {
-					Platform.getJobManager().beginRule(schedulingRule, pm);
+					Job.getJobManager().beginRule(schedulingRule, pm);
 					// Still use the projects as the inner rule so we get the proper batching of sync info write
 					EclipseSynchronizer.getInstance().run(MultiRule.combine(targetProjects), new ICVSRunnable() {
 						public void run(IProgressMonitor monitor) throws CVSException {
@@ -164,7 +163,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 						}
 					}, Policy.subMonitorFor(pm, 90));
 				} finally {
-					Platform.getJobManager().endRule(schedulingRule);
+					Job.getJobManager().endRule(schedulingRule);
 				}
 			} else {
 				EclipseSynchronizer.getInstance().run(schedulingRule, new ICVSRunnable() {
@@ -365,7 +364,7 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 			Policy.checkCanceled(monitor);
 			if (needsPromptForOverwrite(project) && !promptToOverwrite(remoteFolder, project)) {
 				// User said no to this project but not no to all
-				return new CVSStatus(IStatus.INFO, IStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() })); 
+				return new CVSStatus(IStatus.INFO, IStatus.CANCEL, NLS.bind(CVSUIMessages.CheckoutProjectOperation_0, new String[] { remoteFolder.getRepositoryRelativePath() }), remoteFolder); 
 			}
 		}
 		// Create the projects and remove any previous content

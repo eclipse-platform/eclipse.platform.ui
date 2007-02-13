@@ -20,9 +20,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSMessages;
+import org.eclipse.team.internal.ccvs.core.*;
 
 /**
  * This class extracts matches server lines to expected patterns and extracts
@@ -41,7 +41,8 @@ public class ServerMessageLineMatcher {
 		List variables = new ArrayList();
 		while (matcher.find()) {
 			if (matcher.groupCount() != 2) {
-				throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_5, new String[] { template })); 
+				IStatus status = new CVSStatus(IStatus.ERROR,NLS.bind(CVSMessages.ServerMessageLineMatcher_5, new String[] { template }));
+				throw new CVSException(status); 
 			}
 			variables.add(matcher.group(2));
 		}
@@ -63,7 +64,8 @@ public class ServerMessageLineMatcher {
 			count++;
 		}
 		if (count != variables.size()) {
-			throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_6, new String[] { template })); 
+			IStatus status = new CVSStatus(IStatus.ERROR,NLS.bind(CVSMessages.ServerMessageLineMatcher_6, new String[] { template }));
+			throw new CVSException(status); 
 		}
 
 		// Create the pattern fir matching lines from the server
@@ -77,7 +79,8 @@ public class ServerMessageLineMatcher {
 		for (int i = 0; i < expectedVariables.length; i++) {
 			String expected = expectedVariables[i];
 			if (!variables.contains(expected)) {
-				throw new CVSException(NLS.bind(CVSMessages.ServerMessageLineMatcher_7, new String[] { expected, template })); 
+				IStatus status = new CVSStatus(IStatus.ERROR,NLS.bind(CVSMessages.ServerMessageLineMatcher_7, new String[] { expected, template }));
+				throw new CVSException(status); 
 			}
 		}
 	}

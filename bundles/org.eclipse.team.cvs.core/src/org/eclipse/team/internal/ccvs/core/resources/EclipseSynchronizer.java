@@ -64,14 +64,14 @@ public class EclipseSynchronizer implements IFlushOperation {
 	private static EclipseSynchronizer instance;
 	
 	// track resources that have changed in a given operation
-	private ILock lock = Platform.getJobManager().newLock();
+	private ILock lock = Job.getJobManager().newLock();
 	private ReentrantLock resourceLock = new ReentrantLock();
 	
 	private SynchronizerSyncInfoCache synchronizerCache = new SynchronizerSyncInfoCache();
 	private SessionPropertySyncInfoCache sessionPropertyCache = new SessionPropertySyncInfoCache(synchronizerCache);
 	
 	/*
-	 * Package private contructor to allow specialized subclass for handling folder deletions
+	 * Package private constructor to allow specialized subclass for handling folder deletions
 	 */
 	EclipseSynchronizer() {		
 	}
@@ -87,7 +87,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	public SyncInfoCache getSyncInfoCacheFor(IResource resource) {
-		if (resource.exists() && resource.isLocal(IResource.DEPTH_ZERO)) {
+		if (resource.exists()) {
 			return sessionPropertyCache;
 		} else {
 			return synchronizerCache;
@@ -115,8 +115,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 			// Allow the set if the parent is a CVS folder since
 			// this can occur when creating phantom folders
 			if (getFolderSync(folder.getParent()) == null) {
-				throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
-					NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() })); 
+				IStatus status = new CVSStatus(IStatus.ERROR, TeamException.UNABLE,
+						NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() }),folder);
+				throw new CVSException(status); 
 			}
 		}
 		ISchedulingRule rule = null;
@@ -220,8 +221,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 		Assert.isNotNull(info); // enforce the use of deleteResourceSync
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
-			throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
-				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); 
+			IStatus status = new CVSStatus(IStatus.ERROR, TeamException.UNABLE,
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() }), resource);
+			throw new CVSException(status); 
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -302,8 +304,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 		Assert.isNotNull(syncBytes); // enforce the use of deleteResourceSync
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() == IResource.ROOT || !isValid(parent)) {
-			throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
-				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() })); 
+			IStatus status = new CVSStatus(IStatus.ERROR, TeamException.UNABLE,
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingResourceSync, new String[] { resource.getFullPath().toString() }),resource);
+			throw new CVSException(status); 
 		}
 		ISchedulingRule rule = null;
 		try {
@@ -393,8 +396,9 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	public void addIgnored(IContainer folder, String pattern) throws CVSException {
 		if (folder.getType() == IResource.ROOT || ! folder.exists()) {
-			throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
-				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingIgnorePattern, new String[] { folder.getFullPath().toString() })); 
+			IStatus status = new CVSStatus(IStatus.ERROR, TeamException.UNABLE,
+				NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingIgnorePattern, new String[] { folder.getFullPath().toString() }),folder);
+			throw new CVSException(status); 
 		}
 		ISchedulingRule rule = null;
 		try {

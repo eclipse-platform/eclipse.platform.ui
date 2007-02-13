@@ -20,6 +20,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
+
 /**
  * Represents handles to CVS resource on the local file system. Synchronization
  * information is taken from the CVS subdirectories. 
@@ -61,7 +62,8 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 			if (result.length() == 0) return CURRENT_LOCAL_FOLDER;
 			return result;	
 		} catch (ClassCastException e) {
-			throw new CVSException(CVSMessages.EclipseResource_invalidResourceClass, e); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, CVSMessages.EclipseResource_invalidResourceClass, e, root);
+			throw new CVSException(status); 
 		}
 	}
 

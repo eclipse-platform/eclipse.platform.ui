@@ -151,7 +151,8 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 			}	
 		}
 		if (!exists) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, CVSStatus.DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_doesNotExist, new String[] { this.parentFolder.getRepositoryRelativePath() }))); 
+			IStatus notExistStatus = new CVSStatus(IStatus.ERROR, CVSStatus.DOES_NOT_EXIST, NLS.bind(CVSMessages.RemoteFolder_doesNotExist, new String[] { this.parentFolder.getRepositoryRelativePath() }), parentFolder);
+			throw new CVSException(notExistStatus); 
 		}
 		
 		// Report any internal exceptions that occured fetching the members

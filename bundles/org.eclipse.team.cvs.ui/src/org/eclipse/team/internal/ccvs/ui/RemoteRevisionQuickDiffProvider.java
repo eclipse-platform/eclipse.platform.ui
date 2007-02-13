@@ -289,13 +289,15 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 			document.set(caw.toString());
 			//System.out.println("+ CVSQuickDiff: updating document : " + caw.toString());
 		} catch (IOException x) {
-			throw new CVSException(CVSUIMessages.RemoteRevisionQuickDiffProvider_readingFile, x); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, CVSUIMessages.RemoteRevisionQuickDiffProvider_readingFile, x);
+			throw new CVSException(status); 
 		} finally {
 			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException x) {
-					throw new CVSException(CVSUIMessages.RemoteRevisionQuickDiffProvider_closingFile, x); 
+					IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, CVSUIMessages.RemoteRevisionQuickDiffProvider_closingFile, x);
+					throw new CVSException(status); 
 				}
 			}
 		}

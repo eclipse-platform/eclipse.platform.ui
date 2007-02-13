@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
  
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.TeamStatus;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 	
-public class CVSStatus extends Status {
+public class CVSStatus extends TeamStatus {
 
 	/*** Status codes ***/
 	public static final int SERVER_ERROR = -10;
@@ -35,30 +39,52 @@ public class CVSStatus extends Status {
 	public static final int UNMEGERED_BINARY_CONFLICT = -26;
 	public static final int INVALID_LOCAL_RESOURCE_PATH = -27;
 	public static final int RESPONSE_HANDLING_FAILURE = -28;
+	public static final int COMMUNICATION_FAILURE = -29;
+	public static final int AUTHENTICATION_FAILURE = -30;
 	
 	// Path for resource related status
 	private ICVSFolder commandRoot;
+	// Server information
+	private ICVSRepositoryLocation cvsLocation;
 
-	public CVSStatus(int severity, int code, String message, Throwable t) {
-		super(severity, CVSProviderPlugin.ID, code, message, t);
+	public CVSStatus(int severity, int code, String message, Throwable t, ICVSRepositoryLocation cvsLocation) {
+		super(severity, CVSProviderPlugin.ID, code, message, t,null);
+		this.cvsLocation = cvsLocation;
 	}
 	
-	public CVSStatus(int severity, int code, String message) {
-		this(severity, code, message, null);
+	public CVSStatus(int severity, int code, String message,ICVSRepositoryLocation cvsLocation) {
+		this(severity, code, message, null, cvsLocation);
 	}
 	
-	public CVSStatus(int severity, int code, ICVSFolder commandRoot, String message) {
-		this(severity, code, message, null);
+	public CVSStatus(int severity, int code, String message, Throwable t, IResource cvsResource) {
+		super(severity, CVSProviderPlugin.ID, code, message, t, cvsResource);
+	}	
+	
+	public CVSStatus(int severity, int code, String message, IResource resource) {
+		this(severity, code, message, null, resource);
+	}	
+	
+	public CVSStatus(int severity, int code, String message, Throwable t, ICVSFolder commandRoot) {
+		super(severity, CVSProviderPlugin.ID, code, message, t, null);
 		this.commandRoot = commandRoot;
 	}
 	
+	public CVSStatus(int severity, int code, String message, ICVSFolder commandRoot) {
+		this(severity, code, message, null, commandRoot);
+	}
+	
+	public CVSStatus(int severity, int code, String message, Throwable t) {
+		super(severity, CVSProviderPlugin.ID, code, message, t, null);
+	}	
+	
 	public CVSStatus(int severity, String message, Throwable t) {
-		this(severity, 0, message, t);
+		super(severity, CVSProviderPlugin.ID, CVSStatus.ERROR,  message, t, null);
 	}
 	
 	public CVSStatus(int severity, String message) {
-		this(severity, severity, message, null);
-	}
+		super(severity, CVSProviderPlugin.ID, CVSStatus.ERROR,  message, null, null);
+	}	
+	
 	/**
 	 * @see IStatus#getMessage()
 	 */
@@ -110,5 +136,35 @@ public class CVSStatus extends Status {
         }
         return true;
     }
+
+	public ICVSRepositoryLocation getCvsLocation() {
+		if (cvsLocation==null){
+			try {
+			if (commandRoot!=null){
+				FolderSyncInfo info = commandRoot.getFolderSyncInfo();
+				if (info!=null){
+					String repoString = info.getRoot();
+					cvsLocation = KnownRepositories.getInstance().getRepository(repoString);
+				}
+			} else if (getResource()!=null){
+				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(getResource().getProject());
+				FolderSyncInfo info = folder.getFolderSyncInfo();
+				if (info!=null){
+					String repoString = info.getRoot();
+					cvsLocation = KnownRepositories.getInstance().getRepository(repoString);
+				}
+			}
+			} catch (CVSException e){
+				// do nothing as we are already creating a status for an exception
+				// we may need to trace it though
+			}
+		}
+		return cvsLocation;
+	}
+
+	public ICVSFolder getCommandRoot() {
+		return commandRoot;
+	}
+
 
 }

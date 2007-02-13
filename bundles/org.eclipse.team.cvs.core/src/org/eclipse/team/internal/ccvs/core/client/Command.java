@@ -253,18 +253,19 @@ public abstract class Command extends Request {
 	 */
 	protected void sendFileStructure(Session session, ICVSResource[] resources,
 		LocalOption[] localOptions, boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
-		checkResourcesManaged(resources);
+		checkResourcesManaged(session, resources);
 		
 		new FileStructureVisitor(session, localOptions, emptyFolders, true).visit(session, resources, monitor);
 	}
 
 	/**
 	 * Checks that all work resources are managed.
-	 * 
+	 * @param session TODO
 	 * @param resources the resource arguments for the command
+	 * 
 	 * @throws CVSException if some resources are not managed
 	 */
-	protected void checkResourcesManaged(ICVSResource[] resources) throws CVSException {
+	protected void checkResourcesManaged(Session session, ICVSResource[] resources) throws CVSException {
 		for (int i = 0; i < resources.length; ++i) {
 			ICVSFolder folder;
 			if (resources[i].isFolder()) {
@@ -274,7 +275,8 @@ public abstract class Command extends Request {
 				folder = resources[i].getParent();
 			}
 			if (!folder.isCVSFolder() && folder.exists()) {
-				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));
+				IStatus status = new CVSStatus(IStatus.ERROR,CVSStatus.ERROR,NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }),session.getLocalRoot());
+				throw new CVSException(status);
 			}
 		}
 	}

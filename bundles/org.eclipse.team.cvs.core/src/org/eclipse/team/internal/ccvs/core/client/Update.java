@@ -152,9 +152,9 @@ public class Update extends Command {
 	/**
 	 * We allow unmanaged resources as long as there parents are managed.
 	 * 
-	 * @see Command#checkResourcesManaged(ICVSResource[])
+	 * @see Command#checkResourcesManaged(Session, ICVSResource[])
 	 */
-	protected void checkResourcesManaged(ICVSResource[] resources) throws CVSException {
+	protected void checkResourcesManaged(Session session, ICVSResource[] resources) throws CVSException {
 		for (int i = 0; i < resources.length; ++i) {
 			ICVSFolder folder;
 			if (resources[i].isFolder()) {
@@ -170,7 +170,8 @@ public class Update extends Command {
 			if (folder==null || (!folder.isCVSFolder() && folder.exists())) {
                 if (folder == null)
                     folder = (ICVSFolder)resources[i];
-				throw new CVSException(NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }));
+                IStatus status = new CVSStatus(IStatus.ERROR,CVSStatus.ERROR,NLS.bind(CVSMessages.Command_argumentNotManaged, new String[] { folder.getName() }),session.getLocalRoot());
+				throw new CVSException(status);
 			}
 		}
 	}

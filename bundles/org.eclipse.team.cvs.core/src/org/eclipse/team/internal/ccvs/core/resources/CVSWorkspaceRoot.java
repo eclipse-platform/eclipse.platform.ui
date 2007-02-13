@@ -100,7 +100,7 @@ public class CVSWorkspaceRoot {
 					// parent handle. If this is the case, isManaged should return false
 					// now. If it doesn't, then we should log an error.
 					if (resource.isManaged()) {
-						CVSProviderPlugin.log(new CVSException(NLS.bind(CVSMessages.CVSWorkspaceRoot_11, new String[] { Util.getFullestPath(resource) }))); 
+						CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR,CVSStatus.ERROR, NLS.bind(CVSMessages.CVSWorkspaceRoot_11, new String[] { Util.getFullestPath(resource) }),resource.getIResource())); 
 					}
 				} else {
 					return RemoteFile.getBase(parent, (ICVSFile)resource);
@@ -133,7 +133,7 @@ public class CVSWorkspaceRoot {
 			}
 			// The types need to match or we're in trouble
 			if (remote != null && !(remote.isContainer() == managed.isFolder()))
-				throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_typesDiffer, new String[] { resource.getFullPath().toString() }), null)); 
+				throw new CVSException(new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_typesDiffer, new String[] { resource.getFullPath().toString() }), resource)); 
 		}
 		return remote;
 	}
@@ -207,7 +207,8 @@ public class CVSWorkspaceRoot {
 	public ICVSRepositoryLocation getRemoteLocation() throws CVSException {
 		FolderSyncInfo info = localRoot.getFolderSyncInfo();
 		if (info == null) {
-			throw new CVSException(NLS.bind(CVSMessages.CVSWorkspaceRoot_notCVSFolder, new String[] { localRoot.getName() }));  
+			IStatus status = new CVSStatus(IStatus.ERROR,CVSStatus.RESOURCE_SYNC_INFO_ERROR,NLS.bind(CVSMessages.CVSWorkspaceRoot_notCVSFolder, new String[] { localRoot.getName() }),localRoot);
+			throw new CVSException(status);  
 		}
 		return KnownRepositories.getInstance().getRepository(info.getRoot());
 	}

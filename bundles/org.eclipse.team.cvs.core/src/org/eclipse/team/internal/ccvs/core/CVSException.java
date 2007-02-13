@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 
 /**
@@ -33,25 +32,13 @@ public class CVSException extends TeamException {
 	private static final long serialVersionUID = 1L;
 
     public CVSException(CoreException e) {
-		super(e);
-	}
-
-	public CVSException(int severity, int code, String message, Throwable e) {
-		super(new CVSStatus(severity, code, message, e));
-	}
-	
-	public CVSException(int severity, int code, String message) {
-		this(severity, code, message, null);
+    	super(e);
 	}
 
 	public CVSException(String message) {
-		super(new CVSStatus(IStatus.ERROR, UNABLE, message, null));
+		this(new CVSStatus(IStatus.ERROR, message));
 	}
-
-	public CVSException(String message, Throwable e) {
-		this(IStatus.ERROR, UNABLE, message, e);
-	}
-
+    
 	public CVSException(IStatus status) {
 		super(status);
 	}
@@ -60,16 +47,14 @@ public class CVSException extends TeamException {
 	 * Static helper methods for creating exceptions
 	 */
 	public static CVSException wrapException(IResource resource, String message, IOException e) {
-		// NOTE: we should record the resource somehow
-		// We should also inlcude the IO message
-		return new CVSException(new CVSStatus(IStatus.ERROR, IO_FAILED, message, e));
+		return new CVSException(new CVSStatus(IStatus.ERROR, IO_FAILED, message, e, resource));
 	}
 
 	/*
 	 * Static helper methods for creating exceptions
 	 */
 	public static CVSException wrapException(IResource resource, String message, CoreException e) {
-		return new CVSException(new CVSStatus(IStatus.ERROR, e.getStatus().getCode(), message, e));
+		return new CVSException(new CVSStatus(IStatus.ERROR, e.getStatus().getCode(), message, e, resource));
 	}
 
 	/*
@@ -84,7 +69,9 @@ public class CVSException extends TeamException {
 			}
 			t = target;
 		}
-		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, t.getMessage() != null ? t.getMessage() : "",	t)); //$NON-NLS-1$
+		//TODO: fix the caller to include a resource
+		//TODO: fix the caller to setup the error code
+		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, t.getMessage() != null ? t.getMessage() : "", t, (IResource)null)); //$NON-NLS-1$
 	}
 	
 	public static CVSException wrapException(CoreException e) {

@@ -44,7 +44,7 @@ public class Commit extends Command {
 		throws CVSException {			
 
 		// Get the folders we want to work on
-		checkResourcesManaged(resources);
+		checkResourcesManaged(session, resources);
 		
 		// Send all changed files to the server	
 		ModifiedFileSender visitor = new ModifiedFileSender(session, localOptions);

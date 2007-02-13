@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
 import java.io.*;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
@@ -153,7 +154,8 @@ public class FolderSyncInfo {
 			}
 			return root.substring(index);
 		} catch (IndexOutOfBoundsException e) {
-			throw new CVSException(CVSMessages.FolderSyncInfo_Maleformed_root_4); 
+			IStatus status = new CVSStatus(IStatus.ERROR,CVSMessages.FolderSyncInfo_Maleformed_root_4, e);
+			throw new CVSException(status); 
 		}
 	}
 	

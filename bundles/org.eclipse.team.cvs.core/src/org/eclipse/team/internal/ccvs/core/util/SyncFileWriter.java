@@ -619,7 +619,8 @@ public class SyncFileWriter {
 			IFolder baseFolder = getBaseDirectory(file);
 			IFile source = baseFolder.getFile(new Path(null, file.getName()));
 			if (!source.exists()) {
-				throw new CVSException(NLS.bind(CVSMessages.SyncFileWriter_baseNotAvailable, new String[] { file.getFullPath().toString() })); 
+				IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.SyncFileWriter_baseNotAvailable, new String[] { file.getFullPath().toString() }), file);
+				throw new CVSException(status); 
 			}
 			if (file.exists()) {
 				file.delete(false /* force */, true /* keep history */, Policy.subMonitorFor(monitor, 10));

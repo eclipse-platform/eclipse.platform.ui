@@ -925,7 +925,8 @@ public class EclipseTest extends ResourceTest {
 				try {
 					file.setContents(new ByteArrayInputStream(getFileContents(file).getBytes()), false, false, null);
 				} catch (IOException e) {
-					throw new CVSException("Error reading file contents", e);
+					CVSStatus status = new CVSStatus(IStatus.ERROR, "Error reading file contents", e);
+					throw new CVSException(status);
 				}
 			}
 		} while (!cvsFile.isModified(null));

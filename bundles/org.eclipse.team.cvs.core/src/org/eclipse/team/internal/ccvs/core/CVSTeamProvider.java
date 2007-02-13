@@ -170,7 +170,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 			this.workspaceRoot = new CVSWorkspaceRoot(project);
 			// Ensure that the project has CVS info
 			if (workspaceRoot.getLocalRoot().getFolderSyncInfo() == null) {
-				CVSProviderPlugin.log(new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_noFolderInfo, new String[] { project.getName() })))); 
+				IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.RESOURCE_SYNC_INFO_ERROR, NLS.bind(CVSMessages.CVSTeamProvider_noFolderInfo, new String[] { project.getName() }),project);
+				CVSProviderPlugin.log(status); 
 			}
 		} catch (CVSException e) {
 			// Ignore exceptions here. They will be surfaced elsewhere
@@ -648,7 +649,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 			if (property == null) return CVSProviderPlugin.getPlugin().getFetchAbsentDirectories();
 			return Boolean.valueOf(property).booleanValue();
 		} catch (CoreException e) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorGettingFetchProperty, new String[] { project.getName() }), e)); 
+			throw new CVSException(new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorGettingFetchProperty, new String[] { project.getName() }), e, project)); 
 		}
 	}
 	
@@ -664,7 +665,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 		try {
 			getProject().setPersistentProperty(FETCH_ABSENT_DIRECTORIES_PROP_KEY, fetchAbsentDirectories);
 		} catch (CoreException e) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorSettingFetchProperty, new String[] { project.getName() }), e)); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorSettingFetchProperty, new String[] { project.getName() }), e, project);
+			throw new CVSException(status); 
 		}
 	}
 	
@@ -694,12 +696,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 		try {
 			if (cvsFolder.isCVSFolder()) {
 				// There is a remote folder that overlaps with the link so disallow
-				return new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_overlappingRemoteFolder, new String[] { resource.getFullPath().toString() })); 
+				return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_overlappingRemoteFolder, new String[] { resource.getFullPath().toString() }),resource); 
 			} else {
 				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(resource.getParent().getFile(new Path(resource.getName())));
 				if (cvsFile.isManaged()) {
 					// there is an outgoing file deletion that overlaps the link so disallow
-					return new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_overlappingFileDeletion, new String[] { resource.getFullPath().toString() })); 
+					return new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_overlappingFileDeletion, new String[] { resource.getFullPath().toString() }),resource); 
 				}
 			}
 		} catch (CVSException e) {
@@ -836,7 +838,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 		} catch (CoreException e) {
 			if (project.isAccessible()) {
 				// We only care if the project still exists
-				throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorGettingWatchEdit, new String[] { project.getName() }), e)); 
+				IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorGettingWatchEdit, new String[] { project.getName() }), e, project);
+				throw new CVSException(status); 
 			}
 		}
 		return false;
@@ -852,7 +855,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 			project.setPersistentProperty(WATCH_EDIT_PROP_KEY, enabled);
 			project.setSessionProperty(WATCH_EDIT_PROP_KEY, enabled);
 		} catch (CoreException e) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorSettingWatchEdit, new String[] { project.getName() }), e)); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR, NLS.bind(CVSMessages.CVSTeamProvider_errorSettingWatchEdit, new String[] { project.getName() }), e, project);
+			throw new CVSException(status); 
 		}
 	}
 	

@@ -161,13 +161,13 @@ public abstract class Request {
 				} else {
 					argument = NLS.bind(CVSMessages.Command_seriousServerError, new String[] { argument }); 
 					if (!session.hasErrors()) {
-						session.addError(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, argument));
+						session.addError(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, argument,session.getLocalRoot()));
 					}
 					serious = true;
 				}
 					
 				if (!session.hasErrors()) {
-				    session.addError(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, CVSMessages.Command_noMoreInfoAvailable));
+				    session.addError(new CVSStatus(IStatus.ERROR, CVSStatus.SERVER_ERROR, CVSMessages.Command_noMoreInfoAvailable,session.getLocalRoot()));
 				}
 				IStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.SERVER_ERROR, 
 				        session.getErrors(),

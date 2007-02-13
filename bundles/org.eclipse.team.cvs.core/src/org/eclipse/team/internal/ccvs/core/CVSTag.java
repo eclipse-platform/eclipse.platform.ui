@@ -46,7 +46,8 @@ public class CVSTag implements ITag {
 		try {
 			return tagNameFormat.parse(name);
 		} catch (ParseException e) {
-			CVSProviderPlugin.log(new CVSException("Tag name " + name + " is not of the expected format " + DATE_TAG_NAME_FORMAT, e)); //$NON-NLS-1$ //$NON-NLS-2$
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR,"Tag name " + name + " is not of the expected format " + DATE_TAG_NAME_FORMAT,e ); //$NON-NLS-1$ //$NON-NLS-2$
+			CVSProviderPlugin.log(new CVSException(status)); 
 			return null;
 		}
 	}

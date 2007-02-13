@@ -245,9 +245,9 @@ public class PServerConnection implements IServerConnection {
 		// If the last line is the login failed (I HATE YOU) message, return authentication failure
 		if (LOGIN_FAILED.equals(line)) {
 		    if (message.length() == 0) {
-		        throw new CVSAuthenticationException(CVSMessages.PServerConnection_loginRefused, CVSAuthenticationException.RETRY);
+		        throw new CVSAuthenticationException(CVSMessages.PServerConnection_loginRefused, CVSAuthenticationException.RETRY,cvsroot);
 		    } else {
-		        throw new CVSAuthenticationException(message, CVSAuthenticationException.RETRY);
+		        throw new CVSAuthenticationException(message, CVSAuthenticationException.RETRY,cvsroot);
 		    }
 		}
 		
@@ -257,7 +257,7 @@ public class PServerConnection implements IServerConnection {
 		else
 			message += separator + line;
 		if (message.indexOf(NO_SUCH_USER) != -1)
-			throw new CVSAuthenticationException(NLS.bind(CVSMessages.PServerConnection_invalidUser, (new Object[] {message})), CVSAuthenticationException.RETRY);
+			throw new CVSAuthenticationException(NLS.bind(CVSMessages.PServerConnection_invalidUser, (new Object[] {message})), CVSAuthenticationException.RETRY,cvsroot);
 		throw new IOException(NLS.bind(CVSMessages.PServerConnection_connectionRefused, (new Object[] { message })));
 	}
 	/*
@@ -318,7 +318,7 @@ public class PServerConnection implements IServerConnection {
 	}
 	
 	private void throwInValidCharacter() throws CVSAuthenticationException {
-		throw new CVSAuthenticationException(CVSMessages.PServerConnection_invalidChars, CVSAuthenticationException.RETRY);
+		throw new CVSAuthenticationException(CVSMessages.PServerConnection_invalidChars, CVSAuthenticationException.RETRY, cvsroot);
 	}
     
     

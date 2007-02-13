@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.syncinfo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -136,8 +132,8 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 				if (parentBytes == null) {
 					IProject project = resource.getProject();
 					if (project.exists() && RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) != null) {
-						CVSProviderPlugin.log(new CVSException( 
-								NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnGet, new String[] { getSyncName(getByteStore()).toString(), resource.getFullPath().toString() }))); 
+						IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR,NLS.bind(CVSMessages.ResourceSynchronizer_missingParentBytesOnGet, new String[] { getSyncName(getByteStore()).toString(), resource.getFullPath().toString() }),resource);
+						CVSProviderPlugin.log(status); 
 						// Assume there is no remote and the problem is a programming error
 					}
 					return null;
@@ -344,7 +340,7 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 	}
 	
 	private boolean isJobInFamilyRunning(Object family) {
-		Job[] jobs = Platform.getJobManager().find(family);
+		Job[] jobs = Job.getJobManager().find(family);
 		if (jobs != null && jobs.length > 0) {
 			for (int i = 0; i < jobs.length; i++) {
 				Job job = jobs[i];

@@ -763,7 +763,8 @@ public class Session {
 		        handleErrorLine(sizeLine.substring(1).trim(), org.eclipse.core.runtime.Status.OK_STATUS);
 		        return;
 		    } else {
-		        throw new CVSException(CVSMessages.Session_badInt, e); 
+		    	IStatus status = new CVSStatus(IStatus.ERROR,CVSStatus.ERROR,CVSMessages.Session_badInt, e, localRoot);
+		        throw new CVSException(status); 
 		    }
 		}
 		// create an input stream that spans the next 'size' bytes from the connection

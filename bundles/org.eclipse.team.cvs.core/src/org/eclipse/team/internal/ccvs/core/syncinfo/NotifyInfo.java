@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.CVSDateFormatter;
@@ -57,13 +58,15 @@ public class NotifyInfo {
 	public NotifyInfo(IContainer parent, String line) throws CVSException {
 		String[] strings = Util.parseIntoSubstrings(line, ResourceSyncInfo.SEPARATOR);
 		if(strings.length != 4) {
-			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedLine, new String[] { line })); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE, NLS.bind(CVSMessages.NotifyInfo_MalformedLine, new String[] { line }), parent);
+			throw new CVSException(status); 
 		}
 		this.filename = strings[0];
 		
 		String type = strings[1];
 		if (type.length() != 1) {
-			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedNotificationType, new String[] { line })); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE, NLS.bind(CVSMessages.NotifyInfo_MalformedNotificationType, new String[] { line }), parent);
+			throw new CVSException(status);
 		}
 		this.notificationType = type.charAt(0);
 		
@@ -71,7 +74,8 @@ public class NotifyInfo {
 		try {	
 			this.timeStamp = CVSDateFormatter.entryLineToDate(date);
 		} catch(ParseException e) {
-			throw new CVSException(NLS.bind(CVSMessages.NotifyInfo_MalformedNotifyDate, new String[] { line })); 
+			IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.ERROR_LINE, NLS.bind(CVSMessages.NotifyInfo_MalformedNotifyDate, new String[] { line }), parent);
+			throw new CVSException(status);			
 		}
 		
 		String watchesString = strings[3];

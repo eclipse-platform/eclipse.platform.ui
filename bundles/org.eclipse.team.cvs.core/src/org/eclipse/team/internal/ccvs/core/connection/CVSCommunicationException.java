@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ccvs.core.connection;
  
 import java.io.InterruptedIOException;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 
@@ -23,49 +22,53 @@ public class CVSCommunicationException extends CVSException {
 	private static final long serialVersionUID = 1L;
 
     /**
-	 * Create a new <code>CVSCommunicationException with the
+	 * Create a new <code>CVSCommunicationException</code> with the
 	 * given status.
 	 */
 	private CVSCommunicationException(IStatus status) {
 		super(status);
 	}
 	/**
-	 * Create a new <code>CVSCommunicationException with the
+	 * Create a new <code>CVSCommunicationException</code> with the
 	 * given message.
 	 */
 	public CVSCommunicationException(String message) {
 		super(message);
 	}
+	
 	/**
-	 * Create a new <code>CVSCommunicationException.
+	 * Create a new <code>CVSCommunicationException</code>.
 	 *
 	 * @param message a message describing the exception in detail.
+	 * @param the CVS server
 	 * @param the caught exception that has caused the communication
 	 *  exception.
 	 */
-	public CVSCommunicationException(String message, Exception e) {
-		super(message, e);
+	public CVSCommunicationException(String message, ICVSRepositoryLocation cvsLocation, Exception e) {
+		this(new CVSStatus(IStatus.ERROR, CVSStatus.COMMUNICATION_FAILURE, message, e, cvsLocation));		
 	}
+	
 	/**
-	 * Create a new <code>CVSCommunicationException.
+	 * Create a new <code>CVSCommunicationException </code>.
 	 *
 	 * @param the caught exception that has caused the communication
 	 *  exception.
+	 * @param the location of the CVS server.
 	 */
-	public CVSCommunicationException(Exception e) {
-		this(getStatusFor(e));
-	}
+	public CVSCommunicationException(ICVSRepositoryLocation cvsLocation,Exception e) {
+		this(getStatusFor(e,cvsLocation));
+	}	
 	
-	public static IStatus getStatusFor(Exception e) {
+	private static IStatus getStatusFor(Exception e,ICVSRepositoryLocation cvsLocation) {
 		if (e instanceof InterruptedIOException) {
 			MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, 0, getMessageFor(e), e);
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptCause)); 
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_interruptSolution)); 
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptCause)); 
-			status.add(new CVSStatus(IStatus.ERROR, CVSMessages.CVSCommunicationException_alternateInterruptSolution)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSStatus.COMMUNICATION_FAILURE, CVSMessages.CVSCommunicationException_interruptCause, cvsLocation)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSStatus.COMMUNICATION_FAILURE, CVSMessages.CVSCommunicationException_interruptSolution, cvsLocation)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSStatus.COMMUNICATION_FAILURE, CVSMessages.CVSCommunicationException_alternateInterruptCause, cvsLocation)); 
+			status.add(new CVSStatus(IStatus.ERROR, CVSStatus.COMMUNICATION_FAILURE, CVSMessages.CVSCommunicationException_alternateInterruptSolution, cvsLocation)); 
 			return status;
 		}
-		return new CVSStatus(IStatus.ERROR, getMessageFor(e), e);
+		return new CVSStatus(IStatus.ERROR,CVSStatus.COMMUNICATION_FAILURE, getMessageFor(e), e, cvsLocation);
 	}
 	
 	public static String getMessageFor(Throwable throwable) {

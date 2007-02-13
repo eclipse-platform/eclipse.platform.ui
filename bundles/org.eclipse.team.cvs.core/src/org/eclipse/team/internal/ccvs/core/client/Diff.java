@@ -64,7 +64,7 @@ public class Diff extends Command {
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 
-		checkResourcesManaged(resources);
+		checkResourcesManaged(session, resources);
 		DiffStructureVisitor visitor = new DiffStructureVisitor(session, localOptions);
 		visitor.visit(session, resources, monitor);
 		return resources;

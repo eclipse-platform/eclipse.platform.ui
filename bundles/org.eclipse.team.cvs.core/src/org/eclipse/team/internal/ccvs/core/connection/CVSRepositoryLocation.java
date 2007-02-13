@@ -14,17 +14,13 @@ package org.eclipse.team.internal.ccvs.core.connection;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
@@ -401,11 +397,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		}
 		catch (IndexOutOfBoundsException e) {
 			// We'll get here if anything funny happened while extracting substrings
-			throw new CVSException(errorMessage);
+			IStatus status = new CVSStatus(IStatus.ERROR, errorMessage);
+			throw new CVSException(status);
 		}
 		catch (NumberFormatException e) {
+			IStatus status = new CVSStatus(IStatus.ERROR, errorMessage);
 			// We'll get here if we couldn't parse a number
-			throw new CVSException(errorMessage);
+			throw new CVSException(status);
 		}
 	}
 	
@@ -660,8 +658,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				}
 				return (ICVSRemoteResource[]) folders.toArray(new ICVSRemoteResource[folders.size()]);
 			}
-		} catch(TeamException e) {
-			throw new CVSException(e.getStatus());
+		} catch (CVSException e){
+			// keep current CVSException
+			throw e;
+		} catch(TeamException e1) {
+			throw new CVSException(e1.getStatus());
 		}
 	}
 	
@@ -747,7 +748,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		synchronized(hostLocks) {
 			hostLock = (ILock)hostLocks.get(getHost());
 			if (hostLock == null) {
-				hostLock = Platform.getJobManager().newLock();
+				hostLock = Job.getJobManager().newLock();
 				hostLocks.put(getHost(), hostLock);
 			}
 		}
@@ -773,7 +774,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					}
 					if (user == null) {
 						// This is possible if the cache was cleared somehow for a location with a mutable username
-						throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, CVSMessages.CVSRepositoryLocation_usernameRequired)); 
+						throw new CVSAuthenticationException(CVSMessages.CVSRepositoryLocation_usernameRequired, CVSAuthenticationException.RETRY, this, null); 
 					}
 					//if (password == null)
 					//	password = "";//$NON-NLS-1$ 
@@ -784,7 +785,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
                     return connection;
 				} catch (CVSAuthenticationException ex) {
 					previousAuthenticationFailed = true;
-					if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
+					if (ex.getRetryStatus() == CVSAuthenticationException.RETRY) {
 						String message = ex.getMessage();
 						promptForUserInfo(message);
 						// The authentication information has been change so update the cache
@@ -806,7 +807,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private void promptForUserInfo(String message) throws CVSException {
 		IUserAuthenticator authenticator = getAuthenticator();
 		if (authenticator == null) {
-			throw new CVSAuthenticationException(CVSMessages.CVSRepositoryLocation_noAuthenticator, CVSAuthenticationException.NO_RETRY);// 
+			throw new CVSAuthenticationException(CVSMessages.CVSRepositoryLocation_noAuthenticator, CVSAuthenticationException.NO_RETRY,this);// 
 		}
 		authenticator.promptForUserInfo(this, this, message);
 	}
