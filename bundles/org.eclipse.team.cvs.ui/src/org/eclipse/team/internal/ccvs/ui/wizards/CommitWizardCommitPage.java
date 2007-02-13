@@ -177,11 +177,26 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
      * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
      */
     public boolean isPageComplete() {
-        return super.isPageComplete();
-    }
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
-     */
+		/* if empty comment is not allowed (see bug 114678) */
+		final IPreferenceStore store = CVSUIPlugin.getPlugin()
+				.getPreferenceStore();
+		final String allowEmptyComment = store
+				.getString(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
+		if (allowEmptyComment.equals(MessageDialogWithToggle.NEVER)) {
+			/* but is empty */
+			final String comment = fCommentArea.getComment(false);
+			if (comment.equals("")) { //$NON-NLS-1$
+				return false; // then the page is not complete
+			}
+		}
+		return super.isPageComplete();
+	}
+    
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+	 */
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         expand();
