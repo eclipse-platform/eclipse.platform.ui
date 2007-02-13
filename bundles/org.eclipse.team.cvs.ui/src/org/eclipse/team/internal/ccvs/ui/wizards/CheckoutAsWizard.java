@@ -220,10 +220,13 @@ public class CheckoutAsWizard extends Wizard {
 	 * Return the remote folders to be checked out
 	 */
 	private ICVSRemoteFolder[] getRemoteFolders() {
-		ICVSRemoteFolder[] folders = new ICVSRemoteFolder[remoteFolders.length];
-		for (int i = 0; i < remoteFolders.length; i++) {
-			ICVSRemoteFolder remote = remoteFolders[i];
-			folders[i] = (ICVSRemoteFolder)remote.forTag(getSelectedTag());
+		ICVSRemoteFolder[] folders = (ICVSRemoteFolder[]) remoteFolders.clone();
+		CVSTag selectedTag = getSelectedTag();
+		// see bug 160851
+		if(selectedTag != null){
+			for (int i = 0; i < remoteFolders.length; i++) {
+				folders[i] = (ICVSRemoteFolder)folders[i].forTag(getSelectedTag());
+			}
 		}
 		return folders;
 	}
