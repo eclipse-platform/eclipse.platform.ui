@@ -61,6 +61,8 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager= FileBuffers.getTextFileBufferManager();
 		fProject= ResourceHelper.createProject("project");
 		fPath= createPath(fProject);
+		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+		assertTrue(buffer == null);
 	}
 	
 	protected IProject getProject() {
@@ -68,6 +70,8 @@ public abstract class FileBufferFunctions extends TestCase {
 	}
 	
 	protected void tearDown() throws Exception {
+		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+		assertTrue(buffer == null);
 		ResourceHelper.deleteProject("project");
 	}
 	
