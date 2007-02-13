@@ -126,7 +126,7 @@ public interface IModelDelta {
 	 *  
 	 * @return changed children, possibly empty
 	 */
-	public ModelDelta[] getChildDeltas();
+	public IModelDelta[] getChildDeltas();
 	
 	/**
 	 * When a node indicates the <code>IModelDelta.REPLACED</code> flag, this method

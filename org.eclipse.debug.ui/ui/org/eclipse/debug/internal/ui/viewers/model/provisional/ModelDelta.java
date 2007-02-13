@@ -199,7 +199,7 @@ public class ModelDelta implements IModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
-	public ModelDelta[] getChildDeltas() {
+	public IModelDelta[] getChildDeltas() {
 		return fNodes;
 	}
 	
@@ -222,9 +222,9 @@ public class ModelDelta implements IModelDelta {
 		return buf.toString();
 	}
 	
-	private void appendDetail(StringBuffer buf, ModelDelta delta) {
+	private void appendDetail(StringBuffer buf, IModelDelta delta) {
 		buf.append("\tElement: "); //$NON-NLS-1$
-		buf.append(delta.fElement);
+		buf.append(delta.getElement());
 		buf.append('\n');
 		buf.append("\t\tFlags: "); //$NON-NLS-1$
 		int flags = delta.getFlags();
@@ -264,11 +264,11 @@ public class ModelDelta implements IModelDelta {
 		}
 		buf.append('\n');
 		buf.append("\t\tIndex: "); //$NON-NLS-1$
-		buf.append(delta.fIndex);
+		buf.append(delta.getIndex());
 		buf.append(" Child Count: "); //$NON-NLS-1$
-		buf.append(delta.fChildCount);
+		buf.append(delta.getChildCount());
 		buf.append('\n');
-		ModelDelta[] nodes = delta.getChildDeltas();
+		IModelDelta[] nodes = delta.getChildDeltas();
 		for (int i = 0; i < nodes.length; i++) {
 			appendDetail(buf, nodes[i]);
 		}
@@ -290,9 +290,9 @@ public class ModelDelta implements IModelDelta {
 	
 	protected void doAccept(IModelDeltaVisitor visitor, int depth) {
 		if (visitor.visit(this, depth)) {
-			ModelDelta[] childDeltas = getChildDeltas();
+			IModelDelta[] childDeltas = getChildDeltas();
 			for (int i = 0; i < childDeltas.length; i++) {
-				childDeltas[i].doAccept(visitor, depth+1);
+				((ModelDelta)childDeltas[i]).doAccept(visitor, depth+1);
 			}
 		}
 	}
