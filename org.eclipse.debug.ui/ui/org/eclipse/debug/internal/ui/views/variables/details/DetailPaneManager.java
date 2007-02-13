@@ -195,7 +195,7 @@ public class DetailPaneManager {
 		 * @return an evaluatable expression or <code>null</code>
 		 */
 		private Expression getEnablementExpression(){
-			// all of this stuff is optional, so...tedius testing is required
+			// all of this stuff is optional, so...tedious testing is required
 			if (fEnablementExpression == null) {
 				try{
 					IConfigurationElement[] elements = fConfigElement.getChildren(ExpressionTagNames.ENABLEMENT);

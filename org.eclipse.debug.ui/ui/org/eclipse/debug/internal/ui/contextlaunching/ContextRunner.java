@@ -356,7 +356,8 @@ public final class ContextRunner {
 							return config.getName();
 						}
 						else {
-							return "As..."; //$NON-NLS-1$
+							//TODO could cause TVT issues
+							return ContextMessages.ContextRunner_14;
 						}
 					}
 					else {
@@ -364,10 +365,12 @@ public final class ContextRunner {
 							List exts = getLaunchConfigurationManager().getLaunchShortcuts(res);
 							int esize = exts.size();
 							if(esize == 0) {
-								return "..."; //$NON-NLS-1$
+								//TODO could cause TVT issues
+								return ContextMessages.ContextRunner_15; 
 							}
 							else {
-								return "As..."; //$NON-NLS-1$
+								//TODO could cause TVT issues
+								return ContextMessages.ContextRunner_14;
 							}
 						}
 						catch(CoreException ce) {DebugUIPlugin.log(ce);}

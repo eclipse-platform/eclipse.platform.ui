@@ -208,25 +208,16 @@ public interface IInternalDebugUIConstants {
      * @since 3.3
      * CONTEXTLAUNCHING
      */ 
-    public static final String PREF_USE_CONTEXTUAL_LAUNCH= IDebugUIConstants.PLUGIN_ID + ".UseContextualLaunch"; //$NON-NLS-1$
+    public static final String PREF_USE_CONTEXTUAL_LAUNCH = IDebugUIConstants.PLUGIN_ID + ".UseContextualLaunch"; //$NON-NLS-1$
     
     /**
-     * always/never/prompt preference indicating the action for the event when there is no context to launch during context launching 
+     * Boolean preference indicating if we should always consider the parent project when
+     * a selected context is not runnable
      * 
-     * @since 3.3
-     *  
+     *  @since 3.3
      *  CONTEXTLAUNCHING
      */
-    public static final String PREF_ALWAYS_RUN_LAST_LAUNCH = IDebugUIConstants.PLUGIN_ID + ".AlwaysRunLastLaunch"; //$NON-NLS-1$
-    
-    /**
-     * always/never/prompt preference indicating the action to take when an un-runnable file is the context
-     * 
-     * @since 3.3
-     * 
-     * CONTEXTLAUNCHING
-     */
-    public static final String PREF_ALWAYS_RUN_PROJECT_CONFIGURATION = IDebugUIConstants.PLUGIN_ID + ".ALwaysRunProjectConfiguration"; //$NON-NLS-1$
+    public static final String PREF_LAUNCH_PARENT_PROJECT = IDebugUIConstants.PLUGIN_ID + ".LaunchParentProject"; //$NON-NLS-1$
     
     /**
      * String preference controlling whether editors are saved before launching.

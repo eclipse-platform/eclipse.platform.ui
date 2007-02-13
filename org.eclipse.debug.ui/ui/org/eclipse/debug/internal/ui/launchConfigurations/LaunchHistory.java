@@ -73,6 +73,17 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
+	 * Returns if either the history listing or the favorites listing contain the specified <code>ILaunchConfiguration</code>
+	 * @param config the config to look for
+	 * @return true if one of the listing contains the specified config, false otherwise
+	 * @since 3.3
+	 * CONTEXTLAUNCHING
+	 */
+	public boolean contains(ILaunchConfiguration config) {
+		return fHistory.contains(config) || fFavorites.contains(config);
+	}
+	
+	/**
 	 * Adds the given configuration to this history
 	 * 
 	 * @param configuration

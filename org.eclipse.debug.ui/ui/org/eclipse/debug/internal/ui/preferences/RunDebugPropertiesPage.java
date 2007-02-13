@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,7 +21,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -33,8 +31,8 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationComparator;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -82,6 +80,11 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * Set of original default candidates for the resource
 	 */
 	private Set fOriginalCandidates;
+	
+	/**
+	 * Holds configurations that need to be saved when the page closes
+	 */
+	private Set fChangedConfigurations = new HashSet();
 	
 	/**
 	 * List of the applicable launch config types for the backing resource
@@ -207,6 +210,21 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	}
 
 	/**
+	 * @see org.eclipse.jface.dialogs.DialogPage#dispose()
+	 */
+	public void dispose() {
+		if(fOriginalCandidates != null) {
+			fOriginalCandidates.clear();
+			fOriginalCandidates = null;
+		}
+		if(fChangedConfigurations != null) {
+			fChangedConfigurations.clear();
+			fChangedConfigurations = null;
+		}
+		super.dispose();
+	}
+
+	/**
 	 * Returns the viewer displaying possible default configurations.
 	 * 
 	 * @return viewer
@@ -253,72 +271,18 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	protected Set collectConfigCandidates(IResource resource) {
 		if(fOriginalCandidates == null) {
 			fOriginalCandidates = new HashSet();
-			IPath resourcePath = resource.getFullPath();
 			try {
-				List types = collectTypeCandidates();
-				List configs = new ArrayList();
-				ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
-				for(int i = 0; i < configurations.length; i++) {
-					if(types.contains(configurations[i].getType())) {
-						if(configurations[i].isMigrationCandidate()) {
-							configurations[i].migrate();
-						}
-						configs.add(configurations[i]);
-					}
+				List configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+				for(Iterator iter = configs.iterator(); iter.hasNext();) {
+					fOriginalCandidates.add(((ILaunchConfiguration)iter.next()).getWorkingCopy());
 				}
-				ILaunchConfiguration configuration = null;
-				IResource[] resources = null;
-				for (Iterator iter = configs.iterator(); iter.hasNext();) {
-					configuration = (ILaunchConfiguration) iter.next();
-					if(acceptConfiguration(configuration)) { 
-						if(configuration.contentsEqual(getLaunchManager().getDefaultConfiguration(resource))) {
-							fOriginalCandidates.add(configuration.getWorkingCopy());
-						}
-						else {
-							resources = configuration.getMappedResources();
-							if (resources != null) {
-								for (int j = 0; j < resources.length; j++) {
-									if (resource.equals(resources[j]) || resourcePath.isPrefixOf(resources[j].getFullPath())) {
-										fOriginalCandidates.add(configuration.getWorkingCopy());
-										break;
-									}
-								}
-							}
-							else {
-								//in the event the config has no mapping
-								fOriginalCandidates.add(configuration.getWorkingCopy());
-							}
-						}
-					}
-				}
-			} catch (CoreException e) {
-				fOriginalCandidates.clear();
-				DebugPlugin.log(e);
 			}
+			catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		}
 		return fOriginalCandidates;
 	}
 	
-	/**
-	 * Returns if the specified configuration should be considered as a potential candidate
-	 * @param config
-	 * @return if the specified configuration should be considered as a potential candidate
-	 * @throws CoreException
-	 */
-	private boolean acceptConfiguration(ILaunchConfiguration config) throws CoreException {
-		if(config != null && !DebugUITools.isPrivate(config)) {
-			if(!"org.eclipse.ui.externaltools".equals(config.getType().getCategory())) { //$NON-NLS-1$
-				return true;
-			}
-			else {
-				IResource[] res = config.getMappedResources();
-				if(res != null) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+	
 	
 	/**
 	 * Returns the resource this property page is open on.
@@ -365,15 +329,13 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			}
 		}
 	//add
-		iter = fOriginalCandidates.iterator();
+		iter = fChangedConfigurations.iterator();
 		while (iter.hasNext()) {
 			ILaunchConfigurationWorkingCopy currentConfig = (ILaunchConfigurationWorkingCopy) iter.next();
-			if (currentConfig.isDirty()){
-				try{
-					currentConfig.doSave();
-				} catch (CoreException e) {
-					DebugPlugin.logMessage("Problem saving changes to configuration " + currentConfig.getName(), e); //$NON-NLS-1$
-				}
+			try{
+				currentConfig.doSave();
+			} catch (CoreException e) {
+				DebugPlugin.logMessage("Problem saving changes to configuration " + currentConfig.getName(), e); //$NON-NLS-1$
 			}
 		}
 		
@@ -397,12 +359,12 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	private Set getConfigurationNames() {
 		Set names = new HashSet();
 		Iterator iter = fOriginalCandidates.iterator();
-		Object o = null;
 		while (iter.hasNext()) {
-			o = iter.next();
-			if(o instanceof ILaunchConfiguration) {
-				names.add(((ILaunchConfiguration)o).getName());
-			}
+			names.add(((ILaunchConfiguration)iter.next()).getName());
+		}
+		iter = fChangedConfigurations.iterator();
+		while (iter.hasNext()) {
+			names.add(((ILaunchConfiguration)iter.next()).getName());
 		}
 		return names;
 	}
@@ -426,8 +388,8 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			ILaunchConfigurationWorkingCopy copy = configuration.copy(
 					((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).generateUniqueLaunchConfigurationNameFrom(configuration.getName(), getConfigurationNames()));
 			copy.setAttributes(configuration.getAttributes());
-			fOriginalCandidates.add(copy);
-			fViewer.refresh();
+			fChangedConfigurations.add(copy);
+			fViewer.add(copy);
 			fViewer.setSelection(new StructuredSelection(copy));
 		} catch (CoreException e) {
 			setErrorMessage(e.getMessage());
@@ -444,9 +406,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		ILaunchConfiguration[] configurations = getSelectedConfigurations();
 		for (int i = 0; i < configurations.length; i++) {
 			fDeletedConfigurations.add(configurations[i]);
-			fOriginalCandidates.remove(configurations[i]);
+			fChangedConfigurations.remove(configurations[i]);
+			fViewer.remove(configurations[i]);
 		}
-		fViewer.refresh();
 		if (indices[0] < table.getItemCount()) {
 			fViewer.setSelection(new StructuredSelection(table.getItem(indices[0]).getData()));
 		} else if (table.getItemCount() > 0) {
@@ -458,8 +420,11 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * Edit the selection
 	 */
 	private void handleEdit() {
-		edit(getSelectedConfigurations()[0]);
-		fViewer.refresh();
+		ILaunchConfigurationWorkingCopy config = getSelectedConfigurations()[0]; 
+		if(edit(config) == IDialogConstants.OK_ID) {
+			fChangedConfigurations.add(config);
+			fViewer.refresh();
+		}
 	}
 
 	/**
@@ -493,8 +458,8 @@ public class RunDebugPropertiesPage extends PropertyPage {
 							((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).
 							generateUniqueLaunchConfigurationNameFrom("New_configuration", getConfigurationNames())); //$NON-NLS-1$
 					if (edit(wc) == Window.OK) {
-						fOriginalCandidates.add(wc);
-						fViewer.refresh();
+						fChangedConfigurations.add(wc);
+						fViewer.add(wc);
 						fViewer.setSelection(new StructuredSelection(wc));
 					}
 				} catch (CoreException e) {

@@ -15,24 +15,26 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
- * This class provides an action warpper for adding shared launch configuration actions to the context menu
+ * This class provides an action wrapper for adding launch configuration actions to the context menu
  * of the Run->... menu item
  * 
  * @since 3.3
  */
-public class SharedLaunchConfigAction extends Action {
+public class LaunchConfigurationAction extends Action {
 
 	private ILaunchConfiguration fConfig;
 	private String fMode;
 	
 	/**
-	 * Consturtor
+	 * Constructor
 	 * @param text the text for the action
 	 * @param image the image for the action
 	 */
-	public SharedLaunchConfigAction(ILaunchConfiguration config, String mode, ImageDescriptor image) {
-		super(config.getName(), image);
+	public LaunchConfigurationAction(ILaunchConfiguration config, String mode, String text, ImageDescriptor image, int accelerator) {
+		super(MessageFormat.format(ActionMessages.LaunchConfigurationAction_0, new String[] {Integer.toString(accelerator), text}), image);
 		fConfig = config;
 		fMode = mode;
 	}

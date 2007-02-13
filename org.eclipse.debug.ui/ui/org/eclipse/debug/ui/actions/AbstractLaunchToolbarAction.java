@@ -13,7 +13,6 @@ package org.eclipse.debug.ui.actions;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingToolbarAction;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.OrganizeFavoritesAction;
 import org.eclipse.debug.ui.DebugUITools;
@@ -51,20 +50,11 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 */
 	protected void fillMenu(Menu menu) {
 		super.fillMenu(menu);
-
 		// Separator between history and common actions
 		if (menu.getItemCount() > 0) {
 			addSeparator(menu);
 		}
-		//CONTEXTLAUNCHING
-		if(!getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-			if(ContextRunner.isContextLaunchEnabled()) {
-				addToMenu(menu, new ContextLaunchingToolbarAction(getLaunchGroupIdentifier()), -1);
-			}
-			else {
-				addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
-			}
-		}
+		addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
 		addToMenu(menu, getOpenDialogAction(), -1);
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
@@ -83,8 +73,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-	//CONTEXTLAUNCHING
-		if(ContextRunner.isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
 			ContextRunner.getDefault().launch(getMode());
 		}
 		else {

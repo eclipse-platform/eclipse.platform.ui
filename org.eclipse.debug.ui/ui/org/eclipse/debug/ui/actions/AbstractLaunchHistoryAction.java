@@ -186,8 +186,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		String launchName= configuration.getName();
 		String label = null;
 		//CONTEXTLAUNCHING
-		if(ContextRunner.isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-			launchName = ContextRunner.getDefault().getContextName();
+		if(ContextRunner.getDefault().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+			launchName = ContextRunner.getDefault().getContextName(getMode());
 		}
 		String mode = getMode();
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
@@ -342,7 +342,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		if (fAction == null) {
 			initialize(action);
 		} 
-		if(ContextRunner.isContextLaunchEnabled()) {
+		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
 			updateTooltip();
 		}
 	}

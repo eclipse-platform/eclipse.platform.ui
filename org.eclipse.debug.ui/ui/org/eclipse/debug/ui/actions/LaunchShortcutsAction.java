@@ -20,15 +20,21 @@ import java.util.Set;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -37,6 +43,7 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
@@ -50,6 +57,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -168,14 +177,45 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	}	
 	
 	/**
+	 * Returns the resource this menu is open on.
+	 * 
+	 * @return resource
+	 */
+	protected IResource getResource(Object element) {
+		IResource resource = null;
+		if (element instanceof IResource) {
+			resource = (IResource) element;
+		} else if (element instanceof IAdaptable) {
+			resource = (IResource) ((IAdaptable)element).getAdapter(IResource.class);
+		}
+		return resource;
+	}
+	
+	/**
 	 * Fills the flyout menu 
 	 */
 	private void fillMenu() {
+		try {
+			Object selection = ContextRunner.getDefault().getCurrentContext();
+			int accelerator = 1;
+			ILaunchConfiguration config = DebugPlugin.getDefault().getLaunchManager().getDefaultConfiguration(getResource(selection));
+			if(config != null && config.exists() && config.supportsMode(getMode())) {
+	        	IAction action = new LaunchConfigurationAction(config, getMode(), MessageFormat.format(ActionMessages.ContextualLaunchAction_0, new String[] {config.getName()}), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+	            ActionContributionItem item = new ActionContributionItem(action);
+	            item.fill(fCreatedMenu, -1);
+	            new MenuItem(fCreatedMenu, SWT.SEPARATOR);
+			}
+			config = getLaunchConfigurationManager().isSharedConfig(selection);
+	        if(config != null && config.exists() && config.supportsMode(getMode())) {
+	        	IAction action = new LaunchConfigurationAction(config, getMode(), config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+	            ActionContributionItem item = new ActionContributionItem(action);
+	            item.fill(fCreatedMenu, -1);
+	            new MenuItem(fCreatedMenu, SWT.SEPARATOR);
+			}
+		}
+		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		IEvaluationContext context = createContext();
-		// gather all shortcuts and run their filters so that we only run the
-		// filters one time for each shortcut. Running filters can be expensive.
-		// Also, only *LOADED* plug-ins get their filters run.
-		List /* <LaunchShortcutExtension> */ allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
+		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
 		while (iter.hasNext()) {

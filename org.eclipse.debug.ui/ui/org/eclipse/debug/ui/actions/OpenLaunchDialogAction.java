@@ -18,13 +18,11 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextMessages;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -46,7 +44,7 @@ import com.ibm.icu.text.MessageFormat;
  * </p>
  * @since 2.1
  */
-public class OpenLaunchDialogAction extends Action implements IPropertyChangeListener, IActionDelegate2, IWorkbenchWindowActionDelegate {
+public class OpenLaunchDialogAction extends Action implements IActionDelegate2, IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Launch group identifier
@@ -102,16 +100,13 @@ public class OpenLaunchDialogAction extends Action implements IPropertyChangeLis
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
-	public void dispose() {
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-	}
+	public void dispose() {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
 		fBackingAction = action;
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
 		updateActionState();
 	}
@@ -125,15 +120,14 @@ public class OpenLaunchDialogAction extends Action implements IPropertyChangeLis
 		LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
 		if(fBackingAction == null) {
 			//there is no backing action, like a toolbar action delegate
-			if(ContextRunner.isContextLaunchEnabled() && !"org.eclipse.ui.externaltools.launchGroup".equals(fIdentifier)) { //$NON-NLS-1$
-				setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_0, new String[] {extension.getLabel()}));
-				setImageDescriptor(null);
-			}
-			else {
-				setText(extension.getLabel() + "..."); //$NON-NLS-1$
-				setImageDescriptor(extension.getImageDescriptor());
-			}
+			setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_0, new String[] {extension.getLabel()}));
+			setImageDescriptor(extension.getImageDescriptor());
 			setEnabled(existsConfigTypesForMode());
+		}
+		else {
+			fBackingAction.setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_1, new String[] {DebugUIPlugin.removeAccelerators(extension.getLabel())}));
+			fBackingAction.setImageDescriptor(extension.getImageDescriptor());
+			fBackingAction.setEnabled(existsConfigTypesForMode());
 		}
 	}
 	

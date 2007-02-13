@@ -51,8 +51,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		
 	//contextual launching preference page
 		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, false);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_ALWAYS_RUN_LAST_LAUNCH, MessageDialogWithToggle.PROMPT);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_ALWAYS_RUN_PROJECT_CONFIGURATION, MessageDialogWithToggle.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, false);
 		
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);

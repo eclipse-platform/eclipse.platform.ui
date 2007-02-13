@@ -20,15 +20,16 @@ import java.util.Set;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
-import org.eclipse.debug.internal.ui.actions.SharedLaunchConfigAction;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.ui.DebugUITools;
@@ -44,11 +45,12 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * An action delegate that builds a context menu with applicable launch shortcuts
@@ -130,12 +132,15 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		menu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {
 				if (fFillMenu) {
-					Menu m = (Menu)e.widget;
-					MenuItem[] items = m.getItems();
-					for (int i=0; i < items.length; i++) {
-						items[i].dispose();
+					try {
+						Menu m = (Menu)e.widget;
+						MenuItem[] items = m.getItems();
+						for (int i=0; i < items.length; i++) {
+							items[i].dispose();
+						}
+						fillMenu(m);
 					}
-					fillMenu(m);
+					catch(CoreException ce) {}
 					fFillMenu = false;
 				}
 			}
@@ -179,46 +184,45 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	}
 	
 	/**
-	 * Prepares a SharedLaunchConfigAction and adds it to the current menu
-	 * @param file the file to get the launch configuration from
-	 * @param image the image for the action
-	 * @param menu the menu to add the new action to.
-	 * @since 3.3
+	 * Returns the resource this menu is open on.
+	 * 
+	 * @return resource
 	 */
-	private void prepareSharedConfigAction(IFile file, Menu menu) {
-		ILaunchConfiguration config = getLaunchManager().getLaunchConfiguration(file);
-		try {
-            if(config != null && config.exists() && config.supportsMode(fMode)) {
-            	IAction action = new SharedLaunchConfigAction(config, fMode, DebugUITools.getDefaultImageDescriptor(config));
-                ActionContributionItem item= new ActionContributionItem(action);
-                item.fill(menu, -1);
-            }
-        } catch (CoreException e) {
-        }
+	protected IResource getResource(Object element) {
+		IResource resource = null;
+		if (element instanceof IResource) {
+			resource = (IResource) element;
+		} else if (element instanceof IAdaptable) {
+			resource = (IResource) ((IAdaptable)element).getAdapter(IResource.class);
+		}
+		return resource;
 	}
 	
     /**
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
      */
-	protected void fillMenu(Menu menu) {
+	protected void fillMenu(Menu menu) throws CoreException {
 		if (fSelection == null) {
 			return;
 		}
 		IEvaluationContext context = createContext();
-		//add in any selected shared configs before the rest of the items to launch as
-		//feature fix for 
 		//CONTEXTLAUNCHING
-		if(!fSelection.isEmpty()) {
-			Object obj = fSelection.getFirstElement();
-			if(ContextRunner.getDefault().isSharedConfig(obj) != null) {
-				prepareSharedConfigAction((IFile)obj, menu);
-				new MenuItem(menu, SWT.SEPARATOR);
-			} 
-			else if(ContextRunner.getDefault().isSharedConfigEditorInput(obj) != null) {
-				prepareSharedConfigAction(((IFileEditorInput) obj).getFile(), menu);
-				new MenuItem(menu, SWT.SEPARATOR);
-			}
+		Object obj = fSelection.getFirstElement();
+		int accelerator = 1;
+		ILaunchConfiguration config = getLaunchManager().getDefaultConfiguration(getResource(obj));
+		if(config != null && config.exists() && config.supportsMode(fMode)) {
+        	IAction action = new LaunchConfigurationAction(config, fMode, MessageFormat.format(ActionMessages.ContextualLaunchAction_0, new String[] {config.getName()}), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+            ActionContributionItem item = new ActionContributionItem(action);
+            item.fill(menu, -1);
+            new MenuItem(menu, SWT.SEPARATOR);
+		}
+		config = getLaunchConfigurationManager().isSharedConfig(obj);
+        if(config != null && config.exists() && config.supportsMode(fMode)) {
+        	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+            ActionContributionItem item = new ActionContributionItem(action);
+            item.fill(menu, -1);
+            new MenuItem(menu, SWT.SEPARATOR);
 		}
 		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		Iterator iter = allShortCuts.iterator();
@@ -233,7 +237,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			catch (CoreException e) {DebugUIPlugin.log(e);}
 		}
 		iter = filteredShortCuts.iterator();
-		int accelerator = 1;
+		
 		List categories = new ArrayList();
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
@@ -299,7 +303,8 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		ArrayList result = new ArrayList();
 		Iterator iter = fSelection.iterator();
 		while (iter.hasNext()) {
-			result.add(iter.next());
+			Object next = iter.next();
+			result.add(next);
 		}
 		return result;
 	}

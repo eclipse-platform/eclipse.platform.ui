@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.ui.actions.ILaunchable;
 
 /**
@@ -34,28 +34,29 @@ public class LaunchablePropertyTester extends PropertyTester {
 					return Platform.getAdapterManager().hasAdapter(receiver, ILaunchable.class.getName());
 				}
 		}
-		if("resource".equals(property)) { //$NON-NLS-1$
-			IResource res = getResource(receiver);
-			if(res != null) {
-				return res.isAccessible();
-			}
-		}
 		if("contextlaunch".equals(property)) { //$NON-NLS-1$
-			return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
-		}
-		if("contextlaunchable".equals(property)) { //$NON-NLS-1$
-			try {
-				IResource res = getResource(receiver);
-				if(res != null) {
-					return ContextRunner.getDefault().getLaunchShortcuts(getResource(receiver)).size() > 0 && ContextRunner.getDefault().isSharedConfig(receiver) == null;
-				}
-				return false;
-			} 
-			catch (CoreException e) {return false;}
+			if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
+				try {
+					IResource res = getResource(receiver);
+					if(res != null) {
+						return res.isAccessible() && getLaunchConfiguraitonManager().getLaunchShortcuts(getResource(receiver)).size() > 0 && getLaunchConfiguraitonManager().isSharedConfig(receiver) == null;
+					}
+					return false;
+				} 
+				catch (CoreException e) {return false;}
+			}
 		}
 		return false;
 	}
 
+	/**
+	 * Returns the launch configuration manager
+	 * @return the launch configuration manager
+	 */
+	protected LaunchConfigurationManager getLaunchConfiguraitonManager() {
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}
+	
 	/**
 	 * Returns the resource this property page is open on.
 	 * 

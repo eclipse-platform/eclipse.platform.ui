@@ -17,11 +17,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -69,17 +67,10 @@ public class ContextLaunchingPreferencePage extends PreferencePage implements IW
 	//use contextual launch
 		FieldEditor edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, DebugPreferencesMessages.ContextualLaunchPreferencePage_1, comp);	
 		fFieldEditors.add(edit);
-			
-		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_ALWAYS_RUN_LAST_LAUNCH, DebugPreferencesMessages.ContextLaunchingPreferencePage_0, 3, 
-				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}},
-				 comp, true);	
+		
+		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, DebugPreferencesMessages.ContextLaunchingPreferencePage_0, comp);
 		fFieldEditors.add(edit);
-		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_ALWAYS_RUN_PROJECT_CONFIGURATION, DebugPreferencesMessages.ContextLaunchingPreferencePage_1, 3, 
-				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_7, MessageDialogWithToggle.ALWAYS}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}},
-				 comp, true);	
-		fFieldEditors.add(edit);
+		
 	//init the field editors
 		FieldEditor editor;
 		for(int i = 0; i < fFieldEditors.size(); i++) {

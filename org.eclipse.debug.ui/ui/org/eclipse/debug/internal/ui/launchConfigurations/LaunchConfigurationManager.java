@@ -34,7 +34,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
@@ -43,10 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -63,6 +60,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchGroup;
@@ -70,11 +68,10 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -600,13 +597,38 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 
 	/**
+	 * Creates a listing of the launch shortcut extensions that are applicable to the underlying resource
+	 * @param resource the underlying resource
+	 * @return a listing of applicable launch shortcuts or an empty list, never <code>null</code>
+	 * @throws CoreException
+	 * @since 3.3
+	 */
+	public List getLaunchShortcuts(IResource resource) throws CoreException {
+		List list = new ArrayList(); 
+		List sc = getLaunchShortcuts();
+		List ctxt = new ArrayList();
+		ctxt.add(resource);
+		IEvaluationContext context = new EvaluationContext(null, ctxt);
+		context.addVariable("selection", ctxt); //$NON-NLS-1$
+		LaunchShortcutExtension ext = null;
+		for(Iterator iter = sc.iterator(); iter.hasNext();) {
+			ext = (LaunchShortcutExtension) iter.next();
+			if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && !WorkbenchActivityHelper.filterItem(ext)) {
+				if(!list.contains(ext)) {
+					list.add(ext);
+				}
+			}
+		}
+		return list;
+	}
+	
+	/**
 	 * Returns a listing of all of the <code>ILaunchConfigurationType</code>s that apply to the currently
 	 * specified <code>IResource</code>.
 	 * 
 	 * @param resource the resource context
 	 * @return a listing of applicable <code>ILaunchConfigurationType</code>s, or an empty list, never <code>null</code>
 	 * @since 3.3
-	 * EXPERIMENTAL
 	 * CONTEXTLAUNCHING
 	 */
 	public List getApplicableConfigurationTypes(IResource resource) {
@@ -617,6 +639,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			List list = new ArrayList();
 			list.add(resource);
 			IEvaluationContext context = new EvaluationContext(null, list);
+			context.setAllowPluginActivation(true);
 			context.addVariable("selection", list); //$NON-NLS-1$
 			HashSet set = new HashSet();
 			for(Iterator iter = exts.iterator(); iter.hasNext();) {
@@ -641,24 +664,78 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
-	 * Returns a listing of all applicable <code>LaunchShortcutExtension</code>s for the given
-	 * launch configuration type id.
-	 * @param typeid the id of the launch configuration
-	 * @return a listing of <code>LaunchShortcutExtension</code>s that are associated with the specified launch configuration
-	 * type id or an empty list, never <code>null</code>
-	 * 
+	 * Returns a list of the <code>ILaunchConfiguration</code>s that apply to the specified <code>IResource</code>
+	 * @param resource the resource
+	 * @return a listing of applicable <code>ILaunchConfiguration</code>s for the specified <code>IResource</code> or an empty 
+	 * list if none, never <code>null</code>
 	 * @since 3.3
 	 */
-	public List getApplicableLaunchShortcuts(String typeid) {
-		List list = new ArrayList();
-		LaunchShortcutExtension ext = null;
-		for(int i = 0; i < fLaunchShortcuts.size(); i++) {
-			ext = (LaunchShortcutExtension) fLaunchShortcuts.get(i);
-			if(ext.getAssociatedConfigurationTypes().contains(typeid)) {
-				list.add(ext);
+	public List getApplicableLaunchConfigurations(IResource resource) {
+		ArrayList list = new ArrayList();
+		IPath resourcePath = resource.getFullPath();
+		try {
+			List types = getApplicableConfigurationTypes(resource);
+			List configs = new ArrayList();
+			ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
+			for(int i = 0; i < configurations.length; i++) {
+				if(types.contains(configurations[i].getType())) {
+					if(configurations[i].isMigrationCandidate()) {
+						configurations[i].migrate();
+					}
+					configs.add(configurations[i]);
+				}
 			}
+			ILaunchConfiguration configuration = null;
+			IResource[] resources = null;
+			for (Iterator iter = configs.iterator(); iter.hasNext();) {
+				configuration = (ILaunchConfiguration) iter.next();
+				if(acceptConfiguration(configuration)) { 
+					if(configuration.contentsEqual(getLaunchManager().getDefaultConfiguration(resource))) {
+						list.add(configuration);
+					}
+					else {
+						resources = configuration.getMappedResources();
+						if (resources != null) {
+							for (int j = 0; j < resources.length; j++) {
+								if (resource.equals(resources[j]) || resourcePath.isPrefixOf(resources[j].getFullPath())) {
+									list.add(configuration);
+									break;
+								}
+							}
+						}
+						else {
+							//in the event the config has no mapping
+							list.add(configuration);
+						}
+					}
+				}
+			}
+		} catch (CoreException e) {
+			list.clear();
+			DebugPlugin.log(e);
 		}
 		return list;
+	}
+	
+	/**
+	 * Returns if the specified configuration should be considered as a potential candidate
+	 * @param config
+	 * @return if the specified configuration should be considered as a potential candidate
+	 * @throws CoreException
+	 */
+	private boolean acceptConfiguration(ILaunchConfiguration config) throws CoreException {
+		if(config != null && !DebugUITools.isPrivate(config)) {
+			if(!"org.eclipse.ui.externaltools".equals(config.getType().getCategory())) { //$NON-NLS-1$
+				return true;
+			}
+			else {
+				IResource[] res = config.getMappedResources();
+				if(res != null) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -738,9 +815,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * or <code>null</code>
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 * CONTEXTLAUNCHING
 	 */
 	public LaunchShortcutExtension getLaunchShortcut(String id) {
 		loadLaunchShortcuts();
@@ -750,6 +824,33 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			if(ext.getId().equals(id)) {
 				return ext;
 			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the shared config from the selected resource or <code>null</code> if the selected resources is not a shared config
+	 * @param receiver the object to test if it is a shared launch configuration
+	 * @return the shared config from the selected resource or <code>null</code> if the selected resources is not a shared config
+	 * @since 3.3
+	 */
+	public ILaunchConfiguration isSharedConfig(Object receiver) {
+		if(receiver instanceof IFile) {
+			IFile file = (IFile) receiver;
+			String ext = file.getFileExtension();
+			if(ext == null) {
+				return null;
+			}
+			if(ext.equals("launch")) { //$NON-NLS-1$
+				ILaunchConfiguration config = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(file);
+				if(config != null && config.exists()) {
+					return config;
+				}
+			}
+		}
+		else if(receiver instanceof IFileEditorInput) {
+			IFileEditorInput input = (IFileEditorInput) receiver;
+			return isSharedConfig(input.getFile());
 		}
 		return null;
 	}
@@ -815,6 +916,15 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}	
 	
 	/**
+	 * Returns the singleton instance of the launch manager
+	 * @return the singleton instance of the launch manager
+	 * @since 3.3
+	 */
+	private LaunchManager getLaunchManager() {
+		return (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+	}
+	
+	/**
 	 * Restore launch history
 	 */
 	private void loadLaunchHistories() {
@@ -832,76 +942,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			restoreLaunchHistory();
 			fRestoring = false;
 		}
-	}
-	
-	/**
-	 * This method allows a default launch shortcut to be specified for the given resource. This sets
-	 * a default way of <i>how</i> something should be launched, not what specific <code>ILaunchConfiguration</code>
-	 * will do the launching. Passing in <code>null</code> for a shortcut will remove the attribute.
-	 * 
-	 * @see {@link ILaunchManager#setDefaultConfiguration(IResource, ILaunchConfiguration)}
-	 * @param resource the resource to map the specified launch shortcut to
-	 * @param shortcut the shortcut to map
-	 * 
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 * CONTEXTLAUNCHING
-	 */
-	public void setDefaultLaunchShortcut(IResource resource, LaunchShortcutExtension shortcut) throws CoreException {
-		IProject project = resource.getProject();
-		if (project == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					DebugPlugin.INTERNAL_ERROR, "Illegal argument: can only set default launch shortcut on and within projects.", null)); //$NON-NLS-1$ (internal error)
-		}
-		Preferences node = getInstanceNode(resource);
-		if(shortcut != null) {
-			node.put(IConfigurationElementConstants.DEFAULT_LAUNCH_SHORTCUT, shortcut.getId());
-		}
-		else {
-			node.remove(IConfigurationElementConstants.DEFAULT_LAUNCH_SHORTCUT);
-		}
-		try {
-			node.flush();
-		} 
-		catch (BackingStoreException e) {DebugUIPlugin.log(e);}
-	}
-	
-	/**
-	 * This method allows access to the default <code>LaunchShortcutExtension</code> for
-	 * the specified <code>IResource</code>.
-	 * 
-	 * @see {@link ILaunchManager#getDefaultConfiguration(IResource)}
-	 * @param resource the resource
-	 * @return the corresponding <code>LaunchShortcutExtension</code> for the given <code>IResource</code>,
-	 * or <code>null</code> if there is not one.
-	 * 
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 * CONTEXTLAUNCHING
-	 */
-	public LaunchShortcutExtension getDefaultLaunchShortcut(IResource resource) {
-		IProject project = resource.getProject();
-		if (project != null) {
-			Preferences node = getInstanceNode(resource);
-			String id = node.get(IConfigurationElementConstants.DEFAULT_LAUNCH_SHORTCUT, null);
-			if(id != null) {
-				return getLaunchShortcut(id);
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the node for instance project preferences
-	 * @param resource the resource to get the node for
-	 * @return the instance node for debug UI
-	 */
-	private org.osgi.service.prefs.Preferences getInstanceNode(IResource resource) {
-		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode();
-		node = node.node(InstanceScope.SCOPE).node(DebugUIPlugin.getUniqueIdentifier());
-		return node.node(resource.getFullPath().makeRelative().toString());
 	}
 	
 	/**

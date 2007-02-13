@@ -20,17 +20,12 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
@@ -57,10 +52,6 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	 */
 	private String fMode = null;
 	private IResource fResource = null;
-	private boolean fChecked = false;
-	private boolean fProject = false;
-	private boolean fShowProject = false;
-	private boolean fShowResource = false;
 	
 	/**
 	 * Constructor
@@ -68,13 +59,11 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	 * @param resource
 	 * @param mode
 	 */
-	public LaunchShortcutSelectionDialog(IResource resource, String mode, boolean showresource, boolean showproject) {
+	public LaunchShortcutSelectionDialog(IResource resource, String mode) {
 		super(DebugUIPlugin.getShell());
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fResource = resource;
 		fMode = mode;
-		fShowProject = showproject;
-		fShowResource = showresource;
 		ILaunchMode lmode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(fMode);
 		String modename = fMode;
 		if (lmode != null) {
@@ -127,47 +116,10 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	protected Control createDialogArea(Composite container) {
 		Composite comp = (Composite) super.createDialogArea(container);
 		try {
-			List input = new ArrayList(ContextRunner.getDefault().getLaunchShortcuts(fResource));
-			Button butt = null;
-			if(!input.isEmpty()) {
-				if(fShowResource) {
-					butt = SWTUtil.createCheckButton(comp, MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, new String[] {fResource.getName()}), null, fChecked);
-					butt.addSelectionListener(new SelectionListener() {
-						public void widgetDefaultSelected(SelectionEvent e) {}
-						public void widgetSelected(SelectionEvent e) {
-							fChecked = ((Button)e.getSource()).getSelection();
-						}
-					});
-				}
-				if(fShowProject) {
-					butt = SWTUtil.createCheckButton(comp, MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3, new String[] {fResource.getProject().getName()}), null, false);
-					butt.addSelectionListener(new SelectionListener() {
-						public void widgetDefaultSelected(SelectionEvent e) {}
-						public void widgetSelected(SelectionEvent e) {
-							fProject = ((Button)e.getSource()).getSelection();
-						}
-					});
-				}
-			}
+			List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
 			getTableViewer().setInput(input);
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		return comp;
-	}
- 
-	/**
-	 * Returns if the launched config from the selected shortcut should be made the default for the underlying resource
-	 * @return if the launched config should be made the default
-	 */
-	public boolean makeDefault() {
-		return fChecked;
-	}
-	
-	/**
-	 * Returns if the launched config from the selected shortcut should be made the default for the underlying resources' associated project
-	 * @return if the launched config from the selected shortcut should be made the default for the underlying resources' associated project
-	 */
-	public boolean makeProjectDefault() {
-		return fProject;
 	}
 }

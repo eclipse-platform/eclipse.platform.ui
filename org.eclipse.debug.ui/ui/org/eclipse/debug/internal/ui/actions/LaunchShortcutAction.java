@@ -45,8 +45,6 @@ public class LaunchShortcutAction extends Action {
 		updateEnablement();
 	}
 	
-	
-
 	/**
 	 * Runs with either the active editor or workbench selection.
 	 * 

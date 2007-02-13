@@ -38,6 +38,8 @@ public class ActionMessages extends NLS {
     public static String ConfigureColumnsAction_0;
 	public static String ConfigureColumnsAction_1;
 	public static String ConfigureColumnsAction_2;
+
+	public static String ContextualLaunchAction_0;
     
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
@@ -55,6 +57,8 @@ public class ActionMessages extends NLS {
     public static String EnableBreakpointAction_Enable_breakpoint_s__failed_2;
     public static String EnableBreakpointAction_Enabling_breakpoints_3;
     public static String EnableBreakpointAction_Exceptions_occurred_enabling_the_breakpoint_s___4;
+
+	public static String LaunchConfigurationAction_0;
 
     public static String OpenBreakpointMarkerAction__Go_to_File_1;
     public static String OpenBreakpointMarkerAction_Exceptions_occurred_attempting_to_open_the_editor_for_the_breakpoint_resource_2;
