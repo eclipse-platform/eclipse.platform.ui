@@ -176,8 +176,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (getParent() != null) {
 			// save to parent working copy
 			LaunchConfigurationWorkingCopy wc = (LaunchConfigurationWorkingCopy) getParent();
-			wc.setName(getName());
-			wc.copyFrom(this);
+			if(fRenamed) {
+				wc.rename(getName());
+			}
+			else {
+				wc.setName(getName());
+			}
+			wc.setAttributes(getInfo().getAttributes());
 			return wc;
 		}
 		else {

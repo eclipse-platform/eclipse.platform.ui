@@ -2415,20 +2415,22 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * CONTEXTLAUNCHING
 	 */
 	public ILaunchConfiguration getDefaultConfiguration(IResource resource) throws CoreException {
-		IProject project = resource.getProject();
-		if (project != null) {
-			org.osgi.service.prefs.Preferences projectNode = getProjectNode(resource);
-			String configValue = projectNode.get(DEFAULT_CONFIGURATION, null);
-			if (configValue != null) {
-				// shared config
-				IFile file = project.getFile(Path.fromPortableString(configValue));
-				return getLaunchConfiguration(file);
-			} else {
-				org.osgi.service.prefs.Preferences instanceNode = getInstanceNode(resource);
-				configValue = instanceNode.get(DEFAULT_CONFIGURATION, null);
+		if(resource != null) {
+			IProject project = resource.getProject();
+			if (project != null) {
+				org.osgi.service.prefs.Preferences projectNode = getProjectNode(resource);
+				String configValue = projectNode.get(DEFAULT_CONFIGURATION, null);
 				if (configValue != null) {
-					// local config
-					return getLaunchConfiguration(configValue);
+					// shared config
+					IFile file = project.getFile(Path.fromPortableString(configValue));
+					return getLaunchConfiguration(file);
+				} else {
+					org.osgi.service.prefs.Preferences instanceNode = getInstanceNode(resource);
+					configValue = instanceNode.get(DEFAULT_CONFIGURATION, null);
+					if (configValue != null) {
+						// local config
+						return getLaunchConfiguration(configValue);
+					}
 				}
 			}
 		}
