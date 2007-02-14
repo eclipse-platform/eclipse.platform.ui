@@ -44,5 +44,6 @@ public final class CommandsTestSuite extends TestSuite {
 		addTest(new TestSuite(HandlerActivationTest.class));
 		addTest(new TestSuite(CommandCallbackTest.class));
 		addTest(new TestSuite(CommandEnablementTest.class));
+		addTest(new TestSuite(CommandActionTest.class));
 	}
 }
