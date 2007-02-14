@@ -181,7 +181,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * 
 	 * @return resource
 	 */
-	protected IResource getResource(Object element) {
+	private IResource getResource(Object element) {
 		IResource resource = null;
 		if (element instanceof IResource) {
 			resource = (IResource) element;
