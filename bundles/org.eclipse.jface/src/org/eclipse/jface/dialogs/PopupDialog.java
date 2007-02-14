@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM - bug 156790: Adopt GridLayoutFactory within JFace
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -19,6 +20,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
@@ -33,8 +36,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -68,6 +69,11 @@ import org.eclipse.swt.widgets.Tracker;
  * @since 3.2
  */
 public class PopupDialog extends Window {
+
+	/**
+	 * 
+	 */
+	private static final GridDataFactory LAYOUTDATA_GRAB_BOTH = GridDataFactory.fillDefaults().grab(true,true);
 
 	/**
 	 * The dialog settings key name for stored dialog x location.
@@ -196,6 +202,13 @@ public class PopupDialog extends Window {
 	 */
 	public final static int POPUP_HORIZONTALSPACING = 1;
 
+	/**
+	 * 
+	 */
+	private static final GridLayoutFactory POPUP_LAYOUT_FACTORY = GridLayoutFactory
+			.fillDefaults().margins(POPUP_MARGINWIDTH, POPUP_MARGINHEIGHT)
+			.spacing(POPUP_HORIZONTALSPACING, POPUP_VERTICALSPACING);
+	
 	/**
 	 * Border thickness in pixels.
 	 */
@@ -345,16 +358,12 @@ public class PopupDialog extends Window {
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
 	protected void configureShell(Shell shell) {
-		GridLayout layout;
 		Display display = shell.getDisplay();
 		shell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
-		layout = new GridLayout(1, false);
 		int border = ((getShellStyle() & SWT.NO_TRIM) == 0) ? 0
 				: BORDER_THICKNESS;
-		layout.marginHeight = border;
-		layout.marginWidth = border;
-		shell.setLayout(layout);
+		GridLayoutFactory.fillDefaults().margins(border, border).spacing(5,5).applyTo(shell);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
@@ -434,14 +443,8 @@ public class PopupDialog extends Window {
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginHeight = POPUP_MARGINHEIGHT;
-		layout.marginWidth = POPUP_MARGINWIDTH;
-		layout.verticalSpacing = POPUP_VERTICALSPACING;
-		layout.horizontalSpacing = POPUP_HORIZONTALSPACING;
-		composite.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(gd);
+		POPUP_LAYOUT_FACTORY.applyTo(composite);
+		LAYOUTDATA_GRAB_BOTH.applyTo(composite);
 
 		// Title area
 		if (hasTitleArea()) {
@@ -453,7 +456,7 @@ public class PopupDialog extends Window {
 		// Create a grid data layout data if one was not provided.
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=118025
 		if (dialogArea.getLayoutData() == null) {
-			dialogArea.setLayoutData(new GridData(GridData.FILL_BOTH));
+			LAYOUTDATA_GRAB_BOTH.applyTo(dialogArea);
 		}
 		
 		// Info field
@@ -494,14 +497,8 @@ public class PopupDialog extends Window {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = POPUP_MARGINHEIGHT;
-		layout.marginWidth = POPUP_MARGINWIDTH;
-		layout.verticalSpacing = POPUP_VERTICALSPACING;
-		layout.horizontalSpacing = POPUP_HORIZONTALSPACING;
-		composite.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		composite.setLayoutData(gd);
+		POPUP_LAYOUT_FACTORY.applyTo(composite);
+		LAYOUTDATA_GRAB_BOTH.applyTo(composite);
 		return composite;
 	}
 
@@ -572,14 +569,10 @@ public class PopupDialog extends Window {
 	protected Control createTitleMenuArea(Composite parent) {
 
 		Composite titleAreaComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = POPUP_MARGINHEIGHT;
-		layout.marginWidth = POPUP_MARGINWIDTH;
-		layout.verticalSpacing = POPUP_VERTICALSPACING;
-		layout.horizontalSpacing = POPUP_HORIZONTALSPACING;
-		titleAreaComposite.setLayout(layout);
-		titleAreaComposite
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		POPUP_LAYOUT_FACTORY.copy().numColumns(2).applyTo(titleAreaComposite);
+		GridDataFactory.fillDefaults()
+			.align(SWT.FILL, SWT.CENTER).grab(true, false)
+			.applyTo(titleAreaComposite);
 
 		createTitleControl(titleAreaComposite);
 
@@ -607,11 +600,11 @@ public class PopupDialog extends Window {
 	protected Control createTitleControl(Composite parent) {
 		titleLabel = new Label(parent, SWT.NONE);
 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		if (!showDialogMenu) {
-			gd.horizontalSpan = 2;
-		}
-		titleLabel.setLayoutData(gd);
+		GridDataFactory.fillDefaults()
+			.align(SWT.FILL, SWT.CENTER)
+			.grab(true, false)
+			.span(showDialogMenu ? 1 : 2, 1)
+			.applyTo(titleLabel);	
 		
 		Font font = titleLabel.getFont();
 		FontData[] fontDatas = font.getFontData();
@@ -656,10 +649,8 @@ public class PopupDialog extends Window {
 		}
 		infoFont = new Font(infoLabel.getDisplay(), fontDatas);
 		infoLabel.setFont(infoFont);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.HORIZONTAL_ALIGN_BEGINNING
-				| GridData.VERTICAL_ALIGN_BEGINNING);
-		infoLabel.setLayoutData(gd);
+		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING)
+			.applyTo(infoLabel);
 		infoLabel.setForeground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_DARK_SHADOW));
 		return infoLabel;
@@ -675,7 +666,7 @@ public class PopupDialog extends Window {
 	private Control createHorizontalSeparator(Composite parent) {
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL
 				| SWT.LINE_DOT);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(separator);
 		return separator;
 	}
 
@@ -690,7 +681,7 @@ public class PopupDialog extends Window {
 		toolBar = new ToolBar(parent, SWT.FLAT);
 		ToolItem viewMenuButton = new ToolItem(toolBar, SWT.PUSH, 0);
 
-		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(toolBar);
 
 		menuImage = ImageDescriptor.createFromFile(PopupDialog.class,
 				"images/popup_menu.gif").createImage();//$NON-NLS-1$
