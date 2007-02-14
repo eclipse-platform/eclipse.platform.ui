@@ -679,6 +679,16 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		file.delete(false, DEFAULT_MONITOR);
 		deleteResources(project, new String[] {"delete5.txt"}, false);
 		
+		// Get the sync tree for the project
+		assertSyncEquals("testDeletionConflicts", project, 
+			new String[] { "delete1.txt", "delete2.txt", "delete3.txt", "delete4.txt", "delete5.txt"}, 
+			true, new int[] {
+				SyncInfo.OUTGOING | SyncInfo.DELETION,
+				SyncInfo.OUTGOING | SyncInfo.DELETION,
+				SyncInfo.OUTGOING | SyncInfo.CHANGE,
+				SyncInfo.OUTGOING | SyncInfo.DELETION,
+				SyncInfo.OUTGOING | SyncInfo.DELETION });
+		
 		// Checkout a copy and commit the deletion
 		IProject copy = checkoutCopy(project, "-copy");
 		setContentsAndEnsureModified(copy.getFile("delete1.txt"));

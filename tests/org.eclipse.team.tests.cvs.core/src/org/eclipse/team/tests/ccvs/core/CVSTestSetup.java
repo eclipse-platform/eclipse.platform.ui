@@ -31,6 +31,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final boolean FAIL_IF_EXCEPTION_LOGGED;
     public static final boolean RECORD_PROTOCOL_TRAFFIC;
     public static final boolean ENSURE_SEQUENTIAL_ACCESS;
+    public static final boolean FAIL_ON_BAD_DIFF;
 	
 	public static CVSRepositoryLocation repository;
 	public static CVSTestLogListener logListener;
@@ -48,6 +49,7 @@ public class CVSTestSetup extends TestSetup {
 		FAIL_IF_EXCEPTION_LOGGED = Boolean.valueOf(System.getProperty("eclipse.cvs.failLog", "true")).booleanValue();
         RECORD_PROTOCOL_TRAFFIC = Boolean.valueOf(System.getProperty("eclipse.cvs.recordProtocolTraffic", "false")).booleanValue();
         ENSURE_SEQUENTIAL_ACCESS = Boolean.valueOf(System.getProperty("eclipse.cvs.sequentialAccess", "false")).booleanValue();
+        FAIL_ON_BAD_DIFF = Boolean.valueOf(System.getProperty("eclipse.cvs.failOnBadDiff", "false")).booleanValue();
 	}
 
 	public static void loadProperties() {
