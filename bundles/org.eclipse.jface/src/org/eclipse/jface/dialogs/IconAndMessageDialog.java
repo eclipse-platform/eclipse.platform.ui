@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM - bug 156790: Adopt GridLayoutFactory within JFace
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
