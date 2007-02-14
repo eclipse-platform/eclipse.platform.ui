@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Fix for bug 162124 
+ *      [Dialogs] Double click to resize dialog should be tray-aware
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -227,12 +229,6 @@ public abstract class Dialog extends Window {
 	 */
 	private FontMetrics fontMetrics;
 	
-	/**
-	 * Point used for storing initial computed size of the dialog so
-	 * that it may be restored.
-	 */
-	private Point computedSize;
-
 	/**
 	 * Number of horizontal dialog units per character, value <code>4</code>.
 	 */
@@ -725,12 +721,6 @@ public abstract class Dialog extends Window {
 			}
 		}
 		
-		// Store the computed size for the dialog.  Must be done here before
-		// any dialog settings are applied.  We don't do this in the create methods
-		// because the dialog font is applied after creation and before the bounds
-		// are initialized.
-		computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);	
-		
 		super.initializeBounds();
 	}
 
@@ -1198,8 +1188,18 @@ public abstract class Dialog extends Window {
 				settings.put(DIALOG_ORIGIN_Y, shellLocation.y);
 			}
 			if ((strategy & DIALOG_PERSISTSIZE) != 0) {
-				settings.put(DIALOG_WIDTH, shellSize.x);
-				settings.put(DIALOG_HEIGHT, shellSize.y);
+				// Don't store the size if it is simply the computed size.
+				// This prevents us, for example, from storing a size that
+				// depended upon dynamic content that will not appear on 
+				// the next initial invocation.
+				Point preferredSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				if (shellSize.equals(preferredSize)) {
+					settings.put(DIALOG_WIDTH, DIALOG_DEFAULT_BOUNDS);
+					settings.put(DIALOG_HEIGHT, DIALOG_DEFAULT_BOUNDS);
+				} else {
+					settings.put(DIALOG_WIDTH, shellSize.x);
+					settings.put(DIALOG_HEIGHT, shellSize.y);
+				}
 				FontData [] fontDatas = JFaceResources.getDialogFont().getFontData();
 				if (fontDatas.length > 0) {
 					settings.put(DIALOG_FONT_DATA, fontDatas[0].toString());
@@ -1399,17 +1399,14 @@ public abstract class Dialog extends Window {
 	}
 	
 	/**
-	 * Restore the dialog to its initially computed size, resetting
+	 * Restore the dialog to its preferred size, resetting
 	 * any bounds that may have been stored in dialog settings.
 	 * 
 	 * @since 3.2
 	 */
 	private void restoreDialogToComputedSize() {
-		// The computed size was never stored.  This should not typically
-		// happen, but could if a client completely override the bounds initialization.
-		if (computedSize == null) {
-			return;
-		}
+		// Compute the dialog's current preferred size.
+		Point computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		
 		Shell shell = getShell();
 		Point shellSize = shell.getSize();
@@ -1425,7 +1422,7 @@ public abstract class Dialog extends Window {
 				shellLocation.y, computedSize.x, computedSize.y)));
 		
 		// If we do store the bounds, update the value so default bounds
-		// will be used.
+		// will be used on the next invocation.  
 		IDialogSettings settings = getDialogBoundsSettings();
 		if (settings != null) {
 			int strategy = getDialogBoundsStrategy();
