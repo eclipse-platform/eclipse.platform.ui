@@ -75,8 +75,8 @@ public class HelpDisplay {
 							"topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (UnsupportedEncodingException uee) {
 				}
-			} else if (href.startsWith("jar:file:")) { //$NON-NLS-1$
-				// topic from a jar to display without frames
+			} else if (href.startsWith("jar:") || href.startsWith("platform:")) { //$NON-NLS-1$ //$NON-NLS-2$
+				// topic from a jar/workspace to display without frames
 				displayHelpURL(
 						getBaseURL() + "nftopic/" + getNoframesURL(href), true); //$NON-NLS-1$
 			} else {

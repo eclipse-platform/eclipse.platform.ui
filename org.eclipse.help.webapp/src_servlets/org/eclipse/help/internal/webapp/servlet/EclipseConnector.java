@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.*;
-import java.util.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Locale;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.protocols.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
-import org.eclipse.help.internal.webapp.data.*;
+import org.eclipse.help.internal.webapp.data.ServletResources;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
@@ -45,8 +56,9 @@ public class EclipseConnector {
 			String url = getURL(req);
 			if (url == null)
 				return;
-			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:/") //$NON-NLS-1$
-					|| url.toLowerCase(Locale.ENGLISH).startsWith("jar:file:/")) { //$NON-NLS-1$
+			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:") //$NON-NLS-1$
+					|| url.toLowerCase(Locale.ENGLISH).startsWith("jar:") //$NON-NLS-1$
+					|| url.toLowerCase(Locale.ENGLISH).startsWith("platform:")) { //$NON-NLS-1$
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
@@ -190,7 +202,8 @@ public class EclipseConnector {
 		String protocol = helpURL.getProtocol();
 		if (!("help".equals(protocol) //$NON-NLS-1$
 				|| "file".equals(protocol) //$NON-NLS-1$
-		|| "jar".equals(protocol))) { //$NON-NLS-1$
+				|| "platform".equals(protocol) //$NON-NLS-1$
+				|| "jar".equals(protocol))) { //$NON-NLS-1$
 			throw new IOException();
 		}
 		con = helpURL.openConnection();
