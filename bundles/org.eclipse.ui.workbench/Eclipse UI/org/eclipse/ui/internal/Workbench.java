@@ -150,6 +150,8 @@ import org.eclipse.ui.internal.services.ActionSetSourceProvider;
 import org.eclipse.ui.internal.services.ActivePartSourceProvider;
 import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
 import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
+import org.eclipse.ui.internal.services.EvaluationService;
+import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
@@ -1432,6 +1434,20 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * and hooks up all the required listeners.
 	 */
 	private final void initializeDefaultServices() {
+		// TODO Correctly order service initialization
+		// there needs to be some serious consideration given to
+		// the services, and hooking them up in the correct order
+		final EvaluationService evaluationService = new EvaluationService();
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				serviceLocator.registerService(IEvaluationService.class,
+						evaluationService);
+			}
+		});
+		
+		
 
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
@@ -1538,6 +1554,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void runWithException() {
 				final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
 						Workbench.this);
+				evaluationService.addSourceProvider(activeShellSourceProvider);
 				handlerService[0].addSourceProvider(activeShellSourceProvider);
 				contextService.addSourceProvider(activeShellSourceProvider);
 				menuService.addSourceProvider(activeShellSourceProvider);
@@ -1549,6 +1566,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void runWithException() {
 				final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
 						Workbench.this);
+				evaluationService.addSourceProvider(activePartSourceProvider);
 				handlerService[0].addSourceProvider(activePartSourceProvider);
 				contextService.addSourceProvider(activePartSourceProvider);
 				menuService.addSourceProvider(activePartSourceProvider);
@@ -1559,6 +1577,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void runWithException() {
 				final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
 						contextService);
+				evaluationService.addSourceProvider(activeContextSourceProvider);
 				handlerService[0].addSourceProvider(activeContextSourceProvider);
 				menuService.addSourceProvider(activeContextSourceProvider);
 				sourceProviderService.registerProvider(activeContextSourceProvider);
@@ -1568,16 +1587,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 			public void runWithException() {
 				final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
 						Workbench.this);
+				evaluationService.addSourceProvider(currentSelectionSourceProvider);
 				handlerService[0].addSourceProvider(currentSelectionSourceProvider);
 				contextService.addSourceProvider(currentSelectionSourceProvider);
 				menuService.addSourceProvider(currentSelectionSourceProvider);
 				sourceProviderService.registerProvider(currentSelectionSourceProvider);
 				actionSetSourceProvider = new ActionSetSourceProvider(contextService);
+				evaluationService.addSourceProvider(actionSetSourceProvider);
 				handlerService[0].addSourceProvider(actionSetSourceProvider);
 				contextService.addSourceProvider(actionSetSourceProvider);
 				menuService.addSourceProvider(actionSetSourceProvider);
 				sourceProviderService.registerProvider(actionSetSourceProvider);
 				menuSourceProvider = new MenuSourceProvider();
+				evaluationService.addSourceProvider(menuSourceProvider);
 				handlerService[0].addSourceProvider(menuSourceProvider);
 				contextService.addSourceProvider(menuSourceProvider);
 				menuService.addSourceProvider(menuSourceProvider);

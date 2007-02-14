@@ -250,6 +250,22 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 */
 	protected abstract void sourceChanged(final int sourcePriority);
 
+	/**
+	 * Similar to sourceChanged(int) this notifies the subclass about the
+	 * change, but using the array of source names that changed instead of the
+	 * priority ... int based.
+	 * <p>
+	 * Clients may override this method.
+	 * </p>
+	 * 
+	 * @param sourceNames
+	 *            The array of names that changed.
+	 * @since 3.3
+	 */
+	protected void sourceChanged(final String[] sourceNames) {
+		// this is a no-op, since we're late in the game
+	}
+
 	public final void sourceChanged(final int sourcePriority,
 			final Map sourceValuesByName) {
 		// If the selection has changed, invalidate the current state.
@@ -265,7 +281,8 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 			final Object sourceValue = entry.getValue();
 			updateEvaluationContext(sourceName, sourceValue);
 		}
-		sourceChanged(sourcePriority);
+		sourceChanged(sourcePriority, (String[]) sourceValuesByName.keySet()
+				.toArray(new String[0]));
 	}
 
 	public final void sourceChanged(final int sourcePriority,
@@ -276,7 +293,16 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 		}
 
 		updateEvaluationContext(sourceName, sourceValue);
+		sourceChanged(sourcePriority, new String[] { sourceName });
+	}
+
+	/**
+	 * @param sourcePriority
+	 * @param strings
+	 */
+	private void sourceChanged(int sourcePriority, String[] sourceNames) {
 		sourceChanged(sourcePriority);
+		sourceChanged(sourceNames);
 	}
 
 	/**

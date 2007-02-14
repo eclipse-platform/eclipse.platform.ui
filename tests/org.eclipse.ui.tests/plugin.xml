@@ -3235,6 +3235,11 @@
             name="Handler Enablement 2"
             parentId="org.eclipse.ui.contexts.window">
       </context>
+      <context
+            id="org.eclipse.ui.command.contexts.evaluationService1"
+            name="evaluation service 1"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

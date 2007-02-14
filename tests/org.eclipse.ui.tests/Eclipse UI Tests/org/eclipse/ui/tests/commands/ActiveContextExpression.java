@@ -18,8 +18,15 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.internal.expressions.ActivePartExpression;
 
 public class ActiveContextExpression extends Expression {
+	/**
+	 * The seed for the hash code for all schemes.
+	 */
+	private static final int HASH_INITIAL = ActivePartExpression.class
+			.getName().hashCode();
+
 	private String contextId;
 
 	private String[] expressionInfo;
@@ -56,4 +63,20 @@ public class ActiveContextExpression extends Expression {
 		return EvaluationResult.FALSE;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		if (o instanceof ActiveContextExpression) {
+			ActiveContextExpression ace = (ActiveContextExpression) o;
+			if (!equals(contextId, ace.contextId)) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	protected final int computeHashCode() {
+		return HASH_INITIAL * HASH_FACTOR + hashCode(contextId);
+	}
 }

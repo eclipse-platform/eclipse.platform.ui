@@ -40,6 +40,7 @@ import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.presentations.PresentationsTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
+import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.eclipse.ui.tests.zoom.ZoomTestSuite;
 
@@ -90,5 +91,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new FieldAssistTestSuite());
         addTest(new MultiEditorTestSuite());
         addTest(new TestSuite(FilteredTreeTests.class));
+        addTest(new ServicesTestSuite());
     }
 }
