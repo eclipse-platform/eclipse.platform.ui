@@ -477,19 +477,13 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
         IStreamMonitor streamMonitor = streamsProxy.getErrorStreamMonitor();
         if (streamMonitor != null) {
-            connect(streamMonitor, IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
-            if (stream != null) {
-                stream.setActivateOnWrite(store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR));
-            }
+            connect(streamMonitor, IDebugUIConstants.ID_STANDARD_ERROR_STREAM,
+            		store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_ERR));
         }
         streamMonitor = streamsProxy.getOutputStreamMonitor();
         if (streamMonitor != null) {
-            connect(streamMonitor, IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
-            IOConsoleOutputStream stream = getStream(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
-            if (stream != null) {
-                stream.setActivateOnWrite(store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT));
-            }
+            connect(streamMonitor, IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM, 
+            		store.getBoolean(IDebugPreferenceConstants.CONSOLE_OPEN_ON_OUT));
         }
         InputReadJob readJob = new InputReadJob(streamsProxy);
         readJob.setSystem(true);
@@ -500,11 +494,23 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
      * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
      */
     public void connect(IStreamMonitor streamMonitor, String streamIdentifier) {
+        connect(streamMonitor, streamIdentifier, false);
+    }
+    
+    /**
+     * Connects the given stream monitor to a new output stream with the given identifier.
+     * 
+     * @param streamMonitor stream monitor
+     * @param streamIdentifier stream identifier
+     * @param activateOnWrite whether the stream should displayed when written to 
+     */
+    private void connect(IStreamMonitor streamMonitor, String streamIdentifier, boolean activateOnWrite) {
         IOConsoleOutputStream stream = null;
         if (fAllocateConsole) {
             stream = newOutputStream();
             Color color = fColorProvider.getColor(streamIdentifier);
             stream.setColor(color);
+            stream.setActivateOnWrite(activateOnWrite);
         }
         synchronized (streamMonitor) {
             StreamListener listener = new StreamListener(streamIdentifier, streamMonitor, stream);
