@@ -94,8 +94,11 @@ class BatchUpdate {
 		}
 		if (update.isCanceled()) {
 			update.getContentProvider().updateComplete(update);
-		} else if (allDone) {
-			fViewerUpdateJob.schedule();
+		}
+		synchronized (this) {
+			if (allDone && fComplete != null) {
+				fViewerUpdateJob.schedule();
+			}
 		}
 	}
 
