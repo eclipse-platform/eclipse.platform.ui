@@ -843,8 +843,10 @@ public class FormToolkit {
 
 	private void initializeBorderStyle() {
 		String osname = System.getProperty("os.name"); //$NON-NLS-1$
-		if (osname.equals("Windows XP")) { //$NON-NLS-1$
-			// Skinned widgets used on XP - check for Windows Classic
+		// Workaround for Sun 1.4 JRE bug #6220825:
+		// "System property os.name should be "Windows Vista" on Windows Vista"
+		if (osname.equals("Windows XP") || osname.equals("Windows Vista") || osname.equals("Windows NT (unknown)")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			// Skinned widgets used on XP, Vista - check for Windows Classic
 			// If not used, set the style to BORDER
 			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
