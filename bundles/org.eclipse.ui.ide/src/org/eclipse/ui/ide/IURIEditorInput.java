@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2007  IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui;
+package org.eclipse.ui.ide;
 
 import java.net.URI;
+
+import org.eclipse.ui.IEditorInput;
 
 /**
  * This interface defines an editor input based on a URI.
@@ -29,8 +31,6 @@ import java.net.URI;
  *
  * @see URI
  * @since 3.3
- * @deprecated replaced by IURIEditorInput in the org.eclipse.ui.ide plug-in. This will be deleted during
- * 3.3 M6.
  */
 public interface IURIEditorInput extends IEditorInput {
     /**
