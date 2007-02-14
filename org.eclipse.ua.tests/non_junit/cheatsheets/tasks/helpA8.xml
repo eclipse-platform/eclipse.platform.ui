@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Appserver preferences">
+   <intro>
+      <description>
+         Test Appserver preferences
+      </description>
+   </intro>
+   <item title="Set port number" dialog="true" skip="false">
+      <description>
+         Body
+      </description>
+      <subitem label="Launch &quot;Window&quot;-&gt;&quot;Preferences&quot;.  Preferences dialog will open." skip="false">
+         <command serialization="org.eclipse.ui.window.preferences" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Choose &quot;Help/Help Server&quot; on the left.  Enter a port number (for example 2003), in the second field.  Click O.K." skip="false">
+      </subitem>
+   </item>
+   <item title="Restart Workbench" dialog="false" skip="false">
+      <description>
+         Exit and restart the workbech, the cheat sheet view should continue this cheat sheet where it left off.
+      </description>
+   </item>
+   <item title="Launch Help" dialog="false" skip="false">
+      <description>
+         Launch help from the menu.  Ensure browser opens and displays help content.
+      </description>
+   </item>
+   <item title="Restore Preferences" dialog="true" skip="false">
+      <description>
+         Restore the port number
+      </description>
+      <subitem label="Launch &quot;Window&quot;-&gt;&quot;Preferences&quot;." skip="false">
+         <command serialization="org.eclipse.ui.window.preferences" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Click &quot;Restore defaults&quot; button, click &quot;OK&quot;," skip="false">
+      </subitem>
+   </item>
+   <item title="Restart Workbench" dialog="false" skip="false">
+      <description>
+         Exit and restart the workbech, the cheat sheet view should continue this cheat sheet where it left off.
+      </description>
+   </item>
+</cheatsheet>

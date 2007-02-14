@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Cheatsheet with one step">
+  <intro>
+    <description>This is a placeholder cheatsheet</description>
+  </intro>
+  <item title="Step 1">
+     <description>This is the only step in this cheat sheet.</description>
+  </item>
+</cheatsheet>

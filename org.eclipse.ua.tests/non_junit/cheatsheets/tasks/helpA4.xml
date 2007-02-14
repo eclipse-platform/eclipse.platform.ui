@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Search">
+   <intro>
+      <description>
+         Tests for search
+      </description>
+   </intro>
+   <item title="Open Search" dialog="false" skip="false">
+      <description>
+         Choose &quot;Search&quot; from the workbench Help menu. Help search page should open in the search view.
+      </description>
+   </item>
+   <item title="Perform Search" dialog="false" skip="false">
+      <description>
+         Type a query &quot;open project&quot; (without quotes), click &quot;Go&quot;.
+      </description>
+   </item>
+   <item title="Select Result" dialog="false" skip="false">
+      <description>
+         Choose a result.  The document should open with occurrences of the words &quot;open&quot; and &quot;project&quot; highlighted.
+      </description>
+   </item>
+</cheatsheet>

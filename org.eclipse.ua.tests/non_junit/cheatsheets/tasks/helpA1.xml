@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="A1: Help browser preferences">
+   <intro>
+      <description>
+         Tets for help browser preferences
+      </description>
+   </intro>
+   <item title="Default Browser" dialog="true" skip="false">
+      <description>
+         Test default browser preferences
+      </description>
+      <subitem label="Launch &quot;Window&quot;-&gt;&quot;Preferences&quot;.  Preferences dialog will open." skip="false">
+         <command serialization="org.eclipse.ui.window.preferences" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Choose &quot;Help&quot; on the left.  This should show help preference page on the right" skip="false">
+      </subitem>
+      <subitem label="On Windows and Linux help uses embedded browser, and the preference should contain a checkbox to use external browser. Leave this unchecked." skip="false">
+      </subitem>
+      <subitem label="Hit OK to close the preferences dialog." skip="false">
+      </subitem>
+      <subitem label="Choose &quot;Help&quot;-&gt;&quot;Help Contents&quot; from the workbench menu, ensure a browser opens and displays Help contents." skip="false">
+      </subitem>
+   </item>
+   <item title="External Browser" dialog="true" skip="false">
+      <description>
+         Test external browsers
+      </description>
+      <subitem label="Launch Window-&gt;Preferences" skip="false">
+         <command serialization="org.eclipse.ui.window.preferences" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Select &quot;Use external browser&quot;.  Follow hyperlink to Workbench Browsers preference page.  Choose a browser to use, Click &quot;OK&quot;." skip="false">
+      </subitem>
+      <subitem label="Choose &quot;Help&quot;-&gt;&quot;Help Contents&quot; from the workbench menu, ensure a browser selected opens and displays Help" skip="false">
+      </subitem>
+   </item>
+   <item title="Other Browsers" dialog="false" skip="false">
+      <description>
+         Go back to help preferences.  If you have more browser adapters available, try selecting each browser adapter and launch help.
+      </description>
+   </item>
+</cheatsheet>

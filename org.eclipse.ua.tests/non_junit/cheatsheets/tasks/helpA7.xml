@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Live help">
+   <intro>
+      <description>
+         Tests for live help
+      </description>
+   </intro>
+   <item title="Search for page with active help" dialog="false" skip="false">
+      <description>
+         Type &quot;active link below&quot; (no quotes) in the search field in the help view, and search.
+      </description>
+   </item>
+   <item title="Select document" dialog="false" skip="false">
+      <description>
+         Choose a document titled &quot;Active help&quot; from the search results
+      </description>
+   </item>
+   <item title="Open link" dialog="false" skip="false">
+      <description>
+         Click once &quot;Click here for a Message&quot; link at the bottom of the document.
+      </description>
+   </item>
+   <item title="Check Results" dialog="false" skip="false">
+      <description>
+         Ensure that a &quot;Hello World&quot; is being displayed in a dialog on top of the workbench
+      </description>
+   </item>
+   <item title="Commands in Help View" dialog="false" skip="false">
+      <description>
+         Test command activation from the Help View
+      </description>
+      <subitem label="Type &quot;Embedding commands&quot; (no quotes) in the search field in the help view, and search." skip="false">
+      </subitem>
+      <subitem label="Choose a document titled &quot;Embedding Commands in Help&quot; from the search results" skip="false">
+      </subitem>
+      <subitem label="Click the link for &quot;Open a specific preference page, such as  General &gt; Appearance&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that the preference dialog opens. Close the preference dialog." skip="false">
+      </subitem>
+   </item>
+   <item title="Commands in Help Browser" dialog="false" skip="false">
+      <description>
+         Repeat of the previous test only using the Help Browser instead of the Help View.
+      </description>
+      <subitem label="Type &quot;Embedding commands&quot; (no quotes) in the search field in the help browser, and search." skip="false">
+      </subitem>
+      <subitem label="Choose a document titled &quot;Embedding Commands in Help&quot; from the search results" skip="false">
+      </subitem>
+      <subitem label="Click the link for &quot;Open a specific preference page, such as  General &gt; Appearance&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that the preference dialog opens. Close the preference dialog." skip="false">
+      </subitem>
+   </item>
+</cheatsheet>

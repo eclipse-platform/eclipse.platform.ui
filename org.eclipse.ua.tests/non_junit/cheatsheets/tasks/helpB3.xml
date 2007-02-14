@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Searching documentation, basic scenario">
+   <intro>
+      <description>
+         Basic tests for search
+      </description>
+   </intro>
+   <item title="Simple search" dialog="false" skip="false">
+      <description>
+         In the Search entry field enter the word &quot;participation&quot; without the double quotes. The navigation frame should turn to the Search Results view, and if this was the first time you search the docs, you should see the indexing progress monitor in that page. When indexing is finished (or right away if other searches were performed before) you should get the results. In my case, I got 14 hits, starting with &quot;Synchronize View Integration&quot;.
+      </description>
+   </item>
+   <item title="Select result" dialog="false" skip="false">
+      <description>
+         Select a search result: &quot;Workspace save participation&quot;. You should see the &quot;participation&quot; string highlighted, as well as &quot;particip&quot;. This is because the search engine uses word stemming on English, so the highlighting respects the same stemming algorithm.
+      </description>
+   </item>
+   <item title="Highlighting Button" dialog="false" skip="false">
+      <description>
+         Test that highlighting can be turned on and off
+      </description>
+      <subitem label="Verify that there is an enabled button &quot;Highlight search items&quot;" skip="false">
+      </subitem>
+      <subitem label="Turn off highlighting by pressing the button." skip="false">
+      </subitem>
+      <subitem label="Turn on highlighting by pressing the button again." skip="false">
+      </subitem>
+   </item>
+   <item title="Open result" dialog="false" skip="false">
+      <description>
+         Click on each result. You should see the page for that result open.
+      </description>
+   </item>
+   <item title="Narrow Search" dialog="false" skip="false">
+      <description>
+         Let&apos;s narrow the results by book.
+      </description>
+      <subitem label="Click on the &quot;Scope&quot; link in the search bar. This should launch the Select Scope Search dialog that let&apos;s use define search list." skip="false">
+      </subitem>
+      <subitem label="Click on &quot;New&quot; to launch the dialog for defining a new search list." skip="false">
+      </subitem>
+      <subitem label="Enter the name &quot;workbench&quot; and select the &quot;Workbench User Guide&quot;, click OK to close the dialog." skip="false">
+      </subitem>
+      <subitem label="The name &quot;workbench&quot; should now be visible in the list in the Select Scope Search dialog. Select it, and click OK (or double click instead)." skip="false">
+      </subitem>
+   </item>
+   <item title="Check search scope" dialog="false" skip="false">
+      <description>
+         The dialog should be closed and the Search Scope should now display the name &quot;workbench&quot;. Note: Sometimes the search bar is not updated right away, so you may have to wait a bit.
+      </description>
+   </item>
+   <item title="Search again" dialog="false" skip="false">
+      <description>
+         Search again for the same word, &quot;Workspace save participation&quot;. You should see fewer results (I see 1 hit only).
+      </description>
+   </item>
+   <item title="Select an item" dialog="false" skip="false">
+      <description>
+         Select the &quot;Crash recovery&quot; hit, and click on &quot;Refresh/Show All Topics&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Crash recovery&quot; topic.
+      </description>
+   </item>
+   <item title="Redisplay search results" dialog="false" skip="false">
+      <description>
+         Click the &quot;Search Results&quot; tab at the bottom of the navigation tree. This should redisplay the search result you&apos;ve seen in &quot;Search Again&quot;
+      </description>
+   </item>
+   <item title="Show TOC" dialog="false" skip="false">
+      <description>
+         Click on the &quot;Contents&quot; tab at the bottom of the navigation tree. This should redisplay the navigation tree as you left it before switching to the search results tab.
+      </description>
+   </item>
+</cheatsheet>

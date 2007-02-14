@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Keyword Index">
+   <intro>
+      <description>
+         Tests for the index view
+      </description>
+   </intro>
+   <item title="Obtain index" dialog="false" skip="false">
+      <description>
+         Download and extract the test files zip from http://www.eclipse.org/eclipse/platform-ua/testing/test_files.zip
+      </description>
+   </item>
+   <item title="Install plugins" dialog="false" skip="false">
+      <description>
+         Extract the /help/org.eclipse.help.index.test.zip and place the test plugin in your plugins dir; restart workbench
+      </description>
+   </item>
+   <item title="Test Index View" dialog="false" skip="false">
+      <description>
+         Run some tests on the index view in the webapp.
+      </description>
+      <subitem label="Open Help -&gt; Help Contents" skip="false">
+      </subitem>
+      <subitem label="Verify that there’s a new index tab at the bottom left. Click on it to open the index." skip="false">
+      </subitem>
+      <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
+      </subitem>
+      <subitem label="Verify that when you start to type in a word in the index that entry is selected." skip="false">
+      </subitem>
+      <subitem label="Open a topic by clicking on the link." skip="false">
+      </subitem>
+   </item>
+   <item title="Test Index in Help View" dialog="false" skip="false">
+      <description>
+         Repeat the tests using the help view
+      </description>
+      <subitem label="Help-&gt;Dynamic Help" skip="false">
+      </subitem>
+      <subitem label="Verify that there’s a new index tab at the bottom left. Click on it to open the index." skip="false">
+      </subitem>
+      <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
+      </subitem>
+      <subitem label="Verify that when you start to type in a word in the index that entry is selected." skip="false">
+      </subitem>
+      <subitem label="Open a topic by clicking on the link." skip="false">
+      </subitem>
+      <subitem label="Select an index entry. Check that the type in area shows the selected keyword." skip="false">
+      </subitem>
+   </item>
+</cheatsheet>

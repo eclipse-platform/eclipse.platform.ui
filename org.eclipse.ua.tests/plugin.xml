@@ -144,6 +144,20 @@
             This cheat sheet is used to measure composite cheat sheet view performance.
          </description>
       </cheatsheet>
+      <category
+            id="org.eclipse.ua.tests.category979978139"
+            name="User Assistance Tests">
+      </category>
+      <cheatsheet
+            category="org.eclipse.ua.tests.category979978139"
+            composite="true"
+            contentFile="non_junit/cheatsheets/uaTests.xml"
+            id="org.eclipse.ua.tests.cheatsheet1052183668"
+            name="User Assistance Test Suite">
+         <description>
+            User Assistance Test Suite
+         </description>
+      </cheatsheet>
    </extension>
 
    <!-- 

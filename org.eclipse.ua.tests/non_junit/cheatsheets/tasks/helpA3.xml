@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Opening / closing help browser">
+   <intro>
+      <description>
+         Test that the browser opens and closes.
+      </description>
+   </intro>
+   <item title="Reopen browser" dialog="false" skip="false">
+      <description>
+         Without closing the browser that opened in the previous test case, choose &quot;Help&quot;-&gt;&quot;Help&quot; Contents&quot; from the workbench menu.  No new browser window should launch, and the existing help browser should load the table of contents, with lists of books on the left, and &quot;Welcome to Eclipse help&quot; document on the right.
+      </description>
+   </item>
+   <item title="Close Browser" dialog="false" skip="false">
+      <description>
+         Close the help browser.  Browser window should close.
+      </description>
+   </item>
+</cheatsheet>
