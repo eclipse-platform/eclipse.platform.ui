@@ -320,6 +320,12 @@ public final class GridDataFactory {
      * @return this
      */
     public GridDataFactory align(int hAlign, int vAlign) {
+    	if (hAlign != SWT.BEGINNING && hAlign != SWT.CENTER && hAlign != GridData.CENTER && hAlign != SWT.END && hAlign != GridData.END && hAlign != SWT.FILL && hAlign != SWT.LEFT && hAlign != SWT.RIGHT) {
+    		throw new IllegalArgumentException();
+    	}
+    	if (vAlign != SWT.BEGINNING && vAlign != SWT.CENTER && vAlign != GridData.CENTER && vAlign != SWT.END && vAlign != GridData.END && vAlign != SWT.FILL && vAlign != SWT.TOP && vAlign != SWT.BOTTOM) {
+    		throw new IllegalArgumentException();
+    	}
         data.horizontalAlignment = hAlign;
         data.verticalAlignment = vAlign;
         return this;
