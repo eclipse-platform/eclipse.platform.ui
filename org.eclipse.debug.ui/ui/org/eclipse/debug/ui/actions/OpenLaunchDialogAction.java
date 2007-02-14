@@ -16,14 +16,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -64,7 +62,8 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 */
 	public OpenLaunchDialogAction(String identifier) {
 		fIdentifier = identifier;
-		updateActionState();
+		init(this);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
 	}
 	
 	/**
@@ -107,25 +106,9 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 */
 	public void init(IAction action) {
 		fBackingAction = action;
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
-		updateActionState();
-	}
-	
-	/**
-	 * Updates the action state (label and image descriptor)
-	 * @since 3.3
-	 * CONTEXTLAUNCHING
-	 */
-	private void updateActionState() {
-		LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
-		if(fBackingAction == null) {
-			//there is no backing action, like a toolbar action delegate
-			setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_0, new String[] {extension.getLabel()}));
-			setImageDescriptor(extension.getImageDescriptor());
-			setEnabled(existsConfigTypesForMode());
-		}
-		else {
-			fBackingAction.setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_1, new String[] {DebugUIPlugin.removeAccelerators(extension.getLabel())}));
+		if(fBackingAction != null) {
+			LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
+			fBackingAction.setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_0, new String[] {extension.getLabel()}));
 			fBackingAction.setImageDescriptor(extension.getImageDescriptor());
 			fBackingAction.setEnabled(existsConfigTypesForMode());
 		}
@@ -153,15 +136,6 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH.equals(event.getProperty())){
-			updateActionState();
-		}
-	}
 	
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)

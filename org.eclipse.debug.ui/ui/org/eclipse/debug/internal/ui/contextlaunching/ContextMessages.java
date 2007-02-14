@@ -21,7 +21,6 @@ public class ContextMessages extends NLS {
 	public static String ContextRunner_8;
 	public static String ContextRunner_9;
 	public static String OpenLaunchDialogAction_0;
-	public static String OpenLaunchDialogAction_1;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ContextMessages.class);

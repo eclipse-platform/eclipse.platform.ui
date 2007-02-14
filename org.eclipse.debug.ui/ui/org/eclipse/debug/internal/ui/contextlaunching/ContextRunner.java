@@ -60,6 +60,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public final class ContextRunner {
 	
+	private IResource fLastContext = null;
+	
 	/**
 	 * The singleton instance of the context runner
 	 */
@@ -345,35 +347,38 @@ public final class ContextRunner {
 				Object a = ((IAdaptable)o).getAdapter(IResource.class);
 				if(a != null) {
 					IResource res = (IResource) a;
-					List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(res);
-					int csize = configs.size();
-					if(csize == 1) {
-						return ((ILaunchConfiguration)configs.get(0)).getName();
-					}
-					else if(csize > 1) {
-						config = getMRUConfiguration(configs, mode);
-						if(config != null) {
-							return config.getName();
+					if(res != fLastContext) {
+						fLastContext = res;
+						List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(res);
+						int csize = configs.size();
+						if(csize == 1) {
+							return ((ILaunchConfiguration)configs.get(0)).getName();
 						}
-						else {
-							//TODO could cause TVT issues
-							return ContextMessages.ContextRunner_14;
-						}
-					}
-					else {
-						try {
-							List exts = getLaunchConfigurationManager().getLaunchShortcuts(res);
-							int esize = exts.size();
-							if(esize == 0) {
-								//TODO could cause TVT issues
-								return ContextMessages.ContextRunner_15; 
+						else if(csize > 1) {
+							config = getMRUConfiguration(configs, mode);
+							if(config != null) {
+								return config.getName();
 							}
 							else {
 								//TODO could cause TVT issues
 								return ContextMessages.ContextRunner_14;
 							}
 						}
-						catch(CoreException ce) {DebugUIPlugin.log(ce);}
+						else {
+							try {
+								List exts = getLaunchConfigurationManager().getLaunchShortcuts(res);
+								int esize = exts.size();
+								if(esize == 0) {
+									//TODO could cause TVT issues
+									return ContextMessages.ContextRunner_15; 
+								}
+								else {
+									//TODO could cause TVT issues
+									return ContextMessages.ContextRunner_14;
+								}
+							}
+							catch(CoreException ce) {DebugUIPlugin.log(ce);}
+						}
 					}
 				}
 			}
