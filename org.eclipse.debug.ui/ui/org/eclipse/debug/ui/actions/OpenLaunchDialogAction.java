@@ -116,7 +116,7 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 * @since 3.3
 	 * CONTEXTLAUNCHING
 	 */
-	protected void updateActionState() {
+	private void updateActionState() {
 		LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
 		if(fBackingAction == null) {
 			//there is no backing action, like a toolbar action delegate
