@@ -163,7 +163,10 @@ public final class GridDataFactory {
     
     /**
      * Creates a GridDataFactory initialized with defaults that will cause
-     * the control to fill its cell.
+     * the control to fill its cell. The minimum size is set to the smallest possible
+     * minimum size supported by SWT. Currently, the smallest supported minimum size
+     * is (1,1) so this is the default. If GridLayout ever adds support for grid data
+     * with no minimum size, this will be changed to 0,0 in the future. 
      * 
      * <p>
      * Initial values are:
