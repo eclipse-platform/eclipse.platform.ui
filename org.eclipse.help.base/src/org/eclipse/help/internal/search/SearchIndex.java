@@ -98,7 +98,7 @@ public class SearchIndex implements ISearchIndex {
 
 	public static final String DEPENDENCIES_KEY_ANALYZER = "analyzer"; //$NON-NLS-1$
 
-	private static final String LUCENE_PLUGIN_ID = "org.apache.lucene"; //$NON-NLS-1$
+	private static final String LUCENE_BUNDLE_ID = "org.apache.lucene"; //$NON-NLS-1$
 
 	private static final String FIELD_NAME = "name"; //$NON-NLS-1$
 
@@ -184,11 +184,12 @@ public class SearchIndex implements ISearchIndex {
 	public IStatus addDocument(String name, URL url) {
 		try {
 			Document doc = new Document();
-			doc.add(Field.Keyword(FIELD_NAME, name));
+			doc.add(new Field(FIELD_NAME, name, Field.Store.YES, Field.Index.UN_TOKENIZED));
 			addExtraFields(doc);
 			String pluginId = LocalSearchManager.getPluginId(name);
-			if (relativePath != null)
-				doc.add(Field.Keyword(FIELD_INDEX_ID, relativePath));
+			if (relativePath != null) {
+				doc.add(new Field(FIELD_INDEX_ID, relativePath, Field.Store.YES, Field.Index.UN_TOKENIZED));
+			}
 			// NEW: check for the explicit search participant.
 			LuceneSearchParticipant participant = null;
 			HelpURLConnection urlc = new HelpURLConnection(url);
@@ -205,9 +206,9 @@ public class SearchIndex implements ISearchIndex {
 					String filters = doc.get("filters"); //$NON-NLS-1$
 					indexedDocs.put(name, filters != null ? filters : "0"); //$NON-NLS-1$
 					if (id != null)
-						doc.add(Field.UnIndexed("id", id)); //$NON-NLS-1$
+						doc.add(new Field("id", id, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 					if (pid != null)
-						doc.add(Field.UnIndexed("participantId", pid)); //$NON-NLS-1$
+						doc.add(new Field("participantId", pid, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 					iw.addDocument(doc);
 				}
 				return status;
@@ -263,8 +264,8 @@ public class SearchIndex implements ISearchIndex {
 			indexedDocs.restore();
 			setInconsistent(true);
 			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), create);
-			iw.mergeFactor = 20;
-			iw.maxFieldLength = 1000000;
+			iw.setMergeFactor(20);
+			iw.setMaxFieldLength(1000000);
 			return true;
 		} catch (IOException e) {
 			HelpBasePlugin.logError("Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
@@ -317,9 +318,8 @@ public class SearchIndex implements ISearchIndex {
 	public IStatus removeDocument(String name) {
 		Term term = new Term(FIELD_NAME, name);
 		try {
-			ir.delete(term);
+			ir.deleteDocuments(term);
 			indexedDocs.remove(name);
-			//System.out.println("removed: " + name); //$NON-NLS-1$
 		} catch (IOException e) {
 			return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 					"IO exception occurred while removing document " + name //$NON-NLS-1$
@@ -567,7 +567,7 @@ public class SearchIndex implements ISearchIndex {
 				}
 			}
 			if (doc1.doc() == docs2.doc()) {
-				ir.delete(doc1.doc());
+				ir.deleteDocument(doc1.doc());
 				if (!doc1.next()) {
 					return;
 				}
@@ -691,9 +691,9 @@ public class SearchIndex implements ISearchIndex {
 	public boolean isLuceneCompatible(String luceneVersion) {
 		if (luceneVersion==null) return false;
 		String currentLuceneVersion = ""; //$NON-NLS-1$
-		Bundle lucenePluginDescriptor = Platform.getBundle(LUCENE_PLUGIN_ID);
-		if (lucenePluginDescriptor != null) {
-			currentLuceneVersion += (String) lucenePluginDescriptor.getHeaders()
+		Bundle luceneBundle = Platform.getBundle(LUCENE_BUNDLE_ID);
+		if (luceneBundle != null) {
+			currentLuceneVersion += (String) luceneBundle.getHeaders()
 					.get(Constants.BUNDLE_VERSION);
 		}
 		//Direct comparison
@@ -725,7 +725,7 @@ public class SearchIndex implements ISearchIndex {
 	 */
 	private void saveDependencies() {
 		getDependencies().put(DEPENDENCIES_KEY_ANALYZER, analyzerDescriptor.getId());
-		Bundle luceneBundle = Platform.getBundle(LUCENE_PLUGIN_ID);
+		Bundle luceneBundle = Platform.getBundle(LUCENE_BUNDLE_ID);
 		if (luceneBundle != null) {
 			String luceneBundleVersion = "" //$NON-NLS-1$
 					+ luceneBundle.getHeaders().get(Constants.BUNDLE_VERSION);

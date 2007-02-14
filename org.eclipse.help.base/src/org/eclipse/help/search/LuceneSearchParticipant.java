@@ -158,9 +158,9 @@ public abstract class LuceneSearchParticipant {
 	 */
 
 	protected void addTitle(String title, Document doc) {
-		doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
-		doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
-		doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
+		doc.add(new Field("title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
+		doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
+		doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 	}
 
 	/**

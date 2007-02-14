@@ -168,8 +168,8 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		if (children.length > 0) {
 			StringBuffer buf = new StringBuffer();
 			addChildren(children, buf, doc);
-			doc.add(Field.Text("contents", new StringReader(buf.toString()))); //$NON-NLS-1$
-			doc.add(Field.Text("exact_contents", new StringReader(buf.toString()))); //$NON-NLS-1$
+			doc.add(new Field("contents", new StringReader(buf.toString()))); //$NON-NLS-1$
+			doc.add(new Field("exact_contents", new StringReader(buf.toString()))); //$NON-NLS-1$
 			return Status.OK_STATUS;
 		}
 		// delegate to the help system

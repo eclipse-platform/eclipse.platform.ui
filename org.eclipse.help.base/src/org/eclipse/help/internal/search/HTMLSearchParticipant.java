@@ -58,14 +58,13 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 								null);
 					}
 					ParsedDocument parsed = new ParsedDocument(parser.getContentReader());
-					doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
-					doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
-							.newContentReader()));
+					doc.add(new Field("contents", parsed.newContentReader())); //$NON-NLS-1$
+					doc.add(new Field("exact_contents", parsed.newContentReader())); //$NON-NLS-1$
 					String title = parser.getTitle();
-					doc.add(Field.UnStored("title", title)); //$NON-NLS-1$
-					doc.add(Field.UnStored("exact_title", title)); //$NON-NLS-1$
-					doc.add(Field.UnIndexed("raw_title", title)); //$NON-NLS-1$
-					doc.add(Field.UnIndexed("summary", parser.getSummary(title))); //$NON-NLS-1$
+					doc.add(new Field("title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
+					doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
+					doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+					doc.add(new Field("summary", parser.getSummary(title), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 				} finally {
 					parser.closeDocument();
 				}

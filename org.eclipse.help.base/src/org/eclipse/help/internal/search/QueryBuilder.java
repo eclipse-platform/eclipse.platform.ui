@@ -306,7 +306,7 @@ public class QueryBuilder {
 		BooleanQuery bq = new BooleanQuery();
 		for (Iterator it = queries.iterator(); it.hasNext();) {
 			Query q = (Query) it.next();
-			bq.add(q, false, false);
+			bq.add(q, BooleanClause.Occur.SHOULD);
 		}
 		return bq;
 	}
@@ -338,13 +338,13 @@ public class QueryBuilder {
 			if (fieldNames.length > 1) {
 				BooleanQuery allFieldsQuery = new BooleanQuery();
 				for (int f = 0; f < fieldNames.length; f++)
-					allFieldsQuery.add(qs[f], false, false);
+					allFieldsQuery.add(qs[f], BooleanClause.Occur.SHOULD);
 				q = allFieldsQuery;
 			}
 			if (operator != null && operator.type == QueryWordsToken.NOT) {
-				retQuery.add(q, false, true); // add as prohibited
+				retQuery.add(q, BooleanClause.Occur.MUST_NOT); // add as prohibited
 			} else {
-				retQuery.add(q, true, false); // add as required
+				retQuery.add(q, BooleanClause.Occur.MUST); // add as required
 				requiredTermExist = true;
 			}
 		}
@@ -425,7 +425,7 @@ public class QueryBuilder {
 				return query;
 		// Create phrase query for all tokens and OR with original query
 		BooleanQuery booleanQuery = new BooleanQuery();
-		booleanQuery.add(query, false, false);
+		booleanQuery.add(query, BooleanClause.Occur.SHOULD);
 		PhraseQuery[] phraseQueries = new PhraseQuery[fields.length];
 		for (int f = 0; f < fields.length; f++) {
 			phraseQueries[f] = new PhraseQuery();
@@ -435,7 +435,7 @@ public class QueryBuilder {
 				phraseQueries[f].add(t);
 			}
 			phraseQueries[f].setBoost(10 * boosts[f]);
-			booleanQuery.add(phraseQueries[f], false, false);
+			booleanQuery.add(phraseQueries[f], BooleanClause.Occur.SHOULD);
 		}
 		return booleanQuery;
 	}

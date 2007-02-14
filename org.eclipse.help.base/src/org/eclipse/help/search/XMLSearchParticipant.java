@@ -300,17 +300,16 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			stream = url.openStream();
 			stream = preprocess(stream, name, index.getLocale());
 			parser.parse(stream, handler);
-			doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
-			doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
-					.newContentReader()));
+			doc.add(new Field("contents", parsed.newContentReader())); //$NON-NLS-1$
+			doc.add(new Field("exact_contents", parsed.newContentReader())); //$NON-NLS-1$
 			String title = parsed.getTitle();
 			if (title != null)
 				addTitle(title, doc);
 			String summary = parsed.getSummary();
 			if (summary != null)
-				doc.add(Field.UnIndexed("summary", summary)); //$NON-NLS-1$
+				doc.add(new Field("summary", summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 			if (hasFilters) {
-				doc.add(Field.UnIndexed("filters", "true")); //$NON-NLS-1$ //$NON-NLS-2$
+				doc.add(new Field("filters", "true", Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return Status.OK_STATUS;
 		} catch (Exception e) {

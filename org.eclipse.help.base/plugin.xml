@@ -55,13 +55,45 @@
             locale="en"
             class="org.eclipse.help.internal.search.Analyzer_en">
       </analyzer>
-   </extension>
-   <extension
-         id="org.eclipse.help.base.Analyzer_de"
-         point="org.eclipse.help.base.luceneAnalyzer">
+      <analyzer
+            locale="br"
+            class="org.apache.lucene.analysis.br.BrazilianAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="ja"
+            class="org.apache.lucene.analysis.cjk.CJKAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="ko"
+            class="org.apache.lucene.analysis.cjk.CJKAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="zh"
+            class="org.apache.lucene.analysis.cn.ChineseAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="cz"
+            class="org.apache.lucene.analysis.cz.CzechAnalyzer">
+      </analyzer>
       <analyzer
             locale="de"
             class="org.apache.lucene.analysis.de.GermanAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="el"
+            class="org.apache.lucene.analysis.el.GreekAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="fr"
+            class="org.apache.lucene.analysis.fr.FrenchAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="nl"
+            class="org.apache.lucene.analysis.nl.DutchAnalyzer">
+      </analyzer>
+      <analyzer
+            locale="ru"
+            class="org.apache.lucene.analysis.ru.RussianAnalyzer">
       </analyzer>
    </extension>
 <!-- Web Browsers -->
