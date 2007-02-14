@@ -8,10 +8,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -147,7 +145,7 @@ public class Snippet006TableMultiLineCells {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new TableViewer(parent);
+		viewer = new TableViewer(parent, SWT.FULL_SELECTION);
 
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			/*
@@ -181,34 +179,6 @@ public class Snippet006TableMultiLineCells {
 		createColumns();
 
 		viewer.setLabelProvider(new OwnerDrawLabelProvider() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#erase(org.eclipse.swt.widgets.Event,
-			 *      java.lang.Object)
-			 */
-			protected void erase(Event event, Object element) {
-
-				Rectangle bounds = event.getBounds();
-				if ((event.detail & SWT.SELECTED) > 0) {
-
-					Color oldForeground = event.gc.getForeground();
-					Color oldBackground = event.gc.getBackground();
-
-					event.gc.setBackground(viewer.getControl().getDisplay()
-							.getSystemColor(SWT.COLOR_LIST_SELECTION));
-					event.gc.setForeground(viewer.getControl().getDisplay()
-							.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
-					event.gc.fillRectangle(bounds);
-					/* restore the old GC colors */
-					event.gc.setForeground(oldForeground);
-					event.gc.setBackground(oldBackground);
-					/* ensure that default selection is not drawn */
-					event.detail &= ~SWT.SELECTED;
-
-				}
-
-			}
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#measure(org.eclipse.swt.widgets.Event, java.lang.Object)

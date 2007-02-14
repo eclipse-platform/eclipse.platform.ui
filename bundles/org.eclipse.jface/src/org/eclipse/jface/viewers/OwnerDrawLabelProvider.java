@@ -12,6 +12,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -107,13 +108,37 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	}
 
 	/**
-	 * Handle the erase event.
+	 * Handle the erase event. The default implementation colours the background of selected areas with 
+	 * {@link SWT#COLOR_LIST_SELECTION} and foregrounds with {@link SWT#COLOR_LIST_SELECTION_TEXT} 
 	 * 
 	 * @param event
 	 * @param element
 	 * @see SWT#EraseItem
+	 * @see SWT#COLOR_LIST_SELECTION
+	 * @see SWT#COLOR_LIST_SELECTION_TEXT
 	 */
-	protected abstract void erase(Event event, Object element);
+	protected void erase(Event event, Object element) {
+
+		Rectangle bounds = event.getBounds();
+		if ((event.detail & SWT.SELECTED) > 0) {
+
+			Color oldForeground = event.gc.getForeground();
+			Color oldBackground = event.gc.getBackground();
+
+			event.gc.setBackground(event.item.getDisplay()
+					.getSystemColor(SWT.COLOR_LIST_SELECTION));
+			event.gc.setForeground(event.item.getDisplay()
+					.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+			event.gc.fillRectangle(bounds);
+			/* restore the old GC colors */
+			event.gc.setForeground(oldForeground);
+			event.gc.setBackground(oldBackground);
+			/* ensure that default selection is not drawn */
+			event.detail &= ~SWT.SELECTED;
+
+		}
+
+	}
 
 	/**
 	 * Handle the paint event.
@@ -153,5 +178,6 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 				cellBounds.height, true);
 
 	}
+
 
 }
