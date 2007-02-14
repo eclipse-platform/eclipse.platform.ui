@@ -27,6 +27,11 @@
 
 function onloadHandler(e)
 {
+    resize();
+}
+
+function resize()
+{
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
 %>	var h=window.<%=view.getName()%>ToolbarFrame.document.getElementById("titleText").offsetHeight; <%-- default 13 --%>
 	if(h<=19){
@@ -36,6 +41,20 @@ function onloadHandler(e)
 	window.<%=view.getName()%>ToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(9+h)+"px"; <%-- default 22 --%>
 <%}%>
 }
+
+var resized = false;
+
+// Called when the view is made visible. This function is needed because 
+// with IE the resize only works after the view has been displayed for the first time.
+
+function onShow() 
+{
+    if (!resized) {
+        resize();
+        resized = true;
+    }
+}
+
 </script>
 
 </head>

@@ -83,6 +83,9 @@ function showView(view)
   		}else{
    			iframes[i].className = "visible";
    			iframes[i].style.visibility="visible";
+   			try {
+   			    iframes[i].contentWindow.onShow();
+   		    } catch(ex) {}
    		}
  	}
 }
