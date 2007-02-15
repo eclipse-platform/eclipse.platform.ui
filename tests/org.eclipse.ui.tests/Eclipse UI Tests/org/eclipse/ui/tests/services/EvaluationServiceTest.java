@@ -121,19 +121,37 @@ public class EvaluationServiceTest extends UITestCase {
 					new ActiveContextExpression(CONTEXT_ID1,
 							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
 					listener1, IEvaluationService.RESULT);
+			assertEquals(1, listener1.count);
+			assertFalse(listener1.currentValue);
+
 			evalRef2 = service.addEvaluationListener(
 					new ActiveContextExpression(CONTEXT_ID1,
 							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
 					listener2, IEvaluationService.RESULT);
-			assertEquals(1, listener1.count);
-			assertFalse(listener1.currentValue);
+			assertEquals(1, listener2.count);
+			assertFalse(listener2.currentValue);
+			evalRef2.setResult(true);
 
 			contextService = (IContextService) window
 					.getService(IContextService.class);
 			context1 = contextService.activateContext(CONTEXT_ID1);
 			assertEquals(2, listener1.count);
 			assertTrue(listener1.currentValue);
+			// we already set this guy to true, he should skip
+			assertEquals(1, listener2.count);
+			assertFalse(listener2.currentValue);
 
+			evalRef1.setResult(false);
+			contextService.deactivateContext(context1);
+			context1 = null;
+			assertEquals(2, listener2.count);
+			assertFalse(listener2.currentValue);
+			
+			// we already set this guy to false, so he should be the old
+			// values
+			assertEquals(2, listener1.count);
+			assertTrue(listener1.currentValue);
+			
 		} finally {
 			if (context1 != null) {
 				contextService.deactivateContext(context1);

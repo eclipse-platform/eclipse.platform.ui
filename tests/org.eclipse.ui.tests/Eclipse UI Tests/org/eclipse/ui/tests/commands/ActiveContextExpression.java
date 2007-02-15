@@ -63,15 +63,15 @@ public class ActiveContextExpression extends Expression {
 		return EvaluationResult.FALSE;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
 		if (o instanceof ActiveContextExpression) {
 			ActiveContextExpression ace = (ActiveContextExpression) o;
-			if (!equals(contextId, ace.contextId)) {
-				return false;
-			}
+			return equals(contextId, ace.contextId);
 		}
 		return false;
 	}
