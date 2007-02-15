@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ide.IURIEditorInput;
 
 /**
  * Factory for saving and restoring a <code>JavaFileEditorInput</code>. 
@@ -32,23 +33,23 @@ import org.eclipse.ui.IMemento;
  * @since 3.3
  */
 public class JavaFileEditorInputFactory implements IElementFactory {
-	
+
 	/**
 	 * This factory's ID.
 	 * <p>
 	 * The editor plug-in registers a factory by this name with
 	 * the <code>"org.eclipse.ui.elementFactories"<code> extension point.
 	 */
-	static final String ID= "org.eclipse.ui.internal.editors.text.JavaFileEditorInputFactory"; //$NON-NLS-1$
-	
+	static final String ID= "org.eclipse.ui.ide.FileStoreEditorInputFactory"; //$NON-NLS-1$
+
 	/**
 	 * Saves the state of the given editor input into the given memento.
 	 *
 	 * @param memento the storage area for element state
 	 * @param input the file editor input
 	 */
-	static void saveState(IMemento memento, JavaFileEditorInput input) {
-		URI uri= input.URI();
+	static void saveState(IMemento memento, IURIEditorInput input) {
+		URI uri= input.getURI();
 		memento.putString(TAG_URI, uri.toString());
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,124 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.net.URI;
-
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.resources.IStorage;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.ui.editors.text.ILocationProvider;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 
 /**
  * @since 3.0
+ * @deprecated will be deleted soon.
  */
-public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInput, ILocationProvider, IPersistableElement {
-
-	/**
-	 * The workbench adapter which simply provides the label.
-	 *
-	 * @since 3.1
-	 */
-	private class WorkbenchAdapter implements IWorkbenchAdapter {
-		/*
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-		 */
-		public Object[] getChildren(Object o) {
-			return null;
-		}
-
-		/*
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-		 */
-		public ImageDescriptor getImageDescriptor(Object object) {
-			return null;
-		}
-
-		/*
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-		 */
-		public String getLabel(Object o) {
-			return ((JavaFileEditorInput)o).getName();
-		}
-
-		/*
-		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-		 */
-		public Object getParent(Object o) {
-			return null;
-		}
-	}
-
-	private IFileStore fFileStore;
-	private WorkbenchAdapter fWorkbenchAdapter= new WorkbenchAdapter();
-	private IStorage fStorage;
+public class JavaFileEditorInput extends FileStoreEditorInput implements ILocationProvider, IPersistableElement {
+	
 	private IPath fPath;
 	
 	public JavaFileEditorInput(IFileStore fileStore) {
-		Assert.isNotNull(fileStore);
-		Assert.isTrue(EFS.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
-		fFileStore= fileStore;
-		fWorkbenchAdapter= new WorkbenchAdapter();
-	}
-	/*
-	 * @see org.eclipse.ui.IEditorInput#exists()
-	 */
-	public boolean exists() {
-		return fFileStore.fetchInfo().exists();
-	}
-
-	/*
-	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		return null;
-	}
-
-	/*
-	 * @see org.eclipse.ui.IEditorInput#getName()
-	 */
-	public String getName() {
-		return fFileStore.getName();
-	}
-
-	/*
-	 * @see org.eclipse.ui.IEditorInput#getPersistable()
-	 */
-	public IPersistableElement getPersistable() {
-		return this;
-	}
-
-	/*
-	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
-	 */
-	public String getToolTipText() {
-		return fFileStore.toString();
-	}
-
-	/*
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (ILocationProvider.class.equals(adapter))
-			return this;
-		if (IWorkbenchAdapter.class.equals(adapter))
-			return fWorkbenchAdapter;
-		return Platform.getAdapterManager().getAdapter(this, adapter);
+		super(fileStore);
+		fPath= URIUtil.toPath(fileStore.toURI());
 	}
 
 	/*
@@ -136,7 +40,6 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
 	public IPath getPath(Object element) {
 		if (element instanceof JavaFileEditorInput)
 			return ((JavaFileEditorInput)element).getPath();
-		
 		return null;
 	}
 
@@ -145,73 +48,28 @@ public class JavaFileEditorInput implements IPathEditorInput, IStorageEditorInpu
      * @since 3.1
      */
     public IPath getPath() {
-    	if (fPath == null)
-    		fPath= new Path(fFileStore.toURI().getPath());
-    	return fPath;
+	 return fPath;
+    }
+
+    /*
+     * @see org.eclipse.ui.ide.FileStoreEditorInput#getPersistable()
+     */
+    public IPersistableElement getPersistable() {
+    	return this;
     }
 
 	/*
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-
-		if (o instanceof JavaFileEditorInput) {
-			JavaFileEditorInput input= (JavaFileEditorInput) o;
-			return fFileStore.equals(input.fFileStore);
-		}
-
-        if (o instanceof IPathEditorInput) {
-            IPathEditorInput input= (IPathEditorInput)o;
-            return getPath().equals(input.getPath());
-        }
-
-		return false;
-	}
-
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return fFileStore.hashCode();
-	}
-
-	/*
-	 * @see org.eclipse.ui.IStorageEditorInput#getStorage()
-	 * @since 3.2
-	 */
-	public IStorage getStorage() throws CoreException {
-		if (fStorage == null)
-			fStorage= new JavaFileStorage(fFileStore);
-		return fStorage;
-	}
-	
-	/*
 	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
-	 * @since 3.3
 	 */
 	public String getFactoryId() {
 		return JavaFileEditorInputFactory.ID;
 	}
-	
+
 	/*
 	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
 	 * @since 3.3
 	 */
 	public void saveState(IMemento memento) {
 		JavaFileEditorInputFactory.saveState(memento, this);
-		
 	}
-	
-	/**
-	 * Returns the file store's URI.
-	 * 
-	 * @return the uri
-	 * @since 3.3
-	 */
-	URI URI() {
-		return fFileStore.toURI();
-	}
-
 }
