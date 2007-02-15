@@ -501,9 +501,8 @@ public class FormToolkit {
 			section.setTitleBarBackground(colors.getColor(IFormColors.TB_BG));
 			section.setTitleBarBorderColor(colors
 					.getColor(IFormColors.TB_BORDER));
-			section
-					.setTitleBarForeground(colors
-							.getColor(IFormColors.TB_TOGGLE));
+			section.setTitleBarForeground(colors
+					.getColor(IFormColors.TB_TOGGLE));
 		}
 		return section;
 	}
@@ -797,6 +796,20 @@ public class FormToolkit {
 	}
 
 	/**
+	 * Returns the margin required around the children whose border is being
+	 * painted by the toolkit using {@link #paintBordersFor(Composite)}. Since
+	 * the border is painted around the controls on the parent, a number of
+	 * pixels needs to be reserved for this border. For windowing systems where
+	 * the native border is used, this margin is 0.
+	 * 
+	 * @return the margin in the parent when children have their border painted
+	 * @since 3.3
+	 */
+	public int getBorderMargin() {
+		return getBorderStyle() == SWT.BORDER ? 0 : 2;
+	}
+
+	/**
 	 * Sets the border style to be used when creating widgets. The toolkit
 	 * chooses the correct style based on the platform but this value can be
 	 * changed using this method.
@@ -845,7 +858,8 @@ public class FormToolkit {
 		String osname = System.getProperty("os.name"); //$NON-NLS-1$
 		String osversion = System.getProperty("os.version"); //$NON-NLS-1$
 		if (osname.startsWith("Windows") && "5.1".compareTo(osversion) <= 0) { //$NON-NLS-1$ //$NON-NLS-2$
-			// Skinned widgets used on newer Windows (e.g. XP (5.1), Vista (6.0))
+			// Skinned widgets used on newer Windows (e.g. XP (5.1), Vista
+			// (6.0))
 			// Check for Windows Classic. If not used, set the style to BORDER
 			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
