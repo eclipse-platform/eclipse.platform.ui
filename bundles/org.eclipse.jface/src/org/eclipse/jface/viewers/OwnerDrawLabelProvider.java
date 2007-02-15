@@ -120,7 +120,7 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	protected void erase(Event event, Object element) {
 
 		Rectangle bounds = event.getBounds();
-		if ((event.detail & SWT.SELECTED) > 0) {
+		if ((event.detail & SWT.SELECTED) != 0) {
 
 			Color oldForeground = event.gc.getForeground();
 			Color oldBackground = event.gc.getBackground();
