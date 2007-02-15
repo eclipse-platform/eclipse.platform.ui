@@ -215,8 +215,42 @@ public abstract class Dialog extends Window {
 	 */
 	private MouseListener restoreSizeMouseListener = new MouseAdapter() {
 		public void mouseDoubleClick(MouseEvent event) {
-			restoreDialogToComputedSize();
+			// In case an async event is received after disposal
+			if (event.widget.isDisposed()) {
+				return;
+			}
+			// Need to cast to Control for coordinate mapping
+			if (event.widget instanceof Control) {
+				// We don't want to respond to a double click on a disabled
+				// widget that the user can see.
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140306#c34
+				Point displayPoint = event.widget.getDisplay().map((Control)event.widget, null, event.x, event.y);
+				if (!isPointOnDisabledVisibleControl((Control)event.widget, displayPoint)) {
+					restoreDialogToComputedSize();
+				}
+			}
 		}
+		
+		// Answers true if the point is on a visible, disabled widget, either
+		// the control or any of its children.  
+		// The point is in display coordinates.
+		private boolean isPointOnDisabledVisibleControl(Control control, Point displayPoint) {
+			if (!control.isEnabled() && control.isVisible()) {
+				Rectangle displayRect = control.getDisplay().map(control.getParent(), null, control.getBounds());
+				if (displayRect.contains(displayPoint)) {
+					return true;
+				}
+			}
+			if (control instanceof Composite) {
+				Control [] children = ((Composite)control).getChildren();
+				for (int i=0; i<children.length; i++) {
+					if (isPointOnDisabledVisibleControl(children[i], displayPoint)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}	
 	};
 
 	/**
