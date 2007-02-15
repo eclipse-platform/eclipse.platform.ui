@@ -32,12 +32,12 @@ import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -109,15 +109,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
+import org.eclipse.ui.ide.IURIEditorInput;
 import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
 import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.texteditor.AnnotationColumn;
 import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
@@ -1208,10 +1209,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IDocumentProvider provider= getDocumentProvider();
 		final IEditorInput newInput;
 		
-		if (input instanceof JavaFileEditorInput) {
+		if (input instanceof IURIEditorInput) {
 			FileDialog dialog= new FileDialog(shell, SWT.SAVE);
-			dialog.setFileName(((JavaFileEditorInput)input).getName());
-			dialog.setFilterPath(((JavaFileEditorInput)input).getPath().toOSString());
+			dialog.setFileName(((FileStoreEditorInput)input).getName());
+			IPath oldPath= URIUtil.toPath(((FileStoreEditorInput)input).getURI());
+			if (oldPath != null)
+				dialog.setFilterPath(oldPath.toOSString());
 			
 			String path= dialog.open();
 			if (path == null) {
@@ -1239,12 +1242,23 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			}
 
-			IFileStore fileStore= EFS.getLocalFileSystem().getStore(externalFile.toURI());
+			// XXX: Should use new URI-based file buffer support once it is available
+			IFileStore fileStore;
+			try {
+				fileStore= EFS.getStore(externalFile.toURI());
+			} catch (CoreException ex) {
+				EditorsPlugin.log(ex.getStatus());
+				String title= TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_title;
+				String msg= NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_message, ex.getMessage());
+				MessageDialog.openError(shell, title, msg);
+				return;
+			}
+			
 			IFile file= getWorkspaceFile(fileStore);
 			if (file != null)
 				newInput= new FileEditorInput(file);
 			else
-				newInput= new JavaFileEditorInput(fileStore);
+				newInput= new FileStoreEditorInput(fileStore);
 			
 		} else {
 			SaveAsDialog dialog= new SaveAsDialog(shell);
@@ -1320,7 +1334,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private IFile getWorkspaceFile(IFileStore fileStore) {
 		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-		IFile[] files= workspaceRoot.findFilesForLocation(new Path(fileStore.toURI().getPath()));
+		IFile[] files= workspaceRoot.findFilesForLocation(URIUtil.toPath(fileStore.toURI()));
 		if (files != null && files.length == 1)
 			return files[0];
 		return null;
