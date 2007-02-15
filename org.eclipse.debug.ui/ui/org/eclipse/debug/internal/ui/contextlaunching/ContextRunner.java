@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contextlaunching;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
@@ -60,7 +60,11 @@ import com.ibm.icu.text.MessageFormat;
  */
 public final class ContextRunner {
 	
-	private IResource fLastContext = null;
+	public static boolean DEBUG_CONTEXTUAL_LAUNCH = false;
+	
+	static {
+		DEBUG_CONTEXTUAL_LAUNCH = DebugUIPlugin.DEBUG && "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug/contextlaunching")); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 	
 	/**
 	 * The singleton instance of the context runner
@@ -91,6 +95,9 @@ public final class ContextRunner {
 				if(context instanceof IAdaptable) {
 					IResource resource = (IResource) ((IAdaptable)context).getAdapter(IResource.class);
 					if(resource != null) {
+						if(DEBUG_CONTEXTUAL_LAUNCH) {
+							System.out.println("LAUNCH -> Selecting and Launching with resource: "+resource.getName()+ " in mode: "+mode); //$NON-NLS-1$ //$NON-NLS-2$
+						}
 						selectAndLaunch(resource, mode);
 						return;
 					}
@@ -99,10 +106,12 @@ public final class ContextRunner {
 			//2. launch last if no resource
 			config = getLastLaunch(mode);
 			if(config != null) {
+				if(DEBUG_CONTEXTUAL_LAUNCH) {
+					System.out.println("LAUNCH -> Using last launch, context: "+context+" is not valid"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				DebugUITools.launch(config, mode);
 				return;
 			}
-			
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 	}
@@ -156,8 +165,19 @@ public final class ContextRunner {
 	 * @throws CoreException
 	 */
 	protected boolean selectAndLaunch(IResource resource, String mode) throws CoreException {
+		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(resource);
+		if(config != null) {
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("\tSELECTANDLAUNCH -> Shared config, launch it"); //$NON-NLS-1$
+			}
+			DebugUITools.launch(config, mode);
+			return true;
+		}
 		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
 		int csize = configs.size();
+		if(DEBUG_CONTEXTUAL_LAUNCH) {
+			System.out.println("\tSELECTANDLAUNCH -> Selecting from "+csize+" possible launch configurations for "+resource.getName()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		if(csize == 1) {
 			DebugUITools.launch((ILaunchConfiguration) configs.get(0), mode);
 			return true;
@@ -165,6 +185,9 @@ public final class ContextRunner {
 		if(csize < 1) {
 			List exts = getLaunchConfigurationManager().getLaunchShortcuts(resource);
 			int esize = exts.size();
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("\tSELECTANDLAUNCH -> No configurations for "+resource.getName()+", choosing from "+esize+" launch shortcuts"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
 			if(esize == 1) {
 				LaunchShortcutExtension ext = (LaunchShortcutExtension) exts.get(0);
 				ext.launch(new StructuredSelection(resource), mode);
@@ -175,6 +198,9 @@ public final class ContextRunner {
 			}
 			if(esize < 1) {
 				IProject project = resource.getProject();
+				if(DEBUG_CONTEXTUAL_LAUNCH) {
+					System.out.println("\tSELECTANDLAUNCH -> No shortcuts apply for "+resource.getName()+" trying project"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				if(project != null && !project.equals(resource)) {
 					if(!shouldCheckParent()) {
 						String msg = MessageFormat.format(ContextMessages.ContextRunner_10, new String[] {project.getName(), resource.getName(), resource.getName()});
@@ -206,9 +232,13 @@ public final class ContextRunner {
 			}
 		}
 		else if(csize > 1){
-			ILaunchConfiguration config = getMRUConfiguration(configs, mode);
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("\tSELECTANDLAUNCH -> More than one configuration for "+resource.getName()+ " get MRU"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			config = getMRUConfiguration(configs, mode);
 			if(config != null) {
 				DebugUITools.launch(config, mode);
+				return true;
 			}
 			else {
 				return showConfigurationSelectionDialog(configs, mode);
@@ -227,12 +257,34 @@ public final class ContextRunner {
 	protected ILaunchConfiguration getMRUConfiguration(List configurations, String mode) {
 		ILaunchGroup group = resolveLaunchGroup(mode);
 		if(group != null) {
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("\t\tGETMRUCONFIGURATION -> Looking up MRU for launchgroup "+DebugUIPlugin.removeAccelerators(group.getLabel())); //$NON-NLS-1$
+			}
+			ILaunchConfiguration config = getLastLaunch(mode);
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("\t\tGETMRUCONFIGURATION -> Last launch: "+(config != null ? config.getName() : "None")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			if(configurations.contains(config)) {
+				if(DEBUG_CONTEXTUAL_LAUNCH) {
+					System.out.println("\t\tGETMRUCONFIGURATION -> Selecting last launch "+config.getName()); //$NON-NLS-1$
+				}
+				return config;
+			}
 			LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(group.getIdentifier());
-			ILaunchConfiguration config = null;
-			for(Iterator iter = configurations.iterator(); iter.hasNext();) {
-				config = (ILaunchConfiguration) iter.next();
-				if(history.contains(config)) {
-					return config;
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("\t\tGETMRUCONFIGURATION -> Checking history"); //$NON-NLS-1$
+			}
+			//TODO favorites will be missed unless they were the last launch
+			//this is a limitation of the launch history, and due to be refactored
+			if(history != null) {
+				ILaunchConfiguration[] configs = history.getHistory();
+				for(int i = 0; i < configs.length; i++) {
+					if(DEBUG_CONTEXTUAL_LAUNCH) {
+						System.out.println("\t\tGETMRUCONFIGURATION -> Comparing containment of "+configs[i].getName()+" to "+configurations.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					if(configurations.contains(configs[i])) {
+						return configs[i];
+					}
 				}
 			}
 		}
@@ -340,6 +392,9 @@ public final class ContextRunner {
 		Object o = getCurrentContext();
 		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(o);
 		if(config != null) {
+			if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("GETCONTEXTNAME -> Shared config, return name"); //$NON-NLS-1$
+			}
 			return config.getName();
 		}
 		else {
@@ -347,45 +402,86 @@ public final class ContextRunner {
 				Object a = ((IAdaptable)o).getAdapter(IResource.class);
 				if(a != null) {
 					IResource res = (IResource) a;
-					if(res != fLastContext) {
-						fLastContext = res;
-						List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(res);
-						int csize = configs.size();
-						if(csize == 1) {
-							return ((ILaunchConfiguration)configs.get(0)).getName();
-						}
-						else if(csize > 1) {
-							config = getMRUConfiguration(configs, mode);
-							if(config != null) {
-								return config.getName();
-							}
-							else {
-								//TODO could cause TVT issues
-								return ContextMessages.ContextRunner_14;
-							}
-						}
-						else {
-							try {
-								List exts = getLaunchConfigurationManager().getLaunchShortcuts(res);
-								int esize = exts.size();
-								if(esize == 0) {
-									//TODO could cause TVT issues
-									return ContextMessages.ContextRunner_15; 
-								}
-								else {
-									//TODO could cause TVT issues
-									return ContextMessages.ContextRunner_14;
-								}
-							}
-							catch(CoreException ce) {DebugUIPlugin.log(ce);}
-						}
-					}
+					return getResourceLabel(res, mode);
+				}
+				else if(DEBUG_CONTEXTUAL_LAUNCH) {
+					System.out.println("GETCONTEXTNAME -> Not adaptable to IResource: "+o.toString()); //$NON-NLS-1$
 				}
 			}
+			else if(DEBUG_CONTEXTUAL_LAUNCH) {
+				System.out.println("GETCONTEXTNAME -> Not adaptable: "+o.toString()); //$NON-NLS-1$
+			}
+		}
+		if(DEBUG_CONTEXTUAL_LAUNCH) {
+			System.out.println("GETCONTEXTNAME -> Not shared config or otherwise, use last launch name if one"); //$NON-NLS-1$
 		}
 		config = getLastLaunch(mode);
 		if(config != null) {
 			return config.getName();
+		}
+		return ""; //$NON-NLS-1$
+	}
+	
+	/**
+	 * Returns the label for the specified resource or the empty string, never <code>null</code>
+	 * @param resource
+	 * @param mode
+	 * @return the label for the resource or the empty string, never <code>null</code>
+	 */
+	protected String getResourceLabel(IResource resource, String mode) {
+		if(DEBUG_CONTEXTUAL_LAUNCH) {
+			System.out.println("\tGETRESOURCELABEL -> Finding name for: "+resource.getName()); //$NON-NLS-1$
+		}
+		if(DEBUG_CONTEXTUAL_LAUNCH) {
+			System.out.println("\tGETRESOURCELABEL -> looking up name for "+resource.getName()); //$NON-NLS-1$
+		}
+		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+		int csize = configs.size();
+		if(DEBUG_CONTEXTUAL_LAUNCH) {
+			System.out.println("\tGETRESOURCELABEL -> Selecting from "+csize+" possible configurations for "+resource.getName()+ " choices: "+configs.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+		ILaunchConfiguration config = null;
+		if(csize == 1) {
+			return ((ILaunchConfiguration)configs.get(0)).getName();
+		}
+		else if(csize > 1) {
+			config = getMRUConfiguration(configs, mode);
+			if(config != null) {
+				return config.getName();
+			}
+			else {
+				//TODO could cause TVT issues
+				return ContextMessages.ContextRunner_14;
+			}
+		}
+		else {
+			try {
+				List exts = getLaunchConfigurationManager().getLaunchShortcuts(resource);
+				int esize = exts.size();
+				if(DEBUG_CONTEXTUAL_LAUNCH) {
+					System.out.println("\tGETRESOURCELABEL -> Selecting from: "+esize+" shortcuts"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+				if(esize == 0) {
+					IProject project = resource.getProject();
+					if(DEBUG_CONTEXTUAL_LAUNCH) {
+						System.out.println("\tGETRESOURCELABEL -> No shortcuts apply for "+resource.getName()+" trying project"); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+					if(project != null && !project.equals(resource)) {
+						if(shouldCheckParent()) {
+							return getResourceLabel(project, mode);
+						}
+						else {
+							//TODO could cause TVT issues
+							return ContextMessages.ContextRunner_15;
+						}
+					}
+				}
+				else {
+					//TODO could cause TVT issues
+					return ContextMessages.ContextRunner_14;
+				}
+			}
+			catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		}
 		return ""; //$NON-NLS-1$
 	}
