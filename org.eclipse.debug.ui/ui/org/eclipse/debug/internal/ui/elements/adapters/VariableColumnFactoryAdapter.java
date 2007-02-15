@@ -11,12 +11,9 @@
 package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -24,7 +21,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class VariableColumnFactoryAdapter implements IColumnPresentationFactoryAdapter, IColumnEditorFactoryAdapter {
+public class VariableColumnFactoryAdapter implements IColumnPresentationFactoryAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
@@ -47,32 +44,6 @@ public class VariableColumnFactoryAdapter implements IColumnPresentationFactoryA
 		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
 			if (element instanceof IStackFrame) {
 				return VariableColumnPresentation.DEFAULT_VARIABLE_COLUMN_PRESENTATION;
-			}
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#createColumnEditor(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
-	 */
-	public IColumnEditor createColumnEditor(IPresentationContext context, Object element) {
-		String id = context.getId();
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
-			if (element instanceof IVariable) {
-				return new VariableColumnEditor();
-			}
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter#getColumnEditorId(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)
-	 */
-	public String getColumnEditorId(IPresentationContext context, Object element) {
-		String id = context.getId();
-		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(id) || IDebugUIConstants.ID_REGISTER_VIEW.equals(id)) {
-			if (element instanceof IVariable) {
-				return VariableColumnEditor.DEFAULT_VARIABLE_COLUMN_EDITOR;
 			}
 		}
 		return null;

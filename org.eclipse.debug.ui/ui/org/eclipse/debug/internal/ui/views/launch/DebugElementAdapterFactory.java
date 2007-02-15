@@ -60,7 +60,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactor
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
@@ -215,13 +214,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	if (adaptableObject instanceof IStackFrame) {
         		return fgVariableColumnFactory;
         	}
-        }
-        
-        if (adapterType.equals(IColumnEditorFactoryAdapter.class)) {
-        	if (adaptableObject instanceof IVariable) {
-        		return fgVariableColumnFactory;
-        	}
-        }     
+        }   
         
         if (adapterType.equals(IElementMementoProvider.class)) {
         	if (adaptableObject instanceof IStackFrame) {
@@ -255,7 +248,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         		ISourceDisplay.class,
         		IModelSelectionPolicyFactoryAdapter.class,
         		IColumnPresentationFactoryAdapter.class,
-        		IColumnEditorFactoryAdapter.class,
         		IElementContentProvider.class,
         		IElementLabelProvider.class,
         		IElementMementoProvider.class,
