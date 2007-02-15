@@ -158,7 +158,11 @@ public class SyncInfoSource {
 				+ SyncInfoToDiffConverter.diffStatusToString(expectedFlags)
 				+ " but was "
 				+ SyncInfoToDiffConverter.diffStatusToString(actualFlags);
-		if (CVSTestSetup.FAIL_ON_BAD_DIFF) {
+		if (CVSTestSetup.FAIL_ON_BAD_DIFF 
+				|| (expectedFlags != IDiff.NO_CHANGE && actualFlags == IDiff.NO_CHANGE)) {
+			// When running in the suites, we want to avoid intermittent failures.
+			// However, still fail if we expected a change but we get no change since that can
+			// cause work to be lost
 			junit.framework.Assert.assertTrue(errorString, result);
 		} else if (!result) {
 			System.out.println(errorString);
