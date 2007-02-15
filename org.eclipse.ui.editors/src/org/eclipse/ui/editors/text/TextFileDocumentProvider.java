@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -798,15 +799,13 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				}
 			};
 		} else if (element instanceof IURIEditorInput) {
-
-			// XXX: Should use new URI-based file buffer support when available
-			final IPath fileLocation= URIUtil.toPath(((IURIEditorInput)element).getURI());
+			final URI uri= ((IURIEditorInput)element).getURI();
 			return new DocumentProviderOperation() {
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 				 */
 				public void execute(IProgressMonitor monitor) throws CoreException {
-					createJavaFileFromDocument(monitor, fileLocation, document);
+					createFileStoreFromDocument(monitor, uri, document);
 				}
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#getSchedulingRule()
@@ -911,17 +910,19 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	}
 
 	/**
-	 * Creates the given file with the given document content.
+	 * Creates the given file store with the given document content.
 	 *
 	 * @param monitor the progress monitor
-	 * @param location the location where the external file should be created
-	 * @param document the document to be written to the file
-	 * @throws CoreException if the creation of the file fails
-	 * @since 3.2
+	 * @param uri the location where the file store should be created
+	 * @param document the document to be written to the file store
+	 * @throws CoreException if the creation of the file store fails
+	 * @since 3.3
 	 */
-	private void createJavaFileFromDocument(IProgressMonitor monitor, IPath location, IDocument document) throws CoreException {
+	private void createFileStoreFromDocument(IProgressMonitor monitor, URI uri, IDocument document) throws CoreException {
 		try {
 			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000);
+			// XXX: Should use new URI-based file buffer support when available
+			IPath location= URIUtil.toPath(uri);
 			FileBuffers.getTextFileBufferManager().connect(location, monitor);
 			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(location);
 			buffer.getDocument().set(document.get());

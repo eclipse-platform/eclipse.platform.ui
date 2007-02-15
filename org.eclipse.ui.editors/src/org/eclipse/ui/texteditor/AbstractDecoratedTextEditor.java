@@ -1224,8 +1224,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			}
 
 			// Check whether file exists and if so, confirm overwrite
-			final File externalFile= new File(path);
-			if (externalFile.exists()) {
+			final File localFile= new File(path);
+			if (localFile.exists()) {
 		        MessageDialog overwriteDialog= new MessageDialog(
 		        		shell,
 		        		TextEditorMessages.AbstractDecoratedTextEditor_saveAs_overwrite_title,
@@ -1242,10 +1242,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			}
 
-			// XXX: Should use new URI-based file buffer support once it is available
 			IFileStore fileStore;
 			try {
-				fileStore= EFS.getStore(externalFile.toURI());
+				fileStore= EFS.getStore(localFile.toURI());
 			} catch (CoreException ex) {
 				EditorsPlugin.log(ex.getStatus());
 				String title= TextEditorMessages.AbstractDecoratedTextEditor_error_saveAs_title;
