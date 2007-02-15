@@ -15,7 +15,7 @@ import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Creates context specific cell modifiers and editors for an elements.
+ * Creates context specific cell modifiers and editors for elements.
  *  
  * @since 3.3
  */
