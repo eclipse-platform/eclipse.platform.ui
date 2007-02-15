@@ -16,6 +16,7 @@ import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 /**
  * A variation of {@link FormEditor}, this editor has a stable header that does
@@ -69,6 +70,7 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 		parent = super.createPageContainer(parent);
 		parent.setLayout(new FillLayout());
 		ScrolledForm scform = getToolkit().createScrolledForm(parent);
+		scform.getForm().setData(FormUtil.IGNORE_BODY, Boolean.TRUE);
 		headerForm = new HeaderForm(this, scform);
 		createHeaderContents(headerForm);
 		return headerForm.getForm().getBody();

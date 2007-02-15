@@ -125,8 +125,14 @@ public class Form extends Composite {
 					head), SWT.DEFAULT);
 			width = Math.max(hsize.x, width);
 			height = hsize.y;
-
-			Point bsize = bodyCache.computeSize(FormUtil.getWidthHint(wHint,
+			
+			boolean ignoreBody=getData(FormUtil.IGNORE_BODY)!=null;
+			
+			Point bsize;
+			if (ignoreBody)
+				bsize = new Point(0,0);
+			else
+				bsize = bodyCache.computeSize(FormUtil.getWidthHint(wHint,
 					body), SWT.DEFAULT);
 			width = Math.max(bsize.x, width);
 			height += bsize.y;

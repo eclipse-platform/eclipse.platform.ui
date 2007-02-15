@@ -50,13 +50,18 @@ public class SingleHeaderEditor extends SharedHeaderFormEditor {
 	}
 
 	protected void createHeaderContents(IManagedForm headerForm) {
-		ScrolledForm sform = headerForm.getForm();
-		sform.setText("Shared header for all the pages");
+		final ScrolledForm sform = headerForm.getForm();
+		//sform.setText("Shared header for all the pages");
 		getToolkit().decorateFormHeading(sform.getForm());
 		addToolBar(sform.getForm());
 		sform.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FILE));
-		sform.setMessage("Static text", 0);
+		headerForm.getForm().getDisplay().timerExec(5000, new Runnable() {
+			public void run() {
+				sform.setText("<Another text>");
+			}
+		});
+		//sform.setMessage("Static text", 0);
 	}
 
 	/*

@@ -54,6 +54,8 @@ public class FormUtil {
 	public static final String DEBUG_FOCUS = DEBUG + "/focus"; //$NON-NLS-1$
 
 	public static final String FOCUS_SCROLLING = "focusScrolling"; //$NON-NLS-1$
+	
+	public static final String IGNORE_BODY = "__ignore_body__"; //$NON-NLS-1$
 
 	public static Text createText(Composite parent, String label,
 			FormToolkit factory) {
