@@ -811,7 +811,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private void unhookDialogListener() {
 		if (listener != null) {
 			Display.getCurrent().removeFilter(SWT.Show, listener);
-			listener = null;
 		}
 	}
 	
