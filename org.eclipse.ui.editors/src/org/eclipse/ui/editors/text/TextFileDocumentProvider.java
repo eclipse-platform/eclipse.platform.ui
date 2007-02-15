@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ import org.osgi.framework.Bundle;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -81,7 +82,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.ide.IURIEditorInput;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
@@ -796,9 +797,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 					return computeSchedulingRule(file);
 				}
 			};
-		} else if (element instanceof JavaFileEditorInput) {
+		} else if (element instanceof IURIEditorInput) {
 
-			final IPath fileLocation= ((JavaFileEditorInput)element).getPath();
+			// XXX: Should use new URI-based file buffer support when available
+			final IPath fileLocation= URIUtil.toPath(((IURIEditorInput)element).getURI());
 			return new DocumentProviderOperation() {
 				/*
 				 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider.DocumentProviderOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
