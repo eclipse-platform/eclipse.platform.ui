@@ -63,7 +63,8 @@ public abstract class DebugPopup extends PopupDialog {
     /**
      * Constructs a new popup dialog of type <code>PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE</code>
      * @param parent The parent shell
-     * @param anchor point at which to anchor the popup dialog in Display coordinate space
+     * @param anchor point at which to anchor the popup dialog in Display coordinate space.
+     * 	Since 3.3, <code>null</code> can be specified to use a default anchor point
      * @param commandId The command id to be used for persistence of 
      *  the dialog, or <code>null</code>
      */
@@ -159,6 +160,9 @@ public abstract class DebugPopup extends PopupDialog {
      * @return the initial location of the shell
      */
     protected Point getInitialLocation(Point initialSize) {
+    	if (fAnchor == null) {
+    		return super.getInitialLocation(initialSize);
+    	}
         Point point = fAnchor;
         Rectangle monitor = getShell().getMonitor().getClientArea();
         if (monitor.width < point.x + initialSize.x) {

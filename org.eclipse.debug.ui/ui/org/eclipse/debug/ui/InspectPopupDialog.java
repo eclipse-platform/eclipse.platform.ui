@@ -86,7 +86,8 @@ public class InspectPopupDialog extends DebugPopup {
      * Creates a new inspect popup.
      * 
      * @param shell The parent shell
-     * @param anchor point at which to anchor the popup in Display coordinates
+     * @param anchor point at which to anchor the popup in Display coordinates. Since
+     *  3.3 <code>null</code> indicates a default location should be used.
      * @param commandId The command id to be used for persistence of 
      * the dialog (possibly <code>null</code>)
      * @param expression The expression being inspected
