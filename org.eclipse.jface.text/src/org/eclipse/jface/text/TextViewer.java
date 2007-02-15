@@ -1863,8 +1863,7 @@ public class TextViewer extends Viewer implements
 		fDocument= null;
 		fScroller= null;
 		
-		// FIXME: commented out as workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=171201
-//		fTextWidget= null;
+		fTextWidget= null;
 	}
 
 
