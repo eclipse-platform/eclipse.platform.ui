@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -56,6 +58,7 @@ import org.eclipse.ui.internal.actions.HelpSearchAction;
 import org.eclipse.ui.internal.actions.NewEditorAction;
 import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
 import org.eclipse.ui.internal.actions.ToggleCoolbarVisibilityAction;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -100,6 +103,11 @@ public abstract class ActionFactory {
 		public WorkbenchCommandAction(String commandIdIn,
 				IWorkbenchWindow window) {
 			super(commandIdIn, window);
+		}
+		
+		public WorkbenchCommandAction(String commandIdIn, Map parameterMap,
+				IServiceLocator serviceLocator) {
+			super(commandIdIn, parameterMap, serviceLocator);
 		}
 	}
 
@@ -706,10 +714,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_next); 
-            action.setToolTipText(WorkbenchMessages.Workbench_nextToolTip);
-            window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.navigate.next", window); //$NON-NLS-1$
+			action.setText(WorkbenchMessages.Workbench_next);
+			action.setId(getId());
+			action.setToolTipText(WorkbenchMessages.Workbench_nextToolTip);
             return action;
         }
     };
@@ -873,10 +882,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_previous);
-            action.setToolTipText(WorkbenchMessages.Workbench_previousToolTip);
-            window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.navigate.previous", window); //$NON-NLS-1$
+			action.setText(WorkbenchMessages.Workbench_previous);
+			action.setId(getId());
+			action.setToolTipText(WorkbenchMessages.Workbench_previousToolTip);
             return action;
         }
     };
