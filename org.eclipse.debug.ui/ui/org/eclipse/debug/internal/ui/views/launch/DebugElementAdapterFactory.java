@@ -51,13 +51,13 @@ import org.eclipse.debug.internal.ui.model.elements.VariableContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableEditor;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariablesViewElementMementoProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
@@ -70,9 +70,9 @@ import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
  */
 public class DebugElementAdapterFactory implements IAdapterFactory {
 	
-	private static IModelProxyFactoryAdapter fgModelProxyFactoryAdapter = new DefaultModelProxyFactory();
+	private static IModelProxyFactory fgModelProxyFactoryAdapter = new DefaultModelProxyFactory();
 	private static ISourceDisplay fgStackFrameSourceDisplayAdapter = new StackFrameSourceDisplayAdapter();
-	private static IModelSelectionPolicyFactoryAdapter fgModelSelectionPolicyFactoryAdapter = new DefaultModelSelectionPolicyFactory();
+	private static IModelSelectionPolicyFactory fgModelSelectionPolicyFactoryAdapter = new DefaultModelSelectionPolicyFactory();
     
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
     private static IAsynchronousLabelAdapter fgMemoryBlockLabelAdapter = new MemoryBlockLabelAdapter();
@@ -105,7 +105,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementMementoProvider fgMPExpressions = new ExpressionsViewMementoProvider();
     private static IElementMementoProvider fgMPMemory = new MemoryViewElementMementoProvider();
     
-    private static IColumnPresentationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
+    private static IColumnPresentationFactory fgVariableColumnFactory = new VariableColumnFactoryAdapter();
     
 
     /* (non-Javadoc)
@@ -189,7 +189,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	return fgLPDebugElement;
         }        
         
-        if (adapterType.equals(IModelProxyFactoryAdapter.class)) {
+        if (adapterType.equals(IModelProxyFactory.class)) {
         	if (adaptableObject instanceof ILaunch || adaptableObject instanceof IDebugTarget ||
         			adaptableObject instanceof IProcess || adaptableObject instanceof ILaunchManager ||
         			adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager ||
@@ -204,13 +204,13 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         }
         
-        if (adapterType.equals(IModelSelectionPolicyFactoryAdapter.class)) {
+        if (adapterType.equals(IModelSelectionPolicyFactory.class)) {
         	if (adaptableObject instanceof IDebugElement) {
         		return fgModelSelectionPolicyFactoryAdapter;
         	}
         }
         
-        if (adapterType.equals(IColumnPresentationFactoryAdapter.class)) {
+        if (adapterType.equals(IColumnPresentationFactory.class)) {
         	if (adaptableObject instanceof IStackFrame) {
         		return fgVariableColumnFactory;
         	}
@@ -244,10 +244,10 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         return new Class[] {
         		IAsynchronousLabelAdapter.class,
         		IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class,
+        		IModelProxyFactory.class,
         		ISourceDisplay.class,
-        		IModelSelectionPolicyFactoryAdapter.class,
-        		IColumnPresentationFactoryAdapter.class,
+        		IModelSelectionPolicyFactory.class,
+        		IColumnPresentationFactory.class,
         		IElementContentProvider.class,
         		IElementLabelProvider.class,
         		IElementMementoProvider.class,

@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -22,7 +22,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class DefaultModelSelectionPolicyFactory implements IModelSelectionPolicyFactoryAdapter {
+public class DefaultModelSelectionPolicyFactory implements IModelSelectionPolicyFactory {
 
 	public IModelSelectionPolicy createModelSelectionPolicyAdapter(Object element, IPresentationContext context) {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {

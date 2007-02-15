@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
  * must subclass {@link AbstractModelProxy}.
  * </p>
  * @see IModelDelta
- * @see IModelProxyFactoryAdapter
+ * @see IModelProxyFactory
  * @see IModelChangedListener
  * @since 3.2
  */

@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -21,7 +21,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.2
  */
-public class VariableColumnFactoryAdapter implements IColumnPresentationFactoryAdapter {
+public class VariableColumnFactoryAdapter implements IColumnPresentationFactory {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresenetationFactoryAdapter#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.Object)

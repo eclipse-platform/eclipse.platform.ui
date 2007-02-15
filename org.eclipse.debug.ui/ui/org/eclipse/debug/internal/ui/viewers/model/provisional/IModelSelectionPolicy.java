@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
  * The adapter represents selections from an instance of a model.
  * </p>
  * 
- * @see IModelSelectionPolicyFactoryAdapter
+ * @see IModelSelectionPolicyFactory
  * @since 3.2
  */
 public interface IModelSelectionPolicy {

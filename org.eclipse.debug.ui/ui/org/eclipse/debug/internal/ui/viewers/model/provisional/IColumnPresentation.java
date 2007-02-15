@@ -15,7 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * Defines the possible set of columns presented in a view for a model.
  * A column presentation is customizable per presentation context (view) and
- * view input, and is created by an <code>IColumnPresentationFactoryAdapter</code>.
+ * view input, and is created by an <code>IColumnPresentationFactory</code>.
  * 
  * @since 3.2
  */

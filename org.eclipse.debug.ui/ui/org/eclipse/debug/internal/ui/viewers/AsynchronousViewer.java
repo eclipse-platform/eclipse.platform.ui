@@ -25,7 +25,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
@@ -588,7 +588,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 			Object element = ss.getFirstElement();
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
-				IModelSelectionPolicyFactoryAdapter factory =  (IModelSelectionPolicyFactoryAdapter) adaptable.getAdapter(IModelSelectionPolicyFactoryAdapter.class);
+				IModelSelectionPolicyFactory factory =  (IModelSelectionPolicyFactory) adaptable.getAdapter(IModelSelectionPolicyFactory.class);
 				if (factory != null) {
 					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
 				}

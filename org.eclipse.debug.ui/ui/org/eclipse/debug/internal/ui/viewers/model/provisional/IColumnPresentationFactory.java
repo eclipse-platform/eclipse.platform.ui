@@ -16,7 +16,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * @see IColumnPresentation
  * @since 3.2
  */
-public interface IColumnPresentationFactoryAdapter {
+public interface IColumnPresentationFactory {
 
 	/**
 	 * Constructs and returns the column presentation for the given presentation

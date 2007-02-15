@@ -40,7 +40,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
@@ -471,7 +471,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	protected synchronized void installModelProxy(Object element) {
 		if (!fModelProxies.containsKey(element)) {
-			IModelProxyFactoryAdapter modelProxyFactory = getModelProxyFactoryAdapter(element);
+			IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter(element);
 			if (modelProxyFactory != null) {
 				final IModelProxy proxy = modelProxyFactory.createModelProxy(
 						element, getPresentationContext());
@@ -507,13 +507,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 *            element to retrieve adapter for
 	 * @return model proxy factory adapter or <code>null</code>
 	 */
-	protected IModelProxyFactoryAdapter getModelProxyFactoryAdapter(Object element) {
-		IModelProxyFactoryAdapter adapter = null;
-		if (element instanceof IModelProxyFactoryAdapter) {
-			adapter = (IModelProxyFactoryAdapter) element;
+	protected IModelProxyFactory getModelProxyFactoryAdapter(Object element) {
+		IModelProxyFactory adapter = null;
+		if (element instanceof IModelProxyFactory) {
+			adapter = (IModelProxyFactory) element;
 		} else if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IModelProxyFactoryAdapter) adaptable.getAdapter(IModelProxyFactoryAdapter.class);
+			adapter = (IModelProxyFactory) adaptable.getAdapter(IModelProxyFactory.class);
 		}
 		return adapter;
 	}

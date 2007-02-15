@@ -17,11 +17,11 @@ import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
@@ -454,7 +454,7 @@ public class InternalTreeModelViewer extends TreeViewer {
     protected void resetColumns(Object input) {
     	if (input != null) {
     		// only change columns if the input is non-null (persist when empty)
-	    	IColumnPresentationFactoryAdapter factory = getColumnPresenetationFactoryAdapter(input);
+	    	IColumnPresentationFactory factory = getColumnPresenetationFactoryAdapter(input);
 	    	PresentationContext context = (PresentationContext) getPresentationContext();
 	    	String type = null;
 	    	if (factory != null) {
@@ -491,13 +491,13 @@ public class InternalTreeModelViewer extends TreeViewer {
      * @param input
      * @return column presentation factory of <code>null</code>
      */
-    protected IColumnPresentationFactoryAdapter getColumnPresenetationFactoryAdapter(Object input) {
-    	if (input instanceof IColumnPresentationFactoryAdapter) {
-			return (IColumnPresentationFactoryAdapter) input;
+    protected IColumnPresentationFactory getColumnPresenetationFactoryAdapter(Object input) {
+    	if (input instanceof IColumnPresentationFactory) {
+			return (IColumnPresentationFactory) input;
 		}
     	if (input instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) input;
-			return (IColumnPresentationFactoryAdapter) adaptable.getAdapter(IColumnPresentationFactoryAdapter.class);
+			return (IColumnPresentationFactory) adaptable.getAdapter(IColumnPresentationFactory.class);
 		}
     	return null;
     }    
@@ -906,7 +906,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 			Object element = ss.getFirstElement();
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
-				IModelSelectionPolicyFactoryAdapter factory =  (IModelSelectionPolicyFactoryAdapter) adaptable.getAdapter(IModelSelectionPolicyFactoryAdapter.class);
+				IModelSelectionPolicyFactory factory =  (IModelSelectionPolicyFactory) adaptable.getAdapter(IModelSelectionPolicyFactory.class);
 				if (factory != null) {
 					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
 				}

@@ -22,7 +22,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * @see IModelSelectionPolicy
  * @since 3.2
  */
-public interface IModelSelectionPolicyFactoryAdapter {
+public interface IModelSelectionPolicyFactory {
 	/**
 	 * Creates and returns a model selection policy for the given element in the specified
 	 * context or <code>null</code> if none.
