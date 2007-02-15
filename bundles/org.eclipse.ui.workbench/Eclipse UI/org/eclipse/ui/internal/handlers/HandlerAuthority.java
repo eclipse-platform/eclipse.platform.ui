@@ -27,7 +27,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.services.EvaluationResultCache;
 import org.eclipse.ui.internal.services.EvaluationResultCacheComparator;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
 
@@ -402,13 +401,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 								while (activationItr.hasNext()) {
 									activation = (IHandlerActivation) activationItr
 											.next();
-									// TODO After 3.2, consider making this API.
-									if (activation instanceof EvaluationResultCache) {
-										((EvaluationResultCache) activation)
-												.setResult(newActive);
-									} else {
-										activation.clearResult();
-									}
+									activation.setResult(newActive);
+									
 									changedCommandIds.add(activation
 											.getCommandId());
 								}
@@ -421,14 +415,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 									// mark as changed. It's not as expensive
 									// as it looks :-)
 									if (newActive != evaluate(activation)) {
-										// TODO After 3.2, consider making this
-										// API.
-										if (activation instanceof EvaluationResultCache) {
-											((EvaluationResultCache) activation)
-													.setResult(newActive);
-										} else {
-											activation.clearResult();
-										}
+										activation.setResult(newActive);
 										changedCommandIds.add(activation
 												.getCommandId());
 									}

@@ -103,4 +103,47 @@ public class EvaluationServiceTest extends UITestCase {
 			}
 		}
 	}
+
+	public void testTwoEvaluations() throws Exception {
+		IWorkbenchWindow window = openTestWindow();
+		IEvaluationService service = (IEvaluationService) window
+				.getService(IEvaluationService.class);
+		assertNotNull(service);
+
+		MyEval listener1 = new MyEval();
+		MyEval listener2 = new MyEval();
+		IContextActivation context1 = null;
+		IEvaluationReference evalRef1 = null;
+		IEvaluationReference evalRef2 = null;
+		IContextService contextService = null;
+		try {
+			evalRef1 = service.addEvaluationListener(
+					new ActiveContextExpression(CONTEXT_ID1,
+							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
+					listener1, IEvaluationService.RESULT);
+			evalRef2 = service.addEvaluationListener(
+					new ActiveContextExpression(CONTEXT_ID1,
+							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
+					listener2, IEvaluationService.RESULT);
+			assertEquals(1, listener1.count);
+			assertFalse(listener1.currentValue);
+
+			contextService = (IContextService) window
+					.getService(IContextService.class);
+			context1 = contextService.activateContext(CONTEXT_ID1);
+			assertEquals(2, listener1.count);
+			assertTrue(listener1.currentValue);
+
+		} finally {
+			if (context1 != null) {
+				contextService.deactivateContext(context1);
+			}
+			if (evalRef1 != null) {
+				service.removeEvaluationListener(evalRef1);
+			}
+			if (evalRef2 != null) {
+				service.removeEvaluationListener(evalRef2);
+			}
+		}
+	}
 }

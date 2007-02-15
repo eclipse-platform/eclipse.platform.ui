@@ -67,4 +67,14 @@ public interface IEvaluationResultCache {
 	 *         <code>true</code>; <code>false</code> otherwise.
 	 */
 	public boolean evaluate(IEvaluationContext context);
+
+	/**
+	 * Forces the cached result to be a particular value. This will <b>not</b>
+	 * notify any users of the cache that it has changed.
+	 * 
+	 * @param result
+	 *            The cached result to use.
+	 * @since 3.3
+	 */
+	public void setResult(boolean result);
 }

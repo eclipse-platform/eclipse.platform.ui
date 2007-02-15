@@ -94,12 +94,6 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 		return sourcePriority;
 	}
 
-	/**
-	 * Forces the cached result to be a particular value.
-	 * 
-	 * @param result
-	 *            The cached result to use.
-	 */
 	public final void setResult(final boolean result) {
 		if (result) {
 			evaluationResult = EvaluationResult.TRUE;

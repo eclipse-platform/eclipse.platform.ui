@@ -110,6 +110,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 							// this is not as expensive as it looks
 							oldValue = evaluate(ref);
 							if (oldValue != newValue) {
+								ref.setResult(newValue);
 								firePropertyChange(ref, new Boolean(oldValue),
 										new Boolean(newValue));
 							}
