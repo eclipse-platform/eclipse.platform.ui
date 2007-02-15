@@ -15,7 +15,12 @@
    <extension point="org.eclipse.core.runtime.adapters">
       <factory 
          class="org.eclipse.ui.internal.editors.text.FileEditorInputAdapterFactory" 
-            adaptableType="org.eclipse.core.resources.IFile">
+            adaptableType="org.eclipse.core.resources.IFile"> <!-- must adapt IFile due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=120336 -->
+            <adapter type="org.eclipse.ui.editors.text.ILocationProvider"/>
+      </factory>
+      <factory 
+         class="org.eclipse.ui.internal.editors.text.IURIEditorInputAdapterFactory" 
+            adaptableType="org.eclipse.ui.ide.IURIEditorInput">
             <adapter type="org.eclipse.ui.editors.text.ILocationProvider"/>
       </factory>
    </extension>     	
@@ -284,13 +289,13 @@
       </provider>
       <provider
             class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
-            inputTypes="org.eclipse.ui.internal.editors.text.JavaFileEditorInput"
-            id="org.eclipse.ui.editors.text.ExternalFileDocumentProvider">
+            inputTypes="org.eclipse.ui.internal.editors.text.NonExistingFileEditorInput"
+            id="org.eclipse.ui.editors.text.NonExistingFileDocumentProvider">
       </provider>
       <provider
             class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
-            inputTypes="org.eclipse.ui.internal.editors.text.NonExistingFileEditorInput"
-            id="org.eclipse.ui.editors.text.NonExistingFileDocumentProvider">
+            inputTypes="org.eclipse.ui.ide.IURIEditorInput"
+            id="org.eclipse.ui.editors.text.URIDocumentProvider">
       </provider>
    </extension>
    <extension
@@ -934,7 +939,7 @@
          point="org.eclipse.ui.elementFactories">
       <factory
             class="org.eclipse.ui.internal.editors.text.JavaFileEditorInputFactory"
-            id="org.eclipse.ui.internal.editors.text.JavaFileEditorInputFactory">
+            id="org.eclipse.ui.ide.FileStoreEditorInputFactory">
       </factory>
    </extension>
    
