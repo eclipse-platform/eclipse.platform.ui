@@ -22,10 +22,12 @@ import java.util.TreeSet;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.EvaluationResultCacheComparator;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
@@ -291,9 +293,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 		// Cycle over the activations, remembered the current best.
 		final Iterator activationItr = activations.iterator();
 		IHandlerActivation bestActivation = null;
+		IHandlerActivation currentActivation = null;
 		boolean conflict = false;
 		while (activationItr.hasNext()) {
-			final IHandlerActivation currentActivation = (IHandlerActivation) activationItr
+			currentActivation = (IHandlerActivation) activationItr
 					.next();
 			if (!evaluate(currentActivation)) {
 				continue; // only consider potentially active handlers
@@ -347,6 +350,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 		// Return the current best.
 		if (conflict) {
+			WorkbenchPlugin.log("Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
+					+ bestActivation + ": " + currentActivation, Status.OK_STATUS); //$NON-NLS-1$
 			return null;
 		}
 		return bestActivation;
