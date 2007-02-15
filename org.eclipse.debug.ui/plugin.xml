@@ -2233,10 +2233,11 @@ M4 = Platform-specific fourth key
     <extension
           point="org.eclipse.ui.workingSets">
        <workingSet
+             elementAdapterClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetElementAdapter"
              icon="$nl$/icons/full/obj16/brkp_grp.gif"
+             id="org.eclipse.debug.ui.breakpointWorkingSet"
              name="%BreakpointWorkingSet.name"
-             pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"
-             id="org.eclipse.debug.ui.breakpointWorkingSet"/>
+             pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"/>
     </extension>
     <extension
           point="org.eclipse.ui.keywords">
