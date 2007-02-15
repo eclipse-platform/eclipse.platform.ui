@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.examples.jobs.TestJob;
+import org.eclipse.ui.examples.jobs.TestJobRule;
 import org.eclipse.ui.examples.jobs.UITestJob;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -32,6 +33,7 @@ public class JobsView extends ViewPart {
 	private Combo durationField;
 	private Button lockField, failureField, threadField, systemField, userField, groupField, rescheduleField, keepField, keepOneField, unknownField, gotoActionField;
 	private Text quantityField, delayField, rescheduleDelay;
+	private Button schedulingRuleField;
 
 	protected void busyCursorWhile() {
 		try {
@@ -68,6 +70,7 @@ public class JobsView extends ViewPart {
 		boolean keep = keepField.getSelection();
 		boolean keepOne = keepOneField.getSelection();
 		boolean gotoAction = gotoActionField.getSelection();
+		boolean schedulingRule = schedulingRuleField.getSelection();
 
 		int groupIncrement = IProgressMonitor.UNKNOWN;
 		IProgressMonitor group = new NullProgressMonitor();
@@ -104,6 +107,9 @@ public class JobsView extends ViewPart {
 			result.setProgressGroup(group, groupIncrement);
 			result.setSystem(system);
 			result.setUser(user);
+			
+			if(schedulingRule)
+				result.setRule(new TestJobRule(i));
 			result.schedule(delay);
 		}
 	}
@@ -411,6 +417,11 @@ public class JobsView extends ViewPart {
 		gotoActionField.setText("Goto action"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		gotoActionField.setLayoutData(data);
+		
+//		whether the job should use a scheduling rule
+		schedulingRuleField = new Button(group, SWT.CHECK);
+		schedulingRuleField.setText("Schedule sequentially"); //$NON-NLS-1$
+		schedulingRuleField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
 	protected void doRun(long duration, IProgressMonitor monitor) {

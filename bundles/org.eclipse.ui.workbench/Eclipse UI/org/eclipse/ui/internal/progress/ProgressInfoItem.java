@@ -88,8 +88,6 @@ class ProgressInfoItem extends Composite {
 
 	static final int MIN_ICON_SIZE = 16;
 
-	private static final String EMPTY_STRING = "";//$NON-NLS-1$
-
 	private static final String TEXT_KEY = "Text"; //$NON-NLS-1$
 
 	private static final String ACTION_KEY = "Action";//$NON-NLS-1$
@@ -523,14 +521,13 @@ class ProgressInfoItem extends Composite {
 				}
 			} else {// Check for the finished job state
 				Job job = jobInfo.getJob();
-				if (job.getResult() != null) {
-					IStatus result = job.getResult();
-					String message = EMPTY_STRING;
-					if (result != null) {
-						message = result.getMessage();
-					}
-					setLinkText(job, message, i);
-				}
+				IStatus result = job.getResult();
+				if (result == null) {// If it isn't done then show it if it
+										// is waiting
+					if (job.getState() == Job.WAITING)
+						setLinkText(job, jobInfo.getDisplayString(), i);
+				} else
+					setLinkText(job, result.getMessage(), i);
 			}
 			setColor(currentIndex);
 		}
@@ -588,16 +585,14 @@ class ProgressInfoItem extends Composite {
 	 * @return boolean
 	 */
 	private boolean isRunning() {
+
 		JobInfo[] infos = getJobInfos();
 		for (int i = 0; i < infos.length; i++) {
 			int state = infos[i].getJob().getState();
-			if (state == Job.RUNNING) {
-				continue;
-			}
-			return false;
+			if (state == Job.WAITING || state == Job.RUNNING)
+				return true;
 		}
-		// Only completed if there are any jobs
-		return infos.length > 0;
+		return false;
 	}
 
 	/**
