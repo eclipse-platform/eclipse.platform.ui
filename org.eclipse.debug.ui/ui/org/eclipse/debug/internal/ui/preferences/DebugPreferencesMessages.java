@@ -34,8 +34,6 @@ public class DebugPreferencesMessages extends NLS {
 
 	public static String ContextLaunchingPreferencePage_0;
 
-	public static String ContextLaunchingPreferencePage_1;
-
 	public static String ContextualLaunchPreferencePage_0;
 
 	public static String ContextualLaunchPreferencePage_1;
