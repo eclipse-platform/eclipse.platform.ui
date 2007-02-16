@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public IAnnotationModel getAnnotationModel() {
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
-				fAnnotationModel= fManager.createAnnotationModel(getLocation());
+				fAnnotationModel= fManager.createAnnotationModel(fFile);
 				if (fAnnotationModel != null)
 					fAnnotationModel.connect(fDocument);
 			}
@@ -265,7 +265,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 
 
-			fDocument= fManager.createEmptyDocument(getLocation());
+			fDocument= fManager.createEmptyDocument(fFile);
 			setDocumentContent(fDocument, fFile, fEncoding);
 
 		} catch (CoreException x) {
@@ -456,7 +456,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void handleFileContentChanged(boolean revert) throws CoreException {
 
-		IDocument document= fManager.createEmptyDocument(fFile.getLocation());
+		IDocument document= fManager.createEmptyDocument(fFile);
 		IStatus status= null;
 
 		try {

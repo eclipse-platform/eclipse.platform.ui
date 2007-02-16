@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -201,8 +201,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
 	protected TextFileBufferManager fManager;
-
-
+	/**
+	 * This buffer's URI.
+	 * @since 3.3
+	 */
+	private URI fURI;
 
 
 	public ResourceFileBuffer(TextFileBufferManager manager) {
@@ -228,19 +231,16 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		monitor.beginTask(FileBuffersMessages.ResourceFileBuffer_task_creatingFileBuffer, 2);
 
 		try {
-			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+			IFile file= FileBuffers.getWorkspaceFileAtLocation(location, true);
 			if (file == null)
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null));
 
 			fLocation= location;
 			fFile= file;
+			fURI= file.getLocationURI();
 			fFileSynchronizer= new FileSynchronizer();
 
-			IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
-			refreshFile(subMonitor);
-			subMonitor.done();
-
-			subMonitor= new SubProgressMonitor(monitor, 1);
+			SubProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
 			initializeFileBufferContent(subMonitor);
 			subMonitor.done();
 
@@ -510,10 +510,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 */
 	public long getModificationStamp() {
 		try {
-			URI uri= fFile.getLocationURI();
-			if (uri == null)
+			if (fURI == null)
 				return IResource.NULL_STAMP;
-			IFileInfo info= EFS.getStore(uri).fetchInfo();
+			IFileInfo info= EFS.getStore(fURI).fetchInfo();
 			if (info.exists())
 				return info.getLastModified();
 		} catch (CoreException e) {
@@ -548,10 +547,9 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 */
 	public boolean isCommitable() {
 		try {
-			URI uri= fFile.getLocationURI();
-			if (uri == null)
+			if (fURI == null)
 				return false;
-			IFileInfo info= EFS.getStore(uri).fetchInfo();
+			IFileInfo info= EFS.getStore(fURI).fetchInfo();
 			return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 		} catch (CoreException e) {
 			return false;

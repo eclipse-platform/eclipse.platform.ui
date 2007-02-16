@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -451,19 +451,30 @@ public class ExtensionsRegistry {
 	 */
 	private IContentType[] findContentTypes(IPath location) {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-		if (file != null) {
-			try {
-				IContentDescription contentDescription= file.getContentDescription();
-				if (contentDescription != null) {
-					IContentType contentType= contentDescription.getContentType();
-					if (contentType != null)
-						return new IContentType[] {contentType};
-				}
-			} catch (CoreException x) {
-				// go for the default
-			}
-		}
+		if (file != null)
+			return findContentTypes(file);
 		return fContentTypeManager.findContentTypesFor(location.lastSegment());
+	}
+	
+	/**
+	 * Returns the set of content types for the given location.
+	 *
+	 * @param file the file for which to look up the content types
+	 * @return the set of content types for the location
+	 * @since 3.3
+	 */
+	private IContentType[] findContentTypes(IFile file) {
+		try {
+			IContentDescription contentDescription= file.getContentDescription();
+			if (contentDescription != null) {
+				IContentType contentType= contentDescription.getContentType();
+				if (contentType != null)
+					return new IContentType[] {contentType};
+			}
+		} catch (CoreException x) {
+			// go for the default
+		}
+		return fContentTypeManager.findContentTypesFor(file.getFullPath().lastSegment());
 	}
 
 	/**
@@ -491,6 +502,24 @@ public class ExtensionsRegistry {
 		return result;
 	}
 
+	/**
+	 * Returns the sharable document factory for the given file.
+	 *
+	 * @param file the file for which to looked up the factory
+	 * @return the sharable document factory
+	 */
+	public IDocumentFactory getDocumentFactory(IFile file) {
+		IDocumentFactory factory= getDocumentFactory(findContentTypes(file));
+		if (factory == null) {
+			factory= getDocumentFactory(file.getFullPath().lastSegment());
+		}
+		if (factory == null)
+			factory= getDocumentFactory(file.getFileExtension());
+		if (factory == null)
+			factory= getDocumentFactory(WILDCARD);
+		return factory;
+	}
+	
 	/**
 	 * Returns the sharable document factory for the given location.
 	 *
@@ -537,6 +566,36 @@ public class ExtensionsRegistry {
 		participants.toArray(result);
 		return result;
 	}
+	
+	/**
+	 * Returns the sharable set of document setup participants for the given file.
+	 *
+	 * @param file the file for which to look up the setup participants
+	 * @return the sharable set of document setup participants
+	 */
+	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IFile file) {
+		Set participants= new HashSet();
+		
+		List p= getDocumentSetupParticipants(findContentTypes(file));
+		if (p != null)
+			participants.addAll(p);
+		
+		p= getDocumentSetupParticipants(file.getFullPath().lastSegment());
+		if (p != null)
+			participants.addAll(p);
+		
+		p= getDocumentSetupParticipants(file.getFileExtension());
+		if (p != null)
+			participants.addAll(p);
+		
+		p= getDocumentSetupParticipants(WILDCARD);
+		if (p != null)
+			participants.addAll(p);
+		
+		IDocumentSetupParticipant[] result= new IDocumentSetupParticipant[participants.size()];
+		participants.toArray(result);
+		return result;
+	}
 
 	/**
 	 * Returns the sharable annotation model factory for the given location.
@@ -550,6 +609,24 @@ public class ExtensionsRegistry {
 			factory= getAnnotationModelFactory(location.lastSegment());
 		if (factory == null)
 			factory= getAnnotationModelFactory(location.getFileExtension());
+		if (factory == null)
+			factory= getAnnotationModelFactory(WILDCARD);
+		return factory;
+	}
+	
+	/**
+	 * Returns the sharable annotation model factory for the given file.
+	 *
+	 * @param file the file for which to look up the factory
+	 * @return the sharable annotation model factory
+	 * @since 3.3
+	 */
+	public IAnnotationModelFactory getAnnotationModelFactory(IFile file) {
+		IAnnotationModelFactory factory= getAnnotationModelFactory(findContentTypes(file));
+		if (factory == null)
+			factory= getAnnotationModelFactory(file.getFullPath().lastSegment());
+		if (factory == null)
+			factory= getAnnotationModelFactory(file.getFileExtension());
 		if (factory == null)
 			factory= getAnnotationModelFactory(WILDCARD);
 		return factory;

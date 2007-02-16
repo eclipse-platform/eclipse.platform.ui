@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -166,7 +166,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		IContentTypeManager manager= Platform.getContentTypeManager();
 		IContentType text= manager.getContentType(IContentTypeManager.CT_TEXT);
 
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(location, true);
 		if (file != null) {
 			if (file.exists()) {
 				try {
@@ -242,7 +242,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		location= FileBuffers.normalizeLocation(location);
 		return internalGetFileBuffer(location);
 	}
-	
+
 	private AbstractFileBuffer internalGetFileBuffer(IPath location) {
 		synchronized (fFilesBuffers) {
 			return (AbstractFileBuffer)fFilesBuffers.get(location);
@@ -346,6 +346,67 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		return document;
 	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
+	 */
+	public IDocument createEmptyDocument(IFile file) {
+		final IDocument[] runnableResult= new IDocument[1];
+		final IDocumentFactory factory= fRegistry.getDocumentFactory(file);
+		if (factory != null) {
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					runnableResult[0]= factory.createDocument();
+				}
+				public void handleException(Throwable t) {
+					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
+					FileBuffersPlugin.getDefault().getLog().log(status);
+					if (t instanceof VirtualMachineError)
+						throw (VirtualMachineError)t;
+				}
+			};
+			SafeRunner.run(runnable);
+		}
+
+		final IDocument document;
+		if (runnableResult[0] != null)
+			document= runnableResult[0];
+		else
+			document= new SynchronizableDocument();
+		
+		// Set the initial line delimiter
+		if (document instanceof IDocumentExtension4) {
+			String initalLineDelimiter= getLineDelimiterPreference(file); 
+			if (initalLineDelimiter != null)
+				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
+		}
+		
+		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(file);
+		if (participants != null) {
+			for (int i= 0; i < participants.length; i++) {
+				final IDocumentSetupParticipant participant= participants[i];
+				ISafeRunnable runnable= new ISafeRunnable() {
+					public void run() throws Exception {
+						participant.setup(document);
+						if (document.getDocumentPartitioner() != null) {
+							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
+							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
+							FileBuffersPlugin.getDefault().getLog().log(status);
+						}
+					}
+					public void handleException(Throwable t) {
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
+						FileBuffersPlugin.getDefault().getLog().log(status);
+						if (t instanceof VirtualMachineError)
+							throw (VirtualMachineError)t;
+					}
+				};
+				SafeRunner.run(runnable);
+			}
+		}
+		
+		return document;
+	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath)
@@ -356,6 +417,14 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location);
 		if (factory != null)
 			return factory.createAnnotationModel(location);
+		return null;
+	}
+	
+	public IAnnotationModel createAnnotationModel(IFile file) {
+		Assert.isNotNull(file);
+		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(file);
+		if (factory != null)
+			return factory.createAnnotationModel(file.getFullPath());
 		return null;
 	}
 
@@ -427,21 +496,31 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	private AbstractFileBuffer createFileBuffer(IPath location) {
-		if (isTextFileLocation(location, false))
-			return createTextFileBuffer(location);
-		return createBinaryFileBuffer(location);
+		/*
+		 * XXX: the following code is commented out for performance
+		 * reasons and because we do not yet create a special binary
+		 * file buffer.
+		 */
+//		if (isTextFileLocation(location, false))
+//			return createTextFileBuffer(location);
+//		return createBinaryFileBuffer(location);
+		return createTextFileBuffer(location);
 	}
+	
 
 	private AbstractFileBuffer createTextFileBuffer(IPath location) {
-		if (FileBuffers.getWorkspaceFileAtLocation(location) != null)
+		if (FileBuffers.getWorkspaceFileAtLocation(location, true) != null)
 			return new ResourceTextFileBuffer(this);
 		return new JavaTextFileBuffer(this);
 	}
 
-	private AbstractFileBuffer createBinaryFileBuffer(IPath location) {
-		// XXX: should return a binary file buffer - using text file buffer for now
-		return createTextFileBuffer(location);
-	}
+	
+//	private AbstractFileBuffer createBinaryFileBuffer(IPath location) {
+//		// XXX: should return a binary file buffer - using text file buffer for now
+//		return createTextFileBuffer(location);
+//	}
+//	
+//	
 
 	private Iterator getFileBufferListenerIterator() {
 		synchronized (fFileBufferListeners) {
@@ -656,6 +735,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	
 	private String getLineDelimiterPreference(IPath location) {
 		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+		return getLineDelimiterPreference(file);
+	}
+	
+	private String getLineDelimiterPreference(IFile file) {
 		IScopeContext[] scopeContext;
 		if (file != null && file.getProject() != null) {
 			// project preference

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,25 @@ public final class FileBuffers {
 	 * @return the workspace file at the location or <code>null</code>
 	 */
 	public static IFile getWorkspaceFileAtLocation(IPath location) {
-		IPath normalized= normalizeLocation(location);
+		return getWorkspaceFileAtLocation(location, false);
+	}
+
+	/**
+	 * Returns the workspace file at the given location or <code>null</code> if
+	 * the location is not a valid location in the workspace.
+	 *
+	 * @param location the location
+	 * @param isNormalized <code>true</code> if the given location is already normalized
+	 * @return the workspace file at the location or <code>null</code>
+	 * @since 3.3
+	 */
+	public static IFile getWorkspaceFileAtLocation(IPath location, boolean isNormalized) {
+		IPath normalized;
+		if (isNormalized)
+			normalized= location;
+		else
+			normalized= normalizeLocation(location);
+		
 		if (normalized.segmentCount() >= 2) {
 			// @see IContainer#getFile for the required number of segments
 			IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
