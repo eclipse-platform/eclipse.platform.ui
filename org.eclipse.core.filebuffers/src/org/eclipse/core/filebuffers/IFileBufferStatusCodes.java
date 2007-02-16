@@ -12,8 +12,6 @@ package org.eclipse.core.filebuffers;
 
 import java.nio.charset.UnmappableCharacterException;
 
-import org.eclipse.core.resources.IResource;
-
 /**
  * This interface provides the list of status codes that are used by the file
  * buffer plug-in when it throws {@link org.eclipse.core.runtime.CoreException}.
@@ -64,7 +62,7 @@ public interface IFileBufferStatusCodes {
 	 * <p>
 	 * Value: {@value}</p>
 	 * 
-	 * @see IResource#isDerived()
+	 * @see org.eclipse.core.resources.IResource#isDerived()
 	 * @since 3.3
 	 */
 	int DERIVED_FILE= 5;
