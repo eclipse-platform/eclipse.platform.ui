@@ -93,6 +93,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.IShowInSource;
@@ -949,6 +950,14 @@ public abstract class MarkerView extends TableView {
 				undoAction);
 		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), 
 				redoAction);
+		
+		copyAction.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
+		pasteAction.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
+		selectAllAction.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
+		propertiesAction.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
+		undoAction.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+		redoAction.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
 	}
 
 	protected void initDragAndDrop() {
@@ -1593,7 +1602,16 @@ public abstract class MarkerView extends TableView {
 
 		menu.add(new Separator(MENU_SHOW_IN_GROUP));
 		// Don't add in the filters until they are set
-		showInMenu = new MenuManager(IDEWorkbenchMessages.Workbench_showIn);
+		
+		String showInLabel= IDEWorkbenchMessages.Workbench_showIn;
+		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService != null) {
+			String keyBinding = bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+			if (keyBinding != null) {
+				showInLabel += '\t' + keyBinding;
+			}
+		}		
+		showInMenu = new MenuManager(showInLabel);
 		showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
 				.create(getViewSite().getWorkbenchWindow()));
 

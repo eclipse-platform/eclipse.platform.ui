@@ -29,6 +29,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -36,11 +37,14 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -59,6 +63,10 @@ public class ProblemView extends MarkerView {
 
 	private ActionResolveMarker resolveMarkerAction;
 
+	private IHandlerService handlerService;
+	
+	private IHandlerActivation resolveMarkerHandlerActivation;
+	
 	private IActivityManagerListener activityManagerListener;
 
 	private IField severityAndMessage = new FieldSeverityAndMessage();
@@ -160,6 +168,9 @@ public class ProblemView extends MarkerView {
 		if (resolveMarkerAction != null) {
 			resolveMarkerAction.dispose();
 		}
+		if (resolveMarkerHandlerActivation != null && handlerService != null) {
+			handlerService.deactivateHandler(resolveMarkerHandlerActivation);
+		}
 
 		PlatformUI.getWorkbench().getActivitySupport().getActivityManager()
 				.removeActivityManagerListener(activityManagerListener);
@@ -208,6 +219,23 @@ public class ProblemView extends MarkerView {
 		resolveMarkerAction = new ActionResolveMarker(this, getViewer());
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.internal.tableview.TableView#registerGlobalActions(org.eclipse.ui.IActionBars)
+	 */
+	protected void registerGlobalActions(IActionBars actionBars) {
+		super.registerGlobalActions(actionBars);
+		
+		String quickFixId = "org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"; //$NON-NLS-1$
+		resolveMarkerAction.setActionDefinitionId(quickFixId);
+		
+		handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
+		if (handlerService != null) {
+			resolveMarkerHandlerActivation = handlerService.activateHandler(quickFixId, new ActionHandler(resolveMarkerAction));
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
