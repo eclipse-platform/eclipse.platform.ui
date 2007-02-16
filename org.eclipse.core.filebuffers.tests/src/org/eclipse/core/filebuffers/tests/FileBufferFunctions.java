@@ -1148,4 +1148,17 @@ public abstract class FileBufferFunctions extends TestCase {
 		assertEquals(2, notifyCounter1.notifyCount);
 		assertEquals(2, notifyCounter2.notifyCount);
 	}
+	
+	public void testGetBufferForDocument() throws Exception {
+		fManager.connect(fPath, null);
+		try {
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			assertNotNull(buffer);
+			IDocument document= buffer.getDocument();
+			assertNotNull(document);
+			assertSame(buffer, fManager.getTextFileBuffer(document));
+		} finally {
+			fManager.disconnect(fPath, null);
+		}
+	}
 }

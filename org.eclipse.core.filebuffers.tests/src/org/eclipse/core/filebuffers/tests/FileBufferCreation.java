@@ -83,6 +83,8 @@ public class FileBufferCreation extends TestCase {
 		assertNotNull(document);
 		assertEquals(CONTENT1, document.get());
 		
+		assertSame(buffer, manager.getTextFileBuffer(document));
+		
 		manager.disconnect(path, null);
 		assertNull(manager.getTextFileBuffer(path));
 	}
@@ -116,10 +118,12 @@ public class FileBufferCreation extends TestCase {
 		IDocument document1= buffer1.getDocument();
 		assertNotNull(document1);
 		assertEquals(CONTENT1, document1.get());
+		assertSame(buffer1, manager.getTextFileBuffer(document1));
 		
 		IDocument document2= buffer2.getDocument();
 		assertNotNull(document2);
 		assertEquals(CONTENT1, document2.get());
+		assertSame(buffer2, manager.getTextFileBuffer(document2));
 		
 		try {
 			document1.replace(0, document1.getLength(), CONTENT3);
@@ -153,6 +157,7 @@ public class FileBufferCreation extends TestCase {
 		IDocument document= buffer.getDocument();
 		Assert.assertNotNull(document);
 		Assert.assertTrue(CONTENT2.equals(document.get()));
+		assertSame(buffer, manager.getTextFileBuffer(document));
 		
 		manager.disconnect(path, null);
 		assertNull(manager.getTextFileBuffer(path));
@@ -174,6 +179,7 @@ public class FileBufferCreation extends TestCase {
 		IDocument document= buffer.getDocument();
 		Assert.assertNotNull(document);
 		Assert.assertTrue(CONTENT4.equals(document.get()));
+		assertSame(buffer, manager.getTextFileBuffer(document));
 		
 		manager.disconnect(path, null);
 		assertNull(manager.getTextFileBuffer(path));
@@ -200,8 +206,11 @@ public class FileBufferCreation extends TestCase {
 		
 		IDocument document1= buffer1.getDocument();
 		assertNotNull(document1);
+		assertSame(buffer1, manager.getTextFileBuffer(document1));
+		
 		IDocument document2= buffer2.getDocument();
 		assertNotNull(document2);
+		assertSame(buffer2, manager.getTextFileBuffer(document2));
 		
 		assertEquals(document1.get(), document2.get());
 		assertEquals(CONTENT2, document1.get());
@@ -237,6 +246,7 @@ public class FileBufferCreation extends TestCase {
 		IDocument document= buffer.getDocument();
 		assertNotNull(document);
 		assertTrue(CONTENT3.equals(document.get()));
+		assertSame(buffer, manager.getTextFileBuffer(document));
 		
 		manager.disconnect(path, null);
 		assertNull(manager.getTextFileBuffer(path));
@@ -265,8 +275,11 @@ public class FileBufferCreation extends TestCase {
 		
 		IDocument document1= buffer1.getDocument();
 		assertNotNull(document1);
+		assertSame(buffer1, manager.getTextFileBuffer(document1));
+		
 		IDocument document2= buffer2.getDocument();
 		assertNotNull(document2);
+		assertSame(buffer2, manager.getTextFileBuffer(document2));
 		
 		assertEquals(document1.get(), document2.get());
 		assertEquals(CONTENT3, document1.get());
@@ -300,6 +313,7 @@ public class FileBufferCreation extends TestCase {
 		IDocument document= buffer.getDocument();
 		Assert.assertNotNull(document);
 		Assert.assertTrue("".equals(document.get()));
+		assertSame(buffer, manager.getTextFileBuffer(document));
 		
 		manager.disconnect(path, null);
 		assertNull(manager.getTextFileBuffer(path));

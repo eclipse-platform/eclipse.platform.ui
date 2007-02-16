@@ -44,6 +44,22 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	ITextFileBuffer getTextFileBuffer(IPath location);
 
 	/**
+ 	 * Returns the text file buffer managed for the given document
+	 * or <code>null</code> if there is no such text file buffer.
+	 * <p>
+	 * <strong>Note:</strong> This method goes through the list
+	 * of registered buffers and tests whether its document matches
+	 * the given one. Therefore this method should not be used in
+	 * performance critical code.
+	 * </p>
+	 * 
+	 * @param document the document for which to find the text file buffer
+	 * @return the text file buffer managed for that document or <code>null</code>
+	 * @since 3.3
+	 */
+	ITextFileBuffer getTextFileBuffer(IDocument document);
+
+	/**
 	 * Returns the default encoding that is used to read the contents of text files
 	 * if no other encoding is specified.
 	 *

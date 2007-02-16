@@ -257,6 +257,24 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.jface.text.IDocument)
+	 * @since 3.3
+	 */
+	public ITextFileBuffer getTextFileBuffer(IDocument document) {
+		Assert.isLegal(document != null);
+		Iterator iter= new ArrayList(fFilesBuffers.values()).iterator();
+		while (iter.hasNext()) {
+			Object buffer= iter.next();
+			if (buffer instanceof ITextFileBuffer) {
+				ITextFileBuffer textFileBuffer= (ITextFileBuffer)buffer;
+				if (textFileBuffer.getDocument() == document)
+					return textFileBuffer;
+			}
+		}
+		return null;
+	}
+
+	/*
 	 * @see org.eclipse.core.buffer.text.IBufferedFileManager#getDefaultEncoding()
 	 */
 	public String getDefaultEncoding() {
