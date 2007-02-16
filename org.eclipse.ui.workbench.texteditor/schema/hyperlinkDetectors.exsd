@@ -81,7 +81,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully qualified class name implementing the interface &lt;code&gt;org.eclipse.jface.text.hyperlink.IHyperlinkDetector&lt;/code&gt;
+                  the fully qualified class name implementing the interface &lt;code&gt;org.eclipse.jface.text.hyperlink.IHyperlinkDetector&lt;/code&gt;. Subclass &lt;code&gt;org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector&lt;/code&gt; if you want to access context that is provided by the target.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector"/>
