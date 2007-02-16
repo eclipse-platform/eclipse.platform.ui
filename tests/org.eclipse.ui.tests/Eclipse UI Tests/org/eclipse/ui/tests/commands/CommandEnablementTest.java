@@ -18,6 +18,11 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.ICommandListener;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
@@ -25,6 +30,9 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.handlers.HandlerProxy;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -57,6 +65,7 @@ public class CommandEnablementTest extends UITestCase {
 	private DisabledHandler disabledHandler2;
 	private EnableEventHandler eventHandler1;
 	private EnableEventHandler eventHandler2;
+	private IEvaluationService evalService;
 
 	/**
 	 * @param testName
@@ -78,6 +87,8 @@ public class CommandEnablementTest extends UITestCase {
 				.getService(IHandlerService.class);
 		contextService = (IContextService) fWorkbench
 				.getService(IContextService.class);
+		evalService = (IEvaluationService) fWorkbench
+				.getService(IEvaluationService.class);
 		cmd1 = commandService.getCommand(CMD1_ID);
 		normalHandler1 = new DefaultHandler();
 		normalHandler2 = new DefaultHandler();
@@ -357,7 +368,7 @@ public class CommandEnablementTest extends UITestCase {
 			enabledChangedCount++;
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 			assertFalse(cmd1.isEnabled());
-			
+
 			eventHandler2.setEnabled(false);
 			eventHandler2.setEnabled(true);
 			eventHandler2.setEnabled(false);
@@ -372,5 +383,36 @@ public class CommandEnablementTest extends UITestCase {
 		} finally {
 			cmd1.removeCommandListener(listener);
 		}
+	}
+
+	public void testCommandWithHandlerProxy() throws Exception {
+		IConfigurationElement handlerProxyConfig = null;
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.ui.handlers");
+		IExtension[] extensions = point.getExtensions();
+		boolean found = false;
+		for (int i = 0; i < extensions.length && !found; i++) {
+			IConfigurationElement[] configElements = extensions[i]
+					.getConfigurationElements();
+			for (int j = 0; j < configElements.length && !found; j++) {
+				if (configElements[j].getAttribute(
+						IWorkbenchRegistryConstants.ATT_CLASS).equals(
+						"org.eclipse.ui.tests.menus.HelloEHandler")) {
+					handlerProxyConfig = configElements[j];
+					found = true;
+				}
+			}
+		}
+		assertNotNull(handlerProxyConfig);
+		Expression enabledWhen = new ActiveContextExpression(CONTEXT_TEST1,
+				new String[] { ISources.ACTIVE_CONTEXT_NAME });
+		HandlerProxy proxy = new HandlerProxy(handlerProxyConfig, "class",
+				enabledWhen, evalService);
+		assertFalse(proxy.isEnabled());
+		IContextActivation test1 = contextService
+				.activateContext(CONTEXT_TEST1);
+		assertTrue(proxy.isEnabled());
+		contextService.deactivateContext(test1);
+		assertFalse(proxy.isEnabled());
 	}
 }

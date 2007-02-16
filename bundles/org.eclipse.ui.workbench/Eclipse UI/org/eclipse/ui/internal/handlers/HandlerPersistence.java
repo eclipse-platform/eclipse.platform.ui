@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 
 /**
@@ -70,15 +71,22 @@ final class HandlerPersistence extends RegistryPersistence {
 	 */
 	private final IHandlerService handlerService;
 
+	private IEvaluationService evaluationService;
+
 	/**
 	 * Constructs a new instance of <code>HandlerPersistence</code>.
 	 * 
 	 * @param handlerService
 	 *            The handler service with which the handlers should be
 	 *            registered; must not be <code>null</code>.
+	 * @param evaluationService
+	 *            The evaluation service used by handler proxies with enabled
+	 *            when expressions
 	 */
-	HandlerPersistence(final IHandlerService handlerService) {
+	HandlerPersistence(final IHandlerService handlerService,
+			IEvaluationService evaluationService) {
 		this.handlerService = handlerService;
+		this.evaluationService = evaluationService;
 	}
 
 	/**
@@ -276,7 +284,7 @@ final class HandlerPersistence extends RegistryPersistence {
 			}
 
 			final IHandler proxy = new HandlerProxy(configurationElement,
-					ATT_CLASS, enabledWhenExpression, handlerService);
+					ATT_CLASS, enabledWhenExpression, evaluationService);
 			handlerActivations.add(handlerService.activateHandler(commandId,
 					proxy, activeWhenExpression));
 

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.services;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.ISourceProvider;
 
@@ -73,5 +74,12 @@ public final class EvaluationService implements IEvaluationService {
 	 */
 	public void dispose() {
 		evaluationAuthority.dispose();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.services.IEvaluationService#getCurrentState()
+	 */
+	public IEvaluationContext getCurrentState() {
+		return evaluationAuthority.getCurrentState();
 	}
 }

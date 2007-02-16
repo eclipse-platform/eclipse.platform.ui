@@ -33,6 +33,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.services.IEvaluationService;
 
 /**
  * <p>
@@ -71,15 +72,18 @@ public final class HandlerService implements IHandlerService {
 	 * 
 	 * @param commandService
 	 *            The command service to use; must not be <code>null</code>.
+	 * @param evaluationService
+	 *            The evaluation service to use; must not be <code>null</code>.
 	 */
-	public HandlerService(final ICommandService commandService) {
+	public HandlerService(final ICommandService commandService, 
+			final IEvaluationService evaluationService) {
 		if (commandService == null) {
 			throw new NullPointerException(
 					"A handler service requires a command service"); //$NON-NLS-1$
 		}
 		this.commandService = commandService;
 		this.handlerAuthority = new HandlerAuthority(commandService);
-		this.handlerPersistence = new HandlerPersistence(this);
+		this.handlerPersistence = new HandlerPersistence(this, evaluationService);
 	}
 
 	public final IHandlerActivation activateHandler(

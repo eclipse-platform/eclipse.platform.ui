@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.services;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.ISources;
 
 /**
  * @since 3.3
@@ -67,6 +70,12 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	private String[] getNames(IEvaluationReference ref) {
 		ExpressionInfo info = new ExpressionInfo();
 		ref.getExpression().collectExpressionInfo(info);
+		if (info.hasDefaultVariableAccess()) {
+			ArrayList l = new ArrayList(Arrays.asList(info
+					.getAccessedVariableNames()));
+			l.add(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			return (String[]) l.toArray(new String[l.size()]);
+		}
 		return info.getAccessedVariableNames();
 	}
 

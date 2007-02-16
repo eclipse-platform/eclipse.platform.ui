@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.services;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.services.IServiceWithSources;
 
@@ -28,4 +29,6 @@ public interface IEvaluationService extends IServiceWithSources {
 			IPropertyChangeListener listener, String property);
 
 	public void removeEvaluationListener(IEvaluationReference ref);
+
+	public IEvaluationContext getCurrentState();
 }

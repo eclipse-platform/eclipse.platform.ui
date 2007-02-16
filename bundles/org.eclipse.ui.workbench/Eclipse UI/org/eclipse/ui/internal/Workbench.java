@@ -1503,7 +1503,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 			public void runWithException() {
 				handlerService[0] = new HandlerService(
-						commandService[0]);
+						commandService[0], evaluationService);
 				handlerService[0].readRegistry();
 			}});
 		

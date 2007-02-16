@@ -19,15 +19,17 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
-import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.commands.IElementUpdater;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.services.IEvaluationReference;
+import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.UIElement;
 
@@ -44,6 +46,11 @@ import org.eclipse.ui.menus.UIElement;
  */
 public final class HandlerProxy extends AbstractHandler implements
 		IElementUpdater {
+
+	/**
+	 * 
+	 */
+	private static final String PROP_ENABLED = "enabled"; //$NON-NLS-1$
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -72,15 +79,21 @@ public final class HandlerProxy extends AbstractHandler implements
 	 */
 	private final String handlerAttributeName;
 
+	private IHandlerListener handlerListener;
+
 	/**
-	 * The handler service to use when evaluating
+	 * The evaluation service to use when evaluating
 	 * <code>enabledWhenExpression</code>. This value may be
 	 * <code>null</code> only if the <code>enabledWhenExpression</code> is
 	 * <code>null</code>.
 	 */
-	private final IHandlerService handlerService;
+	private IEvaluationService evaluationService;
 
-	private IHandlerListener handlerListener;
+	private IPropertyChangeListener enablementListener;
+
+	private IEvaluationReference enablementRef;
+
+	private boolean proxyEnabled;
 
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
@@ -115,8 +128,8 @@ public final class HandlerProxy extends AbstractHandler implements
 	 *            <code>null</code>, then there is no enablement expression
 	 *            (i.e., enablement will be delegated to the handler when
 	 *            possible).
-	 * @param handlerService
-	 *            The handler service from which to get the current context when
+	 * @param evaluationService
+	 *            The evaluation service to manage enabledWhen expressions
 	 *            trying to evaluate the <code>enabledWhenExpression</code>.
 	 *            This value may be <code>null</code> only if the
 	 *            <code>enabledWhenExpression</code> is <code>null</code>.
@@ -124,7 +137,7 @@ public final class HandlerProxy extends AbstractHandler implements
 	public HandlerProxy(final IConfigurationElement configurationElement,
 			final String handlerAttributeName,
 			final Expression enabledWhenExpression,
-			final IHandlerService handlerService) {
+			final IEvaluationService evaluationService) {
 		if (configurationElement == null) {
 			throw new NullPointerException(
 					"The configuration element backing a handler proxy cannot be null"); //$NON-NLS-1$
@@ -135,15 +148,50 @@ public final class HandlerProxy extends AbstractHandler implements
 					"The attribute containing the handler class must be known"); //$NON-NLS-1$
 		}
 
-		if ((enabledWhenExpression != null) && (handlerService == null)) {
+		if ((enabledWhenExpression != null) && (evaluationService == null)) {
 			throw new NullPointerException(
-					"We must have a handler service to support the enabledWhen expression"); //$NON-NLS-1$
+					"We must have a handler service and evaluation service to support the enabledWhen expression"); //$NON-NLS-1$
 		}
 
 		this.configurationElement = configurationElement;
 		this.handlerAttributeName = handlerAttributeName;
 		this.enabledWhenExpression = enabledWhenExpression;
-		this.handlerService = handlerService;
+		this.evaluationService = evaluationService;
+		if (enabledWhenExpression != null) {
+			proxyEnabled = false;
+			registerEnablement();
+		} else {
+			proxyEnabled = true;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void registerEnablement() {
+		enablementRef = evaluationService.addEvaluationListener(
+				enabledWhenExpression, getEnablementListener(), PROP_ENABLED);
+	}
+
+	/**
+	 * @return
+	 */
+	private IPropertyChangeListener getEnablementListener() {
+		if (enablementListener == null) {
+			enablementListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getNewValue() != null) {
+						proxyEnabled = ((Boolean) event.getNewValue())
+								.booleanValue();
+					} else {
+						proxyEnabled = false;
+					}
+					fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
+							true, false));
+				}
+			};
+		}
+		return enablementListener;
 	}
 
 	/**
@@ -158,6 +206,11 @@ public final class HandlerProxy extends AbstractHandler implements
 			handler.dispose();
 			handler = null;
 		}
+		if (enablementListener != null) {
+			evaluationService.removeEvaluationListener(enablementRef);
+			enablementRef = null;
+			enablementListener = null;
+		}
 	}
 
 	public final Object execute(final ExecutionEvent event)
@@ -171,24 +224,12 @@ public final class HandlerProxy extends AbstractHandler implements
 
 	public final boolean isEnabled() {
 		if (enabledWhenExpression != null) {
-			try {
-				final EvaluationResult result = enabledWhenExpression
-						.evaluate(handlerService.getCurrentState());
-				if (result == EvaluationResult.FALSE) {
-					return false;
-				}
-				if (isOkToLoad() && loadHandler()) {
-					return handler.isEnabled();
-				}
-			} catch (final CoreException e) {
-				// We will just fall through an let it return false.
-				final String message = "An exception occurred while evaluating the enabledWhen expression for " //$NON-NLS-1$
-						+ configurationElement
-								.getAttribute(handlerAttributeName)
-						+ "' could not be loaded"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
-				WorkbenchPlugin.log(message, status);
+			// proxyEnabled reflects the enabledWhen clause
+			if (!proxyEnabled) {
+				return false;
+			}
+			if (isOkToLoad() && loadHandler()) {
+				return handler.isEnabled();
 			}
 
 			return true;
