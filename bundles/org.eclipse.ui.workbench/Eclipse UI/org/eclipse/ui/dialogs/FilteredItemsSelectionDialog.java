@@ -387,8 +387,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 	}
 
-	private Control createHeader(Composite parent) {
+	private void createHeader(Composite parent) {
 		Composite header = new Composite(parent, SWT.NONE);
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginWidth = 0;
@@ -412,7 +413,38 @@ public abstract class FilteredItemsSelectionDialog extends
 		label.setLayoutData(gd);
 
 		createViewMenu(header);
-		return header;
+		header.setLayoutData(gd);
+	}
+
+	private void createLabels(Composite parent) {
+		Composite labels = new Composite(parent, SWT.NONE);
+		
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		labels.setLayout(layout);
+
+		Label listLabel = new Label(labels, SWT.NONE);
+		listLabel
+				.setText(WorkbenchMessages.FilteredItemsSelectionDialog_listLabel);
+
+		listLabel.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
+					e.detail = SWT.TRAVERSE_NONE;
+					list.getTable().setFocus();
+				}
+			}
+		});
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		listLabel.setLayoutData(gd);
+
+		progressLabel = new Label(labels, SWT.RIGHT);
+		progressLabel.setLayoutData(gd);
+
+		labels.setLayoutData(gd);
 	}
 
 	private void createViewMenu(Composite parent) {
@@ -502,44 +534,24 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
-
+		
 		Composite content = new Composite(dialogArea, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		content.setLayoutData(gd);
 
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		content.setLayout(layout);
 
-		Control header = createHeader(content);
-
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		header.setLayoutData(gd);
+		createHeader(content);
 
 		pattern = new Text(content, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
 		pattern.setLayoutData(gd);
 
-		Label listLabel = new Label(content, SWT.NONE);
-		listLabel
-				.setText(WorkbenchMessages.FilteredItemsSelectionDialog_listLabel);
-
-		listLabel.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
-					e.detail = SWT.TRAVERSE_NONE;
-					list.getTable().setFocus();
-				}
-			}
-		});
-
-		progressLabel = new Label(content, SWT.RIGHT);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		progressLabel.setLayoutData(gd);
+		createLabels(content);
 
 		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
 				| SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
@@ -548,7 +560,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		list.setInput(new Object[0]);
 		list.setItemCount(contentProvider.getElements(null).length);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		list.getTable().setLayoutData(gd);
 
 		createPopupMenu();
