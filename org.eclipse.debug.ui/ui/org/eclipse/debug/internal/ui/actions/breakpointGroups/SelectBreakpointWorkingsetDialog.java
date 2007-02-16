@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -89,7 +89,7 @@ public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite comp = (Composite) super.createDialogArea(parent);
-		SWTUtil.createLabel(comp, BreakpointGroupMessages.SelectBreakpointWorkingsetDialog_0, 2);
+		SWTFactory.createLabel(comp, BreakpointGroupMessages.SelectBreakpointWorkingsetDialog_0, 2);
 		Table table = new Table(comp, SWT.BORDER | SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.SINGLE);
 		fViewer = new CheckboxTableViewer(table);
 		GridData gd = new GridData(GridData.FILL_BOTH);

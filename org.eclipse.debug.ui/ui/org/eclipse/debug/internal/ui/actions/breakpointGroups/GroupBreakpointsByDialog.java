@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
@@ -244,16 +244,16 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		buttonComposite.setLayoutData(new GridData());
 		buttonComposite.setFont(parent.getFont());
 		
-		fAddButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_2, null); 
+		fAddButton= SWTFactory.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_2, null); 
 		fAddButton.addSelectionListener(fSelectionListener);
 		
-		fRemoveButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_4, null); 
+		fRemoveButton= SWTFactory.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_4, null); 
 		fRemoveButton.addSelectionListener(fSelectionListener);
 		
-		fMoveUpButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_5, null); 
+		fMoveUpButton= SWTFactory.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_5, null); 
 		fMoveUpButton.addSelectionListener(fSelectionListener);
 		
-		fMoveDownButton= SWTUtil.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_6, null); 
+		fMoveDownButton= SWTFactory.createPushButton(buttonComposite, BreakpointGroupMessages.GroupBreakpointsByDialog_6, null); 
 		fMoveDownButton.addSelectionListener(fSelectionListener);
 	    
 	}

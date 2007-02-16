@@ -21,7 +21,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.MultipleInputDialog;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -228,14 +228,14 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		buttonComposite.setFont(parent.getFont());
 		
 		// Create buttons
-		envAddButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null); 
+		envAddButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_7, null); 
 		envAddButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
 				handleAddButtonPressed();
 			}
 		});
-		envEditButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null); 
+		envEditButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_8, null); 
 		envEditButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {
@@ -243,7 +243,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		});
 		envEditButton.setEnabled(false);
-		envRemoveButton = SWTUtil.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null); 
+		envRemoveButton = SWTFactory.createPushButton(buttonComposite, DebugPreferencesMessages.SimpleVariablePreferencePage_9, null); 
 		envRemoveButton.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent event) {

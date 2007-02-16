@@ -18,7 +18,7 @@ import com.ibm.icu.text.MessageFormat;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -185,7 +185,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 		fFileNameField.setFont(font);
 
 		// destination browse button
-		fBrowseForFileButton = SWTUtil.createPushButton(destinationSelectionGroup, ImportExportMessages.WizardBreakpointsPage_8, null);
+		fBrowseForFileButton = SWTFactory.createPushButton(destinationSelectionGroup, ImportExportMessages.WizardBreakpointsPage_8, null);
 		fBrowseForFileButton.addListener(SWT.Selection, this);
 	}
 	

@@ -16,7 +16,7 @@ import java.util.List;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
@@ -60,10 +60,10 @@ public class ContextLaunchingPreferencePage extends PreferencePage implements IW
 	 */
 	protected Control createContents(Composite parent) {
 		fFieldEditors = new ArrayList();
-		Composite comp = SWTUtil.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		
-		SWTUtil.createWrapLabel(comp, DebugPreferencesMessages.ContextualLaunchPreferencePage_0, 1, 300);
-		SWTUtil.createVerticalSpacer(comp, 2);
+		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.ContextualLaunchPreferencePage_0, 1, 300);
+		SWTFactory.createVerticalSpacer(comp, 2);
 	//use contextual launch
 		FieldEditor edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, DebugPreferencesMessages.ContextualLaunchPreferencePage_1, comp);	
 		fFieldEditors.add(edit);

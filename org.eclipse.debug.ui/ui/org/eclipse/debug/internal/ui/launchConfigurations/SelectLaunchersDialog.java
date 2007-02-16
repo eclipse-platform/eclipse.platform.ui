@@ -19,7 +19,7 @@ import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -122,20 +122,20 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomHeaderControls(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addCustomHeaderControls(Composite parent) {
-		SWTUtil.createWrapLabel(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_2, 1);
+		SWTFactory.createWrapLabel(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_2, 1);
 		Link link = new Link(parent, SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.SelectLaunchersDialog_4);
 		link.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		link.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
-				SWTUtil.showPreferencePage("org.eclipse.debug.ui.LaunchDelegatesPreferencePage"); //$NON-NLS-1$
+				SWTFactory.showPreferencePage("org.eclipse.debug.ui.LaunchDelegatesPreferencePage"); //$NON-NLS-1$
 				if(!fUseSystemLauncher.getSelection()) {
 					resetDelegate();
 				}
 			}
 		});
-		fUseSystemLauncher = SWTUtil.createCheckButton(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_1, null, true);
+		fUseSystemLauncher = SWTFactory.createCheckButton(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_1, null, true, 1);
 		fUseSystemLauncher.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
@@ -206,8 +206,8 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addCustomFooterControls(Composite parent) {
-		Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_5, 1, 1, GridData.FILL_BOTH);
-		fDescriptionText = SWTUtil.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_5, 1, 1, GridData.FILL_BOTH);
+		fDescriptionText = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
 		fDescriptionText.setBackground(group.getBackground());
 	}
 

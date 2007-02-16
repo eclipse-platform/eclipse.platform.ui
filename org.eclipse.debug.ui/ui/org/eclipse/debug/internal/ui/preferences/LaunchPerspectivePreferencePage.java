@@ -27,7 +27,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
@@ -147,9 +147,9 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		}
 		
 		protected void createPanel(Composite parent, String heading) {
-			fMainComposite = SWTUtil.createComposite(parent, 2, 1, GridData.FILL_BOTH);
-			SWTUtil.createWrapLabel(fMainComposite, heading, 2);
-			fMessage = SWTUtil.createWrapLabel(fMainComposite, "", 2, 250); //$NON-NLS-1$
+			fMainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+			SWTFactory.createWrapLabel(fMainComposite, heading, 2);
+			fMessage = SWTFactory.createWrapLabel(fMainComposite, "", 2, 250); //$NON-NLS-1$
 		}
 		
 		public void setMessage(String msg) {
@@ -178,7 +178,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				}
 			}
 			else {
-				SWTUtil.createWrapLabel(fMainComposite, DebugPreferencesMessages.LaunchPerspectivePreferencePage_0, 2, 275);
+				SWTFactory.createWrapLabel(fMainComposite, DebugPreferencesMessages.LaunchPerspectivePreferencePage_0, 2, 275);
 			}
 			fMainComposite.layout();
 		}
@@ -278,9 +278,9 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 */
 	protected Control createContents(Composite parent) {
 		
-		SWTUtil.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_0, 2, 300);
+		SWTFactory.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_0, 2, 300);
 		
-		SWTUtil.createVerticalSpacer(parent, 1);
+		SWTFactory.createVerticalSpacer(parent, 1);
 		
 		fSwitchLaunch = new RadioGroupFieldEditor(
 				IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE,
@@ -288,7 +288,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_12, MessageDialogWithToggle.ALWAYS },
 							{ DebugPreferencesMessages.LaunchingPreferencePage_13, MessageDialogWithToggle.NEVER },
 							{ DebugPreferencesMessages.LaunchingPreferencePage_14, MessageDialogWithToggle.PROMPT } }, 
-							SWTUtil.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL),
+							SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL),
 							true);
 		fSwitchLaunch.setPreferenceName(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE);
 		fSwitchLaunch.setPreferenceStore(getPreferenceStore());
@@ -298,14 +298,14 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				new String[][] {{ DebugPreferencesMessages.DebugPreferencePage_22, MessageDialogWithToggle.ALWAYS },
 								{ DebugPreferencesMessages.DebugPreferencePage_23, MessageDialogWithToggle.NEVER },
 								{ DebugPreferencesMessages.DebugPreferencePage_24, MessageDialogWithToggle.PROMPT } }, 
-								SWTUtil.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL),
+								SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL),
 								true);
 		fSwitchSuspend.setPreferenceName(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND);
 		fSwitchSuspend.setPreferenceStore(getPreferenceStore());
 		
-		SWTUtil.createVerticalSpacer(parent, 1);
-		SWTUtil.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_5, 2, 300);
-		Composite comp = SWTUtil.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		SWTFactory.createVerticalSpacer(parent, 1);
+		SWTFactory.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_5, 2, 300);
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		createTreeViewer(comp);
 		fPerspectivesPanel = new PerspectivesPanel(comp, DebugPreferencesMessages.PerspectivePreferencePage_2);
 		initializeControls();
@@ -319,8 +319,8 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * @param parent the parent to add these components to
 	 */
 	protected void createTreeViewer(Composite parent) {
-		Composite comp = SWTUtil.createComposite(parent, 1, 1, GridData.FILL_BOTH);
-		SWTUtil.createWrapLabel(comp, DebugPreferencesMessages.PerspectivePreferencePage_1, 1);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.PerspectivePreferencePage_1, 1);
 		fTree = new Tree(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		gd.widthHint = 220;
@@ -364,9 +364,9 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			fmodes = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(smodes);
 			if(!fmodes.isEmpty()) {
 				//add the modeset and create a combo
-				label = SWTUtil.createLabel(parent, fmodes.toString()+":", 1); //$NON-NLS-1$
+				label = SWTFactory.createLabel(parent, fmodes.toString()+":", 1); //$NON-NLS-1$
 				((GridData)label.getLayoutData()).grabExcessHorizontalSpace = true;
-				combo = SWTUtil.createCombo(parent, SWT.READ_ONLY, 1, fgPerspectiveLabels);
+				combo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 1, fgPerspectiveLabels);
 				String text = getComboSelection(smodes);
 				if(text != null) {
 					combo.setText(text);

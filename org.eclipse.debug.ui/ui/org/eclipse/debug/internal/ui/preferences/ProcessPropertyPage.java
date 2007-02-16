@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -44,30 +44,30 @@ public class ProcessPropertyPage extends PropertyPage {
 	 */
 	protected Control createContents(Composite ancestor) {
 		noDefaultAndApplyButton();
-		Composite parent = SWTUtil.createComposite(ancestor, ancestor.getFont(), 1, 1, GridData.FILL_BOTH);
+		Composite parent = SWTFactory.createComposite(ancestor, ancestor.getFont(), 1, 1, GridData.FILL_BOTH);
 		
 		IProcess proc = getProcess();
 		
 	//create the process time section
-		SWTUtil.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_0, fHeadingFont, 1);
-		Text text = SWTUtil.createText(parent, SWT.READ_ONLY, 1);
+		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_0, fHeadingFont, 1);
+		Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(text, IDebugHelpContextIds.PROCESS_PAGE_RUN_AT);
 		text.setText(getTimeText(proc));
 		text.setBackground(parent.getBackground());
-		SWTUtil.createVerticalSpacer(parent, 2);
+		SWTFactory.createVerticalSpacer(parent, 2);
 		
 	//create the path name section
-		SWTUtil.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_1, fHeadingFont, 1);		
-		text = SWTUtil.createText(parent, SWT.WRAP | SWT.READ_ONLY, 1);
+		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_1, fHeadingFont, 1);		
+		text = SWTFactory.createText(parent, SWT.WRAP | SWT.READ_ONLY, 1);
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		text.setText(getPathText(proc));
 		text.setBackground(parent.getBackground());
-		SWTUtil.createVerticalSpacer(parent, 2);
+		SWTFactory.createVerticalSpacer(parent, 2);
 		
 	//create commandline section
-		SWTUtil.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1, fHeadingFont, 1);
-		text = SWTUtil.createText(parent, 
+		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_Command_Line__1, fHeadingFont, 1);
+		text = SWTFactory.createText(parent, 
 				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
 				1, 
 				convertWidthInCharsToPixels(80),

@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.ViewContextService;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -113,7 +113,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		label.setText(DebugPreferencesMessages.ViewManagementPreferencePage_4); 
 		label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		fResetViewsButton= SWTUtil.createPushButton(composite, DebugPreferencesMessages.ViewManagementPreferencePage_5, null); 
+		fResetViewsButton= SWTFactory.createPushButton(composite, DebugPreferencesMessages.ViewManagementPreferencePage_5, null); 
 		((GridData) fResetViewsButton.getLayoutData()).horizontalAlignment= GridData.BEGINNING;
 		fResetViewsButton.addSelectionListener(fSelectionListener);
 		updateResetButton();

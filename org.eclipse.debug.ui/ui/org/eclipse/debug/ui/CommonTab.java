@@ -33,7 +33,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
@@ -164,7 +164,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @since 3.2
 	 */
 	private void createFavoritesComponent(Composite parent) {
-		Group favComp = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_Display_in_favorites_menu__10, 1, 1, GridData.FILL_BOTH);
+		Group favComp = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_Display_in_favorites_menu__10, 1, 1, GridData.FILL_BOTH);
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Control table = fFavoritesTable.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -185,8 +185,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @since 3.2
 	 */
 	private void createSharedConfigComponent(Composite parent) {
-		Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_0, 3, 2, GridData.FILL_HORIZONTAL);
-		Composite comp = SWTUtil.createComposite(group, parent.getFont(), 3, 3, GridData.FILL_BOTH, 0, 0);
+		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_0, 3, 2, GridData.FILL_HORIZONTAL);
+		Composite comp = SWTFactory.createComposite(group, parent.getFont(), 3, 3, GridData.FILL_BOTH, 0, 0);
 		fLocalRadioButton = createRadioButton(comp, LaunchConfigurationsMessages.CommonTab_L_ocal_3);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -197,7 +197,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				handleSharedRadioButtonSelected();
 			}
 		});
-		fSharedLocationText = SWTUtil.createSingleText(comp, 1);
+		fSharedLocationText = SWTFactory.createSingleText(comp, 1);
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
 		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
@@ -215,8 +215,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      * @param parent the parent to add this component to
      */
     private void createOutputCaptureComponent(Composite parent) {
-        Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
-        Composite comp = SWTUtil.createComposite(group, 5, 5, GridData.FILL_BOTH);
+        Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
+        Composite comp = SWTFactory.createComposite(group, 5, 5, GridData.FILL_BOTH);
         GridLayout ld = (GridLayout)comp.getLayout();
         ld.marginWidth = 1;
         ld.marginHeight = 1;
@@ -238,10 +238,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 updateLaunchConfigurationDialog();
             }
         });
-        fFileText = SWTUtil.createSingleText(comp, 4);
+        fFileText = SWTFactory.createSingleText(comp, 4);
         fFileText.addModifyListener(fBasicModifyListener);
         
-        Composite bcomp = SWTUtil.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
+        Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
         ld = (GridLayout)bcomp.getLayout();
         ld.marginHeight = 1;
         ld.marginWidth = 0;
@@ -315,7 +315,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private void createEncodingComponent(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
 	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
-	    Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
+	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
 	    
 	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding})); 
 	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);

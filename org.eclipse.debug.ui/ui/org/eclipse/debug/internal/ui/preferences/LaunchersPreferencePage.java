@@ -24,7 +24,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -164,13 +164,13 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		Composite comp = SWTUtil.createComposite(parent, 2, 1, GridData.FILL_BOTH);
-		SWTUtil.createWrapLabel(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_1, 2, 300);
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_1, 2, 300);
 		
-		SWTUtil.createVerticalSpacer(comp, 1);
+		SWTFactory.createVerticalSpacer(comp, 1);
 	//tree
-		Composite comp1 = SWTUtil.createComposite(comp, 1, 1, GridData.FILL_VERTICAL);
-		SWTUtil.createLabel(comp1, DebugPreferencesMessages.LaunchDelegatesPreferencePage_2, 1);
+		Composite comp1 = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL);
+		SWTFactory.createLabel(comp1, DebugPreferencesMessages.LaunchDelegatesPreferencePage_2, 1);
 		Tree tree = new Tree(comp1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = false;
@@ -200,8 +200,8 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		
 	//table
-		Composite comp2 = SWTUtil.createComposite(comp, comp.getFont(), 1, 1, GridData.FILL_BOTH);
-		SWTUtil.createLabel(comp2, DebugPreferencesMessages.LaunchDelegatesPreferencePage_3, 1);
+		Composite comp2 = SWTFactory.createComposite(comp, comp.getFont(), 1, 1, GridData.FILL_BOTH);
+		SWTFactory.createLabel(comp2, DebugPreferencesMessages.LaunchDelegatesPreferencePage_3, 1);
 		Table table = new Table(comp2, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK | SWT.SINGLE);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer = new CheckboxTableViewer(table);
@@ -239,8 +239,8 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				}
 			}
 		});
-		Group group = SWTUtil.createGroup(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_4, 1, 2, GridData.FILL_BOTH);
-		fDescription = SWTUtil.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_4, 1, 2, GridData.FILL_BOTH);
+		fDescription = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
 		fDescription.setBackground(group.getBackground());
 		return comp;
 	}

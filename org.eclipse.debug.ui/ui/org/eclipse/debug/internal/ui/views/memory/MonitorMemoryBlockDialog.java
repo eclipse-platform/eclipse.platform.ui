@@ -15,7 +15,7 @@ package org.eclipse.debug.internal.ui.views.memory;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
@@ -67,16 +67,16 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite comp = (Composite) super.createDialogArea(parent);
-		SWTUtil.createWrapLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor, 1, LABEL_WIDTH);
-		expressionInput = SWTUtil.createCombo(comp, SWT.BORDER, 1, MemoryViewUtil.getHistory());
+		SWTFactory.createWrapLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_EnterExpressionToMonitor, 1, LABEL_WIDTH);
+		expressionInput = SWTFactory.createCombo(comp, SWT.BORDER, 1, MemoryViewUtil.getHistory());
 		if (fPrefillExp != null) {
 			expressionInput.setText(fPrefillExp);
 		}
 		expressionInput.addModifyListener(this);
 		
 		if (needLength) {
-			SWTUtil.createLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes, 1);
-			lengthInput = SWTUtil.createSingleText(comp, 1);
+			SWTFactory.createLabel(comp, DebugUIMessages.MonitorMemoryBlockDialog_NumberOfBytes, 1);
+			lengthInput = SWTFactory.createSingleText(comp, 1);
 			if (fPrefillLength != null) {
 				lengthInput.setText(fPrefillLength);
 			}

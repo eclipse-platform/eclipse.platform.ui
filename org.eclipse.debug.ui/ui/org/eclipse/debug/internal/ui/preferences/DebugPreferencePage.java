@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.preferences;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
@@ -52,18 +52,18 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_REUSE_EDITOR, DebugPreferencesMessages.DebugPreferencePage_2, SWT.NONE, getFieldEditorParent())); 
 		
-		SWTUtil.createHorizontalSpacer(getFieldEditorParent(), 2);
+		SWTFactory.createHorizontalSpacer(getFieldEditorParent(), 2);
 		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, DebugPreferencesMessages.DebugPreferencePage_3, SWT.NONE, getFieldEditorParent())); 
 		addField(new BooleanFieldEditor(IInternalDebugUIConstants.PREF_ACTIVATE_DEBUG_VIEW, DebugPreferencesMessages.DebugPreferencePage_26, SWT.NONE, getFieldEditorParent())); 
 
-		SWTUtil.createHorizontalSpacer(getFieldEditorParent(), 2);
+		SWTFactory.createHorizontalSpacer(getFieldEditorParent(), 2);
 		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, DebugPreferencesMessages.DebugPreferencePage_25, SWT.NONE, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS, DebugPreferencesMessages.DebugPreferencePage_29, SWT.NONE, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, DebugPreferencesMessages.DebugPreferencePage_30, SWT.NONE, getFieldEditorParent()));
 		
-		SWTUtil.createHorizontalSpacer(getFieldEditorParent(), 2);
+		SWTFactory.createHorizontalSpacer(getFieldEditorParent(), 2);
 		ColorFieldEditor mem= new ColorFieldEditor(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR, DebugPreferencesMessages.DebugPreferencePage_4, getFieldEditorParent()); 
 		addField(mem);
 		mem = new ColorFieldEditor(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND, DebugPreferencesMessages.DebugPreferencePage_28, getFieldEditorParent());

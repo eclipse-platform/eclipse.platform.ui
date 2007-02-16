@@ -27,7 +27,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -284,8 +284,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
     		
 		createTabFolder(fTabComposite);
 		
-		Composite blComp = SWTUtil.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
-		Composite linkComp = SWTUtil.createComposite(blComp, blComp.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+		Composite blComp = SWTFactory.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
+		Composite linkComp = SWTFactory.createComposite(blComp, blComp.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 
 	//a link for launch options
 		fOptionsLink = new Link(linkComp, SWT.WRAP);
@@ -338,7 +338,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fApplyButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fApplyButton.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(fApplyButton);
+		SWTFactory.setButtonDimensionHint(fApplyButton);
 		fApplyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleApplyPressed();
@@ -349,7 +349,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fRevertButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		fRevertButton.setLayoutData(gd);
-		SWTUtil.setButtonDimensionHint(fRevertButton);
+		SWTFactory.setButtonDimensionHint(fRevertButton);
 		fRevertButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleRevertPressed();
@@ -367,14 +367,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		Font font = parent.getFont();
 		GridData gd = null;
 		int width = parent.getBounds().width - 30;
-		SWTUtil.createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1, 1, width);
-		SWTUtil.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG), 1, width);
-		SWTUtil.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG), 1, width);
-		SWTUtil.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG), 1, width);
-        SWTUtil.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS), 1, width);
-        SWTUtil.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 1, width);
+		SWTFactory.createWrapLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_1, 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_2, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_NEW_CONFIG), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_6, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DUPLICATE_CONFIG), 1, width);
+		SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_4, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_DELETE_CONFIG), 1, width);
+        SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_8, DebugUITools.getImage(IInternalDebugUIConstants.IMG_ELCL_FILTER_CONFIGS), 1, width);
+        SWTFactory.createWrapCLabel(parent, LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_3, DebugUITools.getImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT), 1, width);
         
-		SWTUtil.createHorizontalSpacer(parent, 2);
+		SWTFactory.createHorizontalSpacer(parent, 2);
 		Link link = new Link(parent, SWT.LEFT | SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_5);
 		link.setFont(font);
@@ -383,7 +383,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		link.setLayoutData(gd);
 		link.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				SWTUtil.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage"); //$NON-NLS-1$
+				SWTFactory.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage"); //$NON-NLS-1$
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});

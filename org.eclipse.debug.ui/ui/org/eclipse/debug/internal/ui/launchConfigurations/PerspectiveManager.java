@@ -351,7 +351,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	}
 	
 	/**
-	 * Utility method to submit an asnychronous runnable to the UI
+	 * Utility method to submit an asynchronous runnable to the UI
 	 */
 	protected void async(Runnable r) {
 		Display d = DebugUIPlugin.getStandardDisplay();

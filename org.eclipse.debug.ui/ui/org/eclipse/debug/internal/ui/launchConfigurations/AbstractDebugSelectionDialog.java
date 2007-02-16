@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -132,7 +132,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		addCustomHeaderControls(comp);
 		String label = getTableViewerMessage();
 		if(label != null) {
-			SWTUtil.createLabel(comp, label, 1);
+			SWTFactory.createLabel(comp, label, 1);
 		}
 		fTable = new Table(comp, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
 		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));

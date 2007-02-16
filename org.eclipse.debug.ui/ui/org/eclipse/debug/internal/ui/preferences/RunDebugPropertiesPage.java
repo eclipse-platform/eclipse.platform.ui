@@ -29,7 +29,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationComparator;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -104,17 +104,17 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.DEFAULT_LAUNCHCONFIGURATION_PROPERTY_PAGE);
 		collectConfigCandidates(getResource());
-		Composite topComposite = SWTUtil.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		Composite topComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		
-		SWTUtil.createWrapLabel(topComposite, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_0, 2, 300);
-		SWTUtil.createVerticalSpacer(topComposite, 2);
-		SWTUtil.createWrapLabel(topComposite, MessageFormat.format(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_1, new String[]{getResource().getName()}), 2, 300);
+		SWTFactory.createWrapLabel(topComposite, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_0, 2, 300);
+		SWTFactory.createVerticalSpacer(topComposite, 2);
+		SWTFactory.createWrapLabel(topComposite, MessageFormat.format(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_1, new String[]{getResource().getName()}), 2, 300);
 		fViewer = createViewer(topComposite);
 		
-		Composite buttonComp = SWTUtil.createComposite(topComposite, 1, 1, GridData.FILL_VERTICAL);
+		Composite buttonComp = SWTFactory.createComposite(topComposite, 1, 1, GridData.FILL_VERTICAL);
 		GridLayout layout = (GridLayout) buttonComp.getLayout();
 		layout.marginHeight = 0;
-		fNewButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_2, null);
+		fNewButton = SWTFactory.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_2, null);
 		fNewButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_3);
 		fNewButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
@@ -123,7 +123,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			}
 		});
 		
-		fDuplicateButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_4, null);
+		fDuplicateButton = SWTFactory.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_4, null);
 		fDuplicateButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_5);
 		fDuplicateButton.setEnabled(false);
 		fDuplicateButton.addSelectionListener(new SelectionListener() {
@@ -132,7 +132,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 				handleCopy();
 			}
 		});
-		fEditButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_6, null);
+		fEditButton = SWTFactory.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_6, null);
 		fEditButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_7);
 		fEditButton.setEnabled(false);
 		fEditButton.addSelectionListener(new SelectionListener() {
@@ -141,7 +141,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 				handleEdit();
 			}
 		});
-		fDeleteButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_8, null);
+		fDeleteButton = SWTFactory.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_8, null);
 		fDeleteButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_9);
 		fDeleteButton.setEnabled(false);
 		fDeleteButton.addSelectionListener(new SelectionListener() {

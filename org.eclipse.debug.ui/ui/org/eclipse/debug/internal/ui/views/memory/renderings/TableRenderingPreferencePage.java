@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.FieldEditor;
@@ -61,7 +61,7 @@ public class TableRenderingPreferencePage extends PreferencePage implements
 		GridData hspanData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		hspanData.horizontalSpan = 2;
 		
-		SWTUtil.createWrapLabel(fComposite, DebugUIMessages.TableRenderingPreferencePage_10, 2, 300);
+		SWTFactory.createWrapLabel(fComposite, DebugUIMessages.TableRenderingPreferencePage_10, 2, 300);
 		
 		fAuto = new Button(fComposite, SWT.RADIO);
 		fAuto.setText(DebugUIMessages.TableRenderingPreferencePage_0);

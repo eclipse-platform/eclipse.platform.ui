@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.EmbeddedBreakpointsViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -107,7 +107,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout(2, false));
 		buttonComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
-		Button selectAllButton = SWTUtil.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_label, null);
+		Button selectAllButton = SWTFactory.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_label, null);
 		selectAllButton.setToolTipText(DebugUIViewsMessages.BreakpointWorkingSetPage_selectAll_toolTip);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
@@ -119,7 +119,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 				validateInput();
 			}
 		});
-		Button deselectAllButton = SWTUtil.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_label, null);
+		Button deselectAllButton = SWTFactory.createPushButton(buttonComposite, DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_label, null);
 		deselectAllButton.setToolTipText(DebugUIViewsMessages.BreakpointWorkingSetPage_deselectAll_toolTip);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {

@@ -16,7 +16,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * @since 2.0
  */
 public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab {
-//	 TODO Add in access methods for createGroup, createLabel and createSingleText from SWTUtil post 3.2 API freeze
+//	 TODO Add in access methods for createGroup, createLabel and createSingleText from SWTFactory post 3.2 API freeze
 	
 	/**
 	 * The control for this page, or <code>null</code>
@@ -197,7 +197,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @return a new push button
 	 */
 	protected Button createPushButton(Composite parent, String label, Image image) {
-		return SWTUtil.createPushButton(parent, label, image);	
+		return SWTFactory.createPushButton(parent, label, image);	
 	}
 	
 	/**
@@ -210,7 +210,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @return a new radio button
 	 */
 	protected Button createRadioButton(Composite parent, String label) {
-		return SWTUtil.createRadioButton(parent, label);	
+		return SWTFactory.createRadioButton(parent, label);	
 	}	
 	
 	/**
@@ -228,7 +228,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 		GridData data = new GridData();
 		button.setLayoutData(data);
 		button.setFont(parent.getFont());
-		SWTUtil.setButtonDimensionHint(button);
+		SWTFactory.setButtonDimensionHint(button);
 		return button;
 	}
 	

@@ -14,7 +14,7 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
 import org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
@@ -164,7 +164,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		fArgumentButton.setFont(parent.getFont());
 		fArgumentButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_7); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.widthHint = SWTUtil.getButtonWidthHint(fArgumentButton);
+		gd.widthHint = SWTFactory.getButtonWidthHint(fArgumentButton);
 		fArgumentButton.setLayoutData(gd);
 		fArgumentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

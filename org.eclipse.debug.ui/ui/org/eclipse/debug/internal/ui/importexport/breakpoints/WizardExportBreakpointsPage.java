@@ -22,7 +22,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
@@ -217,9 +217,9 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
         layout.makeColumnsEqualWidth = true;
         composite.setLayout(layout);
         composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-        fSelectAll = SWTUtil.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null); 
+        fSelectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null); 
         fSelectAll.addListener(SWT.Selection, this);
-		fDeselectAll = SWTUtil.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_2, null);
+		fDeselectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_2, null);
 		fDeselectAll.addListener(SWT.Selection, this);
     }
 	

@@ -18,7 +18,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -231,7 +231,7 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite comp = (Composite) super.createDialogArea(parent);
-		SWTUtil.createLabel(comp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_0, 2);
+		SWTFactory.createLabel(comp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_0, 2);
 		fViewer = new LCViewer(comp, SWT.BORDER);
 		Tree tree = fViewer.getTree();
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -250,7 +250,7 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		butcomp.setLayoutData(gd);
-		Button sall = SWTUtil.createPushButton(butcomp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_1, null);
+		Button sall = SWTFactory.createPushButton(butcomp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_1, null);
 		sall.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
@@ -258,7 +258,7 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 				fViewer.setAllChecked(true);
 			}			
 		});
-		Button dsall = SWTUtil.createPushButton(butcomp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_2, null);
+		Button dsall = SWTFactory.createPushButton(butcomp, LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_2, null);
 		dsall.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {

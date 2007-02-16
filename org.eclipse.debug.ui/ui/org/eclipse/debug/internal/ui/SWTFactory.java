@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
- * Utility class to simplify access to some SWT resources. 
+ * Factory class to create some SWT resources. 
  */
-public class SWTUtil {
+public class SWTFactory {
 		
 	/**
 	 * Returns a width hint for a button control.
@@ -66,10 +66,11 @@ public class SWTUtil {
 	 * @param label the label for the button
 	 * @param image the image for the button 
 	 * @param checked the initial checked state of the button
+	 * @param hspan the horizontal span to take up in the parent composite
 	 * @return a new checked button set to the initial checked state
 	 * @since 3.3
 	 */
-	public static Button createCheckButton(Composite parent, String label, Image image, boolean checked) {
+	public static Button createCheckButton(Composite parent, String label, Image image, boolean checked, int hspan) {
 		Button button = new Button(parent, SWT.CHECK);
 		button.setFont(parent.getFont());
 		button.setSelection(checked);
@@ -80,6 +81,7 @@ public class SWTUtil {
 			button.setText(label);
 		}
 		GridData gd = new GridData();
+		gd.horizontalSpan = hspan;
 		button.setLayoutData(gd);
 		setButtonDimensionHint(button);
 		return button;
@@ -106,7 +108,7 @@ public class SWTUtil {
 		}
 		GridData gd = new GridData();
 		button.setLayoutData(gd);	
-		SWTUtil.setButtonDimensionHint(button);
+		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
 
@@ -127,7 +129,7 @@ public class SWTUtil {
 		}
 		GridData gd = new GridData();
 		button.setLayoutData(gd);	
-		SWTUtil.setButtonDimensionHint(button);
+		SWTFactory.setButtonDimensionHint(button);
 		return button;	
 	}	
 	
