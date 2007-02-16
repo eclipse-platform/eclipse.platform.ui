@@ -2020,13 +2020,23 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// If there are no pages create a default.
 		if (pageList.isEmpty()) {
 			try {
-				String defPerspID = getWorkbenchImpl().getPerspectiveRegistry()
+				final String defPerspID = getWorkbenchImpl().getPerspectiveRegistry()
 						.getDefaultPerspective();
 				if (defPerspID != null) {
-					WorkbenchPage newPage = new WorkbenchPage(this, defPerspID,
-							getDefaultPageInput());
-					pageList.add(newPage);
-					firePageOpened(newPage);
+					final WorkbenchPage [] newPage = new WorkbenchPage[1];
+					StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
+						
+						public void runWithException() throws Throwable {
+							newPage[0] = new WorkbenchPage(WorkbenchWindow.this, defPerspID,
+									getDefaultPageInput());
+						}});
+					
+					pageList.add(newPage[0]);
+					StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+						public void runWithException() throws Throwable {
+							firePageOpened(newPage[0]);
+						}});
 				}
 			} catch (WorkbenchException e) {
 				WorkbenchPlugin
