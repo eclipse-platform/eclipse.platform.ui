@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -331,7 +332,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 		final IActionDelegate delegate = getDelegate();
 		final IAction action = getAction();
-		
+
 		// Check to see if the view delegate should be initialized.
 		if ((viewId != null) && (page != null)
 				&& (delegate instanceof IViewActionDelegate)) {
@@ -561,9 +562,13 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		buffer.append(getDelegate());
 		if (element != null) {
 			buffer.append(',');
-			final String className = element
-					.getAttribute(delegateAttributeName);
-			buffer.append(className);
+			try {
+				final String className = element
+						.getAttribute(delegateAttributeName);
+				buffer.append(className);
+			} catch (InvalidRegistryObjectException e) {
+				buffer.append(actionId);
+			}
 		}
 		buffer.append(')');
 		return buffer.toString();

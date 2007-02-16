@@ -274,7 +274,10 @@ public final class HandlerProxy extends AbstractHandler implements
 
 	public final String toString() {
 		if (handler == null) {
-			return configurationElement.getAttribute(handlerAttributeName);
+			if (configurationElement != null) {
+				return configurationElement.getAttribute(handlerAttributeName);
+			}
+			return "HandlerProxy()"; //$NON-NLS-1$
 		}
 
 		return handler.toString();
