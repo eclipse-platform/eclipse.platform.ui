@@ -1299,7 +1299,7 @@
          </colorOverride>
          <colorOverride
                id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
-               value="COLOR_TITLE_BACKGROUND">
+               value="COLOR_TITLE_BACKGROUND_GRADIENT">
          </colorOverride>
          <data
                name="org.eclipse.ui.workbench.ACTIVE_TAB_PERCENT"
