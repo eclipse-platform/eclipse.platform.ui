@@ -31,6 +31,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -44,7 +45,6 @@ import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.core.resources.IResourceStatus;
 
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -485,7 +485,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 
 		} else {
 
-			fFileStore= FileBuffers.getFileStoreAtLocation(getLocation());
+			fFileStore= EFS.getStore(URIUtil.toURI(getLocation()));
 			fFileStore.getParent().mkdir(EFS.NONE, null);
 			OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
 			try {

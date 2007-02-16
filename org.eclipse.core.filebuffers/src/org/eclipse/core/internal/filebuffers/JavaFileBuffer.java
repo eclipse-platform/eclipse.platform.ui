@@ -13,6 +13,7 @@ package org.eclipse.core.internal.filebuffers;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
@@ -22,8 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.core.filebuffers.FileBuffers;
 
 /**
  * @since 3.0
@@ -63,7 +62,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		fLocation= location;
-		IFileStore fileStore= FileBuffers.getFileStoreAtLocation(location);
+		IFileStore fileStore= EFS.getStore(URIUtil.toURI(getLocation()));
 		IFileInfo info= fileStore.fetchInfo();
 		if (info.exists())
 			fFileStore= fileStore;
