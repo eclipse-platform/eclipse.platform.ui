@@ -269,7 +269,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			setDocumentContent(fDocument, fFile, fEncoding);
 
 		} catch (CoreException x) {
-			fDocument= fManager.createEmptyDocument(getLocation());
+			fDocument= fManager.createEmptyDocument(fFile);
 			fStatus= x.getStatus();
 		}
 	}
