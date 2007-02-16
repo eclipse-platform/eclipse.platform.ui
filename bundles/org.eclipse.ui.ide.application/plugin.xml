@@ -37,7 +37,7 @@
       <perspectiveExtension
             targetID="org.eclipse.ui.resourcePerspective">
          <showInPart
-               id="org.eclipse.ui.views.ResourceNavigator">
+               id="org.eclipse.ui.navigator.ProjectExplorer">
          </showInPart>
       </perspectiveExtension>
    </extension>
