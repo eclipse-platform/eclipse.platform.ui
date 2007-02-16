@@ -57,7 +57,11 @@ public class MultipleYesNoPrompter {
 					IDialogConstants.CANCEL_LABEL};
 			}
 		} else {
-			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
+			buttons = new String[] { 
+					IDialogConstants.YES_LABEL,
+					IDialogConstants.NO_LABEL, 
+					IDialogConstants.CANCEL_LABEL 
+			};
 		}	 
 	}
 	
@@ -131,7 +135,15 @@ public class MultipleYesNoPrompter {
 					throw new InterruptedException();
 			}
 		} else {
-			return dialog.getReturnCode() == 0;
+			switch (dialog.getReturnCode()) {
+			case 0:// Yes
+				return true;
+			case 1:// No
+				return false;
+			case 2:// Cancel
+			default:
+				throw new InterruptedException();
+			}
 		}
 	}
 
