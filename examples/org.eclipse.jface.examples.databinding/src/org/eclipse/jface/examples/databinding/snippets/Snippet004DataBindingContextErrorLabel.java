@@ -62,8 +62,6 @@ public class Snippet004DataBindingContextErrorLabel {
 				dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
 						value, new DefaultBindSpec().addTargetValidator(
 								BindingEvent.PIPELINE_AFTER_CONVERT,
-								new FiveValidator()).addModelValidator(
-								BindingEvent.PIPELINE_AFTER_CONVERT,
 								new FiveValidator()));
 
 				// Bind the error label to the validation error on the dbc.

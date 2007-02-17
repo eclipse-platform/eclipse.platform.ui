@@ -13,12 +13,9 @@ package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
+import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -83,50 +80,30 @@ public class SelectionProviderSingleSelectionObservableValueTest extends TestCas
         SelectionProviderSingleSelectionObservableValue observable = new SelectionProviderSingleSelectionObservableValue(
                 SWTObservables.getRealm(Display.getDefault()),
                 selectionProvider);
-        ChangeListener listener = new ChangeListener();
+        ValueChangeEventTracker listener = new ValueChangeEventTracker();
         observable.addValueChangeListener(listener);
         assertNull(observable.getValue());
 
         selectionProvider.setSelection(new StructuredSelection(model[0]));
         assertEquals(1, listener.count);
-        assertNull(listener.diff.getOldValue());
-        assertEquals(model[0], listener.diff.getNewValue());
-        assertEquals(observable, listener.source);
+        assertNull(listener.event.diff.getOldValue());
+        assertEquals(model[0], listener.event.diff.getNewValue());
+        assertEquals(observable, listener.event.getObservableValue());
         assertEquals(model[0], observable.getValue());
 
         selectionProvider.setSelection(new StructuredSelection(model[1]));
         assertEquals(2, listener.count);
-        assertEquals(model[0], listener.diff.getOldValue());
-        assertEquals(model[1], listener.diff.getNewValue());
-        assertEquals(observable, listener.source);
+        assertEquals(model[0], listener.event.diff.getOldValue());
+        assertEquals(model[1], listener.event.diff.getNewValue());
+        assertEquals(observable, listener.event.getObservableValue());
         assertEquals(model[1], observable.getValue());
 
         selectionProvider.setSelection(StructuredSelection.EMPTY);
         assertEquals(3, listener.count);
-        assertEquals(model[1], listener.diff.getOldValue());
-        assertNull(listener.diff.getNewValue());
-        assertEquals(observable, listener.source);
+        assertEquals(model[1], listener.event.diff.getOldValue());
+        assertNull(listener.event.diff.getNewValue());
+        assertEquals(observable, listener.event.getObservableValue());
         assertEquals(null, observable.getValue());
-    }
-
-    private class ChangeListener implements IValueChangeListener {
-        int count = 0;
-
-        IObservable source;
-
-        ValueDiff diff;
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.databinding.observable.value.IValueChangeListener#handleValueChange(org.eclipse.jface.databinding.observable.value.IObservableValue,
-         *      org.eclipse.jface.databinding.observable.value.ValueDiff)
-         */
-        public void handleValueChange(ValueChangeEvent event) {
-            count++;
-            this.source = event.getObservableValue();
-            this.diff = event.diff;
-        }
     }
 
     private class ContentProvider implements IStructuredContentProvider {

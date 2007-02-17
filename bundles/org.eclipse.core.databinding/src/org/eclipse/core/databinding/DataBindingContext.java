@@ -162,9 +162,20 @@ public class DataBindingContext {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
 		}
-		Binding result = new ValueBinding(targetObservableValue,
+		ValueBinding result = new ValueBinding(targetObservableValue,
 				modelObservableValue, bindSpec);
 		result.init(this);
+		
+		Integer position = result.getTargetChangeModelPipelinePosition();
+		if (position != null) {
+			if (position.intValue() == BindingEvent.PIPELINE_AFTER_CHANGE) {
+				//we don't want to update the model
+				position = new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE);
+			}
+			
+			result.updateModelFromTarget(position.intValue());
+		}
+		
 		return result;
 	}
 
@@ -221,9 +232,20 @@ public class DataBindingContext {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
 		}
-		Binding result = new ListBinding(targetObservableList,
+		ListBinding result = new ListBinding(targetObservableList,
 				modelObservableList, bindSpec);
 		result.init(this);
+		
+		Integer position = result.getTargetChangeModelPipelinePosition();
+		if (position != null) {
+			if (position.intValue() == BindingEvent.PIPELINE_AFTER_CHANGE) {
+				//we don't want to copy the value to the model
+				position = new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE);
+			}
+			
+			result.updateModelFromTarget(position.intValue());
+		}
+		
 		return result;
 	}
 

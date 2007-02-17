@@ -75,7 +75,7 @@ public class ListBinding extends Binding {
 		fillBindSpecDefaults(bindSpec, targetList, modelList);
 
 		if (bindSpec.isUpdateModel()) {
-			int stopPosition = getValidationPolicy(bindSpec
+			int stopPosition = calculateValidationPolicy(bindSpec
 					.getModelUpdatePolicy(), bindSpec.getTargetValidatePolicy());
 			targetList
 					.addListChangeListener(targetChangeListener = new ChangeListener(
@@ -85,9 +85,11 @@ public class ListBinding extends Binding {
 		}
 
 		if (bindSpec.isUpdateTarget()) {
-			 int stopPosition = getValidationPolicy(
-					bindSpec.getTargetUpdatePolicy(), bindSpec
-							.getModelValidatePolicy());
+			int stopPosition = calculateValidationPolicy(bindSpec
+					.getTargetUpdatePolicy(), bindSpec.getModelValidatePolicy());
+
+			targetChangeModelPipelinePosition = new Integer(stopPosition);
+			
 			modelList
 					.addListChangeListener(modelChangeListener = new ChangeListener(
 							BindingEvent.EVENT_COPY_TO_TARGET, stopPosition));
@@ -265,6 +267,11 @@ public class ListBinding extends Binding {
 
 	private WritableValue validationErrorObservable;
 
+	/**
+	 * Pipeline position that validation will run up to when the target changes.
+	 */
+	private Integer targetChangeModelPipelinePosition;
+
 	public void updateTargetFromModel() {
 		updateTargetFromModel(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
@@ -330,7 +337,7 @@ public class ListBinding extends Binding {
 		updateTargetFromModel();
 	}
 
-	private static int getValidationPolicy(Integer updatePolicy,
+	private static int calculateValidationPolicy(Integer updatePolicy,
 			Integer validationPolicy) {
 		int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
 
@@ -340,5 +347,12 @@ public class ListBinding extends Binding {
 		}
 
 		return pipelineStop;
+	}
+
+	/**
+	 * @return position that will be validated up to when the target changes, can be <code>null</code>
+	 */
+	public Integer getTargetChangeModelPipelinePosition() {
+		return targetChangeModelPipelinePosition;
 	}
 }

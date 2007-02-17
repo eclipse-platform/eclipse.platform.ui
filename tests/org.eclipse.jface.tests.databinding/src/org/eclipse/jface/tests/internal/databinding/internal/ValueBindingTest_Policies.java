@@ -22,7 +22,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.Pipeline.TrackLastL
 /**
  * Asserts the policies of ValueBinding.
  * 
- * @since 3.2
+ * @since 1.1
  */
 public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 	private WritableValue target;
@@ -50,22 +50,27 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testModelUpdatePolicyAutomatic() throws Exception {
-		new ValueBinding(target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC)).init(dbc);
-		target.setValue("1");
-		assertEquals("should be automatic", target.getValue(), model.getValue());
+		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_AUTOMATIC));
+		binding.init(dbc);
+		assertEquals(BindingEvent.PIPELINE_AFTER_CHANGE, binding.getTargetChangeModelPipelinePosition().intValue());
 	}
 
 	public void testModelUpdatePolicyExplicit() throws Exception {
+		int position = BindingEvent.PIPELINE_AFTER_GET;
 		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
-				.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT).setTargetValidatePolicy(new Integer(position)));
 		binding.init(dbc);
 
-		model.setValue("1");
-		assertFalse(model.getValue().equals(target.getValue()));
+		assertEquals(position, binding.getTargetChangeModelPipelinePosition().intValue());
+	}
+	
+	public void testModelUpdatePolicyExplicitDefault() throws Exception {
+		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
+				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
+		binding.init(dbc);
 
-		binding.updateTargetFromModel();
-		assertEquals(model.getValue(), target.getValue());
+		assertEquals(BindingEvent.PIPELINE_AFTER_CONVERT, binding.getTargetChangeModelPipelinePosition().intValue());
 	}
 
 	public void testTargetUpdatePolicyNull() throws Exception {
@@ -115,20 +120,5 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 
 		assertFalse(target.getValue().equals(model.getValue()));
 		assertEquals("last position", position, listener.lastPosition);
-	}
-
-	public void testModelUpdatePolicyExplicitValidationDefault()
-			throws Exception {
-		TrackLastListener listener = new TrackLastListener();
-
-		ValueBinding binding = new ValueBinding(target, model, new BindSpec()
-				.setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT));
-		binding.init(dbc);
-
-		binding.addBindingEventListener(listener);
-		target.setValue("");
-
-		assertEquals("default validation position",
-				BindingEvent.PIPELINE_AFTER_CONVERT, listener.lastPosition);
 	}
 }

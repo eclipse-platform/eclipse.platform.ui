@@ -15,10 +15,9 @@ package org.eclipse.jface.tests.internal.databinding.internal.beans;
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
 
 /**
  * @since 3.2
@@ -58,12 +57,12 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
     
     public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
 		assertFalse(bean.changeSupport.hasListeners(propertyName));
-		observableValue.addValueChangeListener(new ValueChangeListener());
+		observableValue.addValueChangeListener(new ValueChangeEventTracker());
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
 	}
     
     public void testRemovesListenerAfterLastListenerIsRemoved() throws Exception {
-    	ValueChangeListener listener = new ValueChangeListener();
+    	ValueChangeEventTracker listener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(listener);
 		
 		assertTrue(bean.changeSupport.hasListeners(propertyName));
@@ -72,18 +71,11 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
     
     public void testFiresValueChangeEvents() throws Exception {
-    	ValueChangeListener listener = new ValueChangeListener();
+    	ValueChangeEventTracker listener = new ValueChangeEventTracker();
     	observableValue.addValueChangeListener(listener);
     	
     	assertEquals(0, listener.count);
     	bean.setValue(bean.getValue() + bean.getValue());
     	assertEquals(1, listener.count);
 	}
-    
-    static class ValueChangeListener implements IValueChangeListener {
-    	int count;
-		public void handleValueChange(ValueChangeEvent event) {
-			count++;
-		}
-    }
 }

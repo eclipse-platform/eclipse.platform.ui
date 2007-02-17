@@ -14,16 +14,15 @@ package org.eclipse.jface.tests.internal.databinding.provisional.viewers;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * @since 3.3
+ * @since 1.1
  */
 public class SelectionObservableValueTest extends TestCase {
     public void testSetValue() throws Exception {
@@ -34,7 +33,7 @@ public class SelectionObservableValueTest extends TestCase {
         viewer.setInput(items);
         
         IObservableValue observable = ViewersObservables.observeSingleSelection(viewer);
-        ValueChangeListener listener = new ValueChangeListener();
+        ValueChangeEventTracker listener = new ValueChangeEventTracker();
         observable.addValueChangeListener(listener);
         
         assertNull(observable.getValue());
@@ -53,13 +52,5 @@ public class SelectionObservableValueTest extends TestCase {
         assertNull(observable.getValue());
         assertEquals("viewer selection should be empty", StructuredSelection.EMPTY, viewer.getSelection());
         assertEquals("value change event did not fire", 2, listener.count);
-    }
-    
-    private static class ValueChangeListener implements IValueChangeListener {
-        int count;
-        
-        public void handleValueChange(ValueChangeEvent event) {
-            count++;
-        }        
     }
 }

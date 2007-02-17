@@ -66,6 +66,11 @@ public class ValueBinding extends Binding {
 			new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE) };
 
 	/**
+	 * Pipeline position that validation will run up to when the target changes.
+	 */
+	private Integer targetChangeModelPipelinePosition;
+
+	/**
 	 * @param target
 	 * @param model
 	 * @param bindSpec
@@ -94,7 +99,7 @@ public class ValueBinding extends Binding {
 						"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			int pipelineStop = getValidationPolicy(bindSpec
+			int pipelineStop = calculateValidationPolicy(bindSpec
 					.getTargetUpdatePolicy(), bindSpec.getModelValidatePolicy());
 
 			model
@@ -108,12 +113,14 @@ public class ValueBinding extends Binding {
 						"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
-			int pipelineStop = getValidationPolicy(bindSpec
+			int pipelineStop = calculateValidationPolicy(bindSpec
 					.getModelUpdatePolicy(), bindSpec.getTargetValidatePolicy());
 
 			target
 					.addValueChangeListener(targetChangeListener = new TargetChangeListener(
 							pipelineStop));
+
+			targetChangeModelPipelinePosition = new Integer(pipelineStop);
 
 			if (target instanceof IVetoableValue) {
 				((IVetoableValue) target)
@@ -422,7 +429,7 @@ public class ValueBinding extends Binding {
 		}
 	}
 
-	private static int getValidationPolicy(Integer updatePolicy,
+	private static int calculateValidationPolicy(Integer updatePolicy,
 			Integer validationPolicy) {
 		int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
 
@@ -432,5 +439,12 @@ public class ValueBinding extends Binding {
 		}
 
 		return pipelineStop;
+	}
+
+	/**
+	 * @return position that will be validated up to when the target changes, can be <code>null</code>
+	 */
+	public Integer getTargetChangeModelPipelinePosition() {
+		return targetChangeModelPipelinePosition;
 	}
 }

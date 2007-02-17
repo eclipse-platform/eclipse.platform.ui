@@ -13,11 +13,10 @@
 package org.eclipse.jface.tests.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -31,7 +30,7 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	public void testValueChangeOnlyFiresOnChange() throws Exception {
 		WritableValue writableValue = new WritableValue();
-		ValueChangeCounter counter = new ValueChangeCounter();
+		ValueChangeEventTracker counter = new ValueChangeEventTracker();
 		writableValue.addValueChangeListener(counter);
 
 		assertEquals(0, counter.count);
@@ -78,13 +77,5 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 		assertNotNull(value);
 		assertEquals(Realm.getDefault(), value.getRealm());
 		assertEquals(elementType, value.getValueType());
-	}
-
-	private static class ValueChangeCounter implements IValueChangeListener {
-		int count;
-
-		public void handleValueChange(ValueChangeEvent event) {
-			count++;
-		}
 	}
 }

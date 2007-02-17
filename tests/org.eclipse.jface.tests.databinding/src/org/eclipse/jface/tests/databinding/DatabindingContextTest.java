@@ -21,25 +21,51 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.tests.databinding.util.EventTrackers.ChangeEventTracker;
+import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
 
 public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
-	public void testDisposeBindings() throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
+	private DataBindingContext dbc;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		dbc = new DataBindingContext();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		if (dbc != null) {
+			Realm.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					dbc.dispose();
+				}
+			});
+		}
+		super.tearDown();
+	}
+
+	public void testDisposeBindings() throws Exception {
 		Binding binding = new BindingStub();
 		binding.init(dbc);
 
@@ -50,7 +76,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testBindValue() throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
 		IObservableValue target = WritableValue.withValueType(String.class);
 		IObservableValue model = WritableValue.withValueType(String.class);
 
@@ -60,7 +85,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testBindList() throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
 		IObservableList target = WritableList.withElementType(Object.class);
 		IObservableList model = WritableList.withElementType(Object.class);
 
@@ -80,9 +104,8 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		WritableValue modelObservable = WritableValue.withValueType(String.class);
 
 		final String errorMessage = "error";
-		DataBindingContext dbc = new DataBindingContext();
-		ValueChangeCounter errorCounter = new ValueChangeCounter();
-		ChangeCounter errorsCounter = new ChangeCounter();
+		ValueChangeEventTracker errorCounter = new ValueChangeEventTracker();
+		ChangeEventTracker errorsCounter = new ChangeEventTracker();
 
 		IObservableValue error = new AggregateValidationStatus(dbc
 				.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
@@ -124,7 +147,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		WritableValue targetValue = WritableValue.withValueType(String.class);
 		WritableValue modelValue = WritableValue.withValueType(String.class);
 
-		DataBindingContext dbc = new DataBindingContext();
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
 
@@ -147,7 +169,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 				Object.class);
 		WritableList modelList = new WritableList(new ArrayList(), Object.class);
 
-		DataBindingContext dbc = new DataBindingContext();
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
 
@@ -159,7 +180,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetBindingsImmutability() throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
 		BindingStub binding = new BindingStub();
 		binding.init(dbc);
 
@@ -172,7 +192,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	public void testRemoveBinding() throws Exception {
 		BindingStub binding = new BindingStub();
-		DataBindingContext dbc = new DataBindingContext();
 		binding.init(dbc);
 
 		assertTrue("context should contain the binding", dbc.getBindings()
@@ -183,30 +202,51 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * {@link IValueChangeListener} implementation that counts the times
-	 * handleValueChange(...) is invoked.
+	 * Asserts that when a ValueBinding is created validation is ran to ensure
+	 * that the validation status of the Binding reflects the validity of the
+	 * value in the target.
 	 * 
-	 * @since 3.2
+	 * @throws Exception
 	 */
-	private static class ValueChangeCounter implements IValueChangeListener {
-		int count;
-
-		public void handleValueChange(ValueChangeEvent event) {
-			count++;
+	public void testValidateTargetAfterValueBindingCreation() throws Exception {
+		WritableValue target = new WritableValue("", String.class);
+		WritableValue model = new WritableValue("2", String.class);
+		class Validator implements IValidator {
+			public IStatus validate(Object value) {
+				return ValidationStatus.error("error");
+			}
 		}
+
+		ValueBinding binding = (ValueBinding) dbc.bindValue(target, model,
+				new DefaultBindSpec().addTargetValidator(
+						BindingEvent.PIPELINE_AFTER_CONVERT, new Validator()));
+
+		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus()
+				.getValue()).getSeverity());
 	}
 
 	/**
-	 * {@link IChangeListener} implementation that counts the times
-	 * handleChange(...) is invoked.
+	 * Asserts that when a ListBinding is created validation is ran to ensure
+	 * that the validation status of the Binding reflects the validity of the
+	 * value in the target.
 	 * 
+	 * @throws Exception
 	 */
-	private static class ChangeCounter implements IChangeListener {
-		int count;
-
-		public void handleChange(ChangeEvent event) {
-			count++;
+	public void testValidateTargetAfterListBindingCreation() throws Exception {
+		WritableList target = new WritableList();
+		WritableList model = new WritableList();
+		
+		class Validator implements IValidator {
+			public IStatus validate(Object value) {
+				return ValidationStatus.error("error");
+			}
 		}
+
+		Binding binding = dbc.bindList(target, model, new DefaultBindSpec()
+				.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET,
+						new Validator()));
+
+		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus().getValue()).getSeverity());
 	}
 
 	private static class BindingStub extends Binding {
