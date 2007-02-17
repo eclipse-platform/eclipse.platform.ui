@@ -30,9 +30,6 @@
 
 options {
   STATIC = false;
-  OPTIMIZE_TOKEN_MANAGER = true;
-  //DEBUG_LOOKAHEAD = true;
-  //DEBUG_TOKEN_MANAGER = true;
   UNICODE_INPUT = true;
 }
 
@@ -44,18 +41,19 @@ import java.io.*;
 import java.util.Properties;
 
 public class HTMLParser {
-  public static int SUMMARY_LENGTH = 200;
+  public static int SUMMARY_LENGTH = 175;
 
-  StringBuffer title = new StringBuffer(SUMMARY_LENGTH);
-  StringBuffer summary = new StringBuffer(SUMMARY_LENGTH * 2);
+  StringBuffer title = new StringBuffer();
+  StringBuffer summary = new StringBuffer();
   Properties metaTags=new Properties();
   String currentMetaTag=null;
   String currentMetaContent=null;
   int length = 0;
   boolean titleComplete = false;
   boolean inTitle = false;
+  boolean inHeading = false;
   boolean inMetaTag = false;
-  boolean inStyle = false;
+  boolean inIgnoredTag = false;
   boolean afterTag = false;
   boolean afterSpace = false;
   String eol = System.getProperty("line.separator");
@@ -124,15 +122,7 @@ InterruptedException {
 	wait(10);
       }
     }
-    if (summary.length() > SUMMARY_LENGTH)
-      summary.setLength(SUMMARY_LENGTH);
-
-    String sum = summary.toString().trim();
-    String tit = getTitle();
-    if (sum.startsWith(tit))             // don't repeat title in summary
-      return sum.substring(tit.length()).trim();
-    else
-      return sum;
+    return summary.toString().trim();
   }
 
   public Reader getReader() throws IOException {
@@ -152,21 +142,31 @@ InterruptedException {
   void addToSummary(String text) {
     if (summary.length() < SUMMARY_LENGTH) {
       summary.append(text);
+      // avoid repeating title in summary
+      if (summary.length() == title.length() && summary.toString().equals(title.toString())) {
+        summary.setLength(0);
+      }
+      // truncate with "..." if too long
       if (summary.length() >= SUMMARY_LENGTH) {
-	synchronized(this) {
-	  notifyAll();
-	}
+        summary.setLength(SUMMARY_LENGTH - 3);
+        summary.append("...");
+        synchronized(this) {
+          notifyAll();
+        }
       }
     }
   }
 
   void addText(String text) throws IOException {
-    if (inStyle)
+    if (inIgnoredTag)
       return;
     if (inTitle)
       title.append(text);
     else {
-      addToSummary(text);
+      // don't repeat first heading in summary
+      if (!inHeading || summary.length() > 0) {
+        addToSummary(text);
+      }
       if (!titleComplete && !title.equals("")) {  // finished title
 	synchronized(this) {
 	  titleComplete = true;			  // tell waiting threads
@@ -195,7 +195,7 @@ InterruptedException {
     if (!afterSpace) {
       if (inTitle)
 	title.append(" ");
-      else
+      else if (summary.length() > 0)
 	addToSummary(" ");
 
       String space = afterTag ? eol : " ";
@@ -204,15 +204,6 @@ InterruptedException {
       afterSpace = true;
     }
   }
-
-//    void handleException(Exception e) {
-//      System.out.println(e.toString());  // print the error message
-//      System.out.println("Skipping...");
-//      Token t;
-//      do {
-//        t = getNextToken();
-//      } while (t.kind != TagEnd);
-//    }
 }
 
 PARSER_END(HTMLParser)
@@ -223,7 +214,6 @@ void HTMLDocument() throws IOException :
   Token t;
 }
 {
-//  try {
     ( Tag()         { afterTag = true; }
     | t=Decl()      { afterTag = true; }
     | CommentTag()  { afterTag = true; }
@@ -233,9 +223,6 @@ void HTMLDocument() throws IOException :
     | t=<Punct>     { addText(t.image); afterTag = false; }
     | <Space>       { addSpace(); afterTag = false; }
     )* <EOF>
-//  } catch (ParseException e) {
-//    handleException(e);
-//  }
 }
 
 void Tag() throws IOException :
@@ -249,10 +236,11 @@ void Tag() throws IOException :
    if(Tags.WS_ELEMS.contains(tagName) ) {
       addSpace();
     }
-    inTitle = tagName.equalsIgnoreCase("<title"); // keep track if in <TITLE>
-    inMetaTag = tagName.equalsIgnoreCase("<META"); // keep track if in <META>
-    inStyle = tagName.equalsIgnoreCase("<STYLE"); // keep track if in <STYLE>
-    inImg = tagName.equalsIgnoreCase("<img");	  // keep track if in <IMG>
+    inTitle = tagName.equals("<title"); // keep track if in <title>
+    inHeading = tagName.startsWith("<h") && tagName.length() == 3 && Character.isDigit(tagName.charAt(2)); // keep track if in <h#> (heading)
+    inMetaTag = tagName.equals("<meta"); // keep track if in <meta>
+    inIgnoredTag = tagName.equals("<style") || tagName.equals("<script"); // ignore these tags
+    inImg = tagName.equals("<img");	  // keep track if in <img>
   }
   (t1=<ArgName>
    (<ArgEquals>
@@ -342,10 +330,10 @@ TOKEN :
 | < #NUM:     ["0"-"9"] >
 | < #HEX:     ["0"-"9","A"-"F","a"-"f"] >
 
-| < Entity:   ( "&" (["A"-"Z","a"-"z"])+ (";")? | "&" "#" (<NUM>)+ (";")? | "&" "#" ["X","x"] (<HEX>)+ (";")? ) >
-
-| < Space:    (<SP>)+ >
+| < Space:    (<SP>|"&nbsp;")+ >
 | < #SP:      [" ","\t","\r","\n"] >
+
+| < Entity:   ( "&" (["A"-"Z","a"-"z"])+ (";")? | "&" "#" (<NUM>)+ (";")? | "&" "#" ["X","x"] (<HEX>)+ (";")? ) >
 
 | < Punct:    ~[] > // Keep this last.  It is a catch-all.
 }

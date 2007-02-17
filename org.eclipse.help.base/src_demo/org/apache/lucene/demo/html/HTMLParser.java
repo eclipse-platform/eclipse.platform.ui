@@ -5,18 +5,19 @@ import java.io.*;
 import java.util.Properties;
 
 public class HTMLParser implements HTMLParserConstants {
-  public static int SUMMARY_LENGTH = 200;
+  public static int SUMMARY_LENGTH = 175;
 
-  StringBuffer title = new StringBuffer(SUMMARY_LENGTH);
-  StringBuffer summary = new StringBuffer(SUMMARY_LENGTH * 2);
+  StringBuffer title = new StringBuffer();
+  StringBuffer summary = new StringBuffer();
   Properties metaTags=new Properties();
   String currentMetaTag=null;
   String currentMetaContent=null;
   int length = 0;
   boolean titleComplete = false;
   boolean inTitle = false;
+  boolean inHeading = false;
   boolean inMetaTag = false;
-  boolean inStyle = false;
+  boolean inIgnoredTag = false;
   boolean afterTag = false;
   boolean afterSpace = false;
   String eol = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -85,15 +86,7 @@ InterruptedException {
         wait(10);
       }
     }
-    if (summary.length() > SUMMARY_LENGTH)
-      summary.setLength(SUMMARY_LENGTH);
-
-    String sum = summary.toString().trim();
-    String tit = getTitle();
-    if (sum.startsWith(tit))             // don't repeat title in summary
-      return sum.substring(tit.length()).trim();
-    else
-      return sum;
+    return summary.toString().trim();
   }
 
   public Reader getReader() throws IOException {
@@ -113,7 +106,14 @@ InterruptedException {
   void addToSummary(String text) {
     if (summary.length() < SUMMARY_LENGTH) {
       summary.append(text);
+      // avoid repeating title in summary
+      if (summary.length() == title.length() && summary.toString().equals(title.toString())) {
+        summary.setLength(0);
+      }
+      // truncate with "..." if too long
       if (summary.length() >= SUMMARY_LENGTH) {
+        summary.setLength(SUMMARY_LENGTH - 3);
+        summary.append("..."); //$NON-NLS-1$
         synchronized(this) {
           notifyAll();
         }
@@ -122,12 +122,15 @@ InterruptedException {
   }
 
   void addText(String text) throws IOException {
-    if (inStyle)
+    if (inIgnoredTag)
       return;
     if (inTitle)
       title.append(text);
     else {
-      addToSummary(text);
+      // don't repeat first heading in summary
+      if (!inHeading || summary.length() > 0) {
+        addToSummary(text);
+      }
       if (!titleComplete && !title.equals("")) {  // finished title //$NON-NLS-1$
         synchronized(this) {
           titleComplete = true;                   // tell waiting threads
@@ -156,7 +159,7 @@ InterruptedException {
     if (!afterSpace) {
       if (inTitle)
         title.append(" "); //$NON-NLS-1$
-      else
+      else if (summary.length() > 0)
         addToSummary(" "); //$NON-NLS-1$
 
       String space = afterTag ? eol : " "; //$NON-NLS-1$
@@ -177,8 +180,8 @@ InterruptedException {
       case Comment1:
       case Comment2:
       case Word:
-      case Entity:
       case Space:
+      case Entity:
       case Punct:
         ;
         break;
@@ -237,10 +240,11 @@ InterruptedException {
    if(Tags.WS_ELEMS.contains(tagName) ) {
       addSpace();
     }
-    inTitle = tagName.equalsIgnoreCase("<title"); // keep track if in <TITLE> //$NON-NLS-1$
-    inMetaTag = tagName.equalsIgnoreCase("<META"); // keep track if in <META> //$NON-NLS-1$
-    inStyle = tagName.equalsIgnoreCase("<STYLE"); // keep track if in <STYLE> //$NON-NLS-1$
-    inImg = tagName.equalsIgnoreCase("<img");     // keep track if in <IMG> //$NON-NLS-1$
+    inTitle = tagName.equals("<title"); // keep track if in <title> //$NON-NLS-1$
+    inHeading = tagName.startsWith("<h") && tagName.length() == 3 && Character.isDigit(tagName.charAt(2)); // keep track if in <h#> (heading) //$NON-NLS-1$
+    inMetaTag = tagName.equals("<meta"); // keep track if in <meta> //$NON-NLS-1$
+    inIgnoredTag = tagName.equals("<style") || tagName.equals("<script"); // ignore these tags //$NON-NLS-1$ //$NON-NLS-2$
+    inImg = tagName.equals("<img");       // keep track if in <img> //$NON-NLS-1$
 
     label_2:
     while (true) {
@@ -482,7 +486,7 @@ null)
       jj_la1_0();
    }
    private static void jj_la1_0() {
-      jj_la1_0 = new int[] {0x2c7e,0x2c7e,0x10000,0x380000,0x20000,0x80000,0x100000,0x200000,0x3b0000,0x3b0000,0x8000000,0x20000000,0x30,0x4000,};
+      jj_la1_0 = new int[] {0x347e,0x347e,0x10000,0x380000,0x20000,0x80000,0x100000,0x200000,0x3b0000,0x3b0000,0x8000000,0x20000000,0x30,0x4000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
@@ -737,12 +741,4 @@ null)
     JJCalls next;
   }
 
-//    void handleException(Exception e) {
-//      System.out.println(e.toString());  // print the error message
-//      System.out.println("Skipping...");
-//      Token t;
-//      do {
-//        t = getNextToken();
-//      } while (t.kind != TagEnd);
-//    }
 }

@@ -13,9 +13,9 @@ public interface HTMLParserConstants {
   int LET = 7;
   int NUM = 8;
   int HEX = 9;
-  int Entity = 10;
-  int Space = 11;
-  int SP = 12;
+  int Space = 10;
+  int SP = 11;
+  int Entity = 12;
   int Punct = 13;
   int ScriptText = 14;
   int ScriptEnd = 15;
@@ -54,9 +54,9 @@ public interface HTMLParserConstants {
     "<LET>", //$NON-NLS-1$
     "<NUM>", //$NON-NLS-1$
     "<HEX>", //$NON-NLS-1$
-    "<Entity>", //$NON-NLS-1$
     "<Space>", //$NON-NLS-1$
     "<SP>", //$NON-NLS-1$
+    "<Entity>", //$NON-NLS-1$
     "<Punct>", //$NON-NLS-1$
     "<ScriptText>", //$NON-NLS-1$
     "<ScriptEnd>", //$NON-NLS-1$
