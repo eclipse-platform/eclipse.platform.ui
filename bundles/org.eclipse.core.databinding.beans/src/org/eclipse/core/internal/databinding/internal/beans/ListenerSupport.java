@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.internal.beans;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -17,6 +18,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * This is a helper that will hook up and listen for <code>PropertyChangeEvent</code> events
@@ -29,49 +35,42 @@ public class ListenerSupport {
 	private Set elementsListenedTo = new HashSet();
 	
 	private PropertyChangeListener listener;
-	
+
+	private String propertyName;
+
 	/**
+	 * Constructs a new instance.
+	 * 
 	 * @param listener is the callback that will be called
 	 * 		when a <code>PropertyChangeEvent</code> is fired on any
-	 * 		of the target objects.
+	 * 		of the target objects.  Will only receive change events 
+	 * 		when the provided <code>propertyName</code> changes.
+	 * @param propertyName
 	 */
-	public ListenerSupport (PropertyChangeListener listener) {
-		this.listener=listener;
+	public ListenerSupport(final PropertyChangeListener listener,
+			final String propertyName) {
+		Assert.isNotNull(listener);
+		Assert.isNotNull(propertyName);
+
+		this.propertyName = propertyName;
+		this.listener = new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (propertyName.equals(evt.getPropertyName())) {
+					listener.propertyChange(evt);
+				}
+			}
+		};
 	}
-	
-	
+
 	/**
 	 * Start listen to target (if it supports the JavaBean property change listener pattern)
 	 * 
 	 * @param target
 	 */
 	public void hookListener(Object target) {
-		Method addPropertyChangeListenerMethod = null;
-		try {
-			addPropertyChangeListenerMethod = target.getClass().getMethod(
-					"addPropertyChangeListener", //$NON-NLS-1$
-					new Class[] { PropertyChangeListener.class });
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
-		if (addPropertyChangeListenerMethod != null) {
-			try {
-				if (!addPropertyChangeListenerMethod.isAccessible()) {
-					addPropertyChangeListenerMethod.setAccessible(true);
-				}
-				addPropertyChangeListenerMethod.invoke(target,
-						new Object[] { listener });
-				elementsListenedTo.add(new IdentityWrapper(target));
-				return;
-			} catch (IllegalArgumentException e) {
-				// ignore
-			} catch (IllegalAccessException e) {
-				// ignore
-			} catch (InvocationTargetException e) {
-				// ignore
-			}
+		if (processListener(
+				"addPropertyChangeListener", "Could not attach listener to ", target)) { //$NON-NLS-1$ //$NON-NLS-2$
+			elementsListenedTo.add(new IdentityWrapper(target));
 		}
 	}
 		
@@ -108,32 +107,12 @@ public class ListenerSupport {
 	 * @param target
 	 */
 	public void unhookListener(Object target) {
-		if (target.getClass()==IdentityWrapper.class)
-			target = ((IdentityWrapper)target).unwrap();
-		
-		Method removePropertyChangeListenerMethod = null;
-		try {
-			removePropertyChangeListenerMethod = target.getClass().getMethod(
-					"removePropertyChangeListener", //$NON-NLS-1$
-					new Class[] { PropertyChangeListener.class });
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
-		if (removePropertyChangeListenerMethod != null) {
-			try {
-				removePropertyChangeListenerMethod.invoke(target,
-						new Object[] { listener });
-				elementsListenedTo.remove(new IdentityWrapper(target));
-				return;
-			} catch (IllegalArgumentException e) {
-				// ignore
-			} catch (IllegalAccessException e) {
-				// ignore
-			} catch (InvocationTargetException e) {
-				// ignore
-			}
+		if (target.getClass() == IdentityWrapper.class)
+			target = ((IdentityWrapper) target).unwrap();
+
+		if (processListener(
+				"removePropertyChangeListener", "Cound not remove listener from ", target)) { //$NON-NLS-1$//$NON-NLS-2$
+			elementsListenedTo.remove(new IdentityWrapper(target));
 		}
 	}
 	
@@ -164,5 +143,73 @@ public class ListenerSupport {
 				targets[i]=((IdentityWrapper)identityList[i]).unwrap();							
 		}
 		return targets;
+	}
+
+	/**
+	 * Invokes the method for the provided <code>methodName</code> attempting
+	 * to first use the method with the property name and then the unnamed
+	 * version.
+	 * 
+	 * @param methodName
+	 *            either addPropertyChangeListener or
+	 *            removePropertyChangeListener
+	 * @param message
+	 *            string that will be prefixed to the target in an error message
+	 * @param target
+	 *            object to invoke the method on
+	 * @return <code>true</code> if the method was invoked successfully
+	 */
+	private boolean processListener(String methodName, String message,
+			Object target) {
+		Method method = null;
+		Object[] parameters = null;
+
+		try {
+			try {
+				method = target.getClass().getMethod(
+						methodName,
+						new Class[] { String.class,
+								PropertyChangeListener.class });
+
+				parameters = new Object[] { propertyName, listener };
+			} catch (NoSuchMethodException e) {
+				method = target.getClass().getMethod(methodName,
+						new Class[] { PropertyChangeListener.class });
+
+				parameters = new Object[] { listener };
+			}
+		} catch (SecurityException e) {
+			// ignore
+		} catch (NoSuchMethodException e) {
+			log(IStatus.WARNING, message + target, e);
+		}
+
+		if (method != null) {
+			if (!method.isAccessible()) {
+				method.setAccessible(true);
+			}
+			try {
+				method.invoke(target, parameters);
+				return true;
+			} catch (IllegalArgumentException e) {
+				log(IStatus.WARNING, message + target, e);
+			} catch (IllegalAccessException e) {
+				log(IStatus.WARNING, message + target, e);
+			} catch (InvocationTargetException e) {
+				log(IStatus.WARNING, message + target, e);
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Logs a message to the Data Binding logger.
+	 */
+	private void log(int severity, String message, Throwable throwable) {
+		if (BeansObservables.DEBUG) {
+			Policy.getLog().log(
+					new Status(severity, Policy.JFACE_DATABINDING, IStatus.OK,
+							message, throwable));
+		}
 	}
 }

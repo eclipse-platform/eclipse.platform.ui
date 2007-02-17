@@ -197,6 +197,10 @@ public class Snippet007ColorLabelProvider {
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			changeSupport.addPropertyChangeListener(listener);
 		}
+		
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			changeSupport.removePropertyChangeListener(listener);
+		}
 
 		/**
 		 * Returns the gender. Method declared public to satisfy Java bean

@@ -22,59 +22,59 @@ import java.util.Set;
  * @since 3.3
  */
 public class Bean {
-	private PropertyChangeSupport support = new PropertyChangeSupport(this);
-    private String value;
+	/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	private String value;
 	private List list;
 	private Set set;
-    
-    public Bean() {
-    }
-    
-    public Bean(String value) {
-    	this.value = value;
-    }
-    
-    public Bean(List list) {
-    	this.list = list;
-    }
-    
-    public Bean(Set set) {
-    	this.set = set;
-    }
-    
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
-    }
-    
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
-    }
-    
-    public String getValue() {
-        return value;
-    }
-    
-    public void setValue(String value) {
-        support.firePropertyChange("value", this.value, this.value = value);
-    }
-    
-    public List getList() {
+
+	public Bean() {
+	}
+
+	public Bean(String value) {
+		this.value = value;
+	}
+
+	public Bean(List list) {
+		this.list = list;
+	}
+
+	public Bean(Set set) {
+		this.set = set;
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(listener);
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		changeSupport.firePropertyChange("value", this.value, this.value = value);
+	}
+
+	public List getList() {
 		return list;
 	}
-    
-    public void setList(List list) {
-    	support.firePropertyChange("list", this.list, this.list = list);
-    }
 
-    public Bean[] getListArray() {
-    	return (Bean[]) list.toArray(new Bean[list.size()]);
-    }
-    
+	public void setList(List list) {
+		changeSupport.firePropertyChange("list", this.list, this.list = list);
+	}
+
+	public Bean[] getListArray() {
+		return (Bean[]) list.toArray(new Bean[list.size()]);
+	}
+
 	public Set getSet() {
 		return set;
 	}
 
 	public void setSet(Set set) {
-		support.firePropertyChange("set", this.set, this.set = set);
+		changeSupport.firePropertyChange("set", this.set, this.set = set);
 	}
 }

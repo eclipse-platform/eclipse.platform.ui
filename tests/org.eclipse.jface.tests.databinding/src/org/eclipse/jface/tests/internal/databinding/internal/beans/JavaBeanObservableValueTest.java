@@ -15,6 +15,8 @@ package org.eclipse.jface.tests.internal.databinding.internal.beans;
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
@@ -25,6 +27,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	private Bean bean;
 	private JavaBeanObservableValue observableValue;
 	private PropertyDescriptor propertyDescriptor;
+	private String propertyName;
 	
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()
@@ -33,11 +36,12 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		super.setUp();
 		
 		bean = new Bean();
-		propertyDescriptor = new PropertyDescriptor("value", Bean.class);
+		propertyName = "value";
+		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
 		observableValue = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor, String.class);
 	}
 	
-    public void testSetValue() throws Exception {
+    public void testSetsValueInBean() throws Exception {
         String value = "value";
         assertNull(observableValue.getValue());
         observableValue.setValue(value);
@@ -51,4 +55,35 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
     public void testGetPropertyDescriptor() throws Exception {
     	assertEquals(propertyDescriptor, observableValue.getPropertyDescriptor());
 	}
+    
+    public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+		observableValue.addValueChangeListener(new ValueChangeListener());
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+	}
+    
+    public void testRemovesListenerAfterLastListenerIsRemoved() throws Exception {
+    	ValueChangeListener listener = new ValueChangeListener();
+		observableValue.addValueChangeListener(listener);
+		
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+		observableValue.removeValueChangeListener(listener);
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+	}
+    
+    public void testFiresValueChangeEvents() throws Exception {
+    	ValueChangeListener listener = new ValueChangeListener();
+    	observableValue.addValueChangeListener(listener);
+    	
+    	assertEquals(0, listener.count);
+    	bean.setValue(bean.getValue() + bean.getValue());
+    	assertEquals(1, listener.count);
+	}
+    
+    static class ValueChangeListener implements IValueChangeListener {
+    	int count;
+		public void handleValueChange(ValueChangeEvent event) {
+			count++;
+		}
+    }
 }

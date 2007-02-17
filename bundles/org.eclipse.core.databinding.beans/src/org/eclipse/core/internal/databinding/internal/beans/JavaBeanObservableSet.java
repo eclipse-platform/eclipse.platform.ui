@@ -38,8 +38,6 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				if (JavaBeanObservableSet.this.descriptor.getName().equals(
-						event.getPropertyName())) {
 					Set newElements = new HashSet(Arrays.asList(getValues()));
 					Set addedElements = new HashSet(newElements);
 					Set removedElements = new HashSet(wrappedSet);
@@ -50,7 +48,6 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 					wrappedSet = newElements;
 					fireSetChange(Diffs.createSetDiff(addedElements,
 							removedElements));
-				}
 			}
 		}
 	};
@@ -59,8 +56,7 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 
 	private PropertyDescriptor descriptor;
 
-	private ListenerSupport collectionListenSupport = new ListenerSupport(
-			collectionListener);
+	private ListenerSupport collectionListenSupport;
 
 	/**
 	 * @param realm 
@@ -73,6 +69,8 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 		super(realm, new HashSet(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
+		this.collectionListenSupport = new ListenerSupport(collectionListener, descriptor.getName());
+		
 		wrappedSet.addAll(Arrays.asList(getValues()));
 	}
 

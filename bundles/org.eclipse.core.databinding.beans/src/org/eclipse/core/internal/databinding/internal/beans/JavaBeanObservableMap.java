@@ -35,18 +35,14 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements IBea
 	private PropertyChangeListener elementListener = new PropertyChangeListener() {
 		public void propertyChange(final java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				if (propertyDescriptor.getName()
-						.equals(event.getPropertyName())) {
-					fireMapChange(Diffs.createMapDiffSingleChange(event
-							.getSource(), event.getOldValue(), event
-							.getNewValue()));
-				}
+				fireMapChange(Diffs.createMapDiffSingleChange(
+						event.getSource(), event.getOldValue(), event
+								.getNewValue()));
 			}
 		}
 	};
 
-	private ListenerSupport listenerSupport = new ListenerSupport(
-			elementListener);
+	private ListenerSupport listenerSupport;
 
 	private boolean updating = false;
 
@@ -59,6 +55,8 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements IBea
 		super(domain);
 		
 		this.propertyDescriptor = propertyDescriptor;
+		this.listenerSupport = new ListenerSupport(elementListener,
+				propertyDescriptor.getName());
 		init();
 	}
 

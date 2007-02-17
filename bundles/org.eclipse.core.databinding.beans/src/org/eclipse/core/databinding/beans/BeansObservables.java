@@ -38,9 +38,7 @@ import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableVa
  * A factory for creating observable objects of Java
  * objects that conform to the <a
  * href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
- * specification</a> for bound properties. When binding to the property
- * reflection is used to find an <code>addPropertyChangeListener(...)</code>
- * method that conforms to section 7.4.5 of the specification.
+ * specification</a> for bound properties.
  * 
  * @since 1.1
  * 

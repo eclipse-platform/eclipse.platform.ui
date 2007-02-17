@@ -12,9 +12,13 @@
 package org.eclipse.jface.tests.internal.databinding.internal.beans;
 
 import java.beans.PropertyDescriptor;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
@@ -24,8 +28,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class JavaBeanObservableSetTest extends TestCase {
 	private JavaBeanObservableSet observableSet;
-	private Bean model;
+	private Bean bean;
 	private PropertyDescriptor propertyDescriptor;
+	private String propertyName;
+	private SetChangeListener listener;
 
 	/*
 	 * (non-Javadoc)
@@ -33,16 +39,18 @@ public class JavaBeanObservableSetTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		model = new Bean();
-		propertyDescriptor = new PropertyDescriptor("set", Bean.class);
+		bean = new Bean();
+		propertyName = "set";
+		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
 
 		observableSet = new JavaBeanObservableSet(SWTObservables
-				.getRealm(Display.getDefault()), model, propertyDescriptor,
+				.getRealm(Display.getDefault()), bean, propertyDescriptor,
 				Bean.class);
+		listener = new SetChangeListener();
 	}
 
 	public void testGetObserved() throws Exception {
-		assertEquals(model, observableSet.getObserved());
+		assertEquals(bean, observableSet.getObserved());
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
@@ -51,5 +59,33 @@ public class JavaBeanObservableSetTest extends TestCase {
 	
 	public void testGetElementType() throws Exception {
 		assertEquals(Bean.class, observableSet.getElementType());
+	}
+	
+	public void testRegistersListenerAfterFirstListenerIsAdded() throws Exception {
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+		observableSet.addSetChangeListener(new SetChangeListener());
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+	}
+    
+    public void testRemovesListenerAfterLastListenerIsRemoved() throws Exception {
+		observableSet.addSetChangeListener(listener);
+		
+		assertTrue(bean.changeSupport.hasListeners(propertyName));
+		observableSet.removeSetChangeListener(listener);
+		assertFalse(bean.changeSupport.hasListeners(propertyName));
+	}
+	
+	public void testFiresChangeEvents() throws Exception {
+		observableSet.addSetChangeListener(listener);
+		assertEquals(0, listener.count);
+		bean.setSet(new HashSet(Arrays.asList(new String[] {"1"})));
+		assertEquals(1, listener.count);
+	}
+	
+	static class SetChangeListener implements ISetChangeListener {
+		int count;
+		public void handleSetChange(SetChangeEvent event) {
+			count++;
+		}
 	}
 }

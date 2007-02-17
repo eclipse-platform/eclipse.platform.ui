@@ -60,9 +60,11 @@ import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Po
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableListDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableValueDecoratorTest;
+import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableMapTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.beans.ListenerSupportTest;
 import org.eclipse.jface.tests.internal.databinding.internal.observable.UnmodifiableObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTest;
@@ -97,9 +99,6 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DetailObservableListTest.class);
 		addTestSuite(DetailObservableSetTest.class);
 		addTestSuite(DetailObservableValueTest.class);
-		
-		// org.eclipse.core.internal.databinding.internal.beans
-		addTestSuite(JavaBeanObservableValueTest.class);
 
 		// org.eclipse.core.tests.databinding.beans
 		addTestSuite(BeansObservablesTest.class);
@@ -192,6 +191,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(JavaBeanObservableMapTest.class);
 		addTestSuite(JavaBeanObservableSetTest.class);
 		addTestSuite(JavaBeanObservableValueTest.class);
+		addTestSuite(JavaBeanObservableListTest.class);
+		addTestSuite(ListenerSupportTest.class);
 
 		// org.eclipse.jface.tests.internal.databinding.internal.observable
 		addTestSuite(UnmodifiableObservableListTest.class);

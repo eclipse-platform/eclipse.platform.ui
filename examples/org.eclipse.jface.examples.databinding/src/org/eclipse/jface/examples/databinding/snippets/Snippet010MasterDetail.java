@@ -11,6 +11,9 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
@@ -75,11 +78,20 @@ public class Snippet010MasterDetail {
 
 	public static class Person {
 		private String name;
+		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 		Person(String name) {
 			this.name = name;
 		}
 
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			changeSupport.addPropertyChangeListener(listener);
+		}
+		
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			changeSupport.removePropertyChangeListener(listener);
+		}
+		
 		/**
 		 * @return Returns the name.
 		 */

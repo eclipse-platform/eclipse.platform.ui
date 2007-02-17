@@ -36,10 +36,7 @@ public class JavaBeanObservableList extends ObservableList implements IBeanObser
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				if (JavaBeanObservableList.this.descriptor.getName().equals(
-						event.getPropertyName())) {
-					updateWrappedList(Arrays.asList(getValues()));
-				}
+				updateWrappedList(Arrays.asList(getValues()));
 			}
 		}
 	};
@@ -47,12 +44,11 @@ public class JavaBeanObservableList extends ObservableList implements IBeanObser
 	private boolean updating = false;
 
 	private PropertyDescriptor descriptor;
-	
-	private ListenerSupport collectionListenSupport = new ListenerSupport(
-			collectionListener);
+
+	private ListenerSupport collectionListenSupport;
 
 	/**
-	 * @param realm 
+	 * @param realm
 	 * @param object
 	 * @param descriptor
 	 * @param elementType
@@ -62,6 +58,9 @@ public class JavaBeanObservableList extends ObservableList implements IBeanObser
 		super(realm, new ArrayList(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
+		this.collectionListenSupport = new ListenerSupport(collectionListener,
+				descriptor.getName());
+
 		// initialize list without firing events
 		wrappedList.addAll(Arrays.asList(getValues()));
 	}

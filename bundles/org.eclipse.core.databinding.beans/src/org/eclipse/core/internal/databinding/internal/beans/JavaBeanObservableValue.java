@@ -14,7 +14,6 @@ package org.eclipse.core.internal.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.databinding.BindingException;
@@ -34,13 +33,11 @@ import org.eclipse.core.runtime.Status;
  */
 public class JavaBeanObservableValue extends AbstractObservableValue implements IBeanObservable {
 	private final Object object;
-
-	private PropertyChangeListener listener;
-
 	private boolean updating = false;
 
 	private final PropertyDescriptor propertyDescriptor;
 	private final Class overrideType;
+	private ListenerSupport listenerSupport;
 
 	/**
 	 * @param realm
@@ -57,11 +54,9 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	}
 
 	protected void firstListenerAdded() {
-		listener = new PropertyChangeListener() {
+		PropertyChangeListener listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
-				if (!updating
-						&& event.getPropertyName().equals(
-								propertyDescriptor.getName())) {
+				if (!updating) {
 					final ValueDiff diff = Diffs.createValueDiff(event.getOldValue(),
 											event.getNewValue());
 					getRealm().exec(new Runnable(){
@@ -71,58 +66,12 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 				}
 			}
 		};
-		Method addPropertyChangeListenerMethod = null;
-		try {
-			addPropertyChangeListenerMethod = object.getClass().getMethod(
-					"addPropertyChangeListener", //$NON-NLS-1$
-					new Class[] { String.class, PropertyChangeListener.class });
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
+		
+		if (listenerSupport == null) {
+			listenerSupport = new ListenerSupport(listener, propertyDescriptor.getName());
 		}
-		if (addPropertyChangeListenerMethod != null) {
-			try {
-				addPropertyChangeListenerMethod.invoke(object, new Object[] {
-						propertyDescriptor.getName(), listener });
-				return;
-			} catch (IllegalArgumentException e) {
-				if (BeansObservables.DEBUG) {
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.WARNING,
-											Policy.JFACE_DATABINDING,
-											IStatus.OK,
-											"Could not attach listener to " + object, e)); //$NON-NLS-1$
-				}
-			} catch (IllegalAccessException e) {
-				if (BeansObservables.DEBUG) {
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.WARNING,
-											Policy.JFACE_DATABINDING,
-											IStatus.OK,
-											"Could not attach listener to " + object, e)); //$NON-NLS-1$
-				}
-			} catch (InvocationTargetException e) {
-				if (BeansObservables.DEBUG) {
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.WARNING,
-											Policy.JFACE_DATABINDING,
-											IStatus.OK,
-											"Could not attach listener to " + object, e)); //$NON-NLS-1$
-				}
-			}
-		}
-		// set listener to null because we are not listening
-		listener = null;
+		
+		listenerSupport.hookListener(object);
 	}
 
 	public void doSetValue(Object value) {
@@ -178,79 +127,8 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	}
 
 	protected void lastListenerRemoved() {
-		if (listener != null) {
-			Method removePropertyChangeListenerMethod = null;
-			try {
-				removePropertyChangeListenerMethod = object.getClass()
-						.getMethod(
-								"removePropertyChangeListener", //$NON-NLS-1$
-								new Class[] { String.class,
-										PropertyChangeListener.class });
-			} catch (SecurityException e) {
-				if (BeansObservables.DEBUG) {
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.WARNING,
-											Policy.JFACE_DATABINDING,
-											IStatus.OK,
-											"Could not remove listener from " + object, e)); //$NON-NLS-1$
-				}
-			} catch (NoSuchMethodException e) {
-				if (BeansObservables.DEBUG) {
-					Policy
-							.getLog()
-							.log(
-									new Status(
-											IStatus.WARNING,
-											Policy.JFACE_DATABINDING,
-											IStatus.OK,
-											"Could not remove listener from " + object, e)); //$NON-NLS-1$
-				}
-			}
-			if (removePropertyChangeListenerMethod != null) {
-				try {
-					removePropertyChangeListenerMethod.invoke(object,
-							new Object[] { propertyDescriptor.getName(),
-									listener });
-				} catch (IllegalArgumentException e) {
-					if (BeansObservables.DEBUG) {
-						Policy
-								.getLog()
-								.log(
-										new Status(
-												IStatus.WARNING,
-												Policy.JFACE_DATABINDING,
-												IStatus.OK,
-												"Could not remove listener from " + object, e)); //$NON-NLS-1$
-					}
-				} catch (IllegalAccessException e) {
-					if (BeansObservables.DEBUG) {
-						Policy
-								.getLog()
-								.log(
-										new Status(
-												IStatus.WARNING,
-												Policy.JFACE_DATABINDING,
-												IStatus.OK,
-												"Could not remove listener from " + object, e)); //$NON-NLS-1$
-					}
-				} catch (InvocationTargetException e) {
-					if (BeansObservables.DEBUG) {
-						Policy
-								.getLog()
-								.log(
-										new Status(
-												IStatus.WARNING,
-												Policy.JFACE_DATABINDING,
-												IStatus.OK,
-												"Could not remove listener from " + object, e)); //$NON-NLS-1$
-					}
-				}
-			}
-			// set listener to null because we are no longer listening
-			listener = null;
+		if (listenerSupport != null) {
+			listenerSupport.dispose();
 		}
 	}
 
