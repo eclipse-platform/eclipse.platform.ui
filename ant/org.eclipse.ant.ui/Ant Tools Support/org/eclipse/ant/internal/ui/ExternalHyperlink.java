@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.File;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,7 +23,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.console.IHyperlink;
-import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -50,7 +49,7 @@ public class ExternalHyperlink implements IHyperlink {
     	IFileStore fileStore;
 		try {
 			fileStore= EFS.getStore(fFile.toURI());
-			input = new JavaFileEditorInput(fileStore);
+			input = new FileStoreEditorInput(fileStore);
 		} catch (CoreException e) {
 			// unable to link
 			AntUIPlugin.log(e);
