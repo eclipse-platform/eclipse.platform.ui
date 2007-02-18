@@ -24,6 +24,11 @@ There is an implementation limitation which currently affects action sets.  It i
    <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" replacement="org.eclipse.ui.menus" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="actionSet" minOccurs="1" maxOccurs="unbounded"/>

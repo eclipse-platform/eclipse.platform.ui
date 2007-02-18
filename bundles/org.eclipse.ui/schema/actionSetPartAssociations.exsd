@@ -13,6 +13,11 @@ In the case of a view, the action set will be visible when the view is the activ
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true" replacement="org.eclipse.ui.menus" />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="actionSetPartAssociation" minOccurs="0" maxOccurs="unbounded"/>
