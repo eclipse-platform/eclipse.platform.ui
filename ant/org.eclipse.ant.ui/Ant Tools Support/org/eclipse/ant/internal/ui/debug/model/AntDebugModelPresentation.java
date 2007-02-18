@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,12 @@
 package org.eclipse.ant.internal.ui.debug.model;
 
 import java.io.File;
+import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntObjectLabelProvider;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -29,11 +27,15 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.ide.FileStoreEditorInput;
-import org.eclipse.ui.part.FileEditorInput;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * Renders Ant debug elements
@@ -150,7 +152,7 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
         	IFileStore fileStore;
 			try {
 				fileStore = EFS.getStore(file.toURI());
-				return new FileStoreEditorInput(fileStore);
+				return new JavaFileEditorInput(fileStore);
 			} catch (CoreException e) {
 				AntUIPlugin.log(e);
 				return null;
