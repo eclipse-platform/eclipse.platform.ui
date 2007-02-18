@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Richard Hoefter and others.
+ * Copyright (c) 2004, 2007 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,8 +91,6 @@ public class BuildFileCreator
     private Set visited = new TreeSet(); // record used subclasspaths
     private Node classpathNode;
     
-    private BuildFileCreator() {}
-
     /**
      * Constructor. Please prefer {@link #createBuildFiles(Set, Shell, IProgressMonitor)} if
      * you do not want call the various createXXX() methods yourself.
