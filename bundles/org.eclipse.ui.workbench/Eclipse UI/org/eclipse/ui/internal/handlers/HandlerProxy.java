@@ -180,14 +180,16 @@ public final class HandlerProxy extends AbstractHandler implements
 		if (enablementListener == null) {
 			enablementListener = new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
-					if (event.getNewValue() != null) {
-						proxyEnabled = ((Boolean) event.getNewValue())
-								.booleanValue();
-					} else {
-						proxyEnabled = false;
+					if (event.getProperty() == PROP_ENABLED) {
+						if (event.getNewValue() != null) {
+							proxyEnabled = ((Boolean) event.getNewValue())
+									.booleanValue();
+						} else {
+							proxyEnabled = false;
+						}
+						fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
+								true, false));
 					}
-					fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
-							true, false));
 				}
 			};
 		}

@@ -1531,7 +1531,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
 		
-		final WorkbenchMenuService menuService = new WorkbenchMenuService();
+		final WorkbenchMenuService menuService = new WorkbenchMenuService(evaluationService);
 		
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 

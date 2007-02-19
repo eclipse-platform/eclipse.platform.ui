@@ -24,10 +24,16 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.services.IEvaluationReference;
+import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
@@ -46,10 +52,9 @@ import org.eclipse.ui.menus.IMenuService;
 public final class WorkbenchMenuService implements IMenuService {
 
 	/**
-	 * The central authority for determining which menus are visible within this
-	 * window.
+	 * 
 	 */
-	private final MenuAuthority menuAuthority;
+	private static final String PROP_VISIBLE = "visible"; //$NON-NLS-1$
 
 	/**
 	 * The class providing persistence for this service.
@@ -57,21 +62,32 @@ public final class WorkbenchMenuService implements IMenuService {
 	private final MenuPersistence menuPersistence;
 
 	/**
+	 * The central authority for determining which menus are visible within this
+	 * window.
+	 */
+	private IEvaluationService evaluationService;
+
+	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
 	 */
-	public WorkbenchMenuService() {
-		this.menuAuthority = new MenuAuthority();
+	public WorkbenchMenuService(IEvaluationService evalService) {
 		this.menuPersistence = new MenuPersistence(this);
+		evaluationService = evalService;
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
-		menuAuthority.addSourceProvider(provider);
+		// no-op
 	}
 
 	public final void dispose() {
 		menuPersistence.dispose();
-		menuAuthority.dispose();
+		Iterator i = evaluationsByItem.values().iterator();
+		while (i.hasNext()) {
+			IEvaluationReference ref = (IEvaluationReference) i.next();
+			evaluationService.removeEvaluationListener(ref);
+		}
+		evaluationsByItem.clear();
 	}
 
 	public final void readRegistry() {
@@ -79,7 +95,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
-		menuAuthority.removeSourceProvider(provider);
+		// no-op
 	}
 
 	//
@@ -92,6 +108,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	private IMenuListener menuTrackerListener;
 
 	private Map cacheTracker = new HashMap();
+
+	private Map evaluationsByItem = new HashMap();
 
 	/**
 	 * Construct an 'id' string from the given URI. The resulting 'id' is the
@@ -371,7 +389,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getCurrentState()
 	 */
 	public IEvaluationContext getCurrentState() {
-		return menuAuthority.getCurrentState();
+		return evaluationService.getCurrentState();
 	}
 
 	/*
@@ -380,9 +398,44 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem,
 	 *      org.eclipse.core.expressions.Expression)
 	 */
-	public void registerVisibleWhen(IContributionItem item,
-			Expression visibleWhen) {
-		menuAuthority.addContribution(item, visibleWhen);
+	public void registerVisibleWhen(final IContributionItem item,
+			final Expression visibleWhen) {
+		if (item == null) {
+			throw new IllegalArgumentException("item cannot be null"); //$NON-NLS-1$
+		}
+		if (visibleWhen == null) {
+			throw new IllegalArgumentException(
+					"visibleWhen expression cannot be null"); //$NON-NLS-1$
+		}
+		if (evaluationsByItem.get(item) != null) {
+			final String id = item.getId();
+			WorkbenchPlugin.log("item is already registered: " //$NON-NLS-1$
+					+ (id == null ? "no id" : id)); //$NON-NLS-1$
+			return;
+		}
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty() == PROP_VISIBLE) {
+					if (event.getNewValue() != null) {
+						item.setVisible(((Boolean) event.getNewValue())
+								.booleanValue());
+					} else {
+						item.setVisible(false);
+					}
+					if (item instanceof ContributionItem) {
+						IContributionManager parent = ((ContributionItem) item)
+								.getParent();
+						if (parent != null) {
+							parent.markDirty();
+						}
+					}
+				}
+			}
+		};
+
+		IEvaluationReference ref = evaluationService.addEvaluationListener(
+				visibleWhen, listener, PROP_VISIBLE);
+		evaluationsByItem.put(item, ref);
 	}
 
 	/*
@@ -391,7 +444,12 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
 	 */
 	public void unregisterVisibleWhen(IContributionItem item) {
-		menuAuthority.removeContribition(item);
+		IEvaluationReference ref = (IEvaluationReference) evaluationsByItem
+				.remove(item);
+		if (ref == null) {
+			return;
+		}
+		evaluationService.removeEvaluationListener(ref);
 	}
 
 	/*
@@ -434,8 +492,7 @@ public final class WorkbenchMenuService implements IMenuService {
 			releaseContributions((ContributionManager) item);
 		} else if (item instanceof IToolBarContributionItem) {
 			IToolBarContributionItem tbci = (IToolBarContributionItem) item;
-			releaseContributions((ContributionManager) tbci
-					.getToolBarManager());
+			releaseContributions((ContributionManager) tbci.getToolBarManager());
 		}
 	}
 }

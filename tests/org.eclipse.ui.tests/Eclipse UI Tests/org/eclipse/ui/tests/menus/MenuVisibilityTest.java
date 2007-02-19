@@ -22,13 +22,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.menus.MenuAuthority;
-import org.eclipse.ui.internal.services.ISourceProviderService;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -37,7 +35,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.3
  * 
  */
-public class MenuAuthorityTest extends UITestCase {
+public class MenuVisibilityTest extends UITestCase {
 
 	/**
 	 * 
@@ -47,12 +45,12 @@ public class MenuAuthorityTest extends UITestCase {
 	/**
 	 * @param testName
 	 */
-	public MenuAuthorityTest(String testName) {
+	public MenuVisibilityTest(String testName) {
 		super(testName);
 	}
 
 	private IContextService contextService;
-	private MenuAuthority menuAuth;
+	private IMenuService menuService;
 	private IWorkbenchWindow window;
 	private IContextActivation activeContext;
 
@@ -73,8 +71,8 @@ public class MenuAuthorityTest extends UITestCase {
 				MenuContributionHarness.CONTEXT_TEST1_ID,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
 
-		menuAuth.addContribution(item, activeContextExpr);
-		
+		menuService.registerVisibleWhen(item, activeContextExpr);
+
 		assertFalse("starting state", item.isVisible());
 
 		activeContext = contextService
@@ -87,7 +85,7 @@ public class MenuAuthorityTest extends UITestCase {
 
 		assertFalse("after deactivation", item.isVisible());
 
-		menuAuth.removeContribition(item);
+		menuService.unregisterVisibleWhen(item);
 	}
 
 	public void testExtensionContributionExpression() throws Exception {
@@ -104,7 +102,8 @@ public class MenuAuthorityTest extends UITestCase {
 		ActionContributionItem aci = new ActionContributionItem(a);
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint menusExtension = reg.getExtensionPoint("org.eclipse.ui.menus");
+		IExtensionPoint menusExtension = reg
+				.getExtensionPoint("org.eclipse.ui.menus");
 		IExtension extension = menusExtension.getExtension(EXTENSION_ID);
 
 		IConfigurationElement[] mas = extension.getConfigurationElements();
@@ -126,8 +125,7 @@ public class MenuAuthorityTest extends UITestCase {
 		}
 		assertNotNull("Failed to find expression", activeContextExpr);
 
-		
-		menuAuth.addContribution(aci, activeContextExpr);
+		menuService.registerVisibleWhen(aci, activeContextExpr);
 		assertFalse("starting state", aci.isVisible());
 
 		activeContext = contextService
@@ -139,7 +137,7 @@ public class MenuAuthorityTest extends UITestCase {
 
 		assertFalse("after deactivation", aci.isVisible());
 
-		menuAuth.removeContribition(aci);
+		menuService.unregisterVisibleWhen(aci);
 	}
 
 	/*
@@ -151,6 +149,7 @@ public class MenuAuthorityTest extends UITestCase {
 		super.doSetUp();
 
 		window = openTestWindow();
+		menuService = (IMenuService) window.getService(IMenuService.class);
 		contextService = (IContextService) window
 				.getService(IContextService.class);
 		Context context1 = contextService
@@ -158,15 +157,6 @@ public class MenuAuthorityTest extends UITestCase {
 		if (!context1.isDefined()) {
 			context1.define("Menu Test 1", "Menu test 1",
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
-		}
-
-		menuAuth = new MenuAuthority();
-		ISourceProviderService sp = (ISourceProviderService) window
-				.getService(ISourceProviderService.class);
-		ISourceProvider[] sourceProviders = sp.getSourceProviders();
-		for (int i = 0; i < sourceProviders.length; i++) {
-			ISourceProvider sourceProvider = sourceProviders[i];
-			menuAuth.addSourceProvider(sourceProvider);
 		}
 	}
 
@@ -180,14 +170,7 @@ public class MenuAuthorityTest extends UITestCase {
 			contextService.deactivateContext(activeContext);
 			activeContext = null;
 		}
-		ISourceProviderService sp = (ISourceProviderService) window
-				.getService(ISourceProviderService.class);
-		ISourceProvider[] sourceProviders = sp.getSourceProviders();
-		for (int i = 0; i < sourceProviders.length; i++) {
-			ISourceProvider sourceProvider = sourceProviders[i];
-			menuAuth.removeSourceProvider(sourceProvider);
-		}
-		menuAuth = null;
+		menuService = null;
 		contextService = null;
 		window = null;
 
