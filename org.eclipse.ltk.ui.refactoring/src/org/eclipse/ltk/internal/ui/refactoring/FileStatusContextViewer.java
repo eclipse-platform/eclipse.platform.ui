@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -64,13 +65,13 @@ public class FileStatusContextViewer extends TextStatusContextViewer {
 		IPath path= file.getFullPath();
 		try {
 			try {
-				manager.connect(path, new NullProgressMonitor());
-				ITextFileBuffer buffer = manager.getTextFileBuffer(path);
+				manager.connect(path, LocationKind.IFILE, new NullProgressMonitor());
+				ITextFileBuffer buffer = manager.getTextFileBuffer(path, LocationKind.IFILE);
 				if (buffer != null) {
 					return buffer.getDocument();
 				}
 			} finally {
-				manager.disconnect(path, new NullProgressMonitor());
+				manager.disconnect(path, LocationKind.IFILE, new NullProgressMonitor());
 			}
 		} catch (CoreException e) {
 			RefactoringUIPlugin.log(e);
