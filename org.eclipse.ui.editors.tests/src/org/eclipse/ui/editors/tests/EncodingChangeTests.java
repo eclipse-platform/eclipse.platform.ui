@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IFolder;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.filebuffers.tests.ResourceHelper;
 
 import org.eclipse.text.tests.Accessor;
@@ -168,7 +169,7 @@ public class EncodingChangeTests extends TestCase {
 				Accessor accessor= new Accessor(editor, StatusTextEditor.class);
 				while (editor.getSite().getShell().getDisplay().readAndDispatch()) {
 				}
-				ITextFileBuffer fileBuffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
+				ITextFileBuffer fileBuffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 				DefaultEncodingSupport encodingSupport= (DefaultEncodingSupport)editor.getAdapter(IEncodingSupport.class);
 				String expected= encodingSupport.getStatusMessage(fileBuffer.getStatus());
 				Composite composite= (Composite)accessor.get("fStatusControl");
