@@ -91,7 +91,7 @@ public interface IFormColors {
 	 * tool bar gradient is created starting from {@link #TB_BG} to
 	 * the section background color.
 	 */
-	String TB_GBG = TB_PREFIX + "GBG"; //$NON-NLS-1$
+	String TB_GBG = TB_BG;
 
 	/**
 	 * Key for the section title bar border.
