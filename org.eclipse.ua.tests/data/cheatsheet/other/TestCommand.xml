@@ -9,7 +9,8 @@
       <description>
          Test with no action.
       </description>
-      <command serialization="org.eclipse.ui.console.ConsoleView" confirm="false">
+      <command serialization="org.eclipse.ui.console.ConsoleView" 
+               translate="" confirm="false">
       </command>
    </item>
 </cheatsheet>

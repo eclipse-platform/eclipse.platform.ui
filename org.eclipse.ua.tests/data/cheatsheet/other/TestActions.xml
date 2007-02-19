@@ -12,6 +12,7 @@ Test Actions cheat sheet.
 	title="Step 1">
 	<action
 		pluginId="org.eclipse.ua.tests"
+		translate=""
 		class="org.eclipse.ua.tests.cheatsheet.util.NoopAction"/>
 	<description>
 		Test with action.
