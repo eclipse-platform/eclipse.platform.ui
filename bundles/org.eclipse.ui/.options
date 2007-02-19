@@ -115,6 +115,9 @@ org.eclipse.ui/trace/operations.verbose=false
 # guaranteed to provide a working workbench.
 org.eclipse.ui/experimental/menus=false
 
+# Report multi page editor tracing information
+org.eclipse.ui/trace/multipageeditor=false
+
 # Enable logging of events fired from an IWorkbenchPage to an IPartListener
 org.eclipse.ui/listeners/IWorkbenchPage.IPartListener=false
 

@@ -14,11 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
@@ -42,6 +41,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IServiceLocator;
@@ -72,6 +72,11 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor
  */
 public abstract class MultiPageEditorPart extends EditorPart {
+
+	/**
+	 * 
+	 */
+	private static final String TRACING_COMPONENT = "MPE"; //$NON-NLS-1$
 
 	/**
 	 * The active service locator. This value may be <code>null</code> if
@@ -612,12 +617,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
 					provider.fireSelectionChanged(event);
 					provider.firePostSelectionChanged(event);
 				} else {
-					WorkbenchPlugin
-							.log(new Status(
-									IStatus.WARNING,
-									"org.eclipse.ui.workbench", IStatus.OK, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$ //$NON-NLS-2$
-											+ " did not propogate selection for " //$NON-NLS-1$
-											+ activeEditor.getTitle(), null));
+					if (Policy.DEBUG_MPE) {
+						Tracing.printTrace(TRACING_COMPONENT,
+								"MultiPageEditorPart " + getTitle() //$NON-NLS-1$
+										+ " did not propogate selection for " //$NON-NLS-1$
+										+ activeEditor.getTitle());
+					}
 				}
 			}
 		}
@@ -630,7 +635,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            The part to dispose; must not be <code>null</code>.
 	 */
 	private void disposePart(final IWorkbenchPart part) {
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new ISafeRunnable() {
 			public void run() {
 				if (part.getSite() instanceof MultiPageEditorSite) {
 					MultiPageEditorSite partSite = (MultiPageEditorSite) part

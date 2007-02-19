@@ -146,6 +146,8 @@ public class Policy {
      * working workbench.
      */
     public static boolean EXPERIMENTAL_MENU = DEFAULT;
+    
+    public static boolean DEBUG_MPE = DEFAULT;
 
     static {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
@@ -176,6 +178,7 @@ public class Policy {
             DEBUG_DECLARED_IMAGES = getDebugOption("/debug/declaredImages"); //$NON-NLS-1$
             DEBUG_CONTRIBUTIONS = getDebugOption("/debug/contributions"); //$NON-NLS-1$
             EXPERIMENTAL_MENU = getDebugOption("/experimental/menus"); //$NON-NLS-1$
+            DEBUG_MPE = getDebugOption("/trace/multipageeditor"); //$NON-NLS-1$
         }
     }
 
