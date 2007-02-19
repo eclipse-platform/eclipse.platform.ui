@@ -15,10 +15,13 @@ import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
 
 /**
  * FileBuffersForNonExistingWorkspaceFiles
@@ -42,6 +45,35 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 		return filePath.makeAbsolute();
 	}
 	
+	public void testBug118199() throws Exception {
+		IFile file= getProject().getWorkspace().getRoot().getFile(getPath());
+		assertFalse(file.exists());
+		fManager.connect(getPath(), null);
+		try {
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(getPath());
+			buffer.getDocument().set("test");
+			buffer.commit(null, false);
+		} finally {
+			fManager.disconnect(getPath(), null);
+		}
+		assertFalse(file.exists());
+	}
+
+	public void testBug118199_fixed() throws Exception {
+		IFile file= getProject().getWorkspace().getRoot().getFileForLocation(getPath());
+		IPath path= file.getFullPath();
+		assertFalse(file.exists());
+		fManager.connect(path, LocationKind.IFILE, null);
+		try {
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(path, LocationKind.IFILE);
+			buffer.getDocument().set("test");
+			buffer.commit(null, false);
+		} finally {
+			fManager.disconnect(path, null);
+		}
+		assertTrue(file.exists());
+	}
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
