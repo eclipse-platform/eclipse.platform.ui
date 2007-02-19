@@ -282,7 +282,7 @@ public class FilteredResourcesSelectionDialog extends
 								setSubtitle(null);
 							}
 
-							scheduleRefresh(true);
+							scheduleRefresh();
 						}
 					}
 				});
