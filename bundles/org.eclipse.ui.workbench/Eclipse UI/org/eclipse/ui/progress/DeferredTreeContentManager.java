@@ -302,7 +302,7 @@ public class DeferredTreeContentManager {
              */
             public IStatus runInUIThread(IProgressMonitor updateMonitor) {
                 //Cancel the job if the tree viewer got closed
-                if (treeViewer.getControl().isDisposed()) {
+                if (treeViewer.getControl().isDisposed() || updateMonitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
                 treeViewer.add(parent, children);
