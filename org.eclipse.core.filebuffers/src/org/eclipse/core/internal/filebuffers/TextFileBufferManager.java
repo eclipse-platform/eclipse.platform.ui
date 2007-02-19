@@ -57,6 +57,7 @@ import org.eclipse.core.filebuffers.IStateValidationSupport;
 import org.eclipse.core.filebuffers.ISynchronizationContext;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
@@ -89,26 +90,35 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
+		connect(location, LocationKind.NORMALIZE, monitor);
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connect(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind, org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.3
+	 */
+	public void connect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
+		if (locationKind == LocationKind.NORMALIZE)
+			location= FileBuffers.normalizeLocation(location);
 		
 		AbstractFileBuffer fileBuffer= null;
 		synchronized (fFilesBuffers) {
-			fileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
+			fileBuffer= internalGetFileBuffer(location);
 			if (fileBuffer != null)  {
 				fileBuffer.connect();
 				return;
 			}
 		}
 			
-		fileBuffer= createFileBuffer(location);
+		fileBuffer= createFileBuffer(location, locationKind);
 		if (fileBuffer == null)
 			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
 		
 		fileBuffer.create(location, monitor);
 			
 		synchronized (fFilesBuffers) {
-			AbstractFileBuffer oldFileBuffer= (AbstractFileBuffer) fFilesBuffers.get(location);
+			AbstractFileBuffer oldFileBuffer= internalGetFileBuffer(location);
 			if (oldFileBuffer != null) {
 				fileBuffer.disconnect();
 				fileBuffer.dispose();
@@ -127,12 +137,21 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
+		disconnect(location, LocationKind.NORMALIZE, monitor);
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind, org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.3
+	 */
+	public void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
+		if (locationKind == LocationKind.NORMALIZE)
+			location= FileBuffers.normalizeLocation(location);
 
 		AbstractFileBuffer fileBuffer;
 		synchronized (fFilesBuffers) {
-			fileBuffer= (AbstractFileBuffer)fFilesBuffers.get(location);
+			fileBuffer= internalGetFileBuffer(location);
 			if (fileBuffer == null)
 				return;
 			
@@ -239,7 +258,16 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
 	public IFileBuffer getFileBuffer(IPath location) {
-		location= FileBuffers.normalizeLocation(location);
+		return getFileBuffer(location, LocationKind.NORMALIZE);
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind)
+	 * @since 3.3
+	 */
+	public IFileBuffer getFileBuffer(IPath location, LocationKind locationKind) {
+		if (locationKind == LocationKind.NORMALIZE)
+			location= FileBuffers.normalizeLocation(location);
 		return internalGetFileBuffer(location);
 	}
 
@@ -254,6 +282,14 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
 		return (ITextFileBuffer)getFileBuffer(location);
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind)
+	 * @since 3.3
+	 */
+	public ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind) {
+		return (ITextFileBuffer)getFileBuffer(location, locationKind);
 	}
 
 	/*
@@ -285,66 +321,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
 	 */
 	public IDocument createEmptyDocument(IPath location) {
-		final IDocument[] runnableResult= new IDocument[1];
-		if (location != null) {
-			location= FileBuffers.normalizeLocation(location);
-			final IDocumentFactory factory= fRegistry.getDocumentFactory(location);
-			if (factory != null) {
-				ISafeRunnable runnable= new ISafeRunnable() {
-					public void run() throws Exception {
-						runnableResult[0]= factory.createDocument();
-					}
-					public void handleException(Throwable t) {
-						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-						FileBuffersPlugin.getDefault().getLog().log(status);
-						if (t instanceof VirtualMachineError)
-							throw (VirtualMachineError)t;
-					}
-				};
-				SafeRunner.run(runnable);
-			}
-		}
-		final IDocument document;
-		if (runnableResult[0] != null)
-			document= runnableResult[0];
-		else
-			document= new SynchronizableDocument();
-		
-		if (location == null)
-			return document;
-		
-		// Set the initial line delimiter
-		if (document instanceof IDocumentExtension4) {
-			String initalLineDelimiter= getLineDelimiterPreference(location); 
-			if (initalLineDelimiter != null)
-				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
-		}
-
-		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location);
-		if (participants != null) {
-			for (int i= 0; i < participants.length; i++) {
-				final IDocumentSetupParticipant participant= participants[i];
-				ISafeRunnable runnable= new ISafeRunnable() {
-					public void run() throws Exception {
-						participant.setup(document);
-						if (document.getDocumentPartitioner() != null) {
-							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
-							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
-							FileBuffersPlugin.getDefault().getLog().log(status);
-						}
-					}
-					public void handleException(Throwable t) {
-						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
-						FileBuffersPlugin.getDefault().getLog().log(status);
-						if (t instanceof VirtualMachineError)
-							throw (VirtualMachineError)t;
-					}
-				};
-				SafeRunner.run(runnable);
-			}
-		}
-
-		return document;
+		return createEmptyDocument(location, LocationKind.NORMALIZE);
 	}
 	
 	/*
@@ -409,12 +386,90 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 
 	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
+	 * @since 3.3
+	 */
+	public IDocument createEmptyDocument(IPath location, LocationKind locationKind) {
+		final IDocument[] runnableResult= new IDocument[1];
+		if (location != null) {
+			if (locationKind == LocationKind.NORMALIZE)
+				location= FileBuffers.normalizeLocation(location);
+			
+			final IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
+			if (factory != null) {
+				ISafeRunnable runnable= new ISafeRunnable() {
+					public void run() throws Exception {
+						runnableResult[0]= factory.createDocument();
+					}
+					public void handleException(Throwable t) {
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
+						FileBuffersPlugin.getDefault().getLog().log(status);
+						if (t instanceof VirtualMachineError)
+							throw (VirtualMachineError)t;
+					}
+				};
+				SafeRunner.run(runnable);
+			}
+		}
+		final IDocument document;
+		if (runnableResult[0] != null)
+			document= runnableResult[0];
+		else
+			document= new SynchronizableDocument();
+		
+		if (location == null)
+			return document;
+		
+		// Set the initial line delimiter
+		if (document instanceof IDocumentExtension4) {
+			String initalLineDelimiter= getLineDelimiterPreference(location, locationKind); 
+			if (initalLineDelimiter != null)
+				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
+		}
+
+		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(location, locationKind);
+		if (participants != null) {
+			for (int i= 0; i < participants.length; i++) {
+				final IDocumentSetupParticipant participant= participants[i];
+				ISafeRunnable runnable= new ISafeRunnable() {
+					public void run() throws Exception {
+						participant.setup(document);
+						if (document.getDocumentPartitioner() != null) {
+							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
+							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
+							FileBuffersPlugin.getDefault().getLog().log(status);
+						}
+					}
+					public void handleException(Throwable t) {
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
+						FileBuffersPlugin.getDefault().getLog().log(status);
+						if (t instanceof VirtualMachineError)
+							throw (VirtualMachineError)t;
+					}
+				};
+				SafeRunner.run(runnable);
+			}
+		}
+
+		return document;
+	}
+	
+	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath)
 	 */
 	public IAnnotationModel createAnnotationModel(IPath location) {
+		return createAnnotationModel(location, LocationKind.NORMALIZE);
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
+	 * @since 3.3
+	 */
+	public IAnnotationModel createAnnotationModel(IPath location, LocationKind locationKind) {
 		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
-		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location);
+		if (locationKind == LocationKind.NORMALIZE)
+			location= FileBuffers.normalizeLocation(location);
+		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location, locationKind);
 		if (factory != null)
 			return factory.createAnnotationModel(location);
 		return null;
@@ -495,7 +550,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			runnable.run();
 	}
 
-	private AbstractFileBuffer createFileBuffer(IPath location) {
+	private AbstractFileBuffer createFileBuffer(IPath location, LocationKind locationKind) {
 		/*
 		 * XXX: the following code is commented out for performance
 		 * reasons and because we do not yet create a special binary
@@ -503,21 +558,19 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		 */
 //		if (isTextFileLocation(location, false))
 //			return createTextFileBuffer(location);
-//		return createBinaryFileBuffer(location);
-		return createTextFileBuffer(location);
+//		return createBinaryFileBuffer(location, locationKind);
+		return createTextFileBuffer(location, locationKind);
 	}
 	
-
-	private AbstractFileBuffer createTextFileBuffer(IPath location) {
-		if (FileBuffers.getWorkspaceFileAtLocation(location, true) != null)
+	private AbstractFileBuffer createTextFileBuffer(IPath location, LocationKind locationKind) {
+		if (locationKind == LocationKind.IFILE || locationKind == LocationKind.NORMALIZE  && FileBuffers.getWorkspaceFileAtLocation(location, true) != null)
 			return new ResourceTextFileBuffer(this);
-		return new JavaTextFileBuffer(this);
+		return new FileStoreTextFileBuffer(this);
 	}
-
 	
-//	private AbstractFileBuffer createBinaryFileBuffer(IPath location) {
+//	private AbstractFileBuffer createBinaryFileBuffer(IPath location, LocationKind locationKind) {
 //		// XXX: should return a binary file buffer - using text file buffer for now
-//		return createTextFileBuffer(location);
+//		return createTextFileBuffer(location, locationKind);
 //	}
 //	
 //	
@@ -733,8 +786,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return FileBuffers.getWorkspaceFileAtLocation(fileBuffer.getLocation());
 	}
 	
-	private String getLineDelimiterPreference(IPath location) {
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+	private String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
+		IFile file= null;
+		if (locationKind != LocationKind.LOCATION)
+			file= FileBuffers.getWorkspaceFileAtLocation(location);
 		return getLineDelimiterPreference(file);
 	}
 	

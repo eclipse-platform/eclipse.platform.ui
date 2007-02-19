@@ -33,9 +33,9 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 
 
@@ -231,7 +231,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		monitor.beginTask(FileBuffersMessages.ResourceFileBuffer_task_creatingFileBuffer, 2);
 
 		try {
-			IFile file= FileBuffers.getWorkspaceFileAtLocation(location, true);
+			IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
+			IFile file= workspaceRoot.getFile(location);
 			if (file == null)
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null));
 

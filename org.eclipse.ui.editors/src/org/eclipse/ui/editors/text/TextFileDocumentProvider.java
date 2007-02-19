@@ -71,6 +71,7 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.IFileBufferManager;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.operation.IRunnableContext;
@@ -550,26 +551,35 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @throws CoreException if the file info object could not successfully be created
 	 */
 	protected FileInfo createFileInfo(Object element) throws CoreException {
-
+		IFile file= null;
 		IPath location= null;
+		LocationKind locationKind= null;
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable= (IAdaptable) element;
-			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
-			if (provider != null)
-				location= provider.getPath(element);
+			file= (IFile)adaptable.getAdapter(IFile.class);
+			if (file != null) {
+				locationKind= LocationKind.IFILE;
+				location= file.getFullPath();
+			} else {
+				ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+				if (provider != null) {
+					locationKind= LocationKind.NORMALIZE;
+					location= provider.getPath(element);
+					file= FileBuffers.getWorkspaceFileAtLocation(location);
+				}
+			}
 		}
 
 		if (location != null) {
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-			manager.connect(location, getProgressMonitor());
-			ITextFileBuffer fileBuffer= manager.getTextFileBuffer(location);
+			manager.connect(location, locationKind, getProgressMonitor());
+			ITextFileBuffer fileBuffer= manager.getTextFileBuffer(location, locationKind);
 			fileBuffer.requestSynchronizationContext();
 
 			FileInfo info= createEmptyFileInfo();
 			info.fTextFileBuffer= fileBuffer;
 			info.fCachedReadOnlyState= isSystemFileReadOnly(info);
 
-			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 			if (file != null)
 				info.fModel= createAnnotationModel(file);
 			return info;
@@ -923,11 +933,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000);
 			// XXX: Should use new URI-based file buffer support when available
 			IPath location= URIUtil.toPath(uri);
-			FileBuffers.getTextFileBufferManager().connect(location, monitor);
-			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(location);
+			FileBuffers.getTextFileBufferManager().connect(location, LocationKind.LOCATION, monitor);
+			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(location, LocationKind.LOCATION);
 			buffer.getDocument().set(document.get());
 			buffer.commit(monitor, true);
-			FileBuffers.getTextFileBufferManager().disconnect(location, monitor);
+			FileBuffers.getTextFileBufferManager().disconnect(location, LocationKind.LOCATION, monitor);
 		} finally {
 			monitor.done();
 		}

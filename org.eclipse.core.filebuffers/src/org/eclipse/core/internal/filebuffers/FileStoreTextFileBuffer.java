@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -55,9 +56,9 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
- * @since 3.0
+ * @since 3.3 (previously available as JavaTextFileBuffer since 3.3)
  */
-public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffer {
+public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITextFileBuffer {
 
 
 	private class DocumentListener implements IDocumentListener {
@@ -74,7 +75,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		public void documentChanged(DocumentEvent event) {
 			fCanBeSaved= true;
 			removeFileBufferContentListeners();
-			fManager.fireDirtyStateChanged(JavaTextFileBuffer.this, fCanBeSaved);
+			fManager.fireDirtyStateChanged(FileStoreTextFileBuffer.this, fCanBeSaved);
 		}
 	}
 
@@ -130,7 +131,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	private boolean fIsCacheUpdated= false;
 
 
-	public JavaTextFileBuffer(TextFileBufferManager manager) {
+	public FileStoreTextFileBuffer(TextFileBufferManager manager) {
 		super(manager);
 	}
 
@@ -147,7 +148,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	public IAnnotationModel getAnnotationModel() {
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
-				fAnnotationModel= fManager.createAnnotationModel(getLocation());
+				fAnnotationModel= fManager.createAnnotationModel(getLocation(), LocationKind.LOCATION);
 				if (fAnnotationModel != null)
 					fAnnotationModel.connect(fDocument);
 			}
@@ -239,7 +240,7 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 		fStatus= null;
 
 		try {
-			original= fManager.createEmptyDocument(getLocation());
+			original= fManager.createEmptyDocument(getLocation(), LocationKind.LOCATION);
 			cacheEncodingState(monitor);
 			setDocumentContent(original, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
@@ -354,11 +355,11 @@ public class JavaTextFileBuffer extends JavaFileBuffer implements ITextFileBuffe
 	 */
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {
 		try {
-			fDocument= fManager.createEmptyDocument(getLocation());
+			fDocument= fManager.createEmptyDocument(getLocation(), LocationKind.LOCATION);
 			cacheEncodingState(monitor);
 			setDocumentContent(fDocument, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
-			fDocument= fManager.createEmptyDocument(getLocation());
+			fDocument= fManager.createEmptyDocument(getLocation(), LocationKind.LOCATION);
 			fStatus= x.getStatus();
 		}
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.resources.IResource;
 
 /**
- * @since 3.0
+ * @since 3.3 (previously available as JavaFileBuffer since 3.0)
  */
-public abstract class JavaFileBuffer extends AbstractFileBuffer  {
+public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 
 	/** The location */
 	protected IPath fLocation;
@@ -47,7 +47,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	protected TextFileBufferManager fManager;
 
 
-	public JavaFileBuffer(TextFileBufferManager manager) {
+	public FileStoreFileBuffer(TextFileBufferManager manager) {
 		super();
 		fManager= manager;
 	}
