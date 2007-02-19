@@ -32,6 +32,15 @@ public interface IProxyChangeEvent {
 	 * @see #getChangeType()
 	 */
 	public static final int PROXY_DATA_CHANGED = 2;
+
+	/**
+	 * Type constant that indicates that the enablement of the proxy 
+	 * manager has changed. Client should consult the manager to determine
+	 * the current enablement
+	 * @see #getChangeType()
+	 * @see IProxyManager#isProxiesEnabled()
+	 */
+	public static final int PROXY_MANAGER_ENABLEMENT_CHANGE = 3;
 	
 	/**
 	 * Return the type of change this event represents. Clients

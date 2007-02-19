@@ -103,7 +103,7 @@ public class ProxyType {
 		return proxyData;
 	}
 
-	public boolean setProxyData(IProxyData proxyData) {
+	public boolean setProxyData(IProxyData proxyData, boolean proxiesEnabled) {
 		Assert.isTrue(proxyData.getType().equals(getName()));
 		IProxyData oldData = getProxyData();
 		if (oldData.equals(proxyData))
@@ -130,18 +130,18 @@ public class ProxyType {
 					"The {0} proxy node could not be written", proxyData.getType()), e); //$NON-NLS-1$
 			}
 		}
-		updateSystemProperties(proxyData);
+		updateSystemProperties(proxyData, proxiesEnabled);
 		return true;
 	}
-
-	private void updateSystemProperties(IProxyData proxyData) {
+	
+	/* package */void updateSystemProperties(IProxyData proxyData, boolean proxiesEnabled) {
 		try {
 			if (proxyData.getType().equals(IProxyData.HTTP_PROXY_TYPE)) {
-				updateHttpSystemProperties(proxyData);
+				updateHttpSystemProperties(proxyData, proxiesEnabled);
 			} else if (proxyData.getType().equals(IProxyData.HTTPS_PROXY_TYPE)) {
-				updateHttpsSystemProperties(proxyData);
+				updateHttpsSystemProperties(proxyData, proxiesEnabled);
 			} else if (proxyData.getType().equals(IProxyData.SOCKS_PROXY_TYPE)) {
-				updateSocksSystemProperties(proxyData);
+				updateSocksSystemProperties(proxyData, proxiesEnabled);
 			}
 		} catch (SecurityException e) {
 			NetCorePlugin.logError("A security exception occurred while trying to put the proxy data into the system properties", e); //$NON-NLS-1$
@@ -152,10 +152,10 @@ public class ProxyType {
 		return name;
 	}
 
-	private void updateHttpSystemProperties(IProxyData data) {
+	private void updateHttpSystemProperties(IProxyData data, boolean proxiesEnabled) {
 		Assert.isTrue(data.getType().equals(IProxyData.HTTP_PROXY_TYPE));
 		Properties sysProps = System.getProperties();
-		if (data.getHost() == null) {
+		if (!proxiesEnabled || data.getHost() == null) {
 			sysProps.remove("http.proxySet"); //$NON-NLS-1$
 			sysProps.remove("http.proxyHost"); //$NON-NLS-1$
 			sysProps.remove("http.proxyPort"); //$NON-NLS-1$
@@ -190,10 +190,10 @@ public class ProxyType {
 		}
 	}
 	
-	private void updateHttpsSystemProperties(IProxyData data) {
+	private void updateHttpsSystemProperties(IProxyData data, boolean proxiesEnabled) {
 		Assert.isTrue(data.getType().equals(IProxyData.HTTPS_PROXY_TYPE));
 		Properties sysProps = System.getProperties();
-		if (data.getHost() == null) {
+		if (!proxiesEnabled || data.getHost() == null) {
 			sysProps.remove("https.proxySet"); //$NON-NLS-1$
 			sysProps.remove("https.proxyHost"); //$NON-NLS-1$
 			sysProps.remove("https.proxyPort"); //$NON-NLS-1$
@@ -228,10 +228,10 @@ public class ProxyType {
 		}
 	}
 	
-	private void updateSocksSystemProperties(IProxyData data) {
+	private void updateSocksSystemProperties(IProxyData data, boolean proxiesEnabled) {
 		Assert.isTrue(data.getType().equals(IProxyData.SOCKS_PROXY_TYPE));
 		Properties sysProps = System.getProperties();
-		if (data.getHost() == null) {
+		if (!proxiesEnabled || data.getHost() == null) {
 			sysProps.remove("socksProxyHost"); //$NON-NLS-1$
 			sysProps.remove("socksProxyPort"); //$NON-NLS-1$
 		} else {
@@ -248,8 +248,8 @@ public class ProxyType {
 		}
 	}
 
-	public void initialize() {
-		updateSystemProperties(getProxyData());
+	public void initialize(boolean proxiesEnabled) {
+		updateSystemProperties(getProxyData(), proxiesEnabled);
 	}
 	
     private Map getAuthInfo() {

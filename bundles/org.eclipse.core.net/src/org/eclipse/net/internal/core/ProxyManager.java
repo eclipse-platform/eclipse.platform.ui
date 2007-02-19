@@ -108,8 +108,7 @@ public class ProxyManager implements IProxyManager {
 	}
 	
 	public void setProxyData(IProxyData[] proxies) {
-		if (isProxiesEnabled())
-			doSetProxyData(proxies);
+		doSetProxyData(proxies);
 	}
 	
 	private void doSetProxyData(IProxyData[] proxyDatas) {
@@ -117,7 +116,7 @@ public class ProxyManager implements IProxyManager {
 		String[] hosts = getNonProxiedHosts();
 		IProxyData[] changedProxies = internalSetProxyData(proxyDatas);
 		if (changedProxies.length > 0) {
-			IProxyChangeEvent event = new ProxyChangeEvent(IProxyChangeEvent.PROXY_DATA_CHANGED, hosts, hosts, oldData, changedProxies);
+			IProxyChangeEvent event = new ProxyChangeEvent(IProxyChangeEvent.PROXY_MANAGER_ENABLEMENT_CHANGE, hosts, hosts, oldData, changedProxies);
 			fireChange(event);
 		}
 	}
@@ -127,7 +126,7 @@ public class ProxyManager implements IProxyManager {
 		for (int i = 0; i < proxyDatas.length; i++) {
 			IProxyData proxyData = proxyDatas[i];
 			ProxyType type = getType(proxyData);
-			if (type != null && type.setProxyData(proxyData)) {
+			if (type != null && type.setProxyData(proxyData, isProxiesEnabled())) {
 				result.add(proxyData);
 			}
 		}
@@ -161,29 +160,30 @@ public class ProxyManager implements IProxyManager {
 		NetCorePlugin.getInstance().getInstancePreferences().putBoolean(PREF_ENABLED, enabled);
 		Properties sysProps = System.getProperties();
 		sysProps.put("proxySet", enabled ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (!enabled) {
-			// This will fire a change event
-			doSetProxyData(new IProxyData[] {
-					new ProxyData(IProxyData.HTTP_PROXY_TYPE),
-					new ProxyData(IProxyData.HTTPS_PROXY_TYPE),
-					new ProxyData(IProxyData.SOCKS_PROXY_TYPE)
-			});
-		}
+		updateSystemProperties();
 		try {
 			NetCorePlugin.getInstance().getInstancePreferences().flush();
 		} catch (BackingStoreException e) {
 			NetCorePlugin.logError(
 					"An error occurred while writing out the enablement state", e); //$NON-NLS-1$
 		}
+		String[] hosts = getNonProxiedHosts();
+		IProxyData[] data = getProxyData();
+		IProxyChangeEvent event = new ProxyChangeEvent(IProxyChangeEvent.PROXY_DATA_CHANGED, hosts, hosts, data, data);
+		fireChange(event);
+	}
+
+	private void updateSystemProperties() {
+		for (int i = 0; i < proxies.length; i++) {
+			ProxyType type = proxies[i];
+			type.updateSystemProperties(getProxyData(type.getName()), isProxiesEnabled());
+		}
 	}
 
 	public void initialize() {
-		// Only initialize the system settings if proxies are enabled
-		if (isProxiesEnabled()) {
-			for (int i = 0; i < proxies.length; i++) {
-				ProxyType type = proxies[i];
-				type.initialize();
-			}
+		for (int i = 0; i < proxies.length; i++) {
+			ProxyType type = proxies[i];
+			type.initialize(isProxiesEnabled());
 		}
 	}
 

@@ -21,10 +21,11 @@ import org.eclipse.core.runtime.CoreException;
 public interface IProxyManager {
 	
 	/**
-	 * Set whether proxy support should be enabled. When disabled, the data for all the 
-	 * known proxy types will contain a <code>null</code> in the host field 
-	 * (see {@link IProxyData#getHost()}). When enabled, the proxy data will not have any
-	 * values until the next time it is set (see {@link #setProxyData(IProxyData[])}).
+	 * Set whether proxy support should be enabled. The current proxy settings are
+	 * still kept so clients should check the enablement using {@link #isProxiesEnabled()}
+	 * before calling the {@link #getProxyData()} or {@link #getProxyData(String)} method.
+	 * However, the {@link #getProxyDataForHost(String)} and {@link #getProxyDataForHost(String, String)}
+	 * method will check the enablement and only return data if the manager is enabled.
 	 * @param enabled whether proxy support should be enabled
 	 */
 	void setProxiesEnabled(boolean enabled);
@@ -88,8 +89,7 @@ public interface IProxyManager {
 	 * Set the information associated with known proxy types.
 	 * If an unknown type is provided, it will be ignored. Any
 	 * known types that are not present in the list of the provided
-	 * proxy data will be unaffected. Calls to this method when proxies
-	 * are disabled will be ignored.
+	 * proxy data will be unaffected.
 	 * @param proxies the proxy data whose information is to be set.
 	 * @throws CoreException if the proxy could not be set
 	 */
