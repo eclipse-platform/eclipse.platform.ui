@@ -16,11 +16,6 @@ by clicking on the top right triangle button. Other plug-ins can contribute subm
    <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true" replacement="org.eclipse.ui.menus" />
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="viewContribution" minOccurs="1" maxOccurs="unbounded"/>

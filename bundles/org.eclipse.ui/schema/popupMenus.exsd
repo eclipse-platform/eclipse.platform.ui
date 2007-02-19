@@ -25,11 +25,6 @@ If these filtering mechanisms are inadequate an action contribution may use the 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true" replacement="org.eclipse.ui.menus" />
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="objectContribution" minOccurs="0" maxOccurs="unbounded"/>

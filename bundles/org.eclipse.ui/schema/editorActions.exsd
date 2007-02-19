@@ -29,11 +29,6 @@ The active editor is passed to the delegate by invoking
    <include schemaLocation="commonExpression.exsd"/>
 
    <element name="extension">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true" replacement="org.eclipse.ui.menus" />
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="editorContribution" minOccurs="1" maxOccurs="unbounded"/>
