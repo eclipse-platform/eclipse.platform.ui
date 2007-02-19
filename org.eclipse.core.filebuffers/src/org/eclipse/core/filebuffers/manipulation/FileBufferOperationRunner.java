@@ -22,11 +22,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 import org.eclipse.core.resources.IWorkspace;
@@ -164,7 +164,7 @@ public class FileBufferOperationRunner {
 	private void performOperation(IFileBuffer fileBuffer, IFileBufferOperation operation, IProgressMonitor progressMonitor) throws CoreException, OperationCanceledException {
 
 		ISchedulingRule rule= fileBuffer.computeCommitRule();
-		IJobManager manager= Platform.getJobManager();
+		IJobManager manager= Job.getJobManager();
 		try {
 			manager.beginRule(rule, progressMonitor);
 
