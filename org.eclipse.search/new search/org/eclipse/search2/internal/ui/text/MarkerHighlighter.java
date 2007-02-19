@@ -104,7 +104,7 @@ public class MarkerHighlighter extends Highlighter {
 	}
 
 	protected void handleContentReplaced(IFileBuffer buffer) {
-		if (!buffer.getLocation().equals(fFile.getLocation()))
+		if (!buffer.getLocation().equals(fFile.getFullPath()))
 			return;
 		Match[] matches= new Match[fMatchesToAnnotations.keySet().size()];
 		fMatchesToAnnotations.keySet().toArray(matches);

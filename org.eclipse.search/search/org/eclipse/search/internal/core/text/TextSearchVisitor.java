@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -221,7 +222,7 @@ public class TextSearchVisitor {
 			IFile file= ((IFileEditorInput) input).getFile();
 			if (!result.containsKey(file)) { // take the first editor found
 				ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
-				ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath());
+				ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 				if (textFileBuffer != null) {
 					// file buffer has precedence
 					result.put(file, textFileBuffer.getDocument());
@@ -359,7 +360,7 @@ public class TextSearchVisitor {
 		IDocument document= (IDocument) fDocumentsInEditors.get(file);
 		if (document == null) {
 			ITextFileBufferManager bufferManager= FileBuffers.getTextFileBufferManager();
-			ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath());
+			ITextFileBuffer textFileBuffer= bufferManager.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			if (textFileBuffer != null) {
 				document= textFileBuffer.getDocument();
 			}

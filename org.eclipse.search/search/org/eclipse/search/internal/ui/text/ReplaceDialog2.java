@@ -22,6 +22,7 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -477,7 +478,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 			}
 			ITextFileBufferManager bm= FileBuffers.getTextFileBufferManager();
 			try {
-				bm.connect(file.getFullPath(), new SubProgressMonitor(pm, 1));
+				bm.connect(file.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
 				ITextFileBuffer fb= bm.getTextFileBuffer(file.getFullPath());
 				boolean wasDirty= fb.isDirty();
 				IDocument doc= fb.getDocument();
@@ -502,7 +503,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 					fSaved= true;
 				}
 			} finally {
-				bm.disconnect(file.getFullPath(), new SubProgressMonitor(pm, 1));
+				bm.disconnect(file.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
 			}
 		} finally {
 			pm.done();
