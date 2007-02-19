@@ -12,6 +12,8 @@ package org.eclipse.core.filebuffers;
 
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.core.resources.IFile;
+
 
 /**
  * Type-safe enum of the available location kinds.
@@ -30,6 +32,7 @@ public final class LocationKind {
 	 * The corresponding argument is the full path
 	 * of an {@link org.eclipse.core.resources.IFile}.
 	 * 
+	 * @see IFile#getFullPath()
 	 * @since 3.3
 	 */
 	public static final LocationKind IFILE= new LocationKind("IFile"); //$NON-NLS-1$
