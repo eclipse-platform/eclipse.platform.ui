@@ -48,13 +48,13 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 	public void testBug118199() throws Exception {
 		IFile file= getProject().getWorkspace().getRoot().getFile(getPath());
 		assertFalse(file.exists());
-		fManager.connect(getPath(), null);
+		fManager.connect(getPath(), LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer buffer= fManager.getTextFileBuffer(getPath());
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(getPath(), LocationKind.NORMALIZE);
 			buffer.getDocument().set("test");
 			buffer.commit(null, false);
 		} finally {
-			fManager.disconnect(getPath(), null);
+			fManager.disconnect(getPath(), LocationKind.NORMALIZE, null);
 		}
 		assertFalse(file.exists());
 	}
@@ -69,7 +69,7 @@ public class FileBuffersForNonExistingWorkspaceFiles extends FileBufferFunctions
 			buffer.getDocument().set("test");
 			buffer.commit(null, false);
 		} finally {
-			fManager.disconnect(path, null);
+			fManager.disconnect(path, LocationKind.IFILE, null);
 		}
 		assertTrue(file.exists());
 	}

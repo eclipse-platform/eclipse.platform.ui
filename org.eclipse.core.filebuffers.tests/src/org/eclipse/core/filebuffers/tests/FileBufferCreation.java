@@ -15,17 +15,19 @@ import java.io.File;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -75,8 +77,8 @@ public class FileBufferCreation extends TestCase {
 		assertNotNull(path);
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path, null);
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		manager.connect(path, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 		assertNotNull(buffer);
 		
 		IDocument document= buffer.getDocument();
@@ -85,8 +87,8 @@ public class FileBufferCreation extends TestCase {
 		
 		assertSame(buffer, manager.getTextFileBuffer(document));
 		
-		manager.disconnect(path, null);
-		assertNull(manager.getTextFileBuffer(path));
+		manager.disconnect(path, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -104,15 +106,15 @@ public class FileBufferCreation extends TestCase {
 		path2= path2.append(path1.makeAbsolute());
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path1, null);
-		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1);
+		manager.connect(path1, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1, LocationKind.NORMALIZE);
 		assertNotNull(buffer1);
 		
-		ITextFileBuffer buffer2= manager.getTextFileBuffer(path2);
+		ITextFileBuffer buffer2= manager.getTextFileBuffer(path2, LocationKind.NORMALIZE);
 		assertNotNull(buffer2);
 		
-		manager.connect(path2, null);
-		buffer2= manager.getTextFileBuffer(path2);
+		manager.connect(path2, LocationKind.NORMALIZE, null);
+		buffer2= manager.getTextFileBuffer(path2, LocationKind.NORMALIZE);
 		assertNotNull(buffer2);
 		
 		IDocument document1= buffer1.getDocument();
@@ -133,13 +135,13 @@ public class FileBufferCreation extends TestCase {
 		
 		assertEquals(CONTENT3, document2.get());
 		
-		manager.disconnect(path1, null);
-		assertNotNull(manager.getTextFileBuffer(path1));
-		assertNotNull(manager.getTextFileBuffer(path2));
+		manager.disconnect(path1, LocationKind.NORMALIZE, null);
+		assertNotNull(manager.getTextFileBuffer(path1, LocationKind.NORMALIZE));
+		assertNotNull(manager.getTextFileBuffer(path2, LocationKind.NORMALIZE));
 		
-		manager.disconnect(path2, null);
-		assertNull(manager.getTextFileBuffer(path1));
-		assertNull(manager.getTextFileBuffer(path2));
+		manager.disconnect(path2, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path1, LocationKind.NORMALIZE));
+		assertNull(manager.getTextFileBuffer(path2, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -150,8 +152,8 @@ public class FileBufferCreation extends TestCase {
 		assertNotNull(path);
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path, null);
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		manager.connect(path, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 		Assert.assertNotNull(buffer);
 		
 		IDocument document= buffer.getDocument();
@@ -159,8 +161,8 @@ public class FileBufferCreation extends TestCase {
 		Assert.assertTrue(CONTENT2.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 		
-		manager.disconnect(path, null);
-		assertNull(manager.getTextFileBuffer(path));
+		manager.disconnect(path, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -172,8 +174,8 @@ public class FileBufferCreation extends TestCase {
 		path= path.append("FileInLinkedFolder");
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path, null);
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		manager.connect(path, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 		Assert.assertNotNull(buffer);
 		
 		IDocument document= buffer.getDocument();
@@ -181,8 +183,8 @@ public class FileBufferCreation extends TestCase {
 		Assert.assertTrue(CONTENT4.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 		
-		manager.disconnect(path, null);
-		assertNull(manager.getTextFileBuffer(path));
+		manager.disconnect(path, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -197,11 +199,11 @@ public class FileBufferCreation extends TestCase {
 		assertNotNull(path2);
 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path1, null);
-		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1);
+		manager.connect(path1, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1, LocationKind.NORMALIZE);
 		assertNotNull(buffer1);
-		manager.connect(path2, null);
-		ITextFileBuffer buffer2= manager.getTextFileBuffer(path2);
+		manager.connect(path2, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer2= manager.getTextFileBuffer(path2, LocationKind.NORMALIZE);
 		assertNotNull(buffer2);
 		
 		IDocument document1= buffer1.getDocument();
@@ -223,11 +225,11 @@ public class FileBufferCreation extends TestCase {
 		
 		assertFalse(document1.get().equals(document2.get()));
 		
-		manager.disconnect(path1, null);
-		assertNull(manager.getTextFileBuffer(path1));
-		assertNotNull(manager.getTextFileBuffer(path2));
-		manager.disconnect(path2, null);
-		assertNull(manager.getTextFileBuffer(path2));
+		manager.disconnect(path1, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path1, LocationKind.NORMALIZE));
+		assertNotNull(manager.getTextFileBuffer(path2, LocationKind.NORMALIZE));
+		manager.disconnect(path2, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path2, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -239,8 +241,8 @@ public class FileBufferCreation extends TestCase {
 		IPath path= new Path(externalFile.getAbsolutePath());
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path, null);
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		manager.connect(path, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 		assertNotNull(buffer);
 		
 		IDocument document= buffer.getDocument();
@@ -248,8 +250,8 @@ public class FileBufferCreation extends TestCase {
 		assertTrue(CONTENT3.equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 		
-		manager.disconnect(path, null);
-		assertNull(manager.getTextFileBuffer(path));
+		manager.disconnect(path, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -266,11 +268,11 @@ public class FileBufferCreation extends TestCase {
 		IPath path2= new Path(externalFile.getAbsolutePath());
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path1, null);
-		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1);
+		manager.connect(path1, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1, LocationKind.NORMALIZE);
 		assertNotNull(buffer1);
-		manager.connect(path2, null);
-		ITextFileBuffer buffer2= manager.getTextFileBuffer(path2);
+		manager.connect(path2, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer2= manager.getTextFileBuffer(path2, LocationKind.NORMALIZE);
 		assertNotNull(buffer2);
 		
 		IDocument document1= buffer1.getDocument();
@@ -292,10 +294,10 @@ public class FileBufferCreation extends TestCase {
 		
 		assertFalse(document1.get().equals(document2.get()));
 		
-		manager.disconnect(path1, null);
-		assertNull(manager.getTextFileBuffer(path1));
-		manager.disconnect(path2, null);
-		assertNull(manager.getTextFileBuffer(path2));
+		manager.disconnect(path1, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path1, LocationKind.NORMALIZE));
+		manager.disconnect(path2, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path2, LocationKind.NORMALIZE));
 	}
 	
 	/*
@@ -306,8 +308,8 @@ public class FileBufferCreation extends TestCase {
 		path= path.append("NonExistingFile");
 				
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		manager.connect(path, null);
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		manager.connect(path, LocationKind.NORMALIZE, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.NORMALIZE);
 		Assert.assertNotNull(buffer);
 		
 		IDocument document= buffer.getDocument();
@@ -315,7 +317,7 @@ public class FileBufferCreation extends TestCase {
 		Assert.assertTrue("".equals(document.get()));
 		assertSame(buffer, manager.getTextFileBuffer(document));
 		
-		manager.disconnect(path, null);
-		assertNull(manager.getTextFileBuffer(path));
+		manager.disconnect(path, LocationKind.NORMALIZE, null);
+		assertNull(manager.getTextFileBuffer(path, LocationKind.NORMALIZE));
 	}
 }

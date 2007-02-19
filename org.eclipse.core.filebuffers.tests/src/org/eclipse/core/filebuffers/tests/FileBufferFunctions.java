@@ -28,6 +28,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -61,7 +62,7 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager= FileBuffers.getTextFileBufferManager();
 		fProject= ResourceHelper.createProject("project");
 		fPath= createPath(fProject);
-		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 		assertTrue(buffer == null);
 	}
 	
@@ -70,7 +71,7 @@ public abstract class FileBufferFunctions extends TestCase {
 	}
 	
 	protected void tearDown() throws Exception {
-		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+		ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 		assertTrue(buffer == null);
 		ResourceHelper.deleteProject("project");
 	}
@@ -83,13 +84,13 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Tests getLocation.
 	 */
 	public void test1() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertEquals(fPath, buffer.getLocation());
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 		
@@ -97,9 +98,9 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Tests isSynchronized.
 	 */
 	public void test2() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(fileBuffer.isSynchronized());
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
@@ -109,7 +110,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			assertTrue(lastModified == EFS.NONE || !fileBuffer.isSynchronized());
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -117,16 +118,16 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Tests isDirty.
 	 */
 	public void test3() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertFalse(fileBuffer.isDirty());
 			IDocument document= fileBuffer.getDocument();
 			document.replace(document.getLength(), 0, "appendix");
 			assertTrue(fileBuffer.isDirty());
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -134,24 +135,24 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Tests isShared.
 	 */
 	public void test4() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer fileBuffer1= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer1= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertFalse(fileBuffer1.isShared());
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
-				ITextFileBuffer fileBuffer2= fManager.getTextFileBuffer(fPath);
+				ITextFileBuffer fileBuffer2= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				assertTrue(fileBuffer1.isShared());
 				assertTrue(fileBuffer2.isShared());
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 			assertFalse(fileBuffer1.isShared());
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -159,9 +160,9 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Tests getModificationStamp.
 	 */
 	public void test5() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			long modificationStamp= fileBuffer.getModificationStamp();
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
@@ -171,7 +172,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			long lastModified= fileStore.fetchInfo().getLastModified();
 			assertTrue(lastModified == EFS.NONE || modificationStamp != fileBuffer.getModificationStamp());
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}		
 	}
 	
@@ -179,10 +180,10 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Test revert.
 	 */
 	public void test6() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
 			
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			// set dirty bit
 			IDocument document= fileBuffer.getDocument();
 			String originalContent= document.get();
@@ -200,7 +201,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			assertTrue(fileBuffer.isSynchronized());
 
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -208,10 +209,10 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Test commit.
 	 */
 	public void test7() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
 			
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			// set dirty bit
 			IDocument document= fileBuffer.getDocument();
 			document.replace(document.getLength(), 0, "appendix");
@@ -229,22 +230,22 @@ public abstract class FileBufferFunctions extends TestCase {
 			assertFalse(fileBuffer.isDirty());
 			assertTrue(fileBuffer.isSynchronized());
 			// disconnect
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			// reconnect
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				document= fileBuffer.getDocument();
 				// check assertions
 				assertEquals(originalContent, document.get());
 				assertFalse(fileBuffer.isDirty());
 				assertTrue(fileBuffer.isSynchronized());				
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -252,15 +253,15 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Test validateState.
 	 */
 	public void test8_1() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
 			
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			fileBuffer.validateState(null, null);
 			assertTrue(fileBuffer.isStateValidated());
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -268,17 +269,17 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Test validateState.
 	 */
 	public void test8_2() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
 			
 			setReadOnly(true);
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			fileBuffer.validateState(null, null);
 			assertTrue(fileBuffer.isStateValidated());
 			
 		} finally {
 			setReadOnly(false);
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -286,17 +287,17 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Test resetStateValidation.
 	 */
 	public void test9_1() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
 			
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			fileBuffer.validateState(null, null);
 			fileBuffer.resetStateValidation();
 			if (isStateValidationSupported())
 				assertFalse(fileBuffer.isStateValidated());
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -304,11 +305,11 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * Test resetStateValidation.
 	 */
 	public void test9_2() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
 			
 			setReadOnly(true);
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			fileBuffer.validateState(null, null);
 			fileBuffer.resetStateValidation();
 			if (isStateValidationSupported())
@@ -316,7 +317,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			
 		} finally {
 			setReadOnly(false);
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -344,20 +345,20 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager.addFileBufferListener(listener);
 		try {
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			
 			assertTrue(listener.count == 1);
 			assertNotNull(listener.buffer);
-			IFileBuffer fileBuffer= fManager.getFileBuffer(fPath);
+			IFileBuffer fileBuffer= fManager.getFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.buffer == fileBuffer);
 			
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			assertTrue(listener.count == 0);
 			assertTrue(listener.buffer == fileBuffer);
 			
 		} finally {
 			try {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			} finally {
 				fManager.removeFileBufferListener(listener);
 			}
@@ -385,13 +386,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager.addFileBufferListener(listener);
 		try {
 			
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 				
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 				
@@ -406,7 +407,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				assertFalse(listener.isDirty);
 				
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -434,13 +435,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 				
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 				
@@ -455,7 +456,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				assertFalse(listener.isDirty);
 				
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -486,13 +487,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.preCount == 0 && listener.postCount == 0 && listener.preBuffer == null && listener.postBuffer == null);
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 				
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");
 							
@@ -504,7 +505,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				assertTrue(listener.postBuffer == fileBuffer);
 				
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -535,13 +536,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.preCount == 0 && listener.postCount == 0 && listener.preBuffer == null && listener.postBuffer == null);
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 				
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 							
 				if (modifyUnderlyingFile()) {
 					assertTrue(listener.preCount == 1);
@@ -551,7 +552,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 				
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -579,13 +580,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 			
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 				
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				fileBuffer.validateState(null, null);
 				
 				if (isStateValidationSupported()) {
@@ -595,7 +596,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 				
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -623,14 +624,14 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
 				setReadOnly(true);
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				fileBuffer.validateState(null, null);
 
 				if (isStateValidationSupported()) {
@@ -641,7 +642,7 @@ public abstract class FileBufferFunctions extends TestCase {
 
 			} finally {
 				setReadOnly(false);
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -668,13 +669,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				fileBuffer.validateState(null, null);
 				fileBuffer.resetStateValidation();
 				
@@ -685,7 +686,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -713,14 +714,14 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
 				setReadOnly(true);
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				fileBuffer.validateState(null, null);
 				fileBuffer.resetStateValidation();
 
@@ -732,7 +733,7 @@ public abstract class FileBufferFunctions extends TestCase {
 
 			} finally {
 				setReadOnly(false);
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -758,20 +759,20 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (deleteUnderlyingFile()) {
 					assertTrue(listener.count == 1);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -799,13 +800,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IPath newLocation= moveUnderlyingFile();
 				if (newLocation != null) {
 					assertTrue(listener.count == 1);
@@ -814,7 +815,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -840,20 +841,20 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (modifyUnderlyingFile()) {
 					assertSame(listener.buffer, fileBuffer);
 					assertEquals(1, listener.count);
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -879,20 +880,20 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (deleteUnderlyingFile()) {
 					assertTrue(listener.count == 1);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -918,20 +919,20 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				if (moveUnderlyingFile() != null) {
 					assertTrue(listener.count == 1);
 					assertTrue(listener.buffer == fileBuffer);
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -957,13 +958,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				fileBuffer.validateState(null, null);
 				
 				if (isStateValidationSupported()) {
@@ -972,7 +973,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				}
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -997,13 +998,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");				
 				fileBuffer.revert(null);
@@ -1012,7 +1013,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				assertTrue(listener.buffer == fileBuffer);
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -1038,13 +1039,13 @@ public abstract class FileBufferFunctions extends TestCase {
 		Listener listener= new Listener();
 		fManager.addFileBufferListener(listener);
 		try {
-			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertTrue(listener.count == 0 && listener.buffer == null);
 
-			fManager.connect(fPath, null);
+			fManager.connect(fPath, LocationKind.NORMALIZE, null);
 			try {
 
-				fileBuffer= fManager.getTextFileBuffer(fPath);
+				fileBuffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 				IDocument document= fileBuffer.getDocument();
 				document.replace(0, 0, "prefix");				
 				fileBuffer.commit(null, true);
@@ -1053,7 +1054,7 @@ public abstract class FileBufferFunctions extends TestCase {
 				assertTrue(listener.buffer == fileBuffer);
 
 			} finally {
-				fManager.disconnect(fPath, null);
+				fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			}
 			
 		} finally {
@@ -1066,9 +1067,9 @@ public abstract class FileBufferFunctions extends TestCase {
 	 * ATTENTION: This test is only effective in a workspace that contains the "org.eclipse.ui.editors" bundle.
 	 */
 	public void test18() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertNotNull(buffer);
 			
 			Class clazz= getAnnotationModelClass();
@@ -1078,7 +1079,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			}
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 	
@@ -1127,9 +1128,9 @@ public abstract class FileBufferFunctions extends TestCase {
 		fManager.addFileBufferListener(failingListener);
 		fManager.addFileBufferListener(notifyCounter2);
 		
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertNotNull(buffer);
 			
 			Class clazz= getAnnotationModelClass();
@@ -1139,7 +1140,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			}
 			
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 			fManager.removeFileBufferListener(notifyCounter1);
 			fManager.removeFileBufferListener(failingListener);
 			fManager.removeFileBufferListener(notifyCounter2);
@@ -1150,15 +1151,15 @@ public abstract class FileBufferFunctions extends TestCase {
 	}
 	
 	public void testGetBufferForDocument() throws Exception {
-		fManager.connect(fPath, null);
+		fManager.connect(fPath, LocationKind.NORMALIZE, null);
 		try {
-			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath, LocationKind.NORMALIZE);
 			assertNotNull(buffer);
 			IDocument document= buffer.getDocument();
 			assertNotNull(document);
 			assertSame(buffer, fManager.getTextFileBuffer(document));
 		} finally {
-			fManager.disconnect(fPath, null);
+			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
 }

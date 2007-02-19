@@ -680,7 +680,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		try {
 			info.fTextFileBuffer.releaseSynchronizationContext();
 			IPath location= info.fTextFileBuffer.getLocation();
-			manager.disconnect(location, getProgressMonitor());
+			manager.disconnect(location, LocationKind.NORMALIZE, getProgressMonitor());
 		} catch (CoreException x) {
 			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
 		}
