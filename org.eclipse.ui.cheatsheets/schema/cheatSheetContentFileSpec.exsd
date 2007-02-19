@@ -405,6 +405,21 @@ then the item expands to something equivalent to:
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="translate" type="string">
+            <annotation>
+               <documentation>
+                  A comma separated list of parameters which are translatable. Any parameters not in the list are considered non-translatable. While this attribute is optional it is strongly recommended that it be provided for any cheat sheat which may end up being translated. If this attribute is not specified it means that there is no translation hint.
+&lt;br&gt;
+Examples:
+&lt;br&gt;
+&lt;code&gt;translate = &quot;param2, param3&quot;&lt;/code&gt;  means translate param2 and param3 only.
+&lt;br&gt;
+&lt;code&gt;translate = &quot;&quot;&lt;/code&gt; means do not translate any parameters for this action.
+
+
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -467,6 +482,21 @@ stores the result in the cheat sheet variable &amp;quot;result&amp;quot;.&lt;/p&
             <annotation>
                <documentation>
                   if &quot;true&quot; this item or subitem can only be completed by performing this command (it may still be skipped if skip=&quot;true&quot;). If &quot;false&quot; two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="translate" type="string">
+            <annotation>
+               <documentation>
+                  A comma separated list of parameters which are translatable. Any parameters not in the list are considered non-translatable. While this attribute is optional it is strongly recommended that it be provided for any cheat sheat which may end up being translated. If this attribute is not specified it means that there is no translation hint.
+&lt;br&gt;
+Examples:
+&lt;br&gt;
+&lt;code&gt;translate = &quot;param2, param3&quot;&lt;/code&gt;  means translate param2 and param3 only.
+&lt;br&gt;
+&lt;code&gt;translate = &quot;&quot;&lt;/code&gt; means do not translate any parameters for this command.
+
+
                </documentation>
             </annotation>
          </attribute>

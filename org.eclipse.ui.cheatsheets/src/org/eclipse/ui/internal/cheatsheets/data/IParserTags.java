@@ -128,6 +128,7 @@ public interface IParserTags {
 	public static final String ON_COMPLETION = "onCompletion"; //$NON-NLS-1$
 	public static final String CONTENT_URL = "contentURL"; //$NON-NLS-1$
 	public static final String REQUIRED = "required"; //$NON-NLS-1$
+	public static final String TRANSLATE = "translate"; //$NON-NLS-1$
 
 	// Constants for re-escaping XML characters
 	public static final String LESS_THAN = "&lt;"; //$NON-NLS-1$

@@ -214,7 +214,7 @@ then the item expands to something equivalent to:
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.action">action</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST action</p>
-<p class=code id=dtdAttlist>class&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>pluginId&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>paramN&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>required&nbsp;(true | false) "true"&gt;</p>
+<p class=code id=dtdAttlist>class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>pluginId&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>paramN&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>required&nbsp;&nbsp;(true | false) "true"<p class=code id=dtdAttlist>translate&nbsp;CDATA #IMPLIED&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 Each &lt;action&gt; element describes an action in a cheat sheet.</p>
@@ -248,10 +248,17 @@ Each &lt;action&gt; element describes an action in a cheat sheet.</p>
     matches this string value. This attribute is ignored if the &lt;action&gt;
     element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
 <li><b>required</b> - if "true" this item or subitem can only be completed by performing this action (it may still be skipped if skip="true"). If "false" two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.</li>
+<li><b>translate</b> - A comma separated list of parameters which are translatable. Any parameters not in the list are considered non-translatable. While this attribute is optional it is strongly recommended that it be provided for any cheat sheat which may end up being translated. If this attribute is not specified it means that there is no translation hint.
+<br>
+Examples:
+<br>
+<code>translate = "param2, param3"</code>  means translate param2 and param3 only.
+<br>
+<code>translate = ""</code> means do not translate any parameters for this action.</li>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.command">command</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST command</p>
-<p class=code id=dtdAttlist>serialization&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>required&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "true"&gt;</p>
+<p class=code id=dtdAttlist>serialization&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>required&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "true"<p class=code id=dtdAttlist>translate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 <p>Each &lt;command&gt; element describes an command in a cheat sheet.
@@ -282,6 +289,13 @@ stores the result in the cheat sheet variable &quot;result&quot;.</p>
     matches this string value. This attribute is ignored if the &lt;command&gt;
     element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
 <li><b>required</b> - if "true" this item or subitem can only be completed by performing this command (it may still be skipped if skip="true"). If "false" two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.</li>
+<li><b>translate</b> - A comma separated list of parameters which are translatable. Any parameters not in the list are considered non-translatable. While this attribute is optional it is strongly recommended that it be provided for any cheat sheat which may end up being translated. If this attribute is not specified it means that there is no translation hint.
+<br>
+Examples:
+<br>
+<code>translate = "param2, param3"</code>  means translate param2 and param3 only.
+<br>
+<code>translate = ""</code> means do not translate any parameters for this command.</li>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.onCompletion">onCompletion</a> (#PCDATA)&gt;</p>
 <p></p>
