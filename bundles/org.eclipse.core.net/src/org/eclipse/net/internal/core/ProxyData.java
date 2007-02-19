@@ -73,4 +73,12 @@ public class ProxyData implements IProxyData {
 		return requiresAuthentication;
 	}
 
+	public void disable() {
+		host = null;
+		port = -1;
+		user = null;
+		password = null;
+		requiresAuthentication = false;
+	}
+
 }

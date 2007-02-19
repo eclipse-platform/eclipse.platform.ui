@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Net Tests Plug-in
+Bundle-SymbolicName: org.eclipse.net.tests
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.net.internal.tests.Activator
+Bundle-Vendor: Eclipse.org
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.net.core,
+ org.junit
+Eclipse-LazyStart: true

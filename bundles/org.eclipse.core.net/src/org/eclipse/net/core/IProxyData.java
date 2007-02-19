@@ -140,4 +140,13 @@ public interface IProxyData {
 	 */
 	boolean isRequiresAuthentication();
 
+	/**
+	 * Set the values of this data to represent a disabling of its type.
+	 * Note that the proxy type will not be disabled unless the client
+	 * calls {@link IProxyManager#setProxyData(IProxyData[])} with the
+	 * disabled data as a parameter. A proxy data can be enabled by setting
+	 * the host.
+	 */
+	void disable();
+
 }

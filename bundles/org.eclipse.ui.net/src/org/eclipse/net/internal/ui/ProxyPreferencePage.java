@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.net.internal.ui;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.net.core.IProxyData;
 import org.eclipse.net.core.NetCore;
@@ -190,9 +192,13 @@ public class ProxyPreferencePage extends PreferencePage implements
 
 		NetCore.getProxyManager().setProxiesEnabled(proxiesEnabled);
 		if (proxiesEnabled) {
-			NetCore.getProxyManager().setProxyData(proxyData);
-			NetCore.getProxyManager().setNonProxiedHosts(
-					nonHostComposite.getList());
+			try {
+				NetCore.getProxyManager().setProxyData(proxyData);
+				NetCore.getProxyManager().setNonProxiedHosts(
+						nonHostComposite.getList());
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(), null, null, e.getStatus());
+			}
 		}
 		Activator.getDefault().savePluginPreferences();
 	}

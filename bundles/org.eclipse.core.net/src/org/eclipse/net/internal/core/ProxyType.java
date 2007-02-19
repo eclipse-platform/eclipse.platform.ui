@@ -109,6 +109,7 @@ public class ProxyType {
 		if (oldData.equals(proxyData))
 			return false;
 		Preferences node = getPreferenceNode();
+		saveProxyAuth(proxyData);
 		if (proxyData.getHost() == null) {
 			try {
 				Preferences parent = node.parent();
@@ -122,7 +123,6 @@ public class ProxyType {
 			node.put(PREF_PROXY_HOST, proxyData.getHost());
 			node.putInt(PREF_PROXY_PORT, proxyData.getPort());
 			node.putBoolean(PREF_PROXY_HAS_AUTH, proxyData.getUserId() != null);
-			saveProxyAuth(proxyData);
 			try {
 				node.flush();
 			} catch (BackingStoreException e) {
@@ -270,12 +270,16 @@ public class ProxyType {
 			authInfo = new java.util.HashMap(4);
 		}
 		String proxyUser = data.getUserId();
-		if (proxyUser != null) {
+		if (proxyUser != null && data.getHost() != null) {
 			authInfo.put(INFO_PROXY_USER, proxyUser);
+		} else {
+			authInfo.remove(INFO_PROXY_USER);
 		}
 		String proxyPass = data.getPassword();
-		if (proxyPass != null) {
+		if (proxyPass != null && data.getHost() != null) {
 			authInfo.put(INFO_PROXY_PASS, proxyPass);
+		} else {
+			authInfo.remove(INFO_PROXY_PASS);
 		}
 		try {
 			if (authInfo.isEmpty()) {

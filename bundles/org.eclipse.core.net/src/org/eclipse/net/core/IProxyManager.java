@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.net.core;
 
+import org.eclipse.core.runtime.CoreException;
+
 /**
  * Manages the proxy data and related information.
  * <p>
@@ -89,8 +91,9 @@ public interface IProxyManager {
 	 * proxy data will be unaffected. Calls to this method when proxies
 	 * are disabled will be ignored.
 	 * @param proxies the proxy data whose information is to be set.
+	 * @throws CoreException if the proxy could not be set
 	 */
-	void setProxyData(IProxyData[] proxies);
+	void setProxyData(IProxyData[] proxies) throws CoreException;
 	
 	/**
 	 * Return the list of hosts for which non proxy should be used.
@@ -107,8 +110,9 @@ public interface IProxyManager {
 	/**
 	 * Set the list of hosts for which non proxy should be used.
 	 * @param hosts the list of hosts for which non proxy should be used.
+	 * @throws CoreException if the non-proxied host list could not be set
 	 */
-	void setNonProxiedHosts(String[] hosts);
+	void setNonProxiedHosts(String[] hosts) throws CoreException;
 	
 	/**
 	 * Register a listener that will be notified when proxy related
