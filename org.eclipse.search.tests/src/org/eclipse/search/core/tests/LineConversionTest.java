@@ -17,6 +17,8 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -57,7 +59,7 @@ public class LineConversionTest extends TestCase {
 	
 	public void testConvertToCharacter() throws Exception {
 		IDE.openEditor(SearchPlugin.getActivePage(), fFile);
-		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getLocation());
+		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 		
 		Position p1= new Position(2, 1);
@@ -83,7 +85,7 @@ public class LineConversionTest extends TestCase {
 	
 	public void testBogusLines() throws Exception {
 		IDE.openEditor(SearchPlugin.getActivePage(), fFile);
-		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getLocation());
+		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
 		Position p1= new Position(2, 67);
@@ -96,7 +98,7 @@ public class LineConversionTest extends TestCase {
 
 	public void atestLineOffsets() throws Exception {
 		IDE.openEditor(SearchPlugin.getActivePage(), fFile);
-		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getLocation());
+		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
 		int offset= doc.getLineOffset(3);

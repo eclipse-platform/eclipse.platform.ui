@@ -39,6 +39,7 @@ import org.eclipse.core.filebuffers.IFileBufferManager;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 /**
  * A <code>FileBufferOperationRunner</code> executes
@@ -227,9 +228,9 @@ public class FileBufferOperationRunner {
 			IFileBuffer[] fileBuffers= new ITextFileBuffer[locations.length];
 			for (int i= 0; i < locations.length; i++) {
 				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 1);
-				fFileBufferManager.connect(locations[i], subMonitor);
+				fFileBufferManager.connect(locations[i], LocationKind.NORMALIZE, subMonitor);
 				subMonitor.done();
-				fileBuffers[i]= fFileBufferManager.getFileBuffer(locations[i]);
+				fileBuffers[i]= fFileBufferManager.getFileBuffer(locations[i], LocationKind.NORMALIZE);
 			}
 			return fileBuffers;
 
@@ -250,7 +251,7 @@ public class FileBufferOperationRunner {
 			final ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
 			for (int i= 0; i < locations.length; i++) {
 				IProgressMonitor subMonitor= Progress.getSubMonitor(progressMonitor, 1);
-				fileBufferManager.disconnect(locations[i], subMonitor);
+				fileBufferManager.disconnect(locations[i], LocationKind.NORMALIZE, subMonitor);
 				subMonitor.done();
 			}
 		} finally {

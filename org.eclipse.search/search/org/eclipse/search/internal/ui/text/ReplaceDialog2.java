@@ -479,7 +479,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 			ITextFileBufferManager bm= FileBuffers.getTextFileBufferManager();
 			try {
 				bm.connect(file.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
-				ITextFileBuffer fb= bm.getTextFileBuffer(file.getFullPath());
+				ITextFileBuffer fb= bm.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 				boolean wasDirty= fb.isDirty();
 				IDocument doc= fb.getDocument();
 				for (int i= 0; i < markers.length; i++) {

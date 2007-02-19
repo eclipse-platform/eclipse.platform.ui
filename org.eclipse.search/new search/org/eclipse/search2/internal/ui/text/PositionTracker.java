@@ -33,6 +33,8 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -188,7 +190,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			return null;
 		if (!file.exists())
 			return null;
-		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath());
+		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 	}
 	
 	public Position getCurrentPosition(Match match) {

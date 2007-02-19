@@ -14,6 +14,7 @@ package org.eclipse.search.tests.filesearch;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -97,12 +98,12 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 				return fLastDocument;
 			}
 			if (fLastFile != null) {
-				FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), null);
+				FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), LocationKind.IFILE, null);
 			}
 			fLastFile= file;
 			
-			FileBuffers.getTextFileBufferManager().connect(file.getFullPath(), null);
-			fLastDocument= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath()).getDocument();
+			FileBuffers.getTextFileBufferManager().connect(file.getFullPath(), LocationKind.IFILE, null);
+			fLastDocument= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE).getDocument();
 			return fLastDocument;
 		}
 		
@@ -112,7 +113,7 @@ public class LineBasedFileSearch extends FileSearchQuery  {
 		public void endReporting() {
 			if (fLastFile != null) {
 				try {
-					FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), null);
+					FileBuffers.getTextFileBufferManager().disconnect(fLastFile.getFullPath(), LocationKind.IFILE, null);
 				} catch (CoreException e) {
 				}
 			}

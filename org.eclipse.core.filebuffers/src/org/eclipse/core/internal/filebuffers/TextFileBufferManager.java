@@ -281,7 +281,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath)
 	 */
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
-		return (ITextFileBuffer)getFileBuffer(location);
+		return getTextFileBuffer(location, LocationKind.NORMALIZE);
 	}
 	
 	/*

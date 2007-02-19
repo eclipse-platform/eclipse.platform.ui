@@ -28,6 +28,8 @@ import org.eclipse.search.ui.text.Match;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
@@ -259,7 +261,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		if (match.getCreationTimeStamp() != match.getFile().getModificationStamp())
 			return true;
 		ITextFileBufferManager bm= FileBuffers.getTextFileBufferManager();
-		ITextFileBuffer fb= bm.getTextFileBuffer(match.getFile().getFullPath());
+		ITextFileBuffer fb= bm.getTextFileBuffer(match.getFile().getFullPath(), LocationKind.IFILE);
 		if (fb != null && fb.isDirty())
 			return true;
 		return false;

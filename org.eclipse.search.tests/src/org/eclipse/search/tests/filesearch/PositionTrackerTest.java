@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.resources.IFile;
 
@@ -96,7 +97,7 @@ public class PositionTrackerTest extends TestCase {
 		Match[] matches= result.getMatches(file);
 		try {
 			IDE.openEditor(SearchPlugin.getActivePage(), file);
-			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath());
+			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			IDocument doc= fb.getDocument();
 
 			for (int i= 0; i < matches.length; i++) {
@@ -127,7 +128,7 @@ public class PositionTrackerTest extends TestCase {
 		}
 		try {
 			IDE.openEditor(SearchPlugin.getActivePage(), file);
-			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
+			ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
 			IDocument doc= fb.getDocument();
 			doc.replace(0, 0, "Test");
 
