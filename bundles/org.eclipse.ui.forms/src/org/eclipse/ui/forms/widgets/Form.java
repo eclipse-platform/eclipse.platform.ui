@@ -76,9 +76,9 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * <pre>
  * FormToolkit toolkit = new FormToolkit(parent.getDisplay());
  * Form form = toolkit.createForm(parent);
- * formContent.setText(&quot;Sample form&quot;);
- * formContent.getBody().setLayout(new GridLayout());
- * toolkit.createButton(formContent.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
+ * form.setText(&quot;Sample form&quot;);
+ * form.getBody().setLayout(new GridLayout());
+ * toolkit.createButton(form.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
  * </pre>
  * 
  * <p>
