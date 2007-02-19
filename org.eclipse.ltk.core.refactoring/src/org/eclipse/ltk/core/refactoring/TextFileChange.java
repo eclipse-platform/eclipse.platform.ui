@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.resources.IFile;
 
@@ -196,8 +197,8 @@ public class TextFileChange extends TextChange {
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= fFile.getFullPath();
-		manager.connect(path, pm);
-		fBuffer= manager.getTextFileBuffer(path);
+		manager.connect(path, LocationKind.IFILE, pm);
+		fBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 		IDocument result= fBuffer.getDocument();
 		fContentStamp= ContentStamps.get(fFile, result);
 		return result;
@@ -223,7 +224,7 @@ public class TextFileChange extends TextChange {
 		Assert.isTrue(fAcquireCount > 0);
 		if (fAcquireCount == 1) {
 			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-			manager.disconnect(fFile.getFullPath(), pm);
+			manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, pm);
 		}
 		fAcquireCount--;
  	}

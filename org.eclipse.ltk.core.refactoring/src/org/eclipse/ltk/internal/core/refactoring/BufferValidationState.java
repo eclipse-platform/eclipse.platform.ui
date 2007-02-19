@@ -18,6 +18,7 @@ import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -171,7 +172,7 @@ public abstract class BufferValidationState {
 	protected static ITextFileBuffer getBuffer(IFile file) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= file.getFullPath();
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 		return buffer;
 	}
 	

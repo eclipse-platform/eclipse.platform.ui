@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.resources.IFile;
 
@@ -35,7 +36,7 @@ public class TextChanges {
 	public static IDocument getDocument(IFile file) throws CoreException {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		IPath path= file.getFullPath();
-		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 		if (buffer == null)
 			return null;
 		return buffer.getDocument();

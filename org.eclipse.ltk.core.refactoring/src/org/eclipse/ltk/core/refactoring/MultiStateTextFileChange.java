@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.resources.IFile;
 
@@ -276,10 +277,10 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		final ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		final IPath path= fFile.getFullPath();
 
-		manager.connect(path, monitor);
+		manager.connect(path, LocationKind.IFILE, monitor);
 		fCount++;
 
-		fBuffer= manager.getTextFileBuffer(path);
+		fBuffer= manager.getTextFileBuffer(path, LocationKind.IFILE);
 
 		final IDocument document= fBuffer.getDocument();
 		fContentStamp= ContentStamps.get(fFile, document);
@@ -811,7 +812,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	public final RefactoringStatus isValid(final IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		monitor.beginTask("", 1); //$NON-NLS-1$
 
-		final ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
+		final ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		fDirty= buffer != null && buffer.isDirty();
 
 		final RefactoringStatus status= fValidationState.isValid(needsSaving());
@@ -909,7 +910,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		Assert.isTrue(fCount > 0);
 
 		if (fCount == 1)
-			FileBuffers.getTextFileBufferManager().disconnect(fFile.getFullPath(), monitor);
+			FileBuffers.getTextFileBufferManager().disconnect(fFile.getFullPath(), LocationKind.IFILE, monitor);
 
 		fCount--;
 	}

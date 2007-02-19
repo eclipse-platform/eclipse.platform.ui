@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.core.resources.IFile;
 
@@ -154,7 +155,7 @@ public class UndoTextFileChange extends Change {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
-		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
+		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		fDirty= buffer != null && buffer.isDirty();
 		RefactoringStatus result= fValidationState.isValid(needsSaving(), true);
 		pm.worked(1);
@@ -171,8 +172,8 @@ public class UndoTextFileChange extends Change {
 		pm.beginTask("", 2); //$NON-NLS-1$
 		ITextFileBuffer buffer= null;
 		try {
-			manager.connect(fFile.getFullPath(), new SubProgressMonitor(pm, 1));
-			buffer= manager.getTextFileBuffer(fFile.getFullPath());
+			manager.connect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
+			buffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			IDocument document= buffer.getDocument();
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
 			// perform the changes
@@ -205,7 +206,7 @@ public class UndoTextFileChange extends Change {
 				return new NullChange();
 		} finally {
 			if (buffer != null)
-				manager.disconnect(fFile.getFullPath(), new SubProgressMonitor(pm, 1));
+				manager.disconnect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
 		}
 	}
 	
