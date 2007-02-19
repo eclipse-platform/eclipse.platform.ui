@@ -48,6 +48,7 @@ public interface IFileBufferManager {
 	 * @param location the location of the file to be connected
 	 * @param monitor the progress monitor
 	 * @throws CoreException if the file could not successfully be connected
+	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	void connect(IPath location, IProgressMonitor monitor) throws CoreException;
 	
@@ -83,6 +84,7 @@ public interface IFileBufferManager {
 	 * @param location the location of the file to be disconnected
 	 * @param monitor the progress monitor
 	 * @throws CoreException if the file could not successfully be disconnected
+	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	void disconnect(IPath location, IProgressMonitor monitor) throws CoreException;
 	
@@ -116,6 +118,7 @@ public interface IFileBufferManager {
 	 *
 	 * @param location the location
 	 * @return the file buffer managed for that location or <code>null</code>
+	 * @deprecated As of 3.3, replaced by {@link #getFileBuffer(IPath, LocationKind)}
 	 */
 	IFileBuffer getFileBuffer(IPath location);
 

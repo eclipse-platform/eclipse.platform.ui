@@ -40,6 +40,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 *
 	 * @param location the location
 	 * @return the text file buffer managed for that location or <code>null</code>
+	 * @deprecated As of 3.3, replaced by {@link #getTextFileBuffer(IPath, LocationKind)}
 	 */
 	ITextFileBuffer getTextFileBuffer(IPath location);
 	
@@ -95,6 +96,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 *
 	 * @param location the location used to set up the newly created document
 	 * @return a new empty document
+	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
 	IDocument createEmptyDocument(IPath location);
 	
@@ -124,6 +126,7 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 *
 	 * @param location the location used to create the new annotation model
 	 * @return the newly created annotation model
+	 * @deprecated As of 3.3, replaced by {@link #createAnnotationModel(IPath, LocationKind)}
 	 */
 	IAnnotationModel createAnnotationModel(IPath location);
 	
