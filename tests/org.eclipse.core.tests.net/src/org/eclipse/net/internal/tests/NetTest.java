@@ -10,15 +10,14 @@
  *******************************************************************************/
 package org.eclipse.net.internal.tests;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import junit.framework.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.net.core.IProxyData;
 import org.eclipse.net.core.NetCore;
-import org.eclipse.net.internal.core.NetCorePlugin;
+import org.eclipse.net.internal.core.ProxyType;
 
 public class NetTest extends TestCase {
 	
@@ -55,17 +54,6 @@ public class NetTest extends TestCase {
 		NetCore.getProxyManager().setProxyData(data);
 	}
 	
-	private void assertProxyDataForType(String type, String host,
-			int port, String userid, String password) {
-		IProxyData data = NetCore.getProxyManager().getProxyData(type);
-		assertEquals(type, data.getType());
-		assertEquals(host, data.getHost());
-		assertEquals(port, data.getPort());
-		assertEquals(userid, data.getUserId());
-		assertEquals(password, data.getPassword());
-		assertEquals(userid != null, data.isRequiresAuthentication());
-	}
-	
 	private void assertProxyDataEqual(IProxyData expectedData) {
 		IProxyData data = NetCore.getProxyManager().getProxyData(expectedData.getType());
 		assertEquals(expectedData.getType(), data.getType());
@@ -74,6 +62,62 @@ public class NetTest extends TestCase {
 		assertEquals(expectedData.getUserId(), data.getUserId());
 		assertEquals(expectedData.getPassword(), data.getPassword());
 		assertEquals(expectedData.isRequiresAuthentication(), data.isRequiresAuthentication());
+		assertSystemPropertiesMatch(data);
+	}
+	
+	public void assertSystemPropertiesMatch(IProxyData proxyData) {
+		if (proxyData.getType().equals(IProxyData.HTTP_PROXY_TYPE)) {
+			assertHttpSystemProperties(proxyData, "http");
+		} else if (proxyData.getType().equals(IProxyData.HTTPS_PROXY_TYPE)) {
+			assertHttpSystemProperties(proxyData, "https");
+		} else if (proxyData.getType().equals(IProxyData.SOCKS_PROXY_TYPE)) {
+			assertSocksSystemProperties(proxyData);
+		}
+	}
+
+	private void assertHttpSystemProperties(IProxyData proxyData, String keyPrefix) {
+		Properties sysProps = System.getProperties();
+		
+		if (NetCore.getProxyManager().isProxiesEnabled()) {
+			boolean isSet = Boolean.getBoolean(keyPrefix + ".proxySet");
+			assertEquals(proxyData.getHost() != null, isSet); //$NON-NLS-1$
+			assertEquals(proxyData.getHost(), sysProps.get(keyPrefix + ".proxyHost")); //$NON-NLS-1$
+			String portString = (String)sysProps.get(keyPrefix + ".proxyPort"); //$NON-NLS-1$
+			int port = -1;
+			if (portString != null)
+				port = Integer.parseInt(portString);
+			assertEquals(proxyData.getPort(), port);
+			if (isSet)
+				assertEquals(ProxyType.convertHostsToPropertyString(NetCore.getProxyManager().getNonProxiedHosts()), sysProps.get(keyPrefix + ".nonProxyHosts")); //$NON-NLS-1$
+			else 
+				assertNull(sysProps.get(keyPrefix + ".nonProxyHosts"));
+			assertEquals(proxyData.getUserId(), sysProps.get(keyPrefix + ".proxyUser")); //$NON-NLS-1$
+			assertEquals(proxyData.getUserId(), sysProps.get(keyPrefix + ".proxyUserName")); //$NON-NLS-1$
+			assertEquals(proxyData.getPassword(), sysProps.get(keyPrefix + ".proxyPassword")); //$NON-NLS-1$
+		} else {
+			assertNull(sysProps.get(keyPrefix + ".proxySet"));
+			assertNull(sysProps.get(keyPrefix + ".proxyHost"));
+			assertNull(sysProps.get(keyPrefix + ".proxyPort"));
+			assertNull(sysProps.get(keyPrefix + ".nonProxyHosts"));
+			assertNull(sysProps.get(keyPrefix + ".proxyUser"));
+			assertNull(sysProps.get(keyPrefix + ".proxyUserName"));
+			assertNull(sysProps.get(keyPrefix + ".proxyPassword"));
+		}
+	}
+
+	private void assertSocksSystemProperties(IProxyData proxyData) {
+		Properties sysProps = System.getProperties();
+		if (NetCore.getProxyManager().isProxiesEnabled()) {
+			assertEquals(proxyData.getHost(), sysProps.get("socksProxyHost")); //$NON-NLS-1$
+			String portString = (String)sysProps.get("socksProxyPort"); //$NON-NLS-1$
+			int port = -1;
+			if (portString != null)
+				port = Integer.parseInt(portString);
+			assertEquals(proxyData.getPort(), port);
+		} else {
+			assertNull(sysProps.get("socksProxyHost"));
+			assertNull(sysProps.get("socksProxyPort"));
+		}
 	}
 	
 	private IProxyData getProxyData(String type) {
@@ -200,6 +244,53 @@ public class NetTest extends TestCase {
 		IProxyData data = NetCore.getProxyManager().getProxyData(type);
 		setProxiesEnabled(false);
 		assertProxyDataEqual(data);
+	}
+	
+	public void testSimpleHost() throws CoreException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+		
+		IProxyData[] allData = NetCore.getProxyManager().getProxyDataForHost("www.randomhot.com");
+		assertEquals(3, allData.length);
+		
+		IProxyData data = NetCore.getProxyManager().getProxyDataForHost("www.randomhot.com", IProxyData.HTTP_PROXY_TYPE);
+		assertNotNull(data);
+		
+		allData = NetCore.getProxyManager().getProxyDataForHost("localhost");
+		assertEquals(0, allData.length);
+		
+		data = NetCore.getProxyManager().getProxyDataForHost("localhost", IProxyData.HTTP_PROXY_TYPE);
+		assertNull(data);
+	}
+	
+	public void testHostPattern() throws CoreException {
+		setDataTest(IProxyData.HTTP_PROXY_TYPE);
+		setDataTest(IProxyData.HTTPS_PROXY_TYPE);
+		setDataTest(IProxyData.SOCKS_PROXY_TYPE);
+		
+		String[] oldHosts = NetCore.getProxyManager().getNonProxiedHosts();
+		NetCore.getProxyManager().setNonProxiedHosts(new String[] { "*ignore.com" });
+		
+		IProxyData[] allData = NetCore.getProxyManager().getProxyDataForHost("www.randomhot.com");
+		assertEquals(3, allData.length);
+		
+		IProxyData data = NetCore.getProxyManager().getProxyDataForHost("www.randomhot.com", IProxyData.HTTP_PROXY_TYPE);
+		assertNotNull(data);
+		
+		allData = NetCore.getProxyManager().getProxyDataForHost("www.ignore.com");
+		assertEquals(0, allData.length);
+		
+		data = NetCore.getProxyManager().getProxyDataForHost("www.ignore.com", IProxyData.HTTP_PROXY_TYPE);
+		assertNull(data);
+		
+		allData = NetCore.getProxyManager().getProxyDataForHost("ignore.com");
+		assertEquals(0, allData.length);
+		
+		data = NetCore.getProxyManager().getProxyDataForHost("ignore.com", IProxyData.HTTP_PROXY_TYPE);
+		assertNull(data);
+		
+		NetCore.getProxyManager().setNonProxiedHosts(oldHosts);
 	}
 
 }
