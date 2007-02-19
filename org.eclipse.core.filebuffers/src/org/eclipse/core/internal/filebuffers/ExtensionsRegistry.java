@@ -39,6 +39,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.core.filebuffers.LocationKind;
 
 
 
@@ -447,15 +448,19 @@ public class ExtensionsRegistry {
 	 * Returns the set of content types for the given location.
 	 *
 	 * @param location the location for which to look up the content types
+	 * @param locationKind the kind of the given location
 	 * @return the set of content types for the location
+	 * @since 3.3
 	 */
-	private IContentType[] findContentTypes(IPath location) {
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
-		if (file != null)
-			return findContentTypes(file);
+	private IContentType[] findContentTypes(IPath location, LocationKind locationKind) {
+		if (locationKind != LocationKind.LOCATION) {
+			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
+			if (file != null)
+				return findContentTypes(file);
+		}
 		return fContentTypeManager.findContentTypesFor(location.lastSegment());
 	}
-	
+
 	/**
 	 * Returns the set of content types for the given location.
 	 *
@@ -524,10 +529,12 @@ public class ExtensionsRegistry {
 	 * Returns the sharable document factory for the given location.
 	 *
 	 * @param location the location for which to looked up the factory
+	 * @param locationKind the kind of the given location
 	 * @return the sharable document factory
+	 * @since 3.3
 	 */
-	public IDocumentFactory getDocumentFactory(IPath location) {
-		IDocumentFactory factory= getDocumentFactory(findContentTypes(location));
+	public IDocumentFactory getDocumentFactory(IPath location, LocationKind locationKind) {
+		IDocumentFactory factory= getDocumentFactory(findContentTypes(location, locationKind));
 		if (factory == null)
 			factory= getDocumentFactory(location.lastSegment());
 		if (factory == null)
@@ -541,12 +548,14 @@ public class ExtensionsRegistry {
 	 * Returns the sharable set of document setup participants for the given location.
 	 *
 	 * @param location the location for which to look up the setup participants
+	 * @param locationKind the kind of the given location
 	 * @return the sharable set of document setup participants
+	 * @since 3.3
 	 */
-	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location) {
+	public IDocumentSetupParticipant[] getDocumentSetupParticipants(IPath location, LocationKind locationKind) {
 		Set participants= new HashSet();
 
-		List p= getDocumentSetupParticipants(findContentTypes(location));
+		List p= getDocumentSetupParticipants(findContentTypes(location, locationKind));
 		if (p != null)
 			participants.addAll(p);
 
@@ -601,10 +610,12 @@ public class ExtensionsRegistry {
 	 * Returns the sharable annotation model factory for the given location.
 	 *
 	 * @param location the location for which to look up the factory
+	 * @param locationKind the kind of the given location
 	 * @return the sharable annotation model factory
+	 * @since 3.3
 	 */
-	public IAnnotationModelFactory getAnnotationModelFactory(IPath location) {
-		IAnnotationModelFactory factory= getAnnotationModelFactory(findContentTypes(location));
+	public IAnnotationModelFactory getAnnotationModelFactory(IPath location, LocationKind locationKind) {
+		IAnnotationModelFactory factory= getAnnotationModelFactory(findContentTypes(location, locationKind));
 		if (factory == null)
 			factory= getAnnotationModelFactory(location.lastSegment());
 		if (factory == null)

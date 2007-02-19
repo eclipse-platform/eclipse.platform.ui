@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,22 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return the text file buffer managed for that location or <code>null</code>
 	 */
 	ITextFileBuffer getTextFileBuffer(IPath location);
+	
+	/**
+	 * Returns the text file buffer managed for the file at the given location
+	 * or <code>null</code> if there is no such text file buffer.
+	 * <p>
+	 * The type of the provided location is specified by the given
+	 * <code>locationKind</code>.
+	 * </p>
+	 *
+	 * @param location the location
+	 * @param locationKind the kind of the given location
+	 * @return the text file buffer managed for that location or <code>null</code>
+	 * @see LocationKind
+	 * @since 3.3
+	 */
+	ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind);
 
 	/**
  	 * Returns the text file buffer managed for the given document
@@ -81,6 +97,21 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return a new empty document
 	 */
 	IDocument createEmptyDocument(IPath location);
+	
+	/**
+	 * Creates a new empty document. The document is set up in the same way as
+	 * it would be used in a text file buffer for a file at the given location.
+	 * <p>
+	 * The type of the provided location is specified by the given
+	 * <code>locationKind</code>.
+	 * </p>
+	 *
+	 * @param location the location used to set up the newly created document
+	 * @param locationKind the kind of the given location
+	 * @return a new empty document
+	 * @since 3.3
+	 */
+	IDocument createEmptyDocument(IPath location, LocationKind locationKind);
 
 	/**
 	 * Creates a new annotation for the given location.
@@ -95,6 +126,20 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @return the newly created annotation model
 	 */
 	IAnnotationModel createAnnotationModel(IPath location);
+	
+	/**
+	 * Creates a new annotation for the given location.
+	 * <p>
+	 * The type of the provided location is specified by the given
+	 * <code>locationKind</code>.
+	 * </p>
+	 *
+	 * @param location the location used to create the new annotation model
+	 * @param locationKind the kind of the given location
+	 * @return the newly created annotation model
+	 * @since 3.3
+	 */
+	IAnnotationModel createAnnotationModel(IPath location, LocationKind locationKind);
 
 	/**
 	 * Returns whether a file at the given location is or can be considered a

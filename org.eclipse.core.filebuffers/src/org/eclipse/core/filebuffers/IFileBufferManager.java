@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.0
  */
 public interface IFileBufferManager {
-
+	
+	
 	/**
 	 * Connects the file at the given location to this manager. After that call
 	 * successfully completed it is guaranteed that each call to <code>getFileBuffer</code>
@@ -49,6 +50,24 @@ public interface IFileBufferManager {
 	 * @throws CoreException if the file could not successfully be connected
 	 */
 	void connect(IPath location, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Connects the file at the given location to this manager. After that call
+	 * successfully completed it is guaranteed that each call to <code>getFileBuffer</code>
+	 * returns the same file buffer until <code>disconnect</code> is called.
+	 * <p>
+	 * The type of the provided location is specified by the given
+	 * <code>locationKind</code>.
+	 * </p>
+	 *
+	 * @param location the location of the file to be connected
+	 * @param locationKind the kind of the given location
+	 * @param monitor the progress monitor
+	 * @throws CoreException if the file could not successfully be connected
+	 * @see LocationKind
+	 * @since 3.3
+	 */
+	void connect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Disconnects the file at the given location from this manager. After that
@@ -66,6 +85,24 @@ public interface IFileBufferManager {
 	 * @throws CoreException if the file could not successfully be disconnected
 	 */
 	void disconnect(IPath location, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Disconnects the file at the given location from this manager. After that
+	 * call successfully completed there is no guarantee that <code>getFileBuffer</code>
+	 * will return a valid file buffer.
+	 * <p>
+	 * The type of the provided location is specified by the given
+	 * <code>locationKind</code>.
+	 * </p>
+	 *
+	 * @param location the location of the file to be disconnected
+	 * @param locationKind the kind of the given location
+	 * @param monitor the progress monitor
+	 * @throws CoreException if the file could not successfully be disconnected
+	 * @see LocationKind
+	 * @since 3.3
+	 */
+	void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the file buffer managed for the given location or <code>null</code>
@@ -81,6 +118,22 @@ public interface IFileBufferManager {
 	 * @return the file buffer managed for that location or <code>null</code>
 	 */
 	IFileBuffer getFileBuffer(IPath location);
+
+	/**
+	 * Returns the file buffer managed for the given location or <code>null</code>
+	 * if there is no such file buffer.
+	 * <p>
+	 * The type of the provided location is specified by the given
+	 * <code>locationKind</code>.
+	 * </p>
+	 *
+	 * @param location the location
+	 * @param locationKind the kind of the given location
+	 * @return the file buffer managed for that location or <code>null</code>
+	 * @see LocationKind
+	 * @since 3.3
+	 */
+	IFileBuffer getFileBuffer(IPath location, LocationKind locationKind);
 
 	/**
 	 * Sets the synchronization context for this file buffer manager, i.e., for
