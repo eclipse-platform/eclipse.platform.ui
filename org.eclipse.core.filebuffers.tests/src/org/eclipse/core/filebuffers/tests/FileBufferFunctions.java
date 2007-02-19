@@ -38,7 +38,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 public abstract class FileBufferFunctions extends TestCase {
 	
 	private IProject fProject;
-	private ITextFileBufferManager fManager;
+	protected ITextFileBufferManager fManager;
 	private IPath fPath;
 	
 	
