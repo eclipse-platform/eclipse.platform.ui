@@ -1,29 +1,31 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.forms.examples.internal.dialogs;
 
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.handlers.HandlerUtil;
 
-public class OpenFormDialog implements IWorkbenchWindowActionDelegate {
-	private IWorkbenchWindow window;
+public class OpenFormDialog extends AbstractHandler {
 
-	public void dispose() {
-	}
-
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
-	}
-
-	public void run(IAction action) {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		SampleFormDialog dialog = new SampleFormDialog(window.getShell());
 		dialog.create();
 		dialog.getShell().setText("Sample Form Dialog");
 		dialog.getShell().setSize(500,500);
 		dialog.getShell().setLocation(100, 300);
 		dialog.open();
-	}
-
-	public void selectionChanged(IAction action, ISelection selection) {
+		return null;
 	}
 }

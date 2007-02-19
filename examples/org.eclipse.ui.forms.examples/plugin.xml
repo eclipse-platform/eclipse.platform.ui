@@ -19,6 +19,31 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui.ide"/>
    </requires>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.forms.examples.category"
+            name="Eclipse Forms Examples">
+      </category>
+      <command
+            categoryId="org.eclipse.ui.forms.examples.category"
+            defaultHandler="org.eclipse.ui.forms.examples.internal.rcp.OpenSimpleFormEditorAction"
+            id="org.eclipse.ui.forms.examples.simple"
+            name="Simple Form Editor">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.forms.examples.category"
+            defaultHandler="org.eclipse.ui.forms.examples.internal.rcp.OpenSingleHeaderEditorAction"
+            id="org.eclipse.ui.forms.examples.singleHeader"
+            name="Single Header Editor">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.forms.examples.category"
+            defaultHandler="org.eclipse.ui.forms.examples.internal.dialogs.OpenFormDialog"
+            id="org.eclipse.ui.forms.examples.openDialog"
+            name="Open Form Dialog...">
+      </command>
+   </extension>
 
 
    <extension
@@ -39,36 +64,37 @@
       </editor>      
    </extension>
    <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="Eclipse Forms Examples"
-            id="org.eclipse.ui.forms.examples.actionSet">
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
          <menu
-               label="Form Editors"
-               id="org.eclipse.ui.forms.examples.menu">
-            <groupMarker
-                  name="group">
-            </groupMarker>
+               label="Form Editors">
+            <command
+                  commandId="org.eclipse.ui.forms.examples.simple"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.forms.examples.singleHeader"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.forms.examples.openDialog"
+                  style="push">
+            </command>
          </menu>
-         <action
-               label="Simple Form Editor"
-               class="org.eclipse.ui.forms.examples.internal.rcp.OpenSimpleFormEditorAction"
-               menubarPath="org.eclipse.ui.forms.examples.menu/group"
-               id="org.eclipse.ui.forms.examples.simple">
-         </action>
-         <action
-               label="Single Header Editor"
-               class="org.eclipse.ui.forms.examples.internal.rcp.OpenSingleHeaderEditorAction"
-               menubarPath="org.eclipse.ui.forms.examples.menu/group"
-               id="org.eclipse.ui.forms.examples.singleHeader">
-         </action>         
-         <action
-               class="org.eclipse.ui.forms.examples.internal.dialogs.OpenFormDialog"
-               id="org.eclipse.ui.forms.examples.openDialog"
-               label="Open Form Dialog..."
-               menubarPath="org.eclipse.ui.forms.examples.menu/group">
-         </action>
-      </actionSet>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               ratio="0.5"
+               relative="org.eclipse.ui.views.TaskList"
+               relationship="right"
+               id="org.eclipse.ui.forms.examples.views.FormView">
+         </view>
+      </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -83,17 +109,5 @@
             class="org.eclipse.ui.forms.examples.views.FormView"
             id="org.eclipse.ui.forms.examples.views.FormView">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.ui.resourcePerspective">
-         <view
-               ratio="0.5"
-               relative="org.eclipse.ui.views.TaskList"
-               relationship="right"
-               id="org.eclipse.ui.forms.examples.views.FormView">
-         </view>
-      </perspectiveExtension>
    </extension>
 </plugin>
