@@ -80,7 +80,7 @@ public class Utils{
     if(!useProxy)
       return;
     Proxy proxy=null;
-    IProxyData data=getProxyData();
+    IProxyData data=getProxyData(session.getHost());
     if(data==null)
       return;
     String _type=getProxyType(data);
@@ -129,13 +129,13 @@ public class Utils{
     return port;
   }
 
-  private static IProxyData getProxyData(){
-    IProxyData data = NetCore.getProxyManager().getProxyData(IProxyData.HTTP_PROXY_TYPE);
+  private static IProxyData getProxyData(String host){
+    IProxyData data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.HTTP_PROXY_TYPE);
     if (data == null || data.getHost() == null) {
-      data = NetCore.getProxyManager().getProxyData(IProxyData.SOCKS_PROXY_TYPE);
+      data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.SOCKS_PROXY_TYPE);
     }
     if (data == null || data.getHost() == null) {
-      data = NetCore.getProxyManager().getProxyData(IProxyData.HTTPS_PROXY_TYPE);
+      data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.HTTPS_PROXY_TYPE);
     }
     if (data == null || data.getHost() == null || getProxyType(data) == null)
       return null;
