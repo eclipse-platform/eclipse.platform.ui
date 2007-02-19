@@ -307,8 +307,8 @@ public class FilteredResourcesSelectionDialog extends
 	 */
 	public Object[] getResult() {
 		Object[] result = super.getResult();
-		
-		if(result == null)
+
+		if (result == null)
 			return null;
 
 		List resultToReturn = new ArrayList();
@@ -380,15 +380,6 @@ public class FilteredResourcesSelectionDialog extends
 	 */
 	protected ItemsFilter createFilter() {
 		return new ResourceFilter(container, isDerived, typeMask);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#applyFilter()
-	 */
-	protected void applyFilter() {
-		super.applyFilter();
 	}
 
 	/*
@@ -784,24 +775,32 @@ public class FilteredResourcesSelectionDialog extends
 			this.filterTypeMask = typeMask;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/**
+		 * @param item
+		 *            Must be instance of IResource, otherwise
+		 *            <code>false</code> will be returned.
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#isConsistentItem(java.lang.Object)
 		 */
 		public boolean isConsistentItem(Object item) {
+			if (!(item instanceof IResource)) {
+				return false;
+			}
 			IResource resource = (IResource) item;
 			if (this.filterContainer.findMember(resource.getFullPath()) != null)
 				return true;
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
+		/**
+		 * @param item
+		 *            Must be instance of IResource, otherwise
+		 *            <code>false</code> will be returned.
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#matchItem(java.lang.Object)
 		 */
 		public boolean matchItem(Object item) {
+			if (!(item instanceof IResource)) {
+				return false;
+			}
 			IResource resource = (IResource) item;
 			if ((!this.showDerived && resource.isDerived())
 					|| ((this.filterTypeMask & resource.getType()) == 0))
@@ -829,7 +828,7 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#equalsFilter(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter)
 		 */
 		public boolean equalsFilter(ItemsFilter iFilter) {
-			if (!super.equals(iFilter))
+			if (!super.equalsFilter(iFilter))
 				return false;
 			if (iFilter instanceof ResourceFilter)
 				if (this.showDerived == ((ResourceFilter) iFilter).showDerived)
@@ -861,10 +860,9 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.SelectionHistory#restoreItemFromMemento(org.eclipse.ui.IMemento)
 		 */
 		protected Object restoreItemFromMemento(IMemento element) {
-
-			IResource resource = null;
 			ResourceFactory resourceFactory = new ResourceFactory();
-			resource = (IResource) resourceFactory.createElement(element);
+			IResource resource = (IResource) resourceFactory
+					.createElement(element);
 			return resource;
 		}
 
