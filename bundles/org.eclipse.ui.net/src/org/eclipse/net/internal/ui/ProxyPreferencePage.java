@@ -11,6 +11,7 @@
  * -------- -------- -----------------------------------------------------------
  * 20070123   154100 eu@md.pp.ru - Eugene Kuleshov, Initial UI coding
  * 20070201   154100 pmoogk@ca.ibm.com - Peter Moogk, Port internet code from WTP to Eclipse base.
+ * 20070219   174674 pmoogk@ca.ibm.com - Peter Moogk
  *******************************************************************************/
 package org.eclipse.net.internal.ui;
 
@@ -20,6 +21,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.net.core.IProxyData;
 import org.eclipse.net.core.NetCore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -176,6 +179,30 @@ public class ProxyPreferencePage extends PreferencePage implements
 		password.setToolTipText(NetUIMessages.ProxyPreferencePage_27);
 		password.setEchoChar('*');
 
+    ModifyListener modifyListener = new ModifyListener()
+    {
+      public void modifyText(ModifyEvent e)
+      {
+        if( useSameProxyButton.getSelection() )
+        {
+          Entry  httpEntry    = entryList[0];
+          String httpHostname = httpEntry.hostname.getText();
+          String httpPort     = httpEntry.port.getText();
+          
+          for( int index = 1; index < entryList.length; index++ )
+          {
+            Entry entry = entryList[index];
+            
+            entry.hostname.setText( httpHostname );
+            entry.port.setText( httpPort );
+          }
+        }
+      }
+    };
+    
+    entryList[0].hostname.addModifyListener( modifyListener );
+    entryList[0].port.addModifyListener( modifyListener );
+    
 		restoreState(NetCore.getProxyManager().isProxiesEnabled());
 		applyDialogFont(composite);
 
