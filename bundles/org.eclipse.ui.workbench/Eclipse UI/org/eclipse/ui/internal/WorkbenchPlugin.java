@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal;
 
 import java.io.OutputStream;
-import java.util.Locale;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -62,11 +62,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleListener;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -119,6 +115,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     // The context within which this plugin was started.
     private BundleContext bundleContext;
 
+    // The set of currently starting bundles
+    private Collection startingBundles = new HashSet();
+
     /**
      * Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
      * All other plugins, examples, or test cases must *not* use this flag.
@@ -158,6 +157,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     private IntroRegistry introRegistry;
     
     private WorkbenchOperationSupport operationSupport;
+	private BundleListener bundleListener;
         
     
     /**
@@ -844,6 +844,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start(BundleContext context) throws Exception {
+    	context.addBundleListener(getBundleListener());
         super.start(context);
         bundleContext = context;
         
@@ -872,6 +873,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		 */
 
     }
+
 	/**
      * Get the default orientation from the command line
      * arguments. If there are no arguments imply the 
@@ -1058,6 +1060,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
+    	if (bundleListener!=null) {
+    		context.removeBundleListener(bundleListener);
+    		bundleListener = null;
+    	}
+    	// TODO normally super.stop(*) would be the last statement in this
+    	// method
         super.stop(context);
         if (workingSetManager != null) {
         	workingSetManager.dispose();
@@ -1152,6 +1160,44 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @return
+	 */
+	private BundleListener getBundleListener() {
+		if (bundleListener == null) {
+			bundleListener = new SynchronousBundleListener() {
+				public void bundleChanged(BundleEvent event) {
+					WorkbenchPlugin.this.bundleChanged(event);
+				}
+			};
+		}
+		return bundleListener;
+	}
+
+	private void bundleChanged(BundleEvent event) {
+		// a bundle in the STARTING state generates 2 events, LAZY_ACTIVATION
+		// when it enters STARTING and STARTING when it exists STARTING :-)
+		synchronized (startingBundles) {
+			switch (event.getType()) {
+				case BundleEvent.STARTING :
+					startingBundles.add(event.getBundle());
+					break;
+				case BundleEvent.STARTED :
+				case BundleEvent.STOPPED :
+					startingBundles.remove(event.getBundle());
+					break;
+				default :
+					break;
+			}
+		}
+	}
+
+	public boolean isStarting(Bundle bundle) {
+		synchronized (startingBundles) {
+			return startingBundles.contains(bundle);
+		}
 	}
 	
 }
