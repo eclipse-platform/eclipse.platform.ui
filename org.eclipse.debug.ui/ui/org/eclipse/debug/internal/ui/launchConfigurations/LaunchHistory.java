@@ -398,5 +398,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			}
 			checkFavorites(newConfig);
 		}
+		fireLaunchHistoryChanged();
 	}
 }
