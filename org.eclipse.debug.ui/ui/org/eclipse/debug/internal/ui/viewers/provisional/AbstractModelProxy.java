@@ -73,7 +73,8 @@ public abstract class AbstractModelProxy implements IModelProxy {
 	 * 
 	 * @param delta model delta to broadcast
 	 */
-	public void fireModelChanged(final IModelDelta delta) {
+	public void fireModelChanged(IModelDelta delta) {
+		final IModelDelta root = getRootDelta(delta);
 		Object[] listeners = getListeners();
 		if (DEBUG_DELTAS) {
 			DebugUIPlugin.debug("FIRE DELTA: " + delta.toString()); //$NON-NLS-1$
@@ -86,12 +87,27 @@ public abstract class AbstractModelProxy implements IModelProxy {
 				}
 
 				public void run() throws Exception {
-					listener.modelChanged(delta, AbstractModelProxy.this);
+					listener.modelChanged(root, AbstractModelProxy.this);
 				}
 
 			};
             SafeRunner.run(safeRunnable);
 		}
+	}
+	
+	/**
+	 * Returns the root node of the given delta.
+	 * 
+	 * @param delta delta node
+	 * @return returns the root of the given delta
+	 */
+	protected IModelDelta getRootDelta(IModelDelta delta) {
+		IModelDelta parent = delta.getParentDelta();
+		while (parent != null) {
+			delta = parent;
+			parent = delta.getParentDelta();
+		}
+		return delta;
 	}
 
 	/* (non-Javadoc)
