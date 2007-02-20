@@ -45,7 +45,7 @@ import org.osgi.framework.Bundle;
  * Special processing has been added for linked folders and their childen so
  * that their CVS meta files are never read or written.
  * 
- * IMPORTANT NOTICE: It is the reponsibility of the clients of EclipseSynchronizer
+ * IMPORTANT NOTICE: It is the responsibility of the clients of EclipseSynchronizer
  * to ensure that they have wrapped operations that may modify the workspace in
  * an IWorkspaceRunnable. If this is not done, deltas may fore at inopertune times 
  * and corrupt the sync info. The wrapping could be done within the synchronizer 
@@ -87,7 +87,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 	}
 	
 	public SyncInfoCache getSyncInfoCacheFor(IResource resource) {
-		if (resource.exists()) {
+		if (resource.exists()  && resource.isLocal(IResource.DEPTH_ZERO)) {
 			return sessionPropertyCache;
 		} else {
 			return synchronizerCache;
