@@ -71,7 +71,7 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 		}
 		setTitle(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_0, new String[] {modename}));
 		setAddCancelButton(true);
-		setMessage(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_1, new String[] {fMode, fResource.getName()}));
+		setMessage(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_1, new String[] {modename.toLowerCase(), fResource.getName()}));
 		setLabelProvider(new DefaultLabelProvider());
 		setContentProvider(new ArrayContentProvider());
 	}
