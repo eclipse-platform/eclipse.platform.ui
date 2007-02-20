@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -54,8 +57,13 @@ public class FileBuffersPlugin extends Plugin {
 	 * @return the text file buffer manager of this plug-in
 	 */
 	public synchronized ITextFileBufferManager getFileBufferManager()  {
-		if (fTextFileBufferManager == null)
-			fTextFileBufferManager= new TextFileBufferManager();
+		if (fTextFileBufferManager == null) {
+			Bundle resourcesBundle= Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+			if (resourcesBundle != null)
+				fTextFileBufferManager= new ResourceTextFileBufferManager();
+			else
+				fTextFileBufferManager= new TextFileBufferManager();
+		}
 		return fTextFileBufferManager;
 	}
 }

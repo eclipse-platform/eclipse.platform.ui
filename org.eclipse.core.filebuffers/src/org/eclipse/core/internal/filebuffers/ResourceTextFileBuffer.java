@@ -129,7 +129,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	private final Object fAnnotationModelCreationLock= new Object();
 
 
-	public ResourceTextFileBuffer(TextFileBufferManager manager) {
+	public ResourceTextFileBuffer(ResourceTextFileBufferManager manager) {
 		super(manager);
 	}
 

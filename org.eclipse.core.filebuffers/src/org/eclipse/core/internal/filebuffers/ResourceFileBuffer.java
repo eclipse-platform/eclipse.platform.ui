@@ -38,6 +38,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 
+import org.eclipse.jface.text.IDocumentExtension4;
+
 
 public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
@@ -196,11 +198,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	/** The file synchronizer. */
 	protected FileSynchronizer fFileSynchronizer;
 	/** The modification stamp at which this buffer synchronized with the underlying file. */
-	protected long fSynchronizationStamp= IResource.NULL_STAMP;
+	protected long fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
-	protected TextFileBufferManager fManager;
+	protected ResourceTextFileBufferManager fManager;
 	/**
 	 * This buffer's URI.
 	 * @since 3.3
@@ -208,7 +210,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	private URI fURI;
 
 
-	public ResourceFileBuffer(TextFileBufferManager manager) {
+	public ResourceFileBuffer(ResourceTextFileBufferManager manager) {
 		super();
 		fManager= manager;
 	}
@@ -502,7 +504,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 		if (fSynchronizationStamp == fFile.getModificationStamp() && fFile.isSynchronized(IResource.DEPTH_ZERO))
 			return true;
 		
-		fSynchronizationStamp= IResource.NULL_STAMP;
+		fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 		return false;
 	}
 
@@ -512,14 +514,14 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public long getModificationStamp() {
 		try {
 			if (fURI == null)
-				return IResource.NULL_STAMP;
+				return IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 			IFileInfo info= EFS.getStore(fURI).fetchInfo();
 			if (info.exists())
 				return info.getLastModified();
 		} catch (CoreException e) {
 			//fall through below and return null stamp
 		}
-		return IResource.NULL_STAMP;
+		return IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	}
 
 	/*
