@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
@@ -267,7 +268,7 @@ public class SizeCache {
 
             // Else we can't find an existing size in the cache, so recompute
             // it from scratch.
-            Point newHeight = controlComputeSize(widthHint, heightHint);
+            Point newHeight = controlComputeSize(widthHint - widthAdjustment, SWT.DEFAULT);
 
             cachedHeightQuery = heightHint;
             cachedHeightResult = newHeight.y;
@@ -290,7 +291,7 @@ public class SizeCache {
                 return new Point(cachedWidthResult, heightHint + heightAdjustment);
             }
 
-            Point widthResult = controlComputeSize(widthHint, heightHint);
+            Point widthResult = controlComputeSize(SWT.DEFAULT, heightHint - heightAdjustment);
 
             cachedWidthQuery = heightHint;
             cachedWidthResult = widthResult.x;
@@ -372,10 +373,10 @@ public class SizeCache {
      * @param control
      */
     private void computeHintOffset(Control control) {
-        if (control instanceof Composite) {
-            // For composites, subtract off the trim size
-            Composite composite = (Composite) control;
-            Rectangle trim = composite.computeTrim(0, 0, 0, 0);
+        if (control instanceof Scrollable) {
+            // For scrollables, subtract off the trim size
+            Scrollable scrollable = (Scrollable) control;
+            Rectangle trim = scrollable.computeTrim(0, 0, 0, 0);
 
             widthAdjustment = trim.width;
             heightAdjustment = trim.height;
