@@ -43,8 +43,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
-import org.eclipse.core.resources.IResourceStatus;
-
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -625,7 +623,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 */
 	private void checkSynchronizationState() throws CoreException {
 		if (!isSynchronized()) {
-			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IResourceStatus.OUT_OF_SYNC_LOCAL, FileBuffersMessages.FileBuffer_error_outOfSync, null);
+			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 274 /* IResourceStatus.OUT_OF_SYNC_LOCAL */, FileBuffersMessages.FileBuffer_error_outOfSync, null);
 			throw new CoreException(status);
 		}
 	}

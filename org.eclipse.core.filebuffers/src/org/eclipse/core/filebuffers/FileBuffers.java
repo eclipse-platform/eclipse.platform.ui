@@ -30,6 +30,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
  * Facade for the file buffers plug-in. Provides access to the text file buffer
  * manager and helper methods for location handling. This facade is available
  * independent from the activation status of the file buffers plug-in.
+ * <p>
+ * This class must not be used by clients that do not want to require
+ * <code>org.eclipse.core.resources</code>. Use <code>ITextFileBufferManager.DEFAULT</code>
+ * to get the default text file buffer manager.
+ * </p>
  *
  * @since 3.0
  */
@@ -53,6 +58,12 @@ public final class FileBuffers {
 	 * Returns the text file buffer manager. May return <code>null</code> if
 	 * the file buffers plug-in may no be activated. This is, for example, the
 	 * case when the method is called on plug-in shutdown.
+	 * <p>
+	 * Use <code>ITextFileBufferManager.DEFAULT</code> to get the default text
+	 * file buffer manager if you do not want to depend on
+	 * <code>org.eclipse.core.resources</code>.
+
+	 * </p>
 	 *
 	 * @return the text file buffer manager or <code>null</code>
 	 */

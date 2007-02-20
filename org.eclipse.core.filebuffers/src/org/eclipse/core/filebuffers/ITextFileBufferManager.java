@@ -11,6 +11,8 @@
 package org.eclipse.core.filebuffers;
 
 
+import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.jface.text.IDocument;
@@ -27,6 +29,12 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * @since 3.0
  */
 public interface ITextFileBufferManager extends IFileBufferManager {
+	
+	/**
+	 * The default text file buffer manager.
+	 * @since 3.3
+	 */
+	ITextFileBufferManager DEFAULT= FileBuffersPlugin.getDefault().getFileBufferManager();
 
 	/**
 	 * Returns the text file buffer managed for the file at the given location

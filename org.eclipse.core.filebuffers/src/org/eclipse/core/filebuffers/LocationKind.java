@@ -12,7 +12,6 @@ package org.eclipse.core.filebuffers;
 
 import org.eclipse.core.runtime.IPath;
 
-import org.eclipse.core.resources.IFile;
 
 
 /**
@@ -32,7 +31,7 @@ public final class LocationKind {
 	 * The corresponding argument is the full path
 	 * of an {@link org.eclipse.core.resources.IFile}.
 	 * 
-	 * @see IFile#getFullPath()
+	 * @see org.eclipse.core.resources.IFile#getFullPath()
 	 * @since 3.3
 	 */
 	public static final LocationKind IFILE= new LocationKind("IFile"); //$NON-NLS-1$
