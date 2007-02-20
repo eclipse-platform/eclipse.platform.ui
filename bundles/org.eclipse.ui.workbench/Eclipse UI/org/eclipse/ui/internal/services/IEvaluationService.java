@@ -23,7 +23,13 @@ import org.eclipse.ui.services.IServiceWithSources;
  * @since 3.3
  */
 public interface IEvaluationService extends IServiceWithSources {
-	public static final String RESULT = "org.eclipse.ui.result"; //$NON-NLS-1$
+	public static final String RESULT = "org.eclipse.ui.services.result"; //$NON-NLS-1$
+	public static final String PROP_NOTIFYING = "org.eclipse.ui.services.notifying"; //$NON-NLS-1$
+
+
+	public void addServiceListener(IPropertyChangeListener listener);
+
+	public void removeServiceListener(IPropertyChangeListener listener);
 
 	public IEvaluationReference addEvaluationListener(Expression expression,
 			IPropertyChangeListener listener, String property);

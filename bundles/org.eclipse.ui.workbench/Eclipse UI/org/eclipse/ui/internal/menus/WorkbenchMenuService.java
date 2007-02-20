@@ -13,9 +13,11 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -67,6 +69,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	 */
 	private IEvaluationService evaluationService;
 
+	private IPropertyChangeListener serviceListener;
+
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
@@ -74,6 +78,37 @@ public final class WorkbenchMenuService implements IMenuService {
 	public WorkbenchMenuService(IEvaluationService evalService) {
 		this.menuPersistence = new MenuPersistence(this);
 		evaluationService = evalService;
+		evaluationService.addServiceListener(getServiceListener());
+	}
+
+	/**
+	 * @return
+	 */
+	private IPropertyChangeListener getServiceListener() {
+		if (serviceListener == null) {
+			serviceListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (event.getProperty().equals(
+							IEvaluationService.PROP_NOTIFYING)) {
+						if (!((Boolean) event.getNewValue()).booleanValue()) {
+							// if it's false, the evaluation service has
+							// finished
+							// with its latest round of updates
+							updateMenus();
+						}
+					}
+				}
+			};
+		}
+		return serviceListener;
+	}
+
+	private void updateMenus() {
+		Object[] managers = managersAwaitingUpdates.toArray();
+		managersAwaitingUpdates.clear();
+		for (int i = 0; i < managers.length; i++) {
+			((IContributionManager) managers[i]).update(false);
+		}
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -88,6 +123,11 @@ public final class WorkbenchMenuService implements IMenuService {
 			evaluationService.removeEvaluationListener(ref);
 		}
 		evaluationsByItem.clear();
+		managersAwaitingUpdates.clear();
+		if (serviceListener != null) {
+			evaluationService.removeServiceListener(serviceListener);
+			serviceListener = null;
+		}
 	}
 
 	public final void readRegistry() {
@@ -110,6 +150,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	private Map cacheTracker = new HashMap();
 
 	private Map evaluationsByItem = new HashMap();
+
+	private Set managersAwaitingUpdates = new HashSet();
 
 	/**
 	 * Construct an 'id' string from the given URI. The resulting 'id' is the
@@ -427,6 +469,7 @@ public final class WorkbenchMenuService implements IMenuService {
 								.getParent();
 						if (parent != null) {
 							parent.markDirty();
+							managersAwaitingUpdates.add(parent);
 						}
 					}
 				}

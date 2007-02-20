@@ -22,6 +22,7 @@ import org.eclipse.ui.ISourceProvider;
  */
 public final class EvaluationService implements IEvaluationService {
 	private EvaluationAuthority evaluationAuthority;
+	
 
 	public EvaluationService() {
 		evaluationAuthority = new EvaluationAuthority();
@@ -81,5 +82,19 @@ public final class EvaluationService implements IEvaluationService {
 	 */
 	public IEvaluationContext getCurrentState() {
 		return evaluationAuthority.getCurrentState();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.services.IEvaluationService#addServiceListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void addServiceListener(IPropertyChangeListener listener) {
+		evaluationAuthority.addServiceListener(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.services.IEvaluationService#removeServiceListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void removeServiceListener(IPropertyChangeListener listener) {
+		evaluationAuthority.removeServiceListener(listener);
 	}
 }
