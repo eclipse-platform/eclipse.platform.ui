@@ -16,7 +16,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -196,26 +195,6 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	 */
 	public void resetStateValidation() {
 		// nop
-	}
-
-	/**
-	 * Sends out the notification that the file serving as document input has been moved.
-	 *
-	 * @param newLocation the path of the new location of the file
-	 */
-	protected void handleFileMoved(IPath newLocation) {
-		fManager.fireUnderlyingFileMoved(this, newLocation);
-	}
-
-	/**
-	 * Defines the standard procedure to handle <code>CoreExceptions</code>. Exceptions
-	 * are written to the plug-in log.
-	 *
-	 * @param exception the exception to be logged
-	 */
-	protected void handleCoreException(CoreException exception) {
-		ILog log= FileBuffersPlugin.getDefault().getLog();
-		log.log(exception.getStatus());
 	}
 
 	/*
