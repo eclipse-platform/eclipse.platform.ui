@@ -170,8 +170,7 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// ensure only the new project is visible
 		project = root.getProject(getProjectName());
-		if (project.exists())
-			project.delete(true, null);
+
 		IProject[] projects = root.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			projects[i].delete(true, null);

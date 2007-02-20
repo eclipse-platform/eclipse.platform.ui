@@ -24,6 +24,11 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 public class UIFilteredResourcesSelectionDialogAuto extends
 		UIAbstractFilteredResourcesSelectionDialog {
 
+	/**
+	 * Checks if content provider displays expected resources from the history.
+	 * 
+	 * @throws Exception
+	 */
 	public void testReadHistory() throws Exception {
 
 		final MockedFilteredResourcesSelectionDialog dialog = createDialog();
@@ -41,7 +46,7 @@ public class UIFilteredResourcesSelectionDialogAuto extends
 
 		closeDialog(dialog);
 	}
-
+	
 	private static MockedFilteredResourcesSelectionDialog createDialog() {
 		final IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
