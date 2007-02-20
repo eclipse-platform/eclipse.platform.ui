@@ -476,9 +476,9 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @since 3.0
 	 */
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
-		int length= e.getText() == null ? 0 : e.getText().length();
 
 		if (fDamagers == null || fDamagers.isEmpty()) {
+			int length= e.getText() == null ? 0 : e.getText().length();
 			length= Math.max(e.getLength(), length);
 			length= Math.min(e.getDocument().getLength() - e.getOffset(), length);
 			return new Region(e.getOffset(), length);
@@ -487,7 +487,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		IRegion damage= null;
 
 		try {
-			int offset= Math.max(0, e.getOffset() - (e.getLength() - length) - 1);
+			int offset= Math.max(0, e.getOffset() - 1);
 			ITypedRegion partition= getPartition(e.getDocument(), offset);
 			IPresentationDamager damager= getDamager(partition.getType());
 			if (damager == null)
