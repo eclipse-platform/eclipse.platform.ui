@@ -363,7 +363,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * If this method is called on a job that reschedules itself from within the 
 	 * <tt>run</tt> method, the join will return at the end of the first execution.
 	 * In other words, join will return the first time this job exits the
-	 * <tt>RUNNING</tt> state, or as soon as this job enters the <tt>NONE</tt> state.
+	 * {@link #RUNNING} state, or as soon as this job enters the {@link #NONE} state.
 	 * </p>
 	 * <p>
 	 * If this method is called while the job manager is suspended, this job
@@ -400,8 +400,8 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * The provided monitor can be used to report progress and respond to 
 	 * cancellation.  If the progress monitor has been canceled, the job
 	 * should finish its execution at the earliest convenience and return a result
-	 * status of severity <code>IStatus.CANCEL</code>.  The singleton
-	 * cancel status <code>Status.CANCEL_STATUS</code> can be used for
+	 * status of severity {@link IStatus#CANCEL}.  The singleton
+	 * cancel status {@link Status#CANCEL_STATUS} can be used for
 	 * this purpose.  The monitor is only valid for the duration of the invocation
 	 * of this method.
 	 * <p>
@@ -409,7 +409,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <code>schedule</code>, which will in turn cause this method to be called.
 	 * <p>
 	 * Jobs can optionally finish their execution asynchronously (in another thread) by 
-	 * returning a result status of <code>Job.ASYNC_FINISH</code>.  Jobs that finish
+	 * returning a result status of {@link #ASYNC_FINISH}.  Jobs that finish
 	 * asynchronously <b>must</b> specify the execution thread by calling
 	 * <code>setThread</code>, and must indicate when they are finished by calling
 	 * the method <code>done</code>.
@@ -462,9 +462,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Changes the name of this job.  The job name is a human-readable
-	 * value that is displayed to users.  The name does not need to be unique, but it
-	 * must not be <code>null</code>.
+	 * Changes the name of this job.  If the job is currently running, waiting,
+	 * or sleeping, the new job name may not take effect until the next time the 
+	 * job is scheduled.  
+	 * <p>
+	 * The job name is a human-readable value that is displayed to users.  The name 
+	 * does not need to be unique, but it must not be <code>null</code>.
 	 * 
 	 * @param name the name of the job.
 	 */
@@ -499,7 +502,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see IJobManager#createProgressGroup()
 	 * @param group The progress group to use for this job
 	 * @param ticks the number of work ticks allocated from the
-	 *    parent monitor, or IProgressMonitor.UNKNOWN
+	 *    parent monitor, or {@link IProgressMonitor#UNKNOWN}
 	 */
 	public final void setProgressGroup(IProgressMonitor group, int ticks) {
 		super.setProgressGroup(group, ticks);
@@ -572,7 +575,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * Sets the thread that this job is currently running in, or <code>null</code>
 	 * if this job is not running or the thread is unknown.
 	 * <p>
-	 * Jobs that use the <code>Job.ASYNC_FINISH</code> return code should tell 
+	 * Jobs that use the {@link #ASYNC_FINISH} return code should tell 
 	 * the job what thread it is running in.  This is used to prevent deadlocks.
 	 * 
 	 * @param thread the thread that this job is running in.
@@ -627,7 +630,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 
 	/**
 	 * Requests that this job be suspended.  If the job is currently waiting to be run, it 
-	 * will be removed from the queue move into the <code>SLEEPING</code> state.
+	 * will be removed from the queue move into the {@link #SLEEPING} state.
 	 * The job will remain asleep until either resumed or canceled.  If this job is not
 	 * currently waiting to be run, this method has no effect.
 	 * <p>
@@ -642,7 +645,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Puts this job immediately into the <code>WAITING</code> state so that it is 
+	 * Puts this job immediately into the {@link #WAITING} state so that it is 
 	 * eligible for immediate execution. If this job is not currently sleeping, 
 	 * the request is ignored.
 	 * <p>
@@ -656,7 +659,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Puts this job back into the <code>WAITING</code> state after
+	 * Puts this job back into the {@link #WAITING} state after
 	 * the specified delay. This is equivalent to canceling the sleeping job and
 	 * rescheduling with the given delay.  If this job is not currently sleeping, 
 	 * the request  is ignored.
