@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +57,8 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+
+import com.ibm.icu.text.MessageFormat;
 
 
 public class AntLaunchShortcut implements ILaunchShortcut {
@@ -142,8 +143,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		IEditorPart editor= page.getActiveEditor();
 		if (editor != null) {
 		    IEditorInput editorInput= editor.getEditorInput();
-		    if (editorInput instanceof ILocationProvider) {
-		        filePath= ((ILocationProvider)editorInput).getPath(editorInput);
+		    ILocationProvider locationProvider= (ILocationProvider)editorInput.getAdapter(ILocationProvider.class);
+		    if (locationProvider != null) {
+		        filePath= locationProvider.getPath(editorInput);
 		    }
 		}
 		return filePath;
@@ -517,8 +519,9 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			launch(file, mode);
 			return;
 		}
-		if (input instanceof ILocationProvider) {
-			IPath filePath= ((ILocationProvider)input).getPath(input);
+	    ILocationProvider locationProvider= (ILocationProvider)input.getAdapter(ILocationProvider.class);
+	    if (locationProvider != null) {
+			IPath filePath= locationProvider.getPath(input);
 			if ("xml".equals(filePath.getFileExtension())) { //$NON-NLS-1$
 				launch(filePath, mode, null);
 				return;

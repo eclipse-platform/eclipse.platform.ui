@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,12 @@ public class LocationProvider {
 	}
 
 	public IPath getLocation() {
-		if(fEditorInput instanceof IFileEditorInput) {
+		if (fEditorInput instanceof IFileEditorInput) {
 			return ((IFileEditorInput)fEditorInput).getFile().getLocation();
-		} else if (fEditorInput instanceof ILocationProvider) {
-			return ((ILocationProvider)fEditorInput).getPath(fEditorInput);
+		}
+		ILocationProvider locationProvider= (ILocationProvider)fEditorInput.getAdapter(ILocationProvider.class);
+		if (locationProvider != null) {
+			return locationProvider.getPath(fEditorInput);
 		}
 		return null;
 	}
