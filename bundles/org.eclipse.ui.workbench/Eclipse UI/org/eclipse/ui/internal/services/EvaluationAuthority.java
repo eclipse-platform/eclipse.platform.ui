@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -156,7 +155,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	private void startSourceChange(final String[] sourceNames) {
 		if (Policy.DEBUG_SOURCES) {
 			Tracing.printTrace(COMPONENT, "start source changed: " //$NON-NLS-1$
-					+ Arrays.toString(sourceNames));
+					+ Arrays.asList(sourceNames));
 		}
 		notifying++;
 		if (notifying == 1) {
@@ -171,7 +170,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	private void endSourceChange(final String[] sourceNames) {
 		if (Policy.DEBUG_SOURCES) {
 			Tracing.printTrace(COMPONENT, "end source changed: " //$NON-NLS-1$
-					+ Arrays.toString(sourceNames));
+					+ Arrays.asList(sourceNames));
 		}
 		if (notifying == 1) {
 			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(true), new Boolean(
