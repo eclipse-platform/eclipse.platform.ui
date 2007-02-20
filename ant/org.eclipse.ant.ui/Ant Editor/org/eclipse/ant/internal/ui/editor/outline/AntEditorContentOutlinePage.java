@@ -428,7 +428,10 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	
 	private void addOpenWithMenu(IMenuManager menuManager) {
 		AntElementNode element= getSelectedNode();
-		IFile file = element.getIFile();
+		IFile file = null;
+		if (element != null) {
+			file = element.getIFile();
+		}
 		if (file != null) {
 			menuManager.add(new Separator("group.open")); //$NON-NLS-1$
 			IMenuManager submenu= new MenuManager(AntOutlineMessages.AntEditorContentOutlinePage_Open_With_1);
@@ -483,7 +486,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		IFile file= null;
 		if (fModel != null) {
 			AntElementNode node= getSelectedNode();
-			file= node.getIFile();
+			if (node != null) {
+				file= node.getIFile();
+			}
 		}
 		if (file != null) {
 			ISelection selection= new StructuredSelection(file);
