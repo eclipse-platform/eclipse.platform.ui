@@ -161,7 +161,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		fFieldEditors = new ArrayList();
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		//filtering options
-		Group group = createGroupComposite(comp, DebugPreferencesMessages.LaunchingPreferencePage_32);
+		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_32, 1, 1, GridData.FILL_HORIZONTAL);
 		Composite spacer = SWTFactory.createComposite(group, group.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		FieldEditor edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED, DebugPreferencesMessages.LaunchingPreferencePage_33, SWT.NONE, spacer);
 		fFieldEditors.add(edit);
@@ -171,8 +171,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		fFieldEditors.add(edit);
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_2, 3,  
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER},
-				 {DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}}, 
+				 {DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER}}, 
 				 comp,
 				 true);
 		fFieldEditors.add(edit);
@@ -181,7 +180,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		createTypeFiltering(group);
 		
 		//migration
-		group = createGroupComposite(comp, DebugPreferencesMessages.LaunchingPreferencePage_35);
+		group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_35, 1, 1, GridData.FILL_HORIZONTAL);
 		Label label = new Label(group, SWT.LEFT | SWT.WRAP);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 350;
@@ -252,25 +251,6 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		tviewer.setInput(getLaunchConfigurationTypes());
 		fTable.setFont(parent.getFont());
 		return comp;
-	}
-	
-	/**
-	 * Creates a standard grouping for this pref page
-	 * @param parent the parent to add the group to
-	 * @param title text the test for the group
-	 * @return the new group
-	 * @since 3.2
-	 */
-	private Group createGroupComposite(Composite parent, String text) {
-		Group group = new Group(parent, SWT.NONE);
-		group.setLayout(new GridLayout());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalIndent = 0;
-		gd.verticalIndent = 0;
-		group.setLayoutData(gd);
-		group.setText(text);
-		group.setFont(parent.getFont());
-		return group;
 	}
 	
 	/**

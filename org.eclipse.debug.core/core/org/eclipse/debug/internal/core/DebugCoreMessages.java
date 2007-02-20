@@ -41,7 +41,6 @@ public class DebugCoreMessages extends NLS {
 
 	public static String LaunchConfigurationInfo_35;
 
-	public static String LaunchConfigurationType_6;
 
 	public static String LaunchConfigurationType_7;
 
@@ -52,8 +51,6 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchDelegate_2;
 
 	public static String LaunchManager_29;
-
-	public static String LaunchOption_0;
 	public static String SystemPropertyResolver_0;	
 	public static String InputStreamMonitor_label;
 	public static String Launch_terminate_failed;
@@ -93,8 +90,6 @@ public class DebugCoreMessages extends NLS {
 	public static String RuntimeProcess_terminate_failed;
 	public static String RuntimeProcess_Exit_value_not_available_until_process_terminates__1;
 	public static String LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1;
-	public static String LaunchConfigurationType_9;
-	public static String LaunchConfigurationType_10;
 	public static String WatchExpression_0;
 	public static String NullStreamsProxy_0;
 

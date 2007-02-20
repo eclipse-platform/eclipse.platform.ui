@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -22,9 +23,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.ui.model.AdaptableList;
 
 /**
  * Provides a status handler to prompt the user to delete any launch configurations
@@ -41,32 +40,23 @@ public class DeleteLaunchConfigurationStatusHandler implements IStatusHandler {
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
 		String pref = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE);
-		if(source instanceof IProject[]) {
-			IProject[] projects = (IProject[])source;
-			ArrayList configs =  new ArrayList();
-			ArrayList elements = null;
-			HashMap map = new HashMap();
-			for (int i = 0; i < projects.length; i++) {
-				elements = collectAssociatedLaunches(projects[i]);
-				if(!elements.isEmpty()) {
-					map.put(projects[i], elements);
-					configs.addAll(elements);
-				}
-			}
-			if(configs.size() > 0) {
-				if(pref.equals(MessageDialogWithToggle.PROMPT)) {
-					DeleteAssociatedLaunchConfigurationsDialog lsd = new DeleteAssociatedLaunchConfigurationsDialog(DebugUIPlugin.getShell(),
-							new AdaptableList(configs),
-							LaunchConfigurationsMessages.DeleteLaunchConfigurations_0, 
-							map);
-					lsd.setInitialSelections(configs.toArray());
-					lsd.setTitle(LaunchConfigurationsMessages.DeleteLaunchConfigurations_1);
-					if(lsd.open() == IDialogConstants.OK_ID) {
-						doDelete(lsd.getResult());
+		if(pref.equals(MessageDialogWithToggle.ALWAYS)) {
+			if(source instanceof IProject[]) {
+				IProject[] projects = (IProject[])source;
+				ArrayList configs =  new ArrayList();
+				ArrayList elements = null;
+				HashMap map = new HashMap();
+				for (int i = 0; i < projects.length; i++) {
+					elements = collectAssociatedLaunches(projects[i]);
+					if(!elements.isEmpty()) {
+						map.put(projects[i], elements);
+						configs.addAll(elements);
 					}
 				}
-				else if(pref.equals(MessageDialogWithToggle.ALWAYS)){
-					doDelete(configs.toArray());
+				if(configs.size() > 0) {
+					for(Iterator iter = configs.iterator(); iter.hasNext();) {
+						((ILaunchConfiguration)iter.next()).delete();
+					}
 				}
 			}
 		}
@@ -104,20 +94,4 @@ public class DeleteLaunchConfigurationStatusHandler implements IStatusHandler {
         }
 		return list;
 	}
-	
-	/**
-	 * Actually performs the deletion of the launch configurations.
-	 * @param launches the launch configurations to delete
-	 */
-	private void doDelete(Object[] launches) {
-		try {
-			for(int i = 0; i < launches.length; i++) {
-				((ILaunchConfiguration)launches[i]).delete();
-			}
-		}
-		catch (CoreException e) {
-            DebugUIPlugin.log(e);
-		}
-	}
-	
 }

@@ -44,15 +44,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CompileErrorPromptStatusHandler_0;
 	public static String CompileErrorPromptStatusHandler_1;
 	public static String CompileErrorPromptStatusHandler_2;
-
-	public static String DeleteAssociatedLaunchConfigurationsDialog_0;
-
-	public static String DeleteAssociatedLaunchConfigurationsDialog_1;
-
-	public static String DeleteAssociatedLaunchConfigurationsDialog_2;
-
-	public static String DeleteAssociatedLaunchConfigurationsDialog_3;
-
 	public static String EnvironmentTab_22;
 
 	public static String LaunchConfigurationDialog__Apply_17;
@@ -192,8 +183,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_1;
 	public static String LaunchConfigurationsDialog_4;
 	public static String LaunchConfigurationsDialog_5;
-	public static String DeleteLaunchConfigurations_0;
-	public static String DeleteLaunchConfigurations_1;
 	public static String FilterLaunchConfigurationAction_0;
 	
 
