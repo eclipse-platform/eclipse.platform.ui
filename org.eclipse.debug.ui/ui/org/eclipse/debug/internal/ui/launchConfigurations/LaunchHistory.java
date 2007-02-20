@@ -175,7 +175,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			ILaunchConfiguration config = null;
 			for(Iterator iter = fCompleteHistory.iterator(); iter.hasNext();) {
 				config = (ILaunchConfiguration) iter.next();
-				if(!fFavorites.contains(config) && 
+				if(config.exists() && !fFavorites.contains(config) && 
 						DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
 						!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
 					history.add(config);
@@ -204,7 +204,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			ILaunchConfiguration config = null;
 			for(Iterator iter = fCompleteHistory.iterator(); iter.hasNext();){
 				config = (ILaunchConfiguration) iter.next();
-				if(DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
+				if(config.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
 				!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
 					history.add(config);
 				}
