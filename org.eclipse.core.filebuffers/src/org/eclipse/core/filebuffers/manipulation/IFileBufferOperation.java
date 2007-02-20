@@ -19,8 +19,9 @@ import org.eclipse.core.filebuffers.IFileBuffer;
 /**
  * A file buffer operation performs changes of the contents of a file buffer.
  * <p>
- * File buffer operations are executed by a
- * {@link org.eclipse.core.filebuffers.manipulation.FileBufferOperationRunner}.
+ * File buffer operations can be executed by a
+ * {@link org.eclipse.core.filebuffers.manipulation.FileBufferOperationRunner} or
+ * a {@link org.eclipse.core.filebuffers.manipulation.GenericFileBufferOperationRunner}.
  * The operation runner takes care of all aspects that are common to file buffer
  * manipulation such as creating file buffers, state validation, committing file
  * buffers, etc. Thus, the purpose of <code>IFileBufferOperation</code> is
