@@ -91,7 +91,7 @@ public class DeleteLaunchConfigurationStatusHandler implements IStatusHandler {
 					resources = configs[i].getMappedResources();
 					if(resources != null) {
 						for(int j = 0; j < resources.length; j++){
-							if(resources[j].equals(project)) {
+							if(resources[j].equals(project) || project.getFullPath().isPrefixOf(resources[j].getFullPath())) {
 								list.add(configs[i]);
 							}
 						}

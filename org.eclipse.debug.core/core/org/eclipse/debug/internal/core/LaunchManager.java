@@ -114,12 +114,6 @@ import com.ibm.icu.text.MessageFormat;
  *
  * @see ILaunchManager
  */
-/**
- * LaunchManager
- */
-/**
- * 
- */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
 	protected static final String PREF_PREFERRED_DELEGATES = DebugPlugin.getUniqueIdentifier() + ".PREFERRED_DELEGATES"; //$NON-NLS-1$
@@ -612,7 +606,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	private HashMap fLaunchDelegates = null;
 	
 	/**
-	 * Initial startup cache of preferred delegate so that the debug prefs are only parsed once
+	 * Initial startup cache of preferred delegate so that the debug preferences are only parsed once
 	 * 
 	 * @since 3.3
 	 * 
@@ -781,7 +775,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					file.deleteOnExit(); // if delete() fails try again on VM close
 				}
 				for (Enumeration enumeration = p.keys(); enumeration.hasMoreElements();) {
-					// Win32's environment vars are case insensitive. Put everything
+					// Win32's environment variables are case insensitive. Put everything
 					// to uppercase so that (for example) the "PATH" variable will match
 					// "pAtH" correctly on Windows.
 					String key= (String) enumeration.nextElement();
@@ -1239,7 +1233,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
                     // If an exact match is found, just replace the value
                     env.put(key, value);
                 } else {
-                    // Win32 vars are case-insensitive. If an exact match isn't found, iterate to
+                    // Win32 variables are case-insensitive. If an exact match isn't found, iterate to
                     // check for a case-insensitive match. We maintain the key's case (see bug 86725),
                     // but do a case-insensitive comparison (for example, "pAtH" will still override "PATH").
                     envIter = env.entrySet().iterator();
@@ -1537,7 +1531,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * This method is used to initialize a simple listing of all preferred delegates, which is then used by each
 	 * <code>ILaunchConfigurationType</code> to find if they have preferred delegates. Once an <code>ILaunchConfigurationType</code>
 	 * has used this listing to initialize its preferred delegates ti will maintain changes to its preferred delegate, which are 
-	 * then written back to the pref store only when the launch manager shuts down.
+	 * then written back to the preference store only when the launch manager shuts down.
 	 * 
 	 * <p>
 	 * This cache is not synchronized with the runtime preferred delegates stored in launch configuration types.

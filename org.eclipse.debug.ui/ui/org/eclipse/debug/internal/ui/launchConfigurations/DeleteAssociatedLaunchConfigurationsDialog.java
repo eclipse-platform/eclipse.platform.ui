@@ -46,7 +46,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
- * Provides a custom dialog for displaying launch configurations seperated by project
+ * Provides a custom dialog for displaying launch configurations separated by project
  * in a tree view for the user to select
  * @since 3.2
  */
@@ -97,7 +97,7 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 	}
 	
 	/**
-	 * Provides a custom viewer for the dialog whic allows us to have custom checked state handling
+	 * Provides a custom viewer for the dialog which allows us to have custom checked state handling
 	 */
 	class LCViewer extends CheckboxTreeViewer {
 

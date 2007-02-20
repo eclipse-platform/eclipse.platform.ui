@@ -156,17 +156,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * <code>null</code> if none 
 	 */
 	public ILaunchConfiguration getRecentLaunch() {
-		if(fCompleteHistory.size() < 1) {
-			return null;
-		}
-		try {
-			ILaunchConfiguration recent = (ILaunchConfiguration) fCompleteHistory.get(0);
-			if(DebugUIPlugin.doLaunchConfigurationFiltering(recent) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(recent.getType())))  {
-				return recent;
-			}
-		}
-		catch(CoreException e) {
-            DebugUIPlugin.log(e);
+		ILaunchConfiguration[] history = getCompleteLaunchHistory();
+		if(history.length > 0) {
+			return history[0];
 		}
 		return null;
 	}
@@ -178,26 +170,48 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @return launch history
 	 */
 	public ILaunchConfiguration[] getHistory() {
-		//TODO should we return the intersection of total history and favorites to maintain
-		//backwards API functionality?
-		Vector intersection = new Vector(fCompleteHistory);
-		intersection.removeAll(fFavorites);
-		//size it to the max specified history size
-		if(intersection.size() > getMaxHistorySize()) {
-			intersection.setSize(getMaxHistorySize());
+		Vector history = new Vector();
+		try {
+			ILaunchConfiguration config = null;
+			for(Iterator iter = fCompleteHistory.iterator(); iter.hasNext();) {
+				config = (ILaunchConfiguration) iter.next();
+				if(!fFavorites.contains(config) && 
+						DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
+						!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
+					history.add(config);
+				}
+			}
+			//size it to the max specified history size
+			if(history.size() > getMaxHistorySize()) {
+				history.setSize(getMaxHistorySize());
+			}
 		}
-		return (ILaunchConfiguration[]) intersection.toArray(new ILaunchConfiguration[intersection.size()]);
+		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		return (ILaunchConfiguration[]) history.toArray(new ILaunchConfiguration[history.size()]);
 	}
 	
 	/**
 	 * Returns the complete launch history in the order they were last launched, this listing includes all
-	 * entries including those from the favorites listing
+	 * entries including those from the favorites listing, but not those that have been filtered via
+	 * launch configuration filtering or capabilities filtering
 	 * @return the list of last launched <code>ILaunchConfiguration</code>s
 	 * 
 	 * @since 3.3
 	 */
 	public ILaunchConfiguration[] getCompleteLaunchHistory() {
-		return (ILaunchConfiguration[]) fCompleteHistory.toArray(new ILaunchConfiguration[fCompleteHistory.size()]);
+		Vector history = new Vector();
+		try {
+			ILaunchConfiguration config = null;
+			for(Iterator iter = fCompleteHistory.iterator(); iter.hasNext();){
+				config = (ILaunchConfiguration) iter.next();
+				if(DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
+				!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
+					history.add(config);
+				}
+			}
+		}
+		catch (CoreException ce) {DebugUIPlugin.log(ce);}
+		return (ILaunchConfiguration[]) history.toArray(new ILaunchConfiguration[history.size()]);
 	}
 	
 	/**
