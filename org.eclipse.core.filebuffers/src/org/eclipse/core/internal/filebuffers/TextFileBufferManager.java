@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -34,26 +35,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ProjectScope;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
-import org.eclipse.core.filebuffers.IStateValidationSupport;
 import org.eclipse.core.filebuffers.ISynchronizationContext;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -75,10 +63,12 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			FileBuffersPlugin.getDefault().getLog().log(status);
 		}
 	}
+	
+	protected static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
 	private Map fFilesBuffers= new HashMap();
 	private List fFileBufferListeners= new ArrayList();
-	private ExtensionsRegistry fRegistry;
+	protected ExtensionsRegistry fRegistry;
 	private ISynchronizationContext fSynchronizationContext;
 
 
@@ -100,7 +90,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void connect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		if (locationKind == LocationKind.NORMALIZE)
-			location= FileBuffers.normalizeLocation(location);
+			location= normalizeLocation(location);
 		
 		AbstractFileBuffer fileBuffer= null;
 		synchronized (fFilesBuffers) {
@@ -139,6 +129,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
 		disconnect(location, LocationKind.NORMALIZE, monitor);
 	}
+	
+	/*
+	 * @since 3.3
+	 */
+	protected IPath normalizeLocation(IPath location) {
+		return location;
+	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.IFileBufferManager.LocationKind, org.eclipse.core.runtime.IProgressMonitor)
@@ -147,7 +144,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(location);
 		if (locationKind == LocationKind.NORMALIZE)
-			location= FileBuffers.normalizeLocation(location);
+			location= normalizeLocation(location);
 
 		AbstractFileBuffer fileBuffer;
 		synchronized (fFilesBuffers) {
@@ -174,84 +171,83 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return isTextFileLocation(location, false);
 	}
 
+	/**
+	 * Returns whether a file store at the given location is or can be considered a
+	 * text file. If the file store exists, the concrete content type of the file store is
+	 * checked. If the concrete content type for the existing file store can not be
+	 * determined, this method returns <code>!strict</code>. If the file store does
+	 * not exist, it is checked whether a text content type is associated with
+	 * the given location. If no content type is associated with the location,
+	 * this method returns <code>!strict</code>.
+	 * <p>
+	 * The provided location is either a full path of a workspace resource or an
+	 * absolute path in the local file system. The file buffer manager does not
+	 * resolve the location of workspace resources in the case of linked
+	 * resources.
+	 * </p>
+	 *
+	 * @param fileStore	file store to check
+	 * @param strict	<code>true</code> if a file with unknown content type
+	 * 					is not treated as text file, <code>false</code> otherwise
+	 * @return <code>true</code> if the location is a text file location
+	 * @since 3.3
+	 */
+	protected boolean isTextFileLocation(IFileStore fileStore, boolean strict) {
+		if (fileStore == null)
+			return false;
+		
+		IContentTypeManager manager= Platform.getContentTypeManager();
+		IFileInfo fileInfo= fileStore.fetchInfo();
+		if (fileInfo.exists()) {
+			InputStream is= null;
+			try {
+				is= fileStore.openInputStream(EFS.NONE, null);
+				IContentDescription description= manager.getDescriptionFor(is, fileStore.getName(), IContentDescription.ALL);
+				if (description != null) {
+					IContentType type= description.getContentType();
+					if (type != null)
+						return type.isKindOf(TEXT_CONTENT_TYPE);
+				}
+			} catch (CoreException ex) {
+				// ignore: API specification tells return true if content type can't be determined
+			} catch (IOException ex) {
+				// ignore: API specification tells return true if content type can't be determined
+			} finally {
+				if (is != null ) {
+					try {
+						is.close();
+					} catch (IOException e) {
+						// ignore: API specification tells to return true if content type can't be determined
+					}
+				}
+			}
+
+			return !strict;
+
+		}
+
+		IContentType[] contentTypes= manager.findContentTypesFor(fileStore.getName());
+		if (contentTypes != null && contentTypes.length > 0) {
+			for (int i= 0; i < contentTypes.length; i++)
+				if (contentTypes[i].isKindOf(TEXT_CONTENT_TYPE))
+					return true;
+			return false;
+		}
+		return !strict;
+	}
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath, boolean)
 	 * @since 3.2
 	 */
 	public boolean isTextFileLocation(IPath location, boolean strict) {
 		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
-
-		IContentTypeManager manager= Platform.getContentTypeManager();
-		IContentType text= manager.getContentType(IContentTypeManager.CT_TEXT);
-
-		IFile file= FileBuffers.getWorkspaceFileAtLocation(location, true);
-		if (file != null) {
-			if (file.exists()) {
-				try {
-					IContentDescription description= file.getContentDescription();
-					if (description != null) {
-						IContentType type= description.getContentType();
-						if (type != null)
-							return type.isKindOf(text);
-					}
-				} catch (CoreException x) {
-					// ignore: API specification tells return true if content type can't be determined
-				}
-			} else {
-				IContentType[] contentTypes= manager.findContentTypesFor(file.getName());
-				if (contentTypes != null && contentTypes.length > 0) {
-					for (int i= 0; i < contentTypes.length; i++)
-						if (contentTypes[i].isKindOf(text))
-							return true;
-					return false;
-				}
-			}
-			return !strict;
+		location= normalizeLocation(location);
+		try {
+			return isTextFileLocation(EFS.getStore(URIUtil.toURI(location)), strict);
+		} catch (CoreException ex) {
+			return false;
 		}
-
-		IFileStore externalFile= FileBuffers.getFileStoreAtLocation(location);
-		if (externalFile != null) {
-			IFileInfo fileInfo= externalFile.fetchInfo();
-			if (fileInfo.exists()) {
-				InputStream is= null;
-				try {
-					is= externalFile.openInputStream(EFS.NONE, null);
-					IContentDescription description= manager.getDescriptionFor(is, externalFile.getName(), IContentDescription.ALL);
-					if (description != null) {
-						IContentType type= description.getContentType();
-						if (type != null)
-							return type.isKindOf(text);
-					}
-				} catch (CoreException ex) {
-					// ignore: API specification tells return true if content type can't be determined
-				} catch (IOException ex) {
-					// ignore: API specification tells return true if content type can't be determined
-				} finally {
-					if (is != null ) {
-						try {
-							is.close();
-						} catch (IOException e) {
-							// ignore: API specification tells to return true if content type can't be determined
-						}
-					}
-				}
-
-				return !strict;
-
-			}
-
-			IContentType[] contentTypes= manager.findContentTypesFor(externalFile.getName());
-			if (contentTypes != null && contentTypes.length > 0) {
-				for (int i= 0; i < contentTypes.length; i++)
-					if (contentTypes[i].isKindOf(text))
-						return true;
-				return false;
-			}
-			return !strict;
-		}
-
-		return false;
 	}
 
 	/*
@@ -267,7 +263,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public IFileBuffer getFileBuffer(IPath location, LocationKind locationKind) {
 		if (locationKind == LocationKind.NORMALIZE)
-			location= FileBuffers.normalizeLocation(location);
+			location= normalizeLocation(location);
 		return internalGetFileBuffer(location);
 	}
 
@@ -314,7 +310,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.buffer.text.IBufferedFileManager#getDefaultEncoding()
 	 */
 	public String getDefaultEncoding() {
-		return ResourcesPlugin.getEncoding();
+		return System.getProperty("file.encoding"); //$NON-NLS-1$;
 	}
 
 	/*
@@ -325,67 +321,6 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 	
 	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
-	 */
-	public IDocument createEmptyDocument(IFile file) {
-		final IDocument[] runnableResult= new IDocument[1];
-		final IDocumentFactory factory= fRegistry.getDocumentFactory(file);
-		if (factory != null) {
-			ISafeRunnable runnable= new ISafeRunnable() {
-				public void run() throws Exception {
-					runnableResult[0]= factory.createDocument();
-				}
-				public void handleException(Throwable t) {
-					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-					FileBuffersPlugin.getDefault().getLog().log(status);
-					if (t instanceof VirtualMachineError)
-						throw (VirtualMachineError)t;
-				}
-			};
-			SafeRunner.run(runnable);
-		}
-
-		final IDocument document;
-		if (runnableResult[0] != null)
-			document= runnableResult[0];
-		else
-			document= new SynchronizableDocument();
-		
-		// Set the initial line delimiter
-		if (document instanceof IDocumentExtension4) {
-			String initalLineDelimiter= getLineDelimiterPreference(file); 
-			if (initalLineDelimiter != null)
-				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
-		}
-		
-		final IDocumentSetupParticipant[] participants= fRegistry.getDocumentSetupParticipants(file);
-		if (participants != null) {
-			for (int i= 0; i < participants.length; i++) {
-				final IDocumentSetupParticipant participant= participants[i];
-				ISafeRunnable runnable= new ISafeRunnable() {
-					public void run() throws Exception {
-						participant.setup(document);
-						if (document.getDocumentPartitioner() != null) {
-							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
-							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
-							FileBuffersPlugin.getDefault().getLog().log(status);
-						}
-					}
-					public void handleException(Throwable t) {
-						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
-						FileBuffersPlugin.getDefault().getLog().log(status);
-						if (t instanceof VirtualMachineError)
-							throw (VirtualMachineError)t;
-					}
-				};
-				SafeRunner.run(runnable);
-			}
-		}
-		
-		return document;
-	}
-
-	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 	 * @since 3.3
 	 */
@@ -393,7 +328,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		final IDocument[] runnableResult= new IDocument[1];
 		if (location != null) {
 			if (locationKind == LocationKind.NORMALIZE)
-				location= FileBuffers.normalizeLocation(location);
+				location= normalizeLocation(location);
 			
 			final IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
 			if (factory != null) {
@@ -468,21 +403,13 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public IAnnotationModel createAnnotationModel(IPath location, LocationKind locationKind) {
 		Assert.isNotNull(location);
 		if (locationKind == LocationKind.NORMALIZE)
-			location= FileBuffers.normalizeLocation(location);
+			location= normalizeLocation(location);
 		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location, locationKind);
 		if (factory != null)
 			return factory.createAnnotationModel(location);
 		return null;
 	}
 	
-	public IAnnotationModel createAnnotationModel(IFile file) {
-		Assert.isNotNull(file);
-		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(file);
-		if (factory != null)
-			return factory.createAnnotationModel(file.getFullPath());
-		return null;
-	}
-
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#addFileBufferListener(org.eclipse.core.filebuffers.IFileBufferListener)
 	 */
@@ -516,7 +443,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void requestSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
+		location= normalizeLocation(location);
 
 		AbstractFileBuffer fileBuffer= internalGetFileBuffer(location);
 		if (fileBuffer != null)
@@ -528,7 +455,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public void releaseSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
-		location= FileBuffers.normalizeLocation(location);
+		location= normalizeLocation(location);
 
 		AbstractFileBuffer fileBuffer= internalGetFileBuffer(location);
 		if (fileBuffer != null)
@@ -562,9 +489,8 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return createTextFileBuffer(location, locationKind);
 	}
 	
-	private AbstractFileBuffer createTextFileBuffer(IPath location, LocationKind locationKind) {
-		if (locationKind == LocationKind.IFILE || locationKind == LocationKind.NORMALIZE  && FileBuffers.getWorkspaceFileAtLocation(location, true) != null)
-			return new ResourceTextFileBuffer(this);
+	protected AbstractFileBuffer createTextFileBuffer(IPath location, LocationKind locationKind) {
+		Assert.isLegal(locationKind != LocationKind.IFILE);
 		return new FileStoreTextFileBuffer(this);
 	}
 	
@@ -706,104 +632,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @since 3.1
 	 */
 	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			public void run(IProgressMonitor progressMonitor) throws CoreException {
-				IFileBuffer[] toValidate= findFileBuffersToValidate(fileBuffers);
-				validationStateAboutToBeChanged(toValidate);
-				try {
-					IStatus status= validateEdit(toValidate, computationContext);
-					validationStateChanged(toValidate, true, status);
-				} catch (RuntimeException x) {
-					validationStateChangedFailed(toValidate);
-				}
-			}
-		};
-		ResourcesPlugin.getWorkspace().run(runnable, computeValidateStateRule(fileBuffers), IWorkspace.AVOID_UPDATE, monitor);
-	}
-
-	private IFileBuffer[] findFileBuffersToValidate(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (!fileBuffers[i].isStateValidated())
-				list.add(fileBuffers[i]);
-		}
-		return (IFileBuffer[]) list.toArray(new IFileBuffer[list.size()]);
-	}
-
-	private void validationStateAboutToBeChanged(IFileBuffer[] fileBuffers) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i] instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
-				support.validationStateAboutToBeChanged();
-			}
-		}
-	}
-
-	private void validationStateChanged(IFileBuffer[] fileBuffers, boolean validationState, IStatus status) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i] instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
-				support.validationStateChanged(validationState, status);
-			}
-		}
-	}
-
-	private void validationStateChangedFailed(IFileBuffer[] fileBuffers) {
-		for (int i= 0; i < fileBuffers.length; i++) {
-			if (fileBuffers[i] instanceof IStateValidationSupport) {
-				IStateValidationSupport support= (IStateValidationSupport) fileBuffers[i];
-				support.validationStateChangeFailed();
-			}
-		}
-	}
-
-	private IStatus validateEdit(IFileBuffer[] fileBuffers, Object computationContext) {
-		ArrayList list= new ArrayList();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			IFile file= getWorkspaceFile(fileBuffers[i]);
-			if (file != null)
-				list.add(file);
-		}
-		IFile[] files= new IFile[list.size()];
-		list.toArray(files);
-		return ResourcesPlugin.getWorkspace().validateEdit(files, computationContext);
-	}
-
-	private ISchedulingRule computeValidateStateRule(IFileBuffer[] fileBuffers) {
-		ArrayList list= new ArrayList();
-		for (int i= 0; i < fileBuffers.length; i++) {
-			IResource resource= getWorkspaceFile(fileBuffers[i]);
-			if (resource != null)
-				list.add(resource);
-		}
-		IResource[] resources= new IResource[list.size()];
-		list.toArray(resources);
-		IResourceRuleFactory factory= ResourcesPlugin.getWorkspace().getRuleFactory();
-		return factory.validateEditRule(resources);
-	}
-
-	private IFile getWorkspaceFile(IFileBuffer fileBuffer) {
-		return FileBuffers.getWorkspaceFileAtLocation(fileBuffer.getLocation());
 	}
 	
-	private String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
-		IFile file= null;
-		if (locationKind != LocationKind.LOCATION)
-			file= FileBuffers.getWorkspaceFileAtLocation(location);
-		return getLineDelimiterPreference(file);
+	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
+		return System.getProperty("line.separator"); //$NON-NLS-1$ 
 	}
 	
-	private String getLineDelimiterPreference(IFile file) {
-		IScopeContext[] scopeContext;
-		if (file != null && file.getProject() != null) {
-			// project preference
-			scopeContext= new IScopeContext[] { new ProjectScope(file.getProject()) };
-			String lineDelimiter= Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
-			if (lineDelimiter != null)
-				return lineDelimiter;
-		}
-		// workspace preference
-		scopeContext= new IScopeContext[] { new InstanceScope() };
-		return Platform.getPreferencesService().getString(Platform.PI_RUNTIME, Platform.PREF_LINE_SEPARATOR, null, scopeContext);
-	}
 }
