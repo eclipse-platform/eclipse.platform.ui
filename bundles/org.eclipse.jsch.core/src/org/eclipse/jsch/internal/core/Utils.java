@@ -143,7 +143,7 @@ public class Utils{
   }
 
   private static String getProxyType(IProxyData data){
-    if (data.getType().equals(IProxyData.HTTP_PROXY_TYPE) || data.getType().equals(IProxyData.HTTPS_PROXY_TYPE))
+    if (data.getType().equals(IProxyData.HTTPS_PROXY_TYPE))
       return IConstants.PROXY_TYPE_HTTP;
     if (data.getType().equals(IProxyData.SOCKS_PROXY_TYPE))
       return IConstants.PROXY_TYPE_SOCKS5;

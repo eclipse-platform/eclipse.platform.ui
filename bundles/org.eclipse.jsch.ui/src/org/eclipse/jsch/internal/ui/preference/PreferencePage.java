@@ -868,7 +868,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
       int timeout = 60000;
       Session session = JSchProvider.createSession(host, port, user);
-      session.setUserInfo(new UserInfoPrompter());
+      new UserInfoPrompter(session);
       session.setTimeout(timeout);
       try {
         JSchProvider.connect(session, timeout, new NullProgressMonitor());

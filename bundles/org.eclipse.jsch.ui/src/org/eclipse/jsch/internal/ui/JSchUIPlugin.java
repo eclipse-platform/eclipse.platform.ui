@@ -157,4 +157,8 @@ public class JSchUIPlugin extends AbstractUIPlugin{
 
   }
 
+  public URL getImageUrl(String relative){
+    return FileLocator.find(Platform.getBundle(ID), new Path(IUIConstants.ICON_PATH + relative), null);
+  }
+
 }

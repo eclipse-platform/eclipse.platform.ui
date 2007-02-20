@@ -83,4 +83,19 @@ public class Messages extends NLS{
   public static String CVSSSH2PreferencePage_136;
   public static String CVSSSH2PreferencePage_138;
   public static String CVSSSH2PreferencePage_139;
+  public static String KeyboardInteractiveDialog_0;
+  public static String KeyboardInteractiveDialog_1;
+  public static String KeyboardInteractiveDialog_2;
+  public static String KeyboardInteractiveDialog_3;
+  public static String KeyboardInteractiveDialog_4;
+  public static String KeyboardInteractiveDialog_5;
+  public static String KeyboardInteractiveDialog_6;
+  public static String UserInfoPrompter_0;
+  public static String UserInfoPrompter_1;
+  public static String UserValidationDialog_0;
+  public static String UserValidationDialog_1;
+  public static String UserValidationDialog_2;
+  public static String UserValidationDialog_3;
+  public static String UserValidationDialog_4;
+  public static String UserValidationDialog_5;
 }
