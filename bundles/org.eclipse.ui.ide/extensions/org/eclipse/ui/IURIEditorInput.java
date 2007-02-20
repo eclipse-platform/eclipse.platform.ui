@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.ide;
+package org.eclipse.ui;
 
 import java.net.URI;
 
@@ -31,7 +31,6 @@ import org.eclipse.ui.IEditorInput;
  *
  * @see URI
  * @since 3.3
- * @deprecated moved tpo {@link org.eclipse.ui.IURIEditorInput}. This will be deleted in 3.3 M6.
  */
 public interface IURIEditorInput extends IEditorInput {
     /**

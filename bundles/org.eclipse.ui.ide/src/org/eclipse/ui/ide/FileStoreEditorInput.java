@@ -27,7 +27,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @since 3.3
  *
  */
-public class FileStoreEditorInput implements IURIEditorInput {
+public class FileStoreEditorInput implements IURIEditorInput, org.eclipse.ui.IURIEditorInput {
 
 	/**
 	 * The workbench adapter which simply provides the label.

@@ -29,7 +29,7 @@ import java.net.URI;
  *
  * @see URI
  * @since 3.3
- * @deprecated replaced by IURIEditorInput in the org.eclipse.ui.ide plug-in. This will be deleted during
+ * @deprecated moved to the org.eclipse.ui.ide plug-in. This will be deleted during
  * 3.3 M6.
  */
 public interface IURIEditorInput extends IEditorInput {
