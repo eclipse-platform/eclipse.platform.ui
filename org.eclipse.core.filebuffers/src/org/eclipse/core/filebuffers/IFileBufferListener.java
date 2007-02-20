@@ -78,6 +78,10 @@ public interface IFileBufferListener {
 	/**
 	 * Informs the listener that the file underlying the given file buffer has been moved to the
 	 * given location.
+	 * <p>
+	 * This event is currently only sent if the file buffer is
+	 * backed by an <code>IFile</code>.
+	 * </p>
 	 *
 	 * @param buffer the effected file buffer
 	 * @param path the new location (not just the container)
