@@ -30,17 +30,17 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private boolean avoidBuild = false;
 	private boolean buildNeeded = false;
 	private boolean forceBuild = false;
-	private boolean isAutoBuilding = false;
 	/**
 	 * Indicates that another thread tried to modify the workspace during
 	 * the autobuild.  The autobuild should be immediately rescheduled
 	 * so that it will run as soon as the next workspace modification completes.
 	 */
 	private boolean interrupted = false;
+	private boolean isAutoBuilding = false;
 	private long lastBuild = 0L;
-	private Workspace workspace;
-	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	private Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
+	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
+	private Workspace workspace;
 
 	AutoBuildJob(Workspace workspace) {
 		super(Messages.events_building_0);
@@ -71,7 +71,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 */
 	synchronized void build(boolean needsBuild) {
 		buildNeeded |= needsBuild;
-		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
+		long delay = computeScheduleDelay();
 		int state = getState();
 		if (Policy.DEBUG_BUILD_NEEDED)
 			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -79,7 +79,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			new RuntimeException("Build Needed").printStackTrace(); //$NON-NLS-1$
 		//don't mess with the interrupt flag if the job is still running
 		if (state != Job.RUNNING)
-			interrupted = false;
+			setInterrupted(false);
 		switch (state) {
 			case Job.SLEEPING :
 				wakeUp(delay);
@@ -89,6 +89,14 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				schedule(delay);
 				break;
 		}
+	}
+
+	/**
+	 * Computes the delay time that autobuild should be scheduled with.  The
+	 * value will be in the range (MIN_BUILD_DELAY, MAX_BUILD_DELAY).
+	 */
+	private long computeScheduleDelay() {
+		return Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 	}
 
 	/**
@@ -107,39 +115,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		if (interrupted) {
 			if (Policy.DEBUG_BUILD_INTERRUPT)
 				System.out.println("Scheduling rebuild due to interruption"); //$NON-NLS-1$
-			interrupted = false;
-			schedule();
+			setInterrupted(false);
+			schedule(computeScheduleDelay());
 		}
 		return Status.CANCEL_STATUS;
-	}
-
-	/**
-	 * Another thread is attempting to modify the workspace. Flag the auto-build
-	 * as interrupted so that it will cancel and reschedule itself
-	 */
-	synchronized void interrupt() {
-		//if already interrupted, do nothing
-		if (interrupted)
-			return;
-		switch (getState()) {
-			case NONE :
-				return;
-			case WAITING :
-				//put the job to sleep if it is waiting to run
-				interrupted = !sleep();
-				break;
-			case RUNNING :
-				//make sure autobuild doesn't interrupt itself
-				interrupted = Job.getJobManager().currentJob() != this;
-				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT) {
-					System.out.println("Autobuild was interrupted:"); //$NON-NLS-1$
-					new Exception().fillInStackTrace().printStackTrace();
-				}
-				break;
-		}
-		//clear the autobuild avoidance flag if we were interrupted
-		if (interrupted)
-			avoidBuild = false;
 	}
 
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
@@ -174,7 +153,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			monitor.done();
 		}
 	}
-
+	
 	/**
 	 * Forces an autobuild to occur, even if nothing has changed since the last
 	 * build. This is used to force a build after a clean.
@@ -183,12 +162,43 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		forceBuild = true;
 	}
 
+	/**
+	 * Another thread is attempting to modify the workspace. Flag the auto-build
+	 * as interrupted so that it will cancel and reschedule itself
+	 */
+	synchronized void interrupt() {
+		//if already interrupted, do nothing
+		if (interrupted)
+			return;
+		switch (getState()) {
+			case NONE :
+				return;
+			case WAITING :
+				//put the job to sleep if it is waiting to run
+				setInterrupted(!sleep());
+				break;
+			case RUNNING :
+				//make sure autobuild doesn't interrupt itself
+				if (Job.getJobManager().currentJob() == this)
+					return;
+				setInterrupted(true);
+				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT) {
+					System.out.println("Autobuild was interrupted:"); //$NON-NLS-1$
+					new Exception().fillInStackTrace().printStackTrace();
+				}
+				break;
+		}
+		//clear the autobuild avoidance flag if we were interrupted
+		if (interrupted)
+			avoidBuild = false;
+	}
+
 	synchronized boolean isInterrupted() {
 		if (interrupted)
 			return true;
 		//check if another job is blocked by the build job
 		if (isBlocking())
-			interrupted = true;
+			setInterrupted(true);
 		return interrupted;
 	}
 
@@ -214,8 +224,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	public IStatus run(IProgressMonitor monitor) {
 		//synchronized in case build starts during checkCancel
 		synchronized (this) {
-			if (monitor.isCanceled())
+			if (monitor.isCanceled()) {
 				return canceled();
+			}
 		}
 		//if the system is shutting down, don't build
 		if (systemBundle.getState() == Bundle.STOPPING)
@@ -224,13 +235,20 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 			doBuild(monitor);
 			lastBuild = System.currentTimeMillis();
 			//if the build was successful then it should not be recorded as interrupted
-			interrupted = false;
+			setInterrupted(false);
 			return Status.OK_STATUS;
 		} catch (OperationCanceledException e) {
 			return canceled();
 		} catch (CoreException sig) {
 			return sig.getStatus();
 		}
+	}
+
+	/**
+	 * Sets or clears the interrupted flag.
+	 */
+	private synchronized void setInterrupted(boolean value) {
+		interrupted = value;
 	}
 
 	/**
