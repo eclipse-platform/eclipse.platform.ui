@@ -130,12 +130,9 @@ public class Utils{
   }
 
   private static IProxyData getProxyData(String host){
-    IProxyData data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.HTTP_PROXY_TYPE);
+    IProxyData data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.HTTPS_PROXY_TYPE);
     if (data == null || data.getHost() == null) {
       data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.SOCKS_PROXY_TYPE);
-    }
-    if (data == null || data.getHost() == null) {
-      data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.HTTPS_PROXY_TYPE);
     }
     if (data == null || data.getHost() == null || getProxyType(data) == null)
       return null;
