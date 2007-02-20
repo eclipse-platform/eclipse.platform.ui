@@ -18,6 +18,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
+import org.eclipse.jface.text.IDocumentExtension4;
+
 
 /**
  * A file buffer represents a file that can be edited by more than one client.
@@ -68,6 +70,14 @@ public interface IFileBuffer {
 
 	/**
 	 * Returns the modification stamp of the file underlying this file buffer.
+	 * <p>
+	 * {@link IDocumentExtension4#UNKNOWN_MODIFICATION_STAMP} is returned if the
+	 * buffer cannot get the modification stamp from the underlying file. 
+	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> The value of the modification stamp returned for
+	 * non-existing files can differ depending on the underlying file system. 
+	 * </p>
 	 *
 	 * @return the modification stamp of the file underlying this file buffer
 	 */

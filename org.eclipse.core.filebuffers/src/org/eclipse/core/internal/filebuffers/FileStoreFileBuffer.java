@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.text.IDocumentExtension4;
 
 /**
  * @since 3.3 (previously available as JavaFileBuffer since 3.0)
@@ -40,7 +40,7 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	/** The status of this element */
 	protected IStatus fStatus;
 	/** The time stamp at which this buffer synchronized with the underlying file. */
-	protected long fSynchronizationStamp= IResource.NULL_STAMP;
+	protected long fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
@@ -229,7 +229,7 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
 	 */
 	public long getModificationStamp() {
-		return fFileStore != null ? fFileStore.fetchInfo().getLastModified() : IResource.NULL_STAMP;
+		return fFileStore != null ? fFileStore.fetchInfo().getLastModified() : IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	}
 
 	/*

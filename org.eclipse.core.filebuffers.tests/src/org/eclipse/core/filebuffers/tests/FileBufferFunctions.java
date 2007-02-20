@@ -22,7 +22,6 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -31,6 +30,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
@@ -166,7 +166,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			long modificationStamp= fileBuffer.getModificationStamp();
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
-			assertEquals(modificationStamp != IResource.NULL_STAMP, fileInfo.exists());
+			assertEquals(modificationStamp != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP, fileInfo.exists());
 			fileInfo.setLastModified(1000);
 			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
@@ -175,7 +175,7 @@ public abstract class FileBufferFunctions extends TestCase {
 			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}		
 	}
-	
+
 	/*
 	 * Test revert.
 	 */
