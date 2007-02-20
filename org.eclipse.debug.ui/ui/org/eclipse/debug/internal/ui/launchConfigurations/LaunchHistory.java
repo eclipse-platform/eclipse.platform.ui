@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -32,13 +34,15 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListener {
 
+	/**
+	 * Listing of the complete launch history, which includes favorites in the launched ordering
+	 */
+	private Vector fCompleteHistory = new Vector();
+	
 	private ILaunchGroup fGroup;
+	private Vector fFavorites = new Vector();
 	
-	private List fHistory = new ArrayList();
-	private List fFavorites = new ArrayList();
-	private ILaunchConfiguration fRecentLaunch;
-	
-	private static List launchHistoryInstances= new ArrayList();
+	private static List fgLaunchHistoryInstances= new ArrayList();
 	
 	/**
 	 * Creates a new launch history for the given launch group
@@ -48,7 +52,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager(); 
 		manager.addLaunchListener(this);
 		manager.addLaunchConfigurationListener(this);
-		launchHistoryInstances.add(this);
+		fgLaunchHistoryInstances.add(this);
 	}
 	
 	/**
@@ -58,7 +62,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		manager.removeLaunchListener(this);
 		manager.removeLaunchConfigurationListener(this);
-		launchHistoryInstances.remove(this);
+		fgLaunchHistoryInstances.remove(this);
 	}
 
 	/**
@@ -68,19 +72,30 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 		if (configuration != null && !configuration.isWorkingCopy() && DebugUIPlugin.doLaunchConfigurationFiltering(configuration) && accepts(configuration)) {
 			addHistory(configuration, true);
-			setRecentLaunch(configuration);
 		}
 	}
 	
 	/**
-	 * Returns if either the history listing or the favorites listing contain the specified <code>ILaunchConfiguration</code>
+	 * Returns if the current history contains the specified <code>ILaunchConfiguration</code>
 	 * @param config the config to look for
-	 * @return true if one of the listing contains the specified config, false otherwise
+	 * @return true if the current history contains the specified configuration, false otherwise
 	 * @since 3.3
-	 * CONTEXTLAUNCHING
 	 */
-	public boolean contains(ILaunchConfiguration config) {
-		return fHistory.contains(config) || fFavorites.contains(config);
+	public boolean contains(ILaunchConfiguration configuration) {
+		return fCompleteHistory.contains(configuration);
+	}
+	
+	/**
+	 * Returns the index of the specified <code>ILaunchConfiguration</code> in the 
+	 * current launch history. The value -1 is returned if the configuration is not
+	 * in the current history, else its zero-relative index is returned.
+	 * @param configuration
+	 * @return the index of the specified <code>ILaunchConfiguration</code> in the 
+	 * current launch history
+	 * @since 3.3
+	 */
+	public int indexOf(ILaunchConfiguration configuration) {
+		return fCompleteHistory.indexOf(configuration);
 	}
 	
 	/**
@@ -91,30 +106,38 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * the history list
 	 */
 	protected void addHistory(ILaunchConfiguration configuration, boolean prepend) {
-		if (fFavorites.contains(configuration)) {
+		if(configuration.isWorkingCopy()) {
 			return;
 		}
-		// might be reconstructing history
-		if (checkIfFavorite(configuration)) {
+		checkFavorites(configuration);
+		int index = fCompleteHistory.indexOf(configuration);
+		if(index == 0) {
 			return;
 		}
-		int index = fHistory.indexOf(configuration);
-		if (index < 0) {
-			if (prepend) {
-				fHistory.add(0, configuration);
-			} else {
-				fHistory.add(configuration);
+		if(index < 0) {
+			if(prepend) {
+				fCompleteHistory.add(0, configuration);
 			}
-			resizeHistory();
-		} else if (index > 0) {
-			// move to first
-			for (int i = index; i > 0; i--) {
-				fHistory.set(i, fHistory.get(i -1));
+			else {
+				fCompleteHistory.add(configuration);
 			}
-			fHistory.set(0, configuration);
-		}	
+		}
+		else {
+			fCompleteHistory.add(0, fCompleteHistory.remove(index));
+		}
+		resizeHistory();
+		fireLaunchHistoryChanged();
 	}
 
+	/**
+	 * Notifies all <code>ILaunchHistoryChangedListener</code>s that the launch history has been modified
+	 * 
+	 * @since 3.3
+	 */
+	private void fireLaunchHistoryChanged() {
+		DebugUIPlugin.getDefault().getLaunchConfigurationManager().fireLaunchHistoryChanged();
+	}
+	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
@@ -133,11 +156,13 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * <code>null</code> if none 
 	 */
 	public ILaunchConfiguration getRecentLaunch() {
+		if(fCompleteHistory.size() < 1) {
+			return null;
+		}
 		try {
-			if(fRecentLaunch != null) {
-				if(fRecentLaunch.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(fRecentLaunch) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(fRecentLaunch.getType()))) {
-					return fRecentLaunch;
-				}
+			ILaunchConfiguration recent = (ILaunchConfiguration) fCompleteHistory.get(0);
+			if(DebugUIPlugin.doLaunchConfigurationFiltering(recent) && !WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(recent.getType())))  {
+				return recent;
 			}
 		}
 		catch(CoreException e) {
@@ -147,25 +172,32 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
-	 * Sets the most recently launched configuration in this history, or
-	 * <code>null</code> if none.
-	 */
-	protected void setRecentLaunch(ILaunchConfiguration configuration) {
-		if (accepts(configuration)) {
-			if (!configuration.equals(fRecentLaunch)) {
-				fRecentLaunch = configuration;
-			}
-		}
-	}	
-	
-	/**
-	 * Returns the launch configuration in this history, in most recently
-	 * launched order.
+	 * Returns the launch configurations in this history, in most recently
+	 * launched order, not including any entries from the favorites listing.
 	 * 
 	 * @return launch history
 	 */
 	public ILaunchConfiguration[] getHistory() {
-		return (ILaunchConfiguration[])fHistory.toArray(new ILaunchConfiguration[fHistory.size()]);
+		//TODO should we return the intersection of total history and favorites to maintain
+		//backwards API functionality?
+		Vector intersection = new Vector(fCompleteHistory);
+		intersection.removeAll(fFavorites);
+		//size it to the max specified history size
+		if(intersection.size() > getMaxHistorySize()) {
+			intersection.setSize(getMaxHistorySize());
+		}
+		return (ILaunchConfiguration[]) intersection.toArray(new ILaunchConfiguration[intersection.size()]);
+	}
+	
+	/**
+	 * Returns the complete launch history in the order they were last launched, this listing includes all
+	 * entries including those from the favorites listing
+	 * @return the list of last launched <code>ILaunchConfiguration</code>s
+	 * 
+	 * @since 3.3
+	 */
+	public ILaunchConfiguration[] getCompleteLaunchHistory() {
+		return (ILaunchConfiguration[]) fCompleteHistory.toArray(new ILaunchConfiguration[fCompleteHistory.size()]);
 	}
 	
 	/**
@@ -184,10 +216,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param favorites
 	 */
 	public void setFavorites(ILaunchConfiguration[] favorites) {
-		fFavorites = new ArrayList(favorites.length);
-		for (int i = 0; i < favorites.length; i++) {
-			fFavorites.add(favorites[i]);
-		}
+		fFavorites = new Vector(Arrays.asList(favorites));
 	}	
 	
 	/**
@@ -198,7 +227,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public void addFavorite(ILaunchConfiguration configuration) {
 		if (!fFavorites.contains(configuration)) {
 			fFavorites.add(configuration);
-			fHistory.remove(configuration);
 		}
 	}
 	
@@ -242,12 +270,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * Notifies all launch histories that the launch history size has changed.
 	 */
 	public static void launchHistoryChanged() {
-		Iterator iter= launchHistoryInstances.iterator();
-		while (iter.hasNext()) {
-			LaunchHistory history = (LaunchHistory) iter.next();
-			history.resizeHistory();		
+		for(Iterator iter = fgLaunchHistoryInstances.iterator(); iter.hasNext();) {
+			((LaunchHistory) iter.next()).resizeHistory();		
 		}
-
 	}
 	
 	/**
@@ -255,9 +280,9 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * collection is too long.
 	 */
 	protected void resizeHistory() {
-		int max = getMaxHistorySize();
-		while (fHistory.size() > max) {
-			fHistory.remove(fHistory.size() - 1);
+		int max = getMaxHistorySize() + fFavorites.size();
+		if (fCompleteHistory.size() > max) {
+			fCompleteHistory.setSize(max);
 		}
 	}
 
@@ -274,20 +299,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		ILaunchConfiguration movedFrom = DebugPlugin.getDefault().getLaunchManager().getMovedFrom(configuration);
-		if (movedFrom == null) {
-			checkIfFavorite(configuration);
-		} else {
-			String movedFromName= movedFrom.getName();
-			ILaunchConfiguration[] history = getHistory();
-			for (int i = 0; i < history.length; i++) {
-				if (history[i].getName().equals(movedFromName)) {
-					if (i == 0) {
-						fRecentLaunch= configuration;
-					}
-				}
-			}
-		}
+		checkFavorites(configuration);
 	}
 	
 	/**
@@ -297,7 +309,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param configuration
 	 * @return whether added to the favorites list
 	 */
-	protected boolean checkIfFavorite(ILaunchConfiguration configuration) {
+	protected boolean checkFavorites(ILaunchConfiguration configuration) {
 		// update favorites
 		if (configuration.isWorkingCopy()) {
 			return false;
@@ -319,15 +331,17 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				} 
 				removeFavorite(configuration);
 				return false;
-			} else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
+			} 
+			else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
 				addFavorite(configuration);
 				return true;
-			} else {
+			} 
+			else {
 				removeFavorite(configuration);
 				return false;
 			}
-		} catch (CoreException e) {
-		}		
+		} 
+		catch (CoreException e) {}		
 		return false;
 	}
 	
@@ -344,45 +358,31 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		checkIfFavorite(configuration);
+		checkFavorites(configuration);
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		boolean changed = false;
 		ILaunchConfiguration newConfig = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
 		if (newConfig == null) {
-			// deleted
-			changed = fHistory.remove(configuration) || fFavorites.remove(configuration);
+			//deleted
+			fCompleteHistory.remove(configuration);
+			fFavorites.remove(configuration);
 		} else {
 			// moved/renamed
-			int index = fHistory.indexOf(configuration);
+			int index = fCompleteHistory.indexOf(configuration);
 			if (index >= 0) {
-				fHistory.remove(index);
-				fHistory.add(index, newConfig);
-				changed = true;
-			} else {
-				index = fFavorites.indexOf(configuration);
-				if (index >= 0) {
-					fFavorites.remove(index);
-					fFavorites.add(index, newConfig);
-				}
+				fCompleteHistory.remove(index);
+				fCompleteHistory.add(index, newConfig);
+			} 
+			index = fFavorites.indexOf(configuration);
+			if (index >= 0) {
+				fFavorites.remove(index);
+				fFavorites.add(index, newConfig);
 			}
-			checkIfFavorite(newConfig);
-		}
-		if (changed) {
-			if (configuration.equals(fRecentLaunch)) {
-				if (!fHistory.isEmpty()) {
-					fRecentLaunch = (ILaunchConfiguration)fHistory.get(0);
-				} else if (!fFavorites.isEmpty()) {
-					fRecentLaunch = (ILaunchConfiguration)fFavorites.get(0);
-				} else {
-					fRecentLaunch = null;
-				}
-			}
+			checkFavorites(newConfig);
 		}
 	}
-
 }

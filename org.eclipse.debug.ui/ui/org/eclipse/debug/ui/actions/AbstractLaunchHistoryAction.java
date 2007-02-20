@@ -80,11 +80,11 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * Resource change listener to update tooltip
+	 * Resource change listener to update tool-tip
 	 */
 	private IResourceChangeListener fListener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
-			// need to update the tooltip in the event that one of the launch filters has removed the most recent entry.
+			// need to update the tool-tip in the event that one of the launch filters has removed the most recent entry.
 			// bug 156516  we only want to respond to after-the-fact updates
 			if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
 				updateTooltip();
@@ -133,7 +133,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 
 	/**
-	 * Initialize this action so that it can dynamically set its tooltip.  Also set the enabled state
+	 * Initialize this action so that it can dynamically set its tool-tip.  Also set the enabled state
 	 * of the underlying action based on whether there are any registered launch configuration types that 
 	 * understand how to launch in the mode of this action.
 	 */
@@ -163,7 +163,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * Updates this action's tooltip to correspond to the most recent launch.
+	 * Updates this action's tool-tip to correspond to the most recent launch.
 	 */
 	protected void updateTooltip() {
 		ILaunchConfiguration lastLaunched = getLastLaunch();
@@ -177,13 +177,13 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * Returns the tooltip specific to a configuration.
+	 * Returns the tool-tip specific to a configuration.
 	 * 
 	 * @param configuration a <code>ILauncConfiguration</code>
 	 * @return the string for the tool tip
 	 */
 	protected String getToolTip(ILaunchConfiguration configuration) {
-		String launchName= configuration.getName();
+		String launchName = configuration.getName();
 		String label = null;
 		//CONTEXTLAUNCHING
 		if(ContextRunner.getDefault().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
@@ -206,7 +206,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
 	 */
 	public void launchHistoryChanged() {
-		fRecreateMenu= true;
+		fRecreateMenu = true;
 		updateTooltip();
 	}
 

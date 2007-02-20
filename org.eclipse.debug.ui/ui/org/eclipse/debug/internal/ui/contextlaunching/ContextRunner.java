@@ -277,7 +277,7 @@ public final class ContextRunner {
 			//TODO favorites will be missed unless they were the last launch
 			//this is a limitation of the launch history, and due to be refactored
 			if(history != null) {
-				ILaunchConfiguration[] configs = history.getHistory();
+				ILaunchConfiguration[] configs = history.getCompleteLaunchHistory();
 				for(int i = 0; i < configs.length; i++) {
 					if(DEBUG_CONTEXTUAL_LAUNCH) {
 						System.out.println("\t\tGETMRUCONFIGURATION -> Comparing containment of "+configs[i].getName()+" to "+configurations.toString()); //$NON-NLS-1$ //$NON-NLS-2$

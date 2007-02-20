@@ -44,7 +44,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -186,7 +185,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns a collection of launch configurations that does not contain
-	 * configs from disabled activities.
+	 * configurations from disabled activities.
 	 * 
 	 * @param configurations a collection of configurations
 	 * @return the given collection minus any configurations from disabled activities
@@ -366,20 +365,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		
 		Iterator histories = fLaunchHistories.values().iterator();
 		LaunchHistory history = null;
-		Element last = null;
 		while (histories.hasNext()) {
 			history = (LaunchHistory)histories.next();
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
-			ILaunchConfiguration configuration = history.getRecentLaunch();
-			if (configuration != null) {
-				if(configuration.exists()) {
-					last = doc.createElement(IConfigurationElementConstants.LAST_LAUNCH);
-					last.setAttribute(IConfigurationElementConstants.MEMENTO, configuration.getMemento());
-					last.setAttribute(IConfigurationElementConstants.MODE, history.getLaunchGroup().getMode());
-					historyRootElement.appendChild(last);
-				}
-			}
 		}
 		
 		return DebugUIPlugin.serializeDocument(doc);
@@ -434,7 +423,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
-	 * Find the XML history file and parse it.  Place the corresponding configs
+	 * Find the XML history file and parse it.  Place the corresponding configurations
 	 * in the appropriate history, and set the most recent launch.
 	 */
 	private void restoreLaunchHistory() {
@@ -442,12 +431,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
 		File file = new File(osHistoryPath);
-		
 		// If no history file, nothing to do
 		if (!file.exists()) {
 			return;
 		}
-		
 		InputStream stream= null;
 		Element rootHistoryElement= null;
 		try {
@@ -469,13 +456,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		} catch (IOException exception) {
 			DebugUIPlugin.log(exception);
 			return;
-		}
-		
+		}	
 		// If root node isn't what we expect, return
 		if (!rootHistoryElement.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH_HISTORY)) { 
 			return;
 		}
-
 		// For each child of the root node, construct a launch config handle and add it to
 		// the appropriate history, or set the most recent launch
 		Collection l = fLaunchHistories.values();
@@ -490,9 +475,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			if (type == Node.ELEMENT_NODE) {
 				entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
-					createHistoryElement(entry, histories);
+					createHistoryElement(entry, histories, false);
 				} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
-					createRecentElement(entry, histories);
+					createHistoryElement(entry, histories, true);
 				}
 			}
 		}
@@ -502,7 +487,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Construct a launch configuration corresponding to the specified XML
 	 * element, and place it in the appropriate history.
 	 */
-	private void createHistoryElement(Element entry, LaunchHistory[] histories) {
+	private void createHistoryElement(Element entry, LaunchHistory[] histories, boolean prepend) {
 		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO); 
 		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);     
 		try {
@@ -512,7 +497,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				for (int i = 0; i < histories.length; i++) {
 					history = histories[i];
 					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
-						history.addHistory(launchConfig, false);
+						history.addHistory(launchConfig, prepend);
 					}
 				}
 			}
@@ -520,32 +505,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			DebugUIPlugin.log(e);
 		}	
 	}
-	
-	/**
-	 * Construct a launch configuration corresponding to the specified XML
-	 * element, and place it in the appropriate history's recent launch
-	 */
-	private void createRecentElement(Element entry, LaunchHistory[] histories) {
-		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO); 
-		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);     
-		try {
-			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
-			if (launchConfig.exists()) {
-				LaunchHistory history = null;
-				for (int i = 0; i < histories.length; i++) {
-					history = histories[i];
-					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
-						history.setRecentLaunch(launchConfig);
-					}
-				}
-			}
-		} catch (CoreException e) {
-			if (e.getStatus().getCode() != DebugException.MISSING_LAUNCH_CONFIGURATION_TYPE) {
-				// only log the error if it's not a missing type definition
-				DebugUIPlugin.log(e);
-			}
-		}	
-	}	
 	
 	/**
 	 * Load all registered extensions of the 'launch shortcut' extension point.
