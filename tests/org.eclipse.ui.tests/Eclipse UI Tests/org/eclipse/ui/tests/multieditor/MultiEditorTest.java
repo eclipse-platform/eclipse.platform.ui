@@ -431,7 +431,7 @@ public class MultiEditorTest extends UITestCase {
 						.toArray(new String[fErrorListener.messages.size()]);
 				for (int i = 0; i < msgs.length; i++) {
 					if (msgs[i].indexOf("The proxied handler for") == -1
-							&& msgs[i].indexOf("Failed with: Conflict for") == -1) {
+							&& msgs[i].indexOf("Conflict for \'") == -1) {
 						fail("Failed with: " + msgs[i]);
 					}
 				}
