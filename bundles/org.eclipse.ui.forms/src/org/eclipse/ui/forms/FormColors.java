@@ -565,6 +565,9 @@ public class FormColors {
 			tbBg = blend(tbBg, bg, 10);
 
 		createColor(IFormColors.TB_BG, tbBg);
+		
+		// for backward compatibility
+		createColor(TB_GBG, tbBg);
 	}
 
 	private void createTitleBarOutlineColors() {
