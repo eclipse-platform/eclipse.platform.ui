@@ -99,6 +99,12 @@ public interface IModelDelta {
 	public static int UNINSTALL = 1 << 23;
 	
 	/**
+	 * Suggests that the element should be collapsed, as described by its path.
+	 * @since 3.3
+	 */
+	public static int COLLAPSE = 1 << 25;	
+	
+	/**
 	 * Returns the parent of this node, or <code>null</code> if this is
 	 * a root node.
 	 * 

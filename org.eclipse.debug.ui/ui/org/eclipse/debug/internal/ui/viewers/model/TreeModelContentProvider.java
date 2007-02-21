@@ -210,6 +210,14 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		cancelSubtreeUpdates(treePath);
 		getTreeViewer().refresh(getElement(treePath));
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#handleCollapse(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
+	 */
+	protected void handleCollapse(IModelDelta delta) {
+		TreePath elementPath = getViewerTreePath(delta);
+		getTreeViewer().setExpandedState(elementPath, false);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleExpand(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)

@@ -580,6 +580,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			if ((flags & IModelDelta.EXPAND) != 0) {
 				handleExpand(node);
 			}
+			if ((flags & IModelDelta.COLLAPSE) != 0) {
+				handleCollapse(node);
+			}
 			if ((flags & IModelDelta.SELECT) != 0) {
 				handleSelect(node);
 			}
@@ -626,6 +629,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected abstract void handleSelect(IModelDelta delta);
 
 	protected abstract void handleExpand(IModelDelta delta);
+	
+	protected abstract void handleCollapse(IModelDelta delta);
 
 	protected abstract void handleContent(IModelDelta delta);
 
