@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -146,7 +147,8 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Label subitemLabel = page.getToolkit().createLabel(buttonComposite, ViewUtilities.escapeForLabel(labelText), SWT.WRAP);
+		Text subitemLabel = new Text(buttonComposite, SWT.WRAP);
+		subitemLabel.setText(labelText);
 		TableWrapData labelData = new TableWrapData();
 		labelData.indent = LABEL_MARGIN;
 		subitemLabel.setLayoutData(labelData);
