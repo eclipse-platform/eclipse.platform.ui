@@ -11,6 +11,8 @@
 
 // Tree code specific to the help toc
 
+var showExpanders = true;
+
 /*
  * Returns the currently selected topic's href, or null if no
  * topic is selected.
@@ -113,21 +115,26 @@ function loadChildren(treeItem) {
     makeNodeRequest(parameters);
 }
 
+function updateTocTree(xml) {
+    updateTree(xml);
+}
+
 function makeNodeRequest(parameters) {
     var href = "../tocfragment" + parameters;
-    var callback = function(xml) { updateTree(xml);}; 
+    var callback = function(xml) { updateTocTree(xml);}; 
     var errorCallback = function() { 
         // alert("ajax error"); 
     };
     ajaxRequest(href, callback, errorCallback);
 }
 
+function onShow() { 
+}
+
 if (isInternetExplorer){
-   document.onclick = mouseClickHandler;
-   document.onmousemove = mouseMoveHandler;
-   document.onkeydown = keyDownHandler;
+   document.onclick = treeMouseClickHandler;
+   document.onkeydown = treeKeyDownHandler;
 } else {
-   document.addEventListener('click', mouseClickHandler, true);
-   document.addEventListener('mousemove', mouseMoveHandler, true);
-   document.addEventListener('keydown', keyDownHandler, true);
+   document.addEventListener('click', treeMouseClickHandler, true);
+   document.addEventListener('keydown', treeKeyDownHandler, true);
 }

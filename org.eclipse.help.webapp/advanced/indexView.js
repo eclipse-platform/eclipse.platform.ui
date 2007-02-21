@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 Intel Corporation and others.
+ * Copyright (c) 2005, 2007 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,98 +8,272 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation 2006, refactored index view into a single frame
+ *     IBM Corporation 2007, allow partial loading of index
  *******************************************************************************/
  
 var isMozilla = navigator.userAgent.indexOf("Mozilla") != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf("MSIE") != -1;
-
-/**
- * Selects the next index list node "up" from current one
- */
-function selectNextUp() {
-
-	var next = getNextUp(oldActive);
-	if (next) {
-		highlightTopic(next);
-		scrollIntoView(next);
-		setTypeinValue(next);
-	}
-}
-
-/**
- * Selects the next index list node "down" from current one
- */
-function selectNextDown() {
-
-	var next = getNextDown(oldActive);
-	if (next) {
-		highlightTopic(next);
-		scrollIntoView(next);
-		setTypeinValue(next);
-	}
-}
-
-/**
- * Returns selected list item
- */
-function getSelection() {
-	return oldActive;
-}
+var showExpanders = false;
+var shown = false;
+var typeinPrevious = "";
+var typein;
+var lines = 30;
 
 /**
  * Set value of the typein input field.
  * The value can be anchor's id or anchor's text.
  */
-function setTypeinValue(anchor) {
 
-	if (!anchor) return;
-
-	var value = anchor.getAttribute("id");
-	if (value) {
-		currentId = value;
-	} else {
-		currentId = "";
-		if (isIE)
-			value = anchor.innerText;
-		else 
-			value = anchor.lastChild.nodeValue;
-		if (!value)
-			value = "";
-	}
-	typein.value = value;
-	typein.previous = value;
+function sizeList() {
+    resizeVertical("indexList", "typeinTable", "navigation", 100, 5);
 }
 
-/**
- * Open current selected item in the content frame
- */
-function doDisplay() {
-	if (!oldActive) return;
+function computeLines() {
+    // Compute the number of lines available using the placeholder
+    try {
+        var indexList = document.getElementById("indexList");
+        var placeholder = document.getElementById("placeholder");
+        // Add 1 to placeholder height allow for margin
+	    var ratio = indexList.offsetHeight / ( placeholder.offsetHeight + 1);
+	    lines = Math.floor(ratio);
+	    if (lines < 1) {
+	        lines = 1;
+	    }
+	} catch(ex) {}
+}
 
-	parent.parent.parent.parent.ContentFrame.ContentViewFrame.location.replace(oldActive);
+/*
+ * Called when the "DISPLAY" button is clicked
+ */
+function showIndex() {
+   loadChildren(typein.value);
 }
 
 function onloadHandler() {
 
-	//var node = document.getElementsByTagName("A").item(0);
-	//highlightTopic(node);
-	//scrollToViewTop(node);
 	typein = document.getElementById("typein");
 
 	typein.value = "";
-	typein.previous = "";
-
-	currentId = "";
+	typeinPrevious = "";
 	
 	if (isIE) {
-		document.onclick = mouseClickHandler;
+		document.onclick = treeMouseClickHandler;
 		document.onkeydown = keyDownHandler;
 	} else {
-		document.addEventListener('click', mouseClickHandler, true);
+		document.addEventListener('click', treeMouseClickHandler, true);
 		document.addEventListener('keydown', keyDownHandler, true);
 	}
 		
 	setInterval("intervalHandler()", 200);
 	sizeList();
 }
+
+function setImage(imageNode, image) {
+    var imageFile = imagesDirectory + "/" + image + ".gif";
+    imageNode.src = imageFile;
+    if (image == "plus") {
+        imageNode.alt = altPlus;       
+    } else if (image == "minus") {
+        imageNode.alt = altMinus;     
+    } else if (image == "toc_open") {
+        imageNode.alt = altBookOpen;    
+    } else if (image == "toc_closed") {
+        imageNode.alt = altBookClosed;  
+    } else if (image == "container_obj") {
+        imageNode.alt = altContainer;  
+    } else if (image == "container_topic") {
+        imageNode.alt = altContainerTopic;  
+    } else if (image == "topic") {
+        imageNode.alt = altTopic;
+    } else {
+        imageNode.alt = "";
+    }
+}
+
+function updateImage(imageNode, isExpanded) {
+    var src = imageNode.src;
+    if (isExpanded) {   
+        if (src.match( /toc_closed.gif$/)) {
+            setImage(imageNode, "toc_open");
+        }
+    } else {
+        if (src.match( /toc_open.gif$/)) {           
+            setImage(imageNode, "toc_closed");
+        }
+    }
+}
+
+/*
+Remove any existing children and read new ones
+*/
+
+function loadChildren(startCharacters, mode) { 
+    var parameters = "";
+    var treeRoot = document.getElementById("tree_root");
+    if (treeRoot !== null) {
+        while (treeRoot.childNodes.length > 0) {
+            treeRoot.removeChild(treeRoot.childNodes[0]);
+        }
+        var placeholder = document.createElement("DIV");
+        placeholder.className = "unopened";
+        placeholder.id = "placeholder";
+        treeRoot.appendChild(placeholder);
+        setLoadingMessage(treeRoot, loadingMessage);
+        computeLines();
+        var separator = "?";
+        if (startCharacters) {    
+            parameters += "?start=";
+            parameters += startCharacters;
+            separator = "&";
+        }
+        if (lines) {
+            parameters += separator;
+            parameters += "size=";
+            parameters += lines;
+            separator = "&";
+        }
+        if (mode) {
+            parameters += separator;
+            parameters += "mode=";
+            parameters += mode;
+        }
+        makeNodeRequest(parameters);
+    }
+}
+
+function updateIndexTree(xml) {
+    updateTree(xml);
+    removePlaceholder();
+    // Enable or disable the buttons
+    var node = xml.documentElement;  
+    var previous = document.getElementById("previous");
+    var enablePrevious = node.getAttribute("enablePrevious");
+    if (enablePrevious == "false") {
+        previous.className = "h";
+    } else {
+        previous.className = "enabled";
+    }
+    var next = document.getElementById("next");
+    var enableNext = node.getAttribute("enableNext");
+    if (enableNext == "false") {
+        next.className = "h";
+    } else {
+        next.className = "enabled";
+    }
+}
+
+function removePlaceholder() {
+    var treeRoot = document.getElementById("tree_root");
+    if (treeRoot == null) return; 
+    var placeholderDiv = findChild(treeRoot, "DIV");
+    if (placeholderDiv && placeholderDiv.className == "unopened") {
+        treeRoot.removeChild(placeholderDiv);
+    }
+}
+
+function makeNodeRequest(parameters) {
+    var href = "../indexfragment" + parameters;
+    var callback = function(xml) { updateIndexTree(xml);}; 
+    var errorCallback = function() { 
+        // alert("ajax error"); 
+    };
+    ajaxRequest(href, callback, errorCallback);
+}
+
+function loadPreviousPage() {
+    // Find the key of the first index entry    
+    var treeRoot = document.getElementById("tree_root");
+    if (treeRoot == null) return; 
+    var childDiv = findChild(treeRoot, "DIV");
+    var anchor = findAnchor(childDiv);
+    if (anchor && anchor.title) {
+        loadChildren(anchor.title, "previous");
+    } else {
+        loadChildren("");
+    }
+}
+       
+function loadNextPage() {
+    // Find the key of the last index entry    
+    var treeRoot = document.getElementById("tree_root");
+    if (treeRoot == null) return; 
+    var childDiv = findLastChild(treeRoot, "DIV");
+    var anchor = findAnchor(childDiv);
+    if (anchor && anchor.title) {
+        loadChildren(anchor.title, "next");
+    } else {
+        loadChildren("");
+    }
+}
+       
+function onShow() {  
+	sizeList();
+    if (!shown) {
+        // View is being shown for the first time
+        loadChildren("");
+        shown = true;
+    }  
+}
+
+/*
+ * Function called when the typein value may have changed
+ */
+ 
+function typeinChanged() {
+    if (typein.value == typeinPrevious) {
+        return;
+    }
+    typeinPrevious = typein.value;
+    loadChildren(typeinPrevious);
+}
+
+/**
+ * Handler for key down 
+ */
+function keyDownHandler(e)
+{
+    var key = getKeycode(e);
+    if (key == 33) {
+        // Page up  
+        cancelEventBubble(e);
+        loadPreviousPage(); 
+        return;
+    }
+    if (key == 34) {
+        // Page down 
+        cancelEventBubble(e);
+        loadNextPage(); 
+        return; 
+    }
+	var clickedNode = getEventTarget(e);
+	if (clickedNode && clickedNode.id == "typein") {
+	    typeinKeyDownHandler(e);
+	} else {
+	    treeKeyDownHandler(e);
+	}
+}
+
+function typeinKeyDownHandler(e) {
+	var key = getKeycode(e);	
+
+	if (key == 13) { // enter
+	    typeinChanged();
+	    cancelEventBubble(e);
+	} else {
+	    return treeKeyDownHandler(e);
+	}
+
+	return false;
+}
+
+/**
+  * Select the corresponding item in the index list on typein value change.
+  * Check is performed periodically in short interval.
+  */
+function intervalHandler() {
+    typeinChanged();
+}
+
+
+
 

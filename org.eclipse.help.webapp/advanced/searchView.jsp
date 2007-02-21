@@ -42,6 +42,9 @@ function refresh()
 { 
 	window.location.replace("searchView.jsp?<%=request.getQueryString()%>");
 }
+
+function onShow() { 
+}
 </script>
 
 

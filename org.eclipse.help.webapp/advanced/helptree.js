@@ -25,7 +25,7 @@ function getActiveAnchor() {
 /**
  * handler for expanding / collapsing topic tree
  */
-function mouseClickHandler(e) {
+function treeMouseClickHandler(e) {
   	var clickedNode = getEventTarget(e);
 	if (!clickedNode) { return; }
 	
@@ -45,7 +45,7 @@ function mouseClickHandler(e) {
 /**
  * Handler for key down (arrows)
  */
-function keyDownHandler(e)
+function treeKeyDownHandler(e)
 {
 	var key = getKeycode(e);
 		
@@ -99,7 +99,7 @@ function goToEnd() {
 // Handle a left arrow key event
 function goLeft(treeItem) {  
     var childClass = getChildClass(treeItem); 
-    if (childClass == "visible") {
+    if (childClass == "visible" && showExpanders) {
         toggleExpandState(treeItem);
      } else {
          focusOnItem(getTreeItem(treeItem.parentNode), false);
@@ -338,5 +338,3 @@ function changeExpanderImage(treeItem, isExpanded) {
     }
 }
 
-function mouseMoveHandler(e) {
-}

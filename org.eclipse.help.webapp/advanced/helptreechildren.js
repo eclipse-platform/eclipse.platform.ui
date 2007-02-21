@@ -83,10 +83,7 @@ function mergeChildren(treeItem, nodes) {
         } else {
             changeExpanderImage(treeItem, true); 
         }
-     } 
-     
-    
-    
+     }  
 }
 
 // Create a child if one with this if does not exist  
@@ -115,29 +112,37 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     container.className = "item";
     childItem.appendChild(container);
    
-    var topicImage = document.createElement("IMG");
-    setImage(topicImage, image);
+    var topicImage;
+    if (image) {
+        topicImage = document.createElement("IMG");
+        setImage(topicImage, image);
+    }  
+    
     var topicName=document.createTextNode(name);
     
-    var plusMinusImage= document.createElement("IMG");
-    plusMinusImage.className = "expander";
-    setImage(plusMinusImage, "plus");
-    if (isLeaf) {
-        plusMinusImage.className = "h";
-        plusMinusImage.alt = "";
+    if (showExpanders) {
+        var plusMinusImage= document.createElement("IMG");
+        plusMinusImage.className = "expander";
+        setImage(plusMinusImage, "plus");
+        if (isLeaf) {
+            plusMinusImage.className = "h";
+            plusMinusImage.alt = "";
+        }
+        container.appendChild(plusMinusImage);
     }
-    container.appendChild(plusMinusImage);
       
     var anchor = document.createElement("a");
     if (href === null) {
-        anchor.href = "about:blank";
-        // anchor.className = "nolink";
+        // anchor.href = "about:blank";
+        anchor.className = "nolink";
     } else {
         anchor.href = href;
     }
     anchor.title = name;
     
-    anchor.appendChild(topicImage);
+    if (topicImage) {
+        anchor.appendChild(topicImage);
+    }
     anchor.appendChild(topicName);
     container.appendChild(anchor);
     

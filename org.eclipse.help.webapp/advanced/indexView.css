@@ -55,6 +55,7 @@ INPUT {
 #indexList {
     overflow:auto;
     width: 100%;
+    height: 100px;
 }
 
 #typein {
@@ -75,7 +76,7 @@ INPUT {
 }
 
 <%
-	if (data.isIE()) {
+	if (requestData.isIE()) {
 %>
 #go {
 	padding-<%=isRTL?"right":"left"%>:1px;
@@ -84,82 +85,79 @@ INPUT {
 	}
 %>
 
-UL {
-	border-width:0; 
-	margin-<%=isRTL?"right":"left"%>:20px;
-<%
-	if (!data.isMozilla()) {
-%>
-	padding-<%=isRTL?"right":"left"%>:0px;
-<%
-	}
-%>
+#root {
+	margin-top:0px;
+	margin-<%=isRTL?"right":"left"%>:5px;	
 }
 
-#root {
-	margin-top:5px;
+#innerNavigation {
+    margin-top:0px;
+    padding-bottom: 5px;
 	margin-<%=isRTL?"right":"left"%>:5px;
+	font-weight:bold;
+	
+}
+
+DIV.root {
+    font-weight:bold;
+}
+
+DIV.visible, DIV.unopened { 
+	border-width:0; 
+	margin-<%=isRTL?"right":"left"%>:1.5em; 
+	font-weight:normal;
 }
   
-UL.expanded {
-	display:block;
+DIV.hidden {
+	display:none; 
 }
 
-UL.collapsed {
-	display:none;
+DIV.visible, DIV.root {  
+    margin-top:1px; 
 }
 
-LI {
-	margin:0;
-	list-style-image:none;
-	list-style-type:none;
-	white-space: nowrap;
+SPAN.item{
+    white-space: nowrap;
 }
 
 IMG {
-	border:0;
-	margin:0;
-	padding:0;
+	border:0px;
+	margin:0px;
+	padding:0px;
 	margin-<%=isRTL?"left":"right"%>:4px;
 }
 
+IMG.expander, IMG.h {
+    margin-top:4px;
+    margin-bottom:2px;
+}
+
 A {
-	text-decoration:none;
+	text-decoration:none; 
 	padding-<%=isRTL?"left":"right"%>:2px;
 	/* this works in ie5.5, but not in ie5.0  */
-	white-space:nowrap;
+	white-space: nowrap;
 }
 
-A:link, A:visited {
-	color:blue;
-}
-
-A:hover {
+A:hover{
 	text-decoration:underline; 
-}
-
-A.nolink {
-	text-decoration:none; 
-}
-
-A.nolink:link, A.nolink:visited {
-	color:WindowText;
-}
-
-A.nolink:hover {
-	text-decoration:none; 
 }
 
 A.active{ 
 	color:HighlightText;
+	width:100%;
 }
 
-A.active:link, A.active:visited {
-	color:HighlightText;
+A.active:hover{
+	text-decoration:underline; 
+}
+
+A.enabled, A:link, A:visited {
+	color:blue;
 }
 
 <%
-if (data.isSafari()){
+if (requestData.isSafari()){
 %>
 
 A.active{ 
@@ -178,24 +176,20 @@ A.active{
 }
 %>
 
-<%if (data.isMozilla()) {%>
-UL {
-	margin-<%=isRTL?"right":"left"%>:-20px;
+A.nolink {
+	text-decoration:none; 
 }
 
-#root {
-	margin-<%=isRTL?"right":"left"%>:-35px; 
-	margin-top:5px;
+A.nolink:link, A.nolink:visited {
+	color:WindowText;
 }
-<%}%>
+
+A.nolink:hover {
+	text-decoration:none; 
+}
 
 .h {
 	visibility:hidden;
 }
 
-DIV {
-    padding: 0px;
-    margin:  0px;
-    overflow: auto;
-}
 

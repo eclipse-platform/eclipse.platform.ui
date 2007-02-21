@@ -75,7 +75,10 @@ if(!data.isLinksRequest()) {
 
 %>
 
-<script language="JavaScript">
+<script language="JavaScript">    
+    function onShow() { 
+    }
+    
 	selectTopicById('<%=data.getSelectedTopicId()%>');
 </script>
 

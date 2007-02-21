@@ -99,6 +99,10 @@ function bookmarkKeyDownHandler(e) {
   	
   	return removeBookmark();
 }
+
+function onShow() { 
+}
+
 </script>
 
 </head>

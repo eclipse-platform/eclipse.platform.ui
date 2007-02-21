@@ -14,8 +14,6 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -24,10 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.HelpEvaluationContext;
 
 /**
  * Helper class for Index view initialization
@@ -111,7 +106,7 @@ public class IndexData extends ActivitiesData {
 		this.out = out;
 		IIndexEntry[] entries = index.getEntries();
 		for (int i=0;i<entries.length;++i) {
-			if (isEnabled(entries[i])) {
+			if (EnabledTopicUtils.isEnabled(entries[i])) {
 				generateEntry(entries[i], 0);
 			}
 		}
@@ -141,8 +136,8 @@ public class IndexData extends ActivitiesData {
 	 */
 	private void generateEntry(IIndexEntry entry, int level) throws IOException {
 		if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
-			ITopic[] topics = getEnabled(entry.getTopics());
-			IIndexEntry[] subentries = getEnabled(entry.getSubentries());
+			ITopic[] topics = EnabledTopicUtils.getEnabled(entry.getTopics());
+			IIndexEntry[] subentries = EnabledTopicUtils.getEnabled(entry.getSubentries());
 			boolean multipleTopics = topics.length > 1;
 			boolean singleTopic = topics.length == 1;
 	
@@ -361,58 +356,5 @@ public class IndexData extends ActivitiesData {
 		if (advancedUI) {
 			out.write("</ul>\n"); //$NON-NLS-1$
 		}
-	}
-
-	private boolean isEnabled(ITopic topic) {
-		if (UAContentFilter.isFiltered(topic, HelpEvaluationContext.getContext())) {
-			return false;
-		}
-		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
-	}
-	
-	/*
-	 * Enabled if entry passes filter and has at least one enabled topic.
-	 */
-	private boolean isEnabled(IIndexEntry entry) {
-		if (UAContentFilter.isFiltered(entry, HelpEvaluationContext.getContext())) {
-			return false;
-		}
-		ITopic[] topics = entry.getTopics();
-		for (int i=0;i<topics.length;++i) {
-			if (isEnabled(topics[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private IIndexEntry[] getEnabled(IIndexEntry[] entries) {
-		for (int i=0;i<entries.length;++i) {
-			if (!isEnabled(entries[i])) {
-				List list = new ArrayList(entries.length);
-				for (int j=0;j<entries.length;++i) {
-					if (j < i || isEnabled(entries[j])) {
-						list.add(entries[j]);
-					}
-				}
-				return (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
-			}
-		}
-		return entries;
-	}
-	
-	private ITopic[] getEnabled(ITopic[] topics) {
-		for (int i=0;i<topics.length;++i) {
-			if (!isEnabled(topics[i])) {
-				List list = new ArrayList(topics.length);
-				for (int j=0;j<topics.length;++i) {
-					if (j < i || isEnabled(topics[j])) {
-						list.add(topics[j]);
-					}
-				}
-				return (ITopic[])list.toArray(new ITopic[list.size()]);
-			}
-		}
-		return topics;
 	}
 }

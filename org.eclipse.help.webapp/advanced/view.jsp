@@ -53,6 +53,10 @@ function onShow()
         resize();
         resized = true;
     }
+    try{
+		window.<%=view.getName()%>ViewFrame.onShow();
+	} catch(ex) {}
+    
 }
 
 </script>
