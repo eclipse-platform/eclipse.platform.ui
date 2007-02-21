@@ -52,12 +52,6 @@
             id="org.eclipse.ui.edit.text.removeTrailingWhitespace">
       </command>
       <command
-            name="%openExternalFile.name"
-            categoryId="org.eclipse.ui.category.file"
-            description="%openExternalFile.description"
-            id="org.eclipse.ui.edit.text.openExternalFile">
-      </command>
-      <command
             name="%ActionDefinition.quickDiff.name"
             categoryId="org.eclipse.ui.category.edit"
             description="%ActionDefinition.quickDiff.description"
@@ -294,7 +288,7 @@
       </provider>
       <provider
             class="org.eclipse.ui.editors.text.TextFileDocumentProvider"
-            inputTypes="org.eclipse.ui.ide.IURIEditorInput"
+            inputTypes="org.eclipse.ui.IURIEditorInput"
             id="org.eclipse.ui.editors.text.URIDocumentProvider">
       </provider>
    </extension>
@@ -404,20 +398,6 @@
    
    <extension
          point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%openFilesActionSet.label"
-            visible="true"
-            id="org.eclipse.ui.edit.text.actionSet.openExternalFile">
-         <action
-               definitionId="org.eclipse.ui.edit.text.openExternalFile"
-               label="%openExternalFile.label"
-               helpContextId="open_text_editor_action_context"
-               class="org.eclipse.ui.internal.editors.text.OpenExternalFileAction"
-               tooltip="%openExternalFile.description"
-               menubarPath="file/new.ext"
-               id="org.eclipse.ui.edit.text.openExternalFile">
-         </action>
-      </actionSet>
       <actionSet
             label="%textEditorAnnotationNavigationActionSet.label"
             visible="true"

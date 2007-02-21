@@ -60,12 +60,6 @@ final class TextEditorMessages extends NLS {
 	public static String QuickDiffConfigurationBlock_changeColor;
 	public static String QuickDiffConfigurationBlock_additionColor;
 	public static String QuickDiffConfigurationBlock_deletionColor;
-	public static String OpenExternalFileAction_title;
-	public static String OpenExternalFileAction_message_fileNotFound;
-	public static String OpenExternalFileAction_message_filesNotFound;
-	public static String OpenExternalFileAction_message_errorOnOpen;
-	public static String OpenExternalFileAction_title_selectWorkspaceFile;
-	public static String OpenExternalFileAction_message_fileLinkedToMultiple;
 	public static String NewTextEditorAction_namePrefix;
 	public static String AnnotationsConfigurationBlock_description;
 	public static String AnnotationsConfigurationBlock_showInText;
