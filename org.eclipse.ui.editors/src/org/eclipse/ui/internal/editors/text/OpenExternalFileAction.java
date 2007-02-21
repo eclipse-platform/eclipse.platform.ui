@@ -39,6 +39,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -157,7 +158,7 @@ public class OpenExternalFileAction extends Action implements IWorkbenchWindowAc
 		IFile workspaceFile= getWorkspaceFile(fileStore);
 		if (workspaceFile != null)
 			return new FileEditorInput(workspaceFile);
-		return new JavaFileEditorInput(fileStore);
+		return new FileStoreEditorInput(fileStore);
 	}
 
 	private IFile getWorkspaceFile(IFileStore fileStore) {

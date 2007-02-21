@@ -936,14 +936,6 @@
    </extension>
    
    <extension
-         point="org.eclipse.ui.elementFactories">
-      <factory
-            class="org.eclipse.ui.internal.editors.text.JavaFileEditorInputFactory"
-            id="org.eclipse.ui.ide.FileStoreEditorInputFactory">
-      </factory>
-   </extension>
-   
-   <extension
          point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
       <target
             id="org.eclipse.ui.DefaultTextEditor"
