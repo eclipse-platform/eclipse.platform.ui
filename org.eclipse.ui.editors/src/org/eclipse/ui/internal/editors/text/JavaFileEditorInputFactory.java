@@ -20,7 +20,8 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.ide.IURIEditorInput;
+import org.eclipse.ui.IURIEditorInput;
+
 
 /**
  * Factory for saving and restoring a <code>JavaFileEditorInput</code>. 

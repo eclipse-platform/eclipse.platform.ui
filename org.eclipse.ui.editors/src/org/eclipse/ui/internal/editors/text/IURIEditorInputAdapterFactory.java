@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.ui.editors.text.ILocationProvider;
 
-import org.eclipse.ui.ide.IURIEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 
 
 /**

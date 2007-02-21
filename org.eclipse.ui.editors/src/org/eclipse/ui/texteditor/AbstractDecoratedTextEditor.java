@@ -103,6 +103,7 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -112,7 +113,6 @@ import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IGotoMarker;
-import org.eclipse.ui.ide.IURIEditorInput;
 import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
 import org.eclipse.ui.internal.editors.quickdiff.RestoreAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertBlockAction;

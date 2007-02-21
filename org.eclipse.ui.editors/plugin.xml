@@ -20,7 +20,7 @@
       </factory>
       <factory 
          class="org.eclipse.ui.internal.editors.text.IURIEditorInputAdapterFactory" 
-            adaptableType="org.eclipse.ui.ide.IURIEditorInput">
+            adaptableType="org.eclipse.ui.IURIEditorInput">
             <adapter type="org.eclipse.ui.editors.text.ILocationProvider"/>
       </factory>
    </extension>     	
