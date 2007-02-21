@@ -16,8 +16,25 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.content.IContentDescription;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -32,23 +49,12 @@ import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.content.IContentTypeMatcher;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -1047,6 +1053,63 @@ public final class IDE {
 		}
 
 		return editor;
+	}
+
+    /**
+     * Opens an editor on the given IFileStore object.
+     * <p>
+     * Unlike the other <code>openEditor</code> methods, this one
+     * can be used to open files that reside outside the workspace
+     * resource set.
+     * </p>
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened.
+     * </p>
+     * 
+     * @param page
+     *            the page in which the editor will be opened
+     * @param fileStore 
+     *            the IFileStore representing the file to open
+     * @return an open editor or <code>null</code> if an external editor was opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage#openEditor(IEditorInput, String)
+     * @since 3.3
+     */
+	public static IEditorPart openEditorOnFileStore(IWorkbenchPage page, IFileStore fileStore) throws PartInitException {
+        //sanity checks
+        if (page == null) {
+			throw new IllegalArgumentException();
+		}
+
+        IEditorInput input = getEditorInput(fileStore);
+        String editorId = getEditorId(fileStore);
+        
+        // open the editor on the file
+        return page.openEditor(input, editorId);
+    }
+
+    /**
+     * Get the id of the editor associated with the given <code>IFileStore</code>.
+     * 
+	 * @param workbench
+	 * 	         the Workbench to use to determine the appropriate editor's id 
+     * @param fileStore
+     *           the <code>IFileStore</code> representing the file for which the editor id is desired
+	 * @return the id of the appropriate editor
+	 * @since 3.3
+	 */
+	private static String getEditorId(IFileStore fileStore) {
+		IEditorDescriptor descriptor;
+		try {
+			descriptor = IDE.getEditorDescriptor(fileStore.getName());
+		} catch (PartInitException e) {
+			return null;
+		}
+		if (descriptor != null)
+			return descriptor.getId();
+		return null;
 	}
 
 	/**

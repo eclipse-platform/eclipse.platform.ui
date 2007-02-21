@@ -203,6 +203,10 @@
             id="org.eclipse.ui.part.FileEditorInputFactory">
       </factory>
       <factory
+            class="org.eclipse.ui.ide.FileStoreEditorInputFactory"
+            id="org.eclipse.ui.ide.FileStoreEditorInputFactory">
+      </factory>
+      <factory
             class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInputFactory"
             id="org.eclipse.ui.internal.dialogs.WelcomeEditorInputFactory">
       </factory>
@@ -301,6 +305,20 @@
         		</objectClass>
      		</enablement>
   		</action>                 
+      </actionSet>
+        <actionSet
+            label="%openFilesActionSet.label"
+            visible="true"
+            id="org.eclipse.ui.actionSet.openFiles">
+         <action
+               definitionId="org.eclipse.ui.edit.text.openLocalFile"
+               label="%openLocalFile.label"
+               helpContextId="org.eclipse.ui.open_local_file_action_context"
+               class="org.eclipse.ui.internal.ide.actions.OpenLocalFileAction"
+               tooltip="%openLocalFile.description"
+               menubarPath="file/new.ext"
+               id="org.eclipse.ui.openLocalFile">
+         </action>
       </actionSet>
    </extension>   
    

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,9 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -27,7 +29,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * @since 3.3
  *
  */
-public class FileStoreEditorInput implements IURIEditorInput, org.eclipse.ui.IURIEditorInput {
+public class FileStoreEditorInput implements IURIEditorInput, IPersistableElement {
 
 	/**
 	 * The workbench adapter which simply provides the label.
@@ -101,7 +103,7 @@ public class FileStoreEditorInput implements IURIEditorInput, org.eclipse.ui.IUR
 	 * @see org.eclipse.ui.IEditorInput#getPersistable()
 	 */
 	public IPersistableElement getPersistable() {
-		return null;
+		return this;
 	}
 
 	/*
@@ -147,6 +149,22 @@ public class FileStoreEditorInput implements IURIEditorInput, org.eclipse.ui.IUR
 	 */
 	public URI getURI() {
 		return fileStore.toURI();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.IPersistableElement#getFactoryId()
+	 */
+	public String getFactoryId() {
+		return FileStoreEditorInputFactory.ID;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		FileStoreEditorInputFactory.saveState(memento, this);
+		
 	}
 
 }
