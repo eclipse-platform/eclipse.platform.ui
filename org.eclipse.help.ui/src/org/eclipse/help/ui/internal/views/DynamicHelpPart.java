@@ -255,6 +255,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				}
 			}
 		};
+		job.setSystem(true);
 		scheduleSearch(job);
 	}
 	
