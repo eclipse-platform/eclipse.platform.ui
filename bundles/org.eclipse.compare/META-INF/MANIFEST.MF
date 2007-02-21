@@ -8,9 +8,9 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.compare,
  org.eclipse.compare.contentmergeviewer,
- org.eclipse.compare.internal;x-internal:=true,
- org.eclipse.compare.internal.merge;x-internal:=true,
- org.eclipse.compare.internal.patch;x-internal:=true,
+ org.eclipse.compare.internal;x-friends:="org.eclipse.team.ui,org.eclipse.team.cvs.ui",
+ org.eclipse.compare.internal.merge;x-friends:="org.eclipse.team.ui,org.eclipse.team.cvs.ui",
+ org.eclipse.compare.internal.patch;x-friends:="org.eclipse.team.ui,org.eclipse.team.cvs.ui",
  org.eclipse.compare.patch,
  org.eclipse.compare.rangedifferencer,
  org.eclipse.compare.structuremergeviewer

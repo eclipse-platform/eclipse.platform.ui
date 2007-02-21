@@ -37,7 +37,6 @@ import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.IChangeSetProvider;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.ui.internal.navigator.extensions.CommonExtensionSite;
 import org.eclipse.ui.navigator.*;
 
 public class ChangeSetContentProvider extends ResourceModelContentProvider implements ITreePathContentProvider {
@@ -645,7 +644,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 	}
 
 	private ChangeSetSorter getSorter() {
-		INavigatorContentService contentService = ((CommonExtensionSite)getExtensionSite()).getContentService();
+		INavigatorContentService contentService = getExtensionSite().getService();
 		INavigatorSorterService sortingService = contentService.getSorterService();
 		INavigatorContentExtension extension = getExtensionSite().getExtension();
 		if (extension != null) {
