@@ -202,7 +202,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		Vector history = new Vector();
 		try {
 			ILaunchConfiguration config = null;
-			for(Iterator iter = fCompleteHistory.iterator(); iter.hasNext();){
+			for(Iterator iter = fCompleteHistory.listIterator(); iter.hasNext();){
 				config = (ILaunchConfiguration) iter.next();
 				if(config.exists() && DebugUIPlugin.doLaunchConfigurationFiltering(config) && 
 				!WorkbenchActivityHelper.filterItem(new LaunchConfigurationTypeContribution(config.getType()))) {
