@@ -38,7 +38,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -79,6 +78,20 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Manages UI related launch configuration artifacts
+ * 
+ * Since 3.3 the Launch Configuration Manager is an <code>ISaveParticipant</code>, allowing it to participate in
+ * workspace persistence life-cycles.
+ * 
+ * @see ISaveParticipant
+ * @see org.eclipse.debug.ui.ILaunchShortcut
+ * @see ILaunchGroup
+ * @see ILaunchListener
+ * @see ILaunchHistoryChangedListener
+ * @see DebugUIPlugin
+ * @see LaunchHistory
+ */
 public class LaunchConfigurationManager implements ILaunchListener, ISaveParticipant {
 	/**
 	 * Launch group extensions, keyed by launch group identifier.
@@ -130,12 +143,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * performs initialization of the manager when it is started 
 	 */
 	public void startup() {				
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
-		try {
-			ResourcesPlugin.getWorkspace().addSaveParticipant(DebugUIPlugin.getDefault(), this);
-		} 
-		catch (CoreException e) {DebugUIPlugin.log(e);}
+		DebugUIPlugin.getDefault().addSaveParticipant(this);
 		//update histories for launches already registered
 		ILaunch[] launches = launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {
@@ -249,7 +259,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				history.dispose();
 			}
 		}
-		ResourcesPlugin.getWorkspace().removeSaveParticipant(DebugUIPlugin.getDefault());
+		DebugUIPlugin.getDefault().removeSaveParticipant(this);
 	}
 	
 	/**

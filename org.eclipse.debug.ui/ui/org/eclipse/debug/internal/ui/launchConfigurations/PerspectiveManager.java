@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -62,15 +64,24 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * The perspective manager manages the 'perspective' settings
- * defined by launch configurations. Specifically it: <ul>
+ * defined by launch configurations. Specifically it: 
+ * <ul>
  * <li>changes perspectives as launches are registered</li>
  * <li>change perspective when a thread suspends</li>
  * </ul>
  * 
+ * Since 3.3 the Perspectives Manager is an <code>ISaveParticipant</code>, allowing it to participate in
+ * workspace persistence life-cycles.
+ * 
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
+ * @see ISaveParticipant
+ * @see ISuspendTriggerListener
+ * @see ILaunchListener
+ * @see org.eclipse.debug.internal.ui.preferences.LaunchPerspectivePreferencePage
+ * @see DebugUIPlugin
  */
-public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListener {
+public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListener, ISaveParticipant {
 		
 	/**
 	 * Lock used to synchronize perspective switching with view activation.
@@ -236,8 +247,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * launches to be registered.
 	 */
 	public void startup() {
-		DebugPlugin plugin = DebugPlugin.getDefault();
-		plugin.getLaunchManager().addLaunchListener(this);
+		DebugUIPlugin.getDefault().addSaveParticipant(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		initPerspectives();
 	}
 
@@ -247,14 +258,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * launch listener.
 	 */
 	public void shutdown() {
-		DebugPlugin plugin = DebugPlugin.getDefault();
-		try {
-			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, generatePerspectiveXML());			
-		} 
-		catch (IOException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$ 
-		catch (ParserConfigurationException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
-		catch (TransformerException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
-		plugin.getLaunchManager().removeLaunchListener(this);
+		DebugUIPlugin.getDefault().removeSaveParticipant(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 	}
 	
 	/**
@@ -410,7 +415,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		// if no perspective specified, always switch to debug
 		// perspective 
 
-		// this has to be done in an asynch, such that the workbench
+		// this has to be done in an async, such that the workbench
 		// window can be accessed
 		final String targetId = perspectiveId;
 		Runnable r = new Runnable() {
@@ -973,7 +978,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	/**
 	 * Parses a string argument into a set of modes
 	 * @param modes the string to parse
-	 * @return a set of modes parsed fomr the specified string of the empty set, never null
+	 * @return a set of modes parsed from the specified string of the empty set, never null
 	 * 
 	 * @since 3.3
 	 */
@@ -987,7 +992,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	}
 	
 	/**
-	 * Creates a standard comma seprerated list of the modes from the specified set
+	 * Creates a standard comma separated list of the modes from the specified set
 	 * @param modes the set to write to string
 	 * @return the 
 	 */
@@ -1019,5 +1024,32 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	public void suspended(ILaunch launch, Object context) {
 		handleBreakpointHit(launch);
+	}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void doneSaving(ISaveContext context) {}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void prepareToSave(ISaveContext context) throws CoreException {}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void rollback(ISaveContext context) {}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void saving(ISaveContext context) throws CoreException {
+		try {
+			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, generatePerspectiveXML());			
+		} 
+		catch (IOException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$ 
+		catch (ParserConfigurationException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
+		catch (TransformerException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
 	}
 }

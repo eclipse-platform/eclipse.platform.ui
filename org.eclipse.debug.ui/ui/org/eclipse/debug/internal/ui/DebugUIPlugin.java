@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -118,7 +120,14 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Debug UI Plug-in.
- *
+ * 
+ * Since 3.3 this plugin registers an <code>ISaveParticipant</code>, allowing this plugin to participate 
+ * in workspace persistence life-cycles
+ * 
+ * @see ISaveParticipant
+ * @see ILaunchListener
+ * @see LaunchConfigurationManager
+ * @see PerspectiveManager
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
@@ -179,6 +188,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      */
     private ServiceTracker fServiceTracker;
     private PackageAdmin fPackageAdminService;
+    
+    /**
+     * A set of <code>ISaveParticipant</code>s that want to contribute to saving via this plugin
+     * 
+     * @since 3.3
+     */
+    private Set fSaveParticipants = new HashSet();
     
     public static boolean DEBUG = false;
 	
@@ -351,6 +367,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return ret[0];
 	}	
 	
+	/**
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
+	 */
 	protected ImageRegistry createImageRegistry() {
 		return DebugPluginImages.initializeImageRegistry();
 	}
@@ -390,6 +409,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fServiceTracker.close();
 			fPackageAdminService = null;
 			
+			fSaveParticipants.clear();
+			
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 			
 		} finally {
@@ -397,6 +418,29 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 	}
 
+	/**
+	 * Add the specified <code>ISaveParticipant</code> to the current listing of
+	 * registered participants
+	 * @param participant
+	 * @return true if this current listing did not already contain the specified participant
+	 * @since 3.3
+	 */
+	public boolean addSaveParticipant(ISaveParticipant participant) {
+		return fSaveParticipants.add(participant);
+	}
+	
+	/**
+	 * Removes the specified <code>ISaveParticipant</code> from the current listing of registered
+	 * participants
+	 * @param participant
+	 * @return true if the set contained the specified element
+	 * 
+	 * @since 3.3
+	 */
+	public boolean removeSaveParticipant(ISaveParticipant participant) {
+		return fSaveParticipants.remove(participant);
+	}
+	
 	/**
 	 * @see AbstractUIPlugin#startup()
 	 */
@@ -406,10 +450,25 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				new ISaveParticipant() {
 					public void saving(ISaveContext saveContext) throws CoreException {
 						savePluginPreferences();
+						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
+							((ISaveParticipant)iter.next()).saving(saveContext);
+						}
 					}				
-					public void rollback(ISaveContext saveContext) {}
-					public void prepareToSave(ISaveContext saveContext) throws CoreException {}
-					public void doneSaving(ISaveContext saveContext) {}
+					public void rollback(ISaveContext saveContext) {
+						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
+							((ISaveParticipant)iter.next()).rollback(saveContext);
+						}
+					}
+					public void prepareToSave(ISaveContext saveContext) throws CoreException {
+						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
+							((ISaveParticipant)iter.next()).prepareToSave(saveContext);
+						}
+					}
+					public void doneSaving(ISaveContext saveContext) {
+						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
+							((ISaveParticipant)iter.next()).doneSaving(saveContext);
+						}
+					}
 				});
 		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		
@@ -461,6 +520,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fServiceTracker.open();
 		fPackageAdminService = (PackageAdmin) fServiceTracker.getService();
 		
+		getLaunchConfigurationManager().startup();
 	}
 
 	/**
@@ -654,7 +714,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				}
 			});
 		} catch (InterruptedException e) {
-			// cancelled by user
+			// canceled by user
 			return false;
 		} catch (InvocationTargetException e) {
 			String title= DebugUIMessages.DebugUIPlugin_Run_Debug_1; 
@@ -759,8 +819,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public void launchAdded(ILaunch launch) {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		getProcessConsoleManager().startup();
-		
-		getLaunchConfigurationManager().startup();
 		SourceLookupManager.getDefault();
 	}
 	
