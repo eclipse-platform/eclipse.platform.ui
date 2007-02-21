@@ -16,6 +16,7 @@
 
  <package name="org.eclipse.core.filebuffers.manipulation">
    <type name="FileBufferOperationRunner" subclass="false"/>
+   <type name="GenericFileBufferOperationRunner" subclass="false"/>
  </package>
 
  <component-depends unrestricted="true"/>
