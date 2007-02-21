@@ -19,10 +19,10 @@ public class DebugUIMessages extends NLS {
 	public static String DebugUIPlugin_23;
 	public static String DebugUIPlugin_24;
 	public static String DebugUIPlugin_0;
+
+	public static String DebugUIPlugin_25;
 	public static String DebugUIPlugin_Build_error__Check_log_for_details__2;
 	public static String DebugUIPlugin_Run_Debug_1;
-
-	public static String DebugUITools_8;
 
 	public static String DefaultLabelProvider__disconnected__1;
 	public static String DefaultLabelProvider_1;

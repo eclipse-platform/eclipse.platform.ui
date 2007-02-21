@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sascha Radike - bug 56642
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -617,17 +618,25 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
      * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
-    	boolean reportdone = false;
+    	if (monitor == null) {
+			monitor = new NullProgressMonitor();
+    	}
+    	/* Setup progress monitor
+    	 * - Prepare delegate (0)
+    	 * - Pre-launch check (1)
+    	 * - [Build before launch (7)]					if build
+    	 * - [Incremental build before launch (3)]		if build
+    	 * - Final launch validation (1)
+    	 * - Initialize source locator (1)
+    	 * - Launch delegate (10) */
+    	if (build) {
+    		monitor.beginTask("", 23); //$NON-NLS-1$
+    	}
+    	else {
+    		monitor.beginTask("", 13); //$NON-NLS-1$
+    	}
+		monitor.subTask(DebugCoreMessages.LaunchConfiguration_9);
     	try {
-	    	if (monitor == null) {
-				monitor = new NullProgressMonitor();	
-				monitor.beginTask(DebugCoreMessages.LaunchConfiguration_9, 100);
-				reportdone = true;
-			}
-	    	else {
-	    		monitor.setTaskName(DebugCoreMessages.LaunchConfiguration_9);
-	    	}
-	    	IProgressMonitor subMonitor = null;
 			// bug 28245 - force the delegate to load in case it is interested in launch notifications
 	    	Set modes = getModes();
 	    	modes.add(mode);
@@ -693,58 +702,69 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 					throw new CoreException(status);
 				}
 			}
-			
 			boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
 			if(!captureOutput) {
 			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
 			} else {
 			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 			}
-			
 			String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);	
+			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);
+			
 		// perform initial pre-launch sanity checks
+			monitor.subTask(DebugCoreMessages.LaunchConfiguration_8);
+			
 			if (delegate2 != null) {
-				subMonitor = new SubProgressMonitor(monitor, 100);
-				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_8);
-				if (!(delegate2.preLaunchCheck(this, mode, subMonitor))) {
+				if (!(delegate2.preLaunchCheck(this, mode, new SubProgressMonitor(monitor, 1)))) {
 					// canceled
 					monitor.setCanceled(true);
 					return launch;
 				}
+			}
+			else {
+				monitor.worked(1); /* No pre-launch-check */
 			}
 		// preform pre-launch build
 			if (build) {
-				subMonitor = new SubProgressMonitor(monitor, 100);
-				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_7);
+				IProgressMonitor buildMonitor = new SubProgressMonitor(monitor, 10, SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK);
+				buildMonitor.beginTask(DebugCoreMessages.LaunchConfiguration_7, 10);			
+				buildMonitor.subTask(DebugCoreMessages.LaunchConfiguration_6);
 				if (delegate2 != null) {
-					build = delegate2.buildForLaunch(this, mode, subMonitor);
+					build = delegate2.buildForLaunch(this, mode, new SubProgressMonitor(buildMonitor, 7));
 				}
 				if (build) {
-					subMonitor = new SubProgressMonitor(monitor, 100);
-					subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_6);
-					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);				
+					buildMonitor.subTask(DebugCoreMessages.LaunchConfiguration_5);
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(buildMonitor, 3));				
+				}
+				else {
+					buildMonitor.worked(3); /* No incremental build required */
 				}
 			}
 		// final validation
+			monitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
 			if (delegate2 != null) {
-				subMonitor = new SubProgressMonitor(monitor, 100);
-				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_5);
-				if (!(delegate2.finalLaunchCheck(this, mode, subMonitor))) {
+				if (!(delegate2.finalLaunchCheck(this, mode, new SubProgressMonitor(monitor, 1)))) {
 					// canceled
 					monitor.setCanceled(true);
 					return launch;
 				}
+			}
+			else {
+				monitor.worked(1); /* No validation */
 			}
 			if (register) {
 			    getLaunchManager().addLaunch(launch);
 			}
-		//initialize the source locator
+			
 			try {
-				subMonitor = new SubProgressMonitor(monitor, 100);
-				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_4);
+				//initialize the source locator
+				monitor.subTask(DebugCoreMessages.LaunchConfiguration_3);
 				initializeSourceLocator(launch);
-				delegate.launch(this, mode, launch, subMonitor);
+				monitor.worked(1);
+
+				/* Launch the delegate */
+				monitor.subTask(DebugCoreMessages.LaunchConfiguration_2);
+				delegate.launch(this, mode,	launch,	new SubProgressMonitor(monitor, 10));
 			} catch (CoreException e) {
 				// if there was an exception, and the launch is empty, remove it
 				if (!launch.hasChildren()) {
@@ -759,9 +779,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			return launch;
     	}
     	finally {
-    		if(reportdone) {
-    			monitor.done();
-    		}
+   			monitor.done();
     	}
     }
 	

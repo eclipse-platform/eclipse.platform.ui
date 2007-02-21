@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sascha Radike - bug 56642
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -42,6 +43,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -869,18 +871,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
-		IProgressMonitor subMonitor = monitor;
-		try {
-			String message = MessageFormat.format("{0}...", new String[]{configuration.getName()}); //$NON-NLS-1$
-			if (buildBeforeLaunch) {
-				monitor.beginTask(message, 200);
-				return configuration.launch(mode, monitor, true);	
-			} 
-			subMonitor = monitor;
-			subMonitor.beginTask(message, 100);
-			return configuration.launch(mode, subMonitor);
+		
+		monitor.beginTask("", 1); //$NON-NLS-1$
+		try
+		{
+			return configuration.launch(
+					mode,
+					new SubProgressMonitor(monitor, 1),
+					buildBeforeLaunch);	
 		}
-		finally {
+		finally
+		{
 			monitor.done();
 		}
 	}
@@ -926,16 +927,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					/* Setup progress monitor
+					 * - Waiting for jobs to finish (2)
+					 * - Build & launch (98) */
+					monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}), 100);
+
 					try {
-						jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
-						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
-					} catch (InterruptedException e) {
-						// continue
-					}
+						jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
+						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
+					} 
+					catch (InterruptedException e) {/* continue*/}
 					if (!monitor.isCanceled()) {
 						try {
-							buildAndLaunch(configuration, mode, monitor);
-						} catch (CoreException e) {
+							buildAndLaunch(configuration, mode,	new SubProgressMonitor(monitor, 98));
+						} 
+						catch (CoreException e) {
 							throw new InvocationTargetException(e);
 						}
 					}
@@ -943,26 +949,32 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			};			
 			try {
 				progressService.busyCursorWhile(runnable);
-			} catch (InterruptedException e) {
-			} catch (InvocationTargetException e2) {
+			} 
+			catch (InterruptedException e) {} 
+			catch (InvocationTargetException e2) {
 				handleInvocationTargetException(e2, configuration, mode);
 			}
 		} else {
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					/* Setup progress monitor
+					 * - Build & launch (1) */
+					monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}), 1);
 					try {
-						buildAndLaunch(configuration, mode, monitor);
-					} catch (CoreException e) {
+						buildAndLaunch(configuration, mode,	new SubProgressMonitor(monitor, 1));
+					} 
+					catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
 				}		
 			};
 			try {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
-			} catch (InvocationTargetException e) {
+			} 
+			catch (InvocationTargetException e) {
 				handleInvocationTargetException(e, configuration, mode);
-			} catch (InterruptedException e) {
-			}							
+			} 
+			catch (InterruptedException e) {}							
 
 		}
 	}
@@ -1005,14 +1017,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
 		final IJobManager jobManager = Job.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-
 		boolean wait = (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0) || (jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length > 0);
-		
 		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (wait) { // if there are build jobs running, do we wait or not??
 			if (waitPref.equals(MessageDialogWithToggle.PROMPT)) {
 				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); // 
-				
 				switch (dialog.getReturnCode()) {
 					case IDialogConstants.CANCEL_ID:
 						return;
@@ -1023,56 +1032,53 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						wait = false;
 						break;
 				}
-			} else {
+			} 
+			else {
 				wait = waitPref.equals(MessageDialogWithToggle.ALWAYS);
 			}
-		}
-		
+		}		
 		final boolean waitInJob = wait;
-		Job job = new Job(DebugUIMessages.DebugUITools_3) { 
+		Job job = new Job(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()})) {
 			public IStatus run(final IProgressMonitor monitor) {
+				/* Setup progress monitor
+				 * - Waiting for jobs to finish (2)
+				 * - Build & launch (98) */
+				monitor.beginTask(DebugUIMessages.DebugUITools_3, 100);
 				try {
 					if(waitInJob) {						
-						StringBuffer buffer= new StringBuffer(configuration.getName());
+						StringBuffer buffer = new StringBuffer(configuration.getName());
 						buffer.append(DebugUIMessages.DebugUIPlugin_0); 
-						ILaunchConfigurationWorkingCopy workingCopy= configuration.copy(buffer.toString());
+						ILaunchConfigurationWorkingCopy workingCopy = configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
-						final ILaunch pendingLaunch= new PendingLaunch(workingCopy, mode, this);
-                        
+						final ILaunch pendingLaunch = new PendingLaunch(workingCopy, mode, this);
 						DebugPlugin.getDefault().getLaunchManager().addLaunch(pendingLaunch);
                         IJobChangeListener listener= new IJobChangeListener() {
-                            public void sleeping(IJobChangeEvent event) {
-                            }
-                            public void scheduled(IJobChangeEvent event) {
-                            }
-                            public void running(IJobChangeEvent event) {
-                            }
+                            public void sleeping(IJobChangeEvent event) {}
+                            public void scheduled(IJobChangeEvent event) {}
+                            public void running(IJobChangeEvent event) {}
+                            public void awake(IJobChangeEvent event) {}
+                            public void aboutToRun(IJobChangeEvent event) {}
                             public void done(IJobChangeEvent event) {
                                 DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
                                 removeJobChangeListener(this);
                             }
-                            public void awake(IJobChangeEvent event) {
-                            }
-                            public void aboutToRun(IJobChangeEvent event) {
-                            }
                         };
                         addJobChangeListener(listener);
-
 						try {
-							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
-							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
-						} catch (InterruptedException e) {
-							// just continue.
-						}
+							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
+							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
+						} 
+						catch (InterruptedException e) {/*just continue.*/}
                         DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
 					}
-					
-					if (!monitor.isCanceled()) {
-						buildAndLaunch(configuration, mode, monitor);
+					else {
+						monitor.worked(2); /* don't wait for jobs to finish */
 					}
-					
+					if (!monitor.isCanceled()) {
+						buildAndLaunch(configuration, mode, new SubProgressMonitor(monitor, 98));
+					}
 				} catch (CoreException e) {
-					final IStatus status= e.getStatus();
+					final IStatus status = e.getStatus();
 					IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 					if (handler == null) {
 						return status;
@@ -1088,6 +1094,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					};
 					DebugUIPlugin.getStandardDisplay().asyncExec(r);
 				}
+				finally	{
+					monitor.done();
+				}
+				
 				return Status.OK_STATUS;
 			}
 		};
@@ -1096,7 +1106,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		IProgressService progressService = workbench.getProgressService();
 
 		job.setPriority(Job.INTERACTIVE);
-		job.setName(DebugUIMessages.DebugUITools_8); 
+		job.setName(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}));
+		
 		if (wait) {
 			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
 		}
