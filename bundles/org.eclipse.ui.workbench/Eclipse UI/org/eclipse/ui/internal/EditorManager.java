@@ -37,7 +37,6 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -69,7 +68,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISaveablesLifecycleListener;
@@ -93,9 +91,10 @@ import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.NullEditorInput;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
@@ -195,11 +194,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			editorPropChangeListnener = new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty().equals(
-							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-							|| event
-									.getProperty()
-									.equals(
-											IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 						IEditorReference[] editors = getEditors();
 						for (int i = 0; i < editors.length; i++) {
 							((EditorReference) editors[i]).pinStatusUpdated();
@@ -226,8 +221,7 @@ public class EditorManager implements IExtensionChangeHandler {
 					IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 					if (store
 							.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-							|| store
-									.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+							|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction()) {
 
 						IWorkbenchPartReference ref = editorPresentation
 								.getVisibleEditor();
@@ -607,84 +601,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * should be opened.
 	 */
 	private IEditorReference findReusableEditor(EditorDescriptor desc) {
-
-		IPreferenceStore store = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
-		if (store
-				.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
-			// allow only the active editor to be replaced, and only if it is
-			// not dirty or pinned
-			IEditorPart activeEditor = page.getActiveEditor();
-			if (activeEditor != null) {
-				EditorReference activeEditorReference = (EditorReference) page
-						.getReference(activeEditor);
-				if (activeEditorReference != null
-						&& !activeEditorReference.isDirty()
-						&& !activeEditorReference.isPinned()) {
-					return activeEditorReference;
-				}
-			}
-			return null;
-		}
-		boolean reuse = store
-				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
-		if (!reuse) {
-			return null;
-		}
-
-		IEditorReference editors[] = page.getSortedEditors();
-		if (editors.length < page.getEditorReuseThreshold()) {
-			return null;
-		}
-
-		IEditorReference dirtyEditor = null;
-
-		// Find a editor to be reused
-		for (int i = 0; i < editors.length; i++) {
-			IEditorReference editor = editors[i];
-			// if(editor == activePart)
-			// continue;
-			if (editor.isPinned()) {
-				continue;
-			}
-			if (editor.isDirty()) {
-				if (dirtyEditor == null) {
-					dirtyEditor = editor;
-				}
-				continue;
-			}
-			return editor;
-		}
-		if (dirtyEditor == null) {
-			return null;
-		}
-
-		/* fix for 11122 */
-		boolean reuseDirty = store
-				.getBoolean(IPreferenceConstants.REUSE_DIRTY_EDITORS);
-		if (!reuseDirty) {
-			return null;
-		}
-
-		MessageDialog dialog = new MessageDialog(window.getShell(),
-				WorkbenchMessages.EditorManager_reuseEditorDialogTitle,
-				null, // accept the default window icon
-				NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion,
-						dirtyEditor.getName()), MessageDialog.QUESTION,
-				new String[] { IDialogConstants.YES_LABEL,
-						IDialogConstants.NO_LABEL,
-						WorkbenchMessages.EditorManager_openNewEditorLabel }, 0);
-		int result = dialog.open();
-		if (result == 0) { // YES
-			ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(dialog
-					.getShell());
-			pmd.open();
-			dirtyEditor.getEditor(true).doSave(pmd.getProgressMonitor());
-			pmd.close();
-		} else if ((result == 2) || (result == -1)) {
-			return null;
-		}
-		return dirtyEditor;
+		return ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).findReusableEditor(page);
 	}
 
 	/**
@@ -911,31 +828,9 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		IEditorReference reusableEditorRef = findReusableEditor(desc);
 		if (reusableEditorRef != null) {
-			IEditorPart reusableEditor = reusableEditorRef.getEditor(false);
-			if (reusableEditor == null) {
-				IEditorReference result = new EditorReference(this, input, desc);
-				page.closeEditor(reusableEditorRef, false);
-				return result;
-			}
-
-			EditorSite site = (EditorSite) reusableEditor.getEditorSite();
-			EditorDescriptor oldDesc = site.getEditorDescriptor();
-			if ((desc.getId().equals(oldDesc.getId()))
-					&& (reusableEditor instanceof IReusableEditor)) {
-				Workbench wb = (Workbench) window.getWorkbench();
-				editorPresentation.moveEditor(reusableEditor, -1);
-				wb.getEditorHistory().add(reusableEditor.getEditorInput(),
-						site.getEditorDescriptor());
-				page.reuseEditor((IReusableEditor) reusableEditor, input);
-				return reusableEditorRef;
-			} else {
-				// findReusableEditor(...) checks pinned and saves editor if
-				// necessary
-				IEditorReference ref = new EditorReference(this, input, desc);
-				reusableEditor.getEditorSite().getPage().closeEditor(
-						reusableEditor, false);
-				return ref;
-			}
+			return ((TabBehaviour) Tweaklets.get(TabBehaviour.class))
+					.reuseInternalEditor(page, this, editorPresentation, desc,
+							input, reusableEditorRef);
 		}
 		return null;
 	}

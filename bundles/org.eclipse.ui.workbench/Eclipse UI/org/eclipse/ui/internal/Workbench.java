@@ -1092,7 +1092,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	/*
 	 * Returns the editor history.
 	 */
-	protected EditorHistory getEditorHistory() {
+	public EditorHistory getEditorHistory() {
 		if (editorHistory == null) {
 			editorHistory = new EditorHistory();
 		}

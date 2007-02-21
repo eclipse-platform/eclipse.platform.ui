@@ -44,7 +44,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -102,6 +101,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -2538,13 +2539,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         // If an editor already exists for the input, use it.
 		IEditorPart editor = null;
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		// Reuse an existing open editor, unless we are in "new editor tab management" mode
-		if (store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
-			editor = getEditorManager().findEditor(editorID, input, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
-		} else {
-			editor = getEditorManager().findEditor(editorID, input, matchFlags);
-		}
+		editor = getEditorManager().findEditor(editorID, input, ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).getReuseEditorMatchFlags(matchFlags));
         if (editor != null) {
             if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorID)) {
                 if (editor.isDirty()) {
@@ -3787,12 +3783,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * 
      */
     public int getEditorReuseThreshold() {
-        IPreferenceStore store = WorkbenchPlugin.getDefault()
-                .getPreferenceStore();
-        if (store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
-        	return 1;
-        }
-        return store.getInt(IPreferenceConstants.REUSE_EDITORS);
+    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).getEditorReuseThreshold();
     }
 
     /**

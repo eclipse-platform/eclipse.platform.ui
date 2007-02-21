@@ -693,10 +693,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 		// Turn -on- the new Min/Max behaviour
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, true);
-        // Turn -on- experimental tab behaviour
-        IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
-		internalStore.setValue(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR, true);
-		internalStore.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
 	}
 
 	private void setR30Preferences() {
@@ -705,8 +701,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		// Turn -off- the new min/max behaviour
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
-        // Turn -off- experimental tab behaviour
-		internalStore.setValue(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR, false);
 
 		setEditorAlignDefault(internalStore);
 		setViewAlignDefault(internalStore);

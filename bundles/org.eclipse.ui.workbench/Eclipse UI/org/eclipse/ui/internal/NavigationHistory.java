@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -32,6 +31,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 
 /**
  * Implementation of the back and forward actions.
@@ -154,9 +155,8 @@ public class NavigationHistory implements INavigationHistory {
                      * Promote the entry of the last closed editor to be the active
                      * one, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=154431 
                      */ 
-                    if (!isEntryDisposed && page.getActiveEditor() == null && activeEntry < history.size()) {
+                    if (!isEntryDisposed && page.getActiveEditor() == null && activeEntry < history.size())
                     	activeEntry++;
-                    }
                     
                     updateActions();
                 }
@@ -169,8 +169,7 @@ public class NavigationHistory implements INavigationHistory {
     }
     
     private boolean isPerTabHistoryEnabled() {
-    	IPreferenceStore store = ((Workbench)page.getWorkbenchWindow().getWorkbench()).getPreferenceStore();
-    	return store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).isPerTabHistoryEnabled();
     }
 
     /*
@@ -761,7 +760,7 @@ public class NavigationHistory implements INavigationHistory {
 		updateActions();
 	}
     
-    void updateCookieForTab(Object oldCookie, Object newCookie) {
+    public void updateCookieForTab(Object oldCookie, Object newCookie) {
     	if (newCookie.equals(oldCookie)) {
     		return;
     	}

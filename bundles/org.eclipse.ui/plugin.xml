@@ -47,6 +47,7 @@
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.exsd"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
    <extension-point id="browserSupport" name="%ExtPoint.browserSupport" schema="schema/browserSupport.exsd"/>
+   <extension-point id="internalTweaklets" name="%ExtPoint.tweaklets" schema="schema/internalTweaklets.exsd"/>
    
    <extension
          point="org.eclipse.ui.contexts">
@@ -800,12 +801,6 @@
             description="%command.quickAccess.description"
             id="org.eclipse.ui.window.quickAccess"
             name="%command.quickAccess.name"/>
-      <command
-            categoryId="org.eclipse.ui.category.window"
-            defaultHandler="org.eclipse.ui.internal.OpenEmptyEditorTabHandler"
-            description="%command.openEmptyEditorTab.description"
-            id="org.eclipse.ui.window.openEmptyEditorTab"
-            name="%command.openEmptyEditorTab.name"/>
       <command
             name="%command.switchToEditor.name"
             description="%command.switchToEditor.description"

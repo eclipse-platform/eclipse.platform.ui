@@ -14,6 +14,8 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 
 /**
  * Action to toggle the pin state of an editor. If an editor is
@@ -26,8 +28,7 @@ public class PinEditorAction extends ActiveEditorAction {
                 WorkbenchPartReference ref = (WorkbenchPartReference)source;
                 setChecked(ref.isPinned());
             } else if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
-        		if (WorkbenchPlugin.getDefault().getPreferenceStore()
-						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+        		if (((TabBehaviour)Tweaklets.get(TabBehaviour.class)).autoPinOnDirty()) {
 					WorkbenchPartReference ref = (WorkbenchPartReference) source;
 					if (ref.isDirty()) {
 						ref.setPinned(true);

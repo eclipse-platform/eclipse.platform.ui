@@ -37,6 +37,8 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -82,11 +84,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
 		createEditorReuseGroup(composite);
-		if (PrefUtil.getInternalPreferenceStore().getBoolean(
-				IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
-			editorReuseGroup.setVisible(false);
-			showMultipleEditorTabs.setVisible(false);
-		}
+		((TabBehaviour)Tweaklets.get(TabBehaviour.class)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
         updateValidState();
 

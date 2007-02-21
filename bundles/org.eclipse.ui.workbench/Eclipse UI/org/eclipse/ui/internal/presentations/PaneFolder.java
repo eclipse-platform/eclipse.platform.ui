@@ -33,12 +33,12 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.IPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.layout.SizeCache;
 import org.eclipse.ui.internal.presentations.util.ProxyControl;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -227,10 +227,7 @@ public final class PaneFolder {
         {
             tabFolder = new CTabFolder(parent, flags);
             
-    		if (!WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-					IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
-				tabFolder.setMRUVisible(true);
-			}
+			tabFolder.setMRUVisible(((TabBehaviour)Tweaklets.get(TabBehaviour.class)).enableMRUTabVisibility());
 
             // Create a proxy control to measure the title area of the tab folder
             titleAreaProxy = new Composite(tabFolder, SWT.NO_BACKGROUND);

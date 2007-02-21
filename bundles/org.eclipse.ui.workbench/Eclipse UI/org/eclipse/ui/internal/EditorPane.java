@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -148,8 +150,7 @@ public class EditorPane extends PartPane {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean reuseEditor = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				|| store
-						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
         if (!reuseEditor) {
             return;
         }

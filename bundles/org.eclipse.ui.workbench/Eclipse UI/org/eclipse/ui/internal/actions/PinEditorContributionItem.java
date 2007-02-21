@@ -18,6 +18,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.PinEditorAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 
 /**
  * This contribution item controls the visibility of the pin editor
@@ -33,18 +35,13 @@ public class PinEditorContributionItem extends ActionContributionItem {
     private IPropertyChangeListener prefListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty().equals(
-					IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-					|| event
-							.getProperty()
-							.equals(
-									IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+					IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
                 if (getParent() != null) {
                     IPreferenceStore store = WorkbenchPlugin.getDefault()
                             .getPreferenceStore();
 					reuseEditors = store
 							.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-							|| store
-									.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+							|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
                     setVisible(reuseEditors);
                     getParent().markDirty();
                     if (window.getShell() != null
@@ -76,8 +73,7 @@ public class PinEditorContributionItem extends ActionContributionItem {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		reuseEditors = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				|| store
-						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
         setVisible(reuseEditors);
         WorkbenchPlugin.getDefault().getPreferenceStore()
                 .addPropertyChangeListener(prefListener);

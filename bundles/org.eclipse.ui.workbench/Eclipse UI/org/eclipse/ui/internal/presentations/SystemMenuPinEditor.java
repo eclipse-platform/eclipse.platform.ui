@@ -17,6 +17,8 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPartReference;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 
 public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
 
@@ -61,8 +63,7 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean reuseEditor = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				| store
-						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+				| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
         return reuseEditor;
     }
 

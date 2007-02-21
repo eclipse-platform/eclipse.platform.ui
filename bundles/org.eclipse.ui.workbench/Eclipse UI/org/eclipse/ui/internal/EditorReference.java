@@ -43,6 +43,8 @@ import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
@@ -383,8 +385,7 @@ public class EditorReference extends WorkbenchPartReference implements
                 .getPreferenceStore();
         boolean bUsePin = prefStore
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				|| prefStore
-						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
 
         if (!bUsePin) {
 			return descriptor;
