@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
@@ -350,8 +351,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 		// Return the current best.
 		if (conflict) {
-			WorkbenchPlugin.log("Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
-					+ bestActivation + ": " + currentActivation, Status.OK_STATUS); //$NON-NLS-1$
+			IStatus s = new Status(IStatus.WARNING, "org.eclipse.ui.workbench", //$NON-NLS-1$
+					"Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
+							+ bestActivation + ": " + currentActivation); //$NON-NLS-1$
+			WorkbenchPlugin.log(s);
 			return null;
 		}
 		return bestActivation;
