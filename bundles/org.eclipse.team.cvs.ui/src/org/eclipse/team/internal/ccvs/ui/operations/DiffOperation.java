@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
@@ -43,6 +42,78 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	protected boolean patchHasContents;
 	protected boolean patchHasNewFiles;
 	
+	/* see bug 159894 */
+	private class CustomizableEOLPrintStream extends PrintStream{
+
+		private boolean error = false;
+		
+		private String defaultLineEnding = "\n";  //$NON-NLS-1$
+		
+		public CustomizableEOLPrintStream(PrintStream openStream) {
+			super(openStream);
+			if(CVSProviderPlugin.getPlugin().isUsePlatformLineend()){
+				defaultLineEnding = System.getProperty("line.separator"); //$NON-NLS-1$
+			}
+		}
+		
+		public boolean checkError() {
+			return error || super.checkError();
+		}
+
+		public void println() {
+			try{
+				write(defaultLineEnding.getBytes());
+			} catch (IOException e){
+				error = true;
+			}
+		}
+		
+		public void println(boolean x) {
+			print(x);
+			println();
+		}
+		
+		public void println(char x) {
+			print(x);
+			println();
+		}
+
+		public void println(char[] x) {
+			print(x);
+			println();
+		}
+
+		public void println(double x) {
+			print(x);
+			println();
+		}
+
+		public void println(float x) {
+			print(x);
+			println();
+		}
+
+		public void println(int x) {
+			print(x);
+			println();
+		}
+
+		public void println(long x) {
+			print(x);
+			println();
+		}
+
+		public void println(Object x) {
+			print(x);
+			println();
+		}
+		
+		public void println(String x) {
+			print(x);
+			println();
+		}
+	}
+	
 	public DiffOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options, boolean isMultiPatch, boolean includeFullPathInformation, IPath patchRoot) {
 		super(part, mappings, options);
 		this.isMultiPatch = isMultiPatch;
@@ -54,7 +125,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	
 	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 		try {
-			stream = openStream();
+			stream = new CustomizableEOLPrintStream(openStream());
 			if (isMultiPatch){
 				stream.println(WorkspacePatcherUI.getWorkspacePatchHeader());
 			}
@@ -286,7 +357,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	}
 
 	public void setStream(PrintStream stream) {
-		this.stream = stream;
+		this.stream = new CustomizableEOLPrintStream(stream);
 	}
 
 	protected void reportEmptyDiff() {
