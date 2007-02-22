@@ -29,6 +29,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -237,7 +238,10 @@ public final class WorkbenchMenuService implements IMenuService {
 			for (Iterator ciIter = ciList.iterator(); ciIter.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
 
-				mgr.insert(insertionIndex++, ici);
+				final int oldSize = mgr.getSize();
+				mgr.insert(insertionIndex, ici);
+				if (mgr.getSize() > oldSize)
+					insertionIndex++;
 			}
 		}
 
@@ -464,14 +468,22 @@ public final class WorkbenchMenuService implements IMenuService {
 					} else {
 						item.setVisible(false);
 					}
+					
+					IContributionManager parent = null;
 					if (item instanceof ContributionItem) {
-						IContributionManager parent = ((ContributionItem) item)
+						parent = ((ContributionItem) item)
 								.getParent();
-						if (parent != null) {
-							parent.markDirty();
-							managersAwaitingUpdates.add(parent);
-						}
+						
 					}
+					else if (item instanceof MenuManager) {
+						parent = ((MenuManager) item)
+								.getParent();
+					}
+					if (parent != null) {
+						parent.markDirty();
+						managersAwaitingUpdates.add(parent);
+					}
+				
 				}
 			}
 		};
