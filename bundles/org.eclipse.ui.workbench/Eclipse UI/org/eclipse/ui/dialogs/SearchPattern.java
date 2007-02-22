@@ -212,6 +212,12 @@ public class SearchPattern {
 			return;
 		}
 
+		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
+			matchRule = RULE_CAMELCASE_MATCH;
+			stringPattern = pattern;
+			return;
+		}
+		
 		if (last == END_SYMBOL) {
 			matchRule = RULE_EXACT_MATCH;
 			stringPattern = pattern.substring(0, length - 1);
@@ -221,12 +227,6 @@ public class SearchPattern {
 		if (last == BLANK) {
 			matchRule = RULE_EXACT_MATCH;
 			stringPattern = pattern.trim();
-			return;
-		}
-
-		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
-			matchRule = RULE_CAMELCASE_MATCH;
-			stringPattern = pattern;
 			return;
 		}
 
@@ -483,12 +483,20 @@ public class SearchPattern {
 			// name
 			while (true) {
 				if (iName == nameEnd) {
-					// We have exhausted name (and not pattern), so it's not a
-					// match
+					if (patternChar == END_SYMBOL || patternChar == BLANK)
+						return true;
 					return false;
 				}
 
 				nameChar = name.charAt(iName);
+
+				if (patternChar == END_SYMBOL || patternChar == BLANK) {
+					if (isNameCharAllowed(nameChar)) {
+						return false;
+					}
+					iName++;
+					continue;
+				}
 
 				if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase
@@ -516,7 +524,7 @@ public class SearchPattern {
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {
-		return Character.isUpperCase(patternChar);
+		return Character.isUpperCase(patternChar) || patternChar == END_SYMBOL || patternChar == BLANK;
 	}
 
 	/**
@@ -636,7 +644,7 @@ public class SearchPattern {
 	 * 
 	 * @param ch
 	 *            character to be validated
-	 * @return true if cahracter is valid
+	 * @return true if character is valid
 	 */
 	protected boolean isValidCamelCaseChar(char ch) {
 		return true;
