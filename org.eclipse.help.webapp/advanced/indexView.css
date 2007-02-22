@@ -94,8 +94,8 @@ INPUT {
     margin-top:0px;
     padding-bottom: 5px;
 	margin-<%=isRTL?"right":"left"%>:5px;
-	font-weight:bold;
-	
+	font-weight:bold;	
+	font-size:110%;
 }
 
 DIV.root {

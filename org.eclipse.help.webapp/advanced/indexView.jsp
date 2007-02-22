@@ -63,10 +63,15 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 </DIV>
 </div>
 <div id="navigation">
-     <div id = "innerNavigation">
-         <a id = "previous" class = "enabled" onclick="this.blur();loadPreviousPage()">Previous</a> 
-         <a id = "next" class = "enabled" onclick="this.blur();loadNextPage()">Next</a> 
-     <div>
+    <table id="innerNavigation" cellspacing=0 cellpadding=0 border=0 style="background:transparent;">
+		<tr>
+			<td>				
+                <a id = "previous" class = "enabled" onclick="this.blur();loadPreviousPage()">Previous</a> 
+			</td>
+			<td>
+				<a id = "next" class = "enabled" onclick="this.blur();loadNextPage()">Next</a> 
+			</td>
+  	 </table>
 </div>
 </body>
 
