@@ -205,6 +205,16 @@ public abstract class ContributionManager implements IContributionManager {
 		contributions.toArray(items);
 		return items;
 	}
+	
+	/**
+	 * Return the number of contributions in this manager.
+	 * 
+	 * @return the number of contributions in this manager
+	 * @since 3.3
+	 */
+	public int getSize() {
+		return contributions.size();
+	}
 
 	/**
 	 * The <code>ContributionManager</code> implementation of this method
