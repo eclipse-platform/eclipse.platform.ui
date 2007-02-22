@@ -282,7 +282,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			return;
 		//test the cancellation of a family of jobs
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create two different families of jobs
 		TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
@@ -361,7 +361,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			return;
 		//test of finding jobs based on the job family they belong to
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create five different families of jobs
 		TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
@@ -628,7 +628,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create two different families of jobs
 		final TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		final TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
@@ -698,7 +698,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create a progress monitor to cancel the join call
 		final IProgressMonitor canceller = new FussyProgressMonitor();
 		//create two different families of jobs
@@ -822,7 +822,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		final int[] status = new int[1];
 		status[0] = TestBarrier.STATUS_WAIT_FOR_START;
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create three different families of jobs
 		final TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		final TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
@@ -894,7 +894,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilyNULL() {
 		//test methods that accept the null job family (i.e. all jobs)
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create two different families of jobs
 		TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
@@ -951,7 +951,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	public void testJobFamilySleep() {
 		//test the sleep method on a family of jobs
 		final int NUM_JOBS = 20;
-		Job[] jobs = new Job[NUM_JOBS];
+		TestJob[] jobs = new TestJob[NUM_JOBS];
 		//create two different families of jobs
 		TestJobFamily first = new TestJobFamily(TestJobFamily.TYPE_ONE);
 		TestJobFamily second = new TestJobFamily(TestJobFamily.TYPE_TWO);
@@ -1033,7 +1033,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//need one common scheduling rule so that the jobs would be executed one by one
 		ISchedulingRule rule = new IdentityRule();
 		//create and schedule a seed job that will cause all others to be blocked
-		Job seedJob = new FamilyTestJob("SeedJob", 1000000, 10, TestJobFamily.TYPE_THREE);
+		TestJob seedJob = new FamilyTestJob("SeedJob", 1000000, 10, TestJobFamily.TYPE_THREE);
 		seedJob.setRule(rule);
 		seedJob.schedule();
 		waitForStart(seedJob);
@@ -1132,7 +1132,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		if (!isWindows())
 			return;
 		final int JOB_COUNT = 10;
-		Job[] jobs = new Job[JOB_COUNT];
+		TestJob[] jobs = new TestJob[JOB_COUNT];
 		ISchedulingRule mutex = new IdentityRule();
 		for (int i = 0; i < JOB_COUNT; i++) {
 			jobs[i] = new TestJob("testMutexRule", 1000000, 10);
@@ -1285,7 +1285,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testSleep() {
-		Job job = new TestJob("ParentJob", 10, 100);
+		TestJob job = new TestJob("ParentJob", 10, 100);
 		//sleeping a job that isn't scheduled should have no effect
 		assertEquals("1.0", Job.NONE, job.getState());
 		assertTrue("1.1", job.sleep());
@@ -1550,7 +1550,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 */
 	public void testTwoRules() {
 		final int JOB_COUNT = 10;
-		Job[] jobs = new Job[JOB_COUNT];
+		TestJob[] jobs = new TestJob[JOB_COUNT];
 		ISchedulingRule evens = new IdentityRule();
 		ISchedulingRule odds = new IdentityRule();
 		for (int i = 0; i < JOB_COUNT; i++) {
@@ -1639,13 +1639,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 	}
 
-	/**
-	 * A job has been scheduled.  Pause this thread so that a worker thread
-	 * has a chance to pick up the new job.
-	 */
-	private void waitForStart(Job job) {
+	private void waitForRunCount(TestJob job, int runCount) {
 		int i = 0;
-		while (job.getState() != Job.RUNNING) {
+		while (job.getRunCount() < runCount) {
 			Thread.yield();
 			sleep(100);
 			Thread.yield();
@@ -1655,5 +1651,12 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				assertTrue("Timeout waiting for job to start. Job: " + job + ", state: " + job.getState(), false);
 			}
 		}
+	}
+	/**
+	 * A job has been scheduled.  Pause this thread so that a worker thread
+	 * has a chance to pick up the new job.
+	 */
+	private void waitForStart(TestJob job) {
+		waitForRunCount(job, 1);
 	}
 }
