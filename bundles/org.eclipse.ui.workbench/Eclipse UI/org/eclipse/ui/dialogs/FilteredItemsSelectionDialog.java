@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -180,7 +179,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	protected ContentProvider contentProvider;
 
-	private AbstractFilterJob filterJob;
+	private FilterJob filterJob;
 
 	private ItemsFilter filter;
 
@@ -209,6 +208,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
+		filterJob = new FilterJob();
 		contentProvider = new ContentProvider();
 		refreshCacheJob = new RefreshCacheJob();
 		selectionMode = NONE;
@@ -847,12 +847,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Schedules the refresh job.
-	 * 
-	 * @param checkDuplicates
-	 *            <code>true</code> if data concerning elements duplication
-	 *            should be computed - it takes much more time than standard
-	 *            filtering
+	 * Schedule refresh job.
 	 */
 	public void scheduleRefresh() {
 		refreshCacheJob.cancelAll();
@@ -986,6 +981,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * refiltering.
 	 */
 	protected void applyFilter() {
+
 		ItemsFilter newFilter = createFilter();
 
 		// don't apply filtering for patterns which mean the same, for example:
@@ -994,12 +990,12 @@ public abstract class FilteredItemsSelectionDialog extends
 			return;
 		}
 
-		stopCurrentFilterJob();
+		filterJob.cancel();
 
 		this.filter = newFilter;
 
 		if (this.filter != null) {
-			scheduleFilterJob();
+			filterJob.schedule();
 		}
 	}
 
@@ -1093,36 +1089,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected void setSelectionHistory(SelectionHistory selectionHistory) {
 		if (this.contentProvider != null)
 			this.contentProvider.setSelectionHistory(selectionHistory);
-	}
-
-	/**
-	 * Schedules filtering job. Depending on the filter decides which job will
-	 * be scheduled. If last filtering is done (last completed filter) is not
-	 * null and new filter is a sub-filter of the last one the method schedules
-	 * job searching in cache. If it is the first filtering or new filter isn't
-	 * a sub-filter of the last one, a full search is scheduled.
-	 */
-	private synchronized void scheduleFilterJob() {
-		if (filter.getPattern().length() == 0) {
-			filterJob = new HistoryResultFilterJob(contentProvider, filter);
-		} else if (lastCompletedFilter != null
-				&& !lastCompletedFilter.equalsFilter(filter)
-				&& lastCompletedFilter.isSubFilter(filter)) {
-			filterJob = new CachedResultFilterJob(contentProvider, filter,
-					lastCompletedResult);
-		} else {
-			filterJob = new FilterJob(contentProvider, filter);
-		}
-		filterJob.schedule();
-	}
-
-	/**
-	 * Stops current filtering job.
-	 */
-	private void stopCurrentFilterJob() {
-		if (filterJob != null) {
-			filterJob.stop();
-		}
 	}
 
 	/**
@@ -1310,10 +1276,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Creates a new instance of the class.
-		 * 
-		 * @param previousJob
-		 *            previous job to be canceled/joined
+		 * Stops the job and all sub-jobs.
 		 */
 		public void cancelAll() {
 			cancel();
@@ -1356,7 +1319,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			super.canceling();
 			contentProvider.stopReloadingCache();
 		}
-	
+
 	}
 
 	private class RemoveHistoryItemAction extends Action {
@@ -1797,15 +1760,16 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Abstract job for filtering elements. It is a pattern job for filtering
-	 * cached elements and full filtering.
+	 * Filters items in indicated set and history. During filtering it refresh
+	 * dialog (progres monitor and elements list).
+	 * 
+	 * Depending on the filter decides which searching will be run inside
+	 * <code>filterContent</code>. If last filtering is done (last completed
+	 * filter) is not null and new filter is a sub-filter of the last,
+	 * <code>FilterJob</code> filtering cache. If it is the first filtering or
+	 * new filter isn't a sub-filter of the last one, a full search is ran.
 	 */
-	private abstract static class AbstractFilterJob extends Job {
-
-		/**
-		 * ContenProvider used to store results of the filtering process.
-		 */
-		protected ContentProvider contentProvider;
+	private class FilterJob extends Job {
 
 		/**
 		 * Filter used during the filtering process.
@@ -1813,17 +1777,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		protected ItemsFilter itemsFilter;
 
 		/**
-		 * Creates a new instance of the filtering job.
+		 * Creates new instance of FilterJob
 		 * 
-		 * @param contentProvider
-		 * @param itemsFilter
-		 * @param previousFilterJob
 		 */
-		protected AbstractFilterJob(ContentProvider contentProvider,
-				ItemsFilter itemsFilter) {
+		public FilterJob() {
 			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
-			this.contentProvider = contentProvider;
-			this.itemsFilter = itemsFilter;
 			setSystem(true);
 		}
 
@@ -1839,13 +1797,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Stops the job.
-		 */
-		public void stop() {
-			cancel();
-		}
-
-		/**
 		 * Executes job using the given filtering progress monitor. A hook for
 		 * subclasses.
 		 * 
@@ -1857,28 +1808,16 @@ public abstract class FilteredItemsSelectionDialog extends
 			try {
 				internalRun(monitor);
 			} catch (CoreException e) {
-				this.stop();
+				cancel();
 				return new Status(
 						IStatus.ERROR,
 						PlatformUI.PLUGIN_ID,
 						IStatus.ERROR,
 						WorkbenchMessages.FilteredItemsSelectionDialog_jobError,
 						e);
-			} catch (OperationCanceledException e) {
-				return canceled(e);
 			}
-			return ok();
+			return Status.OK_STATUS;
 		}
-
-		/**
-		 * Filters items.
-		 * 
-		 * @param monitor
-		 *            for monitoring progress
-		 * @throws CoreException
-		 */
-		protected abstract void filterContent(GranualProgressMonitor monitor)
-				throws CoreException;
 
 		/**
 		 * Main method for the job.
@@ -1888,168 +1827,88 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		private void internalRun(GranualProgressMonitor monitor)
 				throws CoreException {
+			try {
+				if (monitor.isCanceled())
+					return;
 
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
+				this.itemsFilter = filter;
 
-			this.contentProvider.reset();
+				contentProvider.reset();
 
-			filterContent(monitor);
+				filterContent(monitor);
 
-			if (monitor.isCanceled())
-				throw new OperationCanceledException();
+				if (monitor.isCanceled())
+					return;
 
-			contentProvider.refresh();
+				contentProvider.refresh();
+			} finally {
+				monitor.done();
+			}
 		}
-
-		private IStatus canceled(Exception e) {
-			return new Status(IStatus.CANCEL, PlatformUI.PLUGIN_ID,
-					IStatus.CANCEL,
-					WorkbenchMessages.FilteredItemsSelectionDialog_jobCancel, e);
-		}
-
-		private IStatus ok() {
-			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
-					EMPTY_STRING, null);
-		}
-	}
-
-	/**
-	 * Filters elements using cache.
-	 */
-	private static class CachedResultFilterJob extends AbstractFilterJob {
-		private List lastResult;
 
 		/**
-		 * Create instance of <code>CachedResultFilterJob</code>.
+		 * Filters items.
 		 * 
-		 * @param contentProvider
-		 * @param itemsFilter
-		 * @param lastResult
-		 * @param previousFilterJob
+		 * @param monitor
+		 *            for monitoring progress
+		 * @throws CoreException
 		 */
-		public CachedResultFilterJob(ContentProvider contentProvider,
-				ItemsFilter itemsFilter, List lastResult) {
-			super(contentProvider, itemsFilter);
-			this.lastResult = lastResult;
-		}
+		protected void filterContent(GranualProgressMonitor monitor)
+				throws CoreException {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
-		 */
-		protected void filterContent(GranualProgressMonitor monitor) {
-			if (lastResult != null) {
+			if (filter.getPattern().length() == 0) {
 
-				int length = this.lastResult.size() / 500;
+				contentProvider.addHistoryItems(itemsFilter);
+
+			} else if (lastCompletedFilter != null
+					&& lastCompletedFilter.isSubFilter(filter)) {
+
+				int length = lastCompletedResult.size() / 500;
 				monitor
 						.beginTask(
 								WorkbenchMessages.FilteredItemsSelectionDialog_cacheSearchJob_taskName,
 								length);
 
-				for (int pos = 0; pos < this.lastResult.size(); pos++) {
+				for (int pos = 0; pos < lastCompletedResult.size(); pos++) {
 
-					Object item = this.lastResult.get(pos);
+					Object item = lastCompletedResult.get(pos);
 					if (monitor.isCanceled())
 						break;
-					this.contentProvider.add(item, itemsFilter);
+					contentProvider.add(item, itemsFilter);
 
 					if ((pos % 500) == 0) {
 						monitor.worked(1);
 					}
 				}
-			}
-			monitor.done();
-		}
-	}
 
-	/**
-	 * Filters items in indicated set and history. During filtering it refresh
-	 * dialog (progress monitor and elements list).
-	 */
-	private class FilterJob extends AbstractFilterJob {
+			} else {
 
-		/**
-		 * Creates new instance of <code>FilterJob</code>.
-		 * 
-		 * @param contentProvider
-		 * @param itemsFilter
-		 * @param previousFilterJob
-		 */
-		public FilterJob(ContentProvider contentProvider,
-				ItemsFilter itemsFilter) {
-			super(contentProvider, itemsFilter);
-		}
+				lastCompletedFilter = null;
+				lastCompletedResult = null;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
-		 */
-		protected void filterContent(GranualProgressMonitor monitor)
-				throws CoreException {
+				contentProvider.addHistoryItems(itemsFilter);
 
-			if (monitor != null && monitor.isCanceled())
-				return;
+				SubProgressMonitor subMonitor = null;
+				if (monitor != null) {
+					monitor
+							.beginTask(
+									WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
+									1000);
+					subMonitor = new SubProgressMonitor(monitor, 500);
 
-			lastCompletedFilter = null;
-			lastCompletedResult = null;
+				}
 
-			this.contentProvider.addHistoryItems(this.itemsFilter);
+				fillContentProvider(contentProvider, itemsFilter, subMonitor);
 
-			SubProgressMonitor subMonitor = null;
-			if (monitor != null) {
-				monitor
-						.beginTask(
-								WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
-								1000);
-				subMonitor = new SubProgressMonitor(monitor, 500);
-
-			}
-
-			fillContentProvider(this.contentProvider, this.itemsFilter,
-					subMonitor);
-
-			if (monitor != null && !monitor.isCanceled()) {
-				monitor.worked(100);
-				this.contentProvider.rememberResult(this.itemsFilter);
-				monitor.worked(400);
-				monitor.done();
+				if (monitor != null && !monitor.isCanceled()) {
+					monitor.worked(100);
+					contentProvider.rememberResult(itemsFilter);
+					monitor.worked(400);
+				}
 			}
 
 		}
-	}
 
-	/**
-	 * Only filters history items.
-	 */
-	private class HistoryResultFilterJob extends AbstractFilterJob {
-
-		/**
-		 * Creates new instance of <code>HistoryResultFilterJob</code>.
-		 * 
-		 * @param contentProvider
-		 * @param itemsFilter
-		 * @param previousFilterJob
-		 */
-		public HistoryResultFilterJob(ContentProvider contentProvider,
-				ItemsFilter itemsFilter) {
-			super(contentProvider, itemsFilter);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
-		 */
-		protected void filterContent(GranualProgressMonitor monitor) {
-			this.contentProvider.addHistoryItems(this.itemsFilter);
-
-			if (monitor != null && !monitor.isCanceled()) {
-				monitor.done();
-			}
-		}
 	}
 
 	/**
@@ -2586,11 +2445,6 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		/**
 		 * Refresh dialog.
-		 * 
-		 * @param checkDuplicates
-		 *            <code>true</code> if data concerning elements
-		 *            duplication should be computed - it takes much more time
-		 *            than standard filtering
 		 */
 		public void refresh() {
 			scheduleRefresh();
@@ -2608,8 +2462,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void setProgressMessage(String progressMessage,
 				boolean isFiltering) {
-			if (!isFiltering && filterJob != null
-					&& filterJob.getState() == Job.RUNNING)
+			if (!isFiltering && filterJob.getState() == Job.RUNNING)
 				return;
 			this.progressMessage = progressMessage;
 			scheduleProgressMessageRefresh();
@@ -2750,7 +2603,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @param itemsFilter
 		 */
-		public synchronized void rememberResult(ItemsFilter itemsFilter) {
+		public void rememberResult(ItemsFilter itemsFilter) {
 			if (itemsFilter == filter && lastCompletedFilter == null) {
 				lastCompletedResult = Collections.synchronizedList(Arrays
 						.asList(getItems(false)));
