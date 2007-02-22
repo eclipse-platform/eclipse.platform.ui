@@ -11,6 +11,7 @@
 package org.eclipse.core.filebuffers;
 
 
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
 
 import org.eclipse.core.runtime.IPath;
@@ -67,6 +68,24 @@ public interface ITextFileBufferManager extends IFileBufferManager {
 	 * @since 3.3
 	 */
 	ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind);
+	
+	/**
+	 * Returns the text file buffer managed for the given file store
+	 * or <code>null</code> if there is no such text file buffer.
+	 * <p>
+	 * <strong>Note:</strong> This API must not be used if the given file
+	 * store maps to a resource contained in the workspace.
+	 * </p>
+	 * <p>
+	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
+	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * </p>
+	 *
+	 * @param fileStore the file store
+	 * @return the text file buffer managed for that file store or <code>null</code>
+	 * @since 3.3
+	 */
+	ITextFileBuffer getFileStoreTextFileBuffer(IFileStore fileStore);
 
 	/**
  	 * Returns the text file buffer managed for the given document

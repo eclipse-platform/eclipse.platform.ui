@@ -30,8 +30,6 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 
 	/** The location */
 	protected IPath fLocation;
-	/** The element for which the info is stored */
-	protected IFileStore fFileStore;
 	/** How often the element has been connected */
 	protected int fReferenceCount;
 	/** Can the element be saved */
@@ -59,17 +57,22 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 
 	abstract protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException;
 
+	public void create(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
+		IFileInfo info= fileStore.fetchInfo();
+		fFileStore= fileStore;
+		if (fLocation == null)
+			fLocation= URIUtil.toPath(fileStore.toURI());
+		
+		initializeFileBufferContent(monitor);
+		if (info.exists())
+			fSynchronizationStamp= info.getLastModified();
+		
+		addFileBufferContentListeners();
+	}
+	
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
 		fLocation= location;
-		IFileStore fileStore= EFS.getStore(URIUtil.toURI(getLocation()));
-		IFileInfo info= fileStore.fetchInfo();
-		if (info.exists())
-			fFileStore= fileStore;
-		initializeFileBufferContent(monitor);
-		if (fFileStore != null)
-			fSynchronizationStamp= info.getLastModified();
-
-		addFileBufferContentListeners();
+		create(EFS.getStore(URIUtil.toURI(getLocation())), monitor);
 	}
 
 	public void connect() {
@@ -116,7 +119,7 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	public IPath getLocation() {
 		return fLocation;
 	}
-
+	
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#commit(org.eclipse.core.runtime.IProgressMonitor, boolean)
 	 */
@@ -202,13 +205,6 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	 */
 	public boolean isSynchronized() {
 		return fSynchronizationStamp == getModificationStamp();
-	}
-
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
-	 */
-	public long getModificationStamp() {
-		return fFileStore != null ? fFileStore.fetchInfo().getLastModified() : IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	}
 
 	/*

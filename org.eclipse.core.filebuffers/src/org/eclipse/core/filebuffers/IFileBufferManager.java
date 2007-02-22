@@ -11,6 +11,8 @@
 package org.eclipse.core.filebuffers;
 
 
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -71,6 +73,26 @@ public interface IFileBufferManager {
 	void connect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException;
 
 	/**
+	 * Connects the given file store to this manager. After that call
+	 * successfully completed it is guaranteed that each call to <code>getFileBuffer</code>
+	 * returns the same file buffer until <code>disconnect</code> is called.
+	 * <p>
+	 * <strong>Note:</strong> This API must not be used if the given file
+	 * store maps to a resource contained in the workspace.
+	 * </p>
+	 * <p>
+	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
+	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * </p>
+	 *
+	 * @param fileStore the file store to be connected
+	 * @param monitor the progress monitor
+	 * @throws CoreException if the file could not successfully be connected
+	 * @since 3.3
+	 */
+	void connectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException;
+
+	/**
 	 * Disconnects the file at the given location from this manager. After that
 	 * call successfully completed there is no guarantee that <code>getFileBuffer</code>
 	 * will return a valid file buffer.
@@ -105,6 +127,26 @@ public interface IFileBufferManager {
 	 * @since 3.3
 	 */
 	void disconnect(IPath location, LocationKind locationKind, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Disconnects the given file store from this manager. After that
+	 * call successfully completed there is no guarantee that <code>getFileBuffer</code>
+	 * will return a valid file buffer.
+	 * <p>
+	 * <strong>Note:</strong> This API must not be used if the given file
+	 * store maps to a resource contained in the workspace.
+	 * </p>
+	 * <p>
+	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
+	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * </p>
+	 * 
+	 * @param fileStore the file store to be disconnected
+	 * @param monitor the progress monitor
+	 * @throws CoreException if the file could not successfully be disconnected
+	 * @since 3.3
+	 */
+	void disconnectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns the file buffer managed for the given location or <code>null</code>
@@ -137,6 +179,24 @@ public interface IFileBufferManager {
 	 * @since 3.3
 	 */
 	IFileBuffer getFileBuffer(IPath location, LocationKind locationKind);
+	
+	/**
+	 * Returns the file buffer managed for the given file store or
+	 * <code>null</code> if there is no such file buffer.
+	 * <p>
+	 * <strong>Note:</strong> This API must not be used if the given file
+	 * store maps to a resource contained in the workspace.
+	 * </p>
+	 * <p>
+	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
+	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * </p>
+	 *
+	 * @param fileStore the file store
+	 * @return the file buffer managed for that file store or <code>null</code>
+	 * @since 3.3
+	 */
+	IFileBuffer getFileStoreFileBuffer(IFileStore fileStore);
 
 	/**
 	 * Sets the synchronization context for this file buffer manager, i.e., for

@@ -15,6 +15,9 @@ import java.io.File;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -90,6 +93,31 @@ public class FileBufferCreation extends TestCase {
 		manager.disconnect(path, LocationKind.NORMALIZE, null);
 		assertNull(manager.getTextFileBuffer(path, LocationKind.NORMALIZE));
 	}
+	
+	/*
+	 * Tests the creation of file buffer for an existing file.
+	 */
+	public void test1_IFileStore() throws Exception {
+		IFolder folder= ResourceHelper.createFolder("project/folderA/folderB/");
+		IFile file= ResourceHelper.createFile(folder, "file", CONTENT1);
+		IPath path= file.getFullPath();
+		assertNotNull(path);
+		IFileStore fileStore= EFS.getLocalFileSystem().getStore(file.getLocation());
+		
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		manager.connectFileStore(fileStore, null);
+		ITextFileBuffer buffer= manager.getFileStoreTextFileBuffer(fileStore);
+		assertNotNull(buffer);
+		
+		IDocument document= buffer.getDocument();
+		assertNotNull(document);
+		assertEquals(CONTENT1, document.get());
+		
+		assertSame(buffer, manager.getTextFileBuffer(document));
+		
+		manager.disconnectFileStore(fileStore, null);
+		assertNull(manager.getFileStoreTextFileBuffer(fileStore));
+	}
 
 	/*
 	 * Tests that two different paths pointing to the same physical resource
@@ -104,7 +132,7 @@ public class FileBufferCreation extends TestCase {
 
 		IPath path2= ResourcesPlugin.getWorkspace().getRoot().getLocation();
 		path2= path2.append(path1.makeAbsolute());
-
+		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(path1, LocationKind.NORMALIZE, null);
 		ITextFileBuffer buffer1= manager.getTextFileBuffer(path1, LocationKind.NORMALIZE);
@@ -527,5 +555,27 @@ public class FileBufferCreation extends TestCase {
 
 		manager.disconnect(path, LocationKind.LOCATION, null);
 		assertNull(manager.getTextFileBuffer(path, LocationKind.LOCATION));
+	}
+	
+	/*
+	 * Tests the creation of a file buffer for a non-existing file. 
+	 */
+	public void test7_IFileStore() throws Exception {
+		IPath path= FileBuffersTestPlugin.getDefault().getStateLocation();
+		path= path.append("NonExistingFile");
+		IFileStore fileStore= EFS.getLocalFileSystem().getStore(path);
+		
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		manager.connectFileStore(fileStore, null);
+		ITextFileBuffer buffer= manager.getFileStoreTextFileBuffer(fileStore);
+		Assert.assertNotNull(buffer);
+		
+		IDocument document= buffer.getDocument();
+		Assert.assertNotNull(document);
+		Assert.assertTrue("".equals(document.get()));
+		assertSame(buffer, manager.getTextFileBuffer(document));
+		
+		manager.disconnectFileStore(fileStore, null);
+		assertNull(manager.getFileStoreTextFileBuffer(fileStore));
 	}
 }

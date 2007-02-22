@@ -203,18 +203,12 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	protected int fSynchronizationContextCount;
 	/** The text file buffer manager */
 	protected ResourceTextFileBufferManager fManager;
-	/**
-	 * This buffer's URI.
-	 * @since 3.3
-	 */
-	private URI fURI;
 
-
+	
 	public ResourceFileBuffer(ResourceTextFileBufferManager manager) {
 		super();
 		fManager= manager;
 	}
-
 
 
 	abstract protected void addFileBufferContentListeners();
@@ -237,10 +231,13 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 			IFile file= workspaceRoot.getFile(location);
 			if (file == null)
 				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null));
+			URI uri= file.getLocationURI();
+			if (uri == null)
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.ResourceFileBuffer_error_fileDoesNotExist, null));
 
 			fLocation= location;
 			fFile= file;
-			fURI= file.getLocationURI();
+			fFileStore= EFS.getStore(uri);
 			fFileSynchronizer= new FileSynchronizer();
 
 			SubProgressMonitor subMonitor= new SubProgressMonitor(monitor, 1);
@@ -306,7 +303,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	public IPath getLocation() {
 		return fLocation;
 	}
-
+	
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#computeCommitRule()
 	 */
@@ -509,22 +506,6 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	}
 
 	/*
-	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
-	 */
-	public long getModificationStamp() {
-		try {
-			if (fURI == null)
-				return IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-			IFileInfo info= EFS.getStore(fURI).fetchInfo();
-			if (info.exists())
-				return info.getLastModified();
-		} catch (CoreException e) {
-			//fall through below and return null stamp
-		}
-		return IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
-	}
-
-	/*
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()
 	 */
 	public void requestSynchronizationContext() {
@@ -549,14 +530,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	 * @see org.eclipse.core.filebuffers.IFileBuffer#isCommitable()
 	 */
 	public boolean isCommitable() {
-		try {
-			if (fURI == null)
-				return false;
-			IFileInfo info= EFS.getStore(fURI).fetchInfo();
-			return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
-		} catch (CoreException e) {
-			return false;
-		}
+		IFileInfo info= fFileStore.fetchInfo();
+		return info.exists() && !info.getAttribute(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
 	/*

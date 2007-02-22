@@ -11,6 +11,8 @@
 package org.eclipse.core.filebuffers;
 
 
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -47,10 +49,23 @@ public interface IFileBuffer {
 	 * The location is either a full path of a workspace resource or an
 	 * absolute path in the local file system.
 	 * </p>
+	 * <p>
+	 * <strong>Note:<code> Since 3.3 this method can also return
+	 * <code>null</code> if the file is not on the local file
+	 * system.
+	 * </p>
 	 *
-	 * @return the location of this file buffer
+	 * @return the location of this file buffer or <code>null</code> if the file is not on the local file system
 	 */
 	IPath getLocation();
+
+	/**
+	 * Returns the file store of this file buffer.
+	 *
+	 * @return the file store of this file buffer
+	 * @since 3.3
+	 */
+	IFileStore getFileStore();
 
 	/**
 	 * Returns whether this file buffer is shared by more than one client.

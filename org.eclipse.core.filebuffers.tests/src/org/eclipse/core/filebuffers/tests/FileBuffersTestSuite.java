@@ -33,6 +33,11 @@ public class FileBuffersTestSuite {
 		suite.addTestSuite(FileBuffersForNonExistingExternalFiles.class);
 		suite.addTestSuite(FileBuffersForNonExistingWorkspaceFiles.class);
 		suite.addTestSuite(FileBuffersForNonAccessibleWorkspaceFiles.class);
+		
+		suite.addTestSuite(FileStoreFileBuffersForWorkspaceFiles.class);
+		suite.addTestSuite(FileStoreFileBuffersForExternalFiles.class);
+		suite.addTestSuite(FileStoreFileBuffersForNonExistingExternalFiles.class);
+		suite.addTestSuite(FileStoreFileBuffersForNonExistingWorkspaceFiles.class);
 		//$JUnit-END$
 		return suite;
 	}

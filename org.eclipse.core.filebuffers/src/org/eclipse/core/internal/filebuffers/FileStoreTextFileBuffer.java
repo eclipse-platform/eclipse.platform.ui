@@ -35,8 +35,10 @@ import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
@@ -146,6 +148,9 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	public IAnnotationModel getAnnotationModel() {
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
+				IPath path= getLocation();
+				if (path == null)
+					path= new Path(fFileStore.getName());
 				fAnnotationModel= fManager.createAnnotationModel(getLocation(), LocationKind.LOCATION);
 				if (fAnnotationModel != null)
 					fAnnotationModel.connect(fDocument);
@@ -271,7 +276,8 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			if (replaceContents)
 				fManager.fireBufferContentReplaced(this);
 
-			if (fFileStore != null)
+			IFileInfo info= fFileStore.fetchInfo();
+			if (info.exists())
 				fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
 
 			if (fAnnotationModel instanceof IPersistableAnnotationModel) {

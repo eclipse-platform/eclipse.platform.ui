@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -19,10 +22,18 @@ import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IStateValidationSupport;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
+import org.eclipse.jface.text.IDocumentExtension4;
+
 /**
  * @since 3.0
  */
 public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidationSupport {
+
+	/** 
+	 * The element for which the info is stored.
+	 * @since 3.3
+	 */
+	protected IFileStore fFileStore;
 
 
 	public abstract void create(IPath location, IProgressMonitor monitor) throws CoreException;
@@ -72,4 +83,21 @@ public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidatio
 			manager.fireStateChangeFailed(this);
 		}
 	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getModificationStamp()
+	 */
+	public long getModificationStamp() {
+		IFileInfo info= fFileStore.fetchInfo();
+		return info.exists() ? info.getLastModified() : IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBuffer#getFileStore()
+	 * @since 3.3
+	 */
+	public IFileStore getFileStore() {
+		return fFileStore;
+	}
+
 }

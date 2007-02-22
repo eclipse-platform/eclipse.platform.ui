@@ -67,6 +67,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	protected static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 
 	private Map fFilesBuffers= new HashMap();
+	private Map fFileStoreFileBuffers= new HashMap();
 	private List fFileBufferListeners= new ArrayList();
 	protected ExtensionsRegistry fRegistry;
 	private ISynchronizationContext fSynchronizationContext;
@@ -122,6 +123,44 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		// Do notification outside synchronized block
 		fireBufferCreated(fileBuffer);
 	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.3
+	 */
+	public void connectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
+		Assert.isLegal(fileStore != null);
+		
+		FileStoreFileBuffer fileBuffer= null;
+		synchronized (fFileStoreFileBuffers) {
+			fileBuffer= internalGetFileBuffer(fileStore);
+			if (fileBuffer != null)  {
+				fileBuffer.connect();
+				return;
+			}
+		}
+		
+		fileBuffer= createFileBuffer(fileStore);
+		if (fileBuffer == null)
+			throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IFileBufferStatusCodes.CREATION_FAILED, FileBuffersMessages.FileBufferManager_error_canNotCreateFilebuffer, null));
+		
+		fileBuffer.create(fileStore, monitor);
+		
+		synchronized (fFileStoreFileBuffers) {
+			AbstractFileBuffer oldFileBuffer= internalGetFileBuffer(fileStore);
+			if (oldFileBuffer != null) {
+				fileBuffer.disconnect();
+				fileBuffer.dispose();
+				oldFileBuffer.connect();
+				return;
+			}
+			fileBuffer.connect();
+			fFileStoreFileBuffers.put(fileStore, fileBuffer);
+		}
+		
+		// Do notification outside synchronized block
+		fireBufferCreated(fileBuffer);
+	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
@@ -157,6 +196,31 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				return;
 			
 			fFilesBuffers.remove(location);
+		}
+		
+		// Do notification outside synchronized block
+		fireBufferDisposed(fileBuffer);
+		fileBuffer.dispose();
+	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.3
+	 */
+	public void disconnectFileStore(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
+		Assert.isLegal(fileStore != null);
+		
+		AbstractFileBuffer fileBuffer;
+		synchronized (fFileStoreFileBuffers) {
+			fileBuffer= internalGetFileBuffer(fileStore);
+			if (fileBuffer == null)
+				return;
+				
+			fileBuffer.disconnect();
+			if (!fileBuffer.isDisconnected())
+				return;
+
+			fFileStoreFileBuffers.remove(fileStore);
 		}
 		
 		// Do notification outside synchronized block
@@ -267,9 +331,24 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return internalGetFileBuffer(location);
 	}
 
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileStoreFileBuffer(org.eclipse.core.filesystem.IFileStore)
+	 * @since 3.3
+	 */
+	public IFileBuffer getFileStoreFileBuffer(IFileStore fileStore) {
+		Assert.isLegal(fileStore != null);
+		return internalGetFileBuffer(fileStore);
+	}
+	
 	private AbstractFileBuffer internalGetFileBuffer(IPath location) {
 		synchronized (fFilesBuffers) {
 			return (AbstractFileBuffer)fFilesBuffers.get(location);
+		}
+	}
+	
+	private FileStoreFileBuffer internalGetFileBuffer(IFileStore fileStore) {
+		synchronized (fFileStoreFileBuffers) {
+			return (FileStoreFileBuffer)fFileStoreFileBuffers.get(fileStore);
 		}
 	}
 
@@ -287,6 +366,15 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public ITextFileBuffer getTextFileBuffer(IPath location, LocationKind locationKind) {
 		return (ITextFileBuffer)getFileBuffer(location, locationKind);
 	}
+	
+	/*
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getFileStoreTextFileBuffer(org.eclipse.core.filesystem.IFileStore)
+	 * @since 3.3
+	 */
+	public ITextFileBuffer getFileStoreTextFileBuffer(IFileStore fileStore) {
+		Assert.isLegal(fileStore != null);
+		return (ITextFileBuffer)getFileStoreFileBuffer(fileStore);
+	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.jface.text.IDocument)
@@ -295,6 +383,15 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public ITextFileBuffer getTextFileBuffer(IDocument document) {
 		Assert.isLegal(document != null);
 		Iterator iter= new ArrayList(fFilesBuffers.values()).iterator();
+		while (iter.hasNext()) {
+			Object buffer= iter.next();
+			if (buffer instanceof ITextFileBuffer) {
+				ITextFileBuffer textFileBuffer= (ITextFileBuffer)buffer;
+				if (textFileBuffer.getDocument() == document)
+					return textFileBuffer;
+			}
+		}
+		iter= new ArrayList(fFileStoreFileBuffers.values()).iterator();
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
 			if (buffer instanceof ITextFileBuffer) {
@@ -319,7 +416,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public IDocument createEmptyDocument(IPath location) {
 		return createEmptyDocument(location, LocationKind.NORMALIZE);
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 	 * @since 3.3
@@ -327,9 +424,6 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public IDocument createEmptyDocument(IPath location, LocationKind locationKind) {
 		final IDocument[] runnableResult= new IDocument[1];
 		if (location != null) {
-			if (locationKind == LocationKind.NORMALIZE)
-				location= normalizeLocation(location);
-			
 			final IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
 			if (factory != null) {
 				ISafeRunnable runnable= new ISafeRunnable() {
@@ -402,14 +496,12 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public IAnnotationModel createAnnotationModel(IPath location, LocationKind locationKind) {
 		Assert.isNotNull(location);
-		if (locationKind == LocationKind.NORMALIZE)
-			location= normalizeLocation(location);
 		IAnnotationModelFactory factory= fRegistry.getAnnotationModelFactory(location, locationKind);
 		if (factory != null)
 			return factory.createAnnotationModel(location);
 		return null;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.IFileBufferManager#addFileBufferListener(org.eclipse.core.filebuffers.IFileBufferListener)
 	 */
@@ -477,6 +569,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			runnable.run();
 	}
 
+
 	private AbstractFileBuffer createFileBuffer(IPath location, LocationKind locationKind) {
 		/*
 		 * XXX: the following code is commented out for performance
@@ -498,8 +591,28 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 //		// XXX: should return a binary file buffer - using text file buffer for now
 //		return createTextFileBuffer(location, locationKind);
 //	}
-//	
-//	
+	
+	private FileStoreFileBuffer createFileBuffer(IFileStore location) {
+		/*
+		 * XXX: the following code is commented out for performance
+		 * reasons and because we do not yet create a special binary
+		 * file buffer.
+		 */
+//		if (isTextFileLocation(location, false))
+//			return createTextFileBuffer(location);
+//		return createBinaryFileBuffer(location);
+		return createTextFileBuffer(location);
+		
+	}
+	
+	protected FileStoreFileBuffer createTextFileBuffer(IFileStore location) {
+		return new FileStoreTextFileBuffer(this);
+	}
+	
+//	private FileStoreFileBuffer createBinaryFileBuffer(FileStore location) {
+//		// XXX: should return a binary file buffer - using text file buffer for now
+//		return createTextFileBuffer(location);
+//	}
 
 	private Iterator getFileBufferListenerIterator() {
 		synchronized (fFileBufferListeners) {
