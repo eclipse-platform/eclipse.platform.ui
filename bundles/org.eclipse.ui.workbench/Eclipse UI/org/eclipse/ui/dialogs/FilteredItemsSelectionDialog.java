@@ -190,9 +190,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	private String initialPatternText;
 
 	private int selectionMode;
-
-	private Object[] lastRefreshSelection;
-
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
@@ -787,26 +784,12 @@ public abstract class FilteredItemsSelectionDialog extends
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 
-			if (list != null) {
-				// preserve selection
-				lastRefreshSelection = ((StructuredSelection) list
-						.getSelection()).toArray();
-			}
-
 			list.setItemCount(contentProvider.getElements(null).length);
 			list.refresh();
 
 			if (list.getTable().getItemCount() > 0) {
-				// preserve previous selection
-				if (lastRefreshSelection != null
-						&& lastRefreshSelection.length > 0)
-					list.setSelection(new StructuredSelection(
-							lastRefreshSelection));
-
-				if (list.getTable().getSelectionIndices().length == 0) {
-					list.setSelection(new StructuredSelection(contentProvider
-							.getElements(null)[0]));
-				}
+				list.getTable().deselectAll();
+				list.getTable().setSelection(0);
 			} else {
 				list.setSelection(StructuredSelection.EMPTY);
 			}
