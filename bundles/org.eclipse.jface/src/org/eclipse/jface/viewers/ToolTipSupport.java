@@ -100,6 +100,7 @@ class ToolTipSupport extends DefaultToolTip {
 		setForegroundColor(labelProvider.getToolTipForegroundColor(element));
 		setBackgroundColor(labelProvider.getToolTipBackgroundColor(element));
 		setFont(labelProvider.getToolTipFont(element));
+		setImage(labelProvider.getToolTipImage(element));
 	}
 
 
