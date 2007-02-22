@@ -147,7 +147,7 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Text subitemLabel = new Text(buttonComposite, SWT.WRAP);
+		Text subitemLabel = new Text(buttonComposite, SWT.READ_ONLY + SWT.WRAP);
 		subitemLabel.setText(labelText);
 		TableWrapData labelData = new TableWrapData();
 		labelData.indent = LABEL_MARGIN;
