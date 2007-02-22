@@ -29,9 +29,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListDialog;
@@ -108,6 +110,26 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 		return section;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		IDialogSettings settings = getDialogBoundsSettings();
+		if(settings != null) {
+			try {
+				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
+				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
+				if(width > 0 & height > 0) {
+					return new Point(width, height);
+				}
+			}
+			catch (NumberFormatException nfe) {
+				return new Point(450, 450);
+			}
+		}
+		return new Point(450, 450);
+	}
+	
 	/**
 	 * @see org.eclipse.ui.dialogs.ListDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
@@ -131,11 +153,11 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 				List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
 				getTableViewer().setInput(input);
 			}
-			SWTFactory.createWrapLabel(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 300);
-			fDescriptionText = SWTFactory.createText(comp, SWT.READ_ONLY | SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL, 1, 100, 100, GridData.FILL_BOTH);
-			fDescriptionText.setBackground(comp.getBackground());
-			GridData gd = (GridData) fDescriptionText.getLayoutData();
-			gd.widthHint = 200;
+			Group group = SWTFactory.createGroup(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 1, GridData.FILL_BOTH);
+			GridData gd = (GridData) group.getLayoutData();
+			gd.heightHint = 175;
+			fDescriptionText = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+			fDescriptionText.setBackground(group.getBackground());
 			getTableViewer().getTable().addSelectionListener(new SelectionListener() {
 				public void widgetDefaultSelected(SelectionEvent e) {}
 				public void widgetSelected(SelectionEvent e) {
