@@ -551,29 +551,38 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @throws CoreException if the file info object could not successfully be created
 	 */
 	protected FileInfo createFileInfo(Object element) throws CoreException {
+		if (!(element instanceof IAdaptable))
+			return null;
+		IAdaptable adaptable= (IAdaptable) element;
+		
 		IFile file= null;
-		IPath location= null;
-		LocationKind locationKind= null;
-		if (element instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) element;
-			file= (IFile)adaptable.getAdapter(IFile.class);
-			if (file != null) {
-				locationKind= LocationKind.IFILE;
-				location= file.getFullPath();
-			} else {
-				ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
-				if (provider != null) {
-					locationKind= LocationKind.NORMALIZE;
-					location= provider.getPath(element);
-					file= FileBuffers.getWorkspaceFileAtLocation(location);
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		ITextFileBuffer fileBuffer= null;
+		
+		file= (IFile)adaptable.getAdapter(IFile.class);
+		if (file != null) {
+			IPath location= file.getFullPath();
+			manager.connect(location, LocationKind.IFILE, getProgressMonitor());
+			fileBuffer= manager.getTextFileBuffer(location, LocationKind.IFILE);
+		} else {
+			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
+			if (provider instanceof ILocationProviderExtension) {
+				URI uri= ((ILocationProviderExtension)provider).getURI(element);
+				if (ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(uri).length == 0) {
+					IFileStore fileStore= EFS.getStore(uri);
+					manager.connectFileStore(fileStore, getProgressMonitor());
+					fileBuffer= manager.getFileStoreTextFileBuffer(fileStore);
 				}
+			}
+			if (fileBuffer == null && provider != null) {
+				IPath location= provider.getPath(element);
+				manager.connect(location, LocationKind.NORMALIZE, getProgressMonitor());
+				fileBuffer= manager.getTextFileBuffer(location, LocationKind.NORMALIZE);
+				file= FileBuffers.getWorkspaceFileAtLocation(location);
 			}
 		}
 
-		if (location != null) {
-			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-			manager.connect(location, locationKind, getProgressMonitor());
-			ITextFileBuffer fileBuffer= manager.getTextFileBuffer(location, locationKind);
+		if (fileBuffer != null) {
 			fileBuffer.requestSynchronizationContext();
 
 			FileInfo info= createEmptyFileInfo();
@@ -582,11 +591,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 			if (file != null)
 				info.fModel= createAnnotationModel(file);
+
 			return info;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Sets up the synchronization for the document
 	 * and the annotation mode. 
@@ -1334,8 +1344,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @since 3.2
 	 */
 	protected IFileStore getFileStore(FileInfo info)  {
-		IPath path= info.fTextFileBuffer.getLocation();
-		return FileBuffers.getFileStoreAtLocation(path);
+		return info.fTextFileBuffer.getFileStore();
 	}
 	
 	/**

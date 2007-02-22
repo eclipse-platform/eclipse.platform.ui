@@ -10,12 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
+import java.net.URI;
+
 import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.ui.editors.text.ILocationProvider;
+import org.eclipse.ui.editors.text.ILocationProviderExtension;
 
 import org.eclipse.ui.IURIEditorInput;
 
@@ -27,19 +30,30 @@ import org.eclipse.ui.IURIEditorInput;
  */
 public class IURIEditorInputAdapterFactory implements IAdapterFactory {
 
-	private static class LocationProvider implements ILocationProvider {
+	private static class LocationProvider implements ILocationProvider, ILocationProviderExtension {
 		/*
 		 * @see org.eclipse.ui.editors.text.ILocationProvider#getLocation(java.lang.Object)
 		 */
 		public IPath getPath(Object element) {
+			URI uri= getURI(element);
+			if (uri != null)
+				return URIUtil.toPath(uri);
+			return null;
+		}
+		
+		/*
+		 * @see org.eclipse.ui.editors.text.ILocationProviderExtension#getURI(java.lang.Object)
+		 */
+		public URI getURI(Object element) {
 			if (element instanceof IURIEditorInput) {
 				IURIEditorInput input= (IURIEditorInput)element;
-				return URIUtil.toPath(input.getURI());
+				return input.getURI();
 			}
 			return null;
 		}
 	}
 
+	
 	/** The list of provided adapters. */
 	private static final Class[] ADAPTER_LIST= new Class[] { ILocationProvider.class };
 
