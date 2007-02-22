@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -31,9 +30,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
@@ -41,24 +40,16 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
@@ -142,70 +133,29 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 */
 	private IEvaluationContext createContext() {
 	    List list = null;
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-			    IWorkbenchPart activePart = page.getActivePart();
-			    if (activePart instanceof IEditorPart) {
-			        list = new ArrayList();
-			        list.add(((IEditorPart)activePart).getEditorInput());
-			    } else if (activePart != null) {
-			        IWorkbenchPartSite site = activePart.getSite();
-			        if (site != null) {
-	                    ISelectionProvider selectionProvider = site.getSelectionProvider();
-	                    if (selectionProvider != null) {
-	                        ISelection selection = selectionProvider.getSelection();
-					        if (selection instanceof IStructuredSelection) {
-					            list = ((IStructuredSelection)selection).toList();
-					        }
-	                    }
-			        }
-			    }
-			}
-		}	    
-		// create a default evaluation context with default variable
-		// of the user selection or editor input
+	    IResource resource = getResourceContext();
+	    if(resource != null) {
+	    	list = new ArrayList();
+	    	list.add(resource);
+	    }
+		// create a default evaluation context with default variable of the user selection or editor input
 		if (list == null) {
 		    list = Collections.EMPTY_LIST;
 		}
 		IEvaluationContext context = new EvaluationContext(null, list);
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", list); //$NON-NLS-1$
-		
 		return context;
 	}	
-	
-	/**
-	 * Returns the resource this menu is open on.
-	 * 
-	 * @return resource
-	 */
-	private IResource getResource(Object element) {
-		IResource resource = null;
-		if (element instanceof IResource) {
-			resource = (IResource) element;
-		} else if (element instanceof IAdaptable) {
-			resource = (IResource) ((IAdaptable)element).getAdapter(IResource.class);
-		}
-		return resource;
-	}
 	
 	/**
 	 * Fills the flyout menu 
 	 */
 	private void fillMenu() {
+		IEvaluationContext context = createContext();
+		int accelerator = 1;
 		try {
-			Object selection = ContextRunner.getDefault().getCurrentContext();
-			int accelerator = 1;
-			ILaunchConfiguration config = DebugPlugin.getDefault().getLaunchManager().getDefaultConfiguration(getResource(selection));
-			if(config != null && config.exists() && config.supportsMode(getMode())) {
-	        	IAction action = new LaunchConfigurationAction(config, getMode(), MessageFormat.format(ActionMessages.ContextualLaunchAction_0, new String[] {config.getName()}), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-	            ActionContributionItem item = new ActionContributionItem(action);
-	            item.fill(fCreatedMenu, -1);
-	            new MenuItem(fCreatedMenu, SWT.SEPARATOR);
-			}
-			config = getLaunchConfigurationManager().isSharedConfig(selection);
+			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getResourceContext());
 	        if(config != null && config.exists() && config.supportsMode(getMode())) {
 	        	IAction action = new LaunchConfigurationAction(config, getMode(), config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
 	            ActionContributionItem item = new ActionContributionItem(action);
@@ -214,7 +164,6 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			}
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
-		IEvaluationContext context = createContext();
 		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
@@ -224,12 +173,9 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 				if (!WorkbenchActivityHelper.filterItem(ext) && isApplicable(ext, context)) {
 					filteredShortCuts.add(ext);
 				}
-			} catch (CoreException e) {
-				// not supported
-			}
+			} catch (CoreException e) {/*not supported*/}
 		}
 		iter = filteredShortCuts.iterator();
-		int accelerator = 1;
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			Set modes = ext.getModes(); // supported launch modes
@@ -304,6 +250,17 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		});
 	}
 		
+	/**
+	 * Returns the currently selected <code>IResource</code>
+	 * @return the selected <code>IResource</code> or <code>null</code> if the selected 
+	 * item cannot be adapted to <code>IResource</code>, or is not itself an <code>IResource</code>
+	 * 
+	 * @since 3.3
+	 */
+	private IResource getResourceContext() {
+		return SelectedResourceManager.getDefault().getSelectedResource();
+	}
+	
 	/**
 	 * Returns the mode of this action - run or debug 
 	 * 

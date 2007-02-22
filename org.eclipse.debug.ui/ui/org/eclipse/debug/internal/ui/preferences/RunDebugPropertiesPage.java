@@ -34,13 +34,12 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationCom
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -92,7 +91,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	private List fTypeCandidates = null;
 	
 	//widgets
-	private CheckboxTableViewer fViewer;
+	private TableViewer fViewer;
 	private Button fNewButton = null;
 	private Button fEditButton = null;
 	private Button fDuplicateButton = null;
@@ -162,50 +161,30 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @param parent parent composite to create the viewer in
 	 * @return viewer viewer that will display possible default configurations
 	 */
-	protected CheckboxTableViewer createViewer(Composite parent){
-		CheckboxTableViewer viewer = CheckboxTableViewer.newCheckList(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+	protected TableViewer createViewer(Composite parent){
+		TableViewer viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		viewer.setLabelProvider(new DefaultLabelProvider());
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setComparator(new LaunchConfigurationComparator());
-		viewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					fViewer.setCheckedElements(new Object[] {event.getElement()});
-				}
-				else{
-					fViewer.setCheckedElements(new Object[] {});
-				}
-			}
-		});
 		Table builderTable = viewer.getTable();
 		GridData tableGridData = new GridData(GridData.FILL_BOTH);
 		tableGridData.heightHint = 300;
 		builderTable.setLayoutData(tableGridData);
-		
 		IResource resource = getResource();
 		viewer.setInput(collectConfigCandidates(resource));
-		try {
-			ILaunchConfiguration configuration = getLaunchManager().getDefaultConfiguration(resource);
-			if (configuration != null) {
-				Iterator iterator = fOriginalCandidates.iterator();
-				while (iterator.hasNext()) {
-					ILaunchConfigurationWorkingCopy wc = (ILaunchConfigurationWorkingCopy) iterator.next();
-					if (configuration.equals(wc.getOriginal())) {
-						viewer.setChecked(wc, true);
-						break;
-					}
-				}
-			}
-		} catch (CoreException e) {setErrorMessage(e.getMessage());}
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				boolean empty = event.getSelection().isEmpty();
-				fEditButton.setEnabled(!empty);
-				fDuplicateButton.setEnabled(!empty);
-				fDeleteButton.setEnabled(!empty);
+				ISelection sel = event.getSelection();
+				if(sel instanceof IStructuredSelection) {
+					IStructuredSelection ss = (IStructuredSelection) sel;
+					boolean empty = ss.isEmpty();
+					int size = ss.size();
+					fEditButton.setEnabled(!empty && size == 1);
+					fDuplicateButton.setEnabled(!empty && size == 1);
+					fDeleteButton.setEnabled(!empty);
+				}
 			}
 		});
-		
 		return viewer;
 	}
 
@@ -229,7 +208,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * 
 	 * @return viewer
 	 */
-	protected CheckboxTableViewer getViewer() {
+	protected TableViewer getViewer() {
 		return fViewer;
 	}
 		
@@ -304,18 +283,6 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		Object[] checked = fViewer.getCheckedElements();
-		try {
-			ILaunchConfiguration def = null;
-			if (checked.length == 1) {
-					def = (ILaunchConfiguration) checked[0];
-					def = ((ILaunchConfigurationWorkingCopy)def).doSave();
-			}
-			DebugPlugin.getDefault().getLaunchManager().setDefaultConfiguration(getResource(), def);
-		} catch (CoreException e) {
-			setErrorMessage(e.getMessage());
-			return false;
-		}
 	//delete 
 		Iterator iter = fDeletedConfigurations.iterator();
 		while (iter.hasNext()) {
@@ -346,7 +313,6 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		fViewer.setAllChecked(false);
 		setErrorMessage(null);
 		setValid(true);
 		super.performDefaults();

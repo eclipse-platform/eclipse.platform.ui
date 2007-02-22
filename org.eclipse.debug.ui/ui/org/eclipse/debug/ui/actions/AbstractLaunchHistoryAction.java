@@ -187,7 +187,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		String label = null;
 		//CONTEXTLAUNCHING
 		if(ContextRunner.getDefault().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-			launchName = ContextRunner.getDefault().getContextName(getMode());
+			launchName = ContextRunner.getDefault().getContextLabel(getMode());
 		}
 		String mode = getMode();
 		if (mode.equals(ILaunchManager.RUN_MODE)) {

@@ -20,14 +20,11 @@ import java.util.Set;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -49,8 +46,6 @@ import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * An action delegate that builds a context menu with applicable launch shortcuts
@@ -183,21 +178,6 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
-	/**
-	 * Returns the resource this menu is open on.
-	 * 
-	 * @return resource
-	 */
-	private IResource getResource(Object element) {
-		IResource resource = null;
-		if (element instanceof IResource) {
-			resource = (IResource) element;
-		} else if (element instanceof IAdaptable) {
-			resource = (IResource) ((IAdaptable)element).getAdapter(IResource.class);
-		}
-		return resource;
-	}
-	
     /**
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
@@ -207,17 +187,9 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			return;
 		}
 		IEvaluationContext context = createContext();
-		//CONTEXTLAUNCHING
-		Object obj = fSelection.getFirstElement();
 		int accelerator = 1;
-		ILaunchConfiguration config = getLaunchManager().getDefaultConfiguration(getResource(obj));
-		if(config != null && config.exists() && config.supportsMode(fMode)) {
-        	IAction action = new LaunchConfigurationAction(config, fMode, MessageFormat.format(ActionMessages.ContextualLaunchAction_0, new String[] {config.getName()}), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-            ActionContributionItem item = new ActionContributionItem(action);
-            item.fill(menu, -1);
-            new MenuItem(menu, SWT.SEPARATOR);
-		}
-		config = getLaunchConfigurationManager().isSharedConfig(obj);
+		Object obj = fSelection.getFirstElement();
+		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(obj);
         if(config != null && config.exists() && config.supportsMode(fMode)) {
         	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
             ActionContributionItem item = new ActionContributionItem(action);

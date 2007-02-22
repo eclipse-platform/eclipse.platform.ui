@@ -20,14 +20,19 @@ import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListDialog;
 
@@ -52,6 +57,7 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	 */
 	private String fMode = null;
 	private IResource fResource = null;
+	private Text fDescriptionText = null;
 	
 	/**
 	 * Constructor
@@ -118,6 +124,21 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 		try {
 			List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
 			getTableViewer().setInput(input);
+			SWTFactory.createWrapLabel(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 300);
+			fDescriptionText = SWTFactory.createText(comp, SWT.READ_ONLY | SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL, 1, 200, 200, GridData.FILL_BOTH);
+			fDescriptionText.setBackground(comp.getBackground());
+			GridData gd = (GridData) fDescriptionText.getLayoutData();
+			gd.widthHint = 200;
+			getTableViewer().getTable().addSelectionListener(new SelectionListener() {
+				public void widgetDefaultSelected(SelectionEvent e) {}
+				public void widgetSelected(SelectionEvent e) {
+					Object o = e.item.getData();
+					if(o instanceof LaunchShortcutExtension) {
+						String txt = ((LaunchShortcutExtension)o).getShortcutDescription();
+						fDescriptionText.setText((txt == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : txt)); 
+					}
+				}
+			});
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		return comp;

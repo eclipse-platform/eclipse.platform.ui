@@ -42,6 +42,9 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private ITextSelection fSelectedText = null;
 	private Stack fWindowStack = new Stack();
 	
+	/**
+	 * Constructor
+	 */
 	private SelectedResourceManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) { //may be running headless
@@ -147,7 +150,7 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	
 	/**
 	 * Returns the currently selected resource in the active workbench window,
-	 * or <code>null</code> if none. If an editor is active, the resource adapater
+	 * or <code>null</code> if none. If an editor is active, the resource adapter
 	 * associated with the editor is returned.
 	 * 
 	 * @return selected resource or <code>null</code>
@@ -175,8 +178,8 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	public IWorkbenchWindow getActiveWindow() {
 		try {
 			return (IWorkbenchWindow) fWindowStack.peek();
-		} catch (EmptyStackException e) {
-		}
+		} 
+		catch (EmptyStackException e) {}
 		return null;
 	}
 

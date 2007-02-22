@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -38,8 +38,6 @@ public class ActionMessages extends NLS {
     public static String ConfigureColumnsAction_0;
 	public static String ConfigureColumnsAction_1;
 	public static String ConfigureColumnsAction_2;
-
-	public static String ContextualLaunchAction_0;
     
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;

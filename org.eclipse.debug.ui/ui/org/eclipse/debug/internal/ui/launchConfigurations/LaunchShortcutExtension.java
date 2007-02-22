@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -228,6 +228,17 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 			}
 		}
 		return fAssociatedTypes;
+	}
+	
+	/**
+	 * Returns the contributed description of the launch delegate or <code>null</code>
+	 * if one has not been provided
+	 * @return the description of the shortcut or <code>null</code> if one was not provided
+	 * 
+	 * @since 3.3
+	 */
+	public String getShortcutDescription() {
+		return fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 	}
 	
 	/**

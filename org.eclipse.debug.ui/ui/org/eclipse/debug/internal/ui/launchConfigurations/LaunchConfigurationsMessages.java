@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,6 +101,10 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchShortcutSelectionDialog_0;
 
 	public static String LaunchShortcutSelectionDialog_1;
+
+	public static String LaunchShortcutSelectionDialog_2;
+
+	public static String LaunchShortcutSelectionDialog_3;
 
 	public static String PerspectiveManager_Error_1;
 	public static String PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4;

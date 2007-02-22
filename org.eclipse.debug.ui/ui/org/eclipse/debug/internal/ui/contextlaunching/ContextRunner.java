@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -25,23 +24,15 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.ListDialog;
 
 import com.ibm.icu.text.MessageFormat;
@@ -50,9 +41,10 @@ import com.ibm.icu.text.MessageFormat;
  * Static runner for context launching to provide the base capability of context 
  * launching to more than one form of action (drop down, toolbar, view, etc)
  * 
- * @see ContextLaunchingAction
- * @see ContextLaunchingToolbarAction
- * @see ILaunchListener
+ * @see org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction
+ * @see org.eclipse.debug.ui.actions.LaunchShortcutsAction
+ * @see org.eclipse.debug.ui.actions.ContextualLaunchAction
+ * @see org.eclipse.debug.internal.ui.preferences.ContextLaunchingPreferencePage
  * 
  *  @since 3.3
  *  EXPERIMENTAL
@@ -88,26 +80,20 @@ public final class ContextRunner {
 	 */
 	public void launch(String mode) {
 		try {
+			IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 			//1. resolve resource
-			Object context = getCurrentContext();
-			ILaunchConfiguration config = null;
-			if(context != null) {
-				if(context instanceof IAdaptable) {
-					IResource resource = (IResource) ((IAdaptable)context).getAdapter(IResource.class);
-					if(resource != null) {
-						if(DEBUG_CONTEXTUAL_LAUNCH) {
-							System.out.println("LAUNCH -> Selecting and Launching with resource: "+resource.getName()+ " in mode: "+mode); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						selectAndLaunch(resource, mode);
-						return;
-					}
+			if(resource != null) {
+				if(DEBUG_CONTEXTUAL_LAUNCH) {
+					System.out.println("LAUNCH -> Selecting and Launching with resource: "+resource.getName()+ " in mode: "+mode); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+				selectAndLaunch(resource, mode);
+				return;
 			}
 			//2. launch last if no resource
-			config = getLastLaunch(mode);
+			ILaunchConfiguration config = getLastLaunch(mode);
 			if(config != null) {
 				if(DEBUG_CONTEXTUAL_LAUNCH) {
-					System.out.println("LAUNCH -> Using last launch, context: "+context+" is not valid"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("LAUNCH -> Using last launch, context is not valid"); //$NON-NLS-1$
 				}
 				DebugUITools.launch(config, mode);
 				return;
@@ -173,7 +159,7 @@ public final class ContextRunner {
 			DebugUITools.launch(config, mode);
 			return true;
 		}
-		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource); 
 		int csize = configs.size();
 		if(DEBUG_CONTEXTUAL_LAUNCH) {
 			System.out.println("\tSELECTANDLAUNCH -> Selecting from "+csize+" possible launch configurations for "+resource.getName()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -258,7 +244,7 @@ public final class ContextRunner {
 		ILaunchGroup group = resolveLaunchGroup(mode);
 		if(group != null) {
 			if(DEBUG_CONTEXTUAL_LAUNCH) {
-				System.out.println("\t\tGETMRUCONFIGURATION -> Looking up MRU for launchgroup "+DebugUIPlugin.removeAccelerators(group.getLabel())); //$NON-NLS-1$
+				System.out.println("\t\tGETMRUCONFIGURATION -> Looking up MRU for launch group "+DebugUIPlugin.removeAccelerators(group.getLabel())); //$NON-NLS-1$
 			}
 			ILaunchConfiguration config = getLastLaunch(mode);
 			if(DEBUG_CONTEXTUAL_LAUNCH) {
@@ -274,8 +260,6 @@ public final class ContextRunner {
 			if(DEBUG_CONTEXTUAL_LAUNCH) {
 				System.out.println("\t\tGETMRUCONFIGURATION -> Checking history"); //$NON-NLS-1$
 			}
-			//TODO favorites will be missed unless they were the last launch
-			//this is a limitation of the launch history, and due to be refactored
 			if(history != null) {
 				ILaunchConfiguration[] configs = history.getCompleteLaunchHistory();
 				for(int i = 0; i < configs.length; i++) {
@@ -334,83 +318,21 @@ public final class ContextRunner {
 	}
 	
 	/**
-	 * Returns the current context to be considered for launching. 
-	 * The returned object will be one of:
-	 * <ol>
-	 * <li>IEditorInput</li>
-	 * <li>Object where <i>object</i> is the first element in the selection obtained from the 
-	 * selection provider of the currently selected workbench part</li>
-	 * <li><code>null</code>, if the current context is unknown</li>
-	 * </ol>
-	 * @return the currently selected context to consider for launching, or <code>null</code>.
-	 *
-	 */
-	public Object getCurrentContext() {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if(window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if(page!= null) {
-				IWorkbenchPart part = page.getActivePart();
-				if(part != null) {
-					if(part instanceof IEditorPart) {
-						return ((IEditorPart)part).getEditorInput();
-					}
-					IWorkbenchPartSite site = part.getSite();
-					if(site != null) {
-						ISelectionProvider provider = site.getSelectionProvider();
-						if(provider != null) {
-							ISelection sel = provider.getSelection();
-							if(sel instanceof IStructuredSelection) {
-								StructuredSelection ss = (StructuredSelection) sel;
-								if(ss.isEmpty()) {
-									return part;
-								}
-								else {
-									return ss.getFirstElement();
-								}
-							}
-							else if(sel instanceof ITextSelection) {
-								return part;
-							}
-						}
-						else {
-							return part;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	/**
 	 * Returns the associated launch configuration name of the currently selected context, or the empty string.
 	 * @param mode
 	 * @return the associated launch configuration name of the currently selected context or the empty string. 
 	 */
-	public String getContextName(String mode) {
-		Object o = getCurrentContext();
-		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(o);
+	public String getContextLabel(String mode) {
+		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(resource);
 		if(config != null) {
 			if(DEBUG_CONTEXTUAL_LAUNCH) {
 				System.out.println("GETCONTEXTNAME -> Shared config, return name"); //$NON-NLS-1$
 			}
 			return config.getName();
 		}
-		else {
-			if(o instanceof IAdaptable) {
-				Object a = ((IAdaptable)o).getAdapter(IResource.class);
-				if(a != null) {
-					IResource res = (IResource) a;
-					return getResourceLabel(res, mode);
-				}
-				else if(DEBUG_CONTEXTUAL_LAUNCH) {
-					System.out.println("GETCONTEXTNAME -> Not adaptable to IResource: "+o.toString()); //$NON-NLS-1$
-				}
-			}
-			else if(DEBUG_CONTEXTUAL_LAUNCH) {
-				System.out.println("GETCONTEXTNAME -> Not adaptable: "+o.toString()); //$NON-NLS-1$
-			}
+		if(resource != null) {
+			return getResourceLabel(resource, mode);
 		}
 		if(DEBUG_CONTEXTUAL_LAUNCH) {
 			System.out.println("GETCONTEXTNAME -> Not shared config or otherwise, use last launch name if one"); //$NON-NLS-1$
@@ -431,9 +353,6 @@ public final class ContextRunner {
 	protected String getResourceLabel(IResource resource, String mode) {
 		if(DEBUG_CONTEXTUAL_LAUNCH) {
 			System.out.println("\tGETRESOURCELABEL -> Finding name for: "+resource.getName()); //$NON-NLS-1$
-		}
-		if(DEBUG_CONTEXTUAL_LAUNCH) {
-			System.out.println("\tGETRESOURCELABEL -> looking up name for "+resource.getName()); //$NON-NLS-1$
 		}
 		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
 		int csize = configs.size();
@@ -475,6 +394,9 @@ public final class ContextRunner {
 							return ContextMessages.ContextRunner_15;
 						}
 					}
+				}
+				if(esize == 1) {
+					return resource.getName();
 				}
 				else {
 					//TODO could cause TVT issues
