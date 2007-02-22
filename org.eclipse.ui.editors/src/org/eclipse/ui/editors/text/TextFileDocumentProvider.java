@@ -10,22 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.IllegalCharsetNameException;
-import java.nio.charset.UnmappableCharacterException;
-import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +26,6 @@ import org.osgi.framework.Bundle;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -51,10 +37,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -72,7 +55,6 @@ import org.eclipse.core.filebuffers.IFileBufferManager;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -878,52 +860,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @throws CoreException if the creation of the file fails
 	 */
 	protected void createFileFromDocument(IProgressMonitor monitor, IFile file, IDocument document) throws CoreException {
-		String encoding= getCharsetForNewFile(file, document);
 		try {
 			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000);
-			
-			Charset charset;
-			try {
-				charset= Charset.forName(encoding);
-			} catch (UnsupportedCharsetException ex) {
-				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_unsupported_encoding_message_arg, encoding);
-				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, ex);
-				throw new CoreException(s);
-			} catch (IllegalCharsetNameException ex) {
-				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_illegal_encoding_message_arg, encoding);
-				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IStatus.OK, message, ex);
-				throw new CoreException(s);
-			}
-
-			CharsetEncoder encoder= charset.newEncoder();
-			encoder.onMalformedInput(CodingErrorAction.REPLACE);
-			encoder.onUnmappableCharacter(CodingErrorAction.REPORT);
-
-			InputStream stream;
-			
-			try {
-				byte[] bytes;
-				ByteBuffer byteBuffer= encoder.encode(CharBuffer.wrap(document.get()));
-				if (byteBuffer.hasArray())
-					bytes= byteBuffer.array();
-				else {
-					bytes= new byte[byteBuffer.limit()];
-					byteBuffer.get(bytes);
-				}
-				stream= new ByteArrayInputStream(bytes, 0, byteBuffer.limit());
-			} catch (CharacterCodingException ex) {
-				Assert.isTrue(ex instanceof UnmappableCharacterException);
-				String message= NLSUtility.format(TextEditorMessages.DocumentProvider_error_charset_mapping_failed_message_arg, encoding);
-				IStatus s= new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, EditorsUI.CHARSET_MAPPING_FAILED, message, null);
-				throw new CoreException(s);
-			}
-			
-			if (!file.exists()) {
-				ContainerCreator creator= new ContainerCreator(file.getWorkspace(), file.getParent().getFullPath());
-				creator.createContainer(new SubProgressMonitor(monitor, 1000));
-				file.create(stream, false, new SubProgressMonitor(monitor, 1000));
-			} else
-				file.setContents(stream, false, false, new SubProgressMonitor(monitor, 1000));
+			ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+			manager.connect(file.getFullPath(), LocationKind.IFILE, monitor);
+			ITextFileBuffer buffer= ITextFileBufferManager.DEFAULT.getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+			buffer.getDocument().set(document.get());
+			buffer.commit(monitor, true);
+			manager.disconnect(file.getFullPath(), LocationKind.IFILE, monitor);
 		} finally {
 			monitor.done();
 		}
@@ -941,54 +885,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	private void createFileStoreFromDocument(IProgressMonitor monitor, URI uri, IDocument document) throws CoreException {
 		try {
 			monitor.beginTask(TextEditorMessages.TextFileDocumentProvider_beginTask_saving, 2000);
-			// XXX: Should use new URI-based file buffer support when available
-			IPath location= URIUtil.toPath(uri);
-			FileBuffers.getTextFileBufferManager().connect(location, LocationKind.LOCATION, monitor);
-			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(location, LocationKind.LOCATION);
+			IFileStore fileStore= EFS.getStore(uri);
+			FileBuffers.getTextFileBufferManager().connectFileStore(fileStore, monitor);
+			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getFileStoreTextFileBuffer(fileStore);
 			buffer.getDocument().set(document.get());
 			buffer.commit(monitor, true);
-			FileBuffers.getTextFileBufferManager().disconnect(location, LocationKind.LOCATION, monitor);
+			FileBuffers.getTextFileBufferManager().disconnectFileStore(fileStore, monitor);
 		} finally {
 			monitor.done();
-		}
-	}
-
-	private String getCharsetForNewFile(IFile targetFile, IDocument document) {
-		// User-defined encoding has first priority
-		String encoding;
-		try {
-			encoding= targetFile.getCharset(false);
-		} catch (CoreException ex) {
-			encoding= null;
-		}
-		if (encoding != null)
-			return encoding;
-
-		// Probe content
-		Reader reader= new DocumentReader(document);
-		try {
-			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, targetFile.getName(), options);
-			if (description != null) {
-				encoding= description.getCharset();
-				if (encoding != null)
-					return encoding;
-			}
-		} catch (IOException ex) {
-			// continue with next strategy
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException x) {
-			}
-		}
-
-		// Use parent chain
-		try {
-			return targetFile.getParent().getDefaultCharset();
-		} catch (CoreException ex) {
-			// Use global default
-			return ResourcesPlugin.getEncoding();
 		}
 	}
 
