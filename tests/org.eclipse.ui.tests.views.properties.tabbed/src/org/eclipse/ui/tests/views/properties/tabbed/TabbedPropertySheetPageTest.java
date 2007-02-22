@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,6 +27,7 @@ import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyCompos
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.InformationTwoSection;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.NameSection;
+import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvider;
 import org.eclipse.ui.views.properties.tabbed.ISection;
@@ -44,13 +46,19 @@ public class TabbedPropertySheetPageTest
         super.setUp();
 
         /**
-         * Open the properties view.
+         * Open the tests perspective.
          */
         IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
         assertNotNull(workbenchWindow);
         IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
         assertNotNull(workbenchPage);
+        PlatformUI.getWorkbench().showPerspective(
+            TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
+
+        /**
+         * Open the properties view.
+         */
         propertiesView = workbenchPage.showView(IPageLayout.ID_PROP_SHEET);
         assertNotNull(propertiesView);
 
@@ -76,6 +84,13 @@ public class TabbedPropertySheetPageTest
     protected void tearDown()
         throws Exception {
         super.tearDown();
+
+        /**
+         * Bug 175070: Make sure the views have finished painting before hiding them 
+         */
+        while (Display.getCurrent().readAndDispatch()) {
+            //
+        }
 
         /**
          * Close the properties view.

@@ -147,6 +147,15 @@
          </propertySection>
       </propertySections>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective"
+            icon="icons/sample.gif"
+            id="org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective"
+            name="%Views.example.perspective">
+      </perspective>
+   </extension>
 
 
 </plugin>
