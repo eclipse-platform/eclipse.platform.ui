@@ -644,25 +644,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		IPath resourcePath = resource.getFullPath();
 		try {
 			List types = getApplicableConfigurationTypes(resource);
-			List configs = new ArrayList();
 			ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
-			for(int i = 0; i < configurations.length; i++) {
-				if(types.contains(configurations[i].getType())) {
-					if(configurations[i].isMigrationCandidate()) {
-						configurations[i].migrate();
-					}
-					configs.add(configurations[i]);
-				}
-			}
 			ILaunchConfiguration configuration = null;
 			IResource[] resources = null;
-			for (Iterator iter = configs.iterator(); iter.hasNext();) {
-				configuration = (ILaunchConfiguration) iter.next();
-				if(acceptConfiguration(configuration)) { 
-					if(configuration.contentsEqual(getLaunchManager().getDefaultConfiguration(resource))) {
-						list.add(configuration);
-					}
-					else {
+			for(int i = 0; i < configurations.length; i++) {
+				configuration = configurations[i];
+				if(types.contains(configuration.getType())) {
+					if(acceptConfiguration(configuration)) {
 						resources = configuration.getMappedResources();
 						if (resources != null) {
 							for (int j = 0; j < resources.length; j++) {
