@@ -59,6 +59,8 @@ public class EngineResultSection {
 
 	private static final String KEY_PREFIX_GRAYED = "grayed:"; //$NON-NLS-1$
 	
+	private static final String CAT_HEADING_PREFIX = "catheading:"; //$NON-NLS-1$
+	
 	private SearchResultsPart part;
 
 	private EngineDescriptor desc;
@@ -156,10 +158,13 @@ public class EngineResultSection {
 
 			public void linkActivated(HyperlinkEvent e) {
 				Object href = e.getHref();
+				String shref = (String) href;
 				if (HREF_PROGRESS.equals(href)) {
 					showProgressView();
-				} else if (((String) href).startsWith("bmk:")) { //$NON-NLS-1$
-					doBookmark(e.getLabel(), (String) href);
+				} else if (shref.startsWith("bmk:")) { //$NON-NLS-1$
+					doBookmark(e.getLabel(), shref);
+				} else if (shref.startsWith(CAT_HEADING_PREFIX)) {
+					part.doCategoryLink(shref.substring(CAT_HEADING_PREFIX.length()));
 				} else
 					part.doOpenLink(e.getHref());
 			}
@@ -346,7 +351,11 @@ public class EngineResultSection {
 				buff.append("<p>"); //$NON-NLS-1$
 				if (cat.getHref() != null) {
 					buff.append("<a bold=\"true\" href=\""); //$NON-NLS-1$
-					String absoluteHref = hit.toAbsoluteHref(cat.getHref(), true);
+					String absoluteHref = ""; //$NON-NLS-1$
+					if (cat.getHref().endsWith(".xml")) { //$NON-NLS-1$
+						absoluteHref = absoluteHref + CAT_HEADING_PREFIX;
+					}
+					absoluteHref = absoluteHref + hit.toAbsoluteHref(cat.getHref(), true);
 					buff.append(part.parent.escapeSpecialChars(absoluteHref));
 					buff.append("\">"); //$NON-NLS-1$
 					buff.append(cat.getLabel());

@@ -13,10 +13,14 @@ package org.eclipse.help.ui.internal.views;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -262,6 +266,25 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 			parent.showExternalURL(url.substring(3));
 		} else
 			parent.showURL(url);
+	}
+	
+	void doCategoryLink(String href) {
+		parent.showPage(IHelpUIConstants.HV_ALL_TOPICS_PAGE);
+		AllTopicsPart part = (AllTopicsPart) parent
+				.findPart(IHelpUIConstants.HV_TOPIC_TREE);
+		if (part != null) {
+			IToc[] tocs = HelpSystem.getTocs();
+			IHelpResource target = null;
+			for (int i = 0; i < tocs.length; i++) {
+				if (tocs[i].getHref().equals(href))
+					target = tocs[i];
+			}
+			if (target != null) {
+				if (!part.treeViewer.getExpandedState(target))
+					part.doOpen(target);
+				part.treeViewer.setSelection(new StructuredSelection(target), true);
+			}
+		}
 	}
 
 	/*
