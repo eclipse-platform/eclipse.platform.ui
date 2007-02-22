@@ -162,7 +162,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	/** line width of change borders */
 	private static final int LW= 1;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
-	private static final boolean USE_MERGING_TOKEN_DIFF= false;
+	private static final boolean USE_MERGING_TOKEN_DIFF= true;
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
@@ -3422,9 +3422,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				int rightStart2= rightStart+sm.getTokenStart(first.rightStart());
 				int rightEnd2= rightStart+getTokenEnd(sm, last.rightStart(), last.rightLength());
 				Diff diff= new Diff(baseDiff, first.kind(),
-							ancestorDoc, null, ancestorStart2, ancestorEnd2+1,
-							leftDoc, null, leftStart2, leftEnd2+1,
-							rightDoc, null, rightStart2, rightEnd2+1);	
+							ancestorDoc, null, ancestorStart2, ancestorEnd2,
+							leftDoc, null, leftStart2, leftEnd2,
+							rightDoc, null, rightStart2, rightEnd2);	
 				diff.fIsToken= true;
 				baseDiff.add(diff);
 			}
