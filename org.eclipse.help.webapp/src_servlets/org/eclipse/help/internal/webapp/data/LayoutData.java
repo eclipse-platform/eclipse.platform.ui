@@ -90,7 +90,7 @@ public class LayoutData extends RequestData {
 		if (preferences.isIndexView())
 			indexview = new View("index", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/index_view.gif", 'I', !HelpPlugin.getIndexManager().isIndexLoaded(getLocale())); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/index_view.gif", 'I', false); //$NON-NLS-1$
 		if (preferences.isLinksView())
 			linksview = new View("links", //$NON-NLS-1$
 					"", //$NON-NLS-1$
