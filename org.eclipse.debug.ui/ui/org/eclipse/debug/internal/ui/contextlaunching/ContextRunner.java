@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contextlaunching;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -33,6 +37,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListDialog;
 
 import com.ibm.icu.text.MessageFormat;
@@ -98,8 +103,41 @@ public final class ContextRunner {
 				DebugUITools.launch(config, mode);
 				return;
 			}
+			//3. might be empty workspace try to get shortcuts
+			List shortcuts = getLaunchShortcutsForEmptySelection();
+			if(!shortcuts.isEmpty()) {
+				showShortcutSelectionDialog(resource, shortcuts, mode);
+			}
+			else {
+				MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+			}
 		}
 		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+	}
+	
+	/**
+	 * Creates a listing of the launch shortcut extensions that are applicable to the underlying resource
+	 * @param resource the underlying resource
+	 * @return a listing of applicable launch shortcuts or an empty list, never <code>null</code>
+	 * @throws CoreException
+	 * @since 3.3
+	 */
+	public List getLaunchShortcutsForEmptySelection() throws CoreException {
+		List list = new ArrayList(); 
+		List sc = getLaunchConfigurationManager().getLaunchShortcuts();
+		List ctxt = new ArrayList();
+		IEvaluationContext context = new EvaluationContext(null, ctxt);
+		context.addVariable("selection", ctxt); //$NON-NLS-1$
+		LaunchShortcutExtension ext = null;
+		for(Iterator iter = sc.iterator(); iter.hasNext();) {
+			ext = (LaunchShortcutExtension) iter.next();
+			if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && !WorkbenchActivityHelper.filterItem(ext)) {
+				if(!list.contains(ext)) {
+					list.add(ext);
+				}
+			}
+		}
+		return list;
 	}
 	
 	/**
@@ -180,7 +218,7 @@ public final class ContextRunner {
 				return true;
 			}
 			if(esize > 1) {
-				return showShortcutSelectionDialog(resource, mode);
+				return showShortcutSelectionDialog(resource, null, mode);
 			}
 			if(esize < 1) {
 				IProject project = resource.getProject();
@@ -302,8 +340,11 @@ public final class ContextRunner {
 	 * @param mode the mode
 	 * @return true if something was launched, false otherwise
 	 */
-	protected boolean showShortcutSelectionDialog(IResource resource, String mode) {
+	protected boolean showShortcutSelectionDialog(IResource resource, List shortcuts, String mode) {
 		LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(resource, mode);
+		if(shortcuts != null) {
+			dialog.setInput(shortcuts);
+		}
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			if(result.length > 0) {

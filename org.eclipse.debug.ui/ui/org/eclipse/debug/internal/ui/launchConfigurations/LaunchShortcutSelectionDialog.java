@@ -77,7 +77,12 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 		}
 		setTitle(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_0, new String[] {modename}));
 		setAddCancelButton(true);
-		setMessage(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_1, new String[] {modename.toLowerCase(), fResource.getName()}));
+		if(fResource == null) {
+			setMessage(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_4, new String[] {modename.toLowerCase()}));
+		}
+		else {
+			setMessage(MessageFormat.format(LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_1, new String[] {modename.toLowerCase(), fResource.getName()}));
+		}
 		setLabelProvider(new DefaultLabelProvider());
 		setContentProvider(new ArrayContentProvider());
 	}
@@ -122,10 +127,12 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	protected Control createDialogArea(Composite container) {
 		Composite comp = (Composite) super.createDialogArea(container);
 		try {
-			List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
-			getTableViewer().setInput(input);
+			if(fResource != null) {
+				List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
+				getTableViewer().setInput(input);
+			}
 			SWTFactory.createWrapLabel(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 300);
-			fDescriptionText = SWTFactory.createText(comp, SWT.READ_ONLY | SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL, 1, 200, 200, GridData.FILL_BOTH);
+			fDescriptionText = SWTFactory.createText(comp, SWT.READ_ONLY | SWT.BORDER | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL, 1, 100, 100, GridData.FILL_BOTH);
 			fDescriptionText.setBackground(comp.getBackground());
 			GridData gd = (GridData) fDescriptionText.getLayoutData();
 			gd.widthHint = 200;

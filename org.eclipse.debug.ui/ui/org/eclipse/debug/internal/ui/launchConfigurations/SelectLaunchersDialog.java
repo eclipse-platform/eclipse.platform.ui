@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -32,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -90,6 +92,26 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 		fLaunchMode = launchmode;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		IDialogSettings settings = getDialogBoundsSettings();
+		if(settings != null) {
+			try {
+				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
+				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
+				if(width > 0 & height > 0) {
+					return new Point(width, height);
+				}
+			}
+			catch (NumberFormatException nfe) {
+				return new Point(450, 450);
+			}
+		}
+		return new Point(450, 450);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
