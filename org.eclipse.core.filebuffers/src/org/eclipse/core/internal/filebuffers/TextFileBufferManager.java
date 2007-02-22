@@ -382,22 +382,33 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 */
 	public ITextFileBuffer getTextFileBuffer(IDocument document) {
 		Assert.isLegal(document != null);
-		Iterator iter= new ArrayList(fFilesBuffers.values()).iterator();
+		Iterator iter;
+		synchronized (fFilesBuffers) {
+			iter= new ArrayList(fFilesBuffers.values()).iterator();
+		}
+		
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
 			if (buffer instanceof ITextFileBuffer) {
 				ITextFileBuffer textFileBuffer= (ITextFileBuffer)buffer;
-				if (textFileBuffer.getDocument() == document)
-					return textFileBuffer;
+				if (textFileBuffer.getDocument() == document) {
+					if (!((AbstractFileBuffer)textFileBuffer).isDisconnected())
+						return textFileBuffer;
+					return null;
+				}
 			}
 		}
-		iter= new ArrayList(fFileStoreFileBuffers.values()).iterator();
+		synchronized (fFilesBuffers) {
+			iter= new ArrayList(fFileStoreFileBuffers.values()).iterator();
+		}
 		while (iter.hasNext()) {
 			Object buffer= iter.next();
 			if (buffer instanceof ITextFileBuffer) {
 				ITextFileBuffer textFileBuffer= (ITextFileBuffer)buffer;
-				if (textFileBuffer.getDocument() == document)
-					return textFileBuffer;
+				if (textFileBuffer.getDocument() == document) {
+					if (!((AbstractFileBuffer)textFileBuffer).isDisconnected())
+						return textFileBuffer;
+				}
 			}
 		}
 		return null;
