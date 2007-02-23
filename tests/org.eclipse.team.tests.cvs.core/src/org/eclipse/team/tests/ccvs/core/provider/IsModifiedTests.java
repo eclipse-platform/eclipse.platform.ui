@@ -168,10 +168,17 @@ public class IsModifiedTests extends EclipseTest {
 				IPath relativePath = new Path(resource.getRelativePath(rootFolder));
 				boolean resourceModified = resource.isModified(null);
 				boolean resourceListed = resourceList.contains(relativePath);
-				assertTrue(resource.getIResource().getFullPath().toString() 
-						+ (resourceModified ? " should not be modified but is" : " should be modified but isn't"),
-					(listedResourcesShouldBeModified && (resourceModified == resourceListed)) ||
-					(!listedResourcesShouldBeModified && (!resourceModified == resourceListed)));
+				if (CVSTestSetup.FAIL_ON_BAD_DIFF) {
+					assertTrue(resource.getIResource().getFullPath().toString() 
+							+ (resourceModified ? " should not be modified but is" : " should be modified but isn't"),
+						(listedResourcesShouldBeModified && (resourceModified == resourceListed)) ||
+						(!listedResourcesShouldBeModified && (!resourceModified == resourceListed)));
+				} else if (!resourceModified){
+					// Only fail if a file that should be modified isn't
+					assertTrue(resource.getIResource().getFullPath().toString() 
+							+ " should be modified but isn't",
+							listedResourcesShouldBeModified == resourceListed);
+				}
 					
 //				Commented because the CVS core doesn't rely on resourceModify to be called.
 //				IResource iResource = resource.getIResource();
