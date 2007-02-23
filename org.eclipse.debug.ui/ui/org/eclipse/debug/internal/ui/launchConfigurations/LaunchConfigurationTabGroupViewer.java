@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private String fDescription = null;
 	
 	/**
-	 * A placeholder for switching between the tabs for a config and the getting started tab
+	 * A place holder for switching between the tabs for a config and the getting started tab
 	 * @since 3.2
 	 */
 	private Composite fTabPlaceHolder = null;
@@ -680,10 +680,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	}
 	
 	/**
-	 * Returns if the two configs are using the same <code>ILaunchDelegate</code> or not
+	 * Returns if the two configurations are using the same <code>ILaunchDelegate</code> or not
 	 * @param config1
 	 * @param config2
-	 * @return true if the configs are using the same <code>ILaunchDelegate</code> or false if they are not
+	 * @return true if the configurations are using the same <code>ILaunchDelegate</code> or false if they are not
 	 * @since 3.3
 	 */
 	protected boolean delegatesEqual(ILaunchConfiguration config1, ILaunchConfiguration config2) {
@@ -879,7 +879,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		};
 
-		// Creating the tabs can result in plugin loading, so we show the busy cursor
+		// Creating the tabs can result in plug-in loading, so we show the busy cursor
 		BusyIndicator.showWhile(getControl().getDisplay(), runnable);
 
 		// Re-throw any CoreException if there was one
@@ -1404,7 +1404,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * the specified index is not within the limits of the tabs returned by
 	 * <code>getTabs()</code>.
 	 * 
-	 * @param index the index of the tab to dispay
+	 * @param index the index of the tab to display
 	 */
 	public void setActiveTab(int index) {
 		ILaunchConfigurationTab[] tabs = getTabs();

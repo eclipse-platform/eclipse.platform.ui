@@ -642,9 +642,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * @param configuration the configuration to display
      * @param groupIdentifier group identifier of the launch group the launch configuration
      * belongs to
-     * @param reservednames a set of launch configuraiotn names that cannot be used when creating or renaming
+     * @param reservednames a set of launch configuration names that cannot be used when creating or renaming
      * the specified launch configuration
      * @param status the status to display, or <code>null</code> if none 
+     * @param setDefaults whether to set default values in the configuration
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
      *  
@@ -652,11 +653,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * 
      * EXPERIMENTAL
      */
-    public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, Set reservednames, IStatus status) {
+    public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, Set reservednames, IStatus status, boolean setDefaults) {
     	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
     	if (group != null) {
     		LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group, reservednames);
     		dialog.setInitialStatus(status);
+    		dialog.setDefaultsOnOpen(setDefaults);
     		return dialog.open();
     	} 
     	return Window.CANCEL;

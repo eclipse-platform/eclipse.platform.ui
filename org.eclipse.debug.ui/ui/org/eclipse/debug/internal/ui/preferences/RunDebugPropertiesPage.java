@@ -387,7 +387,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 */
 	private void handleEdit() {
 		ILaunchConfigurationWorkingCopy config = getSelectedConfigurations()[0]; 
-		if(edit(config) == IDialogConstants.OK_ID) {
+		if(edit(config, false) == IDialogConstants.OK_ID) {
 			fChangedConfigurations.add(config);
 			fViewer.refresh();
 		}
@@ -398,10 +398,11 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * Returns the code from the dialog used to edit the configuration.
 	 * 
 	 * @param configuration
+	 * @param setDefaults whether to set default values in the config
 	 * @return dialog return code - OK or CANCEL
 	 */
-	private int edit(ILaunchConfigurationWorkingCopy configuration) {
-		return DebugUIPlugin.openLaunchConfigurationPropertiesDialog(getShell(), configuration, IDebugUIConstants.ID_RUN_LAUNCH_GROUP, getConfigurationNames(), null);
+	private int edit(ILaunchConfigurationWorkingCopy configuration, boolean setDefaults) {
+		return DebugUIPlugin.openLaunchConfigurationPropertiesDialog(getShell(), configuration, IDebugUIConstants.ID_RUN_LAUNCH_GROUP, getConfigurationNames(), null, setDefaults);
 	}
 
 	/**
@@ -423,7 +424,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 					ILaunchConfigurationWorkingCopy wc = type.newInstance(null, 
 							((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).
 							generateUniqueLaunchConfigurationNameFrom("New_configuration", getConfigurationNames())); //$NON-NLS-1$
-					if (edit(wc) == Window.OK) {
+					if (edit(wc, true) == Window.OK) {
 						fChangedConfigurations.add(wc);
 						fViewer.add(wc);
 						fViewer.setSelection(new StructuredSelection(wc));
