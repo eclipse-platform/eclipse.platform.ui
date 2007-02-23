@@ -41,6 +41,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 public final class FileBuffers {
 
 	/**
+	 * The workspace root.
+	 * @since 3.3
+	 */
+	private static final IWorkspaceRoot WORKSPACE_ROOT= ResourcesPlugin.getWorkspace().getRoot();
+
+	/**
 	 * Cannot be instantiated.
 	 */
 	private FileBuffers()  {
@@ -101,8 +107,7 @@ public final class FileBuffers {
 		
 		if (normalized.segmentCount() >= 2) {
 			// @see IContainer#getFile for the required number of segments
-			IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-			IFile file= workspaceRoot.getFile(normalized);
+			IFile file= WORKSPACE_ROOT.getFile(normalized);
 			if  (file != null && file.exists())
 				return file;
 		}
@@ -133,13 +138,11 @@ public final class FileBuffers {
 	 * @return the normalized form of <code>pathOrLocation</code>
 	 */
 	public static IPath normalizeLocation(IPath pathOrLocation) {
-		IWorkspaceRoot workspaceRoot= ResourcesPlugin.getWorkspace().getRoot();
-
 		// existing workspace resources - this is the 93% case
-		if (workspaceRoot.exists(pathOrLocation))
+		if (WORKSPACE_ROOT.exists(pathOrLocation))
 			return pathOrLocation.makeAbsolute();
 
-		IFile file= workspaceRoot.getFileForLocation(pathOrLocation);
+		IFile file= WORKSPACE_ROOT.getFileForLocation(pathOrLocation);
 		// existing workspace resources referenced by their file system path
 		// files that do not exist (including non-accessible files) do not pass
 		if (file != null && file.exists())
