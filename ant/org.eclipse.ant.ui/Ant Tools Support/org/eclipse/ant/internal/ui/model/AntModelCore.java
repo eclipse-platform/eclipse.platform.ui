@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,8 +78,11 @@ public class AntModelCore implements IBreakpointsListener {
                 for (int i = 0; i < breakpoints.length; i++) {
                     IBreakpoint breakpoint= breakpoints[i];
                     if (breakpoint instanceof AntLineBreakpoint) {
-                        int lineNumber= breakpoint.getMarker().getAttribute(IMarker.LINE_NUMBER, 0);
-                        breakpoint.getMarker().setAttribute(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new String[] {Integer.toString(lineNumber)}));        
+                        IMarker marker = breakpoint.getMarker();
+                        if (marker.exists()) {
+                        	int lineNumber= marker.getAttribute(IMarker.LINE_NUMBER, 0);
+                        	marker.setAttribute(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new String[] {Integer.toString(lineNumber)}));
+                        }
                     }
                 }
             }
