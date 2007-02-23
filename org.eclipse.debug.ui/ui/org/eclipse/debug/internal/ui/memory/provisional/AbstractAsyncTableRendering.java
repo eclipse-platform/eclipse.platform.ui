@@ -1226,18 +1226,43 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				
 				if (fTableViewer.getTable().isDisposed())
 					return;
-				
+						
 				// call this to make the table viewer to reload when needed
 				int i = fTableViewer.indexOf(address);
 				if (i < 0)
 				{
-					topVisibleAddressChanged(address);
+					// the model may not have been populated yet,
+					// try to predict if the address will be in the buffer
+					boolean contained = isAddressBufferred(address);
+					if (!contained)
+						topVisibleAddressChanged(address);
 				}
 				fTableViewer.setSelection(address);
 			}
 		};
 		
 		runOnUIThread(runnable);
+	}
+	
+	private boolean isAddressBufferred(BigInteger address)
+	{
+		// figure out the buffer top address
+		BigInteger loadAddress = fContentDescriptor.getLoadAddress();
+		loadAddress = MemoryViewUtil.alignToBoundary(loadAddress, getAddressableUnitPerLine());
+		int unitPerLine = getAddressableUnitPerLine();
+		
+		loadAddress = loadAddress.subtract(BigInteger.valueOf(getPreBufferSize() * unitPerLine));
+		
+		// figure out the buffer end address
+		int numLines = fContentDescriptor.getNumLines();
+		BigInteger bufferEnd = loadAddress.add(BigInteger.valueOf(fContentDescriptor.getPostBuffer()*unitPerLine));
+		bufferEnd = bufferEnd.add(BigInteger.valueOf(numLines*unitPerLine + unitPerLine));
+		
+		// see if the address is contained based on current content descriptor
+		if (address.compareTo(loadAddress) >= 0 && address.compareTo(bufferEnd) <= 0)
+			return true;
+		
+		return false;
 	}
 	
 	private void setFont(Font font)
