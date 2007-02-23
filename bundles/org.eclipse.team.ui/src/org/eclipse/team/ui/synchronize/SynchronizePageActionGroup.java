@@ -10,14 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.*;
@@ -127,7 +123,7 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 			Object[] listeners = selectionChangedListeners.getListeners();
 			for (int i = 0; i < listeners.length; ++i) {
 				final ISelectionChangedListener l = (ISelectionChangedListener)listeners[i];
-				Platform.run(new SafeRunnable() {
+				SafeRunner.run(new SafeRunnable() {
 					public void run() {
 						l.selectionChanged(event);
 					}
@@ -209,11 +205,18 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	 * and <code>false</code> if the action was not added
 	 */
 	protected boolean appendToGroup(IContributionManager manager, String groupId, IAction action) {
+		if (internalAppendToGroup(manager, groupId, action)) {
+			registerActionWithWorkbench(action);
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean internalAppendToGroup(IContributionManager manager, String groupId, IAction action) {
 		if (manager == null || action == null) return false;
 		IContributionItem group = findGroup(manager, groupId);
 		if (group != null) {
 			manager.appendToGroup(group.getId(), action);
-			registerActionWithWorkbench(action);
 			return true;
 		}
 		return false;
@@ -341,7 +344,10 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 					for (Iterator iter2 = actions.iterator(); iter2.hasNext();) {
 						Object element = iter2.next();
 						if (element instanceof IAction) {
-							appendToGroup(menu, groupId, (IAction)element);
+							// Call the internal method to avoid registering the action
+							// as a global handler since it would have been registered
+							// when the action was added to the menuContributions
+							internalAppendToGroup(menu, groupId, (IAction)element);
 						} else if (element instanceof IContributionItem) {
 							appendToGroup(menu, groupId, (IContributionItem)element);
 						}

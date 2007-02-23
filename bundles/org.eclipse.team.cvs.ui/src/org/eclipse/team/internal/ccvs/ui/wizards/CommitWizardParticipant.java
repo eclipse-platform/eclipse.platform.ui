@@ -20,8 +20,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
-import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
-import org.eclipse.team.internal.ccvs.ui.subscriber.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -34,15 +34,6 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
      * The actions to be displayed in the context menu.
      */
     private class ActionContribution extends SynchronizePageActionGroup {
-        
-        public void initialize(ISynchronizePageConfiguration configuration) {
-            super.initialize(configuration);
-            appendToGroup(
-                    ISynchronizePageConfiguration.P_CONTEXT_MENU, 
-                    ISynchronizePageConfiguration.OBJECT_CONTRIBUTIONS_GROUP,
-                    new CVSActionDelegateWrapper(new IgnoreAction(), configuration));
-        }
-        
         public void modelChanged(final ISynchronizeModelElement root) {
             super.modelChanged(root);
             Display.getDefault().asyncExec(new Runnable() {
@@ -99,6 +90,9 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
         super.initializeConfiguration(configuration);
         configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.LAYOUT_GROUP});
         configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU);
+		configuration.addMenuGroup(
+				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+				CONTEXT_MENU_CONTRIBUTION_GROUP_3);
         configuration.addActionContribution(new ActionContribution());
         
         // Wrap the container so that we can update the enablements after the runnable
