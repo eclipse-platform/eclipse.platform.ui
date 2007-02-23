@@ -91,7 +91,7 @@ public class StatusAdapter implements IAdaptable {
 
 	/**
 	 * @return Returns one of the values defined in {@link StatusManager}, for
-	 *         instance StatusManager.SHOW
+	 *         instance {@link StatusManager#SHOW}
 	 */
 	public int getHandlingHint() {
 		return handlingHint;
@@ -100,6 +100,10 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * @param handlingHint
 	 *            The handlingHint to set.
+	 * 
+	 * @see {@link StatusManager#LOG}
+	 * @see {@link StatusManager#SHOW}
+	 * @see {@link StatusManager#NONE}
 	 */
 	public void setHandlingHint(int handlingHint) {
 		this.handlingHint = handlingHint;
