@@ -1429,8 +1429,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * happens and <code>false</code> is returned.
 	 * 
 	 * @return <code>true</code> if a single proposal was inserted and the
-	 *         selector can be closed, <code>false</code> if more than once
-	 *         choice remain
+	 *         selector can be closed, <code>false</code> otherwise
 	 * @since 3.0
 	 */
 	private boolean completeCommonPrefix() {
@@ -1508,7 +1507,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		if (rightCase.size() == 1) {
 			ICompletionProposal proposal= (ICompletionProposal) rightCase.get(0);
-			if (canAutoInsert(proposal)) {
+			if (canAutoInsert(proposal) && rightCasePostfix.length() > 0) {
 				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
 				hide();
 				return true;
