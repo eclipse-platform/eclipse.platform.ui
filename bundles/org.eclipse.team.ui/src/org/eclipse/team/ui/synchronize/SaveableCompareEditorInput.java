@@ -17,10 +17,13 @@ import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -28,10 +31,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
+import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.OpenFileAction;
+import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -423,6 +429,44 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		if (saveable != null)
 			return saveable.isDirty();
 		return super.isDirty();
+	}
+	
+	public void registerContextMenu(final MenuManager menu,
+			final ISelectionProvider selectionProvider) {
+		super.registerContextMenu(menu, selectionProvider);
+		final Saveable saveable = getSaveable();
+		if (saveable instanceof LocalResourceSaveableComparison) {
+			menu.addMenuListener(new IMenuListener() {
+				public void menuAboutToShow(IMenuManager manager) {
+					handleMenuAboutToShow(manager, saveable, selectionProvider);
+				}
+			});
+		}
+	}
+	
+	/* package */ void handleMenuAboutToShow (IMenuManager manager, Saveable saveable, ISelectionProvider provider) {
+		if (provider instanceof ITextViewer) {
+			ITextViewer v = (ITextViewer) provider;
+			IDocument d = v.getDocument();
+			IDocument other = (IDocument)Utils.getAdapter(saveable, IDocument.class);
+			if (d == other) {
+				IResource resource = ((ResourceDiffCompareInput)getCompareInput()).getResource();
+				StructuredSelection selection = new StructuredSelection(resource);
+				IWorkbenchPart workbenchPart = getContainer().getWorkbenchPart();
+				if (workbenchPart != null) {
+					IWorkbenchSite ws = workbenchPart.getSite();
+					
+					MenuManager submenu =
+						new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
+					submenu.add(new OpenWithMenu(ws.getPage(), resource));
+					manager.insertAfter("save", submenu); //$NON-NLS-1$
+					
+					OpenFileAction openFileAction = new OpenFileAction(ws.getPage());
+					openFileAction.selectionChanged(selection);
+					manager.insertAfter("save", openFileAction); //$NON-NLS-1$
+				}
+			}
+		}
 	}
 
 }
