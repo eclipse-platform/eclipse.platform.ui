@@ -70,19 +70,24 @@ public class AdaptExpression extends CompositeExpression {
 			return EvaluationResult.FALSE;
 		Object var= context.getDefaultVariable();
 		Object adapted= null;
+		IAdapterManager manager= Platform.getAdapterManager();
 		if (Expressions.isInstanceOf(var, fTypeName)) {
 			adapted= var;
 		} else {
-			IAdapterManager manager= Platform.getAdapterManager();
 			if (!manager.hasAdapter(var, fTypeName))
 				return EvaluationResult.FALSE;
 		
 			adapted= manager.getAdapter(var, fTypeName);
 		}
-		// the adapted result is null but hasAdapter returned true. This means
-		// that there is an adapter but the adapter isn't loaded yet.
-		if (adapted == null) 
-			return EvaluationResult.NOT_LOADED;
+		// the adapted result is null but hasAdapter returned true check
+		// if the adapter is loaded.
+		if (adapted == null) {
+			if (manager.queryAdapter(var, fTypeName) == IAdapterManager.NOT_LOADED) {
+				return EvaluationResult.NOT_LOADED;
+			} else {
+				return EvaluationResult.FALSE;
+			}
+		}
 		return evaluateAnd(new DefaultVariable(context, adapted));
 	}
 	
