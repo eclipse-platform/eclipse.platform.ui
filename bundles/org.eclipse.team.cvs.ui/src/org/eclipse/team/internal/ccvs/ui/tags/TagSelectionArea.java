@@ -294,7 +294,7 @@ public class TagSelectionArea extends DialogArea {
     }
     
     private Text createText(Composite parent, int horizontalSpan) {
-        Text text = new Text(parent, SWT.BORDER);
+        Text text = new Text(parent, SWT.SEARCH);
 		GridData data = new GridData();
 		data.horizontalSpan = horizontalSpan;
 		data.horizontalAlignment = GridData.FILL;

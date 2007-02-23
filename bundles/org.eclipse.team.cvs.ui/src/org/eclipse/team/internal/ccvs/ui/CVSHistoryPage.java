@@ -173,7 +173,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		searchSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
 		//Find field
-		searchField = new Text(searchSashForm, SWT.BORDER);
+		searchField = new Text(searchSashForm, SWT.SEARCH);
 		searchField.setText(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
 		final SearchHistoryTable searchHistoryTable = new SearchHistoryTable();
 		searchField.addModifyListener(new ModifyListener() {
