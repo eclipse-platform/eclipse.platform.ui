@@ -27,6 +27,7 @@ import org.eclipse.team.internal.core.history.LocalFileHistory;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -201,9 +202,13 @@ public class EditionHistoryPage extends LocalHistoryPage {
 				te = localEdition;
 			}
 			if (te != null) {
+				String oldValue = getName();
+				String oldDesc = getDescription();
 				name = te.getName();
 				IFileRevision[] filtered = filterRevisions(te, revisions, Policy.subMonitorFor(monitor, 75));
 				super.update(filtered, Policy.subMonitorFor(monitor, 25));
+				firePropertyChange(this, IHistoryPage.P_NAME, oldValue, getName());
+				firePropertyChange(this, IHistoryPage.P_DESCRIPTION, oldDesc, getDescription());
 			}
 		} finally {
 			if (localEdition == null && te != null)
