@@ -10,16 +10,18 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.ui.history.*;
+import org.eclipse.ui.part.IPage;
 
 /**
  * Displays a compare dialog and allows the same behavior as the compare. In addition
@@ -46,6 +48,13 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 					FileRevisionTypedElement right = (FileRevisionTypedElement)o;
 					IFile file = (IFile)getCompareResult();
 					file.setContents(right.getContents(), false, true, null);
+				}
+				protected IPage createPage(CompareViewerPane parent,
+						IToolBarManager toolBarManager) {
+					IPage page = super.createPage(parent, toolBarManager);
+					setTitle(NLS.bind(CVSUIMessages.ReplaceWithRevisionAction_0, ((IHistoryPage)page).getName()));
+					setPageDescription(((IHistoryPage)page).getName());
+					return page;
 				}
 			};
 			input.setReplace(true);

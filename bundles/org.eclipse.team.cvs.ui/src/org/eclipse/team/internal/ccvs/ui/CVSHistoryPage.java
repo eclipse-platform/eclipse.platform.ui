@@ -1652,7 +1652,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				} catch (CoreException e) {
 				}
 			} else {
-				label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[]{ element.getName(), ((FileRevisionTypedElement) element).getContentIdentifier()});
+				label = NLS.bind(
+						TeamUIMessages.CompareFileRevisionEditorInput_repository, 
+						new Object[]{ 
+								element.getName(), 
+								((FileRevisionTypedElement) element).getContentIdentifier(), 
+								((FileRevisionTypedElement) element).getAuthor()
+								});
 			}
 		}
 		return label;
