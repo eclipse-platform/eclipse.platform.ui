@@ -50,7 +50,7 @@ public interface IFileBuffer {
 	 * absolute path in the local file system.
 	 * </p>
 	 * <p>
-	 * <strong>Note:<code> Since 3.3 this method can also return
+	 * <strong>Note:</strong> Since 3.3 this method can also return
 	 * <code>null</code> if the file is not on the local file
 	 * system.
 	 * </p>
