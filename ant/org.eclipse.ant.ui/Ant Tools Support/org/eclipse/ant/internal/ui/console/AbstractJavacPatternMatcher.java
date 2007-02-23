@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,12 +93,20 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
         return matchedText;
     }
     
-    protected int getLineNumber(int eventOffset) {
+    protected int getLineNumber(int eventOffset, boolean sameLine) {
         IDocument document= fConsole.getDocument();
         try {
             int fileLine = document.getLineOfOffset(eventOffset);
-            IRegion region = document.getLineInformation(++fileLine);
-            String lineLine = document.get(region.getOffset(), region.getLength());
+            if (!sameLine) {
+            	fileLine += 1;
+            }
+            IRegion region = document.getLineInformation(fileLine);
+            int regionLength = region.getLength();
+            if (region.getOffset() != eventOffset) {
+            	 regionLength = regionLength - (eventOffset - region.getOffset());
+            }
+            
+			String lineLine = document.get(eventOffset, regionLength);
             Matcher matcher = null;
             synchronized (fgLineNumberPattern) {
                 matcher = fgLineNumberPattern.matcher(lineLine);
