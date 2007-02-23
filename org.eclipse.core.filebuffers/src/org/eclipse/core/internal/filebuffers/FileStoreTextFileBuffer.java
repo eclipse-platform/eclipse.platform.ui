@@ -31,7 +31,6 @@ import java.nio.charset.UnsupportedCharsetException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.filesystem.URIUtil;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -303,9 +302,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 * @since 3.1
 	 */
 	public IContentType getContentType () throws CoreException {
-		if (fFileStore == null)
-			return null;
-
 		InputStream stream= null;
 		try {
 			if (isDirty()) {
@@ -460,7 +456,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			throw new CoreException(s);
 		}
 
-		IFileInfo fileInfo= fFileStore == null ? null : fFileStore.fetchInfo();
+		IFileInfo fileInfo= fFileStore.fetchInfo();
 		if (fileInfo != null && fileInfo.exists()) {
 
 			if (!overwrite)
@@ -489,8 +485,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			}
 
 		} else {
-
-			fFileStore= EFS.getStore(URIUtil.toURI(getLocation()));
 			fFileStore.getParent().mkdir(EFS.NONE, null);
 			OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
 			try {
@@ -529,25 +523,23 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		if (fExplicitEncoding != null)
 			return fExplicitEncoding;
 
-		if (fFileStore != null) {
-			// Probe content
-			Reader reader= new DocumentReader(fDocument);
+		// Probe content
+		Reader reader= new DocumentReader(fDocument);
+		try {
+			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), options);
+			if (description != null) {
+				String encoding= description.getCharset();
+				if (encoding != null)
+					return encoding;
+			}
+		} catch (IOException ex) {
+			// try next strategy
+		} finally {
 			try {
-				QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-				IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(reader, fFileStore.getName(), options);
-				if (description != null) {
-					String encoding= description.getCharset();
-					if (encoding != null)
-						return encoding;
-				}
-			} catch (IOException ex) {
-				// try next strategy
-			} finally {
-				try {
-					if (reader != null)
-						reader.close();
-				} catch (IOException x) {
-				}
+				if (reader != null)
+					reader.close();
+			} catch (IOException x) {
 			}
 		}
 
