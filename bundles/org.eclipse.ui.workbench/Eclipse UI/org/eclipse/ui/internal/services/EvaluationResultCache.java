@@ -79,6 +79,7 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 				 * kind of information is not really useful to us, so we can
 				 * just treat it as null.
 				 */
+				evaluationResult = EvaluationResult.FALSE;
 				return false;
 			}
 		}
