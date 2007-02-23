@@ -215,6 +215,10 @@ public final class CommandService implements ICommandService {
 			return;
 		}
 		final IElementUpdater updater = (IElementUpdater) cmd.getHandler();
+		
+		if (commandCallbacks==null) {
+			return;
+		}
 
 		List callbackRefs = (List) commandCallbacks.get(commandId);
 		if (callbackRefs == null) {
