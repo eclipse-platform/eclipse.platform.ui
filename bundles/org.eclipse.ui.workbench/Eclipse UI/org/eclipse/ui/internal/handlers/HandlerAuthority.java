@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -118,6 +119,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 * If there is no activation, the entry should be removed entirely.
 	 */
 	private final Map handlerActivationsByCommandId = new HashMap();
+
+	private Set previousLogs = new HashSet();
 
 	/**
 	 * Constructs a new instance of <code>HandlerAuthority</code>.
@@ -290,15 +293,14 @@ final class HandlerAuthority extends ExpressionAuthority {
 		if (activations.isEmpty()) {
 			return null;
 		}
-		
+
 		// Cycle over the activations, remembered the current best.
 		final Iterator activationItr = activations.iterator();
 		IHandlerActivation bestActivation = null;
 		IHandlerActivation currentActivation = null;
 		boolean conflict = false;
 		while (activationItr.hasNext()) {
-			currentActivation = (IHandlerActivation) activationItr
-					.next();
+			currentActivation = (IHandlerActivation) activationItr.next();
 			if (!evaluate(currentActivation)) {
 				continue; // only consider potentially active handlers
 			}
@@ -307,7 +309,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 			if ((DEBUG_VERBOSE)
 					&& ((DEBUG_VERBOSE_COMMAND_ID == null) || (DEBUG_VERBOSE_COMMAND_ID
 							.equals(commandId)))) {
-				Tracing.printTrace(TRACING_COMPONENT, "    resolveConflicts: eval: " + currentActivation); //$NON-NLS-1$
+				Tracing.printTrace(TRACING_COMPONENT,
+						"    resolveConflicts: eval: " + currentActivation); //$NON-NLS-1$
 			}
 			if (bestActivation == null) {
 				bestActivation = currentActivation;
@@ -351,10 +354,15 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 		// Return the current best.
 		if (conflict) {
-			IStatus s = new Status(IStatus.WARNING, "org.eclipse.ui.workbench", //$NON-NLS-1$
-					"Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
-							+ bestActivation + ": " + currentActivation); //$NON-NLS-1$
-			WorkbenchPlugin.log(s);
+			String conflictMessage = "Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
+					+ bestActivation + ": " //$NON-NLS-1$
+					+ currentActivation;
+			if (previousLogs.add(conflictMessage)) {
+				IStatus s = new Status(IStatus.WARNING,
+						"org.eclipse.ui.workbench", //$NON-NLS-1$
+						conflictMessage);
+				WorkbenchPlugin.log(s);
+			}
 			return null;
 		}
 		return bestActivation;
@@ -410,7 +418,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 									activation = (IHandlerActivation) activationItr
 											.next();
 									activation.setResult(newActive);
-									
+
 									changedCommandIds.add(activation
 											.getCommandId());
 								}
