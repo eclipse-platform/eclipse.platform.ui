@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
 import java.util.ArrayList;
@@ -24,15 +22,15 @@ import org.osgi.framework.Bundle;
 class AdapterFactoryProxy implements IAdapterFactory, IAdapterFactoryExt {
 	private IConfigurationElement element;
 	/**
-	 * Store Id of the declaring extension. We might need it in case 
-	 * the owner goes away (in this case element becomes invalid).
-	 */
-	private String ownerId;
-	/**
 	 * The real factory. Null until the factory is loaded.
 	 */
 	private IAdapterFactory factory;
 	private boolean factoryLoaded = false;
+	/**
+	 * Store Id of the declaring extension. We might need it in case 
+	 * the owner goes away (in this case element becomes invalid).
+	 */
+	private String ownerId;
 
 	/**
 	 * Creates a new factory proxy based on the given configuration element.
@@ -100,16 +98,14 @@ class AdapterFactoryProxy implements IAdapterFactory, IAdapterFactoryExt {
 	 * factory will be loaded if necessary, otherwise no plugin activations
 	 * will occur.
 	 */
-	public IAdapterFactory loadFactory(boolean force) {
-		synchronized (this) {
-			if (factory != null || factoryLoaded)
-				return factory;
-			String bundleId = element.getContributor().getName();
-			if (!force && Platform.getBundle(bundleId).getState() != Bundle.ACTIVE)
-				return null;
-			//set to true to prevent repeated attempts to load a broken factory
-			factoryLoaded = true;
-		}
+	public synchronized IAdapterFactory loadFactory(boolean force) {
+		if (factory != null || factoryLoaded)
+			return factory;
+		String bundleId = element.getContributor().getName();
+		if (!force && Platform.getBundle(bundleId).getState() != Bundle.ACTIVE)
+			return null;
+		//set to true to prevent repeated attempts to load a broken factory
+		factoryLoaded = true;
 		try {
 			factory = (IAdapterFactory) element.createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException e) {
