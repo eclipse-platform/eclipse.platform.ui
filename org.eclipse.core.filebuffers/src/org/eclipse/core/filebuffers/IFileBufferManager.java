@@ -78,7 +78,8 @@ public interface IFileBufferManager {
 	 * returns the same file buffer until <code>disconnect</code> is called.
 	 * <p>
 	 * <strong>Note:</strong> This API must not be used if the given file
-	 * store maps to a resource contained in the workspace.
+	 * store maps to a resource contained in the workspace. A file buffer
+	 * that has been connected using a path will not be found.
 	 * </p>
 	 * <p>
 	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
@@ -134,7 +135,8 @@ public interface IFileBufferManager {
 	 * will return a valid file buffer.
 	 * <p>
 	 * <strong>Note:</strong> This API must not be used if the given file
-	 * store maps to a resource contained in the workspace.
+	 * store maps to a resource contained in the workspace. A file buffer
+	 * that has been connected using a path will not be found.
 	 * </p>
 	 * <p>
 	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
@@ -185,7 +187,8 @@ public interface IFileBufferManager {
 	 * <code>null</code> if there is no such file buffer.
 	 * <p>
 	 * <strong>Note:</strong> This API must not be used if the given file
-	 * store maps to a resource contained in the workspace.
+	 * store maps to a resource contained in the workspace. A file buffer
+	 * that has been connected using a path will not be found.
 	 * </p>
 	 * <p>
 	 * <em>This API is provisional and will probably change before the 3.3 API freeze,

@@ -23,7 +23,13 @@ public final class LocationKind {
 	
 	/**
 	 * The corresponding argument is a location
-	 * in in the file system.
+	 * in a file system.
+	 * <p>
+	 * <strong>Note:</strong> File buffers that are
+	 * connected using a file store will not be found.
+	 * </p>
+	 *
+ 	 * @see IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public static final LocationKind LOCATION= new LocationKind("location"); //$NON-NLS-1$
 	
@@ -32,16 +38,19 @@ public final class LocationKind {
 	 * of an {@link org.eclipse.core.resources.IFile}.
 	 * 
 	 * @see org.eclipse.core.resources.IFile#getFullPath()
-	 * @since 3.3
 	 */
 	public static final LocationKind IFILE= new LocationKind("IFile"); //$NON-NLS-1$
 	
 	/**
 	 * Tells to normalize the corresponding argument according
 	 * to {@link FileBuffers#normalizeLocation(IPath)}.
+	 * <p>
+	 * <strong>Note:</strong>: If the normalized path is not in the
+	 * workspace then a file buffer that might be connected using
+	 * a file store will not be found.
 	 * </p>
 	 * 
-	 * @since 3.3
+	 * @see IFileBufferManager#connectFileStore(org.eclipse.core.filesystem.IFileStore, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public static final LocationKind NORMALIZE= new LocationKind("normalize"); //$NON-NLS-1$
 
