@@ -92,25 +92,6 @@ public class StatusNotificationManager {
 	 * @param status
 	 */
 	void addError(IStatus status, Object extension) {
-
-		// Handle out of memory errors via the workbench
-		final Throwable exception = status.getException();
-		if (exception != null && exception instanceof OutOfMemoryError) {
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				//TODO change !!! possible invocation loops
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see java.lang.Runnable#run()
-				 */
-				public void run() {
-					// is it really needed
-					//ExceptionHandler.getInstance().handleException(exception);
-				}
-			});
-
-			return;
-		}
 		StatusInfo errorInfo = new StatusInfo(status, extension);
 		showError(errorInfo);
 	}
