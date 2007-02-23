@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wieant (wieant@tasking.com) - Bug 138007
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
@@ -36,6 +37,9 @@ public class SystemPathResolver implements IDynamicVariableResolver {
         if (path == null) {
             return argument;
         }
+        // On MS Windows the PATHEXT environment variable defines which file extensions
+        // mark files that are executable (e.g. .EXE, .COM, .BAT)
+        String pathext = (String) map.get("PATHEXT"); //$NON-NLS-1$
         StringTokenizer tokenizer= new StringTokenizer(path, File.pathSeparator);
         while (tokenizer.hasMoreTokens()) {
             String pathElement= tokenizer.nextToken();
@@ -45,8 +49,18 @@ public class SystemPathResolver implements IDynamicVariableResolver {
                 if (toolFile.exists()) {
                     return toolFile.getAbsolutePath();
                 }
+                if ( pathext != null ) {
+                	StringTokenizer pathextTokenizer = new StringTokenizer(pathext, File.pathSeparator);
+                    while (pathextTokenizer.hasMoreTokens()) {
+                        String pathextElement = pathextTokenizer.nextToken();
+                        toolFile = new File(pathElementFile, argument + pathextElement);
+                        if (toolFile.exists()) {
+                            return toolFile.getAbsolutePath();
+                        }
+                    }
+                }
             }
         }
-      return argument;
+        return argument;
 	} 
 }
