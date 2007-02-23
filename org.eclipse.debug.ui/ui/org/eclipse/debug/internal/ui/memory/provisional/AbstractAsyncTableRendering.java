@@ -684,7 +684,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						} 
 						
 						setupInitialFormat();
-						fTableViewer.setCellModifier(createCellModifier());
+						fTableViewer.setCellModifier(newInternalCellModifier());
 						fTableViewer.getTable().setHeaderVisible(true);
 						fTableViewer.getTable().setLinesVisible(true);	
 						fTableViewer.addPresentationErrorListener(fPresentationErrorListener);
@@ -1756,6 +1756,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
    private CellEditor[] createCellEditors(Table table) {
+	   
         CellEditor[] editors = new CellEditor[table.getColumnCount()];
         for (int i=0; i<editors.length; i++)
         {
@@ -1764,10 +1765,22 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
         return editors;
     }
    
-   	private ICellModifier createCellModifier() {
-       return new AsyncTableRenderingCellModifier(this);
+   private ICellModifier newInternalCellModifier()
+   {
+	   return new AsyncTableRenderingCellModifier(this, createCellModifier());
+   }
+   
+   	/**
+   	 * Create a custom cell modifier for this rendering.  Return null
+   	 * if the default cell modifier is to be used.
+   	 * @return the cell modifier for this rendering, or <code>null</code> if the 
+   	 * default cell modifier is to be used.
+   	 * 
+   	 * <strong> EXPERIMENTAL </strong>
+   	 */
+   	protected ICellModifier createCellModifier() {
+       return null;
    	}
-
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.AbstractMemoryRendering#dispose()

@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
+import org.eclipse.debug.ui.memory.MemoryRenderingElement;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -35,12 +36,14 @@ import org.eclipse.swt.widgets.TableItem;
 // to plug cell modifier in case the element is not MemorySegment
 public class AsyncTableRenderingCellModifier implements ICellModifier {
 
-    private boolean editActionInvoked = false;
     private AbstractAsyncTableRendering fRendering;
     private boolean fMBSupportsValueModification = false;
+    
+    private ICellModifier fCustomModifier;
 
-    public AsyncTableRenderingCellModifier(AbstractAsyncTableRendering rendering) {
+    public AsyncTableRenderingCellModifier(AbstractAsyncTableRendering rendering, ICellModifier customModifier) {
         fRendering = rendering;
+        fCustomModifier = customModifier;
         
         Job job = new Job("AsyncTableRenderingCellModifier"){ //$NON-NLS-1$
 
@@ -59,13 +62,9 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      *      java.lang.String)
      */
     public boolean canModify(Object element, String property) {
-    	
         boolean canModify = true;
         try {
             if (!(element instanceof MemorySegment))
-                return false;
-
-            if (!editActionInvoked)
                 return false;
 
             if (!isValueModificationSupported()) {
@@ -76,7 +75,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             if (TableRenderingLine.P_ADDRESS.equals(property)) {
                 return false;
             }
-
+            
             // property is stored as number of addressable unit away from the
             // line address
             // to calculate offset to the memory line array, offset =
@@ -86,6 +85,14 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             int offset = Integer.valueOf(property, 16).intValue() * addressableSize;
 
             MemoryByte[] bytes = line.getBytes(offset, fRendering.getBytesPerColumn());
+
+            if (fCustomModifier != null)
+            {
+            	BigInteger address = line.getAddress().add(BigInteger.valueOf(offset));
+            	MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, bytes);
+            	return fCustomModifier.canModify(mElement, null);       
+            }
+
             for (int i = 0; i < bytes.length; i++) {
                 if (!bytes[i].isWritable()) {
                     canModify = false;
@@ -131,6 +138,12 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 
             offset = Integer.valueOf(property, 16).intValue();
             BigInteger address = line.getAddress().add(BigInteger.valueOf(offset));
+            
+            if (fCustomModifier != null)
+            {
+            	MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, memory);
+            	return fCustomModifier.getValue(mElement, null);       
+            }
 
             // ask the rendering for a string representation of the bytes
             return fRendering.getString(fRendering.getRenderingId(), address, memory);
@@ -172,29 +185,33 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 		            // calculate offset to update
-		            final IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
+					final IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
 
-		            int lineOffset = Integer.valueOf(property, 16).intValue();
+					int lineOffset = Integer.valueOf(property, 16).intValue();
 
-		            // this offset is number of addressable unit from the line address
-		            final BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
+					// this offset is number of addressable unit from the line
+					// address
+					final BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
 
-		            byte[] bytes = null;
+					// property is number of addressable unit from line address
+					// to calculate proper offset in the memoryViewLine's array
+					// offset = numberOfAddressableUnit * addressableSize
+					int offsetToLine = Integer.valueOf(property, 16).intValue()	* getAddressableSize();
 
-		            String oldValue = (String) getValue(line, property);
+					MemoryByte[] oldArray = line.getBytes(offsetToLine,	fRendering.getBytesPerColumn());
 
-		            if (!oldValue.equals(value)) {
+					BigInteger address = line.getAddress();
+					address = address.add(BigInteger.valueOf(offsetToLine));
 
-		                // property is number of addressable unit from line address
-		                // to calculate proper offset in the memoryViewLine's array
-		                // offset = numberOfAddressableUnit * addressableSize
-		                int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressableSize();
-
-		                MemoryByte[] oldArray = line.getBytes(offsetToLine, fRendering.getBytesPerColumn());
-
-		                BigInteger address = line.getAddress();
-		                address = address.add(BigInteger.valueOf(offsetToLine));
-
+					if (fCustomModifier != null) {
+ 						MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, oldArray);
+						fCustomModifier.modify(mElement, null, value);
+						return Status.OK_STATUS;
+					}
+					
+	              byte[] bytes = null;	                
+			      String oldValue = (String) getValue(line, property);		                
+		          if (!oldValue.equals(value)) {
 		                bytes = fRendering.getBytes(fRendering.getRenderingId(), address, oldArray, (String) value);
 
 		                if (bytes == null)
@@ -252,14 +269,6 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             memoryAddr = new BigInteger("0"); //$NON-NLS-1$
 
         return lineAddress.subtract(memoryAddr).add(BigInteger.valueOf(lineOffset));
-    }
-
-    /**
-     * @param editActionInvoked
-     *            The editActionInvoked to set.
-     */
-    public void setEditActionInvoked(boolean editActionInvoked) {
-        this.editActionInvoked = editActionInvoked;
     }
     
     private boolean isValueModificationSupported()

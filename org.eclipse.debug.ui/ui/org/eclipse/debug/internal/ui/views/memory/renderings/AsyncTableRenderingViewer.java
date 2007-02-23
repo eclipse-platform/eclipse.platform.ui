@@ -608,16 +608,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			Object property = getColumnProperties()[col];
 			Object value = cellModifier.getValue(element, (String)property);
-			
-			// The cell modifier canModify function always returns false if the edit action 
-			// is not invoked from here.  This is to prevent data to be modified when
-			// the table cursor loses focus from a cell.  By default, data will
-			// be changed in a table when the cell loses focus.  This is to workaround
-			// this default behaviour and only change data when the cell editor
-			// is activated.
-			((AsyncTableRenderingCellModifier)cellModifier).setEditActionInvoked(true);
 			boolean canEdit = cellModifier.canModify(element, (String)property);
-			((AsyncTableRenderingCellModifier)cellModifier).setEditActionInvoked(false);
 			
 			if (!canEdit)
 				return;
