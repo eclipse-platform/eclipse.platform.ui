@@ -659,7 +659,9 @@ public class ControlDecoration {
 	 * 
 	 * @return <code>true</code> if the decoration should only be shown when
 	 *         the control has focus, and <code>false</code> if it should
-	 *         always be shown.
+	 *         always be shown. Note that if the control is not capable of
+	 *         receiving focus (<code>SWT.NO_FOCUS</code>), then the
+	 *         decoration will never show when this value is <code>true</code>.
 	 */
 	public boolean getShowOnlyOnFocus() {
 		return showOnlyOnFocus;
@@ -673,7 +675,10 @@ public class ControlDecoration {
 	 * @param showOnlyOnFocus
 	 *            <code>true</code> if the decoration should only be shown
 	 *            when the control has focus, and <code>false</code> if it
-	 *            should always be shown.
+	 *            should always be shown. Note that if the control is not
+	 *            capable of receiving focus (<code>SWT.NO_FOCUS</code>),
+	 *            then the decoration will never show when this value is
+	 *            <code>true</code>.
 	 */
 	public void setShowOnlyOnFocus(boolean showOnlyOnFocus) {
 		this.showOnlyOnFocus = showOnlyOnFocus;
