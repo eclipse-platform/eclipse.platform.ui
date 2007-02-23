@@ -227,7 +227,7 @@ public final class ContextRunner {
 				}
 				if(project != null && !project.equals(resource)) {
 					if(!shouldCheckParent()) {
-						String msg = MessageFormat.format(ContextMessages.ContextRunner_10, new String[] {project.getName(), resource.getName(), resource.getName()});
+						String msg = MessageFormat.format(ContextMessages.ContextRunner_10, new String[] {resource.getName(), project.getName()});
 						MessageDialogWithToggle mdwt = new MessageDialogWithToggle(DebugUIPlugin.getShell(), 
 								ContextMessages.ContextRunner_11, 
 								null, 
