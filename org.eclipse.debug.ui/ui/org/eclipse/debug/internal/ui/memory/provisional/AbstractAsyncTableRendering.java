@@ -196,6 +196,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private static final String ID_ASYNC_TABLE_RENDERING_CONTEXT = "org.eclipse.debug.ui.memory.abstractasynctablerendering"; //$NON-NLS-1$
 	private static final String ID_GO_TO_ADDRESS_COMMAND = "org.eclipse.debug.ui.command.gotoaddress"; //$NON-NLS-1$
+	private static final String ID_NEXT_PAGE_COMMAND = "org.eclipse.debug.ui.command.nextpage"; //$NON-NLS-1$
+	private static final String ID_PREV_PAGE_COMMAND = "org.eclipse.debug.ui.command.prevpage"; //$NON-NLS-1$
 	
 	/**
 	 * Property identifier for the row size in a table rendering
@@ -404,6 +406,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	
 	private ArrayList fContext = new ArrayList();
 	private AbstractHandler fGoToAddressHandler;
+	
+	private AbstractHandler fNextPageHandler;
+	private AbstractHandler fPrevPageHandler;
 	
 	private boolean fIsCreated = false;
 	private boolean fIsDisposed = false;
@@ -3153,6 +3158,38 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 					}};
 			}
 			gotoCommand.setHandler(fGoToAddressHandler);
+			
+			if (!isDynamicLoad())
+			{
+				Command nextPage = commandSupport.getCommand(ID_NEXT_PAGE_COMMAND);
+				if (fNextPageHandler == null)
+				{
+					fNextPageHandler = new AbstractHandler() {
+
+						public Object execute(ExecutionEvent arg0)
+								throws ExecutionException {
+							fNextAction.run();
+							return null;
+						}						
+					};
+				}
+				nextPage.setHandler(fNextPageHandler);
+				
+				Command prevPage = commandSupport.getCommand(ID_PREV_PAGE_COMMAND);
+				if (fPrevPageHandler == null)
+				{
+					fPrevPageHandler = new AbstractHandler() {
+
+						public Object execute(ExecutionEvent arg0)
+								throws ExecutionException {
+							fPrevAction.run();
+							return null;
+						}						
+					};
+				}
+				prevPage.setHandler(fPrevPageHandler);
+
+			}
 		}
 		
 	}
@@ -3169,6 +3206,12 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		{
 			// 	remove handler
 			Command command = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
+			command.setHandler(null);
+			
+			command = commandSupport.getCommand(ID_NEXT_PAGE_COMMAND);
+			command.setHandler(null);
+			
+			command = commandSupport.getCommand(ID_PREV_PAGE_COMMAND);
 			command.setHandler(null);
 
 			if (fContext != null)

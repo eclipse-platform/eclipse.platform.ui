@@ -1624,6 +1624,18 @@ M4 = Platform-specific fourth key
        description="%command.description.0"
        id="org.eclipse.debug.ui.command.gotoaddress"
        name="%command.name.0"/>
+ <command
+ 	   categoryId="org.eclipse.debug.ui.category.run"
+       id="org.eclipse.debug.ui.command.nextpage"
+       name="%command.name.1"
+       description = "%command.description.1">
+ </command>
+ <command
+ 	   categoryId="org.eclipse.debug.ui.category.run"
+       id="org.eclipse.debug.ui.command.prevpage"
+       name="%command.name.2"
+       description = "%command.description.2">
+ </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
      <key
@@ -1733,7 +1745,17 @@ M4 = Platform-specific fourth key
              commandId="org.eclipse.debug.ui.command.gotoaddress"
              contextId="org.eclipse.debug.ui.memory.abstractasynctablerendering"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-             sequence="M1+G"/>             
+             sequence="M1+G"/>     
+       <key
+             commandId="org.eclipse.debug.ui.command.nextpage"
+             contextId="org.eclipse.debug.ui.memory.abstractasynctablerendering"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M2+."/>    
+       <key
+             commandId="org.eclipse.debug.ui.command.prevpage"
+             contextId="org.eclipse.debug.ui.memory.abstractasynctablerendering"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M2+,"/>                                    
   	</extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">
