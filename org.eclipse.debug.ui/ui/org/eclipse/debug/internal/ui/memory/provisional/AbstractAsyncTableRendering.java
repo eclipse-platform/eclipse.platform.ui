@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 -2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2821,18 +2821,28 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @param point
 	 * @return the column index where the point is located, return -1 if column is not found.
 	 */
-	private int getColumn(Point point) {
+	private int getColumn(Point point)
+	{
 		int colCnt = fTableViewer.getTable().getColumnCount();
-		if(fTableViewer.getTable().getItemCount() > 0) {
-			Point start, end;
-			TableItem item = fTableViewer.getTable().getItem(0);
-			for (int i=0; i<colCnt; i++) {
-				start = new Point(item.getBounds(i).x, item.getBounds(i).y);
+		
+		TableItem item = null;
+		for (int i=0; i<fTableViewer.getTable().getItemCount(); i++)
+		{
+			item = fTableViewer.getTable().getItem(i);
+			if (item.getData() != null)
+				break;
+		}
+		
+		if (item != null)
+		{
+			for (int i=0; i<colCnt; i++)
+			{
+				Point start = new Point(item.getBounds(i).x, item.getBounds(i).y);
 				start = fTableViewer.getTable().toDisplay(start);
-				end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
-				if (start.x < point.x && end.x > point.x) {
+				Point end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
+				
+				if (start.x < point.x && end.x > point.x)
 					return i;
-				}
 			}
 		}
 		return -1;
