@@ -2349,7 +2349,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		int oldIdx = getTopVisibleIndex(fTableViewer.getTable());
 		
 		// BUG in table, if font is changed when table is not starting
-		// from the top, causes table gridline to be misaligned.
+		// from the top, causes table grid-line to be misaligned.
 		setTopIndex(fTableViewer.getTable(),  0);
 		
 		// set font
@@ -3612,18 +3612,19 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 * @param point
 	 * @return the column index where the point is located, return -1 if column is not found.
 	 */
-	private int getColumn(Point point)
-	{
+	private int getColumn(Point point) {
 		int colCnt = fTableViewer.getTable().getColumnCount();
-		TableItem item = fTableViewer.getTable().getItem(0);
-		for (int i=0; i<colCnt; i++)
-		{
-			Point start = new Point(item.getBounds(i).x, item.getBounds(i).y);
-			start = fTableViewer.getTable().toDisplay(start);
-			Point end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
-			
-			if (start.x < point.x && end.x > point.x)
-				return i;
+		if(fTableViewer.getTable().getItemCount() > 0) {
+			TableItem item = fTableViewer.getTable().getItem(0);
+			Point start, end;
+			for (int i=0; i<colCnt; i++) {
+				start = new Point(item.getBounds(i).x, item.getBounds(i).y);
+				start = fTableViewer.getTable().toDisplay(start);
+				end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
+				if (start.x < point.x && end.x > point.x) {
+					return i;
+				}
+			}
 		}
 		return -1;
 	}

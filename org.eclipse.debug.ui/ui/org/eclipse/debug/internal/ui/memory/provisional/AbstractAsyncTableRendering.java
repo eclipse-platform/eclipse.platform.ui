@@ -2821,28 +2821,18 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @param point
 	 * @return the column index where the point is located, return -1 if column is not found.
 	 */
-	private int getColumn(Point point)
-	{
+	private int getColumn(Point point) {
 		int colCnt = fTableViewer.getTable().getColumnCount();
-		
-		TableItem item = null;
-		for (int i=0; i<fTableViewer.getTable().getItemCount(); i++)
-		{
-			item = fTableViewer.getTable().getItem(i);
-			if (item.getData() != null)
-				break;
-		}
-		
-		if (item != null)
-		{
-			for (int i=0; i<colCnt; i++)
-			{
-				Point start = new Point(item.getBounds(i).x, item.getBounds(i).y);
+		if(fTableViewer.getTable().getItemCount() > 0) {
+			Point start, end;
+			TableItem item = fTableViewer.getTable().getItem(0);
+			for (int i=0; i<colCnt; i++) {
+				start = new Point(item.getBounds(i).x, item.getBounds(i).y);
 				start = fTableViewer.getTable().toDisplay(start);
-				Point end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
-				
-				if (start.x < point.x && end.x > point.x)
+				end = new Point(start.x + item.getBounds(i).width, start.y + item.getBounds(i).height);
+				if (start.x < point.x && end.x > point.x) {
 					return i;
+				}
 			}
 		}
 		return -1;
