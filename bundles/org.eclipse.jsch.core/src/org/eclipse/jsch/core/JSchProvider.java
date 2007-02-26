@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.jsch.core;
 
+import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jsch.internal.core.*;
 
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.*;
 
 /**
  * A static class whose purpose is to ensure that all the Jsch preferences are properly pushed into Jsch
@@ -79,6 +79,18 @@ public class JSchProvider {
         session.disconnect();
       throw e;
     }
+  }
+  
+  /**
+   * Return the proxy that should be used to connect to the given host or <code>null</code>
+   * if no proxy is specified for the host.
+   * @param host the host
+   * @param proxyType the proxy type (either {@link IProxyData#HTTPS_PROXY_TYPE} or {@link IProxyData#SOCKS_PROXY_TYPE})
+   * @return the proxy that should be used to connect to the given host or <code>null</code>
+   * if no proxy is specified for the host
+   */
+  public static Proxy getProxyForHost(String host, String proxyType) {
+    return Utils.getProxyForHost(host, proxyType);
   }
 
 }
