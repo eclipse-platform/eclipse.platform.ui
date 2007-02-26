@@ -476,7 +476,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
 			if (lineNumberColumnDescriptor != null)
 				columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
-		} else if (!show && fLineColumn != null && !isLineNumberRulerVisible()) {
+		} else if (!show && fLineColumn != null && isLineNumberRulerVisible()) {
 			columnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
 			fLineColumn= null;
 		}
