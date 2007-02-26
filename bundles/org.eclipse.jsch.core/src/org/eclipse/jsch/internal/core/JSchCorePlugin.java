@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -234,7 +235,7 @@ public class JSchCorePlugin extends Plugin{
     if(Boolean
         .valueOf(System.getProperty(PROP_REGISTER_SERVICE, "true")).booleanValue()){ //$NON-NLS-1$
       proxyService=getBundle().getBundleContext().registerService(
-          IProxyService.class.getName(), JSchProvider.getInstance(), new Hashtable());
+          IJSchService.class.getName(), JSchProvider.getInstance(), new Hashtable());
     }
   }
 
