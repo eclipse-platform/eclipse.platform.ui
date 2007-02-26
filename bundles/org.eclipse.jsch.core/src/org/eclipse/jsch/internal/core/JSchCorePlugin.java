@@ -14,9 +14,13 @@ package org.eclipse.jsch.internal.core;
 //import org.eclipse.core.runtime.Plugin;
 import java.util.Map;
 
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -41,6 +45,7 @@ public class JSchCorePlugin extends Plugin{
   public static final String PT_AUTHENTICATOR="authenticator"; //$NON-NLS-1$
 
   private static JSchCorePlugin plugin;
+  private ServiceTracker tracker;
 
   public JSchCorePlugin(){
     plugin=this;
@@ -197,5 +202,25 @@ public class JSchCorePlugin extends Plugin{
   public void loadPrivateKeys(){
     current_pkeys=Utils.loadPrivateKeys(getJSch(), current_pkeys);
     setNeedToLoadKeys(false);
+  }
+  
+  /**
+   * Return the {@link IProxyService} or <code>null</code> if the
+   * service is not available.
+   * @return the {@link IProxyService} or <code>null</code>
+   */
+  public IProxyService getProxyService() {
+    return (IProxyService)tracker.getService();
+  }
+  
+  public void start(BundleContext context) throws Exception{
+    super.start(context);
+    tracker = new ServiceTracker(getBundle().getBundleContext(),IProxyService.class.getName(), null);
+    tracker.open();
+  }
+  
+  public void stop(BundleContext context) throws Exception{
+    super.stop(context);
+    tracker.close();
   }
 }

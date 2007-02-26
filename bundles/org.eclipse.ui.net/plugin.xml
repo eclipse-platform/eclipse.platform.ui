@@ -6,9 +6,15 @@
   <extension point="org.eclipse.ui.preferencePages">
     <page
       id = "org.eclipse.net.ui.NetPreferences"
-      class = "org.eclipse.net.internal.ui.ProxyPreferencePage"
+      class = "org.eclipse.ui.internal.net.ProxyPreferencePage"
       category = "org.eclipse.ui.preferencePages.Workbench"
       name = "%PLUGIN_INTERNET_PREFERENCE_TITLE"/> 
+  </extension>
+  <extension
+        point="org.eclipse.core.net.authenticator">
+     <authenticator
+           class="org.eclipse.ui.internal.net.auth.NetAuthenticator">
+     </authenticator>
   </extension>
 
 </plugin>

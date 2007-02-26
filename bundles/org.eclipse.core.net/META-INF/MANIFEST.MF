@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %PLUGIN_NAME
-Bundle-SymbolicName: org.eclipse.net.core; singleton:=true
+Bundle-SymbolicName: org.eclipse.core.net;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.eclipse.net.internal.core.NetCorePlugin
+Bundle-Activator: org.eclipse.core.internal.net.Activator
 Bundle-Vendor: %PLUGIN_PROVIDER
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.3.0,4.0.0)"
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.net.core,
- org.eclipse.net.internal.core;x-internal:=true
+Export-Package: org.eclipse.core.internal.net;x-internal:=true,
+ org.eclipse.core.net.proxy
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
  CDC-1.0/Foundation-1.0,
  J2SE-1.3

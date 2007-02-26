@@ -12,10 +12,10 @@ package org.eclipse.jsch.internal.core;
 
 import java.util.Hashtable;
 
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.net.core.IProxyData;
-import org.eclipse.net.core.NetCore;
 
 import com.jcraft.jsch.*;
 
@@ -76,7 +76,10 @@ public class Utils{
   }
   
   public static void setProxy(Session session){
-    boolean useProxy=NetCore.getProxyManager().isProxiesEnabled();
+    IProxyService proxyService=JSchCorePlugin.getPlugin().getProxyService();
+    if (proxyService == null)
+      return;
+    boolean useProxy=proxyService.isProxiesEnabled();
     if(!useProxy)
       return;
     Proxy proxy=null;
@@ -130,9 +133,12 @@ public class Utils{
   }
 
   private static IProxyData getProxyData(String host){
-    IProxyData data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.HTTPS_PROXY_TYPE);
+    IProxyService proxyService=JSchCorePlugin.getPlugin().getProxyService();
+    if (proxyService == null)
+      return null;
+    IProxyData data = proxyService.getProxyDataForHost(host, IProxyData.HTTPS_PROXY_TYPE);
     if (data == null || data.getHost() == null) {
-      data = NetCore.getProxyManager().getProxyDataForHost(host, IProxyData.SOCKS_PROXY_TYPE);
+      data = proxyService.getProxyDataForHost(host, IProxyData.SOCKS_PROXY_TYPE);
     }
     if (data == null || data.getHost() == null || getProxyType(data) == null)
       return null;
