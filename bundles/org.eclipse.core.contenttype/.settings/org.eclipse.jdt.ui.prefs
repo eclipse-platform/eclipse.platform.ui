@@ -1,5 +1,7 @@
-#Fri Jan 06 15:50:24 EST 2006
+#Mon Feb 26 10:42:03 EST 2007
 eclipse.preferences.version=1
+formatter_profile=_core
+formatter_settings_version=11
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=;
 org.eclipse.jdt.ui.ondemandthreshold=3
