@@ -18,8 +18,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ILock;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -64,7 +63,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	private IProject project;	
 	
 	// lock to ensure that map/unmap and getProvider support concurrency
-	private static final ILock mappingLock = Platform.getJobManager().newLock();
+	private static final ILock mappingLock = Job.getJobManager().newLock();
     
     // Session property used to identify projects that are not mapped
     private static final Object NOT_MAPPED = new Object();
@@ -92,7 +91,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 			// getProvider itself does not (and can not) obtain a scheduling rule.
 			// Thus, the locking order is always scheduling rule followed by 
 			// mappingLock.
-			Platform.getJobManager().beginRule(rule, null);
+			Job.getJobManager().beginRule(rule, null);
 			try {
 				mappingLock.acquire();
 				RepositoryProvider existingProvider = null;
@@ -144,7 +143,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		} finally {
-			Platform.getJobManager().endRule(rule);
+			Job.getJobManager().endRule(rule);
 		}
 	}	
 
@@ -247,7 +246,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		ISchedulingRule rule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(project);
 		try{
 			// See the map(IProject, String) method for a description of lock ordering
-			Platform.getJobManager().beginRule(rule, null);
+			Job.getJobManager().beginRule(rule, null);
 			try {
 				mappingLock.acquire();
 				String id = project.getPersistentProperty(TeamPlugin.PROVIDER_PROP_KEY);
@@ -289,7 +288,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		} catch (CoreException e) {
 			throw TeamPlugin.wrapException(e);
 		} finally {
-			Platform.getJobManager().endRule(rule);
+			Job.getJobManager().endRule(rule);
 		}
 	}	
 	
@@ -364,6 +363,8 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
  	 * that modify the contents of files.
  	 * Returns <code>null</code> if the provider does not wish to participate in
  	 * file modification validation.
+	 * @return an <code>IFileModificationValidator</code> for pre-checking operations 
+ 	 * that modify the contents of files
  	 * 
 	 * @see org.eclipse.core.resources.IFileModificationValidator
 	 */
@@ -389,6 +390,8 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * to control how moves and deletes occur and includes the ability to prevent them. 
 	 * <p>
 	 * Returning <code>null</code> signals that the default move and delete behavior is desired.
+	 * @return an <code>IMoveDeleteHook</code> for handling moves and deletes
+	 * that occur within projects managed by the provider
 	 * 
 	 * @see org.eclipse.core.resources.team.IMoveDeleteHook
 	 */
@@ -582,7 +585,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 		if (!project.isAccessible()) return false;
 		try {
 			if (lookupProviderProp(project) != null) return true;
-            // Do a quick check to see it the poroject is known to be unshared.
+            // Do a quick check to see it the project is known to be unshared.
             // This is done to avoid accessing the persistent property store
             if (isMarkedAsUnshared(project))
                 return false;

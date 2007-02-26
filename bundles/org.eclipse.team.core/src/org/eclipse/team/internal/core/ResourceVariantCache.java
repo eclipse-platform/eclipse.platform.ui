@@ -14,8 +14,8 @@ import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.CachedResourceVariant;
@@ -30,7 +30,7 @@ public class ResourceVariantCache {
 	// Maximum lifespan of local cache file, in milliseconds
 	private static final long CACHE_FILE_LIFESPAN = 60*60*1000; // 1hr
 	
-	// Map of registered cahces indexed by local name of a QualifiedName
+	// Map of registered caches indexed by local name of a QualifiedName
 	private static Map caches = new HashMap(); // String (local name) > RemoteContentsCache
 	
 	private String name;
@@ -38,12 +38,12 @@ public class ResourceVariantCache {
 	private long lastCacheCleanup;
 	private int cacheDirSize;
 
-	// Lock used to serialize the writting of cache contents
-	private ILock lock = Platform.getJobManager().newLock(); 
+	// Lock used to serialize the writing of cache contents
+	private ILock lock = Job.getJobManager().newLock(); 
 	
 	/**
 	 * Enables the use of remote contents caching for the given cacheId. The cache ID must be unique.
-	 * A good candidate for this ID is the plugin ID of the plugin peforming the caching.
+	 * A good candidate for this ID is the plugin ID of the plugin performing the caching.
 	 * 
 	 * @param cacheId the unique Id of the cache being enabled
 	 */
@@ -56,7 +56,7 @@ public class ResourceVariantCache {
 	
 	/**
 	 * Returns whether caching has been enabled for the given Id. A cache should only be enabled once.
-	 * It is conceivable that a cache be persisted over workbench invocations thus leading to a cahce that
+	 * It is conceivable that a cache be persisted over workbench invocations thus leading to a cache that
 	 * is enabled on startup without intervention by the owning plugin.
 	 * 
 	 * @param cacheId the unique Id of the cache
@@ -67,7 +67,7 @@ public class ResourceVariantCache {
 	}
 	
 	/**
-	 * Disable the cache, dispoing of any file contents in the cache.
+	 * Disable the cache, disposing of any file contents in the cache.
 	 * 
 	 * @param cacheId the unique Id of the cache
 	 */
@@ -219,7 +219,7 @@ public class ResourceVariantCache {
 	}
 	
 	/**
-	 * @param id the id that uniquely identifes the remote resource that is cached.
+	 * @param id the id that uniquely identifies the remote resource that is cached.
 	 * @return the cache entry
 	 */
 	public ResourceVariantCacheEntry getCacheEntry(String id) {

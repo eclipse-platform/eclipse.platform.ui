@@ -14,8 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.*;
 
@@ -28,7 +27,7 @@ import org.eclipse.team.internal.core.*;
  * thread releases all it's nested locks.
  * <p>
  * The locking is managed by the platform via scheduling rules. This class simply 
- * provides the nesting mechnism in order to allow the client to determine when
+ * provides the nesting mechanism in order to allow the client to determine when
  * the lock for the thread has been released. Therefore, this lock will block if
  * another thread already locks the same resource.</p>
  */
@@ -58,7 +57,7 @@ public class BatchingLock {
 		 * acquire the rule if it is not the workspace root.
 		 * @param resource
 		 * @param monitor 
-		 * @return the schedulsing rule that was obtained
+		 * @return the scheduling rule that was obtained
 		 */
 		public ISchedulingRule pushRule(ISchedulingRule resource, IProgressMonitor monitor) {
 			// The scheduling rule is either the project or the resource's parent
@@ -66,17 +65,17 @@ public class BatchingLock {
 			if (rule != NULL_SCHEDULING_RULE) {
 				boolean success = false;
 				try {
-					Platform.getJobManager().beginRule(rule, monitor);
+					Job.getJobManager().beginRule(rule, monitor);
 					addRule(rule);
 					success = true;
 				} finally {
 					if (!success) {
 						try {
-						    // The begin was cancelled (or some other problem occurred).
+						    // The begin was canceled (or some other problem occurred).
 							// Free the scheduling rule
 							// so the clients of ReentrantLock don't need to
-							// do an endRule when the operation is cancelled.
-							Platform.getJobManager().endRule(rule);
+							// do an endRule when the operation is canceled.
+							Job.getJobManager().endRule(rule);
 						} catch (RuntimeException e) {
 							// Log and ignore so the original exception is not lost
 							TeamPlugin.log(IStatus.ERROR, "Failed to end scheduling rule", e); //$NON-NLS-1$
@@ -112,7 +111,7 @@ public class BatchingLock {
 				}
 				Assert.isTrue(stackedRule.equals(rule), "end for resource '" + rule + "' does not match stacked rule '" + stackedRule + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if (rule != NULL_SCHEDULING_RULE) {
-					Platform.getJobManager().endRule(rule);
+					Job.getJobManager().endRule(rule);
 				}
 			}
 		}
@@ -182,7 +181,7 @@ public class BatchingLock {
 				throw e;
 			} finally {
 			    // We have to clear the resources no matter what since the next attempt
-				// to fluch may not have an appropriate scheduling rule
+				// to flush may not have an appropriate scheduling rule
 			    changedResources.clear();
 			}
 		}
@@ -266,7 +265,7 @@ public class BatchingLock {
 		try {
 			return info.pushRule(resourceRule, monitor);
 		} catch (OperationCanceledException e) {
-			// The operation was cancelled.
+			// The operation was canceled.
 			// If this is the outermost acquire then remove the info that was just added
 			if (added) {
 				synchronized (infos) {
@@ -293,6 +292,9 @@ public class BatchingLock {
 	 * be identical to the rule returned by the corresponding acquire(). If the rule
 	 * for the release is non-null and all remaining rules held by the lock are null,
 	 * the the flush operation provided in the acquire method will be executed.
+     * @param rule the scheduling rule
+     * @param monitor a progress monitor
+     * @throws TeamException 
 	 */
 	public void release(ISchedulingRule rule, IProgressMonitor monitor) throws TeamException {
 		ThreadInfo info = getThreadInfo();
@@ -316,6 +318,8 @@ public class BatchingLock {
 
 	/**
 	 * Flush any changes accumulated by the lock so far.
+	 * @param monitor a progress monitor
+	 * @throws TeamException 
 	 */
 	public void flush(IProgressMonitor monitor) throws TeamException {
 		ThreadInfo info = getThreadInfo();

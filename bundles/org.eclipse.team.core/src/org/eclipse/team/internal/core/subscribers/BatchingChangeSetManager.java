@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.internal.core.Policy;
 
 /**
@@ -21,7 +22,7 @@ import org.eclipse.team.internal.core.Policy;
  */
 public class BatchingChangeSetManager extends ChangeSetManager {
 
-	private ILock lock = Platform.getJobManager().newLock();
+	private ILock lock = Job.getJobManager().newLock();
 	
 	public static class CollectorChangeEvent {
 

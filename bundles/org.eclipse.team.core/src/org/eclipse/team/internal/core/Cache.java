@@ -91,7 +91,7 @@ public class Cache implements ICache {
 			Object[] allListeners = listeners.getListeners();
 			for (int i = 0; i < allListeners.length; i++) {
 				final Object listener = allListeners[i];
-				Platform.run(new ISafeRunnable(){
+				SafeRunner.run(new ISafeRunnable(){
 					public void run() throws Exception {
 						((ICacheListener)listener).cacheDisposed(Cache.this);
 					}

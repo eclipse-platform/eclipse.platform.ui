@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.mapping.DiffChangeEvent;
@@ -41,7 +42,7 @@ public class DiffTree implements IDiffTree {
 	
 	private PathTree pathTree = new PathTree();
 	
-	private ILock lock = Platform.getJobManager().newLock();
+	private ILock lock = Job.getJobManager().newLock();
 	
 	private DiffTreeStatistics statistics = new DiffTreeStatistics();
 	

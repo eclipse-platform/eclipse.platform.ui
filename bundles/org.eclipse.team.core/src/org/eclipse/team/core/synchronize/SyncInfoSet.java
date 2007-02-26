@@ -21,14 +21,9 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ILock;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter.SyncInfoDirectionFilter;
@@ -278,7 +273,7 @@ public class SyncInfoSet {
 	 * implementation. 
 	 * </p><p>
 	 * Disconnecting is done by calling <code>removeChangeListener</code>. Once disconnected,
-	 * a listener can reconnect to be reinitialized.
+	 * a listener can reconnect to be re-initialized.
 	 * </p>
 	 * @param listener the listener that should be connected to this set
 	 * @param monitor a progress monitor
@@ -297,7 +292,7 @@ public class SyncInfoSet {
 		}, monitor);
 	}
 
-	private ILock lock = Platform.getJobManager().newLock();
+	private ILock lock = Job.getJobManager().newLock();
 
 	private Set listeners = Collections.synchronizedSet(new HashSet());
 
@@ -406,6 +401,7 @@ public class SyncInfoSet {
 	 * Indicate whether the set has nodes matching the given filter.
 	 * 
 	 * @param filter a sync info filter
+	 * @return whether the set has nodes that match the filter
 	 */
 	public boolean hasNodes(FastSyncInfoFilter filter) {
 		SyncInfo[] infos = getSyncInfos();
@@ -464,6 +460,7 @@ public class SyncInfoSet {
 	 * Return all nodes in this set that match the given filter.
 	 * 
 	 * @param filter a sync info filter
+	 * @return the nodes that match the filter
 	 */
 	public SyncInfo[] getNodes(FastSyncInfoFilter filter) {
 		List result = new ArrayList();
@@ -525,6 +522,7 @@ public class SyncInfoSet {
 	 * This method is used to release the lock on this set. The progress monitor is needed to allow
 	 * listeners to perform long-running operations is response to the set change. The lock is held
 	 * while the listeners are notified so listeners must be cautious in order to avoid deadlock.
+	 * @param monitor a progress monitor
 	 */
 	public void endInput(IProgressMonitor monitor) {
 		try {
@@ -571,7 +569,7 @@ public class SyncInfoSet {
 		monitor.beginTask(null, 100 + (newErrors.length > 0 ? 50 : 0) * allListeners.length);
 		for (int i = 0; i < allListeners.length; i++) {
 			final ISyncInfoSetChangeListener listener = allListeners[i];
-			Platform.run(new ISafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void handleException(Throwable exception) {
 					// don't log the exception....it is already being logged in Platform#run
 				}
