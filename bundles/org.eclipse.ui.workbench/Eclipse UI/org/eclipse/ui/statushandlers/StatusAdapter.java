@@ -64,7 +64,7 @@ public class StatusAdapter implements IAdaptable {
 
 	private HashMap adapters;
 
-	private int handlingHint;
+	private int style;
 
 	/**
 	 * Creates an instance of this class.
@@ -119,23 +119,21 @@ public class StatusAdapter implements IAdaptable {
 	}
 
 	/**
-	 * @return Returns one of the values defined in {@link StatusManager}, for
-	 *         instance {@link StatusManager#SHOW}
+	 * Return the style of the receiver.
+	 * @return Returns one of the {@link StatusManager} constants
 	 */
-	public int getHandlingHint() {
-		return handlingHint;
+	public int getStyle() {
+		return style;
 	}
 
 	/**
-	 * @param handlingHint
-	 *            The handlingHint to set.
+	 * Set the style for the receiver.
+	 * @param style
 	 *
-	 * @see StatusManager#LOG
-	 * @see StatusManager#SHOW
-	 * @see StatusManager#NONE
+	 * @see StatusManager
 	 */
-	public void setHandlingHint(int handlingHint) {
-		this.handlingHint = handlingHint;
+	public void setStyle(int style) {
+		this.style = style;
 	}
 
 	/**

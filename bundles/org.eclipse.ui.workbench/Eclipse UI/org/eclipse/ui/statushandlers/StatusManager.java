@@ -36,17 +36,17 @@ import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
  * Handlers shoudn't be used directly but through the StatusManager singleton
  * which keeps the status handling policy and chooses handlers due to it.
  * <code>StatusManager.getManager().handle(IStatus)</code> and
- * <code>handle(IStatus status, int
- * hint)</code> methods are used for passing
+ * <code>handle(IStatus status, int style)</code> methods are used for passing
  * all problems to the facility.
  * </p>
  * 
  * <p>
- * Handling hints
+ * Styles
  * <ul>
  * <li>NONE - nothing should be done with the status</li>
  * <li>LOG - the status should be logged</li>
  * <li>SHOW - the status should be shown to an user</li>
+ * <li>BLOCK - the status handling should block until is finished</li>
  * </ul>
  * </p>
  * 
@@ -86,19 +86,24 @@ import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
  */
 public class StatusManager {
 	/**
-	 * A handling hint indicating that nothing should be done with a problem
+	 * A style indicating that nothing should be done with a problem
 	 */
 	public static final int NONE = 0;
 
 	/**
-	 * A handling hint indicating that handlers should log a problem
+	 * A style indicating that handlers should log a problem
 	 */
 	public static final int LOG = 0x01;
 
 	/**
-	 * A handling hint indicating that handlers should show a problem to an user
+	 * A style indicating that handlers should show a problem to an user
 	 */
 	public static final int SHOW = 0x02;
+	
+	/**
+	 * A style indicating that the handling should block until is finished
+	 */
+	public static final int BLOCK = 0x04;
 
 	private static StatusManager MANAGER;
 
@@ -200,12 +205,12 @@ public class StatusManager {
 	 * 
 	 * @param status
 	 *            status to handle
-	 * @param hint
-	 *            handling hint
+	 * @param style
+	 *            style
 	 */
-	public void handle(IStatus status, int hint) {
+	public void handle(IStatus status, int style) {
 		StatusAdapter statusAdapter = new StatusAdapter(status);
-		statusAdapter.setHandlingHint(hint);
+		statusAdapter.setStyle(style);
 		handle(statusAdapter);
 	}
 
