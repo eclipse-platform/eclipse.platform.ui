@@ -24,15 +24,15 @@ import org.eclipse.ui.PlatformUI;
  * status handling process. Can carry all additional information about status
  * either by using properties or by adding new adapter.
  * </p>
- * 
+ *
  * <p>
  * Hint values are defined in {@link StatusManager}.
  * </p>
- * 
+ *
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
  * use this API without consulting with the Platform/UI team.
- * 
+ *
  * @since 3.3
  */
 public class StatusAdapter implements IAdaptable {
@@ -68,7 +68,7 @@ public class StatusAdapter implements IAdaptable {
 
 	/**
 	 * Creates an instance of this class.
-	 * 
+	 *
 	 * @param status
 	 *            the status set in the adapter, not null
 	 */
@@ -78,7 +78,7 @@ public class StatusAdapter implements IAdaptable {
 
 	/**
 	 * Adds new adapter.
-	 * 
+	 *
 	 * @param adapter
 	 *            the adapter class
 	 * @param object
@@ -93,7 +93,7 @@ public class StatusAdapter implements IAdaptable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
@@ -129,10 +129,10 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * @param handlingHint
 	 *            The handlingHint to set.
-	 * 
-	 * @see {@link StatusManager#LOG}
-	 * @see {@link StatusManager#SHOW}
-	 * @see {@link StatusManager#NONE}
+	 *
+	 * @see StatusManager#LOG
+	 * @see StatusManager#SHOW
+	 * @see StatusManager#NONE
 	 */
 	public void setHandlingHint(int handlingHint) {
 		this.handlingHint = handlingHint;
@@ -141,7 +141,7 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * Returns the value of the property of this adapter identified by the given
 	 * key, or <code>null</code> if this adapter has no such property.
-	 * 
+	 *
 	 * @param key
 	 *            the name of the property
 	 * @return the value of the property, or <code>null</code> if this job has
@@ -157,7 +157,7 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * Sets the value of the property of this adapter identified by the given
 	 * key.
-	 * 
+	 *
 	 * @param key
 	 *            the qualified name of the property
 	 * @param value
