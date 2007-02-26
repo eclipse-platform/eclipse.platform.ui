@@ -96,6 +96,8 @@ public class ProxyType {
 
 	private IProxyData createProxyData(String type, Preferences node) {
 		String host = node.get(PREF_PROXY_HOST, null);
+		if (host.length() == 0)
+			host = null;
 		int port = node.getInt(PREF_PROXY_PORT, -1);
 		boolean requiresAuth = node.getBoolean(PREF_PROXY_HAS_AUTH, false);
 		ProxyData proxyData = new ProxyData(type, host, port, requiresAuth);
