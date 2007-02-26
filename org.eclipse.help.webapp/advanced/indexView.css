@@ -95,6 +95,21 @@ INPUT {
     padding-bottom: 5px;
 	font-weight:bold;	
 	font-size:110%;
+	width:100%;
+}
+
+#navigation {
+    width:100%;
+}
+
+#td_previous {   
+    text-align:<%=isRTL?"right":"left"%>;
+    width:50%;
+}
+
+#td_next {
+    text-align:<%=isRTL?"left":"right"%>;
+    width:50%;
 }
 
 DIV.root {

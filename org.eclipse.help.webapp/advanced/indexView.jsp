@@ -65,10 +65,10 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 <div id="navigation">
     <table id="innerNavigation" cellspacing=0 cellpadding=0 border=0 style="background:transparent;">
 		<tr>
-			<td>				
+			<td id = "td_previous">				
                 <a id = "previous" class = "enabled" onclick="this.blur();loadPreviousPage()"><%=ServletResources.getString("IndexPrevious", request)%></a> 
 			</td>
-			<td>
+			<td id = "td_next">
 				<a id = "next" class = "enabled" onclick="this.blur();loadNextPage()"><%=ServletResources.getString("IndexNext", request)%></a> 
 			</td>
   	 </table>
