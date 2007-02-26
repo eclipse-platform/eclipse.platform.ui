@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.statushandlers;
+package org.eclipse.ui.internal.statushandlers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -91,7 +91,7 @@ public class StatusNotificationManager {
 	 * 
 	 * @param status
 	 */
-	void addError(IStatus status, Object extension) {
+	public void addError(IStatus status, Object extension) {
 		StatusInfo errorInfo = new StatusInfo(status, extension);
 		showError(errorInfo);
 	}

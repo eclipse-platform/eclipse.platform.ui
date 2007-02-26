@@ -13,6 +13,7 @@ package org.eclipse.ui.statushandlers;
 
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.statushandlers.StatusNotificationManager;
 
 /**
  * This is a default workbench error handler. The instance of this handler is
