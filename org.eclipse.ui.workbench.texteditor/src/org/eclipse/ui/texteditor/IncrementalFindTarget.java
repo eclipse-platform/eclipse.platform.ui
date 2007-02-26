@@ -197,7 +197,7 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		fForward= searchResult.forward;
 
 		// Recalculate the indices
-		if (fFindString.length() < fCasePosition)
+		if (fFindString.length() <= fCasePosition)
 			fCasePosition= -1;
 		if (fSessionStack.size() < fWrapPosition)
 			fWrapPosition= -1;
