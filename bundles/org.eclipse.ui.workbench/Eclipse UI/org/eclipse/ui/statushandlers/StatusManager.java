@@ -104,6 +104,11 @@ public class StatusManager {
 	 * A style indicating that the handling should block until is finished
 	 */
 	public static final int BLOCK = 0x04;
+	
+	/**
+	 * A style indicating that the handling should not block until is finished
+	 */
+	public static final int NO_BLOCK = 0x08;
 
 	private static StatusManager MANAGER;
 
