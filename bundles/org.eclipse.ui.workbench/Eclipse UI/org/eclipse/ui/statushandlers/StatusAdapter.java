@@ -15,13 +15,14 @@ import java.util.HashMap;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * <p>
  * Contains an instance of IStatus subclass and its handling hint. Used during
- * status handling process. During the process both status and hint can be
- * changed, so a subsequent handler can receive different status or handling
- * hint.
+ * status handling process. Can carry all additional information about status
+ * either by using properties or by adding new adapter.
  * </p>
  * 
  * <p>
@@ -36,7 +37,30 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class StatusAdapter implements IAdaptable {
 
+	/**
+	 * Common prefix for properties defined in this class.
+	 */
+	static final String PROPERTY_PREFIX = PlatformUI.PLUGIN_ID
+			+ ".workbench.statusHandlers.adapters"; //$NON-NLS-1$
+
+	/**
+	 * This property is used to add title to the adapter. If the adapter is
+	 * shown in a dialog, this property is used to create title of the dialog.
+	 */
+	public static final QualifiedName TITLE_PROPERTY = new QualifiedName(
+			PROPERTY_PREFIX, "title"); //$NON-NLS-1$
+
+	/**
+	 * This property is used to add timestamp to the adapter. If the adapter is
+	 * shown in the UI, this property can be used for sorting and showing
+	 * information about the time of status creation.
+	 */
+	public static final QualifiedName TIMESTAMP_PROPERTY = new QualifiedName(
+			PROPERTY_PREFIX, "timestamp"); //$NON-NLS-1$
+
 	private IStatus status;
+
+	private HashMap properties;
 
 	private HashMap adapters;
 
@@ -46,11 +70,10 @@ public class StatusAdapter implements IAdaptable {
 	 * Creates an instance of this class.
 	 * 
 	 * @param status
-	 *            the status set in the adapter
+	 *            the status set in the adapter, not null
 	 */
 	public StatusAdapter(IStatus status) {
 		this.status = status;
-		adapters = new HashMap();
 	}
 
 	/**
@@ -62,6 +85,9 @@ public class StatusAdapter implements IAdaptable {
 	 *            the adapter instance
 	 */
 	public void addAdapter(Class adapter, Object object) {
+		if (adapters == null) {
+			adapters = new HashMap();
+		}
 		adapters.put(adapter, object);
 	}
 
@@ -71,6 +97,9 @@ public class StatusAdapter implements IAdaptable {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
+		if (adapters == null) {
+			return null;
+		}
 		return adapters.get(adapter);
 	}
 
@@ -107,5 +136,37 @@ public class StatusAdapter implements IAdaptable {
 	 */
 	public void setHandlingHint(int handlingHint) {
 		this.handlingHint = handlingHint;
+	}
+
+	/**
+	 * Returns the value of the property of this adapter identified by the given
+	 * key, or <code>null</code> if this adapter has no such property.
+	 * 
+	 * @param key
+	 *            the name of the property
+	 * @return the value of the property, or <code>null</code> if this job has
+	 *         no such property
+	 */
+	public Object getProperty(QualifiedName key) {
+		if (properties == null) {
+			return null;
+		}
+		return properties.get(key);
+	}
+
+	/**
+	 * Sets the value of the property of this adapter identified by the given
+	 * key.
+	 * 
+	 * @param key
+	 *            the qualified name of the property
+	 * @param value
+	 *            the value of the property,
+	 */
+	public void setProperty(QualifiedName key, Object value) {
+		if (properties == null) {
+			properties = new HashMap();
+		}
+		properties.put(key, value);
 	}
 }
