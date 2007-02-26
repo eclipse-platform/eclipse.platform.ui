@@ -193,7 +193,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	}
 
 	private InputStream getFileContents(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
-		if (fileStore == null)
+		if (!fFileStore.fetchInfo().exists())
 			return null;
 		
 		return fileStore.openInputStream(EFS.NONE, null);
