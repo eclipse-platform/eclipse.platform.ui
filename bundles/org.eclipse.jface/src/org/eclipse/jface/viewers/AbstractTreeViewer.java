@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993, bug 167323
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993, bug 167323, bug 175192
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -2815,7 +2815,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 						insertionPosition = getItemCount(item);
 					}
 
-					createTreeItem(item, element, position);
+					createTreeItem(item, element, insertionPosition);
 				}
 			} else {
 				int insertionPosition = position;
@@ -2823,7 +2823,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					insertionPosition = getItemCount((Control) widget);
 				}
 
-				createTreeItem(widget, element, position);
+				createTreeItem(widget, element, insertionPosition);
 			}
 		}
 	}
