@@ -42,6 +42,10 @@ public class ActionMessages extends NLS {
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
 
+	public static String DebugLastAction_0;
+
+	public static String DebugLastAction_1;
+
 	public static String DetailPaneAssignValueAction_0;
 	public static String DetailPaneAssignValueAction_1;
 	public static String DetailPaneAssignValueAction_2;
@@ -63,6 +67,10 @@ public class ActionMessages extends NLS {
     public static String OpenBreakpointMarkerAction_Go_to_Breakpoint_1;
     public static String OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2;
 
+	public static String ProfileLastAction_0;
+
+	public static String ProfileLastAction_1;
+
     public static String RelaunchActionDelegate_An_exception_occurred_while_launching_2;
     public static String RelaunchActionDelegate_Launch_Failed_1;
     public static String RelaunchLastAction_Cannot_relaunch_1;
@@ -83,6 +91,10 @@ public class ActionMessages extends NLS {
 	public static String RemoveBreakpointAction_6;
     public static String RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5;
     public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
+
+	public static String RunLastAction_0;
+
+	public static String RunLastAction_1;
 
     public static String ShowSupportedBreakpointsAction_Show_For_Selected;
     public static String ShowSupportedBreakpointsAction_tooltip;

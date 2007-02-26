@@ -11,13 +11,14 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
@@ -28,16 +29,21 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Relaunches the last launch.
  * 
  * @see ContextRunner
  * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager
  * @see ILaunchConfiguration
+ * @see RunLastAction
+ * @see DebugLastAction
+ * @see ProfileLastAction
  * 
  */
-public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
-	
+public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
+
 	private IWorkbenchWindow fWorkbenchWindow;
 	
 	private IAction fAction;
@@ -46,6 +52,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * @see IWorkbenchWindowActionDelegate
 	 */
 	public void dispose(){
+		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
 	}
 
 	/**
@@ -53,6 +60,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 */
 	public void init(IWorkbenchWindow window){
 		fWorkbenchWindow = window;
+		DebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
 	}
 
 	/**
@@ -112,7 +120,11 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 */
 	private void initialize(IAction action) {
 		fAction = action;
-		action.setEnabled(existsConfigTypesForMode());	
+		if(fAction != null) {
+			fAction.setEnabled(existsConfigTypesForMode());
+			fAction.setText(getText());
+			fAction.setToolTipText(getTooltipText());
+		}
 	}
 	
 	/**
@@ -133,7 +145,6 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		return false;
 	}
 	
-	
 	/**
 	 * Return the last launch that occurred in the workspace.
 	 */
@@ -141,10 +152,23 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
 	}
 	
+	/**
+	 * Returns the parent shell for this menu item
+	 * @return the parent shell
+	 */
 	protected Shell getShell() {
 		return fWorkbenchWindow.getShell();
 	}
 
+	/**
+	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
+			initialize(fAction);
+		}
+	}
+	
 	/**
 	 * Returns the mode (run or debug) of this action.
 	 */
@@ -155,5 +179,21 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 */
 	public abstract String getLaunchGroupId();	
 
+	/**
+	 * Returns the text to display on the menu item.
+	 * @return the text for the menu item
+	 * 
+	 * @since 3.3
+	 */
+	protected abstract String getText();
+	
+	/**
+	 * Returns the text to display in the menu item tooltip
+	 * @return the text for the tooltip
+	 * 
+	 * @since 3.3
+	 */
+	protected abstract String getTooltipText();
+	
 }
 
