@@ -57,7 +57,7 @@ import com.ibm.icu.text.MessageFormat;
  */
 public final class ContextRunner {
 	
-	public static boolean DEBUG_CONTEXTUAL_LAUNCH = false;
+	private static boolean DEBUG_CONTEXTUAL_LAUNCH = false;
 	
 	static {
 		DEBUG_CONTEXTUAL_LAUNCH = DebugUIPlugin.DEBUG && "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug/contextlaunching")); //$NON-NLS-1$ //$NON-NLS-2$
