@@ -12,17 +12,18 @@ package org.eclipse.jsch.core;
 
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jsch.internal.core.*;
 
 import com.jcraft.jsch.*;
 
 /**
- * A static class whose purpose is to ensure that all the Jsch preferences are properly pushed into Jsch
- * before a {@link Session} is created.
+ * A service whose purpose is to ensure that all the JSch preferences are properly pushed into JSch
+ * before a {@link Session} is created. The service is registered as
+ * an OSGi service. Clients can obtain an instance of the service from their bundle context
+ * or from a service tracker.
  * @since 1.0
  */
-public class JSchProvider {
-  
+public interface IJSchService{
+
   /**
    * Create a {@link Session} that can be used to make SSH2 connections. This method ensures that 
    * all preferences are properly propagated into JSch before creating the session and also
@@ -35,25 +36,13 @@ public class JSchProvider {
    * @param host the host name
    * @param port the port or -1 if the default port is to be used
    * @param username the user name or <code>null</code> if there is no user name or the user name is not known
-
+   
    * @return the created session
    * @throws JSchException if errors occur
    */
-  public static Session createSession(String host, int port, String username) throws JSchException {
-    if(port == -1)
-      port = IConstants.SSH_DEFAULT_PORT;
+  public abstract Session createSession(String host, int port, String username)
+      throws JSchException;
 
-    if(JSchCorePlugin.getPlugin().isNeedToLoadKnownHosts()){
-      JSchCorePlugin.getPlugin().loadKnownHosts();
-    }
-
-    if(JSchCorePlugin.getPlugin().isNeedToLoadKeys()){
-      JSchCorePlugin.getPlugin().loadPrivateKeys();
-    }
-    
-    return Utils.createSession(JSchCorePlugin.getPlugin().getJSch(), username, host, port);
-  }
-  
   /**
    * Connect the session using a responsive socket factory. The timeout value is used
    * for socket creation only. Clients that desire a timeout on the session must
@@ -68,19 +57,9 @@ public class JSchProvider {
    *          cancelation is not desired
    * @throws JSchException if an exception occurs connecting the session.
    */
-  public static void connect(Session session, int timeout,
-      IProgressMonitor monitor) throws JSchException{
-    session.setSocketFactory(new ResponsiveSocketFactory(monitor, timeout));
-    try{
-      session.connect();
-    }
-    catch(JSchException e){
-      if(session.isConnected())
-        session.disconnect();
-      throw e;
-    }
-  }
-  
+  public abstract void connect(Session session, int timeout,
+      IProgressMonitor monitor) throws JSchException;
+
   /**
    * Return the proxy that should be used to connect to the given host or <code>null</code>
    * if no proxy is specified for the host.
@@ -89,8 +68,6 @@ public class JSchProvider {
    * @return the proxy that should be used to connect to the given host or <code>null</code>
    * if no proxy is specified for the host
    */
-  public static Proxy getProxyForHost(String host, String proxyType) {
-    return Utils.getProxyForHost(host, proxyType);
-  }
+  public abstract Proxy getProxyForHost(String host, String proxyType);
 
 }

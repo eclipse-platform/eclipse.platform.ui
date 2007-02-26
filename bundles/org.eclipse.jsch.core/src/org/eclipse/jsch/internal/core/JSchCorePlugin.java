@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jsch.internal.core;
 
-//import org.eclipse.core.runtime.Plugin;
+// import org.eclipse.core.runtime.Plugin;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.core.net.proxy.IProxyService;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
 
 import com.jcraft.jsch.JSch;
@@ -28,6 +29,8 @@ import com.jcraft.jsch.JSchException;
 public class JSchCorePlugin extends Plugin{
 
   public static String ID="org.eclipse.jsch.core"; //$NON-NLS-1$
+
+  private static final String PROP_REGISTER_SERVICE="org.eclipse.jsch.core.enableService"; //$NON-NLS-1$
 
   // communication timeout with the server
   public static final int DEFAULT_TIMEOUT=60;
@@ -47,6 +50,8 @@ public class JSchCorePlugin extends Plugin{
   private static JSchCorePlugin plugin;
   private ServiceTracker tracker;
 
+  private ServiceRegistration proxyService;
+
   public JSchCorePlugin(){
     plugin=this;
   }
@@ -57,7 +62,9 @@ public class JSchCorePlugin extends Plugin{
 
   /**
    * Convenience method for logging CoreExceptions to the plugin log
-   * @param e the exception
+   * 
+   * @param e
+   *          the exception
    */
   public static void log(CoreException e){
     log(e.getStatus().getSeverity(), e.getMessage(), e);
@@ -67,7 +74,9 @@ public class JSchCorePlugin extends Plugin{
    * Log the given status. Do not use this method for the IStatus from a
    * CoreException. Use<code>log(CoreException)</code> instead so the stack
    * trace is not lost.
-   * @param status the status
+   * 
+   * @param status
+   *          the status
    */
   public static void log(IStatus status){
     getPlugin().getLog().log(status);
@@ -124,6 +133,7 @@ public class JSchCorePlugin extends Plugin{
 
   /**
    * Get the communications timeout value in seconds
+   * 
    * @return the timeout value in seconds
    */
   public int getTimeout(){
@@ -133,7 +143,9 @@ public class JSchCorePlugin extends Plugin{
   /**
    * Set the timeout value for communications to a value in seconds. The value
    * must be greater than or equal 0. If is it 0, there is no timeout.
-   * @param timeout the timeout value in seconds
+   * 
+   * @param timeout
+   *          the timeout value in seconds
    */
   public void setTimeout(int timeout){
     this.communicationsTimeout=Math.max(0, timeout);
@@ -203,24 +215,35 @@ public class JSchCorePlugin extends Plugin{
     current_pkeys=Utils.loadPrivateKeys(getJSch(), current_pkeys);
     setNeedToLoadKeys(false);
   }
-  
+
   /**
-   * Return the {@link IProxyService} or <code>null</code> if the
-   * service is not available.
+   * Return the {@link IProxyService} or <code>null</code> if the service is
+   * not available.
+   * 
    * @return the {@link IProxyService} or <code>null</code>
    */
-  public IProxyService getProxyService() {
+  public IProxyService getProxyService(){
     return (IProxyService)tracker.getService();
   }
-  
+
   public void start(BundleContext context) throws Exception{
     super.start(context);
-    tracker = new ServiceTracker(getBundle().getBundleContext(),IProxyService.class.getName(), null);
+    tracker=new ServiceTracker(getBundle().getBundleContext(),
+        IProxyService.class.getName(), null);
     tracker.open();
+    if(Boolean
+        .valueOf(System.getProperty(PROP_REGISTER_SERVICE, "true")).booleanValue()){ //$NON-NLS-1$
+      proxyService=getBundle().getBundleContext().registerService(
+          IProxyService.class.getName(), JSchProvider.getInstance(), new Hashtable());
+    }
   }
-  
+
   public void stop(BundleContext context) throws Exception{
     super.stop(context);
     tracker.close();
+    if(proxyService!=null){
+      proxyService.unregister();
+      proxyService=null;
+    }
   }
 }

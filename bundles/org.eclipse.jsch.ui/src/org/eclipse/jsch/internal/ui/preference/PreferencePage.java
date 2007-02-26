@@ -18,8 +18,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jsch.core.JSchProvider;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.jsch.internal.core.*;
+import org.eclipse.jsch.internal.ui.JSchUIPlugin;
 import org.eclipse.jsch.internal.ui.Messages;
 import org.eclipse.jsch.ui.UserInfoPrompter;
 import org.eclipse.osgi.util.NLS;
@@ -867,11 +868,16 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
        */
 
       int timeout = 60000;
-      Session session = JSchProvider.createSession(host, port, user);
+      IJSchService service = JSchUIPlugin.getPlugin().getJSchService();
+      if (service == null) {
+        MessageDialog.openInformation(getShell(), Messages.PreferencePage_0, Messages.PreferencePage_1);
+        return;
+      }
+      Session session = service.createSession(host, port, user);
       new UserInfoPrompter(session);
       session.setTimeout(timeout);
       try {
-        JSchProvider.connect(session, timeout, new NullProgressMonitor());
+        service.connect(session, timeout, new NullProgressMonitor());
 	      if(session.getServerVersion().indexOf("OpenSSH")==-1){ //$NON-NLS-1$
 	        setErrorMessage(Messages.CVSSSH2PreferencePage_110);
 	        return;

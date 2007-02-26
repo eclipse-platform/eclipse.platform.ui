@@ -11,7 +11,6 @@
 package org.eclipse.core.net.proxy;
 
 import org.eclipse.core.runtime.CoreException;
-import org.osgi.framework.BundleContext;
 
 /**
  * Manages the proxy data and related information. The proxy service is registered as
@@ -20,7 +19,6 @@ import org.osgi.framework.BundleContext;
  * <p>
  * This interface is not intended to be implemented by clients. 
  * @since 1.0
- * @see BundleContext#getServiceReference(String)
  */
 public interface IProxyService {
 	

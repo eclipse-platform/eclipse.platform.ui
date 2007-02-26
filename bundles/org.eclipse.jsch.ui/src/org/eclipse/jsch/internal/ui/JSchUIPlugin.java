@@ -17,8 +17,10 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class JSchUIPlugin extends AbstractUIPlugin{
   public static final String ID="org.eclipse.jsch.ui"; //$NON-NLS-1$
@@ -29,6 +31,7 @@ public class JSchUIPlugin extends AbstractUIPlugin{
    * The singleton plug-in instance
    */
   private static JSchUIPlugin plugin;
+  private ServiceTracker tracker;
 
   public JSchUIPlugin(){
     super();
@@ -155,7 +158,19 @@ public class JSchUIPlugin extends AbstractUIPlugin{
       store.setValue(IUIConstants.PREF_FIRST_STARTUP, false);
     }
 
+    tracker = new ServiceTracker(getBundle().getBundleContext(),IJSchService.class.getName(), null);
+    tracker.open();
   }
+  
+  public void stop(BundleContext context) throws Exception{
+    super.stop(context);
+    tracker.close();
+  }
+  
+  public IJSchService getJSchService() {
+    return (IJSchService)tracker.getService();
+  }
+  
 
   public URL getImageUrl(String relative){
     return FileLocator.find(Platform.getBundle(ID), new Path(IUIConstants.ICON_PATH + relative), null);

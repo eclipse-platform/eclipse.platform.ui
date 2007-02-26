@@ -13,7 +13,7 @@ package org.eclipse.jsch.ui;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jsch.core.JSchProvider;
+import org.eclipse.jsch.internal.core.JSchProvider;
 import org.eclipse.jsch.internal.ui.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

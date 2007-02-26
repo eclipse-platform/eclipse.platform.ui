@@ -90,6 +90,8 @@ public class Messages extends NLS{
   public static String KeyboardInteractiveDialog_4;
   public static String KeyboardInteractiveDialog_5;
   public static String KeyboardInteractiveDialog_6;
+  public static String PreferencePage_0;
+  public static String PreferencePage_1;
   public static String UserInfoPrompter_0;
   public static String UserInfoPrompter_1;
   public static String UserValidationDialog_0;
