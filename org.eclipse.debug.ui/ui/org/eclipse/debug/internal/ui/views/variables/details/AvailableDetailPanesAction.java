@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,25 +15,25 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PlatformUI;
 
 /**
  * Drop down action that displays the available detail panes for a selection.
+ * 
+ * @since 3.3
+ * @see IDetailPaneContainer
  */
 public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	
-	private VariablesView fView;
 	private Menu fMenu;
 	private Set fAvailableIDs;
+	private IDetailPaneContainer fDetailPaneContainer;
 	
 	/**
 	 * Each entry in the menu will be of this type.  It represents one possible detail pane
@@ -43,32 +43,29 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	 * @see DetailPaneManager
 	 * @since 3.3
 	 */
-	private class SetDetailsViewerAction extends Action {
+	private class SetDetailPaneAction extends Action {
 		
 		private String fPaneID;
 		private Set fPossiblePaneIDs;
-		private VariablesView fVarView;
 		
-		public SetDetailsViewerAction(String name, String paneID, Set possiblePaneIDs, VariablesView view){
+		public SetDetailPaneAction(String name, String paneID, Set possiblePaneIDs){
 			super(name,AS_RADIO_BUTTON);
 			fPaneID = paneID;
 			fPossiblePaneIDs = possiblePaneIDs;
-			fVarView = view;
 		}
 		
 		public void run() {
-			// Don't change viewers unless the user is selecting a different viewer than the one currently displayed
-			if (isChecked() && !fVarView.getDetailPane().getCurrentViewerID().equals(fPaneID)){
+			// Don't change panes unless the user is selecting a different pane than the one currently displayed
+			if (isChecked() && !fDetailPaneContainer.getCurrentPaneID().equals(fPaneID)){
 				DetailPaneManager.getDefault().setPreferredDetailPane(fPossiblePaneIDs, fPaneID);
-				fVarView.populateDetailPane();
+				fDetailPaneContainer.refreshDetailPaneContents();
 			}
 		}
 			
 	}
 	
-	public AvailableDetailPanesAction(VariablesView view) {
-		setView(view);
-		
+	public AvailableDetailPanesAction(IDetailPaneContainer detailPaneContainer) {
+		fDetailPaneContainer = detailPaneContainer;
 		setText(DetailMessages.AvailableDetailPanesAction_0);  
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_DETAIL_PANE);
 		
@@ -83,14 +80,6 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	public void run() {
 	}
 	
-	protected VariablesView getView() {
-		return fView;
-	}
-	
-	protected void setView(VariablesView view) {
-		fView = view;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
 	 */
@@ -98,7 +87,6 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
-		setView(null);
 		fAvailableIDs.clear();
 	}
 	
@@ -126,7 +114,6 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		
 		Iterator iter = fAvailableIDs.iterator();
 		int i = 0;
-		String currentViewer = getView().getDetailPane().getCurrentViewerID();
 		while (iter.hasNext()) {
 			String currentID = (String) iter.next();
 			
@@ -146,9 +133,9 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 				name.append(currentID);				
 			}
 					
-			IAction action = new SetDetailsViewerAction(name.toString(),currentID,fAvailableIDs,getView());
+			IAction action = new SetDetailPaneAction(name.toString(),currentID,fAvailableIDs);
 			
-			if (currentID.equals(currentViewer)){
+			if (currentID.equals(fDetailPaneContainer.getCurrentPaneID())){
 				action.setChecked(true);
 			}
 			
@@ -162,14 +149,9 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void init() {
-		
-		ISelection viewerSelection = getView().getViewer().getSelection();
-		if (viewerSelection instanceof IStructuredSelection){
-			IStructuredSelection selection = (IStructuredSelection)viewerSelection;
-			fAvailableIDs = DetailPaneManager.getDefault().getAvailablePaneIDs(selection);
-			if (fAvailableIDs.size() > 1){
-				setEnabled(true);
-			}
+		fAvailableIDs = DetailPaneManager.getDefault().getAvailablePaneIDs(fDetailPaneContainer.getCurrentSelection());
+		if (fAvailableIDs.size() > 1){
+			setEnabled(true);
 		}
 	}
 }

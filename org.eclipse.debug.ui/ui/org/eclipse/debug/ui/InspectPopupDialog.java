@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,33 +8,30 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.debug.ui;
 
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IValue;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPane;
+import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneProxy;
+import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -42,12 +39,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 
 /**
@@ -56,32 +52,20 @@ import org.eclipse.ui.PartInitException;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
- * <p>
- * Note: This class subclasses {@link org.eclipse.jface.dialogs.PopupDialog}
- * which is currently marked as experimental API. Users should therefore consider
- * this class to be experimental as well.
- * </p>
  * @since 3.2
  */
 public class InspectPopupDialog extends DebugPopup {
-    private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
-
+    
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
     private static final int MIN_WIDTH = 250;
-
     private static final int MIN_HEIGHT = 200;
 
     private TreeModelViewer fViewer;
-
-    private IDebugModelPresentation fModelPresentation;
-
-    private StyledText fValueDisplay;
-
     private SashForm fSashForm;
-
+    private DetailPaneProxy fDetailPane;
     private Tree fTree;
-
     private IExpression fExpression;
-
+    
     /**
      * Creates a new inspect popup.
      * 
@@ -117,48 +101,21 @@ public class InspectPopupDialog extends DebugPopup {
         } else {
         	context = ((TreeModelViewer)view.getViewer()).getPresentationContext();
         }
-        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL, context);
-        fModelPresentation = new VariablesViewModelPresentation();
-        fValueDisplay = new StyledText(fSashForm, SWT.NO_TRIM | SWT.WRAP | SWT.V_SCROLL);
-        fValueDisplay.setEditable(false);
+        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, context);
 
+        fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
+        fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
+      
         fTree = fViewer.getTree();
         fTree.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
-                try {
-                    TreeItem[] selections = fTree.getSelection();
-                    if (selections.length > 0) {
-                        Object data = selections[selections.length - 1].getData();
-
-                        IValue val = null;
-                        if (data instanceof IndexedVariablePartition) {
-                            // no details for partitions
-                            return;
-                        }
-                        if (data instanceof IVariable) {
-                            val = ((IVariable) data).getValue();
-                        } else if (data instanceof IExpression) {
-                            val = ((IExpression) data).getValue();
-                        }
-                        if (val == null) {
-                            return;
-                        }
-
-                        updateValueDisplay(val);
-                    }
-                } catch (DebugException ex) {
-                    DebugUIPlugin.log(ex);
-                }
-
+            	fDetailPane.display((IStructuredSelection)fViewer.getSelection());
             }
-
-            public void widgetDefaultSelected(SelectionEvent e) {
-            }
+            public void widgetDefaultSelected(SelectionEvent e) {}
         });
 
-        // sashForm.setWeights(getInitialSashWeights());
         fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
-
+      
         fViewer.getContentProvider();
         if (view != null) {
             StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
@@ -169,14 +126,19 @@ public class InspectPopupDialog extends DebugPopup {
                 }
             }
         }
-
+               
         TreeRoot treeRoot = new TreeRoot();
         fViewer.setInput(treeRoot);
         fViewer.expandToLevel(new TreePath(new Object[] {fExpression}), 1);
 
         return fTree;
     }
-
+    
+    /**
+     * Creates the content for the root element of the tree viewer in the inspect
+     * popup dialog.  Always has one child, the expression this popup is displaying.
+     *
+     */
     private class TreeRoot extends ElementContentProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
@@ -198,27 +160,12 @@ public class InspectPopupDialog extends DebugPopup {
 			return true;
 		}
     }
-    
-    private void updateValueDisplay(IValue val) {
-        IValueDetailListener valueDetailListener = new IValueDetailListener() {
-            public void detailComputed(IValue value, final String result) {
-                Display.getDefault().asyncExec(new Runnable() {
-                    public void run() {
-                        if (!fValueDisplay.isDisposed()) {
-                            String text = result;
-                            int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
-                            if (max > 0 && result.length() > max) {
-                                text = result.substring(0, max) + "..."; //$NON-NLS-1$
-                            }
-                            fValueDisplay.setText(text);
-                        }
-                    }
-                });
-            }
-        };
-        fModelPresentation.computeDetail(val, valueDetailListener);
-    }
-
+       
+    /**
+     * Attempts to find an appropriate view to emulate, this will either be the
+     * variables view or the expressions view.
+     * @return a view to emulate or <code>null</code>
+     */
     private VariablesView getViewToEmulate() {
         IWorkbenchPage page = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage();
         VariablesView expressionsView = (VariablesView) page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
@@ -239,12 +186,10 @@ public class InspectPopupDialog extends DebugPopup {
      * @see org.eclipse.debug.ui.DebugPopup#close()
      */
     public boolean close() {
-    	if(fModelPresentation != null) {
-    		fModelPresentation.dispose();
-    	}
     	if (!wasPersisted()) {
     		fExpression.dispose();
     	}
+    	fDetailPane.dispose();
 		return super.close();
 	}
 
@@ -293,6 +238,57 @@ public class InspectPopupDialog extends DebugPopup {
 		list.add(fSashForm);
 		return list;
 	}
-    
+
+	/**
+	 * Inner class implementing IDetailPaneContainer methods.  Handles changes to detail
+	 * pane and provides limited access to the detail pane proxy.
+	 */
+	private class DetailPaneContainer implements IDetailPaneContainer{
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentPaneID()
+		 */
+		public String getCurrentPaneID() {
+			return fDetailPane.getCurrentPaneID();
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentSelection()
+		 */
+		public IStructuredSelection getCurrentSelection() {
+			return (IStructuredSelection)fViewer.getSelection();
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
+		 */
+		public void refreshDetailPaneContents() {		
+			fDetailPane.display(getCurrentSelection());
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
+		 */
+		public Composite getParentComposite() {
+			return fSashForm;
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getWorkbenchPartSite()
+		 */
+		public IWorkbenchPartSite getWorkbenchPartSite() {
+			return null;
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#paneChanged(java.lang.String)
+		 */
+		public void paneChanged(String newPaneID) {
+			if (newPaneID.equals(DefaultDetailPane.ID)){
+				applyBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND), fDetailPane.getCurrentControl());
+			}
+		}
+	
+	}
     
 }

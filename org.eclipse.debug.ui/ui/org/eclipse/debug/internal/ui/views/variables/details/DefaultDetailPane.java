@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,7 +81,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
@@ -125,7 +124,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	protected static final String DETAIL_MAX_LENGTH_ACTION = "MaxLength"; //$NON-NLS-1$
 	
 	/**
-	 * The ID, name and description of this viewer are stored in contants so that the class
+	 * The ID, name and description of this pane are stored in constants so that the class
 	 * does not have to be instantiated to access them.
 	 */
 	public static final String ID = DetailMessages.DefaultDetailPane_0;
@@ -308,13 +307,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	private ICursorListener fCursorListener;
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
-	 */
-	public void init(IWorkbenchPartSite benchPartSite){
-		super.init(benchPartSite);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public Control createControl(Composite parent) {
@@ -323,14 +315,12 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		
 		createSourceViewer(parent);
 		
-		createActions();
-		
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
-		JFaceResources.getFontRegistry().addListener(this);
-		
-		fStatusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
-		IStatusLineManager manager= getViewSite().getActionBars().getStatusLineManager();
-		manager.add(fStatusLineItem);
+		if (isInView()){
+			createViewSpecificComponents();
+			createActions();
+			DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+			JFaceResources.getFontRegistry().addListener(this);
+		}
 		
 		return fSourceViewer.getControl();
 	}
@@ -346,25 +336,35 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		fSourceViewer = new SourceViewer(parent, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		fSourceViewer.setDocument(getDetailDocument());
 		fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
+		fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
+		fSourceViewer.setEditable(false);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDebugHelpContextIds.DETAIL_PANE);
+		Control control = fSourceViewer.getControl();
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		control.setLayoutData(gd);	
+	}
+
+	/**
+	 * Creates listeners and other components that should only be added to the
+	 * source viewer when this detail pane is inside a view.
+	 */
+	private void createViewSpecificComponents(){
+		
+		// Add a document listener so actions get updated when the document changes
 		getDetailDocument().addDocumentListener(new IDocumentListener() {
 			public void documentAboutToBeChanged(DocumentEvent event) {}
 			public void documentChanged(DocumentEvent event) {
 				updateSelectionDependentActions();
 			}
 		});
-		fSourceViewer.setEditable(false);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDebugHelpContextIds.DETAIL_PANE);
-		Control control = fSourceViewer.getControl();
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);
 		
-		// Add the selection listener so selection dependant actions get updated.
+		// Add the selection listener so selection dependent actions get updated.
 		fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateSelectionDependentActions();
 			}
 		});
-			
+		
 		// Add a focus listener to update actions when details area gains focus
 		fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
@@ -404,18 +404,23 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			}
 		});
 		
+		// Create a status line item displaying the current cursor location
+		fStatusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
+		IStatusLineManager manager= getViewSite().getActionBars().getStatusLineManager();
+		manager.add(fStatusLineItem);
 		fSourceViewer.getTextWidget().addMouseListener(getCursorListener());
 		fSourceViewer.getTextWidget().addKeyListener(getCursorListener());
 		
 		// Add a context menu to the detail area
-		createDetailContextMenu(fSourceViewer.getTextWidget());		
+		createDetailContextMenu(fSourceViewer.getTextWidget());	
+		
 	}
-
+	
 	/**
 	 * Creates the actions to add to the context menu
 	 */
 	private void createActions() {
-		
+       
 		TextViewerAction textAction= new TextViewerAction(fSourceViewer, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		textAction.configureAction(DetailMessages.DefaultDetailPane_Co_ntent_Assist_3, "",""); //$NON-NLS-1$ //$NON-NLS-2$ 
@@ -424,8 +429,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CONTENT_ASSIST_ACTION);
 		setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
-        
-        ActionHandler actionHandler = new ActionHandler(textAction);
+		
+		ActionHandler actionHandler = new ActionHandler(textAction);
         IHandlerService handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
         handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
 			
@@ -457,24 +462,23 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		setSelectionDependantAction(DETAIL_CUT_ACTION);
 		setSelectionDependantAction(DETAIL_PASTE_ACTION);
 		
-		// TODO: Still using "old" resource access
+		// TODO: Still using "old" resource access, find/replace won't work in popup dialogs
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewResourceBundleMessages"); //$NON-NLS-1$
 		IAction action = new FindReplaceAction(bundle, "find_replace_action_", getWorkbenchPartSite().getPart());	 //$NON-NLS-1$
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IDebugHelpContextIds.DETAIL_PANE_FIND_REPLACE_ACTION);
 		setAction(DETAIL_FIND_REPLACE_TEXT_ACTION, action);
-
+			
 		updateSelectionDependentActions();
 		
 		action = new DetailPaneWordWrapAction(fSourceViewer);
 		setAction(DETAIL_WORD_WRAP_ACTION, action);
 		
-		action = new DetailPaneMaxLengthAction(getWorkbenchPartSite().getShell());
+		action = new DetailPaneMaxLengthAction(fSourceViewer.getControl().getShell());
 		setAction(DETAIL_MAX_LENGTH_ACTION,action);
 		
 		action = new DetailPaneAssignValueAction(fSourceViewer,getViewSite());
-		setAction(DETAIL_ASSIGN_VALUE_ACTION, action);
-		
+		setAction(DETAIL_ASSIGN_VALUE_ACTION, action);	
 	}
 	
 	/**
@@ -495,6 +499,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		menuControl.setMenu(menu);
 
 		getViewSite().registerContextMenu(IDebugUIConstants.VARIABLE_VIEW_DETAIL_ID, menuMgr, fSourceViewer.getSelectionProvider());
+
 	}
 	
 	/**
@@ -505,16 +510,20 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	*/
 	protected void fillDetailContextMenu(IMenuManager menu) {
 		
-		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));	
-		menu.add(getAction(DETAIL_ASSIGN_VALUE_ACTION));
-		menu.add(getAction(DETAIL_CONTENT_ASSIST_ACTION));
+		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
+		if (isInView()){
+			menu.add(getAction(DETAIL_ASSIGN_VALUE_ACTION));
+			menu.add(getAction(DETAIL_CONTENT_ASSIST_ACTION));
+		}
 		menu.add(new Separator());
 		menu.add(getAction(DETAIL_CUT_ACTION));
 		menu.add(getAction(DETAIL_COPY_ACTION)); 
 		menu.add(getAction(DETAIL_PASTE_ACTION));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
-		menu.add(getAction(DETAIL_FIND_REPLACE_TEXT_ACTION));
+		if (isInView()){
+			menu.add(getAction(DETAIL_FIND_REPLACE_TEXT_ACTION));
+		}
 		menu.add(new Separator());
 		menu.add(getAction(DETAIL_WORD_WRAP_ACTION));
 		menu.add(getAction(DETAIL_MAX_LENGTH_ACTION));
@@ -533,7 +542,9 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		}
 				
 		fLastDisplayed = selection;
-		fSourceViewer.setEditable(true);
+		if (isInView()){
+			fSourceViewer.setEditable(true);
+		}
 						
 		if (selection.isEmpty()){
 			clearSourceViewer();
@@ -546,9 +557,11 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			setDebugModel(modelID);
 		}
 		
-		IAction assignAction = getAction(DETAIL_ASSIGN_VALUE_ACTION);
-		if (assignAction instanceof DetailPaneAssignValueAction){
-			((DetailPaneAssignValueAction)assignAction).updateCurrentVariable(selection);
+		if (isInView()){
+			IAction assignAction = getAction(DETAIL_ASSIGN_VALUE_ACTION);
+			if (assignAction instanceof DetailPaneAssignValueAction){
+				((DetailPaneAssignValueAction)assignAction).updateCurrentVariable(selection);
+			}
 		}
 		
         synchronized (this) {
@@ -561,6 +574,9 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPane#setFocus()
+	 */
 	public boolean setFocus(){
 		if (fSourceViewer != null){
 			fSourceViewer.getTextWidget().setFocus();
@@ -580,13 +596,15 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		fDebugModelIdentifier = null; // Setting this to null makes sure the source viewer is reconfigured with the model presentation after disposal
 		if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
 		
-		disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
-		disposeUndoRedoAction(ITextEditorActionConstants.REDO);
-					
-		getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-		JFaceResources.getFontRegistry().removeListener(this);	
-		
+		if (isInView()){
+			disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
+			disposeUndoRedoAction(ITextEditorActionConstants.REDO);
+			
+			getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
+			
+			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+			JFaceResources.getFontRegistry().removeListener(this);	
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -656,7 +674,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			try {
 				svc = mp.newDetailsViewerConfiguration();
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(getViewSite().getShell(), DetailMessages.DefaultDetailPane_Error_1, DetailMessages.DefaultDetailPane_2, e); 
+				DebugUIPlugin.errorDialog(fSourceViewer.getControl().getShell(), DetailMessages.DefaultDetailPane_Error_1, DetailMessages.DefaultDetailPane_2, e); 
 			}
 		}
 		
@@ -667,10 +685,15 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	    fSourceViewer.unconfigure();
 	    fSourceViewer.configure(svc);
 		//update actions that depend on the configuration of the source viewer
-		updateAction(DETAIL_CONTENT_ASSIST_ACTION);
-		updateAction(DETAIL_ASSIGN_VALUE_ACTION);
 		
-		createUndoRedoActions();
+		if (isInView()){
+			updateAction(DETAIL_ASSIGN_VALUE_ACTION);
+			updateAction(DETAIL_CONTENT_ASSIST_ACTION);
+		}
+		
+		if (isInView()){
+			createUndoRedoActions();
+		}
 	}
 
 	/**

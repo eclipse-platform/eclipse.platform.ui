@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 /**
  * Abstract class that holds common methods used by implementors of IDetailPane.
  * 
+ * @see DefaultDetailPane
  * @since 3.3
  */
 public abstract class AbstractDetailPane implements IDetailPane {
@@ -138,21 +139,36 @@ public abstract class AbstractDetailPane implements IDetailPane {
 	}
 	
 	/**
-	 * Gets the view site for this view.
+	 * Gets the view site for this view.  May be null if this detail pane
+	 * is not part of a view.
 	 * 
-	 * @return The site for this view
+	 * @return The site for this view or <code>null</code>
 	 */
 	protected  IViewSite getViewSite(){
-		return (IViewSite) fWorkbenchPartSite.getPart().getSite();
+		if (fWorkbenchPartSite == null){
+			return null;
+		} else {
+			return (IViewSite) fWorkbenchPartSite.getPart().getSite();
+		}
 	}
 
 	/**
-	 * Gets the workbench part site for this view.
+	 * Gets the workbench part site for this view.  May be null if this detail pane
+	 * is not part of a view.
 	 * 
-	 * @return The workbench part site
+	 * @return The workbench part site or <code>null</code>
 	 */
 	protected IWorkbenchPartSite getWorkbenchPartSite() {
 		return fWorkbenchPartSite;
+	}
+	
+	/**
+	 * Returns whether this detail pane is being displayed in a view with a workbench part site.
+	 * 
+	 * @return whether this detail pane is being displayed in a view with a workbench part site.
+	 */
+	protected boolean isInView(){
+		return fWorkbenchPartSite != null;
 	}
 
 }

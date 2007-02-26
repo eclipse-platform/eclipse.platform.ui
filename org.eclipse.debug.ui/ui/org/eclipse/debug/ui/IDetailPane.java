@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,9 +36,10 @@ public interface IDetailPane {
 
 	/**
 	 * Initializes this detail pane for the given workbench part site. This is the first method
-	 * invoked on a detail pane after instantiation.
+	 * invoked on a detail pane after instantiation.  If this detail pane is being added to a
+	 * non-view component such as a dialog, the passed workbench part site will be <code>null</code>.
 	 * 
-	 * @param partSite The workbench part site that this detail pane has been created in
+	 * @param partSite The workbench part site that this detail pane has been created in or <code>null</code>
 	 */
 	public void init(IWorkbenchPartSite partSite);
 	

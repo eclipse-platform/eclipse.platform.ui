@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
-
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,6 +47,7 @@ import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
 import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneProxy;
+import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -89,12 +89,12 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
-
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -102,7 +102,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class VariablesView extends AbstractDebugView implements IDebugContextListener,
 	IPropertyChangeListener, IDebugExceptionHandler,
 	IPerspectiveListener, IModelChangedListener,
-	IViewerUpdateListener {
+	IViewerUpdateListener, IDetailPaneContainer {
 	
 	/**
 	 * The model presentation used as the label provider for the tree viewer,
@@ -134,6 +134,12 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * populate the detail pane.
 	 */
 	private ISelectionChangedListener fTreeSelectionChangedListener;
+	
+	/**
+	 * Listener added to the control of the detail pane, allows view to keep track of which
+	 * part last had focus, the tree or the detail pane.
+	 */
+	private Listener fDetailPaneActivatedListener;	
 	
 	/**
 	 * These are used to initialize and persist the position of the sash that
@@ -222,15 +228,14 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
      * Job to update details in the UI thread.
      */
     private Job fTriggerDetailsJob = new UIJob("trigger details") { //$NON-NLS-1$
-	
+    	
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			} 
-			populateDetailPane();
+			refreshDetailPaneContents();
 			return Status.OK_STATUS;
 		}
-	
 	};
     
 	/**
@@ -261,7 +266,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected void setViewerInput(Object context) {
 		
 		if (context == null) {
-			clearDetails();
+			// Clear the detail pane
+			fDetailPane.display(null);
 		}
 		
 		Object current = getViewer().getInput();
@@ -306,14 +312,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
 			
-		Listener activateListener = new Listener() {
-			public void handleEvent(Event event) {
-				fTreeHasFocus = false;
-			}
-		};
-		
-		fDetailPane = new DetailPaneProxy(fSashForm,this.getSite(),activateListener);
-		
+		fDetailPane = new DetailPaneProxy(this);	
+		fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 		
 		createOrientationActions(variablesViewer);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
@@ -532,7 +532,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private void showDetailPane() {
 		fSashForm.setMaximizedControl(null);
 		fSashForm.setWeights(getLastSashWeights());
-		populateDetailPane();
+		refreshDetailPaneContents();
 		revealTreeSelection();
 		fToggledDetailOnce = true;
 	}
@@ -612,6 +612,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		setAction(VARIABLES_COPY_ACTION, getAction(COPY_ACTION));
 	}
 
+	/**
+	 * Creates the actions that allow the orientation of the detail pane to be changed.
+	 * 
+	 * @param viewer 
+	 */
 	private void createOrientationActions(TreeModelViewer viewer) {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager viewMenu = actionBars.getMenuManager();
@@ -619,7 +624,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fToggleDetailPaneActions = new ToggleDetailPaneAction[3];
 		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH, null);
 		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT, null);
-		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
+		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, VariablesViewMessages.VariablesView_41);
 		viewMenu.add(new Separator());
 		final MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
 		layoutSubMenu.setRemoveAllWhenShown(true);
@@ -648,10 +653,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				}
 			}
 		});
-	}
-	
-	protected String getToggleActionLabel() {
-		return VariablesViewMessages.VariablesView_41; 
 	}
 	
 	/**
@@ -707,7 +708,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
                         if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
                             return;
                         }	
-                        populateDetailPaneFromSelection((IStructuredSelection) event.getSelection());
+                        refreshDetailPaneContents();
                         treeSelectionChanged(event);
                     }
                 }					
@@ -722,49 +723,67 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * @param event
 	 */
 	protected void treeSelectionChanged(SelectionChangedEvent event) {}
-	
-	/**
-	 * Ask the variables tree for its current selection, and use this to populate
-	 * the detail pane.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentPaneID()
 	 */
-	public void populateDetailPane() {
-		if (isDetailPaneVisible()) {
-            Viewer viewer = getViewer();
-            if (viewer != null) {
-                IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-                populateDetailPaneFromSelection(selection);
-            }
-        }
-    }
-	
-	/**
-	 * Show the details associated with the first of the selected variables in the 
-	 * detail pane.
-	 */
-	protected void populateDetailPaneFromSelection(IStructuredSelection selection) {
-       	fDetailPane.display(selection);
+	public String getCurrentPaneID() {
+		return fDetailPane.getCurrentPaneID();
 	}
 
-	/**
-	 * Clears the detail pane
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getCurrentSelection()
 	 */
-	private void clearDetails() {
-       fDetailPane.display(null);      
+	public IStructuredSelection getCurrentSelection() {
+		if (getViewer() != null){
+			return (IStructuredSelection)getViewer().getSelection();
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
+	 */
+	public Composite getParentComposite() {
+		return fSashForm;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getWorkbenchPartSite()
+	 */
+	public IWorkbenchPartSite getWorkbenchPartSite() {
+		return getSite();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#refreshDetailPaneContents()
+	 */
+	public void refreshDetailPaneContents() {
+		fDetailPane.display(getCurrentSelection());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#paneChanged(java.lang.String)
+	 */
+	public void paneChanged(String newPaneID) {
+		if (fDetailPaneActivatedListener == null){
+			fDetailPaneActivatedListener = 	new Listener() {
+				public void handleEvent(Event event) {
+					fTreeHasFocus = false;
+				}
+			};
+		}
+		fDetailPane.getCurrentControl().addListener(SWT.Activate, fDetailPaneActivatedListener);
+	}
+	
+	/**
+	 * @return the model presentation to be used for this view
+	 */
 	protected IDebugModelPresentation getModelPresentation() {
 		if (fModelPresentation == null) {
 			fModelPresentation = new VariablesViewModelPresentation();
 		}
 		return fModelPresentation;
-	}
-	
-	/**
-	 * Returns the sash form
-	 * @return the current sash form
-	 */
-	protected SashForm getSashForm() {
-		return fSashForm;
 	}
 	
 	/* (non-Javadoc)
@@ -781,6 +800,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return super.getAdapter(required);
 	}
 
+	/**
+	 * If possible, calls the update method of the action associated with the given ID.
+	 * 
+	 * @param actionId the ID of the action to update
+	 */
 	protected void updateAction(String actionId) {
 		IAction action= getAction(actionId);
 		if (action instanceof IUpdate) {
@@ -788,6 +812,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 	}
 	
+	/**
+	 * @return whether the detail pane is visible to the user
+	 */
 	protected boolean isDetailPaneVisible() {
 		return !fToggleDetailPaneActions[2].isChecked();
 	}
@@ -799,8 +826,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return fSashForm;
 	}	
 	
-	/**
-	 * @see IDebugExceptionHandler#handleException(DebugException)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.IDebugExceptionHandler#handleException(org.eclipse.debug.core.DebugException)
 	 */
 	public void handleException(DebugException e) {
 		showMessage(e.getMessage());
@@ -815,6 +842,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 	}
 
+	/**
+	 * Updates actions and sets the viewer input when a context is activated.
+	 * @param selection
+	 */
 	protected void contextActivated(ISelection selection) {
 		if (!isAvailable() || !isVisible()) {
 			return;
@@ -861,19 +892,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IDetailSite#getDetailViewerParent()
-	 */
-	public Composite getDetailViewerParent() {
-		return fSashForm;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailSite#isMainViewerAvailable()
 	 */
 	public boolean isMainViewerAvailable() {
 		return isAvailable();
 	}
 	
+	/**
+	 * @return the presentation context of the viewer
+	 */
 	protected IPresentationContext getPresentationContext() {
 		return getVariablesViewer().getPresentationContext();
 	}
@@ -893,18 +920,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		return show != null && show.booleanValue();
 	}	
 
-	/**
-	 * Returns the number of entries that should be displayed in each
-	 * partition of an indexed collection.
-	 * 
-	 * @return the number of entries that should be displayed in each
-	 * partition of an indexed collection
-	 */
-	protected int getArrayPartitionSize() {
-		// TODO: this should be a view setting
-		return 100;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
 	 */
@@ -922,10 +937,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		contextActivated(selection);
 	}
 
+	/**
+	 * @return the tree model viewer displaying variables
+	 */
 	protected TreeModelViewer getVariablesViewer() {
 		return (TreeModelViewer) getViewer();
 	}
 	
+	/**
+	 * Clears the status line of all messages and errors
+	 */
 	protected void clearStatusLine() {
 		IStatusLineManager manager = getViewSite().getActionBars().getStatusLineManager(); 
 		manager.setErrorMessage(null);
@@ -1003,14 +1024,5 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (!success && getViewer() != null){
 			getViewer().getControl().setFocus();
 		}
-	}
-
-	/**
-	 * Returns the detail pane or null.
-	 */
-	public DetailPaneProxy getDetailPane() {
-		return fDetailPane;
-	}
-	
-	
+	}	
 }
