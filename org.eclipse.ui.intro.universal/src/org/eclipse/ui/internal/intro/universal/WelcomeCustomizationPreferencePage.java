@@ -634,7 +634,10 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	}
 
 	public void dispose() {
-		themeList.clear();
+		Iterator iter = themeList.iterator();
+		while (iter.hasNext()) {
+			((IntroTheme)iter.next()).dispose();
+		}
 		extensionImage.dispose();
 		ihighImage.dispose();
 		ilowImage.dispose();
