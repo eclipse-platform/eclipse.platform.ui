@@ -65,16 +65,12 @@ public abstract class AbstractStatusHandler {
 	private String id;
 
 	/**
-	 * Handles {@link StatusAdapter} objects. This method can modify status and
-	 * hint. Each handler can suggest the facility to stop handling a problem.
-	 * If handling policy respects it, handling will be stopped.
+	 * Handles {@link StatusAdapter} objects.
 	 * 
 	 * @param statusAdapter
 	 *            the status adapter
-	 * @return <code>false</code> if handling should be stopped,
-	 *         <code>true</code> otherwise
 	 */
-	abstract public boolean handle(StatusAdapter statusAdapter);
+	public abstract void handle(StatusAdapter statusAdapter);
 
 	/**
 	 * @return Returns the params.

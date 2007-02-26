@@ -31,8 +31,8 @@ public class WorkbenchErrorHandlerProxy extends AbstractStatusHandler {
 	 * 
 	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
-	public boolean handle(StatusAdapter statusAdapter) {
-		return Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler()
-				.handle(statusAdapter);
+	public void handle(StatusAdapter statusAdapter) {
+		Workbench.getInstance().getAdvisor().getWorkbenchErrorHandler().handle(
+				statusAdapter);
 	}
 }

@@ -33,7 +33,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * 
 	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
-	public boolean handle(final StatusAdapter statusAdapter) {
+	public void handle(final StatusAdapter statusAdapter) {
 		if ((statusAdapter.getStyle() & StatusManager.SHOW) == StatusManager.SHOW) {
 			StatusNotificationManager.getInstance().addError(
 					statusAdapter.getStatus(), null);
@@ -45,6 +45,5 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 			WorkbenchPlugin.getDefault().getLog()
 					.log(statusAdapter.getStatus());
 		}
-		return true;
 	}
 }
