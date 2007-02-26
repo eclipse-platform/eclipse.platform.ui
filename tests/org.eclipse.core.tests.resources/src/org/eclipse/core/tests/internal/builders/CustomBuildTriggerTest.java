@@ -1,13 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
- *     IBM - Initial API and implementation
- *******************************************************************************/
+ * Contributors: IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
 import junit.framework.Test;
@@ -222,5 +220,70 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		}
 		assertTrue("3.0", builder.wasBuilt());
 		assertTrue("3.1", builder.wasIncrementalBuild());
+	}
+
+	/**
+	 * Tests that a builder that skips autobuild still receives the correct resource delta
+	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=173931
+	 */
+	public void testSkipAutobuildDelta() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("PROJECT" + 1);
+		ICommand command = null;
+		CustomTriggerBuilder.resetSingleton();
+		try {
+			// Turn auto-building off
+			setAutoBuilding(false);
+			// Create some resources
+			project.create(getMonitor());
+			project.open(getMonitor());
+			// Create and set a build specs for project 
+			IProjectDescription desc = project.getDescription();
+			command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
+			command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+			desc.setBuildSpec(new ICommand[] {command});
+			project.setDescription(desc, getMonitor());
+			command = project.getDescription().getBuildSpec()[0];
+			//turn autobuild back on
+			setAutoBuilding(true);
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", command.isConfigurable());
+		//ensure that setBuilding has effect
+		assertTrue("1.1", !command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD));
+		
+		//do an initial build to get the builder instance
+		try {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("1.2", e);
+		}
+		waitForBuild();
+		CustomTriggerBuilder builder = CustomTriggerBuilder.getInstance();
+		assertNotNull("1.3", builder);
+		builder.clearBuildTrigger();
+		
+		//add a file in the project, to trigger an autobuild
+		IFile file = project.getFile("a.txt");
+		try {
+			file.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//autobuild should not call our builder
+		waitForBuild();
+		assertTrue("2.0", !builder.wasIncrementalBuild());
+		assertTrue("2.1", !builder.wasAutobuild());
+		
+		//but, a subsequent incremental build should call it
+		try {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("2.1", !builder.wasAutobuild());
+		assertTrue("3.0", builder.wasIncrementalBuild());
+		
 	}
 }
