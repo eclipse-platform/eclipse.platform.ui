@@ -34,12 +34,6 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
  * @since 3.1
  * 
  */
-/**
- * MemoryBlockManager
- */
-/**
- * MemoryBlockManager
- */
 public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetListener {
 	
 	private ArrayList listeners = new ArrayList();			// list of all IMemoryBlockListener
@@ -99,79 +93,75 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 		}
 	}
 	
+	/**
+	 * Returns the <code>MemoryBlockNotifier</code>
+	 * @return the <code>MemoryBlockNotifier</code>
+	 * 
+	 * TODO consider using only one of these, and sync where needed, 
+	 * this way we are not creating a new every single time.
+	 */
 	private MemoryBlockNotifier getMemoryBlockNotifier() {
 		return new MemoryBlockNotifier();
 	}	
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockManager#addMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
 	public void addMemoryBlocks(IMemoryBlock[] mem) {
-		
-		if (memoryBlocks == null)
+		if (memoryBlocks == null) {
 			return;
-		
-		if (mem == null){
+		}
+		if (mem == null) {
 			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.addMemoryBlock", null); //$NON-NLS-1$
 			return;			
 		}
 		
-		ArrayList newMemoryBlocks = new ArrayList();
-		
-		for (int i=0; i<mem.length; i++)
-		{
-			// do not allow duplicates
-			if (!memoryBlocks.contains(mem[i]))
-			{
-			
-				newMemoryBlocks.add(mem[i]);
-				memoryBlocks.add(mem[i]);
-				
-				// add listener for the first memory block added
-				if (memoryBlocks.size() == 1)
-				{
-					DebugPlugin.getDefault().addDebugEventListener(this);
+		if(mem.length > 0) {
+			ArrayList newMemoryBlocks = new ArrayList();
+			for (int i=0; i<mem.length; i++) {
+				// do not allow duplicates
+				if (!memoryBlocks.contains(mem[i])) {
+					newMemoryBlocks.add(mem[i]);
+					memoryBlocks.add(mem[i]);
+					// add listener for the first memory block added
+					if (memoryBlocks.size() == 1) {
+						DebugPlugin.getDefault().addDebugEventListener(this);
+					}
 				}
 			}
+			notifyListeners((IMemoryBlock[])newMemoryBlocks.toArray(new IMemoryBlock[newMemoryBlocks.size()]), ADDED);
 		}
-		
-		notifyListeners((IMemoryBlock[])newMemoryBlocks.toArray(new IMemoryBlock[newMemoryBlocks.size()]), ADDED);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockManager#removeMemoryBlock(org.eclipse.debug.core.model.IMemoryBlock)
 	 */
 	public void removeMemoryBlocks(IMemoryBlock[] memBlocks) {
-		
-		if (memoryBlocks == null)
+		if (memoryBlocks == null) {
 			return;
-		
+		}
 		if (memBlocks == null){
 			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.removeMemoryBlock", null); //$NON-NLS-1$
 			return;			
 		}		
 		
-		for (int i=0; i<memBlocks.length; i++)
-		{
-			memoryBlocks.remove(memBlocks[i]);
-			// remove listener after the last memory block has been removed
-			if (memoryBlocks.size() == 0)
-			{
-				DebugPlugin.getDefault().removeDebugEventListener(this);
-			}
-			
-			if (memBlocks[i] instanceof IMemoryBlockExtension)
-			{ 
-				try {
-					((IMemoryBlockExtension)memBlocks[i]).dispose();
-				} catch (DebugException e) {
-					DebugPlugin.log(e);
+		if(memBlocks.length > 0) {
+			for (int i=0; i<memBlocks.length; i++) {
+				memoryBlocks.remove(memBlocks[i]);
+				// remove listener after the last memory block has been removed
+				if (memoryBlocks.size() == 0) {
+					DebugPlugin.getDefault().removeDebugEventListener(this);
+				}
+				if (memBlocks[i] instanceof IMemoryBlockExtension) { 
+					try {
+						((IMemoryBlockExtension)memBlocks[i]).dispose();
+					} catch (DebugException e) {
+						DebugPlugin.log(e);
+					}
 				}
 			}
+			notifyListeners(memBlocks, REMOVED);
 		}
-		
-		notifyListeners(memBlocks, REMOVED);
 	}
 
 	/* (non-Javadoc)
@@ -179,16 +169,16 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	 */
 	public void addListener(IMemoryBlockListener listener) {
 		
-		if(listeners == null)
+		if(listeners == null) {
 			return;
-		
-		if(listener == null){
+		}
+		if(listener == null) {
 			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.addListener", null); //$NON-NLS-1$
 			return;
 		}
-		
-		if (!listeners.contains(listener))
+		if (!listeners.contains(listener)) {
 			listeners.add(listener);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -196,45 +186,37 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	 */
 	public void removeListener(IMemoryBlockListener listener) {
 		
-		if(listeners == null)
+		if(listeners == null) {
 			return;
-		
-		if(listener == null){
+		}
+		if(listener == null) {
 			DebugPlugin.logMessage("Null argument passed into IMemoryBlockManager.removeListener", null); //$NON-NLS-1$
 			return;
 		}
-		
-		if (listeners.contains(listener))
+		if (listeners.contains(listener)) {
 			listeners.remove(listener);
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IMemoryBlockManager#getMemoryBlocks()
 	 */
 	public IMemoryBlock[] getMemoryBlocks() {
-		
-		IMemoryBlock[] blocks = (IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]);
-		
-		return blocks;
+		return (IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryBlockManager#getMemoryBlocks(org.eclipse.debug.core.model.IDebugTarget)
 	 */
 	public IMemoryBlock[] getMemoryBlocks(IDebugTarget debugTarget) {
-		
 		IMemoryBlock[] blocks = (IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]);
-		
 		ArrayList memoryBlocksList = new ArrayList();
-		
-		for (int i=0; i<blocks.length; i++)
-		{
-			if (blocks[i].getDebugTarget() == debugTarget)
+		for (int i=0; i<blocks.length; i++) {
+			if (blocks[i].getDebugTarget() == debugTarget) {
 				memoryBlocksList.add(blocks[i]);
+			}
 		}
-		
 		return (IMemoryBlock[])memoryBlocksList.toArray(new IMemoryBlock[memoryBlocksList.size()]);
-		
 	}
 	
 	/* (non-Javadoc)
@@ -242,60 +224,56 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	 */
 	public IMemoryBlock[] getMemoryBlocks(IMemoryBlockRetrieval retrieve) {
 		IMemoryBlock[] blocks = (IMemoryBlock[])memoryBlocks.toArray(new IMemoryBlock[memoryBlocks.size()]);
-		
 		ArrayList memoryBlocksList = new ArrayList(blocks.length);
-		
-		for (int i=0; i<blocks.length; i++)
-		{
-			if (blocks[i] instanceof IMemoryBlockExtension)
-			{	
-			
-				if (((IMemoryBlockExtension)blocks[i]).getMemoryBlockRetrieval() == retrieve)
-				{	
+		for (int i=0; i<blocks.length; i++)	{
+			if (blocks[i] instanceof IMemoryBlockExtension)	{	
+				if (((IMemoryBlockExtension)blocks[i]).getMemoryBlockRetrieval() == retrieve) {	
 					memoryBlocksList.add(blocks[i]);
 				}
 			}
-			else
-			{	
+			else {	
 				// standard memory block always uses the debug target as the memory block retrieval
-				if (blocks[i].getDebugTarget() == retrieve)
+				if (blocks[i].getDebugTarget() == retrieve) {
 					memoryBlocksList.add(blocks[i]);
+				}
 			}
 		}
-		
 		return (IMemoryBlock[])memoryBlocksList.toArray(new IMemoryBlock[memoryBlocksList.size()]);
 	}
 	
-	
-	private void notifyListeners(IMemoryBlock[] memBlocks, int event)
-	{
+	/**
+	 * Notifies the listeners about the given memory blocks and the event to be sent
+	 * @param memBlocks
+	 * @param event
+	 */
+	private void notifyListeners(IMemoryBlock[] memBlocks, int event) {
 		getMemoryBlockNotifier().notify(memBlocks, event);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
 	 */
 	public void handleDebugEvents(DebugEvent[] events) {
-		
-		for (int i=0; i < events.length; i++)
+		for (int i=0; i < events.length; i++) {
 			handleDebugEvent(events[i]);
-		
+		}
 	}
 	
+	/**
+	 * Handles a debug event
+	 * @param event
+	 */
 	public void handleDebugEvent(DebugEvent event) {
 		Object obj = event.getSource();
 		IDebugTarget dt = null;
 		
-		if (event.getKind() == DebugEvent.TERMINATE)
-		{
+		if (event.getKind() == DebugEvent.TERMINATE) {
 			// a terminate event could happen from an IThread or IDebugTarget
 			// only handle a debug event from the debug target
-			if (obj instanceof IDebugTarget)
-			{
+			if (obj instanceof IDebugTarget) {
 				dt = ((IDebugTarget)obj);
 				
-				// getMemoryBlocks will return an empty array if dt is null
+				// getMemoryBlocks will return an empty array if it is null
 				IMemoryBlock[] deletedMemoryBlocks = getMemoryBlocks(dt);
 				removeMemoryBlocks(deletedMemoryBlocks);
 			}
@@ -305,16 +283,13 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 	/**
 	 * Clean up when the plugin is shut down
 	 */
-	public void shutdown()
-	{
-		if (listeners != null)
-		{
+	public void shutdown() {
+		if (listeners != null) {
 			listeners.clear();
 			listeners = null;
 		}
 		
-		if (memoryBlocks != null)
-		{
+		if (memoryBlocks != null) {
 			memoryBlocks.clear();
 			memoryBlocks = null;
 		}
