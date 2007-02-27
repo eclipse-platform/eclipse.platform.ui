@@ -47,10 +47,12 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 
 	private StatusHandlerDescriptor defaultHandlerDescriptor;
 
+	private static StatusHandlerRegistry instance;
+
 	/**
 	 * Creates an instance of the class.
 	 */
-	public StatusHandlerRegistry() {
+	private StatusHandlerRegistry() {
 		IExtensionTracker tracker = PlatformUI.getWorkbench()
 				.getExtensionTracker();
 		IExtensionPoint handlersPoint = Platform.getExtensionRegistry()
@@ -75,6 +77,18 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 
 		tracker.registerHandler(this, ExtensionTracker
 				.createExtensionPointFilter(productsPoint));
+	}
+
+	/**
+	 * Returns StatusHandlerRegistry singleton instance.
+	 * 
+	 * @return StatusHandlerRegistry instance
+	 */
+	public static StatusHandlerRegistry getDefault() {
+		if (instance == null) {
+			instance = new StatusHandlerRegistry();
+		}
+		return instance;
 	}
 
 	/*
@@ -141,6 +155,30 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	 */
 	public List getHandlerDescriptors(String pluginId) {
 		return statusHandlerDescriptorsMap.getHandlerDescriptors(pluginId);
+	}
+
+	/**
+	 * Returns status handler descriptor for given id.
+	 * 
+	 * @param statusHandlerId
+	 *            the id to get for
+	 * @return the status handler descriptor
+	 */
+	public StatusHandlerDescriptor getHandlerDescriptor(String statusHandlerId) {
+		StatusHandlerDescriptor descriptor = null;
+		for (Iterator it = statusHandlerDescriptors.iterator(); it.hasNext();) {
+			descriptor = (StatusHandlerDescriptor) it.next();
+			if (descriptor.getId().equals(statusHandlerId)) {
+				return descriptor;
+			}
+		}
+
+		if (defaultHandlerDescriptor != null
+				&& defaultHandlerDescriptor.getId().equals(statusHandlerId)) {
+			return defaultHandlerDescriptor;
+		}
+
+		return null;
 	}
 
 	/**

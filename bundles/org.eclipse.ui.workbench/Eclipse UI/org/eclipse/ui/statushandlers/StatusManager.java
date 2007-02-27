@@ -108,8 +108,6 @@ public class StatusManager {
 
 	private static StatusManager MANAGER;
 
-	private StatusHandlerRegistry statusHandlerRegistry;
-
 	private AbstractStatusHandler workbenchHandler;
 
 	private List loggedStatuses = new ArrayList();
@@ -131,7 +129,6 @@ public class StatusManager {
 	}
 
 	private StatusManager() {
-		statusHandlerRegistry = new StatusHandlerRegistry();
 		Platform.addLogListener(new StatusManagerLogListener());
 	}
 
@@ -154,9 +151,10 @@ public class StatusManager {
 	public void handle(StatusAdapter statusAdapter) {
 		try {
 			// tries to handle the problem with default (product) handler
-			if (statusHandlerRegistry.getDefaultHandlerDescriptor() != null) {
+			if (StatusHandlerRegistry.getDefault()
+					.getDefaultHandlerDescriptor() != null) {
 				try {
-					statusHandlerRegistry
+					StatusHandlerRegistry.getDefault()
 							.getDefaultHandlerDescriptor().getStatusHandler()
 							.handle(statusAdapter);
 
