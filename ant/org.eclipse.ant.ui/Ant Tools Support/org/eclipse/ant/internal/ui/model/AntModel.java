@@ -306,6 +306,7 @@ public class AntModel implements IAntModel {
             } else {
                 project= fProjectNode.getProject();
                 projectHelper= (ProjectHelper)project.getReference("ant.projectHelper"); //$NON-NLS-1$
+                projectHelper.setBuildFile(getEditedFile());
                 prepareForFullIncremental();
             }
             beginReporting();
