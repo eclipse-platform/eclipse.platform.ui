@@ -1132,7 +1132,7 @@ public class AntModel implements IAntModel {
      * @see org.eclipse.ant.internal.ui.model.IAntModel#warning(java.lang.Exception)
      */
     public void warning(Exception exception) {
-        notifyProblemRequestor(exception, (AntElementNode)fStillOpenElements.pop(), AntModelProblem.SEVERITY_WARNING);
+        handleError(exception, AntModelProblem.SEVERITY_WARNING);
     }
     
     /* (non-Javadoc)
