@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistField;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
+import org.eclipse.ui.internal.texteditor.SWTUtil;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
@@ -227,7 +228,7 @@ class FindReplaceDialog extends Dialog {
 
 		readConfiguration();
 
-		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE);
+		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 		setBlockOnOpen(false);
 	}
 
@@ -279,7 +280,7 @@ class FindReplaceDialog extends Dialog {
 		shell.setText(EditorMessages.FindReplace_title);
 		// shell.setImage(null);
 	}
-
+	
 	/**
 	 * Create the button section of the find/replace dialog.
 	 *
@@ -288,10 +289,9 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private Composite createButtonSection(Composite parent) {
 
-		Composite panel= new Composite(parent, SWT.NULL);
+		Composite panel= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
-		layout.numColumns= -2;
-		layout.makeColumnsEqualWidth= true;
+		layout.numColumns= -2; // this is intended
 		panel.setLayout(layout);
 
 		fFindNextButton= makeButton(panel, EditorMessages.FindReplace_FindNextButton_label, 102, true, new SelectionAdapter() {
@@ -305,7 +305,7 @@ class FindReplaceDialog extends Dialog {
 				fFindNextButton.setFocus();
 			}
 		});
-		setGridData(fFindNextButton, GridData.FILL, true, GridData.FILL, false);
+		setGridData(fFindNextButton, SWT.FILL, true, SWT.FILL, false);
 
 		fReplaceFindButton= makeButton(panel, EditorMessages.FindReplace_ReplaceFindButton_label, 103, false, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -317,7 +317,7 @@ class FindReplaceDialog extends Dialog {
 				fReplaceFindButton.setFocus();
 			}
 		});
-		setGridData(fReplaceFindButton, GridData.FILL, true, GridData.FILL, false);
+		setGridData(fReplaceFindButton, SWT.FILL, false, SWT.FILL, false);
 
 		fReplaceSelectionButton= makeButton(panel, EditorMessages.FindReplace_ReplaceSelectionButton_label, 104, false, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -328,7 +328,7 @@ class FindReplaceDialog extends Dialog {
 				fFindNextButton.setFocus();
 			}
 		});
-		setGridData(fReplaceSelectionButton, GridData.FILL, true, GridData.FILL, false);
+		setGridData(fReplaceSelectionButton, SWT.FILL, false, SWT.FILL, false);
 
 		fReplaceAllButton= makeButton(panel, EditorMessages.FindReplace_ReplaceAllButton_label, 105, false, new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -337,7 +337,7 @@ class FindReplaceDialog extends Dialog {
 				fFindNextButton.setFocus();
 			}
 		});
-		setGridData(fReplaceAllButton, GridData.FILL, true, GridData.FILL, false);
+		setGridData(fReplaceAllButton, SWT.FILL, true, SWT.FILL, false);
 
 		// Make the all the buttons the same size as the Remove Selection button.
 		fReplaceAllButton.setEnabled(isEditable());
@@ -353,22 +353,21 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private Composite createConfigPanel(Composite parent) {
 
-		Composite panel= new Composite(parent, SWT.NULL);
+		Composite panel= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		layout.makeColumnsEqualWidth= true;
 		panel.setLayout(layout);
 
 		Composite directionGroup= createDirectionGroup(panel);
-		setGridData(directionGroup, GridData.FILL, true, GridData.FILL, false);
+		setGridData(directionGroup, SWT.FILL, true, SWT.FILL, false);
+		
 		Composite scopeGroup= createScopeGroup(panel);
-		setGridData(scopeGroup, GridData.FILL, true, GridData.FILL, false);
+		setGridData(scopeGroup, SWT.FILL, true, SWT.FILL, false);
 
 		Composite optionsGroup= createOptionsGroup(panel);
-		setGridData(optionsGroup, GridData.FILL, true, GridData.FILL, false);
-		GridData data= (GridData) optionsGroup.getLayoutData();
-		data.horizontalSpan= 2;
-		optionsGroup.setLayoutData(data);
+		setGridData(optionsGroup, SWT.FILL, true, SWT.FILL, true);
+		((GridData)optionsGroup.getLayoutData()).horizontalSpan= 2;
 
 		return panel;
 	}
@@ -383,19 +382,19 @@ class FindReplaceDialog extends Dialog {
 		layout.numColumns= 1;
 		layout.makeColumnsEqualWidth= true;
 		panel.setLayout(layout);
-		panel.setLayoutData(new GridData(GridData.FILL_BOTH));
+		panel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		Composite inputPanel= createInputPanel(panel);
-		setGridData(inputPanel, GridData.FILL, true, GridData.CENTER, false);
+		setGridData(inputPanel, SWT.FILL, true, SWT.TOP, false);
 
 		Composite configPanel= createConfigPanel(panel);
-		setGridData(configPanel, GridData.FILL, true, GridData.CENTER, true);
+		setGridData(configPanel, SWT.FILL, true, SWT.TOP, true);
 
 		Composite buttonPanelB= createButtonSection(panel);
-		setGridData(buttonPanelB, GridData.FILL, true, GridData.CENTER, false);
+		setGridData(buttonPanelB, SWT.RIGHT, true, SWT.BOTTOM, false);
 
 		Composite statusBar= createStatusAndCloseButton(panel);
-		setGridData(statusBar, GridData.FILL, true, GridData.CENTER, false);
+		setGridData(statusBar, SWT.FILL, true, SWT.BOTTOM, false);
 
 		updateButtonState();
 
@@ -428,7 +427,7 @@ class FindReplaceDialog extends Dialog {
 		group.setText(EditorMessages.FindReplace_Direction);
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		SelectionListener selectionListener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -442,12 +441,12 @@ class FindReplaceDialog extends Dialog {
 
 		fForwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		fForwardRadioButton.setText(EditorMessages.FindReplace_ForwardRadioButton_label);
-		setGridData(fForwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fForwardRadioButton, SWT.LEFT, false, SWT.CENTER, false);
 		fForwardRadioButton.addSelectionListener(selectionListener);
 
 		Button backwardRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		backwardRadioButton.setText(EditorMessages.FindReplace_BackwardRadioButton_label);
-		setGridData(backwardRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(backwardRadioButton, SWT.LEFT, false, SWT.CENTER, false);
 		backwardRadioButton.addSelectionListener(selectionListener);
 
 		backwardRadioButton.setSelection(!fForwardInit);
@@ -475,11 +474,11 @@ class FindReplaceDialog extends Dialog {
 		group.setText(EditorMessages.FindReplace_Scope);
 		GridLayout groupLayout= new GridLayout();
 		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		fGlobalRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		fGlobalRadioButton.setText(EditorMessages.FindReplace_GlobalRadioButton_label);
-		setGridData(fGlobalRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fGlobalRadioButton, SWT.LEFT, false, SWT.CENTER, false);
 		fGlobalRadioButton.setSelection(fGlobalInit);
 		fGlobalRadioButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -495,7 +494,7 @@ class FindReplaceDialog extends Dialog {
 
 		fSelectedRangeRadioButton= new Button(group, SWT.RADIO | SWT.LEFT);
 		fSelectedRangeRadioButton.setText(EditorMessages.FindReplace_SelectedRangeRadioButton_label);
-		setGridData(fSelectedRangeRadioButton, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fSelectedRangeRadioButton, SWT.LEFT, false, SWT.CENTER, false);
 		fSelectedRangeRadioButton.setSelection(!fGlobalInit);
 		fUseSelectedLines= !fGlobalInit;
 		fSelectedRangeRadioButton.addSelectionListener(new SelectionListener() {
@@ -572,7 +571,7 @@ class FindReplaceDialog extends Dialog {
 
 		Label findLabel= new Label(panel, SWT.LEFT);
 		findLabel.setText(EditorMessages.FindReplace_Find_label);
-		setGridData(findLabel, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(findLabel, SWT.LEFT, false, SWT.CENTER, false);
 		
 		// Create the find content assist field 
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
@@ -586,12 +585,12 @@ class FindReplaceDialog extends Dialog {
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'\\', '[', '('});
 		fFindField= (Combo)fContentAssistFindField.getControl();
-		setGridData(fContentAssistFindField.getLayoutControl(), GridData.FILL, true, GridData.CENTER, false);
+		setGridData(fContentAssistFindField.getLayoutControl(), SWT.FILL, true, SWT.CENTER, false);
 		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel= new Label(panel, SWT.LEFT);
 		fReplaceLabel.setText(EditorMessages.FindReplace_Replace_label);
-		setGridData(fReplaceLabel, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fReplaceLabel, SWT.LEFT, false, SWT.CENTER, false);
 
 		// Create the replace content assist field
 		RegExContentProposalProvider replaceProposer= new RegExContentProposalProvider(false);
@@ -603,7 +602,7 @@ class FindReplaceDialog extends Dialog {
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'$'});
 		fReplaceField= (Combo)fContentAssistReplaceField.getControl();
-		setGridData(fContentAssistReplaceField.getLayoutControl(), GridData.FILL, true, GridData.CENTER, false);
+		setGridData(fContentAssistReplaceField.getLayoutControl(), SWT.FILL, true, SWT.CENTER, false);
 		fReplaceField.addModifyListener(listener);
 
 		return panel;
@@ -618,7 +617,7 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private Composite createOptionsGroup(Composite parent) {
 
-		Composite panel= new Composite(parent, SWT.NULL);
+		Composite panel= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
 		layout.marginHeight= 0;
@@ -630,7 +629,7 @@ class FindReplaceDialog extends Dialog {
 		groupLayout.numColumns= 2;
 		groupLayout.makeColumnsEqualWidth= true;
 		group.setLayout(groupLayout);
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		SelectionListener selectionListener= new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -643,25 +642,25 @@ class FindReplaceDialog extends Dialog {
 
 		fCaseCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fCaseCheckBox.setText(EditorMessages.FindReplace_CaseCheckBox_label);
-		setGridData(fCaseCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fCaseCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fCaseCheckBox.setSelection(fCaseInit);
 		fCaseCheckBox.addSelectionListener(selectionListener);
 
 		fWrapCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fWrapCheckBox.setText(EditorMessages.FindReplace_WrapCheckBox_label);
-		setGridData(fWrapCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fWrapCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fWrapCheckBox.setSelection(fWrapInit);
 		fWrapCheckBox.addSelectionListener(selectionListener);
 
 		fWholeWordCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fWholeWordCheckBox.setText(EditorMessages.FindReplace_WholeWordCheckBox_label);
-		setGridData(fWholeWordCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fWholeWordCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fWholeWordCheckBox.setSelection(fWholeWordInit);
 		fWholeWordCheckBox.addSelectionListener(selectionListener);
 
 		fIncrementalCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fIncrementalCheckBox.setText(EditorMessages.FindReplace_IncrementalCheckBox_label);
-		setGridData(fIncrementalCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fIncrementalCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		fIncrementalCheckBox.setSelection(fIncrementalInit);
 		fIncrementalCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -677,7 +676,7 @@ class FindReplaceDialog extends Dialog {
 
 		fIsRegExCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
 		fIsRegExCheckBox.setText(EditorMessages.FindReplace_RegExCheckbox_label);
-		setGridData(fIsRegExCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
+		setGridData(fIsRegExCheckBox, SWT.LEFT, false, SWT.CENTER, false);
 		((GridData)fIsRegExCheckBox.getLayoutData()).horizontalSpan= 2;
 		fIsRegExCheckBox.setSelection(fIsRegExInit);
 		fIsRegExCheckBox.addSelectionListener(new SelectionAdapter() {
@@ -721,11 +720,11 @@ class FindReplaceDialog extends Dialog {
 		panel.setLayout(layout);
 
 		fStatusLabel= new Label(panel, SWT.LEFT);
-		setGridData(fStatusLabel, GridData.FILL, true, GridData.CENTER, false);
+		setGridData(fStatusLabel, SWT.FILL, true, SWT.CENTER, false);
 
 		String label= EditorMessages.FindReplace_CloseButton_label;
 		Button closeButton= createButton(panel, 101, label, false);
-		setGridData(closeButton, GridData.END, false, GridData.END, false);
+		setGridData(closeButton, SWT.RIGHT, false, SWT.BOTTOM, false);
 
 		return panel;
 	}
@@ -1422,12 +1421,18 @@ class FindReplaceDialog extends Dialog {
 	 * @param grabExcessVerticalSpace grab excess vertical space
 	 */
 	private void setGridData(Control component, int horizontalAlignment, boolean grabExcessHorizontalSpace, int verticalAlignment, boolean grabExcessVerticalSpace) {
-		GridData gd= new GridData();
-		gd.horizontalAlignment= horizontalAlignment;
-		gd.grabExcessHorizontalSpace= grabExcessHorizontalSpace;
+		GridData gd;
+		if (component instanceof Button && (((Button)component).getStyle() & SWT.PUSH) != 0) {
+			SWTUtil.setButtonDimensionHint((Button)component);
+			gd= (GridData)component.getLayoutData();
+		} else {
+			gd= new GridData();
+			component.setLayoutData(gd);
+			gd.horizontalAlignment= horizontalAlignment;
+			gd.grabExcessHorizontalSpace= grabExcessHorizontalSpace;
+		}
 		gd.verticalAlignment= verticalAlignment;
 		gd.grabExcessVerticalSpace= grabExcessVerticalSpace;
-		component.setLayoutData(gd);
 	}
 
 	/**
@@ -1652,7 +1657,7 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.2
 	 */
 	protected int getDialogBoundsStrategy() {
-		return DIALOG_PERSISTLOCATION;
+		return DIALOG_PERSISTLOCATION | DIALOG_PERSISTSIZE;
 	}
 
 	/**
