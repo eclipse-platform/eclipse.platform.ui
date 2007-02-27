@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -135,22 +136,20 @@ public class RefreshRemoteProjectWizard extends Wizard {
     private ICVSRemoteResource[] internalRefresh(final RepositoryManager manager, final ICVSRemoteResource[] selectedFolders, final boolean recurse, IProgressMonitor monitor) throws InvocationTargetException {
         List failedFolders = new ArrayList();
         monitor.beginTask(null, 100 * selectedFolders.length);
-        try {
         	for (int i = 0; i < selectedFolders.length; i++) {
-        		ICVSRemoteResource resource = selectedFolders[i];
-        		if (resource instanceof ICVSFolder) {
-        			CVSTag[] tags = manager.refreshDefinedTags((ICVSFolder)resource, recurse, true /* notify */, Policy.subMonitorFor(monitor, 100));
-        			if (tags.length == 0) {
-        			    failedFolders.add(resource);
-        			}
-        		}
+        		try {
+					ICVSRemoteResource resource = selectedFolders[i];
+					if (resource instanceof ICVSFolder) {
+						CVSTag[] tags = manager.refreshDefinedTags((ICVSFolder)resource, recurse, true /* notify */, Policy.subMonitorFor(monitor, 100));
+						if (tags.length == 0) {
+						    failedFolders.add(resource);
+						}
+					}
+				} catch (TeamException e) {
+					CVSUIPlugin.log(IStatus.ERROR, NLS.bind("An error occurred while fetching the tags for {0}", selectedFolders[i].getName()), e); //$NON-NLS-1$
+				}
         	}
         	return (ICVSRemoteResource[]) failedFolders.toArray(new ICVSRemoteResource[failedFolders.size()]);
-        } catch (TeamException e) {
-        	throw new InvocationTargetException(e);
-        } finally {
-        	monitor.done();
-        }
     }
 
     private boolean promptForDeepRefresh(final ICVSRemoteResource[] folders) {
