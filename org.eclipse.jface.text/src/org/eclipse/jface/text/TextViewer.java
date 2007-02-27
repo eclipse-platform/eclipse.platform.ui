@@ -2964,7 +2964,7 @@ public class TextViewer extends Viewer implements
 			int top= fTextWidget.getTopIndex();
 			try {
 				top= getVisibleDocument().getLineOffset(top);
-				return widgetLine2ModelLine(top);
+				return widgetOffset2ModelOffset(top);
 			} catch (BadLocationException ex) {
 				if (TRACE_ERRORS)
 					System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.getTopIndexStartOffset")); //$NON-NLS-1$
