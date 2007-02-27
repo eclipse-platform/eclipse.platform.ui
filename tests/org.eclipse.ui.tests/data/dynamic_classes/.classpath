@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" output="intro.bin" path="intro"/>
+	<classpathentry kind="src" output="statusHandler.bin" path="statusHandler"/>
 	<classpathentry kind="src" output="browser.bin" path="browser"/>
 	<classpathentry kind="src" output="editor.bin" path="editor"/>
 	<classpathentry kind="src" output="view.bin" path="view"/>

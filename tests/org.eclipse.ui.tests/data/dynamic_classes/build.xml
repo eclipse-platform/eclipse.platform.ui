@@ -26,7 +26,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="clean, depends, intro, editor, view, oc, newWizard, perspective, startup, decorator, help, propertyPage, preferencePage, workingSet, browser, commands, handlers, markerSupport, self, finish" description="--> Builds the components required by the dynamic test suite">
+    <target name="default" depends="clean, depends, intro, editor, view, oc, newWizard, perspective, startup, decorator, help, propertyPage, preferencePage, workingSet, browser, commands, handlers, statusHandler, markerSupport, self, finish" description="--> Builds the components required by the dynamic test suite">
     </target>
 
     <!-- - - - - - - - - - - - - - - - - - 
@@ -102,7 +102,11 @@
 	
 	<target name="markerSupport">
 			<jar destfile="${output.dir}\markerSupport.jar" basedir="markerSupport.bin"/>
-		</target>
+	</target>
+	
+	<target name="statusHandler">
+		<jar destfile="${output.dir}\statusHandler.jar" basedir="statusHandler.bin"/>
+	</target>
 		
 	<target name="self">
 		<!--<delete file="dynamic_classes.zip"/>

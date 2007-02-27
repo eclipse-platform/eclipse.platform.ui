@@ -31,6 +31,7 @@ public class DynamicPluginsTestSuite extends TestSuite {
 	public DynamicPluginsTestSuite() {
 		addTest(new TestSuite(
 				AcceleratorConfigurationsExtensionDynamicTest.class));
+		addTest(new TestSuite(StatusHandlerTests.class));
 		addTest(new TestSuite(AcceleratorScopesExtensionDynamicTest.class));
 		addTest(new TestSuite(ActionDefinitionsExtensionDynamicTest.class));
 	    addTest(new TestSuite(ActionSetTests.class));
