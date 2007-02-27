@@ -286,8 +286,6 @@ public class Differencer {
 			while (e.hasNext()) {
 				Object keyChild= e.next();
 				
-				content= false;
-				
 				if (pm != null) {
 					
 					if (pm.isCanceled())
@@ -305,6 +303,7 @@ public class Differencer {
 				if ((c & CHANGE_TYPE_MASK) != NO_CHANGE) {
 					code|= CHANGE;	// deletions and additions of child result in a change of the container
 					code|= (c & DIRECTION_MASK);	// incoming & outgoing are just ored
+					content= false;
 				}
 			}
 		}
