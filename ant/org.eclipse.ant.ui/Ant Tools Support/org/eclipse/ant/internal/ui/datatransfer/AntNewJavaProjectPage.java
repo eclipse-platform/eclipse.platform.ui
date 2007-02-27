@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.datatransfer;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,7 +28,9 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -74,6 +77,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 	private Text fProjectNameField;
 	private Text fLocationPathField;
 	private Button fBrowseButton;
+	private Button fLinkButton;
 	
 	private IAntModel fAntModel;
 
@@ -90,8 +94,10 @@ public class AntNewJavaProjectPage extends WizardPage {
                 if (!javacNodes.isEmpty()) {
                     fTableViewer.setSelection(new StructuredSelection(javacNodes.get(0)));
                 }
+                fTableViewer.getControl().setEnabled(true);
 			} else {
                 fTableViewer.setInput(new Object[] {});
+                fTableViewer.getControl().setEnabled(false);
 			}
             setPageComplete(validatePage());
 		}
@@ -131,12 +137,19 @@ public class AntNewJavaProjectPage extends WizardPage {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         composite.setFont(parent.getFont());
         
-		// TODO: help context
-		//WorkbenchHelp.setHelp(composite, IIDEHelpContextIds.NEW_PROJECT_WIZARD_PAGE);
-
 		createProjectNameGroup(composite);
 		createProjectLocationGroup(composite);
         createTargetsTable(composite);
+        
+        fLinkButton = new Button(composite, SWT.CHECK);
+        fLinkButton.setText(DataTransferMessages.AntNewJavaProjectPage_24);
+        fLinkButton.setFont( parent.getFont());
+        GridData gd= new GridData();
+        gd.horizontalAlignment= GridData.FILL;
+        gd.grabExcessHorizontalSpace= false;
+        gd.horizontalSpan= 2;
+        fLinkButton.setLayoutData(gd);
+		
 		validatePage();
 		// Show description on opening
 		setErrorMessage(null);
@@ -371,6 +384,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 		final String projectName= getProjectNameFieldValue();
 		final File buildFile= getBuildFile(getProjectLocationFieldValue());
 		final List selectedJavacs= ((IStructuredSelection)fTableViewer.getSelection()).toList();
+		final boolean link = fLinkButton.getSelection(); 
 		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 			protected void execute(IProgressMonitor monitor) throws CoreException {
 				List javacTasks= resolveJavacTasks(selectedJavacs);
@@ -379,7 +393,7 @@ public class AntNewJavaProjectPage extends WizardPage {
 				while (iter.hasNext()) {
 					Javac javacTask = (Javac) iter.next();
 					IJavaProject javaProject= creator.createJavaProjectFromJavacNode(projectName, javacTask, monitor);
-					importBuildFile(monitor, javaProject.getPath(), buildFile);
+					importBuildFile(monitor, javaProject, buildFile, link);
 					result[0]= javaProject;
 				}
 			}
@@ -407,23 +421,32 @@ public class AntNewJavaProjectPage extends WizardPage {
 		return result[0];
 	}
 	
-	protected void importBuildFile(IProgressMonitor monitor, IPath destPath, File buildFile) {
-		IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
-		List files = new ArrayList(1);
-		
-		files.add(buildFile);
-		File rootDir= buildFile.getParentFile();
-		try {
-			ImportOperation op= new ImportOperation(destPath, rootDir, structureProvider, new ImportOverwriteQuery(), files);
-			op.setCreateContainerStructure(false);
-			op.run(monitor);
-		} catch (InterruptedException e) {
-			// should not happen
-		} catch (InvocationTargetException e) {
-			Throwable t = e.getTargetException();
-			if (t instanceof CoreException) {	
-				ErrorDialog.openError(getShell(), DataTransferMessages.AntNewJavaProjectPage_22,
-				null, ((CoreException) t).getStatus());
+	protected void importBuildFile(IProgressMonitor monitor, IJavaProject javaProject, File buildFile, boolean link) {
+		if (link) {
+			IProject project= javaProject.getProject();
+			IFile iBuildFile = project.getFile(buildFile.getName());
+			if (!iBuildFile.exists()) {
+				try {
+					iBuildFile.createLink(new Path(buildFile.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, monitor);
+				} catch (CoreException e) {
+					ErrorDialog.openError(getShell(), DataTransferMessages.AntNewJavaProjectPage_22, null, e.getStatus());
+				}
+			}
+		} else {
+			IImportStructureProvider structureProvider = FileSystemStructureProvider.INSTANCE;
+			File rootDir= buildFile.getParentFile();
+			try {
+				ImportOperation op= new ImportOperation(javaProject.getPath(), rootDir, structureProvider, new ImportOverwriteQuery(), Collections.singletonList(buildFile));
+				op.setCreateContainerStructure(false);
+				op.run(monitor);
+			} catch (InterruptedException e) {
+				// should not happen
+			} catch (InvocationTargetException e) {
+				Throwable t = e.getTargetException();
+				if (t instanceof CoreException) {	
+					ErrorDialog.openError(getShell(), DataTransferMessages.AntNewJavaProjectPage_22,
+							null, ((CoreException) t).getStatus());
+				}
 			}
 		}
 	}
@@ -501,6 +524,7 @@ public class AntNewJavaProjectPage extends WizardPage {
         fTableViewer = new TableViewer(table);
         fTableViewer.setLabelProvider(new JavacTableLabelProvider());
         fTableViewer.setContentProvider(new AntModelContentProvider());
+        fTableViewer.getControl().setEnabled(false);
     }
     
     /**
