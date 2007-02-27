@@ -39,6 +39,7 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 				CVSFileHistory remoteFile = null;
 				if (remoteResource instanceof ICVSFile) {
 					remoteFile = new CVSFileHistory((ICVSFile) remoteResource, flags);
+					remoteFile.refresh(CVSFileHistory.REFRESH_ALL, monitor);
 				}
 				return remoteFile;
 			} else {
