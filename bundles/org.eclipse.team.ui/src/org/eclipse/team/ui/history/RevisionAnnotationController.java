@@ -71,9 +71,12 @@ public abstract class RevisionAnnotationController {
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection selection= event.getSelection();
 			if (selection instanceof IStructuredSelection) {
-				Object first= ((IStructuredSelection) selection).getFirstElement();
-				if (first != null)
-					historyEntrySelected(first);
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (ss.size() == 1) {
+					Object first= ss.getFirstElement();
+					if (first != null)
+						historyEntrySelected(first);
+				}
 			}
 		}
 	};
