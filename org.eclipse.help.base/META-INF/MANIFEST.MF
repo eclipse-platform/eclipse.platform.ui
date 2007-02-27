@@ -6,7 +6,7 @@ Bundle-Version: 3.3.0.qualifier
 Bundle-Activator: org.eclipse.help.internal.base.HelpBasePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.apache.lucene.demo.html;x-friends:="org.eclipse.pde.ui",
+Export-Package: org.apache.lucene.demo.html;x-internal:=true,
  org.eclipse.help.browser,
  org.eclipse.help.internal.base;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.base.remote;x-friends:="org.eclipse.ua.tests,org.eclipse.help.webapp,org.eclipse.help.ui",
