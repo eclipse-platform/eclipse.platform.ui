@@ -70,10 +70,8 @@ import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
  * </p>
  * 
  * <p>
- * Workbench handler is the
- * {@link org.eclipse.ui.internal.WorkbenchErrorHandlerProxy} object which
- * passes handling to handler assigned to the workbench advisor. This handler
- * doesn't have to be added as "statusHandlers" extension.
+ * Workbench handler passes handling to handler assigned to the workbench
+ * advisor. This handler doesn't have to be added as "statusHandlers" extension.
  * </p>
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
