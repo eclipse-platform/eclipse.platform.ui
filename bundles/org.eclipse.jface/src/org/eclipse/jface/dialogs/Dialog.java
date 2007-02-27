@@ -7,8 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Fix for bug 162124 
- *      [Dialogs] Double click to resize dialog should be tray-aware
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -24,9 +22,6 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -35,7 +30,6 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -207,52 +201,6 @@ public abstract class Dialog extends Window {
 	 */
 	public Control buttonBar;
 	
-	/**
-	 * A mouse listener that can be used to restore the default size
-	 * of a dialog.  
-	 * 
-	 * @since 3.2
-	 */
-	private MouseListener restoreSizeMouseListener = new MouseAdapter() {
-		public void mouseDoubleClick(MouseEvent event) {
-			// In case an async event is received after disposal
-			if (event.widget.isDisposed()) {
-				return;
-			}
-			// Need to cast to Control for coordinate mapping
-			if (event.widget instanceof Control) {
-				// We don't want to respond to a double click on a disabled
-				// widget that the user can see.
-				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140306#c34
-				Point displayPoint = event.widget.getDisplay().map((Control)event.widget, null, event.x, event.y);
-				if (!isPointOnDisabledVisibleControl((Control)event.widget, displayPoint)) {
-					restoreDialogToComputedSize();
-				}
-			}
-		}
-		
-		// Answers true if the point is on a visible, disabled widget, either
-		// the control or any of its children.  
-		// The point is in display coordinates.
-		private boolean isPointOnDisabledVisibleControl(Control control, Point displayPoint) {
-			if (!control.isEnabled() && control.isVisible()) {
-				Rectangle displayRect = control.getDisplay().map(control.getParent(), null, control.getBounds());
-				if (displayRect.contains(displayPoint)) {
-					return true;
-				}
-			}
-			if (control instanceof Composite) {
-				Control [] children = ((Composite)control).getChildren();
-				for (int i=0; i<children.length; i++) {
-					if (isPointOnDisabledVisibleControl(children[i], displayPoint)) {
-						return true;
-					}
-				}
-			}
-			return false;
-		}	
-	};
-
 	/**
 	 * Collection of buttons created by the <code>createButton</code> method.
 	 */
@@ -1019,8 +967,6 @@ public abstract class Dialog extends Window {
 		if (getShell() != null && !getShell().isDisposed()) {
 			saveDialogBounds(getShell());
 		}
-		
-		removeRestoreSizeMouseListeners();
 
 		boolean returnValue = super.close();
 		if (returnValue) {
@@ -1134,11 +1080,6 @@ public abstract class Dialog extends Window {
 	public void create() {
 		super.create();
 		applyDialogFont(buttonBar);
-		
-		// Register a mouse listener so that the user can restore this 
-		// size with a double-click.
-		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=116906
-		addRestoreSizeMouseListeners();
 	}
 
 	/**
@@ -1327,136 +1268,5 @@ public abstract class Dialog extends Window {
 		// No attempt is made to constrain the bounds. The default
 		// constraining behavior in Window will be used.
 		return result;
-	}
-	
-	/**
-	 * Add mouse listeners as needed to provide dialog size restore 
-	 * behavior.  Double-clicking in unused areas will restore
-	 * the dialog size.
-	 * 
-	 *  @since 3.2
-	 */
-	private void addRestoreSizeMouseListeners() {
-		// Hook a double click event for restoring the dialog's computed
-		// size.  We hook onto the button bar and the contents, and any
-		// nested composites in between, in order to accomodate different
-		// layout and construction styles.
-		Control dialogContents = getContents();
-		if (buttonBar != null) {
-			// Hook onto the button bar composite and
-			// any nested composites within the button bar.
-			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=137315
-			addRestoreSizeMouseListenerToComposites(buttonBar);	
-			// Hook onto any nested composites between the button bar
-			// and the contents.
-			Control control = buttonBar.getParent();
-			while (control != dialogContents && control != null) {
-				if (control.getClass() == Composite.class) {
-					control.addMouseListener(restoreSizeMouseListener);
-				}
-				control = control.getParent();
-			}
-		}
-		if (dialogContents != null) {
-			dialogContents.addMouseListener(restoreSizeMouseListener);
-		}
-	}
-	
-	/**
-	 * Add mouse listeners to the specified control if it is a composite,
-	 * and any child composites.  Called recursively.
-	 * 
-	 *  @since 3.2
-	 */
-	private void addRestoreSizeMouseListenerToComposites(Control control) {
-		// Check explicitly for instances of Composite, not instances of
-		// subclasses of composite.
-		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=140306
-		if (control.getClass() == Composite.class) {
-			control.addMouseListener(restoreSizeMouseListener);
-			Control [] children = ((Composite)control).getChildren();
-			for (int i=0; i<children.length; i++) {
-				addRestoreSizeMouseListenerToComposites(children[i]);
-			}
-		}
-	}
-	
-	/**
-	 * Remove any mouse listeners that were registered.
-	 * 
-	 *  @since 3.2
-	 */
-	private void removeRestoreSizeMouseListeners() {
-		Control dialogContents = getContents();
-		if (buttonBar != null && !buttonBar.isDisposed()) {
-			removeRestoreSizeMouseListenerFromComposites(buttonBar);
-			Control control = buttonBar.getParent();
-			while (control != dialogContents && control != null && !control.isDisposed()) {
-				if (control.getClass() == Composite.class) {
-					control.removeMouseListener(restoreSizeMouseListener);
-				}
-				control = control.getParent();
-			}
-		}
-		if (dialogContents != null && !dialogContents.isDisposed()) {
-			dialogContents.removeMouseListener(restoreSizeMouseListener);
-		}
-	}
-	
-	/**
-	 * Remove mouse listeners from the specified control if it is a composite,
-	 * and any child composites.  Called recursively.
-	 * 
-	 *  @since 3.3
-	 */
-	private void removeRestoreSizeMouseListenerFromComposites(Control control) {
-		// Check explicitly for instances of Composite, not instances of
-		// subclasses of composite.
-		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=140306
-		if (control.getClass() == Composite.class) {
-			control.removeMouseListener(restoreSizeMouseListener);
-			Control [] children = ((Composite)control).getChildren();
-			for (int i=0; i<children.length; i++) {
-				removeRestoreSizeMouseListenerFromComposites(children[i]);
-			}
-		}
-	}
-	
-	/**
-	 * Restore the dialog to its preferred size, resetting
-	 * any bounds that may have been stored in dialog settings.
-	 * 
-	 * @since 3.2
-	 */
-	private void restoreDialogToComputedSize() {
-		// Compute the dialog's current preferred size.
-		Point computedSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		
-		Shell shell = getShell();
-		Point shellSize = shell.getSize();
-		Point shellLocation = shell.getLocation();
-
-		// If the size has not changed, do nothing
-		if (shellSize.equals(computedSize)) {
-			return;
-		}
-			
-		// Now reset the bounds
-		shell.setBounds(getConstrainedShellBounds(new Rectangle(shellLocation.x,
-				shellLocation.y, computedSize.x, computedSize.y)));
-		
-		// If we do store the bounds, update the value so default bounds
-		// will be used on the next invocation.  
-		IDialogSettings settings = getDialogBoundsSettings();
-		if (settings != null) {
-			int strategy = getDialogBoundsStrategy();
-			if ((strategy & DIALOG_PERSISTSIZE) != 0) {
-				settings.put(DIALOG_WIDTH, DIALOG_DEFAULT_BOUNDS);
-				settings.put(DIALOG_HEIGHT, DIALOG_DEFAULT_BOUNDS);
-			}
-		}
-
-		
-	
 	}
 }
