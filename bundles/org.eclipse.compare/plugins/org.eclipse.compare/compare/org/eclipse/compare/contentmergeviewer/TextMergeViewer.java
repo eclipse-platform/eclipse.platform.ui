@@ -282,6 +282,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private int fSynchronziedScrollPosition;
 	private ActionContributionItem fNextChange;
 	private ActionContributionItem fPreviousChange;
+	private ShowWhitespaceAction showWhitespaceAction;
 
 	class ContributorInfo implements IElementStateListener, VerifyListener, IDocumentListener {
 		private final TextMergeViewer fViewer;
@@ -1659,6 +1660,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fBirdsEyeCursor.dispose();
 			fBirdsEyeCursor= null;
 		}
+		
+		if (showWhitespaceAction != null)
+			showWhitespaceAction.dispose();
 		
 		super.handleDispose(event);
   	}
@@ -3770,6 +3774,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem); //$NON-NLS-1$
 			Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.copyRightToLeft", fActivations);	//$NON-NLS-1$
 		}
+		
+		showWhitespaceAction = new ShowWhitespaceAction(new MergeSourceViewer[] {
+				fLeft, fRight, fAncestor
+		});
+		Utilities.registerAction(fHandlerService, showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, fActivations);
 	}
 	
 	/* (non-Javadoc)
