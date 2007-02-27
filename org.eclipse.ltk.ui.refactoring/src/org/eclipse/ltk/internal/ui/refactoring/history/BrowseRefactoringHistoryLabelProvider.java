@@ -69,4 +69,17 @@ public final class BrowseRefactoringHistoryLabelProvider extends RefactoringHist
 		}
 		return fDelegateLabelProvider.getText(element);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryLabelProvider#dispose()
+	 */
+	public void dispose() {
+		if (fDelegateLabelProvider != null) {
+			fDelegateLabelProvider.dispose();
+		}
+		if (fWorkbenchLabelProvider != null) {
+			fWorkbenchLabelProvider.dispose();
+		}
+		super.dispose();
+	}
 }
