@@ -11,7 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
@@ -24,6 +25,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.DiffListener;
+import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
@@ -207,11 +209,12 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			}
 			try{
 				super.execute(provider, (IResource[]) existingFiles.toArray(new IResource[existingFiles.size()]), recurse, Policy.subMonitorFor(monitor, 90));
-			} catch (CVSException ex){}
+			} catch(CVSCommunicationException ex){ // see bug 123430
+				CVSUIPlugin.openError(getShell(), null, null, ex);
+			} catch (CVSException ex){
+				//ignore
+			}
 		}
-		
-		
-		
 		
 		if (!newFiles.isEmpty() && Diff.INCLUDE_NEWFILES.isElementOf(localoptions)){
 			//Set new file to flag to let us know that we have added something to the current patch
@@ -243,19 +246,19 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		
 		DiffListener diffListener = new DiffListener(stream);
 		
-		Command.DIFF.execute(session,
-				Command.NO_GLOBAL_OPTIONS,
-				getLocalOptions(recurse),
-				resources,
-				diffListener,
-				monitor);
+		IStatus status = Command.DIFF.execute(session,
+							Command.NO_GLOBAL_OPTIONS,
+							getLocalOptions(recurse),
+							resources,
+							diffListener,
+							monitor);
 		
 		//Once any run of the Diff commands reports that it has written something to the stream, the patch 
 		//in its entirety is considered non-empty - until then keep trying to set the flag.
 		if (!patchHasContents)
 			patchHasContents = diffListener.wroteToStream();
-		//ignore Command.DIFF.execute return value, just return OK
-		return OK;
+
+		return status;
 	}
 
 	protected String getTaskName(CVSTeamProvider provider) {
