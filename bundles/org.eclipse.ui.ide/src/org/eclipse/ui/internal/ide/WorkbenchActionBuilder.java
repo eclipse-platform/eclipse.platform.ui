@@ -652,7 +652,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(newWindowAction);
 		menu.add(newEditorAction);
-		menu.add(toggleCoolbarAction);
         menu.add(new Separator());
         addPerspectiveActions(menu);
         menu.add(new Separator());
