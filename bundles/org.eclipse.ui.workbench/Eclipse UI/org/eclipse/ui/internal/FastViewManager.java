@@ -688,6 +688,11 @@ public class FastViewManager {
 		// Load the Trim Stack info
 		IMemento barsMem = memento
 				.getChild(IWorkbenchConstants.TAG_FAST_VIEW_BARS);
+		
+		// It's not there for old workspaces
+		if (barsMem == null)
+			return;
+		
 		IMemento[] bars = barsMem
 				.getChildren(IWorkbenchConstants.TAG_FAST_VIEW_BAR);
 		for (int i = 0; i < bars.length; i++) {
