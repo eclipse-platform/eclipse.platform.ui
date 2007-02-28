@@ -1741,7 +1741,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @param viewer the viewer for which to compute the proposals
 	 * @param offset a document offset
-	 * @return an array of completion proposals
+	 * @return an array of completion proposals or <code>null</code> if no proposals are possible
 	 * @see IContentAssistProcessor#computeCompletionProposals(ITextViewer, int)
 	 */
 	ICompletionProposal[] computeCompletionProposals(ITextViewer viewer, int offset) {
