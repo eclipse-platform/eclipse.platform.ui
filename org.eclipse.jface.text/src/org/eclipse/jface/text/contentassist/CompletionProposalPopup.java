@@ -1407,7 +1407,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 						hide();
 					} else {
 						ensureDocumentListenerInstalled();
-						if (completeCommonPrefix())
+						if (count > 0 && completeCommonPrefix())
 							hide();
 						else {
 							fComputedProposals= fFilteredProposals;
