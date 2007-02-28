@@ -44,6 +44,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -618,13 +619,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp == null) {
 			return;
 		}
+        
+        persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
+    }
+    
+    /**
+     * Add a fast view.
+     */
+    public void makeFastView(IViewReference ref) {
+        Perspective persp = getActivePerspective();
+        if (persp == null) {
+			return;
+		}
 
-        if (persp.isFastView(ref)) {
+        FastViewManager fvm = persp.getFastViewManager();
+        if (fvm.isFastView(ref)) {
             return;
         }
         
         // Do real work.
-        persp.addFastView(ref);
+        persp.makeFastView(ref);
 
         updateActivePart();
         
@@ -936,7 +950,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * 
      * Assumes that busy cursor is active.
      * 
-     * @param persp
+     * @param desc
      *            identifies the new perspective.
      */
     private void busySetPerspective(IPerspectiveDescriptor desc) {
@@ -2392,6 +2406,32 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
      */
     public boolean isPageZoomed() {
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax) {
+    		boolean zoomed = false;
+    		
+    		// Can we find a presentation container whose state is maximized ?
+    		Perspective persp = getActivePerspective();
+    		if (persp != null) {
+    			LayoutPart[] kids = persp.getPresentation().getLayout().getChildren();
+    			for (int i = 0; i < kids.length && !zoomed; i++) {
+					if (kids[i] instanceof ViewStack) {
+						zoomed = ((ViewStack)kids[i]).getState() == IStackPresentationSite.STATE_MAXIMIZED;
+					}
+					else if (kids[i] instanceof EditorSashContainer) {
+		    			LayoutPart[] editors = ((EditorSashContainer)kids[i]).getChildren();
+		    			for (int j = 0; j < editors.length && !zoomed; j++) {
+							if (editors[j] instanceof EditorStack) {
+								zoomed = ((EditorStack)kids[i]).getState() == IStackPresentationSite.STATE_MAXIMIZED;
+							}
+		    			}
+					}
+				}
+    		}
+    		return zoomed;
+    	}
+    	
     	return isZoomed();
     }
     
@@ -2675,10 +2715,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp == null) {
 			return;
 		}
-
-        if (!persp.isFastView(ref)) {
-            return;
-        }
 
         // Do real work.
         persp.removeFastView(ref);
@@ -3654,6 +3690,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return;
         }
 
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax) {
+	        // set the container's state to the new one
+	        PartStack parent = ((PartStack)pane.getContainer());
+	        parent.setState(newState);
+	        return;
+    	}
+    	
         boolean wasZoomed = isZoomed();
         boolean isZoomed = newState == IStackPresentationSite.STATE_MAXIMIZED;
 		
@@ -3670,7 +3715,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (parent != null) {
             parent.setMinimized(newState == IStackPresentationSite.STATE_MINIMIZED);
         }
-    }
+}
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPage#setPartState(org.eclipse.ui.IWorkbenchPartReference, int)

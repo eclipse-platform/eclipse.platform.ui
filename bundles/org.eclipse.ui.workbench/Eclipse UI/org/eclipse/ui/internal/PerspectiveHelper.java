@@ -35,10 +35,7 @@ import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
-import org.eclipse.ui.internal.layout.ITrimManager;
-import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.misc.StringMatcher;
-import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A perspective presentation is a collection of parts with a layout. Each part
@@ -52,6 +49,8 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class PerspectiveHelper {
     private WorkbenchPage page;
+    
+    private Perspective perspective;
 
     private Composite parentWidget;
 
@@ -199,6 +198,7 @@ public class PerspectiveHelper {
             ViewSashContainer mainLayout, Perspective perspective) {
         this.page = workbenchPage;
         this.mainLayout = mainLayout;
+        this.perspective = perspective;
         
 		// Views can be detached if the feature is enabled (true by default,
 		// use the plug-in customization file to disable), and if the platform
@@ -255,44 +255,8 @@ public class PerspectiveHelper {
 
         enableAllDrag();
 
-		// Trim Stack Support
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
-			// We 'stall' the creation of trim elements until the first activation
-			createInitialTrim();
-			
-			// Show Trim part
-			getLayout().setTrimVisible(true);
-	
-			// if we're done then force an update...optimize out if possible
-			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-			ITrimManager tbm = wbw.getTrimManager();
-			tbm.forceLayout();
-    	}
-
         active = true;
     }
-
-    /**
-	 * Create any trim necessary to support the current
-	 * layout state 
-	 */
-	private void createInitialTrim() {
-		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-		ITrimManager tbm = wbw.getTrimManager();
-
-		LayoutPart[] children = getLayout().getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getTrimState() == LayoutPart.TRIMSTATE_IN_TRIM
-					|| children[i].getTrimState() == LayoutPart.TRIMSTATE_ZOOMEDTOTRIM) {
-				IWindowTrim partTrim = tbm.getTrim(children[i].getID());
-				if (partTrim == null) {
-					children[i].createInitialTrim();
-				}
-			}
-		}
-	}
 
 	/**
      * Adds a part to the presentation. If a placeholder exists for the part
@@ -307,9 +271,10 @@ public class PerspectiveHelper {
         String primaryId = part.getID();
         String secondaryId = null;
 
+        IViewReference ref = null;
         if (part instanceof ViewPane) {
             ViewPane pane = (ViewPane) part;
-            IViewReference ref = (IViewReference) pane.getPartReference();
+            ref = (IViewReference) pane.getPartReference();
             secondaryId = ref.getSecondaryId();
         }
         if (secondaryId != null) {
@@ -341,7 +306,6 @@ public class PerspectiveHelper {
         } else {
             ILayoutContainer container = placeholder.getContainer();
             if (container != null) {
-
                 if (container instanceof DetachedPlaceHolder) {
                     //Create a detached window add the part on it.
                     DetachedPlaceHolder holder = (DetachedPlaceHolder) container;
@@ -362,10 +326,18 @@ public class PerspectiveHelper {
 						part.getContainer().add(otherChildren[i]);
 					}
                 } else {
-
                     // reconsistute parent if necessary
                     if (container instanceof ContainerPlaceholder) {
                         ContainerPlaceholder containerPlaceholder = (ContainerPlaceholder) container;
+                    	
+                        // Is this container placeholder being shown in the trim?
+//                        FastViewManager fvm = perspective.getFastViewManager();
+//                        String id = containerPlaceholder.getID();
+//                        if (fvm.getFastViews(id).size() > 0 && ref != null) {
+//                        	fvm.addViewReference(id, -1, ref, true);
+//                        	return;
+//                        }
+                        
                         ILayoutContainer parentContainer = containerPlaceholder
                                 .getContainer();
                         container = (ILayoutContainer) containerPlaceholder
@@ -628,15 +600,6 @@ public class PerspectiveHelper {
             DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
             window.close();
         }
-
-		// Trim Stack Support
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
-			// OK, adjust the trim to hide any view stacks that
-			// are -currently- showing in the trim
-			getLayout().setTrimVisible(false);
-    	}
         
         active = false;
     }
@@ -692,16 +655,33 @@ public class PerspectiveHelper {
      * drag listeners.
      */
     /* package */void derefPart(LayoutPart part) {
-
         if (part instanceof ViewPane) {
-            page.removeFastView(((ViewPane) part).getViewReference());
+        	IViewReference ref = ((ViewPane) part).getViewReference();
+        	if (perspective.isFastView(ref)) {
+        		// Special check: if it's a fast view then it's actual ViewStack
+        		// may only contain placeholders and the stack is represented in
+        		// the presentation by a container placeholder...make sure the
+        		// PartPlaceHolder for 'ref' is removed from the ViewStack
+        		String id = perspective.getFastViewManager().getIdForRef(ref);
+        		LayoutPart parentPart = findPart(id, null);
+        		if (parentPart instanceof ContainerPlaceholder) {
+        			ViewStack vs = (ViewStack) ((ContainerPlaceholder)parentPart).getRealContainer();
+        			LayoutPart[] kids = vs.getChildren();
+        			for (int i = 0; i < kids.length; i++) {
+						if (kids[i] instanceof PartPlaceholder) {
+							if (ref.getId().equals(kids[i].id))
+								vs.remove(kids[i]);
+						}
+					}
+        		}
+        		perspective.getFastViewManager().removeViewReference(ref, false, true);
+        	}
         }
 
         // Get vital part stats before reparenting.
-        //Window oldWindow = part.getWindow();
+        ILayoutContainer oldContainer = part.getContainer();
         boolean wasDocked = part.isDocked();
         Shell oldShell = part.getShell();
-        ILayoutContainer oldContainer = part.getContainer();
 
         // Reparent the part back to the main window
         part.reparent(mainLayout.getParent());
@@ -728,7 +708,8 @@ public class PerspectiveHelper {
                 // none visible, then reprarent and remove container
                 if (oldContainer instanceof ViewStack) {
                     ViewStack folder = (ViewStack) oldContainer;
-                    if (childVisible == 0) {
+                    boolean inTrim = perspective.getFastViewManager().getFastViews(folder.getID()).size() > 0;
+                    if (childVisible == 0 && !inTrim) {
                         ILayoutContainer parentContainer = folder
                                 .getContainer();
                         for (int i = 0; i < children.length; i++) {
@@ -953,7 +934,7 @@ public class PerspectiveHelper {
      * primary and secondary id pair.  Wild cards
      * are supported.
      */
-    private LayoutPart findPart(String primaryId, String secondaryId) {
+    public LayoutPart findPart(String primaryId, String secondaryId) {
         // check main window.
         ArrayList matchingParts = new ArrayList();
         LayoutPart part = (secondaryId != null) ? findPart(primaryId,

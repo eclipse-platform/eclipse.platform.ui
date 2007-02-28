@@ -33,13 +33,6 @@ abstract public class LayoutPart implements ISizeProvider {
     protected String id;
 
     public static final String PROP_VISIBILITY = "PROP_VISIBILITY"; //$NON-NLS-1$
-
-    // Trim Stack Support
-    public final static int TRIMSTATE_NORMAL = 0;		// 'normal'...in the presentation
-    public final static int TRIMSTATE_IN_TRIM = 1;		// 'minimized'...in the trim but wont restore on an unzoom
-    public final static int TRIMSTATE_ZOOMEDTOTRIM = 2;	// 'zoomed'...in the trim as a result of a 'zoom' on some other part
-    
-    protected int trimState = TRIMSTATE_NORMAL;
     
     /**
      * Number of times deferUpdates(true) has been called without a corresponding
@@ -492,33 +485,4 @@ abstract public class LayoutPart implements ISizeProvider {
      */
     public void testInvariants() {
     }
-
-	// Trim Stack Support
-	
-	/**
-	 * @return Returns the trimState.
-	 */
-	public int getTrimState() {
-		return trimState;
-	}
-
-	/**
-	 * @param trimState The trimState to set.
-	 */
-	public void setTrimState(int trimState) {
-		this.trimState = trimState;
-	}
-
-	/**
-	 * Causes a layout part to refresh its state.
-	 * This is called by the Perspective to cause
-	 * any necessary trim to be constructed on activation 
-	 */
-	public void createInitialTrim() {
-		if (trimState != LayoutPart.TRIMSTATE_NORMAL) {
-	    	int curState = getTrimState();
-	    	trimState = LayoutPart.TRIMSTATE_NORMAL;
-	    	setTrimState(curState);
-		}
-	}
 }

@@ -11,6 +11,14 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -33,10 +41,13 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
@@ -47,14 +58,6 @@ import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Implements the common behavior for stacks of Panes (ie: EditorStack and ViewStack)
@@ -236,6 +239,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      * use the default
      */
     private AbstractPresentationFactory factory;
+
+	private boolean smartZoomed = false;
             
     protected abstract boolean isMoveable(IPresentablePart part);
 
@@ -918,11 +923,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         String activeTabID = memento
                 .getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
 
-        // Trim Stack Support
-    	Integer trimState = memento.getInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE);
-    	if (trimState != null && trimState.intValue() != LayoutPart.TRIMSTATE_NORMAL)
-    		setTrimState(trimState.intValue());
-        
         // Read the page elements.
         IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
         if (children != null) {
@@ -947,9 +947,24 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             }
         }
 
-        Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
-        setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
-                : IStackPresentationSite.STATE_MINIMIZED);
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        final Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
+        if (useNewMinMax && expanded != null) {
+            StartupThreading.runWithoutExceptions(new StartupRunnable() {
+    			public void runWithException() throws Throwable {    		        
+    		        if (expanded.intValue() == IStackPresentationSite.STATE_MAXIMIZED)
+    		        	smartZoomed = true;
+    		        
+    		        setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
+    		                : IStackPresentationSite.STATE_MINIMIZED);
+    			}
+            });
+        }
+        else {
+	        setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
+	                : IStackPresentationSite.STATE_MINIMIZED);
+        }
 
         Integer appearance = memento
                 .getInteger(IWorkbenchConstants.TAG_APPEARANCE);
@@ -1035,10 +1050,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, requestedCurrent
                     .getCompoundId());
 		}
-        
-        // Trim Stack Support
-        if (getTrimState() != LayoutPart.TRIMSTATE_NORMAL)
-        	memento.putInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE, getTrimState());
 
         Iterator iter = children.iterator();
         while (iter.hasNext()) {
@@ -1061,11 +1072,18 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     .getCompoundId());
         }
 
-        memento
-                .putInteger(
-                        IWorkbenchConstants.TAG_EXPANDED,
-                        (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_MINIMIZED
-                                : IStackPresentationSite.STATE_RESTORED);
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        if (useNewMinMax) {
+            memento.putInteger(IWorkbenchConstants.TAG_EXPANDED, presentationSite.getState());
+        }
+        else {
+            memento
+            .putInteger(
+                    IWorkbenchConstants.TAG_EXPANDED,
+                    (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_MINIMIZED
+                            : IStackPresentationSite.STATE_RESTORED);
+        }
 
         memento.putInteger(IWorkbenchConstants.TAG_APPEARANCE, appearance);
 
@@ -1209,12 +1227,14 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	Perspective persp = getPage().getActivePerspective();
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (minimized && useNewMinMax && persp != null && this instanceof ViewStack) {
-    		// Make a one element list to pass on
-    		List stacks = new ArrayList();
-    		stacks.add(this);
-    		persp.movePartsToTrim(stacks, false);
-    		return;
+    	if (useNewMinMax && persp != null && this instanceof ViewStack) {
+			FastViewManager fvm = persp.getFastViewManager();
+    		if (minimized) {
+    			fvm.moveToTrim((ViewStack)this, false);
+    		}
+    		else {
+    			fvm.restoreToPresentation(getID());
+    		}
     	}
     	
         if (minimized != isMinimized) {
@@ -1265,10 +1285,87 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
         setMinimized(minimized);
         
-        if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-            requestZoomIn();
-        } else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
-            requestZoomOut();
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        if (useNewMinMax) {
+        	WorkbenchWindow wbw = (WorkbenchWindow)getPage().getWorkbenchWindow();
+        	if (wbw == null || wbw.getShell() == null)
+        		return;
+        	
+        	wbw.getShell().setRedraw(false);
+        	try {
+				ITrimManager tbm = wbw.getTrimManager();
+				FastViewManager fvm = getPage().getActivePerspective().getFastViewManager();
+				
+				if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+					ILayoutContainer root = getContainer();
+					
+					// We go up one more level when maximizing an editor stack
+					// so that we 'zoom' the editor area
+					boolean zoomingEditorArea = false;
+					if (root instanceof EditorSashContainer) {
+						root = ((EditorSashContainer)root).getContainer();
+						zoomingEditorArea = true;
+					}
+					
+				    LayoutPart[] children = root.getChildren();
+				    for (int i = 0; i < children.length; i++) {
+				        if (children[i] != this && children[i] instanceof ViewStack) {
+				        	((ViewStack)children[i]).setMinimized(true);
+				        	ViewStackTrimToolBar vstb = fvm.getViewStackTrimToolbar(children[i].getID());
+				        	vstb.setRestoreOnUnzoom(true);
+				        }
+				        else if (children[i] instanceof EditorSashContainer && !zoomingEditorArea) {
+				        	getPage().getActivePerspective().setEditorAreaTrimVisibility(true);
+				        }
+				    }
+				    
+				    smartZoomed = true;
+				}
+				else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
+					ILayoutContainer root = getContainer();
+					
+					// We go up one more level when maximizing an editor stack
+					// so that we 'zoom' the editor area
+					if (root instanceof EditorSashContainer) {
+						root = ((EditorSashContainer)root).getContainer();
+					}
+					
+				    LayoutPart[] children = root.getChildren();
+				    for (int i = 0; i < children.length; i++) {
+				        if (children[i] != this) {
+				        	IWindowTrim trim = tbm.getTrim(children[i].getID());
+				        	if (trim == null)
+				        		continue;
+				        	
+				        	if (trim instanceof ViewStackTrimToolBar) {
+				        		if (children[i] instanceof ContainerPlaceholder) {
+				            		// In the current presentation its a container placeholder
+				            		ViewStack realStack = (ViewStack) ((ContainerPlaceholder)children[i]).getRealContainer();
+				            		realStack.setMinimized(false);
+				        		}
+				        	}
+				        	else if (trim instanceof EditorAreaTrimToolBar) {
+				            	getPage().getActivePerspective().setEditorAreaTrimVisibility(false);
+				        	}
+				        }
+				    }
+				    
+				    smartZoomed = false;
+				}
+			}
+        	finally {
+        		wbw.getShell().setRedraw(true);
+			}
+	        
+	        setPresentationState(newState);
+        }
+        else {
+	        if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+	            requestZoomIn();
+	        } else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
+	            requestZoomOut();
+	        }
         }
     }
     
@@ -1304,7 +1401,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     }
     
     private void refreshPresentationState() {
-        if (isZoomed()) {
+        if (isZoomed() || smartZoomed) {
             presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
         } else {
             

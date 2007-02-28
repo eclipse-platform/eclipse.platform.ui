@@ -234,9 +234,9 @@ public class ViewPane extends PartPane {
                 .getWorkbenchWindow();
 
         FastViewBar fastViewBar = window.getFastViewBar();
-        if (fastViewBar == null) {
+        if (fastViewBar == null || getPage().getActivePerspective() == null)
             return;
-        }
+
         Shell shell = window.getShell();
 
         RectangleAnimation animation = new RectangleAnimation(shell,
@@ -244,16 +244,20 @@ public class ViewPane extends PartPane {
 
         animation.schedule();
 
-        getPage().addFastView(getViewReference());
+        FastViewManager fvm = getPage().getActivePerspective().getFastViewManager();
+        fvm.addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, getViewReference(), true);
     }
 
     public void doRemoveFast() {
+        if (getPage().getActivePerspective() == null)
+            return;
 
         Shell shell = getControl().getShell();
 
         Rectangle initialBounds = getParentBounds();
 
-        getPage().removeFastView(getViewReference());
+        FastViewManager fvm = getPage().getActivePerspective().getFastViewManager();
+        fvm.removeViewReference(getViewReference(), true, true);
 
         IWorkbenchPart toActivate = getViewReference().getPart(true);
         if (toActivate != null) {
@@ -272,7 +276,10 @@ public class ViewPane extends PartPane {
      * Pin the view.
      */
     protected void doDock() {
-        getPage().removeFastView(getViewReference());
+    	Perspective persp = getPage().getActivePerspective();
+    	if (persp != null) {
+    		persp.getFastViewManager().removeViewReference(getViewReference(), true, true);
+    	}
     }
     
     public void doDetach() {

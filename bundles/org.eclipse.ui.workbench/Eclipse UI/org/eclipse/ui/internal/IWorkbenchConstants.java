@@ -86,6 +86,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_AREA_VISIBLE = "editorAreaVisible"; //$NON-NLS-1$
 
+    public static final String TAG_AREA_TRIM_STATE = "editorAreaTrimState"; //$NON-NLS-1$
+
     public static final String TAG_INPUT = "input"; //$NON-NLS-1$
 
     public static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
@@ -123,8 +125,6 @@ public interface IWorkbenchConstants {
 	public static final String TAG_PROPERTIES = "properties"; //$NON-NLS-1$
 	
     public static final String TAG_PROPERTY = "property"; //$NON-NLS-1$
-
-    public static final String TAG_PART_TRIMSTATE = "inTrim"; //$NON-NLS-1$
 
     public static final String TAG_RELATIVE = "relative"; //$NON-NLS-1$
 
@@ -217,6 +217,10 @@ public interface IWorkbenchConstants {
     public static final String TAG_PROGRAM_NAME = "program_name"; //$NON-NLS-1$
 
     public static final String TAG_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
+
+    public static final String TAG_FAST_VIEW_BAR = "fastViewBar"; //$NON-NLS-1$
+
+    public static final String TAG_FAST_VIEW_BARS = "fastViewBars"; //$NON-NLS-1$
 
     public static final String TAG_GLOBAL_FAST_VIEWS = "globalFastViews"; //$NON-NLS-1$
 

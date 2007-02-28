@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.internal.IntModel;
 import org.eclipse.ui.internal.RadioMenu;
@@ -65,16 +66,17 @@ import org.eclipse.ui.presentations.PresentationUtil;
  */
 public abstract class TrimToolBarBase implements IWindowTrim {
 	// Fields
-	private String id;
-	private int orientation;
-	private WorkbenchWindow wbw;
-	private TrimLayout layout;
+	protected String id;
+	protected int orientation;
+	protected WorkbenchWindow wbw;
+	protected TrimLayout layout;
+	protected ToolBarManager tbMgr = null;
+	protected ToolItem contextToolItem = null;
 
 	// CoolBar handling
 	private TrimFrame frame = null;
 	private CoolBar cb = null;
 	private CoolItem ci = null;
-	private ToolBarManager tbMgr = null;
     
 	// Context Menu
 	private MenuManager dockMenuManager;
@@ -89,6 +91,27 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	/*
 	 * Listeners...
 	 */
+
+    private Listener tbListener = new Listener() {
+        public void handleEvent(Event event) {
+            Point loc = new Point(event.x, event.y);
+            if (event.type == SWT.MenuDetect) {
+                showToolBarPopup(loc);
+            }
+        }
+    };
+
+    /**
+     * This listener brings up the context menu
+     */
+    private Listener cbListener = new Listener() {
+        public void handleEvent(Event event) {
+            Point loc = new Point(event.x, event.y);
+            if (event.type == SWT.MenuDetect) {
+                showDockTrimPopup(loc);
+            }
+        }
+    };
     
     /**
      * This listener starts a drag operation when
@@ -101,18 +124,6 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 	            Point position = DragUtil.getEventLoc(event);
 	            startDraggingTrim(position);
         	}
-        }
-    };
-
-    /**
-     * This listener brings up the context menu
-     */
-    private Listener menuListener = new Listener() {
-        public void handleEvent(Event event) {
-            Point loc = new Point(event.x, event.y);
-            if (event.type == SWT.MenuDetect) {
-                showDockTrimPopup(loc);
-            }
         }
     };
 
@@ -130,12 +141,38 @@ public abstract class TrimToolBarBase implements IWindowTrim {
     }
 
     /**
-     * Initialize the ToolBarManger for this instance. Clients
-     * may assume that the manager has just been created.
+	 * @param loc
+	 */
+	private void showToolBarPopup(Point loc) {
+		Point tbLoc = tbMgr.getControl().toControl(loc);
+		contextToolItem = tbMgr.getControl().getItem(tbLoc);
+		MenuManager mm = tbMgr.getContextMenuManager();
+		if (mm != null) {
+			Menu menu = mm.createContextMenu(wbw.getShell());
+	        menu.setLocation(loc.x, loc.y);
+	        menu.setVisible(true);
+		}
+	}
+
+	/**
+     * Initialize the ToolBarManger for this instance. We create a
+     * new ToolBarManager whenever we need to and this gives the
+     * derived class a chance to define the ICI's and context
+     * menu...
      * 
      * @param mgr The manager to initialize
      */
     public abstract void initToolBarManager(ToolBarManager mgr);
+    
+    /**
+     * Hook any necessary listeners to the new ToolBar instance.
+     * <p>
+     * NOTE: Clients should add a dispose listener if necessary to
+     * unhook listeners added through this call.
+     * </p>
+     * @param mgr The ToolBarManager whose control is to be hooked
+     */
+    public abstract void hookControl(ToolBarManager mgr);
     
 	/**
 	 * Set up the trim with its cursor, drag listener, context menu and menu listener.
@@ -159,8 +196,16 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 
 		// Create (and 'fill') the toolbar
 		tbMgr = new ToolBarManager(orientation | SWT.FLAT);
+		
+		// Have the subclass define any manager content
 		initToolBarManager(tbMgr);
+		
+		// Create the new ToolBar
 		ToolBar tb = tbMgr.createControl(cb);
+		
+		// Have the subclass hook any listeners
+		hookControl(tbMgr);
+		
 	    Point size = tb.computeSize (SWT.DEFAULT, SWT.DEFAULT);		
 	    Point ps = ci.computeSize (size.x, size.y);
 		ci.setPreferredSize (ps);
@@ -184,7 +229,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
     	dockContributionItem = getDockingContribution();
         dockMenuManager.add(dockContributionItem);
 
-        cb.addListener(SWT.MenuDetect, menuListener);
+        tb.addListener(SWT.MenuDetect, tbListener);
+        cb.addListener(SWT.MenuDetect, cbListener);
         
         //tbMgr.getControl().setBackground(cb.getDisplay().getSystemColor(SWT.COLOR_GREEN));
         //tbMgr.getControl().pack(true);
@@ -205,6 +251,23 @@ public abstract class TrimToolBarBase implements IWindowTrim {
     	
     	// perform an optimized layout to show the trim in its new location
     	LayoutUtil.resize(getControl());
+	}
+
+	/**
+	 * Force the toobar to re-synch to the model
+	 * @param changed true if changes have occurred in the structure
+	 */
+	public void update(boolean changed) {
+		tbMgr.update(changed);
+		
+		// Force a resize
+		
+	    Point size = tbMgr.getControl().computeSize (SWT.DEFAULT, SWT.DEFAULT);		
+	    Point ps = ci.computeSize (size.x, size.y);
+		ci.setPreferredSize (ps);
+		cb.pack();
+		cb.update();
+		LayoutUtil.resize(getControl());
 	}
 	
 	/**
@@ -321,6 +384,13 @@ public abstract class TrimToolBarBase implements IWindowTrim {
     }
 
 	/**
+	 * @return The side the trm is currently on
+	 */
+	public int getCurrentSide() {
+		return radioVal.get();
+	}
+	
+	/**
 	 * Test Hook: Bring up a dialog that allows the user to
 	 * modify the trimdragging GUI preferences.
 	 */
@@ -351,7 +421,7 @@ public abstract class TrimToolBarBase implements IWindowTrim {
         }
 
         // tidy up...
-        getControl().removeListener(SWT.MenuDetect, menuListener);
+        getControl().removeListener(SWT.MenuDetect, cbListener);
         
         tbMgr.dispose();
         tbMgr = null;

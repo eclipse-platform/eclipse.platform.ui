@@ -12,31 +12,29 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
-public class ViewStackTrimToolBar extends TrimToolBarBase {
+public class EditorAreaTrimToolBar extends TrimToolBarBase {
+	private LayoutPart editorArea;
 	private boolean restoreOnUnzoom = false;
 	
 	// The orientation of the fast view pane when showing a view
 	private int paneOrientation;
 
-	public ViewStackTrimToolBar(String id, int curSide, int paneOrientation, WorkbenchWindow wbw) {
-		super(id, curSide, wbw);
+	public EditorAreaTrimToolBar(WorkbenchWindow wbw, LayoutPart editorArea) {
+		super(IPageLayout.ID_EDITOR_AREA, SWT.TOP, wbw);
 		
-		this.paneOrientation = paneOrientation;		
-		dock(curSide);
+		this.editorArea = editorArea;		
+		dock(SWT.TOP);
 	}
 	
 	/**
@@ -44,14 +42,7 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 	 */
 	protected void restoreToPresentation() {
 		Perspective persp = wbw.getActiveWorkbenchPage().getActivePerspective();
-		//FastViewManager fvMgr = persp.getFastViewManager();
-		
-		LayoutPart part = persp.getPresentation().findPart(getId(), null);
-		if (part instanceof ContainerPlaceholder) {
-			ViewStack stack = (ViewStack) ((ContainerPlaceholder)part).getRealContainer();
-			stack.setMinimized(false);
-		}
-		//fvMgr.restoreToPresentation(getId());
+		persp.restoreTrimPart(editorArea);
 	}
 
 	public void initToolBarManager(final ToolBarManager mgr) {
@@ -74,35 +65,26 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 			}
 		};
 		mgr.add(restoreContrib);
-		
-		ShowFastViewContribution sfvc = new ShowFastViewContribution(wbw, getId());
-		mgr.add(sfvc);
-		
-		// Add context menu items
-		mgr.setContextMenuManager(new MenuManager());
-		MenuManager menuMgr = mgr.getContextMenuManager();
-		IContributionItem closeContrib = new ContributionItem() {
-			public void fill(Menu parent, int index) {
-		        MenuItem closeItem = new MenuItem(parent, SWT.NONE, index++);
-		        closeItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
-		        closeItem.addSelectionListener(new SelectionAdapter() {
-		            public void widgetSelected(SelectionEvent e) {
-		            	IViewReference selectedView = null;
-		            	if (contextToolItem != null) {
-		            		selectedView = (IViewReference) contextToolItem.getData(ShowFastViewContribution.FAST_VIEW);
-		            	}
-		            	
-		                if (selectedView != null) {
-		                    WorkbenchPage page = wbw.getActiveWorkbenchPage();
-		                    if (page != null) {
-		                        page.hideView(selectedView);
-		                    }
-		                }
-		            }
+
+		// Set up the ToolBar with a button represing the Editor Area
+		IContributionItem eaContrib = new ContributionItem() {
+			public void fill(ToolBar parent, int index) {
+		        ToolItem editorAreaItem = new  ToolItem(mgr.getControl(), SWT.PUSH, index);        
+		        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_EDITOR_TRIMPART);
+		        editorAreaItem.setImage(tbImage);       
+		        String menuTip = WorkbenchMessages.EditorArea_Tooltip;
+		        editorAreaItem.setToolTipText(menuTip);
+		        editorAreaItem.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+						restoreToPresentation();
+					}
+					public void widgetSelected(SelectionEvent e) {
+						restoreToPresentation();
+					}
 		        });
 			}
 		};
-		menuMgr.add(closeContrib);
+		mgr.add(eaContrib);
 	}
 
 	/* (non-Javadoc)

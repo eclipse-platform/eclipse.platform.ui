@@ -14,10 +14,8 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -29,14 +27,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
-import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * Abstract container that groups various layout
@@ -57,9 +52,6 @@ public abstract class PartSashContainer extends LayoutPart implements
     private Composite parentWidget;
 
     private LayoutPart zoomedPart;
-    
-    // 'Smart' zoom
-    private LayoutPart smartZoomedPart = null;
 
     protected WorkbenchPage page;
 
@@ -854,55 +846,6 @@ public abstract class PartSashContainer extends LayoutPart implements
     public void setBounds(Rectangle r) {
         this.parent.setBounds(r);
     }
-
-    private void smartZoomIn(LayoutPart zoomingPart, Perspective persp) {
-    	// Prevent recursion
-    	if (smartZoomedPart != null)
-    		return;
-    	
-    	// 'Smart'(?) zoom...'minimize' all view stacks except the
-    	// one we're zooming. If we're zooming the editor then -all-
-    	// view stacks get minimized
-        LayoutPart[] children = getChildren();
-        List trimParts = new ArrayList();
-        for (int i = 0; i < children.length; i++) {
-            if (children[i] != zoomingPart)
-            	trimParts.add(children[i]);
-        }
-
-        persp.movePartsToTrim(trimParts, true);
-        
-        // We're -not- really zoomed, don't lie
-        zoomedPart = null;
-        
-        // ...but we're 'zoomed'
-        smartZoomedPart = zoomingPart;
-        
-        if (smartZoomedPart instanceof PartStack) {
-        	((PartStack)smartZoomedPart).setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
-        }
-        // Remember that we need to trigger a layout
-        layoutDirty = true;
-    }
-
-    private void smartZoomOut(Perspective persp) {
-    	// Prevent recursion
-    	if (smartZoomedPart == null)
-    		return;
-    	
-        // we're 'unzoomed'
-    	LayoutPart zoomedPartCache = smartZoomedPart;
-        smartZoomedPart = null;
-		
-		// Restore (close) trim parts created during a zoom
-        persp.restoreZoomedParts();
-        
-        if (zoomedPartCache instanceof PartStack) {
-        	((PartStack)zoomedPartCache).setPresentationState(IStackPresentationSite.STATE_RESTORED);
-        }
-        // Remember that we need to trigger a layout
-        layoutDirty = true;
-    }
     
     /**
      * Zoom in on a particular layout part.
@@ -915,15 +858,6 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Note: Method assumes we are active.
      */
     private void zoomIn(LayoutPart part) {
-        // 'Smart'? maximize
-		Perspective persp = this.getPage().getActivePerspective();
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
-    		smartZoomIn(part, persp);
-    		return;
-    	}
-    	
         // Sanity check.
         if (isZoomed()) {
 			return;
@@ -1025,16 +959,7 @@ public abstract class PartSashContainer extends LayoutPart implements
      * 
      * Note: Method assumes we are active.
      */
-    private void zoomOut() {
-        // 'Smart'? Zoom out
-		Perspective persp = this.getPage().getActivePerspective();
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
-    		smartZoomOut(persp);
-    		return;
-    	}
-    	
+    private void zoomOut() {    	
         // Sanity check.
         if (!isZoomed()) {
 			return;
@@ -1244,7 +1169,6 @@ public abstract class PartSashContainer extends LayoutPart implements
                 PartStack stack = (PartStack) targetPart;
                 for (int idx = 0; idx < toDrop.length; idx++) {
                     PartPane next = toDrop[idx];
-
                     stack(next, stack);
                 }
             }

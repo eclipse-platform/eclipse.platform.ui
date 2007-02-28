@@ -76,9 +76,11 @@ public class Perspective {
 
     protected WorkbenchPage page;
 
+    // Editor Area management
     protected LayoutPart editorArea;
-
     private PartPlaceholder editorHolder;
+    private boolean editorAreaInTrim = false;
+    private boolean editorAreaRestoreOnUnzoom = false;
 
     private ViewFactory viewFactory;
     
@@ -92,7 +94,8 @@ public class Perspective {
 
     private ArrayList perspectiveShortcuts;
 
-    private ArrayList fastViews;
+    //private List fastViews;
+    private FastViewManager fastViewManager;
 
     private Map mapIDtoViewLayoutRec;
 
@@ -144,7 +147,8 @@ public class Perspective {
         this.viewFactory = page.getViewFactory();
         alwaysOnActionSets = new ArrayList(2);
         alwaysOffActionSets = new ArrayList(2);
-        fastViews = new ArrayList(2);
+        fastViewManager = new FastViewManager(this, page);
+        
         mapIDtoViewLayoutRec = new HashMap();
     }
 
@@ -152,7 +156,7 @@ public class Perspective {
 	 * Sets the fast view attribute. Note: The page is expected to update action
 	 * bars.
 	 */
-	public void addFastView(IViewReference ref) {
+	public void makeFastView(IViewReference ref) {
 		addFastView(ref, true);
 	}
 	
@@ -174,7 +178,6 @@ public class Perspective {
 			
 			// We are drag-enabling the pane because it has been disabled
 			// when it was removed from the perspective presentation.
-			fastViews.add(ref);
 			pane.setFast(true);
 			Control ctrl = pane.getControl();
 			if (ctrl != null) {
@@ -297,7 +300,7 @@ public class Perspective {
      * Returns the window's client composite widget
      * which views and editor area will be parented.
      */
-    private Composite getClientComposite() {
+    public Composite getClientComposite() {
         return page.getClientComposite();
     }
 
@@ -325,14 +328,7 @@ public class Perspective {
      * Returns the docked views.
      */
     public IViewReference[] getFastViews() {
-    	ArrayList trueFVBRefs = new ArrayList();
-    	for (Iterator fvs = fastViews.iterator(); fvs.hasNext();) {
-			IViewReference ref = (IViewReference) fvs.next();
-			
-			// Only return 'real' fast views
-			if (getTrimPartForRef(ref) == null)
-				trueFVBRefs.add(ref);
-		}
+    	List trueFVBRefs = fastViewManager.getFastViews(FastViewBar.FASTVIEWBAR_ID);
         IViewReference array[] = new IViewReference[trueFVBRefs.size()];
         trueFVBRefs.toArray(array);
         return array;
@@ -374,7 +370,7 @@ public class Perspective {
      * Retrieves the fast view width ratio for the given view. 
      * If the ratio is not known, the default ratio for the view is assigned and returned.
      */
-    private float getFastViewWidthRatio(IViewReference ref) {
+    public float getFastViewWidthRatio(IViewReference ref) {
         ViewLayoutRec rec = getViewLayoutRec(ref, true);
         if (rec.fastViewWidthRatio == IPageLayout.INVALID_RATIO) {
             IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
@@ -416,7 +412,7 @@ public class Perspective {
     /**
      * Returns the view factory.
      */
-    private ViewFactory getViewFactory() {
+    public ViewFactory getViewFactory() {
         return viewFactory;
     }
 
@@ -432,6 +428,7 @@ public class Perspective {
         List panes = new ArrayList(5);
         presentation.collectViewPanes(panes);
 
+        List fastViews = fastViewManager.getFastViews(null);
         IViewReference[] resultArray = new IViewReference[panes.size()
                 + fastViews.size()];
 
@@ -465,7 +462,6 @@ public class Perspective {
         // know where to put it back on show editor area request.
         editorHolder = new PartPlaceholder(editorArea.getID());
         presentation.getLayout().replace(editorArea, editorHolder);
-
     }
 
     /**
@@ -496,7 +492,6 @@ public class Perspective {
 
         // Remove the view from the current presentation.
         if (isFastView(ref)) {
-            fastViews.remove(ref);
             if (pane != null) {
 				pane.setFast(false); //force an update of the toolbar
 			}
@@ -526,7 +521,7 @@ public class Perspective {
      * Returns true if a view is fast.
      */
     public boolean isFastView(IViewReference ref) {
-        return fastViews.contains(ref);
+        return fastViewManager.isFastView(ref);
     }
 
     /**
@@ -534,7 +529,7 @@ public class Perspective {
      * or null if not found.  If create is true, it creates the record
      * if not already created.
      */
-    private ViewLayoutRec getViewLayoutRec(IViewReference ref, boolean create) {
+    public ViewLayoutRec getViewLayoutRec(IViewReference ref, boolean create) {
         ViewLayoutRec result = getViewLayoutRec(ViewFactory.getKey(ref), create);
         if (result == null && create==false) {
         	result = getViewLayoutRec(ref.getId(), false);
@@ -740,7 +735,12 @@ public class Perspective {
         showInPartIds = layout.getShowInPartIds();
 
         // Retrieve fast views
-        fastViews = layout.getFastViews();
+        ArrayList fastViews = layout.getFastViews();
+        for (Iterator fvIter = fastViews.iterator(); fvIter.hasNext();) {
+			IViewReference ref = (IViewReference) fvIter.next();
+			fastViewManager.addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, 
+					!fvIter.hasNext());
+		}
 
         // Is the layout fixed
         fixed = layout.isFixed();
@@ -814,6 +814,8 @@ public class Perspective {
      * activate.
      */
 	protected void onActivate() {
+		List fastViews = fastViewManager.getFastViews(null);
+		
 		// Update editor area state.
 		if (editorArea.getControl() != null) {
 			editorArea.setVisible(isEditorAreaVisible());
@@ -844,15 +846,7 @@ public class Perspective {
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
     	if (useNewMinMax) {
-			// The editor area's trim stack's visibility is the inverse
-			// Of the actual editor area
-			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-			ITrimManager tbm = wbw.getTrimManager();
-			IWindowTrim eaTrim = tbm.getTrim(editorArea.getID());
-			if (eaTrim != null) {
-				tbm.setTrimVisible(eaTrim, !isEditorAreaVisible());
-				tbm.forceLayout();
-			}
+    		fastViewManager.activate();
     	}
 
 		if (shouldHideEditorsOnActivate) {
@@ -861,6 +855,18 @@ public class Perspective {
 			// before it is hidden. See bug 20166.
 			hideEditorArea();
 			shouldHideEditorsOnActivate = false;
+			
+			// this is an override so it should handle both states
+			setEditorAreaTrimVisibility(false);
+		}
+		else {
+			// Synch the editor area
+			if (editorAreaInTrim) {
+				setEditorAreaTrimVisibility(true);
+			}
+			else {
+				setEditorAreaTrimVisibility(false);
+			}
 		}
 	}
 
@@ -868,6 +874,8 @@ public class Perspective {
      * deactivate.
      */
 	protected void onDeactivate() {
+		List fastViews = fastViewManager.getFastViews(null);
+		
 		presentation.deactivate();
 		setActiveFastView(null);
 		setAllPinsVisible(false);
@@ -882,6 +890,8 @@ public class Perspective {
 				}
 			}
 		}
+		
+		fastViewManager.deActivate();
 	}
 
     /**
@@ -917,24 +927,23 @@ public class Perspective {
 	 */
 	public void removeFastView(IViewReference ref, boolean handleLayout) {
 		ViewPane pane = getPane(ref);
-		if (isFastView(ref)) {
-			if (activeFastView == ref) {
-				setActiveFastView(null);
-			}
-			fastViews.remove(ref);
-			pane.setFast(false);
-			Control ctrl = pane.getControl();
-			if (ctrl != null) {
-				ctrl.setEnabled(true); // Modify focus support.
-			}
-			
-			if (handleLayout) {
-				// We are disabling the pane because it will be enabled when it
-				// is added to the presentation. When a pane is enabled a drop
-				// listener is added to it, and we do not want to have multiple
-				// listeners for a pane
-				presentation.addPart(pane);
-			}
+
+		if (activeFastView == ref) {
+			setActiveFastView(null);
+		}
+		
+		pane.setFast(false);
+		Control ctrl = pane.getControl();
+		if (ctrl != null) {
+			ctrl.setEnabled(true); // Modify focus support.
+		}
+		
+		if (handleLayout) {
+			// We are disabling the pane because it will be enabled when it
+			// is added to the presentation. When a pane is enabled a drop
+			// listener is added to it, and we do not want to have multiple
+			// listeners for a pane
+			presentation.addPart(pane);
 		}
 	}
 
@@ -971,7 +980,7 @@ public class Perspective {
         return result;
     }
 
-    private IStatus createReferences(IMemento views[]) {
+    IStatus createReferences(IMemento views[]) {
         MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
                 WorkbenchMessages.Perspective_problemsRestoringViews, null); 
 
@@ -1077,7 +1086,6 @@ public class Perspective {
             if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
 				continue;
 			}
-
             
             // Create and open the view.
             IViewReference viewRef = viewFactory.getView(id, secondaryId);
@@ -1105,57 +1113,7 @@ public class Perspective {
         }
 
         // Load the fast views
-        IMemento fastViewsMem = memento
-                .getChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-        if (fastViewsMem != null) {
-            views = fastViewsMem.getChildren(IWorkbenchConstants.TAG_VIEW);
-            for (int x = 0; x < views.length; x++) {
-                // Get the view details.
-                IMemento childMem = views[x];
-                String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-                String secondaryId = ViewFactory.extractSecondaryId(viewID);
-                if (secondaryId != null) {
-                    viewID = ViewFactory.extractPrimaryId(viewID);
-                }
-
-                IViewReference viewRef = viewFactory.getView(viewID,
-                        secondaryId);
-                WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
-                if (ref == null) {
-                    String key = ViewFactory.getKey(viewID, secondaryId);
-                    WorkbenchPlugin
-                            .log("Could not create view: '" + key + "'."); //$NON-NLS-1$ //$NON-NLS-2$
-                    result
-                            .add(new Status(
-                                    IStatus.ERROR,
-                                    PlatformUI.PLUGIN_ID,
-                                    0,
-                                    NLS.bind(WorkbenchMessages.Perspective_couldNotFind, key ),
-                                    null));
-                    continue;
-                }
-
-                // Restore fast view width ratio
-                Float ratio = childMem.getFloat(IWorkbenchConstants.TAG_RATIO);
-                if (ratio == null) {
-                    Integer viewWidth = childMem
-                            .getInteger(IWorkbenchConstants.TAG_WIDTH);
-                    if (viewWidth == null) {
-						ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
-					} else {
-						ratio = new Float((float) viewWidth.intValue()
-                                / (float) getClientComposite().getSize().x);
-					}
-                }
-                ViewLayoutRec rec = getViewLayoutRec(viewRef, true);
-                rec.fastViewWidthRatio = ratio.floatValue();
-
-                // Add to fast view list because creating a view pane
-                // will come back to check if its a fast view. We really
-                // need to clean up this code.		
-                fastViews.add(ref);
-            }
-        }
+        fastViewManager.restoreState(memento, result);
 
         // Load the view layout recs
         IMemento[] recMementos = memento
@@ -1300,6 +1258,13 @@ public class Perspective {
         shouldHideEditorsOnActivate = (areaVisible != null && areaVisible
                 .intValue() == 0);
 
+        // Restore the trim state of the editor area
+        Integer trimStateInt = memento.getInteger(IWorkbenchConstants.TAG_AREA_TRIM_STATE);
+        if (trimStateInt != null) {
+        	editorAreaInTrim = (trimStateInt.intValue() & 1) != 0;
+        	editorAreaRestoreOnUnzoom = (trimStateInt.intValue() & 2) != 0;
+        }
+        
         // restore the fixed state
         Integer isFixed = memento.getInteger(IWorkbenchConstants.TAG_FIXED);
         fixed = (isFixed != null && isFixed.intValue() == 1);
@@ -1307,6 +1272,48 @@ public class Perspective {
         return result;
     }
 
+    public IViewReference restoreFastView(IMemento fvMemento, MultiStatus result) {
+        String viewID = fvMemento.getString(IWorkbenchConstants.TAG_ID);
+        String secondaryId = ViewFactory.extractSecondaryId(viewID);
+        if (secondaryId != null) {
+            viewID = ViewFactory.extractPrimaryId(viewID);
+        }
+
+        IViewReference viewRef = viewFactory.getView(viewID,
+                secondaryId);
+        WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
+        if (ref == null) {
+            String key = ViewFactory.getKey(viewID, secondaryId);
+            WorkbenchPlugin
+                    .log("Could not create view: '" + key + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+            result
+                    .add(new Status(
+                            IStatus.ERROR,
+                            PlatformUI.PLUGIN_ID,
+                            0,
+                            NLS.bind(WorkbenchMessages.Perspective_couldNotFind, key ),
+                            null));
+            return null;
+        }
+
+        // Restore fast view width ratio
+        Float ratio = fvMemento.getFloat(IWorkbenchConstants.TAG_RATIO);
+        if (ratio == null) {
+            Integer viewWidth = fvMemento
+                    .getInteger(IWorkbenchConstants.TAG_WIDTH);
+            if (viewWidth == null) {
+				ratio = new Float(IPageLayout.DEFAULT_FASTVIEW_RATIO);
+			} else {
+				ratio = new Float((float) viewWidth.intValue()
+                        / (float) getClientComposite().getSize().x);
+			}
+        }
+        ViewLayoutRec rec = getViewLayoutRec(viewRef, true);
+        rec.fastViewWidthRatio = ratio.floatValue();
+        
+        return viewRef;
+    }
+    
     /**
      * Returns the ActionSets read from perspectiveExtensions in the registry.  
      */
@@ -1481,48 +1488,9 @@ public class Perspective {
                     .getKey(ref));
         }
 
-        // Interim fix for defect 168057...ensure that the old
-        // state is persisted unless using the new presentation
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (!useNewMinMax) {
-    		// -All- fastviews must be in the FVB
-		    if (fastViews.size() > 0) {
-		        IMemento childMem = memento
-		                .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-		        itr = fastViews.iterator();
-		        while (itr.hasNext()) {
-		            IViewReference ref = (IViewReference) itr.next();
-		            IMemento viewMemento = childMem
-		                    .createChild(IWorkbenchConstants.TAG_VIEW);
-		            String id = ViewFactory.getKey(ref);
-		            viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-		            float ratio = getFastViewWidthRatio(ref);
-		            viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
-		        }
-		    }
-    	}
-    	else {
-	        // Persist only the fast views from the 'real' FVB
-    		// FIXME: This indices defect 168057 in the new presentation
-			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-			FastViewBar fvb = wbw.getFastViewBar();
-	        if (fvb != null && fvb.getViewRefs().size() > 0) {
-	            IMemento childMem = memento
-	                    .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-	            itr = fvb.getViewRefs().iterator();
-	            while (itr.hasNext()) {
-	                IViewReference ref = (IViewReference) itr.next();
-	                IMemento viewMemento = childMem
-	                        .createChild(IWorkbenchConstants.TAG_VIEW);
-	                String id = ViewFactory.getKey(ref);
-	                viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-	                float ratio = getFastViewWidthRatio(ref);
-	                viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
-	            }
-	        }
-    	}
-
+        // save all fastview state
+    	fastViewManager.saveState(memento);
+    	
         // Save the view layout recs.
         for (Iterator i = mapIDtoViewLayoutRec.keySet().iterator(); i.hasNext();) {
             String compoundId = (String) i.next();
@@ -1564,12 +1532,17 @@ public class Perspective {
         result.add(presentation.saveState(childMem));
 
         // Save the editor visibility state
-        if (isEditorAreaVisible()) {
+        if (isEditorAreaVisible()  || editorAreaInTrim) {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 		} else {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
 		}
 
+        // Save the trim state of the editor area
+        int trimState = editorAreaInTrim ? 1 : 0;
+        trimState |= editorAreaRestoreOnUnzoom ? 2 : 0;
+        memento.putInteger(IWorkbenchConstants.TAG_AREA_TRIM_STATE, trimState);
+        	
         // Save the fixed state
         if (fixed) {
 			memento.putInteger(IWorkbenchConstants.TAG_FIXED, 1);
@@ -1650,7 +1623,7 @@ public class Perspective {
      * Sets the visibility of all fast view pins.
      */
     private void setAllPinsVisible(boolean visible) {
-        Iterator iter = fastViews.iterator();
+        Iterator iter = fastViewManager.getFastViews(null).iterator();
         while (iter.hasNext()) {
             ViewPane pane = getPane((IViewReference) iter.next());
             if (pane != null) {
@@ -1663,24 +1636,7 @@ public class Perspective {
      * Sets the selection for the shortcut bar icon representing the givevn fast view.
      */
     private void setFastViewIconSelection(IViewReference ref, boolean selected) {
-		// First, is it in a Trim Stack?
-		ViewStackTrimPart ts = getTrimPartForRef(ref);
-		if (ts != null) {
-			ts.setIconSelection(ref, selected);
-			return;
-		}
-
-		WorkbenchWindow window = (WorkbenchWindow) page.getWorkbenchWindow();
-		FastViewBar bar = window.getFastViewBar();
-		if (bar != null) {
-			if (selected) {
-				bar.setSelection(ref);
-			} else {
-				if (ref == bar.getSelection()) {
-					bar.setSelection(null);
-				}
-			}
-		}
+		fastViewManager.setFastViewIconSelection(ref, selected);
     }
 
     /**
@@ -1729,21 +1685,48 @@ public class Perspective {
         editorHolder = null;
     }
 
-	private ViewStackTrimPart getTrimPartForRef(IViewReference ref) {
-		// NOTE: Should I check only the trim stacks for this perspective??
-		// Is it in a minimized stack?
-		List trimParts = presentation.getLayout().getTrimForParts();
-		for (Iterator trimIter = trimParts.iterator(); trimIter.hasNext();) {
-			IWindowTrim trim = (IWindowTrim) trimIter.next();
-			if (trim instanceof ViewStackTrimPart) {
-				if (((ViewStackTrimPart) trim).hasViewRef(ref))
-					return (ViewStackTrimPart) trim;
-			}
+    private EditorAreaTrimToolBar getEditorAreaTrim() {
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		ITrimManager tbm = wbw.getTrimManager();
+		return (EditorAreaTrimToolBar) tbm.getTrim(IPageLayout.ID_EDITOR_AREA);
+    }
+    
+    protected EditorAreaTrimToolBar setEditorAreaTrimVisibility(boolean visible) {
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		ITrimManager tbm = wbw.getTrimManager();
+		
+		EditorAreaTrimToolBar editorAreaTrim = getEditorAreaTrim();
+		if (visible) {
+			// Create if necesary
+	    	if (editorAreaTrim == null) {
+	    		// Gain access to the trim manager
+				editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
+				tbm.addTrim(SWT.TOP, editorAreaTrim);
+	    	}
+	    	
+	    	tbm.setTrimVisible(editorAreaTrim, true);
+	    	tbm.forceLayout();
+	    	editorAreaInTrim = true;
+	    	
+	    	// If we're showing then hide the editor area
+	    	hideEditorArea();
+	    	
+	    	return editorAreaTrim;
 		}
+		
+		// Hide
+		if (editorAreaTrim != null)
+			tbm.setTrimVisible(editorAreaTrim, false);
+    	editorAreaInTrim = false;
+    	editorAreaRestoreOnUnzoom = false;
 
-		return null;
-	}
+		// Unless it's over-ridden, show the editor area
+		if (!shouldHideEditorsOnActivate)
+			showEditorArea();
 
+		return editorAreaTrim;
+    }
+    
     /**
      * Shows a fast view.
      * @return whether the view was successfully shown
@@ -1761,24 +1744,8 @@ public class Perspective {
 
         saveFastViewWidthRatio();
 
-
 		// Determine the display orientation
-		int side;
-		ViewStackTrimPart ts = getTrimPartForRef(ref);
-		if (ts != null) {
-			side = ts.getViewSide();
-		} else {
-			WorkbenchWindow window = (WorkbenchWindow) page
-					.getWorkbenchWindow();
-			FastViewBar bar = window.getFastViewBar();
-
-			if (bar == null) {
-				return false;
-			}
-
-			side = bar.getViewSide(ref);
-		}
-
+		int side = fastViewManager.getViewSide(ref);
         fastViewPane.showView(getClientComposite(), pane, side,
                 getFastViewWidthRatio(ref)); 
 
@@ -1814,8 +1781,8 @@ public class Perspective {
         int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 
         if (openViewMode == IPreferenceConstants.OVM_FAST) {
+        	fastViewManager.addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
             showFastView(ref);
-            addFastView(ref);
         } else if (openViewMode == IPreferenceConstants.OVM_FLOAT
                 && presentation.canDetach()) {
             presentation.addDetachedPart(pane);
@@ -1854,36 +1821,6 @@ public class Perspective {
      */
     public void setOldPartRef(IWorkbenchPartReference oldPartRef) {
         this.oldPartRef = oldPartRef;
-    }
-
-    /**
-     * Method moveFastView.  Moves draggedView to the position above
-     * destinationView.  If placeAtEnd is true, add view to the end. Otherwise,
-     * either place above destination view, or at the beginning if the
-     * destinationView is null
-     * @param draggedView
-     * @param destinationView
-     */
-
-    /*package*/void moveFastView(IViewReference draggedView,
-            IViewReference destinationView) {
-        //PR 6988
-
-        //do nothing if views are the same
-        if (draggedView == destinationView) {
-			return;
-		}
-
-        int insertIdx = fastViews.indexOf(destinationView);
-
-        //move the view
-        fastViews.remove(draggedView);
-
-        if (insertIdx < 0 || insertIdx >= fastViews.size()) {
-            fastViews.add(draggedView);
-        } else {
-            fastViews.add(insertIdx, draggedView);
-        }
     }
 
     //for dynamic UI
@@ -2041,10 +1978,6 @@ public class Perspective {
 		// Gain access to the trim manager
 		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
 		ITrimManager tbm = wbw.getTrimManager();
-
-		// Iterate through all the parts, moving each to the trim
-		int newTrimState = restoreOnUnzoom ? LayoutPart.TRIMSTATE_ZOOMEDTOTRIM
-				: LayoutPart.TRIMSTATE_IN_TRIM;
 		
 		// We hide the editor container last so its position can be used
 		// to calculate the correct side for other trim
@@ -2057,10 +1990,13 @@ public class Perspective {
 			// for now be careful and only manipulate 'known' part types
 			// should generalize...
 			if (part instanceof ViewStack) {
-				part.setTrimState(newTrimState);
-				IWindowTrim partTrim = tbm.getTrim(part.getID());
-				if (partTrim != null) {
-					newTrimParts.add(partTrim);
+				ViewStack vs = (ViewStack) part;
+				fastViewManager.moveToTrim(vs, restoreOnUnzoom);
+    
+				//part.setTrimState(newTrimState);
+				IWindowTrim trim = tbm.getTrim(part.getID());
+				if (trim != null) {
+					newTrimParts.add(trim);
 				}
 			} else if (part instanceof EditorSashContainer) {
 				moveEditorAreaToTrim = true;
@@ -2068,13 +2004,13 @@ public class Perspective {
 		}
 
 		if (moveEditorAreaToTrim) {
-			editorArea.setTrimState(newTrimState);
 			hideEditorArea();
-
-			IWindowTrim partTrim = tbm.getTrim(editorArea.getID());
-			if (partTrim != null) {
-				newTrimParts.add(partTrim);
-			}
+			setEditorAreaTrimVisibility(true);
+			IWindowTrim eaTrim = tbm.getTrim(editorArea.getID());
+			newTrimParts.add(eaTrim);
+			
+			editorAreaInTrim = true;
+			editorAreaRestoreOnUnzoom = restoreOnUnzoom;
 		}
 		
 		// Force a layout if necessary
@@ -2087,8 +2023,8 @@ public class Perspective {
 		// Now that the layout is finished we can add the 'end' rects for the
 		// animation
 		for (Iterator tsIter = newTrimParts.iterator(); tsIter.hasNext();) {
-			TrimPart ts = (TrimPart) tsIter.next();
-			animation.addEndRect(DragUtil.getDisplayBounds(ts.getControl()));
+			IWindowTrim trim = (IWindowTrim) tsIter.next();
+			animation.addEndRect(DragUtil.getDisplayBounds(trim.getControl()));
 		}
 
 		animation.schedule();
@@ -2103,14 +2039,17 @@ public class Perspective {
 		setActiveFastView(null);
 
 		// Set the part's state to place it back in the layout
-		part.setTrimState(LayoutPart.TRIMSTATE_NORMAL);
+		if (part instanceof ViewStack) {
+			ViewStack vs = (ViewStack) part;
+			fastViewManager.restoreToPresentation(vs.getID());
+		}
 
-		if (part == editorArea)
+		if (part == editorArea) {
 			showEditorArea();
-		
-		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-		ITrimManager tbm = wbw.getTrimManager();
-		tbm.forceLayout();
+			setEditorAreaTrimVisibility(false);
+			editorAreaInTrim = false;
+			editorAreaRestoreOnUnzoom = false;
+		}
 	}
 
 	/**
@@ -2149,23 +2088,19 @@ public class Perspective {
 	public void restoreZoomedParts() {
 		// Remove any current fastview
 		setActiveFastView(null);
-
-		// Is the editotr 'zoomed'?
-		boolean editorZoomed = (editorHolder != null &&
-			editorArea.getTrimState() == LayoutPart.TRIMSTATE_ZOOMEDTOTRIM);
 			
 		// have the layout restore the parts
-		boolean needsLayout = presentation.getLayout().restoreZoomedTrimParts();
-		if (needsLayout) {
-			// Force a layout
-			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-			ITrimManager tbm = wbw.getTrimManager();
-			tbm.forceLayout();
-		}
+		fastViewManager.restoreZoomedViewStacks();
 		
-		if (editorZoomed) {
-			editorArea.setTrimState(LayoutPart.TRIMSTATE_NORMAL);
-			showEditorArea();
+		if (editorAreaRestoreOnUnzoom) {
+			restoreTrimPart(editorArea);
 		}
+	}
+
+	/**
+	 * @return Returns the fastViewManager.
+	 */
+	public FastViewManager getFastViewManager() {
+		return fastViewManager;
 	}
 }

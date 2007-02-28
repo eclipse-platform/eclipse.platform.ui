@@ -364,8 +364,7 @@ import org.eclipse.ui.internal.layout.TrimToolBarBase;
            	
            	// Create a new dragging border onto the dragged trim
         	// Special check for TrimPart...should be generalized
-        	boolean wantsFrame = !(draggedTrim instanceof TrimToolBarBase) &&
-        						!(draggedTrim instanceof TrimPart);
+        	boolean wantsFrame = !(draggedTrim instanceof TrimToolBarBase);
            	border = new DragBorder(windowComposite, draggedTrim.getControl(), wantsFrame);
 
            	dockedArea = SWT.NONE;

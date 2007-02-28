@@ -69,7 +69,12 @@ public class ShowViewAction extends Action implements IPluginContribution {
                     }
                     
                     if (!wp.isFastView(ref)) {
-                        wp.addFastView(ref);
+                        if (!wp.isFastView(ref)) {
+                        	Perspective persp = wp.getActivePerspective();
+                        	if (persp != null) {
+                        		persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
+                        	}
+                        }
                     }
                     wp.activate(ref.getPart(true));
                 } else {

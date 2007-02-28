@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -32,13 +36,23 @@ public class ShowFastViewContribution extends ContributionItem {
     public static final String FAST_VIEW = "FastView"; //$NON-NLS-1$
 
     private IWorkbenchWindow window;
+    private String fvbId;
 
     /**
-     * Create a new menu item.
+     * Create a new ToolBar item.
      */
-    public ShowFastViewContribution(IWorkbenchWindow window) {
+    public ShowFastViewContribution(IWorkbenchWindow window, String id) {
         super("showFastViewContr"); //$NON-NLS-1$
         this.window = window;
+        this.fvbId = id;
+    }
+
+    /**
+     * Lagacy constructor...automatically points to the legacy FastViewBar
+     * @param window
+     */
+    public ShowFastViewContribution(IWorkbenchWindow window) {
+    	this(window, FastViewBar.FASTVIEWBAR_ID);
     }
 
     private void updateItem(ToolItem item, IViewReference ref) {
@@ -76,13 +90,15 @@ public class ShowFastViewContribution extends ContributionItem {
 			return;
 		}
 
-        // Get views.
-        IViewReference[] refs = page.getFastViews();
+        // Get views...
+        List fvs = new ArrayList();
+        Perspective perspective = page.getActivePerspective();
+        if (perspective != null)
+        	fvs = perspective.getFastViewManager().getFastViews(fvbId);
 
         // Create tool item for each view.
-        int size = refs.length;
-        for (int nX = 0; nX < size; nX++) {
-            final IViewReference ref = refs[nX];
+        for (Iterator fvIter = fvs.iterator(); fvIter.hasNext();) {
+			final IViewReference ref = (IViewReference) fvIter.next();			
             final ToolItem item = new ToolItem(parent, SWT.CHECK, index);
             updateItem(item, ref);
             item.setData(FAST_VIEW, ref);

@@ -29,7 +29,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
-import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.StackPresentation;
@@ -386,16 +385,6 @@ public class EditorSashContainer extends PartSashContainer {
             mapIDtoPart.put(partID, workbook[0]);
         }
 
-        // Trim Stack Support
-    	final Integer trimState = memento.getInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE);
-    	if (trimState != null && trimState.intValue() != LayoutPart.TRIMSTATE_NORMAL) {
-    		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-				public void runWithException() throws Throwable {
-					setTrimState(trimState.intValue());
-				}});
-    	}
-
     	return result;
     }
 
@@ -442,10 +431,6 @@ public class EditorSashContainer extends PartSashContainer {
                         .getRatio());
             }
         }
-        
-        // Trim Stack Support
-        if (getTrimState() != LayoutPart.TRIMSTATE_NORMAL)
-        	memento.putInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE, getTrimState());
         
         return result;
     }
@@ -629,55 +614,5 @@ public class EditorSashContainer extends PartSashContainer {
            
         }
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-    }
-    
-    // Trim Stack Support
-	public void setTrimState(int newTrimState) {
-    	if (newTrimState == getTrimState())
-    		return;
-
-    	// Remember the new state
-    	int oldTrimState = getTrimState();
-    	
-    	// set the new one
-    	super.setTrimState(newTrimState);
-
-		WorkbenchWindow wbw = (WorkbenchWindow) getWorkbenchWindow();
-		if (wbw == null)
-			return;
-		
-		// Access workbench context
-        Perspective persp = page.getActivePerspective();
-    	ITrimManager tbm = wbw.getTrimManager();
-    	EditorAreaTrimPart viewStackTrim = (EditorAreaTrimPart) tbm.getTrim(getID());
-		
-    	// NOTE: The part visibility is handled by the Perspective
-		// for legacy reasons. All this does is show/hide the trim...
-		    	
-    	// Are we moving the View Stack -to- the trim?
-    	if (oldTrimState == LayoutPart.TRIMSTATE_NORMAL) {    		
-        	// Is it already in the trim?
-        	if (viewStackTrim == null) {
-        		// If it's not already in the trim...create it
-        		int side = SWT.BOTTOM;
-        		if (persp != null)
-        			side = persp.calcStackSide(getBounds());
-        		
-        		viewStackTrim = new EditorAreaTrimPart(wbw, this);
-    	    	viewStackTrim.dock(side);
-        		tbm.addTrim(side, viewStackTrim);
-        	}
-        	
-    		tbm.setTrimVisible(viewStackTrim, true);
-    	}
-    	
-    	// Are we restoring the View Stack -from- the trim?
-    	if (newTrimState == LayoutPart.TRIMSTATE_NORMAL) {
-    		if (viewStackTrim == null)
-    			return;
-    		
-        	// hide the trim widget
-        	tbm.setTrimVisible(viewStackTrim, false);
-    	}
     }
 }
