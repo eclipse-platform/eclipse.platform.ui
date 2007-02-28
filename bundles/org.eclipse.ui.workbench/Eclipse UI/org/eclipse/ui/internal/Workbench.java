@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -533,9 +534,28 @@ public final class Workbench extends EventManager implements IWorkbench {
 					return;
 				}
 				
-				int handle = new Integer(splashHandle).intValue();
-									
-				Shell splashShell = Shell.internal_new(display, handle);
+				Shell splashShell = null;
+				// look for the 32 bit internal_new shell method
+				Method method = Shell.class
+						.getMethod(
+								"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
+				if (method != null) {
+					// we're on a 32 bit platform so invoke it with splash handle as an int
+					splashShell = (Shell) method.invoke(null, new Object[] {
+							display, new Integer(splashHandle) });
+				} else {
+					// look for the 64 bit internal_new shell method
+					method = Shell.class
+							.getMethod(
+									"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
+					if (method != null)
+						// we're on a 64 bit platform so invoke it with a long
+						splashShell = (Shell) method.invoke(null, new Object[] {
+								display, new Long(splashHandle) });
+				}
+				if (splashShell == null)
+					return;
+				
 				if (background != null)
 					splashShell.setBackgroundImage(background);
 				Dictionary properties = new Hashtable();
