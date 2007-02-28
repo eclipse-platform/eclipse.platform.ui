@@ -331,6 +331,13 @@ public class FormHeading extends Canvas {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#forceFocus()
+	 */
+	public boolean forceFocus() {
+		return false;
+	}
+
 	private boolean hasToolBar() {
 		return toolBarManager != null && !toolBarManager.isEmpty();
 	}

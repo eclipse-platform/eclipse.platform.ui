@@ -62,6 +62,13 @@ public class BusyIndicator extends Canvas {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#forceFocus()
+	 */
+	public boolean forceFocus() {
+		return false;
+	}
+	
 	private void loadProgressImage() {
 		InputStream is = BusyIndicator.class
 				.getResourceAsStream("progress.gif"); //$NON-NLS-1$
