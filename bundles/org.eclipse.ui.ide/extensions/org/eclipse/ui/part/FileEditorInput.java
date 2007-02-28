@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.part;
 
 import java.net.URI;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -24,6 +25,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -34,7 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
+public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
 		IPersistableElement {
 	private IFile file;
 
@@ -150,6 +152,15 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput,
 		FileEditorInputFactory.saveState(memento, this);
 	}
 
+	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IURIEditorInput#getURI()
+	 */
+	public URI getURI() {
+		return file.getLocationURI();
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on IPathEditorInput
 	 * @since 3.0
