@@ -960,6 +960,11 @@
             <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
        </factory>
        <factory
+            class="org.eclipse.ui.internal.ide.IURIEditorInputAdapterFactory"
+            adaptableType="org.eclipse.ui.IURIEditorInput">
+            <adapter type="org.eclipse.ui.IPathEditorInput"/>
+       </factory>
+       <factory
              adaptableType="org.eclipse.ui.IFileEditorInput"
              class="org.eclipse.ui.internal.ide.model.FileInputAdapterFactory">
           <adapter
