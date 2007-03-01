@@ -1357,8 +1357,20 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         	finally {
         		wbw.getShell().setRedraw(true);
 			}
-	        
+        	
 	        setPresentationState(newState);
+	        
+        	// HACK!! inform any view ref's in the stack that they've change state
+        	// this lets the Introbar work 'correctly'
+	        LayoutPart[] kids = getChildren();
+	        for (int i = 0; i < kids.length; i++) {
+				if (kids[i] instanceof ViewPane) {
+					if (((ViewPane)kids[i]).getPartReference() instanceof WorkbenchPartReference) {
+						WorkbenchPartReference wpr = (WorkbenchPartReference) ((ViewPane)kids[i]).getPartReference();
+						wpr.fireInternalPropertyChange(WorkbenchPartReference.INTERNAL_PROPERTY_MAXIMIZED);
+					}
+				}
+			}
         }
         else {
 	        if (newState == IStackPresentationSite.STATE_MAXIMIZED) {

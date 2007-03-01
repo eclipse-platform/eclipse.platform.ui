@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * Simple view that will wrap an <code>IIntroPart</code>.
@@ -50,9 +51,13 @@ public final class ViewIntroAdapterPart extends ViewPart {
             ref.addInternalPropertyListener(
                     new IPropertyListener() {
                         public void propertyChanged(Object source, int propId) {
-                            if (handleZoomEvents) {
+                            if (handleZoomEvents && ref.getPane().getContainer() instanceof ViewStack) {
+                        		ViewStack vs = (ViewStack) ref.getPane().getContainer();
                                 if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_ZOOMED) {
-                                    setStandby(!ref.getPane().isZoomed());
+                               		setStandby(vs.getState() == IStackPresentationSite.STATE_MAXIMIZED);
+                                }
+                                else if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_MAXIMIZED) {
+                               		setStandby(vs.getState() != IStackPresentationSite.STATE_MAXIMIZED);
                                 }
                             }
                         }

@@ -79,6 +79,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      */
     public static final int INTERNAL_PROPERTY_ACTIVE_CHILD_CHANGED = 0x216;
 
+    /**
+     * Internal property ID: Indicates that changed in the min / max
+     * state has changed
+     */
+    public static final int INTERNAL_PROPERTY_MAXIMIZED = 0x217;
+
     // State constants //////////////////////////////
     
     /**
