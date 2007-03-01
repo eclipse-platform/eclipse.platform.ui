@@ -177,7 +177,8 @@ public class IsModifiedTests extends EclipseTest {
 					// Only fail if a file that should be modified isn't
 					assertTrue(resource.getIResource().getFullPath().toString() 
 							+ " should be modified but isn't",
-							listedResourcesShouldBeModified == resourceListed);
+							(listedResourcesShouldBeModified && !resourceListed)
+								|| (!listedResourcesShouldBeModified && resourceListed));
 				}
 					
 //				Commented because the CVS core doesn't rely on resourceModify to be called.
