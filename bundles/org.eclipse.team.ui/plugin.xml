@@ -269,7 +269,7 @@
       <perspectiveExtension
             targetID="org.eclipse.team.ui.TeamSynchronizingPerspective">
          <showInPart
-               id="org.eclipse.ui.views.ResourceNavigator">
+               id="org.eclipse.ui.navigator.ProjectExplorer">
          </showInPart>
          <showInPart
                id="org.eclipse.team.ui.GenericHistoryView">
