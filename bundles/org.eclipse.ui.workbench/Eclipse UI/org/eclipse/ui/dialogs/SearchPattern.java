@@ -32,7 +32,8 @@ public class SearchPattern {
 	// Rules for pattern matching: (exact, prefix, pattern) [ | case sensitive]
 	/**
 	 * Match rule: The search pattern matches exactly the search result, that
-	 * is, the source of the search result equals the search pattern.
+	 * is, the source of the search result equals the search pattern. Search pattern
+	 * should start from lowerCase char.
 	 */
 	public static final int RULE_EXACT_MATCH = 0;
 
@@ -212,6 +213,12 @@ public class SearchPattern {
 			return;
 		}
 
+		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
+			matchRule = RULE_CAMELCASE_MATCH;
+			stringPattern = pattern;
+			return;
+		}
+		
 		if (last == END_SYMBOL) {
 			matchRule = RULE_EXACT_MATCH;
 			stringPattern = pattern.substring(0, length - 1);
@@ -221,12 +228,6 @@ public class SearchPattern {
 		if (last == BLANK) {
 			matchRule = RULE_EXACT_MATCH;
 			stringPattern = pattern.trim();
-			return;
-		}
-
-		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
-			matchRule = RULE_CAMELCASE_MATCH;
-			stringPattern = pattern;
 			return;
 		}
 
@@ -447,6 +448,11 @@ public class SearchPattern {
 			// first char must strictly match (upper/lower)
 			return false;
 		}
+		
+		int patternLength = pattern.length();
+		
+		if (pattern.charAt(patternLength - 1) == END_SYMBOL || pattern.charAt(patternLength - 1) == BLANK )
+			patternLength--;
 
 		char patternChar, nameChar;
 		int iPattern = patternStart;
@@ -464,6 +470,8 @@ public class SearchPattern {
 			}
 
 			if (iName == nameEnd) {
+				if (iPattern == patternLength) 
+					return true;
 				// We have exhausted name (and not pattern), so it's not a match
 				return false;
 			}
@@ -483,12 +491,20 @@ public class SearchPattern {
 			// name
 			while (true) {
 				if (iName == nameEnd) {
-					// We have exhausted name (and not pattern), so it's not a
-					// match
+					if (patternChar == END_SYMBOL || patternChar == BLANK)
+						return true;
 					return false;
 				}
 
 				nameChar = name.charAt(iName);
+
+				if (patternChar == END_SYMBOL || patternChar == BLANK) {
+					if (isNameCharAllowed(nameChar)) {
+						return false;
+					}
+					iName++;
+					continue;
+				}
 
 				if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase
@@ -516,7 +532,8 @@ public class SearchPattern {
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {
-		return Character.isUpperCase(patternChar);
+		return Character.isUpperCase(patternChar) || patternChar == END_SYMBOL
+				|| patternChar == BLANK;
 	}
 
 	/**
@@ -600,17 +617,11 @@ public class SearchPattern {
 			// Verify sting pattern validity
 			int length = stringPattern.length();
 			boolean validCamelCase = true;
-			boolean uppercase = false;
 			for (int i = 0; i < length && validCamelCase; i++) {
 				char ch = stringPattern.charAt(i);
 				validCamelCase = isValidCamelCaseChar(ch);
-				// at least one uppercase character is need in CamelCase pattern
-				// (see bug
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=136313)
-				if (!uppercase)
-					uppercase = Character.isUpperCase(ch);
 			}
-			validCamelCase = validCamelCase && uppercase;
+			validCamelCase = validCamelCase && Character.isUpperCase(stringPattern.charAt(0));
 			// Verify bits compatibility
 			if (validCamelCase) {
 				if ((matchRule & RULE_PREFIX_MATCH) != 0) {
