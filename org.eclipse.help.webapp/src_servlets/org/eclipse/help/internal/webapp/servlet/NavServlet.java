@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -35,6 +36,9 @@ public class NavServlet extends HttpServlet {
 	private static final String XHTML_2 = "</title>\n</head>\n<body>\n"; //$NON-NLS-1$
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 
+	private static final IFilter filters[] = new IFilter[]{
+		new FramesetFilter(), new InjectionFilter(), new BreadcrumbsFilter() };
+
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Locale locale = req.getLocale();
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
@@ -42,7 +46,15 @@ public class NavServlet extends HttpServlet {
 		
 		String path = req.getPathInfo().substring(1);
 		ITopic topic = getTopic(path, locale);
-		writeContent(topic, path, locale, resp.getWriter());
+
+		OutputStream out = resp.getOutputStream();
+		for (int i = 0; i < filters.length; i++) {
+			out = filters[i].filter(req, out);
+		}
+		
+		PrintWriter writer = new PrintWriter(out);
+		writeContent(topic, path, locale, writer);
+		writer.close();
 	}
 	
 	private ITopic getTopic(String topicPath, Locale locale) {

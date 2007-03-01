@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,16 +9,28 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.base.util.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.TString;
 
 public class UrlUtil {
 	// XML escaped characters mapping
@@ -122,6 +134,31 @@ public class UrlUtil {
 		else
 			url = "../topic" + url; //$NON-NLS-1$
 		return url;
+	}
+	
+	/**
+	 * Returns a path to the given topic in the form of child indexes. For
+	 * example, if the path points to the 3rd subtopic under the 2nd topic of
+	 * the 4th toc, it will return { 3, 1, 2 }.
+	 * 
+	 * @param path the path portion of the url, e.g. "/help/topic/my.plugin/foo.html"
+	 * @return path to the topic using zero-based indexes
+	 */
+	public static int[] getTopicPath(String path) {
+		if (path.startsWith("/help/nav/")) { //$NON-NLS-1$
+			path = path.substring(10);
+			StringTokenizer tok = new StringTokenizer(path, "_"); //$NON-NLS-1$
+			int[] array = new int[tok.countTokens()];
+			for (int i=0;i<array.length;++i) {
+				array[i] = Integer.parseInt(tok.nextToken());
+			}
+			return array;
+		}
+		else {
+			// grab the part after /help/*topic/
+			String href = path.substring(path.indexOf('/', 6));
+			return HelpPlugin.getTocManager().getTopicPath(href);
+		}
 	}
 
 	public static boolean isBot(HttpServletRequest request) {

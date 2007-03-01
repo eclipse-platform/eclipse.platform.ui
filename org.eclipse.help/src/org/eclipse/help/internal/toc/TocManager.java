@@ -31,6 +31,7 @@ import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.help.internal.util.ProductPreferences;
 
@@ -114,6 +115,32 @@ public class TocManager {
 		if (index != -1) {
 			return getTopic(href.substring(0, index));
 		}
+		return null;
+	}
+	
+	public synchronized int[] getTopicPath(String href) {
+		Topic topic = getTopic(href);
+		if (topic != null) {
+			List path = new ArrayList();
+			UAElement element = topic;
+			while (!(element instanceof Toc)) {
+				UAElement parent = element.getParentElement();
+				path.add(new Integer(parent.indexOf(element)));
+				element = parent;
+			}
+			Toc[] tocs = getTocs(Platform.getNL());
+			for (int i=0;i<tocs.length;++i) {
+				if (tocs[i] == element) {
+					path.add(new Integer(i));
+					int[] array = new int[path.size()];
+					for (int j=0;j<array.length;++j) {
+						array[j] = ((Integer)path.get(array.length - 1 - j)).intValue();
+					}
+					return array;
+				}
+			}
+		}
+		// no path; not in toc
 		return null;
 	}
 	

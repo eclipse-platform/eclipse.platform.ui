@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,6 +120,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private static final int STATE_LT_B = 3;
 
 	private static final int STATE_LT_BR = 4;
+	
+	/*
+	 * Used as a bridge from live help actions back (e.g. breadcrumb links)
+	 * to the originating help part.
+	 */
+	private static ReusableHelpPart lastActiveInstance;
 
 	private RoleFilter roleFilter;
 
@@ -433,6 +439,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			if (bars != null)
 				bars.clearGlobalActionHandlers();
 			ArrayList tabList = new ArrayList();
+			Control originalFocusControl = focusControl;
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
@@ -444,6 +451,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				}
 				rec.part.setVisible(visible);
 			}
+			focusControl = originalFocusControl;
 			Composite parent = mform.getForm().getBody();
 			parent.setTabList((Control[]) tabList.toArray(new Control[tabList
 					.size()]));
@@ -464,6 +472,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				if (pageAction != null)
 					pageAction.setChecked(visible);
 			}
+			
 			if (bars != null) {
 				if (visible)
 					bars.activate();
@@ -475,6 +484,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				ReusableHelpPart.this.toolBarManager.update(true);
 				getControl().getParent().layout();
 			}
+			
 		}
 
 		private void hookGlobalAction(String id, IHelpPart part) {
@@ -647,6 +657,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.addActivityManagerListener(this);
 	}
 
+	/*
+	 * Used as a bridge from live help actions back (e.g. breadcrumb links)
+	 * to the originating help part.
+	 */
+	public static ReusableHelpPart getLastActiveInstance() {
+		return lastActiveInstance;
+	}
+	
 	private void ensureHelpIndexed() {
 		// make sure we have the index but
 		// don't schedule the indexer job if one is
@@ -918,6 +936,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(form.getForm());
 		form.getForm().setMenu(contextMenu);
+		form.addListener(SWT.Activate, new Listener() {
+			public void handleEvent(Event event) {
+				lastActiveInstance = ReusableHelpPart.this;
+			}
+		});
 		//contributeToDropDownMenu(mform.getForm().getForm().getMenuManager());
 	}
 
@@ -1035,6 +1058,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void dispose() {
+		if (lastActiveInstance == this) {
+			lastActiveInstance = null;
+		}
 		for (int i = 0; i < pages.size(); i++) {
 			HelpPartPage page = (HelpPartPage) pages.get(i);
 			page.dispose();
