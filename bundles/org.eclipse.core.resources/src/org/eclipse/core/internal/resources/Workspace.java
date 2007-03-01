@@ -22,8 +22,7 @@ import org.eclipse.core.internal.refresh.RefreshManager;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
-import org.eclipse.core.resources.team.TeamHook;
+import org.eclipse.core.resources.team.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -2017,7 +2016,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 
 			public void run() throws Exception {
-				status[0] = validator.validateEdit(files, context);
+				Object c = context;
+				//must null any reference to FileModificationValidationContext for backwards compatibility
+				if (!(validator instanceof FileModificationValidator))
+					if (c instanceof FileModificationValidationContext)
+						c = null;
+				status[0] = validator.validateEdit(files, c);
 			}
 		};
 		SafeRunner.run(body);

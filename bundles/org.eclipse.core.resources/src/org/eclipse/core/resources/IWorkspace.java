@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.core.resources;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.LockListener;
@@ -78,6 +79,15 @@ public interface IWorkspace extends IAdaptable {
 	 * @since 3.0
 	 */
 	public static final int AVOID_UPDATE = 1;
+
+	/**
+	 * Constant that can be passed to {@link #validateEdit(org.eclipse.core.resources.IFile[], Object)}
+	 * to indicate that the caller does not have access to a UI context but would still
+	 * like to have UI-based validation if possible.
+	 * @since 3.3
+	 * @see #validateEdit(IFile[], Object)
+	 */
+	public static final Object VALIDATE_PROMPT = FileModificationValidationContext.VALIDATE_PROMPT;
 
 	/**
 	 * Adds the given listener for resource change events to this workspace. Has
@@ -1272,7 +1282,10 @@ public interface IWorkspace extends IAdaptable {
 	 * dialogs to query the user or report difficulties; the shell should be
 	 * used to parent any such dialogs; the caller may safely assume that the
 	 * reasons for failure will have been made clear to the user. If
-	 * <code>null</code> is passed, the user should not be contacted; any
+	 * {@link IWorkspace#VALIDATE_PROMPT} is passed
+	 * as the context, this indicates that the caller does not have access to
+	 * a UI context but would still like the user to be prompted if required.
+	 * If <code>null</code> is passed, the user should not be contacted; any
 	 * failures should be reported via the result; the caller may chose to
 	 * present these to the user however they see fit. The ideal implementation
 	 * of this method is transactional; no files would be affected unless the
@@ -1280,7 +1293,7 @@ public interface IWorkspace extends IAdaptable {
 	 * ensure such changes get done atomically.)
 	 * </p>
 	 * <p>
-	 * The method calls <code>IFileModificationValidator.validateEdit</code>
+	 * The method calls <code>FileModificationValidator.validateEdit</code>
 	 * for the file modification validator (if provided by the VCM plug-in).
 	 * When there is no file modification validator, this method returns a
 	 * status with an <code>IResourceStatus.READ_ONLY_LOCAL</code> code if one
@@ -1290,13 +1303,14 @@ public interface IWorkspace extends IAdaptable {
 	 * <p>
 	 * This method may be called from any thread. If the UI context is used, it
 	 * is the responsibility of the implementor of
-	 * <code>IFileModificationValidator.validateEdit</code> to interact with
+	 * <code>FileModificationValidator.validateEdit</code> to interact with
 	 * the UI context in an appropriate thread.
 	 * </p>
 	 * 
 	 * @param files the files that are to be modified; these files must all
 	 * exist in the workspace
-	 * @param context the <code>org.eclipse.swt.widgets.Shell</code> that is
+	 * @param context either {@link IWorkspace#VALIDATE_PROMPT},
+	 * or the <code>org.eclipse.swt.widgets.Shell</code> that is
 	 * to be used to parent any dialogs with the user, or <code>null</code> if
 	 * there is no UI context (declared as an <code>Object</code> to avoid any
 	 * direct references on the SWT component)
