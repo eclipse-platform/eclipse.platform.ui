@@ -206,7 +206,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 		// Have the subclass hook any listeners
 		hookControl(tbMgr);
 		
-	    Point size = tb.computeSize (SWT.DEFAULT, SWT.DEFAULT);		
+	    Point size = tb.computeSize (SWT.DEFAULT, SWT.DEFAULT);
+	    tb.setSize(size);
 	    Point ps = ci.computeSize (size.x, size.y);
 		ci.setPreferredSize (ps);
 		ci.setControl(tb);
