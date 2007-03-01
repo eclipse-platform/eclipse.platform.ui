@@ -20,10 +20,12 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
@@ -35,6 +37,8 @@ import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
+import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
@@ -130,6 +134,8 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	private String LINKING_ENABLED = "CommonNavigator.LINKING_ENABLED"; //$NON-NLS-1$ 
 
+	private LinkHelperService linkService;
+	
 	/**
 	 * 
 	 */
@@ -495,7 +501,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 *         Part.
 	 */
 	protected ActionGroup createCommonActionGroup() {
-		return new CommonNavigatorActionGroup(this, commonViewer);
+		return new CommonNavigatorActionGroup(this, commonViewer, getLinkHelperService());
 	}
 
 	/**
@@ -608,11 +614,34 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	public boolean show(ShowInContext context) {
-		if(context != null && context.getSelection() != null && !context.getSelection().isEmpty()) {
-			selectReveal(context.getSelection());
+		IStructuredSelection selection = getSelection(context);
+		if (selection != null && !selection.isEmpty()) {
+			selectReveal(selection);
 			return true;
 		} 
 		return false;
 	}
 
+	private IStructuredSelection getSelection(ShowInContext context) {
+		if (context == null)
+			return StructuredSelection.EMPTY;
+		ISelection selection = context.getSelection();
+		if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection)
+			return (IStructuredSelection)selection;
+		Object input = context.getInput();
+		if (input instanceof IEditorInput) {
+			LinkHelperService lhs = getLinkHelperService();
+			return lhs.getSelectionFor((IEditorInput) input);
+		}
+		if (input != null) {
+			return new StructuredSelection(input);
+		}
+		return StructuredSelection.EMPTY;
+	}
+
+	private synchronized LinkHelperService getLinkHelperService() {
+		if (linkService == null)
+			linkService = new LinkHelperService((NavigatorContentService)getCommonViewer().getNavigatorContentService());
+		return linkService;
+	}
 }

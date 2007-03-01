@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.actions.CollapseAllAction;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
+import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.internal.navigator.filters.FilterActionGroup;
 import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -39,6 +40,8 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 
 	private CommonNavigator commonNavigator;
 
+	private final LinkHelperService linkHelperService;
+
 	/**
 	 * Create a action group for Collapse All, Link with editor, and Select
 	 * Filters.
@@ -47,12 +50,14 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	 *            The IViewPart for this action group
 	 * @param aViewer
 	 *            The Viewer for this action group
+	 * @param linkHelperService the link service helper
 	 */
 	public CommonNavigatorActionGroup(CommonNavigator aNavigator,
-			CommonViewer aViewer) {
+			CommonViewer aViewer, LinkHelperService linkHelperService) {
 		super();
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
+		this.linkHelperService = linkHelperService;
 		makeActions();
 	}
 
@@ -75,7 +80,7 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_LINK_WITH_EDITOR_ACTION);
 		if (!hideLinkWithEditorAction) {
 			toggleLinkingAction = new LinkEditorAction(commonNavigator,
-					commonViewer);
+					commonViewer, linkHelperService);
 			ImageDescriptor syncIcon = getImageDescriptor("elcl16/synced.gif"); //$NON-NLS-1$
 			toggleLinkingAction.setImageDescriptor(syncIcon);
 			toggleLinkingAction.setHoverImageDescriptor(syncIcon);

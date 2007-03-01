@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.actions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,7 +19,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -30,7 +26,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
-import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.navigator.CommonNavigator;
@@ -55,8 +50,6 @@ public class LinkEditorAction extends Action implements
 	private final CommonNavigator commonNavigator;
 
 	private final CommonViewer commonViewer;
-
-	private final NavigatorContentService contentService;
 
 	private final LinkHelperService linkService;
 
@@ -93,17 +86,7 @@ public class LinkEditorAction extends Action implements
 					IEditorPart editor = page.getActiveEditor();
 					if(editor != null) {
 						IEditorInput input = editor.getEditorInput();
-						ILinkHelper[] helpers = linkService.getLinkHelpersFor(input);
-		
-						IStructuredSelection selection = StructuredSelection.EMPTY;
-						IStructuredSelection newSelection = StructuredSelection.EMPTY;
-		
-						for (int i = 0; i < helpers.length; i++) {
-							selection = helpers[i].findSelection(input);
-							if (selection != null && !selection.isEmpty()) {
-								newSelection = mergeSelection(newSelection, selection);
-							}
-						}
+						IStructuredSelection newSelection = linkService.getSelectionFor(input);
 						if(!newSelection.isEmpty()) {
 							commonNavigator.selectReveal(newSelection);
 						}
@@ -127,17 +110,14 @@ public class LinkEditorAction extends Action implements
 	 * @param aViewer
 	 *            The common viewer instance with a
 	 *            {@link INavigatorContentService}.
+	 * @param linkHelperService 
 	 */
-	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer) {
+	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer, LinkHelperService linkHelperService) {
 		super(CommonNavigatorMessages.LinkEditorActionDelegate_0);
+		linkService = linkHelperService;
 		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1);
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
-		contentService = (NavigatorContentService) aViewer
-				.getNavigatorContentService();
-
-		linkService = new LinkHelperService(contentService);
-
 		init();
 	}
 
@@ -256,19 +236,5 @@ public class LinkEditorAction extends Action implements
 					.removePartListener(partListener);
 		}
 	}
-
-	private IStructuredSelection mergeSelection(IStructuredSelection aBase,
-			IStructuredSelection aSelectionToAppend) {
-		if (aBase == null || aBase.isEmpty()) {
-			return (aSelectionToAppend != null) ? aSelectionToAppend
-					: StructuredSelection.EMPTY;
-		} else if (aSelectionToAppend == null || aSelectionToAppend.isEmpty()) {
-			return aBase;
-		} else {
-			List newItems = new ArrayList(aBase.toList());
-			newItems.addAll(aSelectionToAppend.toList());
-			return new StructuredSelection(newItems);
-		}
-	} 
 
 }

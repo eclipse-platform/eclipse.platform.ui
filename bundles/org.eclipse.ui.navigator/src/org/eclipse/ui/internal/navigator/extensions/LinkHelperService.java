@@ -11,11 +11,15 @@
 
 package org.eclipse.ui.internal.navigator.extensions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.navigator.ILinkHelper;
@@ -99,5 +103,41 @@ public class LinkHelperService {
 			}
 		}
 		return helper;
+	}
+	
+	/**
+	 * Return a selection that contains the elements that the given editor input 
+	 * represent.
+	 * @param input the editor input
+	 * @return a selection that contains the elements that the given editor input 
+	 * represent
+	 */
+	public IStructuredSelection getSelectionFor(IEditorInput input) {
+		ILinkHelper[] helpers = getLinkHelpersFor(input);
+
+		IStructuredSelection selection = StructuredSelection.EMPTY;
+		IStructuredSelection newSelection = StructuredSelection.EMPTY;
+
+		for (int i = 0; i < helpers.length; i++) {
+			selection = helpers[i].findSelection(input);
+			if (selection != null && !selection.isEmpty()) {
+				newSelection = mergeSelection(newSelection, selection);
+			}
+		}
+		return newSelection;
+	} 
+	
+	private IStructuredSelection mergeSelection(IStructuredSelection aBase,
+			IStructuredSelection aSelectionToAppend) {
+		if (aBase == null || aBase.isEmpty()) {
+			return (aSelectionToAppend != null) ? aSelectionToAppend
+					: StructuredSelection.EMPTY;
+		} else if (aSelectionToAppend == null || aSelectionToAppend.isEmpty()) {
+			return aBase;
+		} else {
+			List newItems = new ArrayList(aBase.toList());
+			newItems.addAll(aSelectionToAppend.toList());
+			return new StructuredSelection(newItems);
+		}
 	}
 }
