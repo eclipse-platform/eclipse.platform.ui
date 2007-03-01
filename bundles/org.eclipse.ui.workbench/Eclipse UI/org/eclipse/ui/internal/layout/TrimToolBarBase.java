@@ -202,15 +202,13 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 		
 		// Create the new ToolBar
 		ToolBar tb = tbMgr.createControl(cb);
+		ci.setControl(tb);
 		
 		// Have the subclass hook any listeners
 		hookControl(tbMgr);
 		
-	    Point size = tb.computeSize (SWT.DEFAULT, SWT.DEFAULT);
-	    tb.setSize(size);
-	    Point ps = ci.computeSize (size.x, size.y);
-		ci.setPreferredSize (ps);
-		ci.setControl(tb);
+		// set up the frame's layout
+		update(true);
 		
     	// Set the cursor affordance
     	Cursor dragCursor = getControl().getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL);
@@ -238,6 +236,8 @@ public abstract class TrimToolBarBase implements IWindowTrim {
         cb.pack(true);
         cb.setVisible(true);
         
+        tbMgr.getControl().setVisible(true);
+        cb.setVisible(true);
         frame.getComposite().setVisible(true);
     }
 
@@ -262,10 +262,12 @@ public abstract class TrimToolBarBase implements IWindowTrim {
 		tbMgr.update(changed);
 		
 		// Force a resize
-		
-	    Point size = tbMgr.getControl().computeSize (SWT.DEFAULT, SWT.DEFAULT);		
+		tbMgr.getControl().pack();
+	    Point size = tbMgr.getControl().getSize();
+	    //tbMgr.getControl().setBounds(0, 0, size.x, size.y);
 	    Point ps = ci.computeSize (size.x, size.y);
 		ci.setPreferredSize (ps);
+		ci.setSize(ps);
 		cb.pack();
 		cb.update();
 		LayoutUtil.resize(getControl());
