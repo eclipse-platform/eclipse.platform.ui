@@ -13,20 +13,22 @@ package org.eclipse.team.internal.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
 
-public class DefaultFileModificationValidator implements IFileModificationValidator {
+public class DefaultFileModificationValidator extends FileModificationValidator {
 	
 	/*
 	 * A validator plugged in the the Team UI that will prompt
 	 * the user to make read-only files writable. In the absence of
 	 * this validator, edit/save fail on read-only files.
 	 */
-	private IFileModificationValidator uiValidator;
+	private FileModificationValidator uiValidator;
 
 	protected IStatus getDefaultStatus(IFile file) {
 		return 
@@ -35,10 +37,7 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 				: Status.OK_STATUS;
 	}
 	
-	/**
-	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
-	 */
-	public IStatus validateEdit(IFile[] files, Object context) {
+	public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 	    IFile[] readOnlyFiles = getReadOnly(files);
 	    if (readOnlyFiles.length == 0)
 	        return Status.OK_STATUS;
@@ -86,9 +85,6 @@ public class DefaultFileModificationValidator implements IFileModificationValida
         return (IFile[]) result.toArray(new IFile[result.size()]);
     }
 
-    /**
-	 * @see IFileModificationValidator#validateSave(IFile)
-	 */
 	public IStatus validateSave(IFile file) {
 	    if (!file.isReadOnly())
 	        return Status.OK_STATUS;
@@ -102,7 +98,7 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 		return getDefaultStatus(file);
 	}
 	
-    private IFileModificationValidator loadUIValidator() {
+    private FileModificationValidator loadUIValidator() {
         IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.DEFAULT_FILE_MODIFICATION_VALIDATOR_EXTENSION);
 		if (extension != null) {
 			IExtension[] extensions =  extension.getExtensions();
@@ -111,8 +107,8 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 				if (configElements.length > 0) {
 					try {
                         Object o = configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
-                        if (o instanceof IFileModificationValidator) {
-                            return (IFileModificationValidator)o;
+                        if (o instanceof FileModificationValidator) {
+                            return (FileModificationValidator)o;
                         }
                     } catch (CoreException e) {
                         TeamPlugin.log(e);

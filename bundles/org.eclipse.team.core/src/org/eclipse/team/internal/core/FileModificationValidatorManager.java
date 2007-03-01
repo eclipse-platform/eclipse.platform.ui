@@ -15,12 +15,14 @@ import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.RepositoryProvider;
 
-public class FileModificationValidatorManager implements IFileModificationValidator {
-	private IFileModificationValidator defaultValidator;
+public class FileModificationValidatorManager extends FileModificationValidator {
+	private FileModificationValidator defaultValidator;
 	
 	/*
 	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
@@ -28,7 +30,7 @@ public class FileModificationValidatorManager implements IFileModificationValida
 	 * Ask each provider once for its files.
 	 * Collect the resulting status' and return a MultiStatus.
 	 */
-	public IStatus validateEdit(IFile[] files, Object context) {
+	public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 		ArrayList returnStati = new ArrayList();
 		
 		//map provider to the files under that provider's control
@@ -63,7 +65,13 @@ public class FileModificationValidatorManager implements IFileModificationValida
 				if (v != null) validator = v;
 			}
 			
-			IStatus status = validator.validateEdit(filesArray, context);
+			//must null any reference to FileModificationValidationContext for backwards compatibility
+			Object shell = context;
+			if (!(validator instanceof FileModificationValidator))
+				if (context instanceof FileModificationValidationContext)
+					shell = context.getShell();
+			
+			IStatus status = validator.validateEdit(filesArray, shell);
 			if(!status.isOK())
 				allOK = false;
 
@@ -99,7 +107,7 @@ public class FileModificationValidatorManager implements IFileModificationValida
 		return validator.validateSave(file);
 	}
 	
-	private synchronized IFileModificationValidator getDefaultValidator() {
+	private synchronized FileModificationValidator getDefaultValidator() {
 	    if (defaultValidator == null) {
 	        defaultValidator = new DefaultFileModificationValidator();
 	    }

@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.core;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
@@ -23,7 +22,7 @@ import org.eclipse.core.runtime.IStatus;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public interface ICVSFileModificationValidator extends IFileModificationValidator {
+public interface ICVSFileModificationValidator {
 	
 	public IStatus validateMoveDelete(IFile[] files, IProgressMonitor monitor);
 

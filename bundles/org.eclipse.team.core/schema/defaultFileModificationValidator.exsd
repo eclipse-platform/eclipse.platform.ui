@@ -40,7 +40,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IFileModificationValidator"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.resources.FileModificationValidator"/>
                </appInfo>
             </annotation>
          </attribute>

@@ -11,7 +11,10 @@
 package org.eclipse.team.examples.pessimistic;
  
 import java.util.*;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -31,7 +34,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  * @see IFileModificationValidator
  */
 public class PessimisticModificationValidator
-	implements IFileModificationValidator {
+	extends FileModificationValidator {
 	/*
 	 * The provider for this validator
 	 */
@@ -44,7 +47,7 @@ public class PessimisticModificationValidator
 	/**
 	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
 	 */
- 	public IStatus validateEdit(IFile[] files, Object context) {
+ 	public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
     	if (files.length == 0) { 
 	        return new Status( IStatus.OK, getUid(), IStatus.OK, "OK", null);
 	    } 
@@ -79,7 +82,7 @@ public class PessimisticModificationValidator
 					return new Status( IStatus.ERROR, getUid(), IStatus.ERROR, "Fail Validate Edit Preference true", null);
 				}	 
 	            if(statusCode == IStatus.CANCEL) {
-	            	return new Status( IStatus.CANCEL, getUid(), IStatus.ERROR, "Checkout cancelled by user", null);
+	            	return new Status( IStatus.CANCEL, getUid(), IStatus.ERROR, "Checkout canceled by user", null);
 	            }
             } else {
             	if (isAutomaticCheckout()) {

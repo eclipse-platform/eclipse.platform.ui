@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
@@ -25,14 +24,14 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 /**
  * Core validator that will load the UI validator only if a prompt is needed
  */
-public class CVSCoreFileModificationValidator implements ICVSFileModificationValidator {
+public class CVSCoreFileModificationValidator extends FileModificationValidator implements ICVSFileModificationValidator {
     
-    IFileModificationValidator uiValidator;
+    FileModificationValidator uiValidator;
 
     /* (non-Javadoc)
-     * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
+     * @see org.eclipse.core.resources.team.FileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], org.eclipse.core.resources.team.FileModificationValidationContext)
      */
-    public IStatus validateEdit(IFile[] files, Object context) {
+    public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 	    IFile[] unmanagedReadOnlyFiles = getUnmanagedReadOnlyFiles(files);
 	    if (unmanagedReadOnlyFiles.length > 0) {
 	        IStatus status = setWritable(unmanagedReadOnlyFiles);
@@ -55,7 +54,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 		    }
 		    return Status.OK_STATUS;
 		}
-		return edit(new IFile[] {file}, (Object)null);
+		return edit(new IFile[] {file}, (FileModificationValidationContext)null);
     }
 
     /**
@@ -67,8 +66,8 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
      * @param context
      * @return
      */
-    protected IStatus edit(IFile[] readOnlyFiles, Object context) {
-        IFileModificationValidator override = getUIValidator();
+    protected IStatus edit(IFile[] readOnlyFiles, FileModificationValidationContext context) {
+        FileModificationValidator override = getUIValidator();
         if (override != null) {
             return override.validateEdit(readOnlyFiles, context);
         } else {
@@ -77,7 +76,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
         }
     }
 
-    private IFileModificationValidator getUIValidator() {
+    private FileModificationValidator getUIValidator() {
         synchronized(this) {
 	        if (uiValidator == null) {
 	            uiValidator = getPluggedInValidator();
@@ -181,7 +180,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 		return (IFile[]) readOnlys.toArray(new IFile[readOnlys.size()]);
     }
     
-	private static IFileModificationValidator getPluggedInValidator() {
+	private static FileModificationValidator getPluggedInValidator() {
 		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(CVSProviderPlugin.ID, CVSProviderPlugin.PT_FILE_MODIFICATION_VALIDATOR).getExtensions();
 		if (extensions.length == 0)
 			return null;
@@ -193,7 +192,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 		}
 		try {
 			IConfigurationElement config = configs[0];
-			return (IFileModificationValidator) config.createExecutableExtension("run");//$NON-NLS-1$
+			return (FileModificationValidator) config.createExecutableExtension("run");//$NON-NLS-1$
 		} catch (CoreException ex) {
 			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("The CVS file modification validator registered as ID {0} could not be instantiated", (new Object[] {extension.getUniqueIdentifier()})), ex);//$NON-NLS-1$
 			return null;
@@ -201,7 +200,7 @@ public class CVSCoreFileModificationValidator implements ICVSFileModificationVal
 	}
     
     public ISchedulingRule validateEditRule(CVSResourceRuleFactory factory, IResource[] resources) {
-        IFileModificationValidator override = getUIValidator();
+        FileModificationValidator override = getUIValidator();
         if (override instanceof CVSCoreFileModificationValidator && override != this) {
             CVSCoreFileModificationValidator ui = (CVSCoreFileModificationValidator) override;
             return ui.validateEditRule(factory, resources);

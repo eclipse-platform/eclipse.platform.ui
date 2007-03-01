@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,7 +29,7 @@ import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
 /**
  * Override the default file modification validator to prompt to
- * make read-only files writtable
+ * make read-only files writable
  */
 public class DefaultUIFileModificationValidator extends DefaultFileModificationValidator {
 
@@ -118,12 +119,12 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.team.internal.core.DefaultFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
+     * @see org.eclipse.team.internal.core.DefaultFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], org.eclipse.core.resources.team.FileModificationValidationContext)
      */
-    public IStatus validateEdit(final IFile[] allFiles, Object context) {
+    public IStatus validateEdit(final IFile[] allFiles, FileModificationValidationContext context) {
     	final IFile[] readOnlyFiles = getReadOnlyFiles(allFiles);
-        if (readOnlyFiles.length > 0 && context != null && context instanceof Shell) {
-            final Shell shell = (Shell)context;
+        if (readOnlyFiles.length > 0 && context != null) {
+            final Shell shell = getShell(context);
             final boolean[] ok = new boolean[] { false };
             if (readOnlyFiles.length == 1) {
                 shell.getDisplay().syncExec(new Runnable() {
@@ -149,7 +150,13 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
         return getStatus(readOnlyFiles);
     }
     
-    public IStatus validateSave(IFile file) {
+    private Shell getShell(FileModificationValidationContext context) {
+		if (context.getShell() != null)
+			return (Shell)context.getShell();
+		return Utils.getShell(null);
+	}
+
+	public IStatus validateSave(IFile file) {
     	if (file.isReadOnly() && isMakeWrittableWhenContextNotProvided()) {
     		IFile[] readOnlyFiles = new IFile[] { file };
     		setWritable(readOnlyFiles);

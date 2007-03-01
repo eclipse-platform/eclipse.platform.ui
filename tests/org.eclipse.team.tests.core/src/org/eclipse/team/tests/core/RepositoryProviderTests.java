@@ -11,27 +11,15 @@
 package org.eclipse.team.tests.core;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
-import org.eclipse.core.resources.team.IResourceTree;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 
@@ -132,9 +120,9 @@ public class RepositoryProviderTests extends TeamTest {
 		
 		// test that validator gets called by team core dispatching
 		final boolean[] called = new boolean[] {false};
-		bicProvider.setModificationValidator(new IFileModificationValidator() {
+		bicProvider.setModificationValidator(new FileModificationValidator() {
 			// can't test validate edit here because it is only called from editors
-			public IStatus validateEdit(IFile[] files, Object context) {
+			public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 				return null;
 			}
 			public IStatus validateSave(IFile file) {
@@ -149,9 +137,9 @@ public class RepositoryProviderTests extends TeamTest {
 		
 		// test that validator can veto a setContents
 		called[0] = false;
-		bicProvider.setModificationValidator(new IFileModificationValidator() {
+		bicProvider.setModificationValidator(new FileModificationValidator() {
 			// can't test validate edit here because it is only called from editors
-			public IStatus validateEdit(IFile[] files, Object context) {
+			public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 				return null;
 			}
 			public IStatus validateSave(IFile file) {

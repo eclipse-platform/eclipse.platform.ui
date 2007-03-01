@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.RepositoryProvider;
@@ -23,11 +23,11 @@ import org.eclipse.team.core.TeamException;
 
 /**
  * This class models a sentry that verifies whether resources are available for editing or overwriting.
- * This has been made a separate clas for illustration purposes. It may have been more apporpriate
+ * This has been made a separate class for illustration purposes. It may have been more appropriate
  * to have FileSystemProvider implement IFileModificationValidator itself since the interface
  * only has two methods and their implementation is straight forward.
  */
-public final class FileModificationValidator implements IFileModificationValidator {
+public final class FileModificationValidator extends org.eclipse.core.resources.team.FileModificationValidator {
 	
 	private FileSystemOperations operations;
 
@@ -39,7 +39,7 @@ public final class FileModificationValidator implements IFileModificationValidat
 	}
 
 	/**
-	 * This method will convert any exceptions thrown by the SimpleAccessOperations.chechout() to a Status.
+	 * This method will convert any exceptions thrown by the SimpleAccessOperations.checkout() to a Status.
 	 * @param resources the resources that are to be checked out
 	 * @return IStatus a status indicator that reports whether the operation went smoothly or not.
 	 */
@@ -57,7 +57,7 @@ public final class FileModificationValidator implements IFileModificationValidat
 	 * The idea is to prevent anyone from accidentally working on a file that they won't be able to check in changes to.
 	 * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(IFile[], Object)
 	 */
-	public IStatus validateEdit(IFile[] files, Object context) {
+	public IStatus validateEdit(IFile[] files, FileModificationValidationContext context) {
 		Collection toBeCheckedOut = new ArrayList();
 
 		//Make a list of all the files that need to be checked out:
@@ -72,15 +72,14 @@ public final class FileModificationValidator implements IFileModificationValidat
 
 	/**
 	 * This method will be called by the workbench before it tries to save a file.
-	 * It should not attempt to save any files that don't recieve an OK status here.
+	 * It should not attempt to save any files that don't receive an OK status here.
 	 * @see org.eclipse.core.resources.IFileModificationValidator#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
 		if (file.isReadOnly()) {
 			return checkout(new IResource[] { file });
-		} else {
-			return Status.OK_STATUS;
 		}
+		return Status.OK_STATUS;
 	}
 
 }

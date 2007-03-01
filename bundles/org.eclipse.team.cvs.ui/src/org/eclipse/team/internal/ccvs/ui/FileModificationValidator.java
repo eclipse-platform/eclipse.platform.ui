@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -30,27 +31,30 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.ui.actions.EditorsAction;
 import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.progress.IProgressConstants;
 
 /**
- * IFileModificationValidator that is pluged into the CVS Repository Provider
+ * IFileModificationValidator that is plugged into the CVS Repository Provider
  */
 public class FileModificationValidator extends CVSCoreFileModificationValidator {
 	
 	public FileModificationValidator() {
 	}
 	
-	/* (non-Javadoc)
-     * @see org.eclipse.team.internal.ccvs.core.CVSCoreFileModificationValidator#edit(org.eclipse.core.resources.IFile[], java.lang.Object)
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.core.CVSCoreFileModificationValidator#edit(org.eclipse.core.resources.IFile[], org.eclipse.core.resources.team.FileModificationValidationContext)
      */
-    protected IStatus edit(IFile[] readOnlyFiles, Object context) {
+    protected IStatus edit(IFile[] readOnlyFiles, FileModificationValidationContext context) {
         return edit(readOnlyFiles, getShell(context));
     }
     
-	private Shell getShell(Object context) {
-		if (context instanceof Shell)
-			return (Shell)context;
-		return null;
+	private Shell getShell(FileModificationValidationContext context) {
+		if (context == null)
+			return null;
+		if (context.getShell() != null)
+			return (Shell)context.getShell();
+		return Utils.getShell(null);
 	}
 
 	private IStatus getStatus(InvocationTargetException e) {
@@ -142,7 +146,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
     }
     
     private URL getOperationIcon() {
-        return Platform.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE));
+        return FileLocator.find(CVSUIPlugin.getPlugin().getBundle(), new Path(ICVSUIConstants.ICON_PATH + ICVSUIConstants.IMG_CVS_PERSPECTIVE), null);
     }
     
     private boolean isRunningInUIThread() {
@@ -185,7 +189,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
     }
 
 	private boolean promptEdit(Shell shell) {
-		// Open the dialog using a sync exec (there are no guarentees that we
+		// Open the dialog using a sync exec (there are no guarantees that we
 		// were called from the UI thread
 		final boolean[] result = new boolean[] { false };
 		int flags = isRunningInUIThread() ? 0 : CVSUIPlugin.PERFORM_SYNC_EXEC;
@@ -198,7 +202,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 	}
 
     private boolean promptUpdate(Shell shell) {
-        // Open the dialog using a sync exec (there are no guarentees that we
+        // Open the dialog using a sync exec (there are no guarantees that we
         // were called from the UI thread
         final boolean[] result = new boolean[] { false };
         int flags = isRunningInUIThread() ? 0 : CVSUIPlugin.PERFORM_SYNC_EXEC;
