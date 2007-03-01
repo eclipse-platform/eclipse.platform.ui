@@ -816,6 +816,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * that contain the input.
 	 * By default, this method calls {@link #isSaveNeeded()} 
 	 * but subclasses may extend.
+	 * @return <code>true</code> if there are unsaved changes
 	 * @since 3.3
 	 */
 	public boolean isDirty() {
