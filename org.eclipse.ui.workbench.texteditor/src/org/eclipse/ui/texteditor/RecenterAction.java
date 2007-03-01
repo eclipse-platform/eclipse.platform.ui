@@ -42,6 +42,8 @@ public class RecenterAction extends TextEditorAction {
 	 */
 	public void run() {
 		ITextEditor editor= getTextEditor();
+		if (!(editor instanceof AbstractTextEditor))
+			return;
 
 		ISourceViewer viewer= ((AbstractTextEditor)editor).getSourceViewer();
 		if (viewer == null)
