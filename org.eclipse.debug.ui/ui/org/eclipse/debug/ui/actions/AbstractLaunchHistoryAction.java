@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -33,6 +34,10 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
@@ -47,7 +52,7 @@ import com.ibm.icu.text.MessageFormat;
  * @since 2.1
  */
 public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPulldownDelegate2, ILaunchHistoryChangedListener {
-	
+
 	/**
 	 * The menu created by this action
 	 */
@@ -68,6 +73,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * the sub menu needs to be recreated.
 	 */
 	protected boolean fRecreateMenu= false;
+	
+	private IWorkbenchWindow fWindow = null;
 	
 	/**
 	 * Constructs a launch history action.
@@ -92,6 +99,24 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		}
 	};
 
+	/**
+	 * Part listener to update tool-tip for context launching
+	 */
+	private IPartListener fPartListener = new IPartListener() {
+		/**
+		 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
+		 */
+		public void partActivated(IWorkbenchPart part) {
+			if(ContextRunner.getDefault().isContextLaunchEnabled() && part instanceof IEditorPart) {
+				updateTooltip();
+			}
+		}
+		public void partBroughtToTop(IWorkbenchPart part) {}
+		public void partClosed(IWorkbenchPart part) {}
+		public void partDeactivated(IWorkbenchPart part) {}
+		public void partOpened(IWorkbenchPart part) {}
+	};
+	
 	/**
 	 * Sets the action used to render this delegate.
 	 * 
@@ -217,6 +242,9 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		setMenu(null);
 		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
+		if(fWindow != null) {
+			fWindow.getPartService().removePartListener(fPartListener);
+		}
 	}
 	
 	/**
@@ -343,14 +371,22 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			initialize(action);
 		} 
 		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
-			updateTooltip();
+			if(!(selection instanceof ITextSelection)) {
+				updateTooltip();
+			}
 		}
 	}
 	
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window){}
+	public void init(IWorkbenchWindow window){
+		fWindow = window;
+		if(window != null) {
+			IPartService psrvc = window.getPartService();
+			psrvc.addPartListener(fPartListener);
+		}
+	}
 	
 	/**
 	 * Returns the launch history associated with this action's launch group.

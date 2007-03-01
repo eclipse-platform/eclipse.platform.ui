@@ -19,6 +19,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -28,15 +29,21 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListDialog;
 
@@ -85,7 +92,7 @@ public final class ContextRunner {
 	 */
 	public void launch(String mode) {
 		try {
-			IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+			IResource resource = getSelectedResource();//SelectedResourceManager.getDefault().getSelectedResource();
 			//1. resolve resource
 			if(resource != null) {
 				if(DEBUG_CONTEXTUAL_LAUNCH) {
@@ -364,7 +371,7 @@ public final class ContextRunner {
 	 * @return the associated launch configuration name of the currently selected context or the empty string. 
 	 */
 	public String getContextLabel(String mode) {
-		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+		IResource resource = getSelectedResource();//SelectedResourceManager.getDefault().getSelectedResource();
 		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(resource);
 		if(config != null) {
 			if(DEBUG_CONTEXTUAL_LAUNCH) {
@@ -383,6 +390,36 @@ public final class ContextRunner {
 			return config.getName();
 		}
 		return ""; //$NON-NLS-1$
+	}
+	
+	private IResource getSelectedResource() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if(page != null) {
+				IWorkbenchPart part = page.getActivePart();
+				if(part instanceof IEditorPart) {
+					IEditorPart epart = (IEditorPart) part;
+					return (IResource) epart.getEditorInput().getAdapter(IResource.class);
+				}
+				else {
+					IWorkbenchPartSite site = part.getSite();
+					if(site != null) {
+						ISelection sel = site.getSelectionProvider().getSelection();
+						if(sel instanceof IStructuredSelection) {
+							IStructuredSelection ss = (IStructuredSelection) sel;
+							if(!ss.isEmpty()) {
+								Object o = ss.getFirstElement();
+								if(o instanceof IAdaptable) {
+									return (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
