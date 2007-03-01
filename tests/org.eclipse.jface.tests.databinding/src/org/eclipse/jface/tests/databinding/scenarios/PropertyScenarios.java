@@ -257,7 +257,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 				SWTObservables.observeText(text, SWT.Modify),
 				BeansObservables.observeValue(adventure, "name"),
 				new UpdateValueStrategy().setConverter(new IdentityConverter(
-						String.class)).setAfterGetValidator(validator),
+						String.class)).setBeforeChangeValidator(validator),
 				new UpdateValueStrategy().setConverter(new IdentityConverter(
 						String.class)));
 

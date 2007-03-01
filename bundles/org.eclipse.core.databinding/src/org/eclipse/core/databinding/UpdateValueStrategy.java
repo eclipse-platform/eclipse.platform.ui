@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.IdentityConverter;
 import org.eclipse.core.databinding.conversion.ToStringConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
@@ -47,24 +48,54 @@ import org.eclipse.core.runtime.Status;
 public class UpdateValueStrategy {
 
 	/**
-	 * 
+	 * Policy constant denoting that the source observable's state should not be
+	 * tracked and that the destination observable's value should never be
+	 * updated.
 	 */
-	public static int POLICY_CONVERT = 1 << 2;
+	public static int POLICY_NEVER = notInlined(1);
 
 	/**
-	 * 
+	 * Policy constant denoting that the source observable's state should not be
+	 * tracked, but that validation, conversion and updating the destination
+	 * observable's value should be performed when explicitly requested.
 	 */
-	public static int POLICY_NEVER = 1 << 0;
+	public static int POLICY_ON_REQUEST = notInlined(2);
 
 	/**
-	 * 
+	 * Policy constant denoting that the source observable's state should be
+	 * tracked, including validating changes except for
+	 * {@link #validateBeforeSet(Object)}, but that the destination
+	 * observable's value should only be updated on request.
 	 */
-	public static int POLICY_ON_REQUEST = 1 << 1;
+	public static int POLICY_CONVERT = notInlined(4);
 
 	/**
-	 * 
+	 * Policy constant denoting that the source observable's state should be
+	 * tracked, and that validation, conversion and updating the destination
+	 * observable's value should be performed automaticlly on every change of
+	 * the source observable value.
 	 */
-	public static int POLICY_UPDATE = 1 << 3;
+	public static int POLICY_UPDATE = notInlined(8);
+
+	/**
+	 * Policy bit denoting that pre-change validation should be performed on the
+	 * source observable (can be ORed with one of {@link #POLICY_CONVERT},
+	 * {@link #POLICY_ON_REQUEST}, or {@value #POLICY_UPDATE}).
+	 */
+	public static int VALIDATE_BEFORE_CHANGE = notInlined(16);
+
+	/**
+	 * Helper method allowing API evolution of the above constant values. The
+	 * compiler will not inline constant values into client code if values are
+	 * "computed" using this helper.
+	 * 
+	 * @param i
+	 *            an integer
+	 * @return the same integer
+	 */
+	private static int notInlined(int i) {
+		return i;
+	}
 
 	private static final String BOOLEAN_TYPE = "java.lang.Boolean.TYPE"; //$NON-NLS-1$
 
@@ -80,8 +111,9 @@ public class UpdateValueStrategy {
 
 	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
 
-	protected IValidator afterConvertValidator;
+	protected IValidator beforeChangeValidator;
 	protected IValidator afterGetValidator;
+	protected IValidator afterConvertValidator;
 	protected IValidator beforeSetValidator;
 	protected IConverter converter;
 
@@ -94,21 +126,43 @@ public class UpdateValueStrategy {
 	protected boolean provideDefaults;
 
 	/**
+	 * Creates a new update value strategy for automatically updating the
+	 * destination observable value whenever the source observable value
+	 * changes. Default validators and a default converter will be provided. The
+	 * defaults can be changed by calling one of the setter methods.
 	 */
 	public UpdateValueStrategy() {
 		this(true, POLICY_UPDATE);
 	}
 
 	/**
+	 * Creates a new update value strategy with a configurable update policy.
+	 * Default validators and a default converter will be provided. The defaults
+	 * can be changed by calling one of the setter methods.
+	 * 
 	 * @param updatePolicy
+	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
+	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}, possibly
+	 *            ORed with {@link #VALIDATE_BEFORE_CHANGE}
 	 */
 	public UpdateValueStrategy(int updatePolicy) {
 		this(true, updatePolicy);
 	}
 
 	/**
+	 * Creates a new update value strategy with a configurable update policy.
+	 * Default validators and a default converter will be provided if
+	 * <code>provideDefaults</code> is <code>true</code>. The defaults can
+	 * be changed by calling one of the setter methods.
+	 * 
 	 * @param provideDefaults
+	 *            if <code>true</code>, default validators and a default
+	 *            converter will be provided based on the observable value's
+	 *            type.
 	 * @param updatePolicy
+	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
+	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}, possibly
+	 *            ORed with {@link #VALIDATE_BEFORE_CHANGE}
 	 */
 	public UpdateValueStrategy(boolean provideDefaults, int updatePolicy) {
 		this.provideDefaults = provideDefaults;
@@ -500,6 +554,29 @@ public class UpdateValueStrategy {
 	}
 
 	/**
+	 * Set the validator to be used for pre-change validation. If the given
+	 * validator does not return an OK status, the change will be vetoed. It is
+	 * recommended that a status with severity {@link IStatus#CANCEL} is used to
+	 * veto a change. Calling this method will set the
+	 * {@link #VALIDATE_BEFORE_CHANGE} update policy bit if the given validator
+	 * is not <code>null</code> and will clear the bit if the given validator
+	 * is <code>null</code>.
+	 * 
+	 * @param validator
+	 *            a validator, or <code>null</code>
+	 * @return the receiver, to enable method call chaining
+	 */
+	public UpdateValueStrategy setBeforeChangeValidator(IValidator validator) {
+		this.beforeChangeValidator = validator;
+		if (validator == null) {
+			this.updatePolicy &= ~VALIDATE_BEFORE_CHANGE;
+		} else {
+			this.updatePolicy |= VALIDATE_BEFORE_CHANGE;
+		}
+		return this;
+	}
+
+	/**
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -542,6 +619,22 @@ public class UpdateValueStrategy {
 	public IStatus validateBeforeSet(Object value) {
 		return beforeSetValidator == null ? Status.OK_STATUS
 				: beforeSetValidator.validate(value);
+	}
+
+	/**
+	 * Validates the given change. If this method does not return an OK status,
+	 * the change will be vetoed. It is recommended that a status with severity
+	 * {@link IStatus#CANCEL} is used to veto a change. This method will only be
+	 * called if the {@link #VALIDATE_BEFORE_CHANGE} update policy bit is set.
+	 * Therefore, subclasses that override this method should ensure that this
+	 * bit is set.
+	 * 
+	 * @param diff
+	 * @return a status
+	 */
+	public IStatus validateBeforeChange(ValueDiff diff) {
+		return beforeChangeValidator == null ? Status.OK_STATUS
+				: beforeChangeValidator.validate(diff.getNewValue());
 	}
 
 	private static class ValidatorRegistry {
@@ -657,11 +750,11 @@ public class UpdateValueStrategy {
 	 * Default converter implementation, does not perform any conversion.
 	 */
 	static class DefaultConverter implements IConverter {
-	
+
 		private final Object toType;
-	
+
 		private final Object fromType;
-	
+
 		/**
 		 * @param fromType
 		 * @param toType
@@ -670,15 +763,15 @@ public class UpdateValueStrategy {
 			this.toType = toType;
 			this.fromType = fromType;
 		}
-	
+
 		public Object convert(Object fromObject) {
 			return fromObject;
 		}
-	
+
 		public Object getFromType() {
 			return fromType;
 		}
-	
+
 		public Object getToType() {
 			return toType;
 		}

@@ -15,7 +15,10 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.IValueChangingListener;
+import org.eclipse.core.databinding.observable.value.IVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -49,7 +52,29 @@ public class ValueBinding2 extends Binding {
 			}
 		}
 	};
+	
+	private IValueChangingListener targetChangingListener = new IValueChangingListener(){
+		public void handleValueChanging(ValueChangingEvent event) {
+			if (!updatingTarget) {
+				IStatus status = targetToModel.validateBeforeChange(event.diff);
+				if (!status.isOK()) {
+					setValidationStatus(status);
+					event.veto = true;
+				}
+			}
+		}};
 
+		private IValueChangingListener modelChangingListener = new IValueChangingListener(){
+			public void handleValueChanging(ValueChangingEvent event) {
+				if (!updatingModel) {
+					IStatus status = modelToTarget.validateBeforeChange(event.diff);
+					if (!status.isOK()) {
+						setValidationStatus(status);
+						event.veto = true;
+					}
+				}
+			}};
+			
 	/**
 	 * @param targetObservableValue
 	 * @param modelObservableValue
@@ -64,11 +89,17 @@ public class ValueBinding2 extends Binding {
 		this.model = modelObservableValue;
 		this.targetToModel = targetToModel;
 		this.modelToTarget = modelToTarget;
-		if (targetToModel.getUpdatePolicy() != UpdateValueStrategy.POLICY_NEVER) {
+		if ((targetToModel.getUpdatePolicy() & (UpdateValueStrategy.POLICY_CONVERT | UpdateValueStrategy.POLICY_UPDATE)) != 0) {
 			target.addValueChangeListener(targetChangeListener);
 		}
-		if (modelToTarget.getUpdatePolicy() != UpdateValueStrategy.POLICY_NEVER) {
+		if ((targetToModel.getUpdatePolicy() & UpdateValueStrategy.VALIDATE_BEFORE_CHANGE) != 0 && targetObservableValue instanceof IVetoableValue) {
+			((IVetoableValue)targetObservableValue).addValueChangingListener(targetChangingListener);
+		}
+		if ((modelToTarget.getUpdatePolicy() & (UpdateValueStrategy.POLICY_CONVERT | UpdateValueStrategy.POLICY_UPDATE)) != 0) {
 			model.addValueChangeListener(modelChangeListener);
+		}
+		if ((modelToTarget.getUpdatePolicy() & UpdateValueStrategy.VALIDATE_BEFORE_CHANGE) != 0 && modelObservableValue instanceof IVetoableValue) {
+			((IVetoableValue)modelObservableValue).addValueChangingListener(modelChangingListener);
 		}
 	}
 
@@ -98,6 +129,11 @@ public class ValueBinding2 extends Binding {
 		doUpdate(model, target, modelToTarget, true, false);
 	}
 
+	/*
+	 * This method may be moved to UpdateValueStrategy in the future if clients
+	 * need more control over how the source value is copied to the destination
+	 * observable.
+	 */
 	private void doUpdate(final IObservableValue source,
 			final IObservableValue destination,
 			final UpdateValueStrategy updateValueStrategy,
