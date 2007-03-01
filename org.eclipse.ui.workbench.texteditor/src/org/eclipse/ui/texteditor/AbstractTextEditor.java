@@ -3037,7 +3037,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param viewer the viewer
 	 * @since 3.3
 	 */
-	protected void installTextDragAndDrop(ISourceViewer viewer) {
+	protected void installTextDragAndDrop(final ISourceViewer viewer) {
 		if (fIsTextDragAndDropEnabled || viewer == null)
 			return;
 		
@@ -3186,7 +3186,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					
 					String text= (String)event.data;
 					Point newSelection= st.getSelection();
-					st.insert(text);
+					try {
+						int modelOffset= widgetOffset2ModelOffset(viewer, newSelection.x);
+						viewer.getDocument().replace(modelOffset, 0, text);
+					} catch (BadLocationException e) {
+						return;
+					}
 					st.setSelectionRange(newSelection.x, text.length());
 				} finally {
 					fTextDragAndDropToken= null;
