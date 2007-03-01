@@ -41,18 +41,21 @@ public class TeamUI {
 	/**
 	 * Id of the Team Local History action that is contributed by this plugin. Repository providers may override
 	 * this id in their action definition to provide a unified history.
+	 * @since 3.3
 	 */
 	public static final String SHOW_LOCAL_HISTORY_ACTION_ID = "org.eclipse.team.ui.showLocalHistory"; //$NON-NLS-1$
 	
 	/**
 	 * Id of the Compare With Local History action that is contributed by this plugin. Repository providers may override
 	 * this id in their action definition to provide a unified history.
+	 * @since 3.3
 	 */
 	public static final String COMPARE_WITH_LOCAL_HISTORY_ACTION_ID = "org.eclipse.team.ui.compareLocalHistory"; //$NON-NLS-1$
 	
 	/**
 	 * Id of the Replace With Local History action that is contributed by this plugin. Repository providers may override
 	 * this id in their action definition to provide a unified history.
+	 * @since 3.3
 	 */
 	public static final String REPLACE_WITH_LOCAL_HISTORY_ACTION_ID = "org.eclipse.team.ui.replaceLocalHistory"; //$NON-NLS-1$
 	
