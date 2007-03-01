@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -168,6 +169,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	private ToggleStatusLineAction toggleStatusLineAction;
 
 	private RemoveHistoryItemAction removeHistoryItemAction;
+
+	private ActionContributionItem removeHistoryActionContributionItem;
 
 	private IStatus status;
 
@@ -489,24 +492,41 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private void createPopupMenu() {
 		removeHistoryItemAction = new RemoveHistoryItemAction();
+		removeHistoryActionContributionItem = new ActionContributionItem(
+				removeHistoryItemAction);
 
 		MenuManager manager = new MenuManager();
-		manager.add(removeHistoryItemAction);
+		manager.add(removeHistoryActionContributionItem);
 		manager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
 				List selectedElements = ((StructuredSelection) list
 						.getSelection()).toList();
 
 				Object item = null;
+				
+				manager.remove(removeHistoryActionContributionItem);
 
 				for (Iterator it = selectedElements.iterator(); it.hasNext();) {
 					item = it.next();
 					if (item instanceof ItemsListSeparator
 							|| !isHistoryElement(item)) {
-						removeHistoryItemAction.setEnabled(false);
 						return;
 					}
-					removeHistoryItemAction.setEnabled(true);
+				}
+
+				if (selectedElements.size() > 0) {
+					removeHistoryItemAction
+							.setText(MessageFormat
+									.format(
+											WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction,
+											new Object[] {
+													new Integer(
+															selectedElements
+																	.size()),
+													selectedElements.size() > 1 ? "s" : "" })); //$NON-NLS-1$//$NON-NLS-2$
+
+					manager.add(removeHistoryActionContributionItem);
+
 				}
 			}
 		});
