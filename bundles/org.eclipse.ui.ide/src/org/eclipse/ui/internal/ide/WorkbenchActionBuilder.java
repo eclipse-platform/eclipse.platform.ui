@@ -652,6 +652,14 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         menu.add(newWindowAction);
 		menu.add(newEditorAction);
+		
+		 //Only register the menu but don't show it so that it gets picked up by
+		//platforms that search the menu for entries such as carbon.
+		
+        ActionContributionItem toggleCoolbarItem = new ActionContributionItem(toggleCoolbarAction);
+        toggleCoolbarItem.setVisible(false); 
+        menu.add(toggleCoolbarItem);
+		
         menu.add(new Separator());
         addPerspectiveActions(menu);
         menu.add(new Separator());
