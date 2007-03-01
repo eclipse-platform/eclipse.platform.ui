@@ -1339,7 +1339,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 				        		continue;
 				        	
 				        	if (trim instanceof ViewStackTrimToolBar) {
-				        		if (children[i] instanceof ContainerPlaceholder) {
+				        		ViewStackTrimToolBar vstb = (ViewStackTrimToolBar) trim;
+				        		if (vstb.restoreOnUnzoom() &&
+				        			children[i] instanceof ContainerPlaceholder) {
 				            		// In the current presentation its a container placeholder
 				            		ViewStack realStack = (ViewStack) ((ContainerPlaceholder)children[i]).getRealContainer();
 				            		realStack.setMinimized(false);
