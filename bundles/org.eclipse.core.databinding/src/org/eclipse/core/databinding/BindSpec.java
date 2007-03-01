@@ -43,8 +43,8 @@ public class BindSpec {
 	/**
 	 * Policy constant specifying that update or validation should only occur
 	 * when explicitly requested by calling
-	 * {@link Binding#updateModelFromTarget()} or
-	 * {@link Binding#updateTargetFromModel()}.
+	 * {@link Binding#updateTargetToModel()} or
+	 * {@link Binding#updateModelToTarget()}.
 	 */
 	public static final Integer POLICY_EXPLICIT = new Integer(2);
 

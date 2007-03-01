@@ -57,7 +57,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		model.add("2");
 		
 		assertFalse("target should not equal model", target.equals(model));
-		binding.updateModelFromTarget();
+		binding.updateTargetToModel();
 		assertEquals("target should not have changed", targetCopy, target);
 		assertEquals("target != model", target, model);
 	}
@@ -75,7 +75,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		modelCopy.addAll(model);
 		
 		assertFalse("model should not equal target", model.equals(target));
-		binding.updateTargetFromModel();
+		binding.updateModelToTarget();
 		
 		assertEquals("model should not have changed", modelCopy, model);
 		assertEquals("model != target", model, target);

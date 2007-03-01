@@ -12,7 +12,7 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.DefaultBindSpec;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
@@ -52,9 +52,9 @@ public class Snippet008ComputedValue {
 				// Bind the UI to the Data.
 				DataBindingContext dbc = new DataBindingContext();
 				dbc.bindValue(SWTObservables.observeText(ui.firstName,
-						SWT.Modify), data.firstName, null);
+						SWT.Modify), data.firstName, null, null);
 				dbc.bindValue(SWTObservables.observeText(ui.lastName,
-						SWT.Modify), data.lastName, null);
+						SWT.Modify), data.lastName, null, null);
 
 				// Construct the formatted name observable.
 				FormattedName formattedName = new FormattedName(data.firstName,
@@ -63,8 +63,7 @@ public class Snippet008ComputedValue {
 				// Bind the formatted name Text to the formatted name
 				// observable.
 				dbc.bindValue(SWTObservables.observeText(ui.formattedName,
-						SWT.None), formattedName, new DefaultBindSpec()
-						.setUpdateModel(false));
+						SWT.None), formattedName, new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
 
 				shell.pack();
 				shell.open();

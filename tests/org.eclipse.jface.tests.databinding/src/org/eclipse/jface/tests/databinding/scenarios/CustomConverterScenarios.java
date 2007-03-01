@@ -55,15 +55,15 @@ public class CustomConverterScenarios extends ScenariosTestCase {
         PriceModelObject priceModel = new PriceModelObject();
 
         dbc.bindValue(BeansObservables.observeValue(priceModel, "price"), BeansObservables.observeValue(skiTrip,
-                "price"), null);
+                "price"), null, null);
 
         dbc.bindValue(SWTObservables.observeSelection(spinner_dollars),
                 BeansObservables.observeValue(priceModel, "dollars"),
-                null);
+                null, null);
 
         dbc.bindValue(SWTObservables.observeSelection(spinner_cents),
                 BeansObservables.observeValue(priceModel, "cents"),
-                null);
+                null, null);
 
         // spinEventLoop(1);
         // Make sure that the selection on the spinner_dollars matches the

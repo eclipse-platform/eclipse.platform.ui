@@ -101,7 +101,7 @@ public class ValueBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		assertEquals("last position should be PIPELINE_AFTER_CONVERT",
 				BindingEvent.PIPELINE_AFTER_CONVERT, listener.lastPosition);
 
-		binding.updateModelFromTarget();
+		binding.updateTargetToModel();
 		assertEquals(target.getValue(), model.getValue());
 	}
 

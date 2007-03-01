@@ -257,13 +257,10 @@ public class ListBinding extends Binding {
 			status = fireBindingEvent(e);
 		}
 
-		partialValidationErrorObservable.setValue(null);
 		validationErrorObservable.setValue(status);
 
 		return (status.isOK() && pipelinePosition != lastPosition);
 	}
-
-	private WritableValue partialValidationErrorObservable;
 
 	private WritableValue validationErrorObservable;
 
@@ -272,7 +269,7 @@ public class ListBinding extends Binding {
 	 */
 	private Integer targetChangeModelPipelinePosition;
 
-	public void updateTargetFromModel() {
+	public void updateModelToTarget() {
 		updateTargetFromModel(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
 
@@ -280,18 +277,12 @@ public class ListBinding extends Binding {
 		return validationErrorObservable;
 	}
 
-	public IObservableValue getPartialValidationStatus() {
-		return partialValidationErrorObservable;
-	}
-
-	public void updateModelFromTarget() {
+	public void updateTargetToModel() {
 		updateModelFromTarget(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.Binding#performModelToTarget(int)
+	/**
+	 * @param phase 
 	 */
 	public void updateTargetFromModel(final int phase) {
 		modelList.getRealm().exec(new Runnable() {
@@ -307,10 +298,8 @@ public class ListBinding extends Binding {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.Binding#performTargetToModel(int)
+	/**
+	 * @param phase  
 	 */
 	public void updateModelFromTarget(final int phase) {
 		targetList.getRealm().exec(new Runnable() {
@@ -327,14 +316,12 @@ public class ListBinding extends Binding {
 	}
 
 	protected void preInit() {
-		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
 		validationErrorObservable = new WritableValue(context
 				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
 	}
 
 	protected void postInit() {
-		updateTargetFromModel();
+		updateModelToTarget();
 	}
 
 	private static int calculateValidationPolicy(Integer updatePolicy,
@@ -354,5 +341,13 @@ public class ListBinding extends Binding {
 	 */
 	public Integer getTargetChangeModelPipelinePosition() {
 		return targetChangeModelPipelinePosition;
+	}
+
+	public void validateModelToTarget() {
+		updateTargetFromModel(BindingEvent.PIPELINE_AFTER_CONVERT);
+	}
+
+	public void validateTargetToModel() {
+		updateModelFromTarget(BindingEvent.PIPELINE_AFTER_CONVERT);
 	}
 }

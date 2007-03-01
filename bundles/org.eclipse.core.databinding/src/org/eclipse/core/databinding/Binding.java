@@ -133,12 +133,6 @@ public abstract class Binding {
 	}
 
 	/**
-	 * @return an observable value containing the current partial validation
-	 *         status
-	 */
-	public abstract IObservableValue getPartialValidationStatus();
-
-	/**
 	 * @return an observable value containing the current validation status
 	 */
 	public abstract IObservableValue getValidationStatus();
@@ -162,14 +156,28 @@ public abstract class Binding {
 	 * opportunity. There is no guarantee that the state will have been updated
 	 * by the time this call returns.
 	 */
-	public abstract void updateModelFromTarget();
+	public abstract void updateTargetToModel();
 
 	/**
 	 * Updates the target's state from the model's state at the next reasonable
 	 * opportunity. There is no guarantee that the state will have been updated
 	 * by the time this call returns.
 	 */
-	public abstract void updateTargetFromModel();
+	public abstract void updateModelToTarget();
+	
+	/**
+	 * Validates the target's state at the next reasonable
+	 * opportunity. There is no guarantee that the validation status will have been updated
+	 * by the time this call returns.
+	 */
+	public abstract void validateTargetToModel();
+	
+	/**
+	 * Validates the model's state at the next reasonable
+	 * opportunity. There is no guarantee that the validation status will have been updated
+	 * by the time this call returns.
+	 */
+	public abstract void validateModelToTarget();
 	
 	/**
 	 * Disposes of this Binding. Subclasses may extend, but must call super.dispose().
@@ -200,22 +208,6 @@ public abstract class Binding {
 	/* package */ void setDataBindingContext(DataBindingContext context) {
 		this.context = context;
 	}
-
-	/**
-	 * Invokes the pipeline positions from the target to the model up to and
-	 * including the provided <code>pipelinePosition</code> but no further.
-	 * 
-	 * @param pipelinePosition BindingEvent.PIPELINE_* constant
-	 */
-	public abstract void updateModelFromTarget(int pipelinePosition);
-
-	/**
-	 * Invokes the pipeline posistions from the model to the target up to and
-	 * including the provided <code>pipelinePosition</code> but no further.
-	 * 
-	 * @param pipelinePosition BindingEvent.PIPELINE_* constant
-	 */
-	public abstract void updateTargetFromModel(int pipelinePosition);
 
 	/**
 	 * Returns a new BindingEvent object.

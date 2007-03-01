@@ -54,9 +54,9 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 
 		DataBindingContext dbc = new DataBindingContext();
 		final Binding binding1 = dbc.bindValue(SWTObservables.observeText(
-				view.text1, SWT.Modify), model.value1, null);
+				view.text1, SWT.Modify), model.value1, null, null);
 		final Binding binding2 = dbc.bindValue(SWTObservables.observeText(
-				view.text2, SWT.Modify), model.value2, null);
+				view.text2, SWT.Modify), model.value2, null, null);
 
 		/**
 		 * Listener that will validate multiple bindings each time a change
@@ -85,7 +85,7 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 
 					// force validation to run for the other
 					// binding
-					other.updateModelFromTarget();
+					other.updateTargetToModel();
 
 					// reset stored state
 					changingValue = null;

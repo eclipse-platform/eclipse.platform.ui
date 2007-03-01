@@ -50,8 +50,6 @@ public class ValueBinding extends Binding {
 	private boolean updatingTarget = false;
 	private boolean updatingModel = false;
 
-	private WritableValue partialValidationErrorObservable;
-
 	private WritableValue validationErrorObservable;
 
 	private IValueChangeListener targetChangeListener;
@@ -288,22 +286,11 @@ public class ValueBinding extends Binding {
 
 		final IStatus finalStatus = status;
 
-		if (position == BindingEvent.PIPELINE_VALUE_CHANGING) {
-			partialValidationErrorObservable.getRealm().exec(new Runnable() {
-				public void run() {
-					partialValidationErrorObservable.setValue(finalStatus);
-				}
-			});
-		} else {
-			Assert.isTrue(partialValidationErrorObservable.getRealm().equals(
-					validationErrorObservable.getRealm()));
-			partialValidationErrorObservable.getRealm().exec(new Runnable() {
-				public void run() {
-					partialValidationErrorObservable.setValue(Status.OK_STATUS);
-					validationErrorObservable.setValue(finalStatus);
-				}
-			});
-		}
+		validationErrorObservable.getRealm().exec(new Runnable() {
+			public void run() {
+				validationErrorObservable.setValue(finalStatus);
+			}
+		});
 
 		return (status.isOK() && position != lastPosition);
 	}
@@ -311,7 +298,7 @@ public class ValueBinding extends Binding {
 	/**
 	 * Can be called from any thread/realm.
 	 */
-	public void updateTargetFromModel() {
+	public void updateModelToTarget() {
 		updateTargetFromModel(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
 
@@ -367,21 +354,15 @@ public class ValueBinding extends Binding {
 		return validationErrorObservable;
 	}
 
-	public IObservableValue getPartialValidationStatus() {
-		return partialValidationErrorObservable;
-	}
-
 	/**
 	 * Can be called from any thread/realm.
 	 */
-	public void updateModelFromTarget() {
+	public void updateTargetToModel() {
 		updateModelFromTarget(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.Binding#performTarget(int)
+	/**
+	 * @param pipelinePosition 
 	 */
 	public void updateModelFromTarget(final int pipelinePosition) {
 		target.getRealm().exec(new Runnable() {
@@ -397,10 +378,8 @@ public class ValueBinding extends Binding {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.databinding.Binding#performModelToTarget(int)
+	/**
+	 * @param pipelinePosition 
 	 */
 	public void updateTargetFromModel(final int pipelinePosition) {
 		model.getRealm().exec(new Runnable() {
@@ -419,13 +398,11 @@ public class ValueBinding extends Binding {
 	protected void preInit() {
 		validationErrorObservable = new WritableValue(context
 				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
-		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
 	}
 
 	protected void postInit() {
 		if (updateTarget) {
-			updateTargetFromModel();
+			updateModelToTarget();
 		}
 	}
 
@@ -446,5 +423,13 @@ public class ValueBinding extends Binding {
 	 */
 	public Integer getTargetChangeModelPipelinePosition() {
 		return targetChangeModelPipelinePosition;
+	}
+
+	public void validateModelToTarget() {
+		updateTargetFromModel(BindingEvent.PIPELINE_BEFORE_CHANGE);
+	}
+
+	public void validateTargetToModel() {
+		updateModelFromTarget(BindingEvent.PIPELINE_BEFORE_CHANGE);
 	}
 }

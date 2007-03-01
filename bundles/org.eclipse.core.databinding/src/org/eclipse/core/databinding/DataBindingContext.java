@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValidationStatusMap;
 import org.eclipse.core.internal.databinding.ValueBinding;
+import org.eclipse.core.internal.databinding.ValueBinding2;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -85,7 +86,7 @@ public class DataBindingContext {
 
 		unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
 		validationStatusMap = new ValidationStatusMap(validationRealm,
-				bindings, false);
+				bindings);
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class DataBindingContext {
 	 * {@link BindSpec#POLICY_EXPLICIT} validation is ran up to and including
 	 * <code>BindingEvent.PIPELINE_AFTER_CONVERT</code> on every change of the
 	 * target. In the above example the provided validator will only be invoked
-	 * on an explicit model updates {@link Binding#updateModelFromTarget()}.
+	 * on an explicit model updates {@link Binding#updateTargetToModel()}.
 	 * </p>
 	 * 
 	 * @param targetObservableValue
@@ -173,9 +174,32 @@ public class DataBindingContext {
 				position = new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE);
 			}
 			
-			result.updateModelFromTarget(position.intValue());
+			result.validateTargetToModel();
 		}
 		
+		return result;
+	}
+	
+	/**
+	 * @param targetObservableValue
+	 * @param modelObservableValue
+	 * @param targetToModel
+	 * @param modelToTarget
+	 * @return a binding
+	 */
+	public Binding bindValue(IObservableValue targetObservableValue,
+			IObservableValue modelObservableValue,
+			UpdateValueStrategy targetToModel, UpdateValueStrategy modelToTarget) {
+		UpdateValueStrategy targetToModelStrategy = targetToModel != null ? targetToModel
+						: new UpdateValueStrategy();
+		UpdateValueStrategy modelToTargetStrategy = modelToTarget != null ? modelToTarget
+				: new UpdateValueStrategy();
+		targetToModelStrategy.fillDefaults(targetObservableValue, modelObservableValue);
+		modelToTargetStrategy.fillDefaults(modelObservableValue, targetObservableValue);
+		ValueBinding2 result = new ValueBinding2(targetObservableValue,
+				modelObservableValue, targetToModelStrategy,
+				modelToTargetStrategy);
+		result.init(this);
 		return result;
 	}
 
@@ -243,7 +267,7 @@ public class DataBindingContext {
 				position = new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE);
 			}
 			
-			result.updateModelFromTarget(position.intValue());
+			result.validateTargetToModel();
 		}
 		
 		return result;
@@ -332,7 +356,7 @@ public class DataBindingContext {
 	public void updateModels() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
 			Binding binding = (Binding) it.next();
-			binding.updateModelFromTarget();
+			binding.updateTargetToModel();
 		}
 	}
 
@@ -344,7 +368,7 @@ public class DataBindingContext {
 	public void updateTargets() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
 			Binding binding = (Binding) it.next();
-			binding.updateTargetFromModel();
+			binding.updateModelToTarget();
 		}
 	}
 

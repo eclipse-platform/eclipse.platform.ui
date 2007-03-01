@@ -62,7 +62,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Change the model and verify the UI changes
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
-                null);
+                null, null);
 
         assertEquals(adventure.getName(), text.getText());
         text.setText("England");
@@ -84,7 +84,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Change the model and verify the UI changes
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(transportation, "price"),
-                null);
+                null, null);
 
         assertEquals(Double.toString(transportation.getPrice()), text.getText());
         text.setText("9876.54");
@@ -101,7 +101,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // is lost from the Text control
         getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut),
                 BeansObservables.observeValue(adventure, "name"),
-                null);
+                null, null);
 
         String currentText = text.getText();
         text.setText("Switzerland");
@@ -138,7 +138,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // keystroke occurs
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
-                null);
+                null, null);
 
         String originalName = adventure.getName();
         // Change the text field character by character and ensure that the
@@ -253,7 +253,9 @@ public class TextControlScenario extends ScenariosTestCase {
 
         DataBindingContext dbc = getDbc();
         
-        dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(adventure, "maxNumberOfPeople"), new CustomBeanBindSpec());
+        dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
+				new CustomBeanUpdateValueStrategy(), null);
 
         // make sure we can set a value inside the validator's range
         text.setText("4");
@@ -268,7 +270,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696        
         Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label), null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label), null, null);
 
         // Change the text
         text.setText("Frog");
@@ -284,7 +286,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696 with TIME_EARLY
         Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label), null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label), null, null);
 
         // Change the text
         String newTextValue = "Frog";

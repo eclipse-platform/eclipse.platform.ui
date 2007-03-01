@@ -29,7 +29,7 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends AbstractBindS
 
     public void testStringToBooleanPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
-                "booleanPrimitiveVal"), null);
+                "booleanPrimitiveVal"), null, null);
 
         dataObject.setBooleanPrimitiveVal(true);
         assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
@@ -55,7 +55,7 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends AbstractBindS
     public void testBooleanToBooleanPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "booleanVal"),
                 BeansObservables.observeValue(dataObject, "booleanPrimitiveVal"),
-                null);
+                null, null);
 
         dataObject.setBooleanPrimitiveVal(true);
         assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
@@ -75,7 +75,7 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends AbstractBindS
 
     public void testObjectToBooleanPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
-                "booleanPrimitiveVal"), null);
+                "booleanPrimitiveVal"), null, null);
 
         dataObject.setBooleanPrimitiveVal(true);
         assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());

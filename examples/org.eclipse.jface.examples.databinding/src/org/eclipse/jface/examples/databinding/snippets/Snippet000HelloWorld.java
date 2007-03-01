@@ -116,7 +116,7 @@ public class Snippet000HelloWorld {
 			// Called from inside the SWT threading realm)
 			Person person = viewModel.getPerson();
 			bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
-					BeansObservables.observeValue(person, "name"), null);
+					BeansObservables.observeValue(person, "name"), null, null);
 		}
 	}
 

@@ -12,8 +12,15 @@
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
+import java.util.Iterator;
+
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.IBeanObservable;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -200,19 +207,19 @@ public class TestMasterDetail {
 		DataBindingContext dbc = new DataBindingContext(realm);
 		dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"name", String.class), null);
+						"name", String.class), null, null);
 
 		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"address", String.class), null);
+						"address", String.class), null, null);
 
 		dbc.bindValue(SWTObservables.observeText(city, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"city", String.class), null);
+						"city", String.class), null, null);
 
 		dbc.bindValue(SWTObservables.observeText(state, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"state", String.class), null);
+						"state", String.class), null, null);
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
 		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
@@ -225,6 +232,20 @@ public class TestMasterDetail {
 		IObservableList orders = BeansObservables.observeDetailList(realm,
 				selectedPerson, "orders", SimpleOrder.class);
 		ordersViewer.setInput(orders);
+		
+		for (Iterator it = dbc.getBindings().iterator(); it.hasNext();) {
+			Binding binding = (Binding) it.next();
+			binding.getModel().addChangeListener(new IChangeListener() {
+				public void handleChange(ChangeEvent event) {
+					final IObservable observable = event.getObservable();
+					if (observable instanceof IBeanObservable) {
+						System.out.println(((IBeanObservable)observable).getObserved());
+					} else {
+						System.out.println(observable);
+					}
+				}
+			});
+		}
 	}
 
 }

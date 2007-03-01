@@ -40,8 +40,6 @@ public class ValidationStatusMap extends ObservableMap {
 
 	private final WritableList bindings;
 
-	private final boolean usePartialErrors;
-
 	private List dependencies = new ArrayList();
 
 	private IChangeListener markDirtyChangeListener = new IChangeListener() {
@@ -53,13 +51,10 @@ public class ValidationStatusMap extends ObservableMap {
 	/**
 	 * @param realm
 	 * @param bindings
-	 * @param usePartialErrors
 	 */
-	public ValidationStatusMap(Realm realm, WritableList bindings,
-			boolean usePartialErrors) {
+	public ValidationStatusMap(Realm realm, WritableList bindings) {
 		super(realm, new HashMap());
 		this.bindings = bindings;
-		this.usePartialErrors = usePartialErrors;
 		bindings.addChangeListener(markDirtyChangeListener);
 	}
 
@@ -118,8 +113,7 @@ public class ValidationStatusMap extends ObservableMap {
 			Map newContents = new HashMap();
 			for (Iterator it = bindings.iterator(); it.hasNext();) {
 				Binding binding = (Binding) it.next();
-				IObservableValue validationError = usePartialErrors ? binding
-						.getPartialValidationStatus() : binding
+				IObservableValue validationError = binding
 						.getValidationStatus();
 				dependencies.add(validationError);
 				validationError.addChangeListener(markDirtyChangeListener);

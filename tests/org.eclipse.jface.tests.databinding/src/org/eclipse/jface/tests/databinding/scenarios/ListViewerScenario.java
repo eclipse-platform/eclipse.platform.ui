@@ -97,7 +97,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 				.observeSingleSelection(listViewer);
 		getDbc().bindValue(selection,
 				BeansObservables.observeValue(adventure, "defaultLodging"),
-				null);
+				null, null);
 
 		// Verify that the list selection is the default lodging
 		assertEquals(((IStructuredSelection) listViewer.getSelection())

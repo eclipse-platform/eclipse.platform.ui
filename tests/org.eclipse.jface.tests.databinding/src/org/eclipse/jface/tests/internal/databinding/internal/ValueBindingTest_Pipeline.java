@@ -285,7 +285,7 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 		ValueBinding binding = new ValueBinding(target, model, new BindSpec());
 		binding.init(dbc);
 		binding.addBindingEventListener(new Listener());
-		assertTrue(((IStatus) binding.getPartialValidationStatus().getValue())
+		assertTrue(((IStatus) binding.getValidationStatus().getValue())
 				.isOK());
 		
 		try {
@@ -294,7 +294,7 @@ public class ValueBindingTest_Pipeline extends AbstractDefaultRealmTestCase {
 		}
 		
 		assertFalse("status should be in error", ((IStatus) binding
-				.getPartialValidationStatus().getValue()).isOK());
+				.getValidationStatus().getValue()).isOK());
 	}
 
 	static class VetoableValueStub extends AbstractVetoableValue {

@@ -73,7 +73,7 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		assertFalse("should not be updated", Arrays.equals(target.toArray(),
 				model.toArray()));
 
-		binding.updateModelFromTarget();
+		binding.updateTargetToModel();
 		assertTrue("should be updated", Arrays.equals(target.toArray(), model
 				.toArray()));
 	}
@@ -106,7 +106,7 @@ public class ListBindingTest_Policies extends AbstractDefaultRealmTestCase {
 		assertFalse("should not be updated", Arrays.equals(model.toArray(),
 				target.toArray()));
 
-		binding.updateTargetFromModel();
+		binding.updateModelToTarget();
 		assertTrue("should be updated", Arrays.equals(model.toArray(), target
 				.toArray()));
 	}
