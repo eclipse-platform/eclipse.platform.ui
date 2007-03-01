@@ -1292,7 +1292,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         	if (wbw == null || wbw.getShell() == null)
         		return;
         	
-        	wbw.getShell().setRedraw(false);
+        	wbw.getPageComposite().setRedraw(false);
         	try {
 				ITrimManager tbm = wbw.getTrimManager();
 				FastViewManager fvm = getPage().getActivePerspective().getFastViewManager();
@@ -1359,7 +1359,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 				}
 			}
         	finally {
-        		wbw.getShell().setRedraw(true);
+        		wbw.getPageComposite().setRedraw(true);
 			}
         	
 	        setPresentationState(newState);
