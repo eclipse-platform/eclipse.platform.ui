@@ -788,8 +788,8 @@ public abstract class FilteredItemsSelectionDialog extends
 			list.refresh();
 
 			if (list.getTable().getItemCount() > 0) {
-				list.getTable().deselectAll();
 				list.getTable().setSelection(0);
+				list.getTable().notifyListeners(SWT.Selection, new Event());
 			} else {
 				list.setSelection(StructuredSelection.EMPTY);
 			}
