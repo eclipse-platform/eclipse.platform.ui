@@ -469,7 +469,7 @@ public class FormHeading extends Canvas {
 				messageHyperlink.removeHyperlinkListener(listener);
 			if (listeners.isEmpty())
 				listeners = null;
-			if (listeners == null)
+			if (listeners == null && !isDisposed())
 				updateForeground();
 		}
 
