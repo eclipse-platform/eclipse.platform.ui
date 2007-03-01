@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class AntDebugState {
     
 	private IDebugBuildLogger fLogger;
 	private Stack fTasks= new Stack();
+	private Map fTaskToProxies= new HashMap();
 	private Task fCurrentTask;
 	private Task fStepOverTask;
 	private Task fStepIntoTask;
@@ -51,6 +52,7 @@ public class AntDebugState {
 	private boolean fClientSuspend= false;
 	private boolean fStepIntoSuspend= false;
 	private boolean fIsAfterTaskEvent= false;
+	
 	
 	public AntDebugState(IDebugBuildLogger logger) {
 		fLogger= logger;
@@ -102,7 +104,7 @@ public class AntDebugState {
 	private Stack getTasks() {
 		return fTasks;
 	}
-
+	
 	public void setShouldSuspend(boolean shouldSuspend) {
 		fShouldSuspend= shouldSuspend;
 	}
@@ -206,6 +208,15 @@ public class AntDebugState {
 		
 		setCurrentTask(event.getTask());
 		setConsiderTargetBreakpoints(false);
+		if (!getTasks().isEmpty()) {
+			//cache the parent task proxy as when that task is started or finished the
+			//proxy is not yet available or is nulled out
+			Task parentTask = (Task) getTasks().peek();
+			Object proxy = parentTask.getRuntimeConfigurableWrapper().getProxy();
+			if (proxy != null) {
+				fTaskToProxies.put(parentTask, proxy);
+			}
+		}
 		getTasks().push(getCurrentTask());
 		waitIfSuspended();
 	}
@@ -220,7 +231,7 @@ public class AntDebugState {
         if (getStepOverTask() != null) {
         	if ((fgAntCallTaskName.equals(taskName) || fgAntTaskName.equals(taskName)) && (!fgAntCallTaskName.equals(getStepOverTask().getTaskName()) && !fgAntTaskName.equals(getStepOverTask().getTaskName()))) {
         		setShouldSuspend(true);
-        	} else if (lastTask.getRuntimeConfigurableWrapper().getProxy() instanceof MacroInstance) {
+        	} else if (fTaskToProxies.remove(lastTask) instanceof MacroInstance) {
         		setShouldSuspend(true);
         	}
         }
