@@ -559,7 +559,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				if (background != null)
 					splashShell.setBackgroundImage(background);
 				Dictionary properties = new Hashtable();
-				properties.put(Constants.SERVICE_RANKING, Integer.toString(Integer.MAX_VALUE));
+				properties.put(Constants.SERVICE_RANKING, new Integer(Integer.MAX_VALUE));
 				BundleContext context = WorkbenchPlugin.getDefault().getBundleContext();
 				context.registerService(StartupMonitor.class.getName(), new StartupMonitor () {
 					
