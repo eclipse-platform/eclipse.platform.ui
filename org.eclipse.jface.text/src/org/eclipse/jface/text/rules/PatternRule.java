@@ -237,6 +237,7 @@ public class PatternRule implements IPredicateRule {
 			Arrays.sort(fSortedLineDelimiters, fLineDelimiterComparator);
 		}
 
+		int readCount= 1;
 		int c;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
 			if (c == fEscapeCharacter) {
@@ -261,9 +262,15 @@ public class PatternRule implements IPredicateRule {
 						return true;
 				}
 			}
+			readCount++;
 		}
-		if (fBreaksOnEOF) return true;
-		scanner.unread();
+		
+		if (fBreaksOnEOF)
+			return true;
+
+		for (; readCount > 0; readCount--)
+			scanner.unread();
+
 		return false;
 	}
 

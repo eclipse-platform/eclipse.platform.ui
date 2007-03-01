@@ -12,10 +12,15 @@ package org.eclipse.jface.text.tests.rules;
 
 import junit.framework.TestCase;
 
+import org.eclipse.swt.SWT;
+
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
+import org.eclipse.jface.text.rules.PatternRule;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
@@ -24,7 +29,19 @@ import org.eclipse.jface.text.rules.WordRule;
  * @since 3.3
  */
 public class WordRuleTest extends TestCase {
+	
+	
+	private static class SimpleWordDetector implements IWordDetector {
+		public boolean isWordStart(char c) {
+			return !Character.isWhitespace(c);
+		}
+		
+		public boolean isWordPart(char c) {
+			return !Character.isWhitespace(c);
+		}
+	}
 
+	
 	/*
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=163116
 	 */
@@ -60,17 +77,7 @@ public class WordRuleTest extends TestCase {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=144355
 	 */
 	public void testBug144355() throws Exception {
-		IWordDetector detector= new IWordDetector() {
-
-			public boolean isWordPart(char c) {
-				return true;
-			}
-
-			public boolean isWordStart(char c) {
-				return true;
-			}
-
-		};
+		IWordDetector detector= new SimpleWordDetector();
 		
 		String defaultTokenString= "defaultToken";
 		Token defaultToken= new Token(defaultTokenString);
@@ -126,5 +133,69 @@ public class WordRuleTest extends TestCase {
 		scanner.setRange(new Document(testTokenStringDifferentCapitalization), 0, testTokenStringDifferentCapitalization.length());
 		assertTrue(scanner.nextToken().getData().equals(defaultTokenString));
 	}
+	
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712
+	public void testBug175712_1() throws Exception {
+		IRule[] rules= new IRule[2];
+		
+		IToken stepToken= new Token(new TextAttribute(null, null, SWT.BOLD));
+		PatternRule stepRule= new PatternRule("(((", ")", stepToken, (char) 0,false);
+		stepRule.setColumnConstraint(-1);
+		rules[1]= stepRule;
+		
+		IToken titleToken= new Token(new TextAttribute(null, null, SWT.BOLD));
+		WordRule wordRule= new WordRule(new SimpleWordDetector());
+		wordRule.addWord("((", titleToken);
+		rules[0]= wordRule;
+		
+		IDocument document= new Document("((( \n((\n- Cheese\n- Wine");
+		RuleBasedScanner scanner= new RuleBasedScanner();
+		scanner.setRules(rules);
+		scanner.setRange(document, 0, document.getLength());
+		
+		IToken defaultToken= new Token(this);
+		scanner.setDefaultReturnToken(defaultToken);
+
+		IToken token= scanner.nextToken();
+		assertSame(defaultToken, token);
+		
+		token= scanner.nextToken();
+		assertSame(defaultToken, token);
+		
+		token= scanner.nextToken();
+		assertSame(defaultToken, token);
+		
+		token= scanner.nextToken();
+		assertSame(titleToken, token);
+		
+	}
+	
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=175712
+	public void testBug175712_2() throws Exception {
+		IRule[] rules= new IRule[2];
+		
+		IToken stepToken= new Token(new TextAttribute(null, null, SWT.BOLD));
+		PatternRule stepRule= new PatternRule("(((", ")", stepToken, (char) 0,false);
+		stepRule.setColumnConstraint(-1);
+		rules[1]= stepRule;
+		
+		IToken titleToken= new Token(new TextAttribute(null, null, SWT.BOLD));
+		WordRule wordRule= new WordRule(new SimpleWordDetector());
+		wordRule.addWord("((", titleToken);
+		rules[0]= wordRule;
+		
+		IDocument document= new Document("((\n((\n- Cheese\n- Wine");
+		RuleBasedScanner scanner= new RuleBasedScanner();
+		scanner.setRules(rules);
+		scanner.setRange(document, 0, document.getLength());
+		
+		IToken defaultToken= new Token(this);
+		scanner.setDefaultReturnToken(defaultToken);
+		
+		IToken token= scanner.nextToken();
+		assertSame(titleToken, token);
+		
+	}
+	
 	
 }
