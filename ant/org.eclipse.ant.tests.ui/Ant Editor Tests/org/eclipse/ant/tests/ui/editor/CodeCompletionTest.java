@@ -106,7 +106,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals(3, proposals.length);
         displayString= proposals[0].getDisplayString();
         assertTrue(displayString.equals("id") 
-        		||  displayString.equals("includeFile")
+        		||  displayString.equals("includesFile")
 				|| displayString.equals("includes"));
 
         proposals = processor.getAttributeProposals("project", "de");
