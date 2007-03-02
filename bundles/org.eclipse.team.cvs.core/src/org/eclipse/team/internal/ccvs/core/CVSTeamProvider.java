@@ -166,16 +166,9 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
-		try {
-			this.workspaceRoot = new CVSWorkspaceRoot(project);
-			// Ensure that the project has CVS info
-			if (workspaceRoot.getLocalRoot().getFolderSyncInfo() == null) {
-				IStatus status = new CVSStatus(IStatus.ERROR, CVSStatus.RESOURCE_SYNC_INFO_ERROR, NLS.bind(CVSMessages.CVSTeamProvider_noFolderInfo, new String[] { project.getName() }),project);
-				CVSProviderPlugin.log(status); 
-			}
-		} catch (CVSException e) {
-			// Ignore exceptions here. They will be surfaced elsewhere
-		}
+		// We used to check to see if the project had CVS folders and log
+		// if it didn't However, in some scenarios, the project can be mapped
+		// before the CVS folders have been created (see bug 173610)
 	}
 
 	/**
