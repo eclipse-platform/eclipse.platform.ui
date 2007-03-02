@@ -13,11 +13,12 @@ package org.eclipse.ui.internal.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
@@ -114,14 +115,15 @@ public class EvaluationAuthority extends ExpressionAuthority {
 				Map cachesByExpression = (HashMap) cachesBySourceName
 						.get(sourceNames[i]);
 				if (cachesByExpression != null) {
-					Iterator expressionCaches = cachesByExpression.values()
-							.iterator();
-					while (expressionCaches.hasNext()) {
-						Set caches = (Set) expressionCaches.next();
-						Iterator evalutionCache = caches.iterator();
-						if (evalutionCache.hasNext()) {
-							IEvaluationReference ref = (IEvaluationReference) evalutionCache
-									.next();
+					Collection v = cachesByExpression.values();
+					Set[] expressionCaches = (Set[]) v
+							.toArray(new Set[v.size()]);
+					for (int j = 0; j < expressionCaches.length; j++) {
+						if (expressionCaches[j].size() > 0) {
+							IEvaluationReference[] refs = (IEvaluationReference[]) expressionCaches[j]
+									.toArray(new IEvaluationReference[expressionCaches[j]
+											.size()]);
+							IEvaluationReference ref = refs[0];
 							boolean oldValue = evaluate(ref);
 							ref.clearResult();
 							final boolean newValue = evaluate(ref);
@@ -129,9 +131,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 								firePropertyChange(ref, new Boolean(oldValue),
 										new Boolean(newValue));
 							}
-							while (evalutionCache.hasNext()) {
-								ref = (IEvaluationReference) evalutionCache
-										.next();
+							for (int k = 1; k < refs.length; k++) {
+								ref = refs[k];
 								// this is not as expensive as it looks
 								oldValue = evaluate(ref);
 								if (oldValue != newValue) {
@@ -159,8 +160,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 		}
 		notifying++;
 		if (notifying == 1) {
-			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(false), new Boolean(
-					true));
+			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(
+					false), new Boolean(true));
 		}
 	}
 
@@ -173,8 +174,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 					+ Arrays.asList(sourceNames));
 		}
 		if (notifying == 1) {
-			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(true), new Boolean(
-					false));
+			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(
+					true), new Boolean(false));
 		}
 		notifying--;
 	}
