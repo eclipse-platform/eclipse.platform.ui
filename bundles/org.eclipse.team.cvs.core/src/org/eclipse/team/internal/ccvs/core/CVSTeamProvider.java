@@ -166,6 +166,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 */
 	public void setProject(IProject project) {
 		this.project = project;
+		this.workspaceRoot = new CVSWorkspaceRoot(project);
 		// We used to check to see if the project had CVS folders and log
 		// if it didn't However, in some scenarios, the project can be mapped
 		// before the CVS folders have been created (see bug 173610)

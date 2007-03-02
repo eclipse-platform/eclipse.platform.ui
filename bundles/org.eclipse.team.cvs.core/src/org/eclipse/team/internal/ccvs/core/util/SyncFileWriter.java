@@ -638,7 +638,7 @@ public class SyncFileWriter {
 
 	private static void setReadOnly(IFile source, boolean readOnly) {
 		ResourceAttributes attrs = source.getResourceAttributes();
-		if (attrs.isReadOnly() != readOnly) {
+		if (attrs != null && attrs.isReadOnly() != readOnly) {
 			attrs.setReadOnly(readOnly);
 			try {
 		        source.setResourceAttributes(attrs);
