@@ -153,14 +153,3 @@ function printContent(button, param)
 		document.getElementById(button).blur();
 	}
 }
-
-function setTitle(label)
-{
-	if( label == null) label = "";
-	var title = document.getElementById("titleText");
-	if(title !=null){
-		var text = title.lastChild;
-		text.nodeValue = " "+label;
-	}
-}
-

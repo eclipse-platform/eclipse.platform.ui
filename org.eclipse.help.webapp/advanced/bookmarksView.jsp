@@ -129,7 +129,6 @@ if(data.getBookmarks().length == 0) {
 		   href='<%=bookmarks[i].getHref()%>' 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
-		   onclick='parent.parent.parent.setContentToolbarTitle(" ")' 
 		   oncontextmenu="contextMenuHandler(event);return false;"
 		   onkeydown="bookmarkKeyDownHandler(event);"
 		   title="<%=UrlUtil.htmlEncode(bookmarks[i].getLabel())%>">

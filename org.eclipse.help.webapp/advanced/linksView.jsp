@@ -57,7 +57,6 @@ if(!data.isLinksRequest()) {
 		   href='<%=data.getTopicHref(topic)%>' 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
-		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)'
 		   title="<%=data.getTopicTocLabel(topic)%>">
 		   <img src="<%=prefs.getImagesDirectory()%>/topic.gif" alt=""><%=data.getTopicLabel(topic)%></a>
 	</td>

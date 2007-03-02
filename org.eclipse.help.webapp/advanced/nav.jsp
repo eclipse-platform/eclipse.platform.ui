@@ -48,16 +48,6 @@ var isMozilla10 = isMozilla && navigator.userAgent.indexOf('rv:1') != -1;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 /**
- * Views can call this to set the title on the content toolbar
- */
-function setContentToolbarTitle(title)
-{
-	if(parent.ContentFrame.ContentToolbarFrame && parent.ContentFrame.ContentToolbarFrame.setTitle ){
-		parent.ContentFrame.ContentToolbarFrame.setTitle(title);
-	}
-}
-
-/**
  * Shows specified view. Called from actions that switch the view
  */
 function showView(view)

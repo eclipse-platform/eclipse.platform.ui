@@ -43,25 +43,10 @@ FRAMESET {
 %>
 </style>
 
-<script language="JavaScript">
-
-function onloadHandler(e)
-{
-<% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
-%>	var h=window.ContentToolbarFrame.document.getElementById("titleText").offsetHeight; <%-- default 13 --%>
-	if(h<=19){
-		return; <%-- no need to resize up to 19px --%>
-	}
-	document.getElementById("contentFrameset").setAttribute("rows", (11+h)+",*"); <%-- default 24 --%>
-	window.ContentToolbarFrame.document.getElementById("titleTextTableDiv").style.height=(9+h)+"px"; <%-- default 22 --%>
-<%}%>
-}
-</script>
-
 </head>
 
 
-<frameset id="contentFrameset" onload="onloadHandler()" rows="24,*" frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset id="contentFrameset" rows="24,*" frameborder="0" framespacing="0" border=0 spacing=0>
 	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("topicViewToolbar", request)%>" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame ACCESSKEY="K" name="ContentViewFrame" title="<%=ServletResources.getString("topicView", request)%>" src='<%=data.getContentURL()%>'  marginwidth="10"<%=(data.isIE() && "6.0".compareTo(data.getIEVersion()) <=0)?"scrolling=\"yes\"":""%> marginheight="0" frameborder="0" >
 </frameset>

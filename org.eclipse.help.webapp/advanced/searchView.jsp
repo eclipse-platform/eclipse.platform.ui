@@ -123,7 +123,6 @@ setTimeout('refresh()', 2000);
 		   href="<%=data.getTopicHref(topic)%>" 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
-		   onclick='parent.parent.parent.setContentToolbarTitle(this.title)' 
 		   title="<%=data.getTopicTocLabel(topic)%>">
 
 <%
