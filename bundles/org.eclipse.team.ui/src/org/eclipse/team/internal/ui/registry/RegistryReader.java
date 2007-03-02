@@ -13,9 +13,12 @@ package org.eclipse.team.internal.ui.registry;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils.Sorter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.osgi.framework.Bundle;
 
 public abstract class RegistryReader {
 	protected static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
@@ -26,14 +29,51 @@ public abstract class RegistryReader {
      * been loaded a busy cursor will be activated during the duration of
      * the load.
      *
-     * @param element the config element defining the extension
+     * @param element the configuration element defining the extension
      * @param classAttribute the name of the attribute carrying the class
      * @return the extension object
      * @throws CoreException if the extension cannot be created
      */
     public static Object createExtension(final IConfigurationElement element,
             final String classAttribute) throws CoreException {
-        return WorkbenchPlugin.createExtension(element, classAttribute);
+        try {
+            // If plugin has been loaded create extension.
+            // Otherwise, show busy cursor then create extension.
+            if (isActivated(element.getDeclaringExtension()
+                    .getContributor().getName())) {
+                return element.createExecutableExtension(classAttribute);
+            }
+            final Object[] ret = new Object[1];
+            final CoreException[] exc = new CoreException[1];
+            BusyIndicator.showWhile(null, new Runnable() {
+                public void run() {
+                    try {
+                        ret[0] = element
+                                .createExecutableExtension(classAttribute);
+                    } catch (CoreException e) {
+                        exc[0] = e;
+                    }
+                }
+            });
+            if (exc[0] != null) {
+				throw exc[0];
+			}
+            return ret[0];
+
+        } catch (CoreException core) {
+            throw core;
+        } catch (Exception e) {
+            throw new CoreException(new Status(IStatus.ERROR, TeamUIPlugin.ID,
+                    IStatus.ERROR, NLS.bind(TeamUIMessages.RegistryReader_0, element.getNamespaceIdentifier(), element.getName()),e));
+        }
+    }
+    
+    private static boolean isActivated(String bundleId) {
+        return isActivated(Platform.getBundle(bundleId));
+    }
+    
+    private static boolean isActivated(Bundle bundle) {
+        return bundle != null && (bundle.getState() & (Bundle.ACTIVE | Bundle.STOPPING)) != 0;
     }
     
 	/**
@@ -42,7 +82,7 @@ public abstract class RegistryReader {
 	protected RegistryReader() {
 	}
 	/**
-	 * This method extracts description as a subelement of the given element.
+	 * This method extracts description as a sub-element of the given element.
 	 * 
 	 * @return description string if defined, or empty string if not.
 	 */
@@ -60,7 +100,7 @@ public abstract class RegistryReader {
 	protected void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
 		StringBuffer buf = new StringBuffer();
-		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
+		buf.append("Plugin " + extension.getNamespaceIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text); //$NON-NLS-1$
 		TeamUIPlugin.log(IStatus.ERROR, buf.toString(), null);
 	}
@@ -85,7 +125,7 @@ public abstract class RegistryReader {
 		logError(element, "Unknown extension tag found: " + element.getName()); //$NON-NLS-1$
 	}
 	/**
-	 * Apply a reproducable order to the list of extensions provided, such that
+	 * Apply a reproducible order to the list of extensions provided, such that
 	 * the order will not change as extensions are added or removed.
 	 */
 	protected IExtension[] orderExtensions(IExtension[] extensions) {
@@ -95,8 +135,8 @@ public abstract class RegistryReader {
 		// dependent in the order listed in the XML file.
 		Sorter sorter = new Sorter() {
 			public boolean compare(Object extension1, Object extension2) {
-				String s1 = ((IExtension) extension1).getNamespace();
-				String s2 = ((IExtension) extension2).getNamespace();
+				String s1 = ((IExtension) extension1).getNamespaceIdentifier();
+				String s2 = ((IExtension) extension2).getNamespaceIdentifier();
 				//Return true if elementTwo is 'greater than' elementOne
 				return s2.compareToIgnoreCase(s1) > 0;
 			}
@@ -143,6 +183,9 @@ public abstract class RegistryReader {
 	/**
 	 * Start the registry reading process using the supplied plugin ID and
 	 * extension point.
+	 * @param registry the registry
+	 * @param pluginId the plug-in id
+	 * @param extensionPoint the extension point
 	 */
 	public void readRegistry(IExtensionRegistry registry, String pluginId, String extensionPoint) {
 		String pointId = pluginId + "-" + extensionPoint; //$NON-NLS-1$

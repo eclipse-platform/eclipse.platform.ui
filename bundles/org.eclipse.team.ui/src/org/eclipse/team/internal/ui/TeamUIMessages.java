@@ -172,6 +172,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String ParticipantPageCompareEditorInput_0;
 
+	public static String RegistryReader_0;
+
 	public static String ReplaceLocalHistory_0;
 
 	public static String ReplaceLocalHistory_1;
