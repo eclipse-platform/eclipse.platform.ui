@@ -81,7 +81,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 		 */
 		public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
-			getSite().registerContextMenu(menu, provider);
+			if (getSite() instanceof IEditorSite) {
+				IEditorSite es = (IEditorSite) getSite();
+				es.registerContextMenu(menu, provider, false);
+			}
 		}
 
 		/* (non-Javadoc)
