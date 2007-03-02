@@ -12,10 +12,7 @@ package org.eclipse.team.internal.ui.actions;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -35,7 +32,6 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.internal.LegacyResourceSupport;
 
 /**
  * The abstract superclass of all Team actions. This class contains some convenience
@@ -187,7 +183,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
     private Object getResourceMapping(Object object) {
         if (object instanceof ResourceMapping)
             return (ResourceMapping)object;
-        return LegacyResourceSupport.getAdaptedContributorResourceMapping(object);
+        return Utils.getResourceMapping(object);
     }
     
     private boolean isMappedToProvider(ResourceMapping element, String providerId) {
