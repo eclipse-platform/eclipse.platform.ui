@@ -43,6 +43,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	private long timestamp;
 	private boolean exists;
 	private boolean useSharedDocument = true;
+	private EditableSharedDocumentAdapter.ISharedDocumentAdapterListener sharedDocumentListener;
 
 	/**
 	 * Creates an element for the given resource.
@@ -132,18 +133,27 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 			sharedDocumentAdapter = new EditableSharedDocumentAdapter(new EditableSharedDocumentAdapter.ISharedDocumentAdapterListener() {
 				public void handleDocumentConnected() {
 					LocalResourceTypedElement.this.updateTimestamp();
+					if (sharedDocumentListener != null)
+						sharedDocumentListener.handleDocumentConnected();
 				}
 				public void handleDocumentFlushed() {
 					LocalResourceTypedElement.this.fireContentChanged();
+					if (sharedDocumentListener != null)
+						sharedDocumentListener.handleDocumentFlushed();
 				}
 				public void handleDocumentDeleted() {
 					LocalResourceTypedElement.this.update();
+					if (sharedDocumentListener != null)
+						sharedDocumentListener.handleDocumentDeleted();
 				}
 				public void handleDocumentSaved() {
 					LocalResourceTypedElement.this.updateTimestamp();
+					if (sharedDocumentListener != null)
+						sharedDocumentListener.handleDocumentSaved();
 				}
 				public void handleDocumentDisconnected() {
-					// Nothing to do
+					if (sharedDocumentListener != null)
+						sharedDocumentListener.handleDocumentDisconnected();
 				}
 			});
 		return sharedDocumentAdapter;
@@ -317,6 +327,11 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 */
 	public boolean isDirty() {
 		return fDirty || (sharedDocumentAdapter != null && sharedDocumentAdapter.hasBufferedContents());
+	}
+
+	public void setSharedDocumentListener(
+			EditableSharedDocumentAdapter.ISharedDocumentAdapterListener sharedDocumentListener) {
+		this.sharedDocumentListener = sharedDocumentListener;
 	}
 
 }

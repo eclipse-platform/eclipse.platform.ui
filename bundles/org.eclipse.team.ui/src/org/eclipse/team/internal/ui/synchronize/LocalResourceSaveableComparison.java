@@ -51,7 +51,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @param editorInput the editor input containing the comparison
 	 */
 	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput) {
-		this(input, editorInput, input.getLeft(), false);
+		this(input, editorInput, input.getLeft());
 	}
 	
 	/**
@@ -59,19 +59,15 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @param input the compare input to be save
 	 * @param editorInput the editor input containing the comparison
 	 * @param fileElement the file element that handles the saving and change notification
-	 * @param connected 
 	 */
-	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput, ITypedElement fileElement, boolean connected) {
+	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput, ITypedElement fileElement) {
 		this.input = input;
 		this.editorInput = editorInput;
 		this.fileElement = fileElement;
 		initializeContentChangeListeners();
-		if (connected) {
-			initializeHashing();
-		}
 	}
 	
-	private void initializeHashing() {
+	protected void initializeHashing() {
 		Object document= getAdapter(IDocument.class);
 		if (document != null) {
 			this.document = (IDocument)document;

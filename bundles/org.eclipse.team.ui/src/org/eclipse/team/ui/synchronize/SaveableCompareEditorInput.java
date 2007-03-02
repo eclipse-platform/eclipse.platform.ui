@@ -31,9 +31,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
-import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.internal.ui.synchronize.EditableSharedDocumentAdapter.ISharedDocumentAdapterListener;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.OpenFileAction;
@@ -87,14 +87,66 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		return null;
 	}
 	
-	private class InternalResourceSaveableComparison extends LocalResourceSaveableComparison {
+	private class InternalResourceSaveableComparison extends LocalResourceSaveableComparison implements ISharedDocumentAdapterListener {
+		private LocalResourceTypedElement lrte;
+		private boolean connected = false;
 		public InternalResourceSaveableComparison(
-				ICompareInput input, CompareEditorInput editorInput, boolean connected) {
-			super(input, editorInput, SaveableCompareEditorInput.getFileElement(input, editorInput), connected);
+				ICompareInput input, CompareEditorInput editorInput) {
+			super(input, editorInput, SaveableCompareEditorInput.getFileElement(input, editorInput));
+			ITypedElement element = SaveableCompareEditorInput.getFileElement(input, editorInput);
+			if (element instanceof LocalResourceTypedElement) {
+				lrte = (LocalResourceTypedElement) element;
+				if (lrte.isConnected()) {
+					registerSaveable(true);
+				} else {
+					lrte.setSharedDocumentListener(this);
+				}
+			}
 		}
-
 		protected void fireInputChange() {
 			SaveableCompareEditorInput.this.fireInputChange();
+		}
+		public void dispose() {
+			super.dispose();
+			if (lrte != null)
+				lrte.setSharedDocumentListener(null);
+		}
+		public void handleDocumentConnected() {
+			if (connected)
+				return;
+			connected = true;
+			registerSaveable(false);
+			if (lrte != null)
+				lrte.setSharedDocumentListener(null);
+		}
+		
+		private void registerSaveable(boolean init) {
+			ICompareContainer container = getContainer();
+			IWorkbenchPart part = container.getWorkbenchPart();
+			if (part != null) {
+				ISaveablesLifecycleListener lifecycleListener= getSaveablesLifecycleListener(part);
+				// Remove this saveable from the lifecycle listener
+				if (!init)
+					lifecycleListener.handleLifecycleEvent(
+							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, new Saveable[] { this }, false));
+				// Now fix the hashing so it uses the connected document
+				initializeHashing();
+				// Finally, add this saveable back to the listener
+				lifecycleListener.handleLifecycleEvent(
+						new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { this }, false));
+			}
+		}
+		public void handleDocumentDeleted() {
+			// Ignore
+		}
+		public void handleDocumentDisconnected() {
+			// Ignore
+		}
+		public void handleDocumentFlushed() {
+			// Ignore
+		}
+		public void handleDocumentSaved() {
+			// Ignore
 		}
 	}
 	
@@ -133,27 +185,6 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 			}
 		};
 		getCompareInput().addCompareInputChangeListener(compareInputChangeListener);
-		
-		if (getSaveable() instanceof LocalResourceSaveableComparison) {
-			LocalResourceSaveableComparison lrsc = (LocalResourceSaveableComparison) saveable;
-			if (lrsc.isConnectedToSharedDocument()) {
-				ICompareContainer container = getContainer();
-				IWorkbenchPart part = container.getWorkbenchPart();
-				if (part != null) {
-					ISaveablesLifecycleListener lifecycleListener= getSaveablesLifecycleListener(part);
-					lifecycleListener.handleLifecycleEvent(
-							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
-					if (saveable instanceof LocalResourceSaveableComparison) {
-						LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
-						rsc.dispose();
-					}
-					saveable = createConnectedSaveable();
-					lifecycleListener.handleLifecycleEvent(
-							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
-
-				}
-			}
-		}
 		
 		if (getSaveable() instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
@@ -307,17 +338,13 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	
 	/**
 	 * Create the saveable that provides the save behavior for this compare editor input.
-	 * By default, an instance of {@link LocalResourceSaveableComparison} is returned.
+	 * By default, a saveable that handles local files is returned
 	 * @return the saveable that provides the save behavior for this compare editor input
 	 */
 	protected Saveable createSaveable() {
 		Object compareResult = getCompareResult();
 		Assert.isNotNull(compareResult, "This method cannot be called until after prepareInput is called"); //$NON-NLS-1$
-		return new InternalResourceSaveableComparison((ICompareInput)compareResult, this, false);
-	}
-	
-	private Saveable createConnectedSaveable() {
-		return new InternalResourceSaveableComparison((ICompareInput)getCompareResult(), this, true);
+		return new InternalResourceSaveableComparison((ICompareInput)compareResult, this);
 	}
 
 	/* (non-Javadoc)
@@ -450,20 +477,24 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 			IDocument d = v.getDocument();
 			IDocument other = (IDocument)Utils.getAdapter(saveable, IDocument.class);
 			if (d == other) {
-				IResource resource = ((ResourceDiffCompareInput)getCompareInput()).getResource();
-				StructuredSelection selection = new StructuredSelection(resource);
-				IWorkbenchPart workbenchPart = getContainer().getWorkbenchPart();
-				if (workbenchPart != null) {
-					IWorkbenchSite ws = workbenchPart.getSite();
-					
-					MenuManager submenu =
-						new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
-					submenu.add(new OpenWithMenu(ws.getPage(), resource));
-					manager.insertAfter("save", submenu); //$NON-NLS-1$
-					
-					OpenFileAction openFileAction = new OpenFileAction(ws.getPage());
-					openFileAction.selectionChanged(selection);
-					manager.insertAfter("save", openFileAction); //$NON-NLS-1$
+				ITypedElement element = getFileElement(getCompareInput(), this);
+				if (element instanceof IResourceProvider) {
+					IResourceProvider rp = (IResourceProvider) element;
+					IResource resource = rp.getResource();
+					StructuredSelection selection = new StructuredSelection(resource);
+					IWorkbenchPart workbenchPart = getContainer().getWorkbenchPart();
+					if (workbenchPart != null) {
+						IWorkbenchSite ws = workbenchPart.getSite();
+						
+						MenuManager submenu =
+							new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
+						submenu.add(new OpenWithMenu(ws.getPage(), resource));
+						manager.insertAfter("save", submenu); //$NON-NLS-1$
+						
+						OpenFileAction openFileAction = new OpenFileAction(ws.getPage());
+						openFileAction.selectionChanged(selection);
+						manager.insertAfter("save", openFileAction); //$NON-NLS-1$
+					}
 				}
 			}
 		}
