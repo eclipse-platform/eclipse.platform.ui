@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.intro.impl.model.util;
 
-import java.net.URL;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
@@ -25,8 +24,6 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroExtensionContent;
 import org.eclipse.ui.internal.intro.impl.model.url.IntroURLParser;
 import org.eclipse.ui.internal.intro.impl.util.Log;
-import org.eclipse.ui.internal.intro.impl.util.StringUtil;
-import org.eclipse.ui.internal.intro.impl.util.Util;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -114,36 +111,13 @@ public class ModelUtil {
         return BundleUtil.getResolvedResourceLocation(base, url, bundle);
     }
 
-
-
     /**
-     * Util method to support jarring. Used to extract parent folder of intro
-     * xml content files. And to extract parent folder of invalidPage.xhtml
-     * 
-     * @param resource
+     * Ensures that a file:// URL exists for the bundle root. This will
+     * cause jarred bundles to be extracted into a cache directory.
      */
-    public static void extractParentFolder(Bundle bundle, String contentFile) {
+    public static void ensureFileURLsExist(Bundle bundle, String contentFile) {
         try {
-            long start = 0;
-            if (Log.logPerformance)
-                start = System.currentTimeMillis();
-            IPath parentFolder = ModelUtil.getParentFolderPath(contentFile);
-            URL[] parentFolderURLs = FindSupport.findEntries(bundle, parentFolder);
-            if (parentFolderURLs.length == 0) {
-                // should never be here.
-                Log.error("Could not find folder to extract: " + contentFile, //$NON-NLS-1$
-                    null);
-                return;
-            }
-            for (int i = 0; i < parentFolderURLs.length; i++)
-            	FileLocator.toFileURL(parentFolderURLs[i]);
-            if (Log.logPerformance) {
-                String msg = StringUtil.concat(
-                    "extracting content folder ", contentFile, " (", //$NON-NLS-1$ //$NON-NLS-2$
-                    bundle.getSymbolicName(), ")", " took: ").toString(); //$NON-NLS-1$ //$NON-NLS-2$
-                Util.logPerformanceTime(msg, start);
-            }
-
+        	FileLocator.toFileURL(bundle.getEntry("/")); //$NON-NLS-1$
         } catch (Exception e) {
             if (contentFile != null)
                 Log.error("Failed to extract Intro content folder for: " //$NON-NLS-1$

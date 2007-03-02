@@ -847,7 +847,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // files.
         Bundle domBundle = BundleUtil
             .getBundleFromConfigurationElement(cfgElement);
-        ModelUtil.extractParentFolder(domBundle, content);
+        ModelUtil.ensureFileURLsExist(domBundle, content);
 
         // Resolve.
         content = BundleUtil.getResourceLocation(content, cfgElement);

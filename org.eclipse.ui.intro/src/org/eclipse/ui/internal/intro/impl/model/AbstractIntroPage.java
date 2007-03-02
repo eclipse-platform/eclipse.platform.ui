@@ -460,7 +460,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             // have logged fact. Load dom for invalid page, and make sure to
             // force an extract on parent folder to enabling jarring.
             Bundle introBundle = Platform.getBundle(IIntroConstants.PLUGIN_ID);
-            ModelUtil.extractParentFolder(introBundle, INVALID_CONTENT);
+            ModelUtil.ensureFileURLsExist(introBundle, INVALID_CONTENT);
 
             String invalidContentFilePath = BundleUtil
                 .getResolvedResourceLocation(INVALID_CONTENT, introBundle);
