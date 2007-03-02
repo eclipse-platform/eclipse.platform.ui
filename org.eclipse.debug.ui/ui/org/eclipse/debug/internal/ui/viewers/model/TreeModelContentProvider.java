@@ -272,9 +272,13 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleRemove(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleRemove(IModelDelta delta) {
+		IModelDelta parentDelta = delta.getParentDelta();
+		TreePath parentPath = getViewerTreePath(parentDelta);
 		getTreeViewer().remove(getViewerTreePath(delta));
 		// refresh the parent to properly update for non-visible/unmapped children
-		getTreeViewer().refresh(delta.getParentDelta().getElement());
+		// and update filtered indexes
+		clearFilters(parentPath);
+		getTreeViewer().refresh(parentPath);
 	}
 
 	/* (non-Javadoc)
