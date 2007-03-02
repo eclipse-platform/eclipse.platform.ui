@@ -71,4 +71,20 @@ public class JSchProvider implements IJSchService {
     return instance;
   }
 
+  /* (non-Javadoc)
+   * @see org.eclipse.jsch.core.IJSchService#connect(com.jcraft.jsch.Proxy, java.lang.String, java.lang.String, int, org.eclipse.core.runtime.IProgressMonitor)
+   */
+  public void connect(Proxy proxy, String host, int port, int timeout,
+      IProgressMonitor monitor) throws JSchException {
+    try{
+      proxy.connect(new ResponsiveSocketFactory(monitor, timeout), host, port, timeout);
+    }
+    catch(JSchException e){
+      throw e;
+    }
+    catch(Exception e){
+      new JSchException(e.getMessage());
+    }
+  }
+
 }

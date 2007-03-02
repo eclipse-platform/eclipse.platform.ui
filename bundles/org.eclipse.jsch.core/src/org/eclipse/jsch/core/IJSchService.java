@@ -69,5 +69,22 @@ public interface IJSchService{
    * if no proxy is specified for the host
    */
   public abstract Proxy getProxyForHost(String host, String proxyType);
+  
+  /**
+   * Connect to the given host and port using the given proxy.
+   * This method calls {@link Proxy#connect(SocketFactory, String, int, int)}
+   * and provides a {@link SocketFactory} that responds to cancelation.
+   * @param proxy the proxy
+   * @param host the host name
+   * @param port the port
+   * @param timeout
+   *          a timeout in milliseconds
+   * @param monitor
+   *          a progress monitor or <code>null</code> if progress and
+   *          cancelation is not desired
+   * @throws JSchException
+   */
+  public abstract void connect(Proxy proxy, String host, int port, int timeout,
+      IProgressMonitor monitor) throws JSchException;
 
 }
