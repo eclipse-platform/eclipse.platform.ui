@@ -130,7 +130,7 @@ public class ProxyManager implements IProxyService {
 		String[] hosts = getNonProxiedHosts();
 		IProxyData[] changedProxies = internalSetProxyData(proxyDatas);
 		if (changedProxies.length > 0) {
-			IProxyChangeEvent event = new ProxyChangeEvent(IProxyChangeEvent.PROXY_MANAGER_ENABLEMENT_CHANGE, hosts, hosts, oldData, changedProxies);
+			IProxyChangeEvent event = new ProxyChangeEvent(IProxyChangeEvent.PROXY_SERVICE_ENABLEMENT_CHANGE, hosts, hosts, oldData, changedProxies);
 			fireChange(event);
 		}
 	}

@@ -27,7 +27,7 @@ public interface IProxyService {
 	 * still kept so clients should check the enablement using {@link #isProxiesEnabled()}
 	 * before calling the {@link #getProxyData()} or {@link #getProxyData(String)} method.
 	 * However, the {@link #getProxyDataForHost(String)} and {@link #getProxyDataForHost(String, String)}
-	 * method will check the enablement and only return data if the manager is enabled.
+	 * method will check the enablement and only return data if the service is enabled.
 	 * @param enabled whether proxy support should be enabled
 	 */
 	void setProxiesEnabled(boolean enabled);
@@ -62,7 +62,7 @@ public interface IProxyService {
 	/**
 	 * Return the proxy data for the proxy of the given type
 	 * or <code>null</code> if the proxy type is not known by this
-	 * manager.
+	 * service.
 	 * @param type the proxy type
 	 * @return the proxy data for the proxy of the given type
 	 * or <code>null</code>
@@ -75,7 +75,7 @@ public interface IProxyService {
 	/**
 	 * Return the proxy data for the proxy of the given type
 	 * or <code>null</code> if the proxy type is not known by this
-	 * manager, the proxy data is empty for that type or the
+	 * service, the proxy data is empty for that type or the
 	 * host is in the non-proxied host list.
 	 * @param host the host for which a connection is desired
 	 * @param type the proxy type
