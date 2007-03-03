@@ -41,7 +41,7 @@ public class JSchCorePlugin extends Plugin{
 
   private JSch jsch;
 
-  private String current_pkeys;
+  private String current_pkeys=""; //$NON-NLS-1$
 
   private static final String INFO_PROXY_USER="org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
   private static final String INFO_PROXY_PASS="org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
