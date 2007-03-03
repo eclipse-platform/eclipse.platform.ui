@@ -913,4 +913,22 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected int doGetColumnCount() {
 		return tree.getColumnCount();
 	}
+	
+	/**
+	 * Sets a new selection for this viewer and optionally makes it visible.
+	 * <p>
+	 * <b>Currently the <code>reveal</code> parameter is not honored because
+	 * {@link Tree} does not provide an API to only select an item without
+	 * scrolling it into view</b>
+	 * </p>
+	 * 
+	 * @param selection
+	 *            the new selection
+	 * @param reveal
+	 *            <code>true</code> if the selection is to be made visible,
+	 *            and <code>false</code> otherwise
+	 */
+	public void setSelection(ISelection selection, boolean reveal) {
+		super.setSelection(selection, reveal);
+	}
 }
