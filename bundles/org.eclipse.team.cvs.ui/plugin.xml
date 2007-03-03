@@ -893,16 +893,6 @@
       </page>
    </extension>
    
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            name="%ProxyPreferencePage.name"
-            category="org.eclipse.team.cvs.ui.CVSPreferences"
-            class="org.eclipse.team.internal.ccvs.ui.ProxyPreferencePage"
-            id="org.eclipse.team.cvs.ui.ProxyPreferencesPreferences">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs.proxy"/>
-      </page>
-   </extension>
    
    
 <!-- **************** Decorator ******************* -->

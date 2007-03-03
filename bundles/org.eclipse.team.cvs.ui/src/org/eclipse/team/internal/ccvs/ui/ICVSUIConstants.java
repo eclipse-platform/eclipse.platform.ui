@@ -188,13 +188,7 @@ public interface ICVSUIConstants {
 	
 	public final String PREF_ENABLE_MODEL_SYNC = "enableModelSync"; //$NON-NLS-1$
 	public final String PREF_OPEN_COMPARE_EDITOR_FOR_SINGLE_FILE = "openCompareEditorForSingleFile"; //$NON-NLS-1$
-	
-    public final String PREF_USE_PROXY = "proxyEnabled"; //$NON-NLS-1$
-    public final String PREF_PROXY_TYPE = "proxyType"; //$NON-NLS-1$
-    public final String PREF_PROXY_HOST = "proxyHost"; //$NON-NLS-1$
-    public final String PREF_PROXY_PORT = "proxyPort"; //$NON-NLS-1$
-    public final String PREF_PROXY_AUTH = "proxyAuth"; //$NON-NLS-1$
-    
+	    
 	// Wizard banners
 	public final String IMG_WIZBAN_SHARE = "wizban/newconnect_wizban.png";	 //$NON-NLS-1$
 	public final String IMG_WIZBAN_MERGE = "wizban/mergestream_wizban.png";	 //$NON-NLS-1$

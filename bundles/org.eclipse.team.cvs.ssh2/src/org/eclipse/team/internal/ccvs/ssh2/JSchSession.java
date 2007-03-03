@@ -11,27 +11,36 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
+import org.eclipse.team.internal.ccvs.core.IUserInfo;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SocketFactory;
+import com.jcraft.jsch.UIKeyboardInteractive;
+import com.jcraft.jsch.UserInfo;
 
 class JSchSession {
 	private static final int SSH_DEFAULT_PORT = 22;
 	private static JSch jsch=new JSch();
 	private static java.util.Hashtable pool = new java.util.Hashtable();
-
-	private static String current_ssh_home = null;
-	private static String current_pkeys = ""; //$NON-NLS-1$
+	
     private final Session session;
     private final UserInfo prompter;
     private final ICVSRepositoryLocation location;
@@ -349,52 +358,7 @@ class JSchSession {
 
         if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
             port = getPort(location);
-        
-		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
-		String pkeys = store.getString(ISSHContants.KEY_PRIVATEKEY);
-
-		try {
-			if (current_ssh_home == null || !current_ssh_home.equals(ssh_home)) {
-				loadKnownHosts();
-				current_ssh_home = ssh_home;
-			}
-
-			if (ssh_home.length() == 0)
-				ssh_home = CVSSSH2Plugin.SSH_HOME_DEFAULT;
-
-			if (!current_pkeys.equals(pkeys)) {
-				java.io.File file;
-				String[] pkey = pkeys.split(","); //$NON-NLS-1$
-				String[] _pkey = current_pkeys.split(","); //$NON-NLS-1$
-				current_pkeys = ""; //$NON-NLS-1$
-				for (int i = 0; i < pkey.length; i++) {
-					file = new java.io.File(pkey[i]);
-					if (!file.isAbsolute()) {
-						file = new java.io.File(ssh_home, pkey[i]);
-					}
-					if (file.exists()) {
-						boolean notyet = true;
-						for (int j = 0; j < _pkey.length; j++) {
-							if (pkey[i].equals(_pkey[j])) {
-								notyet = false;
-								break;
-							}
-						}
-						if (notyet)
-							jsch.addIdentity(file.getPath());
-						if (current_pkeys.length() == 0) {
-							current_pkeys = pkey[i];
-						} else {
-							current_pkeys += ("," + pkey[i]); //$NON-NLS-1$
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
 		
-
 		String key = getPoolKey(username, hostname, port);
 
 		try {
@@ -405,61 +369,29 @@ class JSchSession {
 			}
 
 			if (jschSession == null) {
-				boolean useProxy = CVSProviderPlugin.getPlugin().isUseProxy();
-                Proxy proxy = null;
-				if (useProxy) {
-					String _type = CVSProviderPlugin.getPlugin().getProxyType();
-					String _host = CVSProviderPlugin.getPlugin().getProxyHost();
-					String _port = CVSProviderPlugin.getPlugin().getProxyPort();
-
-					boolean useAuth = CVSProviderPlugin.getPlugin().isUseProxyAuth();
-					String _user = ""; //$NON-NLS-1$
-					String _pass = ""; //$NON-NLS-1$
-					
-					// Retrieve username and password from keyring.
-					if(useAuth){
-						_user=CVSProviderPlugin.getPlugin().getProxyUser();
-						_pass=CVSProviderPlugin.getPlugin().getProxyPassword();
-					}
-
-					String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-					if (_type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
-						proxy = new ProxyHTTP(proxyhost);
-						if (useAuth) {
-							((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
-						}
-					} else if (_type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
-						proxy = new ProxySOCKS5(proxyhost);
-						if (useAuth) {
-							((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
-						}
-					} else {
-						proxy = null;
-					}
-				}
-
                 MyUserInfo ui = new MyUserInfo(username, password, location);
                 UserInfoTimer wrapperUI = new UserInfoTimer(ui);
                 ui.aboutToConnect();
                 
                 Session session = null;
                 try {
-                    session = createSession(username, password, hostname, port, new JSchSession.ResponsiveSocketFacory(monitor), proxy, wrapperUI);
+                    session = createSession(username, password, hostname, port, wrapperUI, monitor);
                 } catch (JSchException e) {
                     if (isAuthenticationFailure(e) && wrapperUI.hasPromptExceededTimeout()) {
                         // Try again since the previous prompt may have obtained the proper credentials from the user
-                        session = createSession(username, password, hostname, port, new JSchSession.ResponsiveSocketFacory(monitor), proxy, wrapperUI);
+                        session = createSession(username, password, hostname, port, wrapperUI, monitor);
                     } else {
                         throw e;
                     }
                 }
+                if (session == null)
+                	throw new JSchException("The JSch service is not available");
                 ui.connectionMade();
                 JSchSession schSession = new JSchSession(session, location, wrapperUI);
                 pool.put(key, schSession);
                 return schSession;
-			} else {
-                return jschSession;
-            }
+			}
+            return jschSession;
 		} catch (JSchException e) {
 			pool.remove(key);
 			if(e.toString().indexOf("Auth cancel")!=-1){  //$NON-NLS-1$
@@ -469,35 +401,16 @@ class JSchSession {
 		}
 	}
 
-    private static Session createSession(String username, String password, String hostname, int port, SocketFactory socketFactory, Proxy proxy, UserInfo wrapperUI) throws JSchException {
-        Session session = jsch.getSession(username, hostname, port);
-        if (proxy != null) {
-            session.setProxy(proxy);
-        }
+    private static Session createSession(String username, String password, String hostname, int port, UserInfo wrapperUI, IProgressMonitor monitor) throws JSchException {
+        IJSchService service = CVSSSH2Plugin.getDefault().getJSchService();
+        if (service == null)
+        	return null;
+        Session session = service.createSession(hostname, port, username);
         session.setTimeout(getCVSTimeoutInMillis());
         if (password != null)
 			session.setPassword(password);
         session.setUserInfo(wrapperUI);
-        session.setSocketFactory(socketFactory);
-        
-        // TODO following lines should be deleted after
-        //      improvements on the prompt for keyboard-interactive(KI) auth method.
-        //      Without following lines, in establishing SSH session to some sshd(for example,
-        //      running on dev.eclipse.org), KI will be tryed at first instead of password auth method and
-        //      the GUI for KI prompt will not allow to save given password in current implementation.
-        Hashtable config=new Hashtable();
-        config.put("PreferredAuthentications", //$NON-NLS-1$
-        		"gssapi-with-mic,publickey,password,keyboard-interactive"); //$NON-NLS-1$
-        session.setConfig(config);
-        
-        // This is where the server is contacted and authentication occurs
-        try {
-            session.connect();
-        } catch (JSchException e) {
-            if (session.isConnected())
-                session.disconnect();
-            throw e;
-        }
+        service.connect(session, getCVSTimeoutInMillis(), monitor);
         return session;
     }
 
@@ -515,21 +428,6 @@ class JSchSession {
             port = SSH_DEFAULT_PORT;
         return port;
     }
-
-    static void loadKnownHosts(){
-		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
-
-		if (ssh_home.length() == 0)
-			ssh_home = CVSSSH2Plugin.SSH_HOME_DEFAULT;
-
-		try {
-		  java.io.File file;
-		  file=new java.io.File(ssh_home, "known_hosts"); //$NON-NLS-1$
-		  jsch.setKnownHosts(file.getPath());
-		} catch (Exception e) {
-		}
-	}
 
 	static void shutdown() {
 		if (jsch != null && pool.size() > 0) {

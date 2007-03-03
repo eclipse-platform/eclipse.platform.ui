@@ -11,18 +11,20 @@
 package org.eclipse.team.internal.ccvs.core.connection;
  
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
-import org.eclipse.team.internal.ccvs.core.connection.Connection;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.*;
 
-import com.jcraft.jsch.*;
 import com.jcraft.jsch.Proxy;
+import com.jcraft.jsch.SocketFactory;
 
 /**
  * A connection used to talk to an cvs pserver.
@@ -113,7 +115,8 @@ public class PServerConnection implements IServerConnection {
           }
           try {
             int timeout = CVSProviderPlugin.getPlugin().getTimeout() * 1000;
-            proxy.connect(new ResponsiveSocketFacory(monitor), host, port, timeout);
+            IJSchService service = CVSProviderPlugin.getPlugin().getJSchService();
+            service.connect(proxy, host, port, timeout, monitor);
           } catch( Exception ex) {
             ex.printStackTrace();
             throw new IOException(ex.getMessage());
@@ -142,29 +145,12 @@ public class PServerConnection implements IServerConnection {
 	}
 
 	private Proxy getProxy() {
-        CVSProviderPlugin plugin = CVSProviderPlugin.getPlugin();
-        boolean useProxy = plugin.isUseProxy();
-        Proxy proxy = null;
-        if (useProxy) {
-            String type = plugin.getProxyType();
-            String host = plugin.getProxyHost();
-            String port = plugin.getProxyPort();
-
-            boolean useAuth = plugin.isUseProxyAuth();
-
-            String proxyhost = host + ":" + port; //$NON-NLS-1$
-            if (type.equals(CVSProviderPlugin.PROXY_TYPE_HTTP)) {
-                proxy = new ProxyHTTP(proxyhost);
-                if (useAuth) {
-                    ((ProxyHTTP) proxy).setUserPasswd(plugin.getProxyUser(), plugin.getProxyPassword());
-                }
-            } else if (type.equals(CVSProviderPlugin.PROXY_TYPE_SOCKS5)) {
-                proxy = new ProxySOCKS5(proxyhost);
-                if (useAuth) {
-                    ((ProxySOCKS5) proxy).setUserPasswd(plugin.getProxyUser(), plugin.getProxyPassword());
-                }
-            }
-        }
+		IJSchService service = CVSProviderPlugin.getPlugin().getJSchService();
+		if (service == null)
+			return null;
+		Proxy proxy = service.getProxyForHost(cvsroot.getHost(), IProxyData.HTTPS_PROXY_TYPE);
+		if (proxy == null)
+			proxy = service.getProxyForHost(cvsroot.getHost(), IProxyData.SOCKS_PROXY_TYPE);
         return proxy;
     }
 
@@ -190,7 +176,7 @@ public class PServerConnection implements IServerConnection {
 		this.password = password;
 	}
 	/**
-	 * Does the actual authentification.
+	 * Does the actual authentication.
 	 */
 	private void authenticate() throws IOException, CVSAuthenticationException {
 		String scrambledPassword = scramblePassword(password);

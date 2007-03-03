@@ -12,9 +12,10 @@
 package org.eclipse.team.internal.ccvs.ssh2;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class CVSSSH2Plugin extends AbstractUIPlugin {
 
@@ -36,6 +37,8 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 			
 		}
 	}
+
+	private ServiceTracker tracker;
 	
 	public CVSSSH2Plugin() {
 		super();
@@ -45,6 +48,7 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		try {
 			JSchSession.shutdown();
+			tracker.close();
 		} finally {
 			super.stop(context);
 		}
@@ -53,18 +57,14 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 	public static CVSSSH2Plugin getDefault() {
 		return plugin;
 	}
-
-	private void initializeDefaultPreferences() {
-	    IPreferenceStore store = getPreferenceStore();
-	    store.setDefault(ISSHContants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
-	    store.setDefault(ISSHContants.KEY_PRIVATEKEY, ISSHContants.PRIVATE_KEYS_DEFAULT);
-	    store.setDefault(ISSHContants.KEY_PROXY_TYPE, ISSHContants.HTTP);
-	    store.setDefault(ISSHContants.KEY_PROXY_PORT, ISSHContants.HTTP_DEFAULT_PORT);
-	    store.setDefault(ISSHContants.KEY_PROXY_AUTH, "false"); //$NON-NLS-1$
-	}
 	
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		initializeDefaultPreferences();
+	    tracker = new ServiceTracker(getBundle().getBundleContext(), IJSchService.class.getName(), null);
+	    tracker.open();
 	}
+	
+    public IJSchService getJSchService() {
+        return (IJSchService)tracker.getService();
+    }
 }

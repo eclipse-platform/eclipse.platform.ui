@@ -32,18 +32,4 @@
 	</adapter>
 </extension>
 
-
-<!-- =================================================================================== -->
-<!-- Extension Point: Preference page                                                    -->
-<!-- =================================================================================== -->
-<extension point="org.eclipse.ui.preferencePages">
-	<page
-		name="%ssh2PreferencePage.name"
-		category="org.eclipse.team.cvs.ui.CVSPreferences"
-		class="org.eclipse.team.internal.ccvs.ssh2.CVSSSH2PreferencePage"
-		id="org.eclipse.team.cvs.ssh2.CVSSSH2Preferences">
-		<keywordReference id="org.eclipse.team.cvs.ui.cvs.ext"/>
-	</page>
-</extension>
-
 </plugin>

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
@@ -34,6 +35,7 @@ import org.eclipse.team.internal.ccvs.core.resources.FileModificationManager;
 import org.eclipse.team.internal.ccvs.core.util.*;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class CVSProviderPlugin extends Plugin {
 	
@@ -124,6 +126,7 @@ public class CVSProviderPlugin extends Plugin {
     private boolean useProxyAuth;
     
     private CVSActiveChangeSetCollector changeSetManager;
+	private ServiceTracker tracker;
 
     private static final String INFO_PROXY_USER = "org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
     private static final String INFO_PROXY_PASS = "org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
@@ -301,6 +304,9 @@ public class CVSProviderPlugin extends Plugin {
 		
 		// Must load the change set manager on startup since it listens to deltas
 		getChangeSetManager();
+		
+	    tracker = new ServiceTracker(getBundle().getBundleContext(), IJSchService.class.getName(), null);
+	    tracker.open();
 	}
 	
 	/**
@@ -321,6 +327,8 @@ public class CVSProviderPlugin extends Plugin {
 			workspace.removeSaveParticipant(this);
 			
 			getChangeSetManager().dispose();
+			
+			tracker.close();
 			
 			deleteCrashFile();
 		} finally {
@@ -720,6 +728,10 @@ public class CVSProviderPlugin extends Plugin {
             changeSetManager = new CVSActiveChangeSetCollector(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
         }
         return changeSetManager;
+    }
+    
+    public IJSchService getJSchService() {
+        return (IJSchService)tracker.getService();
     }
     
 }

@@ -609,19 +609,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		CVSProviderPlugin.getPlugin().setDebugProtocol(CVSProviderPlugin.getPlugin().isDebugProtocol() || store.getBoolean(ICVSUIConstants.PREF_DEBUG_PROTOCOL));
         CVSProviderPlugin.getPlugin().setAutoshareOnImport(store.getBoolean(ICVSUIConstants.PREF_AUTO_SHARE_ON_IMPORT));
         
-        // proxy configuration
-        store.setDefault(ICVSUIConstants.PREF_USE_PROXY, false);
-        store.setDefault(ICVSUIConstants.PREF_PROXY_TYPE, CVSProviderPlugin.PROXY_TYPE_HTTP);
-        store.setDefault(ICVSUIConstants.PREF_PROXY_HOST, ""); //$NON-NLS-1$
-        store.setDefault(ICVSUIConstants.PREF_PROXY_PORT, CVSProviderPlugin.HTTP_DEFAULT_PORT);
-        store.setDefault(ICVSUIConstants.PREF_PROXY_AUTH, false);
-
-        CVSProviderPlugin.getPlugin().setUseProxy(store.getBoolean(ICVSUIConstants.PREF_USE_PROXY));
-        CVSProviderPlugin.getPlugin().setProxyType(store.getString(ICVSUIConstants.PREF_PROXY_TYPE));
-        CVSProviderPlugin.getPlugin().setProxyHost(store.getString(ICVSUIConstants.PREF_PROXY_HOST));
-        CVSProviderPlugin.getPlugin().setProxyPort(store.getString(ICVSUIConstants.PREF_PROXY_PORT));
-        CVSProviderPlugin.getPlugin().setUseProxyAuth(store.getBoolean(ICVSUIConstants.PREF_PROXY_AUTH));
-        
         // code to transfer CVS preference to Team preference
         if (store.getBoolean(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR)) {
         	store.setValue(ICVSUIConstants.PREF_SHOW_AUTHOR_IN_EDITOR, false);
