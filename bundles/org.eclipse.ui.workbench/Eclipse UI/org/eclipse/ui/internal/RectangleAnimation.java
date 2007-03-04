@@ -15,9 +15,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -203,6 +205,18 @@ public class RectangleAnimation extends Job {
     public void addEndRect(Rectangle rect) {
     	if (feedbackRenderer != null)
     	    feedbackRenderer.addEndRect(rect);
+    }
+
+    public void addStartRect(Control ctrl) {
+    	Rectangle ctrlBounds = ctrl.getBounds();
+    	Rectangle startRect = Geometry.toDisplay(ctrl.getParent(), ctrlBounds);
+    	addStartRect(startRect);
+    }
+
+    public void addEndRect(Control ctrl) {
+    	Rectangle ctrlBounds = ctrl.getBounds();
+    	Rectangle endRect = Geometry.toDisplay(ctrl.getParent(), ctrlBounds);
+    	addEndRect(endRect);
     }
 
     /**
