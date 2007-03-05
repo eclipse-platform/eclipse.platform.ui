@@ -222,7 +222,8 @@ public class FormToolkit {
 
 	/**
 	 * Creates a toolkit that will use the provided (shared) colors. The toolkit
-	 * will <b>not </b> dispose the provided colors.
+	 * will dispose the colors if and only if they are <b>not</b> marked as
+	 * shared via the <code>markShared()</code> method.
 	 * 
 	 * @param colors
 	 *            the shared colors
