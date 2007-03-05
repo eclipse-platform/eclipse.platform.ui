@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+
+   <extension
+   		point="org.eclipse.ui.keywords">
+    <keyword
+            label="%PreferenceKeywords.SSH"
+            id="org.eclipse.jsch.ui.ssh2"/>
+   </extension>  
+   
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
@@ -8,6 +16,7 @@
             id="org.eclipse.jsch.ui.preference.PreferencePage"
             name="%ssh2PreferencePage.name"
             category="org.eclipse.net.ui.NetPreferences">
+      <keywordReference id="org.eclipse.jsch.ui.ssh2"/>
       </page>
    </extension>
 
