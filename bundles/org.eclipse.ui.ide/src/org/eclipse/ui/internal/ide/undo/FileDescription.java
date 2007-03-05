@@ -179,20 +179,13 @@ public class FileDescription extends AbstractResourceDescription {
 				InputStream contents = new ByteArrayInputStream(
 						UndoMessages.FileDescription_ContentsCouldNotBeRestored
 								.getBytes());
-				// Retrieve the contents and charset from the file content
+				// Retrieve the contents from the file content
 				// description. Other file state attributes, such as timestamps,
 				// have already been retrieved from the original IResource
-				// object and are restored in the superclass.
+				// object and are restored in #restoreResourceAttributes
 				if (fileContentDescription != null
 						&& fileContentDescription.exists()) {
 					contents = fileContentDescription.getContents();
-					// If the charset was explicitly recorded from the file
-					// handle,
-					// use it. But if it is null, get it from the
-					// fileContentDescription.
-					if (charset == null) {
-						charset = fileContentDescription.getCharset();
-					}
 				}
 				fileHandle.create(contents, false, new SubProgressMonitor(
 						monitor, 100));
@@ -248,5 +241,20 @@ public class FileDescription extends AbstractResourceDescription {
 		}
 		return states[0];
 
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource)
+	 */
+	protected void restoreResourceAttributes(IResource resource)
+			throws CoreException {
+		super.restoreResourceAttributes(resource);
+		Assert.isLegal(resource instanceof IFile);
+		IFile file = (IFile) resource;
+		if (charset != null) {
+			file.setCharset(charset, null);
+		}
 	}
 }
