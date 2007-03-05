@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
@@ -109,8 +108,11 @@ public class BusyIndicator extends Canvas {
 			return;
 
 		stop = false;
+		final Display display = getDisplay();
 		busyThread = new Thread() {
 			private Image timage;
+			private Image offScreenImage;
+			private GC offScreenImageGC;
 
 			public void run() {
 				try {
@@ -118,12 +120,12 @@ public class BusyIndicator extends Canvas {
 					 * Create an off-screen image to draw on, and fill it with
 					 * the shell background.
 					 */
-					Image offScreenImage = new Image(getDisplay(),
+					offScreenImage = new Image(display,
 							loader.logicalScreenWidth,
 							loader.logicalScreenHeight);
-					final GC offScreenImageGC = new GC(offScreenImage);
+					offScreenImageGC = new GC(offScreenImage);
 					//FormUtil.setAntialias(offScreenImageGC, SWT.ON);
-					getDisplay().asyncExec(new Runnable() {
+					display.asyncExec(new Runnable() {
 						public void run() {
 							if (!isDisposed())
 								drawBackground(offScreenImageGC, 0, 0,
@@ -133,120 +135,120 @@ public class BusyIndicator extends Canvas {
 					});
 					if (isDisposed())
 						return;
-					try {
-						/*
-						 * Create the first image and draw it on the off-screen
-						 * image.
-						 */
-						int imageDataIndex = 0;
-						ImageData imageData = progressData[imageDataIndex];
-						if (timage != null && !timage.isDisposed())
-							timage.dispose();
-						timage = new Image(getDisplay(), imageData);
-						offScreenImageGC.drawImage(timage, 0, 0,
-								imageData.width, imageData.height, imageData.x,
-								imageData.y, imageData.width, imageData.height);
 
-						/*
-						 * Now loop through the images, creating and drawing
-						 * each one on the off-screen image before drawing it on
-						 * the shell.
-						 */
-						int repeatCount = loader.repeatCount;
-						while (loader.repeatCount == 0 || repeatCount > 0) {
-							if (stop || isDisposed())
-								break;
-							switch (imageData.disposalMethod) {
-							case SWT.DM_FILL_BACKGROUND:
-								/*
-								 * Fill with the background color before
-								 * drawing.
-								 */
-								/*
-								 * offScreenImageGC.fillRectangle(imageData.x,
-								 * imageData.y, imageData.width,
-								 * imageData.height);
-								 */
-								final ImageData fimageData = imageData;
-								getDisplay().syncExec(new Runnable() {
-									public void run() {
-								drawBackground(offScreenImageGC, fimageData.x,
-										fimageData.y, fimageData.width,
-										fimageData.height);
-									}});
-								break;
-							case SWT.DM_FILL_PREVIOUS:
-								/* Restore the previous image before drawing. */
-								offScreenImageGC.drawImage(timage, 0, 0,
-										imageData.width, imageData.height,
-										imageData.x, imageData.y,
-										imageData.width, imageData.height);
-								break;
-							}
+					/*
+					 * Create the first image and draw it on the off-screen
+					 * image.
+					 */
+					int imageDataIndex = 0;
+					ImageData imageData = progressData[imageDataIndex];
+					if (timage != null && !timage.isDisposed())
+						timage.dispose();
+					timage = new Image(display, imageData);
+					offScreenImageGC.drawImage(timage, 0, 0,
+							imageData.width, imageData.height, imageData.x,
+							imageData.y, imageData.width, imageData.height);
 
-							imageDataIndex = (imageDataIndex + 1)
-									% progressData.length;
-							imageData = progressData[imageDataIndex];
-							timage.dispose();
-							timage = new Image(getDisplay(), imageData);
-							offScreenImageGC.drawImage(timage, 0, 0,
-									imageData.width, imageData.height,
-									imageData.x, imageData.y, imageData.width,
-									imageData.height);
-
-							/* Draw the off-screen image to the shell. */
-							animationImage = offScreenImage;
-							getDisplay().syncExec(new Runnable() {
+					/*
+					 * Now loop through the images, creating and drawing
+					 * each one on the off-screen image before drawing it on
+					 * the shell.
+					 */
+					int repeatCount = loader.repeatCount;
+					while (loader.repeatCount == 0 || repeatCount > 0) {
+						if (stop || isDisposed())
+							break;
+						switch (imageData.disposalMethod) {
+						case SWT.DM_FILL_BACKGROUND:
+							/*
+							 * Fill with the background color before
+							 * drawing.
+							 */
+							/*
+							 * offScreenImageGC.fillRectangle(imageData.x,
+							 * imageData.y, imageData.width,
+							 * imageData.height);
+							 */
+							final ImageData fimageData = imageData;
+							display.syncExec(new Runnable() {
 								public void run() {
-									if (!isDisposed())
-										redraw();
+									if (!isDisposed()) {
+										drawBackground(offScreenImageGC, fimageData.x,
+												fimageData.y, fimageData.width,
+												fimageData.height);
+									}
 								}
 							});
-							/*
-							 * Sleep for the specified delay time (adding
-							 * commonly-used slow-down fudge factors).
-							 */
-							try {
-								int ms = imageData.delayTime * 10;
-								if (ms < 20)
-									ms += 50;
-								if (ms < 30)
-									ms += 20;
-								Thread.sleep(ms);
-							} catch (InterruptedException e) {
-							}
-
-							/*
-							 * If we have just drawn the last image, decrement
-							 * the repeat count and start again.
-							 */
-							if (imageDataIndex == progressData.length - 1)
-								repeatCount--;
+							break;
+						case SWT.DM_FILL_PREVIOUS:
+							/* Restore the previous image before drawing. */
+							offScreenImageGC.drawImage(timage, 0, 0,
+									imageData.width, imageData.height,
+									imageData.x, imageData.y,
+									imageData.width, imageData.height);
+							break;
 						}
-					} catch (SWTException ex) {
-						// System.out
-						// .println("There was an error animating the GIF");
-					} finally {
-						if (offScreenImage != null
-								&& !offScreenImage.isDisposed())
-							offScreenImage.dispose();
-						if (offScreenImageGC != null
-								&& !offScreenImageGC.isDisposed())
-							offScreenImageGC.dispose();
-						if (timage != null && !timage.isDisposed())
-							timage.dispose();
-					}
-					if (busyThread == null)
-						Display.getDefault().syncExec(new Runnable() {
+
+						imageDataIndex = (imageDataIndex + 1)
+								% progressData.length;
+						imageData = progressData[imageDataIndex];
+						timage.dispose();
+						timage = new Image(display, imageData);
+						offScreenImageGC.drawImage(timage, 0, 0,
+								imageData.width, imageData.height,
+								imageData.x, imageData.y, imageData.width,
+								imageData.height);
+
+						/* Draw the off-screen image to the shell. */
+						animationImage = offScreenImage;
+						display.syncExec(new Runnable() {
 							public void run() {
-								animationImage = null;
-								redraw();
+								if (!isDisposed())
+									redraw();
 							}
 						});
+						/*
+						 * Sleep for the specified delay time (adding
+						 * commonly-used slow-down fudge factors).
+						 */
+						try {
+							int ms = imageData.delayTime * 10;
+							if (ms < 20)
+								ms += 50;
+							if (ms < 30)
+								ms += 20;
+							Thread.sleep(ms);
+						} catch (InterruptedException e) {
+						}
+
+						/*
+						 * If we have just drawn the last image, decrement
+						 * the repeat count and start again.
+						 */
+						if (imageDataIndex == progressData.length - 1)
+							repeatCount--;
+					}
 				} catch (Exception e) {
 					// Trace.trace(Trace.WARNING, "Busy error", e);
 					// //$NON-NLS-1$
+				} finally {
+					if (offScreenImage != null
+							&& !offScreenImage.isDisposed())
+						offScreenImage.dispose();
+					if (offScreenImageGC != null
+							&& !offScreenImageGC.isDisposed())
+						offScreenImageGC.dispose();
+					if (timage != null && !timage.isDisposed())
+						timage.dispose();
 				}
+				if (busyThread == null)
+					display.syncExec(new Runnable() {
+						public void run() {
+							animationImage = null;
+							if (!isDisposed())
+								redraw();
+						}
+					});
 			}
 		};
 		busyThread.setPriority(Thread.NORM_PRIORITY + 2);
