@@ -207,8 +207,6 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public Set getAttribute(String attributeName, Set defaultValue) throws CoreException;
 	
@@ -328,36 +326,27 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns the launch modes that have been set on this configuration.
+	 * An empty set is returned if no specific launch modes have been set
+	 * on a launch configuration. 
 	 * <p>
 	 * Setting launch modes on a configuration allows a launch to be
 	 * performed in mixed mode - for example, debug and profile at the
 	 * same time.
 	 * </p>
-	 * @return this configuration's launch modes
+	 * @return this configuration's launch modes, possibly an empty set
 	 * @exception CoreException if an exception occurs retrieving modes
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
 	 */
 	public Set getModes() throws CoreException;
 	
 	/**
-	 * Returns the preferred launch delegate that has been set on this configuration.
+	 * Returns the preferred launch delegate that has been set on this
+	 * configuration or <code>null</code> if one is not specified.
 	 * 
 	 * @param modes mode set for which a preferred delegate has been requested
 	 * @return this configuration's preferred launch delegate for the specified mode set, or  
 	 * 	<code>null</code> if one is not specified
 	 * @exception CoreException if an exception occurs retrieving preferred delegate
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
 	 */
 	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException;
