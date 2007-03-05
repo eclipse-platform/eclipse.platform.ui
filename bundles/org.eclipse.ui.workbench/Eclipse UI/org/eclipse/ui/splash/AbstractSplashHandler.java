@@ -14,6 +14,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 
 /**
  * Baseclass for splash implementations. Please note that methods on this class
@@ -74,8 +77,22 @@ public abstract class AbstractSplashHandler {
 	 * with the UI thread if necessary.
 	 * </p>
 	 * 
+	 * <p>
+	 * Please note that progress will only be shown if the
+	 * "org.eclipse.ui/SHOW_PROGRESS_ON_STARTUP" property has been set to
+	 * <code>true</code>. Because property defaults to <code>false</code>
+	 * RCP developers must set this property via a
+	 * <code>plugin_customization.ini</code> file or by setting the preference
+	 * on the Platform UI perference store in the
+	 * {@link WorkbenchAdvisor#initialize(org.eclipse.ui.application.IWorkbenchConfigurer)}
+	 * method if they wish to have progress reported on startup.
+	 * </p>
+	 * 
 	 * @return the progress monitor
 	 * @see NullProgressMonitor
+	 * @see PlatformUI#getPreferenceStore()
+	 * @see IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
+	 * @see WorkbenchAdvisor#initialize(org.eclipse.ui.application.IWorkbenchConfigurer)
 	 */
 	public IProgressMonitor getBundleProgressMonitor() {
 		return new NullProgressMonitor();
