@@ -115,7 +115,7 @@ public class ContentStamps {
 				((IDocumentExtension4)document).replace(0, 0, "", stamp.getValue()); //$NON-NLS-1$
 				return true;
 			} catch (BadLocationException e) {
-				Changes.asCoreException(e);
+				throw Changes.asCoreException(e);
 			}
 		}
 		return false;
