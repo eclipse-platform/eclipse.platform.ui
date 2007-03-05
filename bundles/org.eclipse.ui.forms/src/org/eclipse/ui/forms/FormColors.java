@@ -140,9 +140,8 @@ public class FormColors {
 	}
 
 	/**
-	 * Allocates colors for the following keys: BORDER, COMPOSITE_SEPARATOR and
-	 * DEFAULT_HEADER. Subclasses can override to allocate this colors
-	 * differently.
+	 * Allocates colors for the following keys: BORDER, SEPARATOR and
+	 * TITLE. Subclasses can override to allocate these colors differently.
 	 */
 	protected void initializeColorTable() {
 		createTitleColor();
