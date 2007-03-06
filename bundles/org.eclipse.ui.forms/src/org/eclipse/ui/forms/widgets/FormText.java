@@ -204,6 +204,8 @@ public class FormText extends Canvas {
 
 	private IHyperlinkSegment entered;
 
+	private IHyperlinkSegment armed;
+
 	private boolean mouseFocus = false;
 
 	private boolean controlFocusTransfer = false;
@@ -1321,8 +1323,10 @@ public class FormText extends Canvas {
 				enterLink(segmentUnder, e.stateMask);
 				paintFocusTransfer(oldLink, segmentUnder);
 			}
-			if (e.button == 1)
+			if (e.button == 1) {
 				startSelection(e);
+				armed = segmentUnder;
+			}
 			else {
 			}
 		} else {
@@ -1330,8 +1334,9 @@ public class FormText extends Canvas {
 				endSelection(e);
 				IHyperlinkSegment segmentUnder = model
 						.findHyperlinkAt(e.x, e.y);
-				if (segmentUnder != null && selData == null) {
+				if (segmentUnder != null && armed == segmentUnder && selData == null) {
 					activateLink(segmentUnder, e.stateMask);
+					armed = null;
 				}
 			}
 			mouseFocus = false;

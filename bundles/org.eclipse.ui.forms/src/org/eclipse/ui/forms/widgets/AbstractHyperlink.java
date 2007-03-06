@@ -38,6 +38,12 @@ public abstract class AbstractHyperlink extends Canvas {
 	private boolean hasFocus;
 	boolean paintFocus=true;
 
+	/*
+	 * Armed link is one that will activate on a mouse up event, i.e.
+	 * it has received a mouse down and mouse still on top of it.
+	 */
+	private boolean armed;
+
 	private ListenerList listeners;
 
 	/**
@@ -106,15 +112,23 @@ public abstract class AbstractHyperlink extends Canvas {
 				case SWT.MouseExit:
 					handleExit(e);
 					break;
+				case SWT.MouseDown:
+					handleMouseDown(e);
+					break;
 				case SWT.MouseUp:
 					handleMouseUp(e);
+					break;
+				case SWT.MouseMove:
+					handleMouseMove(e);
 					break;
 				}
 			}
 		};
 		addListener(SWT.MouseEnter, listener);
 		addListener(SWT.MouseExit, listener);
+		addListener(SWT.MouseDown, listener);
 		addListener(SWT.MouseUp, listener);
+		addListener(SWT.MouseMove, listener);
 		addListener(SWT.FocusIn, listener);
 		addListener(SWT.FocusOut, listener);
 		setCursor(FormsResources.getHandCursor());
@@ -179,6 +193,8 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * must call 'super'.
 	 */
 	protected void handleExit(Event e) {
+		// disarm the link; won't activate on mouseup
+		armed = false;
 		redraw();
 		if (listeners == null)
 			return;
@@ -197,6 +213,8 @@ public abstract class AbstractHyperlink extends Canvas {
 	 * method must call 'super'.
 	 */
 	protected void handleActivate(Event e) {
+		// disarm link, back to normal state
+		armed = false;
 		getAccessible().setFocus(ACC.CHILDID_SELF);
 		if (listeners == null)
 			return;
@@ -272,8 +290,15 @@ public abstract class AbstractHyperlink extends Canvas {
 		}
 	}
 
-	private void handleMouseUp(Event e) {
+	private void handleMouseDown(Event e) {
 		if (e.button != 1)
+			return;
+		// armed and ready to activate on mouseup
+		armed = true;
+	}
+
+	private void handleMouseUp(Event e) {
+		if (!armed || e.button != 1)
 			return;
 		Point size = getSize();
 		// Filter out mouse up events outside
@@ -289,6 +314,14 @@ public abstract class AbstractHyperlink extends Canvas {
 		if (e.y >= size.y)
 			return;
 		handleActivate(e);
+	}
+
+	private void handleMouseMove(Event e) {
+		// disarm link if we move out of bounds
+		if (armed) {
+			Point size = getSize();
+			armed = (e.x >= 0 && e.y >= 0 && e.x < size.x && e.y < size.y);
+		}
 	}
 	
 	/*
