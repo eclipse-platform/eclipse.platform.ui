@@ -12,6 +12,7 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -26,9 +27,9 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet -1.
  * 
- * Hello, no databinding. Bind changes in a GUI to a Model object but don't worry
- * about propogating changes from the Model to the GUI -- using *manual* code.
- * (0xffffffff is -1 in 32-bit two's complement binary arithmatic)
+ * Hello, no databinding. Bind changes in a GUI to a Model object but don't
+ * worry about propogating changes from the Model to the GUI -- using *manual*
+ * code. (0xffffffff is -1 in 32-bit two's complement binary arithmatic)
  */
 public class Snippet0xffffffff {
 	public static void main(String[] args) {
@@ -98,8 +99,7 @@ public class Snippet0xffffffff {
 		public void setName(String name) {
 			this.name = name;
 		}
-		
-		
+
 	}
 
 	// The View's model--the root of our Model graph for this particular GUI.
@@ -107,7 +107,8 @@ public class Snippet0xffffffff {
 	// Typically each View class has a corresponding ViewModel class.
 	//
 	// The ViewModel is responsible for getting the objects to edit from the
-	// data access tier. Since this snippet doesn't have any persistent objects to
+	// data access tier. Since this snippet doesn't have any persistent objects
+	// to
 	// retrieve, this ViewModel just instantiates a model object to edit.
 	static class ViewModel {
 		// The model to bind
@@ -128,19 +129,34 @@ public class Snippet0xffffffff {
 
 		public Shell createShell() {
 			// Build a UI
-			Display display = Display.getCurrent();
+			final Display display = Display.getCurrent();
 			Shell shell = new Shell(display);
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
 
 			final Text name = new Text(shell, SWT.BORDER);
-
+			
 			// Bind it (manually)
 			name.setText(viewModel.getPerson().getName());
 			name.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					viewModel.getPerson().setName(name.getText());
+					final String text = name.getText();
+					// validation
+					// conversion
+					viewModel.getPerson().setName(text);
 				}
 			});
+			viewModel.person.addPropertyChangeListener("name",
+					new PropertyChangeListener() {
+						public void propertyChange(PropertyChangeEvent evt) {
+							display.asyncExec(new Runnable() {
+								public void run() {
+									final String newName = viewModel.person.getName();
+									// conversion
+									name.setText(newName);
+								}
+							});
+						}
+					});
 
 			// Open and return the Shell
 			shell.pack();

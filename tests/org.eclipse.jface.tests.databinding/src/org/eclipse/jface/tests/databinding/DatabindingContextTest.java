@@ -32,7 +32,6 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.ListBinding;
-import org.eclipse.core.internal.databinding.ValueBinding2;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.util.EventTrackers.ChangeEventTracker;
 import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
@@ -83,7 +82,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 		Binding binding = dbc.bindValue(target, model, null, null);
 		assertTrue("binding is of the incorrect type",
-				binding instanceof ValueBinding2);
+				binding.getClass().getSimpleName().equals("ValueBinding2"));
 	}
 
 	public void testBindList() throws Exception {
@@ -218,7 +217,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 			}
 		}
 
-		ValueBinding2 binding = (ValueBinding2) dbc.bindValue(target, model,
+		Binding binding = dbc.bindValue(target, model,
 				new UpdateValueStrategy().setAfterConvertValidator(new Validator()), null);
 
 		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus()

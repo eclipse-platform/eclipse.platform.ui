@@ -19,7 +19,6 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.IdentityConverter;
 import org.eclipse.core.databinding.conversion.ToStringConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
@@ -78,13 +77,6 @@ public class UpdateValueStrategy {
 	public static int POLICY_UPDATE = notInlined(8);
 
 	/**
-	 * Policy bit denoting that pre-change validation should be performed on the
-	 * source observable (can be ORed with one of {@link #POLICY_CONVERT},
-	 * {@link #POLICY_ON_REQUEST}, or {@value #POLICY_UPDATE}).
-	 */
-	public static int VALIDATE_BEFORE_CHANGE = notInlined(16);
-
-	/**
 	 * Helper method allowing API evolution of the above constant values. The
 	 * compiler will not inline constant values into client code if values are
 	 * "computed" using this helper.
@@ -111,7 +103,6 @@ public class UpdateValueStrategy {
 
 	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
 
-	protected IValidator beforeChangeValidator;
 	protected IValidator afterGetValidator;
 	protected IValidator afterConvertValidator;
 	protected IValidator beforeSetValidator;
@@ -142,8 +133,7 @@ public class UpdateValueStrategy {
 	 * 
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
-	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}, possibly
-	 *            ORed with {@link #VALIDATE_BEFORE_CHANGE}
+	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}
 	 */
 	public UpdateValueStrategy(int updatePolicy) {
 		this(true, updatePolicy);
@@ -161,8 +151,7 @@ public class UpdateValueStrategy {
 	 *            type.
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
-	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}, possibly
-	 *            ORed with {@link #VALIDATE_BEFORE_CHANGE}
+	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}
 	 */
 	public UpdateValueStrategy(boolean provideDefaults, int updatePolicy) {
 		this.provideDefaults = provideDefaults;
@@ -554,29 +543,6 @@ public class UpdateValueStrategy {
 	}
 
 	/**
-	 * Set the validator to be used for pre-change validation. If the given
-	 * validator does not return an OK status, the change will be vetoed. It is
-	 * recommended that a status with severity {@link IStatus#CANCEL} is used to
-	 * veto a change. Calling this method will set the
-	 * {@link #VALIDATE_BEFORE_CHANGE} update policy bit if the given validator
-	 * is not <code>null</code> and will clear the bit if the given validator
-	 * is <code>null</code>.
-	 * 
-	 * @param validator
-	 *            a validator, or <code>null</code>
-	 * @return the receiver, to enable method call chaining
-	 */
-	public UpdateValueStrategy setBeforeChangeValidator(IValidator validator) {
-		this.beforeChangeValidator = validator;
-		if (validator == null) {
-			this.updatePolicy &= ~VALIDATE_BEFORE_CHANGE;
-		} else {
-			this.updatePolicy |= VALIDATE_BEFORE_CHANGE;
-		}
-		return this;
-	}
-
-	/**
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -620,21 +586,16 @@ public class UpdateValueStrategy {
 		return beforeSetValidator == null ? Status.OK_STATUS
 				: beforeSetValidator.validate(value);
 	}
-
+	
 	/**
-	 * Validates the given change. If this method does not return an OK status,
-	 * the change will be vetoed. It is recommended that a status with severity
-	 * {@link IStatus#CANCEL} is used to veto a change. This method will only be
-	 * called if the {@link #VALIDATE_BEFORE_CHANGE} update policy bit is set.
-	 * Therefore, subclasses that override this method should ensure that this
-	 * bit is set.
+	 * Sets the current value of the given observable to the given value.
+	 * Clients may extend but must call the super implementation.
 	 * 
-	 * @param diff
-	 * @return a status
+	 * @param observableValue
+	 * @param value
 	 */
-	public IStatus validateBeforeChange(ValueDiff diff) {
-		return beforeChangeValidator == null ? Status.OK_STATUS
-				: beforeChangeValidator.validate(diff.getNewValue());
+	protected void doSet(IObservableValue observableValue, Object value) {
+		observableValue.setValue(value);
 	}
 
 	private static class ValidatorRegistry {

@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
@@ -28,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 3.2
  * 
  */
-public class DetailObservableSet extends ObservableSet {
+public class DetailObservableSet extends ObservableSet implements IObserving {
 
 	private boolean updating = false;
 
@@ -113,4 +114,12 @@ public class DetailObservableSet extends ObservableSet {
 		innerObservableSet = null;
 		innerChangeListener = null;
 	}
+
+	public Object getObserved() {
+		if (innerObservableSet instanceof IObserving) {
+			return ((IObserving)innerObservableSet).getObserved();
+		}
+		return null;
+	}
+
 }

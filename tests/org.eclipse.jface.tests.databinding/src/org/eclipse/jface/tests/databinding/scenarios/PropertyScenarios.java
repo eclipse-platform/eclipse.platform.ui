@@ -242,7 +242,7 @@ public class PropertyScenarios extends ScenariosTestCase {
                 if (stringValue.length() > 15) {
                     return ValidationStatus.error(max15CharactersMessage);
                 } else if (stringValue.indexOf(' ') != -1) {
-                    return ValidationStatus.error(noSpacesMessage);
+                    return ValidationStatus.cancel(noSpacesMessage);
                 } else {
                     return Status.OK_STATUS;
                 }
@@ -257,7 +257,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 				SWTObservables.observeText(text, SWT.Modify),
 				BeansObservables.observeValue(adventure, "name"),
 				new UpdateValueStrategy().setConverter(new IdentityConverter(
-						String.class)).setBeforeChangeValidator(validator),
+						String.class)).setAfterGetValidator(validator),
 				new UpdateValueStrategy().setConverter(new IdentityConverter(
 						String.class)));
 

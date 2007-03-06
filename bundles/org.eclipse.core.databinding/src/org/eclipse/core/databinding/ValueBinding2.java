@@ -9,18 +9,15 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding;
+package org.eclipse.core.databinding;
 
-import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.IValueChangingListener;
-import org.eclipse.core.databinding.observable.value.IVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
-import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -28,7 +25,7 @@ import org.eclipse.core.runtime.Status;
  * @since 3.3
  * 
  */
-public class ValueBinding2 extends Binding {
+class ValueBinding2 extends Binding {
 
 	private final UpdateValueStrategy targetToModel;
 	private final UpdateValueStrategy modelToTarget;
@@ -52,29 +49,7 @@ public class ValueBinding2 extends Binding {
 			}
 		}
 	};
-	
-	private IValueChangingListener targetChangingListener = new IValueChangingListener(){
-		public void handleValueChanging(ValueChangingEvent event) {
-			if (!updatingTarget) {
-				IStatus status = targetToModel.validateBeforeChange(event.diff);
-				if (!status.isOK()) {
-					setValidationStatus(status);
-					event.veto = true;
-				}
-			}
-		}};
 
-		private IValueChangingListener modelChangingListener = new IValueChangingListener(){
-			public void handleValueChanging(ValueChangingEvent event) {
-				if (!updatingModel) {
-					IStatus status = modelToTarget.validateBeforeChange(event.diff);
-					if (!status.isOK()) {
-						setValidationStatus(status);
-						event.veto = true;
-					}
-				}
-			}};
-			
 	/**
 	 * @param targetObservableValue
 	 * @param modelObservableValue
@@ -92,14 +67,8 @@ public class ValueBinding2 extends Binding {
 		if ((targetToModel.getUpdatePolicy() & (UpdateValueStrategy.POLICY_CONVERT | UpdateValueStrategy.POLICY_UPDATE)) != 0) {
 			target.addValueChangeListener(targetChangeListener);
 		}
-		if ((targetToModel.getUpdatePolicy() & UpdateValueStrategy.VALIDATE_BEFORE_CHANGE) != 0 && targetObservableValue instanceof IVetoableValue) {
-			((IVetoableValue)targetObservableValue).addValueChangingListener(targetChangingListener);
-		}
 		if ((modelToTarget.getUpdatePolicy() & (UpdateValueStrategy.POLICY_CONVERT | UpdateValueStrategy.POLICY_UPDATE)) != 0) {
 			model.addValueChangeListener(modelChangeListener);
-		}
-		if ((modelToTarget.getUpdatePolicy() & UpdateValueStrategy.VALIDATE_BEFORE_CHANGE) != 0 && modelObservableValue instanceof IVetoableValue) {
-			((IVetoableValue)modelObservableValue).addValueChangingListener(modelChangingListener);
 		}
 	}
 
@@ -145,63 +114,70 @@ public class ValueBinding2 extends Binding {
 				source.getRealm().exec(new Runnable() {
 					public void run() {
 						boolean destinationRealmReached = false;
-						Object value = source.getValue();
-						IStatus status = updateValueStrategy
-								.validateAfterGet(value);
-						if (!status.isOK()) {
-							statusHolder[0] = status;
-						} else {
-							final Object convertedValue = updateValueStrategy
-									.convert(value);
-							status = updateValueStrategy
-									.validateAfterConvert(convertedValue);
+						try {
+							Object value = source.getValue();
+							IStatus status = updateValueStrategy
+									.validateAfterGet(value);
 							if (!status.isOK()) {
 								statusHolder[0] = status;
 							} else {
-								if (policy == UpdateValueStrategy.POLICY_CONVERT
-										&& !explicit) {
+								final Object convertedValue = updateValueStrategy
+										.convert(value);
+								status = updateValueStrategy
+										.validateAfterConvert(convertedValue);
+								if (!status.isOK()) {
+									statusHolder[0] = status;
 								} else {
-									status = updateValueStrategy
-											.validateBeforeSet(convertedValue);
-									if (!status.isOK()) {
-										statusHolder[0] = status;
+									if (policy == UpdateValueStrategy.POLICY_CONVERT
+											&& !explicit) {
 									} else {
-										if (!validateOnly) {
-											destinationRealmReached = true;
-											destination.getRealm().exec(
-													new Runnable() {
-														public void run() {
-															if (destination == target) {
-																updatingTarget = true;
-															} else {
-																updatingModel = true;
-															}
-															try {
-																destination
-																		.setValue(convertedValue);
-															} catch (Exception ex) {
-																statusHolder[0] = ValidationStatus
-																		.error(
-																				BindingMessages
-																						.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
-																				ex);
-															} finally {
+										status = updateValueStrategy
+												.validateBeforeSet(convertedValue);
+										if (!status.isOK()) {
+											statusHolder[0] = status;
+										} else {
+											if (!validateOnly) {
+												destinationRealmReached = true;
+												destination.getRealm().exec(
+														new Runnable() {
+															public void run() {
 																if (destination == target) {
-																	updatingTarget = false;
+																	updatingTarget = true;
 																} else {
-																	updatingModel = false;
+																	updatingModel = true;
 																}
-																setValidationStatus(statusHolder[0]);
+																try {
+																	updateValueStrategy.doSet(destination, convertedValue);
+																} catch (Exception ex) {
+																	statusHolder[0] = ValidationStatus
+																			.error(
+																					BindingMessages
+																							.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+																					ex);
+																} finally {
+																	if (destination == target) {
+																		updatingTarget = false;
+																	} else {
+																		updatingModel = false;
+																	}
+																	setValidationStatus(statusHolder[0]);
+																}
 															}
-														}
-													});
+														});
+											}
 										}
 									}
 								}
 							}
-						}
-						if (!destinationRealmReached) {
-							setValidationStatus(statusHolder[0]);
+						} catch (Exception ex) {
+							setValidationStatus(new Status(IStatus.ERROR,
+									Policy.JFACE_DATABINDING, IStatus.ERROR, ex
+											.getMessage(), ex));
+						} finally {
+							if (!destinationRealmReached) {
+								setValidationStatus(statusHolder[0]);
+							}
+
 						}
 					}
 				});

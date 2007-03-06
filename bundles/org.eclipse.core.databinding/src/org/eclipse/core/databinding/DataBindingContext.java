@@ -27,14 +27,12 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValidationStatusMap;
 import org.eclipse.core.internal.databinding.ValueBinding;
-import org.eclipse.core.internal.databinding.ValueBinding2;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * A context for binding observable objects. This class is not intended to be
- * subclassed by clients.
+ * A context for binding observable objects.
  * 
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -97,7 +95,7 @@ public class DataBindingContext {
 	 * @param listener
 	 *            The listener to add.
 	 */
-	public void addBindingEventListener(IBindingListener listener) {
+	public final void addBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.add(listener);
 	}
 
@@ -158,7 +156,7 @@ public class DataBindingContext {
 	 *            or changed after it is passed to this method.
 	 * @return a Binding synchronizing the state of the two observables
 	 */
-	public Binding bindValue(IObservableValue targetObservableValue,
+	public final Binding bindValue(IObservableValue targetObservableValue,
 			IObservableValue modelObservableValue, BindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
@@ -187,13 +185,13 @@ public class DataBindingContext {
 	 * @param modelToTarget
 	 * @return a binding
 	 */
-	public Binding bindValue(IObservableValue targetObservableValue,
+	public final Binding bindValue(IObservableValue targetObservableValue,
 			IObservableValue modelObservableValue,
 			UpdateValueStrategy targetToModel, UpdateValueStrategy modelToTarget) {
 		UpdateValueStrategy targetToModelStrategy = targetToModel != null ? targetToModel
-						: new UpdateValueStrategy();
+						: createTargetToModelUpdateValueStrategy(targetObservableValue, modelObservableValue);
 		UpdateValueStrategy modelToTargetStrategy = modelToTarget != null ? modelToTarget
-				: new UpdateValueStrategy();
+				: createModelToTargetUpdateValueStrategy(modelObservableValue, targetObservableValue);
 		targetToModelStrategy.fillDefaults(targetObservableValue, modelObservableValue);
 		modelToTargetStrategy.fillDefaults(modelObservableValue, targetObservableValue);
 		ValueBinding2 result = new ValueBinding2(targetObservableValue,
@@ -203,6 +201,32 @@ public class DataBindingContext {
 		return result;
 	}
 
+	/**
+	 * Returns an update value strategy to be used for copying values from the
+	 * from value to the to value. Clients may override.
+	 * 
+	 * @param fromValue
+	 * @param toValue
+	 * @return a update value strategy
+	 */
+	protected UpdateValueStrategy createModelToTargetUpdateValueStrategy(
+			IObservableValue fromValue, IObservableValue toValue) {
+		return new UpdateValueStrategy();
+	}
+
+	/**
+	 * Returns an update value strategy to be used for copying values from the
+	 * from value to the to value. Clients may override.
+	 * 
+	 * @param fromValue
+	 * @param toValue
+	 * @return a update value strategy
+	 */
+	protected UpdateValueStrategy createTargetToModelUpdateValueStrategy(
+			IObservableValue fromValue, IObservableValue toValue) {
+		return new UpdateValueStrategy();
+	}
+	
 	/**
 	 * Binds two observable lists using converter and validator as specified in
 	 * bindSpec. If bindSpec is null, default converters and validators as
@@ -251,7 +275,7 @@ public class DataBindingContext {
 	 *            or changed after it is passed to this method.
 	 * @return a Binding synchronizing the state of the two observables
 	 */
-	public Binding bindList(IObservableList targetObservableList,
+	public final Binding bindList(IObservableList targetObservableList,
 			IObservableList modelObservableList, BindSpec bindSpec) {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
@@ -277,7 +301,7 @@ public class DataBindingContext {
 	 * Disposes of this data binding context and all bindings that were added to
 	 * this context.
 	 */
-	public void dispose() {
+	public final void dispose() {
 		Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
 		for (int i = 0; i < bindingArray.length; i++) {
 			bindingArray[i].dispose();
@@ -291,7 +315,7 @@ public class DataBindingContext {
 	 * @param event
 	 * @return a status object  
 	 */
-	protected IStatus fireBindingEvent(BindingEvent event) {
+	IStatus fireBindingEvent(BindingEvent event) {
 		IStatus result = Status.OK_STATUS;
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter
 				.hasNext();) {
@@ -310,7 +334,7 @@ public class DataBindingContext {
 	 * 
 	 * @return the observable list containing all bindings
 	 */
-	public IObservableList getBindings() {
+	public final IObservableList getBindings() {
 		return unmodifiableBindings;
 	}
 
@@ -322,7 +346,7 @@ public class DataBindingContext {
 	 * 
 	 * @return the observable map from bindings to status objects.
 	 */
-	public IObservableMap getValidationStatusMap() {
+	public final IObservableMap getValidationStatusMap() {
 		return validationStatusMap;
 	}
 
@@ -344,7 +368,7 @@ public class DataBindingContext {
 	 * @param listener
 	 *            The listener to remove.
 	 */
-	public void removeBindingEventListener(IBindingListener listener) {
+	public final void removeBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.remove(listener);
 	}
 
@@ -353,7 +377,7 @@ public class DataBindingContext {
 	 * target observable objects.
 	 * 
 	 */
-	public void updateModels() {
+	public final void updateModels() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
 			Binding binding = (Binding) it.next();
 			binding.updateTargetToModel();
@@ -365,7 +389,7 @@ public class DataBindingContext {
 	 * model observable objects.
 	 * 
 	 */
-	public void updateTargets() {
+	public final void updateTargets() {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
 			Binding binding = (Binding) it.next();
 			binding.updateModelToTarget();
@@ -389,7 +413,7 @@ public class DataBindingContext {
 	 * @return the realm for the validation observables
 	 * @see Realm
 	 */
-	public Realm getValidationRealm() {
+	public final Realm getValidationRealm() {
 		return validationRealm;
 	}
 }
