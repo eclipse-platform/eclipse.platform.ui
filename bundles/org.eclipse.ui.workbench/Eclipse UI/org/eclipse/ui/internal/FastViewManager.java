@@ -480,6 +480,8 @@ public class FastViewManager {
 		int paneOrientation = (stackBounds.width > stackBounds.height) ? SWT.HORIZONTAL
 				: SWT.VERTICAL;
 
+		vs.deferUpdates(true);
+		
 		// Update the model first
 		List toMove = getTrueViewOrder(vs);
 		for (Iterator viewIter = toMove.iterator(); viewIter.hasNext();) {
@@ -487,6 +489,8 @@ public class FastViewManager {
 			addViewReference(vs.getID(), -1, ref, false);
 		}
 
+		vs.deferUpdates(false);
+		
 		// Find (or create) the trim stack to move to
 		ViewStackTrimToolBar vstb = getTrimForViewStack(vs.getID(), perspective
 				.calcStackSide(stackBounds), paneOrientation);
