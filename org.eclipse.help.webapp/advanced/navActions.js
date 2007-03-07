@@ -29,6 +29,13 @@ function toggleShowAll(button){
 	}
 }
 
+function toggleShowCategories(button){
+	parent.searchViewFrame.toggleShowCategories();
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
 function removeBookmark(button){
 	try {
 		parent.bookmarksViewFrame.removeBookmark();

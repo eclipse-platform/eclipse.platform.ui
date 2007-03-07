@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -207,7 +207,7 @@ function showStatus(e) {
 		else 
 			statusText = a.lastChild.nodeValue;
 			
-		if (statusText != a.title)
+		if (a.title && statusText != a.title)
 			statusText += " - " + a.title;
 			
 		window.status = statusText;

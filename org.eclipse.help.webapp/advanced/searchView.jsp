@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2006 IBM Corporation and others.
+ Copyright (c) 2000, 2007 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -38,9 +38,20 @@
 <script language="JavaScript" src="list.js"></script>
 <script language="JavaScript">		
 
-function refresh() 
-{ 
+function refresh() { 
 	window.location.replace("searchView.jsp?<%=request.getQueryString()%>");
+}
+
+function setShowCategories(value) {
+	parent.searchToolbarFrame.setButtonState("show_categories", value);
+	var date = new Date();
+	date.setTime(date.getTime()+(365*24*60*60*1000));
+	document.cookie = "showCategories="+value+"; expires="+date.toGMTString() + ";path=/";;
+	window.location.reload();
+}
+
+function toggleShowCategories() {
+	setShowCategories(<%=!data.isShowCategories()%>);
 }
 
 function onShow() { 
@@ -85,13 +96,39 @@ setTimeout('refresh()', 2000);
 } else {
 %>
 
-<table id='list'  cellspacing='0' >
+<table class="results" cellspacing='0'>
 
 <%
+	String oldCat = null;
 	for (int topic = 0; topic < data.getResultsCount(); topic++)
 	{
 		if(data.isActivityFiltering() && !data.isEnabled(topic)){
 			continue;
+		}
+
+		String cat = data.getCategoryLabel(topic);
+		if (data.isShowCategories() && cat != null
+				&& (oldCat == null || !oldCat.equals(cat))) {
+%>
+
+</table>
+<table class="category" cellspacing='0'>
+	<tr class='list' id='r<%=topic%>c'>
+		<td>
+			<a href="<%=data.getCategoryHref(topic)%>"
+					id="a<%=topic%>c"'
+					class="link"
+					onmouseover="showStatus(event);return true;"
+					onmouseout="clearStatus();return true;">
+				<%=cat%>
+			</a>
+		</td>
+	</tr>
+</table>
+<table class="results" cellspacing='0'>
+
+<%
+			oldCat = cat;
 		}
 %>
 

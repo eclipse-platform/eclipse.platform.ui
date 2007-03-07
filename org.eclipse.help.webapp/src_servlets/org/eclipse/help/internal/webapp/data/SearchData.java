@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,20 @@
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.help.HelpSystem;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -31,6 +38,7 @@ import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.WorkingSet;
+import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResult2;
 
 /**
@@ -114,6 +122,33 @@ public class SearchData extends ActivitiesData {
 		return (request.getParameter("workingSet") != null); //$NON-NLS-1$
 	}
 
+	public String getCategoryLabel(int i) {
+		IHelpResource cat = hits[i].getCategory();
+		if (cat != null) {
+			return cat.getLabel();
+		}
+		return null;
+	}
+
+	public String getCategoryHref(int i) {
+		IHelpResource cat = hits[i].getCategory();
+		if (cat != null) {
+			String tocHref = cat.getHref();
+			IToc[] tocs = HelpSystem.getTocs();
+			for (int j=0;j<tocs.length;++j) {
+				if (tocHref.equals(tocs[j].getHref())) {
+					ITopic topic = tocs[j].getTopic(null);
+					String topicHref = topic.getHref();
+					if (topicHref != null) {
+						return UrlUtil.getHelpURL(topicHref);
+					}
+					return "../nav/" + j; //$NON-NLS-1$
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Return the number of links
 	 * 
@@ -171,6 +206,17 @@ public class SearchData extends ActivitiesData {
 		return ((getMode() != MODE_INFOCENTER) && hits[i].isPotentialHit());
 	}
 
+	public boolean isShowCategories() {
+		Cookie[] cookies = request.getCookies();
+		for (int i=0;i<cookies.length;++i) {
+			if ("showCategories".equals(cookies[i].getName())) { //$NON-NLS-1$
+				return String.valueOf(true).equals(cookies[i].getValue());
+			}
+		}
+		// default off
+		return false;
+	}
+	
 	/**
 	 * Return indexed completion percentage
 	 */
@@ -281,6 +327,11 @@ public class SearchData extends ActivitiesData {
 				if (hits == null) {
 					HelpWebappPlugin
 							.logWarning("No search results returned.  Help index is in use."); //$NON-NLS-1$
+				}
+				else {
+					if (isShowCategories()) {
+						Arrays.sort(hits, new SearchResultComparator());
+					}
 				}
 				return;
 			}
@@ -408,6 +459,51 @@ public class SearchData extends ActivitiesData {
 				}
 			}
 			super.addHits(filtered, highlightTerms);
+		}
+	}
+	
+	private static class SearchResultComparator implements Comparator {
+	    public int category(Object element) {
+			if (element instanceof ISearchEngineResult) {
+				ISearchEngineResult r = (ISearchEngineResult)element;
+				IHelpResource c = r.getCategory();
+				if (c!=null) {
+					String label = c.getLabel();
+					if (label.length()==0)
+						return 10;
+					return 5;
+				}
+			}
+	        return 0;
+	    }
+
+		public int compare(Object e1, Object e2) {
+		    int cat1 = category(e1);
+		    int cat2 = category(e2);
+		    if (cat1 != cat2) {
+		    	return cat1 - cat2;
+		    }
+			ISearchEngineResult r1 = (ISearchEngineResult)e1;
+			ISearchEngineResult r2 = (ISearchEngineResult)e2;
+			IHelpResource c1 = r1.getCategory();
+			IHelpResource c2 = r2.getCategory();
+			if (c1 != null && c2 != null) {
+				int cat = c1.getLabel().compareToIgnoreCase(c2.getLabel());
+				if (cat != 0) {
+					return cat;
+				}
+			}
+			float rank1 = ((ISearchEngineResult)e1).getScore();
+			float rank2 = ((ISearchEngineResult)e2).getScore();
+			if (rank1 - rank2 > 0) {
+				return -1;
+			}
+			else if (rank1 == rank2) {
+				return 0;
+			}
+			else {
+				return 1;
+			}
 		}
 	}
 }
