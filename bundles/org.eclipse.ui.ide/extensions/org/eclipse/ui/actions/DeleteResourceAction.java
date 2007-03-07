@@ -484,8 +484,15 @@ public class DeleteResourceAction extends SelectionListenerAction {
 					DeleteResourcesOperation op = 
 						new DeleteResourcesOperation(resourcesToDelete, IDEWorkbenchMessages.DeleteResourceAction_operationLabel, deleteContent);
 					op.setModelProviderIds(getModelProviderIds());
+					// If we are deleting projects and their content, do not
+					// execute the operation in the undo history, since it cannot be
+					// properly restored.  Just execute it directly so it won't be
+					// added to the undo history.
+					if (deleteContent && containsOnlyProjects(resourcesToDelete)) {
+						return op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shell));
+					}
 					return PlatformUI.getWorkbench().getOperationSupport()
-					.getOperationHistory().execute(op, monitor, 
+							.getOperationHistory().execute(op, monitor, 
 							WorkspaceUndoUtil.getUIInfoAdapter(shell));
 				} catch (ExecutionException e) {
 					if (e.getCause() instanceof CoreException) {
