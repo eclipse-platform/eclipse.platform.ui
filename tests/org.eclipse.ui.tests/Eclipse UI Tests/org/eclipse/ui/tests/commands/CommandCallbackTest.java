@@ -30,6 +30,7 @@ import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.menus.UIElement;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -131,6 +132,13 @@ public class CommandCallbackTest extends UITestCase {
 	}
 
 	private static class MyElement extends UIElement {
+		
+		/**
+		 * 
+		 */
+		public MyElement(IServiceLocator locator) {
+			super(locator);
+		}
 
 		/*
 		 * (non-Javadoc)
@@ -220,9 +228,9 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement());
+				new MyElement(fWorkbench));
 
 		try {
 			assertEquals(2, cmd1Handler.callbacks);
@@ -252,9 +260,9 @@ public class CommandCallbackTest extends UITestCase {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement());
+				new MyElement(fWorkbench));
 		try {
 
 			assertEquals(2, cmd2Handler.callbacks);
@@ -299,11 +307,11 @@ public class CommandCallbackTest extends UITestCase {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr3 = commandService.registerElementForCommand(pc3,
-				new MyElement());
+				new MyElement(fWorkbench));
 		try {
 
 			assertEquals(3, cmd2Handler.callbacks);
@@ -360,15 +368,15 @@ public class CommandCallbackTest extends UITestCase {
 				new Parameterization[] { new Parameterization(parmProt, "ftp"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr2 = commandService.registerElementForCommand(pc2,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr3 = commandService.registerElementForCommand(pc3,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr4 = commandService.registerElementForCommand(pc4,
-				new MyElement());
+				new MyElement(fWorkbench));
 		IElementReference cr5 = commandService.registerElementForCommand(pc5,
-				new MyElement());
+				new MyElement(fWorkbench));
 		try {
 			assertEquals(5, cmd2Handler.callbacks);
 			Map filter = new HashMap();
@@ -418,9 +426,9 @@ public class CommandCallbackTest extends UITestCase {
 						new Parameterization(parmProt, "http"),
 						new Parameterization(parmHost, "download.eclipse.org") });
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement());
+				new MyElement(window));
 		// should be removed when the window goes away
-		cs.registerElementForCommand(pc2, new MyElement());
+		cs.registerElementForCommand(pc2, new MyElement(window));
 		try {
 			assertEquals(2, cmd2Handler.callbacks);
 
@@ -448,9 +456,9 @@ public class CommandCallbackTest extends UITestCase {
 				.getService(ICommandService.class);
 
 		IElementReference cr1 = commandService.registerElementForCommand(pc1,
-				new MyElement());
+				new MyElement(window));
 		// should be removed when the window goes away
-		cs.registerElementForCommand(pc2, new MyElement());
+		cs.registerElementForCommand(pc2, new MyElement(window));
 
 		try {
 			assertEquals(2, cmd1Handler.callbacks);

@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.tests.menus;
 
-import java.util.List;
-
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -28,9 +26,12 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.commands.ActiveActionSetExpression;
 
 /**
@@ -52,58 +53,53 @@ public class MenuBuilder {
 			return;
 		}
 		viewMenuAddition = new AbstractContributionFactory(
-				"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
-				CommandContributionItem item = new CommandContributionItem(
+				"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				CommandContributionItem item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.tests.menus.itemX20",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						null, null, "Item X20", null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.add(item);
+				additions.addContributionItem(item, null, null);
 
 				MenuManager submenu = new MenuManager("Menu X21",
 						"org.eclipse.ui.tests.menus.menuX21");
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.tests.menus.itemX22",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
 						null, null, "Item X22", null, null,
 						CommandContributionItem.STYLE_PUSH);
 				submenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.tests.menus.itemX23",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						null, null, "Item X23", null, null,
 						CommandContributionItem.STYLE_PUSH);
 				submenu.add(item);
 
-				additions.add(submenu);
+				additions.addContributionItem(submenu, null, null);
 
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.tests.menus.itemX24",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						null, null, "Item X24", null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.add(item);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
-				// for us this is a no-op
+				additions.addContributionItem(item, null, null);
 			}
 		};
 		menuService.addContributionFactory(viewMenuAddition);
 
 		viewToolbarAddition = new AbstractContributionFactory(
-				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
-				CommandContributionItem item = new CommandContributionItem(
+				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				CommandContributionItem item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.tests.menus.itemX25",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
 						null, null, "Item X25", null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.add(item);
+				additions.addContributionItem(item, null, null);
 				WorkbenchWindowControlContribution widget = new WorkbenchWindowControlContribution(
 						"org.eclipse.ui.tests.menus.itemX26") {
 					protected Control createControl(Composite parent) {
@@ -112,12 +108,7 @@ public class MenuBuilder {
 						return textCtrl;
 					}
 				};
-				additions.add(widget);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
-				// for us this is a no-op
+				additions.addContributionItem(widget, null, null);
 			}
 		};
 		menuService.addContributionFactory(viewToolbarAddition);
@@ -143,9 +134,9 @@ public class MenuBuilder {
 				.getService(IMenuService.class);
 
 		AbstractContributionFactory searchContribution = new AbstractContributionFactory(
-				"menu:org.eclipse.ui.main.menu?after=navigate") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
+				"menu:org.eclipse.ui.main.menu?after=navigate", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator menuService,
+					IContributionRoot additions) {
 				MenuManager search = new MenuManager("Se&arch",
 						"org.eclipse.search.menu");
 
@@ -156,12 +147,7 @@ public class MenuBuilder {
 				search.add(new Separator("occurencesActionsGroup"));
 				search.add(new Separator("extraSearchGroup"));
 
-				additions.add(search);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
-				// nothing to do here
+				additions.addContributionItem(search, null, null);
 			}
 		};
 
@@ -178,55 +164,49 @@ public class MenuBuilder {
 				.imageDescriptorFromPlugin("org.eclise.ui.tests",
 						"icons/full/obj16/jsearch_obj.gif");
 		AbstractContributionFactory factory = new AbstractContributionFactory(
-				"menu:org.eclipse.search.menu?after=dialogGroup") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
-				CommandContributionItem item = new CommandContributionItem(
+				"menu:org.eclipse.search.menu?after=dialogGroup", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				CommandContributionItem item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.internal.ui.search.openJavaSearchPage",
 						"org.eclipse.jdt.internal.ui.search.openJavaSearchPage",
 						null, searchIcon, null, null, null, null, null,
 						CommandContributionItem.STYLE_PUSH);
-				menuService.registerVisibleWhen(item, activeSearchActionSet);
-				additions.add(item);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
+				additions.addContributionItem(item, activeSearchActionSet, null);
 			}
 		};
 		menuService.addContributionFactory(factory);
 
 		factory = new AbstractContributionFactory(
-				"menu:org.eclipse.search.menu?after=contextMenuActionsGroup") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
+				"menu:org.eclipse.search.menu?after=contextMenuActionsGroup", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator serviceLocator
+					,
+					IContributionRoot additions) {
 				MenuManager readMenu = new MenuManager("&Read Access",
 						"readAccessSubMenu");
-				menuService
-						.registerVisibleWhen(readMenu, activeSearchActionSet);
-				additions.add(readMenu);
+				additions.addContributionItem(readMenu, activeSearchActionSet, null);
 
 				readMenu.add(new GroupMarker("group1"));
 
-				CommandContributionItem item = new CommandContributionItem(
+				CommandContributionItem item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace",
 						null, null, null, null, null, "W", null,
 						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.project",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.project",
 						null, null, null, null, null, "P", null,
 						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.hierarchy",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.hierarchy",
 						null, null, null, null, null, "H", null,
 						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.working.set",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.working.set",
 						null, null, null, null, null, "S", null,
@@ -235,40 +215,34 @@ public class MenuBuilder {
 
 				MenuManager writeMenu = new MenuManager("&Write Access",
 						"writeAccessSubMenu");
-				menuService.registerVisibleWhen(writeMenu,
-						activeSearchActionSet);
-				additions.add(writeMenu);
+				additions.addContributionItem(writeMenu, activeSearchActionSet, null);
 
 				writeMenu.add(new GroupMarker("group1"));
 
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace",
 						null, null, null, null, null, "W", null,
 						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.project",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.project",
 						null, null, null, null, null, "P", null,
 						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.hierarchy",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.hierarchy",
 						null, null, null, null, null, "H", null,
 						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set",
 						null, null, null, null, null, "S", null,
 						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
 			}
 		};
 		menuService.addContributionFactory(factory);
@@ -305,28 +279,22 @@ public class MenuBuilder {
 				.imageDescriptorFromPlugin("org.eclise.ui.tests",
 						"icons/full/elcl16/load_wiki.gif");
 		AbstractContributionFactory factory = new AbstractContributionFactory(
-				"popup:org.eclipse.ui.menus.popup.any?after=additions") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
-				CommandContributionItem item = new CommandContributionItem(
+				"popup:org.eclipse.ui.menus.popup.any?after=additions", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				CommandContributionItem item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.examples.wiki.post",
 						"org.eclipse.ui.examples.wiki.post", null, postIcon,
 						null, null, null, "P", null,
 						CommandContributionItem.STYLE_PUSH);
-				menuService.registerVisibleWhen(item, ifileExpression);
-				additions.add(item);
+				additions.addContributionItem(item, ifileExpression, null);
 
-				item = new CommandContributionItem(
+				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.examples.wiki.load",
 						"org.eclipse.ui.examples.wiki.load", null, loadIcon,
 						null, null, null, "L", null,
 						CommandContributionItem.STYLE_PUSH);
-				menuService.registerVisibleWhen(item, ifileExpression);
-				additions.add(item);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
+				additions.addContributionItem(item, ifileExpression, null);
 			}
 		};
 		menuService.addContributionFactory(factory);
@@ -340,19 +308,15 @@ public class MenuBuilder {
 				.imageDescriptorFromPlugin("org.eclise.ui.tests",
 						"icons/full/eobj16/scramble.gif");
 		AbstractContributionFactory factory = new AbstractContributionFactory(
-				"popup:#TextEditorContext?after=additions") {
-			public void createContributionItems(IMenuService menuService,
-					List additions) {
-				CommandContributionItem item = new CommandContributionItem(
+				"popup:#TextEditorContext?after=additions", TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				CommandContributionItem item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.examples.menus.scramble.text",
 						"org.eclipse.ui.examples.menus.scramble.text", null,
 						scrambleIcon, null, null, null, "c", null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.add(item);
-			}
-
-			public void releaseContributionItems(IMenuService menuService,
-					List items) {
+				additions.addContributionItem(item, null, null);
 			}
 		};
 		menuService.addContributionFactory(factory);

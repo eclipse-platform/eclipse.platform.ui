@@ -11,13 +11,14 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.List;
+
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
@@ -31,13 +32,13 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  * @since 3.2
  */
-public final class WindowMenuService implements IMenuService {
+public final class WindowMenuService extends InternalMenuService {
 
 	/**
 	 * The parent menu service for this window. This parent must track menu
 	 * definitions and the regsitry. Must not be <code>null</code>
 	 */
-	private final IMenuService parent;
+	private final WorkbenchMenuService parent;
 
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
@@ -48,7 +49,7 @@ public final class WindowMenuService implements IMenuService {
 	 *            track menu definitions and the regsitry. Must not be
 	 *            <code>null</code>
 	 */
-	public WindowMenuService(final IMenuService parent) {
+	public WindowMenuService(final WorkbenchMenuService parent) {
 		if (parent == null) {
 			throw new NullPointerException(
 					"The parent service must not be null"); //$NON-NLS-1$
@@ -89,26 +90,6 @@ public final class WindowMenuService implements IMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem,
-	 *      org.eclipse.core.expressions.Expression)
-	 */
-	public void registerVisibleWhen(IContributionItem item,
-			Expression visibleWhen) {
-		parent.registerVisibleWhen(item, visibleWhen);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
-	 */
-	public void unregisterVisibleWhen(IContributionItem item) {
-		parent.unregisterVisibleWhen(item);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
@@ -142,5 +123,18 @@ public final class WindowMenuService implements IMenuService {
 	 */
 	public void removeSourceProvider(ISourceProvider provider) {
 		throw new RuntimeException("removeSourceProvider"); //$NON-NLS-1$
+	}
+	
+	public List getAdditionsForURI(MenuLocationURI uri) {
+		return parent.getAdditionsForURI(uri);
+	}
+	
+	public void registerVisibleWhen(final IContributionItem item, 
+			final Expression visibleWhen) {
+		parent.registerVisibleWhen(item, visibleWhen);
+	}
+			
+	public void unregisterVisibleWhen(IContributionItem item) {
+		parent.unregisterVisibleWhen(item);
 	}
 }

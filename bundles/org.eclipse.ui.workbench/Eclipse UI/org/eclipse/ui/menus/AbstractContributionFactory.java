@@ -13,6 +13,8 @@ package org.eclipse.ui.menus;
 
 import java.util.List;
 
+import org.eclipse.ui.services.IServiceLocator;
+
 /**
  * ContributionFactories are used by the IMenuService to populate
  * ContributionManagers. In {@link #createContributionItems(IMenuService, List)}
@@ -65,6 +67,7 @@ import java.util.List;
  */
 public abstract class AbstractContributionFactory {
 	private String location = null;
+	private String namespace;
 
 	/**
 	 * The contribution factories must be instantiated with their location,
@@ -73,9 +76,13 @@ public abstract class AbstractContributionFactory {
 	 * @param location
 	 *            the addition location in Menu API URI format. It must not be
 	 *            <code>null</code>.
+	 * @param namespace
+	 *            the namespace for this contribution. May be <code>null</code>.
+	 * @see #getNamespace()
 	 */
-	public AbstractContributionFactory(String location) {
+	public AbstractContributionFactory(String location, String namespace) {
 		this.location = location;
+		this.namespace = namespace;
 	}
 
 	/**
@@ -97,33 +104,25 @@ public abstract class AbstractContributionFactory {
 	 * the menu service at the appropriate time.
 	 * </p>
 	 * 
-	 * @param menuService
-	 *            the service for callbacks, like accessing
-	 *            {@link IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression)}
+	 * @param serviceLocator
+	 *            a service locator that may be used in the construction of
+	 *            items created by this factory
 	 * @param additions
-	 *            A List supplied by the framework. It should be filled in with
-	 *            new instances of IContributionItems. It will never be
-	 *            <code>null</code>.
+	 *            A {@link IContributionRoot} supplied by the framework. It will
+	 *            never be <code>null</code>.
 	 * @see org.eclipse.ui.menus.CommandContributionItem
 	 * @see org.eclipse.jface.action.MenuManager
 	 */
-	public abstract void createContributionItems(IMenuService menuService,
-			List additions);
+	public abstract void createContributionItems(IServiceLocator serviceLocator,
+			IContributionRoot additions);
 
 	/**
-	 * This method tells the factory that the menu service is finished with the
-	 * IContributionItems that were created. If the factory caches them
-	 * internally, it is time to remove them.
-	 * <p>
-	 * This method is not meant to be called by clients. It will be called by
-	 * the menu service at the appropriate time.
-	 * </p>
+	 * Return the namespace for this cache. This corresponds to the plug-in that
+	 * is contributing this factory.
 	 * 
-	 * @param menuService
-	 *            the service for callbacks
-	 * @param items
-	 *            a list of IContributionItems created by this factory.
+	 * @return the namespace the namespace of this factory
 	 */
-	public abstract void releaseContributionItems(IMenuService menuService,
-			List items);
+	public String getNamespace() {
+		return namespace;
+	}
 }

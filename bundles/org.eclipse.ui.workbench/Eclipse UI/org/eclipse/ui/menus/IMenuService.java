@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.menus;
 
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.services.IServiceWithSources;
 
 /**
@@ -104,38 +102,4 @@ public interface IMenuService extends IServiceWithSources {
 	 * @see org.eclipse.ui.ISources
 	 */
 	public IEvaluationContext getCurrentState();
-
-	/**
-	 * This method allows any <code>IContributionItem</code> to have its
-	 * visibility managed by the menu service by providing a core expression.
-	 * The core expression will be updated as the sources change. The item
-	 * lifecycle must be managed by this service as well.
-	 * <p>
-	 * {@link IContributionItem#isVisible()} must return the value set by
-	 * {@link IContributionItem#setVisible(boolean)}.
-	 * </p>
-	 * <p>
-	 * When the visible expression changes, the service will call
-	 * {@link IContributionItem#setVisible(boolean)} with the appropriate value
-	 * and then {@link IContributionItem#update()}.
-	 * </p>
-	 * 
-	 * @param item
-	 *            An IContributionItem. Must not be <code>null</code>.
-	 * @param visibleWhen
-	 *            The visibleWhen expression. Must not be <code>null</code>.
-	 * @see org.eclipse.ui.ISources
-	 * @see #unregisterVisibleWhen(IContributionItem)
-	 */
-	public void registerVisibleWhen(IContributionItem item,
-			Expression visibleWhen);
-
-	/**
-	 * If an IContributionItem was registered with the menu service, when it is
-	 * no longer needed by any ContributionManager it must be unregistered.
-	 * 
-	 * @param item
-	 *            the item to remove. Must not be <code>null</code>.
-	 */
-	public void unregisterVisibleWhen(IContributionItem item);
 }

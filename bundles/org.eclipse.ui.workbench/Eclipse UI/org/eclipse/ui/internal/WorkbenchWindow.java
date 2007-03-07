@@ -118,6 +118,7 @@ import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.TrimContributionManager;
 import org.eclipse.ui.internal.menus.WindowMenuService;
+import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -3706,6 +3707,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * window.
 	 */
 	private final void initializeDefaultServices() {
+		serviceLocator.registerService(IWorkbenchWindow.class, this);
+		
 		final Expression defaultExpression = new WorkbenchWindowExpression(this);
 
 		final IHandlerService parentHandlerService = (IHandlerService) serviceLocator
@@ -3727,7 +3730,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				this);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
-		final IMenuService parentMenuService = (IMenuService) serviceLocator
+		final WorkbenchMenuService parentMenuService = (WorkbenchMenuService) serviceLocator
 				.getService(IMenuService.class);
 		final IMenuService menuService = new WindowMenuService(
 				parentMenuService);

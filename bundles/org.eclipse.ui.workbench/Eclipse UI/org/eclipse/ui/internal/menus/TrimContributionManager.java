@@ -176,9 +176,11 @@ public class TrimContributionManager extends ContributionManager {
 
 	private WorkbenchWindow wbWindow;
 	TrimLayout layout;
-	private WorkbenchMenuService menuService;
+	private InternalMenuService menuService;
 	
 	List contributedTrim = new ArrayList();
+
+	List contributedLists = new ArrayList();
 
 	/**
 	 * Construct a contribution manager for the given window 
@@ -186,7 +188,7 @@ public class TrimContributionManager extends ContributionManager {
 	public TrimContributionManager(WorkbenchWindow window) {
 		wbWindow = window;
 		layout = (TrimLayout) wbWindow.getShell().getLayout();
-		menuService = (WorkbenchMenuService) window.getWorkbench().getService(
+		menuService = (InternalMenuService) window.getService(
 				IMenuService.class);
 	}
 
@@ -213,9 +215,11 @@ public class TrimContributionManager extends ContributionManager {
 			// a ControlContributionItem; both of which generate new, discreet, trim
 			for (Iterator cacheIter = contribs.iterator(); cacheIter.hasNext();) {
 				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) cacheIter.next();
-				List ciList = new ArrayList();
-				cache.createContributionItems(menuService, ciList);
-				for (Iterator ciIter = ciList.iterator(); ciIter.hasNext();) {
+				ContributionRoot ciList = new ContributionRoot(menuService);
+				cache.createContributionItems(wbWindow, ciList);
+				// save the list for later cleanup of any visibility expressions that were added.
+				contributedLists.add(ciList);
+				for (Iterator ciIter = ciList.getItems().iterator(); ciIter.hasNext();) {
 					IContributionItem ci = (IContributionItem) ciIter.next();
 					if (ci instanceof ToolBarContributionItem) {
 						// HACK!! Fake this
@@ -262,6 +266,14 @@ public class TrimContributionManager extends ContributionManager {
 
 		// Clear out the old list
 		contributedTrim.clear();
+		
+		// clean up the list of ContributionLists
+		for (Iterator iter = contributedLists.iterator(); iter.hasNext();) {
+			ContributionRoot list = (ContributionRoot) iter.next();
+			list.release();
+		}
+		
+		contributedLists.clear();
 	}
 	
 	/**

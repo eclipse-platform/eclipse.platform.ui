@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -38,20 +38,29 @@ final class MenuPersistence extends RegistryPersistence {
 
 	
 	private final WorkbenchMenuService menuService;
+	
+	private final IServiceLocator serviceLocator;
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
+	 * @param workbenchMenuService 
 	 * 
 	 * @param mm
 	 *            The menu service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	MenuPersistence(final IMenuService ms) {
-		if (ms == null || !(ms instanceof WorkbenchMenuService)) {
+	MenuPersistence(final WorkbenchMenuService workbenchMenuService, final IServiceLocator locator) {
+		if (workbenchMenuService == null) {
 			throw new NullPointerException("The menu service cannot be null"); //$NON-NLS-1$
 		}
 
-		this.menuService = (WorkbenchMenuService) ms;
+		
+		if (locator == null) {
+			throw new NullPointerException("The service locator cannot be null"); //$NON-NLS-1$
+		}
+		this.serviceLocator = locator;
+
+		this.menuService =  workbenchMenuService;
 	}
 
 	public final void dispose() {
@@ -85,17 +94,17 @@ final class MenuPersistence extends RegistryPersistence {
 		super.read();
 		
 		// Read legacy 3.2 'trim' additions
-		readTrimAdditions(menuService);
+		readTrimAdditions();
 		
 		// read the 3.3 menu additions
-		readAdditions(menuService);
+		readAdditions();
 	}
 	
 	//
 	// 3.3 menu extension code
 	// 
 	
-	public static void readTrimAdditions(WorkbenchMenuService menuService) {
+	public void readTrimAdditions() {
 		if (menuService == null)
 			return;
 		
@@ -145,7 +154,7 @@ final class MenuPersistence extends RegistryPersistence {
 		}
 	}
 	
-	public static void readAdditions(WorkbenchMenuService menuService) {
+	public void readAdditions() {		
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] menusExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_MENUS);
@@ -158,7 +167,8 @@ final class MenuPersistence extends RegistryPersistence {
 						.getAttribute(TAG_LOCATION_URI);
 
 				menuService.addContributionFactory(new MenuAdditionCacheEntry(
-						menusExtensionPoint[i], menuService, location));
+						menusExtensionPoint[i], serviceLocator, location,
+						menusExtensionPoint[i].getNamespaceIdentifier()));
 			}
 		}
 	}

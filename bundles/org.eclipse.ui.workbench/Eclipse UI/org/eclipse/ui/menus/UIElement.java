@@ -12,6 +12,10 @@
 package org.eclipse.ui.menus;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Allow a command or application to provide feedback to a user through updating
@@ -30,6 +34,23 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.3
  */
 public abstract class UIElement {
+
+	private IServiceLocator serviceLocator;
+
+	/**
+	 * Construct a new instance of this class keyed off of the provided service
+	 * locator.
+	 * 
+	 * @param serviceLocator
+	 *            the locator. May not be <code>null</code>.
+	 */
+	protected UIElement(IServiceLocator serviceLocator)
+			throws IllegalArgumentException {
+		if (serviceLocator == null)
+			throw new IllegalArgumentException();
+		this.serviceLocator = serviceLocator;
+	}
+
 	/**
 	 * Update the label on this UI element.
 	 * 
@@ -79,4 +100,24 @@ public abstract class UIElement {
 	 *            true to set toggle on
 	 */
 	public abstract void setChecked(boolean checked);
+
+	/**
+	 * Get the service locator scope in which this UI element resides. May not
+	 * be <code>null</code>.
+	 * 
+	 * <p>
+	 * The locator may be used to obtain services that are scoped in the same
+	 * way as the {@link UIElement}. Such services include but are not limited
+	 * to {@link IWorkbench}, {@link IWorkbenchWindow}, and
+	 * {@link IWorkbenchPartSite}. While this method may not return
+	 * <code>null</code> requests for any of these particular services may
+	 * return <code>null</code>.
+	 * </p>
+	 * 
+	 * @return the service locator for this element
+	 * @see IServiceLocator#getService(Class)
+	 */
+	public final IServiceLocator getServiceLocator() {
+		return serviceLocator;
+	}
 }

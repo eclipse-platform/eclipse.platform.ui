@@ -21,8 +21,6 @@ import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
@@ -39,7 +37,7 @@ import org.eclipse.ui.internal.services.IEvaluationReference;
 import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -52,8 +50,8 @@ import org.eclipse.ui.menus.IMenuService;
  * 
  * @since 3.2
  */
-public final class WorkbenchMenuService implements IMenuService {
-
+public final class WorkbenchMenuService extends InternalMenuService {
+	
 	/**
 	 * 
 	 */
@@ -73,12 +71,18 @@ public final class WorkbenchMenuService implements IMenuService {
 	private IPropertyChangeListener serviceListener;
 
 	/**
+	 * The service locator into which this service will be inserted.
+	 */
+	private IServiceLocator serviceLocator;
+
+	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
 	 */
-	public WorkbenchMenuService(IEvaluationService evalService) {
-		this.menuPersistence = new MenuPersistence(this);
-		evaluationService = evalService;
+	public WorkbenchMenuService(IServiceLocator serviceLocator) {
+		this.menuPersistence = new MenuPersistence(this, serviceLocator);
+		this.serviceLocator = serviceLocator;
+		evaluationService = (IEvaluationService) serviceLocator.getService(IEvaluationService.class);
 		evaluationService.addServiceListener(getServiceListener());
 	}
 
@@ -147,8 +151,6 @@ public final class WorkbenchMenuService implements IMenuService {
 	private Map contributionManagerTracker = new HashMap();
 
 	private IMenuListener menuTrackerListener;
-
-	private Map cacheTracker = new HashMap();
 
 	private Map evaluationsByItem = new HashMap();
 
@@ -229,13 +231,13 @@ public final class WorkbenchMenuService implements IMenuService {
 			return false; // can't process (yet)
 
 		// Get the additions
-		List ciList = new ArrayList();
-		cache.createContributionItems(this, ciList);
+		ContributionRoot ciList = new ContributionRoot(this);
+		cache.createContributionItems(serviceLocator, ciList);
 
 		// If we have any then add them at the correct location
-		if (ciList.size() > 0) {
+		if (ciList.getItems().size() > 0) {
 			track(mgr, cache, ciList);
-			for (Iterator ciIter = ciList.iterator(); ciIter.hasNext();) {
+			for (Iterator ciIter = ciList.getItems().iterator(); ciIter.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
 
 				final int oldSize = mgr.getSize();
@@ -254,7 +256,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @param ciList
 	 */
 	private void track(ContributionManager mgr,
-			AbstractContributionFactory cache, List ciList) {
+			AbstractContributionFactory cache, ContributionRoot ciList) {
 		List contributions = (List) contributionManagerTracker.get(mgr);
 		if (contributions == null) {
 			contributions = new ArrayList();
@@ -267,8 +269,6 @@ public final class WorkbenchMenuService implements IMenuService {
 			}
 		}
 		contributions.add(ciList);
-
-		cacheTracker.put(ciList, cache);
 	}
 
 	/**
@@ -295,9 +295,9 @@ public final class WorkbenchMenuService implements IMenuService {
 		}
 		Iterator i = contributions.iterator();
 		while (i.hasNext()) {
-			final List items = (List) i.next();
+			final ContributionRoot items = (ContributionRoot) i.next();
 			boolean removed = false;
-			Iterator j = items.iterator();
+			Iterator j = items.getItems().iterator();
 			while (j.hasNext()) {
 				IContributionItem item = (IContributionItem) j.next();
 				if (item instanceof ContributionItem
@@ -316,20 +316,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	/**
 	 * @param items
 	 */
-	private void releaseCache(final List items) {
-		final AbstractContributionFactory cache = (AbstractContributionFactory) cacheTracker
-				.remove(items);
-		if (cache != null) {
-			SafeRunner.run(new ISafeRunnable() {
-				public void handleException(Throwable exception) {
-				}
-
-				public void run() throws Exception {
-					cache.releaseContributionItems(WorkbenchMenuService.this,
-							items);
-				}
-			});
-		}
+	private void releaseCache(final ContributionRoot items) {
+		items.release();
 	}
 
 	/*
@@ -527,8 +515,8 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		Iterator i = contributions.iterator();
 		while (i.hasNext()) {
-			final List items = (List) i.next();
-			Iterator j = items.iterator();
+			final ContributionRoot items = (ContributionRoot) i.next();
+			Iterator j = items.getItems().iterator();
 			while (j.hasNext()) {
 				IContributionItem item = (IContributionItem) j.next();
 				releaseItem(item);

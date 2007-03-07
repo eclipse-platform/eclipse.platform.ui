@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,9 +32,11 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * @since 3.3
@@ -65,13 +66,15 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	private HashMap visWhenMap = new HashMap();
 
 	private IMenuService menuService;
+	
+	private IServiceLocator serviceLocator;
 
 	public MenuAdditionCacheEntry(IConfigurationElement element,
-			IMenuService service, String location) {
-		super(location);
+			IServiceLocator serviceLocator, String location, String namespace) {
+		super(location, namespace);
 		this.additionElement = element;
-		this.menuService = service;
-
+		this.serviceLocator = serviceLocator;
+		this.menuService = (IMenuService) serviceLocator.getService(IMenuService.class);
 		generateSubCaches();
 	}
 
@@ -96,7 +99,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				// -ALL- contibuted menus must have an id so create one
 				// if necessary
 				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
-						items[i], menuService, location);
+						items[i], serviceLocator, location, getNamespace());
 				menuService.addContributionFactory(subMenuEntry);
 			}
 		}
@@ -142,8 +145,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 * @see org.eclipse.ui.internal.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.internal.menus.IMenuService,
 	 *      java.util.List)
 	 */
-	public void createContributionItems(IMenuService menuService, List additions) {
-		additions.clear();
+	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
 
 		IConfigurationElement[] items = additionElement.getChildren();
 		for (int i = 0; i < items.length; i++) {
@@ -168,11 +170,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			// registry element used to back it
 			if (newItem != null) {
 				iciToConfigElementMap.put(newItem, items[i]);
-				additions.add(newItem);
-				Expression visibleWhen = getVisibleWhenForItem(newItem);
-				if (visibleWhen != null) {
-					menuService.registerVisibleWhen(newItem, visibleWhen);
-				}
+				additions.addContributionItem(newItem,
+						getVisibleWhenForItem(newItem), null);
 			}
 		}
 	}
@@ -276,7 +275,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createCommandAdditionContribution(
 			final IConfigurationElement commandAddition) {
-		return new CommandContributionItem(getId(commandAddition),
+		return new CommandContributionItem(serviceLocator, getId(commandAddition),
 				getCommandId(commandAddition), getParameters(commandAddition),
 				getIconDescriptor(commandAddition),
 				getDisabledIconDescriptor(commandAddition),
@@ -412,16 +411,5 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			}
 		}
 		return map;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.AbstractContributionFactory#releaseContributionItems(org.eclipse.ui.internal.menus.IMenuService,
-	 *      java.util.List)
-	 */
-	public void releaseContributionItems(IMenuService menuService, List items) {
-		// TODO Auto-generated method stub
-
 	}
 }

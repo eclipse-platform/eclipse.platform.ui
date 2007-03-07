@@ -43,11 +43,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A contribution item which delegates to a command. It can be used in
@@ -125,6 +127,10 @@ public final class CommandContributionItem extends ContributionItem {
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
+	 * @param serviceLocator
+	 *            a service locator that is most appropriate for this
+	 *            contribution. Typically the local {@link IWorkbenchWindow} or
+	 *            {@link IWorkbenchPartSite} will be sufficient.
 	 * @param id
 	 *            The id for this item. May be <code>null</code>. Items
 	 *            without an id cannot be referenced later.
@@ -152,10 +158,10 @@ public final class CommandContributionItem extends ContributionItem {
 	 * @param style
 	 *            The style of this menu contribution. See the STYLE_* contants.
 	 */
-	public CommandContributionItem(String id, String commandId, Map parameters,
-			ImageDescriptor icon, ImageDescriptor disabledIcon,
-			ImageDescriptor hoverIcon, String label, String mnemonic,
-			String tooltip, int style) {
+	public CommandContributionItem(IServiceLocator serviceLocator, String id,
+			String commandId, Map parameters, ImageDescriptor icon,
+			ImageDescriptor disabledIcon, ImageDescriptor hoverIcon,
+			String label, String mnemonic, String tooltip, int style) {
 		super(id);
 		this.icon = icon;
 		this.disabledIcon = disabledIcon;
@@ -164,17 +170,17 @@ public final class CommandContributionItem extends ContributionItem {
 		this.mnemonic = mnemonic;
 		this.tooltip = tooltip;
 		this.style = style;
-		menuService = (IMenuService) PlatformUI.getWorkbench().getService(
-				IMenuService.class);
-		commandService = (ICommandService) PlatformUI.getWorkbench()
+		menuService = (IMenuService) serviceLocator
+				.getService(IMenuService.class);
+		commandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
-		handlerService = (IHandlerService) PlatformUI.getWorkbench()
+		handlerService = (IHandlerService) serviceLocator
 				.getService(IHandlerService.class);
 		createCommand(commandId, parameters);
 
 		if (command != null) {
 			try {
-				UIElement callback = new UIElement() {
+				UIElement callback = new UIElement(serviceLocator) {
 
 					public void setChecked(boolean checked) {
 						CommandContributionItem.this.setChecked(checked);

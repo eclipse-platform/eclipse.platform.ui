@@ -171,6 +171,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * Initialize the local services.
 	 */
 	private void initializeDefaultServices() {
+		serviceLocator.registerService(IWorkbenchPartSite.class, this);
 		final IHandlerService parentService = (IHandlerService) serviceLocator
 				.getService(IHandlerService.class);
 		final Expression defaultExpression = new ActivePartExpression(part);

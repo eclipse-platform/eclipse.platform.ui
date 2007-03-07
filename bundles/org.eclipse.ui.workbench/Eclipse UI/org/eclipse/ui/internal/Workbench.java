@@ -1454,6 +1454,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * and hooks up all the required listeners.
 	 */
 	private final void initializeDefaultServices() {
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				serviceLocator.registerService(IWorkbench.class,
+						Workbench.this);
+			}
+		});
+		
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
@@ -1551,14 +1560,17 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
 		
-		final WorkbenchMenuService menuService = new WorkbenchMenuService(evaluationService);
+		final WorkbenchMenuService menuService = new WorkbenchMenuService(serviceLocator);
 		
+		serviceLocator.registerService(IMenuService.class, menuService);
+		// the service must be registered before it is initialized - its
+		// initialization uses the service locator to address a dependency on
+		// the menu service
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
 				menuService.readRegistry();
 			}});
-		serviceLocator.registerService(IMenuService.class, menuService);
 
 		/*
 		 * Phase 2 of the initialization of commands. The source providers that

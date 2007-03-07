@@ -22,11 +22,16 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -41,6 +46,7 @@ public class MenuVisibilityTest extends UITestCase {
 	 * 
 	 */
 	private static final String EXTENSION_ID = "org.eclipse.ui.tests.menusX1";
+	private static final String LOCATION = "menu:foo";
 
 	/**
 	 * @param testName
@@ -66,13 +72,24 @@ public class MenuVisibilityTest extends UITestCase {
 				System.out.println("Hello action");
 			}
 		};
-		ActionContributionItem item = new ActionContributionItem(a);
-		Expression activeContextExpr = new ActiveContextExpression(
+		final MenuManager manager = new MenuManager();
+		final ActionContributionItem item = new ActionContributionItem(a);
+		final Expression activeContextExpr = new ActiveContextExpression(
 				MenuContributionHarness.CONTEXT_TEST1_ID,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
+		AbstractContributionFactory factory = new AbstractContributionFactory(LOCATION, TestPlugin.PLUGIN_ID) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.menus.IMenuService, org.eclipse.ui.menus.AbstractContributionFactory.IContributionList)
+			 */
+			public void createContributionItems(IServiceLocator menuService,
+					IContributionRoot additions) {
+				additions.addContributionItem(item, activeContextExpr, null);
+			}
+		};
 
-		menuService.registerVisibleWhen(item, activeContextExpr);
-
+		menuService.addContributionFactory(factory);
+		menuService.populateContributionManager(manager, LOCATION);
+		
 		assertFalse("starting state", item.isVisible());
 
 		activeContext = contextService
@@ -85,7 +102,9 @@ public class MenuVisibilityTest extends UITestCase {
 
 		assertFalse("after deactivation", item.isVisible());
 
-		menuService.unregisterVisibleWhen(item);
+		menuService.releaseContributions(manager);
+		menuService.removeContributionFactory(factory);
+		manager.dispose();
 	}
 
 	public void testExtensionContributionExpression() throws Exception {
@@ -99,7 +118,8 @@ public class MenuVisibilityTest extends UITestCase {
 				System.out.println("Hello action");
 			}
 		};
-		ActionContributionItem aci = new ActionContributionItem(a);
+		final MenuManager manager = new MenuManager();
+		final ActionContributionItem aci = new ActionContributionItem(a);
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
 		IExtensionPoint menusExtension = reg
@@ -107,7 +127,7 @@ public class MenuVisibilityTest extends UITestCase {
 		IExtension extension = menusExtension.getExtension(EXTENSION_ID);
 
 		IConfigurationElement[] mas = extension.getConfigurationElements();
-		Expression activeContextExpr = null;
+		final Expression activeContextExpr [] = new Expression[1];
 		for (int i = 0; i < mas.length; i++) {
 			IConfigurationElement ma = mas[i];
 			IConfigurationElement[] items = ma.getChildren();
@@ -118,14 +138,25 @@ public class MenuVisibilityTest extends UITestCase {
 						&& id.equals("org.eclipse.ui.tests.menus.itemX1")) {
 					IConfigurationElement visibleWhenElement = item
 							.getChildren("visibleWhen")[0];
-					activeContextExpr = ExpressionConverter.getDefault()
+					activeContextExpr[0] = ExpressionConverter.getDefault()
 							.perform(visibleWhenElement.getChildren()[0]);
 				}
 			}
 		}
-		assertNotNull("Failed to find expression", activeContextExpr);
+		assertNotNull("Failed to find expression", activeContextExpr[0]);
+		AbstractContributionFactory factory = new AbstractContributionFactory(LOCATION, TestPlugin.PLUGIN_ID) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.menus.IMenuService, org.eclipse.ui.menus.AbstractContributionFactory.IContributionList)
+			 */
+			public void createContributionItems(IServiceLocator menuService,
+					IContributionRoot additions) {
+				additions.addContributionItem(aci, activeContextExpr[0], null);
+			}
+		};
 
-		menuService.registerVisibleWhen(aci, activeContextExpr);
+		menuService.addContributionFactory(factory);
+		menuService.populateContributionManager(manager, LOCATION);
+
 		assertFalse("starting state", aci.isVisible());
 
 		activeContext = contextService
@@ -136,8 +167,10 @@ public class MenuVisibilityTest extends UITestCase {
 		activeContext = null;
 
 		assertFalse("after deactivation", aci.isVisible());
-
-		menuService.unregisterVisibleWhen(aci);
+		
+		menuService.releaseContributions(manager);
+		menuService.removeContributionFactory(factory);
+		manager.dispose();
 	}
 
 	/*
