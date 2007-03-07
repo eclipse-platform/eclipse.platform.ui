@@ -29,6 +29,13 @@
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowCategories() ? "on" : "off")%>"/>
 
+	<jsp:param name="name"     value="show_descriptions"/>
+	<jsp:param name="tooltip"  value='show_descriptions'/>
+	<jsp:param name="image"    value="show_descriptions.gif"/>
+	<jsp:param name="action"   value="toggleShowDescriptions"/>
+	<jsp:param name="param"    value=""/>
+	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowDescriptions() ? "on" : "off")%>"/>
+
 	<jsp:param name="name"     value="synchnav"/>
 	<jsp:param name="tooltip"  value='SynchNav'/>
 	<jsp:param name="image"    value="synch_nav.gif"/>

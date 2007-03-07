@@ -42,16 +42,34 @@ function refresh() {
 	window.location.replace("searchView.jsp?<%=request.getQueryString()%>");
 }
 
+function isShowCategories() {
+	var value = getCookie("showCategories");
+	return value ? value == "true" : false;
+}
+
+function isShowDescriptions() {
+	var value = getCookie("showDescriptions");
+	return value ? value == "true" : true;
+}
+
 function setShowCategories(value) {
 	parent.searchToolbarFrame.setButtonState("show_categories", value);
-	var date = new Date();
-	date.setTime(date.getTime()+(365*24*60*60*1000));
-	document.cookie = "showCategories="+value+"; expires="+date.toGMTString() + ";path=/";;
+	setCookie("showCategories", value);
 	window.location.reload();
 }
 
+function setShowDescriptions(value) {
+	parent.searchToolbarFrame.setButtonState("show_descriptions", value);
+	setCookie("showDescriptions", value);
+	setCSSRule(".description", "display", value ? "block" : "none");
+}
+
 function toggleShowCategories() {
-	setShowCategories(<%=!data.isShowCategories()%>);
+	setShowCategories(!isShowCategories());
+}
+
+function toggleShowDescriptions() {
+	setShowDescriptions(!isShowDescriptions());
 }
 
 function onShow() { 
@@ -180,12 +198,15 @@ setTimeout('refresh()', 2000);
 		String desc = data.getTopicDescription(topic);
 		if (desc!=null) {
 %>
-<tr class='description' id='d<%=topic%>'>
+<tr id='d<%=topic%>'>
 	<td class='icon'>
 	</td>
-	<td align='<%=isRTL?"right":"left"%>' class='label'>
-		<%=desc%>
+	<td align='<%=isRTL?"right":"left"%>'>
+		<div class="description">
+			<%=desc%>
+		</div>
 	</td>
+</tr>
 <%
 		}
 	}

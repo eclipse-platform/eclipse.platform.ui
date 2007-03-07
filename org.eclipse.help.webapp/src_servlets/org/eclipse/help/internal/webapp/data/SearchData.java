@@ -216,7 +216,18 @@ public class SearchData extends ActivitiesData {
 		// default off
 		return false;
 	}
-	
+
+	public boolean isShowDescriptions() {
+		Cookie[] cookies = request.getCookies();
+		for (int i=0;i<cookies.length;++i) {
+			if ("showDescriptions".equals(cookies[i].getName())) { //$NON-NLS-1$
+				return String.valueOf(true).equals(cookies[i].getValue());
+			}
+		}
+		// default on
+		return true;
+	}
+
 	/**
 	 * Return indexed completion percentage
 	 */

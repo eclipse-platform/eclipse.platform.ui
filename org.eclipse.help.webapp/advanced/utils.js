@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -127,5 +127,44 @@ function getKeycode(e) {
 		return window.event.keyCode;
 	} else {
 		return e.keyCode;
+	}
+}
+
+function getCookie(name) {
+	var nameEquals = name + "=";
+	var cookies = document.cookie.split(";");
+	for (var i=0;i<cookies.length;++i) {
+		var cookie = cookies[i];
+		if (cookie.charAt(0) == ' ') {
+			cookie = cookie.substring(1, cookie.length);
+		}
+		if (cookie.indexOf(nameEquals) == 0) {
+			return cookie.substring(nameEquals.length, cookie.length);
+		}
+	}
+	return null;
+}
+
+function setCookie(name, value) {
+	var date = new Date();
+	date.setTime(date.getTime()+(365*24*60*60*1000));
+	document.cookie = name + "=" + value + "; expires=" + date.toGMTString() + ";path=/";
+}
+
+function setCSSRule(selector, property, value) {
+	var theRules = new Array();
+	for (var i=0;i<document.styleSheets.length;i++) {
+		if (document.styleSheets[i].cssRules) {
+			theRules = document.styleSheets[i].cssRules;
+		}
+		else {
+			theRules = document.styleSheets[i].rules;
+		}
+		for (var j=theRules.length-1;j>=0;j--) {
+			if (theRules[j].selectorText == selector) {
+				theRules[j].style[property] = value;
+				return;
+			}
+		}
 	}
 }

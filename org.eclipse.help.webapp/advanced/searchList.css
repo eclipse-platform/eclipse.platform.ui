@@ -87,3 +87,7 @@ a:hover {
 	width: 23px;
 	padding-<%=isRTL?"right":"left"%>: <%=data.isShowCategories() ? 3 : 0%>px;
 }
+
+.description {
+	display: <%=data.isShowDescriptions() ? "block" : "none"%>;
+}
