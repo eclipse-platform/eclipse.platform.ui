@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -91,6 +92,12 @@ public class ControlDecoration {
 	private Control control;
 
 	/**
+	 * The composite on which to render the decoration and hook mouse events, or
+	 * null if we are hooking all parent composites.
+	 */
+	private Composite composite;
+
+	/**
 	 * The associated image.
 	 */
 	private Image image;
@@ -144,7 +151,7 @@ public class ControlDecoration {
 	/**
 	 * The mouse listener installed for tracking the hover
 	 */
-	private MouseTrackListener mouseListener;
+	private MouseTrackListener mouseTrackListener;
 
 	/**
 	 * The mouse move listener installed for tracking the hover
@@ -367,8 +374,8 @@ public class ControlDecoration {
 
 	/**
 	 * Construct a ControlDecoration for decorating the specified control at the
-	 * specified position. The decoration to be displayed will be specified at a
-	 * later time.
+	 * specified position relative to the control. Render the decoration on top
+	 * of any Control that happens to appear at the specified location.
 	 * <p>
 	 * SWT constants are used to specify the position of the decoration relative
 	 * to the control. The position should include style bits describing both
@@ -393,8 +400,49 @@ public class ControlDecoration {
 	 *            <code>SWT.RIGHT</code>, and <code>SWT.CENTER</code>).
 	 */
 	public ControlDecoration(Control control, int position) {
+		this(control, position, null);
+
+	}
+
+	/**
+	 * Construct a ControlDecoration for decorating the specified control at the
+	 * specified position relative to the control. Render the decoration only on
+	 * the specified Composite.
+	 * <p>
+	 * SWT constants are used to specify the position of the decoration relative
+	 * to the control. The position should include style bits describing both
+	 * the vertical and horizontal orientation. <code>SWT.LEFT</code> and
+	 * <code>SWT.RIGHT</code> describe the horizontal placement of the
+	 * decoration relative to the control, and the constants
+	 * <code>SWT.TOP</code>, <code>SWT.CENTER</code>, and
+	 * <code>SWT.BOTTOM</code> describe the vertical alignment of the
+	 * decoration relative to the control. Decorations always appear on either
+	 * the left or right side of the control, never above or below it. For
+	 * example, a decoration appearing on the left side of the field, at the
+	 * top, is specified as SWT.LEFT | SWT.TOP. If no position style bits are
+	 * specified, the control decoration will be positioned to the left and
+	 * center of the control (<code>SWT.LEFT | SWT.CENTER</code>).
+	 * </p>
+	 * 
+	 * @param control
+	 *            the control to be decorated
+	 * @param position
+	 *            bit-wise or of position constants (<code>SWT.TOP</code>,
+	 *            <code>SWT.BOTTOM</code>, <code>SWT.LEFT</code>,
+	 *            <code>SWT.RIGHT</code>, and <code>SWT.CENTER</code>).
+	 * @param composite
+	 *            The SWT composite on which the decoration should be rendered.
+	 *            The decoration will not be visible if the specified composite
+	 *            is not located in the space relative to the control where the
+	 *            decoration is to be rendered. If this value is
+	 *            <code>null</code>, then the decoration will be rendered on
+	 *            whichever composite (or composites) are located in the
+	 *            specified position.
+	 */
+	public ControlDecoration(Control control, int position, Composite composite) {
 		this.position = position;
 		this.control = control;
+		this.composite = composite;
 
 		addControlListeners();
 
@@ -428,7 +476,8 @@ public class ControlDecoration {
 	}
 
 	/**
-	 * Add any listeners needed on the target control.
+	 * Add any listeners needed on the target control and on the composite where
+	 * the decoration is to be rendered.
 	 */
 	private void addControlListeners() {
 		disposeListener = new DisposeListener() {
@@ -486,7 +535,7 @@ public class ControlDecoration {
 		};
 
 		// Listener for tracking the beginning of a hover. Always installed.
-		mouseListener = new MouseTrackListener() {
+		mouseTrackListener = new MouseTrackListener() {
 			public void mouseExit(MouseEvent event) {
 				// Just in case we didn't catch it before.
 				Control target = (Control) event.widget;
@@ -528,18 +577,45 @@ public class ControlDecoration {
 			}
 		};
 
-		// We are never quite sure which parent in the control hierarchy
-		// is providing the margin space, so hook all the way up.
-		Control c = control.getParent();
-		while (c != null) {
+		if (composite != null) {
+			installCompositeListeners(composite);
+		} else {
+			// We do not know which parent in the control hierarchy
+			// is providing the decoration space, so hook all the way up.
+			Composite c = control.getParent();
+			while (c != null) {
+				installCompositeListeners(c);
+				if (c instanceof Shell)
+					break;
+				c = c.getParent();
+			}
+		}
+	}
+
+	/*
+	 * Install the listeners used to paint and track mouse events on the
+	 * composite.
+	 */
+	private void installCompositeListeners(Composite c) {
+		if (!c.isDisposed()) {
 			printAddListener(c, "PAINT"); //$NON-NLS-1$
 			c.addPaintListener(paintListener);
-			printAddListener(c, "MOUSE"); //$NON-NLS-1$
-			c.addMouseTrackListener(mouseListener);
+			printAddListener(c, "MOUSETRACK"); //$NON-NLS-1$
+			c.addMouseTrackListener(mouseTrackListener);
 			c.redraw();
-			if (c instanceof Shell)
-				break;
-			c = c.getParent();
+		}
+	}
+
+	/*
+	 * Remove the listeners used to paint and track mouse events on the
+	 * composite.
+	 */
+	private void removeCompositeListeners(Composite c) {
+		if (!c.isDisposed()) {
+			printRemoveListener(c, "PAINT"); //$NON-NLS-1$
+			c.removePaintListener(paintListener);
+			printRemoveListener(c, "MOUSETRACK"); //$NON-NLS-1$
+			c.removeMouseTrackListener(mouseTrackListener);
 		}
 	}
 
@@ -805,20 +881,19 @@ public class ControlDecoration {
 		control.removeDisposeListener(disposeListener);
 		disposeListener = null;
 
-		// We installed paint and track listeners all the way up the parent
-		// tree.
-		Control c = control.getParent();
-		while (c != null) {
-			printRemoveListener(c, "PAINT"); //$NON-NLS-1$
-			c.removePaintListener(paintListener);
-			printRemoveListener(c, "MOUSE"); //$NON-NLS-1$
-			c.removeMouseTrackListener(mouseListener);
-			if (c instanceof Shell)
-				break;
-			c = c.getParent();
+		if (composite != null) {
+			removeCompositeListeners(composite);
+		} else {
+			Composite c = control.getParent();
+			while (c != null) {
+				removeCompositeListeners(c);
+				if (c instanceof Shell)
+					break;
+				c = c.getParent();
+			}
 		}
 		paintListener = null;
-		mouseListener = null;
+		mouseTrackListener = null;
 
 		// We may have a remaining mouse move listener installed
 		if (moveListeningTarget != null) {
@@ -895,6 +970,10 @@ public class ControlDecoration {
 			return false;
 		}
 		if (control == null || control.isDisposed() || getImage() == null) {
+			return false;
+		}
+
+		if (!control.isVisible()) {
 			return false;
 		}
 		if (showOnlyOnFocus) {
