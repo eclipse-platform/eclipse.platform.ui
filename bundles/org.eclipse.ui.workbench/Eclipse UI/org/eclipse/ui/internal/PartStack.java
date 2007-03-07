@@ -46,6 +46,7 @@ import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.presentations.PresentablePart;
@@ -1275,6 +1276,29 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return isZoomed();
     }
     
+    /**
+     * This is a hack that allows us to preserve the old
+     * min/max behavior for the stack containing the IntroPart.
+     * This is required to have the initial Intro (Welcome)
+     * pane to show correctly but will induce strange
+     * effects should a user re-locate the part to
+     * stacks other that its initial one...
+     *  
+     * @return true if the stack contains the intro
+     * as a ViewPane (not if it's only a placeholder)
+     */
+    private boolean isIntroInStack() {
+    	LayoutPart[] kids = getChildren();
+    	for (int i = 0; i < kids.length; i++) {
+    		if (kids[i] instanceof ViewPane) {
+    			ViewPane vp = (ViewPane) kids[i];
+    			if (vp.getID().equals(IIntroConstants.INTRO_VIEW_ID))
+    				return true;
+    		}
+		}
+    	return false;
+    }
+    
     protected void setState(int newState) {
         int oldState = presentationSite.getState();
         if (!supportsState(newState) || newState == oldState) {
@@ -1287,6 +1311,13 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        
+        // we have to fiddle with the zoom behavior to satisfy Intro req's
+        if (newState  == IStackPresentationSite.STATE_MAXIMIZED)
+        	useNewMinMax = useNewMinMax && !isIntroInStack();
+        else if (newState  == IStackPresentationSite.STATE_RESTORED)
+        	useNewMinMax = useNewMinMax && smartZoomed;
+        
         if (useNewMinMax) {
         	WorkbenchWindow wbw = (WorkbenchWindow)getPage().getWorkbenchWindow();
         	if (wbw == null || wbw.getShell() == null)
@@ -1363,18 +1394,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			}
         	
 	        setPresentationState(newState);
-	        
-        	// HACK!! inform any view ref's in the stack that they've change state
-        	// this lets the Introbar work 'correctly'
-	        LayoutPart[] kids = getChildren();
-	        for (int i = 0; i < kids.length; i++) {
-				if (kids[i] instanceof ViewPane) {
-					if (((ViewPane)kids[i]).getPartReference() instanceof WorkbenchPartReference) {
-						WorkbenchPartReference wpr = (WorkbenchPartReference) ((ViewPane)kids[i]).getPartReference();
-						wpr.fireInternalPropertyChange(WorkbenchPartReference.INTERNAL_PROPERTY_MAXIMIZED);
-					}
-				}
-			}
         }
         else {
 	        if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
