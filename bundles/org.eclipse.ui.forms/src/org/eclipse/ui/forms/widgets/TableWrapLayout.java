@@ -120,9 +120,14 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 			this.row = row;
 		}
 
+		/*
+		 * Updates this row span's height with the given one if it is within
+		 * this span.
+		 */
 		public void update(int currentRow, int rowHeight) {
 			TableWrapData td = (TableWrapData) child.getLayoutData();
-			if (currentRow - row <= td.rowspan - 1) {
+			// is currentRow within this span?
+			if (currentRow >= row && currentRow < row + td.rowspan) {
 				totalHeight += rowHeight;
 				if (currentRow > row)
 					totalHeight += verticalSpacing;
