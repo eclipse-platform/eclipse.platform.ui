@@ -66,6 +66,10 @@ public class TitleRegion extends Canvas {
 	private int fontHeight = -1;
 	private MenuHyperlink menuHyperlink;
 	private MenuManager menuManager;
+	private boolean dragSupport;
+	private int dragOperations;
+	private Transfer[] dragTransferTypes;
+	private DragSourceListener dragListener;
 	private DragSource dragSource;
 	private Image dragImage;
 
@@ -388,6 +392,8 @@ public class TitleRegion extends Canvas {
 			busyLabel.addMouseMoveListener(listener);
 			if (menuManager != null)
 				busyLabel.setMenu(menuManager.createContextMenu(this));
+			if (dragSupport)
+				addDragSupport(busyLabel, dragOperations, dragTransferTypes, dragListener);
 			IMessageToolTipManager mng = ((FormHeading) getParent())
 					.getMessageToolTipManager();
 			if (mng != null)
@@ -404,6 +410,8 @@ public class TitleRegion extends Canvas {
 		HoverListener listener = new HoverListener();
 		menuHyperlink.addMouseTrackListener(listener);
 		menuHyperlink.addMouseMoveListener(listener);
+		if (dragSupport)
+			addDragSupport(menuHyperlink, dragOperations, dragTransferTypes, dragListener);
 	}
 
 	/**
@@ -464,6 +472,10 @@ public class TitleRegion extends Canvas {
 
 	public void addDragSupport(int operations, Transfer[] transferTypes,
 			DragSourceListener listener) {
+		dragSupport = true;
+		dragOperations = operations;
+		dragTransferTypes = transferTypes;
+		dragListener = listener;
 		dragSource = addDragSupport(titleLabel, operations, transferTypes,
 				listener);
 		addDragSupport(this, operations, transferTypes, listener);
