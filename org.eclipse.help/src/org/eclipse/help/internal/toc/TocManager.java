@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
@@ -125,7 +126,7 @@ public class TocManager {
 			UAElement element = topic;
 			while (!(element instanceof Toc)) {
 				UAElement parent = element.getParentElement();
-				path.add(new Integer(parent.indexOf(element)));
+				path.add(new Integer(indexOf(parent, (Topic)element)));
 				element = parent;
 			}
 			Toc[] tocs = getTocs(Platform.getNL());
@@ -142,6 +143,29 @@ public class TocManager {
 		}
 		// no path; not in toc
 		return null;
+	}
+	
+	/*
+	 * Returns the zero-based index at which the child topic is located under
+	 * the parent topic/toc.
+	 */
+	private int indexOf(UAElement parent, Topic child) {
+		ITopic[] children;
+		if (parent instanceof Topic) {
+			children = ((Topic)parent).getSubtopics();
+		}
+		else if (parent instanceof Toc) {
+			children = ((Toc)parent).getTopics();
+		}
+		else {
+			return -1;
+		}
+		for (int i=0;i<children.length;++i) {
+			if (children[i] == child) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	/*

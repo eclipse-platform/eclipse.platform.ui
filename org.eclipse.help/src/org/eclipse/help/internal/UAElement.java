@@ -156,16 +156,6 @@ public class UAElement implements IUAElement {
 		return parent;
 	}
 
-	public int indexOf(UAElement child) {
-		IUAElement[] children = getChildren();
-		for (int i=0;i<children.length;++i) {
-			if (child == children[i]) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
 	public void insertBefore(UAElement newChild, UAElement refChild) {
 		importElement(newChild);
 		element.insertBefore(newChild.element, refChild.element);
