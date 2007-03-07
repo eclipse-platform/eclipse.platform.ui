@@ -251,6 +251,14 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * ensure proper creation of controls
 	 * </p>
 	 * 
+	 * <p>
+	 * Please note that the default implementation of this method assumes that
+	 * the {@link IProgressMonitor} returned from
+	 * {@link #getBundleProgressMonitor()} can be safely casted to a
+	 * {@link Composite}. If this is not the case this method must be
+	 * reimplemented to reflect the new progress controls.
+	 * </p>
+	 * 
 	 * @see #init(org.eclipse.swt.widgets.Shell)
 	 * @return the composite
 	 */
