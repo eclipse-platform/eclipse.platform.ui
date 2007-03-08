@@ -11,14 +11,13 @@
 
 package org.eclipse.ui.menus;
 
-import java.util.List;
-
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * ContributionFactories are used by the IMenuService to populate
- * ContributionManagers. In {@link #createContributionItems(IMenuService, List)}
- * you fill in the additions List with IContributionItems to be inserted at this
+ * ContributionManagers. In {@link #createContributionItems(IServiceLocator, IContributionRoot)}
+ * you fill in the additions List with {@link IContributionItem} to be inserted at this
  * factory's location. For example:
  * <p>
  * 

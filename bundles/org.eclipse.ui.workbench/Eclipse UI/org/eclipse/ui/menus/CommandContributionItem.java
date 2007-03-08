@@ -53,7 +53,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A contribution item which delegates to a command. It can be used in
- * {@link AbstractContributionFactory#createContributionItems(IMenuService, java.util.List)}.
+ * {@link AbstractContributionFactory#createContributionItems(IServiceLocator, IContributionRoot)}.
  * <p>
  * It currently supports placement in menus and toolbars.
  * </p>
