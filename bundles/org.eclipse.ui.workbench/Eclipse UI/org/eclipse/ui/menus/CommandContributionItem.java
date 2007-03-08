@@ -124,6 +124,8 @@ public final class CommandContributionItem extends ContributionItem {
 
 	private ICommandListener commandListener;
 
+	private String dropDownMenuOverride;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -205,6 +207,10 @@ public final class CommandContributionItem extends ContributionItem {
 					public void setTooltip(String text) {
 						CommandContributionItem.this.setTooltip(text);
 					}
+					
+					public void setDropDownId(String id) {
+						dropDownMenuOverride = id;
+					}
 				};
 				elementRef = commandService.registerElementForCommand(command,
 						callback);
@@ -226,6 +232,9 @@ public final class CommandContributionItem extends ContributionItem {
 					if (commandEvent.isHandledChanged()
 							|| commandEvent.isEnabledChanged()
 							|| commandEvent.isDefinedChanged()) {
+						if (commandEvent.isHandledChanged()) {
+							dropDownMenuOverride = null;
+						}
 						if (commandEvent.getCommand().isDefined()) {
 							update(null);
 						}
@@ -534,8 +543,12 @@ public final class CommandContributionItem extends ContributionItem {
 					Menu menu = menuManager.createContextMenu(ti.getParent());
 					menuManager.addMenuListener(new IMenuListener() {
 						public void menuAboutToShow(IMenuManager manager) {
+							String id = getId();
+							if (dropDownMenuOverride!=null) {
+								id = dropDownMenuOverride;
+							}
 							menuService.populateContributionManager(
-									menuManager, "menu:" + getId()); //$NON-NLS-1$
+									menuManager, "menu:" + id); //$NON-NLS-1$
 						}
 					});
 					menu.addDisposeListener(new DisposeListener() {

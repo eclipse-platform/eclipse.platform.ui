@@ -120,4 +120,20 @@ public abstract class UIElement {
 	public final IServiceLocator getServiceLocator() {
 		return serviceLocator;
 	}
+
+	/**
+	 * Set the menu contribution id to use. This is only applicable to menu
+	 * contributions that support a drop-down style menu. The default
+	 * implementation does nothing.
+	 * <p>
+	 * Example: element.setDropdownId("org.eclipse.ui.navigate.back.my.menu");
+	 * </p>
+	 * 
+	 * @param id
+	 *            used to populate the dropdown menu. Must not be
+	 *            <code>null</code>.
+	 */
+	public void setDropDownId(String id) {
+		// This does nothing.
+	}
 }
