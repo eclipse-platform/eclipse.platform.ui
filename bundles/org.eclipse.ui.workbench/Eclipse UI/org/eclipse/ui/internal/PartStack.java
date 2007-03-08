@@ -1393,7 +1393,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         		wbw.getPageComposite().setRedraw(true);
         		
         		// Hack!! 'setRedraw(true)' won't update on the Mac
-        		wbw.getShell().update();
+        		wbw.getPageComposite().update();
 			}
         	
 	        setPresentationState(newState);
