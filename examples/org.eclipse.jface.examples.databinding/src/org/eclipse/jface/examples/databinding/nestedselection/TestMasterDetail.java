@@ -54,18 +54,20 @@ import org.eclipse.swt.widgets.Text;
 public class TestMasterDetail {
 	/**
 	 * @since 3.2
-	 *
+	 * 
 	 */
 	private static final class CustomUpdateValueStrategy extends
 			UpdateValueStrategy {
-		protected void doSet(IObservableValue observableValue,
-				Object value) {
-			super.doSet(observableValue, value);
-			Object changed = observableValue;
-			if (changed instanceof IObserving) {
-				changed = ((IObserving)changed).getObserved();
+		protected IStatus doSet(IObservableValue observableValue, Object value) {
+			IStatus result = super.doSet(observableValue, value);
+			if (result.isOK()) {
+				Object changed = observableValue;
+				if (changed instanceof IObserving) {
+					changed = ((IObserving) changed).getObserved();
+				}
+				System.out.println("changed: " + changed);
 			}
-			System.out.println("changed: " + changed);
+			return result;
 		}
 	}
 

@@ -16,8 +16,6 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -147,13 +145,10 @@ class ValueBinding2 extends Binding {
 																	updatingModel = true;
 																}
 																try {
-																	updateValueStrategy.doSet(destination, convertedValue);
-																} catch (Exception ex) {
-																	statusHolder[0] = ValidationStatus
-																			.error(
-																					BindingMessages
-																							.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
-																					ex);
+																	IStatus setterStatus = updateValueStrategy.doSet(destination, convertedValue);
+																	if (!setterStatus.isOK()) {
+																		statusHolder[0] = setterStatus;
+																	}
 																} finally {
 																	if (destination == target) {
 																		updatingTarget = false;

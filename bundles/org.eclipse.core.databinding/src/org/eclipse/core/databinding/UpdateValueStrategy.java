@@ -35,6 +35,8 @@ import org.eclipse.core.databinding.validation.String2LongPrimitiveValidator;
 import org.eclipse.core.databinding.validation.String2LongValidator;
 import org.eclipse.core.databinding.validation.String2ShortPrimitiveValidator;
 import org.eclipse.core.databinding.validation.String2ShortValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.internal.databinding.ClassLookupSupport;
 import org.eclipse.core.internal.databinding.Pair;
 import org.eclipse.core.runtime.IStatus;
@@ -593,9 +595,17 @@ public class UpdateValueStrategy {
 	 * 
 	 * @param observableValue
 	 * @param value
+	 * @return TODO
 	 */
-	protected void doSet(IObservableValue observableValue, Object value) {
-		observableValue.setValue(value);
+	protected IStatus doSet(IObservableValue observableValue, Object value) {
+		try {
+			observableValue.setValue(value);
+		} catch (Exception ex) {
+			return ValidationStatus.error(BindingMessages
+					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+					ex);
+		}
+		return Status.OK_STATUS;
 	}
 
 	private static class ValidatorRegistry {
