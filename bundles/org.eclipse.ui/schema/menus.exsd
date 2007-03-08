@@ -730,7 +730,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="name" type="string">
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
                   The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endOf&apos; value).
@@ -760,12 +760,15 @@ Separator contributions that have an id define the start of a logical group so t
          </documentation>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="command" minOccurs="0" maxOccurs="1"/>
             <element ref="separator" minOccurs="0" maxOccurs="1"/>
             <element ref="dynamic" minOccurs="0" maxOccurs="1"/>
             <element ref="control" minOccurs="0" maxOccurs="1"/>
          </choice>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
