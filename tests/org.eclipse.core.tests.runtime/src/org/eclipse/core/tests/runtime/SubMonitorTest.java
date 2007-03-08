@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos - bug 174539 - add a 1-argument convert(...) method     
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
@@ -179,6 +180,23 @@ public class SubMonitorTest extends TestCase {
 
 		mon1.done();
 
+		top.done();
+	}
+
+	/**
+	 * Tests the 1-argument convert(...) method
+	 */
+	public void testConvert() {
+		TestProgressMonitor top = new TestProgressMonitor();
+		SubMonitor mon1 = SubMonitor.convert(top);
+		Assert.assertEquals(0.0, top.getTotalWork(), 0.1d);
+		mon1.worked(10);
+		Assert.assertEquals(0.0, top.getTotalWork(), 0.1d);
+		mon1.setWorkRemaining(100);
+		mon1.worked(50);
+		Assert.assertEquals(500.0, top.getTotalWork(), 0.1d);
+		mon1.done();
+		Assert.assertEquals(1000.0, top.getTotalWork(), 0.1d);
 		top.done();
 	}
 
