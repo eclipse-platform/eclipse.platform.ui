@@ -180,21 +180,23 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(
 				UndoMessages.FolderDescription_SavingUndoInfoProgress, 100);
-		for (int i = 0; i < members.length; i++) {
-			if (members[i] instanceof FileDescription) {
-				IPath path = resource.getFullPath().append(
-						((FileDescription) members[i]).name);
-				IFile fileHandle = resource.getWorkspace().getRoot().getFile(
-						path);
-				members[i].recordStateFromHistory(fileHandle,
-						new SubProgressMonitor(monitor, 100 / members.length));
-			} else if (members[i] instanceof FolderDescription) {
-				IPath path = resource.getFullPath().append(
-						((FolderDescription) members[i]).name);
-				IFolder folderHandle = resource.getWorkspace().getRoot()
-						.getFolder(path);
-				members[i].recordStateFromHistory(folderHandle,
-						new SubProgressMonitor(monitor, 100 / members.length));
+		if (members != null) {
+			for (int i = 0; i < members.length; i++) {
+				if (members[i] instanceof FileDescription) {
+					IPath path = resource.getFullPath().append(
+							((FileDescription) members[i]).name);
+					IFile fileHandle = resource.getWorkspace().getRoot().getFile(
+							path);
+					members[i].recordStateFromHistory(fileHandle,
+							new SubProgressMonitor(monitor, 100 / members.length));
+				} else if (members[i] instanceof FolderDescription) {
+					IPath path = resource.getFullPath().append(
+							((FolderDescription) members[i]).name);
+					IFolder folderHandle = resource.getWorkspace().getRoot()
+							.getFolder(path);
+					members[i].recordStateFromHistory(folderHandle,
+							new SubProgressMonitor(monitor, 100 / members.length));
+				}
 			}
 		}
 		monitor.done();
