@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -72,6 +73,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
 
 /**
@@ -237,6 +239,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postStartup() {
 		try {
 			refreshFromLocal();
+			activateProxyService();
 			checkUpdates();
 			((Workbench) PlatformUI.getWorkbench()).registerService(
 					ISelectionConversionService.class,
@@ -248,6 +251,22 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		} finally {// Resume background jobs after we startup
 			Platform.getJobManager().resume();
 		}
+	}
+
+	/**
+	 * Activate the proxy service by obtaining it.
+	 */
+	private void activateProxyService() {
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.ide"); //$NON-NLS-1$
+		Object proxyService = null;
+		if (bundle != null) {
+			ServiceReference ref = bundle.getBundleContext().getServiceReference(IProxyService.class.getName());
+			if (ref != null)
+				proxyService = bundle.getBundleContext().getService(ref);
+		}
+		if (proxyService == null) {
+			IDEWorkbenchPlugin.log("Proxy service could not be found."); //$NON-NLS-1$
+		}	
 	}
 
 	/**
