@@ -596,15 +596,15 @@
                values="org.eclipse.ui.internal.registry.WizardParameterValues$New"/>
       </command>
       <command
-            name="%command.close.name"
+            categoryId="org.eclipse.ui.category.file"
             description="%command.close.description"
-            categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.close" />
+            id="org.eclipse.ui.file.close"
+            name="%command.close.name"/>
       <command
-            name="%command.closeAll.name"
-            description="%command.closeAll.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.closeAll" />
+            description="%command.closeAll.description"
+            id="org.eclipse.ui.file.closeAll"
+            name="%command.closeAll.name"/>
       <command
             categoryId="org.eclipse.ui.category.file"
             defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$Import"
@@ -807,20 +807,20 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.switchToEditor" />
       <command
-            name="%command.showSystemMenu.name"
+            categoryId="org.eclipse.ui.category.window"
             description="%command.showSystemMenu.description"
-            categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.showSystemMenu" />
+            id="org.eclipse.ui.window.showSystemMenu"
+            name="%command.showSystemMenu.name"/>
       <command
-            name="%command.showViewMenu.name"
+            categoryId="org.eclipse.ui.category.window"
             description="%command.showViewMenu.description"
-            categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.showViewMenu" />
+            id="org.eclipse.ui.window.showViewMenu"
+            name="%command.showViewMenu.name"/>
       <command
-            name="%command.activateEditor.name"
-            description="%command.activateEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.activateEditor" />
+            description="%command.activateEditor.description"
+            id="org.eclipse.ui.window.activateEditor"
+            name="%command.activateEditor.name"/>
       <command
             name="%command.maximizePart.name"
             description="%command.maximizePart.description"
@@ -1398,5 +1398,80 @@
          point="org.eclipse.ui.menus">
       <menuAddition
             locationURI="menu:org.eclipse.ui.main.menu"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.ActivateEditorHandler"
+            commandId="org.eclipse.ui.window.activateEditor">
+         <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.ShowPartPaneMenuHandler"
+            commandId="org.eclipse.ui.window.showSystemMenu">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.ShowViewMenuHandler"
+            commandId="org.eclipse.ui.window.showViewMenu">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.IViewPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CloseEditorHandler"
+            commandId="org.eclipse.ui.file.close">
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CloseAllHandler"
+            commandId="org.eclipse.ui.file.closeAll">
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CloseOthersHandler"
+            commandId="org.eclipse.ui.file.closeOthers">
+         <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
 </plugin>

@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandEvent;
+import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -44,13 +46,12 @@ public class CommandAction extends Action {
 
 	private IHandlerService handlerService = null;
 
-	private String commandId = null;
-
 	private ParameterizedCommand parameterizedCommand = null;
 
+	private ICommandListener commandListener;
+
 	public CommandAction(String commandIdIn, IServiceLocator serviceLocator) {
-		commandId = commandIdIn;
-		init(serviceLocator);
+		this(commandIdIn, null, serviceLocator);
 	}
 
 	/**
@@ -68,12 +69,37 @@ public class CommandAction extends Action {
 	 */
 	public CommandAction(String commandIdIn, Map parameterMap,
 			IServiceLocator serviceLocator) {
-		this(commandIdIn, serviceLocator);
-		if (parameterMap != null) {
-			ICommandService commandService = (ICommandService) serviceLocator
-					.getService(ICommandService.class);
-			createCommand(commandService, parameterMap);
+		if (commandIdIn == null) {
+			throw new NullPointerException("commandIdIn must not be null"); //$NON-NLS-1$
 		}
+		init(serviceLocator);
+		ICommandService commandService = (ICommandService) serviceLocator
+				.getService(ICommandService.class);
+		createCommand(commandService, commandIdIn, parameterMap);
+		if (parameterizedCommand != null) {
+			parameterizedCommand.getCommand().addCommandListener(
+					getCommandListener());
+			setEnabled(parameterizedCommand.getCommand().isEnabled());
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	private ICommandListener getCommandListener() {
+		if (commandListener == null) {
+			commandListener = new ICommandListener() {
+				public void commandChanged(CommandEvent commandEvent) {
+					if (commandEvent.isHandledChanged()
+							|| commandEvent.isEnabledChanged()) {
+						if (commandEvent.getCommand().isDefined()) {
+							setEnabled(commandEvent.getCommand().isEnabled());
+						}
+					}
+				}
+			};
+		}
+		return commandListener;
 	}
 
 	/**
@@ -81,15 +107,24 @@ public class CommandAction extends Action {
 	 * 
 	 * @param commandService
 	 *            to get the Command object
+	 * @param commandId
+	 *            the command id for this action
 	 * @param parameterMap
 	 */
-	private void createCommand(ICommandService commandService, Map parameterMap) {
+	private void createCommand(ICommandService commandService,
+			String commandId, Map parameterMap) {
 		try {
 			Command cmd = commandService.getCommand(commandId);
 			if (!cmd.isDefined()) {
 				WorkbenchPlugin.log("Command " + commandId + " is undefined"); //$NON-NLS-1$//$NON-NLS-2$
 				return;
 			}
+
+			if (parameterMap == null) {
+				parameterizedCommand = new ParameterizedCommand(cmd, null);
+				return;
+			}
+
 			ArrayList parameters = new ArrayList();
 			Iterator i = parameterMap.keySet().iterator();
 			while (i.hasNext()) {
@@ -119,6 +154,11 @@ public class CommandAction extends Action {
 	public void dispose() {
 		// not important for command ID, maybe for command though.
 		handlerService = null;
+		if (commandListener != null) {
+			parameterizedCommand.getCommand().removeCommandListener(
+					commandListener);
+			commandListener = null;
+		}
 		parameterizedCommand = null;
 	}
 
@@ -129,6 +169,8 @@ public class CommandAction extends Action {
 	 */
 	public void runWithEvent(Event event) {
 		if (handlerService == null) {
+			String commandId = (parameterizedCommand == null ? "unknownCommand" //$NON-NLS-1$
+					: parameterizedCommand.getId());
 			WorkbenchPlugin.log("Cannot run " + commandId //$NON-NLS-1$
 					+ " before command action has been initialized"); //$NON-NLS-1$
 			return;
@@ -136,8 +178,6 @@ public class CommandAction extends Action {
 		try {
 			if (parameterizedCommand != null) {
 				handlerService.executeCommand(parameterizedCommand, event);
-			} else if (commandId != null) {
-				handlerService.executeCommand(commandId, event);
 			}
 		} catch (Exception e) {
 			WorkbenchPlugin.log(e);

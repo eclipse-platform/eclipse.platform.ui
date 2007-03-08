@@ -18,12 +18,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.ActivateEditorAction;
-import org.eclipse.ui.internal.CloseAllAction;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
 import org.eclipse.ui.internal.CloseAllSavedAction;
-import org.eclipse.ui.internal.CloseEditorAction;
-import org.eclipse.ui.internal.CloseOthersAction;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.CycleEditorAction;
 import org.eclipse.ui.internal.CyclePartAction;
@@ -44,8 +40,6 @@ import org.eclipse.ui.internal.SaveAction;
 import org.eclipse.ui.internal.SaveAllAction;
 import org.eclipse.ui.internal.SaveAsAction;
 import org.eclipse.ui.internal.SavePerspectiveAction;
-import org.eclipse.ui.internal.ShowPartPaneMenuAction;
-import org.eclipse.ui.internal.ShowViewMenuAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -161,20 +155,24 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new ActivateEditorAction(window);
-            action.setId(getId());
-            return action;
-        }
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.window.activateEditor", window); //$NON-NLS-1$
+			action.setId(getId());
+			action.setText(WorkbenchMessages.ActivateEditorAction_text);
+			action
+					.setToolTipText(WorkbenchMessages.ActivateEditorAction_toolTip);
+			return action;
+		}
     };
 
     /**
-     * Workbench action (id "back"): Back. This action is a
-     * {@link RetargetAction} with id "back". This action maintains
-     * its enablement state.
-     */
+	 * Workbench action (id "back"): Back. This action is a
+	 * {@link RetargetAction} with id "back". This action maintains its
+	 * enablement state.
+	 */
     public static final ActionFactory BACK = new ActionFactory("back") {//$NON-NLS-1$
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -222,7 +220,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CloseEditorAction(window);
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.close",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.CloseEditorAction_text);
+            action.setToolTipText(WorkbenchMessages.CloseEditorAction_toolTip);
             action.setId(getId());
             return action;
         }
@@ -240,7 +240,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CloseAllAction(window);
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.closeAll",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.CloseAllAction_text);
+            action.setToolTipText(WorkbenchMessages.CloseAllAction_toolTip);
             action.setId(getId());
             return action;
         }
@@ -257,19 +259,22 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new CloseOthersAction(window);
-            action.setId(getId());
-            return action;
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.file.closeOthers", window); //$NON-NLS-1$
+			action.setText(WorkbenchMessages.CloseOthersAction_text);
+			action.setToolTipText(WorkbenchMessages.CloseOthersAction_toolTip);
+			action.setId(getId());
+			return action;
         }
     };
 
     /**
-     * Workbench action (id "closeAllPerspectives"): Closes all perspectives.
-     * This action maintains its enablement state.
-     */
+	 * Workbench action (id "closeAllPerspectives"): Closes all perspectives.
+	 * This action maintains its enablement state.
+	 */
     public static final ActionFactory CLOSE_ALL_PERSPECTIVES = new ActionFactory(
             "closeAllPerspectives") {//$NON-NLS-1$
         /* (non-Javadoc)
@@ -1345,7 +1350,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new ShowPartPaneMenuAction(window);
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.showSystemMenu",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.ShowPartPaneMenuAction_text); 
+            action.setToolTipText(WorkbenchMessages.ShowPartPaneMenuAction_toolTip); 
             action.setId(getId());
             return action;
         }
@@ -1365,7 +1372,9 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new ShowViewMenuAction(window);
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.showViewMenu",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.ShowViewMenuAction_text);
+            action.setToolTipText(WorkbenchMessages.ShowViewMenuAction_toolTip);
             action.setId(getId());
             return action;
         }
