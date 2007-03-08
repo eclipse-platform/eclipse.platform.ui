@@ -219,7 +219,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 		
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		tree.getTree().setLayoutData(data);
-		tree.addSelectionChangedListener(new ISelectionChangedListener() {
+		tree.addPostSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleFileSelection(event);
 			}
