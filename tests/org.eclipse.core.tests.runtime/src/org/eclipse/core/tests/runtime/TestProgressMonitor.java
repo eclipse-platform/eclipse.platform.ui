@@ -72,9 +72,9 @@ public class TestProgressMonitor implements IProgressMonitor {
 
 	private int doneCalls;
 
-	private String taskName = "";
+	private String taskName = null;
 
-	private String subTaskName = "";
+	private String subTaskName = null;
 
 	private int expectedWork;
 
@@ -278,11 +278,11 @@ public class TestProgressMonitor implements IProgressMonitor {
 	}
 
 	public String getSubTaskName() {
-		return subTaskName;
+		return subTaskName == null ? "" : subTaskName;
 	}
 
 	public String getTaskName() {
-		return taskName;
+		return taskName == null ? "" : taskName;
 	}
 
 }

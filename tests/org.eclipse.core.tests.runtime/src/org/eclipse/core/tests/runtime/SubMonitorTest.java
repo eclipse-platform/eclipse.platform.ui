@@ -6,11 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos - initial API and implementation
  *     Stefan Xenos - bug 174539 - add a 1-argument convert(...) method     
+ *     Stefan Xenos - bug 174040 - SubMonitor#convert doesn't always set task name
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import java.util.*;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -198,6 +200,226 @@ public class SubMonitorTest extends TestCase {
 		mon1.done();
 		Assert.assertEquals(1000.0, top.getTotalWork(), 0.1d);
 		top.done();
+	}
+
+	/**
+	 * Tests the function of the SUPPRESS_* flags
+	 */
+	public void testFlags() {
+		TestProgressMonitor top = new TestProgressMonitor();
+
+		SubMonitor mon1 = SubMonitor.convert(top, "initial", 100);
+
+		// Ensure that we've called begintask on the root with the correct argument
+		Assert.assertEquals(top.getBeginTaskCalls(), 1);
+		Assert.assertEquals(top.getBeginTaskName(), "initial");
+
+		mon1.beginTask("beginTask", 1000);
+
+		// Ensure that beginTask on the child does NOT result in more than 1 call to beginTask on the root
+		Assert.assertEquals(top.getBeginTaskCalls(), 1);
+
+		// Ensure that the task name was propogated correctly
+		Assert.assertEquals(top.getTaskName(), "beginTask");
+
+		mon1.setTaskName("setTaskName");
+		Assert.assertEquals(top.getTaskName(), "setTaskName");
+
+		mon1.subTask("subTask");
+		Assert.assertEquals(top.getSubTaskName(), "subTask");
+
+		// Create a child monitor that permits calls to beginTask
+		{
+			SubMonitor mon2 = mon1.newChild(10, SubMonitor.SUPPRESS_NONE);
+
+			// Ensure that everything is propogated
+			mon2.beginTask("mon2.beginTask", 100);
+			Assert.assertEquals(top.getTaskName(), "mon2.beginTask");
+
+			mon2.setTaskName("mon2.setTaskName");
+			Assert.assertEquals(top.getTaskName(), "mon2.setTaskName");
+
+			mon2.subTask("mon2.subTask");
+			Assert.assertEquals(top.getSubTaskName(), "mon2.subTask");
+		}
+	}
+
+	private String[] runChildTest(int depth, TestProgressMonitor root, IProgressMonitor child, int ticks) {
+		ArrayList results = new ArrayList();
+		child.beginTask("beginTask" + depth, ticks);
+		results.add(root.getTaskName());
+		child.subTask("subTask" + depth);
+		results.add(root.getSubTaskName());
+		child.setTaskName("setTaskName" + depth);
+		results.add(root.getTaskName());
+		return (String[]) results.toArray(new String[results.size()]);
+	}
+
+	/**
+	 * Tests the style bits in SubProgressMonitor 
+	 */
+	public void testStyles() {
+
+		int[] styles = new int[] {SubMonitor.SUPPRESS_NONE, SubMonitor.SUPPRESS_BEGINTASK, SubMonitor.SUPPRESS_SETTASKNAME, SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_BEGINTASK | SubMonitor.SUPPRESS_SETTASKNAME, SubMonitor.SUPPRESS_BEGINTASK | SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_SETTASKNAME | SubMonitor.SUPPRESS_SUBTASK, SubMonitor.SUPPRESS_ALL_LABELS};
+
+		HashMap expected = new HashMap();
+		expected.put("style 5 below style 7", new String[] {"", "", ""});
+		expected.put("style 7 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 7 below style 4", new String[] {"beginTask0", "subTask0", "beginTask0"});
+		expected.put("style 5 below style 6", new String[] {"", "subTask0", ""});
+		expected.put("style 3 below style 7", new String[] {"", "", ""});
+		expected.put("style 5 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 7 below style 3", new String[] {"setTaskName0", "", "setTaskName0"});
+		expected.put("style 7 below style 2", new String[] {"setTaskName0", "subTask0", "setTaskName0"});
+		expected.put("style 5 below style 4", new String[] {"beginTask0", "subTask0", "beginTask0"});
+		expected.put("style 3 below style 6", new String[] {"", "subTask0", ""});
+		expected.put("style 1 below style 7", new String[] {"", "", ""});
+		expected.put("style 3 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 5 below style 3", new String[] {"beginTask1", "", "beginTask1"});
+		expected.put("style 7 below style 1", new String[] {"setTaskName0", "", "setTaskName0"});
+		expected.put("style 3 below style 4", new String[] {"beginTask0", "subTask0", "beginTask0"});
+		expected.put("style 5 below style 2", new String[] {"beginTask1", "subTask0", "beginTask1"});
+		expected.put("style 7 below style 0", new String[] {"setTaskName0", "subTask0", "setTaskName0"});
+		expected.put("style 1 below style 6", new String[] {"", "subTask0", ""});
+		expected.put("style 1 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 3 below style 3", new String[] {"setTaskName0", "", "setTaskName1"});
+		expected.put("style 5 below style 1", new String[] {"beginTask1", "", "beginTask1"});
+		expected.put("style 1 below style 4", new String[] {"beginTask0", "subTask0", "beginTask0"});
+		expected.put("style 3 below style 2", new String[] {"setTaskName0", "subTask0", "setTaskName1"});
+		expected.put("style 5 below style 0", new String[] {"beginTask1", "subTask0", "beginTask1"});
+		expected.put("style 1 below style 3", new String[] {"beginTask1", "", "setTaskName1"});
+		expected.put("style 3 below style 1", new String[] {"setTaskName0", "", "setTaskName1"});
+		expected.put("style 1 below style 2", new String[] {"beginTask1", "subTask0", "setTaskName1"});
+		expected.put("style 3 below style 0", new String[] {"setTaskName0", "subTask0", "setTaskName1"});
+		expected.put("style 1 below style 1", new String[] {"beginTask1", "", "setTaskName1"});
+		expected.put("style 1 below style 0", new String[] {"beginTask1", "subTask0", "setTaskName1"});
+		expected.put("style 3 as top-level monitor", new String[] {"", "", "setTaskName0"});
+		expected.put("style 7 as top-level monitor", new String[] {"", "", ""});
+		expected.put("style 2 as top-level monitor", new String[] {"", "subTask0", "setTaskName0"});
+		expected.put("style 6 as top-level monitor", new String[] {"", "subTask0", ""});
+		expected.put("style 6 below style 7", new String[] {"", "", ""});
+		expected.put("style 6 below style 6", new String[] {"", "subTask1", ""});
+		expected.put("style 4 below style 7", new String[] {"", "", ""});
+		expected.put("style 6 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 6 below style 4", new String[] {"beginTask0", "subTask1", "beginTask0"});
+		expected.put("style 4 below style 6", new String[] {"", "subTask1", ""});
+		expected.put("style 2 below style 7", new String[] {"", "", ""});
+		expected.put("style 4 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 6 below style 3", new String[] {"setTaskName0", "", "setTaskName0"});
+		expected.put("style 4 below style 4", new String[] {"beginTask0", "subTask1", "beginTask0"});
+		expected.put("style 6 below style 2", new String[] {"setTaskName0", "subTask1", "setTaskName0"});
+		expected.put("style 2 below style 6", new String[] {"", "subTask1", ""});
+		expected.put("style 0 below style 7", new String[] {"", "", ""});
+		expected.put("style 2 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 6 below style 1", new String[] {"setTaskName0", "", "setTaskName0"});
+		expected.put("style 4 below style 3", new String[] {"beginTask1", "", "beginTask1"});
+		expected.put("style 2 below style 4", new String[] {"beginTask0", "subTask1", "beginTask0"});
+		expected.put("style 6 below style 0", new String[] {"setTaskName0", "subTask1", "setTaskName0"});
+		expected.put("style 4 below style 2", new String[] {"beginTask1", "subTask1", "beginTask1"});
+		expected.put("style 0 below style 6", new String[] {"", "subTask1", ""});
+		expected.put("style 0 below style 5", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 4 below style 1", new String[] {"beginTask1", "", "beginTask1"});
+		expected.put("style 2 below style 3", new String[] {"setTaskName0", "", "setTaskName1"});
+		expected.put("style 0 below style 4", new String[] {"beginTask0", "subTask1", "beginTask0"});
+		expected.put("style 4 below style 0", new String[] {"beginTask1", "subTask1", "beginTask1"});
+		expected.put("style 2 below style 2", new String[] {"setTaskName0", "subTask1", "setTaskName1"});
+		expected.put("style 1 as top-level monitor", new String[] {"beginTask0", "", "setTaskName0"});
+		expected.put("style 2 below style 1", new String[] {"setTaskName0", "", "setTaskName1"});
+		expected.put("style 0 below style 3", new String[] {"beginTask1", "", "setTaskName1"});
+		expected.put("style 2 below style 0", new String[] {"setTaskName0", "subTask1", "setTaskName1"});
+		expected.put("style 0 below style 2", new String[] {"beginTask1", "subTask1", "setTaskName1"});
+		expected.put("style 0 below style 1", new String[] {"beginTask1", "", "setTaskName1"});
+		expected.put("style 0 below style 0", new String[] {"beginTask1", "subTask1", "setTaskName1"});
+		expected.put("style 5 as top-level monitor", new String[] {"beginTask0", "", "beginTask0"});
+		expected.put("style 0 as top-level monitor", new String[] {"beginTask0", "subTask0", "setTaskName0"});
+		expected.put("style 4 as top-level monitor", new String[] {"beginTask0", "subTask0", "beginTask0"});
+		expected.put("style 7 below style 7", new String[] {"", "", ""});
+		expected.put("style 7 below style 6", new String[] {"", "subTask0", ""});
+		HashMap results = new HashMap();
+
+		for (int i = 0; i < styles.length; i++) {
+			int style = styles[i];
+			{
+				TestProgressMonitor top = new TestProgressMonitor();
+				top.beginTask("", 100);
+				SubMonitor converted = SubMonitor.convert(top, 100);
+
+				SubMonitor styled = converted.newChild(100, style);
+				styled.setWorkRemaining(100);
+
+				String testName = "style " + style + " as top-level monitor";
+				results.put(testName, runChildTest(0, top, styled, 100 * styles.length));
+			}
+
+			for (int j = 0; j < styles.length; j++) {
+				int innerStyle = styles[j];
+
+				TestProgressMonitor newTop = new TestProgressMonitor();
+				newTop.beginTask("", 100);
+				SubMonitor newConverted = SubMonitor.convert(newTop, 100);
+
+				SubMonitor innerStyled = newConverted.newChild(100, style);
+
+				runChildTest(0, newTop, innerStyled, 100);
+
+				SubMonitor innerChild = innerStyled.newChild(100, innerStyle);
+				String testName = "style " + innerStyle + " below style " + style;
+				results.put(testName, runChildTest(1, newTop, innerChild, 100));
+				innerChild.done();
+			}
+		}
+
+		String failure = null;
+		// Output the code for the observed results, in case one of them has changed intentionally
+		for (Iterator iter = results.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry next = (Map.Entry) iter.next();
+			String[] expectedResult = (String[]) expected.get(next.getKey());
+			if (expectedResult == null)
+				expectedResult = new String[0];
+
+			String[] value = (String[]) next.getValue();
+			if (compareArray(value, expectedResult))
+				continue;
+
+			System.out.print("expected.put(\"" + next.getKey() + "\", new String[] {");
+			failure = (String) next.getKey();
+			String list = concatArray(value);
+			System.out.println(list + "});");
+		}
+
+		if (failure != null) // Now actually throw an assertation if one of the results failed
+			Assert.assertEquals(failure, concatArray((String[]) expected.get(failure)), concatArray((String[]) results.get(failure)));
+	}
+
+	private boolean compareArray(String[] value, String[] expectedResult) {
+		if (value == null || expectedResult == null)
+			return value == null && expectedResult == null;
+
+		if (value.length != expectedResult.length)
+			return false;
+		for (int i = 0; i < expectedResult.length; i++) {
+			String next = expectedResult[i];
+			if (!next.equals(value[i]))
+				return false;
+		}
+		return true;
+	}
+
+	private String concatArray(String[] value) {
+		if (value == null)
+			return "";
+
+		StringBuffer buf = new StringBuffer();
+		boolean isFirst = true;
+		for (int i = 0; i < value.length; i++) {
+			String nextValue = value[i];
+			if (!isFirst)
+				buf.append(", ");
+			isFirst = false;
+			buf.append("\"" + nextValue + "\"");
+		}
+		String list = buf.toString();
+		return list;
 	}
 
 	/**
