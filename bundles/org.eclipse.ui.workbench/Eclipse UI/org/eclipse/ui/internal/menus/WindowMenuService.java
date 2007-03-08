@@ -19,6 +19,8 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -39,6 +41,7 @@ public final class WindowMenuService extends InternalMenuService {
 	 * definitions and the regsitry. Must not be <code>null</code>
 	 */
 	private final WorkbenchMenuService parent;
+	private IServiceLocator serviceLocator;
 
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
@@ -49,13 +52,16 @@ public final class WindowMenuService extends InternalMenuService {
 	 *            track menu definitions and the regsitry. Must not be
 	 *            <code>null</code>
 	 */
-	public WindowMenuService(final WorkbenchMenuService parent) {
-		if (parent == null) {
+	public WindowMenuService(final IServiceLocator serviceLocator) {
+		IMenuService menuService = (IMenuService) serviceLocator
+				.getService(IMenuService.class);
+		if (menuService == null || !(menuService instanceof WorkbenchMenuService)) {
 			throw new NullPointerException(
 					"The parent service must not be null"); //$NON-NLS-1$
 		}
 
-		this.parent = parent;
+		this.parent = (WorkbenchMenuService)menuService;
+		this.serviceLocator = serviceLocator;
 	}
 
 	/*
@@ -65,7 +71,7 @@ public final class WindowMenuService extends InternalMenuService {
 	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
-		parent.populateContributionManager(mgr, uri);
+		parent.populateContributionManager(serviceLocator, mgr, uri);
 	}
 
 	/*

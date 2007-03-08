@@ -80,7 +80,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 * manager.
 	 */
 	public WorkbenchMenuService(IServiceLocator serviceLocator) {
-		this.menuPersistence = new MenuPersistence(this, serviceLocator);
+		this.menuPersistence = new MenuPersistence(this);
 		this.serviceLocator = serviceLocator;
 		evaluationService = (IEvaluationService) serviceLocator.getService(IEvaluationService.class);
 		evaluationService.addServiceListener(getServiceListener());
@@ -224,15 +224,15 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 	}
 
-	private boolean processAdditions(ContributionManager mgr,
-			AbstractContributionFactory cache) {
+	private boolean processAdditions(IServiceLocator serviceLocatorToUse,
+			ContributionManager mgr, AbstractContributionFactory cache) {
 		int insertionIndex = getInsertionIndex(mgr, cache.getLocation());
 		if (insertionIndex == -1)
 			return false; // can't process (yet)
 
 		// Get the additions
 		ContributionRoot ciList = new ContributionRoot(this);
-		cache.createContributionItems(serviceLocator, ciList);
+		cache.createContributionItems(serviceLocatorToUse, ciList);
 
 		// If we have any then add them at the correct location
 		if (ciList.getItems().size() > 0) {
@@ -327,6 +327,11 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
+		populateContributionManager(serviceLocator, mgr, uri);
+	}
+
+	public void populateContributionManager(IServiceLocator serviceLocatorToUse, ContributionManager mgr,
+			String uri) {
 		MenuLocationURI contributionLocation = new MenuLocationURI(uri);
 		List additionCaches = getAdditionsForURI(contributionLocation);
 
@@ -334,7 +339,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
 			AbstractContributionFactory cache = (AbstractContributionFactory) iterator
 					.next();
-			if (!processAdditions(mgr, cache)) {
+			if (!processAdditions(serviceLocatorToUse, mgr, cache)) {
 				retryList.add(cache);
 			}
 		}
@@ -354,7 +359,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
 				AbstractContributionFactory cache = (AbstractContributionFactory) iterator
 						.next();
-				if (!processAdditions(mgr, cache))
+				if (!processAdditions(serviceLocatorToUse, mgr, cache))
 					retryList.add(cache);
 			}
 
@@ -369,17 +374,17 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			if (curItems[i] instanceof ContributionManager) {
 				String id = curItems[i].getId();
 				if (id != null && id.length() > 0) {
-					populateContributionManager(
+					populateContributionManager(serviceLocatorToUse,
 							(ContributionManager) curItems[i],
 							contributionLocation.getScheme() + ":" + id); //$NON-NLS-1$
 				}
 			} else if (curItems[i] instanceof IToolBarContributionItem) {
 				IToolBarContributionItem tbci = (IToolBarContributionItem) curItems[i];
 				if (tbci.getId() != null && tbci.getId().length() > 0) {
-					populateContributionManager((ContributionManager) tbci
-							.getToolBarManager(), contributionLocation
-							.getScheme()
-							+ ":" + tbci.getId()); //$NON-NLS-1$
+					populateContributionManager(serviceLocatorToUse,
+							(ContributionManager) tbci.getToolBarManager(),
+							contributionLocation.getScheme()
+									+ ":" + tbci.getId()); //$NON-NLS-1$
 				}
 			}
 		}

@@ -65,16 +65,16 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private HashMap visWhenMap = new HashMap();
 
+	/**
+	 * The menu service on which to generate all subcaches.
+	 */
 	private IMenuService menuService;
-	
-	private IServiceLocator serviceLocator;
 
-	public MenuAdditionCacheEntry(IConfigurationElement element,
-			IServiceLocator serviceLocator, String location, String namespace) {
+	public MenuAdditionCacheEntry(IMenuService menuService, IConfigurationElement element,
+			String location, String namespace) {
 		super(location, namespace);
-		this.additionElement = element;
-		this.serviceLocator = serviceLocator;
-		this.menuService = (IMenuService) serviceLocator.getService(IMenuService.class);
+		this.menuService = menuService;
+		this.additionElement = element;	
 		generateSubCaches();
 	}
 
@@ -98,8 +98,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 				// -ALL- contibuted menus must have an id so create one
 				// if necessary
-				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
-						items[i], serviceLocator, location, getNamespace());
+				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(menuService,
+						items[i], location, getNamespace());
 				menuService.addContributionFactory(subMenuEntry);
 			}
 		}
@@ -146,14 +146,13 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 *      java.util.List)
 	 */
 	public void createContributionItems(IServiceLocator serviceLocator, IContributionRoot additions) {
-
 		IConfigurationElement[] items = additionElement.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
 			IContributionItem newItem = null;
 
 			if (IWorkbenchRegistryConstants.TAG_COMMAND.equals(itemType)) {
-				newItem = createCommandAdditionContribution(items[i]);
+				newItem = createCommandAdditionContribution(serviceLocator, items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
 				newItem = createDynamicAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
@@ -273,9 +272,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 * @param configurationElement
 	 * @return
 	 */
-	private IContributionItem createCommandAdditionContribution(
+	private IContributionItem createCommandAdditionContribution(IServiceLocator locator,
 			final IConfigurationElement commandAddition) {
-		return new CommandContributionItem(serviceLocator, getId(commandAddition),
+		return new CommandContributionItem(locator, getId(commandAddition),
 				getCommandId(commandAddition), getParameters(commandAddition),
 				getIconDescriptor(commandAddition),
 				getDisabledIconDescriptor(commandAddition),

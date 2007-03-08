@@ -118,7 +118,6 @@ import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.TrimContributionManager;
 import org.eclipse.ui.internal.menus.WindowMenuService;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -3730,10 +3729,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				this);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
-		final WorkbenchMenuService parentMenuService = (WorkbenchMenuService) serviceLocator
-				.getService(IMenuService.class);
-		final IMenuService menuService = new WindowMenuService(
-				parentMenuService);
+		final IMenuService menuService = new WindowMenuService(serviceLocator);
 		serviceLocator.registerService(IMenuService.class, menuService);
 
 //		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator

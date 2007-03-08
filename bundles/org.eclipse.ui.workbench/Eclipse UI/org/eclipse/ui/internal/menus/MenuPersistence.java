@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -39,26 +38,18 @@ final class MenuPersistence extends RegistryPersistence {
 	
 	private final WorkbenchMenuService menuService;
 	
-	private final IServiceLocator serviceLocator;
-
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
 	 * @param workbenchMenuService 
 	 * 
-	 * @param mm
+	 * @param workbenchMenuService
 	 *            The menu service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 */
-	MenuPersistence(final WorkbenchMenuService workbenchMenuService, final IServiceLocator locator) {
+	MenuPersistence(final WorkbenchMenuService workbenchMenuService) {
 		if (workbenchMenuService == null) {
 			throw new NullPointerException("The menu service cannot be null"); //$NON-NLS-1$
 		}
-
-		
-		if (locator == null) {
-			throw new NullPointerException("The service locator cannot be null"); //$NON-NLS-1$
-		}
-		this.serviceLocator = locator;
 
 		this.menuService =  workbenchMenuService;
 	}
@@ -166,8 +157,8 @@ final class MenuPersistence extends RegistryPersistence {
 				String location = menusExtensionPoint[i]
 						.getAttribute(TAG_LOCATION_URI);
 
-				menuService.addContributionFactory(new MenuAdditionCacheEntry(
-						menusExtensionPoint[i], serviceLocator, location,
+				menuService.addContributionFactory(new MenuAdditionCacheEntry(menuService,
+						menusExtensionPoint[i], location,
 						menusExtensionPoint[i].getNamespaceIdentifier()));
 			}
 		}
