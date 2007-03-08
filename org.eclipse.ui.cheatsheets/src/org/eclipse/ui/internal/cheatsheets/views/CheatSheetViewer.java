@@ -1147,7 +1147,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		restorePath = element.getRestorePath();
 		
 		if (contentXml != null) {
-			parserInput = new ParserInput(contentXml, restorePath);
+			parserInput = new ParserInput(contentXml, element.getHref());
 			return;		
 		}
 
