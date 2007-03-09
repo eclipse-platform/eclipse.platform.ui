@@ -765,6 +765,33 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
+	 * Returns the first occurance of any one of the configurations in the provided list, if they are found in the launch history
+	 * for the corresponding launch group
+	 * @param configurations
+	 * @param mode
+	 * @return the associated launch configuration from the MRU listing or <code>null</code> if there isn't one
+	 * @since 3.3
+	 */
+	public ILaunchConfiguration getMRUConfiguration(List configurations, ILaunchGroup group) {
+		if(group != null) {
+			ILaunchConfiguration config = getLastLaunch(group.getIdentifier());
+			if(configurations.contains(config)) {
+				return config;
+			}
+			LaunchHistory history = getLaunchHistory(group.getIdentifier());
+			if(history != null) {
+				ILaunchConfiguration[] configs = history.getCompleteLaunchHistory();
+				for(int i = 0; i < configs.length; i++) {
+					if(configurations.contains(configs[i])) {
+						return configs[i];
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the <code>LaunchShortcutExtension</code> that has the specified id
 	 * or <code>null</code>.
 	 * @param id the id of the <code>LaunchShortcutExtension</code> to look for

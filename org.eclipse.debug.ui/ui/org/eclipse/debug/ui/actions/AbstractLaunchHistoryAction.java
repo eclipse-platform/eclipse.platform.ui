@@ -21,12 +21,12 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingResourceManager;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -34,10 +34,6 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
@@ -74,8 +70,6 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	protected boolean fRecreateMenu= false;
 	
-	private IWorkbenchWindow fWindow = null;
-	
 	/**
 	 * Constructs a launch history action.
 	 * 
@@ -97,24 +91,6 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 				updateTooltip();
 			}
 		}
-	};
-
-	/**
-	 * Part listener to update tool-tip for context launching
-	 */
-	private IPartListener fPartListener = new IPartListener() {
-		/**
-		 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void partActivated(IWorkbenchPart part) {
-			if(ContextRunner.getDefault().isContextLaunchEnabled() && part instanceof IEditorPart) {
-				updateTooltip();
-			}
-		}
-		public void partBroughtToTop(IWorkbenchPart part) {}
-		public void partClosed(IWorkbenchPart part) {}
-		public void partDeactivated(IWorkbenchPart part) {}
-		public void partOpened(IWorkbenchPart part) {}
 	};
 	
 	/**
@@ -166,7 +142,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		getLaunchConfigurationManager().addLaunchHistoryListener(this);
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener);
 		setAction(action);
-		updateTooltip();	
+		updateTooltip(); 		
 		action.setEnabled(existsConfigTypesForMode());	
 	}
 	
@@ -212,7 +188,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		String label = null;
 		//CONTEXTLAUNCHING
 		if(ContextRunner.getDefault().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-			launchName = ContextRunner.getDefault().getContextLabel(getMode());
+			launchName = getContextLaunchingResourceManager().getContextLabel(getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 		}
 		String mode = getMode();
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
@@ -242,9 +218,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		setMenu(null);
 		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
-		if(fWindow != null) {
-			fWindow.getPartService().removePartListener(fPartListener);
-		}
+		getContextLaunchingResourceManager().removeUpdateListener(this, getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 	}
 	
 	/**
@@ -370,22 +344,13 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		if (fAction == null) {
 			initialize(action);
 		} 
-		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
-			if(!(selection instanceof ITextSelection)) {
-				updateTooltip();
-			}
-		}
 	}
 	
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window){
-		fWindow = window;
-		if(window != null) {
-			IPartService psrvc = window.getPartService();
-			psrvc.addPartListener(fPartListener);
-		}
+	public void init(IWorkbenchWindow window) {
+		getContextLaunchingResourceManager().addUpdateListener(this, getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 	}
 	
 	/**
@@ -454,6 +419,15 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	private LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}
+	
+	/**
+	 * Returns the <code>ContextualLaunchingResourceManager</code>
+	 * 
+	 * @return <code>ContextualLaunchingResourceManager</code>
+	 */
+	private ContextLaunchingResourceManager getContextLaunchingResourceManager() {
+		return DebugUIPlugin.getDefault().getContextLaunchingResourceManager();
 	}
 	
 	/**

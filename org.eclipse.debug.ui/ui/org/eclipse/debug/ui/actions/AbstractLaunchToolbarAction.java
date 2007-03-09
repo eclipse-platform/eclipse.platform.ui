@@ -74,7 +74,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 */
 	public void run(IAction action) {
 		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
-			ContextRunner.getDefault().launch(getMode());
+			ContextRunner.getDefault().launch(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 		}
 		else {
 			ILaunchConfiguration configuration = getLastLaunch();

@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -68,7 +69,8 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 */
 	public void run(IAction action){		
 		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
-			ContextRunner.getDefault().launch(getMode());
+			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupId());
+			ContextRunner.getDefault().launch(group);
 			return;
 		}
 		try {

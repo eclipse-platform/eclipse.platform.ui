@@ -69,6 +69,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingResourceManager;
 import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
@@ -130,6 +131,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see ILaunchListener
  * @see LaunchConfigurationManager
  * @see PerspectiveManager
+ * @see ContextLaunch
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
@@ -177,6 +179,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
     
+	/**
+	 * Context launching manager
+	 */
+	private ContextLaunchingResourceManager fContextLaunchingManager = null;
+	
     /**
      * Image descriptor registry used for images with common overlays.
      * 
@@ -297,6 +304,21 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
+	 * Returns the context launching resource manager. If one has not been created prior to this 
+	 * method call, a new manager is created and initialized, by calling its startup() method.
+	 * @return the context launching resource manager
+	 * 
+	 * @since 3.3
+	 */
+	public ContextLaunchingResourceManager getContextLaunchingResourceManager() {
+		if(fContextLaunchingManager == null) {
+			fContextLaunchingManager = new ContextLaunchingResourceManager();
+			fContextLaunchingManager.startup();
+		}
+		return fContextLaunchingManager;
+	}
+	
+	/**
 	 * Returns the currently active workbench window or <code>null</code>
 	 * if none.
 	 * 
@@ -393,7 +415,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (fLaunchConfigurationManager != null) {
 				fLaunchConfigurationManager.shutdown();
 			}
-			
+			if(fContextLaunchingManager != null) {
+				fContextLaunchingManager.shutdown();
+			}
+	
 			ColorManager.getDefault().dispose();
 			
 			if (fgPresentation != null) {
@@ -478,6 +503,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		// and be the first debug event listener
 		fPerspectiveManager = new PerspectiveManager();
 		fPerspectiveManager.startup();		
+		
+		getContextLaunchingResourceManager();
 		
 		// Listen to launches to lazily create "launch processors"
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
