@@ -31,12 +31,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * <p>
  * <p>
  * Clients contributing a detail pane factory are intended to implement this interface.
- * </p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  * @see IDetailPane  
  * @since 3.3
  *

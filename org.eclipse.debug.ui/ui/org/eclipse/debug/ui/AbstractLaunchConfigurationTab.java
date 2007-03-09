@@ -282,18 +282,14 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	
 	/**
 	 * Returns this tab's unique identifier or <code>null</code> if none.
+	 * By default, <code>null</code> is returned. Subclasses should override
+	 * as necessary.
 	 * <p>
 	 * Tab identifiers allow contributed tabs to be ordered relative to one
 	 * another.
 	 * </p>
 	 * @return tab id or <code>null</code>
 	 * @since 3.3
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 */
 	public String getId() {
 		return null;

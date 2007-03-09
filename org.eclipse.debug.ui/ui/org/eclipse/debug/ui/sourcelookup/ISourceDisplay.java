@@ -17,7 +17,7 @@ import org.eclipse.ui.IWorkbenchPage;
  * source whenever a debug context containing a single element is
  * activated (a structured selection with one element). The debug platform
  * displays source by asking an element for its <code>ISourceDisplay</code>
- * adapter or using the element directly if implements <code>ISourceDisplay</code>.
+ * adapter or using the element directly if it implements <code>ISourceDisplay</code>.
  * <p>
  * The debug platform provides a source display adapter for instances
  * of <code>IStackFrame</code>. The standard adapter uses the source locator associated
@@ -29,12 +29,6 @@ import org.eclipse.ui.IWorkbenchPage;
  * </p>
  * @see org.eclipse.core.runtime.IAdaptable
  * @since 3.3
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  */
 public interface ISourceDisplay {
 	
