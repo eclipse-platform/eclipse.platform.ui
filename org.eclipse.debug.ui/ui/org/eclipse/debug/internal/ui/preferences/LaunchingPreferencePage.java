@@ -26,7 +26,11 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -46,6 +50,10 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 	 * @since 3.2
 	 */
 	private List fFieldEditors;
+	
+	private Button fUseContextLaunching;
+	private Button fUseOldLaunching;
+	private Button fCheckParent;
 	
 	/**
 	 * The default constructor
@@ -88,7 +96,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				 true);
 		fFieldEditors.add(edit);
 		
-		//relaunch in debug mode
+		//re-launch in debug mode
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
 				 DebugPreferencesMessages.LaunchingPreferencePage_15, 3, 
 				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_16, MessageDialogWithToggle.ALWAYS}, 
@@ -117,7 +125,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		edit.fillIntoGrid(spacer, 2);
 		fFieldEditors.add(edit);
 		
-		//history list size pref
+		//history list size preference
 		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, spacer);
 		editor.fillIntoGrid(spacer, 2);
 		fFieldEditors.add(editor);
@@ -128,11 +136,40 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		editor.setValidRange(1, historyMax);
 		editor.setEmptyStringAllowed(false);
 		
+		//CONTEXTLAUNCHING
+		createContextLaunchingControls(comp);
+		
 		//init the field editors
 		initFieldEditors();
 		return comp;
 	}
 
+	/**
+	 * Creates the context launching portion of the page, which includes two radio buttons and 
+	 * a nested check box
+	 * @param parent the parent to add this control to
+	 * 
+	 * @since 3.3
+	 * CONTEXTLAUNCHING
+	 */
+	private void createContextLaunchingControls(Composite parent) {
+		Group group = SWTFactory.createGroup(parent, DebugPreferencesMessages.LaunchingPreferencePage_40, 1, 1, GridData.FILL_HORIZONTAL);
+		fUseOldLaunching = SWTFactory.createRadioButton(group, DebugPreferencesMessages.LaunchingPreferencePage_37);
+		fUseContextLaunching = SWTFactory.createRadioButton(group, DebugPreferencesMessages.LaunchingPreferencePage_38);
+		fUseContextLaunching.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				fCheckParent.setEnabled(((Button)e.widget).getSelection());
+			}
+		});
+		Composite space = SWTFactory.createComposite(group, 1, 1, GridData.FILL_HORIZONTAL);
+		GridData gd = (GridData) space.getLayoutData();
+		gd.horizontalIndent = 10;
+		GridLayout layout = (GridLayout) space.getLayout();
+		layout.marginHeight = 0;
+		fCheckParent = SWTFactory.createCheckButton(space, DebugPreferencesMessages.LaunchingPreferencePage_39, null, false, 1);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
@@ -150,6 +187,11 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 			editor.setPage(this);
 			editor.load();
 		}
+		boolean value = getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
+		fUseOldLaunching.setSelection(!value);
+		fUseContextLaunching.setSelection(value);
+		fCheckParent.setSelection(getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT));
+		fCheckParent.setEnabled(value);
 	}
 	
 	/* (non-Javadoc)
@@ -159,6 +201,11 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		for(int i = 0; i < fFieldEditors.size(); i++) {
 			((FieldEditor)fFieldEditors.get(i)).loadDefault();
 		}
+		boolean value = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
+		fUseOldLaunching.setSelection(!value);
+		fUseContextLaunching.setSelection(value);
+		fCheckParent.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT));
+		fCheckParent.setEnabled(value);
 	}
 	
 	/* (non-Javadoc)
@@ -168,6 +215,8 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		for(int i = 0; i < fFieldEditors.size(); i++) {
 			((FieldEditor)fFieldEditors.get(i)).store();
 		}
+		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, fUseContextLaunching.getSelection());
+		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, fCheckParent.getSelection());
 		return super.performOk();
 	}
 }

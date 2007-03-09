@@ -110,6 +110,9 @@
             class="org.eclipse.debug.internal.ui.preferences.LaunchingPreferencePage"
             id="org.eclipse.debug.ui.LaunchingPreferencePage">
          <keywordReference id="org.eclipse.debug.ui.launching"/>
+         <keywordReference
+               id="org.eclipse.debug.ui.contextLaunching">
+         </keywordReference>
       </page>
       <page
             name="%ViewManagementPreferencePage.name"
@@ -153,15 +156,6 @@
             name="%LaunchDelegatesPreferencePage.name">
          <keywordReference
                id="org.eclipse.debug.ui.launchDelegatesKeywords">
-         </keywordReference>
-      </page>
-      <page
-            category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.debug.internal.ui.preferences.ContextLaunchingPreferencePage"
-            id="org.eclipse.debug.ui.contextualLaunchingPage"
-            name="%ContextualLaunchingPrefPage.name">
-         <keywordReference
-               id="org.eclipse.debug.ui.contextLaunching">
          </keywordReference>
       </page>
    </extension>

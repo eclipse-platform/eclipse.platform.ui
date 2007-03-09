@@ -32,10 +32,6 @@ public class DebugPreferencesMessages extends NLS {
 	public static String ConsolePreferencePage_12;
 	public static String ConsolePreferencePage_13;
 
-	public static String ContextLaunchingPreferencePage_0;
-	public static String ContextualLaunchPreferencePage_0;
-	public static String ContextualLaunchPreferencePage_1;
-
 	public static String DebugPreferencePage_1;
 	public static String DebugPreferencePage_2;
 
@@ -77,9 +73,13 @@ public class DebugPreferencesMessages extends NLS {
 
 	public static String LaunchDelegatesPreferencePage_4;
 
+	public static String LaunchingPreferencePage_40;
 	public static String LaunchingPreferencePage_1;
 	public static String LaunchingPreferencePage_2;
 	public static String LaunchingPreferencePage_3;
+	public static String LaunchingPreferencePage_37;
+	public static String LaunchingPreferencePage_38;
+	public static String LaunchingPreferencePage_39;
 	public static String LaunchingPreferencePage_4;
 	public static String LaunchingPreferencePage_5;
 	public static String LaunchingPreferencePage_6;
