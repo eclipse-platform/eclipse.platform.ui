@@ -195,7 +195,11 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		if(fPreferredDelegates == null) {
 			fPreferredDelegates = new HashMap();
 		}
-		fPreferredDelegates.put(modes, delegate);
+		if (delegate == null) {
+			fPreferredDelegates.remove(modes);
+		} else {
+			fPreferredDelegates.put(modes, delegate);
+		}
 	}
 	
 	/**

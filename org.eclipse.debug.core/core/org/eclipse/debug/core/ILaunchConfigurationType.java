@@ -133,46 +133,39 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
 	
 	/**
-	 * Returns the delegates capable of launching in the specified modes.
+	 * Returns the delegates capable of launching in the specified modes, possibly
+	 * an empty set.
 	 * 
 	 * @param modes set of launch modes
 	 * @return the <code>ILaunchDelegate</code>s capable of launching
 	 * 		in the specified modes or an empty collection if none
 	 * @throws CoreException
 	 * @since 3.3
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 */
 	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException;
 	
 	/**
-	 * Returns the preferred launch delegate for this type in the specified mode combination.
+	 * Returns the preferred launch delegate for this type in the specified mode combination
+	 * or <code>null</code> if there is no preferred delegate.
 	 * 
 	 * @param modes the set of modes to support
 	 * @return the preferred delegate or <code>null</code> if none
 	 * @throws CoreException
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException;
 	
 	/**
 	 * Sets the preferred launch delegate for this type in the specified mode combination.
+	 * Specify <code>null</code> as a preferred delegate to remove any preferred delegate
+	 * setting for this launch configuration type.
 	 * 
 	 * @param modes launch mode combination
-	 * @param delegate preferred launch delegate
+	 * @param delegate preferred launch delegate or <code>null</code>
 	 * @throws CoreException
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public void setPreferredDelegate(Set modes, ILaunchDelegate delegate) throws CoreException;
 	
@@ -183,12 +176,6 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @param modes launch mode combination
 	 * @return whether the launch mode combination is supported
 	 * @since 3.3
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 */
 	public boolean supportsModeCombination(Set modes);
 	
@@ -268,8 +255,6 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return a set of sets of all the supported mode combinations supported by this type
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public Set getSupportedModeCombinations();
 	
@@ -317,15 +302,8 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	/**
 	 * Returns the name of the plug-in that contributed this launch configuration type.
 	 * 
-	 * @return the name of contributing plug-in
+	 * @return name of contributing plug-in
 	 * @since 3.3
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 */
 	public String getContributorName();
 
