@@ -85,24 +85,20 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 				LaunchConfigurationTabExtension[] ext = LaunchConfigurationPresentationManager.getDefault().getTabExtensions(fGroupId, fConfig, fMode);
 				//copy contributed into correct position or end if no id or id is not found
 				String id = null;
-				ILaunchConfigurationTab tab = null;
 				for(int i = 0; i < ext.length; i++) {
-					tab = ext[i].getTab();
-					//if(tab != null) {
-						id = ext[i].getRelativeTabId();
-						if(id != null) {
-							int idx = indexofTab(id);
-							if(idx  > -1) {
-								fTabs.add(idx+1, tab);
-							}
-							else {
-								fTabs.add(tab);
-							}
+					id = ext[i].getRelativeTabId();
+					if(id != null) {
+						int idx = indexofTab(id);
+						if(idx  > -1) {
+							fTabs.add(idx+1, ext[i].getTab());
 						}
 						else {
-							fTabs.add(tab);
+							fTabs.add(ext[i].getTab());
 						}
-					//}
+					}
+					else {
+						fTabs.add(ext[i].getTab());
+					}
 				}
 			}
 			catch (CoreException ce) {DebugUIPlugin.log(ce);}
