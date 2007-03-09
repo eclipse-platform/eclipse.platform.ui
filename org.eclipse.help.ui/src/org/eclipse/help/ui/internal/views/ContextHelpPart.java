@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,10 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
+import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContext2;
+import org.eclipse.help.IContext3;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
@@ -21,6 +23,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.ui.internal.ExecuteCommandAction;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -118,6 +121,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		text.setFont("code", codeFont); //$NON-NLS-1$
 		String key = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		text.setImage(key, HelpUIResources.getImage(key));
+		key = IHelpUIConstants.IMAGE_COMMAND_F1TOPIC;
+		text.setImage(key, HelpUIResources.getImage(key));
 		text.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
 				doOpenLink(e.getHref());
@@ -207,7 +212,19 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void doOpenLink(Object href) {
-		parent.showURL((String) href);
+		String sHref = (String)href;
+		if (sHref.startsWith("command://")) { //$NON-NLS-1$
+			doRunCommand(sHref.substring(10));
+		}
+		else {
+			parent.showURL(sHref);
+		}
+	}
+	
+	private void doRunCommand(String serialization) {
+		ExecuteCommandAction action = new ExecuteCommandAction();
+		action.setInitializationString(serialization);
+		action.run();
 	}
 
 	public void handleActivation(Control c, IWorkbenchPart part) {
@@ -429,29 +446,52 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		sbuf.append("<p>"); //$NON-NLS-1$
 		sbuf.append(decodeContextBoldTags(context));
 		sbuf.append("</p>"); //$NON-NLS-1$
+		
+		ICommandLink[] commands = null;
+		if (context instanceof IContext3) {
+			commands = ((IContext3)context).getRelatedCommands();
+		}
+				
+		String category = new String();
+		if (commands != null && commands.length > 0) {
+			for (int i=0;i<commands.length;++i) {
+				if (!UAContentFilter.isFiltered(commands[i], HelpEvaluationContext.getContext())) {
+					if (category != null) {
+						addCategory(sbuf, null);
+					}
+					category = null;
+					sbuf.append("<li style=\"image\" value=\""); //$NON-NLS-1$
+					sbuf.append(IHelpUIConstants.IMAGE_COMMAND_F1TOPIC);
+					sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
+					sbuf.append("<a href=\"command://"); //$NON-NLS-1$
+					sbuf.append(commands[i].getSerialization());
+					sbuf.append("\">"); //$NON-NLS-1$	 		
+					sbuf.append(parent.escapeSpecialChars(commands[i].getLabel()));
+					sbuf.append("</a>"); //$NON-NLS-1$
+					sbuf.append("</li>"); //$NON-NLS-1$
+				}
+			}
+		}
+		
 		IHelpResource[] links = context.getRelatedTopics();
-		IContext2 context2 = null;
 		if (links != null && context instanceof IContext2) {
-			context2 = (IContext2) context;
-			ContextHelpSorter sorter = new ContextHelpSorter(context2);
+			ContextHelpSorter sorter = new ContextHelpSorter((IContext2)context);
 			sorter.sort(null, links);
 		}
 		if (links != null && links.length > 0) {
-			String category = null;
-			if (context2 == null)
-				addCategory(sbuf, null);
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
 				if (!UAContentFilter.isFiltered(link, HelpEvaluationContext.getContext())) {
-					if (context2 != null) {
-						String cat = context2.getCategory(link);
-						if (cat == null && category != null || cat != null
-								&& category == null || cat != null
-								&& category != null && !cat.equals(category)) {
-							addCategory(sbuf, cat);
-						}
-						category = cat;
+					String cat = null;
+					if (context instanceof IContext2) {
+						cat = ((IContext2)context).getCategory(link);
 					}
+					if (cat == null && category != null || cat != null
+							&& category == null || cat != null
+							&& category != null && !cat.equals(category)) {
+						addCategory(sbuf, cat);
+					}
+					category = cat;
 					sbuf.append("<li style=\"image\" value=\""); //$NON-NLS-1$
 					sbuf.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 					sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
@@ -504,6 +544,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		String styledText;
 		if (context instanceof IContext2) {
 			styledText = ((IContext2) context).getStyledText();
+			if (styledText == null) {
+				styledText = context.getText();
+			}
 		} else {
 			styledText = context.getText();
 		}

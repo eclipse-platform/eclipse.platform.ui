@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,27 +84,25 @@ public class ExecuteCommandAction implements ILiveHelpAction {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=130206
 	 */
 	private void forceDialogsOnTop() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
-		Shell windowShell=null;
-		
-		Shell[] shells = display.getShells();
-		for (int i=0; i<shells.length; i++) {
-			Object data = shells[i].getData();
-			if (data!=null && data instanceof IWorkbenchWindow) {
-				windowShell=shells[i];
-				break;
-			}
-		}
-		
-		if (windowShell != null && windowShell != display.getActiveShell()) {
-			windowShell.forceActive();
-			if (Platform.getWS().equals(Platform.WS_WIN32)) {
-				// feature in Windows. Without this code,
-				// the window will only flash in the launch bar.
-				windowShell.setVisible(false);
-				windowShell.setMinimized(true);
-				windowShell.setVisible(true);
-				windowShell.setMinimized(false);
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		Display display = workbench.getDisplay();
+		/*
+		 * If the active shell is not in this display (e.g. help window),
+		 * bring the active workbench window up.
+		 */
+		if (display.getActiveShell() == null) {
+			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+			if (window != null) {
+				Shell windowShell = window.getShell();
+				windowShell.forceActive();
+				if (Platform.getWS().equals(Platform.WS_WIN32)) {
+					// feature in Windows. Without this code,
+					// the window will only flash in the launch bar.
+					windowShell.setVisible(false);
+					windowShell.setMinimized(true);
+					windowShell.setVisible(true);
+					windowShell.setMinimized(false);
+				}
 			}
 		}
 	}

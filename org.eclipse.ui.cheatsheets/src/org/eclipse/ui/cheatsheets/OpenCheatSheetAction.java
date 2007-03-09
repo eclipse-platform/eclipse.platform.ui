@@ -12,11 +12,18 @@ package org.eclipse.ui.cheatsheets;
 
 import java.net.URL;
 
+import org.eclipse.help.ui.internal.views.HelpTray;
+import org.eclipse.help.ui.internal.views.IHelpPartPage;
+import org.eclipse.help.ui.internal.views.ReusableHelpPart;
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
+import org.eclipse.ui.internal.cheatsheets.state.DefaultStateManager;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetHelpPart;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
 import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 
@@ -35,6 +42,7 @@ public final class OpenCheatSheetAction extends Action {
 	private URL url;
 	private String xml;
 	private String basePath;
+	private boolean forceView;
 
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
@@ -43,14 +51,16 @@ public final class OpenCheatSheetAction extends Action {
 	 * extension point.
 	 * 
 	 * @param id the cheat sheet id
+	 * @param forceView to avoid opening in dialogs (e.g. selection dialog itself)
 	 * @exception IllegalArgumentException if <code>id</code>
 	 * is <code>null</code>
 	 */
-	public OpenCheatSheetAction(String id) {
+	public OpenCheatSheetAction(String id, boolean forceView) {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
 		this.id = id;
+		this.forceView = forceView;
 	}
 	
 	/**
@@ -60,16 +70,18 @@ public final class OpenCheatSheetAction extends Action {
 	 * @param id the id to give this cheat sheet
 	 * @param name the name to give this cheat sheet
 	 * @param url URL of the cheat sheet content file
+	 * @param forceView to avoid opening in dialogs (e.g. selection dialog itself)
 	 * @exception IllegalArgumentException if the parameters
 	 * are <code>null</code>
 	 */
-	public OpenCheatSheetAction(String id, String name, URL url) {
+	public OpenCheatSheetAction(String id, String name, URL url, boolean forceView) {
 		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
 		}
 		this.id = id;
 		this.name = name;
 		this.url = url;
+		this.forceView = forceView;
 	}
 	
 	/**
@@ -83,11 +95,12 @@ public final class OpenCheatSheetAction extends Action {
 	 * a composite cheat sheet which has tasks which use path parameters in which 
 	 * case the paths will be relative to baseURL. May be <code>null</code>
 	 * if this is not a composite cheat sheet
+	 * @param forceView to avoid opening in dialogs (e.g. selection dialog itself)
 	 * @exception IllegalArgumentException if the parameters
 	 * are <code>null</code>
 	 * @since 3.3
 	 */
-	public OpenCheatSheetAction(String id, String name, String xml, URL baseURL) {
+	public OpenCheatSheetAction(String id, String name, String xml, URL baseURL, boolean forceView) {
 		if (id == null || name == null || xml == null) {
 			throw new IllegalArgumentException();
 		}
@@ -97,6 +110,7 @@ public final class OpenCheatSheetAction extends Action {
 		if (baseURL !=null) {
 			basePath = baseURL.toExternalForm();
 		}
+		this.forceView = forceView;
 	}
 
 
@@ -108,25 +122,42 @@ public final class OpenCheatSheetAction extends Action {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		CheatSheetView view = ViewUtilities.showCheatSheetView();
-
-		if (view == null) {
-			return;
+		Shell shell = Display.getDefault().getActiveShell();
+		Object data = shell.getData();
+		// are we in a dialog that can show a cheat sheet?
+		if (!forceView && !shell.isFocusControl() && data instanceof TrayDialog) {
+			TrayDialog dialog = (TrayDialog)data;
+			HelpTray tray = (HelpTray)dialog.getTray();
+			if (tray == null) {
+				tray = new HelpTray();
+				dialog.openTray(tray);
+			}
+			ReusableHelpPart helpPart = tray.getHelpPart();
+			IHelpPartPage page = helpPart.createPage(CheatSheetHelpPart.ID, null, null);
+			page.setVerticalSpacing(0);
+			page.setHorizontalMargin(0);
+			CheatSheetElement contentElement = CheatSheetRegistryReader.getInstance().findCheatSheet(id);
+			helpPart.addPart(CheatSheetHelpPart.ID, new CheatSheetHelpPart(helpPart.getForm().getForm().getBody(), helpPart.getForm().getToolkit(), page.getToolBarManager(), contentElement, new DefaultStateManager()));
+			page.addPart(CheatSheetHelpPart.ID, true);
+			helpPart.addPage(page);
+			helpPart.showPage(CheatSheetHelpPart.ID);
 		}
-		// Depending on which constructor was used open the cheat sheet view from a
-		// URL, an XML string or based on the id
-		if(url != null) {
-			view.setInput(id, name, url);
-		} else if (xml != null) {
-			view.setInputFromXml(id, name, xml, basePath);
-		} else {
-			view.setInput(id);
+		else {
+			CheatSheetView view = ViewUtilities.showCheatSheetView();
+			if (view == null) {
+				return;
+			}
+			// Depending on which constructor was used open the cheat sheet view from a
+			// URL, an XML string or based on the id
+			if(url != null) {
+				view.setInput(id, name, url);
+			} else if (xml != null) {
+				view.setInputFromXml(id, name, xml, basePath);
+			} else {
+				view.setInput(id);
+			}
+			IWorkbenchPage page = view.getSite().getWorkbenchWindow().getActivePage();
+			page.bringToTop(view);
 		}
-		IWorkbench workbench = CheatSheetPlugin.getPlugin().getWorkbench();
-		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-		IWorkbenchPage page = window.getActivePage();
-		page.bringToTop(view);
 	}
-	
-
 }

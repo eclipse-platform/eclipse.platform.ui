@@ -11,26 +11,39 @@
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 
+import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContext3;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.CommandLink;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class Context extends UAElement implements IContext {
+public class Context extends UAElement implements IContext3 {
 
 	public static final String NAME = "context"; //$NON-NLS-1$
 	public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	
+	public Context(Element src) {
+		super(src);
+	}
+	
 	public Context(IContext src, String id) {
 		super(NAME);
 		setText(src.getText());
 		setId(id);
+		if (src instanceof IContext3) {
+			ICommandLink[] commands = ((IContext3)src).getRelatedCommands();
+			for (int i=0;i<commands.length;++i) {
+				appendChild(new CommandLink(commands[i]));
+			}
+		}
 		IHelpResource[] topics = src.getRelatedTopics();
 		for (int i=0;i<topics.length;++i) {
 			if (topics[i] instanceof ITopic) {
@@ -44,17 +57,25 @@ public class Context extends UAElement implements IContext {
 			}
 		}
 	}
-	
-	public Context(Element src) {
-		super(src);
-	}
 
-	public IHelpResource[] getRelatedTopics() {
-		return (IHelpResource[])getChildren(IHelpResource.class);
+	public String getCategory(IHelpResource topic) {
+		return null;
 	}
 	
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
+	}
+	
+	public ICommandLink[] getRelatedCommands() {
+		return (ICommandLink[])getChildren(ICommandLink.class);
+	}
+	
+	public IHelpResource[] getRelatedTopics() {
+		return (IHelpResource[])getChildren(IHelpResource.class);
+	}
+
+	public String getStyledText() {
+		return null;
 	}
 	
 	public String getText() {
@@ -74,7 +95,11 @@ public class Context extends UAElement implements IContext {
 		}
 		return new String();
 	}
-		
+	
+	public String getTitle() {
+		return null;
+	}
+
 	public void setId(String id) {
 		setAttribute(ATTRIBUTE_ID, id);
 	}

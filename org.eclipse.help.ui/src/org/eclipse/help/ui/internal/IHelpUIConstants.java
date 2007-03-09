@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public interface IHelpUIConstants {
 			+ "prefPageCustomBrowserPath"; //$NON-NLS-1$
 	
 	public static final String IMAGE_FILE_F1TOPIC = "obj16/topic_small.gif"; //$NON-NLS-1$
+	public static final String IMAGE_COMMAND_F1TOPIC = "obj16/command_small.gif"; //$NON-NLS-1$
 	
 	// Help view images
 	public static final String IMAGE_CONTAINER = "obj16/container_obj.gif"; //$NON-NLS-1$

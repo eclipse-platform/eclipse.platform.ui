@@ -34,7 +34,7 @@ public class OpenCheatSheetHandler extends AbstractHandler {
 			CheatSheetCategoryBasedSelectionAction action = new CheatSheetCategoryBasedSelectionAction();
 			action.run();
 		} else {
-			OpenCheatSheetAction action = new OpenCheatSheetAction(cheatSheetId);
+			OpenCheatSheetAction action = new OpenCheatSheetAction(cheatSheetId, false);
 			action.run();
 		}
 

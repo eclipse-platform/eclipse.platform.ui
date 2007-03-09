@@ -287,7 +287,7 @@ public class CheatSheetMenu extends ContributionItem {
 	 * @param event SelectionEvent - the event send along with the selection callback
 	 */
 	protected void run(CheatSheetElement element, SelectionEvent event) {
-		new OpenCheatSheetAction(element.getID()).run();
+		new OpenCheatSheetAction(element.getID(), false).run();
 	}
 
 	/* (non-Javadoc)

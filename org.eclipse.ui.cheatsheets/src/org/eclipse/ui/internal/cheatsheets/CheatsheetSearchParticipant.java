@@ -121,7 +121,7 @@ public class CheatsheetSearchParticipant extends XMLSearchParticipant {
 	}
 
 	public boolean open(String id) {
-		Action openAction = new OpenCheatSheetAction(id);
+		Action openAction = new OpenCheatSheetAction(id, false);
 		openAction.run();
 		return true;
 	}

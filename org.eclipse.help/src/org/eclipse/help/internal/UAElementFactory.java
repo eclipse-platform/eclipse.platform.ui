@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.help.IAnchor;
+import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContentExtension;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IInclude;
@@ -47,6 +48,7 @@ public class UAElementFactory {
 		{ IInclude.class, Include.class },
 		{ ILink.class, Link.class },
 		{ IToc.class, Toc.class },
+		{ ICommandLink.class, CommandLink.class },
 		{ IIndex.class, Index.class },
 		{ IContentExtension.class, ContentExtension.class },
 	};
@@ -62,6 +64,7 @@ public class UAElementFactory {
 		classByElementName.put(Index.NAME, Index.class);
 		classByElementName.put(IndexEntry.NAME, IndexEntry.class);
 		classByElementName.put(Context.NAME, Context.class);
+		classByElementName.put(CommandLink.NAME, CommandLink.class);
 		classByElementName.put(Link.NAME, Link.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, ContentExtension.class);
