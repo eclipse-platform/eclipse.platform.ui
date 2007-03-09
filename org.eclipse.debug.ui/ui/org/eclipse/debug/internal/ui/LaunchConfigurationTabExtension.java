@@ -77,7 +77,7 @@ public final class LaunchConfigurationTabExtension {
 
 	/**
 	 * Returns the unique id of the <code>ILaunchConfigurationTabGroup</code> that this tab contributes to
-	 * @return the id of the <code>ILaunchConfigurationTabGroup</code> this tab conributes to
+	 * @return the id of the <code>ILaunchConfigurationTabGroup</code> this tab contributes to
 	 */
 	public String getTabGroupId() {
 		return fElement.getAttribute(IConfigurationElementConstants.GROUP);
@@ -98,7 +98,7 @@ public final class LaunchConfigurationTabExtension {
 	
 	/**
 	 * Returns the id of the plugin that contributed this tab extension
-	 * @return the id of the plugin tat contirbuted this tab
+	 * @return the id of the plugin tat contributed this tab
 	 */
 	public String getPluginIdentifier() {
 		return fElement.getContributor().getName();
