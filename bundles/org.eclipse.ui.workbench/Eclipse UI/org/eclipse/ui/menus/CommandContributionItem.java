@@ -25,6 +25,7 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -393,8 +394,18 @@ public final class CommandContributionItem extends ContributionItem {
 				if (mnemonic != null) {
 					// convert label to have mnemonic
 				}
-				if (text != null && !item.getText().equals(text)) {
-					item.setText(text);
+				ExternalActionManager.ICallback callback = ExternalActionManager
+						.getInstance().getCallback();
+				String keyBindingText=null;
+				if ((callback != null) && (command.getId() != null)) {
+					keyBindingText = callback.getAcceleratorText(command.getId());
+				}
+				if (text != null){
+					if (keyBindingText == null) {
+						item.setText(text);
+					} else {
+						item.setText(text + '\t' + keyBindingText);
+					}
 				}
 
 				updateIcons();
