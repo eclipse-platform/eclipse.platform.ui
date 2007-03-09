@@ -26,9 +26,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
  * Utility and supporting methods for source location. Most of these
  * utilities should be migrated to the DebugPlugin and LanuchManager
  * when this facility becomes public API.
- * <p>
- * This class is experimental and temporary.
- * </p>
+ *
  * @see org.eclipse.debug.core.sourcelookup.AbstractSourceLookupDirector
  * @since 3.0
  */

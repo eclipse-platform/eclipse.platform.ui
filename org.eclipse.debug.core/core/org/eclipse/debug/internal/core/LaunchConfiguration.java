@@ -91,12 +91,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * The launch modes set on this configuration.
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This attribute has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
 	 */
 	public static final String ATTR_LAUNCH_MODES = DebugPlugin.getUniqueIdentifier() + ".LAUNCH_MODES"; //$NON-NLS-1$

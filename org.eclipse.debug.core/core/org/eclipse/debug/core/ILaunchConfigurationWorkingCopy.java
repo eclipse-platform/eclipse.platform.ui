@@ -189,29 +189,19 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * </p>
 	 * @param modes launch mode identifiers to set on this configuration
 	 *  or <code>null</code> to clear mode settings
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
+	 *  
 	 * @since 3.3
 	 */
 	public void setModes(Set modes);
 	
 	/**
 	 * Set the preferred launch delegates' id for the given mode set. Passing in <code>null</code> as a delegate
-	 * id will cause the mapping for the specified mode set (if any) to be removed
+	 * id will cause the mapping for the specified mode set (if any) to be removed.
+	 * 
 	 * @param modes the set of modes to set this delegate id for
 	 * @param delegateId the id of the delegate to associate as preferred for the specified mode set
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
+	 *  or <code>null</code> to clear the setting
+	 *  
 	 * @since 3.3
 	 */
 	public void setPreferredLaunchDelegate(Set modes, String delegateId);
@@ -225,12 +215,6 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param modes launch mode identifiers to append to the current set of
 	 * 	launch modes set on this configuration
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
 	 */
 	public void addModes(Set modes);
@@ -244,12 +228,6 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param modes launch mode identifiers to remove from the current set of
 	 * 	launch modes set on this configuration
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
 	 */
 	public void removeModes(Set modes);

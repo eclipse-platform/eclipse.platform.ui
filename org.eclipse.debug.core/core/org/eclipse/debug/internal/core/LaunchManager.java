@@ -470,9 +470,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	
 	/**
 	 * Internal class used to hold information about a preferred delegate
-	 * @since 3.3
 	 * 
-	 * EXPERIMENTAL
+	 * @since 3.3
 	 */
 	class PreferredDelegate {
 		private ILaunchDelegate fDelegate = null;
@@ -597,8 +596,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Initial startup cache of preferred delegate so that the debug preferences are only parsed once
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private Set fPreferredDelegates = null;
 	
@@ -1422,13 +1419,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * instead the method <code>IlaunchDelegate.getDelegate</code> must be used to acquire an executable form of
 	 * the delegate, allowing us to maintain lazy loading of the delegates themselves.
 	 * @return all of the launch delegates
+	 * 
 	 * @since 3.3
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 */
 	public ILaunchDelegate[] getLaunchDelegates() {
 		initializeLaunchDelegates();
@@ -1444,8 +1436,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * type, or an empty array, never <code>null</code>
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public LaunchDelegate[] getLaunchDelegates(String typeid) {
 		initializeLaunchDelegates();
@@ -1465,8 +1455,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * of the launch delegate specified
 	 * @param id the id of the <code>ILaunchDelegate</code> to find 
 	 * @return the <code>ILaunchDelegate</code> or <code>null</code> if not found
+	 * 
 	 * @since 3.3
-	 * EXPERIMENTAL
 	 */
 	public ILaunchDelegate getLaunchDelegate(String id) {
 		if(id != null) {
@@ -1483,12 +1473,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Initializes the listing of delegates available to the launching framework
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
 	 */
 	private synchronized void initializeLaunchDelegates() {
@@ -1520,14 +1504,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * <code>ILaunchConfigurationType</code> to find if they have preferred delegates. Once an <code>ILaunchConfigurationType</code>
 	 * has used this listing to initialize its preferred delegates ti will maintain changes to its preferred delegate, which are 
 	 * then written back to the preference store only when the launch manager shuts down.
-	 * 
 	 * <p>
 	 * This cache is not synchronized with the runtime preferred delegates stored in launch configuration types.
 	 * </p>
-	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private synchronized void initializePreferredDelegates() {
 		if(fPreferredDelegates == null) {
@@ -1578,8 +1558,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return the preferred delegate for the specified type id and mode set, or <code>null</code> if none
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	protected ILaunchDelegate getPreferredDelegate(String typeid, Set modes) {
 		initializePreferredDelegates();
@@ -2238,8 +2216,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Saves the listings of preferred launch delegates from all of the launch configuration types
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private void persistPreferredLaunchDelegates() {
 		Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();

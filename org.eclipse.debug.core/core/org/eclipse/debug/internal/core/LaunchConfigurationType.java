@@ -53,14 +53,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	
 	/**
 	 *  a listing of modes contributed to this launch configuration type
-	 *  @since 3.3
 	 *  
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This field has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
+	 *  @since 3.3
 	 */
 	private Set fModes = null;
 	
@@ -68,21 +62,13 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * A set of sets containing all of the supported mode combinations of this type
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private Set fModeCombinations = null;
 	
 	/**
 	 * the default source path computer for this config type
-	 * @since 3.3
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This field has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
+	 * @since 3.3
 	 */
 	private ISourcePathComputer fSourcePathComputer = null;
 	
@@ -115,8 +101,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * A map of preferred launch delegates for mode combinations
 	 * 
 	 *  @since 3.3
-	 *  
-	 *  EXPERIMENTAL
 	 */
 	private Map fPreferredDelegates = null;
 	
@@ -220,8 +204,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @return the <code>java.util.Map</code> of preferred delegates or an empty <code>java.util.Map</code> if no preferred delegates are specified, never <code>null</code>
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public Map getPreferredDelegates() {
 		return fPreferredDelegates;
@@ -236,8 +218,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * Seems like it would be alot less work...
 	 * </p>
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private synchronized void initializePreferredDelegates() {
 		if(fPreferredDelegates == null) {

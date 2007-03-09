@@ -241,7 +241,7 @@ public class LaunchConfigurationInfo {
 	 *             if the attribute with the given key exists but is not a
 	 *             <code>java.util.Set</code>
 	 * 
-	 * @since 3.3 EXPERIMENTAL
+	 * @since 3.3
 	 */
 	protected Set getSetAttribute(String key, Set defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
