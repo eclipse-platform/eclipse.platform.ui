@@ -209,9 +209,9 @@ public class CommandAction extends Action {
 	 * @see org.eclipse.jface.action.Action#getActionDefinitionId()
 	 */
 	public String getActionDefinitionId() {
-		// This is deliberatly a no-op, since feeding a CommandAction back
-		// into the command/handler system would cause a stack overflow,
-		// which I've been told is bad.
+		if (parameterizedCommand!=null) {
+			return parameterizedCommand.getId();
+		}
 		return null;
 	}
 }

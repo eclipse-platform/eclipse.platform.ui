@@ -35,6 +35,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.handlers.CommandLegacyActionWrapper;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
@@ -466,6 +467,12 @@ public class SubActionBars extends EventManager implements IActionBars {
 			// registered handler
 			WorkbenchPlugin
 					.log("Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
+			return;
+		}
+		
+		if (handler instanceof CommandAction) {
+			// we unfortunately had to allow these out into the wild, but they
+			// still must not feed back into the system
 			return;
 		}
 		

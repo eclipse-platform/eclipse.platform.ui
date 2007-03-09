@@ -98,6 +98,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
@@ -500,7 +501,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	void registerGlobalAction(IAction globalAction) {
 		String commandId = globalAction.getActionDefinitionId();
 
-		if (commandId != null) {
+		if (commandId != null && !(globalAction instanceof CommandAction)) {
 			final Object value = globalActionHandlersByCommandId.get(commandId);
 			if (value instanceof ActionHandler) {
 				// This handler is about to get clobbered, so dispose it.

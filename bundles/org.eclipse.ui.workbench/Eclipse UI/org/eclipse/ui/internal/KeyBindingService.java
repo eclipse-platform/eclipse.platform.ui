@@ -30,6 +30,7 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.EnabledSubmission;
+import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.handlers.CommandLegacyActionWrapper;
 
 /**
@@ -490,6 +491,12 @@ public final class KeyBindingService implements INestableKeyBindingService {
 			// registered handler
 			WorkbenchPlugin
 					.log("Cannot register a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
+			return;
+        }
+        
+        if (action instanceof CommandAction) {
+			// we unfortunately had to allow these out into the wild, but they
+			// still must not feed back into the system
 			return;
         }
 
