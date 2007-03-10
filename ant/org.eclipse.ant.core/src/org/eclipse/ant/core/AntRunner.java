@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,12 +26,13 @@ import org.eclipse.ant.internal.core.AntClassLoader;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.core.InternalCoreAntMessages;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -52,7 +53,7 @@ import org.eclipse.osgi.util.NLS;
  * section in the Platform Plug-in Developer Guide for complete details.</p>
  * </div>
  */
-public class AntRunner implements IPlatformRunnable {
+public class AntRunner implements IApplication {
 
 	private static boolean buildRunning= false;
 	protected String buildFileLocation = IAntCoreConstants.DEFAULT_BUILD_FILENAME;
@@ -66,6 +67,7 @@ public class AntRunner implements IPlatformRunnable {
 	protected String[] propertyFiles;
 	protected URL[] customClasspath;
 	protected String antHome;
+	private IProgressMonitor progressMonitor = null;
 
 	/**
 	 * Sets the build file location on the file system.
@@ -353,6 +355,7 @@ public class AntRunner implements IPlatformRunnable {
 			
 			// add progress monitor
 			if (monitor != null) {
+				progressMonitor = monitor;
 				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] { IProgressMonitor.class }); //$NON-NLS-1$
 				setProgressMonitor.invoke(runner, new Object[] { monitor });
 			}
@@ -482,7 +485,6 @@ public class AntRunner implements IPlatformRunnable {
 	 * @param argArray the command line arguments
 	 * @exception Exception if a problem occurred during the buildfile execution
 	 * @return an exit object (<code>EXIT_OK</code>) indicating normal termination if no exception occurs
-	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(Object argArray) throws Exception {
 		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
@@ -498,9 +500,7 @@ public class AntRunner implements IPlatformRunnable {
 			if (Platform.inDebugMode()) {
 				String[] args = (String[]) argArray;
 				String[] newArgs = new String[args.length + 1];
-				for (int i = 0; i < args.length; i++) {
-					newArgs[i] = args[i];
-				}
+				System.arraycopy(argArray, 0, newArgs, 0, args.length);
 				newArgs[args.length] = "-debug"; //$NON-NLS-1$
 				argArray = newArgs;
 			}
@@ -579,5 +579,32 @@ public class AntRunner implements IPlatformRunnable {
 	 */
 	public static boolean isBuildRunning() {
 		return buildRunning;
+	}
+
+	/**
+	 * Invokes the building of a project object and executes a build using either a given
+	 * target or the default target. This method is called when running Eclipse headless
+	 * and specifying <code>org.eclipse.ant.core.antRunner</code> as the application.
+	 * 
+	 * Sets the current threads context class loader to the <code>AntClassLoader</code>
+	 * for the duration of the build.
+	 *
+	 * @param context the context used to start the application
+	 * @exception Exception if a problem occurred during the buildfile execution
+	 * @return an exit object (<code>EXIT_OK</code>) indicating normal termination if no exception occurs
+	 * @see org.eclipse.equinox.app.IApplication#start(IApplicationContext)
+	 */
+	public Object start(IApplicationContext context) throws Exception {
+		Map contextArguments = context.getArguments();
+		return run(contextArguments.get(IApplicationContext.APPLICATION_ARGS));
+	}
+
+	/*
+	 * @see org.eclipse.equinox.app.IApplication#stop()
+	 */
+	public void stop() {
+		if (progressMonitor != null) {
+			progressMonitor.setCanceled(true);
+		}
 	}
 }
