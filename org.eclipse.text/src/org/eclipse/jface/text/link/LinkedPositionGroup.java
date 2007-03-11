@@ -123,10 +123,13 @@ public class LinkedPositionGroup {
 	 */
 	private void enforceEqualContent(LinkedPosition position) throws BadLocationException {
 		if (fPositions.size() > 0) {
-			String groupContent= ((LinkedPosition) fPositions.get(0)).getContent();
+			LinkedPosition groupPosition= (LinkedPosition) fPositions.get(0);
+			String groupContent= groupPosition.getContent();
 			String positionContent= position.getContent();
 			if (!groupContent.equals(positionContent))
-				throw new BadLocationException();
+				throw new BadLocationException(
+						"First position: '" + groupContent + "' at " + groupPosition.getOffset() + //$NON-NLS-1$ //$NON-NLS-2$
+						", this position: '" + positionContent + "' at " + position.getOffset()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
