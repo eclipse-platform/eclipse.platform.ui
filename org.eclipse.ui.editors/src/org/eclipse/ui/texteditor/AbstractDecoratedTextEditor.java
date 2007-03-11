@@ -1211,10 +1211,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		if (input instanceof IURIEditorInput) {
 			FileDialog dialog= new FileDialog(shell, SWT.SAVE);
-			dialog.setFileName(((FileStoreEditorInput)input).getName());
-			IPath oldPath= URIUtil.toPath(((FileStoreEditorInput)input).getURI());
-			if (oldPath != null)
+			IPath oldPath= URIUtil.toPath(((IURIEditorInput)input).getURI());
+			if (oldPath != null) {
+				dialog.setFileName(oldPath.lastSegment());
 				dialog.setFilterPath(oldPath.toOSString());
+			}
 			
 			String path= dialog.open();
 			if (path == null) {
