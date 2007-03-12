@@ -282,9 +282,13 @@ public final class Team {
 								selected = configElements[j].getAttribute("selected"); //$NON-NLS-1$
 							}
 							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
-							// if this ignore doesn't already exist, add it to the global list
-							pIgnore.put(pattern, Boolean.valueOf(enabled));
-							if (!gIgnore.containsKey(pattern)) {
+							// if this ignore does already exist 
+							if (gIgnore.containsKey(pattern)){
+								// ignore plugins settings
+								pIgnore.put(pattern, gIgnore.get(pattern));
+							} else { 
+								// add ignores
+								pIgnore.put(pattern, Boolean.valueOf(enabled));
 								gIgnore.put(pattern, Boolean.valueOf(enabled));
 							}
 						}
