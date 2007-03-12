@@ -24,9 +24,6 @@ The launch framework has been enhanced to support the following:
   <li>Read-only launch configurations - for example, if a launch configuration 
     is stored in the file system in a read-only state, the launch configuration 
     cannot be edited in the launch dialog</li>
-  <li>A default launch configuration setting for a resource - allows to set and 
-    get a default configuration for a resource, used for simplified launching 
-    support </li>
   <li>Nested launch configuration working copies - allows a working copy to be 
     created from a working copy that saves back to the parent working copy instead 
     of file system</li>
@@ -99,13 +96,6 @@ The launch framework has been enhanced to support the following:
       <li>added method getParent()</li>
     </ul>
   </li>
-  <li>org.eclipse.debug.core.ILaunchManager 
-    <ul>
-      <li>added method setDefaultConfiguration(IResource resource, ILaunchConfiguration 
-        configuration)</li>
-      <li>added method getDefaultConfiguration(IResource resource)</li>
-    </ul>
-  </li>
   <li>org.eclipse.debug.ui.DebugUITools 
     <ul>
       <li>added method getLastLaunch(String id)</li>
@@ -118,7 +108,7 @@ The launch framework has been enhanced to support the following:
       <li>added method getId()</li>
     </ul>
   </li>
-  <li>org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction
+  <li>org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction 
     <ul>
       <li>getHistory()</li>
       <li>getFavorites()</li>
@@ -223,7 +213,7 @@ The launch framework has been enhanced to support the following:
     <code>TextConsole.setBackground(Color)</code> and <code>getBackground()</code></li>
   <li>Added property constant to indicate background color of a console has changed 
     - <code>IConsoleConstants.P_BACKGROUND_COLOR</code>.</li>
-   <li><Added preference constant <code>IDebugUIConstants.PREF_CONSOLE_FONT</code>, which is used to specify
+   <li>Added preference constant <code>IDebugUIConstants.PREF_CONSOLE_FONT</code>, which is used to specify
    what font should be used in the console.</li>
 </ul>
 <h3>Expressions</h3>
