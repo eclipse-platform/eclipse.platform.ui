@@ -292,15 +292,17 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.highlightTokenChanges.label", HIGHLIGHT_TOKEN_CHANGES, 0);	//$NON-NLS-1$
 		//addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
 		
+		Composite radioGroup = new Composite(composite, SWT.NULL);
+		radioGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		editor = new RadioGroupFieldEditor(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, CompareMessages.ComparePreferencePage_0, 1,
 				new String[][] {
 					new String[] { CompareMessages.ComparePreferencePage_1, ICompareUIConstants.PREF_VALUE_PROMPT },
 				    new String[] { CompareMessages.ComparePreferencePage_2, ICompareUIConstants.PREF_VALUE_LOOP },
 				    new String[] { CompareMessages.ComparePreferencePage_3, ICompareUIConstants.PREF_VALUE_NEXT}
 				},
-		composite, true);
+		radioGroup, true);
 		editor.setPreferenceStore(CompareUIPlugin.getDefault().getPreferenceStore());
-		editor.fillIntoGrid(composite, 1);
+		editor.fillIntoGrid(radioGroup, 1);
 		
 		// a spacer
 		Label separator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
