@@ -259,6 +259,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param target the IFindReplaceTarget to use
+	 * @param shell the shell
 	 * @see ResourceAction#ResourceAction(ResourceBundle, String)
 	 * 
 	 * @since 3.3
