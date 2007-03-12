@@ -80,13 +80,13 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 	}
 
 	private void openSimpleCheatSheet() throws Exception {
-		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance.simple", true);
+		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance.simple");
 		action.run();
 		flush();
 	}
 
 	private void openCompositeCheatSheet() throws Exception {
-		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance.composite", true);
+		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance.composite");
 		action.run();
 		flush();
 	}

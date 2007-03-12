@@ -42,7 +42,6 @@ public final class OpenCheatSheetAction extends Action {
 	private URL url;
 	private String xml;
 	private String basePath;
-	private boolean forceView;
 
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
@@ -51,16 +50,14 @@ public final class OpenCheatSheetAction extends Action {
 	 * extension point.
 	 * 
 	 * @param id the cheat sheet id
-	 * @param forceView to avoid opening in dialogs (e.g. selection dialog itself)
 	 * @exception IllegalArgumentException if <code>id</code>
 	 * is <code>null</code>
 	 */
-	public OpenCheatSheetAction(String id, boolean forceView) {
+	public OpenCheatSheetAction(String id) {
 		if (id == null) {
 			throw new IllegalArgumentException();
 		}
 		this.id = id;
-		this.forceView = forceView;
 	}
 	
 	/**
@@ -70,18 +67,16 @@ public final class OpenCheatSheetAction extends Action {
 	 * @param id the id to give this cheat sheet
 	 * @param name the name to give this cheat sheet
 	 * @param url URL of the cheat sheet content file
-	 * @param forceView to avoid opening in dialogs (e.g. selection dialog itself)
 	 * @exception IllegalArgumentException if the parameters
 	 * are <code>null</code>
 	 */
-	public OpenCheatSheetAction(String id, String name, URL url, boolean forceView) {
+	public OpenCheatSheetAction(String id, String name, URL url) {
 		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
 		}
 		this.id = id;
 		this.name = name;
 		this.url = url;
-		this.forceView = forceView;
 	}
 	
 	/**
@@ -95,12 +90,11 @@ public final class OpenCheatSheetAction extends Action {
 	 * a composite cheat sheet which has tasks which use path parameters in which 
 	 * case the paths will be relative to baseURL. May be <code>null</code>
 	 * if this is not a composite cheat sheet
-	 * @param forceView to avoid opening in dialogs (e.g. selection dialog itself)
 	 * @exception IllegalArgumentException if the parameters
 	 * are <code>null</code>
 	 * @since 3.3
 	 */
-	public OpenCheatSheetAction(String id, String name, String xml, URL baseURL, boolean forceView) {
+	public OpenCheatSheetAction(String id, String name, String xml, URL baseURL) {
 		if (id == null || name == null || xml == null) {
 			throw new IllegalArgumentException();
 		}
@@ -110,7 +104,6 @@ public final class OpenCheatSheetAction extends Action {
 		if (baseURL !=null) {
 			basePath = baseURL.toExternalForm();
 		}
-		this.forceView = forceView;
 	}
 
 
@@ -125,7 +118,7 @@ public final class OpenCheatSheetAction extends Action {
 		Shell shell = Display.getDefault().getActiveShell();
 		Object data = shell.getData();
 		// are we in a dialog that can show a cheat sheet?
-		if (!forceView && !shell.isFocusControl() && data instanceof TrayDialog) {
+		if (!shell.isFocusControl() && data instanceof TrayDialog) {
 			TrayDialog dialog = (TrayDialog)data;
 			HelpTray tray = (HelpTray)dialog.getTray();
 			if (tray == null) {

@@ -23,7 +23,7 @@ public class NavigateAction extends Action implements ICheatSheetAction {
 		try {
 			Display.getCurrent().asyncExec( new Runnable() {
 				public void run() {
-					OpenCheatSheetAction csAction = new OpenCheatSheetAction( finalNewSheet, true );
+					OpenCheatSheetAction csAction = new OpenCheatSheetAction( finalNewSheet );
 					csAction.run();
 				}
 			} );

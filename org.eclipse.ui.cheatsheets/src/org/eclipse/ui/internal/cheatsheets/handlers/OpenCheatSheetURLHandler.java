@@ -56,7 +56,7 @@ public class OpenCheatSheetURLHandler extends AbstractHandler {
 		}
 
 		OpenCheatSheetAction action = new OpenCheatSheetAction(cheatSheetId,
-				name, url, false);
+				name, url);
 		action.run();
 
 		return null;

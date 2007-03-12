@@ -539,6 +539,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected void okPressed() {
+		/*
+		 * Prevent the cheat sheet from opening inside this dialog's tray
+		 * because it is about to close.
+		 */
+		getShell().setVisible(false);
+		
 		if (selectFileRadio.getSelection()) {
 			setResultFromFile();
 		} else if (selectRegisteredRadio.getSelection() ){
@@ -560,7 +566,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 					.getTriggerPoint(ICheatSheetResource.TRIGGER_POINT_ID);
 			if (WorkbenchActivityHelper.allowUseOf(triggerPoint,
 					currentSelection)) {
-				new OpenCheatSheetAction(currentSelection.getID(), true).run();
+				new OpenCheatSheetAction(currentSelection.getID()).run();
 			}
 		}
 	}
@@ -580,7 +586,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		try {
 		    File contentFile = new File(selectFileCombo.getText());
 		    url = contentFile.toURL();
-		    new OpenCheatSheetAction(id, id ,url, true).run();
+		    new OpenCheatSheetAction(id, id ,url).run();
 		    opened = true;		
 	    } catch (MalformedURLException e) {
 		    opened = false;
