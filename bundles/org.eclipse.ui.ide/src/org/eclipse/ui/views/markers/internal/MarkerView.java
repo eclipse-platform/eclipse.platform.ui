@@ -159,6 +159,7 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 		 */
 		public boolean shouldRun() {
+			// Do not run if the change came in before there is a viewer
 			return PlatformUI.isWorkbenchRunning();
 		}
 
@@ -222,7 +223,7 @@ public abstract class MarkerView extends TableView {
 				return Status.CANCEL_STATUS;
 			}
 
-			if(monitor.isCanceled())
+			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 
 			getViewer().refresh(true);
@@ -246,13 +247,13 @@ public abstract class MarkerView extends TableView {
 							// one
 							getViewer().expandAll();
 							categoriesToExpand.clear();
-							if(monitor.isCanceled())
+							if (monitor.isCanceled())
 								return Status.CANCEL_STATUS;
 							categoriesToExpand.add(categories[0].getName());
 						} else {
 							Collection newCategories = new HashSet();
 							for (int i = 0; i < categories.length; i++) {
-								if(monitor.isCanceled())
+								if (monitor.isCanceled())
 									return Status.CANCEL_STATUS;
 								MarkerCategory category = categories[i];
 								if (categoriesToExpand.contains(category
@@ -490,9 +491,9 @@ public abstract class MarkerView extends TableView {
 	protected SelectionProviderAction selectAllAction;
 
 	protected SelectionProviderAction propertiesAction;
-	
+
 	protected UndoActionHandler undoAction;
-	
+
 	protected RedoActionHandler redoAction;
 
 	private ISelectionListener focusListener = new ISelectionListener() {
@@ -523,7 +524,6 @@ public abstract class MarkerView extends TableView {
 	 */
 	public MarkerView() {
 		super();
-		adapter = new MarkerAdapter(this);
 		preferenceListener = new IPropertyChangeListener() {
 			/*
 			 * (non-Javadoc)
@@ -588,11 +588,6 @@ public abstract class MarkerView extends TableView {
 			getProgressService().showBusyForFamily(MARKER_UPDATE_FAMILY);
 		}
 		loadFiltersPreferences();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				markerUpdateListener,
-				IResourceChangeEvent.POST_CHANGE
-						| IResourceChangeEvent.PRE_BUILD
-						| IResourceChangeEvent.POST_BUILD);
 
 	}
 
@@ -759,6 +754,13 @@ public abstract class MarkerView extends TableView {
 				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 			}
 		});
+
+		//Hook up to the resource changes after all widget have been created
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(
+				markerUpdateListener,
+				IResourceChangeEvent.POST_CHANGE
+						| IResourceChangeEvent.PRE_BUILD
+						| IResourceChangeEvent.POST_BUILD);
 	}
 
 	/*
@@ -864,10 +866,12 @@ public abstract class MarkerView extends TableView {
 		pasteAction = new ActionPasteMarker(this, getViewer(), getMarkerName());
 		pasteAction.setClipboard(clipboard);
 		pasteAction.setPastableTypes(getMarkerTypes());
-		deleteAction = new ActionRemoveMarker(this, getViewer(), getMarkerName());
+		deleteAction = new ActionRemoveMarker(this, getViewer(),
+				getMarkerName());
 		selectAllAction = new ActionSelectAll(this);
-		propertiesAction = new ActionMarkerProperties(this, getViewer(), getMarkerName());
-		
+		propertiesAction = new ActionMarkerProperties(this, getViewer(),
+				getMarkerName());
+
 		IUndoContext undoContext = getUndoContext();
 		undoAction = new UndoActionHandler(getSite(), undoContext);
 		redoAction = new RedoActionHandler(getSite(), undoContext);
@@ -946,16 +950,17 @@ public abstract class MarkerView extends TableView {
 				selectAllAction);
 		actionBars.setGlobalActionHandler(ActionFactory.PROPERTIES.getId(),
 				propertiesAction);
-		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(), 
+		actionBars.setGlobalActionHandler(ActionFactory.UNDO.getId(),
 				undoAction);
-		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(), 
+		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
 				redoAction);
-		
+
 		copyAction.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
 		pasteAction.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
 		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
 		selectAllAction.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
-		propertiesAction.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
+		propertiesAction
+				.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
 		undoAction.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
 		redoAction.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
 	}
@@ -1602,15 +1607,17 @@ public abstract class MarkerView extends TableView {
 
 		menu.add(new Separator(MENU_SHOW_IN_GROUP));
 		// Don't add in the filters until they are set
-		
-		String showInLabel= IDEWorkbenchMessages.Workbench_showIn;
-		IBindingService bindingService = (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+
+		String showInLabel = IDEWorkbenchMessages.Workbench_showIn;
+		IBindingService bindingService = (IBindingService) PlatformUI
+				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null) {
-			String keyBinding = bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+			String keyBinding = bindingService
+					.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
 			if (keyBinding != null) {
 				showInLabel += '\t' + keyBinding;
 			}
-		}		
+		}
 		showInMenu = new MenuManager(showInLabel);
 		showInMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
 				.create(getViewSite().getWorkbenchWindow()));
@@ -1666,6 +1673,7 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.markers.internal.TableView#createViewerInput()
 	 */
 	Object createViewerInput() {
+		adapter = new MarkerAdapter(this);
 		return adapter;
 	}
 
@@ -1770,20 +1778,20 @@ public abstract class MarkerView extends TableView {
 		updateJob.saveSelection(getViewer().getSelection());
 
 	}
-	
+
 	/**
 	 * Return the string name of the specific type of marker shown in this view.
 	 */
 	protected abstract String getMarkerName();
-	
+
 	/**
-	 * Return the undo context associated with operations performed 
-	 * in this view.  By default, return the workspace undo context.
-	 * Subclasses should override if a more specific undo context should
-	 * be used.
+	 * Return the undo context associated with operations performed in this
+	 * view. By default, return the workspace undo context. Subclasses should
+	 * override if a more specific undo context should be used.
 	 */
 	protected IUndoContext getUndoContext() {
-		return (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		return (IUndoContext) ResourcesPlugin.getWorkspace().getAdapter(
+				IUndoContext.class);
 	}
 
 }

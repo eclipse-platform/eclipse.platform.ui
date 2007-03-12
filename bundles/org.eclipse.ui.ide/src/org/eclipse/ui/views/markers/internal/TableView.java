@@ -190,7 +190,8 @@ public abstract class TableView extends ViewPart {
 	abstract Object createViewerInput();
 
 	/**
-	 * Set the comparator to be the new comparator.
+	 * Set the comparator to be the new comparator. This should only
+	 * be called if the viewer has been created.
 	 * 
 	 * @param comparator
 	 */

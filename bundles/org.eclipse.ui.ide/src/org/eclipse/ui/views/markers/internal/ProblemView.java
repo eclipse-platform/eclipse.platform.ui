@@ -64,9 +64,9 @@ public class ProblemView extends MarkerView {
 	private ActionResolveMarker resolveMarkerAction;
 
 	private IHandlerService handlerService;
-	
+
 	private IHandlerActivation resolveMarkerHandlerActivation;
-	
+
 	private IActivityManagerListener activityManagerListener;
 
 	private IField severityAndMessage = new FieldSeverityAndMessage();
@@ -117,9 +117,12 @@ public class ProblemView extends MarkerView {
 		 */
 		public void run() {
 
-			if (isChecked()) {				
-				Job categoryJob = new Job(MarkerMessages.ProblemView_UpdateCategoryJob) {
-					/* (non-Javadoc)
+			if (isChecked()) {
+				Job categoryJob = new Job(
+						MarkerMessages.ProblemView_UpdateCategoryJob) {
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					protected IStatus run(IProgressMonitor monitor) {
@@ -128,9 +131,10 @@ public class ProblemView extends MarkerView {
 						} catch (InterruptedException e) {
 							return Status.CANCEL_STATUS;
 						}
-						problemView.selectCategoryField(groupingField, problemView
-								.getMarkerAdapter().getCategorySorter());
-						
+						problemView.selectCategoryField(groupingField,
+								problemView.getMarkerAdapter()
+										.getCategorySorter());
+
 						getMarkerAdapter().getCategorySorter().saveState(
 								getDialogSettings());
 						return Status.OK_STATUS;
@@ -138,14 +142,13 @@ public class ProblemView extends MarkerView {
 				};
 				categoryJob.setSystem(true);
 				problemView.preserveSelection();
-				
+
 				IWorkbenchSiteProgressService progressService = getProgressService();
 				if (progressService == null)
 					categoryJob.schedule();
 				else
-					getProgressService().schedule(categoryJob);		
-					
-				
+					getProgressService().schedule(categoryJob);
+
 			}
 
 		}
@@ -226,16 +229,18 @@ public class ProblemView extends MarkerView {
 	 */
 	protected void registerGlobalActions(IActionBars actionBars) {
 		super.registerGlobalActions(actionBars);
-		
+
 		String quickFixId = "org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"; //$NON-NLS-1$
 		resolveMarkerAction.setActionDefinitionId(quickFixId);
-		
-		handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
+
+		handlerService = (IHandlerService) getViewSite().getService(
+				IHandlerService.class);
 		if (handlerService != null) {
-			resolveMarkerHandlerActivation = handlerService.activateHandler(quickFixId, new ActionHandler(resolveMarkerAction));
+			resolveMarkerHandlerActivation = handlerService.activateHandler(
+					quickFixId, new ActionHandler(resolveMarkerAction));
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -465,7 +470,7 @@ public class ProblemView extends MarkerView {
 		getMarkerAdapter().getCategorySorter().setTableSorter(sorter2);
 		getMarkerAdapter().getCategorySorter().saveState(getDialogSettings());
 		updateForNewComparator(sorter2);
-		
+
 	}
 
 	/*
@@ -524,8 +529,9 @@ public class ProblemView extends MarkerView {
 		return null;
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#buildComparator()
 	 */
 	protected ViewerComparator buildComparator() {
@@ -580,16 +586,20 @@ public class ProblemView extends MarkerView {
 
 	}
 
-	
 	/**
 	 * Select the field groupingField.
+	 * 
 	 * @param groupingField
 	 * @param sorter
 	 */
 	void selectCategoryField(IField groupingField, CategoryComparator sorter) {
-		getMarkerAdapter().getCurrentMarkers().clearGroups();
 		sorter.setCategoryField(groupingField);
-		refreshViewer();
+		
+		//Do not refresh if the input has not been set yet
+		if (getMarkerAdapter() != null) {
+			getMarkerAdapter().getCurrentMarkers().clearGroups();
+			refreshViewer();
+		}
 	}
 
 	/*
@@ -664,7 +674,7 @@ public class ProblemView extends MarkerView {
 		}
 
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
