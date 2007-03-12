@@ -1602,7 +1602,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Used in ItemsListContentProvider, separates history and non-history
 	 * items.
 	 */
-	private class ItemsListSeparator {
+	protected class ItemsListSeparator {
 
 		private String name;
 
