@@ -16,6 +16,7 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.AnimatorFactory;
+import org.eclipse.jface.dialogs.ErrorSupportProvider;
 
 /**
  * The Policy class handles settings for behaviour, debug flags and logging
@@ -57,6 +58,8 @@ public class Policy {
 
 	public static boolean TRACE_TOOLBAR = DEFAULT;
 
+	private static ErrorSupportProvider errorSupportProvider;
+
 	/**
 	 * Returns the dummy log to use if none has been set
 	 */
@@ -67,8 +70,6 @@ public class Policy {
 			}
 		};
 	}
-
-
 
 	/**
 	 * Sets the logger used by JFace to log errors.
@@ -81,7 +82,6 @@ public class Policy {
 	public static void setLog(ILogger logger) {
 		log = logger;
 	}
-
 
 	/**
 	 * Returns the logger used by JFace to log errors.
@@ -99,7 +99,6 @@ public class Policy {
 		return log;
 	}
 
-	
 	/**
 	 * Return the default comparator used by JFace to sort strings.
 	 * 
@@ -177,6 +176,24 @@ public class Policy {
 		if (animatorFactory == null)
 			animatorFactory = new AnimatorFactory();
 		return animatorFactory;
+	}
+
+	/**
+	 * Set the error support provider for error dialogs.
+	 * 
+	 * @param provider
+	 */
+	public static void setErrorSupportProvider(ErrorSupportProvider provider) {
+		errorSupportProvider = provider;
+	}
+
+	/**
+	 * Return the ErrorSupportProvider for the receiver.
+	 * 
+	 * @return ErrorSupportProvider or <code>null</code> if this has not been set
+	 */
+	public static ErrorSupportProvider getErrorSupportProvider() {
+		return errorSupportProvider;
 	}
 
 }
