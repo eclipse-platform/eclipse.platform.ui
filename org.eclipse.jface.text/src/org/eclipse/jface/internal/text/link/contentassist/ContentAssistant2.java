@@ -285,6 +285,9 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
 				return;
 
+			if (e.character != 0 && (e.stateMask == SWT.ALT))
+				return;
+
 			int showStyle;
 			int pos= fViewer.getSelectedRange().x;
 			char[] activation= getCompletionProposalAutoActivationCharacters(fViewer, pos);

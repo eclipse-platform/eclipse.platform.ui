@@ -288,6 +288,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			// Only act on typed characters and ignore modifier-only events
 			if (e.character == 0 && (e.keyCode & SWT.KEYCODE_BIT) == 0)
 				return;
+			
+			if (e.character != 0 && (e.stateMask == SWT.ALT))
+				return;
+			
 			// Only act on characters that are trigger candidates. This
 			// avoids computing the model selection on every keystroke
 			if (computeAllAutoActivationTriggers().indexOf(e.character) < 0) {
