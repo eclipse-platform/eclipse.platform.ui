@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,6 +30,8 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -134,6 +137,21 @@ public class ControlDecoration {
 	private int marginWidth = 0;
 
 	/**
+	 * Registered selection listeners.
+	 */
+	private ListenerList selectionListeners = new ListenerList();
+
+	/**
+	 * Registered default selection listeners.
+	 */
+	private ListenerList defaultSelectionListeners = new ListenerList();
+
+	/**
+	 * Registered menu detect listeners.
+	 */
+	private ListenerList menuDetectListeners = new ListenerList();
+
+	/**
 	 * The focus listener
 	 */
 	private FocusListener focusListener;
@@ -157,6 +175,11 @@ public class ControlDecoration {
 	 * The mouse move listener installed for tracking the hover
 	 */
 	private MouseMoveListener mouseMoveListener;
+
+	/**
+	 * The untyped listener installed for notifying external listeners
+	 */
+	private Listener compositeListener;
 
 	/**
 	 * Control that we last installed a move listener on. We only want one at a
@@ -449,6 +472,82 @@ public class ControlDecoration {
 	}
 
 	/**
+	 * Adds the listener to the collection of listeners who will be notified
+	 * when an event of the given type occurs. When the event does occur in the
+	 * decoration, the listener is notified by sending it the
+	 * <code>handleEvent()</code> message. The event type describes the type
+	 * of event of interest.
+	 * <p>
+	 * When listeners are notified, the event data field will contain the
+	 * decoration. The widget field will contain the composite on which the
+	 * decoration is rendered. For <code>SWT.Selection</code> and
+	 * <code>SWT.DefaultSelection</code> events, the x and y fields will
+	 * describe where the event occurred in coordinates relative to the
+	 * composite on which the decoration is rendered, not relative to the
+	 * decoration itself. For the <code>SWT.MenuDetect</code> event, the x and
+	 * y fields are in display relative coordinates.
+	 * 
+	 * @param eventType
+	 *            the type of event to listen for. It should be one of
+	 *            <code>SWT.Selection</code>,
+	 *            <code>SWT.DefaultSelection</code>, or
+	 *            <code>SWT.MenuDetect</code>. All other event types are
+	 *            ignored.
+	 * 
+	 * @param listener
+	 *            the listener which should be notified when the event occurs
+	 * 
+	 * @see org.eclipse.swt.widgets.Listener
+	 * @see #removeListener
+	 */
+	public void addListener(int eventType, Listener listener) {
+		switch (eventType) {
+		case SWT.MenuDetect:
+			menuDetectListeners.add(listener);
+			break;
+		case SWT.Selection:
+			selectionListeners.add(listener);
+			break;
+		case SWT.DefaultSelection:
+			defaultSelectionListeners.add(listener);
+			break;
+		}
+	}
+
+	/**
+	 * Removes the listener from the collection of listeners who will be
+	 * notified when an event of the given type occurs. The event type describes
+	 * the event of interest.
+	 * 
+	 * @param eventType
+	 *            the type of event to listen for. It should be one of
+	 *            <code>SWT.Selection</code>,
+	 *            <code>SWT.DefaultSelection</code>, or
+	 *            <code>SWT.MenuDetect</code>.
+	 * @param listener
+	 *            the listener which should no longer be notified when the event
+	 *            occurs. This message has no effect if the listener was not
+	 *            previously added to the receiver.
+	 * 
+	 * @see org.eclipse.swt.widgets.Listener
+	 * @see #addListener
+	 */
+	public void removeListener(int eventType, Listener listener) {
+		switch (eventType) {
+		case SWT.MenuDetect:
+			menuDetectListeners.remove(listener);
+			break;
+		case SWT.Selection:
+			selectionListeners.remove(listener);
+			break;
+		case SWT.DefaultSelection:
+			defaultSelectionListeners.remove(listener);
+			break;
+		}
+
+	}
+
+	/**
 	 * Dispose this ControlDecoration. Unhook any listeners that have been
 	 * installed on the target control. This method has no effect if the
 	 * receiver is already disposed.
@@ -577,6 +676,30 @@ public class ControlDecoration {
 			}
 		};
 
+		compositeListener = new Listener() {
+			public void handleEvent(Event event) {
+				// Don't forward events if decoration is not showing
+				if (!visible) {
+					return;
+				}
+				// Notify listeners if any are registered.
+				switch (event.type) {
+				case SWT.MouseDown:
+					if (!selectionListeners.isEmpty())
+						notifyListeners(event);
+					break;
+				case SWT.MouseDoubleClick:
+					if (!defaultSelectionListeners.isEmpty())
+						notifyListeners(event);
+					break;
+				case SWT.MenuDetect:
+					if (!menuDetectListeners.isEmpty())
+						notifyListeners(event);
+					break;
+				}
+			}
+		};
+
 		if (composite != null) {
 			installCompositeListeners(composite);
 		} else {
@@ -602,6 +725,12 @@ public class ControlDecoration {
 			c.addPaintListener(paintListener);
 			printAddListener(c, "MOUSETRACK"); //$NON-NLS-1$
 			c.addMouseTrackListener(mouseTrackListener);
+			printAddListener(c, "SWT.MenuDetect"); //$NON-NLS-1$
+			c.addListener(SWT.MenuDetect, compositeListener);
+			printAddListener(c, "SWT.MouseDown"); //$NON-NLS-1$
+			c.addListener(SWT.MouseDown, compositeListener);
+			printAddListener(c, "SWT.MouseDoubleClick"); //$NON-NLS-1$
+			c.addListener(SWT.MouseDoubleClick, compositeListener);
 			c.redraw();
 		}
 	}
@@ -616,6 +745,58 @@ public class ControlDecoration {
 			c.removePaintListener(paintListener);
 			printRemoveListener(c, "MOUSETRACK"); //$NON-NLS-1$
 			c.removeMouseTrackListener(mouseTrackListener);
+			printRemoveListener(c, "SWT.MenuDetect"); //$NON-NLS-1$
+			c.removeListener(SWT.MenuDetect, compositeListener);
+			printRemoveListener(c, "SWT.MouseDown"); //$NON-NLS-1$
+			c.removeListener(SWT.MouseDown, compositeListener);
+			printRemoveListener(c, "SWT.MouseDoubleClick"); //$NON-NLS-1$
+			c.removeListener(SWT.MouseDoubleClick, compositeListener);
+		}
+	}
+
+	private void notifyListeners(Event event) {
+		if (!(event.widget instanceof Control)) {
+			return;
+		}
+		Control mapControl = event.type == SWT.MenuDetect ? null
+				: (Control) event.widget;
+		if (getDecorationRectangle(mapControl).contains(event.x, event.y)) {
+			Event clientEvent = new Event();
+			clientEvent.data = this;
+			clientEvent.display = event.display;
+			clientEvent.stateMask = event.stateMask;
+			clientEvent.time = event.time;
+			clientEvent.widget = event.widget;
+			clientEvent.x = event.x;
+			clientEvent.y = event.y;
+			Object[] listeners;
+			switch (event.type) {
+			case SWT.MenuDetect:
+				clientEvent.type = SWT.MenuDetect;
+				listeners = menuDetectListeners.getListeners();
+				for (int i = 0; i < listeners.length; i++) {
+					((Listener) listeners[i]).handleEvent(clientEvent);
+				}
+				break;
+			case SWT.MouseDoubleClick:
+				if (event.button == 1) {
+					clientEvent.type = SWT.DefaultSelection;
+					listeners = defaultSelectionListeners.getListeners();
+					for (int i = 0; i < listeners.length; i++) {
+						((Listener) listeners[i]).handleEvent(clientEvent);
+					}
+				}
+				break;
+			case SWT.MouseDown:
+				if (event.button == 1) {
+					clientEvent.type = SWT.Selection;
+					listeners = selectionListeners.getListeners();
+					for (int i = 0; i < listeners.length; i++) {
+						((Listener) listeners[i]).handleEvent(clientEvent);
+					}
+				}
+				break;
+			}
 		}
 	}
 
