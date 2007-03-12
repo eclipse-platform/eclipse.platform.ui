@@ -641,8 +641,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    	} else if (delegates.length == 0) {
 	    		monitor.setCanceled(true);
 	    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-	    		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
-	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found, canceling launch and returning", null); //$NON-NLS-1$
+	    		if (handler != null) {
+	    			handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
+	    		}
+	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found - launch canceled", null); //$NON-NLS-1$
 	    		throw new CoreException(status);
 	    	} else {
 	    		ILaunchDelegate del = getPreferredDelegate(modes);
@@ -651,7 +653,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    		}
 	    		if(del == null) {
 	    			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-	    			IStatus status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
+	    			IStatus status = null;
+	    			if (handler != null) {
+	    				status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
+	    			}
 					if(status != null && status.isOK()) {
 						del = getPreferredDelegate(modes);
 						if(del == null) {
@@ -662,13 +667,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 						}
 						else {
 							monitor.setCanceled(true);
-							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
+							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected - launch canceled", null); //$NON-NLS-1$
 				    		throw new CoreException(status);
 						}
 					}
 					else {
 						monitor.setCanceled(true);
-						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
+						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected - launch canceled", null); //$NON-NLS-1$
 			    		throw new CoreException(status);
 					}
 	    		}

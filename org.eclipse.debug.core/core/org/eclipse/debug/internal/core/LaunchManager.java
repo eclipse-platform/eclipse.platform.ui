@@ -2155,7 +2155,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					}
 					if(projs.size() > 0) {
 						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-						handler.handleStatus(deleteAssociatedLaunchConfigs, projs.toArray(new IProject[projs.size()]));
+						if (handler != null) {
+							handler.handleStatus(deleteAssociatedLaunchConfigs, projs.toArray(new IProject[projs.size()]));
+						}
 						projs.clear();
 					}
 				}
