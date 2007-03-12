@@ -202,7 +202,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 *            shell to parent the dialog on
 	 * @param multi
 	 *            indicates whether dialog allows to select more than one
-	 *            position in it's list of items
+	 *            position in its list of items
 	 */
 	public FilteredItemsSelectionDialog(Shell shell, boolean multi) {
 		super(shell);
@@ -310,8 +310,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Restores dialog using persisted settings. In the abstract class it
-	 * restores a status of the details line and the selection history.
+	 * Restores dialog using persisted settings. The default implementation
+	 * restores the status of the details line and the selection history.
 	 * 
 	 * @param settings
 	 *            settings used to restore dialog
@@ -799,7 +799,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract IDialogSettings getDialogSettings();
 
 	/**
-	 * Refreshes the dialog - have to be called in UI thread.
+	 * Refreshes the dialog - has to be called in UI thread.
 	 */
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
@@ -829,20 +829,21 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Notifies the content provider - fires filtering of content provider
-	 * elements. During the filtering a separator between history and workspace
-	 * matches is added. (It is a rather long action - should be called in a
-	 * job.)
+	 * elements. During the filtering, a separator between history and workspace
+	 * matches is added.
+	 * <p>
+	 * This is a long running operation and should be called in a job.
 	 * 
 	 * @param checkDuplicates
 	 *            <code>true</code> if data concerning elements duplication
 	 *            should be computed - it takes much more time than the standard
 	 *            filtering
 	 * @param monitor
-	 *            a progress monitor or <code>null</code> if no monitor's
+	 *            a progress monitor or <code>null</code> if no monitor is
 	 *            available
 	 */
 	public void reloadCache(boolean checkDuplicates,
-			GranualProgressMonitor monitor) {
+			IProgressMonitor monitor) {
 		if (list != null && !list.getTable().isDisposed()
 				&& contentProvider != null) {
 			contentProvider.reloadCache(checkDuplicates, monitor);
@@ -960,8 +961,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Validates the item. When items on the items list are selected or
-	 * deselected, it validates each items in the selection and the dialog
-	 * status depends on it.
+	 * deselected, it validates each item in the selection and the dialog
+	 * status depends on all validations.
 	 * 
 	 * @param item
 	 *            an item to be checked
@@ -1013,17 +1014,17 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract Comparator getItemsComparator();
 
 	/**
-	 * Fills content provider with objects.
+	 * Fills the content provider with matching items.
 	 * 
 	 * @param contentProvider
-	 *            provider to fill items. During adding items it using
-	 *            ItemsFilter to filter items
+	 *            collector to add items to.
+	 *            {@link FilteredItemsSelectionDialog.AbstractContentProvider#add(Object, FilteredItemsSelectionDialog.ItemsFilter)}
+	 *            only adds items that pass the given <code>itemsFilter</code>.
 	 * @param itemsFilter
-	 *            the filter
+	 *            the items filter
 	 * @param progressMonitor
-	 *            it is used for tack searching progress. It is responsibility
-	 *            for refresh of progress. The state of this progress illustrate
-	 *            a state of filtering process .
+	 *            must be used to report search progress. The state of this
+	 *            progress monitor reflects the state of the filtering process.
 	 * @throws CoreException
 	 */
 	protected abstract void fillContentProvider(
@@ -1034,7 +1035,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Removes selected items from history.
 	 * 
 	 * @param items
-	 *            items to be removed, cannot be <code>null</code>
+	 *            items to be removed
 	 */
 	private void removeSelectedItems(List items) {
 		for (Iterator iter = items.iterator(); iter.hasNext();) {
@@ -1065,7 +1066,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Gets history comparator.
+	 * Returns a history comparator.
 	 * 
 	 * @return decorated comparator
 	 */
@@ -1074,7 +1075,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Gets history object of selected elements.
+	 * Returns the history of selected elements.
 	 * 
 	 * @return history of selected elements, or <code>null</code> if it is not
 	 *         set
@@ -1122,8 +1123,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Returns name for then given object.
 	 * 
 	 * @param item
-	 *            the object. Subclassers should pay attention to passed
-	 *            argument. They should either only pass object of a known type
+	 *            an object from the content provider. Subclasses should pay attention to the passed
+	 *            argument. They should either only pass objects of a known type
 	 *            (one used in content provider) or make sure that passed
 	 *            parameter is the expected one (by type checking like
 	 *            <code>instanceof</code> inside the method).
@@ -1153,9 +1154,9 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * <p>
 	 * Standard invocation scenario:
 	 * <ol>
-	 * <li>filtering job (<code>AbstractFilterJob</code> class extending
+	 * <li>filtering job (<code>FilterJob</code> class extending
 	 * <code>Job</code> class)</li>
-	 * <li>cache refresh without checking for duplicates (<code>CacheRefreshJob</code>
+	 * <li>cache refresh without checking for duplicates (<code>RefreshCacheJob</code>
 	 * class extending <code>Job</code> class)</li>
 	 * <li>UI refresh (<code>RefreshJob</code> class extending
 	 * <code>UIJob</code> class)</li>
@@ -1174,17 +1175,14 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * <li> refreshing the UI have to be run in a UIJob</li>
 	 * </ul>
 	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilterJob
 	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.RefreshJob
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.CacheRefreshJob
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.RefreshCacheJob
 	 */
 	private class RefreshJob extends UIJob {
 
 		/**
 		 * Creates a new instance of the class.
-		 * 
-		 * @param associatedRefreshCacheJob
-		 *            cache refreshing job which run before this UI job
 		 */
 		public RefreshJob() {
 			super(FilteredItemsSelectionDialog.this.getParentShell()
@@ -1763,14 +1761,15 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Filters items in indicated set and history. During filtering it refresh
-	 * dialog (progres monitor and elements list).
+	 * Filters items in indicated set and history. During filtering, it refreshes
+	 * the dialog (progress monitor and elements list).
 	 * 
-	 * Depending on the filter decides which searching will be run inside
-	 * <code>filterContent</code>. If last filtering is done (last completed
-	 * filter) is not null and new filter is a sub-filter of the last,
-	 * <code>FilterJob</code> filtering cache. If it is the first filtering or
-	 * new filter isn't a sub-filter of the last one, a full search is ran.
+	 * Depending on the filter, <code>FilterJob</code> decides which kind of search
+	 * will be run inside <code>filterContent</code>. If the last filtering is done (last completed
+	 * filter), is not null, and the new filter is a sub-filter
+	 * ({@link FilteredItemsSelectionDialog.ItemsFilter#isSubFilter(FilteredItemsSelectionDialog.ItemsFilter)})
+	 * of the last, then <code>FilterJob</code> only filters in the cache. If it is the first filtering or
+	 * the new filter isn't a sub-filter of the last one, a full search is run.
 	 */
 	private class FilterJob extends Job {
 
@@ -2089,8 +2088,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Filters elements using SearchPattern for comparison name of items with
-	 * pattern.
+	 * Filters elements using SearchPattern by comparing the names of items with
+	 * the filter pattern.
 	 */
 	protected abstract class ItemsFilter {
 
@@ -2119,18 +2118,18 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Check if given filter is sub-filter of current. Abstract version
-		 * checks if <code>SearchPattern</code> from current filter is a
-		 * sub-pattern of the one from provided filter.
+		 * Check if the given filter is a sub-filter of current filter.
+		 * The default implementation checks if the <code>SearchPattern</code>
+		 * from the current filter is a sub-pattern of the one from the provided filter.
 		 * <p>
 		 * 
-		 * @see org.eclipse.ui.dialogs.SearchPattern#isSubPattern(org.eclipse.ui.dialogs.SearchPattern)
-		 *      <p>
 		 * @param filter
-		 *            the filter to be checked
+		 *            the filter to be checked, or <code>null</code>
 		 * @return <code>true</code> if the given filter is sub-filter of the
 		 *         current, <code>false</code> if the given filter isn't a
 		 *         sub-filter or is <code>null</code>
+		 *         
+		 * @see org.eclipse.ui.dialogs.SearchPattern#isSubPattern(org.eclipse.ui.dialogs.SearchPattern)
 		 */
 		public boolean isSubFilter(ItemsFilter filter) {
 			if (filter != null) {
@@ -2141,17 +2140,17 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		/**
 		 * Checks whether the provided filter is equal to the current filter.
-		 * Abstract version checks if <code>SearchPattern</code> from current
+		 * The default implementation checks if <code>SearchPattern</code> from current
 		 * filter is equal to the one from provided filter.
 		 * <p>
 		 * 
-		 * @see org.eclipse.ui.dialogs.SearchPattern#equalsPattern(org.eclipse.ui.dialogs.SearchPattern)
-		 *      <p>
 		 * @param filter
-		 *            filter to be checked
+		 *            filter to be checked, or <code>null</code>
 		 * @return <code>true</code> if the given filter is equal to current
 		 *         filter, <code>false</code> if given filter isn't equal to
 		 *         current one or if it is <code>null</code>
+		 *         
+		 * @see org.eclipse.ui.dialogs.SearchPattern#equalsPattern(org.eclipse.ui.dialogs.SearchPattern)
 		 */
 		public boolean equalsFilter(ItemsFilter filter) {
 			if (filter != null
@@ -2172,9 +2171,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Gets pattern string.
+		 * Returns the pattern string.
 		 * 
 		 * @return pattern for this filter
+		 * 
+		 * @see SearchPattern#getPattern()
 		 */
 		public String getPattern() {
 			return patternMatcher.getPattern();
@@ -2184,6 +2185,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Returns the rule to apply for matching keys.
 		 * 
 		 * @return match rule
+		 * 
+		 * @see SearchPattern#getMatchRule()
 		 */
 		public int getMatchRule() {
 			return patternMatcher.getMatchRule();
@@ -2193,7 +2196,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Matches text with filter.
 		 * 
 		 * @param text
-		 * @return <code>true</code> if text and filter pattern matches,
+		 * @return <code>true</code> if text matches with filter pattern,
 		 *         <code>false</code> otherwise
 		 */
 		protected boolean matches(String text) {
@@ -2229,8 +2232,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * General method for matching raw name pattern. It always returns
-		 * <code>true</code>.
+		 * General method for matching raw name pattern.
+		 * The default implementation always returns <code>true</code>.
 		 * 
 		 * @param item
 		 *            item to check
@@ -2267,12 +2270,13 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected abstract class AbstractContentProvider {
 		/**
-		 * Adds items to content provider. During this items are filtered by
-		 * filter. It's depend on
-		 * <code>matchesElement(AbstarctListItem item)<code>.
+		 * Adds the item to the content provider iff the filter matches the item.
+		 * Otherwise does nothing.
 		 * 
-		 * @param item
-		 * @param itemsFilter
+		 * @param item the item to add
+		 * @param itemsFilter the filter 
+		 * 
+		 * @see FilteredItemsSelectionDialog.ItemsFilter#matchItem(Object)
 		 */
 		public abstract void add(Object item, ItemsFilter itemsFilter);
 	}
@@ -2678,7 +2682,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            progress monitor
 		 */
 		public void reloadCache(boolean checkDuplicates,
-				GranualProgressMonitor monitor) {
+				IProgressMonitor monitor) {
 
 			reset = false;
 
@@ -2712,7 +2716,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				monitor.done();
 		}
 
-		private void checkDuplicates(GranualProgressMonitor monitor) {
+		private void checkDuplicates(IProgressMonitor monitor) {
 			synchronized (lastFilteredItems) {
 				IProgressMonitor subMonitor = null;
 				int reportEvery = lastFilteredItems.size() / 20;
