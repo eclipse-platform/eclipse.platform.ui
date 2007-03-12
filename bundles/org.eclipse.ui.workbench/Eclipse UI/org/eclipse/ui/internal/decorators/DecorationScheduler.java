@@ -53,6 +53,9 @@ public class DecorationScheduler {
 	// Objects that are awaiting a label update.
 	Set pendingUpdate = new HashSet();
 
+	// Key to lock write access to the pending update set
+	Object pendingKey = new Object();
+
 	Map awaitingDecorationValues = new HashMap();
 
 	DecoratorManager decoratorManager;
@@ -347,7 +350,10 @@ public class DecorationScheduler {
 					IDecorationContext context) {
 				boolean elementIsCached = internalGetResult(element, context) != null;
 				if (elementIsCached) {
-					pendingUpdate.add(element);
+					synchronized (pendingKey) {
+						pendingUpdate.add(element);
+					}
+
 				}
 
 				if (!elementIsCached) {
@@ -485,7 +491,7 @@ public class DecorationScheduler {
 				// If this is the first one check again in case
 				// someone has already cleared it out.
 				if (currentIndex == NEEDS_INIT) {
-					if (pendingUpdate.isEmpty()) {
+					if (hasPendingUpdates()) {
 						// If the removal came in while we were waiting clear it
 						// anyways
 						removedListeners.clear();
@@ -522,7 +528,7 @@ public class DecorationScheduler {
 						resultCache.clear();
 					}
 
-					if (!pendingUpdate.isEmpty()) {
+					if (!hasPendingUpdates()) {
 						decorated();
 					}
 					currentIndex = NEEDS_INIT;// Reset
@@ -540,11 +546,13 @@ public class DecorationScheduler {
 				// clear the list
 				removedListeners.clear();
 				currentIndex = 0;
-				Object[] elements = pendingUpdate
-						.toArray(new Object[pendingUpdate.size()]);
-				pendingUpdate.clear();
-				labelProviderChangedEvent = new LabelProviderChangedEvent(
-						decoratorManager, elements);
+				synchronized (pendingKey) {
+					Object[] elements = pendingUpdate
+							.toArray(new Object[pendingUpdate.size()]);
+					pendingUpdate.clear();
+					labelProviderChangedEvent = new LabelProviderChangedEvent(
+							decoratorManager, elements);
+				}
 				listeners = decoratorManager.getListeners();
 			}
 
@@ -649,7 +657,7 @@ public class DecorationScheduler {
 	 * @return boolean
 	 */
 	public boolean processingUpdates() {
-		return !pendingUpdate.isEmpty() && !awaitingDecoration.isEmpty();
+		return !hasPendingUpdates() && !awaitingDecoration.isEmpty();
 	}
 
 	/**
@@ -659,11 +667,23 @@ public class DecorationScheduler {
 	 */
 	void listenerRemoved(ILabelProviderListener listener) {
 		if (updatesPending()) {// Only keep track of them if there are updates
-								// pending
+			// pending
 			removedListeners.add(listener);
 		}
 		if (!updatesPending()) {
 			removedListeners.remove(listener);
+		}
+
+	}
+
+	/**
+	 * Return whether or not there are any updates pending.
+	 * 
+	 * @return
+	 */
+	boolean hasPendingUpdates() {
+		synchronized (pendingKey) {
+			return pendingUpdate.isEmpty();
 		}
 
 	}
