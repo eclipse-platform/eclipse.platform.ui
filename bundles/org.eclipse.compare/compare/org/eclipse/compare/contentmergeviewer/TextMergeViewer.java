@@ -678,6 +678,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 		}
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
+			if (!checkState())
+				return;
 			IEditorInput input = getDocumentKey();
 			if (input != null && input.equals(element)) {
 				this.fViewer.updateDirtyState(input, getDocumentProvider(), fLeg);
@@ -701,10 +703,22 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			// TODO: This is fine for now but may need to be revisited if a refresh is performed
 			// higher up as well (e.g. perhaps a refresh request that waits until after all parties
 			// have been notified).
-			fViewer.refresh();
+			if (checkState())
+				fViewer.refresh();
+		}
+
+		private boolean checkState() {
+			if (fViewer == null)
+				return false;
+			Control control = fViewer.getControl();
+			if (control == null)
+				return false;
+			return !control.isDisposed();
 		}
 
 		public void elementContentReplaced(Object element) {
+			if (!checkState())
+				return;
 			IEditorInput input = getDocumentKey();
 			if (input != null && input.equals(element)) {
 				this.fViewer.updateDirtyState(input, getDocumentProvider(), fLeg);
