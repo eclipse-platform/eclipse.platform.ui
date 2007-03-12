@@ -34,6 +34,7 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -195,9 +196,13 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 			}
 			catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		}
+		//see if the context is a shared configuration
+		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(fCurrentResource);
+		if(config != null) {
+			return config.getName();
+		}
 		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
 		int csize = configs.size();
-		ILaunchConfiguration config = null;
 		if(csize == 1) {
 			return ((ILaunchConfiguration)configs.get(0)).getName();
 		}
@@ -355,5 +360,29 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void windowOpened(IWorkbenchWindow window) {}
+	public void windowOpened(IWorkbenchWindow window) {
+		IWorkbenchPage page = window.getActivePage();
+		if(page != null) {
+			IWorkbenchPart part = page.getActivePart();
+			if(part != null) {
+				if(part instanceof IEditorPart) {
+					fCurrentResource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
+				}
+				else {
+					ISelection selection = part.getSite().getSelectionProvider().getSelection();
+					if(selection instanceof IStructuredSelection) {
+						IStructuredSelection ss = (IStructuredSelection) selection;
+						if(!ss.isEmpty()) {
+							Object o = ss.getFirstElement();
+							if(o instanceof IAdaptable) {
+								fCurrentResource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+							}
+						}
+					}
+				}
+				computeLabels();
+				notifyListeners();
+			}
+		}
+	}
 }
