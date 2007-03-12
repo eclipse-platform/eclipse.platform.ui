@@ -22,12 +22,14 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -207,6 +209,22 @@ public class Snippet020CustomizedControlTooltips {
 		DefaultToolTip toolTip = new DefaultToolTip(text);
 		toolTip.setText("Hello World\nHello World");
 		toolTip.setBackgroundColor(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
+		
+		Button b = new Button(parent,SWT.PUSH);
+		b.setText("Popup on press");
+		
+		final DefaultToolTip toolTipDelayed = new DefaultToolTip(b,true);
+		toolTipDelayed.setText("Hello World\nHello World");
+		toolTipDelayed.setBackgroundColor(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
+		toolTipDelayed.setHideDelay(2000);
+		
+		b.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				toolTipDelayed.show(new Point(0,0));
+			}
+		});
+		
+		
 	}
 
 	public static void main(String[] args) {

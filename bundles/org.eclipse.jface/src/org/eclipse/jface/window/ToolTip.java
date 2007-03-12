@@ -67,6 +67,17 @@ public abstract class ToolTip {
 	 *            the control on whose action the tooltip is shown
 	 */
 	public ToolTip(Control control) {
+		this(control, false);
+	}
+
+	/**
+	 * @param control
+	 *            the control to which the tooltip is bound
+	 * @param manualActivation
+	 *            <code>true</code> if the activation is done manually using
+	 *            {@link #show(Point)}
+	 */
+	public ToolTip(Control control, boolean manualActivation) {
 		this.control = control;
 		this.control.addDisposeListener(new DisposeListener() {
 
@@ -77,7 +88,10 @@ public abstract class ToolTip {
 		});
 
 		this.listener = new ToolTipOwnerControlListener();
-		activate();
+
+		if (!manualActivation) {
+			activate();
+		}
 	}
 
 	/**
@@ -206,6 +220,20 @@ public abstract class ToolTip {
 		return true;
 	}
 
+	/**
+	 * Start up the tooltip programmatically
+	 * 
+	 * @param location
+	 *            the location relative to the control the tooltip is shown
+	 */
+	public void show(Point location) {
+		Event event = new Event();
+		event.x = location.x;
+		event.y = location.y;
+		event.widget = control;
+		toolTipCreate(event);
+	}
+
 	private Shell toolTipCreate(final Event event) {
 		if (shouldCreateToolTip(event)) {
 			Shell shell = new Shell(control.getShell(), SWT.ON_TOP | SWT.TOOL
@@ -241,24 +269,24 @@ public abstract class ToolTip {
 			Rectangle bounds;
 			Point rightBounds = new Point(tipSize.x + location.x, tipSize.y
 					+ location.y);
-			
+
 			Monitor[] ms = control.getDisplay().getMonitors();
-			
+
 			if (respectMonitorBounds && ms.length > 1) {
 				// By default present in the monitor of the control
 				bounds = control.getMonitor().getBounds();
-				Point p = new Point(location.x,location.y);
-				
+				Point p = new Point(location.x, location.y);
+
 				// Search on which monitor the event occurred
 				Rectangle tmp;
-				for( int i = 0; i < ms.length; i++ ) {
+				for (int i = 0; i < ms.length; i++) {
 					tmp = ms[i].getBounds();
-					if( tmp.contains(p) ) {
+					if (tmp.contains(p)) {
 						bounds = tmp;
 						break;
 					}
 				}
-				
+
 			} else {
 				bounds = control.getDisplay().getBounds();
 			}

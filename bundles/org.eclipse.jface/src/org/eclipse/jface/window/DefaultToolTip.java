@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -45,12 +46,25 @@ public class DefaultToolTip extends ToolTip {
 	private int style = SWT.SHADOW_NONE;
 
 	/**
-	 * @param control
+	 * Create new instance which add TooltipSupport to the widget
+	 * 
+	 * @param control the control on whose action the tooltip is shown
 	 */
 	public DefaultToolTip(Control control) {
 		super(control);
 	}
 
+	/**
+	 * Create new instance which add TooltipSupport to the widget
+	 * 
+	 * @param control the control to which the tooltip is bound
+	 * @param manualActivation <code>true</code> if the activation is done manually using
+	 *            {@link #show(Point)}
+	 */
+	public DefaultToolTip(Control control, boolean manualActivation) {
+		super(control, manualActivation);
+	}
+	
 	/**
 	 * Creates the content are of the the tooltip. By default this creates a
 	 * CLabel to display text. To customize the text Subclasses may override the
