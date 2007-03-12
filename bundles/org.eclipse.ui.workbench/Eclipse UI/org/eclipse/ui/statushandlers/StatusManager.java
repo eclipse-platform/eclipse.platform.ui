@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -82,29 +83,30 @@ import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
  */
 public class StatusManager {
 	/**
-	 * A style indicating that nothing should be done with a problem
+	 * A style indicating that the status should not be acted on. This is used
+	 * by objects such as log listeners that do not want to report a status twice.
 	 */
 	public static final int NONE = 0;
 
 	/**
-	 * A style indicating that handlers should log a problem
+	 * A style indicating that the status should be logged only.
 	 */
 	public static final int LOG = 0x01;
 
 	/**
-	 * A style indicating that handlers should show a problem to an user
+	 * A style indicating that handlers should show a problem to an user without
+	 * blocking the calling method while awaiting user response. This is generally 
+	 * done using a non modal {@link Dialog}.
 	 */
 	public static final int SHOW = 0x02;
 	
 	/**
-	 * A style indicating that the handling should block until is finished
+	 * A style indicating that the handling should block the calling method until the
+	 * user has responded. This is generally done using a modal window such as a 
+	 * {@link Dialog}.
 	 */
 	public static final int BLOCK = 0x04;
 	
-	/**
-	 * A style indicating that the handling should not block until is finished
-	 */
-	public static final int NO_BLOCK = 0x08;
 
 	private static StatusManager MANAGER;
 
