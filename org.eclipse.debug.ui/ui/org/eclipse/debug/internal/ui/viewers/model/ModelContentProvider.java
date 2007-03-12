@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
@@ -162,6 +163,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public synchronized void dispose() {
+		// cancel pending updates
+		synchronized (fUpdatesInProgress) {
+			Iterator iterator = fUpdatesInProgress.iterator();
+			while (iterator.hasNext()) {
+				((IRequest) iterator.next()).cancel();
+			}
+		}
 		fModelListeners.clear();
 		fUpdateListeners.clear();
 		disposeAllModelProxies();

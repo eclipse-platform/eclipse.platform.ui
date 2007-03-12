@@ -20,7 +20,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Prompts the user in the UI (asyncronously), on behalf of a non-UI client,
+ * Prompts the user in the UI (asynchronously), on behalf of a non-UI client,
  * blocking the calling thread until a response is received.
  * <p>
  * This status handler is registered for for the debug UI plug-in,
@@ -36,11 +36,20 @@ public class Prompter implements IStatusHandler {
 	 * @param status client status code for which a status handler must
 	 *  be registered
 	 * @param source object requesting the status to be resolved
-	 * @return result of resolving the givne status
+	 * @return result of resolving the given status
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(final IStatus status, final Object source) throws CoreException {
-		final IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
+		DebugPlugin dp = DebugPlugin.getDefault();
+		// on shutdown the debug plug-in can be null
+		if (dp == null) {
+			throw new CoreException(new Status(IStatus.INFO,
+					IDebugUIConstants.PLUGIN_ID,
+					IStatus.OK,
+					SourceLookupUIMessages.Prompter_0,
+					null));
+		}
+		final IStatusHandler handler = dp.getStatusHandler(status);
 		if (handler == null) {
 			throw new CoreException(new Status(IStatus.ERROR,
 									IDebugUIConstants.PLUGIN_ID,

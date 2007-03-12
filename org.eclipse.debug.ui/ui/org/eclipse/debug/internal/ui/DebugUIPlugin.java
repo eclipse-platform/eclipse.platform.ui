@@ -1088,7 +1088,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
                             public void awake(IJobChangeEvent event) {}
                             public void aboutToRun(IJobChangeEvent event) {}
                             public void done(IJobChangeEvent event) {
-                                DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
+                                DebugPlugin dp = DebugPlugin.getDefault();
+                                if (dp != null) {
+                                	dp.getLaunchManager().removeLaunch(pendingLaunch);
+                                }
                                 removeJobChangeListener(this);
                             }
                         };
