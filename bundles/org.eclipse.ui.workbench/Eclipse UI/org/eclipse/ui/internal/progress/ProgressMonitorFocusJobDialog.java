@@ -51,7 +51,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		super(parentShell == null ? ProgressManagerUtil.getNonModalShell()
 				: parentShell);
 		setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
-				| SWT.MODELESS); 
+				| SWT.RESIZE | SWT.MODELESS);
 		setCancelable(true);
 		enableDetailsButton = true;
 	}
@@ -107,7 +107,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		cancel = createButton(parent, IDialogConstants.CANCEL_ID,
 				IDialogConstants.CANCEL_LABEL, false);
 		cancel.setCursor(arrowCursor);
-		
+
 		createDetailsButton(parent);
 	}
 
@@ -265,7 +265,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					display = Display.getDefault();
 				} else {
 					if (currentShell.isDisposed())// Don't bother if it has
-													// been closed
+						// been closed
 						return;
 					display = currentShell.getDisplay();
 				}
@@ -279,7 +279,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					public void run() {
 						if (alreadyClosed) {
 							return;// Check again as the async may come too
-									// late
+							// late
 						}
 						Shell shell = getShell();
 						if (shell != null && shell.isDisposed())
