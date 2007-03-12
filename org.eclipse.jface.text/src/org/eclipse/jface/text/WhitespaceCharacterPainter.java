@@ -169,6 +169,11 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 					// 'continue' would improve performance but may produce drawing errors
 					// for long runs of space if width of space and dot differ
 					break;
+				case '\u3000' : // ideographic whitespace
+					visibleChar.append(SPACE_SIGN);
+					// 'continue' would improve performance but may produce drawing errors
+					// for long runs of space if width of space and dot differ
+					break;
 				case '\t' :
 					visibleChar.append(TAB_SIGN);
 					break;
