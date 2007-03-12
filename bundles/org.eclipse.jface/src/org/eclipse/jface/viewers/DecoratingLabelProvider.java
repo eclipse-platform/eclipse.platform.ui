@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -20,16 +20,9 @@ import org.eclipse.swt.graphics.Image;
  * A decorating label provider is a label provider which combines a nested label
  * provider and an optional decorator. The decorator decorates the label text,
  * image, font and colors provided by the nested label provider.
- * 
- * <p><strong>NOTE: During 3.3 M5, this class was changed in a way that broke
- * API binary compatibility. This will be fixed during the 3.3 M6 development
- * cycle. For details, see bug 171612.</strong></p> 
  */
-public class DecoratingLabelProvider extends CellLabelProvider implements
-		ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider,
-		ITreePathLabelProvider {
-
-	private ILabelProvider provider;
+public class DecoratingLabelProvider extends ViewerLabelProvider implements
+		IViewerLabelProvider, ITreePathLabelProvider {
 
 	private ILabelDecorator decorator;
 
@@ -50,8 +43,8 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 */
 	public DecoratingLabelProvider(ILabelProvider provider,
 			ILabelDecorator decorator) {
+		super(provider);
 		Assert.isNotNull(provider);
-		this.provider = provider;
 		this.decorator = decorator;
 	}
 
@@ -65,7 +58,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 */
 	public void addListener(ILabelProviderListener listener) {
 		super.addListener(listener);
-		provider.addListener(listener);
+		getLabelProvider().addListener(listener);
 		if (decorator != null) {
 			decorator.addListener(listener);
 		}
@@ -78,7 +71,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 * provider and the label decorator.
 	 */
 	public void dispose() {
-		provider.dispose();
+		getLabelProvider().dispose();
 		if (decorator != null) {
 			decorator.dispose();
 		}
@@ -92,7 +85,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 * <code>decorateImage</code> method.
 	 */
 	public Image getImage(Object element) {
-		Image image = provider.getImage(element);
+		Image image = getLabelProvider().getImage(element);
 		if (decorator != null) {
 			if (decorator instanceof LabelDecorator) {
 				LabelDecorator ld2 = (LabelDecorator) decorator;
@@ -121,15 +114,6 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	}
 
 	/**
-	 * Returns the nested label provider.
-	 * 
-	 * @return the nested label provider
-	 */
-	public ILabelProvider getLabelProvider() {
-		return provider;
-	}
-
-	/**
 	 * The <code>DecoratingLabelProvider</code> implementation of this
 	 * <code>ILabelProvider</code> method returns the text label provided by
 	 * the nested label provider's <code>getText</code> method, decorated with
@@ -137,7 +121,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 * <code>decorateText</code> method.
 	 */
 	public String getText(Object element) {
-		String text = provider.getText(element);
+		String text = getLabelProvider().getText(element);
 		if (decorator != null) {
 			if (decorator instanceof LabelDecorator) {
 				LabelDecorator ld2 = (LabelDecorator) decorator;
@@ -164,7 +148,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 * returns <code>true</code>.
 	 */
 	public boolean isLabelProperty(Object element, String property) {
-		if (provider.isLabelProperty(element, property)) {
+		if (getLabelProvider().isLabelProperty(element, property)) {
 			return true;
 		}
 		if (decorator != null && decorator.isLabelProperty(element, property)) {
@@ -183,7 +167,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 */
 	public void removeListener(ILabelProviderListener listener) {
 		super.removeListener(listener);
-		provider.removeListener(listener);
+		getLabelProvider().removeListener(listener);
 		if (decorator != null) {
 			decorator.removeListener(listener);
 		}
@@ -272,56 +256,15 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 
 		if (decorator instanceof IColorDecorator) {
 			IColorDecorator colorDecorator = (IColorDecorator) decorator;
-			Color color = colorDecorator.decorateBackground(element);
-			if (color != null)
-				settings.setBackground(color);
-			color = colorDecorator.decorateForeground(element);
-			if (color != null)
-				settings.setForeground(color);
+			settings.setBackground(colorDecorator.decorateBackground(element));
+			settings.setForeground(colorDecorator.decorateForeground(element));
 		}
 
 		if (decorator instanceof IFontDecorator) {
-			Font font = ((IFontDecorator) decorator).decorateFont(element);
-			if (font != null)
-				settings.setFont(font);
+			settings
+					.setFont(((IFontDecorator) decorator).decorateFont(element));
 		}
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	public Color getBackground(Object element) {
-		if (provider instanceof IColorProvider) {
-			return ((IColorProvider) provider).getBackground(element);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-	 */
-	public Font getFont(Object element) {
-		if (provider instanceof IFontProvider) {
-			return ((IFontProvider) provider).getFont(element);
-		}
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
-	public Color getForeground(Object element) {
-		if (provider instanceof IColorProvider) {
-			return ((IColorProvider) provider).getForeground(element);
-		}
-		return null;
 	}
 
 	/**
@@ -347,14 +290,14 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 	 * @since 3.2
 	 */
 	public void setDecorationContext(IDecorationContext decorationContext) {
-		org.eclipse.core.runtime.Assert.isNotNull(decorationContext);
+		Assert.isNotNull(decorationContext);
 		this.decorationContext = decorationContext;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
+	 * @see org.eclipse.jface.viewers.TreeViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
 	 *      org.eclipse.jface.viewers.TreePath)
 	 */
 	public void updateLabel(ViewerLabel settings, TreePath elementPath) {
@@ -381,8 +324,8 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 		settings.setHasPendingDecorations(!decorationReady);
 		// update icon and label
 
-		if (provider instanceof ITreePathLabelProvider) {
-			ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
+		if (getLabelProvider() instanceof ITreePathLabelProvider) {
+			ITreePathLabelProvider pprov = (ITreePathLabelProvider) getLabelProvider();
 			if (decorationReady || oldText == null
 					|| settings.getText().length() == 0) {
 				pprov.updateLabel(settings, elementPath);
@@ -455,31 +398,11 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 			}
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.ViewerCell)
 	 */
-	public void update(ViewerCell cell) {
-
-		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
-
-		// Set up the initial settings from the label provider
-		label.setBackground(getBackground(cell.getElement()));
-		label.setForeground(getForeground(cell.getElement()));
-		label.setFont(getFont(cell.getElement()));
-
+	public void updateLabel(ViewerLabel label, ViewerCell cell) {
 		updateLabel(label, cell.getElement());
-
-		cell.setBackground(label.getBackground());
-		cell.setForeground(label.getForeground());
-		cell.setFont(label.getFont());
-
-		if (label.hasNewText())
-			cell.setText(label.getText());
-
-		if (label.hasNewImage())
-			cell.setImage(label.getImage());
 	}
 }
