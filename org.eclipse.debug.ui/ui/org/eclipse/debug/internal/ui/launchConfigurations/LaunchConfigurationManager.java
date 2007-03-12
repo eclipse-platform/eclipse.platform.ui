@@ -151,6 +151,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
 		}
+		
+		//initialize the launch histories
+		loadLaunchHistories();
 	}
 	
 	/**
@@ -373,12 +376,14 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		Element historyRootElement = doc.createElement(IConfigurationElementConstants.LAUNCH_HISTORY); 
 		doc.appendChild(historyRootElement);
 		
-		Iterator histories = fLaunchHistories.values().iterator();
-		LaunchHistory history = null;
-		while (histories.hasNext()) {
-			history = (LaunchHistory)histories.next();
-			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
-			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
+		if(fLaunchHistories != null) {
+			Iterator histories = fLaunchHistories.values().iterator();
+			LaunchHistory history = null;
+			while (histories.hasNext()) {
+				history = (LaunchHistory)histories.next();
+				createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
+				createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
+			}
 		}
 		
 		return DebugUIPlugin.serializeDocument(doc);
@@ -473,21 +478,23 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		// For each child of the root node, construct a launch config handle and add it to
 		// the appropriate history, or set the most recent launch
-		Collection l = fLaunchHistories.values();
-		LaunchHistory[] histories = (LaunchHistory[])l.toArray(new LaunchHistory[l.size()]);
-		NodeList list = rootHistoryElement.getChildNodes();
-		int length = list.getLength();
-		Node node = null;
-		Element entry = null;
-		for (int i = 0; i < length; ++i) {
-			node = list.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				entry = (Element) node;
-				if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
-					createHistoryElement(entry, histories, false);
-				} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
-					createHistoryElement(entry, histories, true);
+		if(fLaunchHistories != null) {
+			Collection l = fLaunchHistories.values();
+			LaunchHistory[] histories = (LaunchHistory[])l.toArray(new LaunchHistory[l.size()]);
+			NodeList list = rootHistoryElement.getChildNodes();
+			int length = list.getLength();
+			Node node = null;
+			Element entry = null;
+			for (int i = 0; i < length; ++i) {
+				node = list.item(i);
+				short type = node.getNodeType();
+				if (type == Node.ELEMENT_NODE) {
+					entry = (Element) node;
+					if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
+						createHistoryElement(entry, histories, false);
+					} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
+						createHistoryElement(entry, histories, true);
+					}
 				}
 			}
 		}
@@ -893,9 +900,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @return the launch history with the given group id, or <code>null</code>
 	 */
 	public LaunchHistory getLaunchHistory(String id) {
-		if (fLaunchHistories == null) {
-			loadLaunchHistories();
-		}
+		loadLaunchHistories();
 		return (LaunchHistory)fLaunchHistories.get(id);
 	}	
 	
