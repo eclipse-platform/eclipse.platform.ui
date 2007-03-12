@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -72,7 +73,8 @@ public class Snippet015CustomTooltipsForTree {
 	    TreeViewer v = new TreeViewer(shell,SWT.FULL_SELECTION);
 	    v.getTree().setLinesVisible(true);
 	    v.getTree().setHeaderVisible(true);
-	    v.activateCustomTooltips();
+	    ColumnViewerToolTipSupport.enableFor(v);
+	    
 	    v.setContentProvider(new MyContentProvider());
 	    
 	    CellLabelProvider labelProvider = new CellLabelProvider() {

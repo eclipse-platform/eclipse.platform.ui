@@ -39,8 +39,6 @@ import org.eclipse.swt.widgets.Widget;
  */
 public abstract class ColumnViewer extends StructuredViewer {
 
-	private ToolTipSupport tooltipSupport;
-
 	/**
 	 * The cell is a cached viewer cell used for refreshing.
 	 */
@@ -240,26 +238,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 		ViewerColumn column = new ViewerColumn(this,columnOwner) {};
 		column.setLabelProvider(labelProvider, false);
 		return column;
-	}
-
-	/**
-	 * Activate the support for custom tooltips.
-	 */
-	public void activateCustomTooltips() {
-		if (tooltipSupport == null) {
-			tooltipSupport = new ToolTipSupport(this);
-		} else {
-			tooltipSupport.activate();
-		}
-	}
-
-	/**
-	 * Deactivate the support for custom tooltips.
-	 */
-	public void deactivateCustomTooltips() {
-		if (tooltipSupport != null) {
-			tooltipSupport.deactivate();
-		}
 	}
 
 	/**

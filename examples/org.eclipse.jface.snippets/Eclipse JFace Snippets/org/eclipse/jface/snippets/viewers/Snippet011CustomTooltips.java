@@ -13,6 +13,7 @@
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.viewers.CellLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -59,9 +60,9 @@ public class Snippet011CustomTooltips {
 		TableViewer v = new TableViewer(shell, SWT.FULL_SELECTION);
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
-		v.activateCustomTooltips();
 		v.setContentProvider(new MyContentProvider());
-
+		ColumnViewerToolTipSupport.enableFor(v);
+		
 		CellLabelProvider labelProvider = new CellLabelProvider() {
 
 			public String getToolTipText(Object element) {

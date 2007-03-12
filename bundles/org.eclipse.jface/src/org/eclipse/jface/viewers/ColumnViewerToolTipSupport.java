@@ -17,11 +17,10 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * The TooltipSupport is the class that provides tooltips for ColumnViewers.
+ * The ColumnViewerTooltipSupport is the class that provides tooltips for ColumnViewers.
  * 
  * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
  *        added as part of a work in progress. This API may change at any given
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.Event;
  *        Platform/UI team.
  * 
  */
-class ToolTipSupport extends DefaultToolTip {
+public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	private ColumnViewer viewer;
 
 	private static final String LABEL_PROVIDER_KEY = Policy.JFACE
@@ -41,12 +40,32 @@ class ToolTipSupport extends DefaultToolTip {
 
 	private static final int DEFAULT_SHIFT_Y = 0;
 
-	ToolTipSupport(ColumnViewer viewer) {
+	/**
+	 * Enable ToolTip support for the viewer by creating an instance from this
+	 * class. To get all necessary informations this support class consults the
+	 * {@link CellLabelProvider}.
+	 * 
+	 * @param viewer
+	 *            the viewer the support is attached to
+	 */
+	protected ColumnViewerToolTipSupport(ColumnViewer viewer) {
 		super(viewer.getControl());
 		this.viewer = viewer;
 	}
 
-	protected boolean shouldCreateToolTip(Event event) {
+	/**
+	 * Enable ToolTip support for the viewer by creating an instance from this
+	 * class. To get all necessary informations this support class consults the
+	 * {@link CellLabelProvider}.
+	 * 
+	 * @param viewer
+	 *            the viewer the support is attached to
+	 */
+	public static void enableFor(ColumnViewer viewer) {
+		new ColumnViewerToolTipSupport(viewer);
+	}
+
+	protected final boolean shouldCreateToolTip(Event event) {
 		boolean rv = false;
 		ViewerRow row = viewer.getViewerRow(new Point(event.x, event.y));
 
@@ -85,6 +104,8 @@ class ToolTipSupport extends DefaultToolTip {
 				setData(LABEL_PROVIDER_KEY, labelProvider);
 				setData(ELEMENT_KEY, element);
 				rv = true;
+
+				updateData();
 			}
 		}
 
@@ -101,12 +122,6 @@ class ToolTipSupport extends DefaultToolTip {
 		setBackgroundColor(labelProvider.getToolTipBackgroundColor(element));
 		setFont(labelProvider.getToolTipFont(element));
 		setImage(labelProvider.getToolTipImage(element));
-	}
-
-
-	protected Composite createToolTipContentArea(Event event, Composite parent) {
-		updateData();
-		return super.createToolTipContentArea(event, parent);
 	}
 
 	protected void afterHideToolTip(Event event) {
