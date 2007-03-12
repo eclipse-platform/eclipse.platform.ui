@@ -43,7 +43,10 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
@@ -96,6 +99,8 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	private Section scopeSection;
 
 	private Button goButton;
+
+	private Button shellDefaultButton;
 
 	private Hyperlink scopeSetLink;
 
@@ -234,15 +239,34 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			}
 		});
 		searchWordCombo.addKeyListener(new KeyAdapter() {
-
-			public void keyReleased(KeyEvent e) {
+			public void keyPressed(KeyEvent e) {
 				if (e.character == '\r') {
 					if (goButton.isEnabled())
 						doSearch(searchWordCombo.getText());
-					e.doit = false;
 				}
 			}
 		});
+		searchWordCombo.getControl().addListener(SWT.FocusIn, new Listener() {
+			public void handleEvent(Event event) {
+				shellDefaultButton = null;
+				Shell shell = searchWordCombo.getControl().getShell();
+				Button button = shell.getDefaultButton();
+				if (button != null) {
+					shellDefaultButton = button;
+					shell.setDefaultButton(goButton);
+				}
+			}
+		});
+		searchWordCombo.getControl().addListener(SWT.FocusOut, new Listener() {
+			public void handleEvent(Event event) {
+				if (shellDefaultButton != null) {
+					Shell shell = searchWordCombo.getControl().getShell();
+					shell.setDefaultButton(shellDefaultButton);
+					shellDefaultButton = null;
+				}
+			}
+		});
+		
 		scopeSection = toolkit.createSection(container, Section.TWISTIE | Section.COMPACT
 				| Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		scopeSection.setText(Messages.limit_to);
