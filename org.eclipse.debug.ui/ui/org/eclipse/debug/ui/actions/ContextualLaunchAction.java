@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -178,7 +177,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-	
+
     /**
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
@@ -186,7 +185,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	protected void fillMenu(Menu menu) throws CoreException {
 		IEvaluationContext context = createContext();
 		int accelerator = 1;
-		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+		IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
 		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(resource);
         if(config != null && config.exists() && config.supportsMode(fMode)) {
         	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
@@ -259,7 +258,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	private IEvaluationContext createContext() {
 		// create a default evaluation context with default variable of the user selection
 		List selection = null;
-		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
+		IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
 		if(resource != null) {
 			selection = new ArrayList();
 			selection.add(resource);

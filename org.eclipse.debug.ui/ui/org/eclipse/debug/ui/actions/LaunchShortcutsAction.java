@@ -32,7 +32,6 @@ import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
@@ -154,16 +153,6 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	private void fillMenu() {
 		IEvaluationContext context = createContext();
 		int accelerator = 1;
-		try {
-			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getResourceContext());
-	        if(config != null && config.exists() && config.supportsMode(getMode())) {
-	        	IAction action = new LaunchConfigurationAction(config, getMode(), config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-	            ActionContributionItem item = new ActionContributionItem(action);
-	            item.fill(fCreatedMenu, -1);
-	            new MenuItem(fCreatedMenu, SWT.SEPARATOR);
-			}
-		}
-		catch(CoreException ce) {DebugUIPlugin.log(ce);}
 		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
@@ -175,6 +164,20 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 				}
 			} catch (CoreException e) {/*not supported*/}
 		}
+		//first add the launch config if it is one
+		try {
+			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getResourceContext());
+	        if(config != null && config.exists() && config.supportsMode(getMode())) {
+	        	IAction action = new LaunchConfigurationAction(config, getMode(), config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+	            ActionContributionItem item = new ActionContributionItem(action);
+	            item.fill(fCreatedMenu, -1);
+	            if(!filteredShortCuts.isEmpty()) {
+	    			new MenuItem(fCreatedMenu, SWT.SEPARATOR);
+	    		}
+			}
+		}
+		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		//second add the launch shortcuts if any
 		iter = filteredShortCuts.iterator();
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
@@ -258,7 +261,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @since 3.3
 	 */
 	private IResource getResourceContext() {
-		return SelectedResourceManager.getDefault().getSelectedResource();
+		return DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
 	}
 	
 	/**
