@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -29,11 +30,9 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -133,6 +132,11 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private List fFieldEditors;
 	
 	/**
+	 * Boolean editor for debug core plug-in preference
+	 */
+	private Button fDeleteConfigs;
+	
+	/**
 	 * The table for the launch configuration types
 	 */
 	private Table fTable;
@@ -169,12 +173,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		fFieldEditors.add(edit);
 		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_3, SWT.NONE, spacer);
 		fFieldEditors.add(edit);
-		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_2, 3,  
-				 new String[][] {{DebugPreferencesMessages.LaunchingPreferencePage_3, MessageDialogWithToggle.ALWAYS}, 
-				 {DebugPreferencesMessages.LaunchingPreferencePage_4, MessageDialogWithToggle.NEVER}}, 
-				 comp,
-				 true);
-		fFieldEditors.add(edit);
+		fDeleteConfigs = SWTFactory.createCheckButton(comp, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_2, null, false, 3);
 		
 		//add table options
 		createTypeFiltering(group);
@@ -314,6 +313,8 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			editor.setPreferenceStore(getPreferenceStore());
 			editor.load();
 		}
+		fDeleteConfigs.setSelection(DebugPlugin.getDefault().getPluginPreferences().getBoolean(
+				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE));
 		//restore the tables' checked state
 		String[] types = getPreferenceStore().getString(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST).split("\\,"); //$NON-NLS-1$
 		TableItem[] items = fTable.getItems();
@@ -351,6 +352,8 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		for(int i = 0; i < fFieldEditors.size(); i++) {
 			((FieldEditor)fFieldEditors.get(i)).store();
 		}
+		DebugPlugin.getDefault().getPluginPreferences().setValue(
+				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection());
 		//save table
 		String types = ""; //$NON-NLS-1$
 		TableItem[] items = fTable.getItems();

@@ -1322,11 +1322,6 @@
             id="org.eclipse.debug.ui.statusHandler.saveScopedResources"
             plugin="org.eclipse.debug.core"/>
       <statusHandler
-            class="org.eclipse.debug.internal.ui.launchConfigurations.DeleteLaunchConfigurationStatusHandler"
-            code="225"
-            id="org.eclipse.debug.ui.deleteAssociatedLaunchConfigs"
-            plugin="org.eclipse.debug.core"/>
-      <statusHandler
             class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchDelegateNotAvailableHandler"
             code="226"
             id="org.eclipse.debug.ui.statusHandler.launchDelegateNotAvailable"

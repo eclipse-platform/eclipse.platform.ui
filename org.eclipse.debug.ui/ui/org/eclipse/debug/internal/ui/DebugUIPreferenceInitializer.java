@@ -133,6 +133,5 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, true);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS, true);
 		prefs.setDefault(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, false);
-		prefs.setDefault(IInternalDebugUIConstants.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, MessageDialogWithToggle.ALWAYS);
 	}
 }

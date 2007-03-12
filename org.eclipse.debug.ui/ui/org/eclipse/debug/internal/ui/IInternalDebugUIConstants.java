@@ -157,14 +157,7 @@ public interface IInternalDebugUIConstants {
      * @since 3.2
      */
     public static final String PREF_FILTER_LAUNCH_DELETED = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_LAUNCH_DELETED"; //$NON-NLS-1$
-    
-    /**
-     * Preference for prompting if launch configurations should be deleted when a project they are linked to is deleted
-     * @see LaunchManager#preDelete(IProject)
-     * @since 3.2
-     */
-    public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE =IDebugUIConstants.PLUGIN_ID +".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE";  //$NON-NLS-1$
-    
+        
     /**
      * Preference for enabling/disabling filtering based on selected items from the launch configuration type table
      * @since 3.2

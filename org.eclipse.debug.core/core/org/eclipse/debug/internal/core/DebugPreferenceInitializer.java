@@ -28,6 +28,7 @@ public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 		Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
 		// Step filter preferences
 		prefs.setDefault(StepFilterManager.PREF_USE_STEP_FILTERS, false);
+		prefs.setDefault(LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true);
 	}
 
 }

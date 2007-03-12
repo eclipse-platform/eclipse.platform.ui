@@ -84,7 +84,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -113,6 +112,13 @@ import com.ibm.icu.text.MessageFormat;
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
 	protected static final String PREF_PREFERRED_DELEGATES = DebugPlugin.getUniqueIdentifier() + ".PREFERRED_DELEGATES"; //$NON-NLS-1$
+	
+	/**
+	 * Boolean preference on whether to delete associated configurations when a project is deleted.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = DebugPlugin.getUniqueIdentifier() + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
 
 	/**
 	 * Constant to define debug.core for the status codes
@@ -141,14 +147,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.2
 	 */
 	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, EMPTY_STRING, null);
-	
-    /**
-	 * Status code for which a prompter will ask the user to delete any/all of the launch configurations 
-	 * that are associated with this project being deleted
-	 * 
-	 * @since 3.2
-	 */
-	protected static final IStatus deleteAssociatedLaunchConfigs = new Status(IStatus.INFO, DEBUG_CORE, 225, EMPTY_STRING, null);
 	
 	/**
 	 * Step filter manager
@@ -380,8 +378,22 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					}
 				}
 				return false;
-			} else if (resource instanceof IContainer) {
-				return true;
+			} else if (resource instanceof IProject) {
+				if (isDeleteConfigurations()) {
+					if(delta.getKind() == IResourceDelta.REMOVED && delta.getFlags() != IResourceDelta.MOVED_TO) {
+						IProject project = (IProject) resource;
+						ArrayList configs = collectAssociatedLaunches(project);
+						if(configs.size() > 0) {
+							for(Iterator iter = configs.iterator(); iter.hasNext();) {
+								try { 
+									((ILaunchConfiguration)iter.next()).delete();
+								} catch (CoreException e) {
+									DebugPlugin.log(e.getStatus());
+								}
+							}
+						}
+					}
+				}
 			}
 			return true;
 		}
@@ -1929,6 +1941,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return true;
 	}
 	
+	/**
+	 * Returns whether the user has selected to delete associated configurations when a
+	 * project is deleted.
+	 * 
+	 * @return whether to auto-delete configurations
+	 */
+	private boolean isDeleteConfigurations() {
+		return DebugPlugin.getDefault().getPluginPreferences().getBoolean(PREF_DELETE_CONFIGS_ON_PROJECT_DELETE);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#isRegistered(org.eclipse.debug.core.ILaunch)
 	 */
@@ -2139,35 +2161,47 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
                 visitor.preDelete(project);
             }
 		} else {
-			try {
-				IResourceDelta[] children = delta.getAffectedChildren(IResourceDelta.REMOVED);
-				if(children.length > 0) {
-					//collect child resources that are projects and have been deleted, but not moved
-					ArrayList projs = new ArrayList();
-					IResource res = null;
-					for (int i = 0; i < children.length; i++) {
-						if(children[i].getFlags() != IResourceDelta.MOVED_TO) {
-							res = children[i].getResource();
-							if(res != null && res instanceof IProject) {
-								projs.add(res);
+		    LaunchManagerVisitor visitor = getDeltaVisitor();
+		    try {
+		    	delta.accept(visitor);
+		    } catch (CoreException e) {
+		    	DebugPlugin.log(e.getStatus());
+		    }
+			visitor.reset();
+		}
+	}
+	
+	/**
+	 * Gets the launch configuration associated with the specified project.
+	 * This method relies on the resource mapping existing, if no such mapping 
+	 * exists the launch configuration is ignored.
+	 * 
+	 * @param project the project to collect launch configurations for
+	 * @return the list of associated launch configurations
+	 */
+	private ArrayList collectAssociatedLaunches(IProject project) {
+		ArrayList list = new ArrayList();
+		try { 
+			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+			IResource[] resources = null;
+			for(int i = 0; i < configs.length; i++) {
+				if(configs[i].isLocal()) {
+					resources = configs[i].getMappedResources();
+					if(resources != null) {
+						for(int j = 0; j < resources.length; j++){
+							if(project.equals(resources[j].getProject())) {
+								list.add(configs[i]);
 							}
 						}
 					}
-					if(projs.size() > 0) {
-						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-						if (handler != null) {
-							handler.handleStatus(deleteAssociatedLaunchConfigs, projs.toArray(new IProject[projs.size()]));
-						}
-						projs.clear();
-					}
 				}
-			    LaunchManagerVisitor visitor = getDeltaVisitor();
-				delta.accept(visitor);
-				visitor.reset();
 			}
-			catch (CoreException e) {DebugPlugin.log(e);}	
-		}
+		} catch (CoreException e) {
+		    DebugPlugin.log(e);
+        }
+		return list;
 	}
+	
 	/**
 	 * Indicates the given launch configuration is being moved from the given
 	 * location to the new location.
