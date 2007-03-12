@@ -12,6 +12,7 @@
 package org.eclipse.ui.examples.fieldassist;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
@@ -21,12 +22,19 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -43,6 +51,8 @@ import org.eclipse.swt.widgets.Text;
  * there is enough blank space for the decorator to paint properly.
  */
 public class ControlDecorationTestDialog extends FieldAssistTestDialog {
+
+	Menu menu;
 
 	/**
 	 * Open the exapmle dialog.
@@ -74,8 +84,17 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 
 		// Create a field representing a user name
 		Text text = new Text(main, SWT.BORDER);
-		ControlDecoration dec = new ControlDecoration(text, getDecorationLocationBits());
+		ControlDecoration dec = new ControlDecoration(text,
+				getDecorationLocationBits());
 		dec.setMarginWidth(marginWidth);
+		dec.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				MessageDialog.openInformation(getShell(),
+						TaskAssistExampleMessages.ExampleDialog_SelectionTitle, 
+						TaskAssistExampleMessages.ExampleDialog_SelectionMessage);
+			}
+		});
+
 		final SmartField textField = new UserField(dec, text,
 				new TextContentAdapter());
 		if (showRequiredFieldLabelIndicator && textField.isRequiredField()) {
@@ -111,6 +130,36 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 		Combo combo = new Combo(main, SWT.BORDER | SWT.DROP_DOWN);
 		dec = new ControlDecoration(combo, getDecorationLocationBits());
 		dec.setMarginWidth(marginWidth);
+		dec.addListener(SWT.MenuDetect, new Listener() {
+			public void handleEvent(Event event) {
+				Control control = (Control) event.widget;
+				if (menu == null) {
+					menu = new Menu(control);
+					MenuItem item = new MenuItem(menu, SWT.PUSH);
+					item.setText(TaskAssistExampleMessages.ExampleDialog_DecorationMenuItem);
+					item.addSelectionListener(new SelectionListener() {
+						public void widgetSelected(SelectionEvent event) {
+							MessageDialog.openInformation(getShell(),
+									TaskAssistExampleMessages.ExampleDialog_DecorationMenuSelectedTitle,
+									TaskAssistExampleMessages.ExampleDialog_DecorationMenuSelectedMessage);
+						}
+
+						public void widgetDefaultSelected(SelectionEvent event) {
+
+						}
+					});
+				}
+				menu.setLocation(event.x, event.y);
+				menu.setVisible(true);
+			}
+		});
+		dec.addListener(SWT.DefaultSelection, new Listener() {
+			public void handleEvent(Event event) {
+				MessageDialog.openInformation(getShell(),
+						TaskAssistExampleMessages.ExampleDialog_DefaultSelectionTitle, 
+						TaskAssistExampleMessages.ExampleDialog_DefaultSelectionMessage);
+			}
+		});
 
 		final SmartField comboField = new UserField(dec, combo,
 				new ComboContentAdapter());
@@ -234,5 +283,12 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 		} else {
 			cd.hide();
 		}
+	}
+
+	public boolean close() {
+		if (menu != null) {
+			menu.dispose();
+		}
+		return super.close();
 	}
 }

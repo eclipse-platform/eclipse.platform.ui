@@ -69,6 +69,13 @@ public class TaskAssistExampleMessages extends NLS {
 	public static String ExampleDialog_Age;
 	public static String ExampleDialog_Password;
 	public static String ExampleDialog_ProposalDescription;
+	public static String ExampleDialog_DefaultSelectionTitle;
+	public static String ExampleDialog_DefaultSelectionMessage;
+	public static String ExampleDialog_SelectionTitle;
+	public static String ExampleDialog_SelectionMessage;
+	public static String ExampleDialog_DecorationMenuItem;
+	public static String ExampleDialog_DecorationMenuSelectedTitle;
+	public static String ExampleDialog_DecorationMenuSelectedMessage;
 
 	static {
 		// load message values from bundle file

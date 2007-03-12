@@ -52,14 +52,18 @@ these values to provide a certain style of content assist.
 </p>
 <h4>Using the dialog</h4>
 <p>
-The example dialog shows several different kinds of fields:
+The example dialog shows several different ways to configure
+decorations and content proposal behavior in the first
+dialog group (Security group):
 <ul>
 <li> The <b>User name</b> field is configured as a required field with content
 assist.  This field is considered in error when a non-alphabetic character
 is typed in the field.  It is considered in a warning mode when the name "bob"
-is typed in the field.</li>
+is typed in the field.  It installs a default select (double-click) listener on
+the decoration to demonstrate the listener interface.</li>
 <li>The <b>Combo user name</b> field is configured similarly, but uses a combo box 
-instead of a text field.  </li>
+instead of a text field.  It installs a selection (single click) listener on
+the decoration.  It also installs a popup menu on the decoration.</li>
 <li>The <b>Age</b> field demonstrates the use of a Spinner widget with decorations.
 It is configured as a required field, but does not provide an error state.  It
 is considered in a warning mode when an age greater than 65 is set.</li>
@@ -68,13 +72,26 @@ It is merely provided to demonstrate how non-decorated fields can be aligned
 with decorated fields.</li>
 </ul>
 </p>
+<p>
+The second dialog group shows how to use the AutoCompleteField to
+get automatic field completion without using a content assist key or
+decorator.
+</p>
 <h4>Example source code</h4>
 <p>
 The example dialog is not very complex, but is intended to demonstrate how to
 program field assist.  Some notes about the source code follow:
 <ul>
-<li>Non-decorated fields can be layed out in alignment with decorated fields by
+<li>The example is set up to use either DecoratedField or ControlDecoration
+to decorate the fields.  The preferred technique as of release 3.3 is to use
+ControlDecoration.
+<ul>
+<li>When using ControlDecoration, there is no need to align decorated and non-decorated
+fields, since the control decoration is rendered in the margin space.
+<li>When using DecoratedField, non-decorated fields can be layed out in alignment 
+with decorated fields by
 using the <code>FieldDecorationRegistry.getMaximumDecorationWidth()</code> protocol.</li>
+</ul>
 <li>The example plug-in registers standard field decorators for indicating
 the availability of content assist, marking a field as required, or marking
 a field that has an error or warning.  In cases where a standard decorator
