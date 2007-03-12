@@ -288,6 +288,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		} else {
 			// use resource API to update configuration file
 			IFile file = getFile();
+			if (file == null) {
+				throw new DebugException(
+						new Status(
+							 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, null 
+						));
+			}
 			IContainer dir = file.getParent();
 			if (!dir.exists()) {
 				throw new DebugException(
@@ -304,7 +311,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				throw new DebugException(
 					new Status(
 						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, null 
+						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, ue 
 					));
 			}
 			if (!file.exists()) {

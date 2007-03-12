@@ -490,7 +490,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				IStatus status = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_Unable_to_generate_memento_for__0___shared_file_does_not_exist__1, new String[]{getName()}), DebugException.INTERNAL_ERROR, null); 
 				throw new CoreException(status); 
 			}
-			relativePath = getFile().getFullPath();
+			relativePath = file.getFullPath();
 		}
 		Exception e= null;
 		try {
