@@ -1032,7 +1032,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		}
 
 		int idx = themeCombo.getSelectionIndex();
-		if (idx == 0) {
+		if (idx <= 0) {
 			Workbench.getInstance().getThemeManager().setCurrentTheme(
 					IThemeManager.DEFAULT_THEME);
 			refreshThemeCombo(IThemeManager.DEFAULT_THEME);
