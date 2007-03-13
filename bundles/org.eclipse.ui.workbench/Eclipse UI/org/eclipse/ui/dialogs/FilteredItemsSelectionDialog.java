@@ -193,6 +193,9 @@ public abstract class FilteredItemsSelectionDialog extends
 	private String initialPatternText;
 
 	private int selectionMode;
+	
+	private ItemsListSeparator itemsListSeparator;
+
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
@@ -211,6 +214,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		filterJob = new FilterJob();
 		contentProvider = new ContentProvider();
 		refreshCacheJob = new RefreshCacheJob();
+		itemsListSeparator = new ItemsListSeparator(
+				WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel);
 		selectionMode = NONE;
 	}
 
@@ -1120,6 +1125,16 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
+	 * Sets separator label
+	 * 
+	 * @param separatorLabel
+	 *            the label showed on separator
+	 */
+	public void setSeparatorLabel(String separatorLabel) {
+		this.itemsListSeparator = new ItemsListSeparator(separatorLabel);
+	}
+	
+	/**
 	 * Returns name for then given object.
 	 * 
 	 * @param item
@@ -1602,7 +1617,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Used in ItemsListContentProvider, separates history and non-history
 	 * items.
 	 */
-	protected class ItemsListSeparator {
+	private class ItemsListSeparator {
 
 		private String name;
 
@@ -2802,7 +2817,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				return new Object[0];
 			}
 
-			ArrayList preaparedElements = new ArrayList();
+			ArrayList preparedElements = new ArrayList();
 			boolean hasHistory = false;
 
 			if (filteredElements.length > 0) {
@@ -2818,13 +2833,11 @@ public abstract class FilteredItemsSelectionDialog extends
 				Object item = filteredElements[i];
 
 				if (hasHistory && !isHistoryElement(item)) {
-					preaparedElements
-							.add(new ItemsListSeparator(
-									WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel));
+					preparedElements.add(itemsListSeparator);
 					hasHistory = false;
 				}
 
-				preaparedElements.add(item);
+				preparedElements.add(item);
 
 				if (monitor != null && reportEvery != 0
 						&& ((i + 1) % reportEvery == 0))
@@ -2834,7 +2847,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (monitor != null)
 				monitor.done();
 
-			return preaparedElements.toArray();
+			return preparedElements.toArray();
 		}
 
 		/**

@@ -382,6 +382,13 @@ public class FilteredResourcesSelectionDialog extends
 		return new ResourceFilter(container, isDerived, typeMask);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#applyFilter()
+	 */
+	protected void applyFilter() {
+		super.applyFilter();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -653,14 +660,8 @@ public class FilteredResourcesSelectionDialog extends
 		 */
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			if (element instanceof ItemsListSeparator) {
-				return true;
-			} else if (element instanceof IResource) {
-				return resourceWorkingSetFilter.select(viewer, parentElement,
+			return resourceWorkingSetFilter.select(viewer, parentElement,
 						element);
-			}
-
-			return false;
 		}
 	}
 
@@ -671,7 +672,7 @@ public class FilteredResourcesSelectionDialog extends
 	 */
 	private class ResourceProxyVisitor implements IResourceProxyVisitor {
 
-		private AbstractContentProvider contentProvider;
+		private AbstractContentProvider proxyContentProvider;
 
 		private ResourceFilter resourceFilter;
 
@@ -691,7 +692,7 @@ public class FilteredResourcesSelectionDialog extends
 				ResourceFilter resourceFilter, IProgressMonitor progressMonitor)
 				throws CoreException {
 			super();
-			this.contentProvider = contentProvider;
+			this.proxyContentProvider = contentProvider;
 			this.resourceFilter = resourceFilter;
 			this.progressMonitor = progressMonitor;
 			IResource[] resources = container.members();
@@ -721,7 +722,7 @@ public class FilteredResourcesSelectionDialog extends
 				progressMonitor.worked(1);
 			}
 
-			contentProvider.add(resource, resourceFilter);
+			proxyContentProvider.add(resource, resourceFilter);
 
 			if (resource.getType() == IResource.FOLDER && resource.isDerived()
 					&& !resourceFilter.isShowDerived()) {
