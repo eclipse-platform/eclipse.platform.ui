@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
+ *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -27,6 +28,13 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Value: <code>"org.eclipse.ui.edit.text.delete.line"</code>
 	 */
 	String DELETE_LINE= "org.eclipse.ui.edit.text.delete.line"; //$NON-NLS-1$
+
+	/**
+	 * Action definition id of the edit join lines action.
+	 * Value: <code>"org.eclipse.ui.edit.text.join.line"</code>
+	 * @since 3.3
+	 */
+	String JOIN_LINES= "org.eclipse.ui.edit.text.join.lines"; //$NON-NLS-1$
 
 	/**
 	 * Action definition id of the edit cut line action.

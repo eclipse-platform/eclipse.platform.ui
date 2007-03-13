@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
+ *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *******************************************************************************/
 
 package org.eclipse.ui.texteditor;
@@ -79,6 +80,13 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * @since 2.0
 	 */
 	String DELETE_LINE_ACTION= PREFIX + ITextEditorActionConstants.DELETE_LINE + ACTION_POSTFIX;
+
+	/**
+	 * Help context id for the action.
+	 * Value: <code>"org.eclipse.ui.JoinLines_action_context"</code>
+	 * @since 3.3
+	 */
+	String JOIN_LINES_ACTION = PREFIX + ITextEditorActionConstants.JOIN_LINES + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the action.

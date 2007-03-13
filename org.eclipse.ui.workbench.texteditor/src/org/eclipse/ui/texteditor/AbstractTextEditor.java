@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     Chris.Dennis@invidi.com - http://bugs.eclipse.org/bugs/show_bug.cgi?id=29027
  *     Michel Ishizuka (cqw10305@nifty.com) - http://bugs.eclipse.org/bugs/show_bug.cgi?id=68963
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
+ *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -5031,6 +5032,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_LINE_TO_END_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CUT_LINE_TO_END);
 		setAction(ITextEditorActionConstants.CUT_LINE_TO_END, action);
+
+		action= new JoinLinesAction(EditorMessages.getBundleForConstructedKeys(), "Editor.JoinLines.", this, " "); //$NON-NLS-1$ //$NON-NLS-2$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.JOIN_LINES_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.JOIN_LINES);
+		setAction(ITextEditorActionConstants.JOIN_LINES, action);
 
 		action= new MarkAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SetMark.", this, MarkAction.SET_MARK); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SET_MARK_ACTION);

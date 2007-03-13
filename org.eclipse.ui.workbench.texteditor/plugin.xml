@@ -51,6 +51,12 @@
 	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.cut.line.to.end">
 	  </command>
+ 	  <command
+	        name="%command.joinLines.name"
+	        description="%command.joinLines.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.join.lines">
+	  </command>	  
 	  <command
 	        name="%command.setMark.name"
 	        description="%command.setMark.description"
@@ -514,6 +520,17 @@
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.copyLineDown"
 	        schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.join.lines"
+	        contextId="org.eclipse.ui.textEditorScope"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M3+J"/>
+	  <!-- disable the key binding for Carbon as it conflicts with another one in the SDK -->
+	  <key
+            platform="carbon"
+	        commandId=""
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M1+M3+J"/>
 	  <key
 	        sequence="M1+M2+X"
 	        contextId="org.eclipse.ui.textEditorScope"
