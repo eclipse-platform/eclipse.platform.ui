@@ -11,15 +11,13 @@
 
 package org.eclipse.core.internal.databinding.observable.tree;
 
-import org.eclipse.core.databinding.observable.IDiff;
-
 /**
  * Describes the difference between two trees as a tree of tree diff nodes.
  * 
  * @since 1.1
  * 
  */
-public abstract class TreeDiff extends TreeDiffNode implements IDiff {
+public abstract class TreeDiff extends TreeDiffNode {
 
 	/**
 	 * Returns the tree path (possibly empty) of the parent, or

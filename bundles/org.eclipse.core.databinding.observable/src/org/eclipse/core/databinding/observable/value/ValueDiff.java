@@ -12,13 +12,12 @@
 package org.eclipse.core.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IDiff;
 
 /**
  * @since 1.0
  * 
  */
-public abstract class ValueDiff implements IDiff {
+public abstract class ValueDiff {
 	/**
 	 * Creates a value diff.
 	 */

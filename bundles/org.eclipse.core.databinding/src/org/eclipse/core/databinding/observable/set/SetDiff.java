@@ -13,13 +13,11 @@ package org.eclipse.core.databinding.observable.set;
 
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.IDiff;
-
 /**
  * @since 1.0
  *
  */
-public abstract class SetDiff implements IDiff {
+public abstract class SetDiff {
 	
 	/**
 	 * @return the set of added elements

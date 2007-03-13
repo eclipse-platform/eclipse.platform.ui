@@ -11,14 +11,13 @@
 
 package org.eclipse.core.databinding.observable.list;
 
-import org.eclipse.core.databinding.observable.IDiff;
 
 /**
  * Object describing a diff between two lists.
  * 
  * @since 1.0
  */
-public abstract class ListDiff implements IDiff {
+public abstract class ListDiff {
 
 	/**
 	 * Returns a list of ListDiffEntry
