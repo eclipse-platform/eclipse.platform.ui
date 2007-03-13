@@ -52,7 +52,7 @@ public final class HyperlinkDetectorDescriptor {
 	private static final String TARGET_ID_ATTRIBUTE= "targetId"; //$NON-NLS-1$
 	private static final String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
 	private static final String ACTIVATE_PLUG_IN_ATTRIBUTE= "activate"; //$NON-NLS-1$
-	private static final String MODIFIER_KEYS= "modifiers"; //$NON-NLS-1$
+	private static final String MODIFIER_KEYS= "modifierKeys"; //$NON-NLS-1$
 
 	private IConfigurationElement fElement;
 	private HyperlinkDetectorTargetDescriptor fTarget;
