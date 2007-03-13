@@ -24,6 +24,7 @@ import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
+import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
@@ -486,6 +487,10 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		HyperlinkDetectorDescriptor[] descriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
 		for (int i= 0; i < descriptors.length; i++) {
 			int stateMask= computeStateMask(descriptors[i].getModifierKeys());
+			if (stateMask == SWT.SHIFT) {
+				EditorsPlugin.logErrorMessage("The '" + descriptors[i].getId() + "' hyperlink detector specifies 'Shift' as modifier. This is not allowed and hence replaced with the default modifier."); //$NON-NLS-1$ //$NON-NLS-2$
+				stateMask= -1;
+			}
 			store.setDefault(descriptors[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
 		}
 
