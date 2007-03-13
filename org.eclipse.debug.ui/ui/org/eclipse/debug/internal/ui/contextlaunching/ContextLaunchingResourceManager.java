@@ -28,6 +28,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -36,6 +37,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -369,13 +371,19 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 					fCurrentResource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
 				}
 				else {
-					ISelection selection = part.getSite().getSelectionProvider().getSelection();
-					if(selection instanceof IStructuredSelection) {
-						IStructuredSelection ss = (IStructuredSelection) selection;
-						if(!ss.isEmpty()) {
-							Object o = ss.getFirstElement();
-							if(o instanceof IAdaptable) {
-								fCurrentResource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+					IWorkbenchPartSite site = part.getSite();
+					if(site != null) {
+						ISelectionProvider provider = site.getSelectionProvider();
+						if(provider != null) {
+							ISelection selection = provider.getSelection();
+							if(selection instanceof IStructuredSelection) {
+								IStructuredSelection ss = (IStructuredSelection) selection;
+								if(!ss.isEmpty()) {
+									Object o = ss.getFirstElement();
+									if(o instanceof IAdaptable) {
+										fCurrentResource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+									}
+								}
 							}
 						}
 					}
