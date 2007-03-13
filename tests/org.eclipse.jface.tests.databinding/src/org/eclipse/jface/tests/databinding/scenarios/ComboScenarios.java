@@ -464,7 +464,7 @@ public class ComboScenarios extends ScenariosTestCase {
 				| SWT.DROP_DOWN);
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bindList(SWTObservables.observeItems(ccombo), list, null);
+		getDbc().bindList(SWTObservables.observeItems(ccombo), list, null, null);
 		assertEquals(Arrays.asList(ccombo.getItems()), list);
 
 		Account account = catalog.getAccounts()[0];
@@ -499,7 +499,7 @@ public class ComboScenarios extends ScenariosTestCase {
 				| SWT.DROP_DOWN);
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bindList(SWTObservables.observeItems(ccombo), list, null);
+		getDbc().bindList(SWTObservables.observeItems(ccombo), list, null, null);
 		assertEquals(Arrays.asList(ccombo.getItems()), list);
 
 		Account account = catalog.getAccounts()[0];
@@ -543,7 +543,7 @@ public class ComboScenarios extends ScenariosTestCase {
 				getComposite(), SWT.READ_ONLY | SWT.SINGLE);
 
 		// Bind the combo's content to that of the String based list
-		getDbc().bindList(SWTObservables.observeItems(swtlist), list, null);
+		getDbc().bindList(SWTObservables.observeItems(swtlist), list, null, null);
 		assertEquals(Arrays.asList(swtlist.getItems()), list);
 
 		Account account = catalog.getAccounts()[0];

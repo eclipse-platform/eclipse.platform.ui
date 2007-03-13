@@ -52,11 +52,7 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTes
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
 import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest;
-import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest_Pipeline;
-import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest_Policies;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
-import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Pipeline;
-import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Policies;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableListDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableValueDecoratorTest;
@@ -81,21 +77,21 @@ import org.eclipse.jface.tests.internal.databinding.provisional.viewers.Selectio
 
 public class BindingTestSuite extends TestSuite {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
-    }
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(suite());
+	}
 
-    public static Test suite() {
-        return new BindingTestSuite();
-    }
+	public static Test suite() {
+		return new BindingTestSuite();
+	}
 
 	public BindingTestSuite() {
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
 		addTestSuite(WritableMapTest.class);
-		
-		//org.eclipse.core.tests.internal.databinding.observable.masterdetail
+
+		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTestSuite(DetailObservableListTest.class);
 		addTestSuite(DetailObservableSetTest.class);
 		addTestSuite(DetailObservableValueTest.class);
@@ -103,9 +99,9 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.databinding.beans
 		addTestSuite(BeansObservablesTest.class);
 
-		//org.eclipse.core.tests.databinding.observable
+		// org.eclipse.core.tests.databinding.observable
 		addTestSuite(RealmTest.class);
-		
+
 		// org.eclipse.jface.internal.databinding.provisional.conversion
 		addTestSuite(IdentityConverterTest.class);
 
@@ -123,7 +119,6 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ObjectToPrimitiveValidatorTest.class);
 
 		// org.eclipse.jface.tests.databinding
-		addTestSuite(BindSpecTests.class);
 		addTestSuite(ComputedValueTest.class);
 		addTestSuite(DatabindingContextTest.class);
 		addTestSuite(IDiffsTest.class);
@@ -133,13 +128,13 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.jface.tests.databinding.mask
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(EditMaskParserTest.class);
-		
+
 		// org.eclipse.jface.tests.databinding.observable.list
 		addTestSuite(AbstractObservableListTest.class);
 		addTestSuite(ObservableListTest.class);
 		addTestSuite(WritableListTest.class);
-		
-		//org.eclipse.jface.tests.databinding.observable.set
+
+		// org.eclipse.jface.tests.databinding.observable.set
 		addTestSuite(WritableSetTest.class);
 
 		// org.eclipse.jface.tests.databinding.observable.value
@@ -176,14 +171,10 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.jface.tests.internal.databinding.internal
 		addTestSuite(ListBindingTest.class);
-		addTestSuite(ListBindingTest_Policies.class);
-		addTestSuite(ListBindingTest_Pipeline.class);
-		
+
 		addTestSuite(ValueBindingTest.class);
-		addTestSuite(ValueBindingTest_Pipeline.class);
-		addTestSuite(ValueBindingTest_Policies.class);
-		
-		//org.eclipse.jface.tests.internal.databinding.internal.beans
+
+		// org.eclipse.jface.tests.internal.databinding.internal.beans
 		addTestSuite(BeanObservableListDecoratorTest.class);
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
@@ -225,7 +216,8 @@ public class BindingTestSuite extends TestSuite {
 	 * @return true if the given test is temporarily disabled
 	 */
 	public static boolean failingTestsDisabled(TestCase testCase) {
-		System.out.println("Ignoring disabled test: " + testCase.getClass().getName() + "." + testCase.getName());
+		System.out.println("Ignoring disabled test: "
+				+ testCase.getClass().getName() + "." + testCase.getName());
 		return true;
 	}
 
@@ -235,7 +227,8 @@ public class BindingTestSuite extends TestSuite {
 	 * @return true if the given test is temporarily disabled
 	 */
 	public static boolean failingTestsDisabled(TestSuite testSuite) {
-		System.out.println("Ignoring disabled test: " + testSuite.getClass().getName() + "." + testSuite.getName());
+		System.out.println("Ignoring disabled test: "
+				+ testSuite.getClass().getName() + "." + testSuite.getName());
 		return true;
 	}
 }

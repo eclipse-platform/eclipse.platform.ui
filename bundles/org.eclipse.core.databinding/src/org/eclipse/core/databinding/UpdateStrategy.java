@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,182 +7,38 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds (bug 135316)
- *     Brad Reynolds - bug 116920, 159768
- *******************************************************************************/
+ ******************************************************************************/
+
 package org.eclipse.core.databinding;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.IdentityConverter;
 import org.eclipse.core.databinding.conversion.ToStringConverter;
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.IObservableCollection;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2BytePrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2ByteValidator;
-import org.eclipse.core.databinding.validation.String2DateValidator;
-import org.eclipse.core.databinding.validation.String2DoublePrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2DoubleValidator;
-import org.eclipse.core.databinding.validation.String2FloatPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2FloatValidator;
-import org.eclipse.core.databinding.validation.String2IntegerPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2IntegerValidator;
-import org.eclipse.core.databinding.validation.String2LongPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2LongValidator;
-import org.eclipse.core.databinding.validation.String2ShortPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2ShortValidator;
 import org.eclipse.core.internal.databinding.ClassLookupSupport;
 import org.eclipse.core.internal.databinding.Pair;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * This class provides default validators and converters for common data types
- * in form of a BindSpec subclass that can be passed to bind methods, e.g.
- * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, BindSpec)}.
+ * @since 3.3
  * 
- * APIREVIEW We need to list all provided validators and converters.
- * 
- * @since 1.0
  */
-public class DefaultBindSpec extends BindSpec {
-
-	private static class ValidatorRegistry {
-
-		private HashMap validators = new HashMap();
-
-		/**
-		 * Adds the system-provided validators to the current validator
-		 * registry. This is done automatically for the validator registry
-		 * singleton.
-		 */
-		private ValidatorRegistry() {
-			// Standalone validators here...
-			associate(String.class, Integer.TYPE,
-					new String2IntegerPrimitiveValidator());
-			associate(String.class, Byte.TYPE,
-					new String2BytePrimitiveValidator());
-			associate(String.class, Short.TYPE,
-					new String2ShortPrimitiveValidator());
-			associate(String.class, Long.TYPE,
-					new String2LongPrimitiveValidator());
-			associate(String.class, Float.TYPE,
-					new String2FloatPrimitiveValidator());
-			associate(String.class, Double.TYPE,
-					new String2DoublePrimitiveValidator());
-
-			associate(String.class, Integer.class,
-					new String2IntegerValidator());
-			associate(String.class, Byte.class, new String2ByteValidator());
-			associate(String.class, Short.class, new String2ShortValidator());
-			associate(String.class, Long.class, new String2LongValidator());
-			associate(String.class, Float.class, new String2FloatValidator());
-			associate(String.class, Double.class, new String2DoubleValidator());
-			associate(String.class, Date.class, new String2DateValidator());
-
-			associate(Integer.class, Integer.TYPE,
-					new ObjectToPrimitiveValidator(Integer.TYPE));
-			associate(Byte.class, Byte.TYPE, new ObjectToPrimitiveValidator(
-					Byte.TYPE));
-			associate(Short.class, Short.TYPE, new ObjectToPrimitiveValidator(
-					Short.TYPE));
-			associate(Long.class, Long.TYPE, new ObjectToPrimitiveValidator(
-					Long.TYPE));
-			associate(Float.class, Float.TYPE, new ObjectToPrimitiveValidator(
-					Float.TYPE));
-			associate(Double.class, Double.TYPE,
-					new ObjectToPrimitiveValidator(Double.TYPE));
-			associate(Boolean.class, Boolean.TYPE,
-					new ObjectToPrimitiveValidator(Boolean.TYPE));
-
-			associate(Object.class, Integer.TYPE,
-					new ObjectToPrimitiveValidator(Integer.TYPE));
-			associate(Object.class, Byte.TYPE, new ObjectToPrimitiveValidator(
-					Byte.TYPE));
-			associate(Object.class, Short.TYPE, new ObjectToPrimitiveValidator(
-					Short.TYPE));
-			associate(Object.class, Long.TYPE, new ObjectToPrimitiveValidator(
-					Long.TYPE));
-			associate(Object.class, Float.TYPE, new ObjectToPrimitiveValidator(
-					Float.TYPE));
-			associate(Object.class, Double.TYPE,
-					new ObjectToPrimitiveValidator(Double.TYPE));
-			associate(Object.class, Boolean.TYPE,
-					new ObjectToPrimitiveValidator(Boolean.TYPE));
-		}
-
-		/**
-		 * Associate a particular validator that can validate the conversion
-		 * (fromClass, toClass)
-		 * 
-		 * @param fromClass
-		 *            The Class to convert from
-		 * @param toClass
-		 *            The Class to convert to
-		 * @param validator
-		 *            The IValidator
-		 */
-		private void associate(Object fromClass, Object toClass,
-				IValidator validator) {
-			validators.put(new Pair(fromClass, toClass), validator);
-		}
-
-		/**
-		 * Return an IValidator for a specific fromClass and toClass.
-		 * 
-		 * @param fromClass
-		 *            The Class to convert from
-		 * @param toClass
-		 *            The Class to convert to
-		 * @return An appropriate IValidator
-		 */
-		private IValidator get(Object fromClass, Object toClass) {
-			IValidator result = (IValidator) validators.get(new Pair(fromClass,
-					toClass));
-			if (result != null)
-				return result;
-			if (fromClass != null && toClass != null && fromClass == toClass) {
-				return new IValidator() {
-					public IStatus validate(Object value) {
-						return Status.OK_STATUS;
-					}
-				};
-			}
-			return new IValidator() {
-				public IStatus validate(Object value) {
-					return Status.OK_STATUS;
-				}
-			};
-		}
-	}
+/* package */class UpdateStrategy {
 
 	private static final String BOOLEAN_TYPE = "java.lang.Boolean.TYPE"; //$NON-NLS-1$
-
-	private static final String BYTE_TYPE = "java.lang.Byte.TYPE"; //$NON-NLS-1$
-
-	private static final String DOUBLE_TYPE = "java.lang.Double.TYPE"; //$NON-NLS-1$
-
-	private static final String FLOAT_TYPE = "java.lang.Float.TYPE"; //$NON-NLS-1$
-
-	private static final String INTEGER_TYPE = "java.lang.Integer.TYPE"; //$NON-NLS-1$
-
-	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
-
 	private static final String SHORT_TYPE = "java.lang.Short.TYPE"; //$NON-NLS-1$
+	private static final String BYTE_TYPE = "java.lang.Byte.TYPE"; //$NON-NLS-1$
+	private static final String DOUBLE_TYPE = "java.lang.Double.TYPE"; //$NON-NLS-1$
+	private static final String FLOAT_TYPE = "java.lang.Float.TYPE"; //$NON-NLS-1$
+	private static final String INTEGER_TYPE = "java.lang.Integer.TYPE"; //$NON-NLS-1$
+	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
+	private static Map converterMap;
 
-	private Map converterMap;
-
-	private ValidatorRegistry validatorRegistry = new ValidatorRegistry();
-
-	private Class autoboxed(Class clazz) {
+	private static Class autoboxed(Class clazz) {
 		if (clazz == Float.TYPE)
 			return Float.class;
 		else if (clazz == Double.TYPE)
@@ -200,7 +56,7 @@ public class DefaultBindSpec extends BindSpec {
 		return clazz;
 	}
 
-	private void checkAssignable(Object toType, Object fromType,
+	final protected void checkAssignable(Object toType, Object fromType,
 			String errorString) {
 		Boolean assignableFromModelToModelConverter = isAssignableFromTo(
 				fromType, toType);
@@ -223,7 +79,7 @@ public class DefaultBindSpec extends BindSpec {
 	 */
 	protected IConverter createConverter(Object fromType, Object toType) {
 		if (!(fromType instanceof Class) || !(toType instanceof Class)) {
-			return new BindSpec.DefaultConverter(fromType, toType);
+			return new DefaultConverter(fromType, toType);
 		}
 		Class toClass = (Class) toType;
 		if (toClass.isPrimitive()) {
@@ -282,120 +138,10 @@ public class DefaultBindSpec extends BindSpec {
 		if (fromClass.isAssignableFrom(toClass)) {
 			return new IdentityConverter(fromClass, toClass);
 		}
-		return new BindSpec.DefaultConverter(fromType, toType);
+		return new DefaultConverter(fromType, toType);
 	}
 
-	/**
-	 * @param pipelinePosition
-	 *            position BindingEvent.PIPELINE_* constant
-	 * @param modelType
-	 * @return an IValidator, or null if unsuccessful
-	 */
-	protected IValidator createValidator(int pipelinePosition, Object modelType) {
-		return new IValidator() {
-			public IStatus validate(Object value) {
-				return Status.OK_STATUS;
-			}
-		};
-	}
-
-	/**
-	 * Tries to create a validator that can validate values of type fromType.
-	 * Returns <code>null</code> if no validator could be created. Either
-	 * toType or modelDescription can be <code>null</code>, but not both.
-	 * 
-	 * @param fromType
-	 * @param toType
-	 * @return an IValidator, or <code>null</code> if unsuccessful
-	 */
-	protected IValidator createValidator(Object fromType, Object toType) {
-		if (fromType == null || toType == null) {
-			return new IValidator() {
-
-				public IStatus validate(Object value) {
-					return Status.OK_STATUS;
-				}
-			};
-		}
-
-		IValidator dataTypeValidator = findValidator(fromType, toType);
-		if (dataTypeValidator == null) {
-			throw new BindingException(
-					"No IValidator is registered for conversions from " + fromType + " to " + toType); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return dataTypeValidator;
-	}
-
-	/**
-	 * This implementation of
-	 * {@link #fillBindSpecDefaults(IObservable, IObservable)}
-	 * 
-	 * @param target
-	 * @param model
-	 */
-	protected void fillBindSpecDefaults(IObservable target, IObservable model) {
-		Object targetType = null;
-		if (target instanceof IObservableValue) {
-			targetType = ((IObservableValue) target).getValueType();
-		} else if (target instanceof IObservableCollection) {
-			targetType = ((IObservableCollection) target).getElementType();
-		}
-		Object modelType = null;
-		if (model instanceof IObservableValue) {
-			modelType = ((IObservableValue) model).getValueType();
-		} else if (model instanceof IObservableCollection) {
-			modelType = ((IObservableCollection) model).getElementType();
-		}
-
-		for (Iterator it = BindingEvent.PIPELINE_CONSTANTS.keySet().iterator(); it
-				.hasNext();) {
-			int position = ((Integer) it.next()).intValue();
-
-			if (position == BindingEvent.PIPELINE_AFTER_GET) {
-				// Assuming that the consumer wants to validate types after get
-				if (getTargetValidators(position).length == 0) {
-					addTargetValidator(position, createValidator(targetType,
-							modelType));
-				}
-				if (getModelValidators(position).length == 0) {
-					addModelValidator(position, createValidator(modelType,
-							targetType));
-				}
-			} else {
-				if (getTargetValidators(position).length == 0) {
-					addTargetValidator(position, createValidator(position,
-							modelType));
-				}
-				if (getModelValidators(position).length == 0) {
-					addModelValidator(position, createValidator(position,
-							targetType));
-				}
-			}
-		}
-
-		if (getModelToTargetConverter() == null) {
-			setModelToTargetConverter(createConverter(modelType, targetType));
-		}
-		if (getTargetToModelConverter() == null) {
-			setTargetToModelConverter(createConverter(targetType, modelType));
-		}
-		super.fillBindSpecDefaults(target, model);
-		checkAssignable(getModelToTargetConverter().getFromType(), modelType,
-				"model to target converter does not convert from model type."); //$NON-NLS-1$
-		checkAssignable(getModelToTargetConverter().getToType(), targetType,
-				"model to target converter does not convert to target type."); //$NON-NLS-1$
-		checkAssignable(targetType, getTargetToModelConverter().getFromType(),
-				"target to model converter does not convert from target type."); //$NON-NLS-1$
-		checkAssignable(getTargetToModelConverter().getToType(), modelType,
-				"target to model converter does not convert to model type."); //$NON-NLS-1$
-	}
-
-	private IValidator findValidator(Object fromType, Object toType) {
-		// TODO string-based lookup of validator
-		return validatorRegistry.get(fromType, toType);
-	}
-
-	private Map getConverterMap() {
+	private static Map getConverterMap() {
 		// using string-based lookup avoids loading of too many classes
 		if (converterMap == null) {
 			converterMap = new HashMap();
@@ -539,7 +285,7 @@ public class DefaultBindSpec extends BindSpec {
 		return converterMap;
 	}
 
-	private String getKeyForClass(Object originalValue, Class filteredValue) {
+	private static String getKeyForClass(Object originalValue, Class filteredValue) {
 		if (originalValue instanceof Class) {
 			Class originalClass = (Class) originalValue;
 			if (originalClass.equals(Integer.TYPE)) {
@@ -580,6 +326,37 @@ public class DefaultBindSpec extends BindSpec {
 					: Boolean.FALSE;
 		}
 		return null;
+	}
+
+	/*
+	 * Default converter implementation, does not perform any conversion.
+	 */
+	protected static final class DefaultConverter implements IConverter {
+
+		private final Object toType;
+
+		private final Object fromType;
+
+		/**
+		 * @param fromType
+		 * @param toType
+		 */
+		DefaultConverter(Object fromType, Object toType) {
+			this.toType = toType;
+			this.fromType = fromType;
+		}
+
+		public Object convert(Object fromObject) {
+			return fromObject;
+		}
+
+		public Object getFromType() {
+			return fromType;
+		}
+
+		public Object getToType() {
+			return toType;
+		}
 	}
 
 }

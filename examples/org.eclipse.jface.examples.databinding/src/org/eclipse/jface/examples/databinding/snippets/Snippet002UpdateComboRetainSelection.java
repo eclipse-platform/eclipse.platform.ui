@@ -163,7 +163,7 @@ public class Snippet002UpdateComboRetainSelection {
             IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel, "choices"),
                     getListDetailFactory(),
                     String.class);
-            dbc.bindList(SWTObservables.observeItems(combo), list, null); 
+            dbc.bindList(SWTObservables.observeItems(combo), list, null, null); 
             dbc.bindValue(SWTObservables.observeText(combo), BeansObservables.observeValue(viewModel, "text"), null, null);
             
             // Open and return the Shell

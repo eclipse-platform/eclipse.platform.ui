@@ -12,14 +12,8 @@
 
 package org.eclipse.core.databinding;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
  * This abstract class represents a binding between a model and a target. Newly
@@ -29,8 +23,6 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  */
 public abstract class Binding {
-
-	private List bindingEventListeners = new ArrayList();
 
 	protected DataBindingContext context;
 	private IObservable target;
@@ -81,75 +73,9 @@ public abstract class Binding {
 	protected abstract void postInit();
 
 	/**
-	 * This method allows subclasses to fill bind spec defaults. Usually called
-	 * from subclass constructors.
-	 * 
-	 * @param bindSpec
-	 * @param target
-	 * @param model
-	 */
-	protected void fillBindSpecDefaults(BindSpec bindSpec, IObservable target, IObservable model) {
-		bindSpec.fillBindSpecDefaults(target, model);
-	}
-
-	/**
-	 * Add a listener to the set of listeners that will be notified when an
-	 * event occurs in the data flow pipeline that is managed by this Binding.
-	 * 
-	 * @param listener
-	 *            The listener to add.
-	 */
-	public void addBindingEventListener(IBindingListener listener) {
-		synchronized (bindingEventListeners) {
-			bindingEventListeners.add(listener);
-		}
-	}
-
-	/**
-	 * Fires the given event to the binding event listeners, exiting early when
-	 * one of the listeners flags a validation error. If no listener flags a
-	 * validation error, the data binding context's binding listeners will be
-	 * notified in the same manner.
-	 * 
-	 * @param event
-	 * @return the validation error, or null
-	 */
-	protected IStatus fireBindingEvent(BindingEvent event) {
-		IStatus result = Status.OK_STATUS;
-		IBindingListener[] listeners;
-		synchronized (bindingEventListeners) {
-			listeners = (IBindingListener[]) bindingEventListeners
-					.toArray(new IBindingListener[bindingEventListeners.size()]);
-		}
-		for (int i = 0; i < listeners.length; i++) {
-			IBindingListener listener = listeners[i];
-			result = listener.handleBindingEvent(event);
-			if (!result.isOK())
-				break;
-		}
-		if (result.isOK())
-			result = context.fireBindingEvent(event);
-		return result;
-	}
-
-	/**
 	 * @return an observable value containing the current validation status
 	 */
 	public abstract IObservableValue getValidationStatus();
-
-	/**
-	 * Removes a listener from the set of listeners that will be notified when
-	 * an event occurs in the data flow pipeline that is managed by this
-	 * Binding.
-	 * 
-	 * @param listener
-	 *            The listener to remove.
-	 */
-	public void removeBindingEventListener(IBindingListener listener) {
-		synchronized (bindingEventListeners) {
-			bindingEventListeners.remove(listener);
-		}
-	}
 
 	/**
 	 * Updates the model's state from the target's state at the next reasonable
@@ -183,7 +109,6 @@ public abstract class Binding {
 	 * Disposes of this Binding. Subclasses may extend, but must call super.dispose().
 	 */
 	public void dispose() {
-		bindingEventListeners = null;
 		if (context != null) {
 			context.removeBinding(this);
 		}
@@ -209,22 +134,6 @@ public abstract class Binding {
 		this.context = context;
 	}
 
-	/**
-	 * Returns a new BindingEvent object.
-	 * 
-	 * @param diff
-	 *            a diff object representing the change
-	 * @param copyType
-	 *            one of {@link BindingEvent#EVENT_COPY_TO_MODEL} or
-	 *            {@link BindingEvent#EVENT_COPY_TO_TARGET}
-	 * @param pipelinePosition
-	 *            The initial processing pipeline position.
-	 * @return the new binding event
-	 */
-	protected BindingEvent createBindingEvent(IDiff diff, int copyType, int pipelinePosition) {
-		return new BindingEvent(this, diff, copyType, pipelinePosition);
-	}
-	
 	/**
 	 * @return target observable
 	 */

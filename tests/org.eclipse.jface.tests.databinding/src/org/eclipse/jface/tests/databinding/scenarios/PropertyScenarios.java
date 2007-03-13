@@ -265,14 +265,13 @@ public class PropertyScenarios extends ScenariosTestCase {
         assertTrue(((IStatus)binding.getValidationStatus().getValue()).isOK());
         enterText(text, "Invalid Value");
         assertEquals(noSpacesMessage, ((IStatus) binding.getValidationStatus().getValue()).getMessage());
-        assertEquals("ValidValue", text.getText());
+        assertEquals("ValidValue", adventure.getName());
         text.setText("InvalidValueBecauseTooLong");
         assertEquals(max15CharactersMessage,
                 ((IStatus) binding.getValidationStatus().getValue()).getMessage());
-        assertEquals("ValidValue", text.getText());
+        assertEquals("ValidValue", adventure.getName());
         enterText(text, "anothervalid");
         assertTrue(((IStatus)binding.getValidationStatus().getValue()).isOK());
-        assertEquals("anothervalid", text.getText());
         assertEquals("anothervalid", adventure.getName());
     }
 

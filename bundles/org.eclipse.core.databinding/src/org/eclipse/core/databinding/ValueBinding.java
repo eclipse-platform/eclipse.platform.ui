@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
  * @since 3.3
  * 
  */
-class ValueBinding2 extends Binding {
+class ValueBinding extends Binding {
 
 	private final UpdateValueStrategy targetToModel;
 	private final UpdateValueStrategy modelToTarget;
@@ -54,7 +54,7 @@ class ValueBinding2 extends Binding {
 	 * @param targetToModel
 	 * @param modelToTarget
 	 */
-	public ValueBinding2(IObservableValue targetObservableValue,
+	public ValueBinding(IObservableValue targetObservableValue,
 			IObservableValue modelObservableValue,
 			UpdateValueStrategy targetToModel, UpdateValueStrategy modelToTarget) {
 		super(targetObservableValue, modelObservableValue);
@@ -165,9 +165,9 @@ class ValueBinding2 extends Binding {
 								}
 							}
 						} catch (Exception ex) {
-							setValidationStatus(new Status(IStatus.ERROR,
+							statusHolder[0] = new Status(IStatus.ERROR,
 									Policy.JFACE_DATABINDING, IStatus.ERROR, ex
-											.getMessage(), ex));
+											.getMessage(), ex);
 						} finally {
 							if (!destinationRealmReached) {
 								setValidationStatus(statusHolder[0]);
