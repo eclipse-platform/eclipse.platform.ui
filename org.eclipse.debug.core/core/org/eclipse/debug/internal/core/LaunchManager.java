@@ -1286,7 +1286,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						if (file == null) {
 							throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_30, new String[] {config.getName()}), null); 
 						}
-						stream = file.getContents();
+						stream = file.getContents(true);
 					}
 					info = createInfoFromXML(stream);
 					fLaunchConfigurations.put(config, info);
