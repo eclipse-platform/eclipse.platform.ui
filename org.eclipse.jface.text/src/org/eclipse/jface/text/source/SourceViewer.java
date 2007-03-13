@@ -911,6 +911,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 					fContentAssistant.uninstall();
 					fContentAssistantInstalled= false;
 				}
+				break;
 			}
 			case QUICK_ASSIST: {
 				
