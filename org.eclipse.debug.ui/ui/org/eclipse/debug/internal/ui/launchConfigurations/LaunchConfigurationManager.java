@@ -519,7 +519,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				}
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
+			//do nothing, as we want to throw away invalid launch history entries silently
 		}	
 	}
 	
