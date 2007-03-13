@@ -99,8 +99,11 @@ public abstract class AbstractSplashHandler {
 	}
 
 	/**
-	 * Get the Shell associated with this splash screen. This is
-	 * <code>null</code> until the {@link #init(Shell)} method is invoked.
+	 * Get the {@link Shell} associated with this splash screen. If this method returns
+	 * a non-<code>null</code> value prior to the {@link #init(Shell)} being invoked then
+	 * this shell will be used for the splash shell and it will subsequently be
+	 * passed to the {@link #init(Shell)} method. In this way a splash handler
+	 * may participate in splash processes prior to the workbench startup.
 	 * 
 	 * @return the splash shell
 	 */

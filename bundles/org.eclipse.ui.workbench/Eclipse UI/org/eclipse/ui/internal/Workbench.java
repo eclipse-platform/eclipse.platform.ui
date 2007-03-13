@@ -280,11 +280,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	/**
 	 * Signals that the workbench should create a splash implementation when
-	 * instantiated. Intial value is <code>false</code>.
+	 * instantiated. Intial value is <code>true</code>.
 	 * 
 	 * @since 3.3
 	 */
-	private static boolean createSplash = false;
+	private static boolean createSplash = true;
 
 	/**
 	 * The splash handler.
@@ -491,8 +491,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 			} else {
 				newDisplay = new Display();
 			}
-			// we created the display, we create the splash
-			createSplash = true;
 		}
 
 		// workaround for 1GEZ9UR and 1GF07HN
@@ -534,30 +532,32 @@ public final class Workbench extends EventManager implements IWorkbench {
 					return;
 				}
 				
-				Shell splashShell = null;
-				// look for the 32 bit internal_new shell method
-				Method method = Shell.class
-						.getMethod(
-								"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
-				if (method != null) {
-					// we're on a 32 bit platform so invoke it with splash handle as an int
-					splashShell = (Shell) method.invoke(null, new Object[] {
-							display, new Integer(splashHandle) });
-				} else {
-					// look for the 64 bit internal_new shell method
-					method = Shell.class
+				Shell splashShell = splash.getSplash();
+				if (splashShell == null) {
+					// look for the 32 bit internal_new shell method
+					Method method = Shell.class
 							.getMethod(
-									"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
-					if (method != null)
-						// we're on a 64 bit platform so invoke it with a long
+									"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
+					if (method != null) {
+						// we're on a 32 bit platform so invoke it with splash handle as an int
 						splashShell = (Shell) method.invoke(null, new Object[] {
-								display, new Long(splashHandle) });
+								display, new Integer(splashHandle) });
+					} else {
+						// look for the 64 bit internal_new shell method
+						method = Shell.class
+								.getMethod(
+										"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
+						if (method != null)
+							// we're on a 64 bit platform so invoke it with a long
+							splashShell = (Shell) method.invoke(null, new Object[] {
+									display, new Long(splashHandle) });
+					}
+					if (splashShell == null)
+						return;
+					if (background != null)
+						splashShell.setBackgroundImage(background);
 				}
-				if (splashShell == null)
-					return;
-				
-				if (background != null)
-					splashShell.setBackgroundImage(background);
+
 				Dictionary properties = new Hashtable();
 				properties.put(Constants.SERVICE_RANKING, new Integer(Integer.MAX_VALUE));
 				BundleContext context = WorkbenchPlugin.getDefault().getBundleContext();
