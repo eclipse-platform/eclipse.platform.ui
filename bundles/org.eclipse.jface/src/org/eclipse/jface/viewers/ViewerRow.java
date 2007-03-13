@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
  *                                                fix for bug 166346, bug 167325s
+ *                                              - Fix for bug 174355
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -40,12 +41,14 @@ public abstract class ViewerRow {
 
 	/**
 	 * Constant denoting the row above the current one (value is 1).
+	 * 
 	 * @see #getNeighbor(int, boolean)
 	 */
 	public static final int ABOVE = 1;
 
 	/**
 	 * Constant denoting the row below the current one (value is 2).
+	 * 
 	 * @see #getNeighbor(int, boolean)
 	 */
 	public static final int BELOW = 2;
@@ -224,10 +227,9 @@ public abstract class ViewerRow {
 	public abstract Control getControl();
 
 	/**
-	 * Returns a neighboring row, or <code>null</code> if no
-	 * neighbor exists in the given direction. If <code>sameLevel</code> is
-	 * <code>true</code>, only sibling rows (under the same parent) will be
-	 * considered.
+	 * Returns a neighboring row, or <code>null</code> if no neighbor exists
+	 * in the given direction. If <code>sameLevel</code> is <code>true</code>,
+	 * only sibling rows (under the same parent) will be considered.
 	 * 
 	 * @param direction
 	 *            the direction {@link #BELOW} or {@link #ABOVE}
@@ -238,4 +240,9 @@ public abstract class ViewerRow {
 	 */
 	public abstract ViewerRow getNeighbor(int direction, boolean sameLevel);
 
+	/**
+	 * The tree path used to identify an element by the unique path
+	 * @return the path
+	 */
+	public abstract TreePath getTreePath();
 }

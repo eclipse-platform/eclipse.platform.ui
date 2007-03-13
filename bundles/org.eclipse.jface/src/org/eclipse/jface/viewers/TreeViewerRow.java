@@ -8,10 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     											 - Fix for bug 174355
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
 
+import java.util.LinkedList;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -293,6 +297,17 @@ public class TreeViewerRow extends ViewerRow {
 		
 		return rv;
 	}
-	
-	
+
+	public TreePath getTreePath() {
+		TreeItem tItem = item;
+		LinkedList segments = new LinkedList();
+		while (tItem != null) {
+			Object segment = tItem.getData();
+			Assert.isNotNull(segment);
+			segments.addFirst(segment);
+			tItem = tItem.getParentItem();
+		}
+		
+		return new TreePath(segments.toArray());
+	}
 }

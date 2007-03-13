@@ -9,6 +9,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     											- Fix for bug 174355
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -179,6 +180,10 @@ public class TableViewerRow extends ViewerRow {
 		}
 		
 		return null;
+	}
+
+	public TreePath getTreePath() {
+		return new TreePath(new Object[] {item.getData()});
 	}
 
 }

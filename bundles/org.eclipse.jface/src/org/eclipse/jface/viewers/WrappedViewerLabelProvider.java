@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -33,6 +34,10 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 
 	private IFontProvider fontProvider;
 
+	private IViewerLabelProvider viewerLabelProvider;
+
+	private ITreePathLabelProvider treePathLabelProvider;
+	
 	/**
 	 * Create a new instance of the receiver based on labelProvider.
 	 * 
@@ -50,6 +55,12 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 *            {@link Object}
 	 */
 	public void setProviders(Object provider) {
+		if (provider instanceof ITreePathLabelProvider)
+			treePathLabelProvider = ((ITreePathLabelProvider) provider);
+
+		if (provider instanceof IViewerLabelProvider)
+			viewerLabelProvider = ((IViewerLabelProvider) provider);
+		
 		if (provider instanceof ILabelProvider)
 			labelProvider = ((ILabelProvider) provider);
 
@@ -137,5 +148,41 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	 */
 	IFontProvider getFontProvider() {
 		return fontProvider;
+	}
+	
+	public void update(ViewerCell cell) {
+		if (viewerLabelProvider != null) {
+			ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
+			viewerLabelProvider.updateLabel(label, cell.getElement());
+			applyViewerLabel(cell, label);
+		} else if (treePathLabelProvider != null) {
+			ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
+			TreePath treePath = cell.getViewerRow().getTreePath();
+			
+			Assert.isNotNull(treePath);
+			treePathLabelProvider.updateLabel(label, treePath);
+			
+			applyViewerLabel(cell, label);
+		} else {
+			super.update(cell);
+		}
+	}
+
+	private void applyViewerLabel(ViewerCell cell, ViewerLabel label) {
+		if (label.hasNewText()) {
+			cell.setText(label.getText());
+		}
+		if (label.hasNewImage()) {
+			cell.setImage(label.getImage());
+		}
+		if (label.hasNewBackground()) {
+			cell.setBackground(label.getBackground());
+		}
+		if (label.hasNewForeground()) {
+			cell.setForeground(label.getForeground());
+		}
+		if (label.hasNewFont()) {
+			cell.setFont(label.getFont());
+		}
 	}
 }
