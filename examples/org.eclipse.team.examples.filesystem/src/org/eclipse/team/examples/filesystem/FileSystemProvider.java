@@ -15,6 +15,7 @@ import java.io.File;
 import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -170,13 +171,21 @@ public class FileSystemProvider extends RepositoryProvider {
 	public FileSystemOperations getOperations() {
 		return new FileSystemOperations(this);
 	}
-	/**
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
-		return new FileModificationValidator(this);
+		return getNewFileModificationValidator();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator2()
+	 */
+	public FileModificationValidator getNewFileModificationValidator() {
+		return new org.eclipse.team.examples.filesystem.FileModificationValidator(this);
+	}
+	
 	/**
 	 * Return the resource variant for the local resource using the bytes to
 	 * identify the variant.

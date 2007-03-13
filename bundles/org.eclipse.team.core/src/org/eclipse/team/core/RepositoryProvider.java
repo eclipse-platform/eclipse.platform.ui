@@ -16,7 +16,7 @@ import java.util.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.resources.team.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.osgi.util.NLS;
@@ -367,10 +367,48 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
  	 * that modify the contents of files
  	 * 
 	 * @see org.eclipse.core.resources.IFileModificationValidator
+	 * @deprecated use {@link #getNewFileModificationValidator()}
 	 */
-	
 	public IFileModificationValidator getFileModificationValidator() {
 		return null;
+	}
+	
+	/**
+	 * Returns a {@link FileModificationValidator} for pre-checking operations
+	 * that modify the contents of files. Returns <code>null</code> if the
+	 * provider does not wish to participate in file modification validation. By
+	 * default, this method wraps the old validator returned from
+	 * {@link #getFileModificationValidator()}. Subclasses that which to remain
+	 * backwards compatible while providing this new API should override
+	 * {@link #getNewFileModificationValidator()} to return a subclass of
+	 * {@link FileModificationValidator} and should return the same
+	 * validator from {@link #getFileModificationValidator()}.
+	 * 
+	 * @return an <code>FileModificationValidator</code> for pre-checking
+	 *         operations that modify the contents of files
+	 * 
+	 * @see FileModificationValidator
+	 * @since 3.3
+	 */
+	public FileModificationValidator getNewFileModificationValidator() {
+		final IFileModificationValidator fileModificationValidator = getFileModificationValidator();
+		if (fileModificationValidator == null)
+			return null;
+		return new FileModificationValidator() {
+			public IStatus validateSave(IFile file) {
+				return fileModificationValidator.validateSave(file);
+			}
+			public IStatus validateEdit(IFile[] files,
+					FileModificationValidationContext context) {
+				// Extract the shell from the context in order to invoke the old API
+				Object shell;
+				if (context == null)
+					shell = null;
+				else
+					shell = context.getShell();
+				return fileModificationValidator.validateEdit(files, shell);
+			}
+		};
 	}
 	
 	/**

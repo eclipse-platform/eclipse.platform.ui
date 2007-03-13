@@ -14,7 +14,6 @@ package org.eclipse.team.internal.core;
 import java.util.*;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.IStatus;
@@ -57,21 +56,15 @@ public class FileModificationValidatorManager extends FileModificationValidator 
 			RepositoryProvider provider = (RepositoryProvider)providersIterator.next();
 			ArrayList filesList = (ArrayList)providersToFiles.get(provider);
 			IFile[] filesArray = (IFile[])filesList.toArray(new IFile[filesList.size()]);
-			IFileModificationValidator validator = getDefaultValidator();
+			FileModificationValidator validator = getDefaultValidator();
 
 			//if no provider or no validator use the default validator
 			if (provider != null) {
-				IFileModificationValidator v = provider.getFileModificationValidator();
+				FileModificationValidator v = provider.getNewFileModificationValidator();
 				if (v != null) validator = v;
 			}
 			
-			//must null any reference to FileModificationValidationContext for backwards compatibility
-			Object shell = context;
-			if (!(validator instanceof FileModificationValidator))
-				if (context instanceof FileModificationValidationContext)
-					shell = context.getShell();
-			
-			IStatus status = validator.validateEdit(filesArray, shell);
+			IStatus status = validator.validateEdit(filesArray, context);
 			if(!status.isOK())
 				allOK = false;
 
@@ -96,11 +89,11 @@ public class FileModificationValidatorManager extends FileModificationValidator 
 	 */
 	public IStatus validateSave(IFile file) {
 		RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject());
-		IFileModificationValidator validator = getDefaultValidator();
+		FileModificationValidator validator = getDefaultValidator();
 
 		//if no provider or no validator use the default validator
 		if (provider != null) {
-			IFileModificationValidator v = provider.getFileModificationValidator();
+			FileModificationValidator v = provider.getNewFileModificationValidator();
 			if (v != null) validator = v;
 		}
 

@@ -13,28 +13,11 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
-import org.eclipse.core.resources.team.IResourceTree;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFileModificationValidator;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
@@ -329,8 +312,8 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 		}
 	}
 
-	private IFileModificationValidator getFileModificationValidator(IFile[] files) {
-		return getProvider(files).getFileModificationValidator();
+	private FileModificationValidator getFileModificationValidator(IFile[] files) {
+		return getProvider(files).getNewFileModificationValidator();
 	}
 
 	private CVSTeamProvider getProvider(IFile[] files) {

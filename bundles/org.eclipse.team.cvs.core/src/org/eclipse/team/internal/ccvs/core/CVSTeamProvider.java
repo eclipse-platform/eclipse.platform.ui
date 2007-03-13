@@ -12,18 +12,10 @@ package org.eclipse.team.internal.ccvs.core;
  
 import java.io.*;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.team.IMoveDeleteHook;
-import org.eclipse.core.resources.team.ResourceRuleFactory;
+import org.eclipse.core.resources.team.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -481,11 +473,18 @@ public class CVSTeamProvider extends RepositoryProvider {
 	public IMoveDeleteHook getMoveDeleteHook() {
 		return moveDeleteHook;
 	}
-	 
-	/**
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
+		return getNewFileModificationValidator();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator2()
+	 */
+	public FileModificationValidator getNewFileModificationValidator() {
 		return internalGetFileModificationValidator();
 	}
 	
