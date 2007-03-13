@@ -354,58 +354,134 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+?"/>
 
-      <!-- Content assist key binding for the Japanese language to prevent conflict with IME -->
+      <!-- Content assist key binding for the Japanese language to prevent conflict with IME on GTK -->
       <key
             locale="ja"
+            platform="gtk"
    	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+SPACE"/>
       <key
             locale="ja"
+            platform="gtk"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+/"/>
       <key
             locale="ja"
+            platform="gtk"
    	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+M2+SPACE"/>
       <key
             locale="ja"
+            platform="gtk"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+?"/>
       <key
-            locale="zh"
+            locale="ja"
+            platform="gtk"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+?"/>
 
-      <!-- Content assist key binding for the Korean language to prevent conflict with IME -->
+      <!-- Content assist key binding for the Korean language to prevent conflict with IME on GTK -->
       <key
             locale="ko"
+            platform="gtk"
    	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+SPACE"/>
       <key
             locale="ko"
+            platform="gtk"
             commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+/"/>
       <key
             locale="ko"
+            platform="gtk"
    	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="CTRL+M2+SPACE"/>
       <key
             locale="ko"
+            platform="gtk"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M3+?"/>
       <key
             locale="ko"
+            platform="gtk"
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+?"/>
+            
+      <!-- Content assist key binding for the Japanese language to prevent conflict with IME on Motif -->
+      <key
+            locale="ja"
+            platform="motif"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+SPACE"/>
+      <key
+            locale="ja"
+            platform="motif"
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+/"/>
+      <key
+            locale="ja"
+            platform="motif"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+M2+SPACE"/>
+      <key
+            locale="ja"
+            platform="motif"
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+?"/>
+      <key
+            locale="ja"
+            platform="motif"
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+?"/>
+
+      <!-- Content assist key binding for the Korean language to prevent conflict with IME on Motif -->
+      <key
+            locale="ko"
+            platform="motif"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+SPACE"/>
+      <key
+            locale="ko"
+            platform="motif"
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+/"/>
+      <key
+            locale="ko"
+            platform="motif"
+   	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="CTRL+M2+SPACE"/>
+      <key
+            locale="ko"
+            platform="motif"
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+?"/>
+      <key
+            locale="ko"
+            platform="motif"
             commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M2+M3+?"/>
