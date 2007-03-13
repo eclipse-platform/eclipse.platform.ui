@@ -79,7 +79,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 		Binding binding = dbc.bindValue(target, model, null, null);
 		assertTrue("binding is of the incorrect type",
-				binding.getClass().getSimpleName().equals("ValueBinding"));
+				binding.getClass().getName().endsWith("ValueBinding"));
 	}
 
 	public void testBindList() throws Exception {
@@ -88,7 +88,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 		Binding binding = dbc.bindList(target, model, null, null);
 		assertTrue("binding is of the incorrect type",
-				binding.getClass().getSimpleName().equals("ListBinding"));
+				binding.getClass().getName().endsWith("ListBinding"));
 	}
 
 	/**
