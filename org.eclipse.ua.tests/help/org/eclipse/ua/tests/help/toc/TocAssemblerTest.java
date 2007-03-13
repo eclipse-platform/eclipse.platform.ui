@@ -64,6 +64,18 @@ public class TocAssemblerTest extends TestCase {
 		actual = serialize((TocContribution)contributions.get(0));
 		XMLUtil.assertXMLEquals("Assembled TOC did not match expected result", expected, actual);
 	}
+	
+	public void testInvalidLinkTo() throws Exception {
+		TocFileParser parser = new TocFileParser();
+		TocContribution linkTo1 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo1.xml", true, "en", null, null));
+		TocContribution linkTo2 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo2.xml", true, "en", null, null));
+		TocContribution linkTo3 = parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), "data/help/toc/assembler/linkTo3.xml", true, "en", null, null));
+		
+		TocAssembler assembler = new TocAssembler();
+		List contributions = new ArrayList(Arrays.asList(new Object[] { linkTo1, linkTo2, linkTo3 }));
+		contributions = assembler.assemble(contributions);
+		assertEquals(3, contributions.size());
+	}
 
 	private String serialize(TocContribution contribution) throws Exception {
 		DocumentWriter writer = new DocumentWriter();

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="linkTo3" link_to="data/help/toc/assembler/linkTo1.xml#anchor_doesnt_exist">
+	<topic label="My topic3" href="my_topic3.html"/>
+</toc>

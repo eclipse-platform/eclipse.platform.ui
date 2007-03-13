@@ -42,6 +42,7 @@ public class TocAssembler {
 	private DocumentProcessor processor;
 	private ProcessorHandler[] handlers;
 	
+	private Map anchorsByContributionId;
 	private List contributions;
 	private Map contributionsById;
 	private Map contributionsByLinkTo;
@@ -54,6 +55,7 @@ public class TocAssembler {
 	 */
 	public List assemble(List contributions) {
 		this.contributions = contributions;
+		anchorsByContributionId = null;
 		contributionsById = null;
 		contributionsByLinkTo = null;
 		processedContributions = null;
@@ -69,11 +71,12 @@ public class TocAssembler {
 	
 	/*
 	 * Returns the list of contributions that should appear as root TOCs
-	 * (books). Contributions are books if:
+	 * (books). Contributions are books if the following conditions are
+	 * true:
 	 * 
 	 * 1. isPrimary() returns true.
 	 * 2. The toc has no "link_to" attribute defined (does not link into
-	 *    another toc).
+	 *    another toc), or the link_to target anchor doesn't exist.
 	 * 3. No other toc has a link to this contribution (via "link" element).
 	 */
 	private List getBooks() {
@@ -82,7 +85,7 @@ public class TocAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			if (contrib.isPrimary() && contrib.getLinkTo() == null && !linkedContributionIds.contains(contrib.getId())) {
+			if (contrib.isPrimary() && !hasValidLinkTo(contrib) && !linkedContributionIds.contains(contrib.getId())) {
 				books.add(contrib);
 			}
 		}
@@ -129,6 +132,43 @@ public class TocAssembler {
 			}
 		}
 		return linkedContributionIds;
+	}
+	
+	/*
+	 * Checks whether the toc contribution with the given id contains the
+	 * given anchor.
+	 */
+	private boolean hasAnchor(String tocContributionId, String anchorId) {
+		TocContribution contrib = getContribution(tocContributionId);
+		if (contrib != null) {
+			process(contrib);
+			if (anchorsByContributionId != null) {
+				Set anchors = (Set)anchorsByContributionId.get(tocContributionId);
+				if (anchors != null) {
+					return anchors.contains(anchorId);
+				}
+			}
+		}
+		// invalid contribution, or no anchors
+		return false;
+	}
+	
+	/*
+	 * Checks whether the given contribution has a link_to defined, and it
+	 * is valid (contribution and anchor exist).
+	 */
+	private boolean hasValidLinkTo(TocContribution contrib) {
+		String linkTo = contrib.getLinkTo();
+		if (linkTo != null) {
+			String normalized = HrefUtil.normalizeHref(contrib.getContributorId(), linkTo);
+			int index = normalized.indexOf('#');
+			if (index != -1) {
+				String id = normalized.substring(0, index);
+				String anchorId = normalized.substring(index + 1);
+				return hasAnchor(id, anchorId);
+			}
+		}
+		return false;
 	}
 	
 	/*
@@ -292,6 +332,18 @@ public class TocAssembler {
 				if (parent != null) {
 					String anchorId = anchor.getId();
 					if (anchorId != null) {
+						// add to set of known anchors
+						if (anchorsByContributionId == null) {
+							anchorsByContributionId = new HashMap();
+						}
+						Set set = (Set)anchorsByContributionId.get(id);
+						if (set == null) {
+							set = new HashSet();
+							anchorsByContributionId.put(id, set);
+						}
+						set.add(anchorId);
+						
+						// process contributions
 						TocContribution destContribution = getContribution(id);
 						if (destContribution != null) {
 							TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
