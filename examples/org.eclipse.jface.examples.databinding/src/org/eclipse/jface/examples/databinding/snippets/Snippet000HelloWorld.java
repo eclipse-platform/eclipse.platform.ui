@@ -31,12 +31,13 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet000HelloWorld {
 	public static void main(String[] args) {
-		ViewModel viewModel = new ViewModel();
-		final Shell shell = new View(viewModel).createShell();
+		Display display = new Display();
+		final ViewModel viewModel = new ViewModel();
 
-		Realm.runWithDefault(SWTObservables.getRealm(shell.getDisplay()),
+		Realm.runWithDefault(SWTObservables.getRealm(display),
 				new Runnable() {
 					public void run() {
+						final Shell shell = new View(viewModel).createShell();
 						// The SWT event loop
 						Display display = Display.getCurrent();
 						while (!shell.isDisposed()) {
