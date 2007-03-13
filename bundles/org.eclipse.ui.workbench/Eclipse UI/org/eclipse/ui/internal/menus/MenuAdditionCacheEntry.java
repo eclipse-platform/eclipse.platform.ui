@@ -170,7 +170,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			if (newItem != null) {
 				iciToConfigElementMap.put(newItem, items[i]);
 				additions.addContributionItem(newItem,
-						getVisibleWhenForItem(newItem), null);
+						getVisibleWhenForItem(newItem));
 			}
 		}
 	}

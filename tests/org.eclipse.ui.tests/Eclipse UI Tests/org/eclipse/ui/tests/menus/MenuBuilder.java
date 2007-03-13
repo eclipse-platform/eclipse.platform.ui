@@ -61,7 +61,7 @@ public class MenuBuilder {
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						null, null, "Item X20", null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, null, null);
+				additions.addContributionItem(item, null);
 
 				MenuManager submenu = new MenuManager("Menu X21",
 						"org.eclipse.ui.tests.menus.menuX21");
@@ -78,14 +78,14 @@ public class MenuBuilder {
 						CommandContributionItem.STYLE_PUSH);
 				submenu.add(item);
 
-				additions.addContributionItem(submenu, null, null);
+				additions.addContributionItem(submenu, null);
 
 				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.tests.menus.itemX24",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						null, null, "Item X24", null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, null, null);
+				additions.addContributionItem(item, null);
 			}
 		};
 		menuService.addContributionFactory(viewMenuAddition);
@@ -99,7 +99,7 @@ public class MenuBuilder {
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
 						null, null, "Item X25", null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, null, null);
+				additions.addContributionItem(item, null);
 				WorkbenchWindowControlContribution widget = new WorkbenchWindowControlContribution(
 						"org.eclipse.ui.tests.menus.itemX26") {
 					protected Control createControl(Composite parent) {
@@ -108,7 +108,7 @@ public class MenuBuilder {
 						return textCtrl;
 					}
 				};
-				additions.addContributionItem(widget, null, null);
+				additions.addContributionItem(widget, null);
 			}
 		};
 		menuService.addContributionFactory(viewToolbarAddition);
@@ -147,7 +147,7 @@ public class MenuBuilder {
 				search.add(new Separator("occurencesActionsGroup"));
 				search.add(new Separator("extraSearchGroup"));
 
-				additions.addContributionItem(search, null, null);
+				additions.addContributionItem(search, null);
 			}
 		};
 
@@ -172,7 +172,7 @@ public class MenuBuilder {
 						"org.eclipse.jdt.internal.ui.search.openJavaSearchPage",
 						null, searchIcon, null, null, null, null, null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, activeSearchActionSet, null);
+				additions.addContributionItem(item, activeSearchActionSet);
 			}
 		};
 		menuService.addContributionFactory(factory);
@@ -184,7 +184,7 @@ public class MenuBuilder {
 					IContributionRoot additions) {
 				MenuManager readMenu = new MenuManager("&Read Access",
 						"readAccessSubMenu");
-				additions.addContributionItem(readMenu, activeSearchActionSet, null);
+				additions.addContributionItem(readMenu, activeSearchActionSet);
 
 				readMenu.add(new GroupMarker("group1"));
 
@@ -215,7 +215,7 @@ public class MenuBuilder {
 
 				MenuManager writeMenu = new MenuManager("&Write Access",
 						"writeAccessSubMenu");
-				additions.addContributionItem(writeMenu, activeSearchActionSet, null);
+				additions.addContributionItem(writeMenu, activeSearchActionSet);
 
 				writeMenu.add(new GroupMarker("group1"));
 
@@ -287,14 +287,14 @@ public class MenuBuilder {
 						"org.eclipse.ui.examples.wiki.post", null, postIcon,
 						null, null, null, "P", null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, ifileExpression, null);
+				additions.addContributionItem(item, ifileExpression);
 
 				item = new CommandContributionItem(serviceLocator,
 						"org.eclipse.ui.examples.wiki.load",
 						"org.eclipse.ui.examples.wiki.load", null, loadIcon,
 						null, null, null, "L", null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, ifileExpression, null);
+				additions.addContributionItem(item, ifileExpression);
 			}
 		};
 		menuService.addContributionFactory(factory);
@@ -316,7 +316,7 @@ public class MenuBuilder {
 						"org.eclipse.ui.examples.menus.scramble.text", null,
 						scrambleIcon, null, null, null, "c", null,
 						CommandContributionItem.STYLE_PUSH);
-				additions.addContributionItem(item, null, null);
+				additions.addContributionItem(item, null);
 			}
 		};
 		menuService.addContributionFactory(factory);

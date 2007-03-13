@@ -40,7 +40,7 @@ final class ContributionRoot implements
 	 * @see org.eclipse.ui.menus.IContributionRoot#addContributionItem(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression, org.eclipse.core.expressions.Expression)
 	 */
 	public void addContributionItem(IContributionItem item,
-			Expression visibleWhen, Expression killswitch) {
+			Expression visibleWhen) {
 		if (item == null)
 			throw new IllegalArgumentException();
 		topLevelItems.add(item);
@@ -69,7 +69,7 @@ final class ContributionRoot implements
 	 * @see org.eclipse.ui.menus.IContributionRoot#registerVisibilityForChild(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression, org.eclipse.core.expressions.Expression)
 	 */
 	public void registerVisibilityForChild(IContributionItem item,
-			Expression visibleWhen, Expression killswitch) {
+			Expression visibleWhen) {
 		if (item == null)
 			throw new IllegalArgumentException();
 		if (visibleWhen == null)

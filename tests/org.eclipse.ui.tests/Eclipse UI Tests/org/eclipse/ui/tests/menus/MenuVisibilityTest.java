@@ -83,7 +83,7 @@ public class MenuVisibilityTest extends UITestCase {
 			 */
 			public void createContributionItems(IServiceLocator menuService,
 					IContributionRoot additions) {
-				additions.addContributionItem(item, activeContextExpr, null);
+				additions.addContributionItem(item, activeContextExpr);
 			}
 		};
 
@@ -150,7 +150,7 @@ public class MenuVisibilityTest extends UITestCase {
 			 */
 			public void createContributionItems(IServiceLocator menuService,
 					IContributionRoot additions) {
-				additions.addContributionItem(aci, activeContextExpr[0], null);
+				additions.addContributionItem(aci, activeContextExpr[0]);
 			}
 		};
 

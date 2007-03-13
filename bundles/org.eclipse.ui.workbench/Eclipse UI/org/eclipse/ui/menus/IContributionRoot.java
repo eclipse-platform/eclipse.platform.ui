@@ -14,7 +14,6 @@ package org.eclipse.ui.menus;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.ui.ActiveShellExpression;
 
 /**
  * Instances of this interface represent a position in the contribution
@@ -42,38 +41,22 @@ public interface IContributionRoot {
 	 *            the item to add
 	 * @param visibleWhen
 	 *            the visibility expression. May be <code>null</code>.
-	 * @param restrictEvaluation
-	 *            an expression that must evaluate to <code>true</code> in
-	 *            order for the visibleWhen expression to be evaluated. This is
-	 *            most commonly used to restrict visibleWhen evaluation to the
-	 *            active workbench window via an {@link ActiveShellExpression}.
-	 *            In this way you can prevent visibility changes in background
-	 *            window elements who have visibilty tied to global properties
-	 *            such as action sets and contexts.
 	 */
 	public void addContributionItem(IContributionItem item,
-			Expression visibleWhen, Expression restrictEvaluation);
+			Expression visibleWhen);
 
 	/**
 	 * Registers visibilty for arbitrary {@link IContributionItem} instances
 	 * that are <b>NOT</b> direct children of this container. Ie: children of a
 	 * {@link IContributionManager} that has been previously registered with a
-	 * call to {{@link #addContributionItem(IContributionItem, Expression, Expression)}.
+	 * call to {{@link #addContributionItem(IContributionItem)}.
 	 * 
 	 * @param item
 	 *            the item for which to register a visibility clause
 	 * @param visibleWhen
 	 *            the visibility expression. May be <code>null</code> in which
 	 *            case this method is a no-op.
-	 * @param restrictEvaluation
-	 *            an expression that must evaluate to <code>true</code> in
-	 *            order for the visibleWhen expression to be evaluated. This is
-	 *            most commonly used to restrict visibleWhen evaluation to the
-	 *            active workbench window via an {@link ActiveShellExpression}.
-	 *            In this way you can prevent visibility changes in background
-	 *            window elements who have visibilty tied to global properties
-	 *            such as action sets and contexts.
 	 */
 	public void registerVisibilityForChild(IContributionItem item,
-			Expression visibleWhen, Expression restrictEvaluation);
+			Expression visibleWhen);
 }
