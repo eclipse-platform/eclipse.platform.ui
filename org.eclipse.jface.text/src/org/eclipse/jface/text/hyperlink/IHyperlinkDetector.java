@@ -25,6 +25,10 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  * <li>{@link IHyperlinkDetectorExtension} since version 3.3,
  * 		adds the ability to dispose a hyperlink detector
  * </li>
+ * <li>{@link IHyperlinkDetectorExtension2} since version 3.3,
+ * 		adds the ability to specify the state mask of the modifier
+ *      keys that need to be pressed for this hyperlink detector
+ * </li>
  * </ul></p>
  * <p>
  * Clients may implement this interface.

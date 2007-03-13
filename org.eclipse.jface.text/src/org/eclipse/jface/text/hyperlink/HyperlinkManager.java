@@ -108,6 +108,11 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	private boolean fActive;
 	/** The key modifier mask. */
 	private int fHyperlinkStateMask;
+	/**
+	 * The active key modifier mask.
+	 * @since 3.3
+	 */
+	private int fActiveHyperlinkStateMask;
 	/** The active hyperlinks. */
 	private IHyperlink[] fActiveHyperlinks;
 	/** The hyperlink detectors. */
@@ -235,6 +240,15 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 				IHyperlinkDetector detector= fHyperlinkDetectors[i];
 				if (detector == null)
 					continue;
+				
+				if (detector instanceof IHyperlinkDetectorExtension2) {
+					int stateMask= ((IHyperlinkDetectorExtension2)detector).getStateMask();
+					if (stateMask != -1 && stateMask != fActiveHyperlinkStateMask)
+						continue;
+					else if (stateMask == -1 && fActiveHyperlinkStateMask != fHyperlinkStateMask)
+					continue;
+				} else if (fActiveHyperlinkStateMask != fHyperlinkStateMask)
+					continue;
 
 				IHyperlink[] hyperlinks= detector.detectHyperlinks(fTextViewer, region, canShowMultipleHyperlinks);
 				if (hyperlinks == null)
@@ -322,12 +336,13 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			return;
 		}
 
-		if (event.keyCode != fHyperlinkStateMask) {
+		if (!isRegisteredStateMask(event.keyCode)) {
 			deactivate();
 			return;
 		}
 
 		fActive= true;
+		fActiveHyperlinkStateMask= event.keyCode;
 
 //			removed for #25871 (hyperlinks could interact with typing)
 //
@@ -364,7 +379,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		if (!fActive)
 			return;
 
-		if (event.stateMask != fHyperlinkStateMask) {
+		if (event.stateMask != fActiveHyperlinkStateMask) {
 			deactivate();
 			return;
 		}
@@ -399,7 +414,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 */
 	public void mouseMove(MouseEvent event) {
 
-		if (event.stateMask != fHyperlinkStateMask) {
+		if (!isRegisteredStateMask(event.stateMask)) {
 			if (fActive)
 				deactivate();
 			
@@ -407,6 +422,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		}
 		
 		fActive= true;
+		fActiveHyperlinkStateMask= event.stateMask;
 
 		StyledText text= fTextViewer.getTextWidget();
 		if (text == null || text.isDisposed()) {
@@ -427,6 +443,21 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 		fHyperlinkPresenter.showHyperlinks(fActiveHyperlinks);
 
+	}
+	
+	private boolean isRegisteredStateMask(int stateMask) {
+		if (stateMask == fHyperlinkStateMask)
+			return true;
+		
+		synchronized (fHyperlinkDetectors) {
+			for (int i= 0; i < fHyperlinkDetectors.length; i++) {
+				if (fHyperlinkDetectors[i] instanceof IHyperlinkDetectorExtension2) {
+					if (stateMask == ((IHyperlinkDetectorExtension2)fHyperlinkDetectors[i]).getStateMask())
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	/*

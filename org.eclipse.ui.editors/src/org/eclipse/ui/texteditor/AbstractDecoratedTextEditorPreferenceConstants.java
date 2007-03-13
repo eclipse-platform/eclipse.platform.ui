@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.util.StringTokenizer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
@@ -19,6 +21,8 @@ import org.eclipse.jface.preference.PreferenceConverter;
 
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -479,6 +483,12 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, new RGB(0, 0, 255));
 
+		HyperlinkDetectorDescriptor[] descriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
+		for (int i= 0; i < descriptors.length; i++) {
+			int stateMask= computeStateMask(descriptors[i].getModifierKeys());
+			store.setDefault(descriptors[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
+		}
+
 		store.setToDefault(EDITOR_DISABLE_OVERWRITE_MODE);
 
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
@@ -500,4 +510,60 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
+	
+	/**
+	 * Computes the state mask out of the given modifiers string.
+	 *
+	 * @param modifiers a string containing modifiers
+	 * @return the state mask
+	 */
+	private static final int computeStateMask(String modifiers) {
+		if (modifiers == null)
+			return -1;
+
+		if (modifiers.length() == 0)
+			return SWT.NONE;
+
+		int stateMask= 0;
+		StringTokenizer modifierTokenizer= new StringTokenizer(modifiers, ",;.:+-* "); //$NON-NLS-1$
+		while (modifierTokenizer.hasMoreTokens()) {
+			int modifier= findLocalizedModifier(modifierTokenizer.nextToken());
+			if (modifier == 0 || (stateMask & modifier) == modifier)
+				return -1;
+			stateMask= stateMask | modifier;
+		}
+		return stateMask;
+	}
+
+	/**
+	 * Maps the localized modifier name to a code in the same
+	 * manner as #findModifier.
+	 *
+	 * @param modifierName the modifier name
+	 * @return the SWT modifier bit, or <code>0</code> if no match was found
+	 */
+	private static final int findLocalizedModifier(String modifierName) {
+		if (modifierName == null)
+			return SWT.NONE;
+
+		if (modifierName.equalsIgnoreCase("M1")) //$NON-NLS-1$
+			return SWT.MOD1;
+		if (modifierName.equalsIgnoreCase("M2")) //$NON-NLS-1$
+			return SWT.MOD2;
+		if (modifierName.equalsIgnoreCase("M3")) //$NON-NLS-1$
+			return SWT.MOD3;
+		if (modifierName.equalsIgnoreCase("M4")) //$NON-NLS-1$
+			return SWT.MOD4;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.CTRL)))
+			return SWT.CTRL;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.SHIFT)))
+			return SWT.SHIFT;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.ALT)))
+			return SWT.ALT;
+		if (modifierName.equalsIgnoreCase(Action.findModifierString(SWT.COMMAND)))
+			return SWT.COMMAND;
+
+		return SWT.NONE;
+	}
+	
 }

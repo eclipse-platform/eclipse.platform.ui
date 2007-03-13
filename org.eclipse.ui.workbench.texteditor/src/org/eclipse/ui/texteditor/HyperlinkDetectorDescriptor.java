@@ -41,6 +41,8 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * @since 3.3
  */
 public final class HyperlinkDetectorDescriptor {
+	
+	public static final String STATE_MASK_POSTFIX= "_stateMask"; //$NON-NLS-1$
 
 	private static final String HYPERLINK_DETECTORS_EXTENSION_POINT= "org.eclipse.ui.workbench.texteditor.hyperlinkDetectors"; //$NON-NLS-1$
 	private static final String HYPERLINK_DETECTOR_ELEMENT= "hyperlinkDetector"; //$NON-NLS-1$
@@ -50,6 +52,7 @@ public final class HyperlinkDetectorDescriptor {
 	private static final String TARGET_ID_ATTRIBUTE= "targetId"; //$NON-NLS-1$
 	private static final String CLASS_ATTRIBUTE= "class"; //$NON-NLS-1$
 	private static final String ACTIVATE_PLUG_IN_ATTRIBUTE= "activate"; //$NON-NLS-1$
+	private static final String MODIFIER_KEYS= "modifiers"; //$NON-NLS-1$
 
 	private IConfigurationElement fElement;
 	private HyperlinkDetectorTargetDescriptor fTarget;
@@ -175,6 +178,16 @@ public final class HyperlinkDetectorDescriptor {
 	 */
 	public String getDescription() {
 		return fElement.getAttribute(DESCRIPTION_ATTRIBUTE);
+	}
+
+	/**
+	 * Returns the hyperlink detector's modifier keys that
+	 * need to be pressed for this hyperlink detector.
+	 *
+	 * @return the hyperlink detector's description or <code>null</code> if not provided
+	 */
+	public String getModifierKeys() {
+		return fElement.getAttribute(MODIFIER_KEYS);
 	}
 
 	public boolean canActivatePlugIn() {

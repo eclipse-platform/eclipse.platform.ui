@@ -25,6 +25,7 @@ import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension2;
 
 
 
@@ -41,16 +42,22 @@ public final class HyperlinkDetectorRegistry {
 	/**
 	 * Delegate for contributed hyperlink detectors.
 	 */
-	private class HyperlinkDetectorDelegate implements IHyperlinkDetector, IHyperlinkDetectorExtension {
+	private class HyperlinkDetectorDelegate implements IHyperlinkDetector, IHyperlinkDetectorExtension, IHyperlinkDetectorExtension2 {
 		
 		private HyperlinkDetectorDescriptor fHyperlinkDescriptor;
 		private AbstractHyperlinkDetector fHyperlinkDetector;
 		private boolean fFailedDuringCreation= false;
 		private IAdaptable fContext;
+		private int fStateMask;
+		private boolean fIsEnabled;
 
 		
 		private HyperlinkDetectorDelegate(HyperlinkDetectorDescriptor descriptor) {
 			fHyperlinkDescriptor= descriptor;
+			if (fPreferenceStore != null) {
+				fStateMask= fPreferenceStore.getInt(fHyperlinkDescriptor.getId() +  HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX);
+				fIsEnabled= !fPreferenceStore.getBoolean(fHyperlinkDescriptor.getId());
+			}
 		}
 
 		/*
@@ -76,7 +83,7 @@ public final class HyperlinkDetectorRegistry {
 		}
 		
 		private boolean isEnabled() {
-			return fPreferenceStore == null || !fPreferenceStore.getBoolean(fHyperlinkDescriptor.getId());
+			return fIsEnabled;
 		}
 
 		private void setContext(IAdaptable context) {
@@ -93,6 +100,14 @@ public final class HyperlinkDetectorRegistry {
 			}
 			fHyperlinkDescriptor= null;
 			fContext= null;
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension#getStateMask()
+		 * @since 3.3
+		 */
+		public int getStateMask() {
+			return fStateMask;
 		}
 		
 	}

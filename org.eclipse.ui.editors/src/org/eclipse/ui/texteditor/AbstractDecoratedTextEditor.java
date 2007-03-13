@@ -70,6 +70,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
@@ -746,6 +747,19 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				} else {
 					getSourceViewer().removeRangeIndication();
 					getSourceViewer().setRangeIndicator(null);
+				}
+			}
+
+			if (sourceViewer instanceof ITextViewerExtension6) {
+				HyperlinkDetectorDescriptor[] descriptor= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
+				for (int i= 0; i < descriptor.length; i++) {
+					if (descriptor[i].getId().equals(property) || (descriptor[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX).equals(property)) {
+						IHyperlinkDetector[] detectors= getSourceViewerConfiguration().getHyperlinkDetectors(sourceViewer);
+						int stateMask= getSourceViewerConfiguration().getHyperlinkStateMask(sourceViewer);
+						ITextViewerExtension6 textViewer6= (ITextViewerExtension6)sourceViewer;
+						textViewer6.setHyperlinkDetectors(detectors, stateMask);
+						return;
+					}
 				}
 			}
 

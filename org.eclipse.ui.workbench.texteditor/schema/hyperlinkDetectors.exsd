@@ -95,6 +95,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="modifierKeys" type="string">
+            <annotation>
+               <documentation>
+                  the modifier keys that need to be pressed for this hyperlink detector to be active. Valid values are: &quot;Alt&quot;, &quot;Ctrl&quot;, &quot;Shift&quot;, &quot;Command&quot;, &quot;M1&quot;, &quot;M2&quot;, &quot;M3&quot; and &quot;M4&quot;. Modifiers are separated by &quot;+&quot;. If this attribute is not specified then the default modifier keys are used.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -75,6 +75,7 @@ final class TextEditorMessages extends NLS {
 	public static String AnnotationsConfigurationBlock_color;
 	public static String HyperlinkDetectorsConfigurationBlock_description;
 	public static String HyperlinkDetectorTable_nameColumn;
+	public static String HyperlinkDetectorTable_modifierKeysColumn;
 	public static String HyperlinkDetectorTable_targetNameColumn;
 	public static String SelectResourcesDialog_filterSelection;
 	public static String SelectResourcesDialog_deselectAll;
@@ -93,6 +94,7 @@ final class TextEditorMessages extends NLS {
 	public static String HyperlinksEnabled_label;
 	public static String HyperlinkColor_label;
 	public static String HyperlinkKeyModifier_label;
+	public static String HyperlinkDefaultKeyModifier_label;
 	public static String HyperlinkKeyModifier_error_modifierIsNotValid;
 	public static String HyperlinkKeyModifier_error_shiftIsDisabled;
 	public static String HyperlinkKeyModifier_delimiter;

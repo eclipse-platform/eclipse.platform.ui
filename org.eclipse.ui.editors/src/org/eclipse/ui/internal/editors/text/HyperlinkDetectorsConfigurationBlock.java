@@ -80,14 +80,17 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		final String targetId;
 		final String targetName;
 		final String targetDescription;
+		String stateMask;
+		String modifierKeys= ""; //$NON-NLS-1$
 
-		ListItem(String id, String name, String description, String targetId, String targetName, String targetDescription) {
+		ListItem(String id, String name, String description, String targetId, String targetName, String targetDescription, String modifierKeys) {
 			this.id= id;
 			this.name= name;
 			this.description= description;
 			this.targetId= targetId;
 			this.targetName= targetName;
 			this.targetDescription= targetDescription;
+			this.modifierKeys= modifierKeys;
 		}
 	}
 
@@ -123,10 +126,17 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
 		 */
 		public String getColumnText(Object element, int columnIndex) {
-			Assert.isLegal(columnIndex == 0 || columnIndex == 1);
-			if (columnIndex == 0)
+			switch (columnIndex) {
+			case 0:
 				return ((ListItem) element).name;
-			return ((ListItem) element).targetName;
+			case 1:
+				return ((ListItem) element).modifierKeys;
+			case 2:
+				return ((ListItem) element).targetName;
+			default:
+				Assert.isLegal(false);
+			}
+			return null; // cannot happen
 		}
 
 		/*
@@ -158,12 +168,14 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	
 	private static final String MODIFIER_DELIMITER= TextEditorMessages.HyperlinkKeyModifier_delimiter;
 
+
 	private OverlayPreferenceStore fStore;
 
 	private CheckboxTableViewer fHyperlinkDetectorsViewer;
-	private final ListItem[] fListModel;
+	private ListItem[] fListModel;
 	private final HyperlinkDetectorDescriptor[] fHyperlinkDetectorDescriptors;
 	
+	private Text fHyperlinkDefaultKeyModifierText;
 	private Text fHyperlinkKeyModifierText;
 	private Button fHyperlinksEnabledCheckBox;
 	private StatusInfo fHyperlinkKeyModifierStatus;
@@ -179,14 +191,15 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		fPreferencePage= preferencePage;
 		fHyperlinkDetectorDescriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
 		fStore.addKeys(createOverlayStoreKeys());
-		fListModel= createListModel();
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 		ArrayList overlayKeys= new ArrayList();
 		
-		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++)
+		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, fHyperlinkDetectorDescriptors[i].getId()));
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, fHyperlinkDetectorDescriptors[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX));
+		}
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED));
@@ -217,7 +230,8 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		fHyperlinksEnabledCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean state= fHyperlinksEnabledCheckBox.getSelection();
-				fHyperlinkKeyModifierText.setEnabled(state);
+				fHyperlinkDefaultKeyModifierText.setEnabled(state);
+				fHyperlinkKeyModifierText.setEnabled(state && getSelectedItem() != null);
 				fHyperlinkDetectorsViewer.getTable().setEnabled(state);
 				handleHyperlinkKeyModifierModified();
 			}
@@ -225,9 +239,129 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			}
 		});
 
+		// Text field for default modifier string
+		label= TextEditorMessages.HyperlinkDefaultKeyModifier_label;
+		fHyperlinkDefaultKeyModifierText= (Text)addTextField(composite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, 15, 20, pixelConverter)[1];
+
+		fHyperlinkDefaultKeyModifierText.addKeyListener(new KeyListener() {
+			private boolean isModifierCandidate;
+			public void keyPressed(KeyEvent e) {
+				isModifierCandidate= e.keyCode > 0 && e.character == 0 && e.stateMask == 0;
+			}
+
+			public void keyReleased(KeyEvent e) {
+				if (isModifierCandidate && e.stateMask > 0 && e.stateMask == e.stateMask && e.character == 0) {// && e.time -time < 1000) {
+					String modifierString= fHyperlinkDefaultKeyModifierText.getText();
+					Point selection= fHyperlinkDefaultKeyModifierText.getSelection();
+					int i= selection.x - 1;
+					while (i > -1 && Character.isWhitespace(modifierString.charAt(i))) {
+						i--;
+					}
+					boolean needsPrefixDelimiter= i > -1 && !String.valueOf(modifierString.charAt(i)).equals(MODIFIER_DELIMITER);
+
+					i= selection.y;
+					while (i < modifierString.length() && Character.isWhitespace(modifierString.charAt(i))) {
+						i++;
+					}
+					boolean needsPostfixDelimiter= i < modifierString.length() && !String.valueOf(modifierString.charAt(i)).equals(MODIFIER_DELIMITER);
+
+					String insertString;
+
+					if (needsPrefixDelimiter && needsPostfixDelimiter)
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifierAndDelimiter, Action.findModifierString(e.stateMask));
+					else if (needsPrefixDelimiter)
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertDelimiterAndModifier, Action.findModifierString(e.stateMask));
+					else if (needsPostfixDelimiter)
+						insertString= NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_insertModifierAndDelimiter, Action.findModifierString(e.stateMask));
+					else
+						insertString= Action.findModifierString(e.stateMask);
+
+					fHyperlinkDefaultKeyModifierText.insert(insertString);
+				}
+			}
+		});
+
+		fHyperlinkDefaultKeyModifierText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				handleHyperlinkDefaultKeyModifierModified();
+			}
+		});
+		
+		addFiller(composite, 2);
+
+		Composite editorComposite= new Composite(composite, SWT.NONE);
+		layout= new GridLayout();
+		layout.numColumns= 1;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		GridData gd= new GridData(SWT.FILL, SWT.TOP, true, false);
+		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 20;
+		editorComposite.setLayoutData(gd);
+		editorComposite.setLayout(layout);
+		
+		// Hyperlink detector table
+		Table hyperlinkDetectorTable= new Table(editorComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
+		hyperlinkDetectorTable.setHeaderVisible(true);
+		hyperlinkDetectorTable.setLinesVisible(true);
+		hyperlinkDetectorTable.setFont(parent.getFont());
+		
+		hyperlinkDetectorTable.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				handleListSelection();
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		
+		ColumnLayoutData columnLayoutData= new ColumnWeightData(1);
+		TableLayout tableLayout= new TableLayout();
+		hyperlinkDetectorTable.setLayout(tableLayout);
+		TableColumnAdapter tableColumnAdapter= new TableColumnAdapter(hyperlinkDetectorTable);
+		hyperlinkDetectorTable.getShell().addControlListener(tableColumnAdapter);
+		
+		TableColumn nameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 0);
+		nameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_nameColumn); 
+		tableLayout.addColumnData(columnLayoutData);
+		tableColumnAdapter.addColumnData(columnLayoutData);
+		
+		TableColumn modifierKeysColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 1);
+		modifierKeysColumn.setText(TextEditorMessages.HyperlinkDetectorTable_modifierKeysColumn);
+		tableLayout.addColumnData(columnLayoutData);
+		tableColumnAdapter.addColumnData(columnLayoutData);
+		
+		TableColumn targetNameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 2);
+		targetNameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_targetNameColumn);
+		tableLayout.addColumnData(columnLayoutData);
+		tableColumnAdapter.addColumnData(columnLayoutData);
+
+		fHyperlinkDetectorsViewer= new CheckboxTableViewer(hyperlinkDetectorTable);
+		fHyperlinkDetectorsViewer.setUseHashlookup(true);
+		
+		fHyperlinkDetectorsViewer.addCheckStateListener(new ICheckStateListener() {
+			/*
+			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+			 */
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				String id= ((ListItem)event.getElement()).id;
+				if (id == null)
+					return;
+				fStore.setValue(id, !event.getChecked());
+			}
+		});
+		
+		fHyperlinkDetectorsViewer.setLabelProvider(new ItemLabelProvider());
+		fHyperlinkDetectorsViewer.setContentProvider(new ItemContentProvider());
+		gd= new GridData(SWT.FILL, SWT.FILL, true , false);
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(10);
+		fHyperlinkDetectorsViewer.getControl().setLayoutData(gd);
+		
+//		addFiller(composite, 2);
+		
 		// Text field for modifier string
 		label= TextEditorMessages.HyperlinkKeyModifier_label;
-		fHyperlinkKeyModifierText= (Text)addTextField(composite, label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, 15, 20, pixelConverter)[1];
+		fHyperlinkKeyModifierText= (Text)addTextField(composite, label, null, 15, 20, pixelConverter)[1];
 
 		fHyperlinkKeyModifierText.addKeyListener(new KeyListener() {
 			private boolean isModifierCandidate;
@@ -272,71 +406,6 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 				handleHyperlinkKeyModifierModified();
 			}
 		});
-		
-		addFiller(composite, 2);
-
-		Composite editorComposite= new Composite(composite, SWT.NONE);
-		layout= new GridLayout();
-		layout.numColumns= 1;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-		gd.horizontalSpan= 2;
-		gd.horizontalIndent= 20;
-		editorComposite.setLayoutData(gd);
-		editorComposite.setLayout(layout);
-		
-		// Hyperlink detector table
-		Table hyperlinkDetectorTable= new Table(editorComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
-		hyperlinkDetectorTable.setHeaderVisible(true);
-		hyperlinkDetectorTable.setLinesVisible(true);
-		hyperlinkDetectorTable.setFont(parent.getFont());
-		
-		hyperlinkDetectorTable.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				handleUpdateDescription();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
-		
-		
-		ColumnLayoutData columnLayoutData= new ColumnWeightData(1);
-		TableLayout tableLayout= new TableLayout();
-		hyperlinkDetectorTable.setLayout(tableLayout);
-		TableColumnAdapter tableColumnAdapter= new TableColumnAdapter(hyperlinkDetectorTable);
-		hyperlinkDetectorTable.getShell().addControlListener(tableColumnAdapter);
-		
-		TableColumn nameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 0);
-		nameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_nameColumn); 
-		tableLayout.addColumnData(columnLayoutData);
-		tableColumnAdapter.addColumnData(columnLayoutData);
-		
-		TableColumn targetNameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 1);
-		targetNameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_targetNameColumn);
-		tableLayout.addColumnData(columnLayoutData);
-		tableColumnAdapter.addColumnData(columnLayoutData);
-
-		fHyperlinkDetectorsViewer= new CheckboxTableViewer(hyperlinkDetectorTable);
-		fHyperlinkDetectorsViewer.setUseHashlookup(true);
-		
-		fHyperlinkDetectorsViewer.addCheckStateListener(new ICheckStateListener() {
-			/*
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
-			 */
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				String id= ((ListItem)event.getElement()).id;
-				if (id == null)
-					return;
-				fStore.setValue(id, !event.getChecked());
-			}
-		});
-		
-		fHyperlinkDetectorsViewer.setLabelProvider(new ItemLabelProvider());
-		fHyperlinkDetectorsViewer.setContentProvider(new ItemContentProvider());
-		gd= new GridData(SWT.FILL, SWT.FILL, true , false);
-		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(10);
-		fHyperlinkDetectorsViewer.getControl().setLayoutData(gd);
 		
 		return composite;
 	}
@@ -384,7 +453,8 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		textControl.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String value= textControl.getText();
-				fStore.setValue(key, value);
+				if (key != null)
+					fStore.setValue(key, value);
 			}
 		});
 
@@ -421,14 +491,19 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		initialize();
 	}
 
-	private void handleUpdateDescription() {
-		// XXX: no description shown yet.
+	private void handleListSelection() {
 		ListItem item= getSelectedItem();
-		if (item != null)
-			item.toString();
+		if (item == null) {
+			fHyperlinkKeyModifierText.setEnabled(false);
+			return;
+		}
+		fHyperlinkKeyModifierText.setEnabled(fHyperlinkDetectorsViewer.getChecked(item));
+		fHyperlinkKeyModifierText.setText(item.modifierKeys);
+		
 	}
 
 	public void initialize() {
+		fListModel= createListModel();
 		fHyperlinkDetectorsViewer.setInput(fListModel);
 		
 		fHyperlinkDetectorsViewer.setAllChecked(false);
@@ -439,15 +514,20 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			// Fix possible illegal modifier string
 			int stateMask= fStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK);
 			if (stateMask == -1)
-				fHyperlinkKeyModifierText.setText(""); //$NON-NLS-1$
+				fHyperlinkDefaultKeyModifierText.setText(""); //$NON-NLS-1$
 			else
-				fHyperlinkKeyModifierText.setText(getModifierString(stateMask));
+				fHyperlinkDefaultKeyModifierText.setText(getModifierString(stateMask));
 		} else
-			fHyperlinkKeyModifierText.setText(modifierString);
-		fHyperlinksEnabledCheckBox.setSelection(fStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED));
-		fHyperlinkKeyModifierText.setEnabled(fHyperlinksEnabledCheckBox.getSelection());
+			fHyperlinkDefaultKeyModifierText.setText(modifierString);
+		boolean isEnabled= fStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED);
+		fHyperlinksEnabledCheckBox.setSelection(isEnabled);
+		fHyperlinkKeyModifierText.setEnabled(isEnabled);
+		fHyperlinkDefaultKeyModifierText.setEnabled(isEnabled);
+		fHyperlinkDetectorsViewer.getTable().setEnabled(isEnabled);
 
-		handleUpdateDescription();
+		fHyperlinkKeyModifierText.setText(""); //$NON-NLS-1$
+
+		handleListSelection();
 	}
 
 	private ListItem[] createListModel() {
@@ -456,8 +536,14 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			HyperlinkDetectorDescriptor desc= fHyperlinkDetectorDescriptors[i];
 			HyperlinkDetectorTargetDescriptor target= desc.getTarget();
 			
+			int stateMask= fStore.getInt(desc.getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX);
+			if (stateMask == -1)
+				stateMask= 1; // FIXME: use default modifier
+
+			String modifierKeys= getModifierString(stateMask);
+			
 			listModelItems.add(new ListItem(
-					desc.getId(), desc.getName(), desc.getDescription(), desc.getTargetId(), target.getName(), target.getDescription()));
+					desc.getId(), desc.getName(), desc.getDescription(), desc.getTargetId(), target.getName(), target.getDescription(), modifierKeys));
 		}
 
 		Comparator comparator= new Comparator() {
@@ -490,8 +576,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 	private void handleHyperlinkKeyModifierModified() {
 		String modifiers= fHyperlinkKeyModifierText.getText();
-		fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, modifiers);
-
+		
 		int stateMask= computeStateMask(modifiers);
 
 		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
@@ -502,6 +587,32 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			applyToStatusLine(getHyperlinkKeyModifierStatus());
 			fPreferencePage.setValid(getHyperlinkKeyModifierStatus().isOK());
 		} else {
+			ListItem item= getSelectedItem();
+			if (item != null) {
+				item.modifierKeys= modifiers;
+				fHyperlinkDetectorsViewer.refresh(getSelectedItem());
+				fStore.setValue(item.id + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
+			}
+			fHyperlinkKeyModifierStatus= new StatusInfo();
+			fPreferencePage.setValid(true);
+			applyToStatusLine(fHyperlinkKeyModifierStatus);
+		}
+	}
+	
+	private void handleHyperlinkDefaultKeyModifierModified() {
+		String modifiers= fHyperlinkDefaultKeyModifierText.getText();
+		
+		int stateMask= computeStateMask(modifiers);
+		
+		if (fHyperlinksEnabledCheckBox.getSelection() && (stateMask == -1 || (stateMask & SWT.SHIFT) != 0)) {
+			if (stateMask == -1)
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, NLSUtility.format(TextEditorMessages.HyperlinkKeyModifier_error_modifierIsNotValid, modifiers));
+			else
+				fHyperlinkKeyModifierStatus= new StatusInfo(IStatus.ERROR, TextEditorMessages.HyperlinkKeyModifier_error_shiftIsDisabled);
+			applyToStatusLine(getHyperlinkKeyModifierStatus());
+			fPreferencePage.setValid(getHyperlinkKeyModifierStatus().isOK());
+		} else {
+			fStore.setValue(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, modifiers);
 			fHyperlinkKeyModifierStatus= new StatusInfo();
 			fPreferencePage.setValid(true);
 			applyToStatusLine(fHyperlinkKeyModifierStatus);
