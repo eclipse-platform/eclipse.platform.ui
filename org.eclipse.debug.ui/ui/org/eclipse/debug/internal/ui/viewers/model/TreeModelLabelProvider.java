@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,6 +157,13 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
 	 */
 	public void dispose() {
+		synchronized (fUpdatesInProgress) {
+			Iterator updatesInProgress = fUpdatesInProgress.iterator();
+			while (updatesInProgress.hasNext()) {
+				ILabelUpdate currentUpdate = (ILabelUpdate) updatesInProgress.next();
+				currentUpdate.cancel();			
+			}
+		}		
 		Iterator images = fImageCache.values().iterator();
 		while (images.hasNext()) {
 			Image image = (Image) images.next();
@@ -177,7 +184,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 			color.dispose();
 		}
 		fColorCache.clear();
-		
+
 		super.dispose();
 	}
 
@@ -231,26 +238,30 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
      * @param update
      */
     protected synchronized void complete(ILabelUpdate update) {
-		if (fComplete == null) {
-			fComplete = new ArrayList();
-			UIJob job = new UIJob(getDisplay(), "Label Updates") { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					LabelUpdate[] updates = null;
-					synchronized (TreeModelLabelProvider.this) {
-						updates = (LabelUpdate[]) fComplete.toArray(new LabelUpdate[fComplete.size()]);
-						fComplete = null;
+		if (update.isCanceled()){
+			updateComplete(update);
+		} else {
+			if (fComplete == null) {
+				fComplete = new ArrayList();
+				UIJob job = new UIJob(getDisplay(), "Label Updates") { //$NON-NLS-1$
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						LabelUpdate[] updates = null;
+						synchronized (TreeModelLabelProvider.this) {
+							updates = (LabelUpdate[]) fComplete.toArray(new LabelUpdate[fComplete.size()]);
+							fComplete = null;
+						}
+						//System.out.println("Changed Labels: " + updates.length);
+						for (int i = 0; i < updates.length; i++) {
+							updates[i].update();
+						}
+						return Status.OK_STATUS;
 					}
-					//System.out.println("Changed Labels: " + updates.length);
-					for (int i = 0; i < updates.length; i++) {
-						updates[i].update();
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule(10L);
+				};
+				job.setSystem(true);
+				job.schedule(10L);
+			}
+			fComplete.add(update);
 		}
-		fComplete.add(update);
     }
     
 	void addLabelUpdateListener(ILabelUpdateListener listener) {
