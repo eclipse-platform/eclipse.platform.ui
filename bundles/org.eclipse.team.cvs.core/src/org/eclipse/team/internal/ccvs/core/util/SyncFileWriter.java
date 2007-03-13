@@ -429,9 +429,14 @@ public class SyncFileWriter {
 				// sees the CVS folder creation.
 				ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) throws CoreException {
-						// Recheck existance in case this method was called without a resource rule
+						// Re-check existence in case this method was called without a resource rule
 						if (! cvsSubDir.exists()) {
-							cvsSubDir.create(IResource.TEAM_PRIVATE, true /*make local*/, null);
+							if (existsInFileSystem(cvsSubDir)) {
+								cvsSubDir.refreshLocal(IResource.DEPTH_INFINITE, null);
+								cvsSubDir.setTeamPrivateMember(true);
+							} else {
+								cvsSubDir.create(IResource.TEAM_PRIVATE, true /*make local*/, null);
+							}
 						} else {
 							if (!cvsSubDir.isTeamPrivateMember()) {
 								cvsSubDir.setTeamPrivateMember(true);
@@ -444,6 +449,21 @@ public class SyncFileWriter {
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
+	}
+
+	protected static boolean existsInFileSystem(IFolder cvsSubDir) {
+		URI uri = cvsSubDir.getLocationURI();
+		if (uri != null) {
+			try {
+				IFileStore store = EFS.getStore(uri);
+				if (store != null) {
+					return store.fetchInfo().exists();
+				}
+			} catch (CoreException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+		return false;
 	}
 
 	/*
