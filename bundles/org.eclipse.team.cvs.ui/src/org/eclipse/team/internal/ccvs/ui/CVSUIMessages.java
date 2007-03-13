@@ -85,6 +85,7 @@ public class CVSUIMessages extends NLS {
 	public static String UserValidationDialog_7;
 	public static String simpleInternal;
 	public static String internal;
+	public static String WorkbenchUserAuthenticator_0;
 	public static String WorkspaceModelParticipant_0;
 	public static String WorkspaceSubscriberContext_1;
 	public static String WorkspaceSubscriberContext_2;

@@ -226,7 +226,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#prompt(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, int, java.lang.String, java.lang.String, int[], int)
 	 */
-	public int prompt(ICVSRepositoryLocation location, final int promptType, final String title, final String message, final int[] promptResponses, final int defaultResponse) {
+	public int prompt(final ICVSRepositoryLocation location, final int promptType, final String title, final String message, final int[] promptResponses, final int defaultResponse) {
 		final Display display = CVSUIPlugin.getStandardDisplay();
 		final int[] retval = new int[1];
 		final String[] buttons = new String[promptResponses.length];
@@ -246,7 +246,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 						new Shell(display),
 						title,
 						null /* title image */,
-						message,
+						NLS.bind(CVSUIMessages.WorkbenchUserAuthenticator_0, message, location.getLocation(true)),
 						promptType,
 						buttons,
 						1
