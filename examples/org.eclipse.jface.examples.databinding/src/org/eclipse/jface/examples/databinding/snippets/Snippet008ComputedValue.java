@@ -155,7 +155,7 @@ public class Snippet008ComputedValue {
 			gdf.applyTo(lastName);
 
 			gdf = GridDataFactory.swtDefaults().span(2, 1).grab(true, false)
-					.align(SWT.FILL, SWT.NONE);
+					.align(SWT.FILL, SWT.BEGINNING);
 			Label label = new Label(this, SWT.NONE);
 			label.setText("Formatted Name:");
 			gdf.applyTo(label);
