@@ -112,7 +112,7 @@ public class ProductPreferences {
 	 * two may be null if not specified).
 	 */
 	public static List getTocOrdering(String pluginId, String helpDataFile, String baseTOCS) {
-		if (helpDataFile != null) {
+		if (helpDataFile != null && helpDataFile.length() > 0) {
 			Bundle bundle = Platform.getBundle(pluginId);
 			URL helpDataUrl = bundle.getEntry(helpDataFile);
 			HelpData helpData = new HelpData(helpDataUrl);
