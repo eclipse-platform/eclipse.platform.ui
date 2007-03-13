@@ -13,6 +13,7 @@ Export-Package: org.eclipse.ltk.internal.ui.refactoring;x-internal:=true,
  org.eclipse.ltk.internal.ui.refactoring.scripting;x-internal:=true,
  org.eclipse.ltk.internal.ui.refactoring.util;x-internal:=true,
  org.eclipse.ltk.ui.refactoring,
+ org.eclipse.ltk.ui.refactoring.actions,
  org.eclipse.ltk.ui.refactoring.history,
  org.eclipse.ltk.ui.refactoring.model
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",

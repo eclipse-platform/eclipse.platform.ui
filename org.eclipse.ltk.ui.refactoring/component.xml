@@ -20,6 +20,12 @@
    <type name= "RefactoringHistoryContentProvider" subclass="false"/>
    <type name= "RefactoringHistoryLabelProvider" subclass="false"/>
  </package>
+ 
+ <package name="org.eclipse.ltk.ui.refactoring.actions">
+   <type name= "ShowRefactoringHistoryAction" subclass="false"/>
+   <type name= "ApplyRefactoringScriptAction" subclass="false"/>
+   <type name= "CreateRefactoringScriptAction" subclass="false"/>
+ </package>
 
  <component-depends unrestricted="true"/>
 </component>
