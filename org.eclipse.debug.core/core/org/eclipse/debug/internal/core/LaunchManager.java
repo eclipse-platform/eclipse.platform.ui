@@ -119,13 +119,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.3
 	 */
 	public static final String PREF_DELETE_CONFIGS_ON_PROJECT_DELETE = DebugPlugin.getUniqueIdentifier() + ".PREF_DELETE_CONFIGS_ON_PROJECT_DELETE"; //$NON-NLS-1$
-
-	/**
-	 * Constant to define debug.core for the status codes
-	 * 
-	 * @since 3.2
-	 */
-	private static final String DEBUG_CORE = "org.eclipse.debug.core"; //$NON-NLS-1$
 	
 	/**
 	 * Constant to define debug.ui for the status codes
