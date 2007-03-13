@@ -66,6 +66,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -459,6 +461,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.END;
 		toolBar.setLayoutData(data);
+		
+		toolBar.addMouseListener(new MouseAdapter() {
+            public void mouseDown(MouseEvent e) {
+                showViewMenu();
+            }
+		});
 
 		toolItem.setImage(WorkbenchImages
 				.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU));
