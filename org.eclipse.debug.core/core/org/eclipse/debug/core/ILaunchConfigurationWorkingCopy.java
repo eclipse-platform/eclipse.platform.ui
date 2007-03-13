@@ -25,6 +25,14 @@ import org.eclipse.core.runtime.IAdaptable;
  * launch configuration are modified by modifying the attributes
  * of a working copy, and then saving the working copy.
  * <p>
+ * Since 3.3, working copies can be nested. For example a working copy B can
+ * be created from the original launch configuration A. Then a nested working
+ * copy C can be created from working copy B. When the <code>doSave()</code> method
+ * is called on C, changes are written back to its parent working copy B without
+ * effecting the original launch configuration A. When <code>doSave()</code> is called
+ * on B, the changes are persisted back to the original A.
+ * </p>
+ * <p>
  * This interface is not intended to be implemented by clients. Clients
  * that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
@@ -51,9 +59,8 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * Has no effect if this configuration does not need saving.
 	 * Creates the underlying file if not yet created.
 	 * <p>
-	 * <strong>EXPERIMENTAL</strong> - Since 3.3, if this is a nested
-	 * working copy, the contents of this working copy are saved to the
-	 * parent working copy and the parent working copy is returned without
+	 * Since 3.3, if this is a nested working copy, the contents of this working copy are
+	 * saved to the parent working copy and the parent working copy is returned without
 	 * effecting the original launch configuration.
 	 * </p>
 	 * @return handle to saved launch configuration
@@ -237,13 +244,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * copy is not a nested copy of another working copy.
 	 * 
 	 * @return parent or <code>null</code>
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
-	 * CONTEXTLAUNCHING
+	 * @since 3.3
 	 */
 	public ILaunchConfigurationWorkingCopy getParent();
 }
