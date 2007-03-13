@@ -9,34 +9,32 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.databinding.observable.tree;
+package org.eclipse.core.internal.databinding.observable.tree;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.internal.databinding.observable.tree.TreePath;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 
 /**
  * Objects that implement this interface are capable of describing a tree by
- * returning the set of children of any given element in the tree.
+ * returning the list of children of any given element in the tree.
  * 
  * @since 3.3
  */
-public interface IUnorderedTreeProvider {
-
-	/**
-	 * @return the realm shared by all child sets
-	 */
-	public Realm getRealm();
-
+public interface IOrderedTreeProvider {
 	/**
 	 * Returns the children of the given element, or null if the element is a
 	 * leaf node. The caller of this method is expected to dispose the result
-	 * set when it is no longer needed.
+	 * list when it is no longer needed.
 	 * 
 	 * @param element
 	 *            the tree path of the element to query
 	 * @return the children of the given element, or null if the element is a
 	 *         leaf node
 	 */
-	public IObservableSet createChildSet(TreePath element);
+	IObservableList createChildList(TreePath element);
+
+	/**
+	 * @return the realm shared by all child lists
+	 */
+	Realm getRealm();
 }

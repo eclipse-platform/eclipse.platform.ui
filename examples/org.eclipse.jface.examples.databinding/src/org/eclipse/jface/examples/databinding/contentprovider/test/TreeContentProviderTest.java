@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.databinding.observable.tree.IUnorderedTreeProvider;
+import org.eclipse.core.internal.databinding.observable.tree.IUnorderedTreeProvider;
 import org.eclipse.core.internal.databinding.observable.tree.TreePath;
 import org.eclipse.jface.internal.databinding.internal.viewers.UnorderedTreeContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;

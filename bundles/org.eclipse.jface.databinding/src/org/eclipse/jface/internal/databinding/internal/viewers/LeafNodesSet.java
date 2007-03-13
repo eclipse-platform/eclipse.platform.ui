@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
-import org.eclipse.core.databinding.observable.tree.IUnorderedTreeProvider;
+import org.eclipse.core.internal.databinding.observable.tree.IUnorderedTreeProvider;
 import org.eclipse.core.internal.databinding.observable.tree.TreePath;
 
 /**
