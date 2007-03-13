@@ -146,11 +146,13 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles status adapter due to the prefix policy.
+	 * Handles the given status adapter due to the style.
 	 * 
 	 * @param statusAdapter
+	 * @param style
+	 *            style
 	 */
-	public void handle(StatusAdapter statusAdapter) {
+	public void handle(StatusAdapter statusAdapter, int style) {
 		try {
 			// tries to handle the problem with default (product) handler
 			if (StatusHandlerRegistry.getDefault()
@@ -158,7 +160,7 @@ public class StatusManager {
 				try {
 					StatusHandlerRegistry.getDefault()
 							.getDefaultHandlerDescriptor().getStatusHandler()
-							.handle(statusAdapter);
+							.handle(statusAdapter, style);
 
 					return;
 				} catch (CoreException ex) {
@@ -166,16 +168,25 @@ public class StatusManager {
 				}
 			}
 
-
 			// delegates the problem to workbench handler
-			getWorkbenchHandler().handle(statusAdapter);
+			getWorkbenchHandler().handle(statusAdapter, style);
 		} catch (Throwable ex) {
 			logError("Errors during status handling", ex); //$NON-NLS-1$
 		}
 	}
 
 	/**
-	 * Handles status due to the prefix policy.
+	 * Handles the given status adapter. The log style is used when this method
+	 * is called.
+	 * 
+	 * @param statusAdapter
+	 */
+	public void handle(StatusAdapter statusAdapter) {
+		handle(statusAdapter, StatusManager.LOG);
+	}
+
+	/**
+	 * Handles the given status due to the style.
 	 * 
 	 * @param status
 	 *            status to handle
@@ -184,12 +195,12 @@ public class StatusManager {
 	 */
 	public void handle(IStatus status, int style) {
 		StatusAdapter statusAdapter = new StatusAdapter(status);
-		statusAdapter.setStyle(style);
-		handle(statusAdapter);
+		handle(statusAdapter, style);
 	}
 
 	/**
-	 * Handles status due to the prefix policy.
+	 * Handles the given status. The log style is used when this method is
+	 * called.
 	 * 
 	 * @param status
 	 *            status to handle

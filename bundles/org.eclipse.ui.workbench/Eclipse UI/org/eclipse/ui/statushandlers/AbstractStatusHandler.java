@@ -16,10 +16,9 @@ import java.util.Map;
 /**
  * <p>
  * All status handlers are <code>AbstractStatusHandler</code> subclasses. Each
- * handler has to have <code>handle(StatusAdapter status)</code>
- * implemented. This method handles the status due to handling hint. The hint
- * indicates how status handler should handle a status but this is only a
- * suggestion.
+ * handler has to have <code>handle(StatusAdapter status)</code> implemented.
+ * This method handles the status due to handling hint. The hint indicates how
+ * status handler should handle a status but this is only a suggestion.
  * </p>
  * 
  * <p>
@@ -65,12 +64,14 @@ public abstract class AbstractStatusHandler {
 	private String id;
 
 	/**
-	 * Handles {@link StatusAdapter} objects.
+	 * Handles {@link StatusAdapter} objects due to the set style.
 	 * 
 	 * @param statusAdapter
 	 *            the status adapter
+	 * @param style
+	 *            the style
 	 */
-	public abstract void handle(StatusAdapter statusAdapter);
+	public abstract void handle(StatusAdapter statusAdapter, int style);
 
 	/**
 	 * @return Returns the params.

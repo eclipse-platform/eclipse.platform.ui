@@ -78,9 +78,10 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.statushandlers.WorkbenchErrorHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
+	 * @see org.eclipse.ui.statushandlers.WorkbenchErrorHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter,
+	 *      int)
 	 */
-	public void handle(final StatusAdapter statusAdapter) {
+	public void handle(final StatusAdapter statusAdapter, int style) {
 		if (statusAdapter.getStatus().getException() != null) {
 			UIJob handlingExceptionJob = new UIJob("IDE Exception Handler") //$NON-NLS-1$
 			{
@@ -103,7 +104,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 			handlingExceptionJob.schedule();
 		}
 
-		super.handle(statusAdapter);
+		super.handle(statusAdapter, style);
 	}
 
 	private Shell getParentShell() {
