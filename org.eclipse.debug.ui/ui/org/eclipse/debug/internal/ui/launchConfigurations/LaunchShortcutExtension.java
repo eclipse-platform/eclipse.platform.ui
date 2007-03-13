@@ -12,9 +12,11 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -53,6 +55,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	private ILaunchShortcut fDelegate = null;
 	private Set fModes = null;
 	private Set fAssociatedTypes = null;
+	private Map fDescriptions = null;
 	private IConfigurationElement fContextualLaunchConfigurationElement = null;
 	private Expression fContextualLaunchExpr = null;
 	private Expression fStandardLaunchExpr = null;
@@ -233,12 +236,36 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	/**
 	 * Returns the contributed description of the launch delegate or <code>null</code>
 	 * if one has not been provided
-	 * @return the description of the shortcut or <code>null</code> if one was not provided
+	 * @param mode the mode to get the description for
+	 * @return the description of the shortcut for that specific mode or <code>null</code> if one was not provided
 	 * 
 	 * @since 3.3
 	 */
-	public String getShortcutDescription() {
-		return fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+	public String getShortcutDescription(String mode) {
+		if(mode == null) {
+			return null;
+		}
+		if(fDescriptions == null) {
+			fDescriptions = new HashMap();
+			//get the description for the main element first
+			String descr = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+			String lmode = null;
+			Set modes = getModes();
+			if(descr != null) {
+				for(Iterator iter = modes.iterator(); iter.hasNext();) {
+					lmode = (String) iter.next();
+					fDescriptions.put(lmode, descr);
+				}
+			}
+			//load descriptions for child description elements
+			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.DESCRIPTION);
+			for(int i = 0; i < children.length; i++) {
+				lmode = children[i].getAttribute(IConfigurationElementConstants.MODE);
+				descr = children[i].getAttribute(IConfigurationElementConstants.DESCRIPTION);
+				fDescriptions.put(lmode, descr);
+			}
+		}
+		return (String) fDescriptions.get(mode);
 	}
 	
 	/**

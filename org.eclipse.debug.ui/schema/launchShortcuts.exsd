@@ -54,6 +54,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
             <element ref="contextualLaunch" minOccurs="0" maxOccurs="1"/>
             <element ref="enablement" minOccurs="0" maxOccurs="1"/>
             <element ref="configurationType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -119,6 +120,16 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                <documentation>
                   an optional menu path used to group launch shortcuts in menus. Launch shortcuts are grouped alphabetically based on the &lt;code&gt;path&lt;/code&gt; attribute, and then sorted alphabetically within groups based on the &lt;code&gt;label&lt;/code&gt; attribute. When unspecified, a shortcut appears in the last group. This attribute was added in the 3.0.1 release.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Provides a human readable description of what the shortcut does (or will do) if the user selects it. A Description provided in this field will apply as the default description for all of the modes listed in the modes attribute. Since 3.3.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -209,12 +220,39 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       </complexType>
    </element>
 
+   <element name="description">
+      <annotation>
+         <documentation>
+            Provdies a mode specific desciption for this launch shortcut. Since 3.3.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="mode" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A launch mode identifier this description applies to. For example, &quot;run&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The desciption for this launch shortcut when invoked in the associated mode.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of the Java Application launch shortcut contribution with an enablement expression:
+         The following is an example of the Java Application launch shortcut contribution with an enablement expression, an associated launch configuration type id and descriptions for run and debug mode:
 
 &lt;p&gt;
 &lt;pre&gt;
@@ -225,7 +263,16 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
     helpContextId=&quot;org.eclipse.jdt.debug.ui.shortcut_local_java_application&quot;
     modes=&quot;run, debug&quot;
     class=&quot;org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut&quot;
+    description=&quot;Launch a local Java application&quot;
     id=&quot;org.eclipse.jdt.debug.ui.localJavaShortcut&quot;&gt;
+    &lt;description
+     description=&quot;Runs a local Java application&quot;
+     mode=&quot;run&quot;&gt;
+    &lt;/description&gt;
+    &lt;description
+     description=&quot;Debugs a local Java application&quot;
+     mode=&quot;debug&quot;&gt;
+    &lt;/description&gt;
   &lt;contextualLaunch&gt;
   &lt;enablement&gt;
     &lt;with variable=&quot;selection&quot;&gt;
@@ -287,6 +334,58 @@ Since 3.1, the debug platform registers a command handler for each launch shortc
    &lt;/extension&gt;      
 &lt;/pre&gt;
 &lt;/p&gt;
+&lt;p&gt;
+Since 3.3, launch shortcuts can now indicate what kind of launch configuration(s) they will create using the configurationType element. In the event that a given launch shortcut can create more than one type of launch configuration, more than one type can be specified using this element.&lt;br&gt;
+Example:
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.debug.ui.launchShortcuts&quot;&gt;
+      &lt;shortcut
+            class=&quot;MyShortcut&quot;
+            description=&quot;Launches a simple program&quot;
+            id=&quot;myShortcut&quot;
+            label=&quot;My Shortcut&quot;
+            modes=&quot;run&quot;&gt;
+         &lt;configurationType 
+          id=&quot;mylaunchtypes&quot;&gt;
+         &lt;/configurationType&gt;
+      &lt;/shortcut&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+&lt;p&gt;
+Since 3.3M5, launch shortcuts can provdie a human readable description. This is used to aid novice users during the context launching process when they are presented with a listing of launch shortcuts to choose from.&lt;br&gt;
+Descriptions can be provided in one of two ways:
+&lt;ol&gt;
+&lt;li&gt;A general description can be provided for the shortcut, which will apply to all modes that the shortcut supports&lt;/li&gt;
+&lt;li&gt;Each description can be specified for a specific mode&lt;/li&gt;
+&lt;/ol&gt;
+Example of general description which applies to run and debug modes:
+&lt;pre&gt;
+ &lt;shortcut
+            class=&quot;MyShortcut&quot;
+            description=&quot;Launches a simple program&quot;
+            id=&quot;myShortcut&quot;
+            label=&quot;My Shortcut&quot;
+            modes=&quot;run, debug&quot;&gt;
+      &lt;/shortcut&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+Example of a description for the run mode only:
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.debug.ui.launchShortcuts&quot;&gt;
+      &lt;shortcut
+            class=&quot;MyShortcut&quot;
+            id=&quot;myShortcut&quot;
+            label=&quot;My Shortcut&quot;
+            modes=&quot;run, debug&quot;&gt;
+         &lt;description
+               description=&quot;Runs a simple program&quot;
+               mode=&quot;run&quot;&gt;
+         &lt;/description&gt;
+      &lt;/shortcut&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -295,7 +394,7 @@ Since 3.1, the debug platform registers a command handler for each launch shortc
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 

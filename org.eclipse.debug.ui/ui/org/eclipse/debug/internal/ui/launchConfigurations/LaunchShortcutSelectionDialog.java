@@ -142,7 +142,7 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 			}	
 		});
 	}
-
+	
 	/**
 	 * @see org.eclipse.ui.dialogs.ListDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -163,7 +163,7 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 				public void widgetSelected(SelectionEvent e) {
 					Object o = e.item.getData();
 					if(o instanceof LaunchShortcutExtension) {
-						String txt = ((LaunchShortcutExtension)o).getShortcutDescription();
+						String txt = ((LaunchShortcutExtension)o).getShortcutDescription(fMode);
 						fDescriptionText.setText((txt == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : txt)); 
 					}
 				}
