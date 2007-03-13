@@ -35,6 +35,7 @@ public class CVSUIMessages extends NLS {
 	public static String AnnotatePreferencePage_AnnotatePrefPageBinaryFileMessage;
 	public static String AnnotatePreferencePage_AnnotatePrefPageMessage;
 	public static String AnnotatePreferencePage_AnnotatePrefPageTitle;
+	public static String ChangeSetContentProvider_0;
 	public static String CheckoutAsMainPage_Browse;
 	public static String CheckoutAsMainPage_EmptyWorkingSetErrorMessage;
 	public static String CheckoutAsMainPage_WorkingSetExistsErrorMessage;

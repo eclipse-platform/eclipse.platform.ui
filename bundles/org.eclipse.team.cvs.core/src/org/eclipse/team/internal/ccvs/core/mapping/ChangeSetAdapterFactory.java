@@ -24,6 +24,10 @@ public class ChangeSetAdapterFactory implements IAdapterFactory {
 			CVSCheckedInChangeSet cs = (CVSCheckedInChangeSet) adaptableObject;
 			return new ChangeSetResourceMapping(cs);
 		}
+		if (adaptableObject instanceof UnassignedDiffChangeSet && adapterType == ResourceMapping.class) {
+			UnassignedDiffChangeSet cs = (UnassignedDiffChangeSet) adaptableObject;
+			return new ChangeSetResourceMapping(cs);
+		}
 		return null;
 	}
 

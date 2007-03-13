@@ -157,6 +157,18 @@ public class DiffChangeSet extends ChangeSet {
 		}
 	}
 	
+	public void remove(IResource[] resources) {
+		try {
+			tree.beginInput();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				tree.remove(resource);
+			}
+		} finally {
+			tree.endInput(null);
+		}
+	}
+	
 	public String getComment() {
 		return null;
 	}

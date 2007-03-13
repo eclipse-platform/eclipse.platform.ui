@@ -233,6 +233,11 @@
             class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetAdapterFactory">
          <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.core.mapping.UnassignedDiffChangeSet"
+            class="org.eclipse.team.internal.ccvs.core.mapping.ChangeSetAdapterFactory">
+         <adapter type="org.eclipse.core.resources.mapping.ResourceMapping"/>
+      </factory>
    </extension>
 
 </plugin>

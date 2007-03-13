@@ -1601,6 +1601,9 @@
             <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.CVSActiveChangeSet"/>
             <instanceof value="org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet"/>
             <instanceof value="org.eclipse.core.resources.IResource"/>
+            <instanceof
+                  value="org.eclipse.team.internal.ccvs.ui.mappings.UnassigndDiffChangeSet">
+            </instanceof>
            </or>
          </enablement>
          <commonSorter

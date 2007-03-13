@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.mappings;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,8 +23,8 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
-import org.eclipse.team.internal.ccvs.core.mapping.CVSCheckedInChangeSet;
-import org.eclipse.team.internal.ccvs.core.mapping.ChangeSetModelProvider;
+import org.eclipse.team.internal.ccvs.core.mapping.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSChangeSetCollector;
 import org.eclipse.team.internal.core.subscribers.*;
 import org.eclipse.team.internal.core.subscribers.BatchingChangeSetManager.CollectorChangeEvent;
@@ -62,16 +61,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		}
 
 		private void handleSetAddition(final ChangeSet set) {
-			IResource[] resources = set.getResources();
-			try {
-				getTheRest().beginInput();
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					getTheRest().remove(resource);
-				}
-			} finally {
-				getTheRest().endInput(null);
-			}
+			getUnassignedSet().remove(set.getResources());
 		}
 
 		/* (non-Javadoc)
@@ -107,17 +97,14 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 
 		private void handleSetRemoval(final ChangeSet set) {
 			IResource[] resources = set.getResources();
-			try {
-				getTheRest().beginInput();
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					IDiff diff = getContext().getDiffTree().getDiff(resource);
-					if (diff != null && !isContainedInSet(diff))
-						getTheRest().add(diff);
-				}
-			} finally {
-				getTheRest().endInput(null);
+			List toAdd = new ArrayList();
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				IDiff diff = getContext().getDiffTree().getDiff(resource);
+				if (diff != null && !isContainedInSet(diff))
+					toAdd.add(diff);
 			}
+			getUnassignedSet().add((IDiff[]) toAdd.toArray(new IDiff[toAdd.size()]));
 		}
 
 		/* (non-Javadoc)
@@ -254,7 +241,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		}
 	}
 
-	private ResourceDiffTree theRest;
+	private DiffChangeSet unassignedDiffs;
+	private boolean firstDiffChange = true;
 	
 	/*
 	 * Listener that reacts to changes made to the active change set collector
@@ -270,15 +258,26 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			// Ignore
 		}
 	
+		boolean isSetVisible(DiffChangeSet set) {
+			return getVisibleSetsInViewer().contains(set);
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.core.diff.IDiffChangeListener#diffsChanged(org.eclipse.team.core.diff.IDiffChangeEvent, org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
 			Object input = getViewer().getInput();
-			if (input instanceof ChangeSetModelProvider && event.getTree() == theRest) {
+			if (input instanceof ChangeSetModelProvider && unassignedDiffs != null && event.getTree() == unassignedDiffs.getDiffTree()) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
-						((AbstractTreeViewer)getViewer()).refresh();
+						if (unassignedDiffs.isEmpty() || !hasChildren(TreePath.EMPTY.createChildPath(getUnassignedSet()))) {
+							((AbstractTreeViewer)getViewer()).remove(unassignedDiffs);
+						} else if (!isSetVisible(unassignedDiffs)) {
+							Object input = getViewer().getInput();
+							((AbstractTreeViewer)getViewer()).add(input, unassignedDiffs);
+						} else {
+							((AbstractTreeViewer)getViewer()).refresh(unassignedDiffs);
+						}
 					}
 				}, (StructuredViewer)getViewer());
 			}
@@ -341,47 +340,41 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			if (hasChildren(TreePath.EMPTY.createChildPath(set)))
 				result.add(set);
 		}
-		// Include resources that are not in a set
-		ResourceDiffTree tree = getTheRest();
-		if (isFlatLayout()) {
-			IResource[] resources = tree.getAffectedResources();
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				result.add(resource);
-			}
-		} else {
-			IPath[] otherRoots = tree.getChildren(ResourcesPlugin.getWorkspace().getRoot().getFullPath());
-			for (int i = 0; i < otherRoots.length; i++) {
-				IPath path = otherRoots[i];
-				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(path.lastSegment());
-				if (project.isAccessible() && hasChildren(TreePath.EMPTY.createChildPath(project)))
-					result.add(project);
-			}
+		if (!getUnassignedSet().isEmpty() && hasChildren(TreePath.EMPTY.createChildPath(getUnassignedSet()))) {
+			result.add(getUnassignedSet());
 		}
 		return result.toArray();
 	}
 
-	private synchronized ResourceDiffTree getTheRest() {
-		if (theRest == null) {
-			theRest = new ResourceDiffTree();
-			theRest.addDiffChangeListener(diffTreeListener);
+	private synchronized DiffChangeSet getUnassignedSet() {
+		if (unassignedDiffs == null) {
+			unassignedDiffs = new UnassignedDiffChangeSet(CVSUIMessages.ChangeSetContentProvider_0);
+			unassignedDiffs.getDiffTree().addDiffChangeListener(diffTreeListener);
 			IResourceDiffTree allChanges = getContext().getDiffTree();
-			try {
-				theRest.beginInput();
-				allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-					public boolean visit(IDiff diff) {
-						if (!isContainedInSet(diff))
-							theRest.add(diff);
-						return true;
-					}
-				}, IResource.DEPTH_INFINITE);
-			} finally {
-				theRest.endInput(null);
-			}
+			final List diffs = new ArrayList();
+			allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+				public boolean visit(IDiff diff) {
+					if (!isContainedInSet(diff))
+						diffs.add(diff);
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE);
+			unassignedDiffs.add((IDiff[]) diffs.toArray(new IDiff[diffs.size()]));
 		}
-		return theRest;
+		return unassignedDiffs;
+	}
+	
+	private ResourceDiffTree getTheRest() {
+		return (ResourceDiffTree)getUnassignedSet().getDiffTree();
 	}
 
+	/**
+	 * Return whether the given diff is contained in a set other than
+	 * the unassigned set.
+	 * @param diff the diff
+	 * @return whether the given diff is contained in a set other than
+	 * the unassigned set
+	 */
 	protected boolean isContainedInSet(IDiff diff) {
 		ChangeSet[] sets = getAllSets();
 		for (int i = 0; i < sets.length; i++) {
@@ -424,10 +417,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 				parent = getModelRoot();
 			}
 		} else {
-			diffTree = getTheRest();
-			if (parent instanceof ModelProvider) {
-				parent = getModelRoot();
-			}
+			return new Object[0];
 		}
 		Object[] children = getChildren(parent);
 		Set result = new HashSet();
@@ -450,14 +440,34 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			case ISynchronizePageConfiguration.CONFLICTING_MODE:
 				return containsConflicts(cs);
 			case ISynchronizePageConfiguration.INCOMING_MODE:
-				return cs instanceof CVSCheckedInChangeSet;
+				return cs instanceof CVSCheckedInChangeSet || (isUnassignedSet(cs) && hasIncomingChanges(cs));
 			case ISynchronizePageConfiguration.OUTGOING_MODE:
-				return cs instanceof ActiveChangeSet || hasConflicts(cs);
+				return cs instanceof ActiveChangeSet || hasConflicts(cs) || (isUnassignedSet(cs) && hasOutgoingChanges(cs));
 			default:
 				break;
 			}
 		}
 		return true;
+	}
+
+	private boolean hasIncomingChanges(ChangeSet cs) {
+		if (cs instanceof DiffChangeSet) {
+			DiffChangeSet dcs = (DiffChangeSet) cs;
+			return dcs.getDiffTree().countFor(IThreeWayDiff.INCOMING, IThreeWayDiff.DIRECTION_MASK) > 0;
+		}
+		return false;
+	}
+
+	private boolean hasOutgoingChanges(ChangeSet cs) {
+		if (cs instanceof DiffChangeSet) {
+			DiffChangeSet dcs = (DiffChangeSet) cs;
+			return dcs.getDiffTree().countFor(IThreeWayDiff.OUTGOING, IThreeWayDiff.DIRECTION_MASK) > 0;
+		}
+		return false;
+	}
+
+	private boolean isUnassignedSet(ChangeSet cs) {
+		return cs == unassignedDiffs;
 	}
 
 	private boolean hasConflicts(ChangeSet cs) {
@@ -531,7 +541,7 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 				}
 				return (TreePath[]) result.toArray(new TreePath[result.size()]);
 			} else {
-				TreePath path = getPathForElement(getTheRest(), resource.getParent());
+				TreePath path = getPathForElement(getUnassignedSet(), resource.getParent());
 				if (path != null)
 					return new TreePath[] { path };
 			}
@@ -552,6 +562,11 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		return (DiffChangeSet[]) result.toArray(new DiffChangeSet[result.size()]);
 	}
 
+	/**
+	 * Return all the change sets (incoming and outgoing). This 
+	 * list must not include the unassigned set. 
+	 * @return all the change sets (incoming and outgoing)
+	 */
 	private DiffChangeSet[] getAllSets() {
 		List result = new ArrayList();
 		ChangeSetCapability csc = getChangeSetCapability();
@@ -572,16 +587,6 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		}
 		return (DiffChangeSet[]) result.toArray(new DiffChangeSet[result.size()]);
 	}
-
-	private TreePath getPathForElement(IResourceDiffTree tree, IResource resource) {
-		List pathList = getPath(tree, resource);
-		if (pathList != null) {
-			TreePath path = new TreePath(pathList.toArray());
-			return path;
-		}
-		return null;
-	}
-	
 
 	private TreePath getPathForElement(DiffChangeSet set, IResource resource) {
 		List pathList = getPath(set.getDiffTree(), resource);
@@ -674,8 +679,8 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			checkedInCollector.removeListener(collectorListener);
 			checkedInCollector.dispose();
 		}
-		if (theRest != null) {
-			theRest.removeDiffChangeListener(diffTreeListener);
+		if (unassignedDiffs != null) {
+			unassignedDiffs.getDiffTree().removeDiffChangeListener(diffTreeListener);
 		}
 		super.dispose();
 	}
@@ -726,6 +731,15 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		}
 		if (checkedInCollector != null)
 			checkedInCollector.handleChange(event);
+		if (firstDiffChange) {
+			// One the first diff event, refresh the viewer to ensure outgoing change sets appear
+			firstDiffChange = false;
+			Utils.asyncExec(new Runnable() {
+				public void run() {
+					((AbstractTreeViewer)getViewer()).refresh();
+				}
+			}, (StructuredViewer)getViewer());
+		}
 	}
 	
 	protected void updateLabels(ISynchronizationContext context, IPath[] paths) {
