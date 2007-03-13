@@ -441,7 +441,9 @@ public class PopupMenuExtender implements IMenuListener2,
 		clearStaticActions();
 		final IMenuService menuService = (IMenuService) part.getSite()
 				.getService(IMenuService.class);
-		menuService.releaseContributions(menu);
+		if (menuService != null) {
+			menuService.releaseContributions(menu);
+		}
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 		menu.removeMenuListener(this);
 	}
