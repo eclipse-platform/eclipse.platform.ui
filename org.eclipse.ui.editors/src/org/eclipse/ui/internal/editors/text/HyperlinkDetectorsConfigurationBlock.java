@@ -130,7 +130,10 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			case 0:
 				return ((ListItem) element).name;
 			case 1:
-				return ((ListItem) element).modifierKeys;
+				String text= ((ListItem) element).modifierKeys;
+				if (text == null)
+					return fHyperlinkDefaultKeyModifierText.getText();
+				return text;
 			case 2:
 				return ((ListItem) element).targetName;
 			default:
@@ -498,17 +501,14 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			return;
 		}
 		fHyperlinkKeyModifierText.setEnabled(fHyperlinkDetectorsViewer.getChecked(item));
-		fHyperlinkKeyModifierText.setText(item.modifierKeys);
+		String text= item.modifierKeys;
+		if (text == null)
+			text= fHyperlinkDefaultKeyModifierText.getText();
+		fHyperlinkKeyModifierText.setText(text);
 		
 	}
 
 	public void initialize() {
-		fListModel= createListModel();
-		fHyperlinkDetectorsViewer.setInput(fListModel);
-		
-		fHyperlinkDetectorsViewer.setAllChecked(false);
-		fHyperlinkDetectorsViewer.setCheckedElements(getCheckedItems());
-		
 		String modifierString= fStore.getString(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER);
 		if (computeStateMask(modifierString) == -1) {
 			// Fix possible illegal modifier string
@@ -523,6 +523,11 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		fHyperlinksEnabledCheckBox.setSelection(isEnabled);
 		fHyperlinkKeyModifierText.setEnabled(isEnabled);
 		fHyperlinkDefaultKeyModifierText.setEnabled(isEnabled);
+		
+		fListModel= createListModel();
+		fHyperlinkDetectorsViewer.setInput(fListModel);
+		fHyperlinkDetectorsViewer.setAllChecked(false);
+		fHyperlinkDetectorsViewer.setCheckedElements(getCheckedItems());
 		fHyperlinkDetectorsViewer.getTable().setEnabled(isEnabled);
 
 		fHyperlinkKeyModifierText.setText(""); //$NON-NLS-1$
@@ -537,9 +542,6 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			HyperlinkDetectorTargetDescriptor target= desc.getTarget();
 			
 			int stateMask= fStore.getInt(desc.getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX);
-			if (stateMask == -1)
-				stateMask= 1; // FIXME: use default modifier
-
 			String modifierKeys= getModifierString(stateMask);
 			
 			listModelItems.add(new ListItem(
@@ -589,7 +591,8 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		} else {
 			ListItem item= getSelectedItem();
 			if (item != null) {
-				item.modifierKeys= modifiers;
+				if (item.modifierKeys != null || !modifiers.equalsIgnoreCase(fHyperlinkDefaultKeyModifierText.getText()))
+					item.modifierKeys= modifiers;
 				fHyperlinkDetectorsViewer.refresh(getSelectedItem());
 				fStore.setValue(item.id + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
 			}
@@ -616,6 +619,8 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			fHyperlinkKeyModifierStatus= new StatusInfo();
 			fPreferencePage.setValid(true);
 			applyToStatusLine(fHyperlinkKeyModifierStatus);
+			fHyperlinkDetectorsViewer.refresh();
+			handleListSelection();
 		}
 	}
 
@@ -680,6 +685,9 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 	 * @return the modifier string
 	 */
 	private static final String getModifierString(int stateMask) {
+		if (stateMask == -1)
+			return null;
+		
 		String modifierString= ""; //$NON-NLS-1$
 		if ((stateMask & SWT.CTRL) == SWT.CTRL)
 			modifierString= appendModifierString(modifierString, SWT.CTRL);
