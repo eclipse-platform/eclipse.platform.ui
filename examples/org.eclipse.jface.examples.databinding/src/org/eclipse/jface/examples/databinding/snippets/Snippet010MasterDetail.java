@@ -14,8 +14,8 @@ package org.eclipse.jface.examples.databinding.snippets;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -63,8 +63,9 @@ public class Snippet010MasterDetail {
 				// 3. Bind the Text widget to the name detail (selection's
 				// name).
 				new DataBindingContext().bindValue(SWTObservables.observeText(
-						name, SWT.None), detailObservable, new BindSpec()
-						.setUpdateModel(false));
+						name, SWT.None), detailObservable,
+						new UpdateValueStrategy(false,
+								UpdateValueStrategy.POLICY_NEVER), null);
 
 				shell.open();
 				while (!shell.isDisposed()) {

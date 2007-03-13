@@ -12,13 +12,22 @@
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.conversion.ToStringConverter;
+import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
@@ -43,6 +52,25 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 public class TestMasterDetail {
+	/**
+	 * @since 3.2
+	 * 
+	 */
+	private static final class CustomUpdateValueStrategy extends
+			UpdateValueStrategy {
+		protected IStatus doSet(IObservableValue observableValue, Object value) {
+			IStatus result = super.doSet(observableValue, value);
+			if (result.isOK()) {
+				Object changed = observableValue;
+				if (changed instanceof IObserving) {
+					changed = ((IObserving) changed).getObserved();
+				}
+				System.out.println("changed: " + changed);
+			}
+			return result;
+		}
+	}
+
 	/**
 	 * @param args
 	 */
@@ -71,6 +99,8 @@ public class TestMasterDetail {
 	private Text state = null;
 
 	private Table ordersTable = null;
+
+	private Text validationStatus;
 
 	/**
 	 * This method initializes table
@@ -161,20 +191,25 @@ public class TestMasterDetail {
 		state = new Text(shell, SWT.BORDER);
 		state.setLayoutData(gridData3);
 		createTable1();
+		validationStatus = new Text(shell, SWT.READ_ONLY | SWT.BORDER);
 	}
 
 	private void run() {
-		Display display = new Display();
+		final Display display = new Display();
 
-		createShell();
-		bind(shell);
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				createShell();
+				bind(shell);
 
-		shell.setSize(600, 600);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+				shell.setSize(600, 600);
+				shell.open();
+				while (!shell.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
+		});
 		display.dispose();
 	}
 
@@ -186,33 +221,69 @@ public class TestMasterDetail {
 		TableViewer peopleViewer = new TableViewer(personsTable);
 		ObservableListContentProvider peopleViewerContent = new ObservableListContentProvider();
 		peopleViewer.setContentProvider(peopleViewerContent);
+
 		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
 				peopleViewerContent.getKnownElements(), SimplePerson.class,
 				new String[] { "name", "state" });
 		peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
 				attributeMaps));
+
 		peopleViewer.setInput(new WritableList(realm, model.getPersonList(),
 				SimpleModel.class));
 
 		IObservableValue selectedPerson = ViewersObservables
 				.observeSingleSelection(peopleViewer);
 
-		DataBindingContext dbc = new DataBindingContext(realm);
-		dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
-				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"name", String.class), null);
+		DataBindingContext dbc = new DataBindingContext(realm) {
+			protected UpdateValueStrategy createTargetToModelUpdateValueStrategy(
+					IObservableValue fromValue, IObservableValue toValue) {
+				return new CustomUpdateValueStrategy();
+			}
+		};
+		IConverter upperCaseConverter = new IConverter() {
+			public Object convert(Object fromObject) {
+				return ((String) fromObject).toUpperCase();
+			}
 
+			public Object getFromType() {
+				return String.class;
+			}
+
+			public Object getToType() {
+				return String.class;
+			}
+		};
+		IValidator vowelValidator = new IValidator() {
+			public IStatus validate(Object value) {
+				String s = (String) value;
+				if (!s.matches("[aeiouAEIOU]*")) {
+					return ValidationStatus.error("only vowels allowed");
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		Binding b = dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"name", String.class), new CustomUpdateValueStrategy()
+						.setConverter(upperCaseConverter).setAfterGetValidator(
+								vowelValidator), null);
+
+//		AggregateValidationStatus status = new AggregateValidationStatus(dbc
+//				.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
+		dbc.bindValue(SWTObservables.observeText(validationStatus, SWT.NONE),
+				b.getValidationStatus(), null, new UpdateValueStrategy().setConverter(new ToStringConverter()));
+		
 		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"address", String.class), null);
+						"address", String.class), null, null);
 
 		dbc.bindValue(SWTObservables.observeText(city, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"city", String.class), null);
+						"city", String.class), null, null);
 
 		dbc.bindValue(SWTObservables.observeText(state, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
-						"state", String.class), null);
+						"state", String.class), null, null);
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
 		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
@@ -226,5 +297,4 @@ public class TestMasterDetail {
 				selectedPerson, "orders", SimpleOrder.class);
 		ordersViewer.setInput(orders);
 	}
-
 }

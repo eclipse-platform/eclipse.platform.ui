@@ -29,7 +29,7 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends AbstractBindSu
 
     public void testStringToDoublePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
-                "doublePrimitiveVal"), null);
+                "doublePrimitiveVal"), null, null);
 
         dataObject.setDoublePrimitiveVal(789.5);
         assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
@@ -54,7 +54,7 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends AbstractBindSu
 
     public void testDoubleToDoublePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "doubleVal"), BeansObservables.observeValue(dataObject,
-                "doublePrimitiveVal"), null);
+                "doublePrimitiveVal"), null, null);
         // ctx.bind(new Property(dataObject, "doubleVal"), new
         // Property(dataObject, "doublePrimitiveVal"), null);
 
@@ -76,7 +76,7 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends AbstractBindSu
 
     public void testObjectToDoublePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
-                "doublePrimitiveVal"), null);
+                "doublePrimitiveVal"), null, null);
 
         dataObject.setDoublePrimitiveVal(789.5);
         assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);

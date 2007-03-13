@@ -94,7 +94,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
 				.observeSingleSelection(comboViewer);
 		getDbc().bindValue(selection,
 				BeansObservables.observeValue(adventure, "defaultLodging"),
-				null);
+				null, null);
 
 		// Verify that the combo selection is the default lodging
 		assertEquals(((IStructuredSelection) comboViewer.getSelection())

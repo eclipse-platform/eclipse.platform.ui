@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -30,7 +31,7 @@ import org.eclipse.core.runtime.Assert;
  * 
  */
 
-public class DetailObservableList extends ObservableList {
+public class DetailObservableList extends ObservableList implements IObserving {
 
 	private boolean updating = false;
 
@@ -115,6 +116,13 @@ public class DetailObservableList extends ObservableList {
 		factory = null;
 		innerObservableList = null;
 		innerChangeListener = null;
+	}
+
+	public Object getObserved() {
+		if (innerObservableList instanceof IObserving) {
+			return ((IObserving)innerObservableList).getObserved();
+		}
+		return null;
 	}
 
 }

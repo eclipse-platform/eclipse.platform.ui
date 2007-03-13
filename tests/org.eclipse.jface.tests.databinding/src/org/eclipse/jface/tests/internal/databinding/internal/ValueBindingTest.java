@@ -13,12 +13,11 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.DefaultBindSpec;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -32,46 +31,45 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	 * @throws Exception
 	 */
 	public void testNoUpdateTargetFromModel() throws Exception {
-		DefaultBindSpec spec = new DefaultBindSpec();
-		spec.setUpdateModel(false);
-		spec.setUpdateTarget(false);
-
 		try {
-			new ValueBinding(
-					new ObservableValueStub(), new ObservableValueStub(), spec).init(new DataBindingContext());
+			new DataBindingContext().bindValue(new ObservableValueStub(),
+					new ObservableValueStub(), new UpdateValueStrategy(
+							UpdateValueStrategy.POLICY_NEVER),
+					new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-    
-    public void testValuePropagation() throws Exception {
-        DefaultBindSpec spec = new DefaultBindSpec();
-        String initialValue = "value";
-        
-        WritableValue target = new WritableValue(null, String.class);
-        WritableValue model = new WritableValue(initialValue, String.class);
-        
-        DataBindingContext dbc = new DataBindingContext();
-        
-        assertFalse(model.getValue().equals(target.getValue()));
-        new ValueBinding(target, model, spec).init(dbc);
-        
-        assertEquals(target.getValue(), model.getValue());
-    }
-    
-    public void testGetTarget() throws Exception {
-    	WritableValue target = new WritableValue();
-    	WritableValue model = new WritableValue();
-		ValueBinding valueBinding = new ValueBinding(target, model, new BindSpec());
-    	
+
+	public void testValuePropagation() throws Exception {
+		String initialValue = "value";
+
+		WritableValue target = new WritableValue(null, String.class);
+		WritableValue model = new WritableValue(initialValue, String.class);
+
+		DataBindingContext dbc = new DataBindingContext();
+
+		assertFalse(model.getValue().equals(target.getValue()));
+		dbc.bindValue(target, model, null, null);
+
+		assertEquals(target.getValue(), model.getValue());
+	}
+
+	public void testGetTarget() throws Exception {
+		WritableValue target = new WritableValue();
+		WritableValue model = new WritableValue();
+		Binding valueBinding = new DataBindingContext().bindValue(target,
+				model, null, null);
+
 		assertEquals(target, valueBinding.getTarget());
 	}
-    
-    public void testGetModel() throws Exception {
-    	WritableValue target = new WritableValue();
-    	WritableValue model = new WritableValue();
-		ValueBinding valueBinding = new ValueBinding(target, model, new BindSpec());
-    	
+
+	public void testGetModel() throws Exception {
+		WritableValue target = new WritableValue();
+		WritableValue model = new WritableValue();
+		Binding valueBinding = new DataBindingContext().bindValue(target,
+				model, null, null);
+
 		assertEquals(model, valueBinding.getModel());
 	}
 

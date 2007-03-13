@@ -13,6 +13,7 @@
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -24,7 +25,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  * 
  */
-public class DetailObservableValue extends AbstractObservableValue {
+public class DetailObservableValue extends AbstractObservableValue implements IObserving {
 
 	private boolean updating = false;
 
@@ -122,6 +123,13 @@ public class DetailObservableValue extends AbstractObservableValue {
 		factory = null;
 		innerObservableValue = null;
 		innerChangeListener = null;
+	}
+
+	public Object getObserved() {
+		if (innerObservableValue instanceof IObserving) {
+			return ((IObserving)innerObservableValue).getObserved();
+		}
+		return null;
 	}
 
 }

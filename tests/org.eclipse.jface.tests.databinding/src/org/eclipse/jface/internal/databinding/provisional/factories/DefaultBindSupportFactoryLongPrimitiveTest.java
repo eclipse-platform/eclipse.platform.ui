@@ -29,7 +29,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends AbstractBindSupp
 
     public void testStringToLongPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
-                "longPrimitiveVal"), null);
+                "longPrimitiveVal"), null, null);
 
         dataObject.setLongPrimitiveVal(110);
         assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
@@ -54,7 +54,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends AbstractBindSupp
 
     public void testLongToLongPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "longVal"), BeansObservables.observeValue(dataObject,
-                "longPrimitiveVal"), null);
+                "longPrimitiveVal"), null, null);
 
         dataObject.setLongPrimitiveVal(110);
         assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
@@ -74,7 +74,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends AbstractBindSupp
 
     public void testObjectToLongPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
-                "longPrimitiveVal"), null);
+                "longPrimitiveVal"), null, null);
 
         dataObject.setLongPrimitiveVal(110);
         assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);

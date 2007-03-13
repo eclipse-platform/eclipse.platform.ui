@@ -11,16 +11,16 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.IBindingListener;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet that validates values across multiple bindings on change of each
  * observable. If the values of the target observables are not equal the model
- * is not updated.  When the values are equal they will be written to sysout.
+ * is not updated. When the values are equal they will be written to sysout.
  * 
  * @author Brad Reynolds
  */
@@ -53,52 +53,14 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		final Model model = new Model();
 
 		DataBindingContext dbc = new DataBindingContext();
-		final Binding binding1 = dbc.bindValue(SWTObservables.observeText(
-				view.text1, SWT.Modify), model.value1, null);
-		final Binding binding2 = dbc.bindValue(SWTObservables.observeText(
-				view.text2, SWT.Modify), model.value2, null);
-
-		/**
-		 * Listener that will validate multiple bindings each time a change
-		 * occurs in either target.
-		 */
-		IBindingListener listener = new IBindingListener() {
-			/**
-			 * Value of the binding that is changing.
-			 */
-			Object changingValue;
-			/**
-			 * Status to return for both bindings.
-			 */
-			IStatus validationStatus;
-
-			public IStatus handleBindingEvent(BindingEvent e) {
-				if (!(e.copyType == BindingEvent.EVENT_COPY_TO_MODEL && e.pipelinePosition == BindingEvent.PIPELINE_AFTER_CONVERT)) {
-					return Status.OK_STATUS;
-				}
-
-				Binding other = (e.binding == binding1) ? binding2 : binding1;
-
-				if (changingValue == null) {
-					changingValue = e.convertedValue;
-					validationStatus = Status.OK_STATUS;
-
-					// force validation to run for the other
-					// binding
-					other.updateModelFromTarget();
-
-					// reset stored state
-					changingValue = null;
-				} else if (!changingValue.equals(e.convertedValue)) {
-					validationStatus = Status.CANCEL_STATUS;
-				}
-
-				return validationStatus;
-			}
-		};
-
-		binding1.addBindingEventListener(listener);
-		binding2.addBindingEventListener(listener);
+		dbc.bindValue(SWTObservables.observeText(view.text1, SWT.Modify),
+				model.value1, new UpdateValueStrategy()
+						.setAfterConvertValidator(new CrossFieldValidator(
+								model.value2)), null);
+		dbc.bindValue(SWTObservables.observeText(view.text2, SWT.Modify),
+				model.value2, new UpdateValueStrategy()
+						.setAfterConvertValidator(new CrossFieldValidator(
+								model.value1)), null);
 
 		// DEBUG - print to show value change
 		model.value1.addValueChangeListener(new IValueChangeListener() {
@@ -122,6 +84,31 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 				display.sleep();
 		}
 		display.dispose();
+	}
+
+	/**
+	 * @since 3.2
+	 * 
+	 */
+	private static final class CrossFieldValidator implements IValidator {
+		/**
+		 * 
+		 */
+		private final IObservableValue other;
+
+		/**
+		 * @param model
+		 */
+		private CrossFieldValidator(IObservableValue other) {
+			this.other = other;
+		}
+
+		public IStatus validate(Object value) {
+			if (!value.equals(other.getValue())) {
+				return ValidationStatus.ok();
+			}
+			return ValidationStatus.error("values cannot be the same");
+		}
 	}
 
 	static class Model {

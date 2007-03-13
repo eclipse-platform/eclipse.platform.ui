@@ -29,7 +29,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends AbstractBindSup
 
     public void testStringToFloatPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
-                "floatPrimitiveVal"), null);
+                "floatPrimitiveVal"), null, null);
 
         dataObject.setFloatPrimitiveVal((float) 789.5);
         assertEquals("float value does not match", 789.5, dataObject.getFloatPrimitiveVal(), .001);
@@ -54,7 +54,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends AbstractBindSup
 
     public void testFloatToFloatPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "floatVal"), BeansObservables.observeValue(dataObject,
-                "floatPrimitiveVal"), null);
+                "floatPrimitiveVal"), null, null);
 
         dataObject.setFloatPrimitiveVal((float) 789.5);
         assertEquals("float value does not match", 789.5, dataObject.getFloatPrimitiveVal(), .001);
@@ -74,7 +74,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends AbstractBindSup
 
     public void testObjectToFloatPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
-                "floatPrimitiveVal"), null);
+                "floatPrimitiveVal"), null, null);
 
         dataObject.setFloatPrimitiveVal((float) 789.5);
         assertEquals("float value does not match", 789.5, dataObject.getFloatPrimitiveVal(), .001);

@@ -193,7 +193,7 @@ public class Snippet001NestedSelectionWithCombo {
 					.observeSingleSelection(peopleListViewer);
 			dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
 					BeansObservables.observeDetailValue(realm, selectedPerson,
-							"name", String.class), null);
+							"name", String.class), null, null);
 
 			ComboViewer cityViewer = new ComboViewer(city);
 			cityViewer.setContentProvider(new ArrayContentProvider());
@@ -202,7 +202,7 @@ public class Snippet001NestedSelectionWithCombo {
 			IObservableValue citySelection = ViewersObservables
 					.observeSingleSelection(cityViewer);
 			dbc.bindValue(citySelection, BeansObservables.observeDetailValue(
-					realm, selectedPerson, "city", String.class), null);
+					realm, selectedPerson, "city", String.class), null, null);
 
 			GridLayoutFactory.swtDefaults().applyTo(shell);
 			// Open and return the Shell

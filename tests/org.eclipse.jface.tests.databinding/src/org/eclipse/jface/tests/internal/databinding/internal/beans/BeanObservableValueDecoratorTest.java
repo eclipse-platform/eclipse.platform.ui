@@ -15,6 +15,7 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -42,7 +43,7 @@ public class BeanObservableValueDecoratorTest extends TestCase {
 				SWTObservables.getRealm(Display.getDefault()), bean,
 				propertyDescriptor, String.class);
 		decorator = new BeanObservableValueDecorator(
-				observableValue, bean, observableValue
+				observableValue, new WritableValue(bean, Object.class), observableValue
 						.getPropertyDescriptor());
 	}
 

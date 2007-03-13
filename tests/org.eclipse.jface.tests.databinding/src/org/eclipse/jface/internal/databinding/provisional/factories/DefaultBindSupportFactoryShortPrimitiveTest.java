@@ -29,7 +29,7 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends AbstractBindSup
 
     public void testStringToShortPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
-                "shortPrimitiveVal"), null);
+                "shortPrimitiveVal"), null, null);
 
         dataObject.setShortPrimitiveVal((short) 110);
         assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
@@ -54,7 +54,7 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends AbstractBindSup
 
     public void testShortToShortPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "shortVal"), BeansObservables.observeValue(dataObject,
-                "shortPrimitiveVal"), null);
+                "shortPrimitiveVal"), null, null);
 
         dataObject.setShortPrimitiveVal((short) 110);
         assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
@@ -74,7 +74,7 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends AbstractBindSup
 
     public void testObjectToShortPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
-                "shortPrimitiveVal"), null);
+                "shortPrimitiveVal"), null, null);
 
         dataObject.setShortPrimitiveVal((short) 110);
         assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());

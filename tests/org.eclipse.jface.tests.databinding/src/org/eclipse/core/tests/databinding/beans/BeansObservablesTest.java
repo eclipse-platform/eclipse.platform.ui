@@ -90,7 +90,7 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		BeanObservableValueDecorator beanObservable = (BeanObservableValueDecorator) detailValue;
 		assertEquals("property descriptor", Bean.class.getMethod("getValue",
 				null), beanObservable.getPropertyDescriptor().getReadMethod());
-		assertEquals("observed", parent, beanObservable.getObserved());
+		assertEquals("observed", parent.getValue(), beanObservable.getObserved());
 		assertTrue("delegate", beanObservable.getDelegate().getClass()
 				.getName().endsWith("DetailObservableValue"));
 	}

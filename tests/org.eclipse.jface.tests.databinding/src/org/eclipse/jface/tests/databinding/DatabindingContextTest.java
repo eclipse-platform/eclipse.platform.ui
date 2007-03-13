@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.DefaultBindSpec;
+import org.eclipse.core.databinding.UpdateListStrategy;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -29,8 +29,6 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.internal.databinding.ListBinding;
-import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.util.EventTrackers.ChangeEventTracker;
 import org.eclipse.jface.tests.databinding.util.EventTrackers.ValueChangeEventTracker;
@@ -79,18 +77,18 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		IObservableValue target = WritableValue.withValueType(String.class);
 		IObservableValue model = WritableValue.withValueType(String.class);
 
-		Binding binding = dbc.bindValue(target, model, null);
+		Binding binding = dbc.bindValue(target, model, null, null);
 		assertTrue("binding is of the incorrect type",
-				binding instanceof ValueBinding);
+				binding.getClass().getSimpleName().equals("ValueBinding"));
 	}
 
 	public void testBindList() throws Exception {
 		IObservableList target = WritableList.withElementType(Object.class);
 		IObservableList model = WritableList.withElementType(Object.class);
 
-		Binding binding = dbc.bindList(target, model, null);
+		Binding binding = dbc.bindList(target, model, null, null);
 		assertTrue("binding is of the incorrect type",
-				binding instanceof ListBinding);
+				binding.getClass().getSimpleName().equals("ListBinding"));
 	}
 
 	/**
@@ -124,8 +122,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 		dbc
 				.bindValue(targetObservable, modelObservable,
-						new DefaultBindSpec().addTargetValidator(
-								BindingEvent.PIPELINE_AFTER_GET, validator));
+						new UpdateValueStrategy().setAfterGetValidator(validator), null);
 
 		targetObservable.setValue("");
 		assertFalse(((IStatus) error.getValue()).isOK());
@@ -138,7 +135,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Asserts that then
-	 * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, org.eclipse.jface.databinding.DefaultBindSpec)}
+	 * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, org.eclipse.jface.databinding.DefaultBindSpec, BindSpec)}
 	 * if invoked the created binding is added to the internal list of bindings.
 	 * 
 	 * @throws Exception
@@ -150,7 +147,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
 
-		Binding binding = dbc.bindValue(targetValue, modelValue, null);
+		Binding binding = dbc.bindValue(targetValue, modelValue, null, null);
 		assertNotNull(binding);
 		assertNotNull(dbc.getBindings());
 		assertEquals(1, dbc.getBindings().size());
@@ -159,7 +156,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 
 	/**
 	 * Asserts that when
-	 * {@link DataBindingContext#bindList(IObservableList, IObservableList, org.eclipse.jface.databinding.DefaultBindSpec)}
+	 * {@link DataBindingContext#bindList(IObservableList, IObservableList, org.eclipse.jface.databinding.DefaultBindSpec, UpdateListStrategy)}
 	 * is invoked the created binding is added to the intenal list of bindings.
 	 * 
 	 * @throws Exception
@@ -172,7 +169,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		assertNotNull(dbc.getBindings());
 		assertEquals(0, dbc.getBindings().size());
 
-		Binding binding = dbc.bindList(targetList, modelList, null);
+		Binding binding = dbc.bindList(targetList, modelList, null, null);
 		assertNotNull(binding);
 		assertNotNull(dbc.getBindings());
 		assertEquals(1, dbc.getBindings().size());
@@ -217,36 +214,11 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 			}
 		}
 
-		ValueBinding binding = (ValueBinding) dbc.bindValue(target, model,
-				new DefaultBindSpec().addTargetValidator(
-						BindingEvent.PIPELINE_AFTER_CONVERT, new Validator()));
+		Binding binding = dbc.bindValue(target, model,
+				new UpdateValueStrategy().setAfterConvertValidator(new Validator()), null);
 
 		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus()
 				.getValue()).getSeverity());
-	}
-
-	/**
-	 * Asserts that when a ListBinding is created validation is ran to ensure
-	 * that the validation status of the Binding reflects the validity of the
-	 * value in the target.
-	 * 
-	 * @throws Exception
-	 */
-	public void testValidateTargetAfterListBindingCreation() throws Exception {
-		WritableList target = new WritableList();
-		WritableList model = new WritableList();
-		
-		class Validator implements IValidator {
-			public IStatus validate(Object value) {
-				return ValidationStatus.error("error");
-			}
-		}
-
-		Binding binding = dbc.bindList(target, model, new DefaultBindSpec()
-				.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET,
-						new Validator()));
-
-		assertEquals(IStatus.ERROR, ((IStatus) binding.getValidationStatus().getValue()).getSeverity());
 	}
 
 	private static class BindingStub extends Binding {
@@ -264,10 +236,10 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 			return null;
 		}
 
-		public void updateModelFromTarget() {
+		public void updateTargetToModel() {
 		}
 
-		public void updateTargetFromModel() {
+		public void updateModelToTarget() {
 		}
 
 		public void updateTargetFromModel(int phase) {
@@ -280,6 +252,12 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		}
 
 		protected void preInit() {
+		}
+
+		public void validateModelToTarget() {
+		}
+
+		public void validateTargetToModel() {
 		}
 	}
 }

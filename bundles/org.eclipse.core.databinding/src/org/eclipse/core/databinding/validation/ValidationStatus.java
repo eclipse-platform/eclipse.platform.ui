@@ -56,6 +56,16 @@ public class ValidationStatus extends Status {
 	}
 
 	/**
+	 * Creates a new validation cancel status with the given message.
+	 * 
+	 * @param message
+	 * @return a new cancel status with the given message
+	 */
+	public static IStatus cancel(String message) {
+		return new ValidationStatus(IStatus.CANCEL, message);
+	}
+	
+	/**
 	 * Creates a new validation error status with the given message and
 	 * exception.
 	 * 

@@ -28,7 +28,7 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends AbstractBindSupp
 
     public void testStringToBytePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
-                "bytePrimitiveVal"), null);
+                "bytePrimitiveVal"), null, null);
 
         dataObject.setBytePrimitiveVal((byte) 110);
         assertEquals("byte value does not match", 110, dataObject.getBytePrimitiveVal(), .001);
@@ -53,7 +53,7 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends AbstractBindSupp
 
 	public void testByteToBytePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "byteVal"), BeansObservables.observeValue(dataObject,
-                "bytePrimitiveVal"), null);
+                "bytePrimitiveVal"), null, null);
 
         dataObject.setBytePrimitiveVal((byte) 110);
         assertEquals("byte value does not match", 110, dataObject.getBytePrimitiveVal(), .001);
@@ -73,7 +73,7 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends AbstractBindSupp
 
     public void testObjectToBytePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
-                "bytePrimitiveVal"), null);
+                "bytePrimitiveVal"), null, null);
 
         dataObject.setBytePrimitiveVal((byte) 110);
         assertEquals("byte value does not match", 110, dataObject.getBytePrimitiveVal(), .001);

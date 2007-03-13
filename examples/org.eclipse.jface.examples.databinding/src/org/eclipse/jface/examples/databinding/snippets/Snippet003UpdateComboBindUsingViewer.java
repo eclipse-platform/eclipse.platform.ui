@@ -170,7 +170,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 			viewer.setInput(list);
 
 			dbc.bindValue(ViewersObservables.observeSingleSelection(viewer),
-					BeansObservables.observeValue(viewModel, "text"), null);
+					BeansObservables.observeValue(viewModel, "text"), null, null);
 
 			// Open and return the Shell
 			shell.pack();

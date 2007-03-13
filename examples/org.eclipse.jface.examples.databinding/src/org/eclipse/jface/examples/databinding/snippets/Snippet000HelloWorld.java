@@ -32,16 +32,20 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet000HelloWorld {
 	public static void main(String[] args) {
 		ViewModel viewModel = new ViewModel();
-		Shell shell = new View(viewModel).createShell();
+		final Shell shell = new View(viewModel).createShell();
 
-		// The SWT event loop
-		Display display = Display.getCurrent();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-
+		Realm.runWithDefault(SWTObservables.getRealm(shell.getDisplay()),
+				new Runnable() {
+					public void run() {
+						// The SWT event loop
+						Display display = Display.getCurrent();
+						while (!shell.isDisposed()) {
+							if (!display.readAndDispatch()) {
+								display.sleep();
+							}
+						}
+					}
+				});
 		// Print the results
 		System.out.println("person.getName() = "
 				+ viewModel.getPerson().getName());
@@ -97,26 +101,19 @@ public class Snippet000HelloWorld {
 			Shell shell = new Shell(display);
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
 			name = new Text(shell, SWT.BORDER);
-			
+
 			// Bind it
-			Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-				public void run() {
-					DataBindingContext bindingContext = new DataBindingContext();
-					bindGUI(bindingContext);
-				}
-			});
+			DataBindingContext bindingContext = new DataBindingContext();
+			Person person = viewModel.getPerson();
+
+			bindingContext.bindValue(SWTObservables.observeText(name,
+					SWT.Modify), BeansObservables.observeValue(person, "name"),
+					null, null);
 
 			// Open and return the Shell
 			shell.pack();
 			shell.open();
 			return shell;
-		}
-
-		protected void bindGUI(DataBindingContext bindingContext) {
-			// Called from inside the SWT threading realm)
-			Person person = viewModel.getPerson();
-			bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
-					BeansObservables.observeValue(person, "name"), null);
 		}
 	}
 

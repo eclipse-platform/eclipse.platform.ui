@@ -17,10 +17,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
-import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
-import org.eclipse.core.databinding.BindingEvent;
-import org.eclipse.core.databinding.DefaultBindSpec;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.conversion.IConverter;
@@ -89,7 +87,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         Text text = new Text(getComposite(), SWT.BORDER);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
-                null);
+                null, null);
 
         // getDbc().bind(text, new Property(adventure, "name"), null);
         // uncomment the following line to see what's happening
@@ -113,7 +111,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.None),
                 BeansObservables.observeValue(adventure, "name"),
-                null);
+                null, null);
         assertEquals(adventure.getName(), text.getText());
     }
 
@@ -129,7 +127,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(cart, "lodgingDays"),
-                null);
+                null, null);
 
         assertEquals(new Integer(cart.getLodgingDays()).toString(), text.getText());
     }
@@ -149,7 +147,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         IObservableValue defaultLodging =BeansObservables.observeDetailValue(realm, BeansObservables.observeValue(adventure,
         "defaultLodging"), "description", String.class); 
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), defaultLodging, null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), defaultLodging, null, null);
 
         // test changing the description
         assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
@@ -216,10 +214,9 @@ public class PropertyScenarios extends ScenariosTestCase {
             }
         };
 
-        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(converter1).setTargetToModelConverter(converter2);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
-                bindSpec);
+                new UpdateValueStrategy().setConverter(converter2), new UpdateValueStrategy().setConverter(converter1));
 
         // spinEventLoop(1);
         assertEquals("Uppercase", text.getText());
@@ -245,33 +242,36 @@ public class PropertyScenarios extends ScenariosTestCase {
                 if (stringValue.length() > 15) {
                     return ValidationStatus.error(max15CharactersMessage);
                 } else if (stringValue.indexOf(' ') != -1) {
-                    return ValidationStatus.error(noSpacesMessage);
+                    return ValidationStatus.cancel(noSpacesMessage);
                 } else {
                     return Status.OK_STATUS;
                 }
             }
         };
 
-        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(new IdentityConverter(String.class))
-                .setTargetToModelConverter(new IdentityConverter(String.class))
-                .addTargetValidator(BindingEvent.PIPELINE_VALUE_CHANGING, validator);
+//        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(new IdentityConverter(String.class))
+//                .setTargetToModelConverter(new IdentityConverter(String.class))
+//                .addTargetValidator(BindingEvent.PIPELINE_VALUE_CHANGING, validator);
 
-        Binding binding = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "name"),
-                bindSpec);
+        Binding binding = getDbc().bindValue(
+				SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "name"),
+				new UpdateValueStrategy().setConverter(new IdentityConverter(
+						String.class)).setAfterGetValidator(validator),
+				new UpdateValueStrategy().setConverter(new IdentityConverter(
+						String.class)));
 
         // no validation message
-        assertTrue(((IStatus)binding.getPartialValidationStatus().getValue()).isOK());
+        assertTrue(((IStatus)binding.getValidationStatus().getValue()).isOK());
         enterText(text, "Invalid Value");
-        assertEquals(noSpacesMessage, ((IStatus) binding.getPartialValidationStatus().getValue()).getMessage());
-        assertEquals("ValidValue", text.getText());
+        assertEquals(noSpacesMessage, ((IStatus) binding.getValidationStatus().getValue()).getMessage());
+        assertEquals("ValidValue", adventure.getName());
         text.setText("InvalidValueBecauseTooLong");
         assertEquals(max15CharactersMessage,
-                ((IStatus) binding.getPartialValidationStatus().getValue()).getMessage());
-        assertEquals("ValidValue", text.getText());
+                ((IStatus) binding.getValidationStatus().getValue()).getMessage());
+        assertEquals("ValidValue", adventure.getName());
         enterText(text, "anothervalid");
-        assertTrue(((IStatus)binding.getPartialValidationStatus().getValue()).isOK());
-        assertEquals("anothervalid", text.getText());
+        assertTrue(((IStatus)binding.getValidationStatus().getValue()).isOK());
         assertEquals("anothervalid", adventure.getName());
     }
 
@@ -301,7 +301,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
-                new DefaultBindSpec().addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator));
+                new UpdateValueStrategy().setAfterGetValidator(validator), null);
 
         assertEquals("5.0", text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
@@ -364,12 +364,9 @@ public class PropertyScenarios extends ScenariosTestCase {
             }
         };
 
-        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(toCurrency)
-                .setTargetToModelConverter(toDouble)
-                .addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
-                bindSpec);
+new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator),new UpdateValueStrategy().setConverter(toCurrency));
 
         assertEquals("$5.00", text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
@@ -398,7 +395,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeSelection(checkbox),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
-                null);
+                null, null);
 
         assertEquals(true, checkbox.getSelection());
         setButtonSelectionWithEvents(checkbox, false);
@@ -424,7 +421,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         Spinner spinner2 = new Spinner(getComposite(), SWT.NONE);
         spinner2.setMaximum(1);
 
-        getDbc().bindValue(SWTObservables.observeSelection(spinner1), SWTObservables.observeMax(spinner2), null);
+        getDbc().bindValue(SWTObservables.observeSelection(spinner1), SWTObservables.observeMax(spinner2), null, null);
 
         assertEquals(1, spinner1.getSelection());
         spinner1.setSelection(10);
@@ -459,15 +456,14 @@ public class PropertyScenarios extends ScenariosTestCase {
         };
 
         getDbc().bindValue(checkbox1Selected,
-                checkbox2Selected,
-                new DefaultBindSpec().setModelToTargetConverter(negatingConverter)
-                        .setTargetToModelConverter(negatingConverter));
+                checkbox2Selected,new UpdateValueStrategy().setConverter(negatingConverter),
+                new UpdateValueStrategy().setConverter(negatingConverter));
         
         // bind the enabled state of the two text widgets to one of the
         // checkboxes each.
         
-        getDbc().bindValue(SWTObservables.observeEnabled(text1), checkbox1Selected, null);
-        getDbc().bindValue(SWTObservables.observeEnabled(text2), checkbox2Selected, null);
+        getDbc().bindValue(SWTObservables.observeEnabled(text1), checkbox1Selected, null, null);
+        getDbc().bindValue(SWTObservables.observeEnabled(text2), checkbox2Selected, null, null);
                 
         assertEquals(true, text1.getEnabled());
         assertEquals(false, text2.getEnabled());
@@ -485,7 +481,7 @@ public class PropertyScenarios extends ScenariosTestCase {
     public void testScenario13() {
         Text text = new Text(getComposite(), SWT.BORDER);
         
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), BeansObservables.observeValue(adventure, "name"), null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), BeansObservables.observeValue(adventure, "name"), null, null);
 
         // uncomment the following line to see what's happening
         // happening
@@ -506,8 +502,8 @@ public class PropertyScenarios extends ScenariosTestCase {
         Text t1 = new Text(getComposite(), SWT.BORDER);
         Text t2 = new Text(getComposite(), SWT.BORDER);
   
-        getDbc().bindValue(SWTObservables.observeText(t1, SWT.Modify), BeansObservables.observeValue(adventure, "name"), null);
-        getDbc().bindValue(SWTObservables.observeText(t2, SWT.Modify), BeansObservables.observeValue(adventure, "name"), null);
+        getDbc().bindValue(SWTObservables.observeText(t1, SWT.Modify), BeansObservables.observeValue(adventure, "name"), null, null);
+        getDbc().bindValue(SWTObservables.observeText(t2, SWT.Modify), BeansObservables.observeValue(adventure, "name"), null, null);
         
         final int[] counter = { 0 };
         
@@ -538,10 +534,10 @@ public class PropertyScenarios extends ScenariosTestCase {
         Account account = new Account();
         account.setExpiryDate(new Date());
         
-        Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"), null);
+        Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"), null, null);
         Text errorText = new Text(getComposite(), SWT.NONE);
         
-        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new DefaultBindSpec().setUpdateModel(false));
+        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
         assertTrue(((IStatus)b.getValidationStatus().getValue()).isOK());
         enterText(text, "foo");
         assertFalse(((IStatus)b.getValidationStatus().getValue()).isOK());

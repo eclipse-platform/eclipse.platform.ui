@@ -42,7 +42,7 @@ public class NPETestScenario extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(person, "name"),
-                null);
+                null, null);
 
         text.setText("Brad");
         text.notifyListeners(SWT.FocusOut, null);

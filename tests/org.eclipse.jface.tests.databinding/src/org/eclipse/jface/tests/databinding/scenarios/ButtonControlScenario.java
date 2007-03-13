@@ -47,7 +47,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
-                null);
+                null, null);
 
         // Check the model and GUI are in the same state
         assertEquals(button.getSelection(), adventure.isPetsAllowed());
@@ -76,7 +76,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
-                null);
+                null, null);
 
         // Check the model and GUI are in the same state
         assertEquals(button.getSelection(), adventure.isPetsAllowed());
@@ -100,7 +100,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
-                null);
+                null, null);
 
         // Check the model and GUI are in the same state
         assertEquals(button.getSelection(), adventure.isPetsAllowed());

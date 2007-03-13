@@ -29,14 +29,14 @@ public class BeanObservableValueDecorator implements IObservableValue,
 		IBeanObservable {
 	private final IObservableValue delegate;
 	private final PropertyDescriptor descriptor;
-	private final Object observed;
+	private final IObservableValue observed;
 
 	/**
 	 * @param delegate
 	 * @param observed 
 	 * @param descriptor
 	 */
-	public BeanObservableValueDecorator(IObservableValue delegate, Object observed,
+	public BeanObservableValueDecorator(IObservableValue delegate, IObservableValue observed,
 			PropertyDescriptor descriptor) {
 		this.delegate = delegate;
 		this.observed = observed;
@@ -105,7 +105,7 @@ public class BeanObservableValueDecorator implements IObservableValue,
 	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
 	 */
 	public Object getObserved() {
-		return observed;
+		return observed.getValue();
 	}
 
 	/*

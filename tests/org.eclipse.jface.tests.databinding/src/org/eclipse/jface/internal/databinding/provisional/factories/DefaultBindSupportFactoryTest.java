@@ -27,11 +27,11 @@ public class DefaultBindSupportFactoryTest extends AbstractBindSupportFactoryTes
         dataObject.setIntStringVal("456");
         ctx.bindValue(BeansObservables.observeValue(dataObject, "intStringVal"),
                 BeansObservables.observeValue(dataObject, "intVal"),
-                null);
+                null, null);
 
         ctx.bindValue(BeansObservables.observeValue(dataObject, "integerStringVal"),
                 BeansObservables.observeValue(dataObject, "integerVal"),
-                null);
+                null, null);
 
         dataObject.setIntegerStringVal("789");
         assertEquals("Integer value does not match", new Integer(789), dataObject.getIntegerVal());

@@ -15,11 +15,11 @@ package org.eclipse.jface.tests.internal.databinding.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -45,10 +45,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testUpdateModelFromTarget() throws Exception {
-		ListBinding binding = new ListBinding(target, model,
-				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
-						.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
-		binding.init(dbc);
+		Binding binding = dbc.bindList(target, model,
+				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST),
+				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST));
 		
 		target.add("1");
 		List targetCopy = new ArrayList(target.size());
@@ -57,16 +56,15 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		model.add("2");
 		
 		assertFalse("target should not equal model", target.equals(model));
-		binding.updateModelFromTarget();
+		binding.updateTargetToModel();
 		assertEquals("target should not have changed", targetCopy, target);
 		assertEquals("target != model", target, model);
 	}
 
 	public void testUpdateTargetFromModel() throws Exception {
-		ListBinding binding = new ListBinding(target, model,
-				new BindSpec().setModelUpdatePolicy(BindSpec.POLICY_EXPLICIT)
-						.setTargetUpdatePolicy(BindSpec.POLICY_EXPLICIT));
-		binding.init(dbc);
+		Binding binding = dbc.bindList(target, model,
+				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST),
+				new UpdateListStrategy(UpdateListStrategy.POLICY_ON_REQUEST));
 		
 		target.add("1");		
 		model.add("2");
@@ -75,20 +73,23 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		modelCopy.addAll(model);
 		
 		assertFalse("model should not equal target", model.equals(target));
-		binding.updateTargetFromModel();
+		binding.updateModelToTarget();
 		
 		assertEquals("model should not have changed", modelCopy, model);
 		assertEquals("model != target", model, target);
 	}
 	
 	public void testGetTarget() throws Exception {
-		ListBinding binding = new ListBinding(target, model,
-				new BindSpec());
+		Binding binding = dbc.bindList(target, model,
+				null,
+				null);
 		assertEquals(target, binding.getTarget());
 	}
 	
 	public void testGetModel() throws Exception {
-		ListBinding binding = new ListBinding(target, model, new BindSpec());
+		Binding binding = dbc.bindList(target, model,
+				null,
+				null);
 		assertEquals(model, binding.getModel());
 	}
 }
