@@ -65,7 +65,7 @@ public class EnabledTopicUtils {
 		for (int i=0;i<entries.length;++i) {
 			if (!isEnabled(entries[i])) {
 				List list = new ArrayList(entries.length);
-				for (int j=0;j<entries.length;++i) {
+				for (int j=0;j<entries.length;++j) {
 					if (j < i || isEnabled(entries[j])) {
 						list.add(entries[j]);
 					}
@@ -85,7 +85,7 @@ public class EnabledTopicUtils {
 		for (int i=0;i<topics.length;++i) {
 			if (!isEnabled(topics[i])) {
 				List list = new ArrayList(topics.length);
-				for (int j=0;j<topics.length;++i) {
+				for (int j=0;j<topics.length;++j) {
 					if (j < i || isEnabled(topics[j])) {
 						list.add(topics[j]);
 					}

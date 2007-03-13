@@ -113,7 +113,7 @@ INPUT {
 }
 
 DIV.root {
-    font-weight:bold;
+    font-weight:normal;
 }
 
 DIV.visible, DIV.unopened { 
@@ -149,6 +149,7 @@ IMG.expander, IMG.h {
 A {
 	text-decoration:none; 
 	padding-<%=isRTL?"left":"right"%>:2px;
+	color:WindowText;
 	/* this works in ie5.5, but not in ie5.0  */
 	white-space: nowrap;
 }
@@ -164,10 +165,6 @@ A.active{
 
 A.active:hover{
 	text-decoration:underline; 
-}
-
-A.enabled, A:link, A:visited {
-	color:blue;
 }
 
 <%

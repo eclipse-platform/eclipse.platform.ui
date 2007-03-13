@@ -18,6 +18,8 @@ var shown = false;
 var typeinPrevious = "";
 var typein;
 var lines = 30;
+var firstEntry;
+var lastEntry;
 
 /**
  * Set value of the typein input field.
@@ -107,7 +109,7 @@ function updateImage(imageNode, isExpanded) {
 Remove any existing children and read new ones
 */
 
-function loadChildren(startCharacters, mode) { 
+function loadChildren(startCharacters, mode, entry) { 
     var parameters = "";
     var treeRoot = document.getElementById("tree_root");
     if (treeRoot !== null) {
@@ -123,7 +125,7 @@ function loadChildren(startCharacters, mode) {
         var separator = "?";
         if (startCharacters) {    
             parameters += "?start=";
-            parameters += startCharacters;
+            parameters += encodeURIComponent(startCharacters);
             separator = "&";
         }
         if (lines) {
@@ -136,6 +138,12 @@ function loadChildren(startCharacters, mode) {
             parameters += separator;
             parameters += "mode=";
             parameters += mode;
+            separator = "&";
+        }
+        if (entry) {
+            parameters += separator;
+            parameters += "entry=";
+            parameters += entry;
         }
         makeNodeRequest(parameters);
     }
@@ -180,27 +188,34 @@ function makeNodeRequest(parameters) {
     ajaxRequest(href, callback, errorCallback);
 }
 
-function loadPreviousPage() {
-    // Find the key of the first index entry    
+// Cache the first and last so that if a request fails we don't lose our place
+function getFirstAndLast() {
     var treeRoot = document.getElementById("tree_root");
     if (treeRoot == null) return; 
-    var childDiv = findChild(treeRoot, "DIV");
-    var anchor = findAnchor(childDiv);
-    if (anchor && anchor.title) {
-        loadChildren(anchor.title, "previous");
+    var firstDiv = findChild(treeRoot, "DIV");
+    if (firstDiv.nodeid) {
+        firstEntry = firstDiv.nodeid.substring(1);
+    }
+    var lastDiv = findLastChild(treeRoot, "DIV");
+        
+    if (lastDiv.nodeid) {
+        lastEntry = lastDiv.nodeid.substring(1);
+    }
+}
+
+function loadPreviousPage() {
+    getFirstAndLast();
+    if (firstEntry) {
+        loadChildren("", "previous", firstEntry);
     } else {
         loadChildren("");
     }
 }
        
 function loadNextPage() {
-    // Find the key of the last index entry    
-    var treeRoot = document.getElementById("tree_root");
-    if (treeRoot == null) return; 
-    var childDiv = findLastChild(treeRoot, "DIV");
-    var anchor = findAnchor(childDiv);
-    if (anchor && anchor.title) {
-        loadChildren(anchor.title, "next");
+    getFirstAndLast();
+    if (lastEntry) {
+        loadChildren("", "next", lastEntry);
     } else {
         loadChildren("");
     }
@@ -273,7 +288,3 @@ function typeinKeyDownHandler(e) {
 function intervalHandler() {
     typeinChanged();
 }
-
-
-
-

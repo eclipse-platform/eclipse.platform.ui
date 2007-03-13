@@ -45,23 +45,26 @@ public class IndexFragmentServlet extends HttpServlet {
 	private static Map locale2Response = new WeakHashMap();
 	private String startParameter;
 	private String sizeParameter;
+	private String entryParameter;
 	private String modeParameter;
 	private int size;
+	private int entry;
 	private static final String NEXT = "next"; //$NON-NLS-1$
 	private static final String PREVIOUS = "previous"; //$NON-NLS-1$
+	private static final String SIZE = "size"; //$NON-NLS-1$
+	private static final String MODE = "mode"; //$NON-NLS-1$
+	private static final String ENTRY = "entry"; //$NON-NLS-1$
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);
 		startParameter = req.getParameter("start"); //$NON-NLS-1$
-		if (startParameter == null) {
-			startParameter = ""; //$NON-NLS-1$
-		} else {
+		if (startParameter != null) {
 			startParameter = startParameter.toLowerCase();
 		}
-		
+
 		size = 30;
-		sizeParameter = req.getParameter("size"); //$NON-NLS-1$
+		sizeParameter = req.getParameter(SIZE); 
 		if (sizeParameter != null) {
 			try {
 			    size = Integer.parseInt(sizeParameter);
@@ -69,7 +72,16 @@ public class IndexFragmentServlet extends HttpServlet {
 			}
 		}
 		
-		modeParameter = req.getParameter("mode"); //$NON-NLS-1$
+		entry = -1;
+		entryParameter = req.getParameter(ENTRY); 
+		if (entryParameter != null) {
+			try {
+			    entry = Integer.parseInt(entryParameter);
+			} catch (NumberFormatException n) {
+			}
+		}
+		
+		modeParameter = req.getParameter(MODE);
 		
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
@@ -132,7 +144,8 @@ public class IndexFragmentServlet extends HttpServlet {
 					}
 				}
 				for (Iterator iter = entryList.iterator(); iter.hasNext();) {
-					generateEntry((IIndexEntry)iter.next(), 0);
+					Integer entryId = (Integer)iter.next();
+					generateEntry(entries[entryId.intValue()], 0, "e" + entryId.intValue()); //$NON-NLS-1$
 				}
 			}
 			String header = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<tree_data enableNext = \"" //$NON-NLS-1$
@@ -140,21 +153,54 @@ public class IndexFragmentServlet extends HttpServlet {
 			buf.append("</tree_data>\n"); //$NON-NLS-1$
 			return header + buf.toString();
 		}
+		
+		private int getCategory(String keyword) {
+			if (keyword != null && keyword.length() > 0) {
+				char c = keyword.charAt(0);
+				if (Character.isDigit(c)) {
+					return 2;
+				} else if (Character.isLetter(c)) {
+					return 3;
+				}
+				return 1;
+			}
+			return 4;
+		}
+		
+		private int compare (String left, String right) {
+			int catLeft = getCategory(left);
+			int catRight = getCategory(right);
+			if (catLeft != catRight) {
+				return catLeft - catRight;
+			} else {
+				return left.compareTo(right);
+			}
+		}
 
 		private int findFirstEntry(IIndexEntry[] entries) {
+			if (NEXT.equals(modeParameter)) {
+				if (entry >= entries.length - 1) {
+					return entries.length - 1;
+				} else {
+					return entry + 1;
+				}
+			}
+			if (PREVIOUS.equals(modeParameter)) {
+				if (entry <= 0) {
+					return 0;
+				} else {
+					return entry - 1;
+				}
+			}
+			if (startParameter == null) {
+				return 0;
+			}
 			int nextEntry = 0;
 			while (nextEntry < entries.length) {
 			    String keyword = entries[nextEntry].getKeyword().toLowerCase();	            
-				if (keyword != null) {
-					if (NEXT.equals(modeParameter)) {
-						// Go past the startParameter if there is an exact match
-						if (startParameter.compareTo(keyword) < 0) {
-				            break;
-						}
-					} else {
-						if (startParameter.compareTo(keyword) <= 0) {
-				            break;
-						}
+				if (keyword != null) {					
+					if (compare(startParameter, keyword) <= 0) { 
+				        break;
 					}
 				}
 				nextEntry++;
@@ -166,7 +212,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			while (nextEntry < entries.length) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
 				if (remaining == size || remaining > entrySize) {
-                    entryList.add(entries[nextEntry]);
+                    entryList.add(new Integer(nextEntry));
                     setFlags(nextEntry);
                     remaining -= entrySize;
 				} else {
@@ -182,7 +228,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			while (nextEntry >= 0) {
 				int entrySize = enabledEntryCount(entries[nextEntry]);
 				if (remaining == size || remaining > entrySize) {
-                    entryList.add(0, entries[nextEntry]);
+                    entryList.add(0, new Integer(nextEntry));
 
                     setFlags(nextEntry);
                     remaining -= entrySize;
@@ -230,7 +276,7 @@ public class IndexFragmentServlet extends HttpServlet {
 			enablePrevious = false;
 		}
 		
-		private void generateEntry(IIndexEntry entry, int level) {
+		private void generateEntry(IIndexEntry entry, int level, String id) {
 			if (!EnabledTopicUtils.isEnabled(entry)) return;
 			if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
 				ITopic[] topics = EnabledTopicUtils.getEnabled(entry.getTopics());
@@ -243,14 +289,13 @@ public class IndexFragmentServlet extends HttpServlet {
 					buf.append('\n' + "      title=\"" + XMLGenerator.xmlEscape(entry.getKeyword()) + '"'); //$NON-NLS-1$
 				}
 				
-				count++;
-				buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$			
+				buf.append('\n' + "      id=\"" + id + '"'); //$NON-NLS-1$			
 			
 				String href;
 				if (singleTopic) {
 					href = UrlUtil.getHelpURL((entry.getTopics()[0]).getHref());
 				    buf.append('\n' + "      href=\"" +  //$NON-NLS-1$
-				    	XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$
+				    	XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 				}
 				buf.append(">\n"); //$NON-NLS-1$
 				
@@ -266,7 +311,7 @@ public class IndexFragmentServlet extends HttpServlet {
 		private void generateSubentries(IIndexEntry entry, int level) {
 			IIndexEntry[] subentries = entry.getSubentries();
 			for (int i=0;i<subentries.length;++i) {
-				generateEntry(subentries[i], level);
+				generateEntry(subentries[i], level, "s" + count++); //$NON-NLS-1$
 			}
 		}
 		
@@ -292,7 +337,7 @@ public class IndexFragmentServlet extends HttpServlet {
 				buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$							
 				String href = UrlUtil.getHelpURL(topic.getHref());	
 				buf.append('\n' + "      href=\""  //$NON-NLS-1$
-					+ XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$
+					+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
 				buf.append(">\n"); //$NON-NLS-1$
 				buf.append("</node>\n"); //$NON-NLS-1$	
 
