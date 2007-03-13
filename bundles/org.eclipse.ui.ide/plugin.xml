@@ -1021,5 +1021,42 @@
                value="0"/>
       </markerAttributeGrouping>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+         <menuContribution
+            locationURI="menu:window?after=newEditor">
+         <command
+               commandId="org.eclipse.ui.ToggleCoolbarAction"
+               tooltip="%menu.toggleCoolbar.tooltip"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+                  <or>
+               		<with
+                  	   variable="activeWorkbenchWindow.isCoolbarVisible">
+                  		<equals
+                        	value="false">
+                  		</equals>
+               		</with>
+               		<with
+                    	 variable="activeWorkbenchWindow.isPerspectiveBarVisible">
+                  		<equals
+                        	value="false">
+                  		</equals>
+               		</with>
+               </or>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:windowCoolbarContextMenu">
+         <command
+               commandId="org.eclipse.ui.ToggleCoolbarAction"
+               style="push"
+               tooltip="%menu.toggleCoolbar.tooltip">
+               <!-- no visibility needed - the result of this action will remove the ability to show this menu anyway -->
+         </command>
+      </menuContribution>
+   </extension>
    
 </plugin>

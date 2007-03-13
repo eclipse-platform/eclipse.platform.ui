@@ -51,7 +51,6 @@ import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
 import org.eclipse.ui.internal.actions.NewEditorAction;
 import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
-import org.eclipse.ui.internal.actions.ToggleCoolbarVisibilityAction;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -1553,7 +1552,11 @@ public abstract class ActionFactory {
 			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-			IWorkbenchAction action = new ToggleCoolbarVisibilityAction(window);
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.ToggleCoolbarAction", window); //$NON-NLS-1$
+			// set the default text - this will be updated by the handler
+			action.setText(WorkbenchMessages.ToggleCoolbarVisibilityAction_hide_text);
+			action.setToolTipText(WorkbenchMessages.ToggleCoolbarVisibilityAction_toolTip);
 			action.setId(getId());
 			return action;
 		}

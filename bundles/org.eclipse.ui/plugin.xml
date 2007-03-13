@@ -1544,5 +1544,17 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+      		class="org.eclipse.ui.internal.handlers.ToggleCoolbarHandler"
+      		commandId="org.eclipse.ui.ToggleCoolbarAction">
+      	 <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
 </plugin>

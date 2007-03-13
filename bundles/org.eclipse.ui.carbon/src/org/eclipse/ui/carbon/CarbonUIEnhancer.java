@@ -14,6 +14,10 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -28,8 +32,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
@@ -63,7 +69,7 @@ public class CarbonUIEnhancer implements IStartup {
 					.getWorkbenchWindows();
 			for (int i = 0; i < windows.length; i++) {
 				if (windows[i].getShell() == shell) {
-					return runAction("toggleCoolbar"); //$NON-NLS-1$
+					return runCommand("org.eclipse.ui.ToggleCoolbarAction"); //$NON-NLS-1$
 				}
 			}
 			return OS.eventNotHandledErr;
@@ -284,11 +290,42 @@ public class CarbonUIEnhancer implements IStartup {
         return OS.eventNotHandledErr;
        
     }
+    
+    private int runCommand(String commandId) {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench == null)
+			return OS.eventNotHandledErr;
+		
+		IWorkbenchWindow activeWorkbenchWindow = workbench
+				.getActiveWorkbenchWindow();
+		if (activeWorkbenchWindow == null)
+			return OS.eventNotHandledErr;
+		
+		IHandlerService commandService = (IHandlerService) activeWorkbenchWindow
+				.getService(IHandlerService.class);
+
+		if (commandService != null) {
+			try {
+				commandService.executeCommand(commandId, null);
+				return OS.noErr;
+			} catch (ExecutionException e) {
+			} catch (NotDefinedException e) {
+			} catch (NotEnabledException e) {
+			} catch (NotHandledException e) {
+			}
+		}
+		return OS.eventNotHandledErr;
+	}
 
     /**
-	 * Find the action with the given ID by recursivly crawling the provided menu manager.  If the action cannot be found <code>null</code> is returned.
-	 * @param actionId the id to search for
-	 * @param manager the manager to search
+	 * Find the action with the given ID by recursivly crawling the provided
+	 * menu manager. If the action cannot be found <code>null</code> is
+	 * returned.
+	 * 
+	 * @param actionId
+	 *            the id to search for
+	 * @param manager
+	 *            the manager to search
 	 * @return the action or <code>null</code>
 	 */
 	private IAction findAction(String actionId, IMenuManager manager) {

@@ -56,6 +56,7 @@ import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
 import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * Adds actions to a workbench window.
@@ -220,8 +221,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction openProjectAction;
 
     private IWorkbenchAction closeProjectAction;
-    
-    private IWorkbenchAction toggleCoolbarAction;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -248,6 +247,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Indicates if the action builder has been disposed
      */
     private boolean isDisposed = false;
+
+    /**
+     * The coolbar context menu manager.
+     * @since 3.3
+     */
+	private MenuManager coolbarPopupMenuManager;
 
     /**
      * Constructs a new action builder which contributes actions
@@ -364,11 +369,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     	IActionBarConfigurer2 actionBarConfigurer = (IActionBarConfigurer2) getActionBarConfigurer();
         { // Set up the context Menu
-            IMenuManager popUpMenu = new MenuManager();
-            popUpMenu.add(new ActionContributionItem(lockToolBarAction));
-            popUpMenu.add(new ActionContributionItem(editActionSetAction));
-            popUpMenu.add(new ActionContributionItem(toggleCoolbarAction));
-            coolBar.setContextMenuManager(popUpMenu);
+            coolbarPopupMenuManager = new MenuManager();
+			coolbarPopupMenuManager.add(new ActionContributionItem(lockToolBarAction));
+            coolbarPopupMenuManager.add(new ActionContributionItem(editActionSetAction));
+            coolBar.setContextMenuManager(coolbarPopupMenuManager);
+            IMenuService menuService = (IMenuService) window.getService(IMenuService.class);
+            menuService.populateContributionManager(coolbarPopupMenuManager, "popup:windowCoolbarContextMenu"); //$NON-NLS-1$
         }
         coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_FILE));
         { // File Group
@@ -653,13 +659,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(newWindowAction);
 		menu.add(newEditorAction);
 		
-		 //Only register the menu but don't show it so that it gets picked up by
-		//platforms that search the menu for entries such as carbon.
-		
-        ActionContributionItem toggleCoolbarItem = new ActionContributionItem(toggleCoolbarAction);
-        toggleCoolbarItem.setVisible(false); 
-        menu.add(toggleCoolbarItem);
-		
         menu.add(new Separator());
         addPerspectiveActions(menu);
         menu.add(new Separator());
@@ -811,6 +810,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			return;
 		}
     	isDisposed = true;
+    	IMenuService menuService = (IMenuService) window.getService(IMenuService.class);
+        menuService.releaseContributions(coolbarPopupMenuManager);
+        coolbarPopupMenuManager.dispose();
+        
         getActionBarConfigurer().getStatusLineManager().remove(statusLineItem);
         if (pageListener != null) {
             window.removePageListener(pageListener);
@@ -920,7 +923,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         prefListener = null;
         propPrefListener = null;
         introAction = null;
-        toggleCoolbarAction = null;
         
         super.dispose();
     }
@@ -1233,9 +1235,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR
                 .create(window);
-        
-        toggleCoolbarAction = ActionFactory.TOGGLE_COOLBAR.create(window);
-        register(toggleCoolbarAction);
         
 //        searchComboItem = ContributionItemFactory.HELP_SEARCH.create(window);
     }

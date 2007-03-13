@@ -144,6 +144,34 @@ public interface ISources {
 	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_NAME = "activeWorkbenchWindow"; //$NON-NLS-1$
+	
+	/**
+	 * The priority given when the source includes subordinate properties of the currently active
+	 * workbench window.
+	 * 
+	 * @since 3.3
+	 */
+	public static final int ACTIVE_WORKBENCH_WINDOW_SUBORDINATE = 1 << 15;
+	
+	/**
+	 * The variable name for the coolbar visibility state of the active
+	 * workbench window. This is for use with the <code>ISourceProvider</code>
+	 * and <code>IEvaluationContext</code>.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
+			+ ".isCoolbarVisible"; //$NON-NLS-1$
+	
+	/**
+	 * The variable name for the perspective bar visibility state of the active
+	 * workbench window. This is for use with the <code>ISourceProvider</code>
+	 * and <code>IEvaluationContext</code>.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
+			+ ".isPerspectiveBarVisible"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active editor part.

@@ -48,6 +48,8 @@ import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -231,6 +233,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.0
 	 */
 	private WorkbenchWindowConfigurer windowConfigurer = null;
+	
+	/**
+	 * List of generic property listeners.
+	 * 
+	 * @since 3.3
+	 */
+	private ListenerList genericPropertyListeners = new ListenerList();
 
 	private ShellPool detachedWindowShells;
 
@@ -248,6 +257,20 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	static final int BAR_SIZE = 23;
 
+	/**
+	 * Coolbar visibility change property.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PROP_COOLBAR_VISIBLE = "coolbarVisible"; //$NON-NLS-1$
+	
+	/**
+	 * Perspective bar visibility change property.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PROP_PERSPECTIVEBAR_VISIBLE = "perspectiveBarVisible"; //$NON-NLS-1$
+	
 	/**
 	 * Constant (bit mask) indicating which the Show View submenu is probably
 	 * present somewhere in this window.
@@ -571,6 +594,35 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 
 		handlerActivations = newHandlers;
+	}
+	
+	/**
+	 * Add a generic property listener.
+	 * 
+	 * @param listener the listener to add
+	 * @since 3.3
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		genericPropertyListeners.add(listener);
+	}
+	
+	/**
+	 * Removes a generic property listener.
+	 * 
+	 * @param listener the listener to remove 
+	 * @since 3.3
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		genericPropertyListeners.remove(listener);
+	}
+	
+	private void firePropertyChanged(final String property, final Object oldValue, final Object newValue) {
+		PropertyChangeEvent event = new PropertyChangeEvent(this, property, oldValue, newValue);
+		Object[] listeners = genericPropertyListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+			listener.propertyChange(event);
+		}
 	}
 
 	/*
@@ -3775,10 +3827,18 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		boolean perspectivebarVisible = getPerspectiveBarVisible();
 		// only toggle the visibility of the components that
 		// were on initially
-		if (getWindowConfigurer().getShowCoolBar())
+		if (getWindowConfigurer().getShowCoolBar()) {
 			setCoolBarVisible(!coolbarVisible);
-		if (getWindowConfigurer().getShowPerspectiveBar())
+			firePropertyChanged(PROP_COOLBAR_VISIBLE,
+					coolbarVisible ? Boolean.TRUE : Boolean.FALSE,
+					!coolbarVisible ? Boolean.TRUE : Boolean.FALSE);
+		}
+		if (getWindowConfigurer().getShowPerspectiveBar()) {
 			setPerspectiveBarVisible(!perspectivebarVisible);
+			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE,
+					coolbarVisible ? Boolean.TRUE : Boolean.FALSE,
+					!coolbarVisible ? Boolean.TRUE : Boolean.FALSE);
+		}
 		getShell().layout();
 	}
 
