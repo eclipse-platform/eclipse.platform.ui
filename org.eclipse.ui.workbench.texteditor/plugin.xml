@@ -783,27 +783,61 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+/"/>
 
-      <!-- In the Japanese language M3+/ is already reserved for content assist -->
+      <!-- In the Japanese language on GTK M3+/ is already reserved for content assist -->
       <key   
-            locale="ja"  
+            locale="ja"
+            platform="gtk"  
             contextId="org.eclipse.ui.textEditorScope"   
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
             sequence="M3+/"/> 
       <key
             locale="ja"
+            platform="gtk"  
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M3+/"/>
 
-      <!-- In the Korean language M3+/ is already reserved for content assist -->
+      <!-- In the Korean language M3+/ on GTK is already reserved for content assist -->
       <key   
             locale="ko"  
+            platform="gtk"  
             contextId="org.eclipse.ui.textEditorScope"   
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
             sequence="M3+/"/> 
       <key
             locale="ko"
+            platform="gtk"  
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+/"/>
+            
+      <!-- In the Japanese language on Motif M3+/ is already reserved for content assist -->
+      <key   
+            locale="ja"
+            platform="motif"  
+            contextId="org.eclipse.ui.textEditorScope"   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
+            sequence="M3+/"/> 
+      <key
+            locale="ja"
+            platform="motif"  
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+/"/>
+
+      <!-- In the Korean language M3+/ on Motif is already reserved for content assist -->
+      <key   
+            locale="ko"  
+            platform="motif"  
+            contextId="org.eclipse.ui.textEditorScope"   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
+            sequence="M3+/"/> 
+      <key
+            locale="ko"
+            platform="motif"  
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
