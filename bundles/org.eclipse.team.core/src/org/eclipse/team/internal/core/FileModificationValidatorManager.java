@@ -60,7 +60,7 @@ public class FileModificationValidatorManager extends FileModificationValidator 
 
 			//if no provider or no validator use the default validator
 			if (provider != null) {
-				FileModificationValidator v = provider.getNewFileModificationValidator();
+				FileModificationValidator v = provider.getFileModificationValidator2();
 				if (v != null) validator = v;
 			}
 			
@@ -93,7 +93,7 @@ public class FileModificationValidatorManager extends FileModificationValidator 
 
 		//if no provider or no validator use the default validator
 		if (provider != null) {
-			FileModificationValidator v = provider.getNewFileModificationValidator();
+			FileModificationValidator v = provider.getFileModificationValidator2();
 			if (v != null) validator = v;
 		}
 

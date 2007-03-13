@@ -313,7 +313,7 @@ public class MoveDeleteHook implements IMoveDeleteHook {
 	}
 
 	private FileModificationValidator getFileModificationValidator(IFile[] files) {
-		return getProvider(files).getNewFileModificationValidator();
+		return getProvider(files).getFileModificationValidator2();
 	}
 
 	private CVSTeamProvider getProvider(IFile[] files) {

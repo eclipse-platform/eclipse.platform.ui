@@ -12,7 +12,9 @@ package org.eclipse.team.examples.pessimistic;
  
 import java.io.*;
 import java.util.*;
+
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.FileModificationValidator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.core.RepositoryProvider;
@@ -38,7 +40,7 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 	/**
 	 * The file modification validator for this provider.
 	 */
-	private IFileModificationValidator validator;
+	private FileModificationValidator validator;
 	/**
 	 * The cache of resources that are currently controlled.
 	 * The cache is a map of parent resource -> set of controlled children.
@@ -327,6 +329,10 @@ public class PessimisticFilesystemProvider extends RepositoryProvider  {
 	 * @see IRepositoryProvider#getFileModificationValidator()
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
+		return getFileModificationValidator();
+	}
+	
+	public FileModificationValidator getFileModificationValidator2() {
 		return validator;
 	}
 	

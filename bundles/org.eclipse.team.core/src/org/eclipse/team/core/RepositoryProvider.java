@@ -367,7 +367,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
  	 * that modify the contents of files
  	 * 
 	 * @see org.eclipse.core.resources.IFileModificationValidator
-	 * @deprecated use {@link #getNewFileModificationValidator()}
+	 * @deprecated use {@link #getFileModificationValidator2()}
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
 		return null;
@@ -380,7 +380,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * default, this method wraps the old validator returned from
 	 * {@link #getFileModificationValidator()}. Subclasses that which to remain
 	 * backwards compatible while providing this new API should override
-	 * {@link #getNewFileModificationValidator()} to return a subclass of
+	 * {@link #getFileModificationValidator2()} to return a subclass of
 	 * {@link FileModificationValidator} and should return the same
 	 * validator from {@link #getFileModificationValidator()}.
 	 * 
@@ -390,7 +390,7 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * @see FileModificationValidator
 	 * @since 3.3
 	 */
-	public FileModificationValidator getNewFileModificationValidator() {
+	public FileModificationValidator getFileModificationValidator2() {
 		final IFileModificationValidator fileModificationValidator = getFileModificationValidator();
 		if (fileModificationValidator == null)
 			return null;

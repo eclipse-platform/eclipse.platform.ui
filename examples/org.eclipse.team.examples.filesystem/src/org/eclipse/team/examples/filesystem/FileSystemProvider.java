@@ -176,13 +176,13 @@ public class FileSystemProvider extends RepositoryProvider {
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator()
 	 */
 	public IFileModificationValidator getFileModificationValidator() {
-		return getNewFileModificationValidator();
+		return getFileModificationValidator2();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.RepositoryProvider#getFileModificationValidator2()
 	 */
-	public FileModificationValidator getNewFileModificationValidator() {
+	public FileModificationValidator getFileModificationValidator2() {
 		return new org.eclipse.team.examples.filesystem.FileModificationValidator(this);
 	}
 	
