@@ -85,14 +85,32 @@ public class EditorSashContainer extends PartSashContainer {
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
         if (!useNewMinMax)
         	return;
-        
+		
+		// Find the upper Right editor stack
 		LayoutPart[] stacks = getChildren();
-		if (stacks.length == 0)
-			return;
+		EditorStack winner = getUpperRightEditorStack(stacks);
+		
+		// Now hide the buttons for all but the upper right stack
+		for (int i = 0; i < stacks.length; i++) {
+			if (!(stacks[i] instanceof EditorStack))
+				continue;
+			
+			((EditorStack)stacks[i]).showMinMax(stacks[i] == winner);
+		}
+	}
+
+	/**
+	 * @param stacks 
+	 * @return the EditorStack in the upper right position
+	 */
+	public EditorStack getUpperRightEditorStack(LayoutPart[] stacks) {
+		if (stacks == null)
+			stacks = getChildren();
 		
 		// Find the upper Right editor stack
 		EditorStack winner = null;
 		Rectangle winnerRect = null;
+
 		for (int i = 0; i < stacks.length; i++) {
 			if (!(stacks[i] instanceof EditorStack))
 				continue;
@@ -107,15 +125,8 @@ public class EditorSashContainer extends PartSashContainer {
 			}
 		}
 		
-		// Now hide the buttons for all but the winner
-		for (int i = 0; i < stacks.length; i++) {
-			if (!(stacks[i] instanceof EditorStack))
-				continue;
-			
-			((EditorStack)stacks[i]).showMinMax(stacks[i] == winner);
-		}
+		return winner;
 	}
-
 
 	/**
      * Notification that a child layout part has been

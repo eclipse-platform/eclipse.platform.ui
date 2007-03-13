@@ -63,6 +63,7 @@ import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.StickyViewDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -78,8 +79,8 @@ public class Perspective {
     // Editor Area management
     protected LayoutPart editorArea;
     private PartPlaceholder editorHolder;
-    private boolean editorAreaInTrim = false;
     private boolean editorAreaRestoreOnUnzoom = false;
+    private int editorAreaState = IStackPresentationSite.STATE_RESTORED;
 
     private ViewFactory viewFactory;
     
@@ -874,16 +875,12 @@ public class Perspective {
 			shouldHideEditorsOnActivate = false;
 			
 			// this is an override so it should handle both states
-			setEditorAreaTrimVisibility(false);
+			if (useNewMinMax)
+				setEditorAreaTrimVisibility(editorAreaState == IStackPresentationSite.STATE_MINIMIZED);
 		}
 		else {
-			// Synch the editor area
-			if (editorAreaInTrim) {
-				setEditorAreaTrimVisibility(true);
-			}
-			else {
-				setEditorAreaTrimVisibility(false);
-			}
+			if (useNewMinMax)
+				refreshEditorAreaVisibility();
 		}
 	}
 
@@ -1278,10 +1275,14 @@ public class Perspective {
                 .intValue() == 0);
 
         // Restore the trim state of the editor area
-        Integer trimStateInt = memento.getInteger(IWorkbenchConstants.TAG_AREA_TRIM_STATE);
-        if (trimStateInt != null) {
-        	editorAreaInTrim = (trimStateInt.intValue() & 1) != 0;
-        	editorAreaRestoreOnUnzoom = (trimStateInt.intValue() & 2) != 0;
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        if (useNewMinMax) {
+		    Integer trimStateInt = memento.getInteger(IWorkbenchConstants.TAG_AREA_TRIM_STATE);
+		    if (trimStateInt != null) {
+		    	editorAreaState = trimStateInt.intValue() & 0x3; // low order two bits contain the state
+		    	editorAreaRestoreOnUnzoom = (trimStateInt.intValue() & 4) != 0;
+		    }
         }
         
         // restore the fixed state
@@ -1291,6 +1292,15 @@ public class Perspective {
         return result;
     }
 
+    /**
+     * Restores a fast view to its corrent presentation structure.
+     * This method is pubilc because the FastViewManager uses it to
+     * reconstruct it minimized stacks on startup.
+     * 
+     * @param fvMemento The mement containing the fast view info
+     * @param result The result status
+     * @return The reference to the restored view
+     */
     public IViewReference restoreFastView(IMemento fvMemento, MultiStatus result) {
         String viewID = fvMemento.getString(IWorkbenchConstants.TAG_ID);
         String secondaryId = ViewFactory.extractSecondaryId(viewID);
@@ -1552,17 +1562,21 @@ public class Perspective {
         result.add(presentation.saveState(childMem));
 
         // Save the editor visibility state
-        if (isEditorAreaVisible()  || editorAreaInTrim) {
+        if (isEditorAreaVisible()  || editorAreaState != IStackPresentationSite.STATE_MINIMIZED) {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 		} else {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
 		}
 
-        // Save the trim state of the editor area
-        int trimState = editorAreaInTrim ? 1 : 0;
-        trimState |= editorAreaRestoreOnUnzoom ? 2 : 0;
-        memento.putInteger(IWorkbenchConstants.TAG_AREA_TRIM_STATE, trimState);
-        	
+        // Save the trim state of the editor area if using the new min/max
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        if (useNewMinMax) {
+	        int trimState = editorAreaState;
+	        trimState |= editorAreaRestoreOnUnzoom ? 4 : 0;
+	        memento.putInteger(IWorkbenchConstants.TAG_AREA_TRIM_STATE, trimState);
+        }
+        
         // Save the fixed state
         if (fixed) {
 			memento.putInteger(IWorkbenchConstants.TAG_FIXED, 1);
@@ -1716,44 +1730,83 @@ public class Perspective {
 		ITrimManager tbm = wbw.getTrimManager();
 		if (tbm == null)
 			return null;
+
+		// Create if necesary
+		EditorAreaTrimToolBar editorAreaTrim = (EditorAreaTrimToolBar) tbm.getTrim(IPageLayout.ID_EDITOR_AREA);
+    	if (editorAreaTrim  == null) {
+    		// Gain access to the trim manager
+			editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
+			tbm.addTrim(SWT.TOP, editorAreaTrim);
+    	}
 		
-		return (EditorAreaTrimToolBar) tbm.getTrim(IPageLayout.ID_EDITOR_AREA);
+		return editorAreaTrim;
     }
     
-    protected EditorAreaTrimToolBar setEditorAreaTrimVisibility(boolean visible) {
-		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-		ITrimManager tbm = wbw.getTrimManager();
-		
-		EditorAreaTrimToolBar editorAreaTrim = getEditorAreaTrim();
-		if (visible) {
-			// Create if necesary
-	    	if (editorAreaTrim == null) {
-	    		// Gain access to the trim manager
-				editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
-				tbm.addTrim(SWT.TOP, editorAreaTrim);
-	    	}
-	    	
-	    	tbm.setTrimVisible(editorAreaTrim, true);
-	    	tbm.forceLayout();
-	    	editorAreaInTrim = true;
-	    	
-	    	// If we're showing then hide the editor area
-	    	hideEditorArea();
-	    	
-	    	return editorAreaTrim;
+    public void setEditorAreaState(int newState) {
+    	if (newState == editorAreaState)
+    		return;
+    	
+    	editorAreaState = newState;
+    	
+    	if (newState != IStackPresentationSite.STATE_MINIMIZED)
+    		editorAreaRestoreOnUnzoom = false;
+    	
+    	refreshEditorAreaVisibility();
+    }
+    
+    public int getEditorAreaState() {
+    	return editorAreaState;
+    }
+    
+    /**
+	 * 
+	 */
+	private void refreshEditorAreaVisibility() {
+		// If it's minimized then it's in the trim
+		if (editorAreaState == IStackPresentationSite.STATE_MINIMIZED) {
+			hideEditorArea();
+			setEditorAreaTrimVisibility(true);
+			return;
 		}
 		
-		// Hide
-		if (editorAreaTrim != null)
-			tbm.setTrimVisible(editorAreaTrim, false);
-    	editorAreaInTrim = false;
-    	editorAreaRestoreOnUnzoom = false;
+		showEditorArea();
+		
+		// Show the editor area in the presentation
+		// We have to explicitly set the buttons on the site since
+		// it could be maximized in one perspective and not in another
+		if (editorAreaState != IStackPresentationSite.STATE_MINIMIZED)
+			updateEditorSiteState();
 
-		// Unless it's over-ridden, show the editor area
-		if (!shouldHideEditorsOnActivate)
-			showEditorArea();
+		setEditorAreaTrimVisibility(false);
+	}
 
-		return editorAreaTrim;
+	/**
+	 * 
+	 */
+	private void updateEditorSiteState() {
+		// find the right editor stack...
+		EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);
+		
+		editorStack.setMinimized(false);
+		
+		// Force it to display the correct state
+		editorStack.setState(editorAreaState);
+	}
+
+	protected EditorAreaTrimToolBar setEditorAreaTrimVisibility(boolean visible) {
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		ITrimManager tbm = wbw.getTrimManager();
+		if (tbm == null)
+			return null;
+		
+		EditorAreaTrimToolBar editorAreaTrim = getEditorAreaTrim();
+		if (editorAreaTrim == null)
+			return null;
+		
+    	tbm.setTrimVisible(editorAreaTrim, visible);
+    	tbm.forceLayout();
+    	
+    	return editorAreaTrim;
     }
     
     /**
@@ -2003,9 +2056,7 @@ public class Perspective {
 		}
 
 		if (part == editorArea) {
-			showEditorArea();
-			setEditorAreaTrimVisibility(false);
-			editorAreaInTrim = false;
+			setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
 			editorAreaRestoreOnUnzoom = false;
 		}
 	}
@@ -2063,5 +2114,20 @@ public class Perspective {
 	 */
 	public FastViewManager getFastViewManager() {
 		return fastViewManager;
+	}
+
+	/**
+	 * Sets the restore on unzoom state for the editor area
+	 * @param restore the new state
+	 */
+	public void setEditorAreaRestoreOnUnzoom(boolean restore) {
+		editorAreaRestoreOnUnzoom = restore;
+	}
+
+	/**
+	 * @return the restore on unzoom state
+	 */
+	public boolean getEditorAreaRestoreOnUnzoom() {
+		return editorAreaRestoreOnUnzoom;
 	}
 }

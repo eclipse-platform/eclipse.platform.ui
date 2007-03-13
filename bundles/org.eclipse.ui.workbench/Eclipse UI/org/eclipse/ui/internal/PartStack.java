@@ -1228,13 +1228,15 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	Perspective persp = getPage().getActivePerspective();
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax && persp != null && this instanceof ViewStack) {
-			FastViewManager fvm = persp.getFastViewManager();
-    		if (minimized) {
-    			fvm.moveToTrim((ViewStack)this, false);
-    		}
-    		else {
-    			fvm.restoreToPresentation(getID());
+    	if (useNewMinMax && persp != null) {
+    		if (this instanceof ViewStack) {
+	    		FastViewManager fvm = persp.getFastViewManager();
+	    		if (minimized) {
+	    			fvm.moveToTrim((ViewStack)this, false);
+	    		}
+	    		else {
+	    			fvm.restoreToPresentation(getID());
+	    		}
     		}
     	}
     	
@@ -1298,114 +1300,162 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		}
     	return false;
     }
-    
-    protected void setState(int newState) {
-        int oldState = presentationSite.getState();
-        if (!supportsState(newState) || newState == oldState) {
-            return;
-        }
-        
-        boolean minimized = (newState == IStackPresentationSite.STATE_MINIMIZED);
-        
-        setMinimized(minimized);
-        
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-        
-        // we have to fiddle with the zoom behavior to satisfy Intro req's
-        if (newState  == IStackPresentationSite.STATE_MAXIMIZED)
-        	useNewMinMax = useNewMinMax && !isIntroInStack();
-        else if (newState  == IStackPresentationSite.STATE_RESTORED)
-        	useNewMinMax = useNewMinMax && smartZoomed;
-        
-        if (useNewMinMax) {
-        	WorkbenchWindow wbw = (WorkbenchWindow)getPage().getWorkbenchWindow();
-        	if (wbw == null || wbw.getShell() == null)
-        		return;
-        	
-        	wbw.getPageComposite().setRedraw(false);
-        	try {
-				ITrimManager tbm = wbw.getTrimManager();
-				FastViewManager fvm = getPage().getActivePerspective().getFastViewManager();
-				
-				if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-					ILayoutContainer root = getContainer();
-					
-					// We go up one more level when maximizing an editor stack
-					// so that we 'zoom' the editor area
-					boolean zoomingEditorArea = false;
-					if (root instanceof EditorSashContainer) {
-						root = ((EditorSashContainer)root).getContainer();
-						zoomingEditorArea = true;
-					}
-					
-				    LayoutPart[] children = root.getChildren();
-				    for (int i = 0; i < children.length; i++) {
-				        if (children[i] != this && children[i] instanceof ViewStack) {
-				        	((ViewStack)children[i]).setMinimized(true);
-				        	ViewStackTrimToolBar vstb = fvm.getViewStackTrimToolbar(children[i].getID());
-				        	vstb.setRestoreOnUnzoom(true);
-				        }
-				        else if (children[i] instanceof EditorSashContainer && !zoomingEditorArea) {
-				        	getPage().getActivePerspective().setEditorAreaTrimVisibility(true);
-				        }
-				    }
-				    
-				    smartZoomed = true;
+
+    private void smartZoom() {
+		WorkbenchWindow wbw = (WorkbenchWindow) getPage().getWorkbenchWindow();
+		if (wbw == null || wbw.getShell() == null)
+			return;
+
+		Perspective perspective = getPage().getActivePerspective();
+		FastViewManager fvm = perspective.getFastViewManager();
+
+		ILayoutContainer root = getContainer();
+
+		// We go up one more level when maximizing an editor stack
+		// so that we 'zoom' the editor area
+		// should be a better way to get the layout root...
+		boolean zoomingEditorArea = false;
+		if (root instanceof EditorSashContainer) {
+			root = ((EditorSashContainer) root).getContainer();
+			zoomingEditorArea = true;
+		}
+
+		LayoutPart[] children = root.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] != this) {
+				if (children[i] instanceof ViewStack) {
+					((ViewStack) children[i]).setMinimized(true);
+					ViewStackTrimToolBar vstb = fvm
+							.getViewStackTrimToolbar(children[i]
+									.getID());
+					vstb.setRestoreOnUnzoom(true);
 				}
-				else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
-					ILayoutContainer root = getContainer();
-					
-					// We go up one more level when maximizing an editor stack
-					// so that we 'zoom' the editor area
-					if (root instanceof EditorSashContainer) {
-						root = ((EditorSashContainer)root).getContainer();
-					}
-					
-				    LayoutPart[] children = root.getChildren();
-				    for (int i = 0; i < children.length; i++) {
-				        if (children[i] != this) {
-				        	IWindowTrim trim = tbm.getTrim(children[i].getID());
-				        	if (trim == null)
-				        		continue;
-				        	
-				        	if (trim instanceof ViewStackTrimToolBar) {
-				        		ViewStackTrimToolBar vstb = (ViewStackTrimToolBar) trim;
-				        		if (vstb.restoreOnUnzoom() &&
-				        			children[i] instanceof ContainerPlaceholder) {
-				            		// In the current presentation its a container placeholder
-				            		ViewStack realStack = (ViewStack) ((ContainerPlaceholder)children[i]).getRealContainer();
-				            		realStack.setMinimized(false);
-				            		
-				            		vstb.setRestoreOnUnzoom(false);
-				        		}
-				        	}
-				        	else if (trim instanceof EditorAreaTrimToolBar) {
-				            	getPage().getActivePerspective().setEditorAreaTrimVisibility(false);
-				        	}
-				        }
-				    }
-				    
-				    smartZoomed = false;
+				else if (children[i] instanceof EditorSashContainer
+						&& !zoomingEditorArea) {
+					perspective.setEditorAreaState(IStackPresentationSite.STATE_MINIMIZED);
+					perspective.setEditorAreaRestoreOnUnzoom(true);
 				}
 			}
-        	finally {
-        		wbw.getPageComposite().setRedraw(true);
-        		
-        		// Hack!! 'setRedraw(true)' won't update on the Mac
-        		wbw.getPageComposite().update();
-			}
-        	
-	        setPresentationState(newState);
-        }
-        else {
-	        if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-	            requestZoomIn();
-	        } else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
-	            requestZoomOut();
-	        }
-        }
+		}
+
+		// If the editor area has changed state tell the perspective
+		if (zoomingEditorArea)
+			perspective.setEditorAreaState(IStackPresentationSite.STATE_MAXIMIZED);
+		
+		smartZoomed = true;
     }
+
+    private void smartUnzoom() {
+		WorkbenchWindow wbw = (WorkbenchWindow) getPage().getWorkbenchWindow();
+		if (wbw == null || wbw.getShell() == null)
+			return;
+
+		ITrimManager tbm = wbw.getTrimManager();
+		Perspective perspective = getPage().getActivePerspective();
+
+		ILayoutContainer root = getContainer();
+
+		// We go up one more level when maximizing an editor stack
+		// so that we 'zoom' the editor area
+		boolean restoringEditorArea = false;
+		if (root instanceof EditorSashContainer) {
+			root = ((EditorSashContainer) root).getContainer();
+			restoringEditorArea = true;
+		}
+
+		LayoutPart[] children = root.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] != this) {
+				IWindowTrim trim = tbm.getTrim(children[i].getID());
+				if (trim == null)
+					continue;
+
+				if (trim instanceof ViewStackTrimToolBar) {
+					ViewStackTrimToolBar vstb = (ViewStackTrimToolBar) trim;
+					if (vstb.restoreOnUnzoom()
+							&& children[i] instanceof ContainerPlaceholder) {
+						// In the current presentation its a
+						// container placeholder
+						ViewStack realStack = (ViewStack) ((ContainerPlaceholder) children[i])
+								.getRealContainer();
+						realStack.setMinimized(false);
+
+						vstb.setRestoreOnUnzoom(false);
+					}
+				} else if (trim instanceof EditorAreaTrimToolBar) {
+					if (perspective.getEditorAreaRestoreOnUnzoom())
+					perspective.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
+				}
+			}
+		}
+
+		// If the editor area has changed state tell the perspective
+		if (restoringEditorArea)
+			perspective.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
+
+		smartZoomed = false;
+    }
+    
+	protected void setState(final int newState) {
+		final int oldState = presentationSite.getState();
+		if (!supportsState(newState) || newState == oldState) {
+			return;
+		}
+
+		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+		boolean useNewMinMax = preferenceStore
+				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+
+		// we have to fiddle with the zoom behavior to satisfy Intro req's
+		// by usning the old zoom behavior for its stack
+		if (newState == IStackPresentationSite.STATE_MAXIMIZED)
+			useNewMinMax = useNewMinMax && !isIntroInStack();
+		else if (newState == IStackPresentationSite.STATE_RESTORED)
+			useNewMinMax = useNewMinMax && smartZoomed;
+
+		if (useNewMinMax) {
+			final WorkbenchWindow wbw = (WorkbenchWindow) getPage()
+					.getWorkbenchWindow();
+			if (wbw == null || wbw.getShell() == null)
+				return;
+
+        	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				public void runWithException() throws Throwable {
+					wbw.getPageComposite().setRedraw(false);
+					try {
+						if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+							smartZoom();
+						} else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
+							smartUnzoom();
+						}
+						
+						if (newState == IStackPresentationSite.STATE_MINIMIZED) {
+							setMinimized(true);
+						}
+					} finally {
+						wbw.getPageComposite().setRedraw(true);
+
+						// Force a redraw (fixes Mac refresh)
+						wbw.getPageComposite().update();
+					}
+
+					setPresentationState(newState);
+				}
+			});
+		} else {
+			boolean minimized = (newState == IStackPresentationSite.STATE_MINIMIZED);
+			setMinimized(minimized);
+
+			if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+				requestZoomIn();
+			} else if (oldState == IStackPresentationSite.STATE_MAXIMIZED) {
+				requestZoomOut();
+				
+				if (newState == IStackPresentationSite.STATE_MINIMIZED)
+					setMinimized(true);
+			}
+		}
+	}
     
 
     /**
@@ -1438,7 +1488,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         return false;
     }
     
-    private void refreshPresentationState() {
+    protected void refreshPresentationState() {
         if (isZoomed() || smartZoomed) {
             presentationSite.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
         } else {

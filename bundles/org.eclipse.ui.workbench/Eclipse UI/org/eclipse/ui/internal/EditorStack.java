@@ -17,9 +17,11 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
@@ -27,6 +29,7 @@ import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -293,6 +296,33 @@ public class EditorStack extends PartStack {
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#setMinimized(boolean)
+	 */
+	public void setMinimized(boolean minimized) {
+    	// 'Smart' minimize; move the editor area to the trim
+    	Perspective persp = getPage().getActivePerspective();
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax && persp != null) {
+    		if (minimized) {
+    			persp.setEditorAreaState(IStackPresentationSite.STATE_MINIMIZED);
+    		}
+    		else {
+    			int curState = persp.getEditorAreaState();
+    			if (curState == IStackPresentationSite.STATE_MINIMIZED)
+    				curState = IStackPresentationSite.STATE_RESTORED;
+    			
+    			persp.setEditorAreaState(curState);
+    		}
+    		
+    		refreshPresentationState();
+    		//return;
+    	}
+    	
+		super.setMinimized(minimized);
+	}
+	
 	/**
 	 * Cause the folder to hide or show its
 	 * Minimize and Maximize affordances.

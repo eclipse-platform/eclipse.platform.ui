@@ -2721,11 +2721,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// 3.3 Trim Contributions
 			if (trimContributionMgr != null) {
 				StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
 					public void runWithException() throws Throwable {
 						trimContributionMgr.updateLocations(knownIds);
+						
+						// The perspective's onActivate manipulates the trim under the
+						// new min/max story so cause it to refresh...
+						Perspective perspective = getActiveWorkbenchPage().getActivePerspective();
+						if (perspective != null)
+							perspective.onActivate();
 					}});
-				
 			}
 		}
 		else {

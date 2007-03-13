@@ -41,8 +41,9 @@ public class EditorAreaTrimToolBar extends TrimToolBarBase {
 	 * Put the stack back into the presentation
 	 */
 	protected void restoreToPresentation() {
-		Perspective persp = wbw.getActiveWorkbenchPage().getActivePerspective();
-		persp.restoreTrimPart(editorArea);
+		EditorSashContainer esc = (EditorSashContainer)editorArea;
+		EditorStack curStack = esc.getUpperRightEditorStack(esc.getChildren());
+		curStack.setMinimized(false);
 	}
 
 	public void initToolBarManager(final ToolBarManager mgr) {
