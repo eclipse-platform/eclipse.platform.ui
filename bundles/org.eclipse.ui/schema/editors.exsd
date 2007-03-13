@@ -213,7 +213,7 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
          <attribute name="contentTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  the content type identifier
+                  The content type identifier. This is an ID defined by the &apos;org.eclipse.core.runtime.contentTypes&apos; extension point.
                </documentation>
             </annotation>
          </attribute>
