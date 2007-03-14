@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -214,13 +214,15 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IProject#setDescription(IProjectDescription, int, IProgressMonitor)
 	 * @since 3.0
 	 */
-	public static final int AVOID_NATURE_CONFIG= 0x40;
+	public static final int AVOID_NATURE_CONFIG = 0x40;
 
 	/**
 	 * Update flag constant (bit mask value 128) indicating that opening a
-	 * project for the first time should refresh in the background.
+	 * project for the first time or creating a linked folder should refresh in the 
+	 * background.
 	 *
 	 * @see IProject#open(int, IProgressMonitor)
+	 * @see IFolder#createLink(URI, int, IProgressMonitor)
 	 * @since 3.1
 	 */
 	public static final int BACKGROUND_REFRESH = 0x80;
@@ -269,7 +271,6 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 */
 	public static final int TEAM_PRIVATE = 0x800;
 
-	
 	/*====================================================================
 	 * Other constants:
 	 *====================================================================*/
@@ -806,7 +807,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.2
 	 */
 	public IResourceProxy createProxy();
-	
+
 	/**
 	 * Deletes this resource from the workspace.
 	 * <p>
@@ -1920,7 +1921,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * project, the directories and files are moved to the default location. If the name
 	 * in the given description is the same as this project's name and the location
 	 * is different, then the project contents will be moved to the new location.
- 	 * In all other cases the directories and files on disk are left untouched.
+	 * In all other cases the directories and files on disk are left untouched.
 	 * Parts of the supplied description other than the name and location are ignored.
 	 * </p>
 	 * <p>
@@ -2059,7 +2060,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceRuleFactory#refreshRule(IResource)
 	 */
 	public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
-	
+
 	/**
 	 * Reverts this resource's modification stamp.  This is intended to be used by 
 	 * a client that is rolling back or undoing a previous change to this resource.  
@@ -2237,7 +2238,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @deprecated use <tt>IResource#setResourceAttributes(ResourceAttributes)</tt>
 	 */
 	public void setReadOnly(boolean readOnly);
-	
+
 	/**
 	 * Sets this resource with the given extended attributes. This sets the
 	 * attributes in the file system. Only attributes that are supported by

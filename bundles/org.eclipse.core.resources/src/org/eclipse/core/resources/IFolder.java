@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,12 +178,16 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * fail if an existing resource exists of the same name.
 	 * </p>
 	 * <p>
-	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE} are ignored.
+	 * The {@link IResource#BACKGROUND_REFRESH} update flag controls how
+	 * this method synchronizes the new resource with the filesystem. If this flag is 
+	 * specified, resources on disk will be synchronized in the background after the 
+	 * method returns. Child resources of the link may not be available until 
+	 * this background refresh completes. If this flag is not specified, resources are 
+	 * synchronized in the foreground before this method returns.
 	 * </p>
 	 * <p>
-	 * This method synchronizes this resource with the local file system at the given
-	 * location.
+	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
+	 * {@link IResource#REPLACE} or {@link IResource#BACKGROUND_REFRESH} are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported
@@ -254,12 +258,16 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * fail if an existing resource exists of the same name.
 	 * </p>
 	 * <p>
-	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
-	 * {@link IResource#REPLACE} are ignored.
+	 * The {@link IResource#BACKGROUND_REFRESH} update flag controls how
+	 * this method synchronizes the new resource with the filesystem. If this flag is 
+	 * specified, resources on disk will be synchronized in the background after the 
+	 * method returns. Child resources of the link may not be available until 
+	 * this background refresh completes. If this flag is not specified, resources are 
+	 * synchronized in the foreground before this method returns.
 	 * </p>
 	 * <p>
-	 * This method synchronizes this resource with the local file system at the given
-	 * location.
+	 * Update flags other than {@link IResource#ALLOW_MISSING_LOCAL} or
+	 * {@link IResource#REPLACE} or {@link IResource#BACKGROUND_REFRESH} are ignored.
 	 * </p>
 	 * <p>
 	 * This method changes resources; these changes will be reported

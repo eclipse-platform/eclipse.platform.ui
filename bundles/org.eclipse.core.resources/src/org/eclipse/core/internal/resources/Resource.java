@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -605,9 +605,15 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				monitor.worked(Policy.opWork * 5 / 100);
 
 				//refresh to discover any new resources below this linked location
-				if (getType() != IResource.FILE)
-					refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
-				else
+				if (getType() != IResource.FILE) {
+					//refresh either in background or foreground
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 90 / 100);
+					} else {
+						refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+					}
+				} else
 					monitor.worked(Policy.opWork * 90 / 100);
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
