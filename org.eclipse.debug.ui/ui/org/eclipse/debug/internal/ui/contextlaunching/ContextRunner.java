@@ -255,16 +255,6 @@ public final class ContextRunner {
 		return false;
 	}
 	
-	
-	
-	/**
-	 * Returns if context launching is enabled
-	 * @return if context launching is enabled
-	 */
-	public boolean isContextLaunchEnabled() {
-		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
-	}
-	
 	/**
 	 * Returns the launch configuration manager
 	 * @return the launch configuration manager

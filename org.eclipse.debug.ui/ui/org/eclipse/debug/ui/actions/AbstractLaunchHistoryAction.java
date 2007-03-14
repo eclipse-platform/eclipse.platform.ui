@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingResourceManager;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -187,7 +186,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		String launchName = configuration.getName();
 		String label = null;
 		//CONTEXTLAUNCHING
-		if(ContextRunner.getDefault().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+		if(getContextLaunchingResourceManager().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
 			launchName = getContextLaunchingResourceManager().getContextLabel(getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 		}
 		String mode = getMode();

@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -45,7 +45,7 @@ public class ProfileLastAction extends RelaunchLastAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getText()
 	 */
 	protected String getText() {
-		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
+		if(DebugUIPlugin.getDefault().getContextLaunchingResourceManager().isContextLaunchEnabled()) {
 			return ActionMessages.ProfileLastAction_1;
 		}
 		else {

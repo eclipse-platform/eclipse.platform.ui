@@ -27,6 +27,8 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.debug.ui.actions.AbstractLaunchHistoryAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,7 +49,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.3
  */
-public class ContextLaunchingResourceManager implements ISelectionListener, IPartListener, IWindowListener {
+public class ContextLaunchingResourceManager implements IPropertyChangeListener, ISelectionListener, IPartListener, IWindowListener {
 	
 	/**
 	 * The map of listeners arranged as: Map<ILaunchGroup, Set<AbstractLaunchHistoryAction>>
@@ -68,6 +70,19 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 * The current <code>IResource</code>
 	 */
 	private IResource fCurrentResource = null;
+	
+	/**
+	 * Indicates if the manager is currently stopped or not
+	 */
+	private boolean fStopped = true;
+	
+	/**
+	 * Returns if context launching is enabled
+	 * @return if context launching is enabled
+	 */
+	public boolean isContextLaunchEnabled() {
+		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
+	}
 	
 	/**
 	 * Allows an <code>AbstractLaunchHistoryAction</code> to register with this manager to be notified
@@ -123,7 +138,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	public String getContextLabel(ILaunchGroup group) {
 		String label = (String) fCurrentLabels.get(group); 
 		if(label == null) {
-			//equates to only trying once as all labels are generated when we computer labels
+			//equates to only trying once as all labels are generated when we compute labels
 			computeLabels();
 			label = (String) fCurrentLabels.get(group);
 		}
@@ -262,6 +277,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 				}
 			}
 		}
+		fStopped = false;
 	}
 
 	/**
@@ -281,13 +297,14 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 		fListeners.clear();
 		fCurrentLabels.clear();
 		fCurrentResource = null;
+		fStopped = true;
 	}
 	
 	/**
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(!(part instanceof IEditorPart)) {
+		if(!fStopped && !(part instanceof IEditorPart)) {
 			if(selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if(!ss.isEmpty()) {
@@ -306,7 +323,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		if(part instanceof IEditorPart) {
+		if(!fStopped && part instanceof IEditorPart) {
 			fCurrentResource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
 			computeLabels();
 			notifyListeners();
@@ -338,7 +355,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
-		if(fWindows.add(window)) {
+		if(!fStopped && fWindows.add(window)) {
 			window.getSelectionService().addPostSelectionListener(this);
 			window.getPartService().addPartListener(this);
 		}
@@ -348,7 +365,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
-		if(fWindows.remove(window)) {
+		if(!fStopped && fWindows.remove(window)) {
 			window.getSelectionService().removePostSelectionListener(this);
 			window.getPartService().removePartListener(this);
 		}
@@ -363,33 +380,67 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
-		IWorkbenchPage page = window.getActivePage();
-		if(page != null) {
-			IWorkbenchPart part = page.getActivePart();
-			if(part != null) {
-				if(part instanceof IEditorPart) {
-					fCurrentResource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
-				}
-				else {
-					IWorkbenchPartSite site = part.getSite();
-					if(site != null) {
-						ISelectionProvider provider = site.getSelectionProvider();
-						if(provider != null) {
-							ISelection selection = provider.getSelection();
-							if(selection instanceof IStructuredSelection) {
-								IStructuredSelection ss = (IStructuredSelection) selection;
-								if(!ss.isEmpty()) {
-									Object o = ss.getFirstElement();
-									if(o instanceof IAdaptable) {
-										fCurrentResource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+		if(!fStopped) {
+			preloadContext(window);
+		}
+	}
+	
+	/**
+	 * Acquires the current context from the active window and computes the labels.
+	 * This method is used to initialize the manager on window open and turning on the manager via
+	 * preference changes
+	 * @param window
+	 */
+	private void preloadContext(IWorkbenchWindow window) {
+		if(window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if(page != null) {
+				IWorkbenchPart part = page.getActivePart();
+				if(part != null) {
+					if(part instanceof IEditorPart) {
+						fCurrentResource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
+					}
+					else {
+						IWorkbenchPartSite site = part.getSite();
+						if(site != null) {
+							ISelectionProvider provider = site.getSelectionProvider();
+							if(provider != null) {
+								ISelection selection = provider.getSelection();
+								if(selection instanceof IStructuredSelection) {
+									IStructuredSelection ss = (IStructuredSelection) selection;
+									if(!ss.isEmpty()) {
+										Object o = ss.getFirstElement();
+										if(o instanceof IAdaptable) {
+											fCurrentResource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+										}
 									}
 								}
 							}
 						}
 					}
+					computeLabels();
+					notifyListeners();
 				}
-				computeLabels();
-				notifyListeners();
+			}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
+			Boolean value = (Boolean) event.getNewValue();
+			if(value.booleanValue()) {
+				if(fStopped) {
+					startup();
+					preloadContext(DebugUIPlugin.getActiveWorkbenchWindow());
+				}
+			}
+			else {
+				if(!fStopped) {
+					shutdown();
+				}
 			}
 		}
 	}

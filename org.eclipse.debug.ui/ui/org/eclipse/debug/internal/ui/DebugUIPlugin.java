@@ -313,7 +313,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public ContextLaunchingResourceManager getContextLaunchingResourceManager() {
 		if(fContextLaunchingManager == null) {
 			fContextLaunchingManager = new ContextLaunchingResourceManager();
-			fContextLaunchingManager.startup();
+			getPreferenceStore().addPropertyChangeListener(fContextLaunchingManager);
+			if(fContextLaunchingManager.isContextLaunchEnabled()) {
+				fContextLaunchingManager.startup();
+			}
 		}
 		return fContextLaunchingManager;
 	}
@@ -416,6 +419,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				fLaunchConfigurationManager.shutdown();
 			}
 			if(fContextLaunchingManager != null) {
+				getPreferenceStore().removePropertyChangeListener(fContextLaunchingManager);
 				fContextLaunchingManager.shutdown();
 			}
 	

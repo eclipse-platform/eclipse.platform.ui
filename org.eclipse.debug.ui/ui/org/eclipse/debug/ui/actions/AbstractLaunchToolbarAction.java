@@ -73,7 +73,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if(ContextRunner.getDefault().isContextLaunchEnabled()) {
+		if(DebugUIPlugin.getDefault().getContextLaunchingResourceManager().isContextLaunchEnabled()) {
 			ContextRunner.getDefault().launch(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 		}
 		else {
