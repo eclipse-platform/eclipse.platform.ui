@@ -165,9 +165,11 @@ class ValueBinding extends Binding {
 								}
 							}
 						} catch (Exception ex) {
+							//This check is necessary as in 3.2.2 Status doesn't accept a null message (bug 177264).
+							String message = (ex.getMessage() != null) ? ex.getMessage() : ""; //$NON-NLS-1$
+							
 							statusHolder[0] = new Status(IStatus.ERROR,
-									Policy.JFACE_DATABINDING, IStatus.ERROR, ex
-											.getMessage(), ex);
+									Policy.JFACE_DATABINDING, IStatus.ERROR, message, ex);
 						} finally {
 							if (!destinationRealmReached) {
 								setValidationStatus(statusHolder[0]);
