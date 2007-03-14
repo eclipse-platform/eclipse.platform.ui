@@ -45,19 +45,19 @@
             label="%RefactoringPropertyPage_keywords"/>
    </extension>
    <extension
-         point="org.eclipse.compare.streamMergers">
-      <streamMerger
+         point="org.eclipse.team.core.storageMergers">
+      <storageMerger
             class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringIndexMerger"
             id="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
       <contentTypeBinding
             contentTypeId="org.eclipse.ltk.core.refactoring.refactoringIndex"
-            streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
-      <streamMerger
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringIndexMerger"/>
+      <storageMerger
             class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringHistoryMerger"
             id="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
       <contentTypeBinding
             contentTypeId="org.eclipse.ltk.core.refactoring.refactoringHistory"
-            streamMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
+            storageMergerId="org.eclipse.ltk.ui.refactoring.model.RefactoringHistoryMerger"/>
    </extension>
    <extension
          point="org.eclipse.compare.contentMergeViewers">
