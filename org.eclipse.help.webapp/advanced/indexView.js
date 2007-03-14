@@ -20,6 +20,8 @@ var typein;
 var lines = 30;
 var firstEntry;
 var lastEntry;
+var showAllChanged = false;
+var showAll;
 
 /**
  * Set value of the typein input field.
@@ -144,6 +146,17 @@ function loadChildren(startCharacters, mode, entry) {
             parameters += separator;
             parameters += "entry=";
             parameters += entry;
+            separator = "&";
+        }
+        if (showAllChanged) {
+            showAllChanged = false;
+            parameters += separator;
+            parameters += "showAll="
+            if (showAll) {
+                parameters += "on";
+            } else {
+                parameters += "off";
+            }
         }
         makeNodeRequest(parameters);
     }
@@ -221,6 +234,15 @@ function loadNextPage() {
     }
 }
        
+function loadCurrentPage() {
+    getFirstAndLast();
+    if (firstEntry && firstEntry > 0) {
+        loadChildren("", "next", firstEntry - 1);
+    } else {
+        loadChildren("");
+    }
+}
+       
 function onShow() {  
 	sizeList();
     if (!shown) {
@@ -228,6 +250,15 @@ function onShow() {
         loadChildren("");
         shown = true;
     }  
+}
+
+function setShowAll(isShowAll) {
+    showAll = isShowAll;
+    showAllChanged = true;
+    if (shown) {
+        // Only refresh if we are already showing       
+        loadCurrentPage();
+    }
 }
 
 /*

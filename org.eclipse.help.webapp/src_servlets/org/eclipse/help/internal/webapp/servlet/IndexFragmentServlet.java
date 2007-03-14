@@ -28,6 +28,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.webapp.WebappResources;
+import org.eclipse.help.internal.webapp.data.ActivitiesData;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -47,6 +48,7 @@ public class IndexFragmentServlet extends HttpServlet {
 	private String sizeParameter;
 	private String entryParameter;
 	private String modeParameter;
+	private String showAllParameter;
 	private int size;
 	private int entry;
 	private static final String NEXT = "next"; //$NON-NLS-1$
@@ -54,6 +56,7 @@ public class IndexFragmentServlet extends HttpServlet {
 	private static final String SIZE = "size"; //$NON-NLS-1$
 	private static final String MODE = "mode"; //$NON-NLS-1$
 	private static final String ENTRY = "entry"; //$NON-NLS-1$
+	private static final String SHOW_ALL = "showAll"; //$NON-NLS-1$
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -80,8 +83,13 @@ public class IndexFragmentServlet extends HttpServlet {
 			} catch (NumberFormatException n) {
 			}
 		}
-		
+
 		modeParameter = req.getParameter(MODE);
+		showAllParameter = req.getParameter(SHOW_ALL);
+		if (showAllParameter != null) {
+			// Use activities data to toggle the show all state
+			new ActivitiesData(this.getServletContext(), req, resp);	
+		}
 		
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$

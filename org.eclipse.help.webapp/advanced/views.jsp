@@ -59,110 +59,11 @@ IFRAME {
 }
 
 </style>
-
+<script language="JavaScript" src="views.js"></script>
 <script language="Javascript">
-
-var lastView = "";
-/**
- * Switches to specified view
- */
-function showView(view)
-{ 	
-	if (view == lastView) 
-		return;
-		
-	lastView = view;
-       	
-	// show appropriate frame
- 	var iframes = parent.ViewsFrame.document.body.getElementsByTagName("IFRAME");
- 	for (var i=0; i<iframes.length; i++)
- 	{			
-  		if (iframes[i].id != view){
-   			iframes[i].className = "hidden";
-   			iframes[i].style.visibility="hidden";
-  		}else{
-   			iframes[i].className = "visible";
-   			iframes[i].style.visibility="visible";
-   			try {
-   			    iframes[i].contentWindow.onShow();
-   		    } catch(ex) {}
-   		}
- 	}
-}
 
 var activityFiltering = <%=(new ActivitiesData(application, request, response)).isActivityFiltering()?"true":"false"%>;
 var displayShowAllConfirmation = <%=prefs.isDontConfirmShowAll()?"false":"true"%>;
-var regExp=/&(showAll|synch)=(on|off|yes|no)/gi;
-function toggleShowAll(){
-	if(activityFiltering){
-		if( displayShowAllConfirmation ){
-			confirmShowAll();
-		}else{
-			showAll();
-		}
-	} else {
-		dontShowAll();
-	}
-}
-
-function dontAskAgain(){
-	displayShowAllConfirmation = false;
-}
-function showAll(){
-	var displayConfirmParam;
-	if(displayShowAllConfirmation){
-		displayConfirmParam="";
-	}else{
-		displayConfirmParam="&showconfirm=false";
-	}
-	activityFiltering=false;
-	try{
-		window.frames.toc.tocToolbarFrame.setButtonState("show_all", true);
-	}catch(ex) {}
-	try{
-		window.frames.index.indexToolbarFrame.setButtonState("show_all", true);
-	}catch(ex) {}
-	try{
-		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
-	}catch(ex) {}
-	try{
-		var newUrl = window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam;
-	    window.frames.toc.tocViewFrame.setShowAll(true, newUrl);
-	}catch(ex) {}
-	try{
-		window.frames.index.indexViewFrame.location.replace(window.frames.index.indexViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam);
-	}catch(ex) {}
-	try{
-		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=on");
-	}catch(ex) {}
-}
-
-function dontShowAll(){
-	activityFiltering=true;
-	try{
-		window.frames.toc.tocToolbarFrame.setButtonState("show_all", false);
-	}catch(ex) {}
-	try{
-		window.frames.index.indexToolbarFrame.setButtonState("show_all", false);
-	}catch(ex) {}
-	try{
-		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
-	}catch(ex) {}
-	try{
-		var newUrl = window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=off";
-	    window.frames.toc.tocViewFrame.setShowAll(false, newUrl);
-	}catch(ex) {}
-	try{
-		window.frames.index.indexViewFrame.location.replace(window.frames.index.indexViewFrame.location.href.replace(regExp, "")+"&showAll=off");
-	}catch(ex) {}
-	try{
-		window.frames.search.searchViewFrame.location.replace(window.frames.search.searchViewFrame.location.href.replace(regExp, "")+"&showAll=off");
-	}catch(ex) {}
-}
-
-var confirmShowAllDialog;
-var w = 470;
-var h = 240;
 
 function confirmShowAll()
 {
@@ -185,15 +86,6 @@ if (data.isIE()){
 	window.location="javascript://needModal";
 	confirmShowAllDialog = window.open("confirmShowAll.jsp", "confirmShowAllDialog", "resizable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	confirmShowAllDialog.focus(); 
-}
-
-function closeConfirmShowAllDialog(){
-	try {
-		if (confirmShowAllDialog){
-			confirmShowAllDialog.close();
-		}
-	}
-	catch(e) {}
 }
 
 </script>

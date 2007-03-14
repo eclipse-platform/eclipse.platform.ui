@@ -14,7 +14,7 @@
 <%@ include file="fheader.jsp"%>
 
 <%
-    RequestData requestData = new RequestData(application,request, response);
+    RequestData requestData = new ActivitiesData(application,request, response);
 	WebappPreferences prefs = requestData.getPrefs();
 %>
 
