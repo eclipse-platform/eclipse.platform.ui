@@ -247,7 +247,7 @@ public final class ContextRunner {
 			if(result.length > 0) {
 				LaunchShortcutExtension method = (LaunchShortcutExtension) result[0];
 				if(method != null) {
-					method.launch(new StructuredSelection(resource), mode);
+					method.launch((resource == null ? new StructuredSelection() : new StructuredSelection(resource)), mode);
 					return true;
 				}
 			}
