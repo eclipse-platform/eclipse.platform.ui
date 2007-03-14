@@ -49,7 +49,7 @@ public interface IContributionRoot {
 	 * Registers visibilty for arbitrary {@link IContributionItem} instances
 	 * that are <b>NOT</b> direct children of this container. Ie: children of a
 	 * {@link IContributionManager} that has been previously registered with a
-	 * call to {{@link #addContributionItem(IContributionItem)}.
+	 * call to {{@link #addContributionItem(IContributionItem, Expression)}.
 	 * 
 	 * @param item
 	 *            the item for which to register a visibility clause
