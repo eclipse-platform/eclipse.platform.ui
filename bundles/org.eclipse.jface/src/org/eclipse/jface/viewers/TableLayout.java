@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -28,7 +29,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * A layout for a table. Call <code>addColumnData</code> to add columns.
  * The TableLayout {@link ColumnLayoutData} is only valid until the table
  * is resized. To keep the proportions constant when the table is resized 
- * see <code>TableColumnAdapter</code>.
+ * see {@link TableColumnLayout}
  */
 public class TableLayout extends Layout {
 

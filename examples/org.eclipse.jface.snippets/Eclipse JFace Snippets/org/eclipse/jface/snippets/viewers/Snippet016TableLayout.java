@@ -12,7 +12,7 @@
 package org.eclipse.jface.snippets.viewers;
 
 
-import org.eclipse.jface.layout.TableColumnAdapter;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -99,19 +99,20 @@ public class Snippet016TableLayout {
 		v.setContentProvider(new MyContentProvider());
 		v.getTable().setHeaderVisible(true);
 
+		TableColumnLayout ad = new TableColumnLayout();
+		comp.setLayout(ad);
+		
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setText("Column 1");
 
 		column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setText("Column 2");
-
-		TableColumnAdapter ad = new TableColumnAdapter(v.getTable());
+		
 		ColumnLayoutData data = new ColumnWeightData(50, 100);
 		ad.addColumnData(data);
 
 		data = new ColumnWeightData(50, 100);
 		ad.addColumnData(data);
-		comp.addControlListener(ad);
 
 		MyModel[] model = createModel();
 		v.setInput(model);
@@ -134,6 +135,7 @@ public class Snippet016TableLayout {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
+		//shell.setSize(400, 150);
 		shell.setLayout(new FillLayout());
 		
 		new Snippet016TableLayout(shell);
