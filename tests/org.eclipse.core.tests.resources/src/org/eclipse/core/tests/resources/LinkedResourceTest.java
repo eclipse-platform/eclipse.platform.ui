@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -635,6 +635,25 @@ public class LinkedResourceTest extends ResourceTest {
 		} finally {
 			Workspace.clear(resolve(fileLocation).toFile());
 		}
+	}
+
+	/**
+	 * Tests creating a linked folder and performing refresh in the background
+	 */
+	public void testCreateFolderInBackground() throws CoreException {
+		final IFileStore rootStore = getTempStore();
+		rootStore.mkdir(IResource.NONE, getMonitor());
+		IFileStore childStore = rootStore.getChild("file.txt");
+		createFileInFileSystem(childStore);
+
+		IFolder link = nonExistingFolderInExistingProject;
+		link.createLink(rootStore.toURI(), IResource.BACKGROUND_REFRESH, getMonitor());
+		waitForRefresh();
+		IFile linkChild = link.getFile(childStore.getName());
+		assertTrue("1.0", link.exists());
+		assertTrue("1.1", link.isSynchronized(IResource.DEPTH_INFINITE));
+		assertTrue("1.2", linkChild.exists());
+		assertTrue("1.3", linkChild.isSynchronized(IResource.DEPTH_INFINITE));
 	}
 
 	/**
