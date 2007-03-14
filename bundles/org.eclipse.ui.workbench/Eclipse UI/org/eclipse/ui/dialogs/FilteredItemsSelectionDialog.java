@@ -182,7 +182,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private Object[] lastSelection;
 
-	protected ContentProvider contentProvider;
+	private ContentProvider contentProvider;
 
 	private FilterJob filterJob;
 
@@ -195,7 +195,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	private String initialPatternText;
 
 	private int selectionMode;
-	
+
 	private ItemsListSeparator itemsListSeparator;
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -461,11 +461,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.END;
 		toolBar.setLayoutData(data);
-		
+
 		toolBar.addMouseListener(new MouseAdapter() {
-            public void mouseDown(MouseEvent e) {
-                showViewMenu();
-            }
+			public void mouseDown(MouseEvent e) {
+				showViewMenu();
+			}
 		});
 
 		toolItem.setImage(WorkbenchImages
@@ -516,7 +516,7 @@ public abstract class FilteredItemsSelectionDialog extends
 						.getSelection()).toList();
 
 				Object item = null;
-				
+
 				manager.remove(removeHistoryActionContributionItem);
 
 				for (Iterator it = selectedElements.iterator(); it.hasNext();) {
@@ -855,8 +855,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 *            a progress monitor or <code>null</code> if no monitor is
 	 *            available
 	 */
-	public void reloadCache(boolean checkDuplicates,
-			IProgressMonitor monitor) {
+	public void reloadCache(boolean checkDuplicates, IProgressMonitor monitor) {
 		if (list != null && !list.getTable().isDisposed()
 				&& contentProvider != null) {
 			contentProvider.reloadCache(checkDuplicates, monitor);
@@ -974,8 +973,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Validates the item. When items on the items list are selected or
-	 * deselected, it validates each item in the selection and the dialog
-	 * status depends on all validations.
+	 * deselected, it validates each item in the selection and the dialog status
+	 * depends on all validations.
 	 * 
 	 * @param item
 	 *            an item to be checked
@@ -1141,16 +1140,16 @@ public abstract class FilteredItemsSelectionDialog extends
 	public void setSeparatorLabel(String separatorLabel) {
 		this.itemsListSeparator = new ItemsListSeparator(separatorLabel);
 	}
-	
+
 	/**
 	 * Returns name for then given object.
 	 * 
 	 * @param item
-	 *            an object from the content provider. Subclasses should pay attention to the passed
-	 *            argument. They should either only pass objects of a known type
-	 *            (one used in content provider) or make sure that passed
-	 *            parameter is the expected one (by type checking like
-	 *            <code>instanceof</code> inside the method).
+	 *            an object from the content provider. Subclasses should pay
+	 *            attention to the passed argument. They should either only pass
+	 *            objects of a known type (one used in content provider) or make
+	 *            sure that passed parameter is the expected one (by type
+	 *            checking like <code>instanceof</code> inside the method).
 	 * @return name of the given item
 	 */
 	public abstract String getElementName(Object item);
@@ -1784,15 +1783,16 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Filters items in indicated set and history. During filtering, it refreshes
-	 * the dialog (progress monitor and elements list).
+	 * Filters items in indicated set and history. During filtering, it
+	 * refreshes the dialog (progress monitor and elements list).
 	 * 
-	 * Depending on the filter, <code>FilterJob</code> decides which kind of search
-	 * will be run inside <code>filterContent</code>. If the last filtering is done (last completed
-	 * filter), is not null, and the new filter is a sub-filter
-	 * ({@link FilteredItemsSelectionDialog.ItemsFilter#isSubFilter(FilteredItemsSelectionDialog.ItemsFilter)})
-	 * of the last, then <code>FilterJob</code> only filters in the cache. If it is the first filtering or
-	 * the new filter isn't a sub-filter of the last one, a full search is run.
+	 * Depending on the filter, <code>FilterJob</code> decides which kind of
+	 * search will be run inside <code>filterContent</code>. If the last
+	 * filtering is done (last completed filter), is not null, and the new
+	 * filter is a sub-filter ({@link FilteredItemsSelectionDialog.ItemsFilter#isSubFilter(FilteredItemsSelectionDialog.ItemsFilter)})
+	 * of the last, then <code>FilterJob</code> only filters in the cache. If
+	 * it is the first filtering or the new filter isn't a sub-filter of the
+	 * last one, a full search is run.
 	 */
 	private class FilterJob extends Job {
 
@@ -1937,10 +1937,10 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * History stores a list of key, object pairs. The list is bounded at size
-	 * <code>MAX_HISTORY_SIZE</code>. If the list exceeds this size the
-	 * oldest element is removed from the list. An element can be added/renewed
-	 * with a call to <code>accessed(Object)</code>.
+	 * History stores a list of key, object pairs. The list is bounded at a
+	 * certain size. If the list exceeds this size the oldest element is removed
+	 * from the list. An element can be added/renewed with a call to
+	 * <code>accessed(Object)</code>.
 	 * <p>
 	 * The history can be stored to/loaded from an XML file.
 	 */
@@ -2141,17 +2141,17 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Check if the given filter is a sub-filter of current filter.
-		 * The default implementation checks if the <code>SearchPattern</code>
-		 * from the current filter is a sub-pattern of the one from the provided filter.
-		 * <p>
+		 * Check if the given filter is a sub-filter of current filter. The
+		 * default implementation checks if the <code>SearchPattern</code>
+		 * from the current filter is a sub-pattern of the one from the provided
+		 * filter.
 		 * 
 		 * @param filter
 		 *            the filter to be checked, or <code>null</code>
 		 * @return <code>true</code> if the given filter is sub-filter of the
 		 *         current, <code>false</code> if the given filter isn't a
 		 *         sub-filter or is <code>null</code>
-		 *         
+		 * 
 		 * @see org.eclipse.ui.dialogs.SearchPattern#isSubPattern(org.eclipse.ui.dialogs.SearchPattern)
 		 */
 		public boolean isSubFilter(ItemsFilter filter) {
@@ -2163,16 +2163,15 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		/**
 		 * Checks whether the provided filter is equal to the current filter.
-		 * The default implementation checks if <code>SearchPattern</code> from current
-		 * filter is equal to the one from provided filter.
-		 * <p>
+		 * The default implementation checks if <code>SearchPattern</code>
+		 * from current filter is equal to the one from provided filter.
 		 * 
 		 * @param filter
 		 *            filter to be checked, or <code>null</code>
 		 * @return <code>true</code> if the given filter is equal to current
 		 *         filter, <code>false</code> if given filter isn't equal to
 		 *         current one or if it is <code>null</code>
-		 *         
+		 * 
 		 * @see org.eclipse.ui.dialogs.SearchPattern#equalsPattern(org.eclipse.ui.dialogs.SearchPattern)
 		 */
 		public boolean equalsFilter(ItemsFilter filter) {
@@ -2227,19 +2226,18 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Checks whether current pattern is prefix of provided name.
+		 * General method for matching raw name pattern. Checks whether current
+		 * pattern is prefix of name provided item.
 		 * 
-		 * @param name
-		 *            name to check
-		 * 
-		 * @return <code>true</code> if current pattern is a prefix of
-		 *         provided name, <code>false</code> if provided name is
-		 *         shorter than prefix or sequences of characters don't match
+		 * @param item
+		 *            item to check
+		 * @return <code>true</code> if current pattern is a prefix of name
+		 *         provided item, <code>false</code> if item's name is shorter
+		 *         than prefix or sequences of characters don't match.
 		 */
-		public boolean matchesRawNamePattern(String name) {
-
+		public boolean matchesRawNamePattern(Object item) {
 			String prefix = patternMatcher.getPattern();
-			String text = name;
+			String text = getElementName(item);
 
 			int textLength = text.length();
 			int prefixLength = prefix.length();
@@ -2251,18 +2249,6 @@ public abstract class FilteredItemsSelectionDialog extends
 						.toLowerCase(text.charAt(i)))
 					return false;
 			}
-			return true;
-		}
-
-		/**
-		 * General method for matching raw name pattern.
-		 * The default implementation always returns <code>true</code>.
-		 * 
-		 * @param item
-		 *            item to check
-		 * @return <code>true</code>
-		 */
-		public boolean matchesRawNamePattern(Object item) {
 			return true;
 		}
 
@@ -2293,11 +2279,13 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected abstract class AbstractContentProvider {
 		/**
-		 * Adds the item to the content provider iff the filter matches the item.
-		 * Otherwise does nothing.
+		 * Adds the item to the content provider iff the filter matches the
+		 * item. Otherwise does nothing.
 		 * 
-		 * @param item the item to add
-		 * @param itemsFilter the filter 
+		 * @param item
+		 *            the item to add
+		 * @param itemsFilter
+		 *            the filter
 		 * 
 		 * @see FilteredItemsSelectionDialog.ItemsFilter#matchItem(Object)
 		 */
