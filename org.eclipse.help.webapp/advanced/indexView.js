@@ -193,12 +193,12 @@ function getFirstAndLast() {
     var treeRoot = document.getElementById("tree_root");
     if (treeRoot == null) return; 
     var firstDiv = findChild(treeRoot, "DIV");
-    if (firstDiv.nodeid) {
+    if (firstDiv && firstDiv.nodeid) {
         firstEntry = firstDiv.nodeid.substring(1);
     }
     var lastDiv = findLastChild(treeRoot, "DIV");
         
-    if (lastDiv.nodeid) {
+    if (lastDiv && lastDiv.nodeid) {
         lastEntry = lastDiv.nodeid.substring(1);
     }
 }
