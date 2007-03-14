@@ -1666,6 +1666,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		private ContentProvider contentProvider;
 
 		private String name;
+		
+		private String subName;
 
 		private int totalWork;
 
@@ -1703,8 +1705,21 @@ public abstract class FilteredItemsSelectionDialog extends
 		public void setTaskName(String name) {
 			super.setTaskName(name);
 			this.name = name;
+			this.subName = null;
+			updateProgressMessage();
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#subTask(java.lang.String)
+		 */
+		public void subTask(String name) {
+			super.subTask(name);
+			this.subName = name;
+			updateProgressMessage();
+		}
+			
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -1716,6 +1731,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (this.name == null)
 				this.name = name;
 			this.totalWork = totalWork;
+			updateProgressMessage();
 		}
 
 		/*
@@ -1759,25 +1775,32 @@ public abstract class FilteredItemsSelectionDialog extends
 			if ((((int) (((worked - work) * 10) / totalWork)) < ((int) ((worked * 10) / totalWork)))
 					|| (((int) ((worked * 10) / totalWork)) == 0))
 				if (!isCanceled())
-					contentProvider.setProgressMessage(getMessage(),
-							isFiltering);
+					updateProgressMessage();
+		}
+
+		private void updateProgressMessage() {
+			contentProvider.setProgressMessage(getMessage(), isFiltering);
 		}
 
 		private String getMessage() {
-			if (done) {
+			if (done)
 				return ""; //$NON-NLS-1$
-			} else if (totalWork == 0) {
-				return name;
+
+			String message;
+
+			if (name == null) {
+				message = subName == null ? "" : subName; //$NON-NLS-1$
 			} else {
-				return MessageFormat
-						.format(
-								"{0} ({1}%)" //$NON-NLS-1$
-								,
-								new Object[] {
-										name,
-										new Integer(
-												(int) ((worked * 100) / totalWork)) });
+				message = subName == null ? name : MessageFormat.format(
+						"{0} {1}", new Object[] { name, subName }); //$NON-NLS-1$
 			}
+			if (totalWork == 0)
+				return message;
+
+			return MessageFormat.format("{0} ({1}%)" //$NON-NLS-1$
+					, new Object[] { message,
+							new Integer((int) ((worked * 100) / totalWork)) });
+
 		}
 
 	}
