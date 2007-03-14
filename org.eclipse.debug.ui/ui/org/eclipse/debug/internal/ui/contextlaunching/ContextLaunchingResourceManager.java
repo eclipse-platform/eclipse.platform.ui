@@ -257,7 +257,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 			if(window != null) {
 				if(fWindows.add(window)) {
-					window.getSelectionService().addSelectionListener(this);
+					window.getSelectionService().addPostSelectionListener(this);
 					window.getPartService().addPartListener(this);
 				}
 			}
@@ -274,7 +274,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 		}
 		for(Iterator iter = fWindows.iterator(); iter.hasNext();) {
 			IWorkbenchWindow window = (IWorkbenchWindow)iter.next();
-			window.getSelectionService().removeSelectionListener(this);
+			window.getSelectionService().removePostSelectionListener(this);
 			window.getPartService().removePartListener(this);
 		}
 		fWindows.clear();
@@ -339,7 +339,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
 		if(fWindows.add(window)) {
-			window.getSelectionService().addSelectionListener(this);
+			window.getSelectionService().addPostSelectionListener(this);
 			window.getPartService().addPartListener(this);
 		}
 	}
@@ -349,7 +349,7 @@ public class ContextLaunchingResourceManager implements ISelectionListener, IPar
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
 		if(fWindows.remove(window)) {
-			window.getSelectionService().removeSelectionListener(this);
+			window.getSelectionService().removePostSelectionListener(this);
 			window.getPartService().removePartListener(this);
 		}
 	}
