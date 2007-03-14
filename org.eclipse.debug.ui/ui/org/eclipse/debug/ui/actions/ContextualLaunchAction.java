@@ -11,7 +11,6 @@
 package org.eclipse.debug.ui.actions;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Set;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -65,6 +63,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public abstract class ContextualLaunchAction implements IObjectActionDelegate, IMenuCreator {
 
+	private IStructuredSelection fSelection;
 	private IAction fDelegateAction;
 	private String fMode;
 	// default launch group for this mode (null category)
@@ -163,6 +162,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				fDelegateAction.setMenuCreator(this);
 			}
 			// save selection and enable our menu
+			fSelection = (IStructuredSelection) selection;
 			action.setEnabled(true);
 			return;
 		}
@@ -177,16 +177,21 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
-
+	
     /**
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
      */
 	protected void fillMenu(Menu menu) throws CoreException {
+		if (fSelection == null) {
+			return;
+		}
 		IEvaluationContext context = createContext();
+		//CONTEXTLAUNCHING
+		Object obj = fSelection.getFirstElement();
 		int accelerator = 1;
-		IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
-		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(resource);
+		//IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
+		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(obj);
         if(config != null && config.exists() && config.supportsMode(fMode)) {
         	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
             ActionContributionItem item = new ActionContributionItem(action);
@@ -257,19 +262,24 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	 */
 	private IEvaluationContext createContext() {
 		// create a default evaluation context with default variable of the user selection
-		List selection = null;
-		IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
-		if(resource != null) {
-			selection = new ArrayList();
-			selection.add(resource);
-		}
-		if(selection == null) {
-			selection = Collections.EMPTY_LIST;
-		}
+		List selection = getSelectedElements();
 		IEvaluationContext context = new EvaluationContext(null, selection);
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", selection); //$NON-NLS-1$
 		return context;
+	}
+	
+	/**
+	 * @return current selection as a List.
+	 */
+	private List getSelectedElements() {
+		ArrayList result = new ArrayList();
+		Iterator iter = fSelection.iterator();
+		while (iter.hasNext()) {
+			Object next = iter.next();
+			result.add(next);
+		}
+		return result;
 	}
 
 	/**

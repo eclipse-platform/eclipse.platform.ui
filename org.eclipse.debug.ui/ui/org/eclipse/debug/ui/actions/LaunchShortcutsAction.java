@@ -20,7 +20,6 @@ import java.util.Set;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -39,12 +38,18 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
@@ -55,6 +60,9 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * selection. This action is similar to <code>ContextualLaunchAction</code>
  * except this action is an <code>IAction</code> rather than an action
  * delegate.
+ * <p> 
+ * This action appears in the main Run menu
+ * </p> 
  * <p>
  * Clients may subclass this class.
  * </p>
@@ -132,12 +140,30 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 */
 	private IEvaluationContext createContext() {
 	    List list = null;
-	    IResource resource = getResourceContext();
-	    if(resource != null) {
-	    	list = new ArrayList();
-	    	list.add(resource);
-	    }
-		// create a default evaluation context with default variable of the user selection or editor input
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+			    IWorkbenchPart activePart = page.getActivePart();
+			    if (activePart instanceof IEditorPart) {
+			        list = new ArrayList();
+			        list.add(((IEditorPart)activePart).getEditorInput());
+			    } else if (activePart != null) {
+			        IWorkbenchPartSite site = activePart.getSite();
+			        if (site != null) {
+	                    ISelectionProvider selectionProvider = site.getSelectionProvider();
+	                    if (selectionProvider != null) {
+	                        ISelection selection = selectionProvider.getSelection();
+					        if (selection instanceof IStructuredSelection) {
+					            list = ((IStructuredSelection)selection).toList();
+					        }
+	                    }
+			        }
+			    }
+			}
+		}	    
+		// create a default evaluation context with default variable
+		// of the user selection or editor input
 		if (list == null) {
 		    list = Collections.EMPTY_LIST;
 		}
@@ -166,7 +192,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		}
 		//first add the launch config if it is one
 		try {
-			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getResourceContext());
+			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getSelection(context));
 	        if(config != null && config.exists() && config.supportsMode(getMode())) {
 	        	IAction action = new LaunchConfigurationAction(config, getMode(), config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
 	            ActionContributionItem item = new ActionContributionItem(action);
@@ -197,6 +223,17 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			ActionContributionItem item= new ActionContributionItem(action);
 			item.fill(fCreatedMenu, -1);
 		}
+	}
+	
+	/**
+	 * Returns the first element of the current selection
+	 * @param context the current evaluation context
+	 * @return the first item in the selection, or <code>null</code> if none
+	 * @since 3.3
+	 */
+	private Object getSelection(IEvaluationContext context) {
+		List list = (List) context.getVariable("selection"); //$NON-NLS-1$
+		return (list.isEmpty() ? null : list.get(0));
 	}
 	
 	/**
@@ -253,17 +290,6 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		});
 	}
 		
-	/**
-	 * Returns the currently selected <code>IResource</code>
-	 * @return the selected <code>IResource</code> or <code>null</code> if the selected 
-	 * item cannot be adapted to <code>IResource</code>, or is not itself an <code>IResource</code>
-	 * 
-	 * @since 3.3
-	 */
-	private IResource getResourceContext() {
-		return DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
-	}
-	
 	/**
 	 * Returns the mode of this action - run or debug 
 	 * 
