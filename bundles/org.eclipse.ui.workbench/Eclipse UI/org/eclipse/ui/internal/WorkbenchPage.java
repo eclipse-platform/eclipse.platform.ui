@@ -1440,6 +1440,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
+     * Forces all perspectives on the page to zoom out.
+     */
+    public void unzoomAllPerspectives() {
+    	for (Iterator perspIter = perspList.iterator(); perspIter.hasNext();) {
+			Perspective persp = (Perspective) perspIter.next();
+			persp.getPresentation().forceNoZoom();
+		}
+    }
+    
+    /**
      * @see IWorkbenchPage#closeAllPerspectives(boolean, boolean)
      */
     public void closeAllPerspectives(boolean saveEditors, boolean closePage) {

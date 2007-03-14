@@ -45,15 +45,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -689,6 +694,24 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 	private void setR33Preferences() {
 		setR30Preferences();
+        
+        // Ensure that nobody's either zoomed or minimized in the old presentation
+        IWorkbench wb = PlatformUI.getWorkbench();
+        if (wb instanceof Workbench) {
+        	IWorkbenchWindow[] windows = ((Workbench)wb).getWorkbenchWindows();
+        	for (int i = 0; i < windows.length; i++) {
+				if (windows[i] instanceof WorkbenchWindow) {
+					WorkbenchWindow wbw = (WorkbenchWindow) windows[i];
+					IWorkbenchPage[] pages = wbw.getPages();
+					for (int j = 0; j < pages.length; j++) {
+						if (pages[j] instanceof WorkbenchPage) {
+							WorkbenchPage page = (WorkbenchPage) pages[j];
+							page.unzoomAllPerspectives();
+						}
+					}
+				}
+			}
+        }
 		
 		// Turn -on- the new Min/Max behaviour
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();

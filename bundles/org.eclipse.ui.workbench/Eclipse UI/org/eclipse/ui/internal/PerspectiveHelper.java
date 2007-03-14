@@ -1348,4 +1348,28 @@ public class PerspectiveHelper {
         }
     }
 
+    /**
+     * Forces the perspective to have no zoomed or minimized parts.
+     * This is used when switching to the 3.3 presentation...
+     */
+    public void forceNoZoom() {
+    	// Ensure that nobody's zoomed
+    	zoomOut();
+    	
+    	// Now, walk the layout ensuring that nothing is minimized
+    	LayoutPart[] kids = mainLayout.getChildren();
+    	for (int i = 0; i < kids.length; i++) {
+			if (kids[i] instanceof ViewStack) {
+				((ViewStack)kids[i]).setMinimized(false);
+			}
+			else if (kids[i] instanceof EditorSashContainer) {
+				LayoutPart[] editorStacks = ((EditorSashContainer)kids[i]).getChildren();
+				for (int j = 0; j < editorStacks.length; j++) {
+					if (editorStacks[j] instanceof EditorStack) {
+						((EditorStack)editorStacks[j]).setMinimized(false);
+					}
+				}
+			}
+		}
+    }
 }
