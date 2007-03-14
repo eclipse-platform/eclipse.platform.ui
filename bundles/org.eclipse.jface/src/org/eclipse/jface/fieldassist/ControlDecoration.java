@@ -47,17 +47,12 @@ import org.eclipse.swt.widgets.Widget;
  * bottom of either side of the control. Future implementations may provide
  * additional positioning options for decorations.
  * <p>
- * ControlDecoration is used in a manner similar to {@link DecoratedField}. The
- * primary difference between these mechanisms is that {@link DecoratedField}
- * ensures adequate space is allocated for any field decorations by creating a
- * composite that parents the decorations and fields, and reserving space for
- * any decorations added to the field. ControlDecoration simply renders the
- * image adjacent to the specified (already created) control, with no guarantee
- * that it won't be clipped or otherwise obscured or overlapped by adjacent
- * controls, including another ControlDecoration placed in the same location.
- * The tradeoff is one of guaranteed placement (via {@link DecoratedField}) vs.
- * more flexibility in creating the control, using ControlDecoration, along with
- * less concern for aligning decorated and non-decorated fields.
+ * ControlDecoration renders the image adjacent to the specified (already
+ * created) control, with no guarantee that it won't be clipped or otherwise
+ * obscured or overlapped by adjacent controls, including another
+ * ControlDecoration placed in the same location. Clients should ensure that
+ * there is adequate space adjacent to the control to show the decoration
+ * properly.
  * <p>
  * Clients using ControlDecoration should typically ensure that enough margin
  * space is reserved for a decoration by altering the layout data margins,
@@ -76,7 +71,6 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @see FieldDecoration
  * @see FieldDecorationRegistry
- * @see DecoratedField
  */
 public class ControlDecoration {
 	/**
