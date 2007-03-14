@@ -354,12 +354,25 @@ public class MarkerTest extends ResourceTest {
 		return created;
 	}
 
-	protected IMarker[] createMarkers(IResource[] hosts, String type) throws CoreException {
-		IMarker[] result = new IMarker[hosts.length];
-		for (int i = 0; i < hosts.length; i++) {
-			result[i] = hosts[i].createMarker(type);
-		}
+	protected IMarker[] createMarkers(final IResource[] hosts, final String type) throws CoreException {
+		final IMarker[] result = new IMarker[hosts.length];
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				for (int i = 0; i < hosts.length; i++) {
+					result[i] = hosts[i].createMarker(type);
+				}
+			}
+		}, getMonitor());
 		return result;
+	}
+
+	public void createProblem(IResource host, int severity) {
+		try {
+			IMarker marker = host.createMarker(IMarker.PROBLEM);
+			marker.setAttribute(IMarker.SEVERITY, severity);
+		} catch (CoreException e) {
+			fail("Failed to create problem on resource: " + host, e);
+		}
 	}
 
 	/**
@@ -707,6 +720,53 @@ public class MarkerTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
+	}
+
+	/**
+	 * Tests public API method IResource#findMaxProblemSeverity
+	 */
+	public void testFindMaxProblemSeverity() throws CoreException {
+		final IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("testFindMaxProblemSeverity");
+		IFolder folder = project.getFolder("top");
+		IFolder sub = folder.getFolder("sub");
+		IFile topFile = folder.getFile("a.txt");
+		IFile subFile = sub.getFile("b.txt");
+		IResource[] allResources = new IResource[] {project, folder, sub, topFile, subFile};
+		ensureExistsInWorkspace(allResources, true);
+
+		assertEquals("1.0", -1, root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE));
+		assertEquals("1.1", -1, root.findMaxProblemSeverity(IMarker.TASK, true, IResource.DEPTH_INFINITE));
+		assertEquals("1.2", -1, root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO));
+
+		createProblem(subFile, IMarker.SEVERITY_INFO);
+		assertEquals("2.0", IMarker.SEVERITY_INFO, root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE));
+		assertEquals("2.1", -1, root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
+		assertEquals("2.2", -1, root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO));
+		assertEquals("2.3", -1, root.findMaxProblemSeverity(IMarker.TASK, true, IResource.DEPTH_INFINITE));
+
+		assertEquals("3.0", IMarker.SEVERITY_INFO, folder.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE));
+		assertEquals("3.1", -1, folder.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
+		assertEquals("3.2", -1, folder.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO));
+		assertEquals("3.3", -1, folder.findMaxProblemSeverity(IMarker.TASK, true, IResource.DEPTH_INFINITE));
+
+		assertEquals("4.1", IMarker.SEVERITY_INFO, sub.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE));
+		assertEquals("4.2", IMarker.SEVERITY_INFO, sub.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
+		assertEquals("4.3", -1, sub.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO));
+		assertEquals("4.4", -1, sub.findMaxProblemSeverity(IMarker.TASK, true, IResource.DEPTH_INFINITE));
+
+		assertEquals("5.1", IMarker.SEVERITY_INFO, subFile.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE));
+		assertEquals("5.2", IMarker.SEVERITY_INFO, subFile.findMaxProblemSeverity(IMarker.PROBLEM, false, IResource.DEPTH_ONE));
+		assertEquals("5.3", IMarker.SEVERITY_INFO, subFile.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO));
+		assertEquals("5.4", -1, subFile.findMaxProblemSeverity(IMarker.TASK, true, IResource.DEPTH_INFINITE));
+
+		createProblem(topFile, IMarker.SEVERITY_ERROR);
+		assertEquals("6.1", IMarker.SEVERITY_ERROR, root.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE));
+		assertEquals("6.2", IMarker.SEVERITY_ERROR, folder.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
+		assertEquals("6.3", IMarker.SEVERITY_ERROR, topFile.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
+		assertEquals("6.4", IMarker.SEVERITY_INFO, sub.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ONE));
+		assertEquals("6.5", IMarker.SEVERITY_INFO, subFile.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO));
+
 	}
 
 	/**
