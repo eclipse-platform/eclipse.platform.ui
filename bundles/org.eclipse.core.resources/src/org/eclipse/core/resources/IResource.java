@@ -1060,6 +1060,33 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IMarker[] findMarkers(String type, boolean includeSubtypes, int depth) throws CoreException;
 
 	/**
+	 * Returns the maximum value of the {@link IMarker#SEVERITY} attribute across markers 
+	 * of the specified type on this resource, and, optionally, on its children. 
+	 * If <code>includeSubtypes</code>is <code>false</code>, only markers whose type 
+	 * exactly matches the given type are considered.  
+	 * Returns <code>-1</code> if there are no matching markers.  
+	 * Returns {@link IMarker#SEVERITY_ERROR} if any of the markers has a severity 
+	 * greater than or equal to {@link IMarker#SEVERITY_ERROR}.
+	 *
+	 * @param type the type of marker to consider (normally {@link IMarker#PROBLEM} 
+	 *   or one of its subtypes), or <code>null</code> to indicate all types 
+	 *   
+	 * @param includeSubtypes whether or not to consider sub-types of the given type
+	 * @param depth how far to recurse (see <code>IResource.DEPTH_* </code>)
+	 * @return {@link IMarker#SEVERITY_INFO}, {@link IMarker#SEVERITY_WARNING}, {@link IMarker#SEVERITY_ERROR}, or -1
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is a project that is not open.</li>
+	 * </ul>
+	 * @see IResource#DEPTH_ZERO
+	 * @see IResource#DEPTH_ONE
+	 * @see IResource#DEPTH_INFINITE
+	 * @since 3.3
+	 */
+	public int findMaxProblemSeverity(String type, boolean includeSubtypes, int depth) throws CoreException;
+
+	/**
 	 * Returns the file extension portion of this resource's name,
 	 * or <code>null</code> if it does not have one.
 	 * <p>

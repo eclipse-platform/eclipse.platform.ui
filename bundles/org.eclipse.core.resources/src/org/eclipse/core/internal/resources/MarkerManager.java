@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,6 +116,42 @@ public class MarkerManager implements IManager {
 		if (size <= 0)
 			return NO_MARKER_INFO;
 		return (MarkerInfo[]) result.toArray(new MarkerInfo[size]);
+	}
+
+	protected int basicFindMaxSeverity(MarkerSet markers, String type, boolean includeSubtypes) {
+		int max = -1;
+		int size = markers.size();
+		if (size <= 0)
+			return max;
+		IMarkerSetElement[] elements = markers.elements();
+		for (int i = 0; i < elements.length; i++) {
+			MarkerInfo marker = (MarkerInfo) elements[i];
+			// if the type is null then we are looking for all types of markers
+			if (type == null)
+				max = Math.max(max, getSeverity(marker));
+			else {
+				if (includeSubtypes) {
+					if (cache.isSubtype(marker.getType(), type))
+						max = Math.max(max, getSeverity(marker));
+				} else {
+					if (marker.getType().equals(type))
+						max = Math.max(max, getSeverity(marker));
+				}
+			}
+			if (max >= IMarker.SEVERITY_ERROR) {
+				break;
+			}
+		}
+		return max;
+	}
+
+	private int getSeverity(MarkerInfo marker) {
+		Object o = marker.getAttribute(IMarker.SEVERITY);
+		if (o instanceof Integer) {
+			Integer i = (Integer) o;
+			return i.intValue();
+		}
+		return -1;
 	}
 
 	/**
@@ -243,6 +279,17 @@ public class MarkerManager implements IManager {
 			recursiveFindMarkers(target.getFullPath(), result, type, includeSubtypes, depth);
 	}
 
+	/**
+	 * Finds the max severity across all problem markers on the given target, 
+	 * with option to search the target's children.
+	 */
+	public int findMaxProblemSeverity(IResource target, String type, boolean includeSubtypes, int depth) {
+		//optimize the deep searches with an element tree visitor
+		if (depth == IResource.DEPTH_INFINITE && target.getType() != IResource.FILE)
+			return visitorFindMaxSeverity(target.getFullPath(), type, includeSubtypes);
+		return recursiveFindMaxSeverity(target.getFullPath(), type, includeSubtypes, depth);
+	}
+
 	public long getChangeId() {
 		return changeId;
 	}
@@ -351,6 +398,39 @@ public class MarkerManager implements IManager {
 	}
 
 	/**
+	 * Finds the max severity across problem markers for a subtree of resources.
+	 */
+	private int recursiveFindMaxSeverity(IPath path, String type, boolean includeSubtypes, int depth) {
+		ResourceInfo info = workspace.getResourceInfo(path, false, false);
+		if (info == null)
+			return -1;
+		MarkerSet markers = info.getMarkers(false);
+
+		//add the matching markers for this resource
+		int max = -1;
+		if (markers != null) {
+			max = basicFindMaxSeverity(markers, type, includeSubtypes);
+			if (max >= IMarker.SEVERITY_ERROR) {
+				return max;
+			}
+		}
+
+		//recurse
+		if (depth == IResource.DEPTH_ZERO || info.getType() == IResource.FILE)
+			return max;
+		if (depth == IResource.DEPTH_ONE)
+			depth = IResource.DEPTH_ZERO;
+		IPath[] children = workspace.getElementTree().getChildren(path);
+		for (int i = 0; i < children.length; i++) {
+			max = Math.max(max, recursiveFindMaxSeverity(children[i], type, includeSubtypes, depth));
+			if (max >= IMarker.SEVERITY_ERROR) {
+				break;
+			}
+		}
+		return max;
+	}
+
+	/**
 	 * Adds the markers for a subtree of resources to the list.
 	 */
 	private void recursiveRemoveMarkers(final IPath path, String type, boolean includeSubtypes, int depth) {
@@ -404,7 +484,7 @@ public class MarkerManager implements IManager {
 	/**
 	 * Remove all markers for the given resource to the specified depth.
 	 */
-	public void removeMarkers(IResource resource, int depth)  {
+	public void removeMarkers(IResource resource, int depth) {
 		removeMarkers(resource, null, false, depth);
 	}
 
@@ -524,6 +604,35 @@ public class MarkerManager implements IManager {
 			}
 		};
 		new ElementTreeIterator(workspace.getElementTree(), path).iterate(visitor);
+	}
+
+	/**
+	 * Finds the max severity across problem markers for a subtree of resources.
+	 */
+	private int visitorFindMaxSeverity(IPath path, final String type, final boolean includeSubtypes) {
+		class MaxSeverityVisitor implements IElementContentVisitor {
+			int max = -1;
+
+			public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+				// bail if an earlier sibling already hit the max
+				if (max >= IMarker.SEVERITY_ERROR) {
+					return false;
+				}
+				ResourceInfo info = (ResourceInfo) elementContents;
+				if (info == null)
+					return false;
+				MarkerSet markers = info.getMarkers(false);
+
+				//add the matching markers for this resource
+				if (markers != null) {
+					max = Math.max(max, basicFindMaxSeverity(markers, type, includeSubtypes));
+				}
+				return max < IMarker.SEVERITY_ERROR;
+			}
+		}
+		MaxSeverityVisitor visitor = new MaxSeverityVisitor();
+		new ElementTreeIterator(workspace.getElementTree(), path).iterate(visitor);
+		return visitor.max;
 	}
 
 	/**

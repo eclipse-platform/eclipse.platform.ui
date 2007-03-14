@@ -862,6 +862,18 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		return workspace.getMarkerManager().findMarkers(this, type, includeSubtypes, depth);
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#findMaxProblemSeverity(String, boolean, int)
+	 */
+	public int findMaxProblemSeverity(String type, boolean includeSubtypes, int depth) throws CoreException {
+		ResourceInfo info = getResourceInfo(false, false);
+		checkAccessible(getFlags(info));
+		// It might happen that from this point the resource is not accessible anymore.
+		// But markers have the #exists method that callers can use to check if it is
+		// still valid.
+		return workspace.getMarkerManager().findMaxProblemSeverity(this, type, includeSubtypes, depth);
+	}
+
 	/**
 	 * Searches for a variant of the given target in the list,
 	 * that differs only in case. Returns the variant from
