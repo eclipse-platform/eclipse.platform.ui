@@ -1329,7 +1329,7 @@ public class TextViewer extends Viewer implements
 		public void keyReleased(KeyEvent e) {
 			if (fTextWidget.getSelectionCount() == 0) {
 				fLastSentSelectionChange= null;
-				queuePostSelectionChanged(false);
+				queuePostSelectionChanged(e.character == SWT.DEL);
 			}
 		}
 
