@@ -11,21 +11,23 @@
 package org.eclipse.jsch.internal.core;
 
 import java.io.*;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.lang.reflect.*;
+import java.net.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
 import com.jcraft.jsch.SocketFactory;
 
 public class ResponsiveSocketFactory implements SocketFactory {
+  private static final String JAVA_NET_PROXY="java.net.Proxy"; //$NON-NLS-1$
   private static final int DEFAULT_TIMEOUT=60; // Seconds
   InputStream in = null;
   OutputStream out = null;
   private IProgressMonitor monitor;
   private final int timeout;
+  private static Class proxyClass;
+  private static boolean hasProxyClass = true;
   public ResponsiveSocketFactory(IProgressMonitor monitor, int timeout) {
     if (monitor == null)
       monitor = new NullProgressMonitor();
@@ -67,7 +69,7 @@ public class ResponsiveSocketFactory implements SocketFactory {
     final Thread thread = new Thread(new Runnable() {
       public void run() {
         try {
-          Socket newSocket = new Socket(host, port);
+          Socket newSocket = internalCreateSocket(host, port);
           synchronized (socket) {
             if (Thread.interrupted()) {
               // we we're either canceled or timed out so just close the socket
@@ -125,6 +127,63 @@ public class ResponsiveSocketFactory implements SocketFactory {
       throw new InterruptedIOException(NLS.bind(Messages.Util_timeout, new String[] { host })); 
     }
     return socket[0];
+  }
+  
+  /* private */  Socket internalCreateSocket(final String host, final int port)
+      throws UnknownHostException, IOException{
+    Class proxyClass = getProxyClass();
+    if (proxyClass != null) {
+      // We need to disable proxy support for the socket
+      try{
+        
+        // Obtain the value of the NO_PROXY static field of the proxy class
+        Field field = proxyClass.getField("NO_PROXY"); //$NON-NLS-1$
+        Object noProxyObject = field.get(null);
+        Constructor constructor = Socket.class.getConstructor(new Class[] { proxyClass });
+        Object o = constructor.newInstance(new Object[] { noProxyObject });
+        if(o instanceof Socket){
+          Socket socket=(Socket)o;
+          socket.connect(new InetSocketAddress(host, port), timeout * 1000);
+          return socket;
+        }
+      }
+      catch(SecurityException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      catch(NoSuchFieldException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      catch(IllegalArgumentException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      catch(IllegalAccessException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      catch(NoSuchMethodException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      catch(InstantiationException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      catch(InvocationTargetException e){
+        JSchCorePlugin.log(IStatus.ERROR, NLS.bind("An internal error occurred while connecting to {0}", host), e); //$NON-NLS-1$
+      }
+      
+    }
+    return new Socket(host, port);
+  }
+  
+  private synchronized Class getProxyClass() {
+    if (hasProxyClass && proxyClass == null) {
+      try{
+        proxyClass = Class.forName(JAVA_NET_PROXY);
+      }
+      catch(ClassNotFoundException e){
+        // We couldn't find the class so we'll assume we are using pre-1.5 JRE
+        hasProxyClass = false;
+      }
+    }
+    return proxyClass;
   }
 
 }
