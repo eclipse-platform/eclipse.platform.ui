@@ -63,12 +63,6 @@ public final class SourcePriorityNameMapping implements ISources {
 	 */
 	private static final Map sourcePrioritiesByName = new HashMap();
 
-	/**
-	 * The map of source names indexed by priority. This value is never
-	 * <code>null</code>.
-	 */
-	private static final Map sourceNamesByPriority = new HashMap();
-
 	static {
 		addMapping(ACTIVE_ACTION_SETS_NAME, ACTIVE_ACTION_SETS);
 		addMapping(ACTIVE_CONTEXT_NAME, ACTIVE_CONTEXT);
@@ -76,6 +70,8 @@ public final class SourcePriorityNameMapping implements ISources {
 		addMapping(ACTIVE_EDITOR_NAME, ACTIVE_EDITOR);
 		addMapping(ACTIVE_EDITOR_ID_NAME, ACTIVE_EDITOR_ID);
 		addMapping(ACTIVE_MENU_NAME, ACTIVE_MENU);
+		addMapping(ACTIVE_MENU_SELECTION_NAME, ACTIVE_MENU);
+		addMapping(ACTIVE_MENU_EDITOR_INPUT_NAME, ACTIVE_MENU);
 		addMapping(ACTIVE_PART_NAME, ACTIVE_PART);
 		addMapping(ACTIVE_PART_ID_NAME, ACTIVE_PART_ID);
 		addMapping(ACTIVE_SHELL_NAME, ACTIVE_SHELL);
@@ -113,17 +109,7 @@ public final class SourcePriorityNameMapping implements ISources {
 
 		final Integer priority = new Integer(sourcePriority);
 
-		final Object existingPriority = sourcePrioritiesByName.get(sourceName);
-		if (existingPriority instanceof Integer) {
-			sourceNamesByPriority.remove(existingPriority);
-		}
 		sourcePrioritiesByName.put(sourceName, priority);
-
-		final Object existingName = sourceNamesByPriority.get(priority);
-		if (existingName instanceof String) {
-			sourcePrioritiesByName.remove(existingName);
-		}
-		sourceNamesByPriority.put(priority, sourceName);
 	}
 
 	/**
@@ -180,24 +166,6 @@ public final class SourcePriorityNameMapping implements ISources {
 		}
 
 		return NO_SOURCE_PRIORITY;
-	}
-
-	/**
-	 * Gets the name of the source with the given priority.
-	 * 
-	 * @param sourcePriority
-	 *            The priority of the variable.
-	 * @return The name of the source that matches, if any; <code>null</code>
-	 *         if nothing matches.
-	 */
-	public static final String getMapping(final int sourcePriority) {
-		final Integer priority = new Integer(sourcePriority);
-		final Object object = sourcePrioritiesByName.get(priority);
-		if (object instanceof String) {
-			return (String) object;
-		}
-
-		return null;
 	}
 
 	/**

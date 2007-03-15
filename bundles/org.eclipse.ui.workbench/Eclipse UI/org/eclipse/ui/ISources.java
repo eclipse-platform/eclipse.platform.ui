@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,11 +43,13 @@ import org.eclipse.core.expressions.IEvaluationContext;
  * Eclipse 3.0.
  * </p>
  * <p>
- * There are unused bits. This is intentional, and is intended to allow clients
- * space to define their own priorities. The workbench will not add further
- * priorities in the future without declaring it as a breaking change. If you
- * want to define your own sources, then you must create a
- * <code>ISourceProvider</code> and register it with a workbench service.
+ * <b>Note in 3.3:</b>
+ * </p>
+ * <p>
+ * Currently, source variables are not extensible by user plugins, and
+ * the number of bits available for resolving conflicts is limited.  When
+ * the variable sources become user extensible a new conflict resolution
+ * mechanism will be implemented.
  * </p>
  * <p>
  * This interface is not intended to be implemented or extended by clients.
@@ -263,4 +265,20 @@ public interface ISources {
 	 * @since 3.2
 	 */
 	public static final String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$
+	
+	/**
+	 * The variable name for the <b>local</b> selection, available while a
+	 * context menu is visible.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ACTIVE_MENU_SELECTION_NAME = "activeMenuSelection";  //$NON-NLS-1$
+	
+	/**
+	 * The variable name for the <b>local</b> editor input which is sometimes
+	 * available while a context menu is visible.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ACTIVE_MENU_EDITOR_INPUT_NAME = "activeMenuEditorInput";  //$NON-NLS-1$
 }

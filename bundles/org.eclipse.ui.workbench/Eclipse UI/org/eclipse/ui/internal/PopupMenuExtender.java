@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuListener2;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -126,45 +126,8 @@ public class PopupMenuExtender implements IMenuListener2,
 			menuWrapper.setVisible(true);
 		}
 		readStaticActionsFor(id);
-		
-		final IMenuService menuService = (IMenuService) part.getSite()
-				.getService(IMenuService.class);
-		addMenuContributions(menuService, menu, MenuUtil.ANY_POPUP);
-		addMenuContributions(id);
-		
+				
 		Platform.getExtensionRegistry().addRegistryChangeListener(this);
-	}
-
-	/**
-	 * @param menuService
-	 * @param menuManager
-	 * @param loc
-	 */
-	private static void addMenuContributions(final IMenuService menuService,
-			final MenuManager menuManager, final String loc) {
-		if (menuManager.getRemoveAllWhenShown()) {
-			menuManager.addMenuListener(new IMenuListener() {
-				public void menuAboutToShow(IMenuManager manager) {
-					menuService.populateContributionManager(menuManager, loc);
-				}
-			});
-		} else {
-			menuService.populateContributionManager(menuManager, loc);
-		}
-	}
-
-    /**
-	 * @param id
-	 */
-	private void addMenuContributions(String id) {
-		if (id == null || id.length() == 0) {
-			return;
-		}
-
-		final IMenuService menuService = (IMenuService) part.getSite()
-				.getService(IMenuService.class);
-		String loc = "popup:" + id; //$NON-NLS-1$
-		addMenuContributions(menuService, menu, loc);
 	}
 
 	// getMenuId() added by Dan Rubel (dan_rubel@instantiations.com)
@@ -203,11 +166,7 @@ public class PopupMenuExtender implements IMenuListener2,
      */
     public final void addMenuId(final String menuId) {
 		bitSet &= ~STATIC_ACTION_READ;
-		boolean contribute = !getMenuIds().contains(menuId);
 		readStaticActionsFor(menuId);
-		if (contribute) {
-			addMenuContributions(menuId);
-		}
 	}
 
     /**
@@ -341,12 +300,22 @@ public class PopupMenuExtender implements IMenuListener2,
     	// Add this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
-    		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
-    		if (workbench instanceof Workbench) {
-    			final Workbench realWorkbench = (Workbench) workbench;
-    			realWorkbench.addShowingMenus(getMenuIds());
-    		}
-    	}
+			final IWorkbench workbench = site.getWorkbenchWindow()
+					.getWorkbench();
+			if (workbench instanceof Workbench) {
+				final Workbench realWorkbench = (Workbench) workbench;
+				ISelection input = null;
+				if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
+					if (part instanceof IEditorPart) {
+						final IEditorPart editorPart = (IEditorPart) part;
+						input = new StructuredSelection(
+								new Object[] { editorPart.getEditorInput() });
+					}
+				}
+				realWorkbench.addShowingMenus(getMenuIds(), selProvider
+						.getSelection(), input);
+			}
+		}
     	
     	readStaticActions();
         testForAdditions();
@@ -359,20 +328,51 @@ public class PopupMenuExtender implements IMenuListener2,
         }
         addObjectActions(mgr);
         addStaticActions(mgr);
+        addMenuContributions(mgr);
     }
+    
+    private boolean contributionsPopulated = false;
+    
+    private void addMenuContributions(IMenuManager mgr) {
+		final IMenuService menuService = (IMenuService) part.getSite()
+				.getService(IMenuService.class);
+		if (menuService == null) {
+			return;
+		}
+		if ((mgr.getRemoveAllWhenShown() || !contributionsPopulated)
+				&& mgr instanceof ContributionManager) {
+			ContributionManager manager = (ContributionManager) mgr;
+			contributionsPopulated = true;
+			menuService
+					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
+			Iterator i = getMenuIds().iterator();
+			while (i.hasNext()) {
+				String id = "popup:" + i.next(); //$NON-NLS-1$
+				menuService.populateContributionManager(manager, id);
+			}
+		}
+	}
 
     /**
-     * Notifies the listener that the menu is about to be hidden.
-     */
+	 * Notifies the listener that the menu is about to be hidden.
+	 */
     public final void menuAboutToHide(final IMenuManager mgr) {
     	// Remove this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
     		final IWorkbench workbench = site.getWorkbenchWindow().getWorkbench();
     		if (workbench instanceof Workbench) {
-    			final Workbench realWorkbench = (Workbench) workbench;
-    			realWorkbench.removeShowingMenus(getMenuIds());
-    		}
+    			// try delaying this until after the selection event
+    			// has been fired.
+    			// This is less threatening if the popup: menu
+    			// contributions aren't tied to the evaluation service
+				workbench.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						final Workbench realWorkbench = (Workbench) workbench;
+						realWorkbench.removeShowingMenus(getMenuIds(), null, null);
+					}
+				});
+			}
     	}
     }
 

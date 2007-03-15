@@ -74,6 +74,7 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
@@ -1636,7 +1637,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				contextService.addSourceProvider(menuSourceProvider);
 				menuService.addSourceProvider(menuSourceProvider);
 				sourceProviderService.registerProvider(menuSourceProvider);
-
 			}});
 		
 		/*
@@ -3365,8 +3365,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            The identifiers of the menu that is now showing; must not be
 	 *            <code>null</code>.
 	 */
-	public final void addShowingMenus(final Set menuIds) {
-		menuSourceProvider.addShowingMenus(menuIds);
+	public final void addShowingMenus(final Set menuIds,
+			final ISelection localSelection, final ISelection localEditorInput) {
+		menuSourceProvider.addShowingMenus(menuIds, localSelection, 
+				localEditorInput);
 	}
 
 	/**
@@ -3378,8 +3380,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            The identifiers of the menu that is now hidden; must not be
 	 *            <code>null</code>.
 	 */
-	public final void removeShowingMenus(final Set menuIds) {
-		menuSourceProvider.removeShowingMenus(menuIds);
+	public final void removeShowingMenus(final Set menuIds,
+			final ISelection localSelection, final ISelection localEditorInput) {
+		menuSourceProvider.removeShowingMenus(menuIds, localSelection, 
+				localEditorInput);
 	}
 
 	/* (non-Javadoc)

@@ -405,4 +405,115 @@ public class HandlerUtil {
 		}
 		return (ISelection) o;
 	}
+
+	/**
+	 * Return the menu IDs that were applied to the registered context
+	 * menu.  For example, #CompilationUnitEditorContext.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the menu IDs, or <code>null</code>.
+	 */
+	public static Collection getActiveMenus(ExecutionEvent event) {
+		Object o = getVariable(event, ISources.ACTIVE_MENU_NAME);
+		if (o instanceof Collection) {
+			return (Collection) o;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the menu IDs that were applied to the registered context
+	 * menu.  For example, #CompilationUnitEditorContext.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the menu IDs. Will not return <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the active menus variable is not found.
+	 */
+	public static Collection getActiveMenusChecked(ExecutionEvent event)
+			throws ExecutionException {
+		Object o = getVariableChecked(event, ISources.ACTIVE_MENU_NAME);
+		if (!(o instanceof Collection)) {
+			incorrectTypeFound(event, ISources.ACTIVE_MENU_NAME,
+					Collection.class, o.getClass());
+		}
+		return (Collection) o;
+	}
+
+	/**
+	 * Return the active menu selection. The active menu is a registered context
+	 * menu.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the active menu selection, or <code>null</code>.
+	 */
+	public static ISelection getActiveMenuSelection(ExecutionEvent event) {
+		Object o = getVariable(event, ISources.ACTIVE_MENU_SELECTION_NAME);
+		if (o instanceof ISelection) {
+			return (ISelection) o;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the active menu selection. The active menu is a registered context
+	 * menu.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the active menu selection. Will not return <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the active menu selection variable is not found.
+	 */
+	public static ISelection getActiveMenuSelectionChecked(ExecutionEvent event)
+			throws ExecutionException {
+		Object o = getVariableChecked(event,
+				ISources.ACTIVE_MENU_SELECTION_NAME);
+		if (!(o instanceof ISelection)) {
+			incorrectTypeFound(event, ISources.ACTIVE_MENU_SELECTION_NAME,
+					ISelection.class, o.getClass());
+		}
+		return (ISelection) o;
+	}
+
+	/**
+	 * Return the active menu editor input, if available. The active menu is a
+	 * registered context menu.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the active menu editor, or <code>null</code>.
+	 */
+	public static ISelection getActiveMenuEditorInput(ExecutionEvent event) {
+		Object o = getVariable(event, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
+		if (o instanceof ISelection) {
+			return (ISelection) o;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the active menu editor input. The active menu is a
+	 * registered context menu.  Some context menus do not include the
+	 * editor input which will throw an exception.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the active menu editor input. Will not return <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the active menu editor input variable is not found.
+	 */
+	public static ISelection getActiveMenuEditorInputChecked(
+			ExecutionEvent event) throws ExecutionException {
+		Object o = getVariableChecked(event,
+				ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
+		if (!(o instanceof ISelection)) {
+			incorrectTypeFound(event, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME,
+					ISelection.class, o.getClass());
+		}
+		return (ISelection) o;
+	}
 }
