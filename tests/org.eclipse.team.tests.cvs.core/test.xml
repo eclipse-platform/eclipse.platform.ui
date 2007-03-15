@@ -7,6 +7,7 @@
   <!-- sets the properties eclipse-home, and library-file -->
   <property name="eclipse-home" value="${basedir}/../../"/>
   <property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
+  <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
 
   <!-- get the repository.properties which identify the cvs test repository -->
   <property name="org.eclipse.team.tests.cvs.core" value="org.eclipse.team.tests.cvs.core"/>
@@ -21,6 +22,9 @@
   <!-- should be done within the body of the suite target. -->
   <target name="init">
     <tstamp/>
+   <delete>
+      <fileset dir="${eclipse-home}" includes="org*.xml"/>
+  </delete>
   </target>
 
   <!-- This target defines the tests that need to be run for regression testing. -->
@@ -32,7 +36,7 @@
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.recordProtocolTraffic=true"/>
       <property name="data-dir" value="${location}"/>
-      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
+      <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.team.tests.ccvs.core.AllCoreTests"/>
     </ant>
     
@@ -40,7 +44,7 @@
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.recordProtocolTraffic=true"/>
       <property name="data-dir" value="${location}"/>
-      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
+      <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" value="org.eclipse.team.tests.ccvs.core.AllTests"/>
     </ant>
 
@@ -54,14 +58,14 @@
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=20  -Declipse.cvs.recordProtocolTraffic=false"/>
       <property name="data-dir" value="${cvs-performance-folder}"/>
-      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
+      <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
                 value="org.eclipse.team.tests.ccvs.ui.benchmark.SyncTests"/>
     </ant>
     <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="vmargs" value="-Declipse.cvs.properties=${team-home}/repository.properties -Declipse.cvs.loopCount=20  -Declipse.cvs.recordProtocolTraffic=false"/>
       <property name="data-dir" value="${cvs-performance-folder}"/>
-      <property name="plugin-name" value="org.eclipse.team.tests.cvs.core"/>
+      <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
                 value="org.eclipse.team.tests.ccvs.ui.benchmark.WorkflowTests"/>
     </ant>
@@ -77,7 +81,7 @@
   <target name="run" depends="init,suite,cleanup">
     <ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
       <property name="includes" value="org*.xml"/>
-      <property name="output-file" value="org.eclipse.team.tests.cvs.xml"/>
+      <property name="output-file" value="${plugin-name}.xml"/>
     </ant>
   </target>
 
