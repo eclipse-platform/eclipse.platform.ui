@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -24,16 +25,14 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.IPageTransitionListener;
-import org.eclipse.jface.dialogs.IPageTransitionProvider;
+import org.eclipse.jface.dialogs.IPageChangingListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.dialogs.PageTransitionEvent;
+import org.eclipse.jface.dialogs.PageChangingEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -75,7 +74,7 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  */
 public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
-		IPageChangeProvider, IPageTransitionProvider {
+		IPageChangeProvider {
     /**
      * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
      */
@@ -142,7 +141,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	
     private ListenerList pageChangedListeners = new ListenerList();
     
-    private ListenerList pageTransitionListeners = new ListenerList();
+    private ListenerList pageChangingListeners = new ListenerList();
 
     /**
      * A layout for a container which includes several pages, like
@@ -336,10 +335,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
             return;
 		}
 
-        // If page transition unsuccessful, do not change the page
-        if (!doPageTransition(PageTransitionEvent.EVENT_BACK))
-        	return;
-        
         // set flag to indicate that we are moving back
         isMovingToPreviousPage = true;
         // show the page
@@ -769,31 +764,23 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
             return;
         }
 
-        // If page transition unsuccessful, do not advance the page
-        if (!doPageTransition(PageTransitionEvent.EVENT_NEXT))
-        	return;
-        
         // show the next page
         showPage(page);
     }
     
     /**
-	 * Notifies page transition listeners and returns result of page transition
+	 * Notifies page changing listeners and returns result of page changing
 	 * processing to the sender.
 	 * 
 	 * @param eventType
-	 * @return <code>true</code> if page transition listener completes
+	 * @return <code>true</code> if page changing listener completes
 	 *         successfully, <code>false</code> otherwise
 	 */
-    private boolean doPageTransition(int eventType){
-    	PageTransitionEvent e = new PageTransitionEvent(this, getCurrentPage(),
-				eventType);
-		firePageTransitioning(e);
+    private boolean doPageChanging(IWizardPage targetPage){
+    	PageChangingEvent e = new PageChangingEvent(this, getCurrentPage(), targetPage);
+		firePageChanging(e);
 		// Prevent navigation if necessary
-		if (e.doit == false){
-			return false;
-		}
-		return true;
+		return e.doit;
     }
 
     /**
@@ -1051,13 +1038,19 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
         if (page == null || page == currentPage) {
             return;
         }
+       
         if (!isMovingToPreviousPage) {
 			// remember my previous page.
             page.setPreviousPage(currentPage);
 		} else {
 			isMovingToPreviousPage = false;
 		}
-        //Update for the new page ina busy cursor if possible
+
+        // If page changing evaluation unsuccessful, do not change the page
+        if (!doPageChanging(page))
+        	return;
+         
+        //Update for the new page in a busy cursor if possible
         if (getContents() == null) {
 			updateForPage(page);
 		} else {
@@ -1400,59 +1393,46 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
         }
     }
 
-	/* 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
+	/**
+	 * Adds a listener for page changes to the list of page changing listeners
+	 * registered for this dialog. Has no effect if an identical listener is
+	 * already registered.
 	 * 
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IPageChangingProvider#addPageChangingListener(org.eclipse.jface.dialogs.IPageTransitionListener)
+	 * @param listener
+	 *            a page changing listener
 	 */
-	public void addPageTransitionListener(IPageTransitionListener listener) {
-		pageTransitionListeners.add(listener);		
+	public void addPageChangingListener(IPageChangingListener listener) {
+		pageChangingListeners.add(listener);		
 	}
 
-	/* 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
+	/**
+	 * Removes the provided page changing listener from the list of page
+	 * changing listeners registered for the dialog.
 	 * 
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IPageChangingProvider#removePageChangingdListener(org.eclipse.jface.dialogs.IPageTransitionListener)
+	 * @param listener
+	 *            a page changing listener
 	 */
-	public void removePageTransitionListener(IPageTransitionListener listener) {
-		pageTransitionListeners.remove(listener);		
+	public void removePageChangingListener(IPageChangingListener listener) {
+		pageChangingListeners.remove(listener);		
 	}
 	
 	/**
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
-     * 
-     * Notifies any selection changing listeners that the selected page
-     * is changing.
-     * Only listeners registered at the time this method is called are notified.
-     *
-     * @param event a selection changing event
-     *
-     * @see IPageTransitionListener#pageTransition(PageTransitionEvent)
-     */
-    protected void firePageTransitioning(final PageTransitionEvent event) {
-        Object[] listeners = pageTransitionListeners.getListeners();
+	 * Notifies any page changing listeners that the currently selected dialog
+	 * page is changing. Only listeners registered at the time this method is
+	 * called are notified.
+	 * 
+	 * @param event
+	 *            a selection changing event
+	 * 
+	 * @see IPageChangingListener#handlePageChanging(PageChangingEvent)
+	 */
+    protected void firePageChanging(final PageChangingEvent event) {
+        Object[] listeners = pageChangingListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
-            final IPageTransitionListener l = (IPageTransitionListener) listeners[i];
+            final IPageChangingListener l = (IPageChangingListener) listeners[i];
             SafeRunnable.run(new SafeRunnable() {
                 public void run() {
-                    l.pageTransition(event);
+               		l.handlePageChanging(event);
                 }
             });
         }
