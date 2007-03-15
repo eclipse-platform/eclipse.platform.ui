@@ -28,11 +28,13 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.services.IEvaluationReference;
 import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.Util;
@@ -112,7 +114,13 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		Object[] managers = managersAwaitingUpdates.toArray();
 		managersAwaitingUpdates.clear();
 		for (int i = 0; i < managers.length; i++) {
-			((IContributionManager) managers[i]).update(false);
+			IContributionManager mgr = (IContributionManager) managers[i];
+			mgr.update(true);
+			if (mgr instanceof ToolBarManager) {
+				((ToolBarManager)mgr).getControl().pack(true);
+				LayoutUtil.resize(((ToolBarManager)mgr).getControl());
+			}
+			
 		}
 	}
 
