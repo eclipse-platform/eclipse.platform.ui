@@ -95,9 +95,13 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 						RepositoryProvider provider = RepositoryProvider.getProvider(project);
 						if (provider != null) {
 							String id = provider.getID();
-							List list = (List)map.get(id);
+							Set list = (Set)map.get(id);
 							if (list == null) {
-								list = new ArrayList();
+								list = new TreeSet(new Comparator() {
+									public int compare(Object o1, Object o2) {
+										return ((IProject) o1).getName().toLowerCase().compareTo(((IProject) o2).getName().toLowerCase());
+									}
+								});
 								map.put(id, list);
 							}
 							list.add(project);
@@ -122,7 +126,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							String id = (String)it.next();
 							IMemento memento = xmlMemento.createChild("provider"); //$NON-NLS-1$
 							memento.putString("id", id); //$NON-NLS-1$
-							List list = (List)map.get(id);
+							Set list = (Set)map.get(id);
 							IProject[] projectArray = (IProject[])list.toArray(new IProject[list.size()]);
 							RepositoryProviderType providerType = RepositoryProviderType.getProviderType(id);
 							ProjectSetCapability serializer = providerType.getProjectSetCapability();
