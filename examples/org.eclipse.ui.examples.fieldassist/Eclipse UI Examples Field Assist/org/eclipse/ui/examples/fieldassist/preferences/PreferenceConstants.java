@@ -14,11 +14,7 @@ package org.eclipse.ui.examples.fieldassist.preferences;
 /**
  * Constant definitions for plug-in preferences
  */
-public class PreferenceConstants {
-	public static final String PREF_DECORATORIMPL = "prefDecoratorImplementation";
-	public static final String PREF_DECORATORIMPL_DECORATEDFIELD = "DecoratedField";
-	public static final String PREF_DECORATORIMPL_CONTROLDECORATION = "ControlDecoration";
-	
+public class PreferenceConstants {	
 	public static final String PREF_DECORATOR_VERTICALLOCATION = "prefDecoratorVerticalLocation";
 	public static final String PREF_DECORATOR_VERTICALLOCATION_TOP = "prefDecoratorVerticalTop";
 	public static final String PREF_DECORATOR_VERTICALLOCATION_CENTER = "prefDecoratorVerticalCenter";
@@ -31,12 +27,10 @@ public class PreferenceConstants {
 
 	public static final String PREF_SHOWERRORDECORATION = "prefShowErrorDecoration";
 	public static final String PREF_SHOWERRORMESSAGE = "prefShowErrorMessage";
-	public static final String PREF_SHOWERRORCOLOR = "prefShowErrorColor";
 	
 	public static final String PREF_SHOWWARNINGDECORATION = "prefShowWarningDecoration";
 	
 	public static final String PREF_SHOWREQUIREDFIELDDECORATION = "prefShowRequiredFieldDecoration";
-	public static final String PREF_SHOWREQUIREDFIELDCOLOR = "prefShowRequiredFieldColor";	
 	public static final String PREF_SHOWREQUIREDFIELDLABELINDICATOR = "prefShowRequiredFieldLabelIndicator";	
 	
 	public static final String PREF_SHOWCONTENTPROPOSALCUE = "prefShowContentProposalCue";	

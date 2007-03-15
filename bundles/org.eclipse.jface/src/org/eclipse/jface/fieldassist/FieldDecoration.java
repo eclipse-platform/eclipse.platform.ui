@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Image;
  * type of field it is used with.
  * 
  * @see FieldDecorationRegistry
- * @see DecoratedField
  * 
  * @since 3.2
  */
@@ -71,8 +70,6 @@ public class FieldDecoration {
 	 * @param image
 	 *            the image shown in the decoration. A value of
 	 *            <code>null</code> signifies a blank decoration.
-	 * 
-	 * @see DecoratedField#updateDecoration(FieldDecoration)
 	 */
 	public void setImage(Image image) {
 		this.image = image;
@@ -84,8 +81,6 @@ public class FieldDecoration {
 	 * 
 	 * @return the String description of the decoration. A return value of
 	 *         <code>null</code> indicates that no description will be shown.
-	 * 
-	 * @see DecoratedField#updateDecoration(FieldDecoration)
 	 */
 	public String getDescription() {
 		return description;

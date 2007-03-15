@@ -34,13 +34,11 @@ public class TaskAssistExampleMessages extends NLS {
 	public static String Preferences_ErrorIndicator;
 	public static String Preferences_ShowErrorMessage;
 	public static String Preferences_ShowErrorDecorator;
-	public static String Preferences_ShowErrorColor;
 	public static String Preferences_ShowWarningDecorator;
 	public static String Preferences_ShowProposalCue;
 	public static String Preferences_RequiredFieldIndicator;
 	public static String Preferences_ShowRequiredFieldDecorator;
 	public static String Preferences_ShowRequiredFieldLabelIndicator;
-	public static String Preferences_ShowRequiredFieldColor;
 	public static String Preferences_Description;
 	public static String Preferences_ContentAssistDescription;
 	public static String Preferences_DecoratorDetails;
@@ -74,8 +72,6 @@ public class TaskAssistExampleMessages extends NLS {
 	public static String ExampleDialog_SelectionTitle;
 	public static String ExampleDialog_SelectionMessage;
 	public static String ExampleDialog_DecorationMenuItem;
-	public static String ExampleDialog_DecorationMenuSelectedTitle;
-	public static String ExampleDialog_DecorationMenuSelectedMessage;
 
 	static {
 		// load message values from bundle file

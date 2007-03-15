@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Display;
  * the lifecycle of any created resource.
  * 
  * @since 3.2
+ * @deprecated As of 3.3, this class is no longer necessary.
  */
 public class FieldAssistColors {
 
@@ -159,7 +160,8 @@ public class FieldAssistColors {
 
 		if (DEBUG) {
 			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
-			System.out.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
+			System.out
+					.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
 		}
 
 		// Look for any stored colors that were created on this display
@@ -205,7 +207,8 @@ public class FieldAssistColors {
 		}
 		if (DEBUG) {
 			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
-			System.out.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
+			System.out
+					.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
 		}
 	}
 

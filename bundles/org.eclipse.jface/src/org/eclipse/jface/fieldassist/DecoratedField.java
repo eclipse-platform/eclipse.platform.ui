@@ -59,8 +59,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class is not intended to be subclassed.
  * 
  * @since 3.2
- * 
- * @see FieldDecorationRegistry
+ * @deprecated As of 3.3, clients should use {@link ControlDecoration} instead.
  */
 public class DecoratedField {
 
@@ -467,16 +466,17 @@ public class DecoratedField {
 				formData.left = new FormAttachment(decData.label);
 			} else if (decDatas[opposing].data.width < newWidth) {
 				// Decorator on opposing side is the smaller one. Attach
-				// control to the new one. 
+				// control to the new one.
 				formData.left = new FormAttachment(decData.label);
 				// Center align the smaller one relative to the larger one.
 				decDatas[opposing].data.left.alignment = SWT.CENTER;
 				decDatas[opposing].data.left.control = decData.label;
 			} else {
 				// The new decorator is the smaller one. Keep the
-				// control attached to the opposing one. 
+				// control attached to the opposing one.
 				formData = null;
-				// Horizontally center the smaller one relative to the larger one.
+				// Horizontally center the smaller one relative to the larger
+				// one.
 				decData.data.left.alignment = SWT.CENTER;
 				decData.data.left.control = decDatas[opposing].label;
 			}
@@ -484,7 +484,7 @@ public class DecoratedField {
 		/*
 		 * The only real difference in right side cases is that we are attaching
 		 * the right side of the control to the wider decoration rather than the
-		 * left side of the control.  Other concerns (horizontally aligning the 
+		 * left side of the control. Other concerns (horizontally aligning the
 		 * smaller decoration relative to the larger one) are the same.
 		 */
 		case RIGHT_TOP:
@@ -500,7 +500,7 @@ public class DecoratedField {
 				formData.right = new FormAttachment(decData.label);
 			} else if (decDatas[opposing].data.width < newWidth) {
 				// Decorator on opposing side is the smaller one. Attach
-				// control to the new one. 
+				// control to the new one.
 				formData.right = new FormAttachment(decData.label);
 				// Center align the smaller one to the larger one.
 				// Note that this could be done using the left or right
@@ -513,7 +513,7 @@ public class DecoratedField {
 				// control attached to the opposing one.
 				formData = null;
 				// Horizontally center align the smaller one to the
-				// larger one. 
+				// larger one.
 				decData.data.right.alignment = SWT.CENTER;
 				decData.data.right.control = decDatas[opposing].label;
 			}

@@ -15,10 +15,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * An {@link IControlCreator} for SWT Combo controls. This is a convenience class
- * for creating combo controls to be supplied to a decorated field.
+ * An {@link IControlCreator} for SWT Combo controls. This is a convenience
+ * class for creating combo controls to be supplied to a decorated field.
  * 
  * @since 3.3
+ * @deprecated As of 3.3, clients should use {@link ControlDecoration} instead
+ *             of {@link DecoratedField}. This class will be removed before 3.3
+ *             ships, and is deprecated temporarily to allow clients to
+ *             transition.
+ * 
  */
 public class ComboControlCreator implements IControlCreator {
 

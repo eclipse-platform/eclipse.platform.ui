@@ -11,14 +11,10 @@
 package org.eclipse.ui.examples.fieldassist.actions;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.examples.fieldassist.ControlDecorationTestDialog;
-import org.eclipse.ui.examples.fieldassist.DecoratedFieldTestDialog;
-import org.eclipse.ui.examples.fieldassist.FieldAssistPlugin;
-import org.eclipse.ui.examples.fieldassist.preferences.PreferenceConstants;
+import org.eclipse.ui.examples.fieldassist.FieldAssistTestDialog;
 
 /**
  * Our sample action implements workbench action delegate. The action proxy will
@@ -44,15 +40,7 @@ public class TestDialogAction implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-		IPreferenceStore store = FieldAssistPlugin.getDefault()
-				.getPreferenceStore();
-		if (store.getString(PreferenceConstants.PREF_DECORATORIMPL).equals(
-				PreferenceConstants.PREF_DECORATORIMPL_CONTROLDECORATION)) {
-			new ControlDecorationTestDialog(window.getShell(), "tom").open();
-		} else {
-			new DecoratedFieldTestDialog(window.getShell(), "tom").open();
-
-		}
+		new FieldAssistTestDialog(window.getShell(), "tom").open();
 	}
 
 	/**

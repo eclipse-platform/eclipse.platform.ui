@@ -50,19 +50,6 @@ public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 	 */
 	public void createFieldEditors() {
 		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.PREF_DECORATORIMPL,
-				TaskAssistExampleMessages.Preferences_DecoratorImpl,
-				1,
-				new String[][] {
-						{
-								PreferenceConstants.PREF_DECORATORIMPL_CONTROLDECORATION,
-								PreferenceConstants.PREF_DECORATORIMPL_CONTROLDECORATION },
-						{
-								PreferenceConstants.PREF_DECORATORIMPL_DECORATEDFIELD,
-								PreferenceConstants.PREF_DECORATORIMPL_DECORATEDFIELD } },
-				getFieldEditorParent()));
-
-		addField(new RadioGroupFieldEditor(
 				PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION,
 				TaskAssistExampleMessages.Preferences_DecoratorVert,
 				1,
@@ -110,11 +97,6 @@ public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 				TaskAssistExampleMessages.Preferences_ShowErrorDecorator,
 				getFieldEditorParent()));
 
-		addField(new BooleanFieldEditor(
-				PreferenceConstants.PREF_SHOWERRORCOLOR,
-				TaskAssistExampleMessages.Preferences_ShowErrorColor,
-				getFieldEditorParent()));
-
 		label = new Label(getFieldEditorParent(), SWT.WRAP);
 		label
 				.setText(TaskAssistExampleMessages.Preferences_RequiredFieldIndicator);
@@ -126,11 +108,6 @@ public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 		addField(new BooleanFieldEditor(
 				PreferenceConstants.PREF_SHOWREQUIREDFIELDDECORATION,
 				TaskAssistExampleMessages.Preferences_ShowRequiredFieldDecorator,
-				getFieldEditorParent()));
-
-		addField(new BooleanFieldEditor(
-				PreferenceConstants.PREF_SHOWREQUIREDFIELDCOLOR,
-				TaskAssistExampleMessages.Preferences_ShowRequiredFieldColor,
 				getFieldEditorParent()));
 
 		label = new Label(getFieldEditorParent(), SWT.WRAP);

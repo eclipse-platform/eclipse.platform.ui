@@ -20,6 +20,9 @@ import org.eclipse.swt.widgets.Control;
  * create a particular kind of control for decoration.
  * 
  * @since 3.2
+ * @deprecated As of 3.3, clients should use {@link ControlDecoration} instead
+ *             of {@link DecoratedField}.
+ * 
  */
 public interface IControlCreator {
 	/**
