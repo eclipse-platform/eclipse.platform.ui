@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class TargetTests extends AbstractAntTest {
 	 */
 	public void testDefaultTarget() throws CoreException {
 		TargetInfo[] targets= getTargets("TestForEcho.xml");
-		assertTrue("Should be two targets in TestForEcho.xml", targets.length == 2);
+		assertEquals("Should be two targets in TestForEcho.xml", 2, targets.length);
 		assertTrue("Test for Echo should be the default target", targets[1].isDefault());
 	}
 	
@@ -39,7 +39,7 @@ public class TargetTests extends AbstractAntTest {
 	 */
 	public void testGetTargetsWithDataTypes() throws CoreException {
 		TargetInfo[] targets= getTargets("Bug32551.xml");
-		assertTrue("Should be one targets in Bug32551.xml", targets.length == 1);
+		assertEquals("Should be one targets in Bug32551.xml", 1, targets.length);
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class TargetTests extends AbstractAntTest {
 			getTargets("Bug42926.xml");
 		} catch (CoreException ce) {
 			//classpathref was successful but the task is not defined
-			ce.getMessage().equals("file:c:/runtime-test-workspace/AntTests/buildfiles/Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found");
+			assertTrue("Core exception message not as expected: " + ce.getMessage(), ce.getMessage().endsWith("Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found"));
 		}
 	}
 	
@@ -62,9 +62,9 @@ public class TargetTests extends AbstractAntTest {
 	 */
 	public void testTargetNames() throws CoreException {
 		String[] targetNames= getTargetNames("TestForEcho.xml");
-		assertTrue("Should be two targets in TestForEcho.xml", targetNames.length == 2);
-		assertTrue("First name should be init", targetNames[0].equals("init"));
-		assertTrue("Second name should be Test for Echo", targetNames[1].equals("Test for Echo"));
+		assertEquals("Should be two targets in TestForEcho.xml", 2, targetNames.length);
+		assertEquals("First name should be init", "init", targetNames[0]);
+		assertEquals("Second name should be Test for Echo", "Test for Echo", targetNames[1]);
 	}
 	
 	/**
@@ -72,9 +72,9 @@ public class TargetTests extends AbstractAntTest {
 	 */
 	public void testTargetDescription() throws CoreException {
 		String[] targetDescriptions= getTargetDescriptions("TestForEcho.xml");
-		assertTrue("Should be two targets in TestForEcho.xml", targetDescriptions.length == 2);
+		assertEquals("Should be two targets in TestForEcho.xml", 2, targetDescriptions.length);
 		assertNull("First description should be null", targetDescriptions[0]);
-		assertTrue("Second description should be Calls other targets", targetDescriptions[1].equals("Calls other echos"));
+		assertEquals("Second description should be Calls other targets", "Calls other echos", targetDescriptions[1]);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class TargetTests extends AbstractAntTest {
 	 */
 	public void testTargetProject() throws CoreException {
 		String targetProject= getProjectName("TestForEcho.xml", "Test for Echo");
-		assertTrue("Project name should be Echo Test", "Echo Test".equals(targetProject));
+		assertEquals("Project name should be Echo Test", "Echo Test", targetProject);
 	}
 	
 	/**
@@ -91,8 +91,8 @@ public class TargetTests extends AbstractAntTest {
 	public void testTargetDependencies() throws CoreException {
 		String[] dependencies= getDependencies("TestForEcho.xml", "Test for Echo");
 		assertNotNull("Dependencies should not be null", dependencies);
-		assertTrue("Should be one dependency in Test for Echo", dependencies.length == 1);
-		assertTrue("First dependency should be init", "init".equals(dependencies[0]));
+		assertEquals("Should be one dependency in Test for Echo", 1, dependencies.length);
+		assertEquals("First dependency should be init", "init", dependencies[0]);
 	}
 	
 	/**
@@ -105,4 +105,3 @@ public class TargetTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 }
-

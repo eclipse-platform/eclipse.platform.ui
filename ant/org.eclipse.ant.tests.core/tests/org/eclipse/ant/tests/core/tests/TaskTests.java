@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class TaskTests extends AbstractAntTest {
 		
 		run("CustomTask.xml", new String[0], false);
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg);
 		assertSuccessful();
 	}
 	
@@ -64,7 +64,7 @@ public class TaskTests extends AbstractAntTest {
 		
 		run("CustomTask.xml", new String[] {"Custom Task from Entry"}, false);
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg);
 		assertSuccessful();
 	}
 	
@@ -103,7 +103,7 @@ public class TaskTests extends AbstractAntTest {
 		
 			run("CustomTask.xml", new String[0], false);
 			String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-			assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+			assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg);
 			assertSuccessful();
 		} finally {
 			restorePreferenceDefaults();
@@ -124,7 +124,7 @@ public class TaskTests extends AbstractAntTest {
 	public void testTaskDefinedInExtensionPoint() throws CoreException {
 		run("ExtensionPointTask.xml");
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg);
 		assertSuccessful();
 	}
 		
@@ -144,7 +144,7 @@ public class TaskTests extends AbstractAntTest {
 	public void testTaskDefinedInExtensionPointWithURI() throws CoreException {
 		run("ExtensionPointTask.xml");
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(2);
-		assertTrue("Message incorrect: " + msg, msg.equals("Testing Ant in Eclipse with a custom task"));
+		assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg);
 		assertSuccessful();
 	}
 }

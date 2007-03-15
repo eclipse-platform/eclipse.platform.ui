@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public class TypeTests extends AbstractAntTest {
 		
 		run("CustomType.xml");
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("Test adding a custom type"));
+		assertEquals("Message incorrect: " + msg, "Test adding a custom type", msg);
 		assertSuccessful();
 	}
 	
@@ -60,7 +60,7 @@ public class TypeTests extends AbstractAntTest {
 	public void testTypeDefinedInExtensionPoint() throws CoreException {
 		run("ExtensionPointType.xml");
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
-		assertTrue("Message incorrect: " + msg, msg.equals("Ensure that an extension point defined type is present"));
+		assertEquals("Message incorrect: " + msg, "Ensure that an extension point defined type is present", msg);
 		assertSuccessful();
 	}
 	
@@ -75,6 +75,5 @@ public class TypeTests extends AbstractAntTest {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);
 		}
 		assertTrue("Build should have failed as type was not defined to run in headless", false);
-	}
-	
+	}	
 }
