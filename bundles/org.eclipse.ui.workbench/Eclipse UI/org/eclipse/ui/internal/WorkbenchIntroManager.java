@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.IntroContentDetector;
 
 /**
  * Workbench implementation of the IIntroManager interface.
@@ -278,4 +279,23 @@ public class WorkbenchIntroManager implements IIntroManager {
     public boolean hasIntro() {
         return workbench.getIntroDescriptor() != null;
     }
+    
+    public boolean isNewContentAvailable() {
+		IntroDescriptor introDescriptor = workbench.getIntroDescriptor();
+		if (introDescriptor == null) {
+			return false;
+		}
+		try {
+			IntroContentDetector contentDetector = introDescriptor
+					.getIntroContentDetector();
+			if (contentDetector != null) {
+				return contentDetector.isNewContentAvailable();
+			}
+		} catch (CoreException ex) {
+			WorkbenchPlugin.log(new Status(IStatus.WARNING,
+					WorkbenchPlugin.PI_WORKBENCH, IStatus.WARNING,
+					"Could not load intro content detector", ex)); //$NON-NLS-1$
+		}
+		return false;
+	}
 }

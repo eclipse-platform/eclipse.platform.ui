@@ -23,6 +23,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.intro.IIntroManager;
 
 /**
  * Public base class for configuring a workbench window.
@@ -161,14 +162,14 @@ public class WorkbenchWindowAdvisor {
 
         boolean showIntro = PrefUtil.getAPIPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.SHOW_INTRO);
-
-        if (!showIntro) {
-			return;
-		}
-
-        if (wbConfig.getWorkbench().getIntroManager()
-                .hasIntro()) {
-            wbConfig.getWorkbench().getIntroManager()
+        
+        IIntroManager introManager = wbConfig.getWorkbench().getIntroManager();
+        
+        boolean hasIntro = introManager.hasIntro();
+        boolean isNewIntroContentAvailable = introManager.isNewContentAvailable();
+        
+		if (hasIntro && (showIntro || isNewIntroContentAvailable)) {
+            introManager
                     .showIntro(getWindowConfigurer().getWindow(), false);
 
             PrefUtil.getAPIPreferenceStore().setValue(

@@ -109,4 +109,14 @@ public interface IIntroManager {
      */
     public IIntroPart showIntro(IWorkbenchWindow preferredWindow,
             boolean standby);
+    
+    /**
+	 * Returns <code>true</code> if there is an intro content detector and it
+	 * reports that new intro content is available.
+	 * 
+	 * @return <code>true</code> if new intro content is available
+	 * 
+	 * @since 3.3
+	 */
+    public boolean isNewContentAvailable();
 }

@@ -95,6 +95,16 @@ in order to inherit the default functionality.  This class implements the introd
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="contentDetector" type="string">
+            <annotation>
+               <documentation>
+                  a fully qualified name of a class extending &lt;code&gt;org.eclipse.ui.intro.IntroContentDetector&lt;/code&gt;.  This optional class is used to detect newly added introduction content.  If new content is available, the view showing the introduction will be opened again.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.intro.IntroContentDetector"/>
+               </appInfo>
+            </annotation>
+         </attribute>
          <attribute name="label" type="string">
             <annotation>
                <documentation>

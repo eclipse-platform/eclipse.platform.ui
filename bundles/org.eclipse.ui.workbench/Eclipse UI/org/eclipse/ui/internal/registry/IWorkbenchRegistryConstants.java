@@ -95,6 +95,11 @@ public interface IWorkbenchRegistryConstants {
 	public static String ATT_CONFIGURATION = "configuration"; //$NON-NLS-1$
 
 	/**
+	 * Intro content detector class attribute (optional). Value <code>contentDetector</code>.
+	 */
+	public static String ATT_CONTENT_DETECTOR = "contentDetector"; //$NON-NLS-1$
+	
+	/**
 	 * Editor content type id binding attribute. Value
 	 * <code>contentTypeId</code>.
 	 */

@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.IntroContentDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -52,6 +53,13 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
      */
     public IIntroPart createIntro() throws CoreException {
     	return (IIntroPart) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+    }
+    
+    public IntroContentDetector getIntroContentDetector() throws CoreException {
+    	if (element.getAttribute(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR) == null) {
+    		return null;
+    	}
+    	return (IntroContentDetector) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CONTENT_DETECTOR);
     }
 
     /* (non-Javadoc)
