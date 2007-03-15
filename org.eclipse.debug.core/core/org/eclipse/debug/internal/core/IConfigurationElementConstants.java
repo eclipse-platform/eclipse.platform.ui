@@ -77,6 +77,24 @@ public interface IConfigurationElementConstants {
 	public static final String LAUNCH_HISTORY = "launchHistory"; //$NON-NLS-1$
 	
 	/**
+	 * the node name for a launch group configuration element
+	 * @since 3.3
+	 */
+	public static final String LAUNCH_GROUP = "launchGroup"; //$NON-NLS-1$
+	
+	/**
+	 * the node name for a launch history MRU list configuration element
+	 * @since 3.3
+	 */
+	public static final String MRU_HISTORY = "mruHistory"; //$NON-NLS-1$	
+	
+	/**
+	 * the node name for a launch favorites list configuration element
+	 * @since 3.3
+	 */
+	public static final String FAVORITES = "favorites"; //$NON-NLS-1$
+	
+	/**
 	 * the after node name for a configuration element
 	 */
 	public static final String AFTER = "after"; //$NON-NLS-1$

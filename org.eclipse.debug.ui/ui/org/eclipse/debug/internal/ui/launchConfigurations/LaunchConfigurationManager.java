@@ -381,8 +381,15 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			LaunchHistory history = null;
 			while (histories.hasNext()) {
 				history = (LaunchHistory)histories.next();
-				createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
-				createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
+				Element groupElement = doc.createElement(IConfigurationElementConstants.LAUNCH_GROUP);
+				groupElement.setAttribute(IConfigurationElementConstants.ID, history.getLaunchGroup().getIdentifier());
+				historyRootElement.appendChild(groupElement);
+				Element historyElement = doc.createElement(IConfigurationElementConstants.MRU_HISTORY);
+				groupElement.appendChild(historyElement);
+				createEntry(doc, historyElement, history.getCompleteLaunchHistory());
+				Element favs = doc.createElement(IConfigurationElementConstants.FAVORITES);
+				groupElement.appendChild(favs);
+				createEntry(doc, favs, history.getFavorites());
 			}
 		}
 		
@@ -397,13 +404,12 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @param configurations the configurations to create entries for
 	 * @throws CoreException
 	 */
-	protected void createEntry(Document doc, Element historyRootElement, String mode, ILaunchConfiguration[] configurations) throws CoreException {
+	protected void createEntry(Document doc, Element historyRootElement, ILaunchConfiguration[] configurations) throws CoreException {
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];
 			if (configuration.exists()) {
 				Element launch = doc.createElement(IConfigurationElementConstants.LAUNCH);
 				launch.setAttribute(IConfigurationElementConstants.MEMENTO, configuration.getMemento());
-				launch.setAttribute(IConfigurationElementConstants.MODE, mode);
 				historyRootElement.appendChild(launch);
 			}
 		}
@@ -494,10 +500,74 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 						createHistoryElement(entry, histories, false);
 					} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
 						createHistoryElement(entry, histories, true);
+					} else if (entry.getNodeName().equals(IConfigurationElementConstants.LAUNCH_GROUP)) {
+						String id = entry.getAttribute(IConfigurationElementConstants.ID);
+						if (id != null) {
+							LaunchHistory history = getLaunchHistory(id);
+							if (history != null) { 
+								restoreHistory(entry, history);
+							}
+						}
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Restores the given launch history.
+	 * 
+	 * @param groupElement launch group history
+	 * @param history associated history cache
+	 */
+	private void restoreHistory(Element groupElement, LaunchHistory history) {
+		NodeList nodes = groupElement.getChildNodes();
+		int length = nodes.getLength();
+		for (int i = 0; i < length; i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element)node;
+				if (element.getNodeName().equals(IConfigurationElementConstants.MRU_HISTORY)) {
+					ILaunchConfiguration[] configs = getLaunchConfigurations(element);
+					for (int j = 0; j < configs.length; j++) {
+						history.addHistory(configs[j], false);
+					}
+				} else if (element.getNodeName().equals(IConfigurationElementConstants.FAVORITES)) {
+					ILaunchConfiguration[] favs = getLaunchConfigurations(element);
+					history.setFavorites(favs);
+				}
+			}
+		}
+	}
+	
+	/** 
+	 * Restores a list of configurations.
+	 * @param root element
+	 * @return list of configurations under the element
+	 */
+	private ILaunchConfiguration[] getLaunchConfigurations(Element root) {
+		List configs = new ArrayList();
+		NodeList nodes = root.getChildNodes();
+		int length = nodes.getLength();
+		for (int i = 0; i < length; i++) {
+			Node node = nodes.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				Element element = (Element) node;
+				if (element.getNodeName().equals(IConfigurationElementConstants.LAUNCH)) {
+					String memento = element.getAttribute(IConfigurationElementConstants.MEMENTO); 
+					if (memento != null) {
+						try {
+							ILaunchConfiguration configuration = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
+							if (configuration.exists()) {
+								configs.add(configuration);
+							}
+						} catch (CoreException e) {
+						}
+					}
+				}
+			}
+		}
+		return (ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]);
 	}
 	
 	/**
