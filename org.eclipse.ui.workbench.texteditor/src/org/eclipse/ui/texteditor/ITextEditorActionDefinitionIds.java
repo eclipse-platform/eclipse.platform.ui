@@ -551,4 +551,13 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.3
 	 */
 	String SHOW_WHITESPACE_CHARACTERS = "org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"; //$NON-NLS-1$
+	
+	/**
+	 * Command ID of the command to display information for the
+	 * current caret location in a sticky hover.
+	 * Value <code>"org.eclipse.ui.edit.text.showInformation"</code>).
+	 * @since 3.3 
+	 */
+	String SHOW_INFORMATION= "org.eclipse.ui.edit.text.showInformation"; //$NON-NLS-1$
+	
 }

@@ -624,5 +624,14 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Value: <code>"ShowWhitespaceCharacters"</code>
 	 * @since 3.3
 	 */
-	String SHOW_WHITESPACE_CHARACTERS = "ShowWhitespaceCharacters"; //$NON-NLS-1$
+	String SHOW_WHITESPACE_CHARACTERS= "ShowWhitespaceCharacters"; //$NON-NLS-1$
+	
+	/**
+	 * Name of the action displaying information for the
+	 * current caret location in a sticky hover.
+	 * 
+	 * Value: <code>"ShowInformation"</code>
+	 * @since 3.3
+	 */
+	String SHOW_INFORMATION= "ShowInformation"; //$NON-NLS-1$
 }

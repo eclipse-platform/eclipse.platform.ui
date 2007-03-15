@@ -114,7 +114,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 			editMenu.update(true);
 		}
 		
-		fRetargetShowInformationAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_TOOL_TIP));
+		fRetargetShowInformationAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_INFORMATION));
 	}
 	
 	/*

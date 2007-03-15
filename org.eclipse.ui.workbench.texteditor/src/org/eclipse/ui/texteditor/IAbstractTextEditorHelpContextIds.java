@@ -353,4 +353,12 @@ public interface IAbstractTextEditorHelpContextIds {
      * @since 3.3
      */
 	String SHOW_WHITESPACE_CHARACTERS_ACTION=PREFIX + "show_whitepsace_characters" + ACTION_POSTFIX; //$NON-NLS-1$
+	
+	/**
+	 * Help context id for the action that displays information
+	 * for the current caret location in a sticky hover.
+	 * Value: <code>"show_information_action_context"</code>
+	 * @since 3.3
+	 */
+	String SHOW_INFORMATION_ACTION=PREFIX + "show_information" + ACTION_POSTFIX; //$NON-NLS-1$
 }

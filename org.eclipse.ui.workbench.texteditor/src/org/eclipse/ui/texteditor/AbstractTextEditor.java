@@ -90,6 +90,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -106,21 +107,29 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 
+import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IMarkRegionTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ISelectionValidator;
+import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension2;
+import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.IUndoManager;
@@ -129,12 +138,21 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationProviderExtension;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IAnnotationHover;
+import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension3;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
@@ -1702,6 +1720,237 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 
+
+	/**
+	 * Information provider used to present focusable information shells.
+	 *
+	 * @since 3.3
+	 */
+	private static final class InformationProvider implements IInformationProvider, IInformationProviderExtension, IInformationProviderExtension2 {
+		
+		private IRegion fHoverRegion;
+		private Object fHoverInfo;
+		private IInformationControlCreator fControlCreator;
+		
+		InformationProvider(IRegion hoverRegion, Object hoverInfo, IInformationControlCreator controlCreator) {
+			fHoverRegion= hoverRegion;
+			fHoverInfo= hoverInfo;
+			fControlCreator= controlCreator;
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProvider#getSubject(org.eclipse.jface.text.ITextViewer, int)
+		 */
+		public IRegion getSubject(ITextViewer textViewer, int invocationOffset) {
+			return fHoverRegion;
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProvider#getInformation(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+		 */
+		public String getInformation(ITextViewer textViewer, IRegion subject) {
+			return fHoverInfo.toString();
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProviderExtension#getInformation2(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+		 * @since 3.2
+		 */
+		public Object getInformation2(ITextViewer textViewer, IRegion subject) {
+			return fHoverInfo;
+		}
+		/*
+		 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+		 */
+		public IInformationControlCreator getInformationPresenterControlCreator() {
+			return fControlCreator;
+		}
+	}
+	
+	/**
+	 * This action behaves in two different ways: If there is no current text
+	 * hover, the javadoc is displayed using information presenter. If there is
+	 * a current text hover, it is converted into a information presenter in
+	 * order to make it sticky.
+	 * 
+	 * @since 3.3
+	 */
+	private final class InformationDispatchAction extends TextEditorAction {
+
+		/** The wrapped text operation action. */
+		private final TextOperationAction fTextOperationAction;
+
+		/**
+		 * Creates a dispatch action.
+		 *
+		 * @param resourceBundle the resource bundle
+		 * @param prefix the prefix
+		 * @param textOperationAction the text operation action
+		 */
+		public InformationDispatchAction(ResourceBundle resourceBundle, String prefix, final TextOperationAction textOperationAction) {
+			super(resourceBundle, prefix, AbstractTextEditor.this);
+			if (textOperationAction == null)
+				throw new IllegalArgumentException();
+			fTextOperationAction= textOperationAction;
+		}
+
+		/*
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer == null) {
+				if (fTextOperationAction.isEnabled())
+					fTextOperationAction.run();
+				return;
+			}
+
+			if (sourceViewer instanceof ITextViewerExtension4)  {
+				ITextViewerExtension4 extension4= (ITextViewerExtension4) sourceViewer;
+				if (extension4.moveFocusToWidgetToken())
+					return;
+			}
+
+			if (sourceViewer instanceof ITextViewerExtension2) {
+				// does a text hover exist?
+				ITextHover textHover= ((ITextViewerExtension2) sourceViewer).getCurrentTextHover();
+				if (textHover != null && makeTextHoverFocusable(sourceViewer, textHover))
+					return;
+			}
+
+			if (sourceViewer instanceof ISourceViewerExtension3) {
+				// does an annotation hover exist?
+				IAnnotationHover annotationHover= ((ISourceViewerExtension3) sourceViewer).getCurrentAnnotationHover();
+				if (annotationHover != null && makeAnnotationHoverFocusable(sourceViewer, annotationHover))
+					return;
+			}
+			
+			// otherwise, just run the action
+			if (fTextOperationAction.isEnabled())
+				fTextOperationAction.run();
+		}
+
+		/**
+		 * Tries to make a text hover focusable (or "sticky").
+		 * 
+		 * @param sourceViewer the source viewer to display the hover over
+		 * @param textHover the hover to make focusable
+		 * @return <code>true</code> if successful, <code>false</code> otherwise
+		 */
+		private boolean makeTextHoverFocusable(ISourceViewer sourceViewer, ITextHover textHover) {
+			Point hoverEventLocation= ((ITextViewerExtension2) sourceViewer).getHoverEventLocation();
+			int offset= computeOffsetAtLocation(sourceViewer, hoverEventLocation.x, hoverEventLocation.y);
+			if (offset == -1)
+				return false;
+			
+			try {
+				IRegion hoverRegion= textHover.getHoverRegion(sourceViewer, offset);
+				if (hoverRegion == null)
+					return false;
+
+				String hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
+
+				IInformationControlCreator controlCreator= null;
+				if (textHover instanceof IInformationProviderExtension2)
+					controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
+
+				IInformationProvider informationProvider= new InformationProvider(hoverRegion, hoverInfo, controlCreator);
+
+				fInformationPresenter.setOffset(offset);
+				fInformationPresenter.setAnchor(AbstractInformationControlManager.ANCHOR_BOTTOM);
+				fInformationPresenter.setMargins(6, 6); // default values from AbstractInformationControlManager
+				String contentType= TextUtilities.getContentType(sourceViewer.getDocument(), getSourceViewerConfiguration().getConfiguredDocumentPartitioning(getSourceViewer()), offset, true);
+				fInformationPresenter.setInformationProvider(informationProvider, contentType);
+				fInformationPresenter.showInformation();
+
+				return true;
+
+			} catch (BadLocationException e) {
+				return false;
+			}
+		}
+
+		/**
+		 * Tries to make an annotation hover focusable (or "sticky").
+		 * 
+		 * @param sourceViewer the source viewer to display the hover over
+		 * @param annotationHover the hover to make focusable
+		 * @return <code>true</code> if successful, <code>false</code> otherwise
+		 */
+		private boolean makeAnnotationHoverFocusable(ISourceViewer sourceViewer, IAnnotationHover annotationHover) {
+			IVerticalRulerInfo info= getVerticalRuler();
+			int line= info.getLineOfLastMouseButtonActivity();
+			if (line == -1)
+				return false;
+
+			try {
+
+				// compute the hover information
+				Object hoverInfo;
+				if (annotationHover instanceof IAnnotationHoverExtension) {
+					IAnnotationHoverExtension extension= (IAnnotationHoverExtension) annotationHover;
+					ILineRange hoverLineRange= extension.getHoverLineRange(sourceViewer, line);
+					if (hoverLineRange == null)
+						return false;
+					final int maxVisibleLines= Integer.MAX_VALUE; // allow any number of lines being displayed, as we support scrolling
+					hoverInfo= extension.getHoverInfo(sourceViewer, hoverLineRange, maxVisibleLines);
+				} else {
+					hoverInfo= annotationHover.getHoverInfo(sourceViewer, line);
+				}
+				
+				// hover region: the beginning of the concerned line to place the control right over the line
+				IDocument document= sourceViewer.getDocument();
+				int offset= document.getLineOffset(line);
+				String contentType= TextUtilities.getContentType(document, getSourceViewerConfiguration().getConfiguredDocumentPartitioning(getSourceViewer()), offset, true);
+
+				IInformationControlCreator controlCreator= null;
+				if (annotationHover instanceof IInformationProviderExtension2)
+					controlCreator= ((IInformationProviderExtension2) annotationHover).getInformationPresenterControlCreator();
+				else if (annotationHover instanceof IAnnotationHoverExtension)
+					controlCreator= ((IAnnotationHoverExtension) annotationHover).getHoverControlCreator();
+				
+				IInformationProvider informationProvider= new InformationProvider(new Region(offset, 0), hoverInfo, controlCreator);
+
+				fInformationPresenter.setOffset(offset);
+				fInformationPresenter.setAnchor(AbstractInformationControlManager.ANCHOR_RIGHT);
+				fInformationPresenter.setMargins(4, 0); // AnnotationBarHoverManager sets (5,0), minus SourceViewer.GAP_SIZE_1
+				fInformationPresenter.setInformationProvider(informationProvider, contentType);
+				fInformationPresenter.showInformation();
+
+				return true;
+
+			} catch (BadLocationException e) {
+				return false;
+			}
+        }
+
+		// modified version from TextViewer
+		private int computeOffsetAtLocation(ITextViewer textViewer, int x, int y) {
+
+			StyledText styledText= textViewer.getTextWidget();
+			IDocument document= textViewer.getDocument();
+
+			if (document == null)
+				return -1;
+
+			try {
+				int widgetOffset= styledText.getOffsetAtLocation(new Point(x, y));
+				Point p= styledText.getLocationAtOffset(widgetOffset);
+				if (p.x > x)
+					widgetOffset--;
+				
+				if (textViewer instanceof ITextViewerExtension5) {
+					ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
+					return extension.widgetOffset2ModelOffset(widgetOffset);
+				}
+				IRegion visibleRegion= textViewer.getVisibleRegion();
+				return widgetOffset + visibleRegion.getOffset();
+			} catch (IllegalArgumentException e) {
+				return -1;
+			}
+
+		}
+	}
+	
+	
 	/**
 	 * Key used to look up font preference.
 	 * Value: <code>"org.eclipse.jface.textfont"</code>
@@ -2188,6 +2437,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	private Object fTextDragAndDropToken;
+	/**
+	 * The information presenter.
+	 * @since 3.3
+	 */
+	private InformationPresenter fInformationPresenter;
+
 
 
 	/**
@@ -3029,6 +3284,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IVerticalRuler ruler= getVerticalRuler();
 		if (ruler instanceof CompositeRuler)
 			updateContributedRulerColumns((CompositeRuler) ruler);
+		
+		IInformationControlCreator informationControlCreator= new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell shell) {
+				boolean cutDown= false;
+				int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
+				return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(cutDown));
+			}
+		};
+		
+		fInformationPresenter= new InformationPresenter(informationControlCreator);
+		fInformationPresenter.setSizeConstraints(60, 10, true, true);
+		fInformationPresenter.install(getSourceViewer());
+		fInformationPresenter.setDocumentPartitioning(getSourceViewerConfiguration().getConfiguredDocumentPartitioning(getSourceViewer()));
 		
 	}
 	
@@ -5194,6 +5462,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHOW_WHITESPACE_CHARACTERS_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS);
 		setAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS, action);
+		
+		ResourceAction resAction= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
+		resAction= new InformationDispatchAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation.", (TextOperationAction) resAction); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHOW_INFORMATION_ACTION);
+		resAction.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
+		setAction(ITextEditorActionConstants.SHOW_INFORMATION, resAction);
 		
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
