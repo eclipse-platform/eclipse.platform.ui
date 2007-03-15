@@ -424,10 +424,10 @@
 	        id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters">
 	  </command>
       <command
-            name="%showToolTip.name"
-            description="%showToolTip.description"
+            name="%showInformation.name"
+            description="%showInformation.description"
 	        categoryId="org.eclipse.ui.category.textEditor"
-            id="org.eclipse.ui.edit.text.showToolTip">
+            id="org.eclipse.ui.edit.text.showInformation">
       </command>
 	</extension>
    
@@ -759,7 +759,7 @@
       <key
             sequence="F2"
             contextId="org.eclipse.ui.textEditorScope"
-            commandId="org.eclipse.ui.edit.text.showToolTip"
+            commandId="org.eclipse.ui.edit.text.showInformation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.hippieCompletion"

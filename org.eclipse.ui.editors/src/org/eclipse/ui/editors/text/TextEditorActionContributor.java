@@ -57,7 +57,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 */
 	private IContributionItem fQuickAssistMenuEntry;
 	
-	private RetargetTextEditorAction fRetargetShowToolTipAction;
+	private RetargetTextEditorAction fRetargetShowInformationAction;
 
 	/**
 	 * Creates a new contributor.
@@ -68,8 +68,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fQuickAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 		fQuickAssistMenuEntry= new ActionContributionItem(fQuickAssistAction);
 		
-		fRetargetShowToolTipAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowToolTip."); //$NON-NLS-1$
-		fRetargetShowToolTipAction.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_TOOL_TIP);
+		fRetargetShowInformationAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation."); //$NON-NLS-1$
+		fRetargetShowInformationAction.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 			editMenu.update(true);
 		}
 		
-		fRetargetShowToolTipAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_TOOL_TIP));
+		fRetargetShowInformationAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_TOOL_TIP));
 	}
 	
 	/*
@@ -128,7 +128,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		if (editMenu != null) {
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fQuickAssistMenuEntry);
 			fQuickAssistMenuEntry.setVisible(false);
-			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_INFORMATION, fRetargetShowToolTipAction);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_INFORMATION, fRetargetShowInformationAction);
 		}
 	}
 
