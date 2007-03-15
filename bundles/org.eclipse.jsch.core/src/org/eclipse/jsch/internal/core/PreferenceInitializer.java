@@ -49,15 +49,20 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer{
     preferences.setDefault(IConstants.KEY_PRIVATEKEY, IConstants.PRIVATE_KEYS_DEFAULT);
  
     if(!preferences.contains(IConstants.PREF_FIRST_STARTUP)){
-      
+
       IEclipsePreferences[] oldPreferences=getOldPreferences();
       IPreferencesService ps=Platform.getPreferencesService();
+
       if(ps.get(IConstants.KEY_OLD_SSH2HOME, null, oldPreferences)!=null){
         preferences.setValue(IConstants.KEY_SSH2HOME, ps.get(
             IConstants.KEY_OLD_SSH2HOME, null, oldPreferences));
+      }
+
+      if(ps.get(IConstants.KEY_OLD_PRIVATEKEY, null, oldPreferences)!=null){
         preferences.setValue(IConstants.KEY_PRIVATEKEY, ps.get(
             IConstants.KEY_OLD_PRIVATEKEY, null, oldPreferences));
       }
+
       preferences.setValue(IConstants.PREF_FIRST_STARTUP, true);
       JSchCorePlugin.getPlugin().savePluginPreferences();
     }
