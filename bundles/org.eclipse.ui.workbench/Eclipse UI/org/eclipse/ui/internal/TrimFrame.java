@@ -111,6 +111,9 @@ public class TrimFrame {
                 drawLine(e.gc, 0, 1, 0, maxY-1, flipXY); 
                 drawLine(e.gc, maxX, 5, maxX, maxY-5, flipXY);
                 
+                // Dispose the color since we created it...
+                outerColor.dispose();
+                
                 // Draw the 'inner' curve
                 e.gc.setForeground (white);
 
