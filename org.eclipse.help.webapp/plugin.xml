@@ -107,6 +107,14 @@
    <extension
          point="org.eclipse.equinox.http.registry.servlets">
       <servlet
+            alias="/indexfragment"
+            class="org.eclipse.help.internal.webapp.servlet.IndexFragmentServlet"
+            httpcontext-name="help">
+      </servlet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
             alias="/search"
             class="org.eclipse.help.internal.webapp.servlet.SearchServlet"
             httpcontext-name="help">
