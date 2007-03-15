@@ -434,6 +434,7 @@
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
          <keywordReference id="org.eclipse.ui.ide.themes"/>
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
+         <keywordReference id="org.eclipse.ui.ide.apearancepage"/>
       </page>
       <page
             name="%PreferencePages.ColorsAndFonts"
