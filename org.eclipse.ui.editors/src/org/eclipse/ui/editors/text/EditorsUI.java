@@ -23,11 +23,15 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.source.ISharedTextColors;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
+import org.eclipse.ui.internal.editors.text.NLSUtility;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -220,4 +224,25 @@ public final class EditorsUI {
 	 */
 	public static final int DERIVED_FILE= IFileBufferStatusCodes.DERIVED_FILE;
 	
+	/**
+	 * Returns the tool tip affordance string.
+	 *
+	 * @return the affordance string or <code>null</code> if disabled or no key binding is defined
+	 * @since 3.3
+	 */
+	public static final String getTooltipAffordanceString() {
+		if (!getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
+			return null;
+		
+		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService == null)
+			return null;
+
+		String keySequence= bindingService.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
+		if (keySequence == null)
+			return null;
+		
+		return NLSUtility.format(TextEditorMessages.Editor_toolTip_affordance, keySequence);
+	}
+
 }

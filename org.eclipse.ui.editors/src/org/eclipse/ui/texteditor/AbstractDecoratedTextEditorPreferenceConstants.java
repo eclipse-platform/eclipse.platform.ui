@@ -430,6 +430,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String EDITOR_TEXT_DRAG_AND_DROP_ENABLED= AbstractTextEditor.PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED;
+	
+	/**
+	 * A named preference that defines whether the hint to make hover sticky should be shown.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "showTextHoverAffordance"; //$NON-NLS-1$
 
 	/**
   	* Initializes the given preference store with the default values.
@@ -512,6 +522,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SMART_HOME_END, true);
 		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
+		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
