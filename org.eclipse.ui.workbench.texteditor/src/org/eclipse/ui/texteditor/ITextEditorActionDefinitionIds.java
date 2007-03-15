@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import org.eclipse.jface.text.information.IInformationProvider;
+
 
 /**
  * Defines the definitions ids for the text editor actions. These actions are
@@ -556,6 +558,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * Command ID of the command to display information for the
 	 * current caret location in a sticky hover.
 	 * Value <code>"org.eclipse.ui.edit.text.showInformation"</code>).
+	 * @see IInformationProvider
 	 * @since 3.3 
 	 */
 	String SHOW_INFORMATION= "org.eclipse.ui.edit.text.showInformation"; //$NON-NLS-1$

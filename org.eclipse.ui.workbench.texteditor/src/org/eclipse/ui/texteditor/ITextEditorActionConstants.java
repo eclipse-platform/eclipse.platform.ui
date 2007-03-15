@@ -14,6 +14,8 @@
 package org.eclipse.ui.texteditor;
 
 
+import org.eclipse.jface.text.information.IInformationProvider;
+
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -631,6 +633,7 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * current caret location in a sticky hover.
 	 * 
 	 * Value: <code>"ShowInformation"</code>
+	 * @see IInformationProvider
 	 * @since 3.3
 	 */
 	String SHOW_INFORMATION= "ShowInformation"; //$NON-NLS-1$
