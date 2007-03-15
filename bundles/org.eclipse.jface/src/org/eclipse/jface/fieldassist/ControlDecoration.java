@@ -424,7 +424,9 @@ public class ControlDecoration {
 	/**
 	 * Construct a ControlDecoration for decorating the specified control at the
 	 * specified position relative to the control. Render the decoration only on
-	 * the specified Composite.
+	 * the specified Composite or its children. The decoration will be clipped
+	 * if it does not appear within the visible bounds of the composite or its
+	 * child composites.
 	 * <p>
 	 * SWT constants are used to specify the position of the decoration relative
 	 * to the control. The position should include style bits describing both
@@ -448,13 +450,15 @@ public class ControlDecoration {
 	 *            <code>SWT.BOTTOM</code>, <code>SWT.LEFT</code>,
 	 *            <code>SWT.RIGHT</code>, and <code>SWT.CENTER</code>).
 	 * @param composite
-	 *            The SWT composite on which the decoration should be rendered.
-	 *            The decoration will not be visible if the specified composite
-	 *            is not located in the space relative to the control where the
-	 *            decoration is to be rendered. If this value is
-	 *            <code>null</code>, then the decoration will be rendered on
-	 *            whichever composite (or composites) are located in the
-	 *            specified position.
+	 *            The SWT composite within which the decoration should be
+	 *            rendered. The decoration will be clipped to this composite,
+	 *            but it may be rendered on a child of the composite. The
+	 *            decoration will not be visible if the specified composite or
+	 *            its child composites are not visible in the space relative to
+	 *            the control, where the decoration is to be rendered. If this
+	 *            value is <code>null</code>, then the decoration will be
+	 *            rendered on whichever composite (or composites) are located in
+	 *            the specified position.
 	 */
 	public ControlDecoration(Control control, int position, Composite composite) {
 		this.position = position;
@@ -694,16 +698,16 @@ public class ControlDecoration {
 			}
 		};
 
-		if (composite != null) {
-			installCompositeListeners(composite);
-		} else {
-			// We do not know which parent in the control hierarchy
-			// is providing the decoration space, so hook all the way up.
-			Composite c = control.getParent();
-			while (c != null) {
-				installCompositeListeners(c);
-				if (c instanceof Shell)
-					break;
+		// We do not know which parent in the control hierarchy
+		// is providing the decoration space, so hook all the way up, until
+		// the shell or the specified parent composite is reached.
+		Composite c = control.getParent();
+		while (c != null) {
+			installCompositeListeners(c);
+			if (composite != null && composite == c) {
+				// We just installed on the specified composite, so stop.
+				c = null;
+			} else {
 				c = c.getParent();
 			}
 		}
@@ -1056,19 +1060,19 @@ public class ControlDecoration {
 		control.removeDisposeListener(disposeListener);
 		disposeListener = null;
 
-		if (composite != null) {
-			removeCompositeListeners(composite);
-		} else {
-			Composite c = control.getParent();
-			while (c != null) {
-				removeCompositeListeners(c);
-				if (c instanceof Shell)
-					break;
+		Composite c = control.getParent();
+		while (c != null) {
+			removeCompositeListeners(c);
+			if (composite != null && composite == c) {
+				// We just installed on the specified composite, so stop.
+				c = null;
+			} else {
 				c = c.getParent();
 			}
 		}
 		paintListener = null;
 		mouseTrackListener = null;
+		compositeListener = null;
 
 		// We may have a remaining mouse move listener installed
 		if (moveListeningTarget != null) {
