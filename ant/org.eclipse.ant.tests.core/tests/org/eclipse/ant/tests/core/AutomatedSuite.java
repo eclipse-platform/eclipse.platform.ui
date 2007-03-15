@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,7 @@ import org.eclipse.ant.tests.core.tests.TaskTests;
 import org.eclipse.ant.tests.core.tests.TypeTests;
 
 /**
- * Test all areas of Ant.
+ * Test the Eclipse Ant Core.
  * 
  * To run this test suite:
  * <ol>
@@ -34,11 +34,6 @@ import org.eclipse.ant.tests.core.tests.TypeTests;
  */
 public class AutomatedSuite extends TestSuite {
 	
-	/**
-	 * Flag that indicates test are in progress
-	 */
-	protected boolean testing = true;
-
 	/**
 	 * Returns the suite.  This is required to
 	 * use the JUnit Launcher.
@@ -59,42 +54,4 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(TaskTests.class));
 		addTest(new TestSuite(TypeTests.class));
 	}
-
-	/**
-	 * Runs the tests and collects their result in a TestResult without blocking.
-	 * the UI thread. Not normally needed but nice to have to check on the state of
-	 * environment during a test run.
-	 */
-//	public void run(final TestResult result) {
-//		final Display display = Display.getCurrent();
-//		Thread thread = null;
-//		try {
-//			Runnable r = new Runnable() {
-//				public void run() {
-//					for (Enumeration e= tests(); e.hasMoreElements(); ) {
-//				  		if (result.shouldStop() )
-//				  			break;
-//						Test test= (Test)e.nextElement();
-//						runTest(test, result);
-//					}					
-//					testing = false;
-//					display.wake();
-//				}
-//			};
-//			thread = new Thread(r);
-//			thread.start();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//				
-//		while (testing) {
-//			try {
-//				if (!display.readAndDispatch())
-//					display.sleep();
-//			} catch (Throwable e) {
-//				e.printStackTrace();
-//			}			
-//		}		
-//	}
 }
-

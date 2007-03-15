@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,10 @@ import java.io.File;
 
 import org.eclipse.ant.tests.core.testplugin.AntTestPlugin;
 import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 
-/**
- * Test to close the workbench, since debug tests do not run in the UI
- * thread.
- */
 public class ProjectCreationDecorator extends AbstractAntTest {
 	
 	public ProjectCreationDecorator(String name) {
@@ -34,7 +32,7 @@ public class ProjectCreationDecorator extends AbstractAntTest {
 			pro.delete(true, true, null);
 		}
 		// create project and import buildfiles and support files
-		project = ProjectHelper.createProject("AntTests");
+		IProject project = ProjectHelper.createProject("AntTests");
 		IFolder folder = ProjectHelper.addFolder(project, "buildfiles");
 		File root = AntTestPlugin.getDefault().getFileInPlugin(ProjectHelper.TEST_BUILDFILES_DIR);
 		ProjectHelper.importFilesFromDirectory(root, folder.getFullPath(), null);
