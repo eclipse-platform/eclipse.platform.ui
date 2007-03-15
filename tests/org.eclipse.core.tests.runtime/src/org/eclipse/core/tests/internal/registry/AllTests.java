@@ -29,6 +29,7 @@ public class AllTests extends TestCase {
 		suite.addTest(NamespaceTest.suite());
 		suite.addTest(AllSimpleRegistryTests.suite());
 		suite.addTestSuite(StaleObjects.class);
+		suite.addTest(ContributorsTest.suite());
 		suite.addTest(ExtensionRegistryStaticTest.suite()); // test again
 		return suite;
 	}
