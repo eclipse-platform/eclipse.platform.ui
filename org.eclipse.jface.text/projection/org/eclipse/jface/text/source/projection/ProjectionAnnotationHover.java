@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jface.text.source.projection;
 
 import java.util.Iterator;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -22,6 +23,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHoverExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -36,9 +38,11 @@ import org.eclipse.jface.text.source.LineRange;
  *
  * @since 3.0
  */
-class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExtension {
-
+class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExtension, IInformationProviderExtension2 {
+	
+	
 	private IInformationControlCreator fInformationControlCreator;
+	private IInformationControlCreator fInformationPresenterControlCreator;
 
 	/**
 	 * Sets the hover control creator for this projection annotation hover.
@@ -47,6 +51,16 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	 */
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
+	}
+	
+	/**
+	 * Sets the information presenter control creator for this projection annotation hover.
+	 *
+	 * @param creator the creator
+	 * @since 3.3
+	 */
+	public void setInformationPresenterControlCreator(IInformationControlCreator creator) {
+		fInformationPresenterControlCreator= creator;
 	}
 
 	/*
@@ -150,14 +164,30 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
+		if (fInformationControlCreator == null) {
+			fInformationControlCreator= new IInformationControlCreator() {
+				public IInformationControl createInformationControl(Shell parent) {
+					return new SourceViewerInformationControl(parent, JFaceResources.TEXT_FONT);
+				}
+			};
+		}
+		return fInformationControlCreator;
+	}
 
-		if (fInformationControlCreator != null)
-			return fInformationControlCreator;
-
-		return new IInformationControlCreator() {
-			public IInformationControl createInformationControl(Shell parent) {
-				return new SourceViewerInformationControl(parent, JFaceResources.TEXT_FONT);
-			}
-		};
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @since 3.3
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		if (fInformationPresenterControlCreator == null) {
+			fInformationPresenterControlCreator= new IInformationControlCreator() {
+				public IInformationControl createInformationControl(Shell parent) {
+					int shellStyle= SWT.RESIZE | SWT.TOOL;
+					int style= SWT.V_SCROLL | SWT.H_SCROLL;
+					return new SourceViewerInformationControl(parent, shellStyle, style, JFaceResources.TEXT_FONT, ""); //$NON-NLS-1$
+				}
+			};
+		}
+		return fInformationPresenterControlCreator;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 * @since 3.3
 	 */
 	private IContributionItem fQuickAssistMenuEntry;
+	
+	private RetargetTextEditorAction fRetargetShowToolTipAction;
 
 	/**
 	 * Creates a new contributor.
@@ -65,6 +67,9 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fQuickAssistAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.QuickAssist."); //$NON-NLS-1$
 		fQuickAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 		fQuickAssistMenuEntry= new ActionContributionItem(fQuickAssistAction);
+		
+		fRetargetShowToolTipAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowToolTip."); //$NON-NLS-1$
+		fRetargetShowToolTipAction.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_TOOL_TIP);
 	}
 
 	/**
@@ -108,6 +113,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 			fQuickAssistMenuEntry.setVisible(isEnabled);
 			editMenu.update(true);
 		}
+		
+		fRetargetShowToolTipAction.setAction(getAction(textEditor, ITextEditorActionConstants.SHOW_TOOL_TIP));
 	}
 	
 	/*
@@ -121,6 +128,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		if (editMenu != null) {
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fQuickAssistMenuEntry);
 			fQuickAssistMenuEntry.setVisible(false);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_INFORMATION, fRetargetShowToolTipAction);
 		}
 	}
 

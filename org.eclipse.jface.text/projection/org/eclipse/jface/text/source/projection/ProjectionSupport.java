@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -155,6 +155,7 @@ public class ProjectionSupport {
 	private ISharedTextColors fSharedTextColors;
 	private List fSummarizableTypes;
 	private IInformationControlCreator fInformationControlCreator;
+	private IInformationControlCreator fInformationPresenterControlCreator;
 	private ProjectionListener fProjectionListener;
 	private ProjectionAnnotationsPainter fPainter;
 	private ProjectionRulerColumn fColumn;
@@ -225,6 +226,17 @@ public class ProjectionSupport {
 	 */
 	public void setHoverControlCreator(IInformationControlCreator creator) {
 		fInformationControlCreator= creator;
+	}
+	
+	/**
+	 * Sets the information presenter control creator that is used for the annotation
+	 * hovers that are shown in the projection viewer's projection ruler column.
+	 *
+	 * @param creator the information presenter control creator
+	 * @since 3.3
+	 */
+	public void setInformationPresenterControlCreator(IInformationControlCreator creator) {
+		fInformationPresenterControlCreator= creator;
 	}
 
 	/**
@@ -330,6 +342,7 @@ public class ProjectionSupport {
 	private IAnnotationHover createProjectionAnnotationHover() {
 		ProjectionAnnotationHover hover= new ProjectionAnnotationHover();
 		hover.setHoverControlCreator(fInformationControlCreator);
+		hover.setInformationPresenterControlCreator(fInformationPresenterControlCreator);
 		return hover;
 	}
 

@@ -423,6 +423,12 @@
 	        categoryId="org.eclipse.ui.category.textEditor"
 	        id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters">
 	  </command>
+      <command
+            name="%showToolTip.name"
+            description="%showToolTip.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.showToolTip">
+      </command>
 	</extension>
    
 	<extension
@@ -749,6 +755,11 @@
             commandId="org.eclipse.ui.edit.text.toggleInsertMode"
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M1+M2+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="F2"
+            contextId="org.eclipse.ui.textEditorScope"
+            commandId="org.eclipse.ui.edit.text.showToolTip"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
