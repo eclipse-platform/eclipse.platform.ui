@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.osgi.util.NLS;
 
 /**

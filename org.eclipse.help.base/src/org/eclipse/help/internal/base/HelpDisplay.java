@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,8 @@ import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.context.Context;
+import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.osgi.util.NLS;
 
 /**

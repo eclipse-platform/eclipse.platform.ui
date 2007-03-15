@@ -15,23 +15,19 @@ import java.net.URL;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.util.IErrorUtil;
 import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.internal.search.LocalSearchManager;
 import org.eclipse.help.internal.search.SearchManager;
+import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.help.internal.workingset.WorkingSetManager;
 import org.osgi.framework.Bundle;
 
@@ -41,9 +37,6 @@ import org.osgi.framework.Bundle;
 public final class BaseHelpSystem {
 	
 	private static final BaseHelpSystem instance = new BaseHelpSystem();
-	
-	private static final String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID + ".webapp"; //$NON-NLS-1$
-	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
 	
 	public static final String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
 	public static final String WORKING_SETS = "workingSets"; //$NON-NLS-1$
@@ -153,11 +146,8 @@ public final class BaseHelpSystem {
 			getInstance().searchManager = null;
 		}
 		if (getInstance().webappStarted) {
-			// stop the web apps
+			// stop the web app
 			WebappManager.stop("help"); //$NON-NLS-1$
-			if (getMode() != MODE_WORKBENCH) {
-				WebappManager.stop("helpControl"); //$NON-NLS-1$
-			}
 		}
 	}
 
@@ -192,20 +182,9 @@ public final class BaseHelpSystem {
 	public static boolean ensureWebappRunning() {
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
-			String webappPlugin = getWebappPlugin();
-			
-			if (getMode() != MODE_WORKBENCH) {
-				// start the help control web app
-				try {
-					WebappManager.start("helpControl", webappPlugin, Path.EMPTY); //$NON-NLS-1$
-				} catch (CoreException e) {
-					HelpBasePlugin.logError("Stand-alone help control web application failed to run.", e); //$NON-NLS-1$
-					return false;
-				}
-			}
-			// start the help web app
 			try {
-				WebappManager.start("help", webappPlugin, Path.EMPTY); //$NON-NLS-1$
+				// start the help web app
+				WebappManager.start("help"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				HelpBasePlugin.logError("The embedded application server could not run help web application.", e); //$NON-NLS-1$
 				BaseHelpSystem.getDefaultErrorUtil().displayError(HelpBaseResources.HelpWebappNotStarted);
@@ -314,38 +293,6 @@ public final class BaseHelpSystem {
 	 */
 	public static IErrorUtil getDefaultErrorUtil() {
 		return getInstance().defaultErrorMessenger;
-	}
-
-	/*
-	 * Returns the plugin id that defines the help webapp
-	 */
-	private static String getWebappPlugin() {
-		// get the webapp extension from the system plugin registry
-		IExtensionPoint point = Platform.getExtensionRegistry()
-				.getExtensionPoint(WEBAPP_EXTENSION_ID);
-		if (point != null) {
-			IExtension[] extensions = point.getExtensions();
-			if (extensions.length != 0) {
-				// We need to pick up the non-default configuration
-				IConfigurationElement[] elements = extensions[0]
-						.getConfigurationElements();
-
-				for (int i = 0; i < elements.length; i++) {
-					String defaultValue = elements[i]
-							.getAttribute(WEBAPP_DEFAULT_ATTRIBUTE);
-					if (defaultValue == null || defaultValue.equals("false")) { //$NON-NLS-1$
-						return elements[i].getContributor().getName();
-					}
-				}
-				// if reached this point, then then pick the first (default)
-				// webapp
-				if (elements.length > 0)
-					return elements[0].getContributor().getName();
-			}
-		}
-
-		// if all fails
-		return "org.eclipse.help.webapp"; //$NON-NLS-1$
 	}
 
 	/**
