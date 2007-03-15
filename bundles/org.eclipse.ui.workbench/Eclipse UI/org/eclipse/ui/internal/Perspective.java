@@ -1725,7 +1725,7 @@ public class Perspective {
         editorHolder = null;
     }
 
-    private EditorAreaTrimToolBar getEditorAreaTrim() {
+    private EditorAreaTrimToolBar getEditorAreaTrim(boolean createIfNecessary) {
 		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
 		ITrimManager tbm = wbw.getTrimManager();
 		if (tbm == null)
@@ -1733,7 +1733,7 @@ public class Perspective {
 
 		// Create if necesary
 		EditorAreaTrimToolBar editorAreaTrim = (EditorAreaTrimToolBar) tbm.getTrim(IPageLayout.ID_EDITOR_AREA);
-    	if (editorAreaTrim  == null) {
+    	if (editorAreaTrim  == null && createIfNecessary) {
     		// Gain access to the trim manager
 			editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
 			tbm.addTrim(SWT.TOP, editorAreaTrim);
@@ -1799,7 +1799,8 @@ public class Perspective {
 		if (tbm == null)
 			return null;
 		
-		EditorAreaTrimToolBar editorAreaTrim = getEditorAreaTrim();
+		// Only create the trim element if it's going to be visible
+		EditorAreaTrimToolBar editorAreaTrim = getEditorAreaTrim(visible);
 		if (editorAreaTrim == null)
 			return null;
 		

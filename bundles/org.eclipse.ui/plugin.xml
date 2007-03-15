@@ -1400,13 +1400,13 @@
          point="org.eclipse.ui.presentationFactories">
       <factory
             name="%Presentation.default.name"
-            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
+            class="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"
             id="org.eclipse.ui.presentations.default">
       </factory>
       <factory
-            class="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"
-            id="org.eclipse.ui.presentations.33"
-            name="%Presentation.experimental.name">
+            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
+            id="org.eclipse.ui.r30"
+            name="%Presentation.30.name">
       </factory>
    </extension>
    <extension

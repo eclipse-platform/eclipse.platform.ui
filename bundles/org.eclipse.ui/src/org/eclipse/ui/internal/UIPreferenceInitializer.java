@@ -146,7 +146,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				true);
 
 		// Default the min/max behaviour to the old (3.2) style
-		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, true);
 		
 		// By default the Fast View Bar allows to select a new fast view from the view list
 		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_NEW_FAST_VIEW, false);

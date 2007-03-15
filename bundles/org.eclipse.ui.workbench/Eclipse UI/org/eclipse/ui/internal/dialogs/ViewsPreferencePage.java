@@ -126,8 +126,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	// its dependant preference defaults on startup. I've filed bug 63346 to do
 	// something about this area.
 	private static final String R21PRESENTATION_ID = "org.eclipse.ui.internal.r21presentationFactory"; //$NON-NLS-1$
-	private static final String R30PRESENTATION_ID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
-	private static final String R33PRESENTATION_ID = "org.eclipse.ui.presentations.33"; //$NON-NLS-1$
+	private static final String DEFAULT_PRESENTATION_ID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
+	private static final String R30_PRESENTATION_ID = "org.eclipse.ui.presentations.30"; //$NON-NLS-1$
 
 	private static final String INITIAL_VAL = new String();
 
@@ -674,11 +674,11 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private boolean isR33(String id) {
-		return R33PRESENTATION_ID.equals(id);
+		return DEFAULT_PRESENTATION_ID.equals(id);
 	}
 
 	private boolean isR30(String id) {
-		return R30PRESENTATION_ID.equals(id);
+		return R30_PRESENTATION_ID.equals(id);
 	}
 
 	private boolean isR21(String id) {
