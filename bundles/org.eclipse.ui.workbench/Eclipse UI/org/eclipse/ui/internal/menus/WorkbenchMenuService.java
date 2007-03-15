@@ -28,14 +28,11 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.services.IEvaluationReference;
 import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.Util;
@@ -117,12 +114,12 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		for (int i = 0; i < managers.length; i++) {
 			IContributionManager mgr = (IContributionManager) managers[i];
 			mgr.update(true);
-			if (mgr instanceof ToolBarManager) {
-				((ToolBarManager)mgr).getControl().pack(true);
-				if (!(((ToolBarManager) mgr).getControl().getParent() instanceof CoolBar)) {
-					LayoutUtil.resize(((ToolBarManager) mgr).getControl());
-				}
-			}
+//			if (mgr instanceof ToolBarManager) {
+//				((ToolBarManager)mgr).getControl().pack(true);
+//				if (!(((ToolBarManager) mgr).getControl().getParent() instanceof CoolBar)) {
+//					LayoutUtil.resize(((ToolBarManager) mgr).getControl());
+//				}
+//			}
 			
 		}
 	}
