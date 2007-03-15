@@ -9,6 +9,9 @@
  *     IBM Corporation - initial API and implementation 
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font should be
  *       activated and used by other components.
+ *     Markus Schorn <markus.schorn@windriver.com> - Fix for bug 136591 - 
+ *       [Dialogs] TypeFilteringDialog appends unnecessary comma
+
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -182,11 +185,10 @@ public class TypeFilteringDialog extends SelectionDialog {
         while (initialIterator.hasNext()) {
             String nextExtension = (String) initialIterator.next();
             if (!selectedMappings.contains(nextExtension)) {
-                entries.append(nextExtension);
-                //Only add a comma if we are not at the end
-                if (initialIterator.hasNext()) {
+            	if (entries.length() != 0) {
 					entries.append(',');
-				}
+            	}            		
+                entries.append(nextExtension);
             }
         }
         this.userDefinedText.setText(entries.toString());
