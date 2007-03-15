@@ -12,11 +12,9 @@ package org.eclipse.team.internal.ccvs.core.connection;
  
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -24,7 +22,6 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.core.streams.*;
 
 import com.jcraft.jsch.Proxy;
-import com.jcraft.jsch.SocketFactory;
 
 /**
  * A connection used to talk to an cvs pserver.
@@ -306,43 +303,5 @@ public class PServerConnection implements IServerConnection {
 	private void throwInValidCharacter() throws CVSAuthenticationException {
 		throw new CVSAuthenticationException(CVSMessages.PServerConnection_invalidChars, CVSAuthenticationException.RETRY, cvsroot);
 	}
-    
-    
-    public static class SimpleSocketFactory implements SocketFactory {
-        InputStream in = null;
-        OutputStream out = null;
-        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-            Socket socket = null;
-            socket = new Socket(host, port);
-            return socket;
-        }
-        public InputStream getInputStream(Socket socket) throws IOException {
-            if (in == null)
-                in = socket.getInputStream();
-            return in;
-        }
-        public OutputStream getOutputStream(Socket socket) throws IOException {
-            if (out == null)
-                out = socket.getOutputStream();
-            return out;
-        }
-    }
-    
-    public static class ResponsiveSocketFacory extends SimpleSocketFactory {
-        private IProgressMonitor monitor;
-        public ResponsiveSocketFacory(IProgressMonitor monitor) {
-            this.monitor = monitor;
-        }
-        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-            Socket socket = null;
-            socket = Util.createSocket(host, port, monitor);
-            // Null out the monitor so we don't hold onto anything
-            // (i.e. the SSH2 session will keep a handle to the socket factory around
-            monitor = new NullProgressMonitor();
-            // Set the socket timeout
-            socket.setSoTimeout(CVSProviderPlugin.getPlugin().getTimeout() * 1000);
-            return socket;
-        }
-    }
     
 }

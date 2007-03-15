@@ -11,30 +11,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jsch.core.IJSchService;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
-import org.eclipse.team.internal.ccvs.core.IUserInfo;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SocketFactory;
-import com.jcraft.jsch.UIKeyboardInteractive;
-import com.jcraft.jsch.UserInfo;
+import com.jcraft.jsch.*;
 
 class JSchSession {
 	private static final int SSH_DEFAULT_PORT = 22;
@@ -51,43 +36,6 @@ class JSchSession {
     	// See bug 92887
     	return 60000;
     }
-    
-	public static class SimpleSocketFactory implements SocketFactory {
-		InputStream in = null;
-		OutputStream out = null;
-		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-			Socket socket = null;
-			socket = new Socket(host, port);
-			return socket;
-		}
-		public InputStream getInputStream(Socket socket) throws IOException {
-			if (in == null)
-				in = socket.getInputStream();
-			return in;
-		}
-		public OutputStream getOutputStream(Socket socket) throws IOException {
-			if (out == null)
-				out = socket.getOutputStream();
-			return out;
-		}
-	}
-	
-	public static class ResponsiveSocketFacory extends SimpleSocketFactory {
-		private IProgressMonitor monitor;
-		public ResponsiveSocketFacory(IProgressMonitor monitor) {
-			this.monitor = monitor;
-		}
-		public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
-			Socket socket = null;
-			socket = Util.createSocket(host, port, monitor);
-			// Null out the monitor so we don't hold onto anything
-			// (i.e. the SSH2 session will keep a handle to the socket factory around
-			monitor = new NullProgressMonitor();
-			// Set the socket timeout
-			socket.setSoTimeout(getCVSTimeoutInMillis());
-			return socket;
-		}
-	}
 	
     /**
      * UserInfo wrapper class that will time how long each prompt takes
