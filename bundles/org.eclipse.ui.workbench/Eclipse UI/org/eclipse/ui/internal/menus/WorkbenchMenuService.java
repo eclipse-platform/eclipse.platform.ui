@@ -32,6 +32,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.layout.LayoutUtil;
@@ -118,7 +119,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			mgr.update(true);
 			if (mgr instanceof ToolBarManager) {
 				((ToolBarManager)mgr).getControl().pack(true);
-				LayoutUtil.resize(((ToolBarManager)mgr).getControl());
+				if (!(((ToolBarManager) mgr).getControl().getParent() instanceof CoolBar)) {
+					LayoutUtil.resize(((ToolBarManager) mgr).getControl());
+				}
 			}
 			
 		}
