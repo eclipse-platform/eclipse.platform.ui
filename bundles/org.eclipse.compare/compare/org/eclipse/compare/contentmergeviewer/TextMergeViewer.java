@@ -3462,8 +3462,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (fCurrentDiff != null) {
 			IMergeViewerContentProvider cp= getMergeContentProvider();
 			if (cp != null) {
-				rightToLeft= cp.isLeftEditable(getInput());
-				leftToRight= cp.isRightEditable(getInput());
+				if (!isPatchHunk()) {
+					rightToLeft= cp.isLeftEditable(getInput());
+					leftToRight= cp.isRightEditable(getInput());
+				}
 			}			
 		}
 		
