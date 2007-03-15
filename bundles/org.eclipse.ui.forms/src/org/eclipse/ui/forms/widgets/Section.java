@@ -449,8 +449,8 @@ public class Section extends ExpandableComposite {
 					marginHeight + gradientheight - 1 });
 		}
 		if (buffer != null) {
-			e.gc.drawImage(buffer, 0, 0);
 			gc.dispose();
+			e.gc.drawImage(buffer, 0, 0);
 			buffer.dispose();
 		}
 	}

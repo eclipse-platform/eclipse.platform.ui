@@ -1580,8 +1580,8 @@ public class FormText extends Canvas {
 					.paint(textGC, repaintRegion, resourceTable, selectedLink,
 							selData);
 		}
-		gc.drawImage(textBuffer, x, y);
 		textGC.dispose();
+		gc.drawImage(textBuffer, x, y);
 		textBuffer.dispose();
 	}
 

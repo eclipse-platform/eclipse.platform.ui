@@ -807,8 +807,8 @@ public class FormHeading extends Canvas {
 			igc.drawLine(carea.x, carea.height - 1, carea.x + carea.width - 1,
 					carea.height - 1);
 		}
-		gc.drawImage(buffer, carea.x, carea.y);
 		igc.dispose();
+		gc.drawImage(buffer, carea.x, carea.y);
 		buffer.dispose();
 	}
 
