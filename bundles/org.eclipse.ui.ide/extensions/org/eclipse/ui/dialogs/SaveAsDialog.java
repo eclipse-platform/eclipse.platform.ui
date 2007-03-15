@@ -9,10 +9,13 @@
  *    IBM Corporation - initial API and implementation 
  *    Bob Foster <bob@objfac.com>
  *     - Fix for bug 23025 - SaveAsDialog should not assume what is being saved is an IFile
+ *    Benjamin Muskalla <b.muskalla@gmx.net>
+ *     - Fix for bug 82541 - [Dialogs] SaveAsDialog should better handle closed projects
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -288,6 +291,21 @@ public class SaveAsDialog extends TitleAreaDialog {
         
         String resourceName = resourceGroup.getResource();
         IWorkspace workspace = ResourcesPlugin.getWorkspace();
+        
+        // Do not allow a closed project to be selected
+        IPath fullPath = resourceGroup.getContainerFullPath();
+        if (fullPath != null) {
+        	String projectName = fullPath.segment(0);
+	        IStatus isValidProjectName = workspace.validateName(projectName, IResource.PROJECT);
+	        if(isValidProjectName.isOK()) {
+	        	IProject project = workspace.getRoot().getProject(projectName);
+	        	if(!project.isOpen()) {
+	        		setErrorMessage(IDEWorkbenchMessages.SaveAsDialog_closedProjectMessage);
+	        		return false;
+	        	}
+	        }
+        }
+        
         IStatus result = workspace.validateName(resourceName, IResource.FILE);
         if (!result.isOK()){
         	setErrorMessage(result.getMessage());

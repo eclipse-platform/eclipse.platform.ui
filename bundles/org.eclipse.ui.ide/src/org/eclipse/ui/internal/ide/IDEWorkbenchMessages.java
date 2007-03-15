@@ -69,6 +69,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String SaveAsDialog_fileLabel;
 	public static String SaveAsDialog_file;
 	public static String SaveAsDialog_overwriteQuestion;
+	public static String SaveAsDialog_closedProjectMessage;
 	public static String Workbench_projectProperties;
 	public static String Workbench_projectPropertiesToolTip;
 
