@@ -53,6 +53,12 @@ public class EnabledTopicUtils {
 				return true;
 			}
 		}
+		IIndexEntry[] subentries = entry.getSubentries();
+		for (int i=0;i<subentries.length;++i) {
+			if (EnabledTopicUtils.isEnabled(subentries[i])) {
+				return true;
+			}
+		}
 		return false;
 	}
 
