@@ -36,7 +36,6 @@ import org.eclipse.swt.graphics.Image;
  * </p>
  * 
  * @see FieldDecoration
- * @see DecoratedField
  * @see ImageRegistry
  * 
  * @since 3.2
@@ -67,6 +66,22 @@ public class FieldDecorationRegistry {
 	 */
 	public static final String DEC_WARNING = "DEC_WARNING"; //$NON-NLS-1$
 
+	/**
+	 * Decoration id for the decoration that should be used to cue the user that
+	 * a field has additional information.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String DEC_INFORMATION = "DEC_INFORMATION"; //$NON-NLS-1$
+
+	/**
+	 * Decoration id for the decoration that should be used to cue the user that
+	 * a field has an error with quick fix available.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String DEC_ERROR_QUICKFIX = "DEC_ERRORQUICKFIX"; //$NON-NLS-1$
+
 	/*
 	 * Image id's
 	 */
@@ -79,6 +94,8 @@ public class FieldDecorationRegistry {
 	private static final String IMG_DEC_FIELD_ERROR_QUICKFIX = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_ERROR_QUICKFIX"; //$NON-NLS-1$
 
 	private static final String IMG_DEC_FIELD_WARNING = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING"; //$NON-NLS-1$
+
+	private static final String IMG_DEC_FIELD_INFO = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_INFO"; //$NON-NLS-1$
 
 	/*
 	 * Declare images and decorations immediately.
@@ -103,7 +120,11 @@ public class FieldDecorationRegistry {
 		
 		imageRegistry.put(IMG_DEC_FIELD_ERROR_QUICKFIX, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/errorqf_ovr.gif"));//$NON-NLS-1$		
+						"images/errorqf_ovr.gif"));//$NON-NLS-1$
+		
+		imageRegistry.put(IMG_DEC_FIELD_INFO, ImageDescriptor
+				.createFromFile(FieldDecorationRegistry.class,
+						"images/info_ovr.gif"));//$NON-NLS-1$		
 
 		// Define the standard decorations. Some do not have standard
 		// descriptions. Use null in these cases.
@@ -119,9 +140,18 @@ public class FieldDecorationRegistry {
 				JFaceResources
 						.getString("FieldDecorationRegistry.errorMessage"), //$NON-NLS-1$
 				IMG_DEC_FIELD_ERROR, imageRegistry);
+		
+		getDefault().registerFieldDecoration(
+				DEC_ERROR_QUICKFIX,
+				JFaceResources
+						.getString("FieldDecorationRegistry.errorQuickFixMessage"), //$NON-NLS-1$
+				IMG_DEC_FIELD_ERROR_QUICKFIX, imageRegistry);
 
 		getDefault().registerFieldDecoration(DEC_WARNING, null,
 				IMG_DEC_FIELD_WARNING, imageRegistry);
+		
+		getDefault().registerFieldDecoration(DEC_INFORMATION, null,
+				IMG_DEC_FIELD_INFO, imageRegistry);
 
 		getDefault()
 				.registerFieldDecoration(
