@@ -17,11 +17,15 @@
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="1" maxOccurs="unbounded">
-            <element ref="page"/>
-            <element ref="group"/>
-            <element ref="extensionContent"/>
-            <element ref="replacementContent"/>
+         <choice>
+            <choice minOccurs="1" maxOccurs="unbounded">
+               <element ref="page"/>
+               <element ref="group"/>
+            </choice>
+            <choice>
+               <element ref="extensionContent"/>
+               <element ref="replacementContent"/>
+            </choice>
          </choice>
       </complexType>
    </element>

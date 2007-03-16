@@ -12,7 +12,7 @@
 <p>
 <h6 class=CaptionFigColumn id=header>Description: </h6>This document describes the intro content file structure as a series of DTD fragments.</p>
 <p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
-<p class=code id=dtd>&lt;!ELEMENT <a name="e.introContent">introContent</a> (<a href="#e.page">page</a> | <a href="#e.group">group</a> | <a href="#e.extensionContent">extensionContent</a> | <a href="#e.replacementContent">replacementContent</a>)+&gt;</p>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.introContent">introContent</a> ((<a href="#e.page">page</a> | <a href="#e.group">group</a>)+ | (<a href="#e.extensionContent">extensionContent</a> | <a href="#e.replacementContent">replacementContent</a>))&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 The introContent element defines the body of the intro content file.  The content file is made up of pages, shared groups that can be included in multiple pages, extensions to anchor points defined in other configurations, or replacements of existing elements.</p>
