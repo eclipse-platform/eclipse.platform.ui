@@ -229,7 +229,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	 * Return the selected existing remote folder. If this
 	 * method returns <code>null</code>, then <code>getModuleName()</code>
 	 * can be used to get the name entered manually by the use.
-	 * @return the selected exisiting remote module
+	 * @return the selected existing remote module
 	 */
 	public ICVSRemoteFolder getSelectedModule() {
 		ICVSRemoteFolder[] selectedModules = getSelectedModules();
@@ -253,6 +253,10 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	private TreeViewer createModuleTree(Composite composite, int horizontalSpan) {
 		Tree tree = new Tree(composite, (supportsMultiSelection ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
+				
+		// see bug 158380
+		data.heightHint = Math.max(composite.getParent().getSize().y, 100);
+		
 		data.horizontalSpan = horizontalSpan;
 		tree.setLayoutData(data);	
 		TreeViewer result = new TreeViewer(tree) {
