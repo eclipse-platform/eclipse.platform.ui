@@ -137,6 +137,7 @@ public final class IDEActionFactory {
             }
             IWorkbenchAction action = new ToggleAutoBuildAction(window);
             action.setId(getId());
+            action.setActionDefinitionId("org.eclipse.ui.project.buildAutomatically"); //$NON-NLS-1$
             return action;
         }
     };

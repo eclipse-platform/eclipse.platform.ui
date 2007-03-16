@@ -660,6 +660,12 @@
             id="org.eclipse.ui.project.rebuildProject">
       </command>
       <command
+            name="%command.buildAutomatically.name"
+            description="%command.buildAutomatically.description"
+            categoryId="org.eclipse.ui.category.project"
+            id="org.eclipse.ui.project.buildAutomatically">
+      </command>
+      <command
             name="%command.buildAll.name"
             description="%command.buildAll.description"
             categoryId="org.eclipse.ui.category.project"
