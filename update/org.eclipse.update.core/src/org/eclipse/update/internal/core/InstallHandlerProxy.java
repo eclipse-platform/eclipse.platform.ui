@@ -102,9 +102,6 @@ public class InstallHandlerProxy implements IInstallHandlerWithFilter {
 		}
 	}
 	
-	private InstallHandlerProxy() {
-	}
-
 	public InstallHandlerProxy(
 		int type,
 		IFeature feature,

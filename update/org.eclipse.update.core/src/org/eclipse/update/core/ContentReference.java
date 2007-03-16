@@ -74,12 +74,6 @@ public class ContentReference {
 	
 	private long lastModified;
 
-	/*
-	 * do not allow default contruction
-	 */
-	private ContentReference() {
-	}
-
 	/**
 	 * Create content reference from URL.
 	 * 
