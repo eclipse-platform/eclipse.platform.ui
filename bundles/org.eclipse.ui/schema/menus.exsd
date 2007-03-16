@@ -762,12 +762,12 @@ Separator contributions that have an id define the start of a logical group so t
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
             <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
-         <choice minOccurs="0" maxOccurs="unbounded">
-            <element ref="command" minOccurs="0" maxOccurs="1"/>
-            <element ref="separator" minOccurs="0" maxOccurs="1"/>
-            <element ref="dynamic" minOccurs="0" maxOccurs="1"/>
-            <element ref="control" minOccurs="0" maxOccurs="1"/>
-         </choice>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="command" minOccurs="0" maxOccurs="1"/>
+               <element ref="separator" minOccurs="0" maxOccurs="1"/>
+               <element ref="dynamic" minOccurs="0" maxOccurs="1"/>
+               <element ref="control" minOccurs="0" maxOccurs="1"/>
+            </choice>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -868,13 +868,13 @@ A basic extension looks like this.
          point=&quot;org.eclipse.ui.menus&quot;&gt;
       &lt;menuContribution
          locationURI=&quot;menu:someorg.somemenu.id?after=additions&quot;&gt;
-         &lt;item
+         &lt;command
                commandId=&quot;someorg.someid.someCommand&quot;
                icon=&quot;icons/anything.gif&quot;
                id=&quot;someorg.someid.BasicCmdItem&quot;
                label=&quot;Simple Item&quot;
                mnemonic=&quot;S&quot;&gt;
-         &lt;/item&gt;
+         &lt;/command&gt;
       &lt;/menuContribution&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
