@@ -796,7 +796,9 @@ public class TreeViewer extends AbstractTreeViewer {
 								disassociate(child);
 							}
 							item.clear(0, true);
-						}
+						} else {
+                            virtualLazyUpdateChildCount(item, item.getItemCount());
+                        }                            
 					}
 				}
 			}
