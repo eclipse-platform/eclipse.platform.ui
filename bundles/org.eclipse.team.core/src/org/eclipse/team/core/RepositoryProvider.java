@@ -383,11 +383,15 @@ public abstract class RepositoryProvider implements IProjectNature, IAdaptable {
 	 * {@link #getFileModificationValidator2()} to return a subclass of
 	 * {@link FileModificationValidator} and should return the same
 	 * validator from {@link #getFileModificationValidator()}.
+	 * <p>
+	 * This method is not intended to be called by clients. Clients should
+	 * use the {@link IWorkspace#validateEdit(IFile[], Object)} method instead.
 	 * 
 	 * @return an <code>FileModificationValidator</code> for pre-checking
 	 *         operations that modify the contents of files
 	 * 
 	 * @see FileModificationValidator
+	 * @see IWorkspace#validateEdit(IFile[], Object)
 	 * @since 3.3
 	 */
 	public FileModificationValidator getFileModificationValidator2() {
