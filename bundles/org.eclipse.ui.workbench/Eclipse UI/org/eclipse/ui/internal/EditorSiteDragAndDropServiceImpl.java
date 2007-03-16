@@ -144,6 +144,9 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 */
 	public void addMergedDropTarget(Control control, int ops, Transfer[] transfers,
 			DropTargetListener listener) {
+		 // First we have to remove any existing drop target from the control
+		removeMergedDropTarget(control);
+		
 		// Capture the editor area's current ops, transfers & listener
 		int editorSiteOps = DND.DROP_DEFAULT | DND.DROP_COPY | DND.DROP_LINK;
 
@@ -159,23 +162,32 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 		addedListeners.add(newTarget);
 	}
 
-	private MergedDropTarget findMergedDropTarget(Control control) {
-		// Clean up the listeners
-		for (Iterator iterator = addedListeners.iterator(); iterator.hasNext();) {
-			MergedDropTarget target = (MergedDropTarget) iterator.next();
-			if (target.realDropTarget.getControl() == control) {
-				return target;
-			}
-		}
+	/**
+	 * This method will return the current drop target for the control
+	 * (whether or not it was created using this service.
+	 * <p>
+	 * <b>WARNING:</b> This code uses an SWT internal string to gain
+	 * access to the drop target. I've been assured that neither the
+	 * value of the string nor the fact that the target is stored in
+	 * a property will change for 3.3 and that post-3.3 we will come
+	 * up with a more viable DnD SWT story... 
+	 * </p>
+	 * @param control The control to get the drop target for
+	 * @return The DropTarget for that control (could be null
+	 */
+	private DropTarget getCurrentDropTarget(Control control) {
+		if (control == null)
+			return null;
 		
-		return null;
+		Object curDT = control.getData("DropTarget");  //$NON-NLS-1$
+		return (DropTarget)curDT;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dnd.IDragAndDropService#removeMergedDropTarget(org.eclipse.swt.widgets.Control)
 	 */
 	public void removeMergedDropTarget(Control control) {
-		MergedDropTarget targetForControl = findMergedDropTarget(control);
+		DropTarget targetForControl = getCurrentDropTarget(control);
 		if (targetForControl != null) {
 			targetForControl.dispose();
 			addedListeners.remove(targetForControl);
