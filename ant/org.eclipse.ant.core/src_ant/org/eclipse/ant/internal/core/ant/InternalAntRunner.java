@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
- * Portions Copyright  2000-2007 The Apache Software Foundation
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Portions Copyright  2000-2005 The Apache Software Foundation
  * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
  * accompanies this distribution and is available at 
@@ -23,6 +23,7 @@ import java.net.URL;
 import java.text.MessageFormat; // don't use ICU in ant builder
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -123,7 +124,7 @@ public class InternalAntRunner {
 	/** Extra arguments to be parsed as command line arguments. */
 	private String[] extraArguments = null;
 	
-	private boolean executed = false;
+	private boolean scriptExecuted= false;
 	
 	private List propertyFiles= new ArrayList();
 	
@@ -484,6 +485,94 @@ public class InternalAntRunner {
 	}
 
 	/**
+	 * Logs a message with the client that lists the targets
+	 * in a project
+	 * 
+	 * @param project the project to list targets from
+	 */
+	private void printTargets(Project project) {
+		// find the target with the longest name
+		int maxLength = 0;
+		Enumeration ptargets = project.getTargets().elements();
+		String targetName;
+		String targetDescription;
+		Target currentTarget;
+		// split the targets in top-level and sub-targets depending
+		// on the presence of a description
+		List topNames = new ArrayList();
+		List topDescriptions = new ArrayList();
+		List subNames = new ArrayList();
+
+		while (ptargets.hasMoreElements()) {
+			currentTarget = (Target) ptargets.nextElement();
+			targetName = currentTarget.getName();
+			targetDescription = currentTarget.getDescription();
+			if (targetDescription == null) {
+				subNames.add(targetName);
+			} else {
+				topNames.add(targetName);
+				topDescriptions.add(targetDescription);
+				if (targetName.length() > maxLength) {
+					maxLength = targetName.length();
+				}
+			}
+		}
+
+		Collections.sort(subNames);
+		Collections.sort(topNames);
+		Collections.sort(topDescriptions);
+		
+		String defaultTargetName = project.getDefaultTarget();
+		if (defaultTargetName != null && !"".equals(defaultTargetName)) { // shouldn't need to check but... //$NON-NLS-1$
+			List defaultName = new ArrayList(1);
+			List defaultDesc = null;
+			defaultName.add(defaultTargetName);
+
+			int indexOfDefDesc = topNames.indexOf(defaultTargetName);
+			if (indexOfDefDesc >= 0) {
+				defaultDesc = new ArrayList(1);
+				defaultDesc.add(topDescriptions.get(indexOfDefDesc));
+			}
+			printTargets(project, defaultName, defaultDesc, InternalAntMessages.InternalAntRunner_Default_target__3, maxLength);
+
+		}
+
+		printTargets(project, topNames, topDescriptions, InternalAntMessages.InternalAntRunner_Main_targets__4, maxLength);
+		printTargets(project, subNames, null, InternalAntMessages.InternalAntRunner_Subtargets__5, 0);
+	}
+
+	/**
+	 * Logs a message with the client that lists the target names and optional descriptions
+	 * 
+	 * @param project the enclosing target
+	 * @param names the targets names
+	 * @param descriptions the corresponding descriptions
+	 * @param heading the message heading
+	 * @param maxlen maximum length that can be allocated for a name
+	 */
+	private void printTargets(Project project, List names, List descriptions, String heading, int maxlen) {
+		// now, start printing the targets and their descriptions
+		String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
+		
+		String spaces = "    "; //$NON-NLS-1$
+		while (spaces.length() < maxlen) {
+			spaces += spaces;
+		}
+		StringBuffer msg = new StringBuffer();
+		msg.append(heading + lSep + lSep);
+		for (int i = 0; i < names.size(); i++) {
+			msg.append(' ');
+			msg.append(names.get(i));
+			if (descriptions != null) {
+				msg.append(spaces.substring(0, maxlen - ((String) names.get(i)).length() + 2));
+				msg.append(descriptions.get(i));
+			}
+			msg.append(lSep);
+		}
+		logMessage(project, msg.toString(), Project.MSG_INFO);
+	}
+
+	/**
 	 * Invokes the building of a project object and executes a build using either a given
 	 * target or the default target. This method is called if running in
 	 * headless mode.
@@ -511,7 +600,7 @@ public class InternalAntRunner {
 		
 		SecurityManager originalSM= System.getSecurityManager();
 		setJavaClassPath();
-		executed = true;
+		scriptExecuted= true;
 		processAntHome(false);
 		try {
 			if (argList != null && (argList.remove("-projecthelp") || argList.remove("-p"))) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -519,8 +608,9 @@ public class InternalAntRunner {
 			}
 			getCurrentProject().init();
 			if (argList != null) {
-				executed = preprocessCommandLine(argList);
-				if (!executed) {
+				scriptExecuted= preprocessCommandLine(argList);
+			
+				if (!scriptExecuted) {
 					return;
 				}
 			}
@@ -555,13 +645,13 @@ public class InternalAntRunner {
 			
 			if (argList != null && !argList.isEmpty()) {
 				try {
-					executed = processCommandLine(argList);
+					scriptExecuted= processCommandLine(argList);
 				} catch (BuildException e) {
-					executed = false;
+					scriptExecuted= false;
 					throw e;
 				}
 			}
-			if (!executed) {
+			if (!scriptExecuted) {
 				return;
 			}
 			
@@ -580,28 +670,22 @@ public class InternalAntRunner {
 					setter.setInputHandler(getCurrentProject(), "org.eclipse.ant.internal.core.ant.FailInputHandler"); //$NON-NLS-1$
 				}
 			}
+			
+			getCurrentProject().log(MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file___0__1, new String[]{getBuildFileLocation()}));
 
-			if(!projectHelp) {
-				getCurrentProject().log(MessageFormat.format(InternalAntMessages.InternalAntRunner_Build_file___0__1, new String[]{getBuildFileLocation()}));
-
-				setTasks(getCurrentProject());
-				setTypes(getCurrentProject());
-
-				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-					getCurrentProject().setKeepGoingMode(keepGoing);
-				}
-				parseBuildFile(getCurrentProject());
+			setTasks(getCurrentProject());
+			setTypes(getCurrentProject());
+			
+			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
+				getCurrentProject().setKeepGoingMode(keepGoing);
 			}
 			
+			parseBuildFile(getCurrentProject());
 			createMonitorBuildListener(getCurrentProject());
 			
 			if (projectHelp) {
-				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-					new EclipseMainHelper().runProjectHelp(getBuildFileLocation(), getCurrentProject());
-					return;
-				} 
-				getCurrentProject().log(InternalAntMessages.InternalAntRunner_3);
-				executed = false;
+				printHelp(getCurrentProject());
+				scriptExecuted= false;
 				return;
 			}
 			
@@ -621,7 +705,7 @@ public class InternalAntRunner {
 			}
 			getCurrentProject().executeTargets(targets);
 		} catch (OperationCanceledException e) {
-			executed = false;
+			scriptExecuted= false;
 			logMessage(getCurrentProject(), e.getMessage(), Project.MSG_INFO);
 			throw e;
 		} catch (AntSecurityException e) {
@@ -758,7 +842,7 @@ public class InternalAntRunner {
 		
 			project.setProperty("XmlLogger.file", path.toOSString()); //$NON-NLS-1$
 		}
-		if (error == null && executed) {
+		if (error == null && scriptExecuted) {
 			logMessage(project, InternalAntMessages.InternalAntRunner_BUILD_SUCCESSFUL_1, messageOutputLevel);
 		} 
         if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
@@ -958,11 +1042,7 @@ public class InternalAntRunner {
 	private boolean processCommandLine(List commands) {
 		
 		if (commands.remove("-help") || commands.remove("-h")) { //$NON-NLS-1$ //$NON-NLS-2$
-			if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-				new EclipseMainHelper().runUsage(getBuildFileLocation(), getCurrentProject());
-			} else {
-				getCurrentProject().log(InternalAntMessages.InternalAntRunner_2);
-			}
+			printUsage();
 			return false;
 		}
 		
@@ -1199,6 +1279,16 @@ public class InternalAntRunner {
 	}
 
 	/*
+	 * Print the project description, if any
+	 */
+	private void printHelp(Project project) {
+		if (project.getDescription() != null) {
+			logMessage(project, project.getDescription(), Project.MSG_INFO);
+		}
+		printTargets(project);
+	}
+
+	/*
 	 * Logs a message with the client indicating the version of <b>Ant</b> that this class
 	 * fronts.
 	 */
@@ -1206,6 +1296,93 @@ public class InternalAntRunner {
 		logMessage(getCurrentProject(), Main.getAntVersion(), Project.MSG_INFO);
 	}
 
+	/*
+	 * Logs a message with the client outlining the usage of <b>Ant</b>.
+	 */
+	private void printUsage() {
+		String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
+		StringBuffer msg = new StringBuffer();
+		msg.append("ant ["); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_options_13);
+		msg.append("] ["); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_target_15);
+		msg.append(" ["); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_target_15);
+		msg.append("2 ["); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_target_15);
+		msg.append("3] ...]]"); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append(InternalAntMessages.InternalAntRunner_Options___21);
+		msg.append(lSep);
+		msg.append("\t-help, -h\t\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_print_this_message_23);
+		msg.append(lSep);
+		msg.append("\t-projecthelp, -p\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_print_project_help_information_25);
+		msg.append(lSep);
+		msg.append("\t-version\t\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_print_the_version_information_and_exit_27);
+		msg.append(lSep); 
+		msg.append("\t-diagnostics\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_12);
+		msg.append(lSep);
+		msg.append(InternalAntMessages.InternalAntRunner_13);
+		msg.append(lSep);
+		msg.append("\t-quiet, -q\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_be_extra_quiet_29);
+		msg.append(lSep);
+		msg.append("\t-verbose, -v\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_be_extra_verbose_31);
+		msg.append(lSep);
+		msg.append("\t-debug, -d\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_print_debugging_information_33);
+		msg.append(lSep);
+		msg.append("\t-emacs, -e\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_produce_logging_information_without_adornments_35);
+		msg.append(lSep);
+		msg.append("\t-logfile\t<file>\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_use_given_file_for_log_37);
+		msg.append(lSep);
+		msg.append("\t\t-l\t<file>"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_1);
+		msg.append(lSep);  
+		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_the_class_which_is_to_perform_logging_39);
+		msg.append(lSep);  
+		msg.append("\t-listener <classname>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_add_an_instance_of_class_as_a_project_listener_41);
+		msg.append(lSep);
+		msg.append("\t-noinput\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_158);
+		msg.append(lSep); 
+		msg.append("\t-buildfile\t<file>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_use_given_buildfile_43);
+		msg.append(lSep); 
+		msg.append("\t\t-file\t<file>"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_1);
+		msg.append(lSep);
+		msg.append("\t\t-f\t\t<file>"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_1);
+		msg.append(lSep);
+		msg.append("\t-D<property>=<value>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_use_value_for_given_property_45);
+		msg.append(lSep);
+		msg.append("\t-keep-going, -k"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_159);
+		msg.append(lSep);
+		msg.append(InternalAntMessages.InternalAntRunner_160);
+		msg.append(lSep); 
+		msg.append("\t-propertyfile <name>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_19);
+		msg.append(lSep);
+		msg.append(InternalAntMessages.InternalAntRunner_20);
+		msg.append(lSep);
+		msg.append("\t-inputhandler <class>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.InternalAntRunner_22);
+		msg.append(lSep);
+
+		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
+	}
 	
 	/**
 	 * Sets the build progress monitor.
