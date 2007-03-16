@@ -278,7 +278,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		// refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
 		clearFilters(parentPath);
-		getTreeViewer().refresh(parentPath);
+		getTreeViewer().refresh(parentDelta.getElement());
 	}
 
 	/* (non-Javadoc)
