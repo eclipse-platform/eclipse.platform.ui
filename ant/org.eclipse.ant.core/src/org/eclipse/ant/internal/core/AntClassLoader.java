@@ -23,7 +23,8 @@ import java.util.List;
 public class AntClassLoader extends URLClassLoader {
 
     private static final String ANT_PACKAGES_PREFIX = "org.apache.tools"; //$NON-NLS-1$
-        
+    private static final String ANT_URL_PREFIX = "org/apache/tools";     //$NON-NLS-1$
+    
     private boolean fAllowPluginLoading = false;
 
     protected ClassLoader[] fPluginLoaders;
@@ -82,6 +83,17 @@ public class AntClassLoader extends URLClassLoader {
      * @see java.net.URLClassLoader#findResource(java.lang.String)
      */
     public URL findResource(String name) {
+    	 if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX))) {
+             URL result = findResourcePlugins(name);
+             if (result != null) {
+            	 return result;
+             }
+         } 
+    	
+    	return super.findResource(name);
+    }
+    
+    private URL findResourcePlugins(String name) {
     	//remove this class loader as the context class loader
     	//when loading resources from plug-ins...see bug 94471
     	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -101,7 +113,7 @@ public class AntClassLoader extends URLClassLoader {
     	} finally {
     		Thread.currentThread().setContextClassLoader(originalClassLoader);
     	}
-    	return super.findResource(name);
+    	return null;
     }
     
     /*
@@ -114,24 +126,26 @@ public class AntClassLoader extends URLClassLoader {
     	}
     	List all = new ArrayList();
     	try {
-    		if (fPluginLoaders != null) {
-    			Enumeration result = null;
-    			for (int i = 0; i < fPluginLoaders.length; i++) {
-    				result = fPluginLoaders[i].getResources(name);
-    				while (result.hasMoreElements()) {
-    					all.add(result.nextElement());
+    		if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX) || name.startsWith(ANT_URL_PREFIX, 1))) {
+    			if (fPluginLoaders != null) {
+    				Enumeration result = null;
+    				for (int i = 0; i < fPluginLoaders.length; i++) {
+    					result = fPluginLoaders[i].getResources(name);
+    					while (result.hasMoreElements()) {
+    						all.add(result.nextElement());
+    					}
     				}
     			}
     		}
-    		
+
     		Enumeration superResources = super.findResources(name);
     		if (all.isEmpty()) {
     			return superResources;
     		}
-    		
+
     		while (superResources.hasMoreElements()) {
-				all.add(superResources.nextElement());
-			}
+    			all.add(superResources.nextElement());
+    		}
     		return Collections.enumeration(all);
     	} finally {
     		Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -139,13 +153,13 @@ public class AntClassLoader extends URLClassLoader {
     }
     
     /**
-     * Sets whether this class loader will allow Apache Ant classes to be found or
+     * Sets whether this class loader will allow Apache Ant classes or resources to be found or
      * loaded from its set of plug-in class loaders.
      * 
      * @param allowLoading whether or not to allow the plug-in class loaders
-     * to load the Apache Ant classes
+     * to load the Apache Ant classes or resources
      */
-    public void allowPluginClassLoadersToLoadAntClasses(boolean allowLoading) {
+    public void allowPluginClassLoadersToLoadAnt(boolean allowLoading) {
         fAllowPluginLoading = allowLoading;
     }
     

@@ -263,9 +263,10 @@ public class AntCorePlugin extends Plugin {
 	
 	/**
 	 * Returns a new class loader to use when executing Ant builds or 
-	 * other applications such as parsing or code proposal determination 
+	 * other applications such as parsing or code proposal determination.
+	 * 
 	 * @param allowLoading whether to allow plug-in classloaders associated 
-	 * with the new classloader to load Apache Ant classes.
+	 * with the new classloader to load Apache Ant classes or resources.
 	 * @return the new class loader
 	 */
 	public ClassLoader getNewClassLoader(boolean allowLoading) {
@@ -276,9 +277,10 @@ public class AntCorePlugin extends Plugin {
 		
 	/**
 	 * Returns a new class loader to use when executing Ant builds or 
-	 * other applications such as parsing or code proposal determination 
+	 * other applications such as parsing or code proposal determination.
+	 *  
 	 * @param allowLoading whether to allow plug-in classloaders associated 
-	 * with the new classloader to load Apache Ant classes.
+	 * with the new classloader to load Apache Ant classes or resources.
 	 * @param urls the URLs that define the classpath of the new classloader
 	 * @return the new class loader
 	 * @since 3.1
@@ -287,7 +289,7 @@ public class AntCorePlugin extends Plugin {
 		AntCorePreferences corePreferences = getPreferences();
 		ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
 		AntClassLoader loader= new AntClassLoader(urls, pluginLoaders);
-		loader.allowPluginClassLoadersToLoadAntClasses(allowLoading);
+		loader.allowPluginClassLoadersToLoadAnt(allowLoading);
 		return loader;
 	}
 	
