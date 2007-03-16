@@ -34,7 +34,7 @@ public class PreferenceNode implements IPreferenceNode {
     private List subNodes;
 
     /**
-     * Name of class that implements <code>IPreferenceNode</code>, or
+     * Name of a class that implements <code>IPreferencePage</code>, or
      * <code>null</code> if none.
      */
     private String classname;
