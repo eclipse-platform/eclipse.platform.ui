@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,63 +12,58 @@
 package org.eclipse.ant.internal.core;
 
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class AntClassLoader extends URLClassLoader {
-    
-    private boolean allowPluginLoading= false;
 
-    protected ClassLoader[] pluginLoaders;
-    private static final String ANT_PACKAGES_PREFIX= "org.apache.tools"; //$NON-NLS-1$
+    private static final String ANT_PACKAGES_PREFIX = "org.apache.tools"; //$NON-NLS-1$
+        
+    private boolean fAllowPluginLoading = false;
 
-    private ClassLoader fContextClassloader= null;
+    protected ClassLoader[] fPluginLoaders;
+
+    private ClassLoader fContextClassloader = null;
     
     public AntClassLoader(URL[] urls, ClassLoader[] pluginLoaders) {
         super(urls, ClassLoader.getSystemClassLoader());
-        this.pluginLoaders = pluginLoaders;
+        fPluginLoaders = pluginLoaders;
     }
 
+    /*
+     * @see java.net.URLClassLoader#findClass(java.lang.String)
+     */
     protected Class findClass(String name) throws ClassNotFoundException {
         Class result = null;
-        //check whether to load the Apache Ant classes from the plugin class loaders 
+        //check whether to load the Apache Ant classes from the plug-in class loaders 
         //or to only load from the URLs specified from the Ant runtime classpath preferences setting
-        if (allowPluginLoading || !(name.startsWith(ANT_PACKAGES_PREFIX))) {
-            result= loadClassPlugins(name);
+        if (fAllowPluginLoading || !(name.startsWith(ANT_PACKAGES_PREFIX))) {
+            result = loadClassPlugins(name);
         } 
         
-        if (result == null) {
-            result = loadClassURLs(name);
+        if (result != null) {
+            return result;
         }
-        if (result == null) {
-            throw new ClassNotFoundException(name);
-        }
-        return result;
-    }
-
-    protected Class loadClassURLs(String name) {
-        try {
-            return super.findClass(name);
-        } catch (ClassNotFoundException e) {
-            // Ignore exception now. If necessary we'll throw
-            // a ClassNotFoundException in findClass(String)
-        }
-        return null;
+        
+        return super.findClass(name);
     }
 
     protected Class loadClassPlugins(String name) {
-        //remove this classloader as the context classloader
-        //when loading classes from plugins...see bug 94471
-        ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
+        //remove this class loader as the context class loader
+        //when loading classes from plug-ins...see bug 94471
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         if (fContextClassloader != null) {
             Thread.currentThread().setContextClassLoader(fContextClassloader);
         }
         try {
             Class result = null;
-            if (pluginLoaders != null) {
-                for (int i = 0; (i < pluginLoaders.length) && (result == null); i++) {
+            if (fPluginLoaders != null) {
+                for (int i = 0; (i < fPluginLoaders.length) && (result == null); i++) {
                     try {
-                        result = pluginLoaders[i].loadClass(name);
+                        result = fPluginLoaders[i].loadClass(name);
                     } catch (ClassNotFoundException e) {
                         // Ignore exception now. If necessary we'll throw
                         // a ClassNotFoundException in loadClass(String)
@@ -81,18 +76,72 @@ public class AntClassLoader extends URLClassLoader {
         }
     }
     
+    /*
+     * @see java.net.URLClassLoader#findResource(java.lang.String)
+     */
+    public URL findResource(String name) {
+    	//remove this class loader as the context class loader
+    	//when loading resources from plug-ins...see bug 94471
+    	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+    	if (fContextClassloader != null) {
+    		Thread.currentThread().setContextClassLoader(fContextClassloader);
+    	}
+    	try {
+    		URL result = null;
+    		if (fPluginLoaders != null) {
+    			for (int i = 0; i < fPluginLoaders.length; i++) {
+    				result = fPluginLoaders[i].getResource(name);
+    				if (result != null) {
+    	    			return result;
+    	    		}
+    			}
+    		}
+    	} finally {
+    		Thread.currentThread().setContextClassLoader(originalClassLoader);
+    	}
+    	return super.findResource(name);
+    }
+    
+    /*
+     * @see java.net.URLClassLoader#findResources(java.lang.String)
+     */
+    public Enumeration findResources(String name) throws IOException {
+    	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+    	if (fContextClassloader != null) {
+    		Thread.currentThread().setContextClassLoader(fContextClassloader);
+    	}
+    	Vector all = new Vector();
+    	try {
+    		if (fPluginLoaders != null) {
+    			Enumeration result = null;
+    			for (int i = 0; i < fPluginLoaders.length; i++) {
+    				result = fPluginLoaders[i].getResources(name);
+    				while (result.hasMoreElements()) {
+    					all.add(result.nextElement());
+    				}
+    			}
+    		}
+    		if (!all.isEmpty()) {
+    			return all.elements();
+    		}
+    	} finally {
+    		Thread.currentThread().setContextClassLoader(originalClassLoader);
+    	}
+    	return super.findResources(name);
+    }
+    
     /**
-     * Sets whether this classloader will allow Apache Ant classes to be found or
-     * loaded from its set of plugin classloaders.
+     * Sets whether this class loader will allow Apache Ant classes to be found or
+     * loaded from its set of plug-in class loaders.
      * 
-     * @param allowLoading whether or not to allow the plugin classloaders
+     * @param allowLoading whether or not to allow the plug-in class loaders
      * to load the Apache Ant classes
      */
     public void allowPluginClassLoadersToLoadAntClasses(boolean allowLoading) {
-        this.allowPluginLoading = allowLoading;
+        fAllowPluginLoading = allowLoading;
     }
     
     public void setPluginContextClassloader(ClassLoader classLoader) {
-        fContextClassloader= classLoader;
+        fContextClassloader = classLoader;
     }
 }
