@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -355,7 +355,7 @@ public final class RevisionPainter {
 		public HoverInformationControlCreator(boolean isFocusable) {
 			fIsFocusable= isFocusable;
 		}
-		
+
 		/*
 		 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
@@ -364,12 +364,42 @@ public final class RevisionPainter {
 			
 			if (BrowserInformationControl.isAvailable(parent)) {
 	            final int shellStyle= SWT.TOOL | (fIsFocusable ? SWT.RESIZE : SWT.NO_TRIM);
-	            return new BrowserInformationControl(parent, shellStyle, style, null);
+	            return new BrowserInformationControl(parent, shellStyle, style) {
+	            	/*
+	            	 * @see org.eclipse.jface.internal.text.html.BrowserInformationControl#setInformation(java.lang.String)
+	            	 * @since 3.3
+	            	 */
+	            	public void setInformation(String content) {
+        				content= addCSSToHTMLFragment(content);
+	            		super.setInformation(content);
+	            	}
+	            	
+	        		/**
+	        		 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
+	        		 * &lt;html&gt; section).
+	        		 * 
+	        		 * @param html the html / text produced by a revision
+	        		 * @return modified html
+	        		 */
+	        		private String addCSSToHTMLFragment(String html) {
+	        			int max= Math.min(100, html.length());
+	        			if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
+	        				// there is already a header
+	        				return html;
+	        			
+	        			StringBuffer info= new StringBuffer(512 + html.length());
+	        			HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
+	        			info.append(html);
+	        			HTMLPrinter.addPageEpilog(info);
+	        			return info.toString();
+	        		}
+	            	
+	            };
             }
 			return new DefaultInformationControl(parent, style, new HTMLTextPresenter());
 		}
 	}
-	
+
 	private static final String fgStyleSheet= "/* Font definitions */\n" + //$NON-NLS-1$
 		"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 9pt }\n" + //$NON-NLS-1$ 
 		"pre				{ font-family: monospace; font-size: 9pt }\n" + //$NON-NLS-1$
@@ -420,6 +450,12 @@ public final class RevisionPainter {
 		 * @see org.eclipse.jface.text.source.IAnnotationHoverExtension#getHoverControlCreator()
 		 */
 		public IInformationControlCreator getHoverControlCreator() {
+			RevisionInformation revisionInfo= fRevisionInfo;
+			if (revisionInfo != null) {
+				IInformationControlCreator creator= revisionInfo.getHoverControlCreator();
+				if (creator != null)
+					return creator;
+			}
 			return new HoverInformationControlCreator(false);
 		}
 
@@ -444,29 +480,7 @@ public final class RevisionPainter {
 		public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
 			RevisionRange range= getRange(lineRange.getStartLine());
 			Object info= range == null ? null : range.getRevision().getHoverInfo();
-			if (info instanceof String)
-				info= addCSSToHTMLFragment((String) info);
 			return info;
-		}
-
-		/**
-		 * Adds a HTML header and CSS info if <code>html</code> is only an HTML fragment (has no
-		 * &lt;html&gt; section).
-		 * 
-		 * @param html the html / text produced by a revision
-		 * @return modified html
-		 */
-		private Object addCSSToHTMLFragment(String html) {
-			int max= Math.min(100, html.length());
-			if (html.substring(0, max).indexOf("<html>") != -1) //$NON-NLS-1$
-				// there is already a header
-				return html;
-			
-			StringBuffer info= new StringBuffer(512 + html.length());
-			HTMLPrinter.insertPageProlog(info, 0, fgStyleSheet);
-			info.append(html);
-			HTMLPrinter.addPageEpilog(info);
-			return info.toString();
 		}
 
 		/*
@@ -482,6 +496,12 @@ public final class RevisionPainter {
          * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
          */
         public IInformationControlCreator getInformationPresenterControlCreator() {
+			RevisionInformation revisionInfo= fRevisionInfo;
+			if (revisionInfo != null) {
+				IInformationControlCreator creator= revisionInfo.getInformationPresenterControlCreator();
+				if (creator != null)
+					return creator;
+			}
 			return new HoverInformationControlCreator(true);
         }
 	}

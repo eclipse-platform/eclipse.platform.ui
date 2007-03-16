@@ -495,6 +495,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.2
 	 */
 	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
+		if (info.getHoverControlCreator() == null)
+			info.setHoverControlCreator(new RevisionHoverInformationControlCreator(false));
+		
 		showChangeInformation(true);
 		if (fLineColumn != null)
 			fLineColumn.showRevisionInformation(info, quickDiffProviderId);
