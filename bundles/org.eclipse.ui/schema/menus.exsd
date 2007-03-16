@@ -40,7 +40,7 @@ The general strategy for this mechanism is to separate the &apos;location&apos; 
 &lt;li&gt;&lt;b&gt;Query&lt;/b&gt; - This field allows fine-grained definition of the specific location &lt;i&gt;within&lt;/i&gt; a given menu. It has the form &quot;[placement]=[id]&quot; where placement is one of &quot;before&quot; or &quot;after&quot; and the id is expected to be the id of some IContributionItem in the menu.&lt;/li&gt;
 &lt;/ul&gt; 
 &lt;p&gt;
-This will define the location at which the contributions will appear in the eclipse UI. Once the isertion point has been defined the rest of the contributions describe the UI elements that will be added at that location. Each element supports a &apos;visibleWhen&apos; expression that determines at build time whether a particular item should appear in the menu based on the system&apos;s current state (selection, active view/editor, context...).
+This will define the location at which the contributions will appear in the eclipse UI. Once the insertion point has been defined the rest of the contributions describe the UI elements that will be added at that location. Each element supports a &apos;visibleWhen&apos; expression that determines at build time whether a particular item should appear in the menu based on the system&apos;s current state (selection, active view/editor, context...).
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -518,7 +518,7 @@ This should be the starting point for &lt;i&gt;all&lt;/i&gt; contributions into 
 
 The format for the URI is comprised of three basic parts:
 
-Sheme: One of &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar. Indicates the type of the manager used to handle the contributions
+Scheme: One of &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar. Indicates the type of the manager used to handle the contributions
 Id: This is either the id of an existing menu, a view id or the id of the editor &apos;type&apos;
 Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
  &amp;lt;placement&amp;gt; is either &quot;before&quot; or &quot;after&quot; and
@@ -535,7 +535,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
             <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
          <documentation>
-            Defines a new menu contribution at the given isertion point.
+            Defines a new menu contribution at the given insertion point.
          </documentation>
       </annotation>
       <complexType>
@@ -699,7 +699,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
       &lt;tr&gt;
  &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
         &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
-        &lt;td valign=&quot;top&quot;&gt;- (Toolar only) Creates a ToolItem with the &lt;code&gt;SWT.DROP_DOWN&lt;/code&gt; affordance. The URI of the menu is &quot;menu:&quot; + this item&apos;s ID.&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- (ToolBar only) Creates a ToolItem with the &lt;code&gt;SWT.DROP_DOWN&lt;/code&gt; affordance. The URI of the menu is &quot;menu:&quot; + this item&apos;s ID.&lt;/td&gt;
       &lt;/tr&gt;
     &lt;/table&gt;
                </documentation>
