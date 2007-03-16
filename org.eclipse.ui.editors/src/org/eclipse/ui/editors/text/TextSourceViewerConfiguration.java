@@ -32,6 +32,7 @@ import org.eclipse.jface.text.DefaultTextHover;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.TextViewerUndoManager;
@@ -155,13 +156,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.2
 	 */
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
-		return new DefaultTextHover(sourceViewer) {
-			protected boolean isIncluded(Annotation annotation) {
-				return isShownInText(annotation);
-			}
-		};
+		return new TextHover(sourceViewer);
 	}
-	
+
 	/*
 	 * @see DefaultTextHover#isIncluded(Annotation)
 	 * @since 3.2
@@ -435,6 +432,33 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			System.arraycopy(array1, 0, allHyperlinkDetectors, 0, array1.length);
 			System.arraycopy(array2, 0, allHyperlinkDetectors, array1.length, array2.length);
 			return allHyperlinkDetectors;
+		}
+	}
+
+	/**
+	 * Text hover with custom control creator that
+	 * can show the tool tip affordance.
+	 * 
+	 * @since 3.3
+	 */
+	private final class TextHover extends DefaultTextHover implements ITextHoverExtension {
+		public TextHover(ISourceViewer sourceViewer) {
+			super(sourceViewer);
+		}
+
+		protected boolean isIncluded(Annotation annotation) {
+			return isShownInText(annotation);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
+		 */
+		public IInformationControlCreator getHoverControlCreator() {
+			return new IInformationControlCreator() {
+				public IInformationControl createInformationControl(Shell parent) {
+					return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), EditorsUI.getTooltipAffordanceString());
+				}
+			};
 		}
 	}
 

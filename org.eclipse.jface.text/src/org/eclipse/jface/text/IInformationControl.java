@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,11 @@ import org.eclipse.swt.graphics.Point;
  * <li>{@link org.eclipse.jface.text.IInformationControlExtension2} since
  *     version 2.1 replacing the original concept of textual input by general input
  *     objects.</li>
- * <li>{@link org.eclipse.jface.text.IInformationControlExtension3}since
+ * <li>{@link org.eclipse.jface.text.IInformationControlExtension3} since
  *     version 3.0 providing access to the control's bounds and introducing
  *     the concept of persistent size and location.</li>
+ * <li>{@link org.eclipse.jface.text.IInformationControlExtension4} since
+ *     version 3.3, adding API which allows to set this information control's status field text.</li>
  * </ul>
  * <p>
  * Clients can implements that interface and its extension interfaces or use the
@@ -52,6 +54,7 @@ import org.eclipse.swt.graphics.Point;
  * @see org.eclipse.jface.text.IInformationControlExtension
  * @see org.eclipse.jface.text.IInformationControlExtension2
  * @see org.eclipse.jface.text.IInformationControlExtension3
+ * @see org.eclipse.jface.text.IInformationControlExtension4
  * @since 2.0
  */
 public interface IInformationControl {
