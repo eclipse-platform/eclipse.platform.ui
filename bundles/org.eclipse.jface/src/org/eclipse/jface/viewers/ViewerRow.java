@@ -14,14 +14,14 @@
 
 package org.eclipse.jface.viewers;
 
-import org.eclipse.jface.util.Policy;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * ViewerRow is the abstract superclass of the part that represents items in a
@@ -33,12 +33,8 @@ import org.eclipse.swt.widgets.Item;
  *        Platform/UI team.
  * 
  */
-public abstract class ViewerRow {
-	/**
-	 * Key used to reference ViewerRow in the widgets data-map
-	 */
-	public static final String ROWPART_KEY = Policy.JFACE + ".ROWPART"; //$NON-NLS-1$
-
+public abstract class ViewerRow implements Cloneable {
+	
 	/**
 	 * Constant denoting the row above the current one (value is 1).
 	 * 
@@ -52,15 +48,6 @@ public abstract class ViewerRow {
 	 * @see #getNeighbor(int, boolean)
 	 */
 	public static final int BELOW = 2;
-
-	/**
-	 * Create a new instance of the receiver.
-	 * 
-	 * @param item
-	 */
-	protected ViewerRow(final Item item) {
-		item.setData(ViewerRow.ROWPART_KEY, this);
-	}
 
 	/**
 	 * Get the bounds of the entry at the columnIndex,
@@ -80,10 +67,10 @@ public abstract class ViewerRow {
 	/**
 	 * Return the item for the receiver.
 	 * 
-	 * @return {@link Item}
+	 * @return {@link Widget}
 	 */
-	public abstract Item getItem();
-
+	public abstract Widget getItem();
+		
 	/**
 	 * Return the number of columns for the receiver.
 	 * 
@@ -214,7 +201,7 @@ public abstract class ViewerRow {
 	 */
 	public ViewerCell getCell(int column) {
 		if (column >= 0)
-			return new ViewerCell(this, column);
+			return new ViewerCell((ViewerRow) clone(), column);
 
 		return null;
 	}
@@ -245,4 +232,36 @@ public abstract class ViewerRow {
 	 * @return the path
 	 */
 	public abstract TreePath getTreePath();
+	
+	public abstract Object clone();
+		
+	/**
+	 * @return the model element
+	 */
+	public abstract Object getElement();
+
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((getItem() == null) ? 0 : getItem().hashCode());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final ViewerRow other = (ViewerRow) obj;
+		if (getItem() == null) {
+			if (other.getItem() != null)
+				return false;
+		} else if (!getItem().equals(other.getItem()))
+			return false;
+		return true;
+	}
+	
+	
 }

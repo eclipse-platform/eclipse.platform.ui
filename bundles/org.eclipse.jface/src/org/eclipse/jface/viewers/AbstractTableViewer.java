@@ -269,7 +269,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Create a new row
+	 * Create a new row.  Callers can only use the returned object locally and before
+	 * making the next call on the viewer since it may be re-used for subsequent method
+	 * calls.
 	 * 
 	 * @param style
 	 *            the style for the new row

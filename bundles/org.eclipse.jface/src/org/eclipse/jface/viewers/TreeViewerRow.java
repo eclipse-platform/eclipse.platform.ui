@@ -21,9 +21,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * TreeViewerRow is the Tree implementation of ViewerRow.
@@ -41,7 +41,6 @@ public class TreeViewerRow extends ViewerRow {
 	 * @param item
 	 */
 	TreeViewerRow(TreeItem item) {
-		super(item);
 		this.item = item;
 	}
 	
@@ -69,7 +68,7 @@ public class TreeViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getItem()
 	 */
-	public Item getItem() {
+	public Widget getItem() {
 		return item;
 	}
 
@@ -170,10 +169,10 @@ public class TreeViewerRow extends ViewerRow {
 				int index = tree.indexOf(item) + 1;
 				
 				if( index < tree.getItemCount() ) {
-					return (ViewerRow)tree.getItem(index).getData(ViewerRow.ROWPART_KEY);
+					return new TreeViewerRow(tree.getItem(index));
 				}
 			} else if( item.getExpanded() && item.getItemCount() > 0 ) {
-				return (ViewerRow)item.getItem(0).getData(ViewerRow.ROWPART_KEY);
+				return new TreeViewerRow(item.getItem(0));
 			}
 		} else {
 			if( sameLevel || ! item.getExpanded() ) {
@@ -192,11 +191,11 @@ public class TreeViewerRow extends ViewerRow {
 				}
 				
 				if( itemAfter != null ) {
-					return (ViewerRow) itemAfter.getData(ViewerRow.ROWPART_KEY);
+					return new TreeViewerRow(itemAfter);
 				}
 				
 			} else if( item.getExpanded() && item.getItemCount() > 0 ) {
-				return (ViewerRow)item.getItem(0).getData(ViewerRow.ROWPART_KEY);
+				return new TreeViewerRow(item.getItem(0));
 			}
 		}
 
@@ -217,10 +216,10 @@ public class TreeViewerRow extends ViewerRow {
 			
 			if( nextTopItem != null ) {
 				if( sameLevel ) {
-					return (ViewerRow)nextTopItem.getData(ViewerRow.ROWPART_KEY);
+					return new TreeViewerRow(nextTopItem);
 				}
 				
-				return (ViewerRow) findLastVisibleItem(nextTopItem).getData(ViewerRow.ROWPART_KEY);
+				return new TreeViewerRow(findLastVisibleItem(nextTopItem));
 			}
 		} else {
 			TreeItem parentItem = item.getParentItem();
@@ -238,7 +237,7 @@ public class TreeViewerRow extends ViewerRow {
 			}
 			
 			if( itemBefore != null ) {
-				return (ViewerRow) itemBefore.getData(ViewerRow.ROWPART_KEY);
+				return new TreeViewerRow(itemBefore);
 			}
 		}
 		
@@ -309,5 +308,17 @@ public class TreeViewerRow extends ViewerRow {
 		}
 		
 		return new TreePath(segments.toArray());
+	}
+	
+	void setItem(TreeItem item) {
+		this.item = item;
+	}
+	 		
+	public Object clone() {
+		return new TreeViewerRow(item);
+	}
+	
+	public Object getElement() {
+		return item.getData();
 	}
 }

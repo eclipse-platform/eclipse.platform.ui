@@ -13,6 +13,7 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -34,7 +35,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 			if (cellToExpand != null) {
 				TreeViewer v = (TreeViewer) viewer;
 				v.setExpandedState(v
-						.getTreePathFromItem(cellToExpand.getItem()), true);
+						.getTreePathFromItem((Item)cellToExpand.getItem()), true);
 			}
 		}
 

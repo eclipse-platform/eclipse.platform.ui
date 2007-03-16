@@ -2916,4 +2916,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return false;
 		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
 	}
+	
+	/*
+	 * Subclasses should implement
+	 */
+	protected ViewerRow getViewerRowFromItem(Widget item) {
+		return null;
+	}
 }

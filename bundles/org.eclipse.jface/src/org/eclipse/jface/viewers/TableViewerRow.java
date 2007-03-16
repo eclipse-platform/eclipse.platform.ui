@@ -19,8 +19,8 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * TableViewerRow is the Table specific implementation of ViewerRow
@@ -38,7 +38,6 @@ public class TableViewerRow extends ViewerRow {
 	 * @param item
 	 */
 	TableViewerRow(TableItem item) {
-		super(item);
 		this.item = item;
 	}
 	
@@ -59,10 +58,14 @@ public class TableViewerRow extends ViewerRow {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getItem()
 	 */
-	public Item getItem() {
+	public Widget getItem() {
 		return item;
 	}
 
+	void setItem(TableItem item) {
+		this.item = item;
+	}	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getColumnCount()
 	 */
@@ -162,7 +165,7 @@ public class TableViewerRow extends ViewerRow {
 		int index = item.getParent().indexOf(item) - 1;
 		
 		if( index >= 0 ) {
-			return (ViewerRow)item.getParent().getItem(index).getData(ViewerRow.ROWPART_KEY); 
+			return new TableViewerRow(item.getParent().getItem(index)); 
 		}
 		
 		return null;
@@ -175,7 +178,7 @@ public class TableViewerRow extends ViewerRow {
 			TableItem tmp = item.getParent().getItem(index);
 			//TODO NULL can happen in case of VIRTUAL => How do we deal with that
 			if( tmp != null ) {
-				return (ViewerRow)tmp.getData(ViewerRow.ROWPART_KEY);
+				return new TableViewerRow(tmp);
 			}
 		}
 		
@@ -185,5 +188,12 @@ public class TableViewerRow extends ViewerRow {
 	public TreePath getTreePath() {
 		return new TreePath(new Object[] {item.getData()});
 	}
-
+	
+	public Object clone() {
+		return new TableViewerRow(item);
+	}
+			
+	public Object getElement() {
+		return item.getData();
+	}
 }

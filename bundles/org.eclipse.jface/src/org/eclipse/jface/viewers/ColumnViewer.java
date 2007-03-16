@@ -129,18 +129,19 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 		return null;
 	}
-
+	
+		
+			
 	/**
-	 * Returns the viewer row associated with the given row widget.
+	 * Returns a {@link ViewerRow} associated with the given row widget. Implementations
+	 * may re-use the same instance for different row widgets; callers can only use the viewer
+	 * row locally and until the next call to this method. 
 	 * 
-	 * @param item
-	 *            the row widget
-	 * @return ViewerRow the associated viewer row
+	 * @param item the row widget
+	 * @return ViewerRow a viewer row object
 	 */
-	protected ViewerRow getViewerRowFromItem(Widget item) {
-		return (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
-	}
-
+	protected abstract ViewerRow getViewerRowFromItem(Widget item);
+	
 	/**
 	 * Returns the column widget at the given column index.
 	 * 

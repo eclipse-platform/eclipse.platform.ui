@@ -63,6 +63,11 @@ public class TableViewer extends AbstractTableViewer {
 	 * This viewer's table control.
 	 */
 	private Table table;
+	
+	/**
+	 * The cached row which is resused all over
+	 */
+	private TableViewerRow cachedRow;
 
 	/**
 	 * Creates a table viewer on a newly-created table control under the given
@@ -148,13 +153,13 @@ public class TableViewer extends AbstractTableViewer {
 	}
 	
 	protected ViewerRow getViewerRowFromItem(Widget item) {
-		ViewerRow part = (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
-
-		if (part == null) {
-			part = new TableViewerRow(((TableItem) item));
+		if( cachedRow == null ) {
+			cachedRow = new TableViewerRow((TableItem) item);
+		} else {
+			cachedRow.setItem((TableItem) item);
 		}
-
-		return part;
+		
+		return cachedRow;
 	}
 	
 	/**

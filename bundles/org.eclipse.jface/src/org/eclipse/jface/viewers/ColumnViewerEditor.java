@@ -173,7 +173,7 @@ public abstract class ColumnViewerEditor {
 					return;
 				}
 				setLayoutData(cellEditor.getLayoutData());
-				setEditor(control, cell.getItem(), cell.getColumnIndex());
+				setEditor(control, (Item)cell.getItem(), cell.getColumnIndex());
 				cellEditor.setFocus();
 				if (focusListener == null) {
 					focusListener = new FocusAdapter() {
@@ -250,7 +250,7 @@ public abstract class ColumnViewerEditor {
 
 			this.cellEditor = null;
 			this.activationEvent = null;
-			Item t = this.cell.getItem();
+			Item t = (Item) this.cell.getItem();
 			// don't null out table item -- same item is still selected
 			if (t != null && !t.isDisposed()) {
 				saveEditorValue(c);
@@ -415,7 +415,7 @@ public abstract class ColumnViewerEditor {
 	 * @param columnIndex
 	 *            the index of the current column
 	 * @param row
-	 *            the current row
+	 *            the current row - may only be used for the duration of this method call
 	 * @param event
 	 *            the travers event
 	 */

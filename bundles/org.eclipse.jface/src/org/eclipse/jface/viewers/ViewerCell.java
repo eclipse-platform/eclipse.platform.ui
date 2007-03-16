@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
@@ -59,7 +60,7 @@ public class ViewerCell {
 	 * @param row
 	 * @param columnIndex
 	 */
-	public ViewerCell(ViewerRow row, int columnIndex) {
+	ViewerCell(ViewerRow row, int columnIndex) {
 		this.row = row;
 		this.columnIndex = columnIndex;
 	}
@@ -88,7 +89,7 @@ public class ViewerCell {
 	 * @return {@link Object}
 	 */
 	public Object getElement() {
-		return row.getItem().getData();
+		return row.getElement();
 	}
 
 	/**
@@ -185,7 +186,7 @@ public class ViewerCell {
 	 * 
 	 * @return {@link Item}
 	 */
-	public Item getItem() {
+	public Widget getItem() {
 		return row.getItem();
 	}
 
@@ -242,20 +243,42 @@ public class ViewerCell {
 		return null;
 	}
 	
-	public boolean equals(Object obj) {
-		if( obj == null || !(obj instanceof ViewerCell) ) {
-			return false;
-		}
-		
-		ViewerCell cell = (ViewerCell) obj;
-		
-		return cell.getColumnIndex() == getColumnIndex() && cell.getItem() == getItem();
-	}
-	
 	/**
 	 * @return the row
 	 */
 	public ViewerRow getViewerRow() {
 		return row;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + columnIndex;
+		result = prime * result + ((row == null) ? 0 : row.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final ViewerCell other = (ViewerCell) obj;
+		if (columnIndex != other.columnIndex)
+			return false;
+		if (row == null) {
+			if (other.row != null)
+				return false;
+		} else if (!row.equals(other.row))
+			return false;
+		return true;
 	}
 }

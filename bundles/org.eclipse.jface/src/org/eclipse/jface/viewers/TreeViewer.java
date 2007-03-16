@@ -68,6 +68,11 @@ public class TreeViewer extends AbstractTreeViewer {
 	private boolean contentProviderIsLazy;
 
 	private boolean contentProviderIsTreeBased;
+	
+	/**
+	 * The row object reused
+	 */
+	private TreeViewerRow cachedRow;
 
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
@@ -620,13 +625,13 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
 	protected ViewerRow getViewerRowFromItem(Widget item) {
-		ViewerRow part = (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
-
-		if (part == null) {
-			part = new TreeViewerRow(((TreeItem) item));
+		if( cachedRow == null ) {
+			cachedRow = new TreeViewerRow((TreeItem) item);
+		} else {
+			cachedRow.setItem((TreeItem) item);
 		}
-
-		return part;
+		
+		return cachedRow;
 	}
 
 	/**
