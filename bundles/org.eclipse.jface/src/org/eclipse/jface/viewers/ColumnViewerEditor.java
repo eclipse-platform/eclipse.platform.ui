@@ -14,6 +14,9 @@
 
 package org.eclipse.jface.viewers;
 
+
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -22,7 +25,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
@@ -40,36 +42,73 @@ import org.eclipse.swt.widgets.Item;
 public abstract class ColumnViewerEditor {
 	private CellEditor cellEditor;
 
-	private CellEditor[] cellEditors;
-
-	private ICellModifier cellModifier;
-
-	private String[] columnProperties;
-
-	private int columnNumber;
-
 	private ICellEditorListener cellEditorListener;
 
 	private FocusListener focusListener;
 
 	private MouseListener mouseListener;
 
-	private int doubleClickExpirationTime;
-
 	private ColumnViewer viewer;
-
-	private Item item;
 
 	private TraverseListener tabeditingListener;
 
+	private int activationTime;
+
+	private ViewerCell cell;
+
+	private ColumnViewerEditorActivationEvent activationEvent;
+
+	private ListenerList editorActivationListener;
+
+	private ColumnViewerEditorActivationStrategy editorActivationStrategy;
+
 	/**
-	 * Create a new editor implementation for the viewer
-	 * 
-	 * @param viewer
-	 *            the column viewer
+	 * Tabing from cell to cell is turned off
 	 */
-	public ColumnViewerEditor(ColumnViewer viewer) {
+	public static final int DEFAULT = 1;
+
+	/**
+	 * Should if the end of the row is reach started from the start/end of the
+	 * row below/above
+	 */
+	public static final int TABBING_MOVE_TO_ROW_NEIGHBOR = 1 << 1;
+
+	/**
+	 * Should if the end of the row is reach started from the beginning in the
+	 * same row
+	 */
+	public static final int TABBING_CYCLE_IN_ROW = 1 << 2;
+
+	/**
+	 * Support tabing to Cell above/below the current cell
+	 */
+	public static final int TABBING_VERTICAL = 1 << 3;
+
+	/**
+	 * Should tabing from column to column with in one row be supported
+	 */
+	public static final int TABBING_HORIZONTAL = 1 << 4;
+
+	/**
+	 * 
+	 */
+	public static final int KEYBOARD_ACTIVATION = 1 << 5;
+	
+	private int feature;
+
+	/**
+	 * @param viewer
+	 * @param editorActivationStrategy
+	 * @param feature
+	 */
+	protected ColumnViewerEditor(ColumnViewer viewer,
+			ColumnViewerEditorActivationStrategy editorActivationStrategy, int feature) {
 		this.viewer = viewer;
+		this.editorActivationStrategy = editorActivationStrategy;
+		if( (feature & KEYBOARD_ACTIVATION) == KEYBOARD_ACTIVATION ) {
+			this.editorActivationStrategy.setEnableEditorActivationWithKeyboard(true);
+		} 
+		this.feature = feature;
 		initCellEditorListener();
 	}
 
@@ -92,28 +131,49 @@ public abstract class ColumnViewerEditor {
 
 	void activateCellEditor() {
 
-		ViewerColumn part = viewer.getViewerColumn(columnNumber);
-		Object element = item.getData();
+		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
+		Object element = cell.getElement();
 
 		if (part != null && part.getEditingSupport() != null
 				&& part.getEditingSupport().canEdit(element)) {
+
 			cellEditor = part.getEditingSupport().getCellEditor(element);
 			if (cellEditor != null) {
+				if (editorActivationListener != null
+						&& !editorActivationListener.isEmpty()) {
+					Object[] ls = editorActivationListener.getListeners();
+					for (int i = 0; i < ls.length; i++) {
+
+						if (activationEvent.cancel) {
+							return;
+						}
+
+						((ColumnViewerEditorActivationListener) ls[i])
+								.beforeEditorActivated(activationEvent);
+					}
+				}
+				
+				// Update the focus cell when we activated the editor with these 2 events
+				if( activationEvent.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || activationEvent.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL ) {
+					updateFocusCell(cell);
+				}
+				
+				
 				cellEditor.addListener(cellEditorListener);
-				Object value = part.getEditingSupport().getValue(element);
-				cellEditor.setValue(value);
+				part.getEditingSupport().initializeCellEditorValue(cellEditor, cell);
+				
 				// Tricky flow of control here:
 				// activate() can trigger callback to cellEditorListener which
 				// will clear cellEditor
 				// so must get control first, but must still call activate()
 				// even if there is no control.
 				final Control control = cellEditor.getControl();
-				cellEditor.activate();
+				cellEditor.activate(activationEvent);
 				if (control == null) {
 					return;
 				}
 				setLayoutData(cellEditor.getLayoutData());
-				setEditor(control, item, columnNumber);
+				setEditor(control, cell.getItem(), cell.getColumnIndex());
 				cellEditor.setFocus();
 				if (focusListener == null) {
 					focusListener = new FocusAdapter() {
@@ -128,7 +188,7 @@ public abstract class ColumnViewerEditor {
 					public void mouseDown(MouseEvent e) {
 						// time wrap?
 						// check for expiration of doubleClickTime
-						if (e.time <= doubleClickExpirationTime) {
+						if (e.time <= activationTime) {
 							control.removeMouseListener(mouseListener);
 							cancelEditing();
 							handleDoubleClickEvent();
@@ -139,57 +199,31 @@ public abstract class ColumnViewerEditor {
 				};
 				control.addMouseListener(mouseListener);
 
-				if( tabeditingListener == null ) {
+				if (tabeditingListener == null) {
 					tabeditingListener = new TraverseListener() {
 
 						public void keyTraversed(TraverseEvent e) {
-							ViewerColumn col = viewer.getViewerColumn(columnNumber);
-							if ( col != null && col.getEditingSupport().isTabingSupported() ) {
-								col.getEditingSupport().processTraversEvent(
-										columnNumber,
-										viewer.getViewerRowFromItem(item), e);
+							if ((feature & DEFAULT) != DEFAULT) {
+								processTraverseEvent(cell.getColumnIndex(),
+										viewer.getViewerRowFromItem(cell
+												.getItem()), e);
 							}
 						}
 					};
 				}
-				
+
 				control.addTraverseListener(tabeditingListener);
 
-			}
-		}
-	}
-
-	/**
-	 * Activate a cell editor for the given mouse position.
-	 */
-	private void activateCellEditor(MouseEvent event) {
-		if (item == null || item.isDisposed()) {
-			// item no longer exists
-			return;
-		}
-		int columnToEdit;
-		ViewerRow row = viewer.getViewerRowFromItem(item);
-		int columns = row.getColumnCount();
-		if (columns == 0) {
-			// If no TableColumn, Table acts as if it has a single column
-			// which takes the whole width.
-			columnToEdit = 0;
-		} else {
-			columnToEdit = -1;
-			for (int i = 0; i < columns; i++) {
-				Rectangle bounds = row.getBounds(i);
-				if (bounds.contains(event.x, event.y)) {
-					columnToEdit = i;
-					break;
+				if (editorActivationListener != null
+						&& !editorActivationListener.isEmpty()) {
+					Object[] ls = editorActivationListener.getListeners();
+					for (int i = 0; i < ls.length; i++) {
+						((ColumnViewerEditorActivationListener) ls[i])
+								.afterEditorActivated(activationEvent);
+					}
 				}
 			}
-			if (columnToEdit == -1) {
-				return;
-			}
 		}
-
-		columnNumber = columnToEdit;
-		activateCellEditor();
 	}
 
 	/**
@@ -203,11 +237,23 @@ public abstract class ColumnViewerEditor {
 			// in case save results in applyEditorValue being re-entered
 			// see 1GAHI8Z: ITPUI:ALL - How to code event notification when
 			// using cell editor ?
+			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(cell);
+			if (editorActivationListener != null
+					&& !editorActivationListener.isEmpty()) {
+				Object[] ls = editorActivationListener.getListeners();
+				for (int i = 0; i < ls.length; i++) {
+
+					((ColumnViewerEditorActivationListener) ls[i])
+							.beforeEditorDeactivated(tmp);
+				}
+			}
+
 			this.cellEditor = null;
-			Item t = this.item;
+			this.activationEvent = null;
+			Item t = this.cell.getItem();
 			// don't null out table item -- same item is still selected
 			if (t != null && !t.isDisposed()) {
-				saveEditorValue(c, t);
+				saveEditorValue(c);
 			}
 			setEditor(null, null, 0);
 			c.removeListener(cellEditorListener);
@@ -227,6 +273,15 @@ public abstract class ColumnViewerEditor {
 				}
 			}
 			c.deactivate();
+
+			if (editorActivationListener != null
+					&& !editorActivationListener.isEmpty()) {
+				Object[] ls = editorActivationListener.getListeners();
+				for (int i = 0; i < ls.length; i++) {
+					((ColumnViewerEditorActivationListener) ls[i])
+							.afterEditorDeactivated(tmp);
+				}
+			}
 		}
 	}
 
@@ -235,6 +290,17 @@ public abstract class ColumnViewerEditor {
 	 */
 	void cancelEditing() {
 		if (cellEditor != null) {
+			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(cell);
+			if (editorActivationListener != null
+					&& !editorActivationListener.isEmpty()) {
+				Object[] ls = editorActivationListener.getListeners();
+				for (int i = 0; i < ls.length; i++) {
+					
+					((ColumnViewerEditorActivationListener) ls[i])
+							.beforeEditorDeactivated(tmp);
+				}
+			}
+
 			setEditor(null, null, 0);
 			cellEditor.removeListener(cellEditorListener);
 
@@ -256,7 +322,17 @@ public abstract class ColumnViewerEditor {
 
 			CellEditor oldEditor = cellEditor;
 			cellEditor = null;
+			activationEvent = null;
 			oldEditor.deactivate();
+
+			if (editorActivationListener != null
+					&& !editorActivationListener.isEmpty()) {
+				Object[] ls = editorActivationListener.getListeners();
+				for (int i = 0; i < ls.length; i++) {
+					((ColumnViewerEditorActivationListener) ls[i])
+							.afterEditorDeactivated(tmp);
+				}
+			}
 		}
 	}
 
@@ -265,65 +341,27 @@ public abstract class ColumnViewerEditor {
 	 * 
 	 * @param event
 	 */
-	void handleMouseDown(MouseEvent event) {
-		if (event.button != 1) {
-			return;
-		}
+	void handleEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+		if (editorActivationStrategy.isEditorActivationEvent(event)) {
+			if (cellEditor != null) {
+				applyEditorValue();
+			}
 
-		if (cellEditor != null) {
-			applyEditorValue();
-		}
+			this.cell = (ViewerCell) event.getSource();
+			
+			activationEvent = event;
+			activationTime = event.time
+					+ Display.getCurrent().getDoubleClickTime();
 
-		// activate the cell editor immediately. If a second mouseDown
-		// is received prior to the expiration of the doubleClick time then
-		// the cell editor will be deactivated and a doubleClick event will
-		// be processed.
-		//
-		doubleClickExpirationTime = event.time
-				+ Display.getCurrent().getDoubleClickTime();
-
-		Item[] items = getSelection();
-		// Do not edit if more than one row is selected.
-		if (items.length != 1) {
-			item = null;
-			return;
+			activateCellEditor();
 		}
-		item = items[0];
-		activateCellEditor(event);
 	}
 
-	/**
-	 * Start editing the given element.
-	 * 
-	 * @param element
-	 * @param column
-	 */
-	void editElement(Object element, int column) {
-		if (cellEditor != null) {
-			applyEditorValue();
-		}
-
-		setSelection(createSelection(element), true);
-		Item[] selection = getSelection();
-		if (selection.length != 1) {
-			return;
-		}
-
-		item = selection[0];
-
-		// Make sure selection is visible
-		showSelection();
-		columnNumber = column;
-		activateCellEditor();
-
-	}
-
-	private void saveEditorValue(CellEditor cellEditor, Item tableItem) {
-		ViewerColumn part = viewer.getViewerColumn(columnNumber);
+	private void saveEditorValue(CellEditor cellEditor) {
+		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
 
 		if (part != null && part.getEditingSupport() != null) {
-			part.getEditingSupport().setValue(tableItem.getData(),
-					cellEditor.getValue());
+			part.getEditingSupport().saveCellEditorValue(cellEditor, cell);
 		}
 	}
 
@@ -337,78 +375,181 @@ public abstract class ColumnViewerEditor {
 		return cellEditor != null;
 	}
 
-	/**
-	 * Set the cell editors
-	 * 
-	 * @param editors
-	 */
-	void setCellEditors(CellEditor[] editors) {
-		this.cellEditors = editors;
-	}
-
-	/**
-	 * Set the cell modifier
-	 * 
-	 * @param modifier
-	 */
-	void setCellModifier(ICellModifier modifier) {
-		this.cellModifier = modifier;
-	}
-
-	/**
-	 * Set the column properties
-	 * 
-	 * @param columnProperties
-	 */
-	void setColumnProperties(String[] columnProperties) {
-		this.columnProperties = columnProperties;
-	}
-
-	/**
-	 * Return the properties for the column
-	 * 
-	 * @return the array of column properties
-	 */
-	Object[] getColumnProperties() {
-		return columnProperties;
-	}
-
-	/**
-	 * Get the cell modifier
-	 * 
-	 * @return the cell modifier
-	 */
-	ICellModifier getCellModifier() {
-		return cellModifier;
-	}
-
-	/**
-	 * Return the array of CellEditors used in the viewer
-	 * 
-	 * @return the cell editors
-	 */
-	CellEditor[] getCellEditors() {
-		return cellEditors;
-	}
-
-	void setSelection(StructuredSelection selection, boolean b) {
-		viewer.setSelection(selection, b);
-	}
-
 	void handleDoubleClickEvent() {
 		viewer.fireDoubleClick(new DoubleClickEvent(viewer, viewer
 				.getSelection()));
 		viewer.fireOpen(new OpenEvent(viewer, viewer.getSelection()));
 	}
 
+	void addEditorActivationListener(
+			ColumnViewerEditorActivationListener listener) {
+		if (editorActivationListener == null) {
+			editorActivationListener = new ListenerList();
+		}
+		editorActivationListener.add(listener);
+	}
+
+	void removeEditorActivationListener(
+			ColumnViewerEditorActivationListener listener) {
+		if (editorActivationListener != null) {
+			editorActivationListener.remove(listener);
+		}
+	}
+
 	/**
-	 * Create a selection for this model element
+	 * Process the travers event and opens the next available editor depending
+	 * of the implemented strategy. The default implementation uses the style
+	 * constants
+	 * <ul>
+	 * <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
+	 * <li>{@link ColumnViewerEditor#TABBING_CYCLE_IN_ROW}</li>
+	 * <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
+	 * <li>{@link ColumnViewerEditor#TABBING_HORIZONTAL}</li>
+	 * </ul>
 	 * 
-	 * @param element
-	 *            the element for which the selection is created
-	 * @return the selection created
+	 * <p>
+	 * Subclasses may overwrite to implement their custom logic to edit the next
+	 * cell
+	 * </p>
+	 * 
+	 * @param columnIndex
+	 *            the index of the current column
+	 * @param row
+	 *            the current row
+	 * @param event
+	 *            the travers event
 	 */
-	protected abstract StructuredSelection createSelection(Object element);
+	protected void processTraverseEvent(int columnIndex, ViewerRow row,
+			TraverseEvent event) {
+
+		ViewerCell cell2edit = null;
+
+		if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+			event.doit = false;
+
+			if ((event.stateMask & SWT.CTRL) == SWT.CTRL
+					&& (feature & TABBING_VERTICAL) == TABBING_VERTICAL) {
+				cell2edit = searchCellAboveBelow(row, viewer, columnIndex, true);
+			} else if ((feature & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
+				cell2edit = searchPreviousCell(row, viewer, columnIndex,
+						columnIndex);
+			}
+		} else if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+			event.doit = false;
+
+			if ((event.stateMask & SWT.CTRL) == SWT.CTRL
+					&& (feature & TABBING_VERTICAL) == TABBING_VERTICAL) {
+				cell2edit = searchCellAboveBelow(row, viewer, columnIndex,
+						false);
+			} else if ((feature & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
+				cell2edit = searchNextCell(row, viewer, columnIndex,
+						columnIndex);
+			}
+		}
+
+		if (cell2edit != null) {
+
+			viewer.getControl().setRedraw(false);
+			ColumnViewerEditorActivationEvent acEvent = new ColumnViewerEditorActivationEvent(
+					cell2edit, event);
+			viewer.triggerEditorActivationEvent(acEvent);
+			viewer.getControl().setRedraw(true);
+		}
+	}
+
+	private ViewerCell searchCellAboveBelow(ViewerRow row, ColumnViewer viewer,
+			int columnIndex, boolean above) {
+		ViewerCell rv = null;
+
+		ViewerRow newRow = null;
+
+		if (above) {
+			newRow = row.getNeighbor(ViewerRow.ABOVE, false);
+		} else {
+			newRow = row.getNeighbor(ViewerRow.BELOW, false);
+		}
+
+		if (newRow != null) {
+			ViewerColumn column = viewer.getViewerColumn(columnIndex);
+			if (column != null && column.getEditingSupport() != null
+					&& column.getEditingSupport().canEdit(
+							newRow.getItem().getData())) {
+				rv = newRow.getCell(columnIndex);
+			} else {
+				rv = searchCellAboveBelow(newRow, viewer, columnIndex, above);
+			}
+		}
+
+		return rv;
+	}
+
+	private ViewerCell searchPreviousCell(ViewerRow row, ColumnViewer viewer,
+			int columnIndex, int startIndex) {
+		ViewerCell rv = null;
+
+		if (columnIndex - 1 >= 0) {
+			ViewerColumn column = viewer.getViewerColumn(columnIndex - 1);
+			if (column != null && column.getEditingSupport() != null
+					&& column.getEditingSupport().canEdit(
+							row.getItem().getData())) {
+				rv = row.getCell(columnIndex - 1);
+			} else {
+				rv = searchPreviousCell(row, viewer, columnIndex - 1,
+						startIndex);
+			}
+		} else {
+			if ((feature & TABBING_CYCLE_IN_ROW) == TABBING_CYCLE_IN_ROW) {
+				// Check that we don't get into endless loop
+				if (columnIndex - 1 != startIndex) {
+					// Don't subtract -1 from getColumnCount() we need to
+					// start in the virtual column
+					// next to it
+					rv = searchPreviousCell(row, viewer, row.getColumnCount(),
+							startIndex);
+				}
+			} else if ((feature & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
+				ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE, false);
+				if (rowAbove != null) {
+					rv = searchPreviousCell(rowAbove, viewer, rowAbove
+							.getColumnCount(), startIndex);
+				}
+			}
+		}
+
+		return rv;
+	}
+
+	private ViewerCell searchNextCell(ViewerRow row, ColumnViewer viewer,
+			int columnIndex, int startIndex) {
+		ViewerCell rv = null;
+
+		if (columnIndex + 1 < row.getColumnCount()) {
+			ViewerColumn column = viewer.getViewerColumn(columnIndex + 1);
+			if (column != null && column.getEditingSupport() != null
+					&& column.getEditingSupport().canEdit(
+							row.getItem().getData())) {
+				rv = row.getCell(columnIndex + 1);
+			} else {
+				rv = searchNextCell(row, viewer, columnIndex + 1, startIndex);
+			}
+		} else {
+			if ((feature & TABBING_CYCLE_IN_ROW) == TABBING_CYCLE_IN_ROW) {
+				// Check that we don't get into endless loop
+				if (columnIndex + 1 != startIndex) {
+					// Start from -1 from the virtual column before the
+					// first one
+					rv = searchNextCell(row, viewer, -1, startIndex);
+				}
+			} else if ((feature & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
+				ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW, false);
+				if (rowBelow != null) {
+					rv = searchNextCell(rowBelow, viewer, -1, startIndex);
+				}
+			}
+		}
+
+		return rv;
+	}
 
 	/**
 	 * Position the editor inside the control
@@ -431,12 +572,22 @@ public abstract class ColumnViewerEditor {
 	protected abstract void setLayoutData(CellEditor.LayoutData layoutData);
 
 	/**
-	 * Show up the current selection (scroll the selection into view)
+	 * @param focusCell updates the cell with the current input focus
 	 */
-	protected abstract void showSelection();
+	protected abstract void updateFocusCell(ViewerCell focusCell);
+	
+	/**
+	 * @return the cell currently holding the focus
+	 * 
+	 */
+	public ViewerCell getFocusCell() {
+		return null;
+	}
 
 	/**
-	 * @return the current selection
+	 * @return the viewer working for
 	 */
-	protected abstract Item[] getSelection();
+	protected ColumnViewer getViewer() {
+		return viewer;
+	}
 }

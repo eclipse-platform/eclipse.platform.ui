@@ -16,9 +16,7 @@ package org.eclipse.jface.viewers;
 import java.util.List;
 
 import org.eclipse.jface.util.Policy;
-import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.TreeEvent;
@@ -61,11 +59,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * This viewer's control.
 	 */
 	private Tree tree;
-
-	/**
-	 * This viewer's tree editor.
-	 */
-	private TreeEditor treeEditor;
 
 	/**
 	 * Flag for whether the tree has been disposed of.
@@ -116,7 +109,6 @@ public class TreeViewer extends AbstractTreeViewer {
 		super();
 		this.tree = tree;
 		hookControl(tree);
-		treeEditor = new TreeEditor(tree);
 	}
 
 	/*
@@ -274,35 +266,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	protected ColumnViewerEditor createViewerEditor() {
-		return new ColumnViewerEditor(this) {
-
-			protected StructuredSelection createSelection(Object element) {
-				if (element instanceof TreePath) {
-					return new TreeSelection((TreePath) element, getComparer());
-				}
-
-				return new StructuredSelection(element);
-			}
-
-			protected Item[] getSelection() {
-				return tree.getSelection();
-			}
-
-			protected void setEditor(Control w, Item item, int fColumnNumber) {
-				treeEditor.setEditor(w, (TreeItem) item, fColumnNumber);
-			}
-
-			protected void setLayoutData(LayoutData layoutData) {
-				treeEditor.grabHorizontal = layoutData.grabHorizontal;
-				treeEditor.horizontalAlignment = layoutData.horizontalAlignment;
-				treeEditor.minimumWidth = layoutData.minimumWidth;
-			}
-
-			protected void showSelection() {
-				getTree().showSelection();
-			}
-
-		};
+		return new TreeViewerEditor(this,null,new ColumnViewerEditorActivationStrategy(this),ColumnViewerEditor.DEFAULT);
 	}
 
 	/*
@@ -930,5 +894,27 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void setSelection(ISelection selection, boolean reveal) {
 		super.setSelection(selection, reveal);
+	}
+	
+	public void editElement(Object element, int column) {
+		if( element instanceof TreePath ) {
+			setSelection(new TreeSelection((TreePath) element));
+			TreeItem[] items = tree.getSelection();
+			
+			if( items.length == 1 ) {
+				ViewerRow row = getViewerRowFromItem(items[0]);
+				
+				if (row != null) {
+					ViewerCell cell = row.getCell(column);
+					if (cell != null) {
+						getControl().setRedraw(false);
+						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
+						getControl().setRedraw(true);
+					}
+				}
+			}
+		} else {
+			super.editElement(element, column);
+		}
 	}
 }

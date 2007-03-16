@@ -14,8 +14,6 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.TraverseEvent;
 
 /**
  * EditingSupport is the abstract superclass of the support for cell editing.
@@ -27,32 +25,6 @@ import org.eclipse.swt.events.TraverseEvent;
  * 
  */
 public abstract class EditingSupport {
-	/**
-	 * Tabing from cell to cell is turned off
-	 */
-	public static final int TABBING_NONE = 1;
-
-	/**
-	 * Should if the end of the row is reach started from the start/end of the
-	 * row below/above
-	 */
-	public static final int TABBING_MOVE_TO_ROW_NEIGHBOR = 1 << 1;
-
-	/**
-	 * Should if the end of the row is reach started from the beginning in the
-	 * same row
-	 */
-	public static final int TABBING_CYCLE_IN_ROW = 1 << 2;
-
-	/**
-	 * Support tabing to Cell above/below the current cell
-	 */
-	public static final int TABBING_VERTICAL = 1 << 3;
-
-	/**
-	 * Should tabing from column to column with in one row be supported
-	 */
-	public static final int TABBING_HORIZONTAL = 1 << 4;
 
 	private ColumnViewer viewer;
 
@@ -61,7 +33,7 @@ public abstract class EditingSupport {
 	 *            a new viewer
 	 */
 	public EditingSupport(ColumnViewer viewer) {
-		Assert.isNotNull(viewer,"Viewer is not allowed to be null"); //$NON-NLS-1$
+		Assert.isNotNull(viewer, "Viewer is not allowed to be null"); //$NON-NLS-1$
 		this.viewer = viewer;
 	}
 
@@ -95,7 +67,9 @@ public abstract class EditingSupport {
 	/**
 	 * Restore the value from the CellEditor
 	 * 
-	 * <p><b>Subclasses should overwrite!</b></p>
+	 * <p>
+	 * <b>Subclasses should overwrite!</b>
+	 * </p>
 	 * 
 	 * @param element
 	 *            the model element
@@ -105,174 +79,36 @@ public abstract class EditingSupport {
 	protected abstract void setValue(Object element, Object value);
 
 	/**
-	 * @return <code>true</code> if tabing supported
-	 */
-	protected boolean isTabingSupported() {
-		return (TABBING_NONE & getTabingStyle()) != TABBING_NONE;
-	}
-
-	/**
-	 * @return the bit mask representing the tabing style
-	 */
-	int getTabingStyle() {
-		return viewer.getTabEditingStyle();
-	}
-
-	/**
-	 * Process the travers event and opens the next available editor depending
-	 * of the implemented strategy. The default implementation uses the style
-	 * constants
-	 * <ul>
-	 * <li>{@link #TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
-	 * <li>{@link #TABBING_CYCLE_IN_ROW}</li>
-	 * <li>{@link #TABBING_VERTICAL}</li>
-	 * <li>{@link #TABBING_HORIZONTAL}</li>
-	 * </ul>
-	 * 
-	 * <p>
-	 * Subclasses may overwrite to implement their custom logic to edit the next
-	 * cell
-	 * </p>
-	 * 
-	 * @param columnIndex
-	 *            the index of the current column
-	 * @param row
-	 *            the current row
-	 * @param event
-	 *            the travers event
-	 */
-	protected void processTraversEvent(int columnIndex,
-			ViewerRow row, TraverseEvent event) {
-		
-		ViewerCell cell2edit = null;
-
-		if (event.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-			event.doit = false;
-
-			if ((event.stateMask & SWT.CTRL) == SWT.CTRL
-					&& (getTabingStyle() & TABBING_VERTICAL) == TABBING_VERTICAL) {
-				cell2edit = searchCellAboveBelow(row, viewer, columnIndex, true);
-			} else if ((getTabingStyle() & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
-				cell2edit = searchPreviousCell(row, viewer, columnIndex,
-						columnIndex);
-			}
-		} else if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-			event.doit = false;
-
-			if ((event.stateMask & SWT.CTRL) == SWT.CTRL
-					&& (getTabingStyle() & TABBING_VERTICAL) == TABBING_VERTICAL) {
-				cell2edit = searchCellAboveBelow(row, viewer, columnIndex,
-						false);
-			} else if ((getTabingStyle() & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
-				cell2edit = searchNextCell(row, viewer, columnIndex,
-						columnIndex);
-			}
-		}
-
-		if (cell2edit != null) {
-			viewer.editElement(cell2edit.getElement(), cell2edit
-					.getColumnIndex());
-		}
-	}
-
-	private ViewerCell searchCellAboveBelow(ViewerRow row, ColumnViewer viewer,
-			int columnIndex, boolean above) {
-		ViewerCell rv = null;
-
-		ViewerRow newRow = null;
-
-		if (above) {
-			newRow = row.getNeighbor(ViewerRow.ABOVE, false);
-		} else {
-			newRow = row.getNeighbor(ViewerRow.BELOW,false);
-		}
-
-		if (newRow != null) {
-			ViewerColumn column = viewer.getViewerColumn(columnIndex);
-			if (column != null
-					&& column.getEditingSupport().canEdit(
-							newRow.getItem().getData())) {
-				rv = newRow.getCell(columnIndex);
-			} else {
-				rv = searchCellAboveBelow(newRow, viewer, columnIndex, above);
-			}
-		}
-
-		return rv;
-	}
-
-	private ViewerCell searchPreviousCell(ViewerRow row, ColumnViewer viewer,
-			int columnIndex, int startIndex) {
-		ViewerCell rv = null;
-
-		if (columnIndex - 1 >= 0) {
-			ViewerColumn column = viewer.getViewerColumn(columnIndex - 1);
-			if (column != null
-					&& column.getEditingSupport().canEdit(
-							row.getItem().getData())) {
-				rv = row.getCell(columnIndex - 1);
-			} else {
-				rv = searchPreviousCell(row, viewer, columnIndex - 1,
-						startIndex);
-			}
-		} else {
-			if ((getTabingStyle() & TABBING_CYCLE_IN_ROW) == TABBING_CYCLE_IN_ROW) {
-				// Check that we don't get into endless loop
-				if (columnIndex - 1 != startIndex) {
-					// Don't subtract -1 from getColumnCount() we need to
-					// start in the virtual column
-					// next to it
-					rv = searchPreviousCell(row, viewer, row.getColumnCount(),
-							startIndex);
-				}
-			} else if ((getTabingStyle() & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
-				ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE,false);
-				if (rowAbove != null) {
-					rv = searchPreviousCell(rowAbove, viewer, rowAbove
-							.getColumnCount(), startIndex);
-				}
-			}
-		}
-
-		return rv;
-	}
-
-	private ViewerCell searchNextCell(ViewerRow row, ColumnViewer viewer,
-			int columnIndex, int startIndex) {
-		ViewerCell rv = null;
-
-		if (columnIndex + 1 < row.getColumnCount()) {
-			ViewerColumn column = viewer.getViewerColumn(columnIndex + 1);
-			if (column != null
-					&& column.getEditingSupport().canEdit(
-							row.getItem().getData())) {
-				rv = row.getCell(columnIndex + 1);
-			} else {
-				rv = searchNextCell(row, viewer, columnIndex + 1, startIndex);
-			}
-		} else {
-			if ((getTabingStyle() & TABBING_CYCLE_IN_ROW) == TABBING_CYCLE_IN_ROW) {
-				// Check that we don't get into endless loop
-				if (columnIndex + 1 != startIndex) {
-					// Start from -1 from the virtual column before the
-					// first one
-					rv = searchNextCell(row, viewer, -1, startIndex);
-				}
-			} else if ((getTabingStyle() & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
-				ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW,false);
-				if (rowBelow != null) {
-					rv = searchNextCell(rowBelow, viewer, -1, startIndex);
-				}
-			}
-		}
-
-		return rv;
-	}
-	
-	/**
 	 * @return the viewer this editing support works for
 	 */
 	public ColumnViewer getViewer() {
 		return viewer;
+	}
+
+	/**
+	 * Initialize the editor. Frameworks like Databinding can hook in here and provide
+	 * a customized implementation. <p><b>Standard customers should not overwrite this method but {@link #getValue(Object)}</b></p>
+	 * 
+	 * @param cellEditor
+	 *            the cell editor
+	 * @param cell
+	 *            the cell the editor is working for
+	 */
+	protected void initializeCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
+		Object value = getValue(cell.getElement());
+		cellEditor.setValue(value);
+	}
+
+	/**
+	 * Save the value of the cell editor back to the model. Frameworks like Databinding can hook in here and provide
+	 * a customized implementation. <p><b>Standard customers should not overwrite this method but {@link #setValue(Object, Object)} </b></p>
+	 * @param cellEditor
+	 *            the cell-editor
+	 * @param cell 
+	 * 			  the cell the editor is working for
+	 */
+	protected void saveCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
+		Object value = cellEditor.getValue();
+		setValue(cell.getElement(), value);
 	}
 }

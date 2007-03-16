@@ -16,9 +16,7 @@ package org.eclipse.jface.viewers;
 
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -67,11 +65,6 @@ public class TableViewer extends AbstractTableViewer {
 	private Table table;
 
 	/**
-	 * This viewer's table editor.
-	 */
-	private TableEditor tableEditor;
-
-	/**
 	 * Creates a table viewer on a newly-created table control under the given
 	 * parent. The table control is created using the SWT style bits
 	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
@@ -110,7 +103,6 @@ public class TableViewer extends AbstractTableViewer {
 	 */
 	public TableViewer(Table table) {
 		this.table = table;
-		tableEditor = new TableEditor(table);
 		hookControl(table);
 	}
 
@@ -128,31 +120,7 @@ public class TableViewer extends AbstractTableViewer {
 	}
 	
 	protected ColumnViewerEditor createViewerEditor() {
-		return new ColumnViewerEditor(this) {
-
-			protected StructuredSelection createSelection(Object element) {
-				return new StructuredSelection(element);
-			}
-
-			protected Item[] getSelection() {
-				return table.getSelection();
-			}
-
-			protected void setEditor(Control w, Item item, int fColumnNumber) {
-				tableEditor.setEditor(w, (TableItem) item, fColumnNumber);
-			}
-
-			protected void setLayoutData(LayoutData layoutData) {
-				tableEditor.grabHorizontal = layoutData.grabHorizontal;
-				tableEditor.horizontalAlignment = layoutData.horizontalAlignment;
-				tableEditor.minimumWidth = layoutData.minimumWidth;
-			}
-
-			protected void showSelection() {
-				table.showSelection();
-			}
-
-		};
+		return new TableViewerEditor(this,null,new ColumnViewerEditorActivationStrategy(this),ColumnViewerEditor.DEFAULT);
 	}
 	
 	/**

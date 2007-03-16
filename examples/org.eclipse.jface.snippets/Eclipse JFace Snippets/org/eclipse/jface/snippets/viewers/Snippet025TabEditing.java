@@ -12,10 +12,13 @@
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
+import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewerEditor;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
@@ -111,8 +114,7 @@ public class Snippet025TabEditing {
 		
 		v.setColumnProperties(new String[] { "column1", "column2" });
 		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()), new TextCellEditor(v.getTable()) });
-		v.setTabEditingStyle(EditingSupport.TABBING_HORIZONTAL|EditingSupport.TABBING_MOVE_TO_ROW_NEIGHBOR|EditingSupport.TABBING_VERTICAL);
-		
+		TableViewerEditor.create(v,new ColumnViewerEditorActivationStrategy(v),ColumnViewerEditor.TABBING_HORIZONTAL|ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR|ColumnViewerEditor.TABBING_VERTICAL);
 		
 		MyModel[] model = createModel();
 		v.setInput(model);

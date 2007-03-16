@@ -853,4 +853,14 @@ public abstract class CellEditor {
         dirty = true;
         fireEditorValueChanged(oldValidState, newValidState);
     }
+    
+    /**
+     * Activate the editor but also inform the editor which event triggered its activation.
+     * <b>The default implementation simply calls {@link #activate()}</b>
+     * 
+     * @param activationEvent the editor activation event
+     */
+    public void activate(ColumnViewerEditorActivationEvent activationEvent) {
+    	activate();
+    }
 }
