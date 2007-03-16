@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -14,29 +14,15 @@ import org.eclipse.osgi.util.NLS;
 public class InternalAntMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.core.ant.InternalAntMessages";//$NON-NLS-1$
 
+	public static String InternalAntRunner_2;
+
+	public static String InternalAntRunner_3;
+
 	public static String InternalAntRunner_Build_file___0__1;
 	public static String InternalAntRunner_Arguments___0__2;
-	public static String InternalAntRunner_Default_target__3;
-	public static String InternalAntRunner_Main_targets__4;
-	public static String InternalAntRunner_Subtargets__5;
 	public static String InternalAntRunner_Unable_to_instantiate_logger___0__6;
 	public static String InternalAntRunner_Could_not_load_the_version_information___0__9;
 	public static String InternalAntRunner_Could_not_load_the_version_information__10;
-	public static String InternalAntRunner_options_13;
-	public static String InternalAntRunner_target_15;
-	public static String InternalAntRunner_Options___21;
-	public static String InternalAntRunner_print_this_message_23;
-	public static String InternalAntRunner_print_project_help_information_25;
-	public static String InternalAntRunner_print_the_version_information_and_exit_27;
-	public static String InternalAntRunner_be_extra_quiet_29;
-	public static String InternalAntRunner_be_extra_verbose_31;
-	public static String InternalAntRunner_print_debugging_information_33;
-	public static String InternalAntRunner_produce_logging_information_without_adornments_35;
-	public static String InternalAntRunner_use_given_file_for_log_37;
-	public static String InternalAntRunner_the_class_which_is_to_perform_logging_39;
-	public static String InternalAntRunner_add_an_instance_of_class_as_a_project_listener_41;
-	public static String InternalAntRunner_use_given_buildfile_43;
-	public static String InternalAntRunner_use_value_for_given_property_45;
 	public static String InternalAntRunner_Using__0__file_as_build_log__1;
 	public static String InternalAntRunner_Could_not_write_to_the_specified_log_file___0___Make_sure_the_path_exists_and_you_have_write_permissions__2;
 	public static String InternalAntRunner_BUILD_SUCCESSFUL_1;
@@ -48,12 +34,6 @@ public class InternalAntMessages extends NLS {
 	public static String InternalAntRunner_You_must_specify_a_classname_when_using_the__logger_argument_2;
 	public static String InternalAntRunner_You_must_specify_a_log_file_when_using_the__log_argument_3;
 	public static String InternalAntRunner_You_must_specify_a_buildfile_when_using_the__buildfile_argument_4;
-	public static String InternalAntRunner_12;
-	public static String InternalAntRunner_13;
-	public static String InternalAntRunner_19;
-	public static String InternalAntRunner_20;
-	public static String InternalAntRunner_22;
-	public static String InternalAntRunner_1;
 	public static String InternalAntRunner_Class__0__not_found_for_task__1__1;
 	public static String InternalAntRunner_Class__0__not_found_for_type__1__2;
 	public static String InternalAntRunner_Only_one_logger_class_may_be_specified_1;
@@ -73,10 +53,7 @@ public class InternalAntMessages extends NLS {
 	public static String InternalAntRunner_Error_setting_Ant_task;
 	public static String InternalAntRunner_Missing_Class;
 	public static String InternalAntRunner_157;
-	public static String InternalAntRunner_158;
-	public static String InternalAntRunner_159;
-	public static String InternalAntRunner_160;
-
+	
 	public static String ProgressBuildListener_Build_cancelled__5;
 
 	public static String InternalProject_0;

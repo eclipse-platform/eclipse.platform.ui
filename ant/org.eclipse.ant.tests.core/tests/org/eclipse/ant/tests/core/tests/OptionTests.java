@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,8 +38,8 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testHelp() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-help"});
-		assertTrue("One message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
-		assertTrue("Help is incorrect", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
+		assertEquals("incorrect message number logged", 35, AntTestChecker.getDefault().getMessagesLoggedCount());
+		assertTrue("Help is incorrect", getLastMessageLogged() != null && ((String) AntTestChecker.getDefault().getMessages().get(0)).startsWith(START_OF_HELP));
 	}
 	
 	/**
@@ -47,8 +47,8 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusH() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-h"});
-		assertTrue("One message should have been logged, was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
-		assertTrue("Help is incorrect", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
+		assertEquals("incorrect message number logged", 35, AntTestChecker.getDefault().getMessagesLoggedCount());
+		assertTrue("Help is incorrect", getLastMessageLogged() != null && ((String) AntTestChecker.getDefault().getMessages().get(0)).startsWith(START_OF_HELP));
 	}
 	
 	/**
@@ -65,8 +65,8 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testProjecthelp() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-projecthelp"});
-		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
-		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
+		assertEquals("Incorrect number of messages", 4, AntTestChecker.getDefault().getMessagesLoggedCount());
+		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Default target:"));
 	}
 	
 	/**
@@ -74,16 +74,16 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusP() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-p"});
-		assertTrue("5 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 5);
-		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
+		assertEquals("Incorrect number of messages", 4, AntTestChecker.getDefault().getMessagesLoggedCount());
+		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Default target:"));
 	}
 	
 	/**
-	 * Tests the "-projecthelp" option when it will not show (quite mode)
+	 * Tests the "-projecthelp" option when it will not show as much (quite mode)
 	 */
 	public void testProjecthelpQuiet() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-projecthelp", "-q"});
-		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
+		assertEquals(1, AntTestChecker.getDefault().getMessagesLoggedCount());
 	}
 	
 	/**
@@ -580,6 +580,7 @@ public class OptionTests extends AbstractAntTest {
 		
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(12);
 		//msg depends on whether self hosting testing or build testing
+		//value of ant.home
 		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant") || msg.endsWith(PLUGIN_VERSION));
 	}
 	
