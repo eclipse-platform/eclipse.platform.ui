@@ -1166,10 +1166,14 @@ public class Perspective {
         for (int x = 0; x < actions.length; x++) {
             String actionSetID = actions[x]
                     .getString(IWorkbenchConstants.TAG_ID);
-            IActionSetDescriptor d = WorkbenchPlugin.getDefault()
+            final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry().findActionSet(actionSetID);
             if (d != null) {
-                addAlwaysOn(d);
+                StartupThreading.runWithoutExceptions(new StartupRunnable() {
+        			public void runWithException() throws Throwable {
+                        addAlwaysOn(d);
+        			}});
+
                 knownActionSetIds.add(actionSetID);
             }
         }
@@ -1180,10 +1184,13 @@ public class Perspective {
         for (int x = 0; x < actions.length; x++) {
             String actionSetID = actions[x]
                     .getString(IWorkbenchConstants.TAG_ID);
-            IActionSetDescriptor d = WorkbenchPlugin.getDefault()
+            final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
                     .getActionSetRegistry().findActionSet(actionSetID);
             if (d != null) {
-                addAlwaysOff(d);
+                StartupThreading.runWithoutExceptions(new StartupRunnable() {
+        			public void runWithException() throws Throwable {
+                        addAlwaysOff(d);
+        			}});
                 knownActionSetIds.add(actionSetID);
             }
         }
