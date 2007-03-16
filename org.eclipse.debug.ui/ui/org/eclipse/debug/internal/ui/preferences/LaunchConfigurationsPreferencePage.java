@@ -65,7 +65,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * Provides the Launch Configuration preference page to the Run/Debug preferences
  * 
  * This page allows users to set filtering options as well as perform migration tasks.
- * This class is not intended to be subclasssed 
+ * This class is not intended to be sub-classed 
  * @since 3.2
  */
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -269,12 +269,23 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		try {
 			ILaunchManager lmanager = DebugPlugin.getDefault().getLaunchManager();
 			ILaunchConfiguration[] configurations = lmanager.getMigrationCandidates();
-			if(configurations.length == 0) {
+			//separate the private from the public 
+			List pub = new ArrayList();
+			for(int i = 0; i < configurations.length; i++) {
+				if(DebugUITools.isPrivate(configurations[i])) {
+					//auto-migrate private ones
+					configurations[i].migrate();
+				}
+				else {
+					pub.add(configurations[i]);
+				}
+			}
+			if(pub.size() == 0) {
 				MessageDialog.openInformation(getShell(), DebugPreferencesMessages.LaunchingPreferencePage_29, DebugPreferencesMessages.LaunchingPreferencePage_30);
 				return;
 			}
 			LaunchConfigurationMigrationSelectionDialog listd = new LaunchConfigurationMigrationSelectionDialog(getShell(), 
-																new AdaptableList(configurations), 
+																new AdaptableList(pub), 
 																new WorkbenchContentProvider(),	
 																DebugUITools.newDebugModelPresentation(), 
 																DebugPreferencesMessages.LaunchingPreferencePage_0);
@@ -288,7 +299,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 					if(objs[i] instanceof ILaunchConfiguration) {
 						((ILaunchConfiguration)objs[i]).migrate();
 					}
-					fMonitor.worked(i);
+					fMonitor.worked(1);
 				}
 				fMonitor.done();
 				fMonitor.dispose();
