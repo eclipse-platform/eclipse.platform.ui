@@ -41,6 +41,7 @@ public class NetTest extends TestCase {
 		setProxiesEnabled(true);
 		isSetEnabled = true;
 		dataCache.clear();
+		ProxyType.alwaysSetSocksProperties = true;
 	}
 	
 	protected void tearDown() throws Exception {

@@ -47,6 +47,8 @@ public class ProxyType {
     }
     
 	private String name;
+	
+	public static boolean alwaysSetSocksProperties = false;
 
 	public static String convertHostsToPropertyString(String[] value) {
 		StringBuffer buffer = new StringBuffer();
@@ -236,7 +238,7 @@ public class ProxyType {
 			sysProps.remove("socksProxyHost"); //$NON-NLS-1$
 			sysProps.remove("socksProxyPort"); //$NON-NLS-1$
 		} else {
-			if (!hasJavaNetProxyClass()) {
+			if (!hasJavaNetProxyClass() && !alwaysSetSocksProperties) {
 				// TODO: For now, don't set the Java system properties if using a 1.4 VM (see bug 177550)
 				Activator.logError("Setting the SOCKS system properties for a 1.4 VM can interfere with other proxy services (e.g. JSch). Please upgrade to a 1.5 JRE or later if you need to use Java's SOCKS proxy support.", null); //$NON-NLS-1$
 				return;
