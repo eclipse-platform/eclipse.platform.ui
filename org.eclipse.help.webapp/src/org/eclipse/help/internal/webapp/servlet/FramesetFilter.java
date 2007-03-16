@@ -54,7 +54,7 @@ public class FramesetFilter implements IFilter {
 		for (int i; 0 <= (i = path.indexOf('/')); path = path.substring(i + 1)) {
 			script.append("../"); //$NON-NLS-1$
 		}
-		script.append("?topic="); //$NON-NLS-1$
+		script.append("index.jsp?topic="); //$NON-NLS-1$
 		script.append(req.getPathInfo());
 		script.append(scriptPart3);
 		try {
