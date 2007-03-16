@@ -15,7 +15,10 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
 import org.eclipse.core.databinding.observable.ObservableEvent;
 
 /**
- * @since 3.3
+ * List change event describing an incremental change of an
+ * {@link IObservableSet} object.
+ * 
+ * @since 1.0
  * 
  */
 public class SetChangeEvent extends ObservableEvent {
@@ -25,21 +28,29 @@ public class SetChangeEvent extends ObservableEvent {
 	 */
 	private static final long serialVersionUID = 7436547103857482256L;
 	static final Object TYPE = new Object();
+
 	/**
-	 * 
+	 * Description of the change to the source observable set. Listeners must
+	 * not change this field.
 	 */
 	public SetDiff diff;
 
 	/**
+	 * Creates a new set change event.
+	 * 
 	 * @param source
+	 *            the source observable set
 	 * @param diff
+	 *            the set change
 	 */
 	public SetChangeEvent(IObservableSet source, SetDiff diff) {
 		super(source);
 		this.diff = diff;
 	}
-	
+
 	/**
+	 * Returns the observable set from which this event originated.
+	 * 
 	 * @return the observable set from which this event originated
 	 */
 	public IObservableSet getObservableSet() {
@@ -47,7 +58,7 @@ public class SetChangeEvent extends ObservableEvent {
 	}
 
 	protected void dispatch(IObservablesListener listener) {
-		((ISetChangeListener)listener).handleSetChange(this);
+		((ISetChangeListener) listener).handleSetChange(this);
 	}
 
 	protected Object getListenerType() {

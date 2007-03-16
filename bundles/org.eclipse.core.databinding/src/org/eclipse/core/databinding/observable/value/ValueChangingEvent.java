@@ -15,7 +15,11 @@ import org.eclipse.core.databinding.observable.IObservablesListener;
 import org.eclipse.core.databinding.observable.ObservableEvent;
 
 /**
- * @since 3.3
+ * Value changing event describing a pending change of an
+ * {@link IObservableValue} object's current value. Listeners can veto the
+ * pending change by setting {@link #veto} to <code>true</code>.
+ * 
+ * @since 1.0
  * 
  */
 public class ValueChangingEvent extends ObservableEvent {
@@ -28,18 +32,24 @@ public class ValueChangingEvent extends ObservableEvent {
 	static final Object TYPE = new Object();
 
 	/**
-	 * 
+	 * Description of the change to the source observable value. Listeners must
+	 * not change this field.
 	 */
 	public ValueDiff diff;
 
 	/**
-	 * 
+	 * Flag for vetoing this change. Default value is <code>false</code>, can
+	 * be set to <code>true</code> by listeners to veto this change.
 	 */
 	public boolean veto = false;
 
 	/**
+	 * Creates a new value changing event.
+	 * 
 	 * @param source
+	 *            the source observable value
 	 * @param diff
+	 *            the value change
 	 */
 	public ValueChangingEvent(IObservableValue source, ValueDiff diff) {
 		super(source);

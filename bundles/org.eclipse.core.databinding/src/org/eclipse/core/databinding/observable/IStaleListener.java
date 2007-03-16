@@ -20,7 +20,9 @@ package org.eclipse.core.databinding.observable;
 public interface IStaleListener extends IObservablesListener {
 
 	/**
-	 * Handle the event that the given observable object is now stale.
+	 * Handle the event that the given observable object is now stale. The given
+	 * event object must only be used locally in this method because it may be
+	 * reused for other change notifications.
 	 * 
 	 * @param staleEvent
 	 */
