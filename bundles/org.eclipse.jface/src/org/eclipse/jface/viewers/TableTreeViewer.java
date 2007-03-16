@@ -116,51 +116,54 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		}
 
 		private void activateCellEditor() {
-			ViewerColumn part = viewer.getViewerColumn(columnNumber);
-			Object element = tableItem.getData();
-
-			if (part != null && part.getEditingSupport() != null
-					&& part.getEditingSupport().canEdit(element)) {
-				cellEditor = part.getEditingSupport().getCellEditor(element);
-				if (cellEditor != null) {
-					cellEditor.addListener(cellEditorListener);
-					Object value = part.getEditingSupport().getValue(element);
-					cellEditor.setValue(value);
-					// Tricky flow of control here:
-					// activate() can trigger callback to cellEditorListener
-					// which will clear cellEditor
-					// so must get control first, but must still call activate()
-					// even if there is no control.
-					final Control control = cellEditor.getControl();
-					cellEditor.activate();
-					if (control == null) {
-						return;
-					}
-					setLayoutData(cellEditor.getLayoutData());
-					setEditor(control, tableItem, columnNumber);
-					cellEditor.setFocus();
-					if (focusListener == null) {
-						focusListener = new FocusAdapter() {
-							public void focusLost(FocusEvent e) {
-								applyEditorValue();
+			if( cellEditors != null ) {
+				if( cellEditors[columnNumber] != null && cellModifier != null ) {
+					Object element = tableItem.getData();
+					String property = columnProperties[columnNumber];
+					
+					if( cellModifier.canModify(element, property) ) {
+						cellEditor = cellEditors[columnNumber];
+						
+						cellEditor.addListener(cellEditorListener);
+						
+						Object value = cellModifier.getValue(element, property);
+						cellEditor.setValue(value);
+						// Tricky flow of control here:
+						// activate() can trigger callback to cellEditorListener
+						// which will clear cellEditor
+						// so must get control first, but must still call activate()
+						// even if there is no control.
+						final Control control = cellEditor.getControl();
+						cellEditor.activate();
+						if (control == null) {
+							return;
+						}
+						setLayoutData(cellEditor.getLayoutData());
+						setEditor(control, tableItem, columnNumber);
+						cellEditor.setFocus();
+						if (focusListener == null) {
+							focusListener = new FocusAdapter() {
+								public void focusLost(FocusEvent e) {
+									applyEditorValue();
+								}
+							};
+						}
+						control.addFocusListener(focusListener);
+						mouseListener = new MouseAdapter() {
+							public void mouseDown(MouseEvent e) {
+								// time wrap?
+								// check for expiration of doubleClickTime
+								if (e.time <= doubleClickExpirationTime) {
+									control.removeMouseListener(mouseListener);
+									cancelEditing();
+									handleDoubleClickEvent();
+								} else if (mouseListener != null) {
+									control.removeMouseListener(mouseListener);
+								}
 							}
 						};
+						control.addMouseListener(mouseListener);
 					}
-					control.addFocusListener(focusListener);
-					mouseListener = new MouseAdapter() {
-						public void mouseDown(MouseEvent e) {
-							// time wrap?
-							// check for expiration of doubleClickTime
-							if (e.time <= doubleClickExpirationTime) {
-								control.removeMouseListener(mouseListener);
-								cancelEditing();
-								handleDoubleClickEvent();
-							} else if (mouseListener != null) {
-								control.removeMouseListener(mouseListener);
-							}
-						}
-					};
-					control.addMouseListener(mouseListener);
 				}
 			}
 		}
@@ -325,6 +328,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
 				return;
 			}
 			tableItem = items[0];
+			
 			activateCellEditor(event);
 		}
 
@@ -360,12 +364,17 @@ public class TableTreeViewer extends AbstractTreeViewer {
 		 * the cell modifier.
 		 */
 		private void saveEditorValue(CellEditor cellEditor, Item tableItem) {
-			ViewerColumn part = viewer.getViewerColumn(columnNumber);
-
-			if (part != null && part.getEditingSupport() != null) {
-				part.getEditingSupport().setValue(tableItem.getData(),
-						cellEditor.getValue());
+			if( cellModifier != null ) {
+				if( ! cellEditor.isValueValid() ) {
+					// Do what????
+				}
 			}
+			String property = null;
+			
+			if( columnProperties != null && columnNumber < columnProperties.length ) {
+				property = columnProperties[columnNumber];
+			}
+			cellModifier.modify(tableItem, property, cellEditor.getValue());
 		}
 
 		/**
