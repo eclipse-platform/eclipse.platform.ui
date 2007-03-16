@@ -16,10 +16,6 @@ import org.eclipse.swt.widgets.Control;
  * AutoCompleteField is a class which attempts to auto-complete a user's
  * keystrokes by activating a popup that filters a list of proposals according
  * to the content typed by the user.
- * <p>
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
  * 
  * @see ContentProposalAdapter
  * @see SimpleContentProposalProvider

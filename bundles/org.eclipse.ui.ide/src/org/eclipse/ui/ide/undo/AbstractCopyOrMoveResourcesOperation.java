@@ -27,10 +27,6 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * 
  * This class is not intended to be subclassed by clients.
  * 
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
- * 
  * @since 3.3
  * 
  */
@@ -49,16 +45,32 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	 * must include the names of the resources at their new location.
 	 * 
 	 * @param resources
-	 *            the resources to be moved or copied
+	 *            the resources to be moved or copied.  May not contain null
+	 *            resources.
 	 * @param destinationPaths
 	 *            the destination paths for the resources, including the name to
-	 *            be assigned to the resource at its new location.
+	 *            be assigned to the resource at its new location.  May not contain
+	 *            null paths, and must be the same length as the resources array.
 	 * @param label
 	 *            the label of the operation
+	 *            
 	 */
 	AbstractCopyOrMoveResourcesOperation(IResource[] resources,
 			IPath[] destinationPaths, String label) {
 		super(resources, label);
+		if (resources == null || destinationPaths == null)
+			throw new IllegalArgumentException("The resource and destination paths may not be null"); //$NON-NLS-1$
+		if (resources.length != destinationPaths.length) {
+			throw new IllegalArgumentException("The resource and destination paths must be the same length"); //$NON-NLS-1$
+		}
+		for (int i=0; i<resources.length; i++) {
+			if (resources[i] == null) {
+				throw new IllegalArgumentException("The resources array may not contain null resources"); //$NON-NLS-1$
+			}
+			if (destinationPaths[i] == null) {
+				throw new IllegalArgumentException("The destination paths array may not contain null paths"); //$NON-NLS-1$
+			}
+		}
 		this.destinationPaths = destinationPaths;
 	}
 

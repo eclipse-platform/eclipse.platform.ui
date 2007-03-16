@@ -29,10 +29,6 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
  * 
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
- * 
  * @since 3.3
  * 
  */
