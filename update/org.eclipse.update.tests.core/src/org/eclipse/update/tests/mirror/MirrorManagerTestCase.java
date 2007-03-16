@@ -12,13 +12,15 @@
 package org.eclipse.update.tests.mirror;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configurator.*;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.osgi.framework.Bundle;
 
 
 public class MirrorManagerTestCase extends UpdateManagerTestCase{
@@ -135,8 +137,8 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 		String fid,
 		String ver,
 		String mirUrl) {
-		final String classpath = "startup.jar";
-		final String launcher = "org.eclipse.core.launcher.Main";
+		final String classpath = getLauncher();
+		final String launcher = "org.eclipse.equinox.launcher.Main";
 		final String command = "mirror";
 		final String application = "org.eclipse.update.core.standaloneUpdate";
 		final String FLAG_CP = "-cp";
@@ -177,6 +179,30 @@ public class MirrorManagerTestCase extends UpdateManagerTestCase{
 				data,
 				FLAG_CONSOLELOG};
 		return cmd;
+	}
+	
+	private String getLauncher() {
+		Bundle launcher = Platform.getBundle("org.eclipse.equinox.launcher");
+		// todo
+		if (launcher == null)
+			return "";
+		URL rootEntry = launcher.getEntry("/");
+		try {
+			rootEntry = FileLocator.resolve(rootEntry);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		if ("file".equals(rootEntry.getProtocol()))
+			return new File(rootEntry.getPath()).getAbsolutePath();
+		if ("jar".equals(rootEntry.getProtocol())) {
+			String path = rootEntry.getPath();	
+			// strip off the file: and the !/
+			path = path.substring(5, path.length() - 2);
+			return new File(path).getAbsolutePath();
+		}
+		return null;
 	}
 	
 	public boolean checkFeatureInSiteXMLExists(String url, String fid, String ver){
