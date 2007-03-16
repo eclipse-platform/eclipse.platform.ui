@@ -236,6 +236,11 @@ public class ProxyType {
 			sysProps.remove("socksProxyHost"); //$NON-NLS-1$
 			sysProps.remove("socksProxyPort"); //$NON-NLS-1$
 		} else {
+			if (!hasJavaNetProxyClass()) {
+				// TODO: For now, don't set the Java system properties if using a 1.4 VM (see bug 177550)
+				Activator.logError("Setting the SOCKS system properties for a 1.4 VM can interfere with other proxy services (e.g. JSch). Please upgrade to a 1.5 JRE or later if you need to use Java's SOCKS proxy support.", null); //$NON-NLS-1$
+				return;
+			}
 			sysProps.put("socksProxyHost", data.getHost()); //$NON-NLS-1$
 			int port = data.getPort();
 			if (port == -1) {
@@ -291,6 +296,16 @@ public class ProxyType {
 		} catch (CoreException e) {
 			Activator.logError(e.getMessage(), e);
 		}
+	}
+	
+	private synchronized boolean hasJavaNetProxyClass() {
+		try {
+			Class proxyClass = Class.forName("java.net.Proxy"); //$NON-NLS-1$
+			return proxyClass != null;
+		} catch (ClassNotFoundException e) {
+			// Ignore
+		}
+		return false;
 	}
 
 }
