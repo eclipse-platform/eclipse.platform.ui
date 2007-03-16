@@ -227,7 +227,9 @@ public final class EditorsUI {
 	/**
 	 * Returns the tool tip affordance string.
 	 *
-	 * @return the affordance string or <code>null</code> if disabled or no key binding is defined
+	 * @return the affordance string which is empty if the preference is enabled
+	 *			but the key binding not active or <code>null</code> if the
+	 *			preference is disabled or the binding service is unavailable
 	 * @since 3.3
 	 */
 	public static final String getTooltipAffordanceString() {
@@ -240,7 +242,7 @@ public final class EditorsUI {
 
 		String keySequence= bindingService.getBestActiveBindingFormattedFor(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
 		if (keySequence == null)
-			return null;
+			return ""; //$NON-NLS-1$
 		
 		return NLSUtility.format(TextEditorMessages.Editor_toolTip_affordance, keySequence);
 	}
