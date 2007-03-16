@@ -13,7 +13,6 @@ package org.eclipse.jface.snippets.viewers;
 
 
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -104,15 +103,13 @@ public class Snippet016TableLayout {
 		
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setText("Column 1");
+		column.setMoveable(true);
+		ad.setColumnData(column, new ColumnWeightData(90, 100));
 
 		column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setText("Column 2");
-		
-		ColumnLayoutData data = new ColumnWeightData(50, 100);
-		ad.addColumnData(data);
-
-		data = new ColumnWeightData(50, 100);
-		ad.addColumnData(data);
+		column.setMoveable(true);
+		ad.setColumnData(column, new ColumnWeightData(10, 100));
 
 		MyModel[] model = createModel();
 		v.setInput(model);

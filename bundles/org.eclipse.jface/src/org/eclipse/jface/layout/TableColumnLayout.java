@@ -13,6 +13,7 @@
 package org.eclipse.jface.layout;
 
 
+import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -41,5 +42,14 @@ public class TableColumnLayout extends AbstractColumnLayout {
 		for (int i = 0; i < widths.length; i++) {
 			columns[i].setWidth(widths[i]);
 		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getLayoutData(int)
+	 */
+	ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
+		TableColumn column = ((Table) tableTree).getColumn(columnIndex);
+		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
 	}
 }
