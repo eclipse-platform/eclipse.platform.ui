@@ -95,12 +95,12 @@ public abstract class ActionFactory {
 		 */
 		public WorkbenchCommandAction(String commandIdIn,
 				IWorkbenchWindow window) {
-			super(commandIdIn, window);
+			super(window, commandIdIn);
 		}
 		
 		public WorkbenchCommandAction(String commandIdIn, Map parameterMap,
 				IServiceLocator serviceLocator) {
-			super(commandIdIn, parameterMap, serviceLocator);
+			super(serviceLocator, commandIdIn, parameterMap);
 		}
 	}
 

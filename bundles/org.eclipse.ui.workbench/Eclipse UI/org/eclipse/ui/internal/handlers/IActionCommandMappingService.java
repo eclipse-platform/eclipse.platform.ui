@@ -49,5 +49,7 @@ public interface IActionCommandMappingService {
 	 *            The identifier of the command; must not be <code>null</code>
 	 */
 	public void map(String actionId, String commandId);
+	
+	public String getGeneratedCommandId(String targetId, String actionId);
 }
 

@@ -117,8 +117,8 @@ public class CommandActionTest extends UITestCase {
 	public void testCommandId() throws Exception {
 
 		// create a command action for CMD1_ID, which takes no parameters.
-		CommandAction action1 = new CommandAction(CMD1_ID, PlatformUI
-				.getWorkbench());
+		CommandAction action1 = new CommandAction(PlatformUI
+				.getWorkbench(), CMD1_ID);
 		assertEquals(0, cmd1Handler.count);
 		action1.run();
 		assertEquals(1, cmd1Handler.count);
@@ -136,8 +136,8 @@ public class CommandActionTest extends UITestCase {
 		map.put("protocol", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("host", "true");
 
-		CommandAction action2 = new CommandAction(CMD2_ID, map, PlatformUI
-				.getWorkbench());//$NON-NLS-1$
+		CommandAction action2 = new CommandAction(PlatformUI
+				.getWorkbench(), CMD2_ID, map);//$NON-NLS-1$
 		action2.run();
 		assertEquals(1, cmd2Handler.count);
 		assertNotNull(cmd2Handler.paramValue1);
@@ -149,7 +149,7 @@ public class CommandActionTest extends UITestCase {
 		map.put("protocol", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("host", "false");
 
-		action2 = new CommandAction(CMD2_ID, map, PlatformUI.getWorkbench());//$NON-NLS-1$
+		action2 = new CommandAction(PlatformUI.getWorkbench(), CMD2_ID, map);//$NON-NLS-1$
 		action2.run();
 		assertEquals(2, cmd2Handler.count);
 		assertNotNull(cmd2Handler.paramValue1);
