@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
  *     											   fix in bug 151295
  *                                                 fix in bug 166500
- ******************************************************************************/
+ *******************************************************************************/
 
 package org.eclipse.jface.viewers;
 
