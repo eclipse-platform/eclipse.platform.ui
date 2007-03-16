@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.revisions.Hunk;
 
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
+
 /**
  * Encapsulates revision information for one line-based document.
  * <p>
@@ -29,7 +33,7 @@ import org.eclipse.jface.internal.text.revisions.Hunk;
  * @since 3.2
  * @see Revision
  */
-public final class RevisionInformation {
+public final class RevisionInformation implements ITextHoverExtension, IInformationProviderExtension2 {
 	/** The revisions, element type: {@link Revision}. */
 	private final List fRevisions= new ArrayList();
 	/** A unmodifiable view of <code>fRevisions</code>. */
@@ -41,6 +45,20 @@ public final class RevisionInformation {
 	 * @since 3.3
 	 */
 	private List fRanges= null;
+	
+	/**
+	 * The hover control creator. Can be <code>null</code>.
+	 *
+	 * @since 3.3 
+	 */
+	private IInformationControlCreator fHoverControlCreator;
+	
+	/**
+	 * The information presenter control creator. Can be <code>null</code>.
+	 *
+	 * @since 3.3 
+	 */
+	private IInformationControlCreator fInformationPresenterControlCreator;
 
 	/**
 	 * Creates a new revision information model.
@@ -112,5 +130,42 @@ public final class RevisionInformation {
 		fRanges= null; // mark for recomputation
 		for (Iterator revisions= getRevisions().iterator(); revisions.hasNext();)
 			((Revision) revisions.next()).applyDiff(hunks);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
+	 * @since 3.3
+	 */
+	public IInformationControlCreator getHoverControlCreator() {
+		return fHoverControlCreator;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @return the information control creator or <code>null</code>
+	 * @since 3.3
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return fInformationPresenterControlCreator;
+	}
+	
+	/**
+	 * Sets the hover control creator.
+	 * 
+	 * @param creator the control creator 
+	 * @since 3.3
+	 */
+	public void setHoverControlCreator(IInformationControlCreator creator) {
+		fHoverControlCreator= creator;
+	}
+
+	/**
+	 * Sets the information presenter control creator.
+	 * 
+	 * @param creator the control creator 
+	 * @since 3.3
+	 */
+	public void setInformationPresenterControlCreator(IInformationControlCreator creator) {
+		fInformationPresenterControlCreator= creator;
 	}
 }
