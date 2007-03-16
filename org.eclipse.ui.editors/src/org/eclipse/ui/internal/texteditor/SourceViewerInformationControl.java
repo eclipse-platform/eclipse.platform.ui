@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
-
-import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -22,6 +20,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,17 +29,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.resource.JFaceResources;
+
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
-import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * Source viewer based implementation of <code>IInformationControl</code>.
@@ -197,24 +198,13 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			return;
 		}
 
-		String spaces= getSpacesForHorizontalScrolling();
-
-		IDocument doc= new Document(content + spaces);
+		IDocument doc= new Document(content);
 		fViewer.setInput(doc);
-		fViewer.getTextWidget().setHorizontalPixel(fHorizontalScrollPixel);
-	}
+		
+		// ensure that we can scroll enough
+		ensureScrollable();
 
-	/**
-	 * Returns a run of spaces the length of which is at least
-	 * <code>fHorizontalScrollPixel</code>.
-	 *
-	 * @return the spaces to add to the document content to ensure that it can
-	 *         be scrolled at least <code>fHorizontalScrollPixel</code>
-	 */
-	private String getSpacesForHorizontalScrolling() {
-		char[] spaces= new char[300];
-		Arrays.fill(spaces, ' ');
-		return new String(spaces);
+		fViewer.getTextWidget().setHorizontalPixel(fHorizontalScrollPixel);
 	}
 
 	/*
@@ -359,4 +349,48 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		scrollIndex= Math.max(0, scrollIndex);
 		fHorizontalScrollPixel= scrollIndex;
 	}
+	
+	/**
+	 * Ensures that the control can be scrolled at least to
+	 * <code>fHorizontalScrollPixel</code> and adjusts <code>fMaxWidth</code>
+	 * accordingly.
+	 *
+	 * @since 3.3
+	 */
+	private void ensureScrollable() {
+		IDocument doc= fViewer.getDocument();
+		if (doc == null)
+			return;
+
+		StyledText widget= fViewer.getTextWidget();
+		if (widget == null || widget.isDisposed())
+			return;
+
+		int last= doc.getNumberOfLines() - 1;
+		GC gc= new GC(widget);
+		gc.setFont(widget.getFont());
+		int maxWidth= 0;
+		String content= new String();
+
+		try {
+			for (int i= 0; i <= last; i++) {
+				IRegion line;
+				line= doc.getLineInformation(i);
+				content= doc.get(line.getOffset(), line.getLength());
+				int width= gc.textExtent(content).x;
+				if (width > maxWidth) {
+					maxWidth= width;
+				}
+			}
+		} catch (BadLocationException e) {
+			return;
+		} finally {
+			gc.dispose();
+		}
+
+		// limit the size of the window to the maximum width minus scrolling,
+		// but never more than the configured max size (viewport size).
+		fMaxWidth= Math.max(0, Math.min(fMaxWidth, maxWidth - fHorizontalScrollPixel + 8));
+	}
+	
 }

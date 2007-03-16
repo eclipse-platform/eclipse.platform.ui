@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -19,6 +20,8 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.LineChangeHover;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 
@@ -54,10 +57,25 @@ public class TextChangeHover extends LineChangeHover {
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				SourceViewerInformationControl control= new SourceViewerInformationControl(parent, JFaceResources.TEXT_FONT);
+				SourceViewerInformationControl control= new SourceViewerInformationControl(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, JFaceResources.TEXT_FONT, EditorsUI.getTooltipAffordanceString());
 				control.setHorizontalScrollPixel(fLastScrollIndex);
 				return control;
 			}
 		};
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @since 3.3
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				int shellStyle= SWT.RESIZE | SWT.TOOL;
+				int style= SWT.V_SCROLL | SWT.H_SCROLL;
+				return new SourceViewerInformationControl(parent, shellStyle, style, JFaceResources.TEXT_FONT, null);
+			}
+		};			
+	}
+
 }
