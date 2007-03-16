@@ -6,7 +6,7 @@ Bundle-Version: 3.3.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.jobs;x-internal:=true,
- org.eclipse.core.runtime.jobs
+ org.eclipse.core.runtime.jobs;uses:="org.eclipse.core.runtime,org.eclipse.core.internal.jobs"
 Bundle-Activator: org.eclipse.core.internal.jobs.JobActivator
 Require-Bundle: org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: CDC-1.0/Foundation-1.0,

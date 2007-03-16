@@ -6,12 +6,12 @@ Bundle-SymbolicName: org.eclipse.core.runtime.compatibility; singleton:=true
 Bundle-Vendor: %providerName
 Bundle-Activator: org.eclipse.core.internal.plugins.CompatibilityActivator
 Bundle-Localization: plugin
-Export-Package: org.eclipse.core.boot,
+Export-Package: org.eclipse.core.boot;uses:="org.eclipse.core.runtime,org.eclipse.update.configurator",
  org.eclipse.core.internal.boot;x-internal:=true,
  org.eclipse.core.internal.compatibility;x-internal:=true,
  org.eclipse.core.internal.model;x-internal:=true,
  org.eclipse.core.internal.plugins;x-internal:=true,
- org.eclipse.core.runtime.model
+ org.eclipse.core.runtime.model;uses:="org.eclipse.core.runtime,org.eclipse.core.internal.model"
 Require-Bundle: 
  org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
  org.eclipse.update.configurator;bundle-version="[3.1.100,4.0.0)";visibility:=reexport
