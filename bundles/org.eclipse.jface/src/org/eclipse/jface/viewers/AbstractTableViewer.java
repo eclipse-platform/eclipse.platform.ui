@@ -15,6 +15,7 @@ package org.eclipse.jface.viewers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -832,7 +833,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 *      boolean)
 	 */
 	protected void setSelectionToWidget(List list, boolean reveal) {
-
 		if (list == null) {
 			doDeselectAll();
 			return;
@@ -842,29 +842,51 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			virtualSetSelectionToWidget(list, reveal);
 			return;
 		}
+		
+		if (reveal) {
+			int size = list.size();
+			Item[] items = new Item[size];
+			int count = 0;
+			for (int i = 0; i < size; ++i) {
+				Object o = list.get(i);
+				Widget w = findItem(o);
+				if (w instanceof Item) {
+					Item item = (Item) w;
+					items[count++] = item;
+				}
+			}
+			if (count < size) {
+				System.arraycopy(items, 0, items = new Item[count], 0, count);
+			}
+			doSetSelection(items);
+		} else {
+			doDeselectAll(); // Clear the selection
+			if( ! list.isEmpty() ) {
+				int[] indices = new int[list.size()];
 
-		int size = list.size();
-		Item[] items = new Item[size];
-		int count = 0;
-		for (int i = 0; i < size; ++i) {
-			Object o = list.get(i);
-			Widget w = findItem(o);
-			if (w instanceof Item) {
-				Item item = (Item) w;
-				items[count++] = item;
+				Iterator it = list.iterator();
+				Item[] items = doGetItems();
+				Object modelElement;
+
+				int count = 0;
+				while( it.hasNext() ) {
+					modelElement = it.next();
+					for( int i = 0; i < items.length; i++ ) {
+						if( items[i].getData() == modelElement ) {
+							indices[count++] = i;
+						}
+					}
+				}
+
+				if (count < indices.length) {
+					System.arraycopy(indices, 0, indices = new int[count], 0, count);
+				}
+
+				doSelect(indices);
 			}
 		}
-		if (count < size) {
-			System.arraycopy(items, 0, items = new Item[count], 0, count);
-		}
-		doSetSelection(items);
-
-		if (reveal) {
-			doShowSelection();
-		}
-
 	}
-
+	
 	/**
 	 * Set the selection on a virtual table
 	 * 
@@ -1272,4 +1294,25 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.3
 	 */
 	protected abstract void doClear(int index);
+	
+		
+			
+	/**
+	 * Selects the items at the given zero-relative indices in the receiver.
+	 * The current selection is not cleared before the new items are selected.
+	 * <p>
+	 * If the item at a given index is not selected, it is selected.
+	 * If the item at a given index was already selected, it remains selected.
+	 * Indices that are out of range and duplicate indices are ignored.
+	 * If the receiver is single-select and multiple indices are specified,
+	 * then all indices are ignored.
+	 * </p>
+	 *
+	 * @param indices the array of indices for the items to select
+	 *
+	 * @exception IllegalArgumentException - if the array of indices is null
+	 * 
+	 */
+	protected abstract void doSelect(int[] indices);
+	
 }

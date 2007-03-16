@@ -276,4 +276,73 @@ public class TableViewer extends AbstractTableViewer {
 	protected void doClear(int index) {
 		table.clear(index);
 	}
+	
+	protected void doSelect(int[] indices) {
+		table.select(indices);
+	}
+
+	/**
+	 * Refreshes this viewer starting with the given element. Labels are updated
+	 * as described in <code>refresh(boolean updateLabels)</code>. The
+	 * methods attempts to preserve the selection.
+	 * <p>
+	 * Unlike the <code>update</code> methods, this handles structural changes
+	 * to the given element (e.g. addition or removal of children). If only the
+	 * given element needs updating, it is more efficient to use the
+	 * <code>update</code> methods.
+	 * </p>
+	 * 
+	 * <p>
+	 * Subclasses who can provide this feature can open this method for the
+	 * public
+	 * </p>
+	 * 
+	 * @param element
+	 *            the element
+	 * @param updateLabels
+	 *            <code>true</code> to update labels for existing elements,
+	 *            <code>false</code> to only update labels as needed, assuming
+	 *            that labels for existing elements are unchanged.
+	 * @param reveal
+	 *            <code>true</code> to make the preserved selection visible
+	 *            afterwards
+	 * 
+	 * @since 3.3
+	 */
+	public void refresh(final Object element, final boolean updateLabels,
+			boolean reveal) {
+		preservingSelection(new Runnable() {
+			public void run() {
+				internalRefresh(element, updateLabels);
+			}
+		}, reveal);
+	}
+
+	/**
+	 * Refreshes this viewer with information freshly obtained from this
+	 * viewer's model. If <code>updateLabels</code> is <code>true</code>
+	 * then labels for otherwise unaffected elements are updated as well.
+	 * Otherwise, it assumes labels for existing elements are unchanged, and
+	 * labels are only obtained as needed (for example, for new elements).
+	 * <p>
+	 * Calling <code>refresh(true)</code> has the same effect as
+	 * <code>refresh()</code>.
+	 * <p>
+	 * Note that the implementation may still obtain labels for existing
+	 * elements even if <code>updateLabels</code> is false. The intent is
+	 * simply to allow optimization where possible.
+	 * 
+	 * @param updateLabels
+	 *            <code>true</code> to update labels for existing elements,
+	 *            <code>false</code> to only update labels as needed, assuming
+	 *            that labels for existing elements are unchanged.
+	 * @param reveal
+	 *            <code>true</code> to make the preserved selection visible
+	 *            afterwards
+	 * 
+	 * @since 3.3
+	 */
+	public void refresh(boolean updateLabels, boolean reveal) {
+		refresh(getRoot(), updateLabels, reveal);
+	}
 }

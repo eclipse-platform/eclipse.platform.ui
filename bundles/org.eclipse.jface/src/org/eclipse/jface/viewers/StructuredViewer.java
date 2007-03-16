@@ -1347,6 +1347,59 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 	}
 
+	/**
+	 * Attempts to preserves the current selection across a run of the given
+	 * code, with a best effort to avoid scrolling if <code>reveal</code> is false,
+	 * or to reveal the selection if <code>reveal</code> is true.
+	 * <p>
+	 * The default implementation of this method:
+	 * <ul>
+	 * <li>discovers the old selection (via <code>getSelection</code>)</li>
+	 * <li>runs the given runnable</li>
+	 * <li>attempts to restore the old selection (using
+	 * <code>setSelectionToWidget</code></li>
+	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)
+	 * </li>
+	 * <li>calls <code>handleInvalidSelection</code> if the selection did not
+	 * take</li>
+	 * <li>calls <code>postUpdateHook</code></li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param updateCode
+	 *            the code to run
+	 * @param reveal
+	 *            <code>true</code> if the selection should be made visible,
+	 *            <code>false</code> if scrolling should be avoided
+	 * @since 3.3
+	 */
+	void preservingSelection(Runnable updateCode, boolean reveal) {
+
+		ISelection oldSelection = null;
+		try {
+			// preserve selection
+			oldSelection = getSelection();
+			inChange = restoreSelection = true;
+
+			// perform the update
+			updateCode.run();
+
+		} finally {
+			inChange = false;
+
+			// restore selection
+			if (restoreSelection) {
+				setSelectionToWidget(oldSelection, reveal);
+			}
+
+			// send out notification if old and new differ
+			ISelection newSelection = getSelection();
+			if (!newSelection.equals(oldSelection)) {
+				handleInvalidSelection(oldSelection, newSelection);
+			}
+		}
+	}
+	
 	/*
 	 * Non-Javadoc. Method declared on Viewer.
 	 */
