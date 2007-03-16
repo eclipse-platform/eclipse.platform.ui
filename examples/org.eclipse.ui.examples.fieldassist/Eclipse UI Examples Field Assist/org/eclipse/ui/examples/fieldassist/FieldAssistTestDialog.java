@@ -34,6 +34,8 @@ import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,10 +46,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -609,19 +609,27 @@ public class FieldAssistTestDialog extends StatusDialog {
 		ControlDecoration dec = new ControlDecoration(text,
 				getDecorationLocationBits());
 		dec.setMarginWidth(marginWidth);
-		dec.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
+		dec.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent event) {
 				MessageDialog
 						.openInformation(
 								getShell(),
 								TaskAssistExampleMessages.ExampleDialog_SelectionTitle,
 								TaskAssistExampleMessages.ExampleDialog_SelectionMessage);
 			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// Nothing on default select
+			}
 		});
 
 		textField = new UserField(dec, text, new TextContentAdapter());
-		dec.addListener(SWT.MenuDetect, new Listener() {
-			public void handleEvent(Event event) {
+		dec.addMenuDetectListener(new MenuDetectListener() {
+			public void menuDetected(MenuDetectEvent event) {
+				// no quick fix if we aren't in error state.
+				if (textField.isValid()) {
+					return;
+				}
 				if (textField.quickFixMenu == null) {
 					textField.quickFixMenu = createQuickFixMenu(textField);
 				}
@@ -651,8 +659,12 @@ public class FieldAssistTestDialog extends StatusDialog {
 		dec.setMarginWidth(marginWidth);
 		comboField = new UserField(dec, combo, new ComboContentAdapter());
 
-		dec.addListener(SWT.MenuDetect, new Listener() {
-			public void handleEvent(Event event) {
+		dec.addMenuDetectListener(new MenuDetectListener() {
+			public void menuDetected(MenuDetectEvent event) {
+				// no quick fix if we aren't in error state.
+				if (comboField.isValid()) {
+					return;
+				}
 				if (comboField.quickFixMenu == null) {
 					comboField.quickFixMenu = createQuickFixMenu(comboField);
 				}
@@ -660,13 +672,17 @@ public class FieldAssistTestDialog extends StatusDialog {
 				comboField.quickFixMenu.setVisible(true);
 			}
 		});
-		dec.addListener(SWT.DefaultSelection, new Listener() {
-			public void handleEvent(Event event) {
+		dec.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent event) {
 				MessageDialog
 						.openInformation(
 								getShell(),
 								TaskAssistExampleMessages.ExampleDialog_DefaultSelectionTitle,
 								TaskAssistExampleMessages.ExampleDialog_DefaultSelectionMessage);
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				// Do nothing on selection
 			}
 		});
 

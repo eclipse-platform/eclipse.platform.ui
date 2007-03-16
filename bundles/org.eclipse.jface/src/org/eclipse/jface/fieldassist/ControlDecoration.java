@@ -16,12 +16,16 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -61,11 +65,6 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
  * 
  * @since 3.3
  * 
@@ -134,11 +133,6 @@ public class ControlDecoration {
 	 * Registered selection listeners.
 	 */
 	private ListenerList selectionListeners = new ListenerList();
-
-	/**
-	 * Registered default selection listeners.
-	 */
-	private ListenerList defaultSelectionListeners = new ListenerList();
 
 	/**
 	 * Registered menu detect listeners.
@@ -471,78 +465,86 @@ public class ControlDecoration {
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
-	 * when an event of the given type occurs. When the event does occur in the
-	 * decoration, the listener is notified by sending it the
-	 * <code>handleEvent()</code> message. The event type describes the type
-	 * of event of interest.
+	 * when the platform-specific context menu trigger has occurred, by sending
+	 * it one of the messages defined in the <code>MenuDetectListener</code>
+	 * interface.
 	 * <p>
-	 * When listeners are notified, the event data field will contain the
-	 * decoration. The widget field will contain the composite on which the
-	 * decoration is rendered. For <code>SWT.Selection</code> and
-	 * <code>SWT.DefaultSelection</code> events, the x and y fields will
-	 * describe where the event occurred in coordinates relative to the
-	 * composite on which the decoration is rendered, not relative to the
-	 * decoration itself. For the <code>SWT.MenuDetect</code> event, the x and
-	 * y fields are in display relative coordinates.
-	 * 
-	 * @param eventType
-	 *            the type of event to listen for. It should be one of
-	 *            <code>SWT.Selection</code>,
-	 *            <code>SWT.DefaultSelection</code>, or
-	 *            <code>SWT.MenuDetect</code>. All other event types are
-	 *            ignored.
+	 * The <code>widget</code> field in the SelectionEvent will contain the
+	 * Composite on which the decoration is rendered that received the click.
+	 * The <code>x</code> and <code>y</code> fields will be in coordinates
+	 * relative to the display. The <code>data</code> field will contain the
+	 * decoration that received the event.
+	 * </p>
 	 * 
 	 * @param listener
-	 *            the listener which should be notified when the event occurs
+	 *            the listener which should be notified
 	 * 
-	 * @see org.eclipse.swt.widgets.Listener
-	 * @see #removeListener
+	 * @see org.eclipse.swt.events.MenuDetectListener
+	 * @see org.eclipse.swt.events.MenuDetectEvent
+	 * @see #removeMenuDetectListener
 	 */
-	public void addListener(int eventType, Listener listener) {
-		switch (eventType) {
-		case SWT.MenuDetect:
-			menuDetectListeners.add(listener);
-			break;
-		case SWT.Selection:
-			selectionListeners.add(listener);
-			break;
-		case SWT.DefaultSelection:
-			defaultSelectionListeners.add(listener);
-			break;
-		}
+	public void addMenuDetectListener(MenuDetectListener listener) {
+		menuDetectListeners.add(listener);
 	}
 
 	/**
 	 * Removes the listener from the collection of listeners who will be
-	 * notified when an event of the given type occurs. The event type describes
-	 * the event of interest.
+	 * notified when the platform-specific context menu trigger has occurred.
 	 * 
-	 * @param eventType
-	 *            the type of event to listen for. It should be one of
-	 *            <code>SWT.Selection</code>,
-	 *            <code>SWT.DefaultSelection</code>, or
-	 *            <code>SWT.MenuDetect</code>.
 	 * @param listener
-	 *            the listener which should no longer be notified when the event
-	 *            occurs. This message has no effect if the listener was not
-	 *            previously added to the receiver.
+	 *            the listener which should no longer be notified. This message
+	 *            has no effect if the listener was not previously added to the
+	 *            receiver.
 	 * 
-	 * @see org.eclipse.swt.widgets.Listener
-	 * @see #addListener
+	 * @see org.eclipse.swt.events.MenuDetectListener
+	 * @see #addMenuDetectListener
 	 */
-	public void removeListener(int eventType, Listener listener) {
-		switch (eventType) {
-		case SWT.MenuDetect:
-			menuDetectListeners.remove(listener);
-			break;
-		case SWT.Selection:
-			selectionListeners.remove(listener);
-			break;
-		case SWT.DefaultSelection:
-			defaultSelectionListeners.remove(listener);
-			break;
-		}
+	public void removeMenuDetectListener(MenuDetectListener listener) {
+		menuDetectListeners.remove(listener);
+	}
 
+	/**
+	 * Adds the listener to the collection of listeners who will be notified
+	 * when the decoration is selected, by sending it one of the messages
+	 * defined in the <code>SelectionListener</code> interface.
+	 * <p>
+	 * <code>widgetSelected</code> is called when the decoration is selected
+	 * (by mouse click). <code>widgetDefaultSelected</code> is called when the
+	 * decoration is double-clicked.
+	 * </p>
+	 * <p>
+	 * The <code>widget</code> field in the SelectionEvent will contain the
+	 * Composite on which the decoration is rendered that received the click.
+	 * The <code>x</code> and <code>y</code> fields will be in coordinates
+	 * relative to that widget. The <code>data</code> field will contain the
+	 * decoration that received the event.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the listener which should be notified
+	 * 
+	 * @see org.eclipse.swt.events.SelectionListener
+	 * @see org.eclipse.swt.events.SelectionEvent
+	 * @see #removeSelectionListener
+	 */
+	public void addSelectionListener(SelectionListener listener) {
+		selectionListeners.add(listener);
+	}
+
+	/**
+	 * Removes the listener from the collection of listeners who will be
+	 * notified when the decoration is selected.
+	 * 
+	 * @param listener
+	 *            the listener which should no longer be notified. This message
+	 *            has no effect if the listener was not previously added to the
+	 *            receiver.
+	 * 
+	 * @see org.eclipse.swt.events.SelectionListener
+	 * @see #addSelectionListener
+	 */
+	public void removeSelectionListener(SelectionListener listener) {
+		selectionListeners.remove(listener);
 	}
 
 	/**
@@ -684,15 +686,15 @@ public class ControlDecoration {
 				switch (event.type) {
 				case SWT.MouseDown:
 					if (!selectionListeners.isEmpty())
-						notifyListeners(event);
+						notifySelectionListeners(event);
 					break;
 				case SWT.MouseDoubleClick:
-					if (!defaultSelectionListeners.isEmpty())
-						notifyListeners(event);
+					if (!selectionListeners.isEmpty())
+						notifySelectionListeners(event);
 					break;
 				case SWT.MenuDetect:
 					if (!menuDetectListeners.isEmpty())
-						notifyListeners(event);
+						notifyMenuDetectListeners(event);
 					break;
 				}
 			}
@@ -752,48 +754,50 @@ public class ControlDecoration {
 		}
 	}
 
-	private void notifyListeners(Event event) {
+	private void notifySelectionListeners(Event event) {
 		if (!(event.widget instanceof Control)) {
 			return;
 		}
-		Control mapControl = event.type == SWT.MenuDetect ? null
-				: (Control) event.widget;
-		if (getDecorationRectangle(mapControl).contains(event.x, event.y)) {
-			Event clientEvent = new Event();
+		if (getDecorationRectangle((Control) event.widget).contains(event.x,
+				event.y)) {
+			SelectionEvent clientEvent = new SelectionEvent(event);
 			clientEvent.data = this;
-			clientEvent.display = event.display;
-			clientEvent.stateMask = event.stateMask;
-			clientEvent.time = event.time;
-			clientEvent.widget = event.widget;
-			clientEvent.x = event.x;
-			clientEvent.y = event.y;
+			if (getImage() != null) {
+				clientEvent.height = getImage().getBounds().height;
+				clientEvent.width = getImage().getBounds().width;
+			}
 			Object[] listeners;
 			switch (event.type) {
-			case SWT.MenuDetect:
-				clientEvent.type = SWT.MenuDetect;
-				listeners = menuDetectListeners.getListeners();
-				for (int i = 0; i < listeners.length; i++) {
-					((Listener) listeners[i]).handleEvent(clientEvent);
-				}
-				break;
 			case SWT.MouseDoubleClick:
 				if (event.button == 1) {
-					clientEvent.type = SWT.DefaultSelection;
-					listeners = defaultSelectionListeners.getListeners();
+					listeners = selectionListeners.getListeners();
 					for (int i = 0; i < listeners.length; i++) {
-						((Listener) listeners[i]).handleEvent(clientEvent);
+						((SelectionListener) listeners[i])
+								.widgetDefaultSelected(clientEvent);
 					}
 				}
 				break;
 			case SWT.MouseDown:
 				if (event.button == 1) {
-					clientEvent.type = SWT.Selection;
 					listeners = selectionListeners.getListeners();
 					for (int i = 0; i < listeners.length; i++) {
-						((Listener) listeners[i]).handleEvent(clientEvent);
+						((SelectionListener) listeners[i])
+								.widgetSelected(clientEvent);
 					}
 				}
 				break;
+			}
+		}
+	}
+
+	private void notifyMenuDetectListeners(Event event) {
+		if (getDecorationRectangle(null).contains(event.x, event.y)) {
+			MenuDetectEvent clientEvent = new MenuDetectEvent(event);
+			clientEvent.data = this;
+			Object[] listeners = menuDetectListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				((MenuDetectListener) listeners[i]).menuDetected(clientEvent);
+
 			}
 		}
 	}
