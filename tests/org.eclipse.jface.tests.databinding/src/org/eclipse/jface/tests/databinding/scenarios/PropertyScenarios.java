@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
@@ -22,12 +21,14 @@ import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.conversion.IdentityConverter;
+import org.eclipse.core.databinding.conversion.NumberToStringConverter;
+import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -42,6 +43,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+
+import com.ibm.icu.text.NumberFormat;
 
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
@@ -298,10 +301,22 @@ public class PropertyScenarios extends ScenariosTestCase {
                 }
             }
         };
+        
+        //Create a number formatter that will display one decimal position.
+		NumberFormat numberFormat = NumberFormat.getInstance();
+		numberFormat.setMinimumFractionDigits(1);
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
-                BeansObservables.observeValue(adventure, "price"),
-                new UpdateValueStrategy().setAfterGetValidator(validator), null);
+		IConverter targetToModelConverter = StringToNumberConverter.toDouble(
+				numberFormat, true);
+		IConverter modelToTargetConverter = NumberToStringConverter.fromDouble(
+				numberFormat, true);
+
+		getDbc().bindValue(
+				SWTObservables.observeText(text, SWT.Modify),
+				BeansObservables.observeValue(adventure, "price"),
+				new UpdateValueStrategy().setAfterGetValidator(validator)
+						.setConverter(targetToModelConverter),
+				new UpdateValueStrategy().setConverter(modelToTargetConverter));
 
         assertEquals("5.0", text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());

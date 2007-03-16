@@ -18,7 +18,11 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.tests.databinding.UpdateStrategyTest;
+import org.eclipse.core.tests.databinding.UpdateValueStrategyTest;
 import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
+import org.eclipse.core.tests.databinding.conversion.NumberToStringConverterTest;
+import org.eclipse.core.tests.databinding.conversion.StringToNumberConverterTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
@@ -26,6 +30,7 @@ import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.validation.WrappedConverterValidatorTest;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimitiveTest;
@@ -86,6 +91,17 @@ public class BindingTestSuite extends TestSuite {
 	}
 
 	public BindingTestSuite() {
+		//org.eclipse.core.tests.databinding
+		addTestSuite(UpdateStrategyTest.class);
+		addTestSuite(UpdateValueStrategyTest.class);
+		
+		// org.eclipse.core.tests.databinding.beans
+		addTestSuite(BeansObservablesTest.class);
+
+		//org.eclipse.core.tests.databinding.conversion
+		addTestSuite(NumberToStringConverterTest.class);
+		addTestSuite(StringToNumberConverterTest.class);
+		
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
@@ -95,9 +111,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DetailObservableListTest.class);
 		addTestSuite(DetailObservableSetTest.class);
 		addTestSuite(DetailObservableValueTest.class);
-
-		// org.eclipse.core.tests.databinding.beans
-		addTestSuite(BeansObservablesTest.class);
+		
+		//org.eclipse.core.tests.internal.databinding.validation
+		addTestSuite(WrappedConverterValidatorTest.class);
 
 		// org.eclipse.core.tests.databinding.observable
 		addTestSuite(RealmTest.class);

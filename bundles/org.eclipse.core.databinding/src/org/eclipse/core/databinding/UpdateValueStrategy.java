@@ -17,23 +17,18 @@ import java.util.HashMap;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2BytePrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2ByteValidator;
-import org.eclipse.core.databinding.validation.String2DateValidator;
-import org.eclipse.core.databinding.validation.String2DoublePrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2DoubleValidator;
-import org.eclipse.core.databinding.validation.String2FloatPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2FloatValidator;
-import org.eclipse.core.databinding.validation.String2IntegerPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2IntegerValidator;
-import org.eclipse.core.databinding.validation.String2LongPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2LongValidator;
-import org.eclipse.core.databinding.validation.String2ShortPrimitiveValidator;
-import org.eclipse.core.databinding.validation.String2ShortValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.internal.databinding.Pair;
+import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
+import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
+import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
+import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
+import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
+import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
+import org.eclipse.core.internal.databinding.validation.StringToIntegerValidator;
+import org.eclipse.core.internal.databinding.validation.StringToLongValidator;
+import org.eclipse.core.internal.databinding.validation.StringToShortValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -94,8 +89,14 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	private int updatePolicy;
 
 	private static ValidatorRegistry validatorRegistry = new ValidatorRegistry();
+	private static HashMap validatorsByConverter = new HashMap();
 
 	protected boolean provideDefaults;
+
+	/**
+	 * <code>true</code> if we defaulted the converter
+	 */
+	private boolean defaultedConverter = false;
 
 	/**
 	 * Creates a new update value strategy for automatically updating the
@@ -166,15 +167,16 @@ public class UpdateValueStrategy extends UpdateStrategy {
 			};
 		}
 
-		IValidator dataTypeValidator = findValidator(fromType, toType);
-		if (dataTypeValidator == null) {
-			throw new BindingException(
-					"No IValidator is registered for conversions from " + fromType + " to " + toType); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return dataTypeValidator;
+		return findValidator(fromType, toType);
 	}
 
 	/**
+	 * Fills out default values based upon the provided <code>source</code>
+	 * and <code>destination</code>. If the strategy is to default values it
+	 * will attempt to default a converter. If the converter can be defaulted an
+	 * attempt is made to default the
+	 * {@link #validateAfterGet(Object) after get validator}. If a validator
+	 * cannot be defaulted it will be <code>null</code>.
 	 * 
 	 * @param source
 	 * @param destination
@@ -184,11 +186,15 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		Object sourceType = source.getValueType();
 		Object destinationType = destination.getValueType();
 		if (provideDefaults && sourceType != null && destinationType != null) {
+			if (converter == null) {
+				IConverter converter = createConverter(sourceType,
+						destinationType);
+				defaultedConverter = (converter != null);
+				setConverter(converter);
+			}
+
 			if (afterGetValidator == null) {
 				afterGetValidator = createValidator(sourceType, destinationType);
-			}
-			if (converter == null) {
-				setConverter(createConverter(sourceType, destinationType));
 			}
 		}
 		if (converter != null) {
@@ -204,8 +210,53 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	private IValidator findValidator(Object fromType, Object toType) {
-		// TODO string-based lookup of validator
-		return validatorRegistry.get(fromType, toType);
+		IValidator result = null;
+
+		// We only default the validator if we defaulted the converter since the
+		// two are tightly coupled.
+		if (defaultedConverter) {
+			if (String.class.equals(fromType)) {
+				result = (IValidator) validatorsByConverter.get(converter);
+
+				if (result == null) {
+					// TODO sring based lookup
+					if (Integer.class.equals(toType)
+							|| Integer.TYPE.equals(toType)) {
+						result = new StringToIntegerValidator(converter);
+					} else if (Long.class.equals(toType)
+							|| Long.TYPE.equals(toType)) {
+						result = new StringToLongValidator(converter);
+					} else if (Float.class.equals(toType)
+							|| Float.TYPE.equals(toType)) {
+						result = new StringToFloatValidator(converter);
+					} else if (Double.class.equals(toType)
+							|| Double.TYPE.equals(toType)) {
+						result = new StringToDoubleValidator(converter);
+					} else if (Byte.class.equals(toType)
+							|| Byte.TYPE.equals(toType)) {
+						result = new StringToByteValidator(converter);
+					} else if (Short.class.equals(toType)
+							|| Short.TYPE.equals(toType)) {
+						result = new StringToShortValidator(converter);
+					} else if (Date.class.equals(toType)
+							&& converter instanceof StringToDateConverter) {
+						result = new StringToDateValidator(
+								(StringToDateConverter) converter);
+					}
+
+					if (result != null) {
+						validatorsByConverter.put(converter, result);
+					}
+				}
+			}
+
+			if (result == null) {
+				// TODO string based lookup
+				result = validatorRegistry.get(fromType, toType);
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -308,28 +359,6 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		 */
 		private ValidatorRegistry() {
 			// Standalone validators here...
-			associate(String.class, Integer.TYPE,
-					new String2IntegerPrimitiveValidator());
-			associate(String.class, Byte.TYPE,
-					new String2BytePrimitiveValidator());
-			associate(String.class, Short.TYPE,
-					new String2ShortPrimitiveValidator());
-			associate(String.class, Long.TYPE,
-					new String2LongPrimitiveValidator());
-			associate(String.class, Float.TYPE,
-					new String2FloatPrimitiveValidator());
-			associate(String.class, Double.TYPE,
-					new String2DoublePrimitiveValidator());
-
-			associate(String.class, Integer.class,
-					new String2IntegerValidator());
-			associate(String.class, Byte.class, new String2ByteValidator());
-			associate(String.class, Short.class, new String2ShortValidator());
-			associate(String.class, Long.class, new String2LongValidator());
-			associate(String.class, Float.class, new String2FloatValidator());
-			associate(String.class, Double.class, new String2DoubleValidator());
-			associate(String.class, Date.class, new String2DateValidator());
-
 			associate(Integer.class, Integer.TYPE,
 					new ObjectToPrimitiveValidator(Integer.TYPE));
 			associate(Byte.class, Byte.TYPE, new ObjectToPrimitiveValidator(

@@ -15,4 +15,5 @@ Require-Bundle: org.eclipse.core.databinding,
  org.eclipse.jface.examples.databinding,
  org.eclipse.core.databinding.beans,
  org.eclipse.jface.databinding
+Import-Package: com.ibm.icu.text
 

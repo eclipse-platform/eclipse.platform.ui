@@ -15,16 +15,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.conversion.IdentityConverter;
-import org.eclipse.core.databinding.conversion.ToStringConverter;
+import org.eclipse.core.databinding.conversion.NumberToStringConverter;
+import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.ClassLookupSupport;
 import org.eclipse.core.internal.databinding.Pair;
+import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
+import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import com.ibm.icu.text.NumberFormat;
+
 /**
- * @since 3.3
+ * @since 1.0
  * 
  */
 /* package */class UpdateStrategy {
@@ -144,82 +148,77 @@ import org.eclipse.core.runtime.Status;
 	private static Map getConverterMap() {
 		// using string-based lookup avoids loading of too many classes
 		if (converterMap == null) {
+			//NumberFormat to be shared across converters for the formatting of integer values
+			NumberFormat integerFormat = NumberFormat.getIntegerInstance();
+			//NumberFormat to be shared across converters for formatting non integer values
+			NumberFormat numberFormat = NumberFormat.getNumberInstance();
+			
 			converterMap = new HashMap();
 			converterMap
 					.put(
-							new Pair("java.util.Date", "java.lang.String"), "org.eclipse.core.databinding.conversion.ConvertDate2String"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.util.Date", "java.lang.String"), "org.eclipse.core.internal.databinding.conversion.DateToStringConverter"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.math.BigDecimal"), "org.eclipse.core.databinding.conversion.ConvertString2BigDecimal"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Boolean"), "org.eclipse.core.internal.databinding.conversion.StringToBooleanConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.lang.Boolean"), "org.eclipse.core.databinding.conversion.ConvertString2Boolean"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Byte"), "org.eclipse.core.internal.databinding.conversion.StringToByteConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.lang.Byte"), "org.eclipse.core.databinding.conversion.ConvertString2Byte"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Character"), "org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.lang.Character"), "org.eclipse.core.databinding.conversion.ConvertString2Character"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.util.Date"), "org.eclipse.core.internal.databinding.conversion.StringToDateConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.util.Date"), "org.eclipse.core.databinding.conversion.ConvertString2Date"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.String", "java.lang.Short"), "org.eclipse.core.internal.databinding.conversion.StringToShortConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			
+			converterMap.put(new Pair("java.lang.String", "java.lang.Integer"), StringToNumberConverter.toInteger(integerFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", "java.lang.Double"), StringToNumberConverter.toDouble(numberFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", "java.lang.Long"), StringToNumberConverter.toLong(integerFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", "java.lang.Float"), StringToNumberConverter.toFloat(numberFormat, false));  //$NON-NLS-1$//$NON-NLS-2$			
+			converterMap.put(new Pair("java.lang.String", "java.math.BigInteger"), StringToNumberConverter.toBigInteger(integerFormat));  //$NON-NLS-1$//$NON-NLS-2$			
+			converterMap.put(new Pair("java.lang.Integer", "java.lang.String"), NumberToStringConverter.fromInteger(integerFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.Long", "java.lang.String"), NumberToStringConverter.fromLong(integerFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.Double", "java.lang.String"), NumberToStringConverter.fromDouble(numberFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.Float", "java.lang.String"), NumberToStringConverter.fromFloat(numberFormat, false));  //$NON-NLS-1$//$NON-NLS-2$
+			converterMap.put(new Pair("java.math.BigInteger", "java.lang.String"), NumberToStringConverter.fromBigInteger(integerFormat));  //$NON-NLS-1$//$NON-NLS-2$
+			
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.lang.Double"), "org.eclipse.core.databinding.conversion.ConvertString2Double"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			converterMap
-					.put(
-							new Pair("java.lang.String", "java.lang.Float"), "org.eclipse.core.databinding.conversion.ConvertString2Float"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			converterMap
-					.put(
-							new Pair("java.lang.String", "java.lang.Integer"), "org.eclipse.core.databinding.conversion.ConvertString2Integer"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			converterMap
-					.put(
-							new Pair("java.lang.String", "java.lang.Long"), "org.eclipse.core.databinding.conversion.ConvertString2Long"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			converterMap
-					.put(
-							new Pair("java.lang.String", "java.lang.Short"), "org.eclipse.core.databinding.conversion.ConvertString2Short"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			converterMap
-					.put(
-							new Pair("java.lang.Object", "java.lang.String"), "org.eclipse.core.databinding.conversion.ToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.Object", "java.lang.String"), "org.eclipse.core.databinding.conversion.ObjectToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
 			// Integer.TYPE
-			converterMap
-					.put(
-							new Pair("java.lang.String", INTEGER_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2IntegerPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", INTEGER_TYPE), StringToNumberConverter.toInteger(integerFormat, true)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(INTEGER_TYPE, "java.lang.Integer"), new IdentityConverter(Integer.TYPE, Integer.class)); //$NON-NLS-1$
 			converterMap
 					.put(
-							new Pair(INTEGER_TYPE, "java.lang.String"), new ToStringConverter(Integer.TYPE)); //$NON-NLS-1$
-			converterMap
-					.put(
 							new Pair(INTEGER_TYPE, "java.lang.Object"), new IdentityConverter(Integer.TYPE, Object.class)); //$NON-NLS-1$
+			converterMap.put(new Pair(INTEGER_TYPE, "java.lang.String"), NumberToStringConverter.fromInteger(integerFormat, true)); //$NON-NLS-1$
 
 			// Byte.TYPE
 			converterMap
 					.put(
-							new Pair("java.lang.String", BYTE_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2BytePrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+							new Pair("java.lang.String", BYTE_TYPE), "org.eclipse.core.internal.databinding.conversion.StringToBytePrimitiveConverter"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(BYTE_TYPE, "java.lang.Byte"), new IdentityConverter(Byte.TYPE, Byte.class)); //$NON-NLS-1$
 			converterMap
 					.put(
-							new Pair(BYTE_TYPE, "java.lang.String"), new ToStringConverter(Byte.TYPE)); //$NON-NLS-1$
+							new Pair(BYTE_TYPE, "java.lang.String"), new ObjectToStringConverter(Byte.TYPE)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(BYTE_TYPE, "java.lang.Object"), new IdentityConverter(Byte.TYPE, Object.class)); //$NON-NLS-1$
 
 			// Double.TYPE
-			converterMap
-					.put(
-							new Pair("java.lang.String", DOUBLE_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2DoublePrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", DOUBLE_TYPE), StringToNumberConverter.toDouble(numberFormat, true)); //$NON-NLS-1$
+			converterMap.put(new Pair(DOUBLE_TYPE, "java.lang.String"), NumberToStringConverter.fromDouble(numberFormat, true)); //$NON-NLS-1$
+			
 			converterMap
 					.put(
 							new Pair(DOUBLE_TYPE, "java.lang.Double"), new IdentityConverter(Double.TYPE, Double.class)); //$NON-NLS-1$
-			converterMap
-					.put(
-							new Pair(DOUBLE_TYPE, "java.lang.String"), new ToStringConverter(Double.TYPE)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(DOUBLE_TYPE, "java.lang.Object"), new IdentityConverter(Double.TYPE, Object.class)); //$NON-NLS-1$
@@ -227,27 +226,23 @@ import org.eclipse.core.runtime.Status;
 			// Boolean.TYPE
 			converterMap
 					.put(
-							new Pair("java.lang.String", BOOLEAN_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2BooleanPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+							new Pair("java.lang.String", BOOLEAN_TYPE), "org.eclipse.core.internal.databinding.conversion.StringToBooleanPrimitiveConverter"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(BOOLEAN_TYPE, "java.lang.Boolean"), new IdentityConverter(Boolean.TYPE, Boolean.class)); //$NON-NLS-1$
 			converterMap
 					.put(
-							new Pair(BOOLEAN_TYPE, "java.lang.String"), new ToStringConverter(Boolean.TYPE)); //$NON-NLS-1$
+							new Pair(BOOLEAN_TYPE, "java.lang.String"), new ObjectToStringConverter(Boolean.TYPE)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(BOOLEAN_TYPE, "java.lang.Object"), new IdentityConverter(Boolean.TYPE, Object.class)); //$NON-NLS-1$
 
 			// Float.TYPE
-			converterMap
-					.put(
-							new Pair("java.lang.String", FLOAT_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2FloatPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", FLOAT_TYPE), StringToNumberConverter.toFloat(numberFormat, true)); //$NON-NLS-1$
+			converterMap.put(new Pair(FLOAT_TYPE, "java.lang.String"), NumberToStringConverter.fromFloat(numberFormat, true)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(FLOAT_TYPE, "java.lang.Float"), new IdentityConverter(Float.TYPE, Float.class)); //$NON-NLS-1$
-			converterMap
-					.put(
-							new Pair(FLOAT_TYPE, "java.lang.String"), new ToStringConverter(Float.TYPE)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(FLOAT_TYPE, "java.lang.Object"), new IdentityConverter(Float.TYPE, Object.class)); //$NON-NLS-1$		
@@ -255,27 +250,23 @@ import org.eclipse.core.runtime.Status;
 			// Short.TYPE
 			converterMap
 					.put(
-							new Pair("java.lang.String", SHORT_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2ShortPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+							new Pair("java.lang.String", SHORT_TYPE), "org.eclipse.core.internal.databinding.conversion.StringToShortPrimitiveConverter"); //$NON-NLS-1$ //$NON-NLS-2$
 			converterMap
 					.put(
 							new Pair(SHORT_TYPE, "java.lang.Short"), new IdentityConverter(Short.TYPE, Short.class)); //$NON-NLS-1$
 			converterMap
 					.put(
-							new Pair(SHORT_TYPE, "java.lang.String"), new ToStringConverter(Short.TYPE)); //$NON-NLS-1$
+							new Pair(SHORT_TYPE, "java.lang.String"), new ObjectToStringConverter(Short.TYPE)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(SHORT_TYPE, "java.lang.Object"), new IdentityConverter(Short.TYPE, Object.class)); //$NON-NLS-1$		
 
 			// Long.TYPE
-			converterMap
-					.put(
-							new Pair("java.lang.String", LONG_TYPE), "org.eclipse.core.databinding.conversion.ConvertString2LongPrimitive"); //$NON-NLS-1$ //$NON-NLS-2$
+			converterMap.put(new Pair("java.lang.String", LONG_TYPE), StringToNumberConverter.toLong(integerFormat, true)); //$NON-NLS-1$
+			converterMap.put(new Pair(LONG_TYPE, "java.lang.String"), NumberToStringConverter.fromLong(integerFormat, true)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(LONG_TYPE, "java.lang.Long"), new IdentityConverter(Long.TYPE, Long.class)); //$NON-NLS-1$
-			converterMap
-					.put(
-							new Pair(LONG_TYPE, "java.lang.String"), new ToStringConverter(Long.TYPE)); //$NON-NLS-1$
 			converterMap
 					.put(
 							new Pair(LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$		

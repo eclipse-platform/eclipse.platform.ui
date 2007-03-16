@@ -18,9 +18,11 @@ Export-Package: org.eclipse.core.databinding,
  org.eclipse.core.databinding.util,
  org.eclipse.core.databinding.validation;x-internal:=false,
  org.eclipse.core.internal.databinding;x-internal:=true,
+ org.eclipse.core.internal.databinding.conversion;x-friends:="org.eclipse.jface.tests.databinding",
  org.eclipse.core.internal.databinding.observable;x-internal:=true,
  org.eclipse.core.internal.databinding.observable.masterdetail;x-friends:="org.eclipse.jface.tests.databinding",
- org.eclipse.core.internal.databinding.observable.tree;x-friends:="org.eclipse.jface.databinding,org.eclipse.jface.tests.databinding"
+ org.eclipse.core.internal.databinding.observable.tree;x-friends:="org.eclipse.jface.databinding,org.eclipse.jface.tests.databinding",
+ org.eclipse.core.internal.databinding.validation;x-friends:="org.eclipse.jface.tests.databinding"
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)";resolution:=optional
 Import-Package: com.ibm.icu.text

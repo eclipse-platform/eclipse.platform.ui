@@ -17,7 +17,6 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.conversion.ToStringConverter;
 import org.eclipse.core.databinding.observable.IObserving;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -26,6 +25,7 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -271,7 +271,7 @@ public class TestMasterDetail {
 //		AggregateValidationStatus status = new AggregateValidationStatus(dbc
 //				.getBindings(), AggregateValidationStatus.MAX_SEVERITY);
 		dbc.bindValue(SWTObservables.observeText(validationStatus, SWT.NONE),
-				b.getValidationStatus(), null, new UpdateValueStrategy().setConverter(new ToStringConverter()));
+				b.getValidationStatus(), null, new UpdateValueStrategy().setConverter(new ObjectToStringConverter()));
 		
 		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,

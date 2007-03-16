@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import com.ibm.icu.text.NumberFormat;
+
 /**
  * To run the tests in this class, right-click and select "Run As JUnit Plug-in
  * Test". This will also start an Eclipse instance. To clean up the launch
@@ -86,12 +88,15 @@ public class TextControlScenario extends ScenariosTestCase {
                 BeansObservables.observeValue(transportation, "price"),
                 null, null);
 
-        assertEquals(Double.toString(transportation.getPrice()), text.getText());
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        
+        assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
         text.setText("9876.54");
         text.notifyListeners(SWT.FocusOut, null);
         assertEquals(9876.54, transportation.getPrice(), 0);
+        
         transportation.setPrice(1234.56);
-        assertEquals("1234.56", text.getText());
+        assertEquals(numberFormat.format(transportation.getPrice()), text.getText());
     }
 
     public void testScenario03() {
