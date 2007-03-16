@@ -15,8 +15,10 @@ package org.eclipse.ant.internal.core;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
 
 public class AntClassLoader extends URLClassLoader {
 
@@ -110,7 +112,7 @@ public class AntClassLoader extends URLClassLoader {
     	if (fContextClassloader != null) {
     		Thread.currentThread().setContextClassLoader(fContextClassloader);
     	}
-    	Vector all = new Vector();
+    	List all = new ArrayList();
     	try {
     		if (fPluginLoaders != null) {
     			Enumeration result = null;
@@ -121,13 +123,19 @@ public class AntClassLoader extends URLClassLoader {
     				}
     			}
     		}
-    		if (!all.isEmpty()) {
-    			return all.elements();
+    		
+    		Enumeration superResources = super.findResources(name);
+    		if (all.isEmpty()) {
+    			return superResources;
     		}
+    		
+    		while (superResources.hasMoreElements()) {
+				all.add(superResources.nextElement());
+			}
+    		return Collections.enumeration(all);
     	} finally {
     		Thread.currentThread().setContextClassLoader(originalClassLoader);
     	}
-    	return super.findResources(name);
     }
     
     /**
