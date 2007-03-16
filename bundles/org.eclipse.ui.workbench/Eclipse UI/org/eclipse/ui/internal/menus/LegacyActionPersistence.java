@@ -307,7 +307,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private final void convertActionToBinding(
 			final IConfigurationElement element,
-			final ParameterizedCommand command) {
+			final ParameterizedCommand command, final List warningsToLog) {
 		// Figure out which accelerator text to use.
 		String acceleratorText = readOptional(element, ATT_ACCELERATOR);
 		if (acceleratorText == null) {
@@ -333,17 +333,23 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			final Scheme activeScheme = bindingService.getActiveScheme();
 
-			final Binding binding = new KeyBinding(keySequence, command,
-					activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW, null,
-					null, null, Binding.SYSTEM);
-			commandIdToBinding.put(command.getCommand().getId(), binding);
-			
-			if (command.getCommand().isEnabled()) {
-				bindingService.addBinding(binding);
-				actionSetActiveBindings.add(binding);
+			try {
+				final Binding binding = new KeyBinding(keySequence, command,
+						activeScheme.getId(), IContextIds.CONTEXT_ID_WINDOW,
+						null, null, null, Binding.SYSTEM);
+				commandIdToBinding.put(command.getCommand().getId(), binding);
+
+				if (command.getCommand().isEnabled()) {
+					bindingService.addBinding(binding);
+					actionSetActiveBindings.add(binding);
+				}
+
+				command.getCommand().addCommandListener(actionSetListener);
+			} catch (IllegalArgumentException e) {
+				addWarning(warningsToLog,
+						"invalid keybinding: " + e.getMessage(), element, //$NON-NLS-1$
+						command.getCommand().getId());
 			}
-			
-			command.getCommand().addCommandListener(actionSetListener);
 		}
 	}
 
@@ -712,7 +718,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					viewId, warningsToLog);
 			// TODO Read the overrideActionId attribute
 
-			convertActionToBinding(element, command);
+			convertActionToBinding(element, command, warningsToLog);
 
 		}
 	}
