@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Maintains a reference counted set of action sets, with a visibility mask.
@@ -62,24 +64,55 @@ public class ActionSetManager {
     public static final int CHANGE_SHOW = 2;
     public static final int CHANGE_HIDE = 3;
     
-    private List listeners = new ArrayList();
+    private ListenerList listeners = new ListenerList();
+	private IPropertyListener contextListener;
+	private Map activationsById = new HashMap();
+	private IContextService contextService;
     
-    public ActionSetManager() {
-        
+    public ActionSetManager(IServiceLocator locator) {
+    	contextService = (IContextService) locator.getService(IContextService.class);
+		addListener(getContextListener());
     }
     
-    public void addListener(IPropertyListener l) {
+    /**
+	 * @return
+	 */
+	private IPropertyListener getContextListener() {
+		if (contextListener == null) {
+			contextListener = new IPropertyListener() {
+				public void propertyChanged(Object source, int propId) {
+					if (source instanceof IActionSetDescriptor) {
+						IActionSetDescriptor desc = (IActionSetDescriptor) source;
+						String id = desc.getId();
+						if (propId == PROP_VISIBLE) {
+							activationsById.put(id, contextService
+									.activateContext(id));
+						} else if (propId == PROP_HIDDEN) {
+							IContextActivation act = (IContextActivation) activationsById
+									.remove(id);
+							if (act != null) {
+								contextService.deactivateContext(act);
+							}
+						}
+					}
+				}
+			};
+		}
+		return contextListener;
+	}
+
+	public void addListener(IPropertyListener l) {
         listeners.add(l);
     }
 
     public void removeListener(IPropertyListener l) {
-        listeners.add(l);
+        listeners.remove(l);
     }
     
     private void firePropertyChange(IActionSetDescriptor descriptor, int id) {
-        for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-            IPropertyListener listener = (IPropertyListener) iter.next();
-            
+    	Object[] l = listeners.getListeners();
+        for (int i=0; i<l.length; i++) {
+            IPropertyListener listener = (IPropertyListener) l[i];
             listener.propertyChanged(descriptor, id);
         }
     }        

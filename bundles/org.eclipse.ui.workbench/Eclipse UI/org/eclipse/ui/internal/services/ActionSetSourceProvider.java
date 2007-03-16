@@ -11,14 +11,11 @@
 
 package org.eclipse.ui.internal.services;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.ActionSetsEvent;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -43,19 +40,14 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider
 	 */
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_ACTION_SETS_NAME };
 
-	private IContextService contextService;
-
-	private Map activeContexts = new HashMap();
-
 	/**
 	 * The action sets last seen as active by this source provider. This value
 	 * may be <code>null</code>.
 	 */
 	private IActionSetDescriptor[] activeActionSets;
 
-	public ActionSetSourceProvider(IContextService cs) {
+	public ActionSetSourceProvider() {
 		super();
-		contextService = cs;
 	}
 
 	public final void actionSetsChanged(final ActionSetsEvent event) {
@@ -75,49 +67,11 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider
 				message.append(']');
 				logDebuggingInfo(message.toString());
 			}
-			updateContexts(activeActionSets, newActionSets);
 
 			activeActionSets = newActionSets;
 			fireSourceChanged(ISources.ACTIVE_ACTION_SETS,
 					ISources.ACTIVE_ACTION_SETS_NAME, activeActionSets);
 
-		}
-	}
-
-	/**
-	 * @param oldActionSets
-	 * @param newActionSets
-	 */
-	private void updateContexts(IActionSetDescriptor[] oldActionSets,
-			IActionSetDescriptor[] newActionSets) {
-		ArrayList foundNew = new ArrayList();
-		if (oldActionSets != null) {
-			for (int i = 0; i < oldActionSets.length; i++) {
-				boolean found = false;
-				if (newActionSets != null) {
-					for (int j = 0; j < newActionSets.length && !found; j++) {
-						if (oldActionSets[i] == newActionSets[j]) {
-							found = true;
-							foundNew.add(oldActionSets[i]);
-						}
-					}
-				}
-				if (!found) {
-					IContextActivation c = (IContextActivation) activeContexts
-							.remove(oldActionSets[i]);
-					if (c != null) {
-						contextService.deactivateContext(c);
-					}
-				}
-			}
-		}
-		if (newActionSets != null) {
-			for (int i = 0; i < newActionSets.length; i++) {
-				if (!foundNew.contains(newActionSets[i])) {
-					activeContexts.put(newActionSets[i], contextService
-							.activateContext(newActionSets[i].getId()));
-				}
-			}
 		}
 	}
 

@@ -146,7 +146,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
     private IActionBars actionBars;
     
-    private ActionSetManager actionSets = new ActionSetManager();
+    private ActionSetManager actionSets;
     
     private ViewFactory viewFactory;
 
@@ -2249,6 +2249,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Save args.
         this.window = w;
         this.input = input;
+        actionSets = new ActionSetManager(w);
 
         // Create presentation.
         createClientComposite();

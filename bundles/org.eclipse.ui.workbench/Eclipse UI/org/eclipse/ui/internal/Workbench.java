@@ -1625,7 +1625,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				contextService.addSourceProvider(currentSelectionSourceProvider);
 				menuService.addSourceProvider(currentSelectionSourceProvider);
 				sourceProviderService.registerProvider(currentSelectionSourceProvider);
-				actionSetSourceProvider = new ActionSetSourceProvider(contextService);
+				actionSetSourceProvider = new ActionSetSourceProvider();
 				evaluationService.addSourceProvider(actionSetSourceProvider);
 				handlerService[0].addSourceProvider(actionSetSourceProvider);
 				contextService.addSourceProvider(actionSetSourceProvider);
