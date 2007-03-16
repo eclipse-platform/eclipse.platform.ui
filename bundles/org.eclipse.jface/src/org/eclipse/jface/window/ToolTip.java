@@ -13,6 +13,8 @@ package org.eclipse.jface.window;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -52,6 +54,17 @@ public abstract class ToolTip {
 	// Ensure that only one tooltip is active in time
 	private static Shell CURRENT_TOOLTIP;
 
+	/**
+	 * Recreate the tooltip on every mouse move
+	 */
+	public static final int RECREATE = 1;
+
+	/**
+	 * Don't recreate the tooltip as long the mouse doesn't leave the area
+	 * triggering the Tooltip creation
+	 */
+	public static final int NO_RECREATE = 1 << 1;
+
 	private TooltipHideListener hideListener = new TooltipHideListener();
 
 	private boolean hideOnMouseDown = true;
@@ -60,6 +73,10 @@ public abstract class ToolTip {
 
 	private boolean respectMonitorBounds = true;
 
+	private int style;
+
+	private Object currentArea;
+
 	/**
 	 * Create new instance which add TooltipSupport to the widget
 	 * 
@@ -67,18 +84,24 @@ public abstract class ToolTip {
 	 *            the control on whose action the tooltip is shown
 	 */
 	public ToolTip(Control control) {
-		this(control, false);
+		this(control, RECREATE, false);
 	}
 
 	/**
 	 * @param control
 	 *            the control to which the tooltip is bound
+	 * @param style
+	 *            style passed to control tooltip behaviour
+	 * 
 	 * @param manualActivation
 	 *            <code>true</code> if the activation is done manually using
 	 *            {@link #show(Point)}
+	 * @see #RECREATE
+	 * @see #NO_RECREATE
 	 */
-	public ToolTip(Control control, boolean manualActivation) {
+	public ToolTip(Control control, int style, boolean manualActivation) {
 		this.control = control;
+		this.style = style;
 		this.control.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
@@ -217,7 +240,65 @@ public abstract class ToolTip {
 	 * @return <code>true</code> if tooltip should be displayed
 	 */
 	protected boolean shouldCreateToolTip(Event event) {
+		if ((style & NO_RECREATE) != 0) {
+			Object tmp = getToolTipArea(event);
+
+			// No new area close the current tooltip
+			if (tmp == null) {
+				hide();
+				return false;
+			}
+
+			boolean rv = !tmp.equals(currentArea);
+			return rv;
+		}
+
 		return true;
+	}
+
+	/**
+	 * This method is called before the tooltip is hidden
+	 * 
+	 * @param event
+	 *            the event trying to hide the tooltip
+	 * @return <code>true</code> if the tooltip should be hidden
+	 */
+	private boolean shouldHideToolTip(Event event) {
+		if (event != null && event.type == SWT.MouseMove
+				&& (style & NO_RECREATE) != 0) {
+			Object tmp = getToolTipArea(event);
+
+			// No new area close the current tooltip
+			if (tmp == null) {
+				hide();
+				return false;
+			}
+
+			boolean rv = !tmp.equals(currentArea);
+			return rv;
+		}
+
+		return true;
+	}
+
+	/**
+	 * This method is called to check for which area the tooltip is
+	 * created/hidden for. In case of {@link #NO_RECREATE} this is used to
+	 * decide if the tooltip is hidden recreated.
+	 * 
+	 * <code>By the default it is the widget the tooltip is created for but could be any object. To decide if
+	 * the area changed the {@link Object#equals(Object)} method is used.</code>
+	 * 
+	 * @param event
+	 *            the event
+	 * @return the area responsible for the tooltip creation or
+	 *         <code>null</code> this could be any object describing the area
+	 *         (e.g. the {@link Control}  onto which the tooltip is bound to, a part of
+	 *         this area e.g. for {@link ColumnViewer} this could be a
+	 *         {@link ViewerCell})
+	 */
+	protected Object getToolTipArea(Event event) {
+		return control;
 	}
 
 	/**
@@ -250,6 +331,7 @@ public abstract class ToolTip {
 
 	private void toolTipShow(Shell tip, Event event) {
 		if (!tip.isDisposed()) {
+			currentArea = getToolTipArea(event);
 			createToolTipContentArea(event, tip);
 			if (isHideOnMouseDown()) {
 				toolTipHookBothRecursively(tip);
@@ -328,7 +410,8 @@ public abstract class ToolTip {
 	}
 
 	private void toolTipHide(Shell tip, Event event) {
-		if (tip != null && !tip.isDisposed()) {
+		if (tip != null && !tip.isDisposed() && shouldHideToolTip(event)) {
+			currentArea = null;
 			tip.dispose();
 			CURRENT_TOOLTIP = null;
 			afterHideToolTip(event);
@@ -492,12 +575,26 @@ public abstract class ToolTip {
 			switch (event.type) {
 			case SWT.Dispose:
 			case SWT.KeyDown:
-			case SWT.MouseMove:
 			case SWT.MouseDown:
+			case SWT.MouseMove:
 				toolTipHide(CURRENT_TOOLTIP, event);
 				break;
 			case SWT.MouseHover:
 				toolTipCreate(event);
+				break;
+			case SWT.MouseExit:
+				/*
+				 * Check if the mouse exit happend because we move over the
+				 * tooltip
+				 */
+				if (CURRENT_TOOLTIP != null && !CURRENT_TOOLTIP.isDisposed()) {
+					if (CURRENT_TOOLTIP.getBounds().contains(
+							control.toDisplay(event.x, event.y))) {
+						break;
+					}
+				}
+
+				toolTipHide(CURRENT_TOOLTIP, event);
 				break;
 			}
 		}

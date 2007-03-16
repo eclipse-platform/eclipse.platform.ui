@@ -213,7 +213,7 @@ public class Snippet020CustomizedControlTooltips {
 		Button b = new Button(parent,SWT.PUSH);
 		b.setText("Popup on press");
 		
-		final DefaultToolTip toolTipDelayed = new DefaultToolTip(b,true);
+		final DefaultToolTip toolTipDelayed = new DefaultToolTip(b,ToolTip.RECREATE,true);
 		toolTipDelayed.setText("Hello World\nHello World");
 		toolTipDelayed.setBackgroundColor(parent.getDisplay().getSystemColor(SWT.COLOR_RED));
 		toolTipDelayed.setHideDelay(2000);

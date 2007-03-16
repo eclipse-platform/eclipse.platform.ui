@@ -58,11 +58,14 @@ public class DefaultToolTip extends ToolTip {
 	 * Create new instance which add TooltipSupport to the widget
 	 * 
 	 * @param control the control to which the tooltip is bound
+	 * @param style style passed to control tooltip behaviour
 	 * @param manualActivation <code>true</code> if the activation is done manually using
 	 *            {@link #show(Point)}
+	 * @see #RECREATE
+	 * @see #NO_RECREATE
 	 */
-	public DefaultToolTip(Control control, boolean manualActivation) {
-		super(control, manualActivation);
+	public DefaultToolTip(Control control, int style, boolean manualActivation) {
+		super(control, style, manualActivation);
 	}
 	
 	/**

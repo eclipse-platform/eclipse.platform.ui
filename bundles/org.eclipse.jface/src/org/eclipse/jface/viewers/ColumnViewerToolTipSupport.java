@@ -15,6 +15,7 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
@@ -47,9 +48,14 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 * 
 	 * @param viewer
 	 *            the viewer the support is attached to
+	 * @param style style passed to control tooltip behaviour
+	 * 
+	 * @param manualActivation
+	 *            <code>true</code> if the activation is done manually using
+	 *            {@link #show(Point)}
 	 */
-	protected ColumnViewerToolTipSupport(ColumnViewer viewer) {
-		super(viewer.getControl());
+	protected ColumnViewerToolTipSupport(ColumnViewer viewer, int style, boolean manualActivation ) {
+		super(viewer.getControl(),style,manualActivation);
 		this.viewer = viewer;
 	}
 
@@ -62,11 +68,36 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 *            the viewer the support is attached to
 	 */
 	public static void enableFor(ColumnViewer viewer) {
-		new ColumnViewerToolTipSupport(viewer);
+		new ColumnViewerToolTipSupport(viewer,ToolTip.NO_RECREATE,false);
+	}
+	
+	/**
+	 * Enable ToolTip support for the viewer by creating an instance from this
+	 * class. To get all necessary informations this support class consults the
+	 * {@link CellLabelProvider}.
+	 * 
+	 * @param viewer
+	 *            the viewer the support is attached to
+	 * @param style style passed to control tooltip behaviour
+	 * 
+	 * @see ToolTip#RECREATE
+	 * @see ToolTip#NO_RECREATE
+	 */
+	public static void enableFor(ColumnViewer viewer, int style) {
+		new ColumnViewerToolTipSupport(viewer,style,false);
+	}
+	
+	protected Object getToolTipArea(Event event) {
+		return viewer.getCell(new Point(event.x,event.y));
 	}
 
 	protected final boolean shouldCreateToolTip(Event event) {
+		if( ! super.shouldCreateToolTip(event) ) {
+			return false;
+		}
+		
 		boolean rv = false;
+		
 		ViewerRow row = viewer.getViewerRow(new Point(event.x, event.y));
 
 		viewer.getControl().setToolTipText(""); //$NON-NLS-1$

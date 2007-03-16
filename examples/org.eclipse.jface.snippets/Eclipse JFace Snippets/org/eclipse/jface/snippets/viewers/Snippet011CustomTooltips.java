@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -61,7 +62,7 @@ public class Snippet011CustomTooltips {
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
 		v.setContentProvider(new MyContentProvider());
-		ColumnViewerToolTipSupport.enableFor(v);
+		ColumnViewerToolTipSupport.enableFor(v,ToolTip.NO_RECREATE);
 		
 		CellLabelProvider labelProvider = new CellLabelProvider() {
 
