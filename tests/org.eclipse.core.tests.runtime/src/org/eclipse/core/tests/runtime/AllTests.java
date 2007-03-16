@@ -26,6 +26,7 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(CoreExceptionTest.suite());
 		suite.addTest(IAdapterManagerTest.suite());
+		suite.addTest(IAdapterManagerServiceTest.suite());
 		suite.addTest(OperationCanceledExceptionTest.suite());
 		suite.addTest(PathTest.suite());
 		suite.addTest(PlatformTest.suite());
