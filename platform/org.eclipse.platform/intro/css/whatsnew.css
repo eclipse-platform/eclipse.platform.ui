@@ -1,11 +1,15 @@
-a#updates img { background-image : url(graphics/obj48/updates_obj.gif); }
-a#updates:hover img { background-image : url(graphics/obj48/updateshov_obj.gif); }
 
-a#eclipse img { background-image : url(graphics/obj48/community_obj.gif); }
-a#eclipse:hover img { background-image : url(graphics/obj48/communityhov_obj.gif); }
+a#platform-noteworthy img { background-image : url(../../images/topiclabel/wn_eclplatform48.gif); }
+a#platform-noteworthy:hover img { background-image : url(../../images/topiclabel/wn_eclplatform48_hov.gif); }
 
-a#migration img { background-image : url(graphics/obj48/migrate_obj.gif); }
-a#migration:hover img { background-image : url(graphics/obj48/migratehov_obj.gif); }
+a#updates img { background-image : url(../../images/topiclabel/wn_updates48.gif); }
+a#updates:hover img { background-image : url(../../images/topiclabel/wn_updates48_hov.gif); }
+
+a#eclipse img { background-image : url(../../images/topiclabel/wn_eclcommunity48.gif); }
+a#eclipse:hover img { background-image : url(../../images/topiclabel/wn_eclcommunity48_hov.gif); }
+
+a#migration img { background-image : url(../../images/topiclabel/wn_migrate48.gif); }
+a#migration:hover img { background-image : url(../../images/topiclabel/wn_migrate48_hov.gif); }
 
 div#rss-news {
 	position: relative;
@@ -29,7 +33,7 @@ div#rss-news {
 
 ul#eclipse-news {
 	list-style-type: none;
-	list-style-image: url("graphics/arrow.gif");
+	list-style-image: url("../../images/topiclabel/arrow.gif");
 	margin-left: 10px;
 	margin-top: 5px;
 }

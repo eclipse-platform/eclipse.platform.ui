@@ -82,19 +82,19 @@
             pluginId="org.eclipse.platform"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/overviewEx.xml"/>
+            content="$nl$/intro/overviewExtensionContent.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/tutorialsEx.xml"/>
+            content="$nl$/intro/tutorialsExtensionContent.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/whatsnewEx1.xml"/>
+            content="$nl$/intro/whatsnewExtensionContent1.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/whatsnewEx2.xml"/>
+            content="$nl$/intro/whatsnewExtensionContent2.xml"/>
       <configExtension
             configId="org.eclipse.ui.intro.universalConfig"
-            content="$nl$/intro/whatsnewEx3.xml"/>
+            content="$nl$/intro/whatsnewExtensionContent3.xml"/>
    </extension>
 
    <extension
