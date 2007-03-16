@@ -211,13 +211,9 @@ public class CommitWizard extends ResizableWizard {
     	for (int i = 0; i < resources.length; i++) {
     		IResource resource = resources[i];
     		try {
-				IMarker[] problems = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-				for (int j = 0; j < problems.length; j++) {
-					IMarker problem = problems[j];
-					int severity = problem.getAttribute(IMarker.SEVERITY, 0);
-					if (severity > mostSeriousSeverity) {
-						mostSeriousSeverity = severity;
-					}
+    			int severity = resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+    			if (severity > mostSeriousSeverity) {
+					mostSeriousSeverity = severity;
 				}
 			} catch (CoreException e) {
 			}
