@@ -115,8 +115,7 @@ public class WatchAction implements IObjectActionDelegate {
             Iterator iterator = fSelection.iterator();
             while (iterator.hasNext()) {
                 IVariable variable = (IVariable) iterator.next();
-                if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier()) &&
-                		isFactoryEnabled(variable)) {
+                if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier()) && isFactoryEnabled(variable)) {
                     enabled++;
                 } else {
                     break;
