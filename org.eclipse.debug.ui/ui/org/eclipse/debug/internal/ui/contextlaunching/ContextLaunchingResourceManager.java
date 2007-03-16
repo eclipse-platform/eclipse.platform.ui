@@ -72,11 +72,6 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 	private IResource fCurrentResource = null;
 	
 	/**
-	 * Indicates if the manager is currently stopped or not
-	 */
-	private boolean fStopped = true;
-	
-	/**
 	 * Returns if context launching is enabled
 	 * @return if context launching is enabled
 	 */
@@ -271,13 +266,9 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 			workbench.addWindowListener(this);
 			IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 			if(window != null) {
-				if(fWindows.add(window)) {
-					window.getSelectionService().addPostSelectionListener(this);
-					window.getPartService().addPartListener(this);
-				}
+				windowActivated(window);
 			}
 		}
-		fStopped = false;
 	}
 
 	/**
@@ -297,14 +288,13 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 		fListeners.clear();
 		fCurrentLabels.clear();
 		fCurrentResource = null;
-		fStopped = true;
 	}
 	
 	/**
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if(!fStopped && !(part instanceof IEditorPart)) {
+		if(!(part instanceof IEditorPart)) {
 			if(selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
 				if(!ss.isEmpty()) {
@@ -323,7 +313,7 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 	 * @see org.eclipse.ui.IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		if(!fStopped && part instanceof IEditorPart) {
+		if(part instanceof IEditorPart) {
 			fCurrentResource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
 			computeLabels();
 			notifyListeners();
@@ -355,7 +345,7 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
-		if(!fStopped && fWindows.add(window)) {
+		if(fWindows.add(window)) {
 			window.getSelectionService().addPostSelectionListener(this);
 			window.getPartService().addPartListener(this);
 		}
@@ -365,7 +355,7 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
-		if(!fStopped && fWindows.remove(window)) {
+		if(fWindows.remove(window)) {
 			window.getSelectionService().removePostSelectionListener(this);
 			window.getPartService().removePartListener(this);
 		}
@@ -380,9 +370,7 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
-		if(!fStopped) {
-			preloadContext(window);
-		}
+		preloadContext(window);
 	}
 	
 	/**
@@ -432,15 +420,11 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
 			Boolean value = (Boolean) event.getNewValue();
 			if(value.booleanValue()) {
-				if(fStopped) {
-					startup();
-					preloadContext(DebugUIPlugin.getActiveWorkbenchWindow());
-				}
+				startup();
+				preloadContext(DebugUIPlugin.getActiveWorkbenchWindow());
 			}
 			else {
-				if(!fStopped) {
-					shutdown();
-				}
+				shutdown();
 			}
 		}
 	}
