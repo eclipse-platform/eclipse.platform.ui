@@ -89,16 +89,19 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		return super.getFocusCell();
 	}
 
-	protected void updateFocusCell(ViewerCell focusCell) {
-		List l = getViewer().getSelectionFromWidget();
+	protected void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event) {
+		// Update the focus cell when we activated the editor with these 2 events
+		if( event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL ) {
 
-		if (focusCellManager != null) {
-			focusCellManager.setFocusCell(focusCell);
+			List l = getViewer().getSelectionFromWidget();
+
+			if( focusCellManager != null ) {
+				focusCellManager.setFocusCell(focusCell);
+			}
+
+			if (!l.contains(focusCell.getElement())) {
+				getViewer().setSelection(new TreeSelection(focusCell.getViewerRow().getTreePath()));
+			}
 		}
-
-		if (!l.contains(focusCell.getElement())) {
-			getViewer().setSelection(new StructuredSelection(focusCell.getElement()));
-		}
-
 	}
 }

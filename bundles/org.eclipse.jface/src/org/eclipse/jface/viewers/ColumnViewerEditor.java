@@ -153,10 +153,7 @@ public abstract class ColumnViewerEditor {
 					}
 				}
 				
-				// Update the focus cell when we activated the editor with these 2 events
-				if( activationEvent.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || activationEvent.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL ) {
-					updateFocusCell(cell);
-				}
+				updateFocusCell(cell, activationEvent);
 				
 				
 				cellEditor.addListener(cellEditorListener);
@@ -573,8 +570,9 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * @param focusCell updates the cell with the current input focus
+	 * @param event the event requesting to update the focusCell
 	 */
-	protected abstract void updateFocusCell(ViewerCell focusCell);
+	protected abstract void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event);
 	
 	/**
 	 * @return the cell currently holding the focus
