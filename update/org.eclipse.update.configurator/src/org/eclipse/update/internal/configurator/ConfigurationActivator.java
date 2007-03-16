@@ -12,15 +12,13 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.net.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.*;
 import org.eclipse.osgi.service.datalocation.*;
 import org.eclipse.osgi.service.debug.*;
+import org.eclipse.osgi.util.ManifestElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.*;
 import org.osgi.framework.*;
@@ -187,7 +185,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			
 			// Get the urls to install
 			String[] bundlesToInstall = getBundlesToInstall(cachedBundles, plugins);
-
+			ArrayList lazyActivationBundles = new ArrayList(bundlesToInstall.length);
 			for (int i = 0; i < bundlesToInstall.length; i++) {
 				try {
 					if (DEBUG)
@@ -199,7 +197,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 					toRefresh.add(target);
 					if (start != null)
 						start.setBundleStartLevel(target, startLevel);
-				
+					// check the bundle manifest to see if it defines a lazy activation policy
+					if (hasLazyActivationPolicy(target))
+						lazyActivationBundles.add(target);
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
 						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] { bundlesToInstall[i] })) + "   " + e.getMessage()); //$NON-NLS-1$
@@ -208,13 +208,62 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 			removeInitialBundles(toRefresh, cachedBundles);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
-			
+			// after resolving all the bundles; activate the bundles that have a lazy activation policy
+			for (Iterator activateBundles = lazyActivationBundles.iterator(); activateBundles.hasNext();) {
+				Bundle toActivate = (Bundle) activateBundles.next();
+				try {
+					// use the START_ACTIVATION_POLICY option so this is not an eager activation.
+					toActivate.start(Bundle.START_ACTIVATION_POLICY);
+				} catch (BundleException e) {
+					if ((toActivate.getState() & Bundle.RESOLVED) != 0)
+						// only log errors if the bundle is resolved
+						Utils.log(NLS.bind(Messages.ConfigurationActivator_installBundle, (new String[] { toActivate.getLocation() })) + "   " + e.getMessage()); //$NON-NLS-1$
+				}
+			}
 			// keep track of the last config successfully processed
 			writePlatformConfigurationTimeStamp();
 			return true;
 		} catch (Exception e) {
 			return false;
 		} 
+	}
+
+	private static boolean hasLazyActivationPolicy(Bundle target) {
+		// check the bundle manifest to see if it defines a lazy activation policy
+		Dictionary headers = target.getHeaders(""); //$NON-NLS-1$
+		// first check to see if this is a fragment bundle
+		String fragmentHost = (String) headers.get(Constants.FRAGMENT_HOST);
+		if (fragmentHost != null)
+			return false; // do not activate fragment bundles
+		// look for the OSGi defined Bundle-ActivationPolicy header
+		String activationPolicy = (String) headers.get(Constants.BUNDLE_ACTIVATIONPOLICY);
+		try {
+			if (activationPolicy != null) {
+				ManifestElement[] elements = ManifestElement.parseHeader(Constants.BUNDLE_ACTIVATIONPOLICY, activationPolicy);
+				if (elements != null && elements.length > 0) {
+					// if the value is "lazy" then it has a lazy activation poliyc
+					if (Constants.ACTIVATION_LAZY.equals(elements[0].getValue()))
+						return true;
+				}
+			} else {
+				// check for Eclipse specific lazy start headers "Eclipse-LazyStart" and "Eclipse-AutoStart"
+				String eclipseLazyStart = (String) headers.get("Eclipse-LazyStart"); //$NON-NLS-1$
+				if (eclipseLazyStart == null)
+					eclipseLazyStart = (String) headers.get("Eclipse-AutoStart"); //$NON-NLS-1$
+				ManifestElement[] elements = ManifestElement.parseHeader("Eclipse-LazyStart", eclipseLazyStart); //$NON-NLS-1$
+				if (elements != null && elements.length > 0) {
+					// if the value is true then it is lazy activated
+					if ("true".equals(elements[0].getValue())) //$NON-NLS-1$
+						return true;
+					// otherwise it is only lazy activated if it defines an exceptions directive.
+					else if (elements[0].getDirective("exceptions") != null) //$NON-NLS-1$
+						return true;
+				}
+			}
+		} catch (BundleException be) {
+			// ignore this
+		}
+		return false;
 	}
 
 	private void removeInitialBundles(List bundles, Bundle[] cachedBundles) {
