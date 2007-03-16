@@ -151,9 +151,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
 		}
-		
-		//initialize the launch histories
-		loadLaunchHistories();
 	}
 	
 	/**
@@ -376,21 +373,19 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		Element historyRootElement = doc.createElement(IConfigurationElementConstants.LAUNCH_HISTORY); 
 		doc.appendChild(historyRootElement);
 		
-		if(fLaunchHistories != null) {
-			Iterator histories = fLaunchHistories.values().iterator();
-			LaunchHistory history = null;
-			while (histories.hasNext()) {
-				history = (LaunchHistory)histories.next();
-				Element groupElement = doc.createElement(IConfigurationElementConstants.LAUNCH_GROUP);
-				groupElement.setAttribute(IConfigurationElementConstants.ID, history.getLaunchGroup().getIdentifier());
-				historyRootElement.appendChild(groupElement);
-				Element historyElement = doc.createElement(IConfigurationElementConstants.MRU_HISTORY);
-				groupElement.appendChild(historyElement);
-				createEntry(doc, historyElement, history.getCompleteLaunchHistory());
-				Element favs = doc.createElement(IConfigurationElementConstants.FAVORITES);
-				groupElement.appendChild(favs);
-				createEntry(doc, favs, history.getFavorites());
-			}
+		Iterator histories = fLaunchHistories.values().iterator();
+		LaunchHistory history = null;
+		while (histories.hasNext()) {
+			history = (LaunchHistory)histories.next();
+			Element groupElement = doc.createElement(IConfigurationElementConstants.LAUNCH_GROUP);
+			groupElement.setAttribute(IConfigurationElementConstants.ID, history.getLaunchGroup().getIdentifier());
+			historyRootElement.appendChild(groupElement);
+			Element historyElement = doc.createElement(IConfigurationElementConstants.MRU_HISTORY);
+			groupElement.appendChild(historyElement);
+			createEntry(doc, historyElement, history.getCompleteLaunchHistory());
+			Element favs = doc.createElement(IConfigurationElementConstants.FAVORITES);
+			groupElement.appendChild(favs);
+			createEntry(doc, favs, history.getFavorites());
 		}
 		
 		return DebugUIPlugin.serializeDocument(doc);
@@ -427,8 +422,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
 	 */
-	protected void persistLaunchHistory() throws IOException, CoreException, TransformerException, ParserConfigurationException {
-		if (fRestoring) {
+	protected synchronized void persistLaunchHistory() throws IOException, CoreException, TransformerException, ParserConfigurationException {
+		if (fLaunchHistories == null || fRestoring) {
 			return;
 		}
 		IPath historyPath = getHistoryFilePath();
@@ -484,29 +479,27 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		// For each child of the root node, construct a launch config handle and add it to
 		// the appropriate history, or set the most recent launch
-		if(fLaunchHistories != null) {
-			Collection l = fLaunchHistories.values();
-			LaunchHistory[] histories = (LaunchHistory[])l.toArray(new LaunchHistory[l.size()]);
-			NodeList list = rootHistoryElement.getChildNodes();
-			int length = list.getLength();
-			Node node = null;
-			Element entry = null;
-			for (int i = 0; i < length; ++i) {
-				node = list.item(i);
-				short type = node.getNodeType();
-				if (type == Node.ELEMENT_NODE) {
-					entry = (Element) node;
-					if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
-						createHistoryElement(entry, histories, false);
-					} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
-						createHistoryElement(entry, histories, true);
-					} else if (entry.getNodeName().equals(IConfigurationElementConstants.LAUNCH_GROUP)) {
-						String id = entry.getAttribute(IConfigurationElementConstants.ID);
-						if (id != null) {
-							LaunchHistory history = getLaunchHistory(id);
-							if (history != null) { 
-								restoreHistory(entry, history);
-							}
+		Collection l = fLaunchHistories.values();
+		LaunchHistory[] histories = (LaunchHistory[])l.toArray(new LaunchHistory[l.size()]);
+		NodeList list = rootHistoryElement.getChildNodes();
+		int length = list.getLength();
+		Node node = null;
+		Element entry = null;
+		for (int i = 0; i < length; ++i) {
+			node = list.item(i);
+			short type = node.getNodeType();
+			if (type == Node.ELEMENT_NODE) {
+				entry = (Element) node;
+				if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
+					createHistoryElement(entry, histories, false);
+				} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
+					createHistoryElement(entry, histories, true);
+				} else if (entry.getNodeName().equals(IConfigurationElementConstants.LAUNCH_GROUP)) {
+					String id = entry.getAttribute(IConfigurationElementConstants.ID);
+					if (id != null) {
+						LaunchHistory history = getLaunchHistory(id);
+						if (history != null) { 
+							restoreHistory(entry, history);
 						}
 					}
 				}
@@ -986,7 +979,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Restore launch history
 	 */
-	private void loadLaunchHistories() {
+	private synchronized void loadLaunchHistories() {
 		if (fLaunchHistories == null) {
 			fRestoring = true;
 			ILaunchGroup[] groups = getLaunchGroups();
