@@ -12,14 +12,17 @@ package org.eclipse.ui.parts.tests;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.parts.tests.util.PartsTestUtil;
 import org.eclipse.ui.parts.tests.util.PartsWorkbenchAdvisor;
 
@@ -96,8 +99,17 @@ public class ViewsReferencesTest extends TestCase {
      *  
      */
     public void testZoomActivePartView0() {
+		// These tests are hard-wired to the pre-3.3 zoom behaviour
+		// Run them anyway to ensure that we preserve the 3.0 mechanism
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+        
         openViews(0);
         zoomView(0);
+        
+        // Restore the previous state (just in case)
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, curMinMaxState);
     }
 
     /**
@@ -106,8 +118,17 @@ public class ViewsReferencesTest extends TestCase {
      *  
      */
     public void testZoomActivePartView1() {
+		// These tests are hard-wired to the pre-3.3 zoom behaviour
+		// Run them anyway to ensure that we preserve the 3.0 mechanism
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+        
         openViews(1);
         zoomView(1);
+        
+        // Restore the previous state (just in case)
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, curMinMaxState);
     }
 
     /**
@@ -116,8 +137,17 @@ public class ViewsReferencesTest extends TestCase {
      *  
      */
     public void testZoomActivePartView2() {
+		// These tests are hard-wired to the pre-3.3 zoom behaviour
+		// Run them anyway to ensure that we preserve the 3.0 mechanism
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+        
         openViews(2);
         zoomView(2);
+        
+        // Restore the previous state (just in case)
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, curMinMaxState);
     }
 
     /**
