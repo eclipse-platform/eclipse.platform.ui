@@ -674,7 +674,7 @@ public class PerspectiveHelper {
 						}
 					}
         		}
-        		perspective.getFastViewManager().removeViewReference(ref, false, true);
+        		perspective.getFastViewManager().removeViewReference(ref, true, true);
         	}
         }
 
