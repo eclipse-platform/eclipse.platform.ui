@@ -28,6 +28,7 @@ public class TableObservableValue extends AbstractSWTObservableValue {
 	private boolean updating = false;
 
 	private int currentSelection;
+	private String attribute;
 
 	/**
 	 * @param table
@@ -36,6 +37,8 @@ public class TableObservableValue extends AbstractSWTObservableValue {
 	public TableObservableValue(Table table, String attribute) {
 		super(table);
 		this.table = table;
+		this.attribute = attribute;
+		
 		currentSelection = table.getSelectionIndex();
 		if (attribute.equals(SWTProperties.SELECTION)) {
 			currentSelection = table.getSelectionIndex();
@@ -78,4 +81,10 @@ public class TableObservableValue extends AbstractSWTObservableValue {
 		return Integer.class;
 	}
 
+	/**
+	 * @return attribute being observed
+	 */
+	public String getAttribute() {
+		return attribute;
+	}
 }

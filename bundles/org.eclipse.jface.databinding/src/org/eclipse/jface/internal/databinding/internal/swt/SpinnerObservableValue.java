@@ -103,4 +103,10 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 		return Integer.TYPE;
 	}
 
+	/**
+	 * @return attribute being observed
+	 */
+	public String getAttribute() {
+		return attribute;
+	}
 }

@@ -31,7 +31,6 @@ import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Button;
@@ -102,138 +101,186 @@ public class SWTObservables {
 	}
 
 	/**
-	 * @param spinner
-	 * @return an observable value tracking the selection of the given spinner
+	 * Returns an observable observing the selection attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * <li>org.eclipse.swt.widgets.Button</li>
+	 * <li>org.eclipse.swt.widgets.Combo</li>
+	 * <li>org.eclipse.swt.custom.CCombo</li>
+	 * <li>org.eclipse.swt.widgets.List</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeSelection(Spinner spinner) {
-		return new SpinnerObservableValue(spinner, SWTProperties.SELECTION);
+	public static ISWTObservableValue observeSelection(Control control) {
+		if (control instanceof Spinner) {
+			return new SpinnerObservableValue((Spinner) control,
+					SWTProperties.SELECTION);
+		} else if (control instanceof Button) {
+			return new ButtonObservableValue((Button) control);
+		} else if (control instanceof Combo) {
+			return new ComboObservableValue((Combo) control,
+					SWTProperties.SELECTION);
+		} else if (control instanceof CCombo) {
+			return new CComboObservableValue((CCombo) control,
+					SWTProperties.SELECTION);
+		} else if (control instanceof List) {
+			return new ListObservableValue((List) control);
+		}
+
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
-	 * @param spinner
-	 * @return an observable value tracking the min of the given spinner
+	 * Returns an observable observing the minimum attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeMin(Spinner spinner) {
-		return new SpinnerObservableValue(spinner, SWTProperties.MIN);
+	public static ISWTObservableValue observeMin(Control control) {
+		if (control instanceof Spinner) {
+			return new SpinnerObservableValue((Spinner) control,
+					SWTProperties.MIN);
+		}
+
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
-	 * @param spinner
-	 * @return an observable value tracking the max of the given spinner
+	 * Returns an observable observing the maximum attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeMax(Spinner spinner) {
-		return new SpinnerObservableValue(spinner, SWTProperties.MAX);
+	public static ISWTObservableValue observeMax(Control control) {
+		if (control instanceof Spinner) {
+			return new SpinnerObservableValue((Spinner) control,
+					SWTProperties.MAX);
+		}
+
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
-	 * @param text
-	 * @param event
-	 *            the SWT event type to use when adding the change listener (one
-	 *            of {@link SWT#Modify} or {@link SWT#FocusOut}
-	 * @return an observable value tracking the current text of the given text
-	 *         control
+	 * Returns an observable observing the text attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Text</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @param event event type to listen to for change events
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeText(Text text, int event) {
-		return new TextObservableValue(text, event);
+	public static ISWTObservableValue observeText(Control control, int event) {
+		if (control instanceof Text) {
+			return new TextObservableValue((Text) control, event);
+		}
+
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
-	 * @param label
-	 * @return an observable value tracking the text of the given label
+	 * Returns an observable observing the text attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Label</li>
+	 * <li>org.eclipse.swt.custom.Label</li>
+	 * <li>org.eclipse.swt.widgets.Combo</li>
+	 * <li>org.eclipse.swt.custom.CCombo</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeText(Label label) {
-		return new LabelObservableValue(label);
+	public static ISWTObservableValue observeText(Control control) {
+		if (control instanceof Label) {
+			return new LabelObservableValue((Label) control);
+		} else if (control instanceof CLabel) {
+			return new CLabelObservableValue((CLabel) control);
+		} else if (control instanceof Combo) {
+			return new ComboObservableValue((Combo) control, SWTProperties.TEXT);
+		} else if (control instanceof CCombo) {
+			return new CComboObservableValue((CCombo) control,
+					SWTProperties.TEXT);
+		}
+
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
-	 * @param cLabel
-	 * @return an observable value tracking the text of the given CLabel
+	 * Returns an observable observing the items attribute of the provided
+	 * <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Combo</li>
+	 * <li>org.eclipse.swt.custom.CCombo</li>
+	 * <li>org.eclipse.swt.widgets.List</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable list
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeText(CLabel cLabel) {
-		return new CLabelObservableValue(cLabel);
+	public static IObservableList observeItems(Control control) {
+		if (control instanceof Combo) {
+			return new ComboObservableList((Combo) control);
+		} else if (control instanceof CCombo) {
+			return new CComboObservableList((CCombo) control);
+		} else if (control instanceof List) {
+			return new ListObservableList((List) control);
+		}
+
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**
-	 * @param button
-	 * @return an observable value tracking the selection state of the given
-	 *         button
+	 * Returns an observable observing the single selection index attribute of
+	 * the provided <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Table</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
 	 */
-	public static ISWTObservableValue observeSelection(Button button) {
-		return new ButtonObservableValue(button);
-	}
+	public static ISWTObservableValue observeSingleSelectionIndex(
+			Control control) {
+		if (control instanceof Table) {
+			return new TableObservableValue((Table) control,
+					SWTProperties.SELECTION);
+		}
 
-	/**
-	 * @param combo
-	 * @return an observable value tracking the text of the given combo
-	 */
-	public static ISWTObservableValue observeText(Combo combo) {
-		return new ComboObservableValue(combo, SWTProperties.TEXT);
-	}
-
-	/**
-	 * @param combo
-	 * @return an observable value tracking the selection of the given combo
-	 */
-	public static ISWTObservableValue observeSelection(Combo combo) {
-		return new ComboObservableValue(combo, SWTProperties.SELECTION);
-	}
-
-	/**
-	 * @param combo
-	 * @return an observable list tracking the items of the given combo
-	 */
-	public static IObservableList observeItems(Combo combo) {
-		return new ComboObservableList(combo);
-	}
-
-	/**
-	 * @param combo
-	 * @return an observable value tracking the text of the given combo
-	 */
-	public static ISWTObservableValue observeText(CCombo combo) {
-		return new CComboObservableValue(combo, SWTProperties.TEXT);
-	}
-
-	/**
-	 * @param combo
-	 * @return an observable value tracking the selection state of the given
-	 *         combo
-	 */
-	public static ISWTObservableValue observeSelection(CCombo combo) {
-		return new CComboObservableValue(combo, SWTProperties.SELECTION);
-	}
-
-	/**
-	 * @param combo
-	 * @return an observable list tracking the items of the given combo
-	 */
-	public static IObservableList observeItems(CCombo combo) {
-		return new CComboObservableList(combo);
-	}
-
-	/**
-	 * @param list
-	 * @return an observable value tracking the selection of the given list
-	 */
-	public static ISWTObservableValue observeSelection(List list) {
-		return new ListObservableValue(list);
-	}
-
-	/**
-	 * @param list
-	 * @return an observable list tracking the items of the given list
-	 */
-	public static IObservableList observeItems(List list) {
-		return new ListObservableList(list);
-	}
-
-	/**
-	 * @param table
-	 * @return an observable value tracking the (single) selection of the given
-	 *         table
-	 */
-	public static ISWTObservableValue observeSingleSelectionIndex(Table table) {
-		return new TableObservableValue(table, SWTProperties.SELECTION);
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**

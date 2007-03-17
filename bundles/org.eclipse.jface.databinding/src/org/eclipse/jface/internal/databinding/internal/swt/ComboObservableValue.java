@@ -105,4 +105,10 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 		return String.class;
 	}
 
+	/**
+	 * @return attribute being observed
+	 */
+	public String getAttribute() {
+		return attribute;
+	}
 }

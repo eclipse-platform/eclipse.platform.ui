@@ -112,4 +112,10 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 		return String.class;
 	}
 
+	/**
+	 * @return attribute being observed
+	 */
+	public String getAttribute() {
+		return attribute;
+	}
 }
