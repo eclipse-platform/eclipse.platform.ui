@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.jface.text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,20 +18,13 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlCreatorExtension;
-
 
 /**
  * Abstract class for a reusable information control creators.
- * <p>
- * XXX copy of org.eclipse.jdt.internal.ui.text.java.hover.AbstractReusableInformationControlCreator.
- * </p>
  * 
- * @since 3.2
+ * @since 3.3
  */
-abstract class AbstractReusableInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension, DisposeListener {
+public abstract class AbstractReusableInformationControlCreator implements IInformationControlCreator, IInformationControlCreatorExtension, DisposeListener {
 
 	private Map fInformationControls= new HashMap();
 
@@ -39,7 +32,7 @@ abstract class AbstractReusableInformationControlCreator implements IInformation
 	 * Creates the control.
 	 * 
 	 * @param parent the parent shell
-	 * @return the information control
+	 * @return the created information control
 	 */
 	protected abstract IInformationControl doCreateInformationControl(Shell parent);
 
