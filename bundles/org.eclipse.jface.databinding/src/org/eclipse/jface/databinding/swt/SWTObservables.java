@@ -28,6 +28,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -109,6 +111,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
 	 * <li>org.eclipse.swt.widgets.List</li>
+	 * <li>org.eclipse.swt.widgets.Scale</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -130,6 +133,9 @@ public class SWTObservables {
 					SWTProperties.SELECTION);
 		} else if (control instanceof List) {
 			return new ListObservableValue((List) control);
+		} else if (control instanceof Scale) {
+			return new ScaleObservableValue((Scale) control,
+					SWTProperties.SELECTION);
 		}
 
 		throw new IllegalArgumentException(
@@ -141,6 +147,7 @@ public class SWTObservables {
 	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * <li>org.eclipse.swt.widgets.Scale</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -152,6 +159,8 @@ public class SWTObservables {
 		if (control instanceof Spinner) {
 			return new SpinnerObservableValue((Spinner) control,
 					SWTProperties.MIN);
+		} else if (control instanceof Scale) {
+			return new ScaleObservableValue((Scale) control, SWTProperties.MIN);
 		}
 
 		throw new IllegalArgumentException(
@@ -163,6 +172,7 @@ public class SWTObservables {
 	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Spinner</li>
+	 * <li>org.eclipse.swt.widgets.Scale</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -174,6 +184,8 @@ public class SWTObservables {
 		if (control instanceof Spinner) {
 			return new SpinnerObservableValue((Spinner) control,
 					SWTProperties.MAX);
+		} else if (control instanceof Scale) {
+			return new ScaleObservableValue((Scale) control, SWTProperties.MAX);
 		}
 
 		throw new IllegalArgumentException(
@@ -188,7 +200,7 @@ public class SWTObservables {
 	 * </ul>
 	 * 
 	 * @param control
-	 * @param event event type to listen to for change events
+	 * @param event event type to register for change events
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported

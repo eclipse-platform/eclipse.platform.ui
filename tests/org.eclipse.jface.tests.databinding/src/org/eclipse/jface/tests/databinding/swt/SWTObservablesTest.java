@@ -26,6 +26,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
@@ -39,6 +40,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
@@ -123,6 +125,16 @@ public class SWTObservablesTest extends TestCase {
 		ISWTObservableValue value = SWTObservables.observeSelection(list);
 		assertNotNull(value);
 		assertTrue(value instanceof ListObservableValue);
+	}
+	
+	public void testObserveSelectionOfScale() throws Exception {
+		Scale scale = new Scale(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeSelection(scale);
+		assertNotNull(value);
+		assertTrue(value instanceof ScaleObservableValue);
+		
+		ScaleObservableValue scaleObservable = (ScaleObservableValue) value;
+		assertEquals(SWTProperties.SELECTION, scaleObservable.getAttribute());
 	}
 
 	public void testObserveSelectionOfUnsupportedControl() throws Exception {
@@ -258,6 +270,16 @@ public class SWTObservablesTest extends TestCase {
 		SpinnerObservableValue spinnerObservable = (SpinnerObservableValue) value;
 		assertEquals(SWTProperties.MIN, spinnerObservable.getAttribute());
 	}
+	
+	public void testObserveMinOfScale() throws Exception {
+		Scale scale = new Scale(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeMin(scale);
+		assertNotNull(value);
+		assertTrue(value instanceof ScaleObservableValue);
+		
+		ScaleObservableValue scaleObservable = (ScaleObservableValue) value;
+		assertEquals(SWTProperties.MIN, scaleObservable.getAttribute());
+	}
 
 	public void testObserveMinOfUnsupportedControl() throws Exception {
 		Text text = new Text(shell, SWT.NONE);
@@ -276,6 +298,16 @@ public class SWTObservablesTest extends TestCase {
 		
 		SpinnerObservableValue spinnerObservable = (SpinnerObservableValue) value;
 		assertEquals(SWTProperties.MAX, spinnerObservable.getAttribute());
+	}
+	
+	public void testObserveMaxOfScale() throws Exception {
+		Scale scale = new Scale(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeMax(scale);
+		assertNotNull(value);
+		assertTrue(value instanceof ScaleObservableValue);
+		
+		ScaleObservableValue scaleObservable = (ScaleObservableValue) value;
+		assertEquals(SWTProperties.MAX, scaleObservable.getAttribute());
 	}
 	
 	public void testObserveMaxOfUnsupportedControl() throws Exception {
