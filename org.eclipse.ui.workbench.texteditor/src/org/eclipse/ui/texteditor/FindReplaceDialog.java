@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
@@ -41,7 +40,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
-import org.eclipse.jface.fieldassist.ComboControlCreator;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -55,7 +55,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.fieldassist.ContentAssistField;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.SWTUtil;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
@@ -177,10 +177,10 @@ class FindReplaceDialog extends Dialog {
 	private Combo fFindField, fReplaceField;
 	
 	/**
-	 * Decorated find and replace fields.
-	 * @since 3.2
+	 * Find and replace command adapters.
+	 * @since 3.3
 	 */
-	private ContentAssistField fContentAssistFindField, fContentAssistReplaceField;
+	private ContentAssistCommandAdapter fContentAssistFindField, fContentAssistReplaceField;
 
 	private Rectangle fDialogPositionInit;
 
@@ -576,16 +576,16 @@ class FindReplaceDialog extends Dialog {
 		// Create the find content assist field 
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
 		RegExContentProposalProvider findProposer= new RegExContentProposalProvider(true);
-		fContentAssistFindField= new ContentAssistField(
-				panel,
-				SWT.DROP_DOWN | SWT.BORDER, 
-				new  ComboControlCreator(), 
+		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
+		fContentAssistFindField= new ContentAssistCommandAdapter(
+				fFindField,
 				contentAdapter,
 				findProposer, 
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
-				new char[] {'\\', '[', '('});
-		fFindField= (Combo)fContentAssistFindField.getControl();
-		setGridData(fContentAssistFindField.getLayoutControl(), SWT.FILL, true, SWT.CENTER, false);
+				new char[] {'\\', '[', '('},
+				true);
+		setGridData(fFindField, SWT.FILL, true, SWT.CENTER, false);
+		addDecorationMargin(fFindField);
 		fFindField.addModifyListener(fFindModifyListener);
 
 		fReplaceLabel= new Label(panel, SWT.LEFT);
@@ -594,15 +594,15 @@ class FindReplaceDialog extends Dialog {
 
 		// Create the replace content assist field
 		RegExContentProposalProvider replaceProposer= new RegExContentProposalProvider(false);
-		fContentAssistReplaceField= new ContentAssistField(
-				panel,
-				SWT.DROP_DOWN | SWT.BORDER, 
-				new  ComboControlCreator(), 
+		fReplaceField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
+		fContentAssistReplaceField= new ContentAssistCommandAdapter(
+				fReplaceField,
 				contentAdapter, replaceProposer, 
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
-				new char[] {'$'});
-		fReplaceField= (Combo)fContentAssistReplaceField.getControl();
-		setGridData(fContentAssistReplaceField.getLayoutControl(), SWT.FILL, true, SWT.CENTER, false);
+				new char[] {'$'},
+				true);
+		setGridData(fReplaceField, SWT.FILL, true, SWT.CENTER, false);
+		addDecorationMargin(fReplaceField);
 		fReplaceField.addModifyListener(listener);
 
 		return panel;
@@ -1433,6 +1433,20 @@ class FindReplaceDialog extends Dialog {
 		}
 		gd.verticalAlignment= verticalAlignment;
 		gd.grabExcessVerticalSpace= grabExcessVerticalSpace;
+	}
+	
+	/**
+	 * Adds enough space in the control's layout data margin for the content assist
+	 * decoration.
+	 * @param control the control that needs a margin
+	 */
+	private void addDecorationMargin(Control control) {
+		Object layoutData= control.getLayoutData();
+		if (!(layoutData instanceof GridData))
+			return;
+		GridData gd= (GridData)layoutData;
+		FieldDecoration dec= FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_CONTENT_PROPOSAL);
+		gd.horizontalIndent= dec.getImage().getBounds().width;
 	}
 
 	/**
