@@ -76,6 +76,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservable
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TableObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.TextEditableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.AbstractObservableTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.ObservablesTest;
@@ -215,6 +216,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ScaleObservableValueTest.class);
 		addTestSuite(SpinnerObservableValueTest.class);
 		addTestSuite(TableObservableValueTest.class);
+		addTestSuite(TextEditableObservableValueTest.class);
 
 		// org.eclipse.jface.tests.internal.databinding.internal.viewers
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);

@@ -31,6 +31,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -319,6 +320,27 @@ public class SWTObservables {
 	 */
 	public static ISWTObservableValue observeFont(Control control) {
 		return new ControlObservableValue(control, SWTProperties.FONT);
+	}
+	
+	/**
+	 * Returns an observable observing the editable attribute of
+	 * the provided <code>control</code>. The supported types are:
+	 * <ul>
+	 * <li>org.eclipse.swt.widgets.Text</li>
+	 * </ul>
+	 * 
+	 * @param control
+	 * @return observable value
+	 * @throws IllegalArgumentException
+	 *             if <code>control</code> type is unsupported
+	 */
+	public static ISWTObservableValue observeEditable(Control control) {
+		if (control instanceof Text) {
+			return new TextEditableObservableValue((Text) control);
+		}
+		
+		throw new IllegalArgumentException(
+				"Widget [" + control.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private static class DisplayRealm extends Realm {

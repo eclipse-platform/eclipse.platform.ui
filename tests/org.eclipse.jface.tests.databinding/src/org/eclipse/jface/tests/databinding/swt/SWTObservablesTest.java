@@ -11,8 +11,6 @@
 
 package org.eclipse.jface.tests.databinding.swt;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -29,7 +27,9 @@ import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
+import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
@@ -47,21 +47,21 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * @since 3.2
+ * @since 1.1
  */
-public class SWTObservablesTest extends TestCase {
+public class SWTObservablesTest extends AbstractSWTTestCase {
 	private Shell shell;
 
-	protected void setUp() {
-		shell = new Shell();
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		shell = getShell();
 		RealmTester.setDefault(SWTObservables.getRealm(shell.getDisplay()));
 	}
 
 	protected void tearDown() throws Exception {
-		if (shell != null && !shell.isDisposed()) {
-			shell.dispose();
-		}
-
+		super.tearDown();
+		
 		RealmTester.setDefault(null);
 	}
 
@@ -314,6 +314,22 @@ public class SWTObservablesTest extends TestCase {
 		Text text = new Text(shell, SWT.NONE);
 		try {
 			SWTObservables.observeMax(text);
+			fail("Exception should have been thrown");
+		} catch (IllegalArgumentException e) {
+		}
+	}
+	
+	public void testObserveEditableOfText() throws Exception {
+		Text text = new Text(shell, SWT.NONE);
+		ISWTObservableValue value = SWTObservables.observeEditable(text);
+		assertNotNull(value);
+		assertTrue(value instanceof TextEditableObservableValue);
+	}
+	
+	public void testObserveEditableOfUnsupportedControl() throws Exception {
+		Label label = new Label(shell, SWT.NONE);
+		try {
+			SWTObservables.observeEditable(label);
 			fail("Exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}
