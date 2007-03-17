@@ -12,7 +12,7 @@ package org.eclipse.jsch.internal.core;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS{
-  private static final String BUNDLE_NAME="org.eclipse.jsch.core.messages";//$NON-NLS-1$
+  private static final String BUNDLE_NAME="org.eclipse.jsch.internal.core.messages";//$NON-NLS-1$
 
   public static String JSchSession_5;
   public static String Util_timeout;
