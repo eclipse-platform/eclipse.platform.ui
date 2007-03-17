@@ -185,9 +185,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
+import org.eclipse.ui.actions.CommandNotMappedException;
+import org.eclipse.ui.actions.ContributedAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.dnd.IDragAndDropService;
-import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
@@ -4944,10 +4945,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else
 				element= (IConfigurationElement)actions.get(0);
 
-			// FIXME: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256
-			final String ATT_DEFINITION_ID= "definitionId";//$NON-NLS-1$
-			String defId= element.getAttribute(ATT_DEFINITION_ID);
-			return new EditorPluginAction(element, this, defId, IAction.AS_UNSPECIFIED);
+			try {
+				return new ContributedAction(getSite(), element);
+			} catch (CommandNotMappedException e) {
+				// out of luck, no command action mapping
+			}
 		}
 
 		return null;
