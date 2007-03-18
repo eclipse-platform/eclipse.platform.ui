@@ -12,6 +12,71 @@
 <h1>Eclipse Platform Build Notes (3.3)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (March 18, 2007, 4:48 p.m.)</p>
+  <p>Problem reports updated</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=17256">Bug 17256</a>. Exception due to bug 17208 (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=82256">Bug 82256</a>. [Contributions] Need EditorPluginAction and ActionDescriptor.ATT_DEFINITION_ID as API (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=82541">Bug 82541</a>. [Dialogs] SaveAsDialog should better handle closed projects (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=136591">Bug 136591</a>. [Dialogs] TypeFilteringDialog appends unnecessary comma (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138137">Bug 138137</a>. [DnD] Drag-and-drop of source files into editor (DUPLICATE)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153315">Bug 153315</a>. [Contributions] The ToggleAutoBuildAction lacks an action definition id (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153957">Bug 153957</a>. [FastViews] Create Multiple FVB's (ASSIGNED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=154130">Bug 154130</a>. [KeyBindings] Finish re-work of commands and key bindings (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161425">Bug 161425</a>. [Viewers] TableTreeViewer => EditingSupport broken (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163345">Bug 163345</a>. [Field Assist] - API - Deprecate DecoratedField and related classes (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164796">Bug 164796</a>. [Viewers] TableViewer setSelectionToWidget always scrolls to widget (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=168888">Bug 168888</a>. [Wizards] PageTransition classes may need rename/reorg (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171522">Bug 171522</a>. [KeyBindings] When "@Ctrl+Break" was appended into lable of menu, Workbench can not startup (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171612">Bug 171612</a>. [Viewers] Breaking API change: DecoratingLabelProvider no longer extends LabelProvider (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171783">Bug 171783</a>. [MPE] Breaked contract of SelectionProvider (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171824">Bug 171824</a>. [Viewers] Lots of flickering when using TableColumnAdapter (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172294">Bug 172294</a>. [FieldAssist] [ControlDecoration] API - Decoration does not disappear inside a closed section (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172646">Bug 172646</a>. [Viewers] Activate Editors using a specialized Event (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172844">Bug 172844</a>. [Dialogs] FilteredItemsSelectionDialog: make history separator string configurable (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173438">Bug 173438</a>. [Contexts] ContextAuthority$1.widgetDisposed(..) does not handle case where shell is already disposed (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173571">Bug 173571</a>. [Viewers] TreeViewer.updateHasChildren() does not work if item is already expanded (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173577">Bug 173577</a>. [Contributions] deactivating actionSet context doesn't make menu disappear (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173902">Bug 173902</a>. remove EXPERIMENTAL markings from 3.3 IDE Undo API (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174355">Bug 174355</a>. [Viewers] IViewerLabelProvider isn't supported by the TreeViewer anymore (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174633">Bug 174633</a>. [Contributions] objectContributions replacement needs selection provider (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174692">Bug 174692</a>. Typos in org.eclipse.ui.menus description (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174694">Bug 174694</a>. Invalid example in org.eclipse.ui.menus description (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174701">Bug 174701</a>. [Viewers] ViewerRow should be reused instead of connected to the Item (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175763">Bug 175763</a>. [DataBinding] ScaleObservableValue (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175889">Bug 175889</a>. Allow early splash bundles to participate in ui splashHandler (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175890">Bug 175890</a>. [Contributions] need a way to restrict Expression evaluation (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176043">Bug 176043</a>. [Commands] Need to be able to restore the toolbar without breking plug-in boundaries (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176158">Bug 176158</a>. Tool tip flickers (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176198">Bug 176198</a>. [Field Assist] - API - ControlDecoration should provide mouse events (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176474">Bug 176474</a>. [key binding] DBCS3.3: please back to the key binding for Content Assist (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176604">Bug 176604</a>. [Dialogs] FilteredItemsSelectionDialog should show view menu on mouseDown (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176607">Bug 176607</a>. [Dialogs] FilteredItemsSelectionDialog.GranualProgressMonitor does not support subTask(..) and misses message updates (REOPENED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176661">Bug 176661</a>. [Intro] Show intro if new intro content is available (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176882">Bug 176882</a>. [DataBinding] Create SWTObservables.observeEditable(...) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177037">Bug 177037</a>. [StatusHandling] Remove style from StatusAdapter (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177116">Bug 177116</a>. [Contributions] NPE in PopupMenuExtender.dispose (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177144">Bug 177144</a>. API problems in FilteredItemsSelectionDialog (2) (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177172">Bug 177172</a>. org.eclipse.ui.editors extension point schema should mention org.eclipse.core.runtime.contentTypes (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177176">Bug 177176</a>. [Field Assist] [API] - Add 7x7 information control decoration to FieldDecorationRegistry (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177181">Bug 177181</a>. [Min/Max] Editor area state not perspective based (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177264">Bug 177264</a>. [DataBinding] Failure in DefaultBindSupportFactoryBooleanPrimitiveTest.testStringToBooleanPrimitiveConverter against Eclipse 3.2.2 (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177328">Bug 177328</a>. javadoc warning in N20070314-0010 (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177353">Bug 177353</a>. Make the 3.3 presentation the default (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177447">Bug 177447</a>. No preference keyword for "presentation" (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177448">Bug 177448</a>. New Presentation leaks colors (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177463">Bug 177463</a>. [DataBinding] SWT Observable API additions (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177489">Bug 177489</a>. [Viewers] Document usability of IColorProvider, IFontProvider not usable for ListViewers (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177633">Bug 177633</a>. [Field Assist] - Remove experimental and deprecated class ComboControlCreator (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177755">Bug 177755</a>. [DataBinding] Please javadoc org.eclipse.core.databinding.observable.ObservableEvent and subclasses (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177787">Bug 177787</a>. Incorrect Javadoc in org.eclipse.jface.preference.PreferenceNode (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177842">Bug 177842</a>. [Min/Max] 'zoom' tests failing in PartsReferencesTestSuite (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177844">Bug 177844</a>. javadoc warning in N200703160010 (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177905">Bug 177905</a>. [Min/Max] Dragging open Fast View by using its tab makes it go unresponsive (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177942">Bug 177942</a>. [Min/Max] Two 'drag MockEditor...' tests fail under the new presentation (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177953">Bug 177953</a>. [DataBinding] test failure (NEW)<br>
+  </p>
+
 <p>Integration Build (März 13, 2007, 12:25 a.m.)</p>
   <p>Problem reports updated</p>
   <p>
