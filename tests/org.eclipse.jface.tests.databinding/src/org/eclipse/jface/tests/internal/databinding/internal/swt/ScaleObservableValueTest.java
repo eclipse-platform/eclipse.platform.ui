@@ -113,4 +113,12 @@ public class ScaleObservableValueTest extends AbstractDefaultRealmTestCase {
 	public void testSelectionTypeIsIntegerType() throws Exception {
 		assertEquals(Integer.TYPE, new ScaleObservableValue(scale, SWTProperties.SELECTION).getValueType());
 	}
+	
+	public void testDisposeListenerWhenObservableIsDisposed() throws Exception {
+		assertFalse(scale.isListening(SWT.Selection));
+		ISWTObservableValue value = new ScaleObservableValue(scale, SWTProperties.SELECTION);
+		assertTrue(scale.isListening(SWT.Selection));
+		value.dispose();
+		assertFalse(scale.isListening(SWT.Selection));
+	}
 }
