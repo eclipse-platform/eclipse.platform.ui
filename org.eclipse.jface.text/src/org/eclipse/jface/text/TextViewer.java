@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +75,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
+
 /**
  * SWT based implementation of {@link ITextViewer} and its extension interfaces.
  * Once the viewer and its SWT control have been created the viewer can only
@@ -98,8 +97,8 @@ import org.eclipse.jface.viewers.Viewer;
  * This class is not intended to be subclassed outside the JFace Text component.</p>
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, IEditingSupportRegistry,
-					ITextOperationTarget, ITextOperationTargetExtension,
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerExtension7,
+					IEditingSupportRegistry, ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 
 	/** Internal flag to indicate the debug state. */
@@ -158,21 +157,30 @@ public class TextViewer extends Viewer implements
 		}
 	}
 
-	
+
 	/**
-	 * Connects a text double click strategy to this viewer's text widget.
-	 * Calls the double click strategy when the mouse has been double clicked
-	 * inside the text editor.
+	 * Connects a text click strategy to this viewer's text widget.
+	 * Calls the double and triple click strategies when the mouse has
+	 * been clicked inside the text editor.
 	 */
-	class TextDoubleClickStrategyConnector extends MouseAdapter implements MouseMoveListener {
+	class TextClickStrategyConnector extends MouseAdapter implements MouseMoveListener {
 
-		/** Internal flag to remember the last double-click selection. */
-		private Point fDoubleClickSelection;
+		/** Internal flag to remember the last click selection. */
+		private Point fClickSelection;
 
-		/**
-		 * Creates a new text double click strategy adapter.
+		/*
+		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 * @since 3.3
 		 */
-		public TextDoubleClickStrategyConnector() {
+		public void mouseDown(MouseEvent e) {
+			if (e.count == 3) {
+				ITextTripleClickStrategy s= (ITextTripleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fTripleClickStrategies);
+				if (s != null) {
+					StyledText textWidget= getTextWidget();
+					s.tripleClicked(TextViewer.this);
+					fClickSelection= textWidget.getSelection();
+				}
+			}			
 		}
 
 		/*
@@ -183,7 +191,7 @@ public class TextViewer extends Viewer implements
 			if (s != null) {
 				StyledText textWidget= getTextWidget();
 				s.doubleClicked(TextViewer.this);
-				fDoubleClickSelection= textWidget.getSelection(); 
+				fClickSelection= textWidget.getSelection();
 			}
 		}
 
@@ -193,10 +201,10 @@ public class TextViewer extends Viewer implements
 		 */
 		public void mouseUp(MouseEvent e) {
 			try {
-				if (fDoubleClickSelection != null)
+				if (fClickSelection != null)
 					getTextWidget().copy(DND.SELECTION_CLIPBOARD);
 			} finally {
-				fDoubleClickSelection= null;
+				fClickSelection= null;
 			}
 		}
 
@@ -205,15 +213,15 @@ public class TextViewer extends Viewer implements
 		 * @since 3.2
 		 */
 		public void mouseMove(MouseEvent e) {
-			if (fDoubleClickSelection != null) {
+			if (fClickSelection != null) {
 				StyledText textWidget= getTextWidget();
 				Point newSelection= textWidget.getSelection();
-				if (newSelection.x == fDoubleClickSelection.x && newSelection.y <= fDoubleClickSelection.y) {
-					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
-				} else if (newSelection.x >= fDoubleClickSelection.x && newSelection.y == fDoubleClickSelection.y && textWidget.getCaretOffset() == newSelection.x) {
-					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
-				} else if (newSelection.y <= fDoubleClickSelection.x && textWidget.getCaretOffset() == newSelection.x)
-					textWidget.setSelection(fDoubleClickSelection.y, newSelection.x);
+				if (newSelection.x == fClickSelection.x && newSelection.y <= fClickSelection.y) {
+					textWidget.setSelection(fClickSelection.x, fClickSelection.y);
+				} else if (newSelection.x >= fClickSelection.x && newSelection.y == fClickSelection.y && textWidget.getCaretOffset() == newSelection.x) {
+					textWidget.setSelection(fClickSelection.x, fClickSelection.y);
+				} else if (newSelection.y <= fClickSelection.x && textWidget.getCaretOffset() == newSelection.x)
+					textWidget.setSelection(fClickSelection.y, newSelection.x);
 			}
 		}
 	}
@@ -1431,7 +1439,7 @@ public class TextViewer extends Viewer implements
 	/** The slave document manager */
 	private ISlaveDocumentManager fSlaveDocumentManager;
 	/** The text viewer's double click strategies connector */
-	private TextDoubleClickStrategyConnector fDoubleClickStrategyConnector;
+	private TextClickStrategyConnector fDoubleClickStrategyConnector;
 	/** The text viewer's view port guard */
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */
@@ -1532,6 +1540,11 @@ public class TextViewer extends Viewer implements
 	protected Map fDefaultPrefixChars;
 	/** The text viewer's text double click strategies */
 	protected Map fDoubleClickStrategies;
+	/**
+	 * The text viewer's text triple click strategies.
+	 * @since 3.3
+	 */
+	protected Map fTripleClickStrategies;
 	/** The text viewer's undo manager */
 	protected IUndoManager fUndoManager;
 	/** The text viewer's auto indent strategies */
@@ -1735,7 +1748,7 @@ public class TextViewer extends Viewer implements
 	public void activatePlugins() {
 
 		if (fDoubleClickStrategies != null && !fDoubleClickStrategies.isEmpty() && fDoubleClickStrategyConnector == null) {
-			fDoubleClickStrategyConnector= new TextDoubleClickStrategyConnector();
+			fDoubleClickStrategyConnector= new TextClickStrategyConnector();
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
 			fTextWidget.addMouseMoveListener(fDoubleClickStrategyConnector);
 		}
@@ -3451,6 +3464,19 @@ public class TextViewer extends Viewer implements
 			fDoubleClickStrategies.put(contentType, strategy);
 		} else if (fDoubleClickStrategies != null)
 			fDoubleClickStrategies.remove(contentType);
+	}
+
+	/*
+	 * @see ITextViewer#setTextTripleClickStrategy(ITextTripleClickStrategy, String)
+	 * @since 3.3
+	 */
+	public void setTextTripleClickStrategy(ITextTripleClickStrategy strategy, String contentType) {
+		if (strategy != null) {
+			if (fTripleClickStrategies == null)
+				fTripleClickStrategies= new HashMap();
+			fTripleClickStrategies.put(contentType, strategy);
+		} else if (fTripleClickStrategies != null)
+			fTripleClickStrategies.remove(contentType);
 	}
 
 	/**

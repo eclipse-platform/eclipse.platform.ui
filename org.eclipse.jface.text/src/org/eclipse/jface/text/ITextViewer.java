@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
-
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
@@ -91,6 +89,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * of widget and model coordinates.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension6} since version 3.1
  * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3
+ * extending the text viewer with the ability to set a {@link ITextTripleClickStrategy}.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
@@ -102,6 +102,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * @see org.eclipse.jface.text.ITextViewerExtension4
  * @see org.eclipse.jface.text.ITextViewerExtension5
  * @see org.eclipse.jface.text.ITextViewerExtension6
+ * @see org.eclipse.jface.text.ITextViewerExtension7
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.ITextInputListener
  * @see org.eclipse.jface.text.IViewportListener
