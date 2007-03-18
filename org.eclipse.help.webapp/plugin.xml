@@ -4,8 +4,10 @@
    <extension
          point="org.eclipse.equinox.http.registry.httpcontexts">
       <httpcontext
-            name="help"
-            path="/">
+            id="help">
+         <resource-mapping
+               path="/">
+         </resource-mapping>
       </httpcontext>
    </extension>
    <extension
@@ -13,7 +15,7 @@
       <resource
             alias="/"
             base-name="/"
-            httpcontext-name="help">
+            httpcontextId="help">
       </resource>
    </extension>
    <extension
@@ -21,127 +23,82 @@
       <servlet
             alias="/control.html"
             class="org.eclipse.help.internal.webapp.servlet.ControlServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/content"
             class="org.eclipse.help.internal.webapp.servlet.ContentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/topic"
             class="org.eclipse.help.internal.webapp.servlet.ContentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/nftopic"
             class="org.eclipse.help.internal.webapp.servlet.ContentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/ntopic"
             class="org.eclipse.help.internal.webapp.servlet.ContentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/rtopic"
             class="org.eclipse.help.internal.webapp.servlet.ContentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/nav"
             class="org.eclipse.help.internal.webapp.servlet.NavServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/livehelp"
             class="org.eclipse.help.internal.webapp.servlet.LiveHelpServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/toc"
             class="org.eclipse.help.internal.webapp.servlet.TocServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/tocfragment"
             class="org.eclipse.help.internal.webapp.servlet.TocFragmentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/index"
             class="org.eclipse.help.internal.webapp.servlet.IndexServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/indexfragment"
             class="org.eclipse.help.internal.webapp.servlet.IndexFragmentServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/search"
             class="org.eclipse.help.internal.webapp.servlet.SearchServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/context"
             class="org.eclipse.help.internal.webapp.servlet.ContextServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/extension"
             class="org.eclipse.help.internal.webapp.servlet.ExtensionServlet"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
-   </extension>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
       <servlet
             alias="/*.jsp"
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/"
-            httpcontext-name="help">
+            httpcontextId="help">
       </servlet>
    </extension>
 </plugin>
