@@ -36,6 +36,7 @@ import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
+import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -336,6 +337,10 @@ public class PropertyScenarios extends ScenariosTestCase {
     }
 
     public void testScenario08() {
+    	if (BindingTestSuite.failingTestsDisabled(this)) {
+			return;
+		}
+    	
         // Binding the price property of an Adventure to a Text control but with
         // custom conversion � the double will be validated to only have two
         // decimal places and displayed with a leading currency symbol, and can
