@@ -3138,7 +3138,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Get the control where the search pattern is entered.
-	 * @return Control or <code>null</code> if there is no pattern control
+	 * @return Control or <code>null</code> if the pattern control
+	 * 	has not been created.
 	 */
 	public Control getPatternControl() {
 		return pattern;
