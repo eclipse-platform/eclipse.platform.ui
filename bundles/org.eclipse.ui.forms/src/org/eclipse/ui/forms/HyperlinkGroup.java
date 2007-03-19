@@ -75,8 +75,10 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		}
 		private void onMouseExit(Event e) {
 			Hyperlink link = (Hyperlink) e.widget;
-			link.setBackground(previousBackground);
-			link.setForeground(previousForeground);
+			if (isActiveBackgroundSet)
+				link.setBackground(previousBackground);
+			if (isActiveForegroundSet)
+				link.setForeground(previousForeground);
 			if (getHyperlinkUnderlineMode() == UNDERLINE_HOVER)
 				link.setUnderlined(false);
 		}
