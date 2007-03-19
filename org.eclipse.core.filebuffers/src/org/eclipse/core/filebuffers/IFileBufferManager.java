@@ -82,8 +82,8 @@ public interface IFileBufferManager {
 	 * that has been connected using a path will not be found.
 	 * </p>
 	 * <p>
-	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
-	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * We had to use a different name than <code>connect</code> for this method
+	 * due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844
 	 * </p>
 	 *
 	 * @param fileStore the file store to be connected
@@ -139,8 +139,8 @@ public interface IFileBufferManager {
 	 * that has been connected using a path will not be found.
 	 * </p>
 	 * <p>
-	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
-	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * We had to use a different name than <code>disconnect</code> for this method
+	 * due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844
 	 * </p>
 	 * 
 	 * @param fileStore the file store to be disconnected
@@ -191,8 +191,8 @@ public interface IFileBufferManager {
 	 * that has been connected using a path will not be found.
 	 * </p>
 	 * <p>
-	 * <em>This API is provisional and will probably change before the 3.3 API freeze,
-	 * depending on to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844</em>
+	 * We had to use a different name than <code>getFileBuffer</code> for this method
+	 * due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=148844
 	 * </p>
 	 *
 	 * @param fileStore the file store
