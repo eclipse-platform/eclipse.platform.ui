@@ -35,6 +35,7 @@ import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.search.federated.IndexerJob;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.search.ISearchEngine2;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
@@ -1726,7 +1727,14 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	static public int getDefaultStyle() {
-		return ALL_TOPICS | INDEX | CONTEXT_HELP | SEARCH | BOOKMARKS;
+		int style = ALL_TOPICS | CONTEXT_HELP | SEARCH;
+		if (ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "indexView")) { //$NON-NLS-1$
+			style |= INDEX;
+		}
+		if (ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "bookmarksView")) { //$NON-NLS-1$
+			style |= BOOKMARKS;
+		}
+		return style;
 	}
 }
 
