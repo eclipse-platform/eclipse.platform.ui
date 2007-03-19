@@ -13,6 +13,10 @@ package org.eclipse.jface.text;
 
 /**
  * Auto edit strategy that converts tabs into spaces.
+ * <p>
+ * Clients usually instantiate and configure this class but
+ * can also extend it in their own subclass.
+ * </p>
  * 
  * @since 3.3
  */
