@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.presentations.r33;
 
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.PlatformUI;

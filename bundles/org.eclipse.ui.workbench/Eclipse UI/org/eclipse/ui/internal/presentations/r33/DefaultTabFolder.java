@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.presentations.r33;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -485,8 +488,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
 
 		paneFolder.setSelectionForeground(currentColors.foreground);
 		paneFolder.setSelectionBackground(currentColors.background,
-				currentColors.percentages, currentColors.vertical,
-				activationState);
+				currentColors.percentages, currentColors.vertical);
 	}
 
 	public void setColors(DefaultTabFolderColors colors, int activationState) {

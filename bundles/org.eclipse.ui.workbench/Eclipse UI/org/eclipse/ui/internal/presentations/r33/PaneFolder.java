@@ -16,6 +16,10 @@ import java.util.List;
 
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -732,10 +736,8 @@ public final class PaneFolder {
 	 * @param vertical
 	 * @param activationState one of the {@link StackPresentation} AS constants.
 	 */
-	public void setSelectionBackground(Color[] bgColors, int[] percentages,
-			boolean vertical, int activationState) {
-		tabFolder.setSelectionBackground(bgColors, percentages, vertical,
-				activationState);
+	public void setSelectionBackground(Color[] bgColors, int[] percentages, boolean vertical) {
+		tabFolder.setSelectionBackground(bgColors, percentages, vertical);
 	}
 
 	public CTabItem getItem(int idx) {

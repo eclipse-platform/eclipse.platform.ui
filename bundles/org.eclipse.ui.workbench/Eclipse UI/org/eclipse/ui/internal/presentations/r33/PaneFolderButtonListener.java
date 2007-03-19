@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.r33;
 
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
+
 
 /**
  * This listener receives notifications when the user clicks on one of
