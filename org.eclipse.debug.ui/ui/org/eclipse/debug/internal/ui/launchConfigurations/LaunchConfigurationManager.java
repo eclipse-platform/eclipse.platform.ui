@@ -1102,6 +1102,28 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		catch (ParserConfigurationException e) {DebugUIPlugin.log(e);} 
 		catch (TransformerException e) {DebugUIPlugin.log(e);}
 	}
+	
+	/**
+	 * Sets the given launch to be the most recent launch in the launch
+	 * history (for applicable histories).
+	 * <p>
+	 * <b>EXPERIMENTAL</b> - This method has been added in support of bug 75762.
+	 * We should consider alternate solutions in a later release. It allows
+	 * clients performing multiple launches to modify the launch history.
+	 * </p>
+	 * @param configuration configuration to be set as most recent
+	 * @since 3.3
+	 */
+	public void setRecentLaunch(ILaunch launch) {
+		ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
+		int size = groups.length;
+		for (int i = 0; i < size; i++) {
+			String id = groups[i].getIdentifier();
+			LaunchHistory history = getLaunchHistory(id);
+			if (history != null)
+				history.launchAdded(launch);
+		}
+	}	
 
 }
 
