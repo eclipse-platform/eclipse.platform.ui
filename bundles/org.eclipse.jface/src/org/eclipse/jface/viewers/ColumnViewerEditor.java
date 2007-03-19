@@ -378,7 +378,10 @@ public abstract class ColumnViewerEditor {
 		viewer.fireOpen(new OpenEvent(viewer, viewer.getSelection()));
 	}
 
-	void addEditorActivationListener(
+	/**
+	 * @param listener add a new listener
+	 */
+	public void addEditorActivationListener(
 			ColumnViewerEditorActivationListener listener) {
 		if (editorActivationListener == null) {
 			editorActivationListener = new ListenerList();
