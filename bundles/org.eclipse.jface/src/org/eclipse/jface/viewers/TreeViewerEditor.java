@@ -58,6 +58,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		TreeViewerEditor editor = new TreeViewerEditor(viewer,
 				focusCellManager, editorActivationStrategy, feature);
 		viewer.setColumnViewerEditor(editor);
+		focusCellManager.init();
 	}
 
 	/**

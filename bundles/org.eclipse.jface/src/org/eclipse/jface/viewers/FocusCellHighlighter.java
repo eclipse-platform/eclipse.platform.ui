@@ -31,4 +31,19 @@ public abstract class FocusCellHighlighter {
 	public ViewerCell getFocusCell() {
 		return viewer.getColumnViewerEditor().getFocusCell();
 	}
+
+	/**
+	 * Called by the framework when the focus cell has changed. Subclasses may extend.
+	 * 
+	 * @param cell the new focus cell
+	 */
+	protected void focusCellChanged(ViewerCell cell) {
+	}
+
+	/**
+	 * This method is called by the framework to initialize this cell
+	 * highlighter object. Subclasses may extend.
+	 */
+	protected void init() {
+	}
 }
