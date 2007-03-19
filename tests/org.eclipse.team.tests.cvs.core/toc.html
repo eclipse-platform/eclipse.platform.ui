@@ -1,7 +1,7 @@
 <html><head><title>Team/CVS Test Plan</title><style type='text/css'>h1 {color: white;background-color: #0080C0;padding-left: 1ex;padding-right: 1ex;}h1 {font-weight: bold;padding-top: 0.5ex;padding-bottom: 0.5ex;margin-top: 0;}</style></head><body>
 
 <!-- KEEP START -->
-<h1>Eclipse Team and CVS 3.2 Test Plan</h1>
+<h1>Eclipse Team and CVS 3.3 Test Plan</h1>
 This plan contains a detailed listing of the features available in the
 Eclipse CVS plug-in. There are some items that don't have many steps
 but are meant as a reminder that the features exist and should be
@@ -16,9 +16,9 @@ however sniff test the latest developer *nix server and the cvsnt
 server. In addition, we will run our automated tests on all three
 flavours. The current server lineup is:<br>
 <br>
-Latest Stable: <span style="font-weight: bold;">1.11.21</span><br>
+Latest Stable: <span style="font-weight: bold;">1.11.22</span><br>
 Latest Development: <span style="font-weight: bold;">1.12.13</span><br>
-CVS NT: <strong>2.5.03.2260</strong>
+CVS NT: <strong>2.5.03.2382</strong>
 <h2>Testing Tips</h2>
 <ul>
   <li><font color="#000000">test corner cases</font></li>
@@ -69,14 +69,14 @@ Platforms</font></b> </div>
       <td width="205">Microsoft Windows XP</td>
       <td width="76">Intel x86</td>
       <td width="59">Win32</td>
-      <td width="453">Michael Valenta<br>
+      <td width="453"><br>
       </td>
     </tr>
     <tr>
       <td width="205">Red Hat Enterprise Linux WS 3</td>
       <td width="76">Intel x86</td>
       <td width="59">GTK</td>
-      <td width="453">Michael Valenta<br>
+      <td width="453"><br>
       </td>
     </tr>
   </tbody>
@@ -165,6 +165,9 @@ Platforms</font></b> </div>
 <ul>
 </ul>
 <li><a href="#sync00001.html">Scenarios</a>
+<ul>
+</ul>
+<li><a href="#syncRestart00001.html">Restart Behavior</a>
 <ul>
 </ul>
 </ul>
@@ -1197,6 +1200,30 @@ it. For example, one folder may be shared as V2_0, a single file may be attached
 with  branch B, have developer 2 release a change to folder F in HEAD, and
 have  developer 1 perform a sync. In this case developer 1 should not see
 the incoming  change.</p>
+
+
+<a name="syncRestart00001.html">
+<h2>Restart Behavior</h2>
+<p>Since: 3.3<br>
+Last Modified: $Date$</p>
+
+<h1>Synchronization Restart Behavior</h1>
+
+CVS Synchronizations can be configured to populate or synchronize 
+after a restart. To test this, do the following.
+
+<ol>
+<li>Create a CVS synchronization of each persisted type (Workspace and Merge).</li>
+<li>Restart and see the page that allwos you to populat or restart.</li>
+<li>Choose to remember the operation</li>
+<li>Pick an operation and ensure that the behavior is respected
+</li>
+</ol>
+You will want to repeat these steps for both operations
+(Synchronize and Populate) and you shoudl also repeat them 
+using the preference page available from the view menu in the 
+Synchronize view.
+
 
 
 <h1>Commit</h1>
