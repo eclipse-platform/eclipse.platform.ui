@@ -192,6 +192,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 					val = ((IExpression)element).getValue();
 				}
 				if (val instanceof IndexedValuePartition) {
+					// Clear the detail pane
+					detailComputed(null, ""); //$NON-NLS-1$
 					val = null;
 				}
 				if (val != null && !monitor.isCanceled()) {
