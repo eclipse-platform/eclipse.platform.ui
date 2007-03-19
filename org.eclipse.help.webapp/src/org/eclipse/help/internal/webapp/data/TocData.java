@@ -174,6 +174,9 @@ public class TocData extends ActivitiesData {
 	 * toc doesn't contain the topic, returns null.
 	 */
 	private static ITopic[] getTopicPathInToc(ITopic topicToFind, IToc toc) {
+		if (topicToFind.getLabel().equals(toc.getLabel())) {
+			return new ITopic[0];
+		}
 		ITopic topics[] = toc.getTopics();
 		if (topics != null) {
 			for (int i=0;i<topics.length;++i) {
@@ -300,7 +303,7 @@ public class TocData extends ActivitiesData {
 			selectedToc = findTocContainingTopic(topicHref);
 
 			ITopic topic = findTopic();
-			if (topic != null) {
+			if (topic != null && selectedToc >= 0) {
 				topicPath = getTopicPathInToc(topic, tocs[selectedToc]);
 			}
 		}
@@ -326,14 +329,19 @@ public class TocData extends ActivitiesData {
 			if (index != -1) {
 				// first number is toc index
 				String nav = topic.substring(index + 5);
+				String book;
 				index = nav.indexOf('_');
-				if (index != -1) {
-					try {
-						return Integer.parseInt(nav.substring(0, index));
-					}
-					catch (Exception e) {
-						// shouldn't happen
-					}
+				if (index == -1) {
+					book = nav;
+				} else {
+					book = nav.substring(0, index);
+				}
+				
+				try {
+					return Integer.parseInt(book);
+				}
+				catch (Exception e) {
+					// shouldn't happen
 				}
 			}
 		}

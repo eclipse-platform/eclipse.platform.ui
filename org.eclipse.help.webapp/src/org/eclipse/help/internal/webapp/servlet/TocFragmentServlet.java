@@ -152,10 +152,18 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 
 			buf.append('\n' + "      image=\"toc_closed\""); //$NON-NLS-1$
-			
+				
+			boolean serializeChildren = true;
+			if (requestKind == REQUEST_SHOW_TOCS) {
+				serializeChildren = false;
+			}
+			if (requestKind == REQUEST_SHOW_IN_TOC && topicPath.length == 0) {
+				serializeChildren = false;
+				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
+				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
+			}
 			buf.append(">\n"); //$NON-NLS-1$
-			
-			if (requestKind != REQUEST_SHOW_TOCS) { 
+			if (serializeChildren) { 
 				serializeChildTopics(topics, topicPath, "", isSelected); //$NON-NLS-1$
 			}
 			buf.append("</node>\n"); //$NON-NLS-1$
