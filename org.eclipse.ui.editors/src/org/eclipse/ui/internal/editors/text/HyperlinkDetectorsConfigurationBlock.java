@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.layout.TableColumnAdapter;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -55,7 +55,6 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -293,15 +292,12 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		addFiller(composite, 2);
 
 		Composite editorComposite= new Composite(composite, SWT.NONE);
-		layout= new GridLayout();
-		layout.numColumns= 1;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
 		GridData gd= new GridData(SWT.FILL, SWT.TOP, true, false);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 20;
 		editorComposite.setLayoutData(gd);
-		editorComposite.setLayout(layout);
+		TableColumnLayout tableColumnlayout= new TableColumnLayout();
+		editorComposite.setLayout(tableColumnlayout);
 		
 		// Hyperlink detector table
 		Table hyperlinkDetectorTable= new Table(editorComposite, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.CHECK);
@@ -317,27 +313,19 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 			}
 		});
 		
-		
 		ColumnLayoutData columnLayoutData= new ColumnWeightData(1);
-		TableLayout tableLayout= new TableLayout();
-		hyperlinkDetectorTable.setLayout(tableLayout);
-		TableColumnAdapter tableColumnAdapter= new TableColumnAdapter(hyperlinkDetectorTable);
-		hyperlinkDetectorTable.getShell().addControlListener(tableColumnAdapter);
 		
 		TableColumn nameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 0);
 		nameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_nameColumn); 
-		tableLayout.addColumnData(columnLayoutData);
-		tableColumnAdapter.addColumnData(columnLayoutData);
+		tableColumnlayout.setColumnData(nameColumn, columnLayoutData);
 		
 		TableColumn modifierKeysColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 1);
 		modifierKeysColumn.setText(TextEditorMessages.HyperlinkDetectorTable_modifierKeysColumn);
-		tableLayout.addColumnData(columnLayoutData);
-		tableColumnAdapter.addColumnData(columnLayoutData);
+		tableColumnlayout.setColumnData(modifierKeysColumn, columnLayoutData);
 		
 		TableColumn targetNameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 2);
 		targetNameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_targetNameColumn);
-		tableLayout.addColumnData(columnLayoutData);
-		tableColumnAdapter.addColumnData(columnLayoutData);
+		tableColumnlayout.setColumnData(targetNameColumn, columnLayoutData);
 
 		fHyperlinkDetectorsViewer= new CheckboxTableViewer(hyperlinkDetectorTable);
 		fHyperlinkDetectorsViewer.setUseHashlookup(true);
