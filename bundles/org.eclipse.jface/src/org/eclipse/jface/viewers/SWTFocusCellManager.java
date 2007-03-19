@@ -23,11 +23,13 @@ import org.eclipse.swt.widgets.Listener;
  */
 abstract class SWTFocusCellManager {
 	
-	private CellNavigationStrategy navigationDelegate;
+	private CellNavigationStrategy navigationStrategy;
 
 	private ColumnViewer viewer;
 
 	private ViewerCell focusCell;
+	
+	private FocusCellHighlighter cellHighlighter;
 
 	/**
 	 * @param viewer
@@ -38,8 +40,18 @@ abstract class SWTFocusCellManager {
 			FocusCellHighlighter focusDrawingDelegate,
 			CellNavigationStrategy navigationDelegate) {
 		this.viewer = viewer;
-		this.navigationDelegate = navigationDelegate;
+		this.cellHighlighter = focusDrawingDelegate;
+		this.navigationStrategy = navigationDelegate;
 		hookListener(viewer);
+	}
+	
+	/**
+	 * This method is called by the framework to initialize this cell
+	 * manager.
+	 */
+	void init() {
+		this.cellHighlighter.init();
+		this.navigationStrategy.init();
 	}
 
 	private void handleMouseDown(Event event) {
@@ -47,7 +59,7 @@ abstract class SWTFocusCellManager {
 		if (cell != null) {
 
 			if (!cell.equals(focusCell)) {
-				this.focusCell = cell;
+				setFocusCell(cell);
 				viewer.getControl().redraw();
 			}
 		}
@@ -56,22 +68,22 @@ abstract class SWTFocusCellManager {
 	private void handleKeyDown(Event event) {
 		ViewerCell tmp = null;
 
-		if (navigationDelegate.isCollapseEvent(viewer, focusCell, event)) {
-			navigationDelegate.collapse(viewer, focusCell, event);
-		} else if (navigationDelegate.isExpandEvent(viewer, focusCell, event)) {
-			navigationDelegate.expand(viewer, focusCell, event);
-		} else if (navigationDelegate.isNavigationEvent(viewer, event)) {
-			tmp = navigationDelegate.findSelectedCell(viewer, focusCell, event);
+		if (navigationStrategy.isCollapseEvent(viewer, focusCell, event)) {
+			navigationStrategy.collapse(viewer, focusCell, event);
+		} else if (navigationStrategy.isExpandEvent(viewer, focusCell, event)) {
+			navigationStrategy.expand(viewer, focusCell, event);
+		} else if (navigationStrategy.isNavigationEvent(viewer, event)) {
+			tmp = navigationStrategy.findSelectedCell(viewer, focusCell, event);
 
 			if (tmp != null) {
 				if (!tmp.equals(focusCell)) {
-					this.focusCell = tmp;
+					setFocusCell(tmp);
 					viewer.getControl().redraw();
 				}
 			}
 		}
 
-		if (navigationDelegate.shouldCancelEvent(viewer, event)) {
+		if (navigationStrategy.shouldCancelEvent(viewer, event)) {
 			event.doit = false;
 		}
 	}
@@ -85,7 +97,7 @@ abstract class SWTFocusCellManager {
 							"Internal Structure invalid. Row item has no row ViewerRow assigned"); //$NON-NLS-1$
 			ViewerCell tmp = row.getCell(focusCell.getColumnIndex());
 			if (!focusCell.equals(tmp)) {
-				this.focusCell = tmp;
+				setFocusCell(tmp);
 				viewer.getControl().redraw();
 			}
 		}
@@ -93,7 +105,7 @@ abstract class SWTFocusCellManager {
 
 	private void handleFocusIn(Event event) {
 		if( focusCell == null ) {
-			focusCell = getInitialFocusCell();
+			setFocusCell(getInitialFocusCell());
 		}
 	}
 	
@@ -136,6 +148,7 @@ abstract class SWTFocusCellManager {
 	
 	void setFocusCell(ViewerCell focusCell) {
 		this.focusCell = focusCell;
+		this.cellHighlighter.focusCellChanged(focusCell);
 	}
 	
 	ColumnViewer getViewer() {

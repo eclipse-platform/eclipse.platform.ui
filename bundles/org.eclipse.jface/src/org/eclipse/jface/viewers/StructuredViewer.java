@@ -27,6 +27,7 @@ import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -2191,6 +2192,19 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected ColorAndFontCollector getColorAndFontCollector() {
 		return colorAndFontCollector;
+	}
+	
+	protected void handleDispose(DisposeEvent event) {
+		super.handleDispose(event);
+		sorter = null;
+		comparer = null;
+		if (filters != null)
+			filters.clear();
+		elementMap = newHashtable(1);
+		openListeners.clear();
+		doubleClickListeners.clear();
+		colorAndFontCollector.clear();
+		postSelectionChangedListeners.clear();
 	}
 
 }

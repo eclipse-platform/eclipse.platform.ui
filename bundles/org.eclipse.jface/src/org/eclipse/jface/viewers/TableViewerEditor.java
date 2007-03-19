@@ -34,7 +34,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 	TableViewerEditor(TableViewer viewer, SWTFocusCellManager focusCellManager, ColumnViewerEditorActivationStrategy editorActivationStrategy, int feature) {
 		super(viewer,editorActivationStrategy,feature);
 		tableEditor = new TableEditor(viewer.getTable());
-		this.focusCellManager = focusCellManager; 
+		this.focusCellManager = focusCellManager;
 	}
 	
 	/**
@@ -46,6 +46,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 	public static void create(TableViewer viewer, SWTFocusCellManager focusCellManager, ColumnViewerEditorActivationStrategy editorActivationStrategy, int feature) {
 		TableViewerEditor editor = new TableViewerEditor(viewer,focusCellManager,editorActivationStrategy,feature);
 		viewer.setColumnViewerEditor(editor);
+		focusCellManager.init();
 	}
 	
 	/**

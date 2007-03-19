@@ -148,4 +148,11 @@ public class CellNavigationStrategy {
 		return event.keyCode == SWT.ARROW_LEFT
 				|| event.keyCode == SWT.ARROW_RIGHT;
 	}
+	
+	/**
+	 * This method is called by the framework to initialize this navigation
+	 * strategy object. Subclasses may extend.
+	 */
+	protected void init() {
+	}
 }
