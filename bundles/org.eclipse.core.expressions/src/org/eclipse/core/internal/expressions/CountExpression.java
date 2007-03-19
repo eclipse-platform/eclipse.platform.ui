@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.ICountable;
 import org.eclipse.core.expressions.IEvaluationContext;
 
 
@@ -77,9 +78,15 @@ public class CountExpression extends Expression {
 
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();
-		Expressions.checkCollection(var, this);
-		Collection collection= (Collection)var;
-		int size= collection.size();
+		int size;
+		if (var instanceof Collection) {
+			size= ((Collection)var).size();
+		} else {
+			ICountable countable= Expressions.getAsICountable(var, this);
+			if (countable == null)
+				return EvaluationResult.NOT_LOADED;
+			size= countable.count();
+		}
 		switch (fMode) {
 			case UNKNOWN:
 				return EvaluationResult.FALSE;

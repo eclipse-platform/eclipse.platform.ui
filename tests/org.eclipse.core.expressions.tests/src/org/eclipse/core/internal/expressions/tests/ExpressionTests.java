@@ -12,6 +12,7 @@ package org.eclipse.core.internal.expressions.tests;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +40,7 @@ import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.internal.expressions.CountExpression;
 import org.eclipse.core.internal.expressions.EnablementExpression;
 import org.eclipse.core.internal.expressions.EqualsExpression;
+import org.eclipse.core.internal.expressions.ExpressionStatus;
 import org.eclipse.core.internal.expressions.Expressions;
 import org.eclipse.core.internal.expressions.InstanceofExpression;
 import org.eclipse.core.internal.expressions.IterateExpression;
@@ -56,6 +58,10 @@ import org.w3c.dom.NodeList;
 
 public class ExpressionTests extends TestCase {
 
+	public static class CollectionWrapper {
+		public Collection collection;
+	}
+	
 	public static Test suite() {
 		return new TestSuite(ExpressionTests.class);
 	}
@@ -559,6 +565,42 @@ public class ExpressionTests extends TestCase {
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
 	
+	public void testCountExpressionNoneWithAdapterManager() throws Exception {
+		CountExpression exp= new CountExpression("!"); //$NON-NLS-1$
+
+		List list= new ArrayList();
+		CollectionWrapper wrapper= new CollectionWrapper();
+		wrapper.collection= list;
+
+		EvaluationContext context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+
+		list.clear();
+		list.add("one"); //$NON-NLS-1$
+		context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+
+		list.clear();
+		list.add("one"); //$NON-NLS-1$
+		list.add("two"); //$NON-NLS-1$
+		context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+
+	public void testCountExpressionFailure() throws Exception {
+		CountExpression exp= new CountExpression("!"); //$NON-NLS-1$
+
+		EvaluationContext context= new EvaluationContext(null, new Object());
+		try {
+			EvaluationResult result= exp.evaluate(context);
+			fail("Count should've failed for non-Collection variable.  Result = " +
+
+			result.toString());
+		} catch (CoreException e) {
+			assertEquals(ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION, e.getStatus().getCode());
+		}
+	}
+
 	public void testInstanceofTrue() throws Exception {
 		B b= new B();
 		EvaluationContext context= new EvaluationContext(null, b);
@@ -695,6 +737,76 @@ public class ExpressionTests extends TestCase {
 		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
 	}
 	
+	public void testIterateExpressionWithAdapterManager() throws Exception {
+		final List result= new ArrayList();
+		Expression myExpression= new Expression() {
+			public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
+				result.add(context.getDefaultVariable());
+				return EvaluationResult.FALSE;
+			}
+		};
+		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
+		exp.add(myExpression);
+		final List input= new ArrayList();
+		input.add("one"); //$NON-NLS-1$
+		input.add("two"); //$NON-NLS-1$
+		CollectionWrapper wrapper= new CollectionWrapper();
+		wrapper.collection= input;
+		EvaluationContext context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+		assertTrue(result.equals(input));
+	}
+
+	public void testIterateExpressionWithAdapterManagerEmptyAnd() throws Exception {
+		IterateExpression exp= new IterateExpression("and"); //$NON-NLS-1$
+		final List input= new ArrayList();
+		CollectionWrapper wrapper= new CollectionWrapper();
+		wrapper.collection= input;
+		EvaluationContext context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+
+	public void testIterateExpressionWithAdapterManagerEmptyOr() throws Exception {
+		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
+		final List input= new ArrayList();
+		CollectionWrapper wrapper= new CollectionWrapper();
+		wrapper.collection= input;
+		EvaluationContext context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+
+	public void testIterateExpressionWithAdapterManagerIfEmptyFalse() throws Exception {
+		IterateExpression exp= new IterateExpression("or", "false"); //$NON-NLS-1$
+		final List input= new ArrayList();
+		CollectionWrapper wrapper= new CollectionWrapper();
+		wrapper.collection= input;
+		EvaluationContext context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+
+	public void testIterateExpressionWithAdapterManagerIfEmptyTrue() throws Exception {
+		IterateExpression exp= new IterateExpression("or", "true"); //$NON-NLS-1$
+		final List input= new ArrayList();
+		CollectionWrapper wrapper= new CollectionWrapper();
+		wrapper.collection= input;
+		EvaluationContext context= new EvaluationContext(null, wrapper);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+
+	public void testIterateExpressionFailure() throws Exception {
+		IterateExpression exp= new IterateExpression((String)null);
+
+		EvaluationContext context= new EvaluationContext(null, new Object());
+		try {
+			EvaluationResult result= exp.evaluate(context);
+			fail("Count should've failed for non-Collection variable.  Result = " +
+
+			result.toString());
+		} catch (CoreException e) {
+			assertEquals(ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION, e.getStatus().getCode());
+		}
+	}
+
 	public void testReadXMLExpression() throws Exception {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$

@@ -64,6 +64,12 @@
             adaptableType="org.eclipse.core.internal.expressions.tests.Adaptee">
             <adapter type="org.eclipse.core.internal.expressions.tests.Adapter"/>
 		</factory>
+		<factory
+			adaptableType="org.eclipse.core.internal.expressions.tests.ExpressionTests$CollectionWrapper"
+			class="org.eclipse.core.internal.expressions.tests.CollectionAdapterFactory">
+			<adapter type="org.eclipse.core.expressions.IIterable"/>
+			<adapter type="org.eclipse.core.expressions.ICountable"/>
+		</factory>
    </extension>
    
    <extension-point id="testParticipants" name="%testParticipant" schema="schema/testParticipants.exsd"/>

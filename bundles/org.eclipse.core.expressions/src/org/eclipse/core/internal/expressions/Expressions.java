@@ -17,10 +17,13 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ICountable;
+import org.eclipse.core.expressions.IIterable;
 
 public class Expressions {
 	
@@ -89,6 +92,64 @@ public class Expressions {
 		throw new CoreException(new ExpressionStatus(
 			ExpressionStatus.VARIABLE_IS_NOT_A_LIST, 
 			Messages.format(ExpressionMessages.Expression_variable_not_a_list, expression.toString()))); 
+	}
+	
+	/**
+	 * Converts the given variable into an <code>IIterable</code>. If a corresponding adapter can't be found an
+	 * exception is thrown. If the corresponding adapter isn't loaded yet, <code>null</code> is returned.
+	 * 
+	 * @param var the variable to turn into an <code>IIterable</code> 
+	 * @param expression the expression referring to the variable
+	 * 
+	 * @return the <code>IIterable</code> or <code>null<code> if a corresponding adapter isn't loaded yet
+	 *  
+	 * @throws CoreException if the var can't be adapted to an <code>IIterable</code>
+	 */
+	public static IIterable getAsIIterable(Object var, Expression expression) throws CoreException {
+		if (var instanceof IIterable) {
+			return (IIterable)var;
+		} else {
+			IAdapterManager manager= Platform.getAdapterManager();
+			IIterable result= (IIterable)manager.getAdapter(var, IIterable.class);
+			if (result != null)
+				return result;
+			
+			if (manager.queryAdapter(var, IIterable.class.getName()) == IAdapterManager.NOT_LOADED)
+				return null;
+			
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION,
+				Messages.format(ExpressionMessages.Expression_variable_not_iterable, expression.toString()))); 
+		}
+	}
+	
+	/**
+	 * Converts the given variable into an <code>ICountable</code>. If a corresponding adapter can't be found an
+	 * exception is thrown. If the corresponding adapter isn't loaded yet, <code>null</code> is returned.
+	 * 
+	 * @param var the variable to turn into an <code>ICountable</code> 
+	 * @param expression the expression referring to the variable
+	 * 
+	 * @return the <code>ICountable</code> or <code>null<code> if a corresponding adapter isn't loaded yet
+	 *  
+	 * @throws CoreException if the var can't be adapted to an <code>ICountable</code>
+	 */
+	public static ICountable getAsICountable(Object var, Expression expression) throws CoreException {
+		if (var instanceof ICountable) {
+			return (ICountable)var;
+		} else {
+			IAdapterManager manager= Platform.getAdapterManager();
+			ICountable result= (ICountable)manager.getAdapter(var, ICountable.class);
+			if (result != null)
+				return result;
+			
+			if (manager.queryAdapter(var, ICountable.class.getName()) == IAdapterManager.NOT_LOADED)
+				return null;
+			
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION,
+				Messages.format(ExpressionMessages.Expression_variable_not_countable, expression.toString()))); 
+		}
 	}
 	
 	public static boolean getOptionalBooleanAttribute(IConfigurationElement element, String attributeName) {

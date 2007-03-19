@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.expressions.IIterable;
 
 public class IterateExpression extends CompositeExpression {
 	
@@ -135,38 +136,71 @@ public class IterateExpression extends CompositeExpression {
 	 */
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object var= context.getDefaultVariable();
-		Expressions.checkCollection(var, this);
-		Collection col= (Collection)var;
-		switch (col.size()) {
-			case 0:
+		if (var instanceof Collection) {
+			Collection col= (Collection)var; 
+			switch (col.size()) {
+				case 0:
+					if (fEmptyResult == null) {
+						return fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+					} else {
+						return fEmptyResult.booleanValue() ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+					}
+				case 1:
+					if (col instanceof List)
+						return evaluateAnd(new DefaultVariable(context, ((List)col).get(0)));
+					// fall through
+				default:
+					IteratePool iter= new IteratePool(context, col.iterator());
+					EvaluationResult result= fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+					while (iter.hasNext()) {
+						iter.next();
+						switch(fOperator) {
+							case OR:
+								result= result.or(evaluateAnd(iter));
+								if (result == EvaluationResult.TRUE)
+									return result;
+								break;
+							case AND:
+								result= result.and(evaluateAnd(iter));
+								if (result != EvaluationResult.TRUE)
+									return result;
+								break;
+						}
+					}
+					return result;
+			}
+		} else {
+			IIterable iterable= Expressions.getAsIIterable(var, this);
+			if (iterable == null)
+				return EvaluationResult.NOT_LOADED;
+			int count= 0;
+			IteratePool iter= new IteratePool(context, iterable.iterator());
+			EvaluationResult result= fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+			while (iter.hasNext()) {
+				iter.next();
+				count++;
+				switch(fOperator) {
+					case OR:
+						result= result.or(evaluateAnd(iter));
+						if (result == EvaluationResult.TRUE)
+							return result;
+						break;
+					case AND:
+						result= result.and(evaluateAnd(iter));
+						if (result != EvaluationResult.TRUE)
+							return result;
+						break;
+				}
+			}
+			if (count > 0) {
+				return result;
+			} else {
 				if (fEmptyResult == null) {
 					return fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
 				} else {
 					return fEmptyResult.booleanValue() ? EvaluationResult.TRUE : EvaluationResult.FALSE;
 				}
-			case 1:
-				if (col instanceof List)
-					return evaluateAnd(new DefaultVariable(context, ((List)col).get(0)));
-				// fall through
-			default:
-				IteratePool iter= new IteratePool(context, col.iterator());
-				EvaluationResult result= fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
-				while (iter.hasNext()) {
-					iter.next();
-					switch(fOperator) {
-						case OR:
-							result= result.or(evaluateAnd(iter));
-							if (result == EvaluationResult.TRUE)
-								return result;
-							break;
-						case AND:
-							result= result.and(evaluateAnd(iter));
-							if (result != EvaluationResult.TRUE)
-								return result;
-							break;
-					}
-				}
-				return result;
+			}
 		}
 	}
 
