@@ -3137,7 +3137,11 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Get the control where the search pattern is entered.
+	 * Get the control where the search pattern is entered. Any filtering
+	 * should be done using an {@link ItemsFilter}. This control should only
+	 * be accessed for listeners that wish to handle events that do not
+	 * affect filtering such as custom traversal.
+	 * 
 	 * @return Control or <code>null</code> if the pattern control
 	 * 	has not been created.
 	 */
