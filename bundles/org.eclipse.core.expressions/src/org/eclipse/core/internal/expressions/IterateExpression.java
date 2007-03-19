@@ -75,6 +75,7 @@ public class IterateExpression extends CompositeExpression {
 	}
 	
 	private static final String ATT_OPERATOR= "operator"; //$NON-NLS-1$
+	private static final String ATT_IF_EMPTY= "ifEmpty"; //$NON-NLS-1$
 	private static final int OR= 1;
 	private static final int AND= 2;
 
@@ -84,19 +85,28 @@ public class IterateExpression extends CompositeExpression {
 	private static final int HASH_INITIAL= IterateExpression.class.getName().hashCode();
 	
 	private int fOperator;
+	private Boolean fEmptyResult;
 	
 	public IterateExpression(IConfigurationElement configElement) throws CoreException {
 		String opValue= configElement.getAttribute(ATT_OPERATOR);
 		initializeOperatorValue(opValue);
+		initializeEmptyResultValue(configElement.getAttribute(ATT_IF_EMPTY));
 	}
 
 	public IterateExpression(Element element) throws CoreException {
 		String opValue= element.getAttribute(ATT_OPERATOR);
 		initializeOperatorValue(opValue.length() > 0 ? opValue : null);
+		String ifEmpty= element.getAttribute(ATT_IF_EMPTY);
+		initializeEmptyResultValue(ifEmpty.length() > 0 ? ifEmpty : null);
 	}
 
 	public IterateExpression(String opValue) throws CoreException {
 		initializeOperatorValue(opValue);
+	}
+	
+	public IterateExpression(String opValue, String ifEmpty) throws CoreException {
+		initializeOperatorValue(opValue);
+		initializeEmptyResultValue(ifEmpty);
 	}
 	
 	private void initializeOperatorValue(String opValue) throws CoreException {
@@ -111,6 +121,14 @@ public class IterateExpression extends CompositeExpression {
 			}
 		}
 	}
+	
+	private void initializeEmptyResultValue(String value) {
+		if (value == null) {
+			fEmptyResult= null;
+		} else {
+			fEmptyResult= Boolean.valueOf(value);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see Expression#evaluate(IVariablePool)
@@ -121,7 +139,11 @@ public class IterateExpression extends CompositeExpression {
 		Collection col= (Collection)var;
 		switch (col.size()) {
 			case 0:
-				return fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+				if (fEmptyResult == null) {
+					return fOperator == AND ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+				} else {
+					return fEmptyResult.booleanValue() ? EvaluationResult.TRUE : EvaluationResult.FALSE;
+				}
 			case 1:
 				if (col instanceof List)
 					return evaluateAnd(new DefaultVariable(context, ((List)col).get(0)));

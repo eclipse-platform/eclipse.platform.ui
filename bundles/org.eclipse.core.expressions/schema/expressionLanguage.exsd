@@ -31,6 +31,7 @@
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -55,6 +56,7 @@
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </choice>
       </complexType>
    </element>
@@ -79,6 +81,7 @@
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -103,6 +106,7 @@
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -287,7 +291,7 @@ rules:
          </appInfo>
          <documentation>
             This element changes the object to be inspected for all its child element to the object
-            referneced by the given variable. If the variable can not be resolved then the expression
+            referenced by the given variable. If the variable can not be resolved then the expression
             will throw a ExpressionException when evaluating it. The children of a with expression 
             are combined using the and operator.
          </documentation>
@@ -306,6 +310,7 @@ rules:
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
          <attribute name="variable" type="string" use="required">
             <annotation>
@@ -325,7 +330,7 @@ rules:
          </appInfo>
          <documentation>
             This element changes the object to be inspected for all its child element to the object
-            referneced by the given variable. If the variable can not be resolved then the expression
+            referenced by the given variable. If the variable can not be resolved then the expression
             will throw a ExpressionException when evaluating it. The children of a with expression 
             are combined using the and operator.
          </documentation>
@@ -344,6 +349,7 @@ rules:
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
          <attribute name="variable" type="string" use="required">
             <annotation>
@@ -393,6 +399,7 @@ rules:
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
          <attribute name="type" type="string" use="required">
             <annotation>
@@ -429,6 +436,7 @@ rules:
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
          <attribute name="operator">
             <annotation>
@@ -445,6 +453,35 @@ rules:
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="ifEmpty" type="boolean">
+            <annotation>
+               <documentation>
+                 the value return from the iterate expression if the collection is empty. If
+                 not specified then true is returned when the operator equals &quot;and&quot; 
+                 and false is return if the operator equals &quot;or&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="reference">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="definitionId"/>
+         </appInfo>
+         <documentation>
+            This element is used to reference an expression from the &lt;b&gt;org.eclipse.core.expressions.definitions&lt;/b&gt; extension point.  The expression definition will be evaluated within the current expression element using the current evaluation context.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="definitionId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique id of an expression from &lt;b&gt;org.eclipse.core.expressions.definitions&lt;/b&gt;.
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>

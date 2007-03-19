@@ -39,6 +39,9 @@ public class ExpressionStatus extends Status {
 	/** Error code indicating that the value specified for an attribute is invalid */
 	public static final int WRONG_ATTRIBUTE_VALUE= 51;
 
+	/** Error code indicating that we are unable to find an expression */
+	public static final int MISSING_EXPRESSION = 52;
+	
 	/** Error code indicating that the number of arguments passed to resolve variable is incorrect. */
 	public static final int VARAIBLE_POOL_WRONG_NUMBER_OF_ARGUMENTS= 100;
 	

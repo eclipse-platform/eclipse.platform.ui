@@ -194,5 +194,49 @@
       	</enablement>
       </testParticipant>
    	</extension>
+ <extension
+       point="org.eclipse.core.expressions.definitions">
+    <definition
+          id="org.eclipse.core.expressions.tests.activeProblemsView">
+       <with
+             variable="activePartId">
+          <equals
+                value="org.eclipse.ui.views.ProblemsView">
+          </equals>
+       </with>
+    </definition>
+    <definition
+          id="org.eclipse.core.expressions.tests.expressionSelection">
+       <iterate ifEmpty="false">
+          <instanceof
+                value="org.eclipse.core.expressions.Expression">
+          </instanceof>
+       </iterate>
+    </definition>
+ </extension>
+ <extension
+       point="org.eclipse.core.expressions.tests.testParticipants">
+    <testParticipant
+          id="refTest1">
+       <enablement>
+          <reference
+                definitionId="org.eclipse.core.expressions.tests.activeProblemsView">
+          </reference>
+       </enablement>
+    </testParticipant>
+    <testParticipant
+          id="refTest2">
+       <enablement>
+          <and>
+          <reference
+                definitionId="org.eclipse.core.expressions.tests.activeProblemsView">
+          </reference>
+          <reference
+                definitionId="org.eclipse.core.expressions.tests.expressionSelection">
+          </reference>
+          </and>
+       </enablement>
+    </testParticipant>
+ </extension>
    	 
 </plugin>

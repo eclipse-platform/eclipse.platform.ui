@@ -56,4 +56,11 @@ public final class ExpressionTagNames {
 	
 	/** The tag name of the equals expression (value: <code>equals</code>) */
 	public static final String EQUALS= "equals"; //$NON-NLS-1$
+
+	/**
+	 * The tag name of the reference expression (value: <code>reference</code>)
+	 * 
+	 * @since 3.3
+	 */
+	public static final String REFERENCE= "reference"; //$NON-NLS-1$
 }

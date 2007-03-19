@@ -25,6 +25,7 @@ public final class ExpressionMessages extends NLS {
 	public static String Expression_variable_not_a_collection;
 	public static String Expression_variable_not_a_list;
 	public static String Expression_unknown_element;
+	public static String Missing_Expression;
 	public static String Expression_string_not_correctly_escaped;
 	public static String Expression_string_not_terminated;
 	

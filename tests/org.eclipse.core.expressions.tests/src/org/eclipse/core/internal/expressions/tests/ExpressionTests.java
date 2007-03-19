@@ -12,6 +12,7 @@ package org.eclipse.core.internal.expressions.tests;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -652,6 +653,48 @@ public class ExpressionTests extends TestCase {
 		assertTrue(result.equals(input));
 	}
 	
+	public void testIterateExpressionEmptyOr() throws Exception {
+		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
+		List input= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
+	public void testIterateExpressionEmptyAnd() throws Exception {
+		IterateExpression exp= new IterateExpression("and"); //$NON-NLS-1$
+		List input= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+	
+	public void testIterateExpressionAnd_IfEmptyTrue() throws Exception {
+		IterateExpression exp= new IterateExpression("and", "true"); //$NON-NLS-1$
+		List input= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+	
+	public void testIterateExpressionAnd_IfEmptyFalse() throws Exception {
+		IterateExpression exp= new IterateExpression("and", "false"); //$NON-NLS-1$
+		List input= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
+	public void testIterateExpressionOr_IfEmptyTrue() throws Exception {
+		IterateExpression exp= new IterateExpression("or", "true"); //$NON-NLS-1$
+		List input= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.TRUE == exp.evaluate(context));
+	}
+	
+	public void testIterateExpressionOr_IfEmptyFalse() throws Exception {
+		IterateExpression exp= new IterateExpression("or", "false"); //$NON-NLS-1$
+		List input= new ArrayList();
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
 	public void testReadXMLExpression() throws Exception {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -716,5 +759,72 @@ public class ExpressionTests extends TestCase {
 	}
 	
 	protected void ref(Expression exp) {
+	}
+	
+	
+	public void testDefinitionExpression() throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions", "definitions");
+		IConfigurationElement expr= findExtension(ces, "org.eclipse.core.expressions.tests.activeProblemsView");
+		assertNotNull(expr);
+		Expression probExpr= ExpressionConverter.getDefault().perform(expr.getChildren()[0]);
+		EvaluationContext context= new EvaluationContext(null, Collections.EMPTY_LIST);
+		try {
+			probExpr.evaluate(context);
+			fail("Should report error with no variable");
+		} catch (CoreException e) {
+			// correct, throw exception
+		}
+		context.addVariable("activePartId", "org.eclipse.ui.views.TasksView");
+		assertEquals(EvaluationResult.FALSE, probExpr.evaluate(context));
+
+		context.addVariable("activePartId", "org.eclipse.ui.views.ProblemsView");
+		assertEquals(EvaluationResult.TRUE, probExpr.evaluate(context));
+	}
+
+	public void testReferenceExpression() throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		IConfigurationElement enable= findExtension(ces, "refTest1").getChildren("enablement")[0]; //$NON-NLS-1$ //$NON-NLS-2$
+		EnablementExpression probExpr= (EnablementExpression)ExpressionConverter.getDefault().perform(enable);
+		EvaluationContext context= new EvaluationContext(null, Collections.EMPTY_LIST);
+
+		try {
+			probExpr.evaluate(context);
+			fail("Should report error with no variable");
+		} catch (CoreException e) {
+			// correct, throw exception
+		}
+		context.addVariable("activePartId", "org.eclipse.ui.views.TasksView");
+		assertEquals(EvaluationResult.FALSE, probExpr.evaluate(context));
+
+		context.addVariable("activePartId", "org.eclipse.ui.views.ProblemsView");
+		assertEquals(EvaluationResult.TRUE, probExpr.evaluate(context));
+	}
+
+	public void testTwoReferences() throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		IConfigurationElement enable= findExtension(ces, "refTest2").getChildren("enablement")[0]; //$NON-NLS-1$ //$NON-NLS-2$
+		EnablementExpression probExpr= (EnablementExpression)ExpressionConverter.getDefault().perform(enable);
+		EvaluationContext context= new EvaluationContext(null, Collections.EMPTY_LIST);
+
+		try {
+			probExpr.evaluate(context);
+			fail("Should report error with no variable");
+		} catch (CoreException e) {
+			// correct, throw exception
+		}
+		context.addVariable("activePartId", "org.eclipse.ui.views.TasksView");
+		assertEquals(EvaluationResult.FALSE, probExpr.evaluate(context));
+
+		context.addVariable("activePartId", "org.eclipse.ui.views.ProblemsView");
+		// we still have no selection in the default variable
+		assertEquals(EvaluationResult.FALSE, probExpr.evaluate(context));
+
+		context= new EvaluationContext(context, Collections.singletonList(probExpr));
+		assertEquals(EvaluationResult.TRUE, probExpr.evaluate(context));
 	}
 }

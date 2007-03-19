@@ -65,6 +65,8 @@ public class StandardElementHandler extends ElementHandler {
 			return result;
 		} else if (ExpressionTagNames.EQUALS.equals(name)) {
 			return new EqualsExpression(element);
+		} else if (ExpressionTagNames.REFERENCE.equals(name)) {
+			return new ReferenceExpression(element);
 		}
 		return null;
 	}
@@ -117,6 +119,8 @@ public class StandardElementHandler extends ElementHandler {
 			return result;
 		} else if (ExpressionTagNames.EQUALS.equals(name)) {
 			return new EqualsExpression(element);
+		} else if (ExpressionTagNames.REFERENCE.equals(name)) {
+			return new ReferenceExpression(element);
 		}
 		return null;
 	}

@@ -3,6 +3,7 @@
 <plugin>
    
      <extension-point id="propertyTesters" name="%propertyTesterExtensionPoint" schema="schema/propertyTesters.exsd"/>
+     <extension-point id="definitions" name="%defintionsExtensionPoint" schema="schema/definitions.exsd"/>
  
      <extension
            point="org.eclipse.core.expressions.propertyTesters">
