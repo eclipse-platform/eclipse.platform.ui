@@ -87,6 +87,7 @@
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -111,6 +112,7 @@
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>

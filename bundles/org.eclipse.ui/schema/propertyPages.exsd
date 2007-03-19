@@ -221,6 +221,7 @@ define the target object for a property page.
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </choice>
       </complexType>
    </element>

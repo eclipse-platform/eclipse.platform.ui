@@ -110,6 +110,7 @@ The identifier of the help context that relates to this specific handler.  While
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </choice>
       </complexType>
    </element>
@@ -129,6 +130,7 @@ The identifier of the help context that relates to this specific handler.  While
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </choice>
       </complexType>
    </element>

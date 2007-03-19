@@ -204,6 +204,7 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -228,6 +229,7 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -252,6 +254,7 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -456,6 +459,7 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -510,6 +514,7 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>
@@ -606,6 +611,7 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </sequence>
       </complexType>
    </element>

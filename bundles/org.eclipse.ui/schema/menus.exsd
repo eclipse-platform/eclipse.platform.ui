@@ -337,6 +337,7 @@ By positioning the trim contribution within or with respect to these groups, the
             <element ref="resolve"/>
             <element ref="adapt"/>
             <element ref="iterate"/>
+            <element ref="reference"/>
          </choice>
          <attribute name="checkEnabled" type="boolean" use="default" value="false">
             <annotation>
