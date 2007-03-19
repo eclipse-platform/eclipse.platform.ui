@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,6 +64,22 @@ public final class LegacyResourceSupport {
     private static Class icontributorResourceAdapterClass = null;
 
     /**
+     * Cached value of </code> org.eclipse.ui.IContributorResourceAdapter.getAdaptedResource(IAdaptable) </code>
+     * <code>null</code> if not initialized or not present.
+     * 
+     * @since 3.3
+     */
+    private static Method getAdaptedResourceMethod = null;
+    
+    /**
+     * Cached value of </code> org.eclipse.ui.IContributorResourceAdapter2.getAdaptedResourceMapping(IAdaptable) </code>
+     * <code>null</code> if not initialized or not present.
+     * 
+     * @since 3.3
+     */
+    private static Method getAdaptedResourceMappingMethod = null;
+    
+    /**
      * Cached value of
      * <code>Class.forName("org.eclipse.ui.ide.IContributorResourceAdapter2")</code>;
      * <code>null</code> if not initialized or not present.
@@ -78,6 +95,14 @@ public final class LegacyResourceSupport {
      */
     private static Class defaultContributorResourceAdapterClass = null;
 
+    /**
+     * Cached value for reflective result of <code>DefaultContributorRessourceAdapter.getDefault()</code>.
+     * <code>null</code> if not initialized or not present.
+     * 
+     * @since 3.3
+     */
+    private static Object defaultContributorResourceAdapter = null;
+    
     /**
      * Cached value of
      * <code>Class.forName("org.eclipse.core.resources.mapping.ResourceMappingr")</code>;
@@ -272,6 +297,39 @@ public final class LegacyResourceSupport {
         return c;
     }
     
+    private static Object getDefaultContributorResourceAdapter() {
+        if (defaultContributorResourceAdapter != null) {
+            return defaultContributorResourceAdapter;
+        }
+        
+		// reflective equivalent of
+		//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+		
+			Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
+			if (c != null) {    			
+				try {
+					Method m  = c.getDeclaredMethod("getDefault", new Class[0]);//$NON-NLS-1$
+					defaultContributorResourceAdapter = m.invoke(null, new Object[0]);
+					return defaultContributorResourceAdapter;
+				} catch (SecurityException e) {
+					// shouldn't happen - but play it safe
+				} catch (NoSuchMethodException e) {
+					// shouldn't happen - but play it safe
+				} catch (IllegalArgumentException e) {
+					// shouldn't happen - but play it safe
+				} catch (IllegalAccessException e) {
+					// shouldn't happen - but play it safe
+				} catch (InvocationTargetException e) {
+					// shouldn't happen - but play it safe
+				} 
+    			
+    			
+			}
+		
+		return null;
+
+    }
+    
     /**
      * Returns <code>true</code> if the provided type name is an
      * <code>IResource</code>, and <code>false</code> otherwise.
@@ -349,37 +407,79 @@ public final class LegacyResourceSupport {
 			IAdaptable adaptable = (IAdaptable) object;
 			Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
 			if (contributorResourceAdapterClass == null) {
-				return adaptable.getAdapter(LegacyResourceSupport.getResourceClass());
+				return adaptable.getAdapter(resourceClass);
 			}
 			Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
 			if (resourceAdapter == null) {
-				// reflective equivalent of
-				//    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
-				try {
-					Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
-					Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
-					resourceAdapter = m.invoke(null, new Object[0]);
-				} catch (Exception e) {
-					// shouldn't happen - but play it safe
+			    resourceAdapter = LegacyResourceSupport.getDefaultContributorResourceAdapter();
+			    if (resourceAdapter == null) {
 					return null;
 				}
 			}
-			Object result;
 			// reflective equivalent of
 			//    result = ((IContributorResourceAdapter) resourceAdapter).getAdaptedResource(adaptable);
-			try {
-				Method m = contributorResourceAdapterClass.getDeclaredMethod("getAdaptedResource", new Class[]{IAdaptable.class}); //$NON-NLS-1$
-				result = m.invoke(resourceAdapter, new Object[]{adaptable});
-			} catch (Exception e) {
-				// shouldn't happen - but play it safe
-				return null;
-			}
-			return result;
+			
+				Method m = getContributorResourceAdapterGetAdaptedResourceMethod();
+				if (m != null) {
+					try {
+						return m.invoke(resourceAdapter, new Object[]{adaptable});
+					} catch (IllegalArgumentException e) {
+						// shouldn't happen - but play it safe
+					} catch (IllegalAccessException e) {
+						// shouldn't happen - but play it safe
+					} catch (InvocationTargetException e) {
+						// shouldn't happen - but play it safe
+					}
+				}
+			
 		}
 		return null;
 	}
     
-    /**
+    private static Method getContributorResourceAdapterGetAdaptedResourceMethod() {
+        if (getAdaptedResourceMethod != null) {
+            return getAdaptedResourceMethod;
+        }
+      
+        Class c = getIContributorResourceAdapterClass();
+        if (c != null) {
+            try {
+				getAdaptedResourceMethod = c.getDeclaredMethod("getAdaptedResource", new Class[]{IAdaptable.class}); //$NON-NLS-1$
+				return getAdaptedResourceMethod;
+			} catch (SecurityException e) {
+				// shouldn't happen - but play it safe
+			} catch (NoSuchMethodException e) {
+				// shouldn't happen - but play it safe
+			} 
+            	
+        }
+    	
+    	return null;
+	}
+
+
+    private static Method getContributorResourceAdapter2GetAdaptedResourceMappingMethod() {
+        if (getAdaptedResourceMappingMethod != null) {
+            return getAdaptedResourceMappingMethod;
+        }
+       
+        Class c = getIContributorResourceAdapter2Class();
+        if (c != null) {
+            try {
+				getAdaptedResourceMappingMethod = c.getDeclaredMethod("getAdaptedResourceMapping", new Class[]{IAdaptable.class}); //$NON-NLS-1$
+				return getAdaptedResourceMappingMethod;
+			} catch (SecurityException e) {
+				// do nothing - play it safe
+			} catch (NoSuchMethodException e) {
+				// do nothing - play it safe
+			} 
+            	
+        }
+    	
+    	return null;
+	}
+
+	/**
      * Returns the adapted resource mapping using the <code>IContributorResourceAdapter2</code>
      * registered for the given object. If the Resources plug-in is not loaded
      * the object can not be adapted.
@@ -402,11 +502,11 @@ public final class LegacyResourceSupport {
             IAdaptable adaptable = (IAdaptable) object;
             Class contributorResourceAdapterClass = LegacyResourceSupport.getIContributorResourceAdapterClass();
             if (contributorResourceAdapterClass == null) {
-                return adaptable.getAdapter(LegacyResourceSupport.getResourceMappingClass());
+                return adaptable.getAdapter(resourceMappingClass);
             }
             Class contributorResourceAdapter2Class = LegacyResourceSupport.getIContributorResourceAdapter2Class();
             if (contributorResourceAdapter2Class == null) {
-                return adaptable.getAdapter(LegacyResourceSupport.getResourceMappingClass());
+                return adaptable.getAdapter(resourceMappingClass);
             }
             Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
             Object resourceMappingAdapter;
@@ -416,32 +516,34 @@ public final class LegacyResourceSupport {
             } else {
             	// Either there is no registered adapter or it doesn't handle resource mappings.
             	// In this case, we will use the default contribution adapter
-                try {
-		            // reflective equivalent of
-		            //    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
-                    Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
-                    Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
-                    resourceMappingAdapter = m.invoke(null, new Object[0]);
-                } catch (Exception e) {
-                    // shouldn't happen - but play it safe
+                resourceMappingAdapter = getDefaultContributorResourceAdapter();
+                if (resourceMappingAdapter == null) {
                     return null;
                 }
             }
             
-            try {
+           
 	            // reflective equivalent of
 	            //    result = ((IContributorResourceAdapter2) resourceAdapter).getAdaptedResource(adaptable);
 
-	            Method m = contributorResourceAdapter2Class.getDeclaredMethod("getAdaptedResourceMapping", new Class[]{IAdaptable.class}); //$NON-NLS-1$
-	            Object result = m.invoke(resourceMappingAdapter, new Object[]{adaptable});
-	            if (result != null) {
-					return result;
+	         Method m = getContributorResourceAdapter2GetAdaptedResourceMappingMethod();
+	         if (m != null) {
+	            	
+				try {
+					Object result  = m.invoke(resourceMappingAdapter, new Object[]{adaptable});
+					if (result != null) {
+		           		return result;
+		           	}
+				} catch (IllegalArgumentException e) {
+					 // shouldn't happen - but play it safe
+				} catch (IllegalAccessException e) {
+					 // shouldn't happen - but play it safe
+				} catch (InvocationTargetException e) {
+					 // shouldn't happen - but play it safe
 				}
-
-            } catch (Exception e) {
-                // shouldn't happen - but play it safe
-                return null;
-            }
+	            	
+	         }
+            
             
             // If we get here, that means that the object in question doesn't adapt to resource mapping
             // and it's contributed adapter doesn't do the adaptation either.
@@ -455,8 +557,7 @@ public final class LegacyResourceSupport {
             return null;
         }
         // Fallback to querying the adapter manager directly when the object isn't an IAdaptable
-        Object result = Platform.getAdapterManager().getAdapter(object, resourceMappingClass);
-        return result;
+        return Platform.getAdapterManager().getAdapter(object, resourceMappingClass);
     }
     
     /**
