@@ -281,4 +281,20 @@ public interface ISources {
 	 * @since 3.3
 	 */
 	public static final String ACTIVE_MENU_EDITOR_INPUT_NAME = "activeMenuEditorInput";  //$NON-NLS-1$
+
+	/**
+	 * The variable name for the active focus Control, when provided by the
+	 * IFocusService.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ACTIVE_FOCUS_CONTROL_NAME = "activeFocusControl"; //$NON-NLS-1$
+
+	/**
+	 * The variable name for the active focus Control id, when provided by the
+	 * IFocusService.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ACTIVE_FOCUS_CONTROL_ID_NAME = "activeFocusControlId"; //$NON-NLS-1$
 }

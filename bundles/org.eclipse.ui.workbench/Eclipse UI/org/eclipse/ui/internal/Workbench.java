@@ -140,6 +140,7 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.menus.FocusControlSourceProvider;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -175,6 +176,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -1625,12 +1627,23 @@ public final class Workbench extends EventManager implements IWorkbench {
 				contextService.addSourceProvider(currentSelectionSourceProvider);
 				menuService.addSourceProvider(currentSelectionSourceProvider);
 				sourceProviderService.registerProvider(currentSelectionSourceProvider);
+				
 				actionSetSourceProvider = new ActionSetSourceProvider();
 				evaluationService.addSourceProvider(actionSetSourceProvider);
 				handlerService[0].addSourceProvider(actionSetSourceProvider);
 				contextService.addSourceProvider(actionSetSourceProvider);
 				menuService.addSourceProvider(actionSetSourceProvider);
 				sourceProviderService.registerProvider(actionSetSourceProvider);
+				
+				FocusControlSourceProvider focusControl = new FocusControlSourceProvider();
+				serviceLocator.registerService(IFocusService.class, focusControl);
+				evaluationService.addSourceProvider(focusControl);
+				handlerService[0].addSourceProvider(focusControl);
+				contextService.addSourceProvider(focusControl);
+				menuService.addSourceProvider(focusControl);
+				sourceProviderService.registerProvider(focusControl);
+				
+				
 				menuSourceProvider = new MenuSourceProvider();
 				evaluationService.addSourceProvider(menuSourceProvider);
 				handlerService[0].addSourceProvider(menuSourceProvider);
