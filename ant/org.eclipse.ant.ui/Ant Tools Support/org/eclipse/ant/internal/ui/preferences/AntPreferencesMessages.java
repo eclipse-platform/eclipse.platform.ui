@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -129,7 +129,6 @@ public class AntPreferencesMessages extends NLS {
 	public static String AntEditorPreferencePage_Ant_editor_tags_4;
 	public static String AntEditorPreferencePage_Ant_editor_comments_5;
 	public static String AntEditorPreferencePage_30;
-	public static String AntEditorPreferencePage_40;
 	public static String AntEditorPreferencePage_1;
 	public static String AntEditorPreferencePage_10;
 	public static String AntEditorPreferencePage_11;

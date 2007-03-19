@@ -277,8 +277,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			};
 		ArrayList overlayKeys= new ArrayList();			
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS));
-			
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
@@ -330,9 +328,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		labelText= AntPreferencesMessages.AntEditorPreferencePage_4;
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES, 0);
 		
-		labelText= AntPreferencesMessages.AntEditorPreferencePage_40;
-		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 0);
-
 		return appearanceComposite;
 	}
 			

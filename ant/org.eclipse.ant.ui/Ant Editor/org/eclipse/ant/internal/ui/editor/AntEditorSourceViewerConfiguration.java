@@ -262,8 +262,8 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 
 		// prefix[0] is either '\t' or ' ' x tabWidth, depending on useSpaces
 				
-		int tabWidth= fEditor.getTabSize();
-		boolean useSpaces= fEditor.isTabConversionEnabled();
+		int tabWidth= getTabWidth(sourceViewer);
+		boolean useSpaces= fEditor.isTabsToSpacesConversionEnabled();
 		
 		for (int i= 0; i <= tabWidth; i++) {
 		    StringBuffer prefix= new StringBuffer();

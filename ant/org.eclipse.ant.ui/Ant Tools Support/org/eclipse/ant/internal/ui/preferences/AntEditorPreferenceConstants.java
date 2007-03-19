@@ -72,15 +72,6 @@ public class AntEditorPreferenceConstants {
 	 */
 	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "org.eclipse.ant.ui.codeAssistProposalsBackgroundColor"; //$NON-NLS-1$
 	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "org.eclipse.ant.ui.codeAssistProposalsForegroundColor"; //$NON-NLS-1$		
-	/**
-	 * A named preference that specifies if the editor uses spaces for tabs.
-	 * <p>
-	 * Value is of type <code>Boolean</code>. If <code>true</code>spaces instead of tabs are used
-	 * in the editor. If <code>false</code> the editor inserts a tab character when pressing the tab
-	 * key.
-	 * </p>
-	 */
-	public final static String EDITOR_SPACES_FOR_TABS= "spaces_for_tabs"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that specifies the tab size for the Ant formatter.
@@ -304,8 +295,6 @@ public class AntEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
 		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
-		
-		store.setDefault(EDITOR_SPACES_FOR_TABS, false);
 		
 		store.setDefault(FORMATTER_TAB_CHAR, true);
 		store.setDefault(FORMATTER_TAB_SIZE, 4);
