@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
@@ -60,12 +58,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.jface.text.hyperlink.HyperlinkManager;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
-import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
-import org.eclipse.jface.text.projection.ChildDocument;
-import org.eclipse.jface.text.projection.ChildDocumentManager;
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -74,6 +67,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.jface.text.hyperlink.HyperlinkManager;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.projection.ChildDocument;
+import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 
 /**
@@ -1394,7 +1394,8 @@ public class TextViewer extends Viewer implements
 			}
 		}
 	}
-
+	
+	
 	/**
 	 * Identifies the scrollbars as originators of a view port change.
 	 */
@@ -1620,6 +1621,11 @@ public class TextViewer extends Viewer implements
 	 * @since 3.3
 	 */
 	private ViewerState fViewerState;
+	/**
+	 * The editor's tab converter.
+	 * @since 3.3
+	 */
+	private IAutoEditStrategy fTabsToSpacesConverter;
 
 
 	//---- Construction and disposal ------------------
@@ -3524,6 +3530,11 @@ public class TextViewer extends Viewer implements
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		if (isIgnoringAutoEditStrategies())
 			return;
+		
+		IDocument document= getDocument();
+		
+		if (fTabsToSpacesConverter != null)
+			fTabsToSpacesConverter.customizeDocumentCommand(document, command);
 
 		List strategies= (List) selectContentTypePlugin(command.offset, fAutoIndentStrategies);
 		if (strategies == null)
@@ -3535,14 +3546,12 @@ public class TextViewer extends Viewer implements
 			break;
 
 		case 1:
-			((IAutoEditStrategy) strategies.iterator().next()).customizeDocumentCommand(getDocument(), command);
+			((IAutoEditStrategy) strategies.iterator().next()).customizeDocumentCommand(document, command);
 			break;
 
 		// make iterator robust against adding/removing strategies from within strategies
 		default:
 			strategies= new ArrayList(strategies);
-
-			IDocument document= getDocument();
 			for (final Iterator iterator= strategies.iterator(); iterator.hasNext(); )
 				((IAutoEditStrategy) iterator.next()).customizeDocumentCommand(document, command);
 
@@ -5319,4 +5328,13 @@ public class TextViewer extends Viewer implements
 			fHyperlinkManager.install(this, fHyperlinkPresenter, fHyperlinkDetectors, fHyperlinkStateMask);
 		}
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension7#setTabsToSpacesConverter(org.eclipse.jface.text.IAutoEditStrategy)
+	 * @since 3.3
+	 */
+	public void setTabsToSpacesConverter(IAutoEditStrategy converter) {
+		fTabsToSpacesConverter= converter;
+	}
+
 }

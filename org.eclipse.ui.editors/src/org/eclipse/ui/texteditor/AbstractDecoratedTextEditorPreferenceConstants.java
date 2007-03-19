@@ -72,6 +72,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public final static String EDITOR_TAB_WIDTH= "tabWidth"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that specifies if the editor uses spaces for tabs.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code>spaces instead of tabs are used
+	 * in the editor. If <code>false</code> the editor inserts a tab character when pressing the tab
+	 * key.
+	 * </p>
+	 */
+	public final static String EDITOR_SPACES_FOR_TABS= "spacesForTabs"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that holds the size of the editor's undo history.
 	 * <p>
 	 * Value is of type <code>int</code>: 0 or positive int value specifying the size of
@@ -455,6 +465,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, new RGB(232, 242, 254));
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, 200);
 

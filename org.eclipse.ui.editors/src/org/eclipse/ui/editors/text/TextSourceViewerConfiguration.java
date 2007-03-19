@@ -206,7 +206,17 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
-		return getIndentPrefixesForTab(getTabWidth(sourceViewer));
+		String[] indentPrefixes= getIndentPrefixesForTab(getTabWidth(sourceViewer));
+
+		if (fPreferenceStore != null && fPreferenceStore.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS))  {
+			// Swap first with last
+			int length= indentPrefixes.length;
+			String first= indentPrefixes[0];
+			indentPrefixes[0]= indentPrefixes[length - 2];
+			indentPrefixes[length -2]= first;
+		}
+
+		return indentPrefixes;
 	}
 
 	/*

@@ -90,7 +90,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension6} since version 3.1
  * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3
- * extending the text viewer with the ability to set a {@link ITextTripleClickStrategy}.</li>
+ * extending the text viewer with the ability to set a {@link ITextTripleClickStrategy}
+ * and tabs to spaces conversion.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the

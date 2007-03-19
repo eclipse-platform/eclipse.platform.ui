@@ -110,6 +110,7 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -132,10 +133,12 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITextViewerExtension6;
+import org.eclipse.jface.text.ITextViewerExtension7;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
@@ -2445,7 +2448,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private InformationPresenter fInformationPresenter;
 
 
-
 	/**
 	 * Creates a new text editor. If not explicitly set, this editor uses
 	 * a <code>SourceViewerConfiguration</code> to configure its
@@ -3742,6 +3744,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fIsOverwriting)
 			fSourceViewer.getTextWidget().invokeAction(ST.TOGGLE_OVERWRITE);
 		handleInsertModeChanged();
+		
+		if (isTabsToSpacesConversionEnabled())
+			installTabsToSpacesConverter();
+		
 	}
 
 	/**
@@ -4064,6 +4070,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fTextListener= null;
 			}
 
+			uninstallTabsToSpacesConverter();
+
 			fTextInputListener= null;
 			fSelectionProvider= null;
 			fSourceViewer= null;
@@ -4132,7 +4140,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		fNonLocalOperationApprover= null;
 		fLinearUndoViolationApprover= null;
-
+		
 		super.dispose();
 	}
 
@@ -6396,7 +6404,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @return <code>true</code> if visible
 	 * @since 2.1
 	 */
-	protected final static boolean isVisible(ISourceViewer viewer, int offset, int length) {
+	protected static final boolean isVisible(ISourceViewer viewer, int offset, int length) {
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			IRegion overlap= extension.modelRange2WidgetRange(new Region(offset, length));
@@ -6775,4 +6783,69 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 	}
 	
+	//---- Tabs to spaces conversion support ------------------
+
+	/**
+	 * Installs a tabs to spaces converter.
+	 * 
+	 * <p>Subclasses may extend or override this method.</p>
+	 * 
+	 * @since 3.3
+	 */
+	protected void installTabsToSpacesConverter() {
+		SourceViewerConfiguration config= getSourceViewerConfiguration();
+		if (config != null && fSourceViewer instanceof ITextViewerExtension7) {
+			int tabWidth= config.getTabWidth(fSourceViewer);
+			TabsToSpacesConverter tabToSpacesConverter= new TabsToSpacesConverter();
+			tabToSpacesConverter.setLineTracker(new DefaultLineTracker());
+			tabToSpacesConverter.setNumberOfSpacesPerTab(tabWidth);
+			((ITextViewerExtension7)fSourceViewer).setTabsToSpacesConverter(tabToSpacesConverter);
+			updateIndentPrefixes();
+		}
+	}
+
+	/**
+	 * Installs a tabs to spaces converter.
+	 * 
+	 * <p>Subclasses may extend or override this method.</p>
+	 * 
+	 * @since 3.3
+	 */
+	protected void uninstallTabsToSpacesConverter() {
+		if (fSourceViewer instanceof ITextViewerExtension7) {
+			((ITextViewerExtension7)fSourceViewer).setTabsToSpacesConverter(null);
+			if (fSourceViewer.getTextWidget() != null)
+				updateIndentPrefixes();
+		}
+	}
+
+	/**
+	 * Tells whether tabs should be converted to
+	 * spaces while editing inside this editor.
+	 * 
+	 * <p>Subclasses may override this method.</p>
+	 * 
+	 * @return <code>true</code> if tabs should be converted to spaces
+	 * @since 3.3
+	 */
+	protected boolean isTabsToSpacesConversionEnabled() {
+		return false;
+	}
+
+	/**
+	 * Updates the source viewer's indent prefixes with
+	 * the values provided by the source viewer configuration.
+	 * 
+	 * @since 3.3
+	 */
+	protected final void updateIndentPrefixes() {
+		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
+		String[] types= configuration.getConfiguredContentTypes(fSourceViewer);
+		for (int i= 0; i < types.length; i++) {
+			String[] prefixes= configuration.getIndentPrefixes(fSourceViewer, types[i]);
+			if (prefixes != null && prefixes.length > 0)
+				fSourceViewer.setIndentPrefixes(prefixes, types[i]);
+		}
+	}
+
 }

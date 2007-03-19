@@ -27,6 +27,7 @@ final class TextEditorMessages extends NLS {
 
 	public static String EditorsPlugin_internal_error;
 	public static String TextEditorPreferencePage_displayedTabWidth;
+	public static String TextEditorPreferencePage_convertTabsToSpaces;
 	public static String TextEditorPreferencePage_undoHistorySize;
 	public static String TextEditorPreferencePage_printMarginColumn;
 	public static String TextEditorPreferencePage_showLineNumbers;

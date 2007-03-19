@@ -415,6 +415,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS));
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN));
@@ -500,15 +501,20 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		appearanceComposite.setLayout(layout);
 
-		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;
+		String label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
+		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
+		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
+		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 15, 0);
+		
+		label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;
 		Preference tabWidth= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, label, null);
 		IntegerDomain tabWidthDomain= new IntegerDomain(1, 16);
 		addTextField(appearanceComposite, tabWidth, tabWidthDomain, 15, 0);
 
-		label= TextEditorMessages.TextEditorPreferencePage_undoHistorySize;
-		Preference undoHistorySize= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, label, null);
-		IntegerDomain undoHistorySizeDomain= new IntegerDomain(0, 99999);
-		addTextField(appearanceComposite, undoHistorySize, undoHistorySizeDomain, 15, 0);
+		label= TextEditorMessages.TextEditorPreferencePage_convertTabsToSpaces;
+		Preference spacesForTabs= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, label, null);
+		addCheckBox(appearanceComposite, spacesForTabs, new BooleanDomain(), 0);
+		
 
 		label= TextEditorMessages.TextEditorPreferencePage_highlightCurrentLine;
 		Preference highlightCurrentLine= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, label, null);

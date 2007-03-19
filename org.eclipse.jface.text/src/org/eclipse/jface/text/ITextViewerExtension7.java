@@ -13,7 +13,8 @@ package org.eclipse.jface.text;
 
 /**
  * Extension interface for {@link org.eclipse.jface.text.ITextViewer}.
- * Adds the ability to install text triple click strategies.
+ * Adds the ability to install text triple click strategies and tabs
+ * to spaces conversion.
  *
  * @since 3.3
  */
@@ -31,4 +32,10 @@ public interface ITextViewerExtension7 {
 	 */
 	void setTextTripleClickStrategy(ITextTripleClickStrategy strategy, String contentType);
 
+	/**
+	 * Sets an auto edit strategy can converts tabs to spaces.
+	 * 
+	 * @param converter the converter or <code>null</code> if none should be used
+	 */
+	void setTabsToSpacesConverter(IAutoEditStrategy converter);
 }

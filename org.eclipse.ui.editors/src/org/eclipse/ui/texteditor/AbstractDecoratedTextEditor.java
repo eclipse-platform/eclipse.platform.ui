@@ -734,6 +734,18 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				IPreferenceStore store= getPreferenceStore();
 				if (store != null)
 					sourceViewer.getTextWidget().setTabs(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH));
+				if (isTabsToSpacesConversionEnabled()) {
+					uninstallTabsToSpacesConverter();
+					installTabsToSpacesConverter();
+				}
+				return;
+			}
+			
+			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS.equals(property)) {
+				if (isTabsToSpacesConversionEnabled())
+					installTabsToSpacesConverter();
+				else
+					uninstallTabsToSpacesConverter();
 				return;
 			}
 
@@ -1657,4 +1669,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 	}
 
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#isTabConversionEnabled()
+	 * @since 3.3
+	 */
+	protected boolean isTabsToSpacesConversionEnabled() {
+		return getPreferenceStore() != null && getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
+	}
 }
