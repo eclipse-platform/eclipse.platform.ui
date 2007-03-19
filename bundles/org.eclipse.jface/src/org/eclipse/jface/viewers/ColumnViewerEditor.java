@@ -379,7 +379,11 @@ public abstract class ColumnViewerEditor {
 	}
 
 	/**
-	 * @param listener add a new listener
+	 * Adds the given listener, it is to be notified when the cell editor is
+	 * activated or deactivated.
+	 * 
+	 * @param listener
+	 *            the listener to add
 	 */
 	public void addEditorActivationListener(
 			ColumnViewerEditorActivationListener listener) {
@@ -389,7 +393,13 @@ public abstract class ColumnViewerEditor {
 		editorActivationListener.add(listener);
 	}
 
-	void removeEditorActivationListener(
+	/**
+	 * Removes the given listener.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeEditorActivationListener(
 			ColumnViewerEditorActivationListener listener) {
 		if (editorActivationListener != null) {
 			editorActivationListener.remove(listener);
