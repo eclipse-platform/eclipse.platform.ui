@@ -147,7 +147,7 @@ public class EditorActionBarsTest extends UITestCase {
                 IToolBarManager citbm = coolItem.getToolBarManager();
                 ToolBar tb = ((ToolBarManager) citbm).getControl();
                 verifyNullToolbar(tb, actionText, citbm);
-                if (tb != null) {
+                if (tb != null && !tb.isDisposed()) {
                     ToolItem[] items = tb.getItems();
                     for (int j = 0; j < items.length; j++) {
                         String itemText = items[j].getToolTipText();

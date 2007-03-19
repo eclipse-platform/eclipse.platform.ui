@@ -25,14 +25,23 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.ICoolBarManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.services.IEvaluationReference;
 import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.Util;
@@ -51,7 +60,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 3.2
  */
 public final class WorkbenchMenuService extends InternalMenuService {
-	
+
 	/**
 	 * 
 	 */
@@ -82,7 +91,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	public WorkbenchMenuService(IServiceLocator serviceLocator) {
 		this.menuPersistence = new MenuPersistence(this);
 		this.serviceLocator = serviceLocator;
-		evaluationService = (IEvaluationService) serviceLocator.getService(IEvaluationService.class);
+		evaluationService = (IEvaluationService) serviceLocator
+				.getService(IEvaluationService.class);
 		evaluationService.addServiceListener(getServiceListener());
 	}
 
@@ -99,7 +109,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 							// if it's false, the evaluation service has
 							// finished
 							// with its latest round of updates
-							updateMenus();
+							updateManagers();
 						}
 					}
 				}
@@ -108,20 +118,49 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		return serviceListener;
 	}
 
-	private void updateMenus() {
+	private void updateManagers() {
 		Object[] managers = managersAwaitingUpdates.toArray();
 		managersAwaitingUpdates.clear();
 		for (int i = 0; i < managers.length; i++) {
 			IContributionManager mgr = (IContributionManager) managers[i];
 			mgr.update(true);
-//			if (mgr instanceof ToolBarManager) {
-//				((ToolBarManager)mgr).getControl().pack(true);
-//				if (!(((ToolBarManager) mgr).getControl().getParent() instanceof CoolBar)) {
-//					LayoutUtil.resize(((ToolBarManager) mgr).getControl());
-//				}
-//			}
-			
+			if (mgr instanceof ToolBarManager) {
+				if (!updateCoolBar((ToolBarManager) mgr)) {
+					updateTrim((ToolBarManager) mgr);
+				}
+			}
 		}
+	}
+
+	private void updateTrim(ToolBarManager mgr) {
+		Control control = mgr.getControl();
+		if (control == null || control.isDisposed()) {
+			return;
+		}
+		LayoutUtil.resize(control);
+	}
+
+	private boolean updateCoolBar(ToolBarManager mgr) {
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+				.getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			WorkbenchWindow window = (WorkbenchWindow) windows[i];
+			ICoolBarManager cb = window.getCoolBarManager2();
+			if (cb!=null) {
+				IContributionItem[] items = cb.getItems();
+				for (int j = 0; j < items.length; j++) {
+					if (items[j] instanceof ToolBarContributionItem) {
+						IToolBarManager tbm = ((ToolBarContributionItem) items[j])
+								.getToolBarManager();
+						if (mgr == tbm) {
+							cb.update(true);
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -245,7 +284,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		// If we have any then add them at the correct location
 		if (ciList.getItems().size() > 0) {
 			track(mgr, cache, ciList);
-			for (Iterator ciIter = ciList.getItems().iterator(); ciIter.hasNext();) {
+			for (Iterator ciIter = ciList.getItems().iterator(); ciIter
+					.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
 
 				final int oldSize = mgr.getSize();
@@ -338,7 +378,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		populateContributionManager(serviceLocator, mgr, uri);
 	}
 
-	public void populateContributionManager(IServiceLocator serviceLocatorToUse, ContributionManager mgr,
+	public void populateContributionManager(
+			IServiceLocator serviceLocatorToUse, ContributionManager mgr,
 			String uri) {
 		MenuLocationURI contributionLocation = new MenuLocationURI(uri);
 		List additionCaches = getAdditionsForURI(contributionLocation);
@@ -469,22 +510,19 @@ public final class WorkbenchMenuService extends InternalMenuService {
 					} else {
 						item.setVisible(false);
 					}
-					
+
 					IContributionManager parent = null;
 					if (item instanceof ContributionItem) {
-						parent = ((ContributionItem) item)
-								.getParent();
-						
-					}
-					else if (item instanceof MenuManager) {
-						parent = ((MenuManager) item)
-								.getParent();
+						parent = ((ContributionItem) item).getParent();
+
+					} else if (item instanceof MenuManager) {
+						parent = ((MenuManager) item).getParent();
 					}
 					if (parent != null) {
 						parent.markDirty();
 						managersAwaitingUpdates.add(parent);
 					}
-				
+
 				}
 			}
 		};
