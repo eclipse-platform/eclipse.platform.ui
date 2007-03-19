@@ -17,11 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -109,8 +107,6 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
-import org.eclipse.ui.views.IStickyViewDescriptor;
-import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * A collection of views and editors in a workbench.
@@ -155,6 +151,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private PerspectiveDescriptor deferredActivePersp;
 
     private NavigationHistory navigationHistory = new NavigationHistory(this);
+    
+    private IStickyViewManager stickyViewMan = StickyViewManager.getInstance(this);
 
     /**
      * If we're in the process of activating a part, this points to the new part.
@@ -188,10 +186,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             }
         }
     };
-
-    // a mapping of perspectives to a set of stickyviews that have been activated in that perspective.
-    // this map is persisted across sessions
-    private Map stickyPerspectives = new HashMap(7);
 
     private ActionSwitcher actionSwitcher = new ActionSwitcher();
 
@@ -1657,7 +1651,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         navigationHistory.dispose();
 
-        stickyPerspectives.clear();
+        stickyViewMan.clear();
         
         if (tracker != null) {
 			tracker.close();
@@ -1686,7 +1680,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         persp.dispose();
 
-        stickyPerspectives.remove(persp.getDesc().getId());
+        stickyViewMan.remove(persp.getDesc().getId());
     }
 
     /**
@@ -3028,25 +3022,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					navigationHistory.markEditor(getActiveEditor());
 				}
                 
-                IMemento stickyState = memento
-						.getChild(IWorkbenchConstants.TAG_STICKY_STATE);
-				// restore the sticky activation state
-
-				if (stickyState != null) {
-					IMemento[] stickyPerspMems = stickyState
-							.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE);
-					for (int i = 0; i < stickyPerspMems.length; i++) {
-						String perspectiveId = stickyPerspMems[i].getID();
-						Set viewState = new HashSet(7);
-						stickyPerspectives.put(perspectiveId, viewState);
-						IMemento[] viewStateMementos = stickyPerspMems[i]
-								.getChildren(IWorkbenchConstants.TAG_VIEW);
-						for (int j = 0; j < viewStateMementos.length; j++) {
-							viewState.add(viewStateMementos[j].getID());
-						}
-					}
-
-				}                
+                // restore sticky view state
+                stickyViewMan.restore(memento);
+                    
                 return result;
             } finally {
             	String blame = activeDescriptor == null ? pageName : activeDescriptor.getId();
@@ -3208,22 +3186,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         navigationHistory.saveState(memento
                 .createChild(IWorkbenchConstants.TAG_NAVIGATION_HISTORY));
         
-        IMemento stickyState = memento
-				.createChild(IWorkbenchConstants.TAG_STICKY_STATE);
-		// save the sticky activation state
-		itr = stickyPerspectives.entrySet().iterator();
-		while (itr.hasNext()) {
-			Map.Entry entry = (Map.Entry) itr.next();
-			String perspectiveId = (String) entry.getKey();
-			Set activatedViewIds = (Set) entry.getValue();
-			IMemento perspectiveState = stickyState.createChild(
-					IWorkbenchConstants.TAG_PERSPECTIVE, perspectiveId);
-			for (Iterator i = activatedViewIds.iterator(); i.hasNext();) {
-				String viewId = (String) i.next();
-				perspectiveState.createChild(IWorkbenchConstants.TAG_VIEW,
-						viewId);
-			}
-		}
+        
+        // save the sticky activation state
+        stickyViewMan.save(memento);
+        
 		return result;
     }
     
@@ -3386,34 +3352,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             // Update the window
             window.updateActionSets();
 
-	        if (newPersp != null && oldPersp != null) {
-	        		Set activatedStickyViewsInThisPerspective = (Set) stickyPerspectives.get(newPersp.getDesc().getId());
-	        		if (activatedStickyViewsInThisPerspective == null) {
-	        			activatedStickyViewsInThisPerspective = new HashSet(7);
-	        			stickyPerspectives.put(newPersp.getDesc().getId(), activatedStickyViewsInThisPerspective);
-	        		}
-	            
-                IViewRegistry viewReg = WorkbenchPlugin.getDefault()
-                        .getViewRegistry();
-                IStickyViewDescriptor[] stickyDescs = viewReg.getStickyViews();
-                for (int i = 0; i < stickyDescs.length; i++) {
-                    final String viewId = stickyDescs[i].getId();
-					try {
-                        // show a sticky view if it was in the last perspective and hasn't already been activated in this one
-                        if (oldPersp.findView(viewId) != null
-								&& !activatedStickyViewsInThisPerspective
-										.contains(viewId)) {
-							showView(viewId, null,
-									IWorkbenchPage.VIEW_CREATE);
-							activatedStickyViewsInThisPerspective.add(viewId);
-						}
-                    } catch (PartInitException e) {
-                        WorkbenchPlugin
-                                .log(
-                                        "Could not open view :" + viewId, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, "Could not open view :" + viewId, e)); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                }
-            }
+            // Update sticky views
+            stickyViewMan.update(oldPersp, newPersp);
+            
         } finally {
             window.largeUpdateEnd();
             if (newPersp == null) {

@@ -451,4 +451,16 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String DISABLE_NEW_FAST_VIEW = "disableNewFastView"; //$NON-NLS-1$
+	
+	/**
+     * A named preference for enabling the 3.2 behavior for closing sticky views.
+     * When not enabled a sticky view is closed in all perspectives when the view is closed.
+     * <p>
+     * The default value for this preference is: <code>false</code>; use the 3.2
+     * behaviour.
+     * </p>
+     * 
+     * @since 3.3
+     */
+	public static final String ENABLE_32_STICKY_CLOSE_BEHAVIOR = "ENABLE_32_STICKY_CLOSE_BEHAVIOR"; //$NON-NLS-1$
 }

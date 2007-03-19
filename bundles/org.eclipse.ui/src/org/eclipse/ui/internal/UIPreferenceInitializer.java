@@ -150,6 +150,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		
 		// By default the Fast View Bar allows to select a new fast view from the view list
 		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_NEW_FAST_VIEW, false);
+		
+		// Default the sticky view close behaviour to the new style
+		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, false);
 
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
