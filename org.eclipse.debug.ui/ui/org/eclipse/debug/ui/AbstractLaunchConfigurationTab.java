@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -328,7 +328,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 
 	/**
-	 * Returns whether this tab is dirty. It is up to clients to set/reset and consult
+	 * Sets the dirty state of the tab. It is up to clients to set/reset and consult
 	 * this attribute as required. By default, a tab is initialized to dirty.
 	 * 
 	 * @param dirty whether this tab is dirty
