@@ -1320,6 +1320,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			zoomingEditorArea = true;
 		}
 
+		// Cache the layout bounds
+		perspective.getPresentation().updateBoundsMap();
+		
 		LayoutPart[] children = root.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] != this) {
@@ -1341,6 +1344,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		// If the editor area has changed state tell the perspective
 		if (zoomingEditorArea)
 			perspective.setEditorAreaState(IStackPresentationSite.STATE_MAXIMIZED);
+
+		// Clear the boundsMap
+		perspective.getPresentation().resetBoundsMap();
 		
 		smartZoomed = true;
     }

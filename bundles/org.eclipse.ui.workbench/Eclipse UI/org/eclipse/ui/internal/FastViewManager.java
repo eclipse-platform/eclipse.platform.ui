@@ -473,7 +473,12 @@ public class FastViewManager {
 	}
 
 	public void moveToTrim(ViewStack vs, boolean restoreOnUnzoom) {
-		Rectangle stackBounds = vs.getBounds();
+		// If we're part of a 'maximize' operation then use the cached
+		// bounds...
+		Rectangle stackBounds = perspective.getPresentation().getCachedBoundsFor(vs.getID());
+		
+		if (stackBounds == null)
+			stackBounds = vs.getBounds();
 		if (stackBounds.width == 0)
 			return;
 		

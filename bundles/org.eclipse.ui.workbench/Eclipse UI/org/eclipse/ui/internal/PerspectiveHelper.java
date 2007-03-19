@@ -14,7 +14,9 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IStatus;
@@ -56,10 +58,18 @@ public class PerspectiveHelper {
 
     private ViewSashContainer mainLayout;
 
-
     private ArrayList detachedWindowList = new ArrayList(1);
 
     private ArrayList detachedPlaceHolderList = new ArrayList(1);
+
+	/**
+	 * Maps a stack's id to its current bounds
+	 * this is used to capture the current bounds of all
+	 * stacks -before- starting a maximize (since the
+	 * iterative 'minimize' calls cause the intial stack's
+	 * bounds to change.
+	 */
+	private Map boundsMap = new HashMap();
 
     private boolean detachable = false;
 
@@ -1372,4 +1382,41 @@ public class PerspectiveHelper {
 			}
 		}
     }
+
+    /**
+     * Captures the current bounds of all ViewStacks and the editor
+     * area and puts them into an ID -> Rectangle map. This info is
+     * used to cache the bounds so that we can correctly place minimized
+     * stacks during a 'maximized' operation (where the iterative min's
+     * affect the current layout while being performed.
+     */
+    public void updateBoundsMap() {
+    	boundsMap.clear();
+    	
+    	// Walk the layout gathering the current bounds of each stack
+    	// and the editor area
+    	LayoutPart[] kids = mainLayout.getChildren();
+    	for (int i = 0; i < kids.length; i++) {
+			if (kids[i] instanceof ViewStack) {
+				ViewStack vs = (ViewStack)kids[i];
+				boundsMap.put(vs.getID(), vs.getBounds());
+			}
+			else if (kids[i] instanceof EditorSashContainer) {
+				EditorSashContainer esc = (EditorSashContainer)kids[i];
+				boundsMap.put(esc.getID(), esc.getBounds());
+			}
+		}
+    }
+
+	/**
+	 * Resets the bounds map so that it won't interfere with normal minimize
+	 * operayions
+	 */
+	public void resetBoundsMap() {
+		boundsMap.clear();
+	}
+	
+	public Rectangle getCachedBoundsFor(String id) {
+		return (Rectangle) boundsMap.get(id);
+	}
 }

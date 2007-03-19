@@ -1743,7 +1743,8 @@ public class Perspective {
     	if (editorAreaTrim  == null && createIfNecessary) {
     		// Gain access to the trim manager
 			editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
-			tbm.addTrim(SWT.TOP, editorAreaTrim);
+			editorAreaTrim.dock(SWT.RIGHT);
+			tbm.addTrim(SWT.RIGHT, editorAreaTrim);
     	}
 		
 		return editorAreaTrim;
@@ -2095,7 +2096,11 @@ public class Perspective {
 			return (dx > 0) ? SWT.LEFT : SWT.RIGHT;
 		}
 
-		return (dy > 0) ? SWT.TOP : SWT.BOTTOM;
+		if (dy > 0) {
+			return (dx > 0) ? SWT.LEFT : SWT.RIGHT;
+		}
+		
+		return SWT.BOTTOM;
 	}
 
 	/**
