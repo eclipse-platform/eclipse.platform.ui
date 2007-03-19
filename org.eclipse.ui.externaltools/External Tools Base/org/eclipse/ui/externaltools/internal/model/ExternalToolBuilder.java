@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Conway  - Bug 175186
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.model;
 
@@ -58,6 +59,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
 	private static IProject buildProject= null;
+    private static IResourceDelta buildDelta= null;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
@@ -197,7 +199,17 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	public static IProject getBuildProject() {
 		return buildProject;
 	}
-	
+
+    /**
+     * Returns the <code>IResourceDelta</code> that is being built and has triggered the current external
+     * tool builder. <code>null</code> is returned if no build is currently occurring.
+     * 
+     * @return resource delta for the build or <code>null</code>
+     */
+    public static IResourceDelta getBuildDelta() {
+        return buildDelta;
+    }
+    
 	/**
 	 * Stores the currently active build kind and build project when a build begins
 	 * @param buildKind
@@ -221,14 +233,16 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 				break;
 		}
 		buildProject= getProject();
+        buildDelta= getDelta(getProject());
 	}
 	
 	/**
-	 * Clears the current build kind and build project when a build finishes.
+	 * Clears the current build kind, build project and build delta when a build finishes.
 	 */
 	private void buildEnded() {
 		buildType= IExternalToolConstants.BUILD_TYPE_NONE;
 		buildProject= null;
+        buildDelta= null;
 	}
 	
 	private boolean buildScopeIndicatesBuild(IResource[] resources) {

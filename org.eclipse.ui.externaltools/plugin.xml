@@ -191,6 +191,12 @@
             description="%build_project.description">
       </variable>
        <variable
+            name="build_files"
+            resolver="org.eclipse.ui.externaltools.internal.variables.BuildFilesResolver"
+            description="%build_files.description"
+            supportsArgument="true">
+      </variable>
+       <variable
             name="system_path"
             resolver="org.eclipse.ui.externaltools.internal.variables.SystemPathResolver"
             description="%system_path.description"
