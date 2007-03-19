@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
@@ -115,7 +116,9 @@ public class WatchAction implements IObjectActionDelegate {
             Iterator iterator = fSelection.iterator();
             while (iterator.hasNext()) {
                 IVariable variable = (IVariable) iterator.next();
-                if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier()) && isFactoryEnabled(variable)) {
+                if (variable instanceof IndexedVariablePartition) {
+                	break;
+                } else if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier()) && isFactoryEnabled(variable)) {
                     enabled++;
                 } else {
                     break;
