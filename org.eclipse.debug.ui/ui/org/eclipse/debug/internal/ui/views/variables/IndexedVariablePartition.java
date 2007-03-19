@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class IndexedVariablePartition extends PlatformObject implements IVariable  {
 	
-	// the starting offset of this parition, into the associated collection
+	// the starting offset of this partition, into the associated collection
 	private int fOffset;
 	
 	// the length of this partition
@@ -46,12 +46,12 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 	private String fName = null;
 	
 	/**
-	 * Creates a parition for an indexed value.
+	 * Creates a partition for an indexed value.
 	 * 
 	 * @param variable variable or expression containing the indexed value
 	 * @param value indexed value
 	 * @param offset beginning offset of this partition (into the value)
-	 * @param length the length of this parition
+	 * @param length the length of this partition
 	 */
 	public IndexedVariablePartition(IDebugElement variable, IIndexedValue value, int offset, int length) {
 		fOriginalVariable = variable;
