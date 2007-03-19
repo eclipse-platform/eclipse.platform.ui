@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -292,8 +292,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_DEFINING));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_TARGETS));
 		
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
-		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_MARK_OCCURRENCES));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_STICKY_OCCURRENCES));
 		
@@ -334,9 +332,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 		labelText= AntPreferencesMessages.AntEditorPreferencePage_40;
 		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, 0);
-		
-		labelText= AntPreferencesMessages.AntEditorPreferencePage_32;
-		addCheckBox(appearanceComposite, labelText, AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, 0);
 
 		return appearanceComposite;
 	}

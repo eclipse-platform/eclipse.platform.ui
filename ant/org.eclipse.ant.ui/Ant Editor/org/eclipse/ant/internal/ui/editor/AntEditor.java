@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2007 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -29,7 +29,6 @@ import org.eclipse.ant.internal.ui.ExternalHyperlink;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup;
-import org.eclipse.ant.internal.ui.editor.actions.InformationDispatchAction;
 import org.eclipse.ant.internal.ui.editor.actions.OpenDeclarationAction;
 import org.eclipse.ant.internal.ui.editor.actions.RenameInFileAction;
 import org.eclipse.ant.internal.ui.editor.actions.RunToLineAdapter;
@@ -118,7 +117,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.ResourceAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -650,11 +648,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
         
         fFoldingGroup= new FoldingActionGroup(this, getViewer());
         
-        ResourceAction resAction= new TextOperationAction(AntEditorMessages.getResourceBundle(), "ShowTooltip.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
-		resAction= new InformationDispatchAction(AntEditorMessages.getResourceBundle(), "ShowTooltip.", (TextOperationAction) resAction, this); //$NON-NLS-1$
-		resAction.setActionDefinitionId("org.eclipse.ant.ui.showTooltip"); //$NON-NLS-1$
-		setAction("ShowTooltip", resAction); //$NON-NLS-1$
-		
 		action= new RenameInFileAction(this);
 		action.setActionDefinitionId("org.eclipse.ant.ui.renameInFile"); //$NON-NLS-1$
 		setAction("renameInFile", action); //$NON-NLS-1$

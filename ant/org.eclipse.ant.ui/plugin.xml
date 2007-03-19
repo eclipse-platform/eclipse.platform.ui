@@ -95,12 +95,6 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.views.AntView">
       </command>
       <command
-            name="%ActionDefinition.showTooltip.name"
-            description="%ActionDefinition.showTooltip.description"
-            categoryId="org.eclipse.jdt.ui.category.source"
-            id="org.eclipse.ant.ui.showTooltip">
-      </command>
-      <command
             name="%ActionDefinition.openExternalDoc.name"
             description="%ActionDefinition.openExternalDoc.description"
             categoryId="org.eclipse.jdt.ui.category.source"
@@ -142,11 +136,6 @@ M4 = Platform-specific fourth key -->
             sequence="ESC CTRL+F"
             contextId="org.eclipse.ant.ui.AntEditorScope"
             commandId="org.eclipse.jdt.ui.edit.text.java.format"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-	  <key
-            sequence="F2"
-            contextId="org.eclipse.ant.ui.AntEditorScope"
-            commandId="org.eclipse.ant.ui.showTooltip"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M2+F2"

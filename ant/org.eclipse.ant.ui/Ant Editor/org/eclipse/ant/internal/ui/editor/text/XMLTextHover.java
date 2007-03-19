@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,16 +18,15 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.AbstractFileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
-import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.debug.model.AntProperty;
 import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
 import org.eclipse.ant.internal.ui.debug.model.AntValue;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
+import org.eclipse.ant.internal.ui.editor.AntEditorSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
-import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
@@ -43,14 +42,16 @@ import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
-public class XMLTextHover implements ITextHover, ITextHoverExtension {
+public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformationProviderExtension2 {
 
 	private AntEditor fEditor;
 	
@@ -326,16 +327,13 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
 	 */
 	public IInformationControlCreator getHoverControlCreator() {
-		if (AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE)) {
-			return new IInformationControlCreator() {
-				public IInformationControl createInformationControl(Shell parent) {
-	  				return new DefaultInformationControl(parent, SWT.NONE, 
-	  					new HTMLTextPresenter(true),
-				   		AntEditorTextMessages.XMLTextHover_7);
-			 	}
-  			};
-		}
-		return null;
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, SWT.NONE, 
+						new HTMLTextPresenter(true),
+						EditorsUI.getTooltipAffordanceString());
+			}
+		};
 	}
     
     /**
@@ -352,4 +350,13 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
         }
         return null;
     }
+
+	/*
+	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
+	 * @since 3.3
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return AntEditorSourceViewerConfiguration.getInformationPresenterControlCreator();
+	}
+
 }

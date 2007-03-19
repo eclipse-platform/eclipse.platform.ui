@@ -128,7 +128,6 @@ public class AntPreferencesMessages extends NLS {
 	public static String AntEditorPreferencePage_Ant_editor_constant_strings_3;
 	public static String AntEditorPreferencePage_Ant_editor_tags_4;
 	public static String AntEditorPreferencePage_Ant_editor_comments_5;
-	public static String AntEditorPreferencePage_32;
 	public static String AntEditorPreferencePage_30;
 	public static String AntEditorPreferencePage_40;
 	public static String AntEditorPreferencePage_1;

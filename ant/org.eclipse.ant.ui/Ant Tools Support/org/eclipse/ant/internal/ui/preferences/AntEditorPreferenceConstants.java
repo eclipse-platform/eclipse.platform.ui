@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -257,13 +257,6 @@ public class AntEditorPreferenceConstants {
 	public static final String EDITOR_FOLDING_DEFINING= "editor_folding_defining"; //$NON-NLS-1$
 	
 	/**
-	 * A named preference that defines whether the hint to make hover sticky should be shown.
-	 *
-	 * @since 3.1
-	 */
-	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "editor_show_text_hover_affordance"; //$NON-NLS-1$
-	
-	/**
 	 * A named preference that controls if segmented view (show selected element only) is turned on or off.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -329,8 +322,6 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(PROBLEM_TASKS, BUILDFILE_IGNORE);
 		
 		store.setDefault(EDITOR_FOLDING_ENABLED, true);
-		
-		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		
 		store.setDefault(EDITOR_SHOW_SEGMENTS, false);
 		
