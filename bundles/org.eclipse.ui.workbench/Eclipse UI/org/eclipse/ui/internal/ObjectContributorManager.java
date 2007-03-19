@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -374,9 +373,8 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
     	// Fetch the unique adapters
     	List adapters = new ArrayList(Arrays.asList(Platform.getAdapterManager().computeAdapterTypes(object.getClass())));
     	removeCommonAdapters(adapters, Arrays.asList(new Class[] {object.getClass()}));
-    	// Use a LinkedHashSet to avoid duplicates, yet maintain element order.
-        // It -must- maintain the element order to preserve menu order
-        LinkedHashSet contributors = new LinkedHashSet();
+
+    	List contributors = new ArrayList();
         
         // Calculate the contributors for this object class
         addAll(contributors, getObjectContributors(object.getClass()));
@@ -391,6 +389,10 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 				addAll(contributors, getAdaptableContributors(adapter));
 			}
     	}
+    	
+        // Remove duplicates.  Note: this -must- maintain the element order to preserve menu order.
+        contributors = removeDups(contributors);
+
     	return contributors.isEmpty() ? Collections.EMPTY_LIST : new ArrayList(contributors);
     }
     
@@ -584,9 +586,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 
         // Get the contributors.   
         
-        // Use a LinkedHashSet to avoid duplicates, yet maintain element order.
-        // It -must- maintain the element order to preserve menu order
-        LinkedHashSet contributors = new LinkedHashSet();
+        List contributors = new ArrayList();
         
         // Add the resource contributions to avoid duplication
         if (resourceClass != null) {
@@ -619,20 +619,44 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
             }
         }
     	
+        // Remove duplicates.  Note: this -must- maintain the element order to preserve menu order.
+        contributors = removeDups(contributors);
+        
         return contributors.isEmpty() ? Collections.EMPTY_LIST : new ArrayList(contributors);
     }
 
     /**
-	 * Adds all items in toAdd to contributors.  Optimized to avoid creating an iterator.
+	 * Adds all items in toAdd to the given collection.  Optimized to avoid creating an iterator.
 	 * This assumes that toAdd is efficient to index (i.e. it's an ArrayList or some other RandomAccessList),
 	 * which is the case for all uses in this class.
 	 */
-	private void addAll(LinkedHashSet contributors, List toAdd) {
+	private static void addAll(Collection collection, List toAdd) {
 		for (int i = 0, size = toAdd.size(); i < size; ++i) {
-			contributors.add(toAdd.get(i));
+			collection.add(toAdd.get(i));
 		}
 	}
 
+    /**
+     * Removes duplicates from the given list, preserving order.
+     */
+    private static List removeDups(List list) {
+    	if (list.size() <= 1) {
+    		return list;
+    	}
+    	HashSet set = new HashSet(list);
+    	if (set.size() == list.size()) {
+    		return list;
+    	}
+    	ArrayList result = new ArrayList(set.size());
+    	for (Iterator i = list.iterator(); i.hasNext();) {
+    		Object o = i.next();
+    		if (set.remove(o)) {
+    			result.add(o);
+    		}
+		}
+    	return result;
+    }
+    
 	/**
      * Returns the common denominator class, interfaces, and adapters 
      * for the given collection of objects.
