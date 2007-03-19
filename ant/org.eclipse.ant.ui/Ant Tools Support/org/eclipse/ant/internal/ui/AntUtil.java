@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.ant.internal.ui.model.LocationProvider;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -357,12 +358,12 @@ public final class AntUtil {
 		IPath location= new Path(buildFile.getAbsolutePath());
 		boolean connected= false;
 		try {
-			ITextFileBuffer buffer= manager.getTextFileBuffer(location);
+			ITextFileBuffer buffer= manager.getTextFileBuffer(location, LocationKind.NORMALIZE);
 			if (buffer == null) {
 				//no existing file buffer..create one
-				manager.connect(location, new NullProgressMonitor());
+				manager.connect(location, LocationKind.NORMALIZE, new NullProgressMonitor());
 				connected= true;
-				buffer= manager.getTextFileBuffer(location);
+				buffer= manager.getTextFileBuffer(location, LocationKind.NORMALIZE);
 				if (buffer == null) {
 					return null;
 				}
@@ -375,7 +376,7 @@ public final class AntUtil {
 		} finally {
 			if (connected) {
 				try {
-					manager.disconnect(location, new NullProgressMonitor());
+					manager.disconnect(location, LocationKind.NORMALIZE, new NullProgressMonitor());
 				} catch (CoreException e) {
 					AntUIPlugin.log(e.getStatus());
 				}
