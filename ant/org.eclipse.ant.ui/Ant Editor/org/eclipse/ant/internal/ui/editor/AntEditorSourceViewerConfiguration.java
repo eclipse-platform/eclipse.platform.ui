@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2007 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -18,6 +18,7 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.ColorManager;
@@ -43,7 +44,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.InformationPresenter;
@@ -292,7 +292,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		return (String[]) list.toArray(new String[list.size()]);	
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getAutoEditStrategies(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
 	 */
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
@@ -305,23 +305,12 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		return fAutoEditorStategies;
 	}
     
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getHyperlinkDetectors(org.eclipse.jface.text.source.ISourceViewer)
-     */
-    public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
-        IHyperlinkDetector[] inheritedDetectors= super.getHyperlinkDetectors(sourceViewer);
-		
-		if (fEditor == null) {
-			return inheritedDetectors;
-		}
-		
-		int inheritedDetectorsLength= inheritedDetectors != null ? inheritedDetectors.length : 0;
-		IHyperlinkDetector[] detectors= new IHyperlinkDetector[inheritedDetectorsLength + 1];
-		detectors[0]= new AntElementHyperlinkDetector(fEditor); 
-		for (int i= 0; i < inheritedDetectorsLength; i++) {
-            detectors[i+1]= inheritedDetectors[i];
-        }
-		
-		return detectors;
-    }
+   /* 
+    * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
+    */
+	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+		Map targets = super.getHyperlinkDetectorTargets(sourceViewer);
+		targets.put("org.eclipse.ant.ui.buildFiles", fEditor); //$NON-NLS-1$
+		return targets;
+	}
 }

@@ -820,4 +820,24 @@ M4 = Platform-specific fourth key -->
       </renameParticipant>
    </extension>
 
+	<extension
+       point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+    	<hyperlinkDetector
+        	  activate="true"
+	          class="org.eclipse.ant.internal.ui.editor.AntElementHyperlinkDetector"
+	          description="%AntElementHyperlinkDetector.description"
+    	      id="org.eclipse.ant.ui.AntElementHyperlinkDetector"
+	          name="%AntElementHyperlinkDetector.label"
+    	      targetId="org.eclipse.ant.ui.buildFiles">
+    	</hyperlinkDetector>
+     </extension>
+     
+     <extension
+  		point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets">
+  		<target
+    		id="org.eclipse.ant.ui.buildFiles"
+    		name="%AntEditorHyperlinkTarget.name">
+    		<context type="org.eclipse.ant.internal.ui.editor.AntEditor"/>
+  		</target>
+	</extension>
 </plugin>

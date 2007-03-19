@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,14 @@ package org.eclipse.ant.internal.ui.editor;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 
-public class AntElementHyperlinkDetector implements IHyperlinkDetector {
+public class AntElementHyperlinkDetector extends AbstractHyperlinkDetector {
 
     private AntEditor fEditor;
     
-    public AntElementHyperlinkDetector(AntEditor editor) {    
-        fEditor= editor;
+    public AntElementHyperlinkDetector() {    
     }
 
 	/* (non-Javadoc)
@@ -31,6 +30,7 @@ public class AntElementHyperlinkDetector implements IHyperlinkDetector {
 		 if (region == null) {
 			return null;
         }
+		fEditor = (AntEditor) getAdapter(AntEditor.class);
         region= XMLTextHover.getRegion(textViewer, region.getOffset());
         Object linkTarget= fEditor.findTarget(region);
 		if (linkTarget == null) {
