@@ -12,30 +12,42 @@
 
 package org.eclipse.jface.layout;
 
-
 import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Widget;
 
 /**
- * The TableColumnAdapter is the ControlAdapter used to maintain Table sizes
- * {@link Table}.
+ * The TableColumnLayout is the {@link Layout} used to maintain
+ * {@link TableColumn} sizes in a {@link Table}.
+ * 
+ * <p>
+ * <b>You can only add the {@link Layout} to a container whose <i>only</i>
+ * child is the {@link Table} control you want the {@link Layout} applied to.
+ * Don't assign the layout directly the {@link Table}</b>
+ * </p>
  * 
  * @since 3.3
  */
 public class TableColumnLayout extends AbstractColumnLayout {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getColumnCount(org.eclipse.swt.widgets.Scrollable)
 	 */
 	int getColumnCount(Scrollable tableTree) {
 		return ((Table) tableTree).getColumnCount();
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.layout.AbstractColumnLayout#setColumnWidths(org.eclipse.swt.widgets.Scrollable, int[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.layout.AbstractColumnLayout#setColumnWidths(org.eclipse.swt.widgets.Scrollable,
+	 *      int[])
 	 */
 	void setColumnWidths(Scrollable tableTree, int[] widths) {
 		TableColumn[] columns = ((Table) tableTree).getColumns();
@@ -44,12 +56,21 @@ public class TableColumnLayout extends AbstractColumnLayout {
 		}
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getLayoutData(int)
 	 */
 	ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
 		TableColumn column = ((Table) tableTree).getColumn(columnIndex);
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
+	}
+
+	int getColumnWidth(Widget column) {
+		return ((TableColumn) column).getWidth();
+	}
+
+	Composite getComposite(Widget column) {
+		return ((TableColumn) column).getParent().getParent();
 	}
 }

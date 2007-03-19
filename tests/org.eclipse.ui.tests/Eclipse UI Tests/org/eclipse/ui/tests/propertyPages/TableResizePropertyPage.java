@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.tests.propertyPages;
 
-import org.eclipse.jface.layout.TableColumnAdapter;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -52,21 +52,21 @@ public class TableResizePropertyPage extends PropertyPage {
 				| SWT.MULTI | SWT.FULL_SELECTION);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		TableColumnLayout tableLayout = new TableColumnLayout();
+		
 		GridData data = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(data);
 
 		table.setHeaderVisible(true);
 		TableColumn column = new TableColumn(table, SWT.NULL);
 		column.setText("Column 1");
+		tableLayout.setColumnData(column, new ColumnWeightData(50, 100, true));
 
 		column = new TableColumn(table, SWT.NULL);
 		column.setText("Column 2");
-
-		TableColumnAdapter adapter = new TableColumnAdapter(
-				table);
-		adapter.addColumnData(new ColumnWeightData(50, 100, true));
-		adapter.addColumnData(new ColumnWeightData(50, 100, true));
-		enclosingComposite.addControlListener(adapter);
+		
+		tableLayout.setColumnData(column,new ColumnWeightData(50, 100, true));
+		enclosingComposite.setLayout(tableLayout);
 
 	}
 

@@ -104,12 +104,12 @@ public class Snippet016TableLayout {
 		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setText("Column 1");
 		column.setMoveable(true);
-		ad.setColumnData(column, new ColumnWeightData(90, 100));
+		ad.setColumnData(column, new ColumnWeightData(90, 290));
 
 		column = new TableColumn(v.getTable(), SWT.NONE);
 		column.setText("Column 2");
 		column.setMoveable(true);
-		ad.setColumnData(column, new ColumnWeightData(10, 100));
+		ad.setColumnData(column, new ColumnWeightData(10, 200));
 
 		MyModel[] model = createModel();
 		v.setInput(model);

@@ -22,16 +22,21 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * The AbstractColumnAdapter is a ControlAdapter used to set the size of a table
+ * The AbstractColumnLayout is a {@link Layout} used to set the size of a table
  * in a consistent way even during a resize unlike a {@link TableLayout} which
- * only sets initial sizes. You can only add the layout to a container whose
- * <b>only</b> child is the table/tree control you want the layouts applied to.
+ * only sets initial sizes. 
+ * 
+ * <p><b>You can only add the layout to a container whose
+ * only child is the table/tree control you want the layouts applied to.</b>
+ * </p>
  * 
  * @since 3.3
  */
@@ -49,6 +54,19 @@ abstract class AbstractColumnLayout extends Layout {
 
 	static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
 
+	private boolean inupdateMode = false;
+	
+	private Listener resizeListener = new Listener() {
+
+		public void handleEvent(Event event) {
+			if( ! inupdateMode ) {
+				event.widget.setData(LAYOUT_DATA,new ColumnPixelData(getColumnWidth(event.widget)));
+				layout(getComposite(event.widget), true);
+			}
+		}
+		
+	};
+	
 	/**
 	 * Adds a new column of data to this table layout.
 	 * 
@@ -59,6 +77,10 @@ abstract class AbstractColumnLayout extends Layout {
 	 *            the column layout data
 	 */
 	public void setColumnData(Widget column, ColumnLayoutData data) {
+		if( column.getData(LAYOUT_DATA) == null ) {
+			column.addListener(SWT.Resize, resizeListener);
+		}
+		
 		column.setData(LAYOUT_DATA, data);
 	}
 
@@ -182,8 +204,10 @@ abstract class AbstractColumnLayout extends Layout {
 			scrollable.setSize(area.width, area.height);
 		}
 
+		inupdateMode = true;
 		setColumnWidths(scrollable, widths);
-
+		inupdateMode = false;
+		
 		if (!increase) {
 			scrollable.setSize(area.width, area.height);
 		}
@@ -288,4 +312,8 @@ abstract class AbstractColumnLayout extends Layout {
 	abstract void setColumnWidths(Scrollable tableTree, int[] widths);
 	
 	abstract ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex);
+	
+	abstract int getColumnWidth(Widget column);
+	
+	abstract Composite getComposite(Widget column);
 }

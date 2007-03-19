@@ -14,13 +14,22 @@ package org.eclipse.jface.layout;
 
 
 import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.Widget;
 
 /**
- * The TreeColumnAdapter is the ControlAdapter used to maintain Table sizes
+ * The TreeColumnLayout is the {@link Layout} used to maintain {@link TreeColumn} sizes in a 
  * {@link Tree}.
+ * 
+ * <p>
+ * <b>You can only add the {@link Layout} to a container whose <i>only</i>
+ * child is the {@link Tree} control you want the {@link Layout} applied to.
+ * Don't assign the layout directly the {@link Tree}</b>
+ * </p>
  * 
  * @since 3.3
  */
@@ -49,5 +58,13 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 	ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex) {
 		TreeColumn column = ((Tree) tableTree).getColumn(columnIndex);
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
+	}
+	
+	int getColumnWidth(Widget column) {
+		return ((TreeColumn)column).getWidth();
+	}
+	
+	Composite getComposite(Widget column) {
+		return ((TreeColumn)column).getParent().getParent();
 	}
 }

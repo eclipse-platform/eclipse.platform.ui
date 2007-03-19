@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.tests.propertyPages;
 
-import org.eclipse.jface.layout.TreeColumnAdapter;
+
+import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -54,18 +55,19 @@ public class TreeResizePropertyPage extends PropertyPage {
 		tree.setLinesVisible(true);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		tree.setLayoutData(data);
+		
+		TreeColumnLayout treeLayout = new TreeColumnLayout();
 
 		tree.setHeaderVisible(true);
 		TreeColumn column = new TreeColumn(tree, SWT.NULL);
 		column.setText("Column 1");
+		treeLayout.setColumnData(column, new ColumnWeightData(50, 100, true));
 
 		column = new TreeColumn(tree, SWT.NULL);
 		column.setText("Column 2");
+		treeLayout.setColumnData(column, new ColumnWeightData(50, 100, true));
 
-		TreeColumnAdapter adapter = new TreeColumnAdapter(tree);
-		adapter.addColumnData(new ColumnWeightData(50, 100, true));
-		adapter.addColumnData(new ColumnWeightData(50, 100, true));
-		enclosingComposite.addControlListener(adapter);
+		enclosingComposite.setLayout(treeLayout);
 
 	}
 
