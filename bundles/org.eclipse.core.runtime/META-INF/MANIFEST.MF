@@ -8,13 +8,7 @@ Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.preferences.legacy;x-internal:=true,
  org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility",
- org.eclipse.core.runtime;
-  uses:="org.eclipse.osgi.service.datalocation,
-   org.eclipse.core.runtime.jobs,
-   org.eclipse.osgi.service.resolver,
-   org.eclipse.core.runtime.content,
-   org.eclipse.core.runtime.preferences,
-   org.osgi.framework"
+ org.eclipse.core.runtime
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.jobs;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
