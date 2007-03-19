@@ -9,7 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.snippets.viewers;
+package org.eclipse.jface.snippets.layout;
 
 
 import org.eclipse.jface.layout.TableColumnLayout;
