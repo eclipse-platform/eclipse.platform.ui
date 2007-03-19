@@ -36,7 +36,6 @@ import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Cart;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -319,28 +318,33 @@ public class PropertyScenarios extends ScenariosTestCase {
 						.setConverter(targetToModelConverter),
 				new UpdateValueStrategy().setConverter(modelToTargetConverter));
 
-        assertEquals("5.0", text.getText());
+		String expected = numberFormat.format(adventure.getPrice());
+        assertEquals(expected, text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        enterText(text, "0.65");
+        
+        String toEnter = numberFormat.format(0.65);
+        enterText(text, toEnter);
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
+        
         adventure.setPrice(42.24);
-        assertEquals("42.24", text.getText());
+        expected = numberFormat.format(adventure.getPrice());
+        assertEquals(expected, text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
+        
         enterText(text, "jygt");
         assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
-        enterText(text, "-23.9");
+        
+        toEnter = numberFormat.format(-23.9);
+        enterText(text, toEnter);
         assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
+        
         adventure.setPrice(0.0);
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
     }
 
     public void testScenario08() {
-    	if (BindingTestSuite.failingTestsDisabled(this)) {
-			return;
-		}
-    	
         // Binding the price property of an Adventure to a Text control but with
         // custom conversion � the double will be validated to only have two
         // decimal places and displayed with a leading currency symbol, and can
@@ -360,7 +364,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         IConverter toDouble = new Converter(String.class, double.class) {
             public Object convert(Object fromObject) {
                 try {
-                    return currencyFormat.parse((String) fromObject);
+                    return new Double(currencyFormat.parse((String) fromObject).doubleValue());
                 } catch (ParseException e) {
                     // TODO throw something like
                     // IllegalConversionException?
@@ -388,17 +392,26 @@ public class PropertyScenarios extends ScenariosTestCase {
                 BeansObservables.observeValue(adventure, "price"),
 new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator),new UpdateValueStrategy().setConverter(toCurrency));
 
-        assertEquals("$5.00", text.getText());
+        String expected = currencyFormat.format(5);
+        assertEquals(expected, text.getText());
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
-        enterText(text, "$0.65");
+        
+        String toEnter = currencyFormat.format(0.65);
+        enterText(text, toEnter);
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
+        
         adventure.setPrice(42.24);
-        assertEquals("$42.24", text.getText());
+        expected = currencyFormat.format(adventure.getPrice());
+        assertEquals(expected, text.getText());
+        
         assertTrue(AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).isOK());
         enterText(text, "jygt");
         assertEquals(mustBeCurrencyMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
-        enterText(text, "-$23.9");
+        
+        toEnter = currencyFormat.format(-23.9);
+        enterText(text, toEnter);
+        
         assertEquals(cannotBeNegativeMessage, AggregateValidationStatus.getStatusMaxSeverity(getDbc().getBindings()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
         adventure.setPrice(0.0);
