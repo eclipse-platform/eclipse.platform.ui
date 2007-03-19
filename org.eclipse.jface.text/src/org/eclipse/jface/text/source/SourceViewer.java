@@ -65,8 +65,8 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * of the viewer's text widget.
  * <p>
  * Clients are supposed to instantiate a source viewer and subsequently to
- * communicate with it exclusively using the <code>ISourceViewer</code>
- * interface.</p>
+ * communicate with it exclusively using the <code>ISourceViewer</code> and
+ * its extension interfaces.</p>
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
