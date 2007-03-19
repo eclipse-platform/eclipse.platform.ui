@@ -86,7 +86,7 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		
 		addField(new BooleanFieldEditor(
 				REUSE_OPEN_COMPARE_EDITOR, 
-		        "Re&use open compare editors when opening comparisons", 
+		        TeamUIMessages.SyncViewerPreferencePage_45, 
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		

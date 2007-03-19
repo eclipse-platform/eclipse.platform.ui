@@ -523,11 +523,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		
 		//Create the local tool bar
 		IToolBarManager tbm = actionBars.getToolBarManager();
-		tbm.add(new Separator(HISTORY_VIEW_GROUP)); //$NON-NLS-1$
-		tbm.appendToGroup(HISTORY_VIEW_GROUP, refreshAction);  //$NON-NLS-1$
-		tbm.appendToGroup(HISTORY_VIEW_GROUP, linkWithEditorAction);  //$NON-NLS-1$
-		tbm.appendToGroup(HISTORY_VIEW_GROUP, pinAction);  //$NON-NLS-1$
-		tbm.add(new Separator(NAVIGATION_GROUP)); //$NON-NLS-1$
+		tbm.add(new Separator(HISTORY_VIEW_GROUP));
+		tbm.appendToGroup(HISTORY_VIEW_GROUP, refreshAction);
+		tbm.appendToGroup(HISTORY_VIEW_GROUP, linkWithEditorAction);
+		tbm.appendToGroup(HISTORY_VIEW_GROUP, pinAction);
+		tbm.add(new Separator(NAVIGATION_GROUP));
 		tbm.appendToGroup(NAVIGATION_GROUP, navigateAction);
 		tbm.update(false);
 	}

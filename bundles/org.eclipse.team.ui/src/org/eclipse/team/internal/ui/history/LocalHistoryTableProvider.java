@@ -118,7 +118,7 @@ public class LocalHistoryTableProvider {
 			if (element instanceof AbstractHistoryCategory){
 				// TODO: We should have a Team theme for this
 				ITheme current = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
-				return current.getColorRegistry().get("org.eclipse.team.cvs.ui.fontsandcolors.cvshistorypagecategories");
+				return current.getColorRegistry().get("org.eclipse.team.cvs.ui.fontsandcolors.cvshistorypagecategories"); //$NON-NLS-1$
 			}
 			
 			if (isDeletedEdition(element)) {
