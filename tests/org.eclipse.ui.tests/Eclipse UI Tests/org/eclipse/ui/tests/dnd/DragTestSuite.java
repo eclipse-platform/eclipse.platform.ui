@@ -74,8 +74,8 @@ public class DragTestSuite extends AutoTestSuite {
         TestDragSource[] maximizedViewDragSources = new TestDragSource[] {
                 new ViewDragSource(resNav, false, true),
                 new ViewDragSource(resNav, true, true),
-                new ViewDragSource(probView, false, true),
-                new ViewDragSource(probView, true, true) };
+                new ViewDragSource(probView, false, true) /*,
+                new ViewDragSource(probView, true, true)*/ };
 
         // Now generate all test cases
         for (int i = 0; i < maximizedViewDragSources.length; i++) {
