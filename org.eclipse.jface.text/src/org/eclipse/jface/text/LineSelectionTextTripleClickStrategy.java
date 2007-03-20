@@ -31,8 +31,11 @@ public class LineSelectionTextTripleClickStrategy implements ITextTripleClickStr
 
 		try {
 			IDocument document= text.getDocument();
+			int lineNumber= document.getLineOfOffset(position);
+			String lineDelimiter= document.getLineDelimiter(lineNumber);
+			int lineDelimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
 			IRegion line= document.getLineInformationOfOffset(position);
-			text.setSelectedRange(line.getOffset(), line.getLength());
+			text.setSelectedRange(line.getOffset(), line.getLength() + lineDelimiterLength);
 		} catch (BadLocationException x) {
 		}
 	}
