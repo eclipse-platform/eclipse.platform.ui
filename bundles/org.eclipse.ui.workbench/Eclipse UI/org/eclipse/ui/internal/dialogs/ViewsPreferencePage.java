@@ -122,7 +122,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	// something about this area.
 	private static final String R21PRESENTATION_ID = "org.eclipse.ui.internal.r21presentationFactory"; //$NON-NLS-1$
 	private static final String DEFAULT_PRESENTATION_ID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
-	private static final String R30_PRESENTATION_ID = "org.eclipse.ui.presentations.30"; //$NON-NLS-1$
+	private static final String R30_PRESENTATION_ID = "org.eclipse.ui.r30"; //$NON-NLS-1$
 
 	private static final String INITIAL_VAL = new String();
 
