@@ -464,13 +464,15 @@ public class FormHeading extends Canvas {
 		}
 
 		private void removeMessageHyperlinkListener(IHyperlinkListener listener) {
-			listeners.remove(listener);
-			if (messageHyperlink != null)
-				messageHyperlink.removeHyperlinkListener(listener);
-			if (listeners.isEmpty())
-				listeners = null;
-			if (listeners == null && !isDisposed())
-				updateForeground();
+			if (listeners != null) {
+				listeners.remove(listener);
+				if (messageHyperlink != null)
+					messageHyperlink.removeHyperlinkListener(listener);
+				if (listeners.isEmpty())
+					listeners = null;
+				if (listeners == null && !isDisposed())
+					updateForeground();
+			}
 		}
 
 		private void ensureControlExists() {
