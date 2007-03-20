@@ -976,7 +976,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @since 3.3
 	 */
 	protected boolean isTabsToSpacesConversionEnabled() {
-		return super.isTabsToSpacesConversionEnabled();
+		return super.isTabsToSpacesConversionEnabled(); //provide package visibility
 	}
 	
 	/* (non-Javadoc)
