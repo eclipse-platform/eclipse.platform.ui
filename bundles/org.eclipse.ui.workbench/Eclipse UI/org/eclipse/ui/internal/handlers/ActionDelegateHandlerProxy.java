@@ -249,6 +249,22 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 					currentSelection = (ISelection) selectionObject;
 					delegate.selectionChanged(action, currentSelection);
 				}
+
+				final Object activeEditor = context
+						.getVariable(ISources.ACTIVE_EDITOR_NAME);
+				if (delegate instanceof IEditorActionDelegate) {
+					((IEditorActionDelegate) delegate).setActiveEditor(action,
+							(IEditorPart) activeEditor);
+				}
+
+				final Object activePart = context
+						.getVariable(ISources.ACTIVE_PART_NAME);
+				if ((delegate instanceof IObjectActionDelegate)
+						&& (activePart != null)) {
+					final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) delegate;
+					objectActionDelegate.setActivePart(action,
+							(IWorkbenchPart) activePart);
+				}
 			}
 
 			// Decide what type of delegate we have.
