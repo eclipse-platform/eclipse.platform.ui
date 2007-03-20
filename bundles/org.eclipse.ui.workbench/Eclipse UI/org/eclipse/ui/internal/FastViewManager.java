@@ -522,6 +522,10 @@ public class FastViewManager {
 	 */
 	public void restoreToPresentation(String id) {
 		ViewStackTrimToolBar vstb = getViewStackTrimToolbar(id);
+		if (vstb==null) {
+			// the intro view does not go to the trim
+			return;
+		}
 		String selectedTabId = vstb.getSelectedTabId();
 		
 		List fvs = getFastViews(id);
