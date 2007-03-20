@@ -415,7 +415,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 
 		final NotHandledException e = new NotHandledException(
-				"There is no handler to execute."); //$NON-NLS-1$
+				"There is no handler to execute. " + getId()); //$NON-NLS-1$
 		fireNotHandled(e);
 		throw e;
 	}
@@ -453,7 +453,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if (!isDefined()) {
 			final NotDefinedException exception = new NotDefinedException(
 					"Trying to execute a command that is not defined. " //$NON-NLS-1$
-							+ id);
+							+ getId());
 			fireNotDefined(exception);
 			throw exception;
 		}
@@ -462,7 +462,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		if ((handler != null) && (handler.isHandled())) {
 			if (!isEnabled()) {
 				final NotEnabledException exception = new NotEnabledException(
-						"Trying to execute a disabled command"); //$NON-NLS-1$
+						"Trying to execute the disabled command " + getId()); //$NON-NLS-1$
 				fireNotEnabled(exception);
 				throw exception;
 			}
@@ -478,7 +478,7 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 
 		final NotHandledException e = new NotHandledException(
-				"There is no handler to execute."); //$NON-NLS-1$
+				"There is no handler to execute for command " + getId()); //$NON-NLS-1$
 		fireNotHandled(e);
 		throw e;
 	}
