@@ -40,7 +40,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	public static final String CMD_APPLY = "apply"; //$NON-NLS-1$
 
 	// control servlet path
-	private static final String CONTROL_SERVLET_PATH = "/helpControl/control.html"; //$NON-NLS-1$
+	private static final String CONTROL_SERVLET_PATH = "/help/control"; //$NON-NLS-1$
 
 	// application to launch
 	protected String applicationId;

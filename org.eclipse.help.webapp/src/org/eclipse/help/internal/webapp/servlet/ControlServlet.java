@@ -142,8 +142,8 @@ public class ControlServlet extends HttpServlet {
 			// do not allow remote clients to execute this servlet
 			return;
 		}
-		if (!"/helpControl".equals(req.getContextPath()) //$NON-NLS-1$
-				|| !"/control.html".equals(req.getServletPath())) { //$NON-NLS-1$
+		if (!"/help".equals(req.getContextPath()) //$NON-NLS-1$
+				|| !"/control".equals(req.getServletPath())) { //$NON-NLS-1$
 			// do not allow arbitrary URLs to execute this servlet
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN, ""); //$NON-NLS-1$
 			return;
