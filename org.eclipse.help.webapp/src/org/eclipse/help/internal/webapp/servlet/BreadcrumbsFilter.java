@@ -39,6 +39,9 @@ public class BreadcrumbsFilter implements IFilter {
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm") && !uri.startsWith("/help/nav/")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return out;
 		}
+		if ("/rtopic".equals(req.getServletPath())) { //$NON-NLS-1$
+			return out;
+		}
 		if (UrlUtil.isBot(req)) {
 			return out;
 		}
