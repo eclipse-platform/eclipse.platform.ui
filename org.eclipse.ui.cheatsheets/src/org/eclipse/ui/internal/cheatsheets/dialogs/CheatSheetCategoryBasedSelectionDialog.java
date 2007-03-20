@@ -647,7 +647,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 	 * Restores the state of the radio button and file name fields
 	 */
 	private void restoreFileSettings() {
-		int radioSetting = 0;
+		int radioSetting = RADIO_REGISTERED;
 		try {
 		     radioSetting = settings.getInt(STORE_RADIO_SETTING);
 		}
