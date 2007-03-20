@@ -3077,7 +3077,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// initialize defaults
 		// Ensure that the UI plugin has started too.
 		if (factoryID == null || factoryID.equals("")) { //$NON-NLS-1$
-			factoryID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
+			factoryID = IWorkbenchConstants.DEFAULT_PRESENTATION_ID;
 		}
 		return factoryID;
 	}

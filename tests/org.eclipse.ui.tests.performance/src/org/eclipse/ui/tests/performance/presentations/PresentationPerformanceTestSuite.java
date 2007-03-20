@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -62,7 +63,7 @@ public class PresentationPerformanceTestSuite extends TestSuite {
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_EDITOR, 5, false));
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_VIEW, 5, false));
         addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE, 1, false));
-        if(presentationId.equals("org.eclipse.ui.presentations.default"))
+        if(presentationId.equals(IWorkbenchConstants.DEFAULT_PRESENTATION_ID))
         	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, true));
         else
         	addTest(new PresentationActivePartPropertyTest(factory, PresentationFactoryUtil.ROLE_STANDALONE_NOTITLE, 1, false));

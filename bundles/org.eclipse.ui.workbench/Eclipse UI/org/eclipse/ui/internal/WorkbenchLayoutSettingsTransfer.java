@@ -293,7 +293,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 
 		if (factory == null)
 			factory = WorkbenchPlugin.getDefault().getPresentationFactory(
-					"org.eclipse.ui.presentations.default"); //$NON-NLS-1$
+					IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
 		return factory.getClass().getName();
 
 	}

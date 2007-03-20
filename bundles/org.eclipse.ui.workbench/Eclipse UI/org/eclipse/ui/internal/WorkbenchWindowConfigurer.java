@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
@@ -45,6 +46,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
@@ -596,6 +598,10 @@ public final class WorkbenchWindowConfigurer implements
                 return factory[0];
             }
         }
+        // presentation ID must be a bogus value, reset it to the default
+        PrefUtil.getAPIPreferenceStore().setValue(
+				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
+				IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
         return new WorkbenchPresentationFactory();
     }
 

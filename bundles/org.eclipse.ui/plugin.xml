@@ -1405,7 +1405,7 @@
       </factory>
       <factory
             class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
-            id="org.eclipse.ui.r30"
+            id="org.eclipse.ui.presentations.r30"
             name="%Presentation.30.name">
       </factory>
    </extension>

@@ -23,6 +23,8 @@ public interface IWorkbenchConstants {
      */
     public static final String ACCELERATOR_CONFIGURATION_ID = "acceleratorConfigurationId"; //$NON-NLS-1$
 
+    public static final String DEFAULT_PRESENTATION_ID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
+    
     /**
      * @deprecated 
      */

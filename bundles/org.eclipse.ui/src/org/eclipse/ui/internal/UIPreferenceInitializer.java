@@ -76,7 +76,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Appearance / Presentation preferences
 		node.put(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
-				"org.eclipse.ui.presentations.default"); //$NON-NLS-1$
+				IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
 		node
 				.putBoolean(
 						IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
