@@ -28,6 +28,10 @@ import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
+/*
+ * Generates navigation pages where topics are not present in the table
+ * of contents. Displays links to the direct child topics.
+ */
 public class NavServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
