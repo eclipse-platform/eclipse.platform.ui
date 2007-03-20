@@ -210,7 +210,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			try{
 				super.execute(provider, (IResource[]) existingFiles.toArray(new IResource[existingFiles.size()]), recurse, Policy.subMonitorFor(monitor, 90));
 			} catch(CVSCommunicationException ex){ // see bug 123430
-				CVSUIPlugin.openError(getShell(), null, null, ex);
+				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
 			} catch (CVSException ex){
 				//ignore
 			}
