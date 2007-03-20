@@ -347,6 +347,7 @@ public class FormHeading extends Canvas {
 	}
 
 	private class MessageRegion {
+		private String message;
 		private int messageType;
 		private CLabel messageLabel;
 		private IMessage[] messages;
@@ -387,6 +388,7 @@ public class FormHeading extends Canvas {
 				IMessage[] messages) {
 			Control oldControl = getMessageControl();
 			int oldType = messageType;
+			this.message = newMessage;
 			this.messageType = newType;
 			this.messages = messages;
 			if (newMessage == null) {
@@ -413,9 +415,7 @@ public class FormHeading extends Canvas {
 		}
 
 		public String getMessage() {
-			if (needHyperlink())
-				return messageHyperlink.getText();
-			return messageLabel.getText();
+			return message;
 		}
 
 		public int getMessageType() {
@@ -470,6 +470,7 @@ public class FormHeading extends Canvas {
 					messageHyperlink.removeHyperlinkListener(listener);
 				if (listeners.isEmpty())
 					listeners = null;
+				ensureControlExists();
 				if (listeners == null && !isDisposed())
 					updateForeground();
 			}
@@ -482,25 +483,34 @@ public class FormHeading extends Canvas {
 				if (messageHyperlink == null) {
 					messageHyperlink = new Hyperlink(FormHeading.this, SWT.NULL);
 					messageHyperlink.setUnderlined(true);
+					messageHyperlink.setText(message);
+					messageHyperlink.setHref(messages);
 					Object[] llist = listeners.getListeners();
 					for (int i = 0; i < llist.length; i++)
 						messageHyperlink
 								.addHyperlinkListener((IHyperlinkListener) llist[i]);
 					if (messageToolTipManager != null)
 						messageToolTipManager.createToolTip(messageHyperlink, false);
-				} else
+				} else if (!messageHyperlink.getVisible()) {
+					messageHyperlink.setText(message);
+					messageHyperlink.setHref(messages);
 					messageHyperlink.setVisible(true);
+				}
 			} else {
 				// need a label
 				if (messageHyperlink != null)
 					messageHyperlink.setVisible(false);
 				if (messageLabel == null) {
 					messageLabel = new CLabel(FormHeading.this, SWT.NULL);
+					messageLabel.setText(message);
 					if (messageToolTipManager != null)
 						messageToolTipManager.createToolTip(messageLabel, false);
-				} else
+				} else if (!messageLabel.getVisible()) {
+					messageLabel.setText(message);
 					messageLabel.setVisible(true);
+				}
 			}
+			layout(true);
 		}
 
 		private boolean needHyperlink() {

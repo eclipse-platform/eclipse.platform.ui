@@ -268,8 +268,6 @@ public class NewStylePage extends FormPage {
 					form.getForm().addMessageHyperlinkListener(listener);
 				else
 					form.getForm().removeMessageHyperlinkListener(listener);
-				form.setMessage(getErrorMessage(form.getMessageType(),
-						longMessage.getSelection()), form.getMessageType());
 			}
 		});
 
