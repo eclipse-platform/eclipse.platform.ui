@@ -12,11 +12,15 @@
 
 package org.eclipse.jface.tests.databinding.observable.list;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
+import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.observable.ThreadRealm;
@@ -43,6 +47,42 @@ public class WritableListTest extends TestCase {
 		writableList.clear();
 		assertEquals(0, writableList.size());
 	}
+    
+    public void testRemoveAllChangeEvent() throws Exception {
+        CurrentRealm realm = new CurrentRealm(true);
+        
+        WritableList list = new WritableList(realm);
+        String element = "element";
+        
+        list.add(element);
+        
+        class ListChangeListener implements IListChangeListener {
+            int count;
+            ListChangeEvent event;
+            
+            /* (non-Javadoc)
+             * @see org.eclipse.core.databinding.observable.list.IListChangeListener#handleListChange(org.eclipse.core.databinding.observable.list.ListChangeEvent)
+             */
+            public void handleListChange(ListChangeEvent event) {
+                count++;
+                this.event = event;
+            }
+        }
+        
+        ListChangeListener listener = new ListChangeListener();
+        list.addListChangeListener(listener);
+        assertEquals(0, listener.count);
+        
+        list.removeAll(Arrays.asList(new String[] {element}));
+        assertEquals(1, listener.count);
+        
+        assertEquals(1, listener.event.diff.getDifferences().length);
+        ListDiffEntry diffEntry = listener.event.diff.getDifferences()[0];
+        assertFalse("addition", diffEntry.isAddition());
+        assertEquals("element", element, diffEntry.getElement());
+        assertEquals("position", 0, diffEntry.getPosition());
+        assertFalse(list.contains(element));
+    }
 
 	public void testSetRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
