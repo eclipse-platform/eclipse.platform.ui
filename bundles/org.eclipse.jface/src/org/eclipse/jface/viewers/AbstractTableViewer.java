@@ -396,17 +396,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Set the TableColumnViewerPart at columnIndex to be viewerPart.
-	 * 
-	 * @param viewerPart
-	 * @param columnIndex
-	 */
-	public void setColumnPart(ViewerColumn viewerPart, int columnIndex) {
-		Widget column = doGetColumn(columnIndex);
-		column.setData(ViewerColumn.COLUMN_VIEWER_KEY, viewerPart);
-	}
-
-	/**
 	 * Returns the element with the given index from this table viewer. Returns
 	 * <code>null</code> if the index is out of range.
 	 * <p>
