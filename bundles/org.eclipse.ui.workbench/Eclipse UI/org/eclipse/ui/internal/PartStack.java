@@ -1218,34 +1218,20 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public int getState() {
     	return presentationSite.getState();
     }
-    
-    /**
-     * Sets the minimized state for this stack. The part may call this method to minimize or restore
-     * itself. The minimized state only affects the view when unzoomed. If the 
-     */
-    public void setMinimized(boolean minimized) {
-    	// 'Smart' minimize; move the stack to the trim
-    	Perspective persp = getPage().getActivePerspective();
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax && persp != null) {
-    		if (this instanceof ViewStack) {
-	    		FastViewManager fvm = persp.getFastViewManager();
-	    		if (minimized) {
-	    			fvm.moveToTrim((ViewStack)this, false);
-	    		}
-	    		else {
-	    			fvm.restoreToPresentation(getID());
-	    		}
-    		}
-    	}
-    	
-        if (minimized != isMinimized) {
-            isMinimized = minimized;
-            
-            refreshPresentationState();            
-        }
-    }
+
+	/**
+	 * Sets the minimized state for this stack. The part may call this method to
+	 * minimize or restore itself. The minimized state only affects the view
+	 * when unzoomed in the 3.0 presentation (in 3.3 it's handled by the
+	 * ViewStack directly and works as expected).
+	 */
+	public void setMinimized(boolean minimized) {
+		if (minimized != isMinimized) {
+			isMinimized = minimized;
+
+			refreshPresentationState();
+		}
+	}
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.ILayoutContainer#obscuredByZoom(org.eclipse.ui.internal.LayoutPart)
@@ -1309,6 +1295,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		Perspective perspective = getPage().getActivePerspective();
 		FastViewManager fvm = perspective.getFastViewManager();
 
+		fvm.deferUpdates(true);
 		ILayoutContainer root = getContainer();
 
 		// We go up one more level when maximizing an editor stack
@@ -1348,6 +1335,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		// Clear the boundsMap
 		perspective.getPresentation().resetBoundsMap();
 		
+		// We're done batching...
+		fvm.deferUpdates(false);
+		
+		perspective.getPresentation().setMaximizedStack(this);
 		smartZoomed = true;
     }
 
@@ -1399,6 +1390,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		if (restoringEditorArea)
 			perspective.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
 
+		perspective.getPresentation().setMaximizedStack(null);
 		smartZoomed = false;
     }
     

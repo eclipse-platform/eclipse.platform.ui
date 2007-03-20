@@ -14,6 +14,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorPart;
@@ -24,6 +25,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.FastViewBar;
@@ -33,6 +35,7 @@ import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -385,6 +388,12 @@ public class StickyViewTest extends UITestCase {
 	 * @since 3.2
 	 */
 	public void testPerspectiveViewToolBarVisible() throws Throwable {
+		// These tests are hard-wired to the pre-3.3 zoom behaviour
+		// Run them anyway to ensure that we preserve the 3.0 mechanism
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        boolean oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+        
 		IPerspectiveDescriptor perspective = WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry().findPerspectiveWithId(
 						PerspectiveViewsBug88345.PERSP_ID);
@@ -443,6 +452,9 @@ public class StickyViewTest extends UITestCase {
 			}
 			page.closePerspective(perspective, false, false);
 			page.closePerspective(secondPerspective, false, false);
+
+			// Restore the min/max state to it's correct value
+			apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, oldMinMaxState);
 		}
 	}
 

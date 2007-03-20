@@ -66,6 +66,22 @@ public class FastViewManager {
 	private Map idToFastViewsMap = new HashMap();
 
 	/**
+	 * Batch update management
+	 */
+	private boolean deferringUpdates = false;
+
+	/**
+	 * animation whose life-cycle spans a
+	 * 'deferUpdates' cycle.
+	 */
+	private RectangleAnimation batchAnimation = null;
+	
+	/**
+	 * Used for non-deferred animations
+	 */
+	private RectangleAnimation oneShotAnimation = null;
+	
+	/**
 	 * Creates a new manager for a particular perspective
 	 * 
 	 * @param perspective
@@ -496,6 +512,11 @@ public class FastViewManager {
 		
 		vs.deferUpdates(true);
 		
+		// animate the minimize
+		RectangleAnimation animation = getDeferrableAnimation();
+		animation.addStartRect(vs.getControl());
+
+		//long startTick = System.currentTimeMillis();
 		// Update the model first
 		List toMove = getTrueViewOrder(vs);
 		for (Iterator viewIter = toMove.iterator(); viewIter.hasNext();) {
@@ -511,6 +532,12 @@ public class FastViewManager {
 		vstb.setRestoreOnUnzoom(restoreOnUnzoom);
 		vstb.setSelectedTabId(selId);
 		updateTrim(vstb.getId());
+		
+		//System.out.println("minimize time: " + (System.currentTimeMillis()-startTick)); //$NON-NLS-1$
+		if (vstb != null) {
+			animation.addEndRect(vstb.getControl());
+			scheduleDeferrableAnimation();
+		}
 	}
 
 	/**
@@ -522,10 +549,12 @@ public class FastViewManager {
 	 */
 	public void restoreToPresentation(String id) {
 		ViewStackTrimToolBar vstb = getViewStackTrimToolbar(id);
-		if (vstb==null) {
-			// the intro view does not go to the trim
+		
+		// The IntroPart uses the old min/max behavior; ensure that
+		// we were really a minimized trim stack
+		if (vstb == null)
 			return;
-		}
+
 		String selectedTabId = vstb.getSelectedTabId();
 		
 		List fvs = getFastViews(id);
@@ -800,5 +829,71 @@ public class FastViewManager {
 				System.out.println("  Ref: " + ref.getId()); //$NON-NLS-1$
 			}
 		}
+	}
+
+	/**
+	 * Informs the manager that a batch operation has started
+	 * (say 'maximize', where many stacks will change state).
+	 * 
+	 * @param defer
+	 *  true when starting a batch operation
+	 *  false when ending the operation
+	 */
+	public void deferUpdates(boolean defer) {
+		if (defer && !deferringUpdates) {
+			deferringUpdates = defer;
+			
+			deferAnimations(true);
+			
+			return;
+		}
+		
+		// 'false': reset and run any necessary updates
+		deferringUpdates = false;
+		deferAnimations(false);
+	}
+
+	/**
+	 * When 'defer' is true we create a RectangleAnimation object
+	 * to be used for any desired feedback. When ending it 
+	 * schedules the animation and resets.
+	 * 
+	 * @param defer
+	 *  true when starting a batch operation
+	 *  false when ending the operation
+	 */
+	private void deferAnimations(boolean defer) {
+		if (defer) {
+			batchAnimation = new RectangleAnimation(wbw.getShell(), null, null);
+			return;
+		}
+
+		if (batchAnimation != null)
+			batchAnimation.schedule();
+		batchAnimation = null;
+	}
+
+	/**
+	 * Returns the animation object appropriate for the deferred state
+	 * @return Either a 'one-shot' or a 'batch' animation object
+	 */
+	private RectangleAnimation getDeferrableAnimation() {
+		if (deferringUpdates)
+			return batchAnimation;
+		
+		// Create a 'one-shot' animation
+		oneShotAnimation = new RectangleAnimation(wbw.getShell(), null, null);
+		return oneShotAnimation;
+	}
+	
+	private void scheduleDeferrableAnimation() {
+		if (deferringUpdates)
+			return;
+		
+		// We can only schedule the 'one-shot' animations
+		// the batch ones are sheduled at batch end
+		if (oneShotAnimation != null)
+			oneShotAnimation.schedule();
+		oneShotAnimation = null;
 	}
 }

@@ -57,6 +57,8 @@ public class PerspectiveHelper {
     private Composite parentWidget;
 
     private ViewSashContainer mainLayout;
+    
+	private PartStack maximizedStack;
 
     private ArrayList detachedWindowList = new ArrayList(1);
 
@@ -1131,10 +1133,38 @@ public class PerspectiveHelper {
      * Returns whether the presentation is zoomed.
      */
     public boolean isZoomed() {
+    	// New 3.3 behavior
+//		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+//		boolean useNewMinMax = preferenceStore
+//				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+//		if (useNewMinMax) {
+//			return maximizedStack != null;
+//		}
+		
         return mainLayout.getZoomedPart() != null;
     }
 
     /**
+	 * @return The currently maxmized stack (if any)
+	 */
+	public PartStack getMaximizedStack() {
+		return maximizedStack;
+	}
+
+	/**
+	 * Sets the currently maximized stack. Used for query
+	 * and 'unZoom' purposes in the 3.3 presentation.
+	 * 
+	 * @param stack The newly maximized stack
+	 */
+	public void setMaximizedStack(PartStack stack) {
+		if (stack == maximizedStack)
+			return;
+		
+		maximizedStack = stack;
+	}
+	
+	/**
      * Returns the ratio that should be used when docking the given source
      * part onto the given target
      * 
@@ -1352,6 +1382,14 @@ public class PerspectiveHelper {
      * Zoom out.
      */
     public void zoomOut() {
+    	// New 3.3 behavior
+//		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+//		boolean useNewMinMax = preferenceStore
+//				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+//		if (useNewMinMax && maximizedStack != null) {
+//			maximizedStack.setState(IStackPresentationSite.STATE_RESTORED);
+//		}
+		
         LayoutPart zoomPart = mainLayout.getZoomedPart();
         if (zoomPart != null) {
             zoomPart.requestZoomOut();

@@ -103,6 +103,12 @@ public class IntroTest extends UITestCase {
      * that it no longer exists.
      */
     public void testPerspectiveChange() {
+		// These tests are hard-wired to the pre-3.3 zoom behaviour
+		// Run them anyway to ensure that we preserve the 3.0 mechanism
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        boolean oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+        
     	IWorkbench workbench = window.getWorkbench();
         IIntroPart part = workbench.getIntroManager().showIntro(window, false);
         assertNotNull(part);
@@ -117,6 +123,9 @@ public class IntroTest extends UITestCase {
         activePage.setPerspective(oldDesc);
         assertTrue(workbench.getIntroManager().closeIntro(part));
         assertNull(workbench.getIntroManager().getIntro());
+
+		// Restore the min/max state to it's correct value
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, oldMinMaxState);
     }
     
     /**
