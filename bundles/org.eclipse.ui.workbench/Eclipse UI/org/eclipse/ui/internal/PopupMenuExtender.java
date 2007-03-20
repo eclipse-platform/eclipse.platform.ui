@@ -312,8 +312,9 @@ public class PopupMenuExtender implements IMenuListener2,
 								new Object[] { editorPart.getEditorInput() });
 					}
 				}
-				realWorkbench.addShowingMenus(getMenuIds(), selProvider
-						.getSelection(), input);
+				ISelection s = (selProvider == null ? null : selProvider
+						.getSelection());
+				realWorkbench.addShowingMenus(getMenuIds(), s, input);
 			}
 		}
     	
