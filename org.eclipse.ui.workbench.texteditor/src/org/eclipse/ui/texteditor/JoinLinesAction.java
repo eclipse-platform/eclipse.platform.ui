@@ -158,14 +158,14 @@ public class JoinLinesAction extends TextEditorAction {
 		}
 
 		int startLineOffset= document.getLineOffset(startLine);
-		int endLineOffset= document.getLineOffset(endLine)	+ document.getLineLength(endLine);
+		int endLineOffset= document.getLineOffset(endLine)	+ document.getLineLength(endLine) - getLineDelimiterLength(document, endLine);
 		document.replace(startLineOffset, endLineOffset - startLineOffset, buffer.toString());
 	}
 
 	private String trim(IDocument document, int line, boolean ignoreLeadingWhitespace) throws BadLocationException {
 		int lineOffset= document.getLineOffset(line);
 		int lineLength= document.getLineLength(line);
-		lineLength= lineLength - document.getLineDelimiter(line).length();
+		lineLength= lineLength - getLineDelimiterLength(document, line);
 		if (!ignoreLeadingWhitespace)
 			return document.get(lineOffset, lineLength).trim();
 		
@@ -173,6 +173,12 @@ public class JoinLinesAction extends TextEditorAction {
 			lineLength--;
 		
 		return document.get(lineOffset, lineLength);
+	}
+	
+	private int getLineDelimiterLength(IDocument document, int line) throws BadLocationException {
+		String lineDelimiter= document.getLineDelimiter(line);
+		return lineDelimiter != null ? lineDelimiter.length() : 0;
+		
 	}
 
 }
