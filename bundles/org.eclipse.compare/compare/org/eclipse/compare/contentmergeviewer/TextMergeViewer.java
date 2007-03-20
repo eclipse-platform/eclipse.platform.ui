@@ -162,7 +162,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	/** line width of change borders */
 	private static final int LW= 1;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
-	private static final boolean USE_MERGING_TOKEN_DIFF= true;
+	private static final boolean USE_MERGING_TOKEN_DIFF= false;
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
