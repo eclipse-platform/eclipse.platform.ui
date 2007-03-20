@@ -480,15 +480,20 @@ public class FastViewManager {
 		// If we're part of a 'maximize' operation then use the cached
 		// bounds...
 		Rectangle stackBounds = perspective.getPresentation().getCachedBoundsFor(vs.getID());
-		
+
+		// OK, no cache means that we use the current stack position
 		if (stackBounds == null)
 			stackBounds = vs.getBounds();
-		if (stackBounds.width == 0)
-			return;
 		
 		int paneOrientation = (stackBounds.width > stackBounds.height) ? SWT.HORIZONTAL
 				: SWT.VERTICAL;
 
+		// Remember the tab that was selected when we minimized
+		String selId = ""; //$NON-NLS-1$
+		PartPane selectedTab = vs.getSelection();
+		if (selectedTab != null)
+			selId  = selectedTab.getID();
+		
 		vs.deferUpdates(true);
 		
 		// Update the model first
@@ -504,6 +509,7 @@ public class FastViewManager {
 		ViewStackTrimToolBar vstb = getTrimForViewStack(vs.getID(), perspective
 				.calcStackSide(stackBounds), paneOrientation);
 		vstb.setRestoreOnUnzoom(restoreOnUnzoom);
+		vstb.setSelectedTabId(selId);
 		updateTrim(vstb.getId());
 	}
 
@@ -515,12 +521,23 @@ public class FastViewManager {
 	 *            The trim version to restore
 	 */
 	public void restoreToPresentation(String id) {
+		ViewStackTrimToolBar vstb = getViewStackTrimToolbar(id);
+		String selectedTabId = vstb.getSelectedTabId();
+		
 		List fvs = getFastViews(id);
 		for (Iterator fvIter = fvs.iterator(); fvIter.hasNext();) {
 			IViewReference ref = (IViewReference) fvIter.next();
 			removeViewReference(ref, true, !fvIter.hasNext());
 		}
 
+		// Restore the correct tab to the 'top'
+		LayoutPart stack = perspective.getPresentation().findPart(id, null);
+		if (stack instanceof PartStack) {
+			LayoutPart selTab = perspective.getPresentation().findPart(selectedTabId, null);
+			if (selTab instanceof PartPane)
+				((PartStack)stack).setSelection(selTab);
+		}
+		
 		// Hide the Trim
 		updateTrim(id);
 	}
@@ -654,6 +671,8 @@ public class FastViewManager {
 					
 					int boolVal = vstb.restoreOnUnzoom() ? 1 : 0;
 					barMemento.putInteger(IWorkbenchConstants.TAG_FAST_VIEW_STYLE, boolVal);
+					
+					barMemento.putString(IWorkbenchConstants.TAG_FAST_VIEW_SEL_ID, vstb.getSelectedTabId());
 				}
 
 				IMemento viewsMem = barMemento
@@ -734,11 +753,15 @@ public class FastViewManager {
 							IWorkbenchConstants.TAG_FAST_VIEW_STYLE).intValue();
 					final boolean restoreOnUnzoom = (boolVal > 0);
 					
+					final String selId = bars[i].getString(IWorkbenchConstants.TAG_FAST_VIEW_SEL_ID);
+					
 					// Create the stack
 		        	StartupThreading.runWithoutExceptions(new StartupRunnable() {
 						public void runWithException() throws Throwable {
 							ViewStackTrimToolBar vstb = getTrimForViewStack(id, side, orientation);
 							vstb.setRestoreOnUnzoom(restoreOnUnzoom);
+							if (selId != null)
+								vstb.setSelectedTabId(selId);
 						}
 					});
 				}

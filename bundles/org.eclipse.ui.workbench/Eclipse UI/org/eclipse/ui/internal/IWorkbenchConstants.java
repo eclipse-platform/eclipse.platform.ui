@@ -316,6 +316,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_FAST_VIEW_ORIENTATION = "orientation"; //$NON-NLS-1$
 
+    public static final String TAG_FAST_VIEW_SEL_ID = "selectedTabId"; //$NON-NLS-1$
+
     public static final String TAG_FAST_VIEW_STYLE = "style"; //$NON-NLS-1$
 
     public static final String TAG_THEME = "theme";//$NON-NLS-1$	

@@ -31,6 +31,9 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 	
 	// The orientation of the fast view pane when showing a view
 	private int paneOrientation;
+	
+	// The id of the part that was showing when we minimized
+	private String selectedTabId;
 
 	public ViewStackTrimToolBar(String id, int curSide, int paneOrientation, WorkbenchWindow wbw) {
 		super(id, curSide, wbw);
@@ -135,8 +138,12 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 	 */
 	public void setIconSelection(IViewReference ref, boolean selected) {
 		ToolItem item = ShowFastViewContribution.getItem(tbMgr.getControl(), ref);
-		if (item != null)
+		if (item != null) {
 			item.setSelection(selected);
+			
+			if (selected)
+				selectedTabId = ref.getId();
+		}
 	}
 
 	/**
@@ -144,5 +151,20 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 	 */
 	public int getPaneOrientation() {
 		return paneOrientation;
+	}
+
+	/**
+	 * Cache the tba that was on top when we were minimized
+	 * @param selectedTab The id of the PartPane for the tab 
+	 */
+	public void setSelectedTabId(String id) {
+		selectedTabId = id;
+	}
+	
+	/**
+	 * @return The id of the layout part representing the 'top' tab
+	 */
+	public String getSelectedTabId() {
+		return selectedTabId;
 	}
 }
