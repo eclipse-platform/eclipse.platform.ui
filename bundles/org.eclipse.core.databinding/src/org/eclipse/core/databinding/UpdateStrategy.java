@@ -186,7 +186,7 @@ import com.ibm.icu.text.NumberFormat;
 			
 			converterMap
 					.put(
-							new Pair("java.lang.Object", "java.lang.String"), "org.eclipse.core.databinding.conversion.ObjectToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+							new Pair("java.lang.Object", "java.lang.String"), "org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 
 			// Integer.TYPE
 			converterMap.put(new Pair("java.lang.String", INTEGER_TYPE), StringToNumberConverter.toInteger(integerFormat, true)); //$NON-NLS-1$

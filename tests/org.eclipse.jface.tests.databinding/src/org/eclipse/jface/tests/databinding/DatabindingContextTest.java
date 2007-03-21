@@ -21,7 +21,6 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -54,11 +53,7 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	 */
 	protected void tearDown() throws Exception {
 		if (dbc != null) {
-			Realm.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					dbc.dispose();
-				}
-			});
+			dbc.dispose();
 		}
 		super.tearDown();
 	}

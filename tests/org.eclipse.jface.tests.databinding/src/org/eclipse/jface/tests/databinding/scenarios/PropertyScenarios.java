@@ -128,6 +128,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         // less than the number of adventure days.
         Text text = new Text(getComposite(), SWT.BORDER);
 
+        System.out.println("Expecting message about not being able to attach a listener");
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(cart, "lodgingDays"),
                 null, null);
