@@ -11,13 +11,14 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -43,6 +44,9 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	protected IPath patchRoot;
 	protected boolean patchHasContents;
 	protected boolean patchHasNewFiles;
+	
+	/* see bug 116427 */
+	private Object destination = null;
 	
 	/* see bug 159894 */
 	private class CustomizableEOLPrintStream extends PrintStream{
@@ -116,13 +120,35 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		}
 	}
 	
-	public DiffOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options, boolean isMultiPatch, boolean includeFullPathInformation, IPath patchRoot) {
+	public DiffOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options, boolean isMultiPatch, boolean includeFullPathInformation, IPath patchRoot, Object destination) {
 		super(part, mappings, options);
 		this.isMultiPatch = isMultiPatch;
 		this.includeFullPathInformation=includeFullPathInformation;
 		this.patchRoot=patchRoot;
 		this.patchHasContents=false;
 		this.patchHasNewFiles=false;
+		this.destination = destination;
+	}
+	
+	protected boolean shouldRun(){
+		if (super.shouldRun() == false){
+			return false;
+		}
+		Job[] jobs = Job.getJobManager().find(destination);
+		if(jobs.length != 0){
+			MessageDialog question = new MessageDialog(getShell(), 
+					CVSUIMessages.DiffOperation_CreatePatchConflictTitle, null, 
+					NLS.bind(CVSUIMessages.DiffOperation_CreatePatchConflictMessage, destination.toString()), 
+					MessageDialog.QUESTION, 
+					new String[]{IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL}, 
+					1);
+			if(question.open() == 0){
+				Job.getJobManager().cancel(destination);
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
@@ -409,6 +435,12 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	 */
 	public boolean consultModelsForMappings() {
 		return false;
+	}
+	
+	public boolean belongsTo(Object family){
+		if(family != null && family.equals(destination))
+			return true;
+		return super.belongsTo(family);
 	}
 
 }

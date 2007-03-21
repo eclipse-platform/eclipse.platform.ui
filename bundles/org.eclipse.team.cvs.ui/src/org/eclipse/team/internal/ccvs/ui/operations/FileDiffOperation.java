@@ -30,7 +30,7 @@ public class FileDiffOperation extends DiffOperation {
 	File tempFile;
 	
 	public FileDiffOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options, File file, boolean isMultiPatch, boolean includeFullPathInformation, IPath patchRoot) {
-		super(part, mappings, options, isMultiPatch, includeFullPathInformation, patchRoot);
+		super(part, mappings, options, isMultiPatch, includeFullPathInformation, patchRoot, file.getAbsolutePath());
 		IPath teamLocation= TeamPlugin.getPlugin().getStateLocation();
 		IPath tempFilePath = teamLocation.append(new Path(IPath.SEPARATOR + "tempDiff" + System.currentTimeMillis())); //$NON-NLS-1$
 		tempFile = tempFilePath.toFile();

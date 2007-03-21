@@ -14,19 +14,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.ui.IWorkbenchPart;
 
 public class ClipboardDiffOperation extends DiffOperation {
 
+	private static final Object DESTINATION_CLIPBOARD = CVSUIMessages.ClipboardDiffOperation_Clipboard;
+
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 	public ClipboardDiffOperation(IWorkbenchPart part, ResourceMapping[] mappings, LocalOption[] options, boolean isMultiPatch, boolean includeFullPathInformation, IPath patchRoot) {
-		super(part, mappings, options, isMultiPatch, includeFullPathInformation, patchRoot);
+		super(part, mappings, options, isMultiPatch, includeFullPathInformation, patchRoot, DESTINATION_CLIPBOARD);
 	}
 
 	public void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
