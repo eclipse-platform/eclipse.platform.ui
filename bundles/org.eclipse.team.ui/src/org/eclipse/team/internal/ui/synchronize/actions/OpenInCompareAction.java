@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
@@ -48,20 +49,53 @@ public class OpenInCompareAction extends Action {
 	public void run() {
 		ISelection selection = configuration.getSite().getSelectionProvider().getSelection();
 		if(selection instanceof IStructuredSelection) {
-			Object obj = ((IStructuredSelection) selection).getFirstElement();
-			if (obj instanceof SyncInfoModelElement) {
-				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
-				if (info != null) {
-				    // Use the open strategy to decide if the editor or the sync view should have focus
-					openCompareEditorOnSyncInfo(configuration, info, !OpenStrategy.activateOnOpen());
+			if (!isOkToRun(selection))
+				return;
+				
+			boolean reuseEditorIfPossible = ((IStructuredSelection) selection).size()==1;
+			for (Iterator iterator = ((IStructuredSelection) selection).iterator(); iterator.hasNext();) {
+				Object obj = iterator.next();
+				if (obj instanceof SyncInfoModelElement) {
+					SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
+					if (info != null) {
+						// Use the open strategy to decide if the editor or the sync view should have focus
+						openCompareEditorOnSyncInfo(configuration, info, !OpenStrategy.activateOnOpen(), reuseEditorIfPossible);
+					}
+				} else if (obj != null){
+					openCompareEditor(configuration, obj, !OpenStrategy.activateOnOpen(), reuseEditorIfPossible);
 				}
-			} else if (obj != null){
-				openCompareEditor(configuration, obj, !OpenStrategy.activateOnOpen());
 			}
 		}
 	}
 	
-	public static IEditorInput openCompareEditor(ISynchronizePageConfiguration configuration, Object object, boolean keepFocus) {	
+	private boolean isOkToRun(ISelection selection) {
+		// do not open Compare Editor unless all elements have input
+		Object[] elements = ((IStructuredSelection) selection).toArray();
+		ISynchronizeParticipant participant = configuration
+				.getParticipant();
+		// model synchronize
+		if (participant instanceof ModelSynchronizeParticipant) {
+			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+			for (int i = 0; i < elements.length; i++) {
+				// TODO: This is inefficient
+				if (!msp.hasCompareInputFor(elements[i])) {
+					return false;
+				}
+			}
+		} else {
+			// all files
+			IResource resources[] = Utils.getResources(elements);  
+			for (int i = 0; i < resources.length; i++) {
+	            if (resources[i].getType() != IResource.FILE) {
+	                // Only supported if all the items are files.
+	                return false;
+	            }
+	        }
+		}
+		return true;
+	}
+
+	public static IEditorInput openCompareEditor(ISynchronizePageConfiguration configuration, Object object, boolean keepFocus, boolean reuseEditorIfPossible) {	
 		Assert.isNotNull(object);
 		Assert.isNotNull(configuration);
 		ISynchronizeParticipant participant = configuration.getParticipant();
@@ -69,14 +103,14 @@ public class OpenInCompareAction extends Action {
 		if (object instanceof SyncInfoModelElement) {
 			SyncInfo info = ((SyncInfoModelElement) object).getSyncInfo();
 			if (info != null)
-				return openCompareEditorOnSyncInfo(configuration, info, keepFocus);
+				return openCompareEditorOnSyncInfo(configuration, info, keepFocus, reuseEditorIfPossible);
 		}
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
 			ICompareInput input = msp.asCompareInput(object);
 			IWorkbenchPage workbenchPage = getWorkbenchPage(site);
 			if (input != null && workbenchPage != null && isOkToOpen(site, participant, input)) {
-				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site);
+				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site, reuseEditorIfPossible);
 			}
 		}
 		return null;
@@ -107,12 +141,12 @@ public class OpenInCompareAction extends Action {
 		return true;
 	}
 
-	public static CompareEditorInput openCompareEditorOnSyncInfo(ISynchronizePageConfiguration configuration, SyncInfo info, boolean keepFocus) {		
+	public static CompareEditorInput openCompareEditorOnSyncInfo(ISynchronizePageConfiguration configuration, SyncInfo info, boolean keepFocus, boolean reuseEditorIfPossible) {		
 		Assert.isNotNull(info);
 		Assert.isNotNull(configuration);	
 		if(info.getLocal().getType() != IResource.FILE) return null;
 		SyncInfoCompareInput input = new SyncInfoCompareInput(configuration, info);
-		return openCompareEditor(getWorkbenchPage(configuration.getSite()), input, keepFocus, configuration.getSite());
+		return openCompareEditor(getWorkbenchPage(configuration.getSite()), input, keepFocus, configuration.getSite(), reuseEditorIfPossible);
 	}
 	
 	public static CompareEditorInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, ISynchronizePageSite site) {
@@ -120,17 +154,19 @@ public class OpenInCompareAction extends Action {
 		Assert.isNotNull(participant);	
 		if(info.getLocal().getType() != IResource.FILE) return null;
 		SyncInfoCompareInput input = new SyncInfoCompareInput(participant, info);
-		return openCompareEditor(getWorkbenchPage(site), input, false, site);
+		return openCompareEditor(getWorkbenchPage(site), input, false, site, false);
 	}
 
 	private static CompareEditorInput openCompareEditor(
 			IWorkbenchPage page, 
 			CompareEditorInput input, 
 			boolean keepFocus,
-			ISynchronizePageSite site) {
+			ISynchronizePageSite site, 
+			boolean reuseEditorIfPossible) {
 		if (page == null)
 			return null;
-		openCompareEditor(input, page);
+		
+		openCompareEditor(input, page, reuseEditorIfPossible);
 		if(site != null && keepFocus) {
 			site.setFocus();
 		}
@@ -150,10 +186,17 @@ public class OpenInCompareAction extends Action {
 	}
 
     public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
+		// this is how it worked before opening compare editors for multiple
+		// selection was enabled
+		openCompareEditor(input, page, false);
+	}
+	
+    public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page, boolean reuseEditorIfPossible) {
         if (page == null || input == null) 
             return;
         IEditorPart editor = findReusableCompareEditor(input, page);
-        if(editor != null) {
+        // reuse editor only for single selection
+        if(editor != null && reuseEditorIfPossible) {
         	IEditorInput otherInput = editor.getEditorInput();
         	if(otherInput.equals(input)) {
         		// simply provide focus to editor
@@ -176,7 +219,6 @@ public class OpenInCompareAction extends Action {
 	 * @return the open editor
 	 */
 	public static IEditorPart findReusableCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
-		IEditorPart targetPart = null;
 		IEditorReference[] editorRefs = page.getEditorReferences();	
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
@@ -186,11 +228,12 @@ public class OpenInCompareAction extends Action {
 				if (part.getEditorInput().equals(input))
 					return part;
 				if(! part.isDirty() && isReuseOpenEditor()) {	
-					targetPart= part;	
+					return part;	
 				}
 			}
 		}
-		return targetPart;
+		// no re-usable editor found
+		return null;
 	}
 
 	/**

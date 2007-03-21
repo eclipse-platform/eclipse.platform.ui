@@ -17,7 +17,8 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.internal.ui.synchronize.actions.*;
+import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
+import org.eclipse.team.internal.ui.synchronize.actions.SyncViewerShowPreferencesAction;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.ui.*;
 
@@ -123,15 +124,20 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 			addMergeActions(cmm);
 		}
 		Object[] elements = ((IStructuredSelection)getContext().getSelection()).toArray();
-    	if (elements.length == 1 && openInCompareAction != null) {
+    	if (elements.length > 0 && openInCompareAction != null) {
     		IContributionItem fileGroup = findGroup(menu, ISynchronizePageConfiguration.FILE_GROUP);
     		if (fileGroup != null) {
-	    		ModelSynchronizeParticipant participant = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
-				ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
-				// TODO: This is inefficient
-				if (msp.hasCompareInputFor(elements[0])) {
-					menu.appendToGroup(fileGroup.getId(), openInCompareAction);
-				}
+    			ModelSynchronizeParticipant msp = ((ModelSynchronizeParticipant)getConfiguration().getParticipant());
+    			boolean allElementsHaveCompareInput = true;
+    			for (int i = 0; i < elements.length; i++) {
+    				if (!msp.hasCompareInputFor(elements[i])) {
+    					allElementsHaveCompareInput = false;
+    					break;
+    				}
+    			}
+    			if (allElementsHaveCompareInput) {
+    				menu.appendToGroup(fileGroup.getId(), openInCompareAction);	
+    			}
     		}
     	}
 	}

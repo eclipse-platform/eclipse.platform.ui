@@ -82,14 +82,20 @@ public class OpenWithActionGroup extends ActionGroup {
         IResource resources[] = Utils.getResources(elements);       
         if(resources.length == 0 && openInCompareAction != null) {
         	// We can still show the compare editor open if the element has a compare input
-        	if (elements.length == 1) {
+        	if (elements.length > 0) {
         		ISynchronizeParticipant participant = getParticipant();
         		if (participant instanceof ModelSynchronizeParticipant) {
 					ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
-					// TODO: This is inefficient
-					if (msp.hasCompareInputFor(elements[0])) {
-						menu.appendToGroup(groupId, openInCompareAction);
+					boolean allElementsHaveCompareInput = true;
+					for (int i = 0; i < elements.length; i++) {
+						if (!msp.hasCompareInputFor(elements[i])) {
+							allElementsHaveCompareInput = false;
+	    					break;
+						}
 					}
+					if (allElementsHaveCompareInput) {
+						menu.appendToGroup(groupId, openInCompareAction);
+	    			}
 				}
         	}
             return;
@@ -102,13 +108,13 @@ public class OpenWithActionGroup extends ActionGroup {
             }
         }       
         
-        if (resources.length == 1 && openInCompareAction != null) {
-            // Only supported if exactly one file is selected.
+        if (resources.length > 0 && openInCompareAction != null) {
+            // Support multiple files selected
             menu.appendToGroup(groupId, openInCompareAction);
         }
         
         for (int i = 0; i < resources.length; i++) {
-            if (!((resources[i].exists()))) {
+            if (!resources[i].exists()) {
                 // Only support non-compare actions if all files exist.
                 return;
             }

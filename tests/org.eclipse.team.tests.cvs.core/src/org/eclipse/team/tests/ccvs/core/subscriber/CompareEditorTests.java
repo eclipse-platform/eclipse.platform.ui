@@ -59,7 +59,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 	}
 	
 	private IEditorInput openEditor(Subscriber subscriber, Object element) {
-		IEditorInput input = OpenInCompareAction.openCompareEditor(((ModelParticipantSyncInfoSource)getSyncInfoSource()).getConfiguration(subscriber), element, false);
+		IEditorInput input = OpenInCompareAction.openCompareEditor(((ModelParticipantSyncInfoSource)getSyncInfoSource()).getConfiguration(subscriber), element, false, false);
 		assertNotNull(input);
 		assertEditorOpen(input, subscriber);
 		return input;
