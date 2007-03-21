@@ -168,6 +168,9 @@ public class SiteSearchCategory extends BaseSearchCategory {
 
 		private Map liteFeatures;
 
+		private FeatureDownloader() {			
+		}
+		
 		public FeatureDownloader(List siteFeatureReferences, IUpdateSearchResultCollector collector, IUpdateSearchFilter filter, HashSet ignores, IProgressMonitor monitor) {
 			super();
 
@@ -223,7 +226,7 @@ public class SiteSearchCategory extends BaseSearchCategory {
 									feature = siteFeatureReference.getFeature(null);
 								}
 								synchronized(siteFeatureReferences) {
-									if ( (feature != null) && (filter.accept(feature)) ) {								
+									if ( (feature != null) && (filter.accept(siteFeatureReference)) ) {								
 										collector.accept(feature);							    
 										monitor.subTask(feature.getLabel());
 									}

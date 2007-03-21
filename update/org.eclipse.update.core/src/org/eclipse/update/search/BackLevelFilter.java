@@ -32,6 +32,7 @@ import org.eclipse.update.internal.operations.*;
 public class BackLevelFilter extends BaseFilter {
 	
 	public boolean accept(IFeature match) {
+		
 			PluginVersionIdentifier matchVid = match.getVersionedIdentifier().getVersion();
 			IFeature [] installed = UpdateUtils.getInstalledFeatures(match.getVersionedIdentifier(), false);
 			if (installed.length==0) return true;
@@ -48,8 +49,7 @@ public class BackLevelFilter extends BaseFilter {
 		
 	}
 	
-	public boolean accept(IFeatureReference match) {
-		
+	public boolean accept(IFeatureReference match) {		
 		try {
 			PluginVersionIdentifier matchVid = match.getVersionedIdentifier().getVersion();
 			IFeature [] installed = UpdateUtils.getInstalledFeatures(match.getVersionedIdentifier(), false);

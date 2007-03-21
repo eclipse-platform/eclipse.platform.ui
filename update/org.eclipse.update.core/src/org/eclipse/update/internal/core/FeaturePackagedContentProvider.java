@@ -383,7 +383,36 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 	public void setContinueOnError(boolean continueOnError) {
 		this.continueOnError = continueOnError;
 	}
-		
+	
+	/** 
+	 * This method is used for when a core exception is detected, so, if its decided to rethrow, then 
+	 * a core exception odes not have to be recreated. 
+	 * 
+	 * @param archiveID id of the archive file
+	 * @param CoreException 
+	 * @return NullReference if its decided not to continue
+	 * @throws CoreException
+	 */
+	/*private ContentReference continueOrErrorOrRethrow(String archiveID, CoreException coreException) throws CoreException {
+		ContentReference reference = null;
+
+		if (continueOnError) {
+			// this ContentReference without a file or URL is purely a
+			// "missing jar" reference.
+			reference = new NullContentReference(archiveID);
+
+			String msg = "    ContinueOnError: The following ID was not found, so was skipped, and is not on miror site: " + archiveID; //$NON-NLS-1$
+			String id = UpdateCore.getPlugin().getBundle().getSymbolicName();
+			IStatus status = new Status(IStatus.WARNING, id , 0, msg, null);
+			UpdateCore.log(status);
+			
+		}
+		else {
+			throw coreException;
+		}
+		return reference;
+	}*/
+	
 	private ContentReference continueOnErrorOrRethrow(String archiveID, Exception e) throws CoreException {
 		ContentReference reference = null;
 
