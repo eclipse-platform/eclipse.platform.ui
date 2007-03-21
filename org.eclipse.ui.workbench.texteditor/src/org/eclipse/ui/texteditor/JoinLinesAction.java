@@ -71,7 +71,9 @@ public class JoinLinesAction extends TextEditorAction {
 		int startLine= selection.getStartLine();
 		int endLine= selection.getEndLine();
 		try {
-			joinLines(document, startLine, endLine);
+			int caretOffset= joinLines(document, startLine, endLine);
+			if (caretOffset > -1)
+				editor.selectAndReveal(caretOffset, 0);
 		} catch (BadLocationException e) {
 			// should not happen
 		}
@@ -139,12 +141,13 @@ public class JoinLinesAction extends TextEditorAction {
 	 * @param document the document
 	 * @param startLine the start line
 	 * @param endLine the end line
+	 * @return the new caret offset
 	 * @throws BadLocationException
 	 */
-	private void joinLines(IDocument document, int startLine, int endLine) throws BadLocationException {
+	private int joinLines(IDocument document, int startLine, int endLine) throws BadLocationException {
 		if (startLine == document.getNumberOfLines() - 1) {
 			// do nothing because we are in the last line
-			return;
+			return -1;
 		}
 
 		if (startLine == endLine)
@@ -159,7 +162,9 @@ public class JoinLinesAction extends TextEditorAction {
 
 		int startLineOffset= document.getLineOffset(startLine);
 		int endLineOffset= document.getLineOffset(endLine)	+ document.getLineLength(endLine) - getLineDelimiterLength(document, endLine);
-		document.replace(startLineOffset, endLineOffset - startLineOffset, buffer.toString());
+		String replaceString= buffer.toString();
+		document.replace(startLineOffset, endLineOffset - startLineOffset, replaceString);
+		return startLineOffset + replaceString.length();
 	}
 
 	private String trim(IDocument document, int line, boolean ignoreLeadingWhitespace) throws BadLocationException {
