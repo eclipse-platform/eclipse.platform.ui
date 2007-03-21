@@ -125,20 +125,24 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 
 		public String getColumnText(Object obj, int col) {
-			
 			IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
-			ISite site = ((IInstallFeatureOperation)obj).getTargetSite().getSite();
+			IConfiguredSite csite =((IInstallFeatureOperation)obj).getTargetSite(); 
+			ISite site = csite!=null?csite.getSite():null;
 			if (col == FEATURE_NAME_COLUMN) {				
 				return feature.getLabel();
 			} else if (col == FEATURE_VERSION_COLUMN) {
 				return feature.getVersionedIdentifier().getVersion().toString();
 			} else if (col == FEATURE_SIZE_COLUMN) {
+				if (site==null)
+					return ""; //$NON-NLS-1$
 				long requiredSpace = site.getDownloadSizeFor(feature) + site.getInstallSizeFor(feature);
 				return getSizeString(requiredSpace);
 			} else if (col == INSTALLATION_DIRECTORY_COLUMN) {
+				if (site==null)
+					return ""; //$NON-NLS-1$
 				return site.getURL().getFile().toString();
 			}
-			return null;
+			return ""; //$NON-NLS-1$
 		}
 	}
 	

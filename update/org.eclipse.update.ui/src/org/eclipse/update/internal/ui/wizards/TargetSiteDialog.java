@@ -223,13 +223,13 @@ public class TargetSiteDialog extends Dialog {
 
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
-		IDialogSettings master = UpdateUI.getDefault().getDialogSettings();
-		IDialogSettings section = master.getSection(MOST_RECEANTLY_USED_SITE_URL);
-		if (section==null)
-			section = master.addNewSection(MOST_RECEANTLY_USED_SITE_URL);
-		section.put(MOST_RECEANTLY_USED_SITE_URL, site.getSite().getURL().toExternalForm()); 
+		if (site!=null) {
+			IDialogSettings master = UpdateUI.getDefault().getDialogSettings();
+			IDialogSettings section = master.getSection(MOST_RECEANTLY_USED_SITE_URL);
+			if (section==null)
+				section = master.addNewSection(MOST_RECEANTLY_USED_SITE_URL);
+			section.put(MOST_RECEANTLY_USED_SITE_URL, site.getSite().getURL().toExternalForm()); 
 			
-		if (site != null) {
 			for(int i = 0; i < jobs.length; i++)
 				jobs[i].setTargetSite(site);
 		}
