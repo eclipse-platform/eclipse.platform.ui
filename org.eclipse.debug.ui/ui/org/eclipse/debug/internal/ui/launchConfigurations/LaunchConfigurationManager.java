@@ -422,9 +422,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
 	 */
-	protected synchronized void persistLaunchHistory() throws IOException, CoreException, TransformerException, ParserConfigurationException {
-		if (fLaunchHistories == null || fRestoring) {
-			return;
+	protected void persistLaunchHistory() throws IOException, CoreException, TransformerException, ParserConfigurationException {
+		synchronized (this) {
+			if (fLaunchHistories == null || fRestoring) {
+				return;
+			}			
 		}
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
