@@ -543,10 +543,44 @@ public class Patcher {
 	}
 	
 	public void setEnabled(Object element, boolean enabled) {
+		if (element instanceof DiffProject) 
+			setEnabledProject((DiffProject) element, enabled);
+		if (element instanceof FileDiff) 
+			setEnabledFile((FileDiff)element, enabled);
+		if (element instanceof Hunk) 
+			setEnabledHunk((Hunk) element, enabled);
+	}
+	
+	private void setEnabledProject(DiffProject projectDiff, boolean enabled) {
+		FileDiff[] diffFiles = projectDiff.getFileDiffs();
+		for (int i = 0; i < diffFiles.length; i++) {
+			setEnabledFile(diffFiles[i], enabled);
+		}
+	}
+	
+	private void setEnabledFile(FileDiff fileDiff, boolean enabled) {
+		Hunk[] hunks = fileDiff.getHunks();
+		for (int i = 0; i < hunks.length; i++) {
+			setEnabledHunk(hunks[i], enabled);
+		}
+	}
+
+	private void setEnabledHunk(Hunk hunk, boolean enabled) {
 		if (enabled) {
-			disabledElements.remove(element);
+			disabledElements.remove(hunk);
+			FileDiff file = hunk.getParent();
+			disabledElements.remove(file);
+			DiffProject project = file.getProject();
+			disabledElements.remove(project);
 		} else {
-			disabledElements.add(element);
+			disabledElements.add(hunk);
+			FileDiff file = hunk.getParent();
+			if (disabledElements.containsAll(Arrays.asList(file.getHunks()))) {
+				disabledElements.add(file);
+				DiffProject project = file.getProject();
+				if (disabledElements.containsAll(Arrays.asList(project.getFileDiffs())))
+					disabledElements.add(project);
+			}
 		}
 	}
 
