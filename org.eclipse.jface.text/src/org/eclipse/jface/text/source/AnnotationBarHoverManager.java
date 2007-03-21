@@ -292,7 +292,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	private ISourceViewer fSourceViewer;
 	/** The vertical ruler the manager is registered with */
 	private IVerticalRulerInfo fVerticalRulerInfo;
-	/** The annotation hover the manager uses to retrieve the information to display */
+	/** The annotation hover the manager uses to retrieve the information to display. Can be <code>null</code>. */
 	private IAnnotationHover fAnnotationHover;
 	/**
 	 * Indicates whether the mouse cursor is allowed to leave the subject area without closing the hover.
@@ -340,7 +340,6 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		super(creator);
 
 		Assert.isNotNull(sourceViewer);
-//		Assert.isNotNull(annotationHover);
 
 		fSourceViewer= sourceViewer;
 		fVerticalRulerInfo= rulerInfo;
@@ -358,6 +357,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		fAllowMouseExit= false;
 		MouseEvent event= getHoverEvent();
 		IAnnotationHover hover= getHover(event);
+		if (hover == null) {
+			setInformation(null, null);
+			return;
+		}
 
 		int line= getHoverLine(event);
 
