@@ -1108,7 +1108,7 @@
       </categoryPresentationBinding>
       <categoryPresentationBinding
             categoryId="org.eclipse.ui.presentation.default"
-            presentationId="org.eclipse.ui.presentations.33">
+            presentationId="org.eclipse.ui.presentations.r30">
       </categoryPresentationBinding>
       <fontDefinition
             label="%FontsPreference.BannerFontLabel"
