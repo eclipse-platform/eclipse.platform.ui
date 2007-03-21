@@ -69,9 +69,13 @@ public class ListBinding extends Binding {
 		this.modelToTarget = modelToTargetStrategy;
 		if ((targetToModel.getUpdatePolicy() & UpdateValueStrategy.POLICY_UPDATE) != 0) {
 			target.addListChangeListener(targetChangeListener);
+		} else {
+			targetChangeListener = null;
 		}
 		if ((modelToTarget.getUpdatePolicy() & UpdateValueStrategy.POLICY_UPDATE) != 0) {
 			model.addListChangeListener(modelChangeListener);
+		} else {
+			modelChangeListener = null;
 		}
 	}
 
@@ -189,4 +193,15 @@ public class ListBinding extends Binding {
 		}
 	}
 
+	public void dispose() {
+		if (targetChangeListener != null) {
+			((IObservableList)getTarget()).removeListChangeListener(targetChangeListener);
+			targetChangeListener = null;
+		}
+		if (modelChangeListener != null) {
+			((IObservableList)getModel()).removeListChangeListener(modelChangeListener);
+			modelChangeListener = null;
+		}
+		super.dispose();
+	}
 }

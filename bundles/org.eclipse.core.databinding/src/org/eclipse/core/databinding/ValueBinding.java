@@ -64,9 +64,13 @@ class ValueBinding extends Binding {
 		this.modelToTarget = modelToTarget;
 		if ((targetToModel.getUpdatePolicy() & (UpdateValueStrategy.POLICY_CONVERT | UpdateValueStrategy.POLICY_UPDATE)) != 0) {
 			target.addValueChangeListener(targetChangeListener);
+		} else {
+			targetChangeListener = null;
 		}
 		if ((modelToTarget.getUpdatePolicy() & (UpdateValueStrategy.POLICY_CONVERT | UpdateValueStrategy.POLICY_UPDATE)) != 0) {
 			model.addValueChangeListener(modelChangeListener);
+		} else {
+			modelChangeListener = null;
 		}
 	}
 
@@ -196,6 +200,20 @@ class ValueBinding extends Binding {
 				validationStatusObservable.setValue(status);
 			}
 		});
+	}
+	
+	public void dispose() {
+		if (targetChangeListener != null) {
+			target.removeValueChangeListener(targetChangeListener);
+			targetChangeListener = null;
+		}
+		if (modelChangeListener != null) {
+			model.removeValueChangeListener(modelChangeListener);
+			modelChangeListener = null;
+		}
+		target = null;
+		model = null;
+		super.dispose();
 	}
 
 }

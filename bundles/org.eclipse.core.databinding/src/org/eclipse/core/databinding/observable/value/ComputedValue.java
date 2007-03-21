@@ -155,13 +155,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		if (!dirty) {
 			dirty = true;
 
-			// Stop listening for dependency changes.
-			for (int i = 0; i < dependencies.length; i++) {
-				IObservable observable = dependencies[i];
-
-				observable.removeChangeListener(privateInterface);
-				observable.removeStaleListener(privateInterface);
-			}
+			stopListening();
 
 			// copy the old value
 			final Object oldValue = cachedValue;
@@ -177,6 +171,19 @@ public abstract class ComputedValue extends AbstractObservableValue {
 					return getValue();
 				}
 			});
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void stopListening() {
+		// Stop listening for dependency changes.
+		for (int i = 0; i < dependencies.length; i++) {
+			IObservable observable = dependencies[i];
+
+			observable.removeChangeListener(privateInterface);
+			observable.removeStaleListener(privateInterface);
 		}
 	}
 
@@ -202,6 +209,11 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners
 		getValue();
+	}
+	
+	public synchronized void dispose() {
+		super.dispose();
+		stopListening();
 	}
 
 }
