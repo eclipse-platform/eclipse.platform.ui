@@ -1189,7 +1189,7 @@
       <colorDefinition
             label="%Color.activeTabText"
             categoryId="org.eclipse.ui.presentation.default"
-            value="COLOR_LIST_FOREGROUND"
+            value="COLOR_TITLE_FOREGROUND"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
          <description>
             %Color.activeTabTextDesc
@@ -1203,7 +1203,7 @@
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
             label="%Color.activeTabBGEnd"
-            value="COLOR_TITLE_BACKGROUND_GRADIENT">
+            value="COLOR_TITLE_BACKGROUND">
          <description>
             %Color.activeTabBGEndDesc
          </description>
@@ -1214,7 +1214,7 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.activeTabBGStart"
-            value="COLOR_LIST_BACKGROUND"
+            value="COLOR_TITLE_BACKGROUND_GRADIENT"
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
          <description>
