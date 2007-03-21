@@ -554,7 +554,7 @@ public class FastViewManager {
 		// we were really a minimized trim stack
 		if (vstb == null)
 			return;
-
+		
 		String selectedTabId = vstb.getSelectedTabId();
 		
 		List fvs = getFastViews(id);
@@ -567,8 +567,10 @@ public class FastViewManager {
 		LayoutPart stack = perspective.getPresentation().findPart(id, null);
 		if (stack instanceof PartStack) {
 			LayoutPart selTab = perspective.getPresentation().findPart(selectedTabId, null);
-			if (selTab instanceof PartPane)
+			if (selTab instanceof PartPane && selTab instanceof ViewPane) {
 				((PartStack)stack).setSelection(selTab);
+				((ViewPane)selTab).requestActivation();
+			}
 		}
 		
 		// Hide the Trim
