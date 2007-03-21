@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,10 +24,15 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.RGB;
 
 /**
+ * Provides context sensitive labels for debug variables.
+ * 
  * @since 3.3
  */
 public class VariableLabelProvider extends DebugElementLabelProvider {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getBackground(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
 	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (columnId != null) {
@@ -41,6 +46,9 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 		return super.getBackground(elementPath, presentationContext, columnId);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getForeground(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
 	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Object element = elementPath.getLastSegment();
 		if (columnId == null) {
@@ -54,6 +62,9 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	    return super.getForeground(elementPath, presentationContext, columnId);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
 			return super.getImageDescriptor(elementPath, presentationContext, columnId);
@@ -61,9 +72,12 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
 	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
 		if (columnId == null) {
-			return escapeSpecialChars(super.getLabel(elementPath, context, columnId));
+			return super.getLabel(elementPath, context, columnId);
 		} else {
 			IVariable variable = (IVariable) elementPath.getLastSegment();
 			IValue value = variable.getValue();		
@@ -74,11 +88,11 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	/**
 	 * Returns text for a specific columns for the variable/value.
 	 * 
-	 * @param variable
-	 * @param value
-	 * @param context
-	 * @param columnId
-	 * @return
+	 * @param variable variable to retrieve text for
+	 * @param value the value associated with the variable
+	 * @param context presentation context specifying how to display the text
+	 * @param columnId the column to get the text for
+	 * @return the label text
 	 * @throws CoreException
 	 */
 	protected String getColumnText(IVariable variable, IValue value, IPresentationContext context, String columnId) throws CoreException {
@@ -140,6 +154,12 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 		return escapeSpecialChars(value.getValueString());
 	}
 	
+	/**
+	 * Escapes special characters using the default label provider
+	 * 
+	 * @param label the text to escape
+	 * @return the string with special characters escaped
+	 */
 	protected String escapeSpecialChars(String label) {
 		return DefaultLabelProvider.escapeSpecialChars(label);
 	}	
