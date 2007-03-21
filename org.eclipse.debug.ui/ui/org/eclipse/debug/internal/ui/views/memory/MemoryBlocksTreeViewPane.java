@@ -240,7 +240,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			if (selection.isEmpty() && fRetrieval != null)
 			{
 				fRetrieval = null;
-				if (fTreeViewer != null)
+				if (fTreeViewer != null && fTreeViewer.getContentProvider() != null)
 					fTreeViewer.setInput(fRetrieval);
 				updateActionsEnablement();
 				return;
@@ -253,7 +253,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				{
 					IAdaptable context = (IAdaptable)obj;
 					IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
-					if (retrieval != null && fTreeViewer != null && retrieval != fRetrieval)
+					if (retrieval != null && retrieval != fRetrieval &&
+						fTreeViewer != null && fTreeViewer.getContentProvider() != null)
 					{
 						// set new setting
 						fRetrieval = retrieval;
@@ -403,7 +404,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getPage().removeSelectionListener(this); 
 		fAddMemoryBlockAction.dispose();
 		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
-		fEvtHandler.dispose();
+		fEvtHandler.dispose();	
 	}
 
 	/* (non-Javadoc)
