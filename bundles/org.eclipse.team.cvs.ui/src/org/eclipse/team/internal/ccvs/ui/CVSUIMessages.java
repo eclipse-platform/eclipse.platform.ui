@@ -112,8 +112,6 @@ public class CVSUIMessages extends NLS {
 	public static String AddToVersionControlDialog_thereIsAnUnaddedResource;
 	public static String AddToVersionControlDialog_thereAreUnaddedResources;
 
-	public static String AvoidableMessageDialog_dontShowAgain;
-
 	public static String BranchWizard_title;
 	public static String BranchWizardPage_pageDescription;
 	public static String BranchWizardPage_pageDescriptionVersion;
@@ -1138,4 +1136,6 @@ public class CVSUIMessages extends NLS {
 	public static String NewLocationWizard_2;
 	public static String NewLocationWizard_3;
 	public static String NewLocationWizard_4;
+	
+	public static String CVSAction_doNotShowThisAgain;
 }

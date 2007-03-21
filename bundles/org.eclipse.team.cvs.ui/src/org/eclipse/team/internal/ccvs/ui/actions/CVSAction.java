@@ -545,20 +545,13 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 				// consider BASE to be equal the parent tag since we don't make BASE sticky on replace
 				if (!CVSTag.equalTags(tag, parentTag) && !CVSTag.equalTags(tag, CVSTag.BASE)) {
 					shell.getDisplay().syncExec(new Runnable() {
-						public void run() {							
-							AvoidableMessageDialog dialog = new AvoidableMessageDialog(
-									shell,
-									CVSUIMessages.CVSAction_mixingTagsTitle,  
-									null,	// accept the default window icon
-									NLS.bind(CVSUIMessages.CVSAction_mixingTags, new String[] { tag.getName() }),  
-									MessageDialog.QUESTION, 
-									new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL}, 
-									0);
-									
-							result[0] = dialog.open() == 0;
-							if(result[0] && dialog.isDontShowAgain()) {
-								store.setValue(ICVSUIConstants.PREF_PROMPT_ON_MIXED_TAGS, false);
-							}																				
+						public void run() {
+							MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(shell, 
+									CVSUIMessages.CVSAction_mixingTagsTitle,
+									NLS.bind(CVSUIMessages.CVSAction_mixingTags, new String[] { tag.getName() }),
+									CVSUIMessages.CVSAction_doNotShowThisAgain, false, 
+									store, ICVSUIConstants.PREF_PROMPT_ON_MIXED_TAGS);
+							result[0] = dialog.getReturnCode() == 0;
 						}
 					});
 					// only prompt once
