@@ -91,8 +91,8 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     }
 
     public synchronized void dispose() {
-        fTable.dispose();
-        fTableEditor.dispose();
+    	fTableEditor.dispose();
+    	fTable.dispose();
         super.dispose();
     }  
 
