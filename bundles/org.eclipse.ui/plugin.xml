@@ -1203,7 +1203,7 @@
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
             label="%Color.activeTabBGEnd"
-            value="COLOR_TITLE_BACKGROUND">
+            >
          <description>
             %Color.activeTabBGEndDesc
          </description>
@@ -1211,10 +1211,21 @@
                ws="motif"
                value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT">
          </colorValue>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.DarkColorSelectionFactory"
+               plugin="org.eclipse.ui">
+          <parameter
+                  name="color1"
+                  value="COLOR_TITLE_BACKGROUND_GRADIENT">
+          </parameter>
+          <parameter
+                  name="color2"
+                  value="COLOR_TITLE_BACKGROUND">
+          </parameter>
+         </colorFactory>
       </colorDefinition>
       <colorDefinition
             label="%Color.activeTabBGStart"
-            value="COLOR_TITLE_BACKGROUND_GRADIENT"
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
          <description>
@@ -1224,6 +1235,18 @@
                ws="motif"
                value="COLOR_TITLE_INACTIVE_BACKGROUND">
          </colorValue>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.LightColorSelectionFactory"
+               plugin="org.eclipse.ui">
+            <parameter
+                  name="color1"
+                  value="COLOR_TITLE_BACKGROUND_GRADIENT">
+            </parameter>
+            <parameter
+                  name="color2"
+                  value="COLOR_TITLE_BACKGROUND">
+            </parameter>
+         </colorFactory>
       </colorDefinition>
 <!-- Active (Nofocus) Tab Colors -->
       <colorDefinition
