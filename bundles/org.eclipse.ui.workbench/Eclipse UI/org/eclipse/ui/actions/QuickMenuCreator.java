@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.TreeItem;
  * Abstract class that is capable of creating a context menu under the mouse
  * pointer.
  * 
- * <em>This API is experimental and may be removed before 3.3 ships.</em>
  * @since 3.3
  */
 public abstract class QuickMenuCreator {
