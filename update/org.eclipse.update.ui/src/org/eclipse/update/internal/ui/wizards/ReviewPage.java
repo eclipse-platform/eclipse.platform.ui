@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,9 +57,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ScrolledFormText;
 import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeature;
@@ -793,6 +797,23 @@ public class ReviewPage	extends BannerPage {
       descLabel.setBackground(parent.getBackground());
       HyperlinkSettings settings = new HyperlinkSettings(parent.getDisplay());
       descLabel.getFormText().setHyperlinkSettings(settings);
+      descLabel.getFormText().addHyperlinkListener(new HyperlinkAdapter() {
+    	  public void linkActivated(HyperlinkEvent e) {
+    		  Object href = e.getHref();
+    		  if (href==null)
+    			  return;
+    		  try {
+    			  URL url = new URL(href.toString());
+    			  PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser().openURL(url);
+    		  }
+    		  catch (PartInitException ex) {
+    			  UpdateUI.logException(ex);
+    		  }
+    		  catch (MalformedURLException ex) {
+    			  UpdateUI.logException(ex);
+    		  }
+    	  }
+      });
       
       gd = new GridData(SWT.FILL, SWT.FILL, true, true);
       gd.horizontalSpan = 1;
@@ -860,7 +881,8 @@ public class ReviewPage	extends BannerPage {
 
         if (description == null)
             description = ""; //$NON-NLS-1$
-        descLabel.setText(UpdateManagerUtils.getWritableXMLString(description));
+        //descLabel.setText(UpdateManagerUtils.getWritableXMLString(description), false, true);
+        updateDescription(description);
         propertiesButton.setEnabled(false);
         moreInfoButton.setEnabled(false);
     }
@@ -886,9 +908,15 @@ public class ReviewPage	extends BannerPage {
 			desc = descEntry.getAnnotation();
 		if (desc == null)
 			desc = ""; //$NON-NLS-1$
-		descLabel.setText(UpdateManagerUtils.getWritableXMLString(desc));
+		//descLabel.setText(UpdateManagerUtils.getWritableXMLString(desc));
+		updateDescription(desc);
 		propertiesButton.setEnabled(feature != null);
 		moreInfoButton.setEnabled(job != null && getMoreInfoURL(job) != null);
+	}
+	
+	private void updateDescription(String text) {
+		descLabel.getFormText().setText(UpdateManagerUtils.getWritableXMLString(text), false, true);
+		descLabel.reflow(true);
 	}
 	
 	private void pageChanged() {
