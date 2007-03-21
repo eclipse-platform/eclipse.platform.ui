@@ -20,10 +20,6 @@ import org.eclipse.ui.internal.statushandlers.StatusNotificationManager;
  * returned from {@link WorkbenchAdvisor#getWorkbenchErrorHandler()}. All
  * handled statuses are logged using logging facility.
  * 
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
- * 
  * @since 3.3
  */
 public class WorkbenchErrorHandler extends AbstractStatusHandler {

@@ -17,10 +17,8 @@ import org.eclipse.jface.util.SafeRunnable;
 /**
  * BaseLabelProvider is a default concrete implementation of
  * {@link IBaseLabelProvider} 
- * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
- *        added as part of a work in progress. This API may change at any given
- *        time. Please do not use this API without consulting with the
- *        Platform/UI team.
+ * 
+ * @since 3.3
  * 
  */
 public class BaseLabelProvider extends EventManager implements IBaseLabelProvider {

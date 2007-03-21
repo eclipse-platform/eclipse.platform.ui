@@ -12,12 +12,6 @@ package org.eclipse.core.databinding.conversion;
 
 /**
  * A one-way converter.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will remain
- * unchanged during the 3.2 release cycle. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 1.0
  * 

@@ -28,10 +28,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * TreeViewerRow is the Tree implementation of ViewerRow.
  * @since 3.3
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as
- * part of a work in progress. This API may change at any given time. Please 
- * do not use this API without consulting with the Platform/UI team.
- *
+ * 
  */
 public class TreeViewerRow extends ViewerRow {
 	private TreeItem item;

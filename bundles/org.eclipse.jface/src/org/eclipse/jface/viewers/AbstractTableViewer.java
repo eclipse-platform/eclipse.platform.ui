@@ -31,10 +31,7 @@ import org.eclipse.swt.widgets.Widget;
  * {@link org.eclipse.swt.widgets.Table} like widgets can use to provide a
  * viewer on top of their widget implementations.
  * 
- * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
- *        added as part of a work in progress. This API may change at any given
- *        time. Please do not use this API without consulting with the
- *        Platform/UI team.
+ * @since 3.3
  */
 public abstract class AbstractTableViewer extends ColumnViewer {
 

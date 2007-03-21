@@ -16,13 +16,6 @@ import java.io.PrintWriter;
 /**
  * An unchecked exception indicating a binding problem.
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will remain
- * unchanged during the 3.2 release cycle. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * 
  * @since 1.0
  */
 public class BindingException extends RuntimeException {

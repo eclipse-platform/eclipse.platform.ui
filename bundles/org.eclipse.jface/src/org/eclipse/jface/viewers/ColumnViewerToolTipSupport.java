@@ -23,10 +23,7 @@ import org.eclipse.swt.widgets.Event;
 /**
  * The ColumnViewerTooltipSupport is the class that provides tooltips for ColumnViewers.
  * 
- * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
- *        added as part of a work in progress. This API may change at any given
- *        time. Please do not use this API without consulting with the
- *        Platform/UI team.
+ * @since 3.3
  * 
  */
 public class ColumnViewerToolTipSupport extends DefaultToolTip {

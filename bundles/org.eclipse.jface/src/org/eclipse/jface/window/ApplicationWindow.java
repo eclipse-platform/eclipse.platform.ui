@@ -441,13 +441,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * tool bar manager.
      * </p>
      * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
-     * @param style swt style bits used to create the Toolbar
+	 * @param style swt style bits used to create the Toolbar
      *  
      * @return a tool bar manager
      * @since 3.2
@@ -482,12 +476,6 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * cool bar manager.
      * </p>
      * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
 	 * @param style swt style bits used to create the Coolbar
      * 
      * @return a cool bar manager
@@ -611,14 +599,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     /**
      * Returns the tool bar manager for this window (if it has one).
      * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
-     * 
-     * @return the tool bar manager, or <code>null</code> if
+	 * @return the tool bar manager, or <code>null</code> if
      *   this window does not have a tool bar
      * @see #addToolBar(int)
 	 * @since 3.2
@@ -645,14 +626,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
     /**
      * Returns the cool bar manager for this window.
      * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API will
-	 * work nor that it will remain the same. Please do not use this API without
-	 * consulting with the Platform/UI team.
-	 * </p>
-     * 
-     * @return the cool bar manager, or <code>null</code> if
+	 * @return the cool bar manager, or <code>null</code> if
      *   this window does not have a cool bar
      * @see #addCoolBar(int)
      * @since 3.2

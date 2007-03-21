@@ -282,9 +282,7 @@ public class ViewerLabel {
 	 * @return {@link String} or <code>null</code> if the tooltip text was
 	 *         never set.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public String getTooltipText() {
 		return tooltipText;
@@ -297,9 +295,7 @@ public class ViewerLabel {
 	 *            The tooltipText {@link String} to set. This value should not
 	 *            be <code>null</code>.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public void setTooltipText(String tooltipText) {
 		this.tooltipText = tooltipText;
@@ -311,9 +307,7 @@ public class ViewerLabel {
 	 * @return <code>boolean</code>. <code>true</code> if the tooltip text
 	 *         has been set.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public boolean hasNewTooltipText() {
 		return this.tooltipText != null;
@@ -325,9 +319,7 @@ public class ViewerLabel {
 	 * @return {@link Color} or <code>null</code> if the tooltip background
 	 *         color has not been set.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public Color getTooltipBackgroundColor() {
 		return tooltipBackgroundColor;
@@ -340,9 +332,7 @@ public class ViewerLabel {
 	 *            The {@link Color} to set. This value should not be
 	 *            <code>null</code>.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public void setTooltipBackgroundColor(Color tooltipBackgroundColor) {
 		this.tooltipBackgroundColor = tooltipBackgroundColor;
@@ -354,9 +344,7 @@ public class ViewerLabel {
 	 * @return <code>boolean</code>. <code>true</code> if the tooltip text
 	 *         has been set.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public boolean hasNewTooltipBackgroundColor() {
 		return tooltipBackgroundColor != null;
@@ -368,9 +356,7 @@ public class ViewerLabel {
 	 * @return Returns {@link Color} or <code>null</code> if the tooltip
 	 *         foreground color has not been set.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public Color getTooltipForegroundColor() {
 		return tooltipForegroundColor;
@@ -379,12 +365,10 @@ public class ViewerLabel {
 	/**
 	 * Set the foreground {@link Color} for tooltip.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
-	 * 
 	 * @param tooltipForegroundColor
 	 *            The tooltipForegroundColor to set.
+	 *            
+	 * @since 3.3
 	 */
 	public void setTooltipForegroundColor(Color tooltipForegroundColor) {
 		this.tooltipForegroundColor = tooltipForegroundColor;
@@ -397,9 +381,7 @@ public class ViewerLabel {
 	 * @return <code>boolean</code>. <code>true</code> if the tooltip foreground
 	 *         has been set.
 	 * 
-	 * <strong>EXPERIMENTAL</strong> This method has been added as part of a
-	 * work in progress. This API may change at any given time. Please do not
-	 * use this API without consulting with the Platform/UI team.
+	 * @since 3.3
 	 */
 	public boolean hasNewTooltipForegroundColor() {
 		return tooltipForegroundColor != null;

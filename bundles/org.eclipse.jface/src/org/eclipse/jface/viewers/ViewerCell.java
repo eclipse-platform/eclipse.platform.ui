@@ -23,10 +23,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
  * 
- * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
- *        added as part of a work in progress. This API may change at any given
- *        time. Please do not use this API without consulting with the
- *        Platform/UI team.
+ * @since 3.3
  * 
  */
 public class ViewerCell {

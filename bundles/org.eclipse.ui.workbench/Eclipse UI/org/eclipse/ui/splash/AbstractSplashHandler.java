@@ -25,9 +25,6 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
  * available to this class while executing. No attempt should be made to access
  * {@link IWorkbench} or any subordinate interfaces or resources.
  * 
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time.
- * 
  * @since 3.3
  */
 public abstract class AbstractSplashHandler {

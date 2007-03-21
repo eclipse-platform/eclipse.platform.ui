@@ -13,13 +13,9 @@ package org.eclipse.ui.dialogs;
 import org.eclipse.ui.internal.misc.StringMatcher;
 
 /**
- * 
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
- * 
  * A search pattern defines how search results are found.
  * 
+ * <p>
  * This class is intended to be subclassed by clients. A default behavior is
  * provided for each of the methods above, that clients can ovveride if they
  * wish.

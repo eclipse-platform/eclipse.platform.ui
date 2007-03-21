@@ -32,10 +32,7 @@ import org.eclipse.swt.widgets.Widget;
  * <strong> This class is not intended to be subclassed outside of the JFace
  * viewers framework.</strong>
  * 
- * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
- *        added as part of a work in progress. This API may change at any given
- *        time. Please do not use this API without consulting with the
- *        Platform/UI team.
+ * @since 3.3
  * 
  */
 public abstract class ColumnViewer extends StructuredViewer {
