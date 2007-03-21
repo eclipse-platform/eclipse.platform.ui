@@ -374,6 +374,7 @@ public class ConfigurationView
 		// pick the first whose size is 16x16 and does not
 		// alpha transparency type.
 		String windowImagesUrls = product.getProperty(IProductConstants.WINDOW_IMAGES);
+		Image png=null, gif=null, other = null;
 		if (windowImagesUrls != null ) {
 			StringTokenizer st = new StringTokenizer(windowImagesUrls, ","); //$NON-NLS-1$
 			while (st.hasMoreTokens()) {
@@ -385,7 +386,7 @@ public class ConfigurationView
 					// must be a path relative to the product bundle
 					Bundle productBundle = product.getDefiningBundle();
 					if (productBundle != null) { 
-						URL url = Platform.find(productBundle, new Path(windowImageURL));
+						URL url = FileLocator.find(productBundle, new Path(windowImageURL), null);
 						if (url != null)
 							edesc = ImageDescriptor.createFromURL(url);
 					}
@@ -395,13 +396,32 @@ public class ConfigurationView
 					Rectangle bounds = image.getBounds();
 					if (bounds.width==16 && bounds.height==16) {
 						// avoid images with TRANSPARENCY_ALPHA
-						if (image.getImageData().getTransparencyType()!=SWT.TRANSPARENCY_ALPHA)
-							return image;
+						//if (image.getImageData().getTransparencyType()!=SWT.TRANSPARENCY_ALPHA)
+						//	return image;
+						//Instead of returning, just store the image based on the
+						// extension.
+						if (windowImageURL.toLowerCase().endsWith(".gif")) //$NON-NLS-1$
+							gif = image;
+						else if (windowImageURL.toLowerCase().endsWith(".png")) //$NON-NLS-1$
+							png = image;
+						else
+							other = image;
 					}
 				}
 			}
 		}
-		return null;
+		Image choice = null;
+		// Pick png first because of transparency
+		if (png!=null) {
+			choice = png;
+		}
+		// Pick other format
+		else if (other!=null)
+			choice = other;
+		// Pick gif
+		else if (gif!=null)
+			choice = gif;
+		return choice;
 	}
 
 	public void initProviders() {
