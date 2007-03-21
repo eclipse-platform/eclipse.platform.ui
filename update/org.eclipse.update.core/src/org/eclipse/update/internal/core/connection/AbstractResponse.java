@@ -45,7 +45,7 @@ public abstract class AbstractResponse implements IResponse {
 	                connection = null;
 					break;
 				}
-				if (runnable.getInputStream() != null) {
+				if (runnable.getInputStream() != null || !t.isAlive()) {
 					is = runnable.getInputStream();
 					break;
 				}
@@ -57,8 +57,8 @@ public abstract class AbstractResponse implements IResponse {
 															IStatus.OK,
 															runnable.getException().getMessage(), 
 															runnable.getException()));
-				}
 				t.join(POLLING_INTERVAL);
+				}
 		} catch (InterruptedException e) {
 		}
 		return is;
