@@ -20,9 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This interface is not intended to be implemented by clients. Clients can
  * obtain file patches by calling
  * {@link ApplyPatchOperation#parsePatch(org.eclipse.core.resources.IStorage)}.
- * <p>
- * This interface is still under development and is to be considered
- * <strong>EXPERIMENTAL</strong>. 
+ * </p>
+ * 
  * @see ApplyPatchOperation#parsePatch(org.eclipse.core.resources.IStorage)
  * @since 3.3
  */

@@ -25,9 +25,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * <p>
  * This interface is not intended to be implemented by clients but can be
  * obtained from an {@link IFilePatchResult}
- * <p>
- * This interface is still under development and is to be considered
- * <strong>EXPERIMENTAL</strong>. 
+ * </p>
  * 
  * @since 3.3
  * 

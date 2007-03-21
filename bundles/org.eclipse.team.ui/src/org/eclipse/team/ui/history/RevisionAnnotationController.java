@@ -39,12 +39,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * revision ruler and a history list such as one shown in the history view. In
  * other words, the selection in the history list will be reflected in the
  * revision rule and vice versa.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
- * </p>
  * 
  * @see Revision
  * @see RevisionInformation

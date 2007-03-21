@@ -17,9 +17,7 @@ import java.util.HashMap;
  * is applied.
  * <p>
  * This class may be instantiated by clients but is not intended to be subclassed.
- * <p>
- * This interface is still under development and is to be considered
- * <strong>EXPERIMENTAL</strong>.  
+ * </p>
  * @see IFilePatch
  * @since 3.3
  */

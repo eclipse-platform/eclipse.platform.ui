@@ -23,11 +23,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * <p>
  * Clients are not expected to implement this interface but instead should subclass 
  * {@link SharedDocumentAdapter} or {@link SharedDocumentAdapterWrapper}.
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/Team team.
  * </p>
  * @since 3.3
  */

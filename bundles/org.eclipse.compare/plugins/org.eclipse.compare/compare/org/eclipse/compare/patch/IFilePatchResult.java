@@ -21,9 +21,7 @@ import org.eclipse.core.runtime.CoreException;
  * <p>
  * This interface is not intended to be implemented by clients. Clients can
  * obtain patch results from an {@link IFilePatch}.
- * <p>
- * This interface is still under development and is to be considered
- * <strong>EXPERIMENTAL</strong>. 
+ * </p>
  * 
  * @see IFilePatch
  * @since 3.3
