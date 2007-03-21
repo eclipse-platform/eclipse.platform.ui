@@ -300,7 +300,7 @@ public class Utils {
 	 */
 	public static void storeProperties(Properties props, OutputStream stream) {
 		PrintStream printStream = new PrintStream(stream);
-		printStream.println("#Processed using Jarprocessor"); //$NON-NLS-1$
+		printStream.print("#Processed using Jarprocessor\n"); //$NON-NLS-1$
 		SortedMap sorted = new TreeMap(props);
 		for (Iterator iter = sorted.keySet().iterator(); iter.hasNext();) {
 			String key = (String) iter.next();
