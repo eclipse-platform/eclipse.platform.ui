@@ -279,12 +279,6 @@ public interface ICommandService extends IDisposable {
 	/**
 	 * Register that this element accepts callbacks for this parameterized
 	 * command.
-	 * <p>
-	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API
-	 * will work nor that it will remain the same. Please do not use this API
-	 * without consulting with the Platform/UI team.
-	 * </p>
 	 * 
 	 * @param command
 	 *            The parameterized command that is already specialized. Must
@@ -308,12 +302,6 @@ public interface ICommandService extends IDisposable {
 	 * element reference must not currently be held by the ICommandService. i.e.
 	 * it must have been removed using
 	 * {@link #unregisterElement(IElementReference)}.
-	 * <p>
-	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API
-	 * will work nor that it will remain the same. Please do not use this API
-	 * without consulting with the Platform/UI team.
-	 * </p>
 	 * 
 	 * @param elementReference
 	 *            The reference to re-register. Must not be <code>null</code>.
@@ -325,12 +313,6 @@ public interface ICommandService extends IDisposable {
 	 * Unregister an element callback. It will be removed from the
 	 * ICommandService. The same service that is used to register an element for
 	 * a command <b>must</b> be used to unregister the element.
-	 * <p>
-	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API
-	 * will work nor that it will remain the same. Please do not use this API
-	 * without consulting with the Platform/UI team.
-	 * </p>
 	 * 
 	 * @param elementReference
 	 *            The callback reference that was provided by the command
@@ -356,12 +338,6 @@ public interface ICommandService extends IDisposable {
 	 * commandService.refreshElements(commandId, filter);
 	 * </pre>
 	 * 
-	 * </p>
-	 * <p>
-	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is a guarantee neither that this API
-	 * will work nor that it will remain the same. Please do not use this API
-	 * without consulting with the Platform/UI team.
 	 * </p>
 	 * 
 	 * @param commandId

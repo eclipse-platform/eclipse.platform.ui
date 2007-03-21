@@ -18,12 +18,6 @@ import org.eclipse.ui.menus.UIElement;
 /**
  * An IHandler for a command that expects to provide feedback through the
  * registered element mechanism must implement this interface.
- * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as part
- * of a work in progress. There is a guarantee neither that this API will work
- * nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.3
  * 
