@@ -85,7 +85,9 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 					}
 				}
 			});
-			table.setLayoutData(new GridData(GridData.FILL_BOTH));
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.heightHint = 200;
+			table.setLayoutData(gd);
 		}
 		text =
 			new Text(
@@ -93,6 +95,7 @@ public class LicensePage extends WizardPage implements IDynamicPage {
 				SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
 
 		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 200;
 		if (multiLicenseMode)
 			gd.horizontalSpan = 2;
 		text.setLayoutData(gd);

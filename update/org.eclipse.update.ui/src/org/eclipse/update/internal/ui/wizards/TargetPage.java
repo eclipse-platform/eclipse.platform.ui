@@ -335,6 +335,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
         gd.horizontalSpan = 3;
 		gd.widthHint = 150;
+		gd.heightHint = 200;
 		jobViewer.getTable().setLayoutData(gd);
 		jobViewer.setContentProvider(new JobsContentProvider());
 		jobViewer.setLabelProvider(new JobsLabelProvider());
