@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -81,7 +82,13 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 
     protected boolean canRelaunch(Object element) {
     	ILaunch launch = RelaunchActionDelegate.getLaunch(element);
-    	return launch != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
+    	if (launch != null) {
+    		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+    		if (configuration != null) {
+    			return LaunchConfigurationManager.isVisible(configuration);
+    		}
+    	}
+		return false; 
     }
 
     public String getActionDefinitionId() {
