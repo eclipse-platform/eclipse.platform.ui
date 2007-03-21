@@ -292,7 +292,14 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		addFiller(composite, 2);
 
 		Composite editorComposite= new Composite(composite, SWT.NONE);
-		GridData gd= new GridData(SWT.FILL, SWT.TOP, true, false);
+		GridData gd;
+		
+		// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=178097
+		if ("gtk".equals(SWT.getPlatform())) //$NON-NLS-1$
+				gd= new GridData(SWT.FILL, SWT.FILL, true, true);
+			else
+				gd= new GridData(SWT.FILL, SWT.TOP, true, false);
+		
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 20;
 		editorComposite.setLayoutData(gd);
