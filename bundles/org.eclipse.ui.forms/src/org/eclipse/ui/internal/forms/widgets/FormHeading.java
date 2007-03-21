@@ -32,6 +32,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -288,17 +289,22 @@ public class FormHeading extends Canvas {
 
 				if (hasMessageRegion()) {
 					xloc += SPACING;
-					int tlineHeight = tsize.y > 0 ? titleRegion.getFontHeight()
-							: 0;
+					int messageOffset = 0;
+					if (tsize.y > 0) {
+						// space between title area and title text
+						int titleLeadingSpace = (tsize.y - titleRegion.getFontHeight()) / 2;
+						// space between message control and message text
+						int messageLeadingSpace = (msize.y - messageRegion.getFontHeight()) / 2;
+						// how much to offset the message so baselines align
+						messageOffset = (titleLeadingSpace + titleRegion.getFontBaselineHeight())
+							- (messageLeadingSpace + messageRegion.getFontBaselineHeight());
+					}
 
 					messageRegion
 							.getMessageControl()
 							.setBounds(
 									xloc,
-									// yloc + row1Height / 2 - msize.y / 2,
-									// yloc + row1Height -1 - msize.y,
-									tlineHeight > 0 ? (yloc + tlineHeight - 1 - messageRegion
-											.getFontHeight())
+									tsize.y > 0 ? (yloc + messageOffset)
 											: (yloc + row1Height / 2 - msize.y / 2),
 									msize.x, msize.y);
 					xloc += msize.x;
@@ -355,6 +361,7 @@ public class FormHeading extends Canvas {
 		private ListenerList listeners;
 		private Color fg;
 		private int fontHeight = -1;
+		private int fontBaselineHeight = -1;
 
 		public MessageRegion() {
 		}
@@ -381,7 +388,21 @@ public class FormHeading extends Canvas {
 				fontHeight = gc.getFontMetrics().getHeight();
 				gc.dispose();
 			}
-			return needHyperlink() ? fontHeight : fontHeight + 2;
+			return fontHeight;
+		}
+
+		public int getFontBaselineHeight() {
+			if (fontBaselineHeight == -1) {
+				Control c = getMessageControl();
+				if (c == null)
+					return 0;
+				GC gc = new GC(c.getDisplay());
+				gc.setFont(c.getFont());
+				FontMetrics fm = gc.getFontMetrics();
+				fontBaselineHeight = fm.getHeight() - fm.getDescent();
+				gc.dispose();
+			}
+			return fontBaselineHeight;
 		}
 
 		public void showMessage(String newMessage, int newType,

@@ -64,6 +64,7 @@ public class TitleRegion extends Canvas {
 	private Label titleLabel;
 	private SizeCache titleCache;
 	private int fontHeight = -1;
+	private int fontBaselineHeight = -1;
 	private MenuHyperlink menuHyperlink;
 	private MenuManager menuManager;
 	private boolean dragSupport;
@@ -190,7 +191,7 @@ public class TitleRegion extends Canvas {
 				if (bsize != null) {
 					busyLabel.setBounds(xloc,
 							// yloc + height / 2 - bsize.y / 2,
-							yloc + internalGetFontHeight() - 1 - bsize.y,
+							yloc + getFontHeight() - 1 - bsize.y,
 							bsize.x, bsize.y);
 					xloc += bsize.x + SPACING;
 				}
@@ -208,7 +209,7 @@ public class TitleRegion extends Canvas {
 				}
 				if (msize != null) {
 					menuHyperlink.setBounds(xloc, yloc
-							+ internalGetFontHeight() / 2 - msize.y / 2,
+							+ getFontHeight() / 2 - msize.y / 2,
 							msize.x, msize.y);
 				}
 			}
@@ -380,6 +381,7 @@ public class TitleRegion extends Canvas {
 		super.setFont(font);
 		titleLabel.setFont(font);
 		fontHeight = -1;
+		fontBaselineHeight = -1;
 		layout();
 	}
 
@@ -441,7 +443,10 @@ public class TitleRegion extends Canvas {
 		return busyLabel != null && busyLabel.isBusy();
 	}
 
-	private int internalGetFontHeight() {
+	/*
+	 * Returns the complete height of the font.
+	 */
+	public int getFontHeight() {
 		if (fontHeight == -1) {
 			Font font = getFont();
 			GC gc = new GC(getDisplay());
@@ -453,8 +458,20 @@ public class TitleRegion extends Canvas {
 		return fontHeight;
 	}
 
-	public int getFontHeight() {
-		return internalGetFontHeight() + VMARGIN;
+	/*
+	 * Returns the height of the font starting at the baseline,
+	 * i.e. without the descent.
+	 */
+	public int getFontBaselineHeight() {
+		if (fontBaselineHeight == -1) {
+			Font font = getFont();
+			GC gc = new GC(getDisplay());
+			gc.setFont(font);
+			FontMetrics fm = gc.getFontMetrics();
+			fontBaselineHeight = fm.getHeight() - fm.getDescent();
+			gc.dispose();
+		}
+		return fontBaselineHeight;
 	}
 
 	public IMenuManager getMenuManager() {
