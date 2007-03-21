@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
-import org.eclipse.jface.text.LineSelectionTextTripleClickStrategy;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -29,7 +28,6 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.ITextTripleClickStrategy;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.TextViewerUndoManager;
@@ -209,20 +207,6 @@ public class SourceViewerConfiguration {
 	 */
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		return new DefaultTextDoubleClickStrategy();
-	}
-
-	/**
-	 * Returns the triple-click strategy ready to be used in this viewer when triple clicking
-	 * onto text of the given content type. This implementation always returns a new instance of
-	 * <code>LineSelectionTextTripleClickStrategy</code>.
-	 *
-	 * @param sourceViewer the source viewer to be configured by this configuration
-	 * @param contentType the content type for which the strategy is applicable
-	 * @return a triple-click strategy or <code>null</code> if triple clicking should not be supported
-	 * @since 3.3
-	 */
-	public ITextTripleClickStrategy getTripleClickStrategy(ISourceViewer sourceViewer, String contentType) {
-		return new LineSelectionTextTripleClickStrategy();
 	}
 
 	/**

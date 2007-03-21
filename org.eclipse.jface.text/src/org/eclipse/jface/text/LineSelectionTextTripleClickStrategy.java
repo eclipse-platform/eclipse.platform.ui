@@ -11,19 +11,12 @@
 package org.eclipse.jface.text;
 
 
-/**
- * A {@link org.eclipse.jface.text.ITextTripleClickStrategy} that selects
- * the line.
- * <p>
- * This class is not intended to be subclassed.
- * </p>
- */
-public class LineSelectionTextTripleClickStrategy implements ITextTripleClickStrategy {
+class LineSelectionTextTripleClickStrategy  {
 
 	/*
 	 * @see org.eclipse.jface.text.ITextTipleClickStrategy#tripleClicked(org.eclipse.jface.text.ITextViewer)
 	 */
-	public void tripleClicked(ITextViewer text) {
+	static void tripleClicked(ITextViewer text) {
 		int position= text.getSelectedRange().x;
 
 		if (position < 0)
