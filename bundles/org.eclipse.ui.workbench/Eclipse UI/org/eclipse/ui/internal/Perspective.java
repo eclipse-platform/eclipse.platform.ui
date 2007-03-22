@@ -79,6 +79,7 @@ public class Perspective {
     // Editor Area management
     protected LayoutPart editorArea;
     private PartPlaceholder editorHolder;
+	private boolean editorHidden = false;
     private boolean editorAreaRestoreOnUnzoom = false;
     private int editorAreaState = IStackPresentationSite.STATE_RESTORED;
 
@@ -472,6 +473,25 @@ public class Perspective {
 			return;
 		}
 
+        // When hiding the editor area, always restore it so we won't
+        // leave trim elements and we always show something
+        if (editorAreaState != IStackPresentationSite.STATE_RESTORED) {
+        	setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
+        }
+        
+        hideEditorAreaLocal();
+        
+        editorHidden = true;
+    }
+
+    /**
+     * Hide the editor area if visible
+     */
+    protected void hideEditorAreaLocal() {
+        if (editorHolder != null) {
+			return;
+		}
+
         // Replace the editor area with a placeholder so we
         // know where to put it back on show editor area request.
         editorHolder = new PartPlaceholder(editorArea.getID());
@@ -528,7 +548,7 @@ public class Perspective {
      * Return whether the editor area is visible or not.
      */
     protected boolean isEditorAreaVisible() {
-        return editorHolder == null;
+        return !editorHidden;
     }
 
     /**
@@ -835,7 +855,8 @@ public class Perspective {
 	protected void onActivate() {
 		// Update editor area state.
 		if (editorArea.getControl() != null) {
-			editorArea.setVisible(isEditorAreaVisible());
+			editorArea.setVisible(isEditorAreaVisible()
+			&& editorAreaState != IStackPresentationSite.STATE_MINIMIZED);
 		}
 
 		// Update fast views.
@@ -868,14 +889,13 @@ public class Perspective {
     	if (useNewMinMax && fastViewManager != null) {
     		fastViewManager.activate();
 
-			// Move any minimized extension stacks to the trim
-			
-			// Turn aimations off
-			boolean useAnimations = preferenceStore
-					.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
-			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
-			
+			// Move any minimized extension stacks to the trim			
 			if (layout != null) {
+				// Turn aimations off
+				boolean useAnimations = preferenceStore
+						.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+				preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+				
 				List minStacks = layout.GetMinimizedStacks();
 				for (Iterator msIter = minStacks.iterator(); msIter.hasNext();) {
 					ViewStack vs = (ViewStack) msIter.next();
@@ -1304,6 +1324,9 @@ public class Perspective {
         shouldHideEditorsOnActivate = (areaVisible != null && areaVisible
                 .intValue() == 0);
 
+        Integer editorWasHidden = memento.getInteger(IWorkbenchConstants.TAG_AREA_HIDDEN);
+        editorHidden = (editorWasHidden != null && editorWasHidden.intValue() != 0);
+
         // Restore the trim state of the editor area
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
@@ -1598,6 +1621,9 @@ public class Perspective {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
 		}
 
+        // Remember if we were -explicitly- hidden
+        memento.putInteger(IWorkbenchConstants.TAG_AREA_HIDDEN, editorHidden ? 1 : 0);
+
         // Save the trim state of the editor area if using the new min/max
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
@@ -1750,6 +1776,18 @@ public class Perspective {
 			return;
 		}
 
+        editorHidden = false;
+        showEditorAreaLocal();
+    }
+
+    /**
+     * Show the editor area if not visible
+     */
+    protected void showEditorAreaLocal() {
+        if (editorHolder == null || editorHidden) {
+			return;
+		}
+
         // Replace the part holder with the editor area.
         presentation.getLayout().replace(editorHolder, editorArea);
         editorHolder = null;
@@ -1795,18 +1833,23 @@ public class Perspective {
 	private void refreshEditorAreaVisibility() {
 		// If it's minimized then it's in the trim
 		if (editorAreaState == IStackPresentationSite.STATE_MINIMIZED) {
-			hideEditorArea();
+			hideEditorAreaLocal();
 			setEditorAreaTrimVisibility(true);
 			return;
 		}
 		
-		showEditorArea();
-		
-		// Show the editor area in the presentation
-		// We have to explicitly set the buttons on the site since
-		// it could be maximized in one perspective and not in another
-		if (editorAreaState != IStackPresentationSite.STATE_MINIMIZED)
-			updateEditorSiteState();
+		if (!editorHidden) {
+			showEditorAreaLocal();
+			
+			// Show the editor area in the presentation
+			// We have to explicitly set the buttons on the site since
+			// it could be maximized in one perspective and not in another
+			if (editorAreaState != IStackPresentationSite.STATE_MINIMIZED)
+				updateEditorSiteState();
+		}
+		else {
+			hideEditorAreaLocal();
+		}
 
 		setEditorAreaTrimVisibility(false);
 	}

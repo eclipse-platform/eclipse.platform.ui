@@ -88,6 +88,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_AREA_VISIBLE = "editorAreaVisible"; //$NON-NLS-1$
 
+    public static final String TAG_AREA_HIDDEN = "editorAreaHidden"; //$NON-NLS-1$
+
     public static final String TAG_AREA_TRIM_STATE = "editorAreaTrimState"; //$NON-NLS-1$
 
     public static final String TAG_INPUT = "input"; //$NON-NLS-1$
