@@ -127,6 +127,10 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	}
 
 	protected void lastListenerRemoved() {
+		unhookListener();
+	}
+
+	private void unhookListener() {
 		if (listenerSupport != null) {
 			listenerSupport.dispose();
 		}
@@ -139,17 +143,16 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 		return type;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
-	 */
 	public Object getObserved() {
 		return object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getPropertyDescriptor()
-	 */
 	public PropertyDescriptor getPropertyDescriptor() {
 		return propertyDescriptor;
+	}
+	
+	public synchronized void dispose() {
+		unhookListener();
+		super.dispose();
 	}
 }
