@@ -72,7 +72,6 @@ import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
-	
 	private static final int FEATURE_NAME_COLUMN = 0;
 	private static final int FEATURE_VERSION_COLUMN = 1;
 	private static final int FEATURE_SIZE_COLUMN = 2;
@@ -84,14 +83,13 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	
 	private TableViewer jobViewer;
 	private IInstallConfiguration config;
-	private ConfigListener configListener;
 	private Label requiredSpaceLabel;
 	private Label availableSpaceLabel;
 	private IInstallFeatureOperation[] jobs;
     //private IInstallFeatureOperation currentJob;
     private Label installLocation;
     private Button changeLocation;
-    static HashSet added;
+    private IConfiguredSite [] addedSites;
 
 	class JobsContentProvider
 		extends DefaultContentProvider
@@ -246,7 +244,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		setDescription(UpdateUIMessages.InstallWizard_TargetPage_desc); 
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		configListener = new ConfigListener();
 	}
 
 	public void setJobs(IInstallFeatureOperation[] jobs) {
@@ -716,18 +713,6 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		return null;
 	}
   
-    
-    void removeAddedSites() {
-        if (added != null) {
-        	Iterator it = added.iterator(); 
-            while (it.hasNext()) {
-                 config.removeConfiguredSite((IConfiguredSite) it.next());
-                // the config listener no longer removes the site so we need to cleanup the collection at the end
-            }
-            added.clear();
-        }           
-    }
-    
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
      */
@@ -772,7 +757,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		if (selectedJob == null) 
 		    return;
 		
-		TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, toJobArray(selection.iterator()), configListener);
+		TargetSiteDialog dialog = new TargetSiteDialog(getShell(), config, toJobArray(selection.iterator()));
 		dialog.create();
 
 		SWTUtil.setDialogSize(dialog, 400, 300);
@@ -782,6 +767,15 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			pageChanged();
 			jobViewer.refresh();
 			updateStatus();
+			addedSites = dialog.getAddedSites();
+		}
+	}
+	
+	void removeAddedSites() {
+		if (addedSites!=null) {
+			for (int i=0; i<addedSites.length; i++) {
+				config.removeConfiguredSite(addedSites[i]);
+			}
 		}
 	}
 }

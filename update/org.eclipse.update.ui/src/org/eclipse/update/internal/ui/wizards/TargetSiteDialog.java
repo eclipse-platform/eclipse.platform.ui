@@ -11,13 +11,16 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.io.File;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -44,7 +47,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateLabelProvider;
@@ -55,21 +57,84 @@ import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetSiteDialog extends Dialog {
-	
 	protected static final String MOST_RECEANTLY_USED_SITE_URL = "mostReceantlyUsedSiteURL"; //$NON-NLS-1$
 	private TableViewer siteViewer;
 	private IInstallConfiguration config;
-    //private Label installLocation;
 	private Button addButton;
 	private Button deleteButton;
-	private IInstallConfigurationChangedListener listener;
-    //private IConfiguredSite targetSite;
     private IInstallFeatureOperation[] jobs;
+    private WorkingCopy workingCopy;
+    
+    class WorkingCopy extends Observable {
+    	private ArrayList sites=new ArrayList();
+    	private ArrayList added=new ArrayList();
+    	private IConfiguredSite targetSite;
+
+    	public WorkingCopy() {
+    		Object [] initial = config.getConfiguredSites();
+    		for (int i=0; i<initial.length; i++)
+    			sites.add(initial[i]);
+    		for (int i=0; i<jobs.length; i++) {
+    			IConfiguredSite jsite = jobs[i].getTargetSite();
+    			if (targetSite==null)
+    				targetSite = jsite;
+    			else
+    				if (!targetSite.equals(jsite))
+    					targetSite = null;
+    		}
+    	}
+    	
+    	public void addSite(IConfiguredSite site) {
+    		sites.add(site);
+    		added.add(site);
+    		setChanged();
+    		notifyObservers(site);
+    		clearChanged();
+    	}
+    	
+    	public void removeSite(IConfiguredSite site) {
+    		sites.remove(site);
+    		added.remove(site);
+    		setChanged();
+    		notifyObservers(site);
+    		clearChanged();
+    	}
+    	
+    	public boolean isNewlyAdded(IConfiguredSite site) {
+    		return added.contains(site);
+    	}
+    	
+    	public void commit() {
+    		// add new sites to the config
+    		for (int i=0; i<added.size(); i++) {
+    			config.addConfiguredSite((IConfiguredSite)added.get(i));
+    		}
+    		// set selected site to the job
+    		for (int i=0; i<jobs.length; i++) {
+    			jobs[i].setTargetSite(targetSite);
+    		}
+    	}
+    	
+    	public IConfiguredSite [] getSites() {
+    		return (IConfiguredSite[])sites.toArray(new IConfiguredSite[sites.size()]);
+    	}
+    	
+    	public IConfiguredSite [] getAddedSites() {
+    		return (IConfiguredSite[])added.toArray(new IConfiguredSite[added.size()]);
+    	}    	
+    	
+    	public IConfiguredSite getTargetSite() {
+    		return targetSite;
+    	}
+    	
+    	public void setTargetSite(IConfiguredSite site) {
+    		this.targetSite = site;
+    	}
+    }
     
     class SitesContentProvider extends DefaultContentProvider implements IStructuredContentProvider {
-
 		public Object[] getElements(Object parent) {
-			return config.getConfiguredSites();
+			return workingCopy.getSites();
 		}
 	}
 	
@@ -93,18 +158,16 @@ public class TargetSiteDialog extends Dialog {
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public TargetSiteDialog(Shell parentShell, IInstallConfiguration config, IInstallFeatureOperation[] jobs, IInstallConfigurationChangedListener listener) {
+	public TargetSiteDialog(Shell parentShell, IInstallConfiguration config, IInstallFeatureOperation[] jobs) {
         super(parentShell);
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		this.jobs = jobs;
-        this.listener = listener;
-        config.addInstallConfigurationChangedListener(listener);
+		workingCopy = new WorkingCopy();
 	}
 
 	public boolean close() {
 		UpdateUI.getDefault().getLabelProvider().disconnect(this);
-		config.removeInstallConfigurationChangedListener(listener);
 		return super.close();
 	}
 
@@ -197,29 +260,42 @@ public class TargetSiteDialog extends Dialog {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection ssel = (IStructuredSelection) event.getSelection();
 				selectTargetSite(ssel);
-				updateDeleteButton(ssel);
+				updateButtons(ssel);
+			}
+		});
+		workingCopy.addObserver(new Observer() {
+			public void update(Observable arg0, Object arg1) {
+				siteViewer.refresh();
 			}
 		});
 	}
 	
     protected void okPressed() {
+    	workingCopy.commit();
         super.okPressed();
     }
     
-	private void updateDeleteButton(IStructuredSelection selection) {
-		boolean enable = TargetPage.added != null && !TargetPage.added.isEmpty();
-		if (enable) {
-			for (Iterator iter = selection.iterator(); iter.hasNext();) {
-				if (!TargetPage.added.contains(iter.next())) {
-					enable = false;
-					break;
-				}
-			}
-		}
-		deleteButton.setEnabled(enable);
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		updateButtons((IStructuredSelection)siteViewer.getSelection());
 	}
 
+	private void updateButtons(IStructuredSelection selection) {
+		deleteButton.setEnabled(canDelete(selection));
+		Button okButton = getButton(IDialogConstants.OK_ID);
+		if (okButton!=null)
+			okButton.setEnabled(!selection.isEmpty());
+	}
 	
+	private boolean canDelete(IStructuredSelection selection) {
+		if (selection.isEmpty()) return false;
+		for (Iterator iter = selection.iterator(); iter.hasNext();) {
+			IConfiguredSite site = (IConfiguredSite)iter.next();
+			if (!workingCopy.isNewlyAdded(site))
+				return false;
+		}
+		return true;
+	}
 
 	private void selectTargetSite(IStructuredSelection selection) {
 		IConfiguredSite site = (IConfiguredSite) selection.getFirstElement();
@@ -228,10 +304,8 @@ public class TargetSiteDialog extends Dialog {
 			IDialogSettings section = master.getSection(MOST_RECEANTLY_USED_SITE_URL);
 			if (section==null)
 				section = master.addNewSection(MOST_RECEANTLY_USED_SITE_URL);
-			section.put(MOST_RECEANTLY_USED_SITE_URL, site.getSite().getURL().toExternalForm()); 
-			
-			for(int i = 0; i < jobs.length; i++)
-				jobs[i].setTargetSite(site);
+			section.put(MOST_RECEANTLY_USED_SITE_URL, site.getSite().getURL().toExternalForm());
+			workingCopy.setTargetSite(site);
 		}
 	}
 
@@ -248,14 +322,9 @@ public class TargetSiteDialog extends Dialog {
 		IStructuredSelection selection = (IStructuredSelection) siteViewer.getSelection();
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			IConfiguredSite targetSite = (IConfiguredSite) iter.next();
-			config.removeConfiguredSite(targetSite);
-
-            if (TargetPage.added != null)
-                TargetPage.added.remove(targetSite);
-            siteViewer.remove(targetSite);
+			workingCopy.removeSite(targetSite);
 		}
-
-//        siteViewer.getControl().setFocus();
+		siteViewer.refresh();
 	}
 
 	private IConfiguredSite addConfiguredSite(Shell shell, IInstallConfiguration config, File file) {
@@ -263,18 +332,11 @@ public class TargetSiteDialog extends Dialog {
 			IConfiguredSite csite = config.createConfiguredSite(file);
 			IStatus status = csite.verifyUpdatableStatus();
 			if (status.isOK())
-				config.addConfiguredSite(csite);
+				workingCopy.addSite(csite);
 			else 
 				throw new CoreException(status);
-			
-            if (TargetPage.added == null)
-                TargetPage.added = new HashSet();
-            TargetPage.added.add(csite);
-            
-            siteViewer.add(csite);         
             siteViewer.setSelection(new StructuredSelection(csite));
             siteViewer.getControl().setFocus();
-            
 			return csite;
 		} catch (CoreException e) {
 			String title = UpdateUIMessages.InstallWizard_TargetPage_location_error_title; 
@@ -306,5 +368,9 @@ public class TargetSiteDialog extends Dialog {
 
 		// Allow installing into any site that is updateable and there is no affinity specified
 		return true;
+	}
+	
+	public IConfiguredSite [] getAddedSites() {
+		return workingCopy.getAddedSites();
 	}
 }
