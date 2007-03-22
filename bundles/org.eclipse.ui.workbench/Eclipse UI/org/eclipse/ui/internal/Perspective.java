@@ -126,6 +126,8 @@ public class Perspective {
 
     private boolean shouldHideEditorsOnActivate = false;
 
+	private PageLayout layout;
+
     /**
      * ViewManager constructor comment.
      */
@@ -671,7 +673,7 @@ public class Perspective {
 		
         // Create layout factory.
         ViewSashContainer container = new ViewSashContainer(page, getClientComposite());
-        PageLayout layout = new PageLayout(container, getViewFactory(),
+        layout = new PageLayout(container, getViewFactory(),
                 editorArea, descriptor);
         layout.setFixed(descriptor.getFixed());
 
@@ -865,6 +867,27 @@ public class Perspective {
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
     	if (useNewMinMax && fastViewManager != null) {
     		fastViewManager.activate();
+
+			// Move any minimized extension stacks to the trim
+			
+			// Turn aimations off
+			boolean useAnimations = preferenceStore
+					.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+			preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+			
+			if (layout != null) {
+				List minStacks = layout.GetMinimizedStacks();
+				for (Iterator msIter = minStacks.iterator(); msIter.hasNext();) {
+					ViewStack vs = (ViewStack) msIter.next();
+					vs.setMinimized(true);
+				}
+
+				// Restore the animation pref
+				preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, useAnimations);
+
+				// this is a one-off deal...set during the extension reading
+				minStacks.clear();
+			}
     	}
 
 		if (shouldHideEditorsOnActivate) {
