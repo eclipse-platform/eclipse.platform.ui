@@ -632,13 +632,6 @@ public class ExpandableComposite extends Canvas {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
-	public boolean forceFocus() {
-		return false;
-	}
-
 	/**
 	 * Overrides 'super' to pass the menu to the text label.
 	 * 

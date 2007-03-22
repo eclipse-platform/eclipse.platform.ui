@@ -242,13 +242,6 @@ public class TitleRegion extends Canvas {
 		});
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
-	public boolean forceFocus() {
-		return false;
-	}
-
 	private Color getColor(String key) {
 		return (Color) ((FormHeading) getParent()).colors.get(key);
 	}
