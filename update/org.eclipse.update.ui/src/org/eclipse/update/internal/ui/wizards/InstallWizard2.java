@@ -18,7 +18,6 @@ import java.util.Arrays;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -121,7 +120,7 @@ public class InstallWizard2
 				return false;
 		}
 		
-		if (Platform.getJobManager().find(jobFamily).length > 0) {
+		if (Job.getJobManager().find(jobFamily).length > 0) {
 			// another update/install job is running, need to wait to finish or cancel old job
 			boolean proceed = MessageDialog.openQuestion(
 					UpdateUI.getActiveWorkbenchShell(),
@@ -301,7 +300,7 @@ public class InstallWizard2
 	}
 
 	public static synchronized boolean isRunning() {
-		return isRunning || Platform.getJobManager().find(jobFamily).length > 0;
+		return isRunning || Job.getJobManager().find(jobFamily).length > 0;
 	}
 	
 	private IBatchOperation getBatchInstallOperation(final IInstallFeatureOperation[] selectedJobs) {
@@ -341,11 +340,11 @@ public class InstallWizard2
 		
 		// TODO: should we cancel existing jobs?
 		if (jobListener != null)
-			Platform.getJobManager().removeJobChangeListener(jobListener);
+			Job.getJobManager().removeJobChangeListener(jobListener);
 		if (job != null)
-			Platform.getJobManager().cancel(job);
+			Job.getJobManager().cancel(job);
 		jobListener = new UpdateJobChangeListener();
-		Platform.getJobManager().addJobChangeListener(jobListener);
+		Job.getJobManager().addJobChangeListener(jobListener);
 		
 		job = new Job(UpdateUIMessages.InstallWizard_jobName) { 
 			public IStatus run(IProgressMonitor monitor) {
@@ -476,8 +475,8 @@ public class InstallWizard2
             // the job listener is triggered when the download job is done, and it proceeds
             // with the actual install
             if (event.getJob() == InstallWizard2.this.job && event.getResult() == Status.OK_STATUS) {
-                Platform.getJobManager().removeJobChangeListener(this);
-                Platform.getJobManager().cancel(job);
+                Job.getJobManager().removeJobChangeListener(this);
+                Job.getJobManager().cancel(job);
                 
                 Job installJob = new Job(UpdateUIMessages.InstallWizard_jobName) { 
         			public IStatus run(IProgressMonitor monitor) {
@@ -519,8 +518,8 @@ public class InstallWizard2
                 }); */
             } else if (event.getJob() == InstallWizard2.this.job && event.getResult() != Status.OK_STATUS) {
                 isRunning = false;
-                Platform.getJobManager().removeJobChangeListener(this);
-                Platform.getJobManager().cancel(job);
+                Job.getJobManager().removeJobChangeListener(this);
+                Job.getJobManager().cancel(job);
                 UpdateUI.getStandardDisplay().syncExec(new Runnable() {
                     public void run() {
                         UpdateUI.log(event.getResult(), true);
