@@ -1720,13 +1720,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (win == null) {
 			win = getWorkbenchWindows()[0];
 		}
-		try {
-			showPerspective(perspId, win);
-		} catch (WorkbenchException e) {
-			String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
-			WorkbenchPlugin.log(msg, new Status(IStatus.ERROR,
-					PlatformUI.PLUGIN_ID, 0, msg, e));
-		}
+		
+		final String threadPerspId = perspId;
+		final IWorkbenchWindow threadWin = win;
+    	StartupThreading.runWithoutExceptions(new StartupRunnable() {
+			public void runWithException() throws Throwable {
+				try {
+					showPerspective(threadPerspId, threadWin);
+				} catch (WorkbenchException e) {
+					String msg = "Workbench exception showing specified command line perspective on startup."; //$NON-NLS-1$
+					WorkbenchPlugin.log(msg, new Status(IStatus.ERROR,
+							PlatformUI.PLUGIN_ID, 0, msg, e));
+				}
+			}});
 	}
 
 	/**
