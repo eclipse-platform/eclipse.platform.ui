@@ -271,7 +271,8 @@ public class RectangleAnimation extends Job {
     protected IStatus run(IProgressMonitor monitor) {
 
         // We use preferece value to indicate that the animation should be skipped on this platform.
-        if (!enableAnimations) {
+    	boolean isEmpty = feedbackRenderer.getStartRects().size() == 0;
+        if (!enableAnimations || isEmpty) {
             return Status.OK_STATUS;
         }
 

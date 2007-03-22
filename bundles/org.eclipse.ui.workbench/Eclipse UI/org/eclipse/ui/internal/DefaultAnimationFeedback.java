@@ -68,6 +68,14 @@ public class DefaultAnimationFeedback {
 		}
 	}
 	
+	public List getStartRects() {
+		return startRects;
+	}
+	
+	public List getEndRects() {
+		return endRects;
+	}
+	
 	public void renderStep(double amount) {
 		if (shellRegion != null) {
         	shellRegion.dispose();
