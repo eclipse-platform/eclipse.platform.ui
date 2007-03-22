@@ -825,8 +825,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * Verify we can write on the file system
 	 */
     public static boolean canWrite(File file) {
-    	//TODO REMOVE THIS
-    	new Exception("Testing canWrite on: " + file).printStackTrace();
         if (file.canWrite() == false)
             return false;
 
