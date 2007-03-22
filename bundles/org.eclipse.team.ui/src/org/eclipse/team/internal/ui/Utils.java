@@ -234,6 +234,10 @@ public class Utils {
 	}
 
 	public static Shell getShell(IWorkbenchSite site) {
+		return getShell(site, false);
+	}
+	
+	public static Shell getShell(IWorkbenchSite site, boolean syncIfNecessary) {
 		if(site != null) {
 			Shell shell = site.getShell();
 			if (!shell.isDisposed())
@@ -247,7 +251,21 @@ public class Utils {
 			}
 		}
 		// Fallback to using the display
-		Display display = Display.getDefault();
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+			if (display.isDisposed()) return null;
+			if (syncIfNecessary) {
+				final Shell[] result = new Shell[] { null };
+				Runnable r = new Runnable() {
+					public void run() {
+						result[0] = new Shell(Display.getDefault());
+					}
+				};
+				display.syncExec(r);
+				return result[0];
+			}
+		}
 		if (display.isDisposed()) return null;
 		return new Shell(display);
 	}

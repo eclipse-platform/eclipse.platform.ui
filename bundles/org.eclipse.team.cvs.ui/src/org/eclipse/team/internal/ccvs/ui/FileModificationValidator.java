@@ -54,7 +54,7 @@ public class FileModificationValidator extends CVSCoreFileModificationValidator 
 			return null;
 		if (context.getShell() != null)
 			return (Shell)context.getShell();
-		return Utils.getShell(null);
+		return Utils.getShell(null, true);
 	}
 
 	private IStatus getStatus(InvocationTargetException e) {

@@ -153,7 +153,7 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
     private Shell getShell(FileModificationValidationContext context) {
 		if (context.getShell() != null)
 			return (Shell)context.getShell();
-		return Utils.getShell(null);
+		return Utils.getShell(null, true);
 	}
 
 	public IStatus validateSave(IFile file) {
