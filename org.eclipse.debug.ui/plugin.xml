@@ -1402,9 +1402,6 @@
                <adapt
                      type="org.eclipse.core.resources.IResource">
                </adapt>
-               <test
-                     property="org.eclipse.debug.ui.contextlaunch"
-                     />
             </and>
          </enabledWhen>
       </page>
