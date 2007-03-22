@@ -195,6 +195,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		}
 		
 		protected void possibleChange(Object element, int type) {
+			DebugContextEvent event = null;
 			synchronized (this) {
 				if (fContext instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) fContext;
@@ -204,14 +205,24 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 				} else {
 					return;
 				}
+				event = new DebugContextEvent(this, fContext, type);
 			}
-			DebugContextEvent event = new DebugContextEvent(this, fContext, type);
 			if (getControl().getDisplay().getThread() == Thread.currentThread()) {
 				fire(event);
 			} else {
 				final DebugContextEvent finalEvent = event;
 				Job job = new UIJob("context change") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
+						// verify selection is still the same context since job was scheduled
+						synchronized (ContextProvider.this) {
+							if (fContext instanceof IStructuredSelection) {
+								IStructuredSelection ss = (IStructuredSelection) fContext;
+								Object changed = ((IStructuredSelection)finalEvent.getContext()).getFirstElement();
+								if (!(ss.size() == 1 && ss.getFirstElement().equals(changed))) {
+									return Status.OK_STATUS;
+								}
+							}
+						}
 						fire(finalEvent);
 						return Status.OK_STATUS;
 					}
