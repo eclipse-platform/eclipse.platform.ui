@@ -269,13 +269,18 @@ public class RectangleAnimation extends Job {
      * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
      */
     protected IStatus run(IProgressMonitor monitor) {
-
-        // We use preferece value to indicate that the animation should be skipped on this platform.
-    	boolean isEmpty = feedbackRenderer.getStartRects().size() == 0;
-        if (!enableAnimations || isEmpty) {
+    	
+        // We use preference value to indicate that the animation should be skipped on this platform.
+        if (!enableAnimations || feedbackRenderer == null) {
             return Status.OK_STATUS;
         }
 
+        // Do we have anything to animate ?
+    	boolean isEmpty = feedbackRenderer.getStartRects().size() == 0;
+        if (isEmpty) {
+            return Status.OK_STATUS;
+        }
+    	
         // We're starting, initialize
         display.syncExec(new Runnable() {
             public void run() {
