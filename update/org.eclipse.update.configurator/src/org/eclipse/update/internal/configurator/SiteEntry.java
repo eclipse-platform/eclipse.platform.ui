@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -600,7 +600,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (existing != null) {
 			VersionedIdentifier existingVersion = new VersionedIdentifier(existing.getFeatureIdentifier(), existing.getFeatureVersion());
 			VersionedIdentifier newVersion = new VersionedIdentifier(feature.getFeatureIdentifier(), feature.getFeatureVersion());
-			if (existingVersion.compareVersion(newVersion) == VersionedIdentifier.LESS_THAN) {
+			if (existingVersion.getVersion().compareTo(newVersion.getVersion()) < 0) {
 				featureEntries.put(feature.getFeatureIdentifier(), feature);
 				pluginsChangeStamp = 0;
 			} else if (existingVersion.equals(newVersion)) {
