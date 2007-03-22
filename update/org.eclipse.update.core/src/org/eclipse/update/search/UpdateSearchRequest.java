@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -282,6 +281,12 @@ public class UpdateSearchRequest {
 					// currently, the next conditional is only executed (qsite!=null) when
 					// running an update search. 
 					if (qsite != null && searchFeatureProvidedSites) {
+						// do not update features that are installed in read-only locations
+						if (query instanceof UpdatesSearchCategory.UpdateQuery) {
+							IFeature feature = ((UpdatesSearchCategory.UpdateQuery)query).getFeature();
+							if (feature != null && !feature.getSite().getCurrentConfiguredSite().verifyUpdatableStatus().isOK())
+								continue;
+						}
 						// check for mapping
 						IUpdateSiteAdapter mappedSite = getMappedSite(updatePolicy, qsite);
 						// when there is no mapped site the feature is not updatable

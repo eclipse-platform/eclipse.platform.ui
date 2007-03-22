@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,33 @@
 package org.eclipse.update.internal.search;
 
 import java.util.ArrayList;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
-import org.eclipse.update.operations.*;
-import org.eclipse.update.search.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configuration.IInstallConfiguration;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IIncludedFeatureReference;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.ISiteFeatureReference;
+import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.core.IUpdateConstants;
+import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.operations.FeatureHierarchyElement;
+import org.eclipse.update.internal.operations.UpdateUtils;
+import org.eclipse.update.operations.IInstallFeatureOperation;
+import org.eclipse.update.operations.OperationsManager;
+import org.eclipse.update.search.IQueryUpdateSiteAdapter;
+import org.eclipse.update.search.IUpdateSearchFilter;
+import org.eclipse.update.search.IUpdateSearchQuery;
+import org.eclipse.update.search.IUpdateSearchResultCollector;
 
 public class UpdatesSearchCategory extends BaseSearchCategory {
 	private static final String CATEGORY_ID =
@@ -150,7 +169,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 		}
 	}
 
-	class UpdateQuery implements IUpdateSearchQuery {
+	public class UpdateQuery implements IUpdateSearchQuery {
 		IFeature candidate;
 		IQueryUpdateSiteAdapter adapter;
 
@@ -284,6 +303,13 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 			}
 			monitor.worked(1);
 			monitor.done();
+		}
+		
+		/**
+		 * Returns IFeature associated with the IUpdateSearchQuery
+		 */
+		public IFeature getFeature() {
+			return candidate;
 		}
 	}
 

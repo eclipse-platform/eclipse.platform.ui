@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,9 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -60,6 +62,7 @@ import org.eclipse.update.configuration.IInstallConfigurationChangedListener;
 import org.eclipse.update.configuration.LocalSystemInfo;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.ISite;
+import org.eclipse.update.internal.core.ConfiguredSite;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateLabelProvider;
@@ -71,6 +74,7 @@ import org.eclipse.update.internal.ui.parts.SWTUtil;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 
 public class TargetPage extends BannerPage implements IDynamicPage {
+	
 	private static final int FEATURE_NAME_COLUMN = 0;
 	private static final int FEATURE_VERSION_COLUMN = 1;
 	private static final int FEATURE_SIZE_COLUMN = 2;
@@ -89,6 +93,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
     private Label installLocation;
     private Button changeLocation;
     private IConfiguredSite [] addedSites;
+    
+    private boolean isUpdate; // whether the wizard is updating a feature or installing a new one
 
 	class JobsContentProvider
 		extends DefaultContentProvider
@@ -122,6 +128,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 
 		public String getColumnText(Object obj, int col) {
+			
 			IFeature feature = ((IInstallFeatureOperation) obj).getFeature();
 			IConfiguredSite csite =((IInstallFeatureOperation)obj).getTargetSite(); 
 			ISite site = csite!=null?csite.getSite():null;
@@ -237,12 +244,13 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public TargetPage(IInstallConfiguration config) {
+	public TargetPage(IInstallConfiguration config, boolean isUpdate) {
 		super("Target"); //$NON-NLS-1$
 		setTitle(UpdateUIMessages.InstallWizard_TargetPage_title); 
 		setDescription(UpdateUIMessages.InstallWizard_TargetPage_desc); 
 		this.config = config;
 		UpdateUI.getDefault().getLabelProvider().connect(this);
+		this.isUpdate = isUpdate;
 	}
 
 	public void setJobs(IInstallFeatureOperation[] jobs) {
@@ -273,7 +281,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
         label.setLayoutData(gd);
 
 		installLocation = new Label(client, SWT.NULL);
-        installLocation.setText("foo"); //$NON-NLS-1$
+        installLocation.setText(""); //$NON-NLS-1$
         gd = new GridData(GridData.FILL_HORIZONTAL);
         installLocation.setLayoutData(gd);
         
@@ -656,11 +664,46 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				jobs[i].setTargetSite(mostReceantlyUsedSite);
 				continue;
 			}
+			
+			IConfiguredSite csite = getFirstTargetSite(jobs[i]);
+			if (csite == null && Platform.getInstallLocation().isReadOnly() && isUpdate == false) {
+				// there are no updateable sites, the installation location is read-only and we are installing a new feature
+				// make an update site in the configuration area
+				String configurationLocation = Platform.getConfigurationLocation().getURL().getFile();
+				File site = new File(configurationLocation);
+				if (!ConfiguredSite.canWrite(site)) {
+					// if we cannot write to the configuration area then make an update site in the user's home directory
+					site = new File(System.getProperty("user.home") + File.separator + ".eclipse" + File.separator + //$NON-NLS-1$ //$NON-NLS-2$
+							Platform.getProduct().getId() + File.separator + "updates"); //$NON-NLS-1$
+				}
+				try {
+					csite = config.createConfiguredSite(site);
+					config.addConfiguredSite(csite);
+					IStatus status = csite.verifyUpdatableStatus();
+					if (!status.isOK())
+						throw new CoreException(status);
+				} catch (CoreException e) {
+					// there was a problem, the user must choose an installation site
+					csite = null;
+					// no need to check if the directory exists because File.delete() returns false if it's not there
+					deleteDir(site);
+				}
+			}
 
-			jobs[i].setTargetSite(getFirstTargetSite(jobs[i]));
-
+			jobs[i].setTargetSite(csite);
 		}
-
+	}
+	
+		private boolean deleteDir(File dir) {
+		if (dir.isDirectory()) {
+			String[] files = dir.list();
+			for (int i = 0; i < files.length; i++) {
+				if (!deleteDir(new File(dir, files[i]))) {
+					return false;
+				}
+			}
+		}
+		return dir.delete();
 	}
 	
 	private IConfiguredSite getMostReceantlyUsedSite() {
@@ -697,7 +740,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		IConfiguredSite[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite csite = sites[i];
-			if (getSiteVisibility(csite, job)) 
+			if (getSiteVisibility(csite, job) && csite.getSite().getCurrentConfiguredSite().verifyUpdatableStatus().isOK())
 				return csite;
 		}
 		return null;
@@ -710,8 +753,8 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 				return jobs[i];
 		}
 		return null;
-	}
-  
+            }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
      */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,12 +29,12 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.Set;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IConfiguredSite;
@@ -803,7 +803,9 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			}
 		} else {
 			File container = getSiteContaining(file);
-			if (container != null) {
+			// allow the install location to pass even though it looks like this
+			// site is contained in another site
+			if (container != null && !siteLocation.equals(Platform.getInstallLocation().getURL().getFile())) {
 				verifyStatus = createStatus(IStatus.ERROR, NLS.bind(Messages.ConfiguredSite_ContainedInAnotherSite, (new String[] { container.getAbsolutePath() })), null);
 				return verifyStatus;
 			}
@@ -822,30 +824,29 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	/*
 	 * Verify we can write on the file system
 	 */
-	private static boolean canWrite(File file) {
-		if (!file.isDirectory() && file.getParentFile() != null) {
-			file = file.getParentFile();
-		}
+    public static boolean canWrite(File file) {
+    	//TODO REMOVE THIS
+    	new Exception("Testing canWrite on: " + file).printStackTrace();
+        if (file.canWrite() == false)
+            return false;
 
-		File tryFile = null;
-		FileOutputStream out = null;
-		try {
-			tryFile = new File(file, "toDelete"); //$NON-NLS-1$
-			out = new FileOutputStream(tryFile);
-			out.write(0);
-		} catch (IOException e) {
-			return false;
-		} finally {
-			try {
-				if (out != null)
-					out.close();
-			} catch (IOException e) {
-			}
-			if (tryFile != null)
-				tryFile.delete();
-		}
-		return true;
-	}
+        if (!file.isDirectory())
+            return false;
+
+        File fileTest = null;
+        try {
+        	// we use the .dll suffix to properly test on Vista virtual directories
+        	// on Vista you are not allowed to write executable files on virtual directories like "Program Files"
+            fileTest = File.createTempFile("writtableArea", ".dll", file); //$NON-NLS-1$ //$NON-NLS-2$
+        } catch (IOException e) {
+            //If an exception occured while trying to create the file, it means that it is not writtable
+            return false;
+        } finally {
+            if (fileTest != null)
+                fileTest.delete();
+        }
+        return true;
+    }
 
 	/*
 	 * Check if the directory contains a marker
