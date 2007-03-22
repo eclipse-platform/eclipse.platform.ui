@@ -288,7 +288,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
-	public UpdateStrategy setBeforeSetValidator(IValidator validator) {
+	public UpdateValueStrategy setBeforeSetValidator(IValidator validator) {
 		this.beforeSetValidator = validator;
 		return this;
 	}
