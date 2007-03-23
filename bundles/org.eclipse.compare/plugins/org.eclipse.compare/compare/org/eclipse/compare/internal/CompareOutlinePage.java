@@ -10,46 +10,59 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-
-import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.Page;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  */
-public class CompareOutlinePage implements IContentOutlinePage {
+public class CompareOutlinePage extends Page implements IContentOutlinePage, IPropertyChangeListener {
 
+	private CompareEditor fCompareEditor;
 	private Control fControl;
-	private ListenerList fListeners= new ListenerList();
-	private ISelection fSelection;
-	//private IActionBars fActionBars;
-	private CompareEditorInput fCompareEditorInput;
+	private CompareViewerSwitchingPane fStructurePane;
+	private OutlineViewerCreator fCreator;
 	
-	CompareOutlinePage(CompareEditorInput input) {
-		fCompareEditorInput= input;
+	CompareOutlinePage(CompareEditor editor) {
+		fCompareEditor= editor;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		if (fCompareEditorInput != null) {
-			fControl= fCompareEditorInput.createOutlineContents(parent, SWT.VERTICAL);
-		}
+		final Splitter h= new Splitter(parent, SWT.HORIZONTAL);
+		fStructurePane= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+		h.setVisible(fStructurePane, true);
+		fControl = h;
+		IPageSite site = getSite();
+		site.setSelectionProvider(fStructurePane);
+		h.layout();
+	}
+	
+	private Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
+		OutlineViewerCreator creator = getCreator();
+		if (creator != null)
+			return creator.findStructureViewer(oldViewer, input, parent, getCompareConfiguration());
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
-	public void dispose() {
-		if (fControl != null)
-			fControl.dispose();
+	private CompareConfiguration getCompareConfiguration() {
+		return fCompareEditor.getCompareConfiguration();
 	}
 
 	/* (non-Javadoc)
@@ -60,47 +73,75 @@ public class CompareOutlinePage implements IContentOutlinePage {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
-	public void setActionBars(IActionBars actionBars) {
-		//fActionBars= actionBars;
-		//if (fControl != null)
-		//	fControl.setData("actionBars", actionBars);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IPage#setFocus()
 	 */
 	public void setFocus() {
-		if (fControl != null)
-			fControl.setFocus();
+		if (fStructurePane != null)
+			fStructurePane.setFocus();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		fListeners.add(listener);
+		if (fStructurePane != null)
+			fStructurePane.addSelectionChangedListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
 	 */
 	public ISelection getSelection() {
-		return fSelection;
+		if (fStructurePane != null)
+			return fStructurePane.getSelection();
+		return StructuredSelection.EMPTY;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
 	 */
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		fListeners.remove(listener);
+		if (fStructurePane != null)
+			fStructurePane.removeSelectionChangedListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
 	 */
 	public void setSelection(ISelection selection) {
-		fSelection= selection;
+		if (fStructurePane != null)
+			fStructurePane.setSelection(selection);
+	}
+	
+	public void setInput(Object input) {
+		if (fCreator != null)
+			fCreator.removePropertyChangeListener(this);
+		fCreator = null;
+		if (fStructurePane != null) {
+			fStructurePane.setInput(input);
+			((Splitter)fControl).layout();
+		}
+	}
+
+	public OutlineViewerCreator getCreator() {
+		if (fCreator == null) {
+			fCreator = (OutlineViewerCreator)Utilities.getAdapter(fCompareEditor, OutlineViewerCreator.class);
+			fCreator.addPropertyChangeListener(this);
+		}
+		return fCreator;
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(OutlineViewerCreator.PROP_INPUT)) {
+			fStructurePane.setInput(event.getNewValue());
+			((Splitter)fControl).layout();
+		}
+	}
+	
+	public void dispose() {
+		super.dispose();
+		if (fCreator != null)
+			fCreator.removePropertyChangeListener(this);
+		fCreator = null;
 	}
 }

@@ -158,12 +158,28 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private ShowPseudoConflicts fShowPseudoConflicts;
 	
 	boolean fStructureCompareOnSingleClick= true;
-	boolean fUseOutlineView= false;
 
 	private ICompareContainer fContainer;
 	private boolean fContainerProvided;
 
 	private String fHelpContextId;
+	private InternalOutlineViewerCreator fOutlineView;
+	
+	private class InternalOutlineViewerCreator extends OutlineViewerCreator {
+		public Viewer findStructureViewer(Viewer oldViewer,
+				ICompareInput input, Composite parent,
+				CompareConfiguration configuration) {
+			if (fContentInputPane != null) {
+				Viewer v = fContentInputPane.getViewer();
+				if (v != null) {
+					OutlineViewerCreator creator = (OutlineViewerCreator)Utilities.getAdapter(v, OutlineViewerCreator.class);
+					if (creator != null)
+						return creator.findStructureViewer(oldViewer, input, parent, configuration);
+				}
+			}
+			return null;
+		}
+	}
 
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
@@ -175,10 +191,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public CompareEditorInput(CompareConfiguration configuration) {
 		fCompareConfiguration= configuration;
 		Assert.isNotNull(configuration);
-		
-		Object object= fCompareConfiguration.getProperty(CompareConfiguration.USE_OUTLINE_VIEW);
-		if (object instanceof Boolean)
-			fUseOutlineView= ((Boolean) object).booleanValue();
 
 		ResourceBundle bundle= CompareUI.getResourceBundle();
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, configuration);
@@ -206,7 +218,12 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 	
 	private boolean structureCompareOnSingleClick() {
-		return fStructureCompareOnSingleClick;
+		return fStructureCompareOnSingleClick && !isShowStructureInOutlineView();
+	}
+	
+	private boolean isShowStructureInOutlineView() {
+		Object object= getCompareConfiguration().getProperty(CompareConfiguration.USE_OUTLINE_VIEW);
+		return (object instanceof Boolean && ((Boolean)object).booleanValue());
 	}
 		
 	/* (non Javadoc)
@@ -224,6 +241,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 						return new ShowInContext(new FileEditorInput(file), StructuredSelection.EMPTY);
 					}
 				};
+		}
+		if (adapter == OutlineViewerCreator.class && getCompareResult() != null && !hasChildren(getCompareResult())) {
+			synchronized (this) {
+				if (fOutlineView == null)
+					fOutlineView = new InternalOutlineViewerCreator();
+				return fOutlineView;
+			}
 		}
 		return null;
 	}
@@ -429,9 +453,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fComposite= new Splitter(parent, SWT.VERTICAL);
 		fComposite.setData(this);
 				
-		Control outline= null;
-		if (!fUseOutlineView)
-			outline= createOutlineContents(fComposite, SWT.HORIZONTAL);
+		Control outline= createOutlineContents(fComposite, SWT.HORIZONTAL);
 					
 		fContentInputPane= new CompareViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
@@ -561,11 +583,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					feed3(e.getSelection());
 				}
 			}
-		);		
-
-		if (fUseOutlineView) {
-			feedInput();
-		}
+		);
 
 		return h;
 	}
@@ -607,7 +625,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			if (structureCompareOnSingleClick() || hasChildren(fInput) || isCustomStructureInputPane()) {
 				fStructureInputPane.setInput(fInput);
 			} else if (!structureCompareOnSingleClick()) {
-				fContentInputPane.setInput(fInput);
+				internalSetContentPaneInput(fInput);
 				if (fContentInputPane.isEmpty() || fContentInputPane.getViewer() instanceof BinaryCompareViewer) {
 					fStructureInputPane.setInput(fInput);
 				}
@@ -629,12 +647,12 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					if (selection == null || selection.isEmpty()) {
 						Object input= fStructureInputPane.getInput();
 						if (input != null)
-							fContentInputPane.setInput(input);
+							internalSetContentPaneInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
 						fStructurePane1.setInput(null);
 					} else {
 						Object input= getElement(selection);
-						fContentInputPane.setInput(input);
+						internalSetContentPaneInput(input);
 						if (structureCompareOnSingleClick() || fContentInputPane.isEmpty())
 							fStructurePane1.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
@@ -663,11 +681,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				public void run() {
 					if (selection.isEmpty()) {
 						Object input= fStructurePane1.getInput();
-						fContentInputPane.setInput(input);
+						internalSetContentPaneInput(input);
 						fStructurePane2.setInput(null);
 					} else {
 						Object input= getElement(selection);
-						fContentInputPane.setInput(input);
+						internalSetContentPaneInput(input);
 						fStructurePane2.setInput(input);
 					}
 				}
@@ -680,13 +698,20 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			new Runnable() {
 				public void run() {
 					if (selection.isEmpty())
-						fContentInputPane.setInput(fStructurePane2.getInput());
+						internalSetContentPaneInput(fStructurePane2.getInput());
 					else
-						fContentInputPane.setInput(getElement(selection));
+						internalSetContentPaneInput(getElement(selection));
 				}
 			}
 		);
 		
+	}
+	
+	private void internalSetContentPaneInput(Object input) {
+		Object oldInput = fContentInputPane.getInput();
+		fContentInputPane.setInput(input);
+		if (fOutlineView != null)
+			fOutlineView.fireInputChange(oldInput, input);
 	}
 	
 	/**

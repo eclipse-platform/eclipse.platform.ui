@@ -38,7 +38,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -283,6 +283,78 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ActionContributionItem fNextChange;
 	private ActionContributionItem fPreviousChange;
 	private ShowWhitespaceAction showWhitespaceAction;
+	private InternalOutlineViewerCreator fOutlineViewerCreator;
+
+	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
+		public Viewer findStructureViewer(Viewer oldViewer,
+				ICompareInput input, Composite parent,
+				CompareConfiguration configuration) {
+			if (input != getInput())
+				return null;
+			final Viewer v = CompareUI.findStructureViewer(oldViewer, input, parent, configuration);
+			if (v != null) {
+				v.getControl().addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						v.removeSelectionChangedListener(InternalOutlineViewerCreator.this);
+					}
+				});
+				v.addSelectionChangedListener(this);
+			}
+				
+			return v;
+		}
+
+		public void selectionChanged(SelectionChangedEvent event) {
+			ISelection s = event.getSelection();
+			if (s instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) s;
+				Object element = ss.getFirstElement();
+				Diff diff = findDiff(element);
+				if (diff != null)
+					setCurrentDiff(diff, true);
+			}
+		}
+
+		private Diff findDiff(Object element) {
+			if (element instanceof ICompareInput) {
+				ICompareInput ci = (ICompareInput) element;
+				Position p = getPosition(ci.getLeft());
+				if (p != null)
+					return findDiff(p, true);
+				p = getPosition(ci.getRight());
+				if (p != null)
+					return findDiff(p, false);
+			}
+			return null;
+		}
+		
+	    private Diff findDiff(Position p, boolean left) {
+			for (Iterator iterator = fAllDiffs.iterator(); iterator.hasNext();) {
+				Diff diff = (Diff) iterator.next();
+				Position diffPos;
+				if (left) {
+					diffPos = diff.fLeftPos;
+				} else {
+					diffPos = diff.fRightPos;
+				}
+				// If the element falls within a diff, highlight that diff
+				if (diffPos.offset + diffPos.length >= p.offset && diff.fDirection != RangeDifference.NOCHANGE)
+					return diff;
+				// Otherwise, highlight the first diff after the elements position
+				if (diffPos.offset >= p.offset)
+					return diff;
+			}
+			return null;
+		}
+
+		private Position getPosition(ITypedElement left) {
+			if (left instanceof DocumentRangeNode) {
+				DocumentRangeNode drn = (DocumentRangeNode) left;
+				return drn.getRange();
+			}
+			return null;
+		}
+	}
 
 	class ContributorInfo implements IElementStateListener, VerifyListener, IDocumentListener {
 		private final TextMergeViewer fViewer;
@@ -5205,6 +5277,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					return null;
 				}
 			};
+		}
+		if (adapter == OutlineViewerCreator.class) {
+			if (fOutlineViewerCreator == null)
+				fOutlineViewerCreator = new InternalOutlineViewerCreator();
+			return fOutlineViewerCreator;
+
 		}
 		return null;
 	}
