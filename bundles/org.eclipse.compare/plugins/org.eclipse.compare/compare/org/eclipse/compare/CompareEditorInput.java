@@ -179,6 +179,17 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 			return null;
 		}
+
+		public boolean hasViewerFor(Object input) {
+			if (fContentInputPane != null) {
+				Viewer v = fContentInputPane.getViewer();
+				if (v != null) {
+					OutlineViewerCreator creator = (OutlineViewerCreator)Utilities.getAdapter(v, OutlineViewerCreator.class);
+					return (creator != null);
+				}
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -218,7 +229,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 	
 	private boolean structureCompareOnSingleClick() {
-		return fStructureCompareOnSingleClick && !isShowStructureInOutlineView();
+		return fStructureCompareOnSingleClick;
 	}
 	
 	private boolean isShowStructureInOutlineView() {
@@ -622,13 +633,22 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (fStructureInputPane != null
 				&& (fInput instanceof ICompareInput 
 						|| isCustomStructureInputPane())) {
-			if (structureCompareOnSingleClick() || hasChildren(fInput) || isCustomStructureInputPane()) {
+			if (hasChildren(fInput) || isCustomStructureInputPane()) {
+				// The input has multiple entries so set the input of the structure input pane
 				fStructureInputPane.setInput(fInput);
-			} else if (!structureCompareOnSingleClick()) {
+			} else if (!structureCompareOnSingleClick() || isShowStructureInOutlineView()) {
+				// We want to avoid showing the structure in the editor if we can so first
+				// we'll set the content pane to see if we need to provide a structure
 				internalSetContentPaneInput(fInput);
-				if (fContentInputPane.isEmpty() || fContentInputPane.getViewer() instanceof BinaryCompareViewer) {
+				// If the content viewer is unusable
+				if (hasUnusableContentViewer() 
+						|| (structureCompareOnSingleClick() 
+								&& isShowStructureInOutlineView() 
+								&& !hasOutlineViewer(fInput))) {
 					fStructureInputPane.setInput(fInput);
 				}
+			} else {
+				fStructureInputPane.setInput(fInput);
 			}
 			ISelection sel= fStructureInputPane.getSelection();
 			if (sel == null || sel.isEmpty())
@@ -636,6 +656,19 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		}
 	}
 
+	private boolean hasOutlineViewer(Object input) {
+		if (!isShowStructureInOutlineView())
+			return false;
+		OutlineViewerCreator creator = (OutlineViewerCreator)getAdapter(OutlineViewerCreator.class);
+		if (creator != null)
+			return creator.hasViewerFor(input);
+		return false;
+	}
+
+	private boolean hasUnusableContentViewer() {
+		return fContentInputPane.isEmpty() || fContentInputPane.getViewer() instanceof BinaryCompareViewer;
+	}
+	
 	private boolean isCustomStructureInputPane() {
 		return !(fStructureInputPane instanceof CompareViewerSwitchingPane);
 	}
@@ -653,7 +686,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					} else {
 						Object input= getElement(selection);
 						internalSetContentPaneInput(input);
-						if (structureCompareOnSingleClick() || fContentInputPane.isEmpty())
+						if (structureCompareOnSingleClick() || hasUnusableContentViewer())
 							fStructurePane1.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
 						if (fStructurePane1.getInput() != input)

@@ -303,6 +303,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				
 			return v;
 		}
+		
+		public boolean hasViewerFor(Object input) {
+			return true;
+		}
 
 		public void selectionChanged(SelectionChangedEvent event) {
 			ISelection s = event.getSelection();

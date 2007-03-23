@@ -243,7 +243,7 @@ public class CompareConfiguration {
 	 */
 	public CompareConfiguration(IPreferenceStore prefStore) {
 		
-		setProperty("LEFT_IS_LOCAL", new Boolean(fLeftIsLocal)); //$NON-NLS-1$
+		setProperty("LEFT_IS_LOCAL", Boolean.valueOf(fLeftIsLocal)); //$NON-NLS-1$
 		
 		fPreferenceStore= prefStore;
 		if (fPreferenceStore != null) {

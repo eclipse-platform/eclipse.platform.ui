@@ -42,6 +42,8 @@ public abstract class OutlineViewerCreator {
 	public abstract Viewer findStructureViewer(Viewer oldViewer, ICompareInput input,
 			Composite parent, CompareConfiguration configuration);
 	
+	public abstract boolean hasViewerFor(Object input);
+	
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		listeners.add(listener);
 	}
