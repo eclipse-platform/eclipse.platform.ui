@@ -27,7 +27,7 @@ import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A dialog for keyboad-interactive authentication for the ssh2 connection.
+ * A dialog for keyboard-interactive authentication for the ssh2 connection.
  */
 public class KeyboardInteractiveDialog extends TrayDialog {
   // widgets
@@ -47,18 +47,19 @@ public class KeyboardInteractiveDialog extends TrayDialog {
   private String message;
   private String[] result;
   protected boolean allowCaching=false;
+  private boolean cachingDialog=false;
   
   private boolean isPasswordAuth=false;
 
 
   /**
-   * Creates a nwe KeyboardInteractiveDialog.
+   * Creates a new KeyboardInteractiveDialog.
    *
    * @param parentShell the parent shell
    * @param destication the location
    * @param name the name
    * @param instruction the instruction
-   * @param prompt the titles for textfields
+   * @param prompt the titles for text fields
    * @param echo '*' should be used or not
    */
   public KeyboardInteractiveDialog(Shell parentShell,
@@ -68,7 +69,8 @@ public class KeyboardInteractiveDialog extends TrayDialog {
 				   String userName, 
 				   String instruction,
 				   String[] prompt,
-				   boolean[] echo){
+				   boolean[] echo,
+				   boolean cachingDialog){
     super(parentShell);
     this.domain=location;
     this.destination=destination;
@@ -77,6 +79,8 @@ public class KeyboardInteractiveDialog extends TrayDialog {
     this.instruction=instruction;
     this.prompt=prompt;
     this.echo=echo;
+    this.cachingDialog=cachingDialog;
+    
     this.message=NLS.bind(CVSUIMessages.KeyboradInteractiveDialog_message, new String[] { destination+(name!=null && name.length()>0 ? ": "+name : "") }); //NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$ 
  
     if(KeyboardInteractiveDialog.isPasswordAuth(prompt)){
@@ -187,7 +191,7 @@ public class KeyboardInteractiveDialog extends TrayDialog {
 
 		createPasswordFields(main);
 
-		if (isPasswordAuth) {
+		if (cachingDialog && isPasswordAuth) {
 			allowCachingButton = new Button(main, SWT.CHECK);
 			allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6);
 			data = new GridData(GridData.FILL_HORIZONTAL
@@ -319,8 +323,8 @@ public class KeyboardInteractiveDialog extends TrayDialog {
   
   /**
    * Guesses if this dialog is used for password authentication.
-   * @param prompt promts for keyboard-interactice auth method.
-   * @return <code>true</code> if this dialg is used for password authentication.
+   * @param prompt prompts for keyboard-interactive authentication method.
+   * @return <code>true</code> if this dialog is used for password authentication.
    */
   static boolean isPasswordAuth(String[] prompt) {
 		return prompt != null && prompt.length == 1

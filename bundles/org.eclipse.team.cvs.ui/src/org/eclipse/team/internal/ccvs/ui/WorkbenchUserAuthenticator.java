@@ -22,7 +22,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 
 /**
  * An authenticator that prompts the user for authentication info,
- * and stores the results in the Platform's authentication keyring.
+ * and stores the results in the Platform's authentication key-ring.
  */
 public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	public static boolean USE_ALTERNATE_PROMPTER = false;
@@ -115,7 +115,34 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 */
 	private boolean promptForPassword(final ICVSRepositoryLocation location, final String username, final String message, final boolean userMutable, final String[] result) throws CVSException {
 		String domain = location == null ? null : location.getLocation(true);
-		UserValidationDialog dialog = new UserValidationDialog(null, domain, (username==null)?"":username, message);//$NON-NLS-1$
+		boolean cachingCheckbox=true;
+		
+		if(location != null && location.getMethod().getName().equals("pserverssh2")){  //$NON-NLS-1$
+			/**
+			 * If this method 'promptForPassword' is invoked for ssh2 connection,
+			 * we want to disable the checkbox for password caching, because it will
+			 * overwrite the password for pserver with the password for ssh2.
+			 * 
+			 * In pserverssh2 connection type, its location name will be like
+			 *    pserverssh2:pserver_username@ssh2_username@ssh2_host@pserver_host
+			 *    
+			 * The problem is that there is not a method to know if we are invoked from ssh2 or pserver.
+			 * The following code will guess that if 'username' is equals to 'ssh2_userver' we are from ssh2,
+			 * but if 'pserver2_username' is equals to 'ssh2_username', this guess will not be correct.
+			 */
+			String host = location.getHost();              // ssh2_username@ssh2_host@pserver_host
+			int index = host.indexOf("@"); //$NON-NLS-1$
+			if (index != -1) {
+				cachingCheckbox = false;
+				if (index != 0) {
+					if (!username.equals(host.substring(0, index))) {
+						cachingCheckbox = true;
+					}
+				}
+			}
+		}
+		
+		UserValidationDialog dialog = new UserValidationDialog(null, domain, (username==null)?"":username, message, cachingCheckbox);//$NON-NLS-1$
 		dialog.setUsernameMutable(userMutable);
 		dialog.open();	
 		result[0] = dialog.getUsername();
@@ -130,7 +157,7 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	 * @param destication the location
 	 * @param name the name
 	 * @param instruction the instruction
-	 * @param prompt the titles for textfields
+	 * @param prompt the titles for text fields
 	 * @param echo '*' should be used or not
 	 * @param result the entered values, or null if user canceled.
 	 */
@@ -172,6 +199,29 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 	
 		String domain = location == null ? null : location.getLocation(true);
 		String userName = location == null ? null : location.getUsername();
+		boolean cachingCheckbox=true;
+		
+		if (location != null
+				&& location.getMethod().getName().equals("pserverssh2")) { //$NON-NLS-1$
+			/**
+			 * We want to disable the checkbox for password caching, because it will
+			 * overwrite the password for pserver with the password for ssh2.
+			 * 
+			 * In pserverssh2 connection type, its location name will be like
+			 *    pserverssh2:pserver_username@ssh2_username@ssh2_host@pserver_host
+			 * 
+			 * 'userName' is 'pserver_username', so we also have to change it to 'ssh2_username'.
+			 */
+			String host = location.getHost();         // ssh2_username@ssh2_host@pserver_host
+			int index = host.indexOf("@"); //$NON-NLS-1$
+			if (index != -1) {
+				if (index != 0) {
+					userName = host.substring(0, index);
+				}
+				cachingCheckbox = false;
+			}
+		}
+		
 		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(null, 
 										 domain,
 										 destination,
@@ -179,7 +229,8 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 										 userName, 
 										 instruction,
 										 prompt,
-										 echo);
+										 echo,
+										 cachingCheckbox);
 		dialog.open();
 	    String[] _result=dialog.getResult();
 	    if(_result!=null)

@@ -27,7 +27,7 @@ import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A dialog for prompting for a username and password
+ * A dialog for prompting for a user name and password
  */
 public class UserValidationDialog extends TrayDialog {
 	// widgets
@@ -41,10 +41,11 @@ public class UserValidationDialog extends TrayDialog {
 	protected boolean allowCaching = false;
 	protected Image keyLockImage;
 	
-	// whether or not the username can be changed
+	// whether or not the user name can be changed
 	protected boolean isUsernameMutable = true;
 	protected String username = null;
 	protected String message = null;
+	boolean cachingCheckbox=true;
 
 	/**
 	 * Creates a new UserValidationDialog.
@@ -52,15 +53,30 @@ public class UserValidationDialog extends TrayDialog {
 	 * @param parentShell  the parent shell
 	 * @param location  the location
 	 * @param defaultName  the default user name
-	 * @param message  a mesage to display to the user
+	 * @param message  a message to display to the user
 	 */
 	public UserValidationDialog(Shell parentShell, String location, String defaultName, String message) {
+		this(parentShell, location, defaultName, message, true);
+	}
+	
+	/**
+	 * Creates a new UserValidationDialog.
+	 * 
+	 * @param parentShell  the parent shell
+	 * @param location  the location
+	 * @param defaultName  the default user name
+	 * @param message  a message to display to the user
+	 * @param cachingCheckbox  a flag to show the allowCachingButton
+	 */
+	public UserValidationDialog(Shell parentShell, String location, String defaultName, String message, boolean cachingCheckbox) {
 		super(parentShell);
         setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.defaultUsername = defaultName;
 		this.domain = location;
 		this.message = message;
+		this.cachingCheckbox=cachingCheckbox;
 	}
+	
 	/**
 	 * @see Window#configureShell
 	 */
@@ -79,7 +95,7 @@ public class UserValidationDialog extends TrayDialog {
 		usernameField.setText(defaultUsername);
 	
 		if (isUsernameMutable) {
-			// give focus to username field
+			// give focus to user name field
 			usernameField.selectAll();
 			usernameField.setFocus();
 		} else {
@@ -143,7 +159,7 @@ public class UserValidationDialog extends TrayDialog {
 		createUsernameFields(main);
 		createPasswordFields(main);
 		
-		if(domain != null) {
+		if(cachingCheckbox && domain != null) {
 			allowCachingButton = new Button(main, SWT.CHECK);
 			allowCachingButton.setText(CVSUIMessages.UserValidationDialog_6); 
 			data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
@@ -218,10 +234,10 @@ public class UserValidationDialog extends TrayDialog {
 	}
 	
 	/**
-	 * Returns the username entered by the user, or null
+	 * Returns the user name entered by the user, or null
 	 * if the user canceled.
 	 * 
-	 * @return the entered username
+	 * @return the entered user name
 	 */
 	public String getUsername() {
 		return username;
@@ -251,11 +267,11 @@ public class UserValidationDialog extends TrayDialog {
 		super.okPressed();
 	}
 	/**
-	 * Sets whether or not the username field should be mutable.
+	 * Sets whether or not the user name field should be mutable.
 	 * This method must be called before create(), otherwise it
 	 * will be ignored.
 	 * 
-	 * @param value  whether the username is mutable
+	 * @param value  whether the user name is mutable
 	 */
 	public void setUsernameMutable(boolean value) {
 		isUsernameMutable = value;
