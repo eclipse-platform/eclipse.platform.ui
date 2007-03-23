@@ -358,6 +358,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 			return null;
 		}
+
+		public Object getInput() {
+			return TextMergeViewer.this.getInput();
+		}
 	}
 
 	class ContributorInfo implements IElementStateListener, VerifyListener, IDocumentListener {

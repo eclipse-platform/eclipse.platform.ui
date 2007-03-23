@@ -166,29 +166,34 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private InternalOutlineViewerCreator fOutlineView;
 	
 	private class InternalOutlineViewerCreator extends OutlineViewerCreator {
-		public Viewer findStructureViewer(Viewer oldViewer,
-				ICompareInput input, Composite parent,
-				CompareConfiguration configuration) {
+		private OutlineViewerCreator getWrappedCreator() {
 			if (fContentInputPane != null) {
 				Viewer v = fContentInputPane.getViewer();
 				if (v != null) {
-					OutlineViewerCreator creator = (OutlineViewerCreator)Utilities.getAdapter(v, OutlineViewerCreator.class);
-					if (creator != null)
-						return creator.findStructureViewer(oldViewer, input, parent, configuration);
+					return (OutlineViewerCreator)Utilities.getAdapter(v, OutlineViewerCreator.class);
 				}
 			}
 			return null;
 		}
+		public Viewer findStructureViewer(Viewer oldViewer,
+				ICompareInput input, Composite parent,
+				CompareConfiguration configuration) {
+			OutlineViewerCreator creator = getWrappedCreator();
+			if (creator != null)
+				return creator.findStructureViewer(oldViewer, input, parent, configuration);
+			return null;
+		}
 
 		public boolean hasViewerFor(Object input) {
-			if (fContentInputPane != null) {
-				Viewer v = fContentInputPane.getViewer();
-				if (v != null) {
-					OutlineViewerCreator creator = (OutlineViewerCreator)Utilities.getAdapter(v, OutlineViewerCreator.class);
-					return (creator != null);
-				}
-			}
-			return false;
+			OutlineViewerCreator creator = getWrappedCreator();
+			return (creator != null);
+		}
+
+		public Object getInput() {
+			OutlineViewerCreator creator = getWrappedCreator();
+			if (creator != null)
+				return creator.getInput();
+			return null;
 		}
 	}
 
@@ -253,7 +258,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					}
 				};
 		}
-		if (adapter == OutlineViewerCreator.class && getCompareResult() != null && !hasChildren(getCompareResult())) {
+		if (adapter == OutlineViewerCreator.class) {
 			synchronized (this) {
 				if (fOutlineView == null)
 					fOutlineView = new InternalOutlineViewerCreator();

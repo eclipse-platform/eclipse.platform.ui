@@ -68,4 +68,6 @@ public abstract class OutlineViewerCreator {
 		}
 	}
 
+	public abstract Object getInput();
+
 }

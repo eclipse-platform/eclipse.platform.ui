@@ -52,6 +52,7 @@ public class CompareOutlinePage extends Page implements IContentOutlinePage, IPr
 		IPageSite site = getSite();
 		site.setSelectionProvider(fStructurePane);
 		h.layout();
+		reset();
 	}
 	
 	private Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
@@ -113,10 +114,7 @@ public class CompareOutlinePage extends Page implements IContentOutlinePage, IPr
 			fStructurePane.setSelection(selection);
 	}
 	
-	public void setInput(Object input) {
-		if (fCreator != null)
-			fCreator.removePropertyChangeListener(this);
-		fCreator = null;
+	private void setInput(Object input) {
 		if (fStructurePane != null) {
 			fStructurePane.setInput(input);
 			((Splitter)fControl).layout();
@@ -126,7 +124,8 @@ public class CompareOutlinePage extends Page implements IContentOutlinePage, IPr
 	public OutlineViewerCreator getCreator() {
 		if (fCreator == null) {
 			fCreator = (OutlineViewerCreator)Utilities.getAdapter(fCompareEditor, OutlineViewerCreator.class);
-			fCreator.addPropertyChangeListener(this);
+			if (fCreator != null)
+				fCreator.addPropertyChangeListener(this);
 		}
 		return fCreator;
 	}
@@ -143,5 +142,16 @@ public class CompareOutlinePage extends Page implements IContentOutlinePage, IPr
 		if (fCreator != null)
 			fCreator.removePropertyChangeListener(this);
 		fCreator = null;
+	}
+
+	public void reset() {
+		if (fCreator != null)
+			fCreator.removePropertyChangeListener(this);
+		fCreator = null;
+		OutlineViewerCreator creator = getCreator();
+		if (creator != null)
+			setInput(creator.getInput());
+		else
+			setInput(null);
 	}
 }

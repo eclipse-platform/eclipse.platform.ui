@@ -150,11 +150,15 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (key.equals(IContentOutlinePage.class)) {
 			Object object= getCompareConfiguration().getProperty(CompareConfiguration.USE_OUTLINE_VIEW);
 			if (object instanceof Boolean && ((Boolean)object).booleanValue()) {
-				IEditorInput input= getEditorInput();
-				if (input instanceof CompareEditorInput) {
-					fOutlinePage= new CompareOutlinePage(this);
-					return fOutlinePage;
+				if (fOutlinePage != null) {
+					if (fOutlinePage.getControl() != null && fOutlinePage.getControl().isDisposed()) {
+						fOutlinePage = null;
+					} else {
+						return fOutlinePage;
+					}
 				}
+				fOutlinePage= new CompareOutlinePage(this);
+				return fOutlinePage;
 			}
 		}
 		
@@ -233,11 +237,12 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 				fControl.dispose();
 				fControl = null;
 			}
-			if (fOutlinePage != null)
-				fOutlinePage.setInput(null);
 		}
 			
 		super.setInput(input);
+		
+		if (fOutlinePage != null)
+			fOutlinePage.reset();
 		
 		final CompareEditorInput cei= (CompareEditorInput) input;
 		cei.setContainer(fContainer);
@@ -388,8 +393,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					setFocus();
 				}
 				setState(INITIALIZED);
-				if (fOutlinePage != null)
-					fOutlinePage.setInput(((CompareEditorInput)getEditorInput()).getCompareResult());
 			}
 		}
 	}
