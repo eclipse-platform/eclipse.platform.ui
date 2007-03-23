@@ -36,8 +36,9 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 	public void testUnknown() throws Exception {
 		URL url = new URL("ftp://255.255.255.255/");
 		try {
-		SiteManager.getSite(url,null);
-		fail("Connected to ftp://255.255.255.255/, should not happen");
+		ISite site = SiteManager.getSite(url,null);
+		if (site!=null) 
+			fail("Connected to ftp://255.255.255.255/, should not happen");
 		} catch (CoreException e){
 			// expected
 		} catch (IllegalArgumentException e){
