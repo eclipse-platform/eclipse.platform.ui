@@ -414,6 +414,14 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @see CompareEditorInput
 	 */
 	public void openCompareEditor(final CompareEditorInput input, final IWorkbenchPage page, final IReusableEditor editor) {
+		CompareConfiguration configuration = input.getCompareConfiguration();
+		if (configuration != null) {
+			IPreferenceStore ps= configuration.getPreferenceStore();
+			if (ps != null)
+				configuration.setProperty(
+						CompareConfiguration.USE_OUTLINE_VIEW, 
+						Boolean.valueOf(ps.getBoolean(ComparePreferencePage.USE_OUTLINE_VIEW)));
+		}
 		if (input.canRunAsJob()) {
 			openEditorInBackground(input, page, editor);
 		} else {

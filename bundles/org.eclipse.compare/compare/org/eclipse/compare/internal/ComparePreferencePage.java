@@ -63,6 +63,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 
 	private static final String PREFIX= CompareUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 	public static final String OPEN_STRUCTURE_COMPARE= PREFIX + "OpenStructureCompare"; //$NON-NLS-1$
+	public static final String USE_OUTLINE_VIEW= PREFIX + "UseOutlineView"; //$NON-NLS-1$
 	public static final String SYNCHRONIZE_SCROLLING= PREFIX + "SynchronizeScrolling"; //$NON-NLS-1$
 	public static final String SHOW_PSEUDO_CONFLICTS= PREFIX + "ShowPseudoConflicts"; //$NON-NLS-1$
 	public static final String INITIALLY_SHOW_ANCESTOR_PANE= PREFIX + "InitiallyShowAncestorPane"; //$NON-NLS-1$
@@ -88,6 +89,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 
 	public final OverlayPreferenceStore.OverlayKey[] fKeys= new OverlayPreferenceStore.OverlayKey[] {	
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, OPEN_STRUCTURE_COMPARE),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_OUTLINE_VIEW),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SYNCHRONIZE_SCROLLING),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_PSEUDO_CONFLICTS),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
@@ -109,6 +111,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(OPEN_STRUCTURE_COMPARE, true);
+		store.setDefault(USE_OUTLINE_VIEW, false);
 		store.setDefault(SYNCHRONIZE_SCROLLING, true);
 		store.setDefault(SHOW_PSEUDO_CONFLICTS, false);
 		store.setDefault(INITIALLY_SHOW_ANCESTOR_PANE, false);
@@ -234,6 +237,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		composite.setLayout(layout);
 				
 		addCheckBox(composite, "ComparePreferencePage.structureCompare.label", OPEN_STRUCTURE_COMPARE, 0);	//$NON-NLS-1$
+		//addCheckBox(composite, "ComparePreferencePage.structureOutline.label", USE_OUTLINE_VIEW, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
 		
