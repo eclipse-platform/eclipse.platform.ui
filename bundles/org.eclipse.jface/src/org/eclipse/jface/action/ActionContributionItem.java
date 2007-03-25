@@ -729,6 +729,19 @@ public class ActionContributionItem extends ContributionItem {
 					if ((toolTip == null) || (toolTip.length() == 0)) {
 						toolTip = text;
 					}
+					
+					ExternalActionManager.ICallback callback = ExternalActionManager
+							.getInstance().getCallback();
+					String commandId = action.getActionDefinitionId();
+					if ((callback != null) && (commandId != null) && (toolTip != null)) {
+						String acceleratorText = callback.getAcceleratorText(commandId);
+						if (acceleratorText != null && acceleratorText.length() != 0) {
+							toolTip = JFaceResources.format(
+									"Toolbar_Tooltip_Accelerator", //$NON-NLS-1$
+									new Object[] { toolTip, acceleratorText });
+						}
+					}
+
 					// if the text is showing, then only set the tooltip if
 					// different
 					if (!showText || toolTip != null && !toolTip.equals(text)) {
