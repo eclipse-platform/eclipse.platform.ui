@@ -100,6 +100,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -571,6 +572,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return;
 		}
 
+        if (composite!=null && composite.isVisible()
+        		&& !((GrabFocus)Tweaklets.get(GrabFocus.class)).grabFocusAllowed(part)) {
+        	return;
+        }
+        
         // If zoomed, unzoom.
         zoomOutIfNecessary(part);
 
@@ -789,6 +795,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (persp == null || !certifyPart(part)) {
 			return;
 		}
+        
+        if (!((GrabFocus)Tweaklets.get(GrabFocus.class)).grabFocusAllowed(part)) {
+        	return;
+        }
 
         String label = null; // debugging only
         if (UIStats.isDebugging(UIStats.BRING_PART_TO_TOP)) {
@@ -1013,6 +1023,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Performs showing of the view in the given mode.
      */
     private void busyShowView(IViewPart part, int mode) {
+        if (!((GrabFocus)Tweaklets.get(GrabFocus.class)).grabFocusAllowed(part)) {
+        	return;
+        }
         if (mode == VIEW_ACTIVATE) {
 			activate(part);
 		} else if (mode == VIEW_VISIBLE) {

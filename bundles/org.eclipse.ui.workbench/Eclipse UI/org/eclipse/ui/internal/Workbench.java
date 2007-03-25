@@ -166,6 +166,8 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.tweaklets.GrabFocus;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
@@ -1304,6 +1306,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 		// initialize workbench single-click vs double-click behavior
 		initializeSingleClickOption();
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				((GrabFocus) Tweaklets.get(GrabFocus.class))
+						.init(getDisplay());
+			}
+		});
+		
 
 		// attempt to restore a previous workbench state
 		try {
@@ -2662,6 +2673,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
 
+		((GrabFocus) Tweaklets.get(GrabFocus.class)).dispose();
+		
 		// Bring down all of the services.
 		serviceLocator.dispose();
 
