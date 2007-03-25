@@ -862,6 +862,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			IEditorPart editor = getEditor(i);
 			if (editor == editorPart) {
 				setActivePage(i);
+				break;
 			}
 		}
 	}
