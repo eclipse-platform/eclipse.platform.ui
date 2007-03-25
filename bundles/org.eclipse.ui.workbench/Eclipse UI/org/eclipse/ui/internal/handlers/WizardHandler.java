@@ -134,7 +134,12 @@ public abstract class WizardHandler extends AbstractHandler {
 				IWorkbenchWizard wizard = wizardDescriptor.createWizard();
 				wizard.init(PlatformUI.getWorkbench(),
 						StructuredSelection.EMPTY);
-
+				
+				if (wizardDescriptor.canFinishEarly() && !wizardDescriptor.hasPages()) {
+					wizard.performFinish();
+					return null;
+				}
+				
 				Shell parent = activeWindow.getShell();
 				WizardDialog dialog = new WizardDialog(parent, wizard);
 				dialog.create();
