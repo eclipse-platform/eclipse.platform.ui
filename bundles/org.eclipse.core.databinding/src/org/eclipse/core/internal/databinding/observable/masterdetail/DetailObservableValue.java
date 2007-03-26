@@ -87,8 +87,9 @@ public class DetailObservableValue extends AbstractObservableValue implements IO
 
 			if (detailType != null) {
 				Assert
-						.isTrue(detailType.equals(innerValueType),
-								"Cannot change value type in a nested observable value"); //$NON-NLS-1$
+						.isTrue(
+								detailType.equals(innerValueType),
+								"Cannot change value type in a nested observable value, from " + innerValueType + " to " + detailType); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			innerObservableValue.addValueChangeListener(innerChangeListener);
 		}
