@@ -8,29 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests;
-
-import org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests;
+package org.eclipse.jface.tests.labelProviders;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-public class AllTests extends TestSuite {
+public class DecoratingLabelProviderTests extends TestSuite {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
-    
+
     public static Test suite() {
-        return new AllTests();
+        return new DecoratingLabelProviderTests();
     }
 
-    public AllTests() {
-        addTest(new org.eclipse.jface.tests.action.AllTests());
-        addTest(new org.eclipse.jface.tests.dialogs.AllTests());
-        addTest(new org.eclipse.jface.tests.images.AllTests());
-        addTest(new org.eclipse.jface.tests.viewers.AllTests());
-        addTest(new org.eclipse.jface.tests.layout.AllTests());
-        addTest(new DecoratingLabelProviderTests());
+    public DecoratingLabelProviderTests() {
+    	addTestSuite(CompositeLabelProviderTableTest.class);
+    	addTestSuite(DecoratingLabelProviderTreePathTest.class);
+        addTestSuite(DecoratingLabelProviderTreeTest.class);
     }
 }
