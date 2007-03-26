@@ -94,6 +94,8 @@ public class StatusAdapter implements IAdaptable {
 	}
 
 	/**
+	 * Returns the status set in the adapter.
+	 * 
 	 * @return Returns the status.
 	 */
 	public IStatus getStatus() {
@@ -101,6 +103,8 @@ public class StatusAdapter implements IAdaptable {
 	}
 
 	/**
+	 * Sets a new status for this adapter.
+	 * 
 	 * @param status
 	 *            The status to set.
 	 */
