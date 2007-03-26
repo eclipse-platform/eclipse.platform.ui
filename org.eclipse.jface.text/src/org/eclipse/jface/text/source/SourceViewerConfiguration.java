@@ -107,7 +107,6 @@ public class SourceViewerConfiguration {
 
 	/**
 	 * Returns the presentation reconciler ready to be used with the given source viewer.
-	 * This implementation always returns <code>null</code>.
 	 *
 	 * @param sourceViewer the source viewer
 	 * @return the presentation reconciler or <code>null</code> if presentation reconciling should not be supported
@@ -115,7 +114,6 @@ public class SourceViewerConfiguration {
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler= new PresentationReconciler();
 		reconciler.setDocumentPartitioning(getConfiguredDocumentPartitioning(sourceViewer));
-
 		return reconciler;
 	}
 
