@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.core.TeamPlugin;
 
@@ -60,7 +61,14 @@ public class RemoteAnnotationStorage extends PlatformObject implements IEncodedS
 		ICVSRepositoryLocation location = file.getRepository();
 		IPath path = new Path(null, location.getRootDirectory());
 		path = path.setDevice(location.getHost() + IPath.DEVICE_SEPARATOR);
-		path = path.append(file.getRepositoryRelativePath());
+		// see bug 176809
+		String revision = ""; //$NON-NLS-1$
+		try {
+			revision = ' ' + file.getRevision();
+		} catch (TeamException e) {
+			//ignore 
+		}
+		path = path.append(file.getRepositoryRelativePath() + revision);
 		return path;
 	}
 	public String getName() {
