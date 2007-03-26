@@ -263,9 +263,12 @@ public class InputDialog extends Dialog {
     	if (errorMessageText != null && !errorMessageText.isDisposed()) {
     		errorMessageText.setText(errorMessage == null ? " \n " : errorMessage); //$NON-NLS-1$
     		// Disable the error message text control if there is no error, or
-    		// no error text (empty or whitespace only).
+    		// no error text (empty or whitespace only).  Hide it also to avoid
+    		// color change.
     		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=130281
-    		errorMessageText.setEnabled(errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0);
+    		boolean hasError = errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0;
+    		errorMessageText.setEnabled(hasError);
+    		errorMessageText.setVisible(hasError);
     		errorMessageText.getParent().update();
     		// Access the ok button by id, in case clients have overridden button creation.
     		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
