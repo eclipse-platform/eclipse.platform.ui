@@ -46,10 +46,23 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 	}
 
 	/**
+	 * Create a customized editor with focusable cells
+	 * 
 	 * @param viewer
+	 *            the viewer the editor is created for
 	 * @param focusCellManager
+	 *            the cell focus manager if one needed else <code>null</code>
 	 * @param editorActivationStrategy
+	 *            activation strategy to control if an editor activated
 	 * @param feature
+	 *            bit mask controlling the editor
+	 *            <ul>
+	 *            <li>{@link ColumnViewerEditor#DEFAULT}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_CYCLE_IN_ROW}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_HORIZONTAL}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
+	 *            </ul>
 	 */
 	public static void create(TreeViewer viewer,
 			SWTFocusCellManager focusCellManager,
@@ -58,13 +71,27 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		TreeViewerEditor editor = new TreeViewerEditor(viewer,
 				focusCellManager, editorActivationStrategy, feature);
 		viewer.setColumnViewerEditor(editor);
-		focusCellManager.init();
+		if( focusCellManager != null ) {
+			focusCellManager.init();
+		}
 	}
 
 	/**
+	 * Create a customized editor whose activation process is customized
+	 * 
 	 * @param viewer
+	 *            the viewer the editor is created for
 	 * @param editorActivationStrategy
+	 *            activation strategy to control if an editor activated
 	 * @param feature
+	 *            bit mask controlling the editor
+	 *            <ul>
+	 *            <li>{@link ColumnViewerEditor#DEFAULT}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_CYCLE_IN_ROW}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_HORIZONTAL}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
+	 *            <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
+	 *            </ul>
 	 */
 	public static void create(TreeViewer viewer,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
