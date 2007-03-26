@@ -150,6 +150,23 @@ public abstract class StructuredViewerTest extends ViewerTestCase {
         fRootElement.deleteChild(first);
         assertNull("first child is not visible", fViewer.testFindItem(first));
     }
+    
+    /**
+     * Tests to ensure that the viewer is properly diposed.  Includes:
+     *     removal of filters
+     */
+    public void testDispose() {
+    	assertEquals(0, fViewer.getFilters().length);
+    	fViewer.addFilter(new ViewerFilter() {
+
+			public boolean select(Viewer viewer, Object parentElement,
+					Object element) {
+				return false;
+			}});
+    	assertEquals(1, fViewer.getFilters().length);
+    	fViewer.getControl().dispose();
+    	assertEquals(0, fViewer.getFilters().length);
+    }
 
     public void testFilter() {
         ViewerFilter filter = new TestLabelFilter();
