@@ -1349,6 +1349,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
 		ITrimManager tbm = wbw.getTrimManager();
 		Perspective perspective = getPage().getActivePerspective();
+		FastViewManager fvm = perspective.getFastViewManager();
 
 		ILayoutContainer root = getContainer();
 
@@ -1360,6 +1361,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			restoringEditorArea = true;
 		}
 
+		// This is a compound operation
+		fvm.deferUpdates(true);
+		
 		LayoutPart[] children = root.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] != this) {
@@ -1391,6 +1395,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			perspective.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
 
 		perspective.getPresentation().setMaximizedStack(null);
+		
+		fvm.deferUpdates(false);
 		smartZoomed = false;
     }
     

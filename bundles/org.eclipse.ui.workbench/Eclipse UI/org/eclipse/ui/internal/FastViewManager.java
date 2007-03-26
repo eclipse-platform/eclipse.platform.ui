@@ -569,7 +569,10 @@ public class FastViewManager {
 			LayoutPart selTab = perspective.getPresentation().findPart(selectedTabId, null);
 			if (selTab instanceof PartPane && selTab instanceof ViewPane) {
 				((PartStack)stack).setSelection(selTab);
-				((ViewPane)selTab).requestActivation();
+				
+				// activate the view if we're not doing a compound operation
+				if (!deferringUpdates)
+					((ViewPane)selTab).requestActivation();
 			}
 		}
 		
