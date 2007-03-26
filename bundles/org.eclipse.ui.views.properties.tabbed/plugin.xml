@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<plugin>
-
-   <extension-point id="propertyContributor" name="%ExtPoint.propertyContributor" schema="schema/propertyContributor.exsd"/>
-   <extension-point id="propertyTabs" name="%ExtPoint.propertyTabs" schema="schema/propertyTabs.exsd"/>
-   <extension-point id="propertySections" name="%ExtPoint.propertySections" schema="schema/propertySections.exsd"/>
-
-</plugin>
