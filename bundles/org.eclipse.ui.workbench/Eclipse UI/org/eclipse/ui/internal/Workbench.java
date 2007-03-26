@@ -540,23 +540,30 @@ public final class Workbench extends EventManager implements IWorkbench {
 				Shell splashShell = splash.getSplash();
 				if (splashShell == null) {
 					// look for the 32 bit internal_new shell method
-					Method method = Shell.class
-							.getMethod(
-									"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
-					if (method != null) {
-						// we're on a 32 bit platform so invoke it with splash handle as an int
+					try {
+						Method method = Shell.class
+								.getMethod(
+										"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
+						// we're on a 32 bit platform so invoke it with splash
+						// handle as an int
 						splashShell = (Shell) method.invoke(null, new Object[] {
 								display, new Integer(splashHandle) });
-					} else {
+					} catch (NoSuchMethodException e) {
 						// look for the 64 bit internal_new shell method
-						method = Shell.class
-								.getMethod(
-										"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
-						if (method != null)
+						try {
+							Method method = Shell.class
+									.getMethod(
+											"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
+
 							// we're on a 64 bit platform so invoke it with a long
-							splashShell = (Shell) method.invoke(null, new Object[] {
-									display, new Long(splashHandle) });
+							splashShell = (Shell) method.invoke(null,
+									new Object[] { display,
+											new Long(splashHandle) });
+						} catch (NoSuchMethodException e2) {
+							// cant find either method - don't do anything.
+						}
 					}
+					
 					if (splashShell == null)
 						return;
 					if (background != null)
