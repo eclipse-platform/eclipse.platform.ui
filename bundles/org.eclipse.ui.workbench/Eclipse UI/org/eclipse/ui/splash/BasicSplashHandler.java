@@ -53,58 +53,54 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String, int)
 		 */
 		public void beginTask(final String name, final int totalWork) {
-			try {
-				updateUI(new Runnable() {
 
-					public void run() {
-						if (isDisposed())
-							return;
-						AbsolutePositionProgressMonitorPart.super.beginTask(name,
-								totalWork);
-					}
-				});
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			updateUI(new Runnable() {
+
+				public void run() {
+					if (isDisposed())
+						return;
+					AbsolutePositionProgressMonitorPart.super.beginTask(name,
+							totalWork);
+				}
+			});
+
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#done()
 		 */
 		public void done() {
-			try {
-				updateUI(new Runnable() {
 
-					public void run() {
-						if (isDisposed())
-							return;
-						AbsolutePositionProgressMonitorPart.super.done();
-					}
-				});
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			updateUI(new Runnable() {
+
+				public void run() {
+					if (isDisposed())
+						return;
+					AbsolutePositionProgressMonitorPart.super.done();
+				}
+			});
+
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#internalWorked(double)
 		 */
 		public void internalWorked(final double work) {
-			try {
-				updateUI(new Runnable() {
 
-					public void run() {
-						if (isDisposed())
-							return;
-						AbsolutePositionProgressMonitorPart.super.internalWorked(work);
-					}
-				});
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			updateUI(new Runnable() {
+
+				public void run() {
+					if (isDisposed())
+						return;
+					AbsolutePositionProgressMonitorPart.super
+							.internalWorked(work);
+				}
+			});
+
 		}
 		
 		/*
@@ -113,38 +109,34 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setFont(org.eclipse.swt.graphics.Font)
 		 */
 		public void setFont(final Font font) {
-			try {
-				updateUI(new Runnable() {
 
-					public void run() {
-						if (isDisposed())
-							return;
-						AbsolutePositionProgressMonitorPart.super.setFont(font);
-					}
-				});
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			updateUI(new Runnable() {
+
+				public void run() {
+					if (isDisposed())
+						return;
+					AbsolutePositionProgressMonitorPart.super.setFont(font);
+				}
+			});
+
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#updateLabel()
 		 */
 		protected void updateLabel() {
-			try {
-				updateUI(new Runnable() {
 
-					public void run() {
-						if (isDisposed())
-							return;
-						AbsolutePositionProgressMonitorPart.super.updateLabel();
-					}
-				});
-			} catch (Throwable e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			updateUI(new Runnable() {
+
+				public void run() {
+					if (isDisposed())
+						return;
+					AbsolutePositionProgressMonitorPart.super.updateLabel();
+				}
+			});
+
 		}
 	}
 
@@ -275,7 +267,7 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 *            the update runnable
 	 * @throws Throwable
 	 */
-	private void updateUI(final Runnable r) throws Throwable {
+	private void updateUI(final Runnable r) {
 
 		if (Thread.currentThread() == getSplash().getDisplay().getThread())
 			r.run(); // run immediatley if we're on the UI thread
