@@ -185,6 +185,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.SynchronousBundleListener;
 
 /**
@@ -573,18 +574,23 @@ public final class Workbench extends EventManager implements IWorkbench {
 				Dictionary properties = new Hashtable();
 				properties.put(Constants.SERVICE_RANKING, new Integer(Integer.MAX_VALUE));
 				BundleContext context = WorkbenchPlugin.getDefault().getBundleContext();
-				context.registerService(StartupMonitor.class.getName(), new StartupMonitor () {
-					
+				final ServiceRegistration registration[] = new ServiceRegistration[1];
+				StartupMonitor startupMonitor = new StartupMonitor() {
+
 					public void applicationRunning() {
 						splash.dispose();
 						if (background != null)
 							background.dispose();
+						registration[0].unregister(); // unregister ourself
 					}
 
 					public void update() {
-						// do nothing -  we come into the picture far too late for this to be relevant
+						// do nothing - we come into the picture far too late
+						// for this to be relevant
 					}
-				}, properties);
+				};
+				registration[0] = context.registerService(StartupMonitor.class
+						.getName(), startupMonitor, properties);
 				
 				splash.init(splashShell);
 			}

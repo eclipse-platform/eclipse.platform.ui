@@ -271,13 +271,11 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 */
 	private void updateUI(final Runnable r) {
 		Shell splashShell = getSplash();
-		Display display = null;
-		if (splashShell != null) {
-			display = splashShell.getDisplay();
-		} else {
-			display = Display.getDefault();
-		}
-
+		if (splashShell == null || splashShell.isDisposed())
+			return;
+		
+		Display display = splashShell.getDisplay();
+		
 		if (Thread.currentThread() == display.getThread())
 			r.run(); // run immediatley if we're on the UI thread
 		else {
