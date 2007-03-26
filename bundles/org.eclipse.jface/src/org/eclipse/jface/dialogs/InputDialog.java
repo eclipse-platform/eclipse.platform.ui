@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -261,6 +262,10 @@ public class InputDialog extends Dialog {
     	this.errorMessage = errorMessage;
     	if (errorMessageText != null && !errorMessageText.isDisposed()) {
     		errorMessageText.setText(errorMessage == null ? " \n " : errorMessage); //$NON-NLS-1$
+    		// Disable the error message text control if there is no error, or
+    		// no error text (empty or whitespace only).
+    		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=130281
+    		errorMessageText.setEnabled(errorMessage != null && (StringConverter.removeWhiteSpaces(errorMessage)).length() > 0);
     		errorMessageText.getParent().update();
     		// Access the ok button by id, in case clients have overridden button creation.
     		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
