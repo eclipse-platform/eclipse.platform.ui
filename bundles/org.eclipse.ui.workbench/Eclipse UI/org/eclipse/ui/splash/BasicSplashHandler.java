@@ -19,7 +19,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
@@ -268,20 +270,26 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 * @throws Throwable
 	 */
 	private void updateUI(final Runnable r) {
+		Shell splashShell = getSplash();
+		Display display = null;
+		if (splashShell != null) {
+			display = splashShell.getDisplay();
+		} else {
+			display = Display.getDefault();
+		}
 
-		if (Thread.currentThread() == getSplash().getDisplay().getThread())
+		if (Thread.currentThread() == display.getThread())
 			r.run(); // run immediatley if we're on the UI thread
 		else {
 			// wrapper with a StartupRunnable to ensure that it will run before
-			// the
-			// UI is fully initialized
+			// the UI is fully initialized
 			StartupRunnable startupRunnable = new StartupRunnable() {
 
 				public void runWithException() throws Throwable {
 					r.run();
 				}
 			};
-			getSplash().getDisplay().asyncExec(startupRunnable);
+			display.asyncExec(startupRunnable);
 		}
 	}
 }
