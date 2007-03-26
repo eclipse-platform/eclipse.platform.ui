@@ -55,9 +55,10 @@ public class StatusHandlerTests extends DynamicTestCase {
 		assertNotNull(statusHandler1);
 
 		ReferenceQueue queue = new ReferenceQueue();
+		ReferenceQueue queue2 = new ReferenceQueue();
 
 		WeakReference ref = new WeakReference(statusHandlerDescriptor1, queue);
-		WeakReference ref2 = new WeakReference(statusHandler1, queue);
+		WeakReference ref2 = new WeakReference(statusHandler1, queue2);
 
 		statusHandlerDescriptor1 = null; // null the reference
 		statusHandler1 = null; // null the reference
@@ -66,7 +67,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		try {
 			LeakTests.checkRef(queue, ref);
-			LeakTests.checkRef(queue, ref2);
+			LeakTests.checkRef(queue2, ref2);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -83,6 +84,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 		getBundle();
 
 		ReferenceQueue queue = new ReferenceQueue();
+		ReferenceQueue queue2 = new ReferenceQueue();
 
 		List statusHandlerDescriptors = StatusHandlerRegistry.getDefault()
 				.getHandlerDescriptors(PLUGIN_PREFIX);
@@ -104,7 +106,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 		assertNotNull(statusHandler1);
 
 		WeakReference ref = new WeakReference(statusHandlerDescriptor1, queue);
-		WeakReference ref2 = new WeakReference(statusHandler1, queue);
+		WeakReference ref2 = new WeakReference(statusHandler1, queue2);
 
 		statusHandlerDescriptors = null;
 		statusHandlerDescriptor1 = null; // null the reference
@@ -114,7 +116,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		try {
 			LeakTests.checkRef(queue, ref);
-			LeakTests.checkRef(queue, ref2);
+			LeakTests.checkRef(queue2, ref2);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
@@ -131,6 +133,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 		getBundle();
 
 		ReferenceQueue queue = new ReferenceQueue();
+		ReferenceQueue queue2 = new ReferenceQueue();
 
 		StatusHandlerDescriptor productStatusHandlerDescriptor = StatusHandlerRegistry
 				.getDefault().getDefaultHandlerDescriptor();
@@ -141,7 +144,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		WeakReference ref = new WeakReference(productStatusHandlerDescriptor,
 				queue);
-		WeakReference ref2 = new WeakReference(productStatusHandler, queue);
+		WeakReference ref2 = new WeakReference(productStatusHandler, queue2);
 
 		productStatusHandlerDescriptor = null; // null the reference
 		productStatusHandler = null;
@@ -150,7 +153,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 		try {
 			LeakTests.checkRef(queue, ref);
-			LeakTests.checkRef(queue, ref2);
+			LeakTests.checkRef(queue2, ref2);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
