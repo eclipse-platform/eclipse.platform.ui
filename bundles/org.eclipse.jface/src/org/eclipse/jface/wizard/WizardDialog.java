@@ -529,8 +529,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
         pmlayout.numColumns = 1;
         progressMonitorPart = createProgressMonitorPart(composite, pmlayout);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-        gridData.widthHint = 0;
-        gridData.heightHint = 0;
         progressMonitorPart
                 .setLayoutData(gridData);
         progressMonitorPart.setVisible(false);
@@ -1159,24 +1157,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
         updateTitleBar();
         // Update the buttons
         updateButtons();
-        
-        // progress monitor required for this wizard - resize dialog 
-        if (wizard.needsProgressMonitor()){
-        	GridData data = (GridData)progressMonitorPart.getLayoutData();
-        	data.widthHint = SWT.DEFAULT;
-        	data.heightHint = SWT.DEFAULT;
-	    	Shell shell = getShell();
-	    	if (shell != null){
-	    		// ensure the wizard does not shrink upon resize
-	    		Point currentSize = shell.getSize();
-	    		Point newSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-	    		// only adjust height for progress bar, adjusting the width will resize 
-	    		// the wizard too wide when there is a long wizard description.
-	    		int height = Math.max(currentSize.y, newSize.y);
-	    		setShellSize(currentSize.x, height);
-	    		progressMonitorPart.getParent().layout(true);
-	    	}
-        }
         
 		// Fires the page change event
 		firePageChanged(new PageChangedEvent(this, getCurrentPage()));
