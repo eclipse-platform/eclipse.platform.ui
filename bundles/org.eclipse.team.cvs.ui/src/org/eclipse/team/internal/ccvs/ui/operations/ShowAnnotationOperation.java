@@ -68,8 +68,8 @@ public class ShowAnnotationOperation extends CVSOperation {
      */
     protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 
-    	final boolean useLiveAnnotate= !fBinary && isKnownUseLiveAnnotate();
-    	final boolean useView= fBinary || isKnownUseView();
+    	final boolean useLiveAnnotate= isKnownUseLiveAnnotate();
+    	final boolean useView= isKnownUseView();
     	
 		monitor.beginTask(null, 80 + (useView ? 0 : 20) + (useLiveAnnotate ? 0 : 20));
 
@@ -97,7 +97,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 				//If the file being annotated is not binary, check to see if we can use the quick
 				//annotate. Until we are able to show quick diff annotate on read only text editors
 				//we can't make use of it for binary files/remote files.
-				boolean useQuickDiffAnnotate = !fBinary && promptForQuickDiffAnnotate();
+				boolean useQuickDiffAnnotate = promptForQuickDiffAnnotate();
 				if (useQuickDiffAnnotate){
 					try {
 						//is there an open editor for the given input? If yes, use live annotate
