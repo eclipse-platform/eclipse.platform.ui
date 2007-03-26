@@ -159,19 +159,20 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		// set F1 help
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(book, IHelpContextIds.EXPORT_PROJECT_SET_PAGE);
 		
-		projectPage = new ProjectPage();
-		projectPage.createControl(book);
-		
 		workingSetPage = new WorkingSetPage();
 		workingSetPage.createControl(book);
+		
+		projectPage = new ProjectPage();
+		//pass in any selected
+		projectPage.getSelectedProjects().addAll(passedInSelectedProjects);
+		projectPage.getReferenceCountProjects().addAll(passedInSelectedProjects);
+		
+		projectPage.createControl(book);
 
 		setControl(c);
 		book.showPage(projectPage.getControl());
 		
 		selectedPage = projectPage;
-		//pass in any selected
-		projectPage.getSelectedProjects().addAll(passedInSelectedProjects);
-		projectPage.getReferenceCountProjects().addAll(passedInSelectedProjects);
 		
 		Dialog.applyDialogFont(parent);
 	}
