@@ -825,6 +825,7 @@ public abstract class MarkerView extends TableView {
 	 */
 	public void dispose() {
 		super.dispose();
+		cancelJobs();
 
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
 				markerUpdateListener);
@@ -1724,9 +1725,16 @@ public abstract class MarkerView extends TableView {
 	 * @param time
 	 */
 	void scheduleMarkerUpdate(int time) {
+		cancelJobs();
+		getProgressService().schedule(markerProcessJob, time);
+	}
+
+	/**
+	 * Cancel the pending jobs in the receiver.
+	 */
+	private void cancelJobs() {
 		markerProcessJob.cancel();
 		updateJob.cancel();
-		getProgressService().schedule(markerProcessJob, time);
 	}
 
 	/*

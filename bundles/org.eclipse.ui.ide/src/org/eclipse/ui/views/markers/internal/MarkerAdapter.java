@@ -256,9 +256,9 @@ public class MarkerAdapter {
 
 				newMarkers = SortUtil.getFirst(newMarkers, (Comparator) sorter,
 						markerLimit, mon);
-				if (monitor.isCanceled()) {
+				if (monitor.isCanceled()) 
 					return;
-				}
+				
 				sorter.sort(view.getViewer(), newMarkers.toArray());
 			}
 

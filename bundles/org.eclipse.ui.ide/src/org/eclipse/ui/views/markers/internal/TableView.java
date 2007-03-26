@@ -123,6 +123,9 @@ public abstract class TableView extends ViewPart {
 
 		viewer = new TreeViewer(createTree(parent));
 		createColumns(viewer.getTree());
+		
+		viewer.setComparator(buildComparator());
+		setSortIndicators();
 
 		contentProvider = new MarkerTreeContentProvider();
 
@@ -136,8 +139,6 @@ public abstract class TableView extends ViewPart {
 			}
 		});
 
-		viewer.setComparator(buildComparator());
-		setSortIndicators();
 
 		// create the actions before the input is set on the viewer but after
 		// the
