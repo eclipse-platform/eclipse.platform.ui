@@ -31,6 +31,10 @@ import org.eclipse.osgi.util.NLS;
  * must NEVER call the worker pool while its own monitor is held.
  */
 public class JobManager implements IJobManager {
+	/**
+	 * The unique identifier constant of this plug-in.
+	 */
+	public static final String PI_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
 
 	/**
 	 * Status code constant indicating an error occurred while running a plug-in.
@@ -53,6 +57,7 @@ public class JobManager implements IJobManager {
 	static boolean DEBUG_TIMING = false;
 	static boolean DEBUG_SHUTDOWN = false;
 	private static DateFormat DEBUG_FORMAT;
+	private static final IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 
 	/**
 	 * The singleton job manager instance. It must be a singleton because
@@ -122,11 +127,6 @@ public class JobManager implements IJobManager {
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
-
-	/**
-	 * The unique identifier constant of this plug-in.
-	 */
-	public static final String PI_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
 
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
@@ -538,7 +538,7 @@ public class JobManager implements IJobManager {
 			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			job.setResult(result);
-			job.setProgressMonitor(null);
+			job.setProgressMonitor(NULL_MONITOR);
 			job.setThread(null);
 			rescheduleDelay = job.getStartTime();
 			changeState(job, Job.NONE);
@@ -1129,7 +1129,8 @@ public class JobManager implements IJobManager {
 							internal.setProgressMonitor(createMonitor(job));
 						//change from ABOUT_TO_RUN to RUNNING
 						internal.internalSetState(Job.RUNNING);
-						break;
+						jobListeners.running(job);
+						return job;
 					}
 				}
 			}
@@ -1139,9 +1140,6 @@ public class JobManager implements IJobManager {
 				continue;
 			}
 		}
-		jobListeners.running(job);
-		return job;
-
 	}
 
 	/* non-Javadoc)
