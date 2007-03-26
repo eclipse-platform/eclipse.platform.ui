@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.DialogMessageArea;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -283,11 +284,32 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
-		List nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER);
-		for (int i = 0; i < nodes.size(); i++) {
-			IPreferenceNode node = (IPreferenceNode) nodes.get(i);
-			node.disposeResources();
-		}
+		
+		//Do this is in a SafeRunnable as it may run client code
+		SafeRunnable runnable = new SafeRunnable(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+			 */
+			public void run() throws Exception {
+				List nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER);
+				for (int i = 0; i < nodes.size(); i++) {
+					IPreferenceNode node = (IPreferenceNode) nodes.get(i);
+					node.disposeResources();
+				}
+				
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)
+			 */
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				clearSelectedNode();//Do not cache a node with problems
+			}
+		};
+		
+		SafeRunner.run(runnable);
+		
 		return super.close();
 	}
 
