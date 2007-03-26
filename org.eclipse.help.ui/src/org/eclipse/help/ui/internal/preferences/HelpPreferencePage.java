@@ -57,8 +57,6 @@ public class HelpPreferencePage extends PreferencePage implements
 	private Button openInPlaceButton;
 
 	private Button openInEditorButton;
-	
-	private Button useNewTocViewButton;
 
 	/**
 	 * Creates preference page controls on demand.
@@ -92,13 +90,6 @@ public class HelpPreferencePage extends PreferencePage implements
 		createLinkArea(mainComposite);
 		createSpacer(mainComposite);
 		createDynamicHelpArea(mainComposite);
-		useNewTocViewButton = new Button(mainComposite, SWT.CHECK);
-		useNewTocViewButton
-				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
-		useNewTocViewButton.setText(Messages.HelpPreferencePage_useNewTocView); 
-		useNewTocViewButton.setSelection(HelpBasePlugin.getDefault()
-				.getPluginPreferences().getBoolean(
-						IHelpBaseConstants.P_KEY_USE_NEW_TOC_VIEW));
 		createSpacer(mainComposite);
 		Dialog.applyDialogFont(mainComposite);
 		return mainComposite;
@@ -250,11 +241,6 @@ public class HelpPreferencePage extends PreferencePage implements
 		openInPlaceButton.setSelection(!openInEditor);
 		openInEditorButton.setSelection(openInEditor);
 		}
-		
-		boolean useNewTocView = HelpBasePlugin.getDefault()
-		      .getPluginPreferences().getDefaultBoolean(
-				    IHelpBaseConstants.P_KEY_USE_NEW_TOC_VIEW);
-		useNewTocViewButton.setSelection(useNewTocView);
 
 		super.performDefaults();
 	}
@@ -277,8 +263,7 @@ public class HelpPreferencePage extends PreferencePage implements
 		if (openInEditorButton!=null)
 			pref.setValue(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR,
 				openInEditorButton.getSelection());
-		pref.setValue(IHelpBaseConstants.P_KEY_USE_NEW_TOC_VIEW,
-				useNewTocViewButton.getSelection());
+
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}
