@@ -140,8 +140,8 @@ public interface IFileStore extends IAdaptable {
 	 * exceptions are recorded but other files will continue to be deleted if possible.
 	 * </p>
 	 * <p>
-	 * Deletion of a symbolic link will always delete the link, rather than the target
-	 * of the link.
+	 * Deletion of a file with attribute {@link EFS#ATTRIBUTE_SYMLINK} will always 
+	 * delete the link, rather than the target of the link.
 	 * </p>
 	 * 
 	 * @param options bit-wise or of option flag constants (none currently applicable).
