@@ -20,13 +20,11 @@ import org.eclipse.team.examples.filesystem.Policy;
  */
 public class PutAction extends FileSystemAction {
 
-	/*
-	 * Method declared on IActionDelegate.
-	 */
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		try {
 			PutOperation operation = new PutOperation(getTargetPart(), 
-								FileSystemOperation.createScopeManager(Policy.bind("PutAction.working"), getSelectedMappings())); //$NON-NLS-1$
+					FileSystemOperation.createScopeManager(Policy.bind("PutAction.working"), getSelectedMappings())); //$NON-NLS-1$
 			operation.setOverwriteIncoming(isOverrideIncoming());
 			operation.run();
 		} catch (InvocationTargetException e) {

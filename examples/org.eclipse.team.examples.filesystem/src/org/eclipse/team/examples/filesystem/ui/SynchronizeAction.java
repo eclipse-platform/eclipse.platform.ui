@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.team.core.subscribers.SubscriberScopeManager;
@@ -24,10 +26,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
  */
 public class SynchronizeAction extends FileSystemAction {
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		ResourceMapping[] mappings = getSelectedMappings();
 		if (mappings.length == 0)
 			return;

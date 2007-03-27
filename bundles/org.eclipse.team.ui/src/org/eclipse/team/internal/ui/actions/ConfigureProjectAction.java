@@ -40,10 +40,8 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 		}		
 	}
 	
-	/*
-	 * Method declared on IActionDelegate.
-	 */
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
@@ -59,10 +57,11 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 			}
 		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR); 
 	}
+	
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	public boolean isEnabled() {
 		IProject[] selectedProjects = getSelectedProjects();
 		if (selectedProjects.length != 1) return false;
 		if (!selectedProjects[0].isAccessible()) return false;

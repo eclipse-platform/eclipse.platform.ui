@@ -136,8 +136,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSAction_multipleProblemsMessage;
 	public static String CVSAction_mixingTagsTitle;
 	public static String CVSAction_mixingTags;
-	public static String CVSAction_handlerNotEnabledTitle;
-	public static String CVSAction_handlerNotEnabledMessage;
 
 	public static String CVSAnnotateView_showFileAnnotation;
 	public static String CVSAnnotateView_viewInstructions;

@@ -20,7 +20,8 @@ import org.eclipse.team.examples.filesystem.Policy;
  */
 public class GetAction extends FileSystemAction {
 
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		try {
 			GetOperation operation = new GetOperation(getTargetPart(), 
 								FileSystemOperation.createScopeManager(Policy.bind("GetAction.working"), getSelectedMappings())); //$NON-NLS-1$

@@ -651,4 +651,8 @@ public class TeamUIMessages extends NLS {
 	public static String CompareRevisionAction_CompareWithOther;
 	public static String CompareRevisionAction_Revision;
 	public static String CompareRevisionAction_Local;
+	
+	public static String TeamAction_errorTitle;
+	public static String TeamAction_handlerNotEnabledTitle;
+	public static String TeamAction_handlerNotEnabledMessage;
 }

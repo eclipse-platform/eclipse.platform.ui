@@ -13,25 +13,26 @@ package org.eclipse.team.internal.ui.actions;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.List;
 
+import org.eclipse.core.commands.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.TeamPlugin;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.ActionDelegate;
+import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.ide.ResourceUtil;
 
 /**
  * The abstract superclass of all Team actions. This class contains some convenience
@@ -42,7 +43,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  * Team providers may also instantiate or subclass any of the  
  * subclasses of TeamAction provided in this package.
  */
-public abstract class TeamAction extends ActionDelegate implements IObjectActionDelegate, IViewActionDelegate, IWorkbenchWindowActionDelegate  {
+public abstract class TeamAction extends AbstractHandler implements IObjectActionDelegate, IViewActionDelegate, IWorkbenchWindowActionDelegate, IActionDelegate2 {
 	// The current selection
 	private IStructuredSelection selection;
 	
@@ -280,11 +281,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	 * This method can be overridden by subclasses but should not be invoked by them.
 	 */
 	protected void setActionEnablement(IAction action) {
-		try {
-			action.setEnabled(isEnabled());
-		} catch (TeamException e) {
-			action.setEnabled(isEnabledForException(e));
-		}
+		action.setEnabled(isEnabled());
 	}
 	
 	/**
@@ -322,15 +319,6 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	protected void handle(Exception exception, String title, String message) {
 		Utils.handleError(getShell(), exception, title, message);
 	}
-	
-	/**
-	 * Concrete action enablement code.
-	 * Subclasses must implement.
-	 * 
-	 * @return whether the action is enabled
-	 * @throws TeamException if an error occurs during enablement detection
-	 */
-	abstract protected boolean isEnabled() throws TeamException;
 	
 	/**
 	 * Convenience method that maps the given resources to their providers.
@@ -418,4 +406,109 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		}
         selection = null;
 	}
+
+	/**
+	 * Actions must override to do their work.
+	 */
+	protected abstract void execute(IAction action)
+			throws InvocationTargetException, InterruptedException;
+
+	/**
+	 * This method is called by the platform UI framework when a command is run for
+	 * which this action is the handler. The handler doesn't have an explicit context, for
+	 * example unlike a view, editor, or workbench window actions, they are not initialized
+	 * with a part. As a result when the action is run it will use the selection service
+	 * to determine to elements on which to perform the action.
+	 * <p>
+	 * CVS actions should ensure that they can run without a proxy action. Meaning that
+	 * <code>selectionChanged</code> and <code>run</code> should support passing
+	 * <code>null</code> as the IAction parameter.
+	 * </p>
+	 * @throws ExecutionException
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+		if (activeWorkbenchWindow != null) {
+			ISelection selection = HandlerUtil.getCurrentSelection(event);
+			if (selection != null) {
+				IWorkbenchPart part = HandlerUtil.getActivePart(event);
+				try {
+					execute(activeWorkbenchWindow,  part, selection);
+				} catch (InvocationTargetException e) {
+					throw new ExecutionException(TeamUIMessages.TeamAction_errorTitle, e); 
+				} catch (InterruptedException e) {
+					// Operation was canceled. Ignore
+				}
+			}
+		}
+		return null;
+	}
+
+	private void execute(IWorkbenchWindow activeWorkbenchWindow,
+			IWorkbenchPart part, ISelection selection)
+			throws InvocationTargetException, InterruptedException {
+		// If the action is run from within an editor, try and find the
+		// file for the given editor.
+		if (part != null && part instanceof IEditorPart) {
+			IEditorInput input = ((IEditorPart) part).getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				selectionChanged((IAction) null, new StructuredSelection(file));
+			}
+		} else {
+			// Fallback is to prime the action with the selection
+			selectionChanged((IAction) null, selection);
+		}
+		// Safe guard to ensure that the action is only run when enabled.
+		if (isEnabled()) {
+			execute((IAction) null);
+		} else {
+			MessageDialog.openInformation(activeWorkbenchWindow.getShell(),
+					TeamUIMessages.TeamAction_handlerNotEnabledTitle,
+					TeamUIMessages.TeamAction_handlerNotEnabledMessage);
+		}
+	}
+
+	/**
+	 * Common run method for all Team actions.
+	 */
+	public void run(IAction action) {
+		try {
+			execute(action);
+		} catch (InvocationTargetException e) {
+			// Handle the exception and any accumulated errors
+			handle(e);
+		} catch (InterruptedException e) {
+			// Operation was canceled. Ignore.
+		}
+	}
+
+	/**
+	 * This method can be overridden by subclasses but should not be invoked by
+	 * them.
+	 * 
+	 * @param e
+	 *            Exception to handle
+	 */
+	protected void handle(Exception e) {
+		handle(e, TeamUIMessages.TeamAction_errorTitle, null);
+	}
+
+    /**
+     * The <code>TeamAction</code> implementation of this
+     * <code>IActionDelegate2</code> method does nothing. Subclasses may
+     * reimplement.
+     */
+    public void init(IAction action) {
+    }
+
+    /**
+     * The <code>TeamAction</code> implementation of this
+     * <code>IActionDelegate2</code> method redirects to the <code>run</code>
+     * method. Subclasses may reimplement.
+     */
+    final public void runWithEvent(IAction action, Event event) {
+        run(action);
+    }
+
 }

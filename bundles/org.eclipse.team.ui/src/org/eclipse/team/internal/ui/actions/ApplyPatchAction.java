@@ -10,20 +10,22 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.TeamException;
 
 public class ApplyPatchAction extends TeamAction {
 
-	protected boolean isEnabled() throws TeamException {
+	public boolean isEnabled() {
 		return true;
 	}
 	
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		IResource[] resources = getSelectedResources();
 		IResource resource = null;
 		if (resources.length > 0) {

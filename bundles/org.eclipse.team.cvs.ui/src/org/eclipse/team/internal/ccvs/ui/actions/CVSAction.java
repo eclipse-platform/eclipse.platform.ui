@@ -14,8 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.commands.*;
-import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
@@ -37,20 +35,19 @@ import org.eclipse.team.internal.ccvs.core.filehistory.CVSFileRevision;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.dialogs.IPromptCondition;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.ResourceUtil;
 
 /**
  * CVSAction is the common superclass for all CVS actions. It provides
  * facilities for enablement handling, standard error handling, selection
  * retrieval and prompting.
  */
-abstract public class CVSAction extends TeamAction implements IEditorActionDelegate, IHandler {
+abstract public class CVSAction extends TeamAction implements IEditorActionDelegate {
 	
 	private List accumulatedStatus = new ArrayList();
 	private RetargetAction retargetAction;
@@ -222,11 +219,6 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 		}
 		return true;
 	}
-
-	/**
-	 * Actions must override to do their work.
-	 */
-	abstract protected void execute(IAction action) throws InvocationTargetException, InterruptedException;
 
 	/**
 	 * This method gets invoked after <code>CVSAction#execute(IAction)</code>
@@ -626,102 +618,6 @@ abstract public class CVSAction extends TeamAction implements IEditorActionDeleg
 	public void setActiveEditor(IAction action, IEditorPart targetEditor) {
 	}
 	
-	/**
-	 * This method is called by the platform UI framework when a command is run for
-	 * which this action is the handler. The handler doesn't have an explicit context, for
-	 * example unlike a view, editor, or workbench window actions, they are not initialized
-	 * with a part. As a result when the action is run it will use the selection service
-	 * to determine to elements on which to perform the action.
-	 * <p>
-	 * CVS actions should ensure that they can run without a proxy action. Meaning that
-	 * <code>selectionChanged</code> and <code>run</code> should support passing
-	 * <code>null</code> as the IAction parameter.
-	 * </p>
-	 * @param parameterValuesByName
-	 * @return
-	 * @throws ExecutionException
-	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IEvaluationContext context = (IEvaluationContext) event
-				.getApplicationContext();
-		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow(context);
-		if (activeWorkbenchWindow != null) {
-			ISelection selection = getCurrentSelection(context);
-			if (selection != null) {
-				IWorkbenchPart part = getActivePart(context);
-				try {
-					execute(activeWorkbenchWindow,  part, selection);
-				} catch (InvocationTargetException e) {
-					throw new ExecutionException(CVSUIMessages.CVSAction_errorTitle, e); 
-				} catch (InterruptedException e) {
-					// Operation was canceled. Ignore
-				}
-			}
-		}
-		return null;
-	}
-
-	private ISelection getCurrentSelection(IEvaluationContext context) {
-		ISelection selection = (ISelection) context
-						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-		if (selection != null)
-			return selection;
-		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow(context);
-		if (activeWorkbenchWindow != null) {
-			IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-			if(activePage!= null) {
-				return activePage.getSelection();
-			}
-		}
-		return null;
-	}
-
-	private IWorkbenchPart getActivePart(IEvaluationContext context) {
-		IWorkbenchPart part = (IWorkbenchPart) context
-						.getVariable(ISources.ACTIVE_PART_NAME);
-		if (part != null)
-			return part;
-		IWorkbenchWindow activeWorkbenchWindow = getActiveWorkbenchWindow(context);
-		if (activeWorkbenchWindow != null) {
-			IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
-			if(activePage!= null) {
-				return activePage.getActivePart();
-			}
-		}
-		return null;
-	}
-
-	private IWorkbenchWindow getActiveWorkbenchWindow(IEvaluationContext context) {
-		IWorkbenchWindow window = (IWorkbenchWindow) context
-						.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		if (window != null)
-			return window;
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	}
-
-	private void execute(IWorkbenchWindow activeWorkbenchWindow, IWorkbenchPart part, ISelection selection) throws InvocationTargetException, InterruptedException {
-		// If the action is run from within an editor, try and find the 
-		// file for the given editor.
-		if(part != null && part instanceof IEditorPart) {
-			IEditorInput input = ((IEditorPart)part).getEditorInput();
-		    IFile file = ResourceUtil.getFile(input);
-			if(file != null) {
-				selectionChanged((IAction)null, new StructuredSelection(file));
-			}
-		} else {						
-			// Fallback is to prime the action with the selection
-			selectionChanged((IAction)null, selection);
-		}
-		// Safe guard to ensure that the action is only run when enabled. 
-		if(isEnabled()) {
-			execute((IAction)null);
-		} else {
-			MessageDialog.openInformation(activeWorkbenchWindow.getShell(), 
-					CVSUIMessages.CVSAction_handlerNotEnabledTitle, 
-					CVSUIMessages.CVSAction_handlerNotEnabledMessage); 
-		}
-	}
-
 	/**
 	 * These handlers won't have any interesting property changes. There is
 	 * no need to notify listeners.

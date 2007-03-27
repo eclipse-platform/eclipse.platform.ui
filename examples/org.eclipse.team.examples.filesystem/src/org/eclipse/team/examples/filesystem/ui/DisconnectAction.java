@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem.ui;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -23,10 +25,8 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
  */
 public class DisconnectAction extends TeamAction {
 	
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
-	 */
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		IProject projects[] = getSelectedProjects();
 		try {
 			for (int i = 0; i < projects.length; i++) {
@@ -40,7 +40,7 @@ public class DisconnectAction extends TeamAction {
 	/**
 	 * @see TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	public boolean isEnabled() {
 		return true;
 	}
 }

@@ -24,7 +24,8 @@ import org.eclipse.team.ui.synchronize.ModelMergeOperation;
  */
 public class MergeAction extends FileSystemAction {
 
-	public void run(IAction action) {
+	protected void execute(IAction action) throws InvocationTargetException,
+			InterruptedException {
 		try {
 			ModelMergeOperation operation;
 			if (isUseSyncFramework()) {

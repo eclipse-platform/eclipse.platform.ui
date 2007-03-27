@@ -27,7 +27,7 @@ public abstract class FileSystemAction extends TeamAction {
 	/**
 	 * @see org.eclipse.team.internal.ui.actions.TeamAction#isEnabled()
 	 */
-	protected boolean isEnabled() {
+	public boolean isEnabled() {
 		return getSelectedMappings().length > 0;
 	}
 
