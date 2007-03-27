@@ -855,8 +855,15 @@ public class Perspective {
 	protected void onActivate() {
 		// Update editor area state.
 		if (editorArea.getControl() != null) {
-			editorArea.setVisible(isEditorAreaVisible()
-			&& editorAreaState != IStackPresentationSite.STATE_MINIMIZED);
+			boolean notHidden = isEditorAreaVisible();
+			boolean notInTrim = editorAreaState != IStackPresentationSite.STATE_MINIMIZED;
+			
+			// Funky check: Intro uses the old zoom behaviour when maximized. Make sure we don't show the
+			// editor if it's supposed to be hidden because the intro is maximized. Note that
+			// 'childObscuredByZoom' will only respond 'true' when using the old behaviour.
+			boolean notIntroMaxed = !getPresentation().getLayout().childObscuredByZoom(editorArea);
+			
+			editorArea.setVisible(notHidden && notInTrim && notIntroMaxed);
 		}
 
 		// Update fast views.
