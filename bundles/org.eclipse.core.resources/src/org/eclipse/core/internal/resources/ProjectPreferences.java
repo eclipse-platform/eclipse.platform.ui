@@ -493,7 +493,7 @@ public class ProjectPreferences extends EclipsePreferences {
 							if (Policy.DEBUG_PREFERENCES)
 								Policy.debug("Deleting preference file: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
 							if (fileInWorkspace.isReadOnly()) {
-								IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
+								IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, IWorkspace.VALIDATE_PROMPT);
 								if (!status.isOK())
 									throw new CoreException(status);
 							}
@@ -536,7 +536,7 @@ public class ProjectPreferences extends EclipsePreferences {
 						if (Policy.DEBUG_PREFERENCES)
 							Policy.debug("Setting preference file contents for: " + fileInWorkspace.getFullPath()); //$NON-NLS-1$
 						if (fileInWorkspace.isReadOnly()) {
-							IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, null);
+							IStatus status = fileInWorkspace.getWorkspace().validateEdit(new IFile[] {fileInWorkspace}, IWorkspace.VALIDATE_PROMPT);
 							if (!status.isOK())
 								throw new CoreException(status);
 						}
