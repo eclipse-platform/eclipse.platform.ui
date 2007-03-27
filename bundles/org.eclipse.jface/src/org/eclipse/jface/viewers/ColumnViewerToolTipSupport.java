@@ -131,7 +131,8 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 				}
 				setData(LABEL_PROVIDER_KEY, labelProvider);
 				setData(ELEMENT_KEY, element);
-				rv = true;
+				// Check if at least one of the values is set
+				rv = getText(event) != null || getImage(event) != null;
 
 				updateData();
 			}
