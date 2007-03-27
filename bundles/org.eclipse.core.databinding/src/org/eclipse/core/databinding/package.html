@@ -25,11 +25,9 @@ from then on track changes on both sides, reacting to changes on one side by
 performing the corresponding change on the other side.
 </p>
 <p>
-A <tt>BindSpec</tt> is used to control whether the binding should synchronize in
-both directions, and can be used to specify data type converters and validators.  
-</p>
-<p>
-<tt>DefaultBindSpec</tt> provides default converters and validators.  
+For each binding, two <tt>UpdateValueStrategy</tt> or <tt>UpdateListStrategy</tt> objects (one
+for each direction) is used to control how the binding should synchronize, and can be used to
+specify data type converters and validators.  
 </p>
 <p>
 <tt>AggregateValidationStatus</tt> allows clients to aggregate the current validation
@@ -37,8 +35,8 @@ statuses of a list of bindings, typically obtained from a data binding context.
 </p>
 <p>
 For advanced validation, conversion, or similar requirements that affect the way
-state is copied from one side to the other, an <tt>IBindingListener</tt> can be attached
-to a particular binding, or to a data binding context.  
+state is copied from one side to the other, subclasses of <tt>UpdateValueStrategy</tt>
+or <tt>UpdateListStrategy</tt> can be created.  
 </p>
 </body>
 </html>
