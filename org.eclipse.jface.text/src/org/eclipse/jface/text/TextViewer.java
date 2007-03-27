@@ -23,11 +23,12 @@ import java.util.regex.PatternSyntaxException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
+import org.eclipse.swt.custom.MovementEvent;
+import org.eclipse.swt.custom.MovementListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -37,7 +38,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -103,6 +103,8 @@ public class TextViewer extends Viewer implements
 
 	/** Internal flag to indicate the debug state. */
 	public static final boolean TRACE_ERRORS= false;
+	/** Internal flag to indicate the debug state. */
+	private static final boolean TRACE_DOUBLE_CLICK= false;
 
 	/**
 	 * Represents a replace command that brings the text viewer's text widget
@@ -163,64 +165,79 @@ public class TextViewer extends Viewer implements
 	 * Calls the double click strategies when the mouse has
 	 * been clicked inside the text editor.
 	 */
-	class TextDoubleClickStrategyConnector extends MouseAdapter implements MouseMoveListener {
+	class TextDoubleClickStrategyConnector extends MouseAdapter implements MovementListener {
 
 		/** Internal flag to remember the last double-click selection. */
 		private Point fDoubleClickSelection;
-
-		/*
-		 * @see org.eclipse.swt.events.MouseAdapter#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 * @since 3.3
-		 */
-		public void mouseDown(MouseEvent e) {
-			if (e.count == 3) {
-				StyledText textWidget= getTextWidget();
-				LineSelectionTextTripleClickStrategy.tripleClicked(TextViewer.this);
-				fDoubleClickSelection= textWidget.getSelection();
-			}			
-		}
-
-		/*
-		 * @see MouseListener#mouseDoubleClick(MouseEvent)
-		 */
-		public void mouseDoubleClick(MouseEvent e) {
-			ITextDoubleClickStrategy s= (ITextDoubleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fDoubleClickStrategies);
-			if (s != null) {
-				StyledText textWidget= getTextWidget();
-				s.doubleClicked(TextViewer.this);
-				fDoubleClickSelection= textWidget.getSelection();
-			}
-		}
 
 		/*
 		 * @see org.eclipse.swt.events.MouseAdapter#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 * @since 3.2
 		 */
 		public void mouseUp(MouseEvent e) {
-			try {
-				if (fDoubleClickSelection != null)
-					getTextWidget().copy(DND.SELECTION_CLIPBOARD);
-			} finally {
-				fDoubleClickSelection= null;
+			fDoubleClickSelection= null;
+		}
+
+		/*
+		 * @see org.eclipse.swt.custom.MovementListener#getNextOffset(org.eclipse.swt.custom.MovementEvent)
+		 * @since 3.3
+		 */
+		public void getNextOffset(MovementEvent event) {
+			if (event.movement != SWT.MOVEMENT_WORD_END)
+				return;
+			
+			if (TRACE_DOUBLE_CLICK) {
+				System.out.println("\n+++"); //$NON-NLS-1$
+				print(event);
+			}
+			
+			if (fDoubleClickSelection != null) {
+				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y)
+					event.newOffset= fDoubleClickSelection.y;
 			}
 		}
 
 		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 * @since 3.2
+		 * @see org.eclipse.swt.custom.MovementListener#getPreviousOffset(org.eclipse.swt.custom.MovementEvent)
+		 * @since 3.3
 		 */
-		public void mouseMove(MouseEvent e) {
-			if (fDoubleClickSelection != null) {
-				StyledText textWidget= getTextWidget();
-				Point newSelection= textWidget.getSelection();
-				if (newSelection.x == fDoubleClickSelection.x && newSelection.y <= fDoubleClickSelection.y) {
-					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
-				} else if (newSelection.x >= fDoubleClickSelection.x && newSelection.y == fDoubleClickSelection.y && textWidget.getCaretOffset() == newSelection.x) {
-					textWidget.setSelection(fDoubleClickSelection.x, fDoubleClickSelection.y);
-				} else if (newSelection.y <= fDoubleClickSelection.x && textWidget.getCaretOffset() == newSelection.x)
-					textWidget.setSelection(fDoubleClickSelection.y, newSelection.x);
+		public void getPreviousOffset(MovementEvent event) {
+			if (event.movement != SWT.MOVEMENT_WORD_START)
+				return;
+			
+			if (TRACE_DOUBLE_CLICK) {
+				System.out.println("\n---"); //$NON-NLS-1$
+				print(event);
+			}
+			if (fDoubleClickSelection == null) {
+				ITextDoubleClickStrategy s= (ITextDoubleClickStrategy) selectContentTypePlugin(getSelectedRange().x, fDoubleClickStrategies);
+				if (s != null) {
+					StyledText textWidget= getTextWidget();
+					s.doubleClicked(TextViewer.this);
+					fDoubleClickSelection= textWidget.getSelection();
+					event.newOffset= fDoubleClickSelection.x;
+					if (TRACE_DOUBLE_CLICK)
+						System.out.println("- setting selection: x= " + fDoubleClickSelection.x + ", y= " + fDoubleClickSelection.y); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			} else {
+				if (fDoubleClickSelection.x <= event.offset && event.offset <= fDoubleClickSelection.y)
+					event.newOffset= fDoubleClickSelection.x;
 			}
 		}
+	}
+
+	/**
+	 * Print trace info about <code>MovementEvent</code>.
+	 * 
+	 * @param e the event to print
+	 * @since 3.3
+	 */
+	private void print(MovementEvent e) {
+		System.out.println("line offset: " + e.lineOffset); //$NON-NLS-1$
+		System.out.println("line: " + e.lineText); //$NON-NLS-1$
+		System.out.println("type: " + e.movement); //$NON-NLS-1$
+		System.out.println("offset: " +  e.offset); //$NON-NLS-1$
+		System.out.println("newOffset: " + e.newOffset); //$NON-NLS-1$
 	}
 
 	/**
@@ -1699,7 +1716,7 @@ public class TextViewer extends Viewer implements
 		);
 
 		fTextWidget.setFont(parent.getFont());
-		fTextWidget.setDoubleClickEnabled(false);
+		fTextWidget.setDoubleClickEnabled(true);
 
 		/*
 		 * Disable SWT Shift+TAB traversal in this viewer
@@ -1747,8 +1764,8 @@ public class TextViewer extends Viewer implements
 
 		if (fDoubleClickStrategies != null && !fDoubleClickStrategies.isEmpty() && fDoubleClickStrategyConnector == null) {
 			fDoubleClickStrategyConnector= new TextDoubleClickStrategyConnector();
+			fTextWidget.addWordMovementListener(fDoubleClickStrategyConnector);
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
-			fTextWidget.addMouseMoveListener(fDoubleClickStrategyConnector);
 		}
 
 		ensureHoverControlManagerInstalled();
