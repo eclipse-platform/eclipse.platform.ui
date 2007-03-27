@@ -12,6 +12,8 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
@@ -84,7 +86,8 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 		// Add context menu items
 		mgr.setContextMenuManager(new MenuManager());
 		MenuManager menuMgr = mgr.getContextMenuManager();
-		IContributionItem closeContrib = new ContributionItem() {
+		
+		final IContributionItem closeContrib = new ContributionItem() {
 			public void fill(Menu parent, int index) {
 		        MenuItem closeItem = new MenuItem(parent, SWT.NONE, index++);
 		        closeItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
@@ -105,6 +108,21 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 		        });
 			}
 		};
+		
+		// We have to manage the visiblity this way...?
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+            	IViewReference selectedView = null;
+            	if (contextToolItem != null) {
+            		selectedView = (IViewReference) contextToolItem.getData(ShowFastViewContribution.FAST_VIEW);
+            	}
+            	
+            	// Only show the 'close' item if we've clicked on a view
+            	closeContrib.setVisible(selectedView != null);
+            	manager.update(true);
+			}
+		});
+		
 		menuMgr.add(closeContrib);
 	}
 
