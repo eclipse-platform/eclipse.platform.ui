@@ -101,7 +101,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-
 /**
  * Shows a list of items to the user with a text entry field for a string
  * pattern used to filter the list of items.
@@ -524,16 +523,8 @@ public abstract class FilteredItemsSelectionDialog extends
 				}
 
 				if (selectedElements.size() > 0) {
-					if (selectedElements.size() == 1)
-						removeHistoryItemAction
-								.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction_singular);
-					else
-						removeHistoryItemAction
-								.setText(NLS
-										.bind(
-												WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction_plural,
-												new Object[] { new Integer(
-														selectedElements.size()) }));
+					removeHistoryItemAction
+								.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
 
 					manager.add(removeHistoryActionContributionItem);
 
@@ -1349,7 +1340,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public RemoveHistoryItemAction() {
 			super(
-					WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction_singular);
+					WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
 		}
 
 		/*
@@ -1797,7 +1788,8 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (totalWork == 0)
 				return message;
 
-			return NLS.bind(
+			return NLS
+					.bind(
 							WorkbenchMessages.FilteredItemsSelectionDialog_taskProgressMessage,
 							new Object[] {
 									message,
