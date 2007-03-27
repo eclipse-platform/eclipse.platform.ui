@@ -25,8 +25,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -58,9 +58,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
     		private final static String EXTENSIONS_ATTRIBUTE= "extensions"; //$NON-NLS-1$
     		private final static String CONTENT_TYPE_ID_ATTRIBUTE= "contentTypeId"; //$NON-NLS-1$
  
-    		private HashMap fIdMap;					// maps ids to datas
-    		private HashMap fExtensionMap;			// maps extensions to datas
-    		private HashMap fContentTypeBindings;		// maps content type bindings to datas
+    		private HashMap fIdMap;					// maps ids to data
+    		private HashMap fExtensionMap;			// maps extensions to data
+    		private HashMap fContentTypeBindings;		// maps content type bindings to data
         
  
 	    	void register(IConfigurationElement element, Object data) {
@@ -300,7 +300,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		        fStructureCreators.createBinding(element, STRUCTURE_CREATOR_ID_ATTRIBUTE);
 		}
 				
-		// collect all viewers which define the structure mergeviewer extension point
+		// collect all viewers which define the structure merge viewer extension point
 		elements= registry.getConfigurationElementsFor(PLUGIN_ID, STRUCTURE_MERGE_VIEWER_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
@@ -317,7 +317,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		        fStructureMergeViewers.createBinding(element, STRUCTURE_MERGE_VIEWER_ID_ATTRIBUTE);
 		}
 		
-		// collect all viewers which define the content mergeviewer extension point
+		// collect all viewers which define the content merge viewer extension point
 		elements= registry.getConfigurationElementsFor(PLUGIN_ID, CONTENT_MERGE_VIEWER_EXTENSION_POINT);
 		for (int i= 0; i < elements.length; i++) {
 		    IConfigurationElement element= elements[i];
@@ -805,8 +805,12 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			return null;
 			
 		ICompareInput input= (ICompareInput) in;
+
 		
 		IContentType ctype= getCommonType(input);
+		if (isCompareAsText(input, cc)) {
+			ctype = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+		}
 		if (ctype != null) {
 			initializeRegistries();
 			Viewer viewer= getViewer(fContentMergeViewers.search(ctype), oldViewer, parent, cc);
@@ -861,6 +865,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
+	private boolean isCompareAsText(ICompareInput input, CompareConfiguration cc) {
+		Set set = (Set)cc.getProperty(ICompareAsText.PROP_TEXT_INPUTS);
+		if (set == null)
+			return false;
+		return set.contains(input);
+	}
+
 	private static Viewer getViewer(Object descriptor, Viewer oldViewer, Composite parent, CompareConfiguration cc) {    
 	    if (descriptor instanceof IViewerDescriptor)
 			return ((IViewerDescriptor)descriptor).createViewer(oldViewer, parent, cc);
