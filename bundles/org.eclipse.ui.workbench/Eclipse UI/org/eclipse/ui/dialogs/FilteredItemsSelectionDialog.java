@@ -101,7 +101,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Shows a list of items to the user with a text entry field for a string
@@ -525,15 +524,16 @@ public abstract class FilteredItemsSelectionDialog extends
 				}
 
 				if (selectedElements.size() > 0) {
-					removeHistoryItemAction
-							.setText(MessageFormat
-									.format(
-											WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction,
-											new Object[] {
-													new Integer(
-															selectedElements
-																	.size()),
-													selectedElements.size() > 1 ? "s" : "" })); //$NON-NLS-1$//$NON-NLS-2$
+					if (selectedElements.size() == 1)
+						removeHistoryItemAction
+								.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction_singular);
+					else
+						removeHistoryItemAction
+								.setText(NLS
+										.bind(
+												WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction_plural,
+												new Object[] { new Integer(
+														selectedElements.size()) }));
 
 					manager.add(removeHistoryActionContributionItem);
 
@@ -1349,7 +1349,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public RemoveHistoryItemAction() {
 			super(
-					WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
+					WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction_singular);
 		}
 
 		/*
@@ -1797,8 +1797,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (totalWork == 0)
 				return message;
 
-			return MessageFormat
-					.format(
+			return NLS.bind(
 							WorkbenchMessages.FilteredItemsSelectionDialog_taskProgressMessage,
 							new Object[] {
 									message,
