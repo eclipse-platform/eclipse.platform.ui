@@ -444,11 +444,12 @@ public class SearchPattern {
 			// first char must strictly match (upper/lower)
 			return false;
 		}
+
+		int patternLength = patternEnd;
 		
-		int patternLength = pattern.length();
-		
-		if (pattern.charAt(patternLength - 1) == END_SYMBOL || pattern.charAt(patternLength - 1) == BLANK )
-			patternLength--;
+		if (pattern.charAt(patternEnd - 1) == END_SYMBOL || pattern.charAt(patternEnd - 1) == BLANK )
+			patternLength = patternEnd - 1;
+
 
 		char patternChar, nameChar;
 		int iPattern = patternStart;
@@ -487,14 +488,14 @@ public class SearchPattern {
 			// name
 			while (true) {
 				if (iName == nameEnd) {
-					if (patternChar == END_SYMBOL || patternChar == BLANK)
+					if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK))
 						return true;
 					return false;
 				}
 
 				nameChar = name.charAt(iName);
 
-				if (patternChar == END_SYMBOL || patternChar == BLANK) {
+				if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK)) {
 					if (isNameCharAllowed(nameChar)) {
 						return false;
 					}
