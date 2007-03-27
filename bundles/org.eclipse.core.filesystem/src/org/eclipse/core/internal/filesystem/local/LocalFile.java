@@ -361,13 +361,16 @@ public class LocalFile extends FileStore {
 	}
 
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
+		boolean success = true;
 		if ((options & EFS.SET_ATTRIBUTES) != 0) {
 			if (LocalFileNatives.usingNatives())
-				LocalFileNatives.setFileInfo(filePath, info, options);
+				success &= LocalFileNatives.setFileInfo(filePath, info, options);
 		}
 		//native does not currently set last modified
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)
-			file.setLastModified(info.getLastModified());
+			success &= file.setLastModified(info.getLastModified());
+		if (!success && !file.exists())
+			Policy.error(EFS.ERROR_NOT_EXISTS, NLS.bind(Messages.fileNotFound, filePath));
 	}
 
 	/* (non-Javadoc)

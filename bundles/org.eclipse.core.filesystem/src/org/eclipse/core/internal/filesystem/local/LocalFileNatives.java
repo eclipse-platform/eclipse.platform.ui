@@ -115,11 +115,10 @@ abstract class LocalFileNatives {
 	 * @param info
 	 * @param options
 	 */
-	public static void setFileInfo(String fileName, IFileInfo info, int options) {
+	public static boolean setFileInfo(String fileName, IFileInfo info, int options) {
 		if (isUnicode)
-			internalSetFileInfoW(Convert.toPlatformChars(fileName), info, options);
-		else
-			internalSetFileInfo(Convert.toPlatformBytes(fileName), info);
+			return internalSetFileInfoW(Convert.toPlatformChars(fileName), info, options);
+		return internalSetFileInfo(Convert.toPlatformBytes(fileName), info);
 	}
 
 	/**

@@ -428,6 +428,32 @@ public class FileStoreTest extends LocalStoreTest {
 		assertTrue("1.1", !child.fetchInfo().exists());
 	}
 
+	/**
+	 * Tests public API method {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}.
+	 */
+	public void testPutInfo() {
+		IFileStore nonExisting = getTempStore();
+
+		//assert that modifying a non-existing store fails
+		IFileInfo info = nonExisting.fetchInfo();
+		info.setLastModified(System.currentTimeMillis());
+		try {
+			nonExisting.putInfo(info, EFS.SET_LAST_MODIFIED, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//expected
+		}
+		info = nonExisting.fetchInfo();
+		info.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+		try {
+			nonExisting.putInfo(info, EFS.SET_ATTRIBUTES, getMonitor());
+			fail("1.1");
+		} catch (CoreException e) {
+			//expected
+		}
+
+	}
+
 	public void testReadOnly() throws CoreException {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
