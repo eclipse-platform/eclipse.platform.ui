@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.presentations;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.internal.FastViewBar;
+import org.eclipse.ui.internal.FastViewManager;
+import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -24,6 +27,8 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
 
     private IStackPresentationSite site;
 
+    private boolean realFV = true;
+    
     public SystemMenuFastView(IStackPresentationSite site) {
         this.site = site;
         setText(WorkbenchMessages.ViewPane_fastView);
@@ -37,15 +42,34 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
     
     public void update() {
         IViewReference viewRef = getReference();
+        if (viewRef == null) {
+        	setEnabled(false);
+        	return;
+        }
         
-        if (viewRef == null
-                || !site.isPartMoveable(viewPane)) {
+        // Are we showing a 'real' fast view or a minimized view ?
+        Perspective persp = viewPane.getPane().getPage().getActivePerspective();
+        FastViewManager fvm = persp.getFastViewManager();
+        
+        String trimId = fvm.getIdForRef(viewRef);
+        realFV = trimId == null || FastViewBar.FASTVIEWBAR_ID.equals(trimId);
+
+        // it's 'restore' if we're not using a real fast view
+        if (realFV) {
+        	setText(WorkbenchMessages.ViewPane_fastView);
+        }
+        else {
+        	setText(WorkbenchMessages.StandardSystemToolbar_Restore);
+        	setChecked(false);
+        }
+        
+        if (!site.isPartMoveable(viewPane)) {
             setEnabled(false);
         } else {
             setEnabled(true);
             
-            setChecked(viewPane.getPane().getPage().getActivePerspective().isFastView(
-                    viewRef));
+            if (realFV)
+            	setChecked(persp.isFastView(viewRef));
         }
     }
 
@@ -79,14 +103,25 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
     }
 
     public void run() {
-        if (viewPane.getPane() instanceof ViewPane) {
-            ViewPane pane = (ViewPane) viewPane.getPane();
+    	if (realFV) {
+	        if (viewPane.getPane() instanceof ViewPane) {
+	            ViewPane pane = (ViewPane) viewPane.getPane();
+	            
+	            if (!isChecked()) {
+	                pane.doMakeFast();
+	            } else {
+	                pane.doRemoveFast();
+	            }   
+	        }
+    	}
+    	else {
+    		// We're a minimized stack...restore it
+            IViewReference viewRef = getReference();
             
-            if (!isChecked()) {
-                pane.doMakeFast();
-            } else {
-                pane.doRemoveFast();
-            }   
-        }
+            Perspective persp = viewPane.getPane().getPage().getActivePerspective();
+            FastViewManager fvm = persp.getFastViewManager();
+            String trimId = fvm.getIdForRef(viewRef);
+            fvm.restoreToPresentation(trimId);
+    	}
     }
 }
