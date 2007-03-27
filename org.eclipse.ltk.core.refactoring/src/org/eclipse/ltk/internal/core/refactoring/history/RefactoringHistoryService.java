@@ -540,16 +540,6 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		}
 
 		/**
-		 * Resets the refactoring history stacks.
-		 */
-		private void resetStacks() {
-			if (fUndoStack != null)
-				fUndoStack.fImplementation.clear();
-			if (fRedoQueue != null)
-				fRedoQueue.clear();
-		}
-
-		/**
 		 * {@inheritDoc}
 		 */
 		public void resourceChanged(final IResourceChangeEvent event) {
@@ -576,8 +566,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 						}
 					}
 				}
-			} else if ((type & IResourceChangeEvent.PRE_CLOSE) != 0)
-				resetStacks();
+			}
 		}
 	}
 
