@@ -33,18 +33,22 @@ import org.eclipse.osgi.util.NLS;
 public class JobManager implements IJobManager {
 
 	/**
+	 * The unique identifier constant of this plug-in.
+	 */
+	public static final String PI_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
+
+	/**
 	 * Status code constant indicating an error occurred while running a plug-in.
 	 * For backward compatibility with Platform.PLUGIN_ERROR left at (value = 2).
 	 */
 	public static final int PLUGIN_ERROR = 2;
 
-	private static final String PLUGIN_NAME = "org.eclipse.core.jobs"; //$NON-NLS-1$
-	private static final String OPTION_DEADLOCK_ERROR = PLUGIN_NAME + "/jobs/errorondeadlock"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_BEGIN_END = PLUGIN_NAME + "/jobs/beginend"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_JOBS = PLUGIN_NAME + "/jobs"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_JOBS_TIMING = PLUGIN_NAME + "/jobs/timing"; //$NON-NLS-1$
-	private static final String OPTION_LOCKS = PLUGIN_NAME + "/jobs/locks"; //$NON-NLS-1$
-	private static final String OPTION_SHUTDOWN = PLUGIN_NAME + "/jobs/shutdown"; //$NON-NLS-1$
+	private static final String OPTION_DEADLOCK_ERROR = PI_JOBS + "/jobs/errorondeadlock"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_BEGIN_END = PI_JOBS + "/jobs/beginend"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_JOBS = PI_JOBS + "/jobs"; //$NON-NLS-1$
+	private static final String OPTION_DEBUG_JOBS_TIMING = PI_JOBS + "/jobs/timing"; //$NON-NLS-1$
+	private static final String OPTION_LOCKS = PI_JOBS + "/jobs/locks"; //$NON-NLS-1$
+	private static final String OPTION_SHUTDOWN = PI_JOBS + "/jobs/shutdown"; //$NON-NLS-1$
 
 	static boolean DEBUG = false;
 	static boolean DEBUG_BEGIN_END = false;
@@ -122,11 +126,6 @@ public class JobManager implements IJobManager {
 	 * jobs that are waiting to be run. Should only be modified from changeState
 	 */
 	private final JobQueue waiting;
-
-	/**
-	 * The unique identifier constant of this plug-in.
-	 */
-	public static final String PI_JOBS = "org.eclipse.core.jobs"; //$NON-NLS-1$
 
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
