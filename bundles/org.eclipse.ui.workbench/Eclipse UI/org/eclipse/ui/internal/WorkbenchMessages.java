@@ -980,6 +980,10 @@ public class WorkbenchMessages extends NLS {
     public static String FilteredItemsSelectionDialog_jobLabel; 
     public static String FilteredItemsSelectionDialog_jobError;
     public static String FilteredItemsSelectionDialog_jobCancel;
+    
+    // GranualProgressMonitor
+    public static String FilteredItemsSelectionDialog_taskProgressMessage;
+    public static String FilteredItemsSelectionDialog_subtaskProgressMessage;
     	
     static {
 		// load message values from bundle file

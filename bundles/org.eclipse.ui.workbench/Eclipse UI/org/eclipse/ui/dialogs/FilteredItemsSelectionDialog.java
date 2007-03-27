@@ -59,6 +59,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
@@ -1662,7 +1663,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		private ContentProvider contentProvider;
 
 		private String name;
-		
+
 		private String subName;
 
 		private int totalWork;
@@ -1715,7 +1716,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.subName = name;
 			updateProgressMessage();
 		}
-			
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -1787,15 +1788,22 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (name == null) {
 				message = subName == null ? "" : subName; //$NON-NLS-1$
 			} else {
-				message = subName == null ? name : MessageFormat.format(
-						"{0} {1}", new Object[] { name, subName }); //$NON-NLS-1$
+				message = subName == null ? name
+						: NLS
+								.bind(
+										WorkbenchMessages.FilteredItemsSelectionDialog_subtaskProgressMessage,
+										new Object[] { name, subName });
 			}
 			if (totalWork == 0)
 				return message;
 
-			return MessageFormat.format("{0} ({1}%)" //$NON-NLS-1$
-					, new Object[] { message,
-							new Integer((int) ((worked * 100) / totalWork)) });
+			return MessageFormat
+					.format(
+							WorkbenchMessages.FilteredItemsSelectionDialog_taskProgressMessage,
+							new Object[] {
+									message,
+									new Integer(
+											(int) ((worked * 100) / totalWork)) });
 
 		}
 
@@ -3133,13 +3141,13 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Get the control where the search pattern is entered. Any filtering
-	 * should be done using an {@link ItemsFilter}. This control should only
-	 * be accessed for listeners that wish to handle events that do not
-	 * affect filtering such as custom traversal.
+	 * Get the control where the search pattern is entered. Any filtering should
+	 * be done using an {@link ItemsFilter}. This control should only be
+	 * accessed for listeners that wish to handle events that do not affect
+	 * filtering such as custom traversal.
 	 * 
-	 * @return Control or <code>null</code> if the pattern control
-	 * 	has not been created.
+	 * @return Control or <code>null</code> if the pattern control has not
+	 *         been created.
 	 */
 	public Control getPatternControl() {
 		return pattern;
