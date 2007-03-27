@@ -555,6 +555,9 @@ public class FastViewManager {
 		if (vstb == null)
 			return;
 		
+		// remove any showing fast view
+		page.hideFastView();
+
 		String selectedTabId = vstb.getSelectedTabId();
 		
 		List fvs = getFastViews(id);
