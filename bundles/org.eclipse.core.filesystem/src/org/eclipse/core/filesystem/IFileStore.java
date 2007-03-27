@@ -139,6 +139,10 @@ public interface IFileStore extends IAdaptable {
 	 * Deletion occurs with best-effort semantics; if some files cannot be deleted,
 	 * exceptions are recorded but other files will continue to be deleted if possible.
 	 * </p>
+	 * <p>
+	 * Deletion of a symbolic link will always delete the link, rather than the target
+	 * of the link.
+	 * </p>
 	 * 
 	 * @param options bit-wise or of option flag constants (none currently applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -147,6 +151,7 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li>Files or directories could not be deleted.
 	 * </ul>
+	 * @see EFS#ATTRIBUTE_SYMLINK
 	 */
 	public void delete(int options, IProgressMonitor monitor) throws CoreException;
 

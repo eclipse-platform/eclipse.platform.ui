@@ -169,15 +169,11 @@ public class EFS {
 	 * </p>
 	 * <p>
 	 * Broken symbolic links (which do not reference any valid file or directory)
-	 * are being returned by {link {@link IFileStore#childInfos(int, IProgressMonitor)},
-	 * but {link {@link IFileInfo#exists()} returns <code>false</code> for these.
+	 * are being returned by {@link IFileStore#childInfos(int, IProgressMonitor)},
+	 * but {@link IFileInfo#exists()} returns <code>false</code> for these.
 	 * Operations like reading or writing on broken symbolic links throw 
 	 * a "file not found" exception.  
 	 * </p>
-	 * <p>
-	 * The only operation that does not transparently work on the link target,
-	 * is deletion: {@link IFileStore#delete(int, IProgressMonitor)}
-	 * deletes the symbolic link but not the link target. 
 	 * 
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
@@ -204,7 +200,7 @@ public class EFS {
 	 * @since org.eclipse.core.filesystem 1.1
 	 */
 	public static final int ATTRIBUTE_LINK_TARGET = 1 << 6;
-	
+
 	/**
 	 * Scheme constant (value "file") indicating the local file system scheme.
 	 * @see EFS#getLocalFileSystem()
