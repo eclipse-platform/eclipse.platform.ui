@@ -242,6 +242,9 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      * @see org.eclipse.jface.dialogs.ProgressMonitorDialog#updateForSetBlocked(org.eclipse.core.runtime.IStatus)
      */
     protected void updateForSetBlocked(IStatus reason) {
+    	if(alreadyClosed)
+    		return;
+    	
         super.updateForSetBlocked(reason);
         enableDetails(true);
         if (viewer == null) {
