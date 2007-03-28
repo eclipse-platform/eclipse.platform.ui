@@ -28,6 +28,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -702,6 +704,12 @@ public class PopupDialog extends Window {
 				menuImage = null;
 				disabledMenuImage.dispose();
 				disabledMenuImage = null;
+			}
+		});
+		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=177183
+		toolBar.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent e) {
+				showDialogMenu();
 			}
 		});
 	}
