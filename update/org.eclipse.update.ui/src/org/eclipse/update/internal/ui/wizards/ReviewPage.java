@@ -182,7 +182,8 @@ public class ReviewPage	extends BannerPage {
                 		    // if the site has mirrors check if this is from the mirror that user selected
                 			if (sites[i].getSite(false, null) instanceof ExtendedSite) {
                 				ExtendedSite site = (ExtendedSite)sites[i].getSite(false, null);
-                				if (site.getSelectedMirror().getURL().toExternalForm().equals(f.getSite().getSiteContentProvider().getURL().toExternalForm())) { 
+                				IURLEntry siteMirror = site.getSelectedMirror();
+                				if (siteMirror != null && siteMirror.getURL().toExternalForm().equals(f.getSite().getSiteContentProvider().getURL().toExternalForm())) { 
                 					// this is the site so proceed with the loop
                 				} else {
                 					continue;
