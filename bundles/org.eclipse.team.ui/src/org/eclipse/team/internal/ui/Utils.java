@@ -730,23 +730,17 @@ public class Utils {
 	 */
 	public static String shortenText(int maxWidth, String textValue) {
 		int length = textValue.length();
-		if(length < maxWidth) return textValue;
-		int ellipsisWidth = 3;
-		int pivot = length / 2;
-		int start = pivot;
-		int end = pivot + 1;
-		while (start >= 0 && end < length) {
-			String s1 = textValue.substring(0, start);
-			String s2 = textValue.substring(end, length);
-			int l1 = s1.length();
-			int l2 = s2.length();
-			if (l1 + ellipsisWidth + l2 < maxWidth) {
-				return s1 + "..." + s2; //$NON-NLS-1$
-			}
-			start--;
-			end++;
-		}
-		return textValue;
+		if (length < maxWidth)
+			return textValue;
+		String ellipsis = "..."; //$NON-NLS-1$
+		int subStrLen = (maxWidth - ellipsis.length()) / 2;
+		int addtl = (maxWidth - ellipsis.length()) % 2;
+
+		StringBuffer sb = new StringBuffer();
+		sb.append(textValue.substring(0, subStrLen));
+		sb.append(ellipsis);
+		sb.append(textValue.substring(length - subStrLen - addtl));
+		return sb.toString();
 	}
 	
 	public static String getTypeName(ISynchronizeParticipant participant) {
