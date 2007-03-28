@@ -17,7 +17,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import com.ibm.icu.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -50,6 +49,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.DateFormat;
 
 /**
  * Displays system information about the eclipse application.  The content of
@@ -133,7 +135,10 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     private String getSystemSummary() {
         StringWriter out = new StringWriter();
         PrintWriter writer = new PrintWriter(out);
-        writer.println(NLS.bind(WorkbenchMessages.SystemSummary_timeStamp,  new Date())); 
+        writer.println(NLS.bind(WorkbenchMessages.SystemSummary_timeStamp,
+				DateFormat
+						.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL)
+						.format(new Date())));  
 
         appendExtensions(writer);
         writer.close();
