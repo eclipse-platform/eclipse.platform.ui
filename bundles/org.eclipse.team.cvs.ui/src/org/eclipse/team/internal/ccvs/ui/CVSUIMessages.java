@@ -859,6 +859,7 @@ public class CVSUIMessages extends NLS {
 	public static String CVSChangeSetCollector_0;
 	public static String WorkspaceChangeSetCapability_7;
 	public static String WorkspaceChangeSetCapability_8;
+	public static String WorkspaceChangeSetCapability_9;
 
 	public static String ProjectMetaFile_taskName;
 	public static String TagFromWorkspace_taskName;

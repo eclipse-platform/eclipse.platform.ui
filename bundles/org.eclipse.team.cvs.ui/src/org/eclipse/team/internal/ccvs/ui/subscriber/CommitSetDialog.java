@@ -28,9 +28,12 @@ import org.eclipse.ui.PlatformUI;
  * Dialog for creating and editing commit set
  * title and comment
  */
-public class CommitSetDialog extends TrayDialog {
+public class CommitSetDialog extends TitleAreaDialog {
 
-    private static final int DEFAULT_WIDTH_IN_CHARS= 80;
+    public final static short NEW = 0;
+    public final static short EDIT = 1;
+    
+	private static final int DEFAULT_WIDTH_IN_CHARS= 80;
     
     private final ActiveChangeSet set;
     private CommitCommentArea commitCommentArea;
@@ -40,12 +43,17 @@ public class CommitSetDialog extends TrayDialog {
     private final String title;
     private final String description;
     private String comment;
+    private short mode;
 
-    public CommitSetDialog(Shell parentShell, ActiveChangeSet set, IResource[] files, String title, String description) {
+    public CommitSetDialog(Shell parentShell, ActiveChangeSet set, IResource[] files, short mode) {
         super(parentShell);
         this.set = set;
-        this.title = title;
-        this.description = description;
+        this.mode = mode;
+		this.title = mode == NEW ? CVSUIMessages.WorkspaceChangeSetCapability_2
+				: CVSUIMessages.WorkspaceChangeSetCapability_7;
+		this.description = mode == NEW ? CVSUIMessages.WorkspaceChangeSetCapability_3
+				: CVSUIMessages.WorkspaceChangeSetCapability_8;
+        
         if (files == null) {
             files = set.getResources();
         }
@@ -59,15 +67,32 @@ public class CommitSetDialog extends TrayDialog {
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createContents(org.eclipse.swt.widgets.Composite)
+     */
+    protected Control createContents(Composite parent) {
+        Control contents = super.createContents(parent);
+        setTitle(title);
+        setMessage(description);
+        return contents;
+    }
+    
+    /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
      */
     protected Control createDialogArea(Composite parent) {
-		getShell().setText(title);
-		Composite composite = (Composite)super.createDialogArea(parent);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        Composite parentComposite = (Composite) super.createDialogArea(parent);
+
+        // create a composite with standard margins and spacing
+        Composite composite = new Composite(parentComposite, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+        composite.setLayout(layout);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setFont(parentComposite.getFont());
 		
-		createWrappingLabel(composite, description);
 		createNameArea(composite);
 		
 		if (hasCommitTemplate()) {
@@ -99,8 +124,6 @@ public class CommitSetDialog extends TrayDialog {
 		initializeValues();
 		updateEnablements();
 		
-		// set F1 help
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_SET_DIALOG);	
         Dialog.applyDialogFont(parent);
         return composite;
     }
@@ -115,11 +138,10 @@ public class CommitSetDialog extends TrayDialog {
 	    return size;
 	}
 
-
     private void createNameArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
@@ -181,11 +203,31 @@ public class CommitSetDialog extends TrayDialog {
 	
     private void updateEnablements() {
         commitCommentArea.setEnabled(isUseCustomComment());
-	    String name = nameText.getText();
-        if (name.length() == 0) {
-            setPageComplete(false);
-            return;
-        }
+		setErrorMessage(null);
+		String name = nameText.getText();
+		if (name.length() == 0) {
+			setPageComplete(false);
+			return;
+		}
+        
+		// check if the new change set already exists
+		if (mode == NEW 
+				&& CVSUIPlugin.getPlugin().getChangeSetManager().getSet(name) != null) {
+			setPageComplete(false);
+			setErrorMessage(CVSUIMessages.WorkspaceChangeSetCapability_9);
+			return;
+		}
+		
+		// check if the edited change set already exists, do not display the
+		// error message when new the name is the same as the old one
+		if (mode == EDIT && !name.equals(set.getName()) 
+				&& CVSUIPlugin.getPlugin().getChangeSetManager().getSet(name) != null) {
+			setPageComplete(false);
+			setErrorMessage(CVSUIMessages.WorkspaceChangeSetCapability_9);
+			return;
+		}
+
+        
         if (isUseCustomComment()) {
             if (comment == null || comment.length() == 0) {
                setPageComplete(false);
@@ -245,4 +287,16 @@ public class CommitSetDialog extends TrayDialog {
         updateEnablements();
         return control;
     }
+    
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		shell.setText(title);
+		// set F1 help
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
+				IHelpContextIds.COMMIT_SET_DIALOG);
+
+	}
 }

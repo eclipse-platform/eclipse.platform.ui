@@ -47,8 +47,7 @@ public class WorkspaceChangeSetCapability extends ModelParticipantChangeSetCapab
      */
     public ActiveChangeSet createChangeSet(ISynchronizePageConfiguration configuration, IDiff[] infos) {
         ActiveChangeSet set = getActiveChangeSetManager().createSet(CVSUIMessages.WorkspaceChangeSetCapability_1, new IDiff[0]); 
-		CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, getResources(infos),
-		        CVSUIMessages.WorkspaceChangeSetCapability_2, CVSUIMessages.WorkspaceChangeSetCapability_3); // 
+		CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, getResources(infos), CommitSetDialog.NEW);
 		dialog.open();
 		if (dialog.getReturnCode() != Window.OK) return null;
 		set.add(infos);
@@ -70,8 +69,7 @@ public class WorkspaceChangeSetCapability extends ModelParticipantChangeSetCapab
      * @see org.eclipse.team.ui.synchronize.ChangeSetCapability#editChangeSet(org.eclipse.team.core.subscribers.ActiveChangeSet)
      */
     public void editChangeSet(ISynchronizePageConfiguration configuration, ActiveChangeSet set) {
-        CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, set.getResources(),
-		        CVSUIMessages.WorkspaceChangeSetCapability_7, CVSUIMessages.WorkspaceChangeSetCapability_8); // 
+        CommitSetDialog dialog = new CommitSetDialog(configuration.getSite().getShell(), set, set.getResources(), CommitSetDialog.EDIT);
 		dialog.open();
 		if (dialog.getReturnCode() != Window.OK) return;
 		// Nothing to do here as the set was updated by the dialog 
