@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -230,8 +229,6 @@ public class NewFolderDialog extends SelectionStatusDialog {
 				validateLinkedResource();
 			}
 		});
-		folderNameField.setBackground(FieldAssistColors
-				.getRequiredFieldBackgroundColor(folderNameField));
 	}
 
 	/**

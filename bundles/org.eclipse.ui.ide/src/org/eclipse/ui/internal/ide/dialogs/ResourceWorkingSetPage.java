@@ -26,7 +26,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -163,7 +162,6 @@ public class ResourceWorkingSetPage extends WizardPage implements
             }
         });
         text.setFocus();
-        text.setBackground(FieldAssistColors.getRequiredFieldBackgroundColor(text));
 
         label = new Label(composite, SWT.WRAP);
         label.setText(IDEWorkbenchMessages.ResourceWorkingSetPage_label_tree);

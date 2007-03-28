@@ -20,7 +20,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -232,9 +231,6 @@ public class ContainerSelectionGroup extends Composite {
 			containerNameField.setLayoutData(gd);
 			containerNameField.addListener(SWT.Modify, listener);
 			containerNameField.setFont(this.getFont());
-			// Mark as required field.
-			containerNameField.setBackground(FieldAssistColors
-					.getRequiredFieldBackgroundColor(containerNameField));
 		} else {
 			// filler...
 			new Label(this, SWT.NONE);

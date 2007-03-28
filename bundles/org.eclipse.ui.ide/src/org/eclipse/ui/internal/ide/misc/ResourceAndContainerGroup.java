@@ -18,7 +18,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -209,9 +208,6 @@ public class ResourceAndContainerGroup implements Listener {
         data.widthHint = SIZING_TEXT_FIELD_WIDTH;
         resourceNameField.setLayoutData(data);
         resourceNameField.setFont(font);
-        resourceNameField.setBackground(
-        		FieldAssistColors.getRequiredFieldBackgroundColor(resourceNameField));
-
         validateControls();
     }
 
