@@ -161,6 +161,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
 	 * @param position
 	 *            a 0-based position relative to the model, or -1 to indicate
 	 *            the last position
+	 * @since 3.3
 	 */
     public void insert(Object element, int position) {
     	if (getComparator() != null || hasFilters()) {
