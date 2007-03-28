@@ -3875,6 +3875,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fLeft, fRight, fAncestor
 		});
 		Utilities.registerAction(fHandlerService, showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, fActivations);
+		
+		IAction findAction = new Action() {
+			public void run() {
+				if (fFocusPart != null) {
+					IAction action = fFocusPart.getAction(MergeSourceViewer.FIND_ID);
+					if (action != null)
+						action.run();
+				}
+			}
+		};
+		Utilities.registerAction(fHandlerService, findAction, IWorkbenchActionDefinitionIds.FIND_REPLACE, fActivations);
 	}
 	
 	/* (non-Javadoc)

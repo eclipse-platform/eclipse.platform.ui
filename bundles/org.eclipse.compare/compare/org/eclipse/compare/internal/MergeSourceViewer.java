@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.texteditor.FindReplaceAction;
 
 import org.eclipse.compare.ICompareContainer;
 import org.eclipse.jface.action.*;
@@ -44,6 +45,7 @@ public class MergeSourceViewer extends SourceViewer
 	public static final String DELETE_ID= "delete"; //$NON-NLS-1$
 	public static final String SELECT_ALL_ID= "selectAll"; //$NON-NLS-1$
 	public static final String SAVE_ID= "save"; //$NON-NLS-1$
+	public static final String FIND_ID= "find"; //$NON-NLS-1$
 
 	class TextOperationAction extends MergeViewerAction {
 		
@@ -317,27 +319,33 @@ public class MergeSourceViewer extends SourceViewer
 		fActions.put(actionId, action);
 	}
 	
-	public MergeViewerAction getAction(String actionId) {
-		MergeViewerAction action= (MergeViewerAction) fActions.get(actionId);
+	public IAction getAction(String actionId) {
+		IAction action= (IAction) fActions.get(actionId);
 		if (action == null) {
 			action= createAction(actionId);
 			if (action == null)
 				return null;
-			
-			if (action.isContentDependent())
-				addTextListener(this);
-			if (action.isSelectionDependent())
-				addSelectionChangedListener(this);
+			if (action instanceof MergeViewerAction) {
+				MergeViewerAction mva = (MergeViewerAction) action;
+				if (mva.isContentDependent())
+					addTextListener(this);
+				if (mva.isSelectionDependent())
+					addSelectionChangedListener(this);
 				
-			Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			 //$NON-NLS-1$ //$NON-NLS-2$
-			fActions.put(actionId, action);
+				Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			 //$NON-NLS-1$ //$NON-NLS-2$
+				fActions.put(actionId, action);
+			}
+				
 		}
-		if (action.isEditableDependent() && !isEditable())
-			return null;
+		if (action instanceof MergeViewerAction) {
+			MergeViewerAction mva = (MergeViewerAction) action;
+			if (mva.isEditableDependent() && !isEditable())
+				return null;
+		}
 		return action;
 	}
 	
-	protected MergeViewerAction createAction(String actionId) {
+	protected IAction createAction(String actionId) {
 		if (UNDO_ID.equals(actionId))
 			return new TextOperationAction(UNDO, true, false, true);
 		if (REDO_ID.equals(actionId))
@@ -352,6 +360,8 @@ public class MergeSourceViewer extends SourceViewer
 			return new TextOperationAction(DELETE, true, false, false);
 		if (SELECT_ALL_ID.equals(actionId))
 			return new TextOperationAction(SELECT_ALL, false, false, false);
+		if (FIND_ID.equals(actionId))
+			return new FindReplaceAction(fResourceBundle, "Editor.FindReplace.", getControl().getShell(), this.getFindReplaceTarget()); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -394,7 +404,7 @@ public class MergeSourceViewer extends SourceViewer
 
 		menu.add(new Separator("edit")); //$NON-NLS-1$
 		menu.add(new Separator("find")); //$NON-NLS-1$
-		//addMenu(menu, FIND_ID);
+		addMenu(menu, FIND_ID);
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
