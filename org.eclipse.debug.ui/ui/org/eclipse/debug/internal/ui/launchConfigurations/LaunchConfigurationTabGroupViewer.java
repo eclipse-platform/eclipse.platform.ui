@@ -35,6 +35,8 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -58,7 +60,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
@@ -395,14 +396,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	private void createTabFolder(Composite parent) {
 		if (fTabFolder == null) {
-			Display display = getShell().getDisplay();
-			Color c1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND),
-				  c2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+			ColorRegistry reg = JFaceResources.getColorRegistry();
+			Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
+				  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
 			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
 			fTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
-			fTabFolder.setSelectionForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+			fTabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
 			fTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 			fTabFolder.setLayoutData(gd);
 	        fTabFolder.setBorderVisible(true);
