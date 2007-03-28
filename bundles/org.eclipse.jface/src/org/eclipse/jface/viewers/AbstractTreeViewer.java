@@ -127,15 +127,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
 		assertElementsNotNull(childElements);
-
-		Widget[] widgets = internalFindItems(parentElementOrTreePath);
-		// If parent hasn't been realized yet, just ignore the add.
-		if (widgets.length == 0) {
+		if (isBusy())
 			return;
-		}
-
-		for (int i = 0; i < widgets.length; i++) {
-			internalAdd(widgets[i], parentElementOrTreePath, childElements);
+		busy = true;
+		try {
+			Widget[] widgets = internalFindItems(parentElementOrTreePath);
+			// If parent hasn't been realized yet, just ignore the add.
+			if (widgets.length == 0) {
+				return;
+			}
+	
+			for (int i = 0; i < widgets.length; i++) {
+				internalAdd(widgets[i], parentElementOrTreePath, childElements);
+			}
+		} finally {
+			busy = false;
 		}
 	}
 
@@ -334,7 +340,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int index;
 			if (comparator == null) {
 				if (itemExists(items, element)) {
-					refresh(element);
+					internalRefresh(element);
 					newItem = false;
 				}
 				index = -1;
@@ -355,7 +361,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 						// any)
 						if (items[lastInsertion].getData().equals(element)) {
 							// refresh the element in case it has new children
-							refresh(element);
+							internalRefresh(element);
 							newItem = false;
 						}
 						lastInsertion++;// We had an insertion so increment
@@ -994,9 +1000,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level) {
-		Widget w = internalExpand(elementOrTreePath, true);
-		if (w != null) {
-			internalExpandToLevel(w, level);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			Widget w = internalExpand(elementOrTreePath, true);
+			if (w != null) {
+				internalExpandToLevel(w, level);
+			}
+		} finally {
+			busy = false;
 		}
 	}
 
@@ -2047,11 +2060,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elementsOrTreePaths.length == 0) {
 			return;
 		}
-		preservingSelection(new Runnable() {
-			public void run() {
-				internalRemove(elementsOrTreePaths);
-			}
-		});
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRemove(elementsOrTreePaths);
+				}
+			});
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**
@@ -2077,11 +2097,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elements.length == 0) {
 			return;
 		}
-		preservingSelection(new Runnable() {
-			public void run() {
-				internalRemove(parent, elements);
-			}
-		});
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRemove(parent, elements);
+				}
+			});
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**
@@ -2229,21 +2256,29 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedElements(Object[] elements) {
 		assertElementsNotNull(elements);
-		CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
-		for (int i = 0; i < elements.length; ++i) {
-			Object element = elements[i];
-			// Ensure item exists for element. This will materialize items for
-			// each element and their parents, if possible. This is important
-			// to support expanding of inner tree nodes without necessarily
-			// expanding their parents.
-			internalExpand(element, false);
-			expandedElements.put(element, element);
+		if (isBusy()) {
+			return;
 		}
-		// this will traverse all existing items, and create children for
-		// elements that need to be expanded. If the tree contains multiple
-		// equal elements, and those are in the set of elements to be expanded,
-		// only the first item found for each element will be expanded.
-		internalSetExpanded(expandedElements, getControl());
+		busy = true;
+		try {
+			CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
+			for (int i = 0; i < elements.length; ++i) {
+				Object element = elements[i];
+				// Ensure item exists for element. This will materialize items for
+				// each element and their parents, if possible. This is important
+				// to support expanding of inner tree nodes without necessarily
+				// expanding their parents.
+				internalExpand(element, false);
+				expandedElements.put(element, element);
+			}
+			// this will traverse all existing items, and create children for
+			// elements that need to be expanded. If the tree contains multiple
+			// equal elements, and those are in the set of elements to be expanded,
+			// only the first item found for each element will be expanded.
+			internalSetExpanded(expandedElements, getControl());
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**
@@ -2263,34 +2298,41 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedTreePaths(TreePath[] treePaths) {
 		assertElementsNotNull(treePaths);
-		final IElementComparer comparer = getComparer();
-		IElementComparer treePathComparer = new IElementComparer() {
-
-			public boolean equals(Object a, Object b) {
-				return ((TreePath) a).equals(((TreePath) b), comparer);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			final IElementComparer comparer = getComparer();
+			IElementComparer treePathComparer = new IElementComparer() {
+	
+				public boolean equals(Object a, Object b) {
+					return ((TreePath) a).equals(((TreePath) b), comparer);
+				}
+	
+				public int hashCode(Object element) {
+					return ((TreePath) element).hashCode(comparer);
+				}
+			};
+			CustomHashtable expandedTreePaths = new CustomHashtable(
+					treePaths.length * 2 + 1, treePathComparer);
+			for (int i = 0; i < treePaths.length; ++i) {
+				TreePath treePath = treePaths[i];
+				// Ensure item exists for element. This will materialize items for
+				// each element and their parents, if possible. This is important
+				// to support expanding of inner tree nodes without necessarily
+				// expanding their parents.
+				internalExpand(treePath, false);
+				expandedTreePaths.put(treePath, treePath);
 			}
-
-			public int hashCode(Object element) {
-				return ((TreePath) element).hashCode(comparer);
-			}
-		};
-		CustomHashtable expandedTreePaths = new CustomHashtable(
-				treePaths.length * 2 + 1, treePathComparer);
-		for (int i = 0; i < treePaths.length; ++i) {
-			TreePath treePath = treePaths[i];
-			// Ensure item exists for element. This will materialize items for
-			// each element and their parents, if possible. This is important
-			// to support expanding of inner tree nodes without necessarily
-			// expanding their parents.
-			internalExpand(treePath, false);
-			expandedTreePaths.put(treePath, treePath);
+			// this will traverse all existing items, and create children for
+			// elements that need to be expanded. If the tree contains multiple
+			// equal elements, and those are in the set of elements to be expanded,
+			// only the first item found for each element will be expanded.
+			internalSetExpandedTreePaths(expandedTreePaths, getControl(),
+					new TreePath(new Object[0]));
+		} finally {
+			busy = false;
 		}
-		// this will traverse all existing items, and create children for
-		// elements that need to be expanded. If the tree contains multiple
-		// equal elements, and those are in the set of elements to be expanded,
-		// only the first item found for each element will be expanded.
-		internalSetExpandedTreePaths(expandedTreePaths, getControl(),
-				new TreePath(new Object[0]));
 	}
 
 	/**
@@ -2305,12 +2347,19 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
 		Assert.isNotNull(elementOrTreePath);
-		Widget item = internalExpand(elementOrTreePath, false);
-		if (item instanceof Item) {
-			if (expanded) {
-				createChildren(item);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			Widget item = internalExpand(elementOrTreePath, false);
+			if (item instanceof Item) {
+				if (expanded) {
+					createChildren(item);
+				}
+				setExpanded((Item) item, expanded);
 			}
-			setExpanded((Item) item, expanded);
+		} finally {
+			busy = false;
 		}
 	}
 
@@ -2789,42 +2838,48 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int position) {
 		Assert.isNotNull(parentElementOrTreePath);
 		Assert.isNotNull(element);
-
-		if (getComparator() != null || hasFilters()) {
-			add(parentElementOrTreePath, new Object[] { element });
+		if (isBusy())
 			return;
-		}
-		Widget[] items;
-		if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
-			items = new Widget[] { getControl() };
-		} else {
-			items = internalFindItems(parentElementOrTreePath);
-		}
-
-		for (int i = 0; i < items.length; i++) {
-			Widget widget = items[i];
-			if (widget instanceof Item) {
-				Item item = (Item) widget;
-
-				Item[] childItems = getChildren(item);
-				if (getExpanded(item)
-						|| (childItems.length > 0 && childItems[0].getData() != null)) {
-					// item has real children, go ahead and add
+		busy = true;
+		try {
+			if (getComparator() != null || hasFilters()) {
+				add(parentElementOrTreePath, new Object[] { element });
+				return;
+			}
+			Widget[] items;
+			if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
+				items = new Widget[] { getControl() };
+			} else {
+				items = internalFindItems(parentElementOrTreePath);
+			}
+	
+			for (int i = 0; i < items.length; i++) {
+				Widget widget = items[i];
+				if (widget instanceof Item) {
+					Item item = (Item) widget;
+	
+					Item[] childItems = getChildren(item);
+					if (getExpanded(item)
+							|| (childItems.length > 0 && childItems[0].getData() != null)) {
+						// item has real children, go ahead and add
+						int insertionPosition = position;
+						if (insertionPosition == -1) {
+							insertionPosition = getItemCount(item);
+						}
+	
+						createTreeItem(item, element, insertionPosition);
+					}
+				} else {
 					int insertionPosition = position;
 					if (insertionPosition == -1) {
-						insertionPosition = getItemCount(item);
+						insertionPosition = getItemCount((Control) widget);
 					}
-
-					createTreeItem(item, element, insertionPosition);
+	
+					createTreeItem(widget, element, insertionPosition);
 				}
-			} else {
-				int insertionPosition = position;
-				if (insertionPosition == -1) {
-					insertionPosition = getItemCount((Control) widget);
-				}
-
-				createTreeItem(widget, element, insertionPosition);
 			}
+		} finally {
+			busy = false;
 		}
 	}
 

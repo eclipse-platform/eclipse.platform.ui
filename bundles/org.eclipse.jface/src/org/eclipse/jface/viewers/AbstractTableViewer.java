@@ -239,12 +239,19 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void add(Object[] elements) {
 		assertElementsNotNull(elements);
-		Object[] filtered = filter(elements);
-
-		for (int i = 0; i < filtered.length; i++) {
-			Object element = filtered[i];
-			int index = indexForElement(element);
-			createItem(element, index);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			Object[] filtered = filter(elements);
+			
+			for (int i = 0; i < filtered.length; i++) {
+				Object element = filtered[i];
+				int index = indexForElement(element);
+				createItem(element, index);
+			}
+		} finally {
+			busy = false;
 		}
 	}
 
@@ -541,8 +548,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	protected void inputChanged(Object input, Object oldInput) {
 		getControl().setRedraw(false);
 		try {
-			// refresh() attempts to preserve selection, which we want here
-			refresh();
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRefresh(getRoot());
+				}
+			});
 		} finally {
 			getControl().setRedraw(true);
 		}
@@ -573,8 +583,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (position == -1) {
 			position = doGetItemCount();
 		}
-
-		createItem(element, position);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			createItem(element, position);
+		} finally {
+			busy = false;
+		}
 	}
 
 	/*
@@ -719,6 +735,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		Object input = getInput();
 		for (int i = 0; i < elements.length; ++i) {
 			if (equals(elements[i], input)) {
+				busy = false;
 				setInput(null);
 				return;
 			}
@@ -769,14 +786,21 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void remove(final Object[] elements) {
 		assertElementsNotNull(elements);
-		if (elements.length == 0) {
+		if (isBusy())
 			return;
-		}
-		preservingSelection(new Runnable() {
-			public void run() {
-				internalRemove(elements);
+		busy = true;
+		try {
+			if (elements.length == 0) {
+				return;
 			}
-		});
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRemove(elements);
+				}
+			});
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**
@@ -960,21 +984,28 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void setItemCount(int count) {
-		int oldCount = doGetItemCount();
-		if (count < oldCount) {
-			// need to disassociate elements that are being disposed
-			for (int i = count; i < oldCount; i++) {
-				Item item = doGetItem(i);
-				if (item.getData() != null) {
-					disassociate(item);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			int oldCount = doGetItemCount();
+			if (count < oldCount) {
+				// need to disassociate elements that are being disposed
+				for (int i = count; i < oldCount; i++) {
+					Item item = doGetItem(i);
+					if (item.getData() != null) {
+						disassociate(item);
+					}
 				}
 			}
+			doSetItemCount(count);
+			if (virtualManager != null) {
+				virtualManager.adjustCacheSize(count);
+			}
+			getControl().redraw();
+		} finally {
+			busy = false;
 		}
-		doSetItemCount(count);
-		if (virtualManager != null) {
-			virtualManager.adjustCacheSize(count);
-		}
-		getControl().redraw();
 	}
 
 	/**
@@ -990,8 +1021,15 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void replace(Object element, int index) {
-		Item item = doGetItem(index);
-		refreshItem(item, element);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			Item item = doGetItem(index);
+			refreshItem(item, element);
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**

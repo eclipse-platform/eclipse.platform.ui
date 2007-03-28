@@ -311,11 +311,18 @@ public class TableViewer extends AbstractTableViewer {
 	 */
 	public void refresh(final Object element, final boolean updateLabels,
 			boolean reveal) {
-		preservingSelection(new Runnable() {
-			public void run() {
-				internalRefresh(element, updateLabels);
-			}
-		}, reveal);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRefresh(element, updateLabels);
+				}
+			}, reveal);
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**

@@ -16,6 +16,9 @@ package org.eclipse.jface.viewers;
 
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
@@ -48,12 +51,26 @@ public abstract class ColumnViewer extends StructuredViewer {
 	private ViewerCell cell = new ViewerCell(null, 0);
 
 	private ColumnViewerEditor viewerEditor;
+	
+	/* package */ boolean busy;
 
 	/**
 	 * Create a new instance of the receiver.
 	 */
 	public ColumnViewer() {
 
+	}
+
+	/* package */ boolean isBusy() {
+		if (busy) {
+			Policy.getLog().log(
+				new Status(
+					IStatus.WARNING,
+					Policy.JFACE,
+					"Ignoring reentrant call while viewer is busy", new RuntimeException())); //$NON-NLS-1$
+			return true;
+		}
+		return false;
 	}
 
 	protected void hookControl(Control control) {
@@ -456,6 +473,39 @@ public abstract class ColumnViewer extends StructuredViewer {
 			return viewerEditor.isCellEditorActive();
 		}
 		return false;
+	}
+	
+	public void refresh(Object element) {
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			super.refresh(element);
+		} finally {
+			busy = false;
+		}
+	}
+	
+	public void refresh(Object element, boolean updateLabels) {
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			super.refresh(element, updateLabels);
+		} finally {
+			busy = false;
+		}
+	}
+	
+	public void update(Object element, String[] properties) {
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			super.update(element, properties);
+		} finally {
+			busy = false;
+		}
 	}
 
 	/**
