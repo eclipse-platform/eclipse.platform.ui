@@ -104,7 +104,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	private void recursiveKeepHistory(IHistoryStore store, UnifiedTreeNode node) {
 		final IResource target = node.getResource();
 		//we don't delete linked content, so no need to keep history
-		if (target.isLinked())
+		if (target.isLinked() || node.isSymbolicLink())
 			return;
 		if (node.isFolder()) {
 			monitor.subTask(NLS.bind(Messages.localstore_deleting, target.getFullPath()));

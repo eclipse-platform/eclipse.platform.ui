@@ -11,8 +11,7 @@
 package org.eclipse.core.internal.localstore;
 
 import java.util.Iterator;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IResource;
 
@@ -83,6 +82,10 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 
 	public boolean isFolder() {
 		return fileInfo == null ? false : fileInfo.isDirectory();
+	}
+	
+	public boolean isSymbolicLink() {
+		return fileInfo == null ? false : fileInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK);
 	}
 
 	public void removeChildrenFromTree() {
