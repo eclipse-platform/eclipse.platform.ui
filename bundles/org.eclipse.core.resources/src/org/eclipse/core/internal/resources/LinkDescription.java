@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.*;
  * Object for describing the characteristics of linked resources that are stored
  * in the project description.
  */
-public class LinkDescription {
+public class LinkDescription implements Comparable {
 
 	private URI localLocation;
 
@@ -82,5 +82,26 @@ public class LinkDescription {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	/**
+	 * Compare link descriptions in a way that sorts them topologically by path.
+	 * This is important to ensure we process links in topological (breadth-first) order when reconciling
+	 * links.  See {@link Project#reconcileLinks(ProjectDescription)}.
+	 */
+	public int compareTo(Object o) {
+		LinkDescription that = (LinkDescription) o;
+		IPath path1 = this.getProjectRelativePath();
+		IPath path2 = that.getProjectRelativePath();
+		int count1 = path1.segmentCount();
+		int compare = count1 - path2.segmentCount();
+		if (compare != 0)
+			return compare;
+		for (int i = 0; i < count1; i++) {
+			compare = path1.segment(i).compareTo(path2.segment(i));
+			if (compare != 0)
+				return compare;
+		}
+		return 0;
 	}
 }

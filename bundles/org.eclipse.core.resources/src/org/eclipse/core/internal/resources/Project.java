@@ -921,7 +921,10 @@ public class Project extends Container implements IProject {
 		//walk over new links and create if necessary
 		if (newLinks == null)
 			return status;
-		for (Iterator it = newLinks.values().iterator(); it.hasNext();) {
+		//sort links to avoid creating nested links before their parents
+		List sortedLinks = new ArrayList(newLinks.values());
+		Collections.sort(sortedLinks);
+		for (Iterator it = sortedLinks.iterator(); it.hasNext();) {
 			LinkDescription newLink = (LinkDescription) it.next();
 			try {
 				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
