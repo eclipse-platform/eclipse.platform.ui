@@ -1510,6 +1510,51 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests creating a link within a link, and ensuring that both links still
+	 * exist when the project is closed/opened (bug 177367).
+	 */
+	public void testNestedLink() {
+		final IFileStore store1 = getTempStore();
+		final IFileStore store2 = getTempStore();
+		URI location1 = store1.toURI();
+		URI location2 = store2.toURI();
+		//folder names are important here, because we want a certain order in the link hash map
+		IFolder link = existingProject.getFolder("aA");
+		IFolder linkChild = link.getFolder("b");
+		try {
+			store1.mkdir(EFS.NONE, getMonitor());
+			store2.mkdir(EFS.NONE, getMonitor());
+			link.createLink(location1, IResource.NONE, getMonitor());
+			linkChild.createLink(location2, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		assertTrue("1.0", link.exists());
+		assertTrue("1.1", link.isLinked());
+		assertTrue("1.2", linkChild.exists());
+		assertTrue("1.3", linkChild.isLinked());
+		assertEquals("1.4", location1, link.getLocationURI());
+		assertEquals("1.5", location2, linkChild.getLocationURI());
+
+		//now delete and recreate the project
+		try {
+			existingProject.delete(IResource.NEVER_DELETE_PROJECT_CONTENT, getMonitor());
+			existingProject.create(getMonitor());
+			existingProject.open(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+
+		assertTrue("2.0", link.exists());
+		assertTrue("2.1", link.isLinked());
+		assertTrue("2.2", linkChild.exists());
+		assertTrue("2.3", linkChild.isLinked());
+		assertEquals("2.4", location1, link.getLocationURI());
+		assertEquals("2.5", location2, linkChild.getLocationURI());
+
+	}
+
+	/**
 	 * Create a project with a linked resource at depth > 2, and refresh it.
 	 */
 	public void testRefreshDeepLink() {
