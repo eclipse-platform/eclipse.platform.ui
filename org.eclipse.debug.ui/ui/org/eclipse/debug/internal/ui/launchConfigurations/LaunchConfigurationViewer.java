@@ -111,6 +111,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		else {
 			super.preservingSelection(updateCode);
 		}
+		getTree().getHorizontalBar().setSelection(0);
 	}
 	
 	/**
