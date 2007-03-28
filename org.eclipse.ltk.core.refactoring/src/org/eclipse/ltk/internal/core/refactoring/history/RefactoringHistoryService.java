@@ -63,6 +63,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -418,79 +419,80 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 * {@inheritDoc}
 		 */
 		public void historyNotification(final OperationHistoryEvent event) {
-			switch (event.getEventType()) {
-				case OperationHistoryEvent.ABOUT_TO_EXECUTE: {
-					fDescriptor= null;
-					IUndoableOperation operation= event.getOperation();
-					if (operation instanceof TriggeredOperations)
-						operation= ((TriggeredOperations) operation).getTriggeringOperation();
-					UndoableOperation2ChangeAdapter adapter= null;
-					if (operation instanceof UndoableOperation2ChangeAdapter)
-						adapter= (UndoableOperation2ChangeAdapter) operation;
-					if (adapter != null) {
-						final ChangeDescriptor changeDescriptor= adapter.getChange().getDescriptor();
+			IUndoableOperation operation= event.getOperation();
+			if (operation instanceof TriggeredOperations)
+				operation= ((TriggeredOperations) operation).getTriggeringOperation();
+			UndoableOperation2ChangeAdapter adapter= null;
+			if (operation instanceof UndoableOperation2ChangeAdapter)
+				adapter= (UndoableOperation2ChangeAdapter) operation;
+			if (adapter != null) {
+				final Change change= adapter.getChange();
+				switch (event.getEventType()) {
+					case OperationHistoryEvent.ABOUT_TO_EXECUTE: {
+						fDescriptor= null;
+						final ChangeDescriptor changeDescriptor= change.getDescriptor();
 						if (changeDescriptor instanceof RefactoringChangeDescriptor) {
 							fDescriptor= ((RefactoringChangeDescriptor) changeDescriptor).getRefactoringDescriptor();
 							fireAboutToPerformEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
 						}
+						break;
 					}
-					break;
-				}
-				case OperationHistoryEvent.DONE: {
-					try {
-						if (fDescriptor != null) {
-							if (!fDescriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN)) {
-								if (fOverrideTimeStamp >= 0)
-									fDescriptor.setTimeStamp(fOverrideTimeStamp);
-								else
-									fDescriptor.setTimeStamp(System.currentTimeMillis());
-							}
-							fUndoStack.push(fDescriptor);
-							fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
-							fDescriptor= null;
-						} else
-							fUndoStack.push(NO_REFACTORING);
-					} catch (CoreException exception) {
+					case OperationHistoryEvent.DONE: {
 						try {
-							fUndoStack.push(NO_REFACTORING);
-						} catch (CoreException impossible) {
-							// Cannot happen
-							Assert.isLegal(false);
+							if (fDescriptor != null) {
+								if (!fDescriptor.getID().equals(RefactoringDescriptor.ID_UNKNOWN)) {
+									if (fOverrideTimeStamp >= 0)
+										fDescriptor.setTimeStamp(fOverrideTimeStamp);
+									else
+										fDescriptor.setTimeStamp(System.currentTimeMillis());
+								}
+								fUndoStack.push(fDescriptor);
+								fireRefactoringPerformedEvent(new RefactoringDescriptorProxyAdapter(fDescriptor));
+								fDescriptor= null;
+							} else
+								fUndoStack.push(NO_REFACTORING);
+						} catch (CoreException exception) {
+							try {
+								fUndoStack.push(NO_REFACTORING);
+							} catch (CoreException impossible) {
+								// Cannot happen
+								Assert.isLegal(false);
+							}
+							RefactoringCorePlugin.log(exception);
 						}
-						RefactoringCorePlugin.log(exception);
+						break;
 					}
-					break;
-				}
-				case OperationHistoryEvent.ABOUT_TO_UNDO: {
-					final RefactoringDescriptor descriptor= fUndoStack.peek();
-					if (descriptor != NO_REFACTORING)
-						fireAboutToUndoEvent(new RefactoringDescriptorProxyAdapter(descriptor));
-					break;
-				}
-				case OperationHistoryEvent.UNDONE: {
-					fRedoQueue.addFirst(fUndoStack.peek());
-					fUndoStack.pop();
-					final RefactoringDescriptor descriptor= (RefactoringDescriptor) fRedoQueue.getFirst();
-					if (descriptor != NO_REFACTORING)
-						fireRefactoringUndoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
-					break;
-				}
-				case OperationHistoryEvent.ABOUT_TO_REDO: {
-					final RefactoringDescriptor descriptor= (RefactoringDescriptor) fRedoQueue.getFirst();
-					if (descriptor != NO_REFACTORING)
-						fireAboutToRedoEvent(new RefactoringDescriptorProxyAdapter(descriptor));
-					break;
-				}
-				case OperationHistoryEvent.REDONE: {
-					try {
-						fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
+					case OperationHistoryEvent.ABOUT_TO_UNDO: {
 						final RefactoringDescriptor descriptor= fUndoStack.peek();
 						if (descriptor != NO_REFACTORING)
-							fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
-					} catch (CoreException exception) {
-						// Cannot happen
+							fireAboutToUndoEvent(new RefactoringDescriptorProxyAdapter(descriptor));
+						break;
 					}
-					break;
+					case OperationHistoryEvent.UNDONE: {
+						fRedoQueue.addFirst(fUndoStack.peek());
+						fUndoStack.pop();
+						final RefactoringDescriptor descriptor= (RefactoringDescriptor) fRedoQueue.getFirst();
+						if (descriptor != NO_REFACTORING)
+							fireRefactoringUndoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
+						break;
+					}
+					case OperationHistoryEvent.ABOUT_TO_REDO: {
+						final RefactoringDescriptor descriptor= (RefactoringDescriptor) fRedoQueue.getFirst();
+						if (descriptor != NO_REFACTORING)
+							fireAboutToRedoEvent(new RefactoringDescriptorProxyAdapter(descriptor));
+						break;
+					}
+					case OperationHistoryEvent.REDONE: {
+						try {
+							fUndoStack.push((RefactoringDescriptor) fRedoQueue.removeFirst());
+							final RefactoringDescriptor descriptor= fUndoStack.peek();
+							if (descriptor != NO_REFACTORING)
+								fireRefactoringRedoneEvent(new RefactoringDescriptorProxyAdapter(descriptor));
+						} catch (CoreException exception) {
+							// Cannot happen
+						}
+						break;
+					}
 				}
 			}
 		}
