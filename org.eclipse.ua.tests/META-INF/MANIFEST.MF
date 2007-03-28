@@ -15,7 +15,8 @@ Require-Bundle: org.junit,
  org.eclipse.ui,
  org.eclipse.ui.cheatsheets,
  org.eclipse.ui.intro,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.eclipse.ui.intro.universal
 Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
 Bundle-ClassPath: ua-tests.jar

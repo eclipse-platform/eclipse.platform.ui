@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ua.tests.intro;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ua.tests.intro.contentdetect.ContentDetectorTest;
 import org.eclipse.ua.tests.intro.parser.AllParserTests;
 
 /*
@@ -32,5 +33,6 @@ public class AllIntroTests extends TestSuite {
 	 */
 	public AllIntroTests() {
 		addTest(AllParserTests.suite());
+		addTestSuite(ContentDetectorTest.class);
 	}
 }
