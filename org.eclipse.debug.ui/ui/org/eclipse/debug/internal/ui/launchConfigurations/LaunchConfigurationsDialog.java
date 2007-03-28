@@ -821,10 +821,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	
 	/**
 	 * Returns the reserved name set (if there is one), <code>null</code> otherwise
-	 * @return the reserved nameset or <code>null</code>
+	 * @return the reserved name set or <code>null</code>
 	 * @since 3.3
 	 * 
-	 * EXPERIMENTAL
 	 */
 	public Set getReservedNameSet() {
 		return fReservedNames;
