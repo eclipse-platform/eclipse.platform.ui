@@ -246,6 +246,9 @@ public abstract class TrimToolBarBase implements IWindowTrim {
      * dock this trim on using the context menu
      */
     private void handleShowOnChange() {
+    	if (getControl() == null)
+    		return;
+    	
     	layout.removeTrim(this);
     	dock(radioVal.get());
     	layout.addTrim(radioVal.get(), this, null);
