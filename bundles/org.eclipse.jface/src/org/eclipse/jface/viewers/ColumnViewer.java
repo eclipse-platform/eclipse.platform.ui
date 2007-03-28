@@ -475,28 +475,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 		return false;
 	}
 	
-	public void refresh(Object element) {
-		if (isBusy())
-			return;
-		busy = true;
-		try {
-			super.refresh(element);
-		} finally {
-			busy = false;
-		}
-	}
-	
-	public void refresh(Object element, boolean updateLabels) {
-		if (isBusy())
-			return;
-		busy = true;
-		try {
-			super.refresh(element, updateLabels);
-		} finally {
-			busy = false;
-		}
-	}
-	
 	public void update(Object element, String[] properties) {
 		if (isBusy())
 			return;

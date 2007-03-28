@@ -1720,17 +1720,24 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void internalRefresh(Object element, boolean updateLabels) {
-		// If element is null, do a full refresh.
-		if (element == null) {
-			internalRefresh(getControl(), getRoot(), true, updateLabels);
+		if (isBusy())
 			return;
-		}
-		Widget[] items = findItems(element);
-		if (items.length != 0) {
-			for (int i = 0; i < items.length; i++) {
-				// pick up structure changes too
-				internalRefresh(items[i], element, true, updateLabels);
+		busy = true;
+		try {
+			// If element is null, do a full refresh.
+			if (element == null) {
+				internalRefresh(getControl(), getRoot(), true, updateLabels);
+				return;
 			}
+			Widget[] items = findItems(element);
+			if (items.length != 0) {
+				for (int i = 0; i < items.length; i++) {
+					// pick up structure changes too
+					internalRefresh(items[i], element, true, updateLabels);
+				}
+			}
+		} finally {
+			busy = false;
 		}
 	}
 

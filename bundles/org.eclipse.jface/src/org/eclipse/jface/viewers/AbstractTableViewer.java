@@ -73,8 +73,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 						IContentProvider contentProvider = getContentProvider();
 						// If we are building lazily then request lookup now
 						if (contentProvider instanceof ILazyContentProvider) {
-							((ILazyContentProvider) contentProvider)
-									.updateElement(index);
+							boolean oldBusy = busy;
+							busy = false;
+							try {
+								((ILazyContentProvider) contentProvider)
+										.updateElement(index);
+							} finally {
+								busy = oldBusy;
+							}
 							return;
 						}
 					}
@@ -468,17 +474,23 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		List result = new ArrayList();
 		int[] selectionIndices = doGetSelectionIndices();
 		if (getContentProvider() instanceof ILazyContentProvider) {
-			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
-			for (int i = 0; i < selectionIndices.length; i++) {
-				int selectionIndex = selectionIndices[i];
-				lazy.updateElement(selectionIndex);// Start the update
-				Object element = doGetItem(selectionIndex).getData();
-				// Only add the element if it got updated.
-				// If this is done deferred the selection will
-				// be incomplete until selection is finished.
-				if (element != null) {
-					result.add(element);
+			boolean oldBusy = busy;
+			busy = false;
+			try {
+				ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
+				for (int i = 0; i < selectionIndices.length; i++) {
+					int selectionIndex = selectionIndices[i];
+					lazy.updateElement(selectionIndex);// Start the update
+					Object element = doGetItem(selectionIndex).getData();
+					// Only add the element if it got updated.
+					// If this is done deferred the selection will
+					// be incomplete until selection is finished.
+					if (element != null) {
+						result.add(element);
+					}
 				}
+			} finally {
+				busy = oldBusy;
 			}
 		} else {
 			for (int i = 0; i < selectionIndices.length; i++) {
@@ -609,18 +621,25 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 *      boolean)
 	 */
 	protected void internalRefresh(Object element, boolean updateLabels) {
-		applyEditorValue();
-		if (element == null || equals(element, getRoot())) {
-			if (virtualManager == null) {
-				internalRefreshAll(updateLabels);
+		if (isBusy())
+			return;
+		busy = true;
+		try {
+			applyEditorValue();
+			if (element == null || equals(element, getRoot())) {
+				if (virtualManager == null) {
+					internalRefreshAll(updateLabels);
+				} else {
+					internalVirtualRefreshAll();
+				}
 			} else {
-				internalVirtualRefreshAll();
+				Widget w = findItem(element);
+				if (w != null) {
+					updateItem(w, element);
+				}
 			}
-		} else {
-			Widget w = findItem(element);
-			if (w != null) {
-				updateItem(w, element);
-			}
+		} finally {
+			busy = false;
 		}
 	}
 
