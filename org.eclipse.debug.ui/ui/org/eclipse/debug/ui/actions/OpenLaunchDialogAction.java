@@ -16,10 +16,11 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextMessages;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,11 +51,6 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	private String fIdentifier;
 	
 	/**
-	 * The underlying <code>IAction</code> for this delegate
-	 */
-	private IAction fBackingAction = null;
-	
-	/**
 	 * Constructs an action that opens the launch configuration dialog in
 	 * the context of the specified launch group.
 	 * 
@@ -62,7 +58,15 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 */
 	public OpenLaunchDialogAction(String identifier) {
 		fIdentifier = identifier;
-		init(this);
+		ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
+		if(group != null) {
+			setImageDescriptor(group.getImageDescriptor());
+			String lbl = group.getLabel();
+			if(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP.equals(fIdentifier)) {
+				lbl = ActionMessages.OpenLaunchDialogAction_0;
+			}
+			setText(MessageFormat.format(ActionMessages.OpenLaunchDialogAction_1, new String[] {lbl}));
+		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
 	}
 	
@@ -105,12 +109,8 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
 	public void init(IAction action) {
-		fBackingAction = action;
-		if(fBackingAction != null) {
-			LaunchGroupExtension extension = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
-			fBackingAction.setText(MessageFormat.format(ContextMessages.OpenLaunchDialogAction_0, new String[] {extension.getLabel()}));
-			fBackingAction.setImageDescriptor(extension.getImageDescriptor());
-			fBackingAction.setEnabled(existsConfigTypesForMode());
+		if(action != null) {
+			action.setEnabled(existsConfigTypesForMode());
 		}
 	}
 	

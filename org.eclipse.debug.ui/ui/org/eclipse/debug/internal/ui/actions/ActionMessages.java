@@ -67,6 +67,10 @@ public class ActionMessages extends NLS {
     public static String OpenBreakpointMarkerAction_Go_to_Breakpoint_1;
     public static String OpenBreakpointMarkerAction_Go_to_File_for_Breakpoint_2;
 
+	public static String OpenLaunchDialogAction_0;
+
+	public static String OpenLaunchDialogAction_1;
+
 	public static String ProfileLastAction_0;
 
 	public static String ProfileLastAction_1;
