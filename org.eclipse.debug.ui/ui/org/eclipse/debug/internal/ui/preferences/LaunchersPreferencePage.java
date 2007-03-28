@@ -61,7 +61,6 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * 
  * TODO create a help topic for this page....it needs a good description
  * 
- * EXPERIMENTAL
  */
 public class LaunchersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -167,11 +166,18 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_1, 2, 300);
 		
+		boolean enabled = fDuplicates.size() > 0;
+		if(!enabled) {
+			SWTFactory.createVerticalSpacer(comp, 1);
+			SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.LaunchersPreferencePage_0, 2, 300);
+		}
+		
 		SWTFactory.createVerticalSpacer(comp, 1);
 	//tree
 		Composite comp1 = SWTFactory.createComposite(comp, 1, 1, GridData.FILL_VERTICAL);
 		SWTFactory.createLabel(comp1, DebugPreferencesMessages.LaunchDelegatesPreferencePage_2, 1);
 		Tree tree = new Tree(comp1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
+		tree.setEnabled(enabled);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = false;
 		tree.setLayoutData(gd);
@@ -203,6 +209,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		Composite comp2 = SWTFactory.createComposite(comp, comp.getFont(), 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(comp2, DebugPreferencesMessages.LaunchDelegatesPreferencePage_3, 1);
 		Table table = new Table(comp2, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK | SWT.SINGLE);
+		table.setEnabled(enabled);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setComparator(new WorkbenchViewerComparator());
@@ -241,6 +248,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		});
 		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_4, 1, 2, GridData.FILL_BOTH);
 		fDescription = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		fDescription.setEnabled(enabled);
 		fDescription.setBackground(group.getBackground());
 		return comp;
 	}

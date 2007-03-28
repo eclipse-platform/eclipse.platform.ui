@@ -86,7 +86,6 @@ public interface IDebugHelpContextIds {
 	public static final String LAUNCH_CONFIGURATION_PREFERENCE_PAGE = PREFIX + "launch_configuration_preference_page_context"; //$NON-NLS-1$
 	public static final String VIEW_MANAGEMENT_PREFERENCE_PAGE = PREFIX + "view_management_preference_page_context"; //$NON-NLS-1$
 	public static final String LAUNCH_DELEGATES_PREFERENCE_PAGE = PREFIX + "launch_delegate_preference_page_context"; //$NON-NLS-1$
-	public static final String CONTEXTUAL_LAUNCHING_PREFERENCE_PAGE = PREFIX + "contextual_launch_preference_page"; //$NON-NLS-1$
 	
 	// Dialogs
 	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
