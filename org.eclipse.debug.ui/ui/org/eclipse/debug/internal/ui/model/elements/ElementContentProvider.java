@@ -166,10 +166,12 @@ public abstract class ElementContentProvider implements IElementContentProvider 
     protected abstract boolean supportsContextId(String id);	
 
     /**
-     * Returns the element at the given index or <code>null</code> if none.
+     * Returns the range of elements from <code>index</code> to <code>index + length</code> 
+     * or <code>null</code> if the index and range is outside the bounds of the original element array.
      * 
-     * @param elements
-     * @param index
+     * @param elements the original element array
+     * @param index the initial index to start copying from 
+     * @param length the number of elements we want to copy into the returned array
      * @return element or <code>null</code>
      */
     protected Object[] getElements(Object[] elements, int index, int length) {
