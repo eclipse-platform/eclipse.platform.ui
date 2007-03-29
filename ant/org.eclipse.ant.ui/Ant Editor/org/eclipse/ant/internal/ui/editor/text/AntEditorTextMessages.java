@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -17,7 +17,6 @@ public class AntEditorTextMessages extends NLS {
 	public static String XMLTextHover_4;
 	public static String XMLTextHover_5;
 	public static String XMLTextHover_6;
-	public static String XMLTextHover_7;
 
 	static {
 		// load message values from bundle file
