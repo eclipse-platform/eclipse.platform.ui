@@ -155,12 +155,8 @@ public class ThreadEventHandler extends DebugEventHandler {
 
 	protected void handleSuspendTimeout(DebugEvent event) {
 		IThread thread = removeSuspendedThread(event);
-		if (event.isEvaluation() && event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
-			// don't collapse thread when waiting for implicit eval to complete
-			fireDeltaUpdatingThread(thread, IModelDelta.STATE);
-		} else {
-			fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT | IModelDelta.SELECT);
-		}
+		// don't collapse thread when waiting for long step or evaluation to complete
+		fireDeltaUpdatingThread(thread, IModelDelta.STATE);
 	}
 	
 	protected ModelDelta buildRootDelta() {
