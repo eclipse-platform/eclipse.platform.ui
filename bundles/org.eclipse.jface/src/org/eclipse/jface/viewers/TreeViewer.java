@@ -376,26 +376,19 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void setChildCount(final Object elementOrTreePath, final int count) {
-		if (isBusy())
-			return;
-		busy = true;
-		try {
-			preservingSelection(new Runnable() {
-				public void run() {
-					if (internalIsInputOrEmptyPath(elementOrTreePath)) {
-						getTree().setItemCount(count);
-						return;
-					}
-					Widget[] items = internalFindItems(elementOrTreePath);
-					for (int i = 0; i < items.length; i++) {
-						TreeItem treeItem = (TreeItem) items[i];
-						treeItem.setItemCount(count);
-					}
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+					getTree().setItemCount(count);
+					return;
 				}
-			});
-		} finally {
-			busy = false;
-		}
+				Widget[] items = internalFindItems(elementOrTreePath);
+				for (int i = 0; i < items.length; i++) {
+					TreeItem treeItem = (TreeItem) items[i];
+					treeItem.setItemCount(count);
+				}
+			}
+		});
 	}
 
 	/**
@@ -424,31 +417,24 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void replace(final Object parentElementOrTreePath, final int index,
 			final Object element) {
-		if (isBusy())
-			return;
-		busy = true;
-		try {
-			preservingSelection(new Runnable() {
-				public void run() {
-					if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
-						if (index < tree.getItemCount()) {
-							updateItem(tree.getItem(index), element);
-						}
-					} else {
-						Widget[] parentItems = internalFindItems(parentElementOrTreePath);
-						for (int i = 0; i < parentItems.length; i++) {
-							TreeItem parentItem = (TreeItem) parentItems[i];
-							if (index < parentItem.getItemCount()) {
-								updateItem(parentItem.getItem(index), element);
-							}
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
+					if (index < tree.getItemCount()) {
+						updateItem(tree.getItem(index), element);
+					}
+				} else {
+					Widget[] parentItems = internalFindItems(parentElementOrTreePath);
+					for (int i = 0; i < parentItems.length; i++) {
+						TreeItem parentItem = (TreeItem) parentItems[i];
+						if (index < parentItem.getItemCount()) {
+							updateItem(parentItem.getItem(index), element);
 						}
 					}
 				}
-				
-			});
-		} finally {
-			busy = false;
-		}
+			}
+
+		});
 	}
 
 	public boolean isExpandable(Object element) {
@@ -716,39 +702,32 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void remove(final Object parentOrTreePath, final int index) {
-		if (isBusy())
-			return;
-		busy = true;
-		try {
-			preservingSelection(new Runnable() {
-				public void run() {
-					if (internalIsInputOrEmptyPath(parentOrTreePath)) {
-						Tree tree = (Tree) getControl();
-						if (index < tree.getItemCount()) {
-							TreeItem item = tree.getItem(index);
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(parentOrTreePath)) {
+					Tree tree = (Tree) getControl();
+					if (index < tree.getItemCount()) {
+						TreeItem item = tree.getItem(index);
+						if (item.getData() != null) {
+							disassociate(item);
+						}
+						item.dispose();
+					}
+				} else {
+					Widget[] parentItems = internalFindItems(parentOrTreePath);
+					for (int i = 0; i < parentItems.length; i++) {
+						TreeItem parentItem = (TreeItem) parentItems[i];
+						if (index < parentItem.getItemCount()) {
+							TreeItem item = parentItem.getItem(index);
 							if (item.getData() != null) {
 								disassociate(item);
 							}
 							item.dispose();
 						}
-					} else {
-						Widget[] parentItems = internalFindItems(parentOrTreePath);
-						for (int i = 0; i < parentItems.length; i++) {
-							TreeItem parentItem = (TreeItem) parentItems[i];
-							if (index < parentItem.getItemCount()) {
-								TreeItem item = parentItem.getItem(index);
-								if (item.getData() != null) {
-									disassociate(item);
-								}
-								item.dispose();
-							}
-						}
 					}
 				}
-			});
-		} finally {
-			busy = false;
-		}
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -793,44 +772,37 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
-		if (isBusy())
-			return;
-		busy = true;
-		try {
-			preservingSelection(new Runnable() {
-				public void run() {
-					if (internalIsInputOrEmptyPath(elementOrTreePath)) {
-						if (hasChildren) {
-							virtualLazyUpdateChildCount(getTree(),
-									getChildren(getTree()).length);
-						} else {
-							setChildCount(elementOrTreePath, 0);
-						}
-						return;
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+					if (hasChildren) {
+						virtualLazyUpdateChildCount(getTree(),
+								getChildren(getTree()).length);
+					} else {
+						setChildCount(elementOrTreePath, 0);
 					}
-					Widget[] items = internalFindItems(elementOrTreePath);
-					for (int i = 0; i < items.length; i++) {
-						TreeItem item = (TreeItem) items[i];
-						if (!hasChildren) {
-							item.setItemCount(0);
+					return;
+				}
+				Widget[] items = internalFindItems(elementOrTreePath);
+				for (int i = 0; i < items.length; i++) {
+					TreeItem item = (TreeItem) items[i];
+					if (!hasChildren) {
+						item.setItemCount(0);
+					} else {
+						if (!item.getExpanded()) {
+							item.setItemCount(1);
+							TreeItem child = item.getItem(0);
+							if (child.getData() != null) {
+								disassociate(child);
+							}
+							item.clear(0, true);
 						} else {
-							if (!item.getExpanded()) {
-								item.setItemCount(1);
-								TreeItem child = item.getItem(0);
-								if (child.getData() != null) {
-									disassociate(child);
-								}
-								item.clear(0, true);
-							} else {
-								virtualLazyUpdateChildCount(item, item.getItemCount());
-							}                            
-						}
+                            virtualLazyUpdateChildCount(item, item.getItemCount());
+                        }                            
 					}
 				}
-			});
-		} finally {
-			busy = false;
-		}
+			}
+		});
 	}
 
 	/**
@@ -839,29 +811,23 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param index
 	 */
 	private void virtualLazyUpdateWidget(Widget widget, int index) {
-		boolean oldBusy = busy;
-		busy = false;
-		try {
-			if (contentProviderIsTreeBased) {
-				TreePath treePath;
-				if (widget instanceof Item) {
-					if (widget.getData() == null) {
-						// temporary fix to avoid a NPE (the tree will still be screwed up)
-						// see bug 167668
-						return;
-					}
-					treePath = getTreePathFromItem((Item) widget);
-				} else {
-					treePath = TreePath.EMPTY;
+		if (contentProviderIsTreeBased) {
+			TreePath treePath;
+			if (widget instanceof Item) {
+				if (widget.getData() == null) {
+					// temporary fix to avoid a NPE (the tree will still be screwed up)
+					// see bug 167668
+					return;
 				}
-				((ILazyTreePathContentProvider) getContentProvider())
-				.updateElement(treePath, index);
+				treePath = getTreePathFromItem((Item) widget);
 			} else {
-				((ILazyTreeContentProvider) getContentProvider()).updateElement(
-						widget.getData(), index);
+				treePath = TreePath.EMPTY;
 			}
-		} finally {
-			busy = oldBusy;
+			((ILazyTreePathContentProvider) getContentProvider())
+					.updateElement(treePath, index);
+		} else {
+			((ILazyTreeContentProvider) getContentProvider()).updateElement(
+					widget.getData(), index);
 		}
 	}
 
@@ -871,23 +837,17 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
-		boolean oldBusy = busy;
-		busy = false;
-		try {
-			if (contentProviderIsTreeBased) {
-				TreePath treePath;
-				if (widget instanceof Item) {
-					treePath = getTreePathFromItem((Item) widget);
-				} else {
-					treePath = TreePath.EMPTY;
-				}
-				((ILazyTreePathContentProvider) getContentProvider())
-						.updateChildCount(treePath, currentChildCount);
+		if (contentProviderIsTreeBased) {
+			TreePath treePath;
+			if (widget instanceof Item) {
+				treePath = getTreePathFromItem((Item) widget);
 			} else {
-				((ILazyTreeContentProvider) getContentProvider()).updateChildCount(widget.getData(), currentChildCount);
+				treePath = TreePath.EMPTY;
 			}
-		} finally {
-			busy = oldBusy;
+			((ILazyTreePathContentProvider) getContentProvider())
+					.updateChildCount(treePath, currentChildCount);
+		} else {
+			((ILazyTreeContentProvider) getContentProvider()).updateChildCount(widget.getData(), currentChildCount);
 		}
 	}
 	
@@ -897,25 +857,19 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateHasChildren(Item item, int currentChildCount) {
-		boolean oldBusy = busy;
-		busy = false;
-		try {
-			if (contentProviderIsTreeBased) {
-				TreePath treePath;
-				treePath = getTreePathFromItem(item);
-				if (currentChildCount == 0) {
-					// item is not expanded (but may have a plus currently)
-					((ILazyTreePathContentProvider) getContentProvider())
-					.updateHasChildren(treePath);
-				} else {
-					((ILazyTreePathContentProvider) getContentProvider())
-					.updateChildCount(treePath, currentChildCount);
-				}
+		if (contentProviderIsTreeBased) {
+			TreePath treePath;
+			treePath = getTreePathFromItem(item);
+			if (currentChildCount == 0) {
+				// item is not expanded (but may have a plus currently)
+				((ILazyTreePathContentProvider) getContentProvider())
+						.updateHasChildren(treePath);
 			} else {
-				((ILazyTreeContentProvider) getContentProvider()).updateChildCount(item.getData(), currentChildCount);
+				((ILazyTreePathContentProvider) getContentProvider())
+						.updateChildCount(treePath, currentChildCount);
 			}
-		} finally {
-			busy = oldBusy;
+		} else {
+			((ILazyTreeContentProvider) getContentProvider()).updateChildCount(item.getData(), currentChildCount);
 		}
 	}
 
