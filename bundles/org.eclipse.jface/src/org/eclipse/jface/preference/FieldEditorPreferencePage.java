@@ -88,6 +88,13 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
     private Composite fieldEditorParent;
 
     /**
+	 * Create a new instance of the reciever.
+	 */
+	public FieldEditorPreferencePage() {
+		this(FLAT);
+	}
+
+	/**
      * Creates a new field editor preference page with the given style,
      * an empty title, and no image.
      *
