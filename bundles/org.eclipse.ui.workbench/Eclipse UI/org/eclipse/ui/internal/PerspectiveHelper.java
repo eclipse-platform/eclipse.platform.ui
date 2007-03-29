@@ -720,7 +720,9 @@ public class PerspectiveHelper {
                 // none visible, then reprarent and remove container
                 if (oldContainer instanceof ViewStack) {
                     ViewStack folder = (ViewStack) oldContainer;
-                    boolean inTrim = perspective.getFastViewManager().getFastViews(folder.getID()).size() > 0;
+                    boolean inTrim = false;
+                    if (perspective.getFastViewManager() != null)
+                    	inTrim = perspective.getFastViewManager().getFastViews(folder.getID()).size() > 0;
                     if (childVisible == 0 && !inTrim) {
                         ILayoutContainer parentContainer = folder
                                 .getContainer();
