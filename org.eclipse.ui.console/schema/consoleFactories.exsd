@@ -56,6 +56,9 @@
                <documentation>
                   optional plug-in relative path to an icon to appear with the action
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
