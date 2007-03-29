@@ -28,7 +28,6 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * Groups configurations by type.
  * 
  * @since 3.3
- * EXPERIMENTAL
  * CONTEXTLAUNCHING
  */
 public class LaunchConfigurationComparator extends WorkbenchViewerComparator {

@@ -29,12 +29,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
  * This class is used to wrap a contributed <code>ILaunchConfigurationTabGroup</code> with any contributed tabs
  * for that group (from a <code>launchConfigurationTabs</code> extension point).
  * 
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  * @since 3.3
  */
 public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationTabGroup {

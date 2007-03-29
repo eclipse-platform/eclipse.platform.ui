@@ -15,7 +15,6 @@ import org.eclipse.osgi.util.NLS;
 /**
  * NLS'd messages for context launching artifacts
  * @since 3.3
- * EXPERIMENTAL
  * CONTEXTLAUNCHING
  */
 public class ContextMessages extends NLS {

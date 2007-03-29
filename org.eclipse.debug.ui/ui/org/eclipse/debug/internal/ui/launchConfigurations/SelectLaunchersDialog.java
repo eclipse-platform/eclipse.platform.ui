@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Text;
  * workspace defaults for preferred launchers
  * 
  *  @since 3.3
- *  EXPERIMENTAL
  */
 public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 

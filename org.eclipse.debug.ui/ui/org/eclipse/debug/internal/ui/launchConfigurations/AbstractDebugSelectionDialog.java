@@ -37,7 +37,6 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  * selections using a checkbox table viewer
  * 
  * @since 3.3
- * EXPERIMENTAL
  */
 public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 

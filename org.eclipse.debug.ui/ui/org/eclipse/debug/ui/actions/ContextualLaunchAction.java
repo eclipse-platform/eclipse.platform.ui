@@ -208,7 +208,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 					filteredShortCuts.add(ext);
 				}
 			} 
-			catch (CoreException e) {DebugUIPlugin.log(e);}
+			catch (CoreException e) {}
 		}
 		iter = filteredShortCuts.iterator();
 		

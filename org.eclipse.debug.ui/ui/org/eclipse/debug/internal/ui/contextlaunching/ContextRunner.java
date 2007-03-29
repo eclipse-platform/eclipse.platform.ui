@@ -50,7 +50,6 @@ import com.ibm.icu.text.MessageFormat;
  * @see org.eclipse.debug.internal.ui.preferences.ContextLaunchingPreferencePage
  * 
  *  @since 3.3
- *  EXPERIMENTAL
  *  CONTEXTLAUNCHING
  */
 public final class ContextRunner {
@@ -76,44 +75,40 @@ public final class ContextRunner {
 	 * @param group 
 	 */
 	public void launch(ILaunchGroup group) {
-		try {
-			IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
-			//1. resolve resource
-			if(resource != null) {
-				selectAndLaunch(resource, group);
-				return;
-			}
-			//2. launch last if no resource
-			ILaunchConfiguration config = null;
-			if(group != null) {
-				LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(group.getIdentifier());
-				if(history != null) {
-					config = history.getRecentLaunch();
-				}
-			}
-			if(config != null) {
-				DebugUITools.launch(config, group.getMode());
-				return;
-			}
-			//3. might be empty workspace try to get shortcuts
-			List shortcuts = getLaunchShortcutsForEmptySelection();
-			if(!shortcuts.isEmpty()) {
-				showShortcutSelectionDialog(resource, shortcuts, group.getMode());
-			}
-			else {
-				MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+		IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
+		//1. resolve resource
+		if(resource != null) {
+			selectAndLaunch(resource, group);
+			return;
+		}
+		//2. launch last if no resource
+		ILaunchConfiguration config = null;
+		if(group != null) {
+			LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(group.getIdentifier());
+			if(history != null) {
+				config = history.getRecentLaunch();
 			}
 		}
-		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		if(config != null) {
+			DebugUITools.launch(config, group.getMode());
+			return;
+		}
+		//3. might be empty workspace try to get shortcuts
+		List shortcuts = getLaunchShortcutsForEmptySelection();
+		if(!shortcuts.isEmpty()) {
+			showShortcutSelectionDialog(resource, shortcuts, group.getMode());
+		}
+		else {
+			MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+		}
 	}
 	
 	/**
 	 * Creates a listing of the launch shortcut extensions that are applicable to the underlying resource
 	 * @param resource the underlying resource
 	 * @return a listing of applicable launch shortcuts or an empty list, never <code>null</code>
-	 * @throws CoreException
 	 */
-	public List getLaunchShortcutsForEmptySelection() throws CoreException {
+	public List getLaunchShortcutsForEmptySelection() {
 		List list = new ArrayList(); 
 		List sc = getLaunchConfigurationManager().getLaunchShortcuts();
 		List ctxt = new ArrayList();
@@ -122,11 +117,14 @@ public final class ContextRunner {
 		LaunchShortcutExtension ext = null;
 		for(Iterator iter = sc.iterator(); iter.hasNext();) {
 			ext = (LaunchShortcutExtension) iter.next();
-			if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && !WorkbenchActivityHelper.filterItem(ext)) {
-				if(!list.contains(ext)) {
-					list.add(ext);
+			try {
+				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && !WorkbenchActivityHelper.filterItem(ext)) {
+					if(!list.contains(ext)) {
+						list.add(ext);
+					}
 				}
 			}
+			catch(CoreException ce) {/*do nothing*/}
 		}
 		return list;
 	}
@@ -137,9 +135,8 @@ public final class ContextRunner {
 	 * @param resource
 	 * @param group
 	 * @return if the context was launched in the given mode or not
-	 * @throws CoreException
 	 */
-	protected boolean selectAndLaunch(IResource resource, ILaunchGroup group) throws CoreException {
+	protected boolean selectAndLaunch(IResource resource, ILaunchGroup group) {
 		if(group == null) {
 			return false;
 		}

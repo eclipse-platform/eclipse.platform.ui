@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.actions;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -36,14 +35,11 @@ public class LaunchablePropertyTester extends PropertyTester {
 		}
 		if("contextlaunch".equals(property)) { //$NON-NLS-1$
 			if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
-				try {
-					IResource res = getResource(receiver);
-					if(res != null) {
-						return res.isAccessible() && getLaunchConfiguraitonManager().getLaunchShortcuts(getResource(receiver)).size() > 0 && getLaunchConfiguraitonManager().isSharedConfig(receiver) == null;
-					}
-					return false;
-				} 
-				catch (CoreException e) {return false;}
+				IResource res = getResource(receiver);
+				if(res != null) {
+					return res.isAccessible() && getLaunchConfiguraitonManager().getLaunchShortcuts(getResource(receiver)).size() > 0 && getLaunchConfiguraitonManager().isSharedConfig(receiver) == null;
+				}
+				return false;
 			}
 		}
 		return false;

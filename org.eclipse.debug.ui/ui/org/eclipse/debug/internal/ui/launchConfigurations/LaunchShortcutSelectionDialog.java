@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -47,7 +46,6 @@ import com.ibm.icu.text.MessageFormat;
  * @see {@link org.eclipse.debug.internal.ui.actions.ContextLaunchingAction}
  * 
  * @since 3.3
- * EXPERIMENTAL
  * CONTEXTLAUNCHING
  */
 public class LaunchShortcutSelectionDialog extends ListDialog {
@@ -148,28 +146,25 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	 */
 	protected Control createDialogArea(Composite container) {
 		Composite comp = (Composite) super.createDialogArea(container);
-		try {
-			if(fResource != null) {
-				List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
-				getTableViewer().setInput(input);
-			}
-			Group group = SWTFactory.createGroup(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 1, GridData.FILL_BOTH);
-			GridData gd = (GridData) group.getLayoutData();
-			gd.heightHint = 175;
-			fDescriptionText = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
-			fDescriptionText.setBackground(group.getBackground());
-			getTableViewer().getTable().addSelectionListener(new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {}
-				public void widgetSelected(SelectionEvent e) {
-					Object o = e.item.getData();
-					if(o instanceof LaunchShortcutExtension) {
-						String txt = ((LaunchShortcutExtension)o).getShortcutDescription(fMode);
-						fDescriptionText.setText((txt == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : txt)); 
-					}
-				}
-			});
+		if(fResource != null) {
+			List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
+			getTableViewer().setInput(input);
 		}
-		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		Group group = SWTFactory.createGroup(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 1, GridData.FILL_BOTH);
+		GridData gd = (GridData) group.getLayoutData();
+		gd.heightHint = 175;
+		fDescriptionText = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		fDescriptionText.setBackground(group.getBackground());
+		getTableViewer().getTable().addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				Object o = e.item.getData();
+				if(o instanceof LaunchShortcutExtension) {
+					String txt = ((LaunchShortcutExtension)o).getShortcutDescription(fMode);
+					fDescriptionText.setText((txt == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : txt)); 
+				}
+			}
+		});
 		return comp;
 	}
 }

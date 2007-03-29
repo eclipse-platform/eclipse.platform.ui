@@ -227,8 +227,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @param delegates the raw listing of delegates to filter
 	 * @return the filtered listing of <code>ILaunchDelegate</code>s or an empty array, never <code>null</code>.
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public static ILaunchDelegate[] filterLaunchDelegates(ILaunchConfigurationType type, Set modes) throws CoreException {
 		IWorkbenchActivitySupport as = PlatformUI.getWorkbench().getActivitySupport();
@@ -641,10 +639,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Creates a listing of the launch shortcut extensions that are applicable to the underlying resource
 	 * @param resource the underlying resource
 	 * @return a listing of applicable launch shortcuts or an empty list, never <code>null</code>
-	 * @throws CoreException
 	 * @since 3.3
 	 */
-	public List getLaunchShortcuts(IResource resource) throws CoreException {
+	public List getLaunchShortcuts(IResource resource) {
 		List list = new ArrayList(); 
 		List sc = getLaunchShortcuts();
 		List ctxt = new ArrayList();
@@ -654,11 +651,14 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		LaunchShortcutExtension ext = null;
 		for(Iterator iter = sc.iterator(); iter.hasNext();) {
 			ext = (LaunchShortcutExtension) iter.next();
-			if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && !WorkbenchActivityHelper.filterItem(ext)) {
-				if(!list.contains(ext)) {
-					list.add(ext);
+			try {
+				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && !WorkbenchActivityHelper.filterItem(ext)) {
+					if(!list.contains(ext)) {
+						list.add(ext);
+					}
 				}
 			}
+			catch(CoreException ce) {/*do nothing*/}
 		}
 		return list;
 	}
@@ -700,7 +700,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				}
 			}
 		}
-		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		catch(CoreException ce) {/*do nothing*/}
 		return types;
 	}
 	

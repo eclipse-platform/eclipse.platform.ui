@@ -169,7 +169,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * A link to allow users to select a valid set of launch options for the specified mode
 	 * @since 3.3
-	 * EXPERIMENTAL
 	 */
 	private Link fOptionsLink = null;
 	
@@ -525,8 +524,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Shows the link for either multiple launch delegates or bad launch mode combinations
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private void showLink() {
 		String text = null;
@@ -560,8 +557,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @return the preferred launch delegate
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	protected ILaunchDelegate getPreferredDelegate() {
 		ILaunchDelegate preferred = null;
@@ -583,8 +578,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Returns the listing of modes for the current config
 	 * @return the listing of modes for the current config
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	private Set getCurrentModeSet() {
 		Set set = new HashSet();
@@ -1072,13 +1065,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Determines if the tab groups that is currently visible can launch with the currently selected
 	 * set of options.
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
-	 * @return
+	 * @return true if the dialog can launch with the given set of modes, false otherwise
+	 * 
+	 * @since 3.3
 	 */
 	public boolean canLaunchWithModes() {
 		if(fInitializingTabs) {
@@ -1103,8 +1092,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * @return the true if there are duplicates, false otherwise
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public boolean hasDuplicateDelegates() {
 		if(fInitializingTabs) {
@@ -1183,7 +1170,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if(getWorkingCopy().isReadOnly()) {
 			return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_9;
 		}
-		//EXPERIMENTAL
 		if(!canLaunchWithModes()) {
 			Set modes = getCurrentModeSet();
 			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);

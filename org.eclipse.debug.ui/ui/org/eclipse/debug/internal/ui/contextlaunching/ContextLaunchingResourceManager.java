@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -197,16 +196,13 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 				}
 			}
 			//otherwise try to determine if there is a way to launch it
-			try {
-				List shortcuts = ContextRunner.getDefault().getLaunchShortcutsForEmptySelection();
-				if(!shortcuts.isEmpty()) {
-					return ContextMessages.ContextRunner_14;
-				}
-				else {
-					return ""; //$NON-NLS-1$
-				}
+			List shortcuts = ContextRunner.getDefault().getLaunchShortcutsForEmptySelection();
+			if(!shortcuts.isEmpty()) {
+				return ContextMessages.ContextRunner_14;
 			}
-			catch(CoreException ce) {DebugUIPlugin.log(ce);}
+			else {
+				return ""; //$NON-NLS-1$
+			}
 		}
 		//see if the context is a shared configuration
 		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(fCurrentResource);
@@ -229,32 +225,28 @@ public class ContextLaunchingResourceManager implements IPropertyChangeListener,
 			}
 		}
 		else {
-			try {
-				List exts = getLaunchConfigurationManager().getLaunchShortcuts(resource);
-				int esize = exts.size();
-				if(esize == 0) {
-					IProject project = resource.getProject();
-					if(project != null && !project.equals(resource)) {
-						if(shouldCheckParent()) {
-							return getResourceLabel(project, group);
-						}
-						else {
-							//TODO could cause TVT issues
-							return ContextMessages.ContextRunner_15;
-						}
+			List exts = getLaunchConfigurationManager().getLaunchShortcuts(resource);
+			int esize = exts.size();
+			if(esize == 0) {
+				IProject project = resource.getProject();
+				if(project != null && !project.equals(resource)) {
+					if(shouldCheckParent()) {
+						return getResourceLabel(project, group);
+					}
+					else {
+						//TODO could cause TVT issues
+						return ContextMessages.ContextRunner_15;
 					}
 				}
-				if(esize == 1) {
-					return resource.getName();
-				}
-				else {
-					//TODO could cause TVT issues
-					return ContextMessages.ContextRunner_14;
-				}
 			}
-			catch(CoreException ce) {DebugUIPlugin.log(ce);}
+			if(esize == 1) {
+				return resource.getName();
+			}
+			else {
+				//TODO could cause TVT issues
+				return ContextMessages.ContextRunner_14;
+			}
 		}
-		return ""; //$NON-NLS-1$
 	}
 	
 	/**

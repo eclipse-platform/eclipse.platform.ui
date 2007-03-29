@@ -64,7 +64,6 @@ import com.ibm.icu.text.MessageFormat;
  * @see {@link org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog}
  * @see {@link IDebugHelpContextIds#DEFAULT_LAUNCHCONFIGURATION_PROPERTY_PAGE}
  * 
- * EXPERIMENTAL
  * CONTEXTLAUNCHING
  * 
  * @since 3.3

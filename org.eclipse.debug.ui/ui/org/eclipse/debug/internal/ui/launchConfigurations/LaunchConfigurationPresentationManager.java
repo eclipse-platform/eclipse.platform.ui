@@ -126,12 +126,7 @@ public class LaunchConfigurationPresentationManager {
 	/**
 	 * This method is used to collect all of the contributed tabs defined by the <code>launchConfigurationTabs</code>
 	 * extension point
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
+	 *
 	 * @since 3.3
 	 */
 	private void initializeContributedTabExtensions() {
@@ -200,8 +195,6 @@ public class LaunchConfigurationPresentationManager {
 	 * @return the listing of all of the tab extensions or an empty array, never <code>null</code>
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	protected LaunchConfigurationTabExtension[] getTabExtensions(String groupid, ILaunchConfiguration config, String mode) throws CoreException {
 		initializeContributedTabExtensions();
@@ -227,8 +220,6 @@ public class LaunchConfigurationPresentationManager {
 	 * @return the listing of filtered <code>LaunchConfigurationTabExtension</code>s or an empty array, never <code>null</code>
 	 * 
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	protected LaunchConfigurationTabExtension[] filterLaunchTabExtensions(LaunchConfigurationTabExtension[] tabs, ILaunchConfiguration config, String mode) throws CoreException {
 		IWorkbenchActivitySupport as = PlatformUI.getWorkbench().getActivitySupport();
