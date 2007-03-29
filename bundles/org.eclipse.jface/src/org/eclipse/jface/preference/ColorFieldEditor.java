@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -86,8 +84,9 @@ public class ColorFieldEditor extends FieldEditor {
 		return p;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#doFillIntoGrid(org.eclipse.swt.widgets.Composite, int)
 	 */
 	protected void doFillIntoGrid(Composite parent, int numColumns) {
 		Control control = getLabelControl(parent);
@@ -95,17 +94,13 @@ public class ColorFieldEditor extends FieldEditor {
 		gd.horizontalSpan = numColumns - 1;
 		control.setLayoutData(gd);
 
-		Button colorButton = getChangeControl(parent);
-		gd = new GridData();
-		int widthHint = convertHorizontalDLUsToPixels(colorButton,
-				IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint = Math.max(widthHint, colorButton.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT, true).x);
-		colorButton.setLayoutData(gd);
+		getChangeControl(parent);
+		
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on FieldEditor.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
 	protected void doLoad() {
 		if (colorSelector == null) {
