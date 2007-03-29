@@ -132,9 +132,6 @@ public class OpenHelpTest extends PerformanceTestCase {
 			shell.dispose();
 			shell = null;
 		}
-		HelpPlugin.getTocManager().clearCache();
-		HelpPlugin.getIndexManager().clearCache();
-		HelpPlugin.getContentExtensionManager().clearCache();
 	}
 	
 	private static void flush() {
