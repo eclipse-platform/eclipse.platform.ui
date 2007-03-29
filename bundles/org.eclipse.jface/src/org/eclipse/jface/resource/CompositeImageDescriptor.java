@@ -191,12 +191,10 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 									c.blue);
 						}
 
-						imageData.setPixel(xx, yy, newPixel);
+						int alpha = src.getAlpha(x, y);
+						updatePixel(xx,yy,newPixel,alpha);
 					}
-					int alpha = src.getAlpha(x, y);
-					imageData.setAlpha(xx, yy, alpha);
 				}
-				
 			}
 		}
 	}
