@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eugene Kuleshov <eu@md.pp.ru> - Bug 153932 [History] Custom hyperlink detectors for comments in History view
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
