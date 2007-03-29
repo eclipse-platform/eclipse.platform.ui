@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ContributionManager;
@@ -25,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -182,6 +184,8 @@ public class TrimContributionManager extends ContributionManager {
 
 	List contributedLists = new ArrayList();
 
+	private Expression restrictionExpression;
+
 	/**
 	 * Construct a contribution manager for the given window 
 	 */
@@ -190,6 +194,7 @@ public class TrimContributionManager extends ContributionManager {
 		layout = (TrimLayout) wbWindow.getShell().getLayout();
 		menuService = (InternalMenuService) window.getService(
 				IMenuService.class);
+		restrictionExpression = new WorkbenchWindowExpression(wbWindow);
 	}
 
 	/* (non-Javadoc)
@@ -211,11 +216,9 @@ public class TrimContributionManager extends ContributionManager {
 			
 			List contribs = menuService.getAdditionsForURI(new MenuLocationURI(trimAreaURIs[i]));
 			
-			// Expected pattern here is either a ToolBarManagerContributionItem or
-			// a ControlContributionItem; both of which generate new, discreet, trim
 			for (Iterator cacheIter = contribs.iterator(); cacheIter.hasNext();) {
 				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) cacheIter.next();
-				ContributionRoot ciList = new ContributionRoot(menuService);
+				ContributionRoot ciList = new ContributionRoot(menuService, restrictionExpression);
 				cache.createContributionItems(wbWindow, ciList);
 				// save the list for later cleanup of any visibility expressions that were added.
 				contributedLists.add(ciList);

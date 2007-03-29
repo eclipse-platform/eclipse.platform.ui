@@ -127,7 +127,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 							boolean oldValue = evaluate(ref);
 							ref.clearResult();
 							final boolean newValue = evaluate(ref);
-							if (oldValue != newValue) {
+							if (oldValue != newValue && ref.isPostingChanges()) {
 								firePropertyChange(ref, new Boolean(oldValue),
 										new Boolean(newValue));
 							}
@@ -137,8 +137,10 @@ public class EvaluationAuthority extends ExpressionAuthority {
 								oldValue = evaluate(ref);
 								if (oldValue != newValue) {
 									ref.setResult(newValue);
-									firePropertyChange(ref, new Boolean(
-											oldValue), new Boolean(newValue));
+									if (ref.isPostingChanges())
+										firePropertyChange(ref, new Boolean(
+												oldValue),
+												new Boolean(newValue));
 								}
 							}
 						}

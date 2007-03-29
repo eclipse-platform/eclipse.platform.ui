@@ -41,7 +41,7 @@ public abstract class AbstractEvaluationHandler extends AbstractEnabledHandler {
 	protected void registerEnablement() {
 		enablementRef = getEvaluationService().addEvaluationListener(
 				getEnabledWhenExpression(), getEnablementListener(),
-				PROP_ENABLED);
+				PROP_ENABLED, null);
 	}
 
 	protected abstract Expression getEnabledWhenExpression();

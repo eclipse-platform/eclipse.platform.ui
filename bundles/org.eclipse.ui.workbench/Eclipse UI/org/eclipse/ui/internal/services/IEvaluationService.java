@@ -32,7 +32,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	public void removeServiceListener(IPropertyChangeListener listener);
 
 	public IEvaluationReference addEvaluationListener(Expression expression,
-			IPropertyChangeListener listener, String property);
+			IPropertyChangeListener listener, String property, Expression restrictEvaluation);
 
 	public void removeEvaluationListener(IEvaluationReference ref);
 

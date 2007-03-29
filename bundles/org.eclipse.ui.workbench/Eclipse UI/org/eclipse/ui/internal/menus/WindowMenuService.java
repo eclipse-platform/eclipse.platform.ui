@@ -18,6 +18,8 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -42,6 +44,7 @@ public final class WindowMenuService extends InternalMenuService {
 	 */
 	private final WorkbenchMenuService parent;
 	private IServiceLocator serviceLocator;
+	private Expression restrictionExpression;
 
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
@@ -59,7 +62,12 @@ public final class WindowMenuService extends InternalMenuService {
 			throw new NullPointerException(
 					"The parent service must not be null"); //$NON-NLS-1$
 		}
-
+		IWorkbenchWindow window = (IWorkbenchWindow) serviceLocator.getService(IWorkbenchWindow.class);
+		if (window == null)
+			throw new NullPointerException("Window cannot be null"); //$NON-NLS-1$
+		
+		restrictionExpression = new WorkbenchWindowExpression(window);
+		
 		this.parent = (WorkbenchMenuService)menuService;
 		this.serviceLocator = serviceLocator;
 	}
@@ -71,7 +79,7 @@ public final class WindowMenuService extends InternalMenuService {
 	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
-		parent.populateContributionManager(serviceLocator, mgr, uri);
+		parent.populateContributionManager(serviceLocator, restrictionExpression, mgr, uri);
 	}
 
 	/*
@@ -136,8 +144,8 @@ public final class WindowMenuService extends InternalMenuService {
 	}
 	
 	public void registerVisibleWhen(final IContributionItem item, 
-			final Expression visibleWhen) {
-		parent.registerVisibleWhen(item, visibleWhen);
+			final Expression visibleWhen, final Expression restriction) {
+		parent.registerVisibleWhen(item, visibleWhen, restriction);
 	}
 			
 	public void unregisterVisibleWhen(IContributionItem item) {

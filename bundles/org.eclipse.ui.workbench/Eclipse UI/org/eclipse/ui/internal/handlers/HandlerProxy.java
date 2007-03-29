@@ -170,7 +170,7 @@ public final class HandlerProxy extends AbstractHandler implements
 	 */
 	private void registerEnablement() {
 		enablementRef = evaluationService.addEvaluationListener(
-				enabledWhenExpression, getEnablementListener(), PROP_ENABLED);
+				enabledWhenExpression, getEnablementListener(), PROP_ENABLED, null);
 	}
 
 	/**

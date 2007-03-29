@@ -23,15 +23,18 @@ public class EvaluationReference extends EvaluationResultCache implements
 
 	private IPropertyChangeListener listener;
 	private String property;
+	private boolean postingChanges = true;
+	private IEvaluationReference targetReference;
 
 	/**
 	 * @param expression
 	 */
 	public EvaluationReference(Expression expression,
-			IPropertyChangeListener listener, String property) {
+			IPropertyChangeListener listener, String property, IEvaluationReference targetReference) {
 		super(expression);
 		this.listener = listener;
 		this.property = property;
+		this.targetReference = targetReference;
 	}
 
 	/*
@@ -45,5 +48,30 @@ public class EvaluationReference extends EvaluationResultCache implements
 	
 	public String getProperty() {
 		return property;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.services.IEvaluationReference#setFlopping(boolean)
+	 */
+	public void setPostingChanges(boolean evaluationEnabled) {
+		this.postingChanges = evaluationEnabled;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.services.IEvaluationReference#isFlopping()
+	 */
+	public boolean isPostingChanges() {
+		return postingChanges;
+	}
+	
+	public IEvaluationReference getTargetReference() {
+		return targetReference;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.services.IEvaluationReference#setTargetReference(org.eclipse.ui.internal.services.IEvaluationReference)
+	 */
+	public void setTargetReference(IEvaluationReference targetReference) {
+		this.targetReference = targetReference;
 	}
 }

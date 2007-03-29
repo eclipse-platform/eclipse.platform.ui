@@ -31,9 +31,11 @@ final class ContributionRoot implements
 	private List topLevelItems = new ArrayList();
 	private List itemsWithExpressions = new ArrayList();
 	private InternalMenuService menuService;
+	private Expression restriction;
 
-	public ContributionRoot(InternalMenuService menuService) {
+	public ContributionRoot(InternalMenuService menuService, Expression restriction) {
 		this.menuService = menuService;
+		this.restriction = restriction;
 	}
 
 	/* (non-Javadoc)
@@ -47,7 +49,7 @@ final class ContributionRoot implements
 		if (visibleWhen == null) 
 			return;
 		
-		menuService.registerVisibleWhen(item, visibleWhen);
+		menuService.registerVisibleWhen(item, visibleWhen, restriction);
 		itemsWithExpressions.add(item);
 	}
 
@@ -74,7 +76,7 @@ final class ContributionRoot implements
 			throw new IllegalArgumentException();
 		if (visibleWhen == null)
 			return;
-		menuService.registerVisibleWhen(item, visibleWhen);
+		menuService.registerVisibleWhen(item, visibleWhen, restriction);
 		itemsWithExpressions.add(item);
 	}
 }
