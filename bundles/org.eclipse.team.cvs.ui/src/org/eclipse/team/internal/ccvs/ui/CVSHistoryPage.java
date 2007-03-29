@@ -30,6 +30,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.revisions.Revision;
+import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
@@ -66,10 +67,12 @@ import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.*;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.*;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.util.Calendar;
@@ -198,13 +201,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	private TextViewer createText(SashForm parent) {
-		TextViewer result = new TextViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.READ_ONLY);
-		result.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				copyAction.update();
-			}
-		});
-		result.setTextDoubleClickStrategy(
+    SourceViewer result = new SourceViewer(parent, null, null, true, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.READ_ONLY);
+    result.getTextWidget().setIndent(2);
+    result.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
+
+    result.addSelectionChangedListener(new ISelectionChangedListener() {
+      public void selectionChanged(SelectionChangedEvent event) {
+        copyAction.update();
+      }
+    });
+    result.setTextDoubleClickStrategy(
                 new DefaultTextDoubleClickStrategy(),
                 IDocument.DEFAULT_CONTENT_TYPE);
 		result.activatePlugins();
