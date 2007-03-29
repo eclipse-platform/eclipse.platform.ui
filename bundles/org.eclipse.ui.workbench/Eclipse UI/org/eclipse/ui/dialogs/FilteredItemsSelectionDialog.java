@@ -356,6 +356,9 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
+		this.filterJob.cancel();
+		this.refreshCacheJob.cancel();
+		this.refreshProgressMessageJob.cancel();
 		storeDialog(getDialogSettings());
 		return super.close();
 	}
