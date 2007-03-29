@@ -204,7 +204,21 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private TextViewer createText(SashForm parent) {
     SourceViewer result = new SourceViewer(parent, null, null, true, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.READ_ONLY);
     result.getTextWidget().setIndent(2);
-    result.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
+    result.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()) {
+      protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
+        return Collections.singletonMap("org.eclipse.ui.DefaultTextEditor", //$NON-NLS-1$
+            new IAdaptable() {
+              public Object getAdapter(Class adapter) {
+                if(adapter==IFile.class && getInput() instanceof IFile) {
+                  return getInput();
+                } else if(adapter==IFileHistory.class && getInput() instanceof IFileHistory) {
+                  return getInput();
+                }
+                return Platform.getAdapterManager().getAdapter(CVSHistoryPage.this, adapter);
+              }
+            });
+      }
+    });
 
     result.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(SelectionChangedEvent event) {
