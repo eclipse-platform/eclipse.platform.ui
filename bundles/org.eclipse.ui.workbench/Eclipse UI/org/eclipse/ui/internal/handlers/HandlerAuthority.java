@@ -21,8 +21,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
@@ -509,5 +513,55 @@ final class HandlerAuthority extends ExpressionAuthority {
 	final void updateShellKludge() {
 		updateCurrentState();
 		sourceChanged(ISources.ACTIVE_SHELL);
+	}
+
+	/**
+	 * Currently this is a kludge.
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 * 
+	 * @param commandId the command id to check
+	 * @param the context to use for activations
+	 * @since 3.3
+	 */
+	public final IHandler findHandler(String commandId,
+			IEvaluationContext context) {
+		Object o = handlerActivationsByCommandId.get(commandId);
+		if (o instanceof IHandlerActivation) {
+			IHandlerActivation activation = (IHandlerActivation) o;
+			try {
+				if (activation.getExpression().evaluate(context) == EvaluationResult.TRUE) {
+					return activation.getHandler();
+				}
+			} catch (CoreException e) {
+				// the evalution failed
+			}
+		} else if (o instanceof SortedSet) {
+			SortedSet activations = (SortedSet) o;
+			IHandlerActivation lastActivation = null;
+			IHandlerActivation currentActivation = null;
+			Iterator i = activations.iterator();
+			while (i.hasNext()) {
+				IHandlerActivation activation = (IHandlerActivation) i.next();
+				try {
+					if (activation.getExpression().evaluate(context) == EvaluationResult.TRUE) {
+						lastActivation = currentActivation;
+						currentActivation = activation;
+					}
+				} catch (CoreException e) {
+					// OK, this one is out of the running
+				}
+			}
+			if (currentActivation!=null) {
+				if (lastActivation==null) {
+					return currentActivation.getHandler();
+				}
+				if (lastActivation.getSourcePriority()!=currentActivation.getSourcePriority()) {
+					return currentActivation.getHandler();
+				}
+			}
+		}
+		return null;
 	}
 }

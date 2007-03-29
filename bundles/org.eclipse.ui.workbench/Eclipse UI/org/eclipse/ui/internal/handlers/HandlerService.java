@@ -225,4 +225,19 @@ public final class HandlerService implements IHandlerService {
 					ISources.ACTIVE_SHELL_NAME, shell);
 		}
 	}
+	
+	/**
+	 * Currently this is a kludge.
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 * 
+	 * @param commandId the command id to check
+	 * @param the context to use for activations
+	 * @since 3.3
+	 */
+	public final IHandler findHandler(String commandId,
+			IEvaluationContext context) {
+		return handlerAuthority.findHandler(commandId, context);
+	}
 }
