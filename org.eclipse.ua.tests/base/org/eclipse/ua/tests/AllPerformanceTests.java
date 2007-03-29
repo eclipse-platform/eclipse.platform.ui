@@ -15,7 +15,6 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.cheatsheet.AllCheatSheetPerformanceTests;
 import org.eclipse.ua.tests.help.AllHelpPerformanceTests;
-import org.eclipse.ua.tests.intro.AllIntroPerformanceTests;
 
 /*
  * Tests all user assistance performance (automated).
@@ -34,7 +33,13 @@ public class AllPerformanceTests extends TestSuite {
 	 */
 	public AllPerformanceTests() {
 		addTest(AllHelpPerformanceTests.suite());
-		addTest(AllIntroPerformanceTests.suite());
 		addTest(AllCheatSheetPerformanceTests.suite());
+
+		/*
+		 * Disabled due to inability to backport test to 3.2. Internal
+		 * test hooks were added in 3.2.2 code base but do not exist in 3.2
+		 * so the test will not be accurate.
+		 */
+		//addTest(AllIntroPerformanceTests.suite());
 	}
 }
