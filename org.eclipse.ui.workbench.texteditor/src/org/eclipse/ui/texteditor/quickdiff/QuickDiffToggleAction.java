@@ -152,8 +152,6 @@ public class QuickDiffToggleAction implements IEditorActionDelegate, IUpdate {
 	 * Installs a submenu with <code>fEditor</code>'s ruler context menu that contains the choices
 	 * for the quick diff reference. This allows the toggle action to lazily install the menu once
 	 * quick diff has been enabled.
-	 *
-	 * @see QuickDiffToggleAction
 	 */
 	private void setPopupMenu() {
 		if (!(fEditor instanceof ITextEditorExtension))
