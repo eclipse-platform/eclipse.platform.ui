@@ -367,12 +367,11 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 				showErrorMessage(IDEWorkbenchMessages.WorkbenchPreference_unsupportedEncoding);
 			}
 			fireStateChanged(IS_VALID, !isValid, isValid);
-
-			String newValue = getSelectedEncoding();
-			if (isValid && !newValue.equals(oldSelectedEncoding)) {
-				fireValueChanged(VALUE, oldSelectedEncoding, newValue);
-				oldSelectedEncoding = newValue;
-			}
+		}
+		String newValue = getSelectedEncoding();
+		if (isValid && !newValue.equals(oldSelectedEncoding)) {
+			fireValueChanged(VALUE, oldSelectedEncoding, newValue);
+			oldSelectedEncoding = newValue;
 		}
 	}
 
