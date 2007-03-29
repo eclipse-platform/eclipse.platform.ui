@@ -10,15 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
@@ -43,15 +37,7 @@ public class ConsoleShowPreferencesAction extends Action implements IViewActionD
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        IPreferencePage page = new ConsolePreferencePage();
-        page.setTitle(ConsoleMessages.ConsoleShowPreferencesAction__run_debug_console);
-        IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.internal.ui.preferences.ConsolePreferencePage", page); //$NON-NLS-1$
-        PreferenceManager manager = new PreferenceManager();
-        manager.addToRoot(targetNode);
-        PreferenceDialog dialog = new PreferenceDialog(DebugUIPlugin.getShell(), manager);
-        dialog.create();
-        dialog.setMessage(page.getDescription());
-        dialog.open();
+    	SWTFactory.showPreferencePage("org.eclipse.debug.ui.ConsolePreferencePage"); //$NON-NLS-1$
     }
 
     /*
