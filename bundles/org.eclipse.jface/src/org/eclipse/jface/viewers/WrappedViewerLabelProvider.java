@@ -131,7 +131,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	}
 
 	/**
-	 * Get the lable provider
+	 * Get the label provider
 	 * 
 	 * @return {@link ILabelProvider}
 	 */
@@ -163,7 +163,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 			return;
 		}
 		
-		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());;
+		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
 		
 		if (viewerLabelProvider != null) {
 			viewerLabelProvider.updateLabel(label, cell.getElement());
@@ -192,13 +192,13 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 		if (label.hasNewImage()) {
 			cell.setImage(label.getImage());
 		}
-		if (label.hasNewBackground()) {
+		if (colorProvider!= null || label.hasNewBackground()) {
 			cell.setBackground(label.getBackground());
 		}
-		if (label.hasNewForeground()) {
+		if (colorProvider!= null || label.hasNewForeground()) {
 			cell.setForeground(label.getForeground());
 		}
-		if (label.hasNewFont()) {
+		if (fontProvider!= null || label.hasNewFont()) {
 			cell.setFont(label.getFont());
 		}
 	}
