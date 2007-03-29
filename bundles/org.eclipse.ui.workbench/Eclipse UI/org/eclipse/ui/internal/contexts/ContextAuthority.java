@@ -568,7 +568,9 @@ final class ContextAuthority extends ExpressionAuthority {
 			 */
 			public void widgetDisposed(DisposeEvent e) {
 				registeredWindows.remove(shell);
-				shell.removeDisposeListener(this);
+				if (!shell.isDisposed()) {
+					shell.removeDisposeListener(this);
+				}
 
 				/*
 				 * In the case where a dispose has happened, we are expecting an
