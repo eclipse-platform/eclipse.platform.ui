@@ -133,6 +133,13 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		public IWorkbenchPart getWorkbenchPart() {
 			return CompareEditor.this;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.internal.CompareContainer#getActionBars()
+		 */
+		public IActionBars getActionBars() {
+			return CompareEditor.this.getActionBars();
+		}
 	}
 	
 	/**
