@@ -151,7 +151,9 @@ public class LineDelimiterEditor {
 	 * preference store.
 	 */
 	public void loadDefault() {
-		doLoad();
+		if(choiceCombo != null) {
+			updateState(true);
+		}
 	}
 
 	/**
