@@ -45,6 +45,7 @@ import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ImportModel;
 import org.eclipse.update.core.model.PluginEntryModel;
 import org.eclipse.update.core.model.SiteModel;
+import org.eclipse.update.core.model.URLEntryModel;
 import org.eclipse.update.internal.core.ExtendedSiteURLFactory;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
@@ -467,7 +468,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		try {
 			SiteModel site = siteParser.parse(new FileInputStream(siteXML));
-			site.getFeatureReferenceModels()[1].getURLString();
+			site.getFeatureReferenceModels()[0].getURLString();
 			FeatureReferenceModel[] featureReferenceModel = site
 					.getFeatureReferenceModels();
 			// System.out.println("featureReferenceModel# =" +
@@ -678,15 +679,21 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			description = featureProperties.getProperty(featureModel
 					.getDescriptionModel().getAnnotation().substring(1));
 		} else {
-			description = featureModel.getDescriptionModel().getAnnotation();
+			URLEntryModel descriptionModel = featureModel.getDescriptionModel();
+			if( descriptionModel == null )
+					description = "";
+			else
+				description = descriptionModel.getAnnotation();
 		}
+		String pvalue = featureModel.getProvider();
 		if ((featureProperties != null)
-				&& featureModel.getProvider().startsWith("%")) { //$NON-NLS-1$
+				&& pvalue!=null && pvalue.startsWith("%")) { //$NON-NLS-1$
 			provider = featureProperties.getProperty(featureModel.getProvider()
 					.substring(1));
 		} else {
-			provider = featureModel.getProvider();
+			provider = pvalue;
 		}
+		if (provider==null) provider = "";
 
 		if (((featureProperties != null) && featureModel.getCopyrightModel() != null)
 				&& featureModel.getCopyrightModel().getAnnotation().startsWith(
@@ -792,7 +799,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 			if ((featureModel.getLicenseModel() != null)
 					&& (featureModel.getLicenseModel().getAnnotation() != null)
-					&& (featureModel.getDescriptionModel().getAnnotation()
+					&& (featureModel.getLicenseModel().getAnnotation()
 							.trim().length() != 0)) {
 				digest.println("\t<license>"); //$NON-NLS-1$
 				digest.println("\t\t" + UpdateManagerUtils.getWritableXMLString(license)); //$NON-NLS-1$
