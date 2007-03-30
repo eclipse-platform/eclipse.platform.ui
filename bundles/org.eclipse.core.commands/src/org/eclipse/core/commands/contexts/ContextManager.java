@@ -34,6 +34,9 @@ import org.eclipse.core.internal.commands.util.Util;
  */
 public final class ContextManager extends HandleObjectManager implements
 		IContextListener {
+	
+	private static final String DEFER_EVENTS = "org.eclipse.ui.internal.contexts.deferEvents"; //$NON-NLS-1$
+	private static final String SEND_EVENTS = "org.eclipse.ui.internal.contexts.sendEvents"; //$NON-NLS-1$
 
 	/**
 	 * This flag can be set to <code>true</code> if the context manager should
@@ -48,6 +51,15 @@ public final class ContextManager extends HandleObjectManager implements
 	 */
 	private Set activeContextIds = new HashSet();
 
+	// allow the ContextManager to send one event for a larger delta
+	private boolean caching = false;
+	
+	private int cachingRef = 0;
+
+	private boolean activeContextsChange = false;
+	
+	private Set oldIds = null;
+
 	/**
 	 * Activates a context in this context manager.
 	 * 
@@ -56,19 +68,39 @@ public final class ContextManager extends HandleObjectManager implements
 	 *            <code>null</code>.
 	 */
 	public final void addActiveContext(final String contextId) {
+		if (DEFER_EVENTS.equals(contextId)) {
+			cachingRef++;
+			if (cachingRef==1) {
+				setEventCaching(true);
+			}
+			return;
+		} else if (SEND_EVENTS.equals(contextId)) {
+			cachingRef--;
+			if (cachingRef==0) {
+				setEventCaching(false);
+			}
+			return;
+		}
+		
 		if (activeContextIds.contains(contextId)) {
 			return;
 		}
+		activeContextsChange = true;
 
-		final Set previouslyActiveContextIds = new HashSet(activeContextIds);
-		activeContextIds.add(contextId);
+		if (caching) {
+			activeContextIds.add(contextId);
+		} else {
+			final Set previouslyActiveContextIds = new HashSet(activeContextIds);
+			activeContextIds.add(contextId);
+
+			fireContextManagerChanged(new ContextManagerEvent(this, null,
+					false, true, previouslyActiveContextIds));
+		}
 
 		if (DEBUG) {
 			Tracing.printTrace("CONTEXTS", activeContextIds.toString()); //$NON-NLS-1$
 		}
 
-		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
-				true, previouslyActiveContextIds));
 	}
 
 	/**
@@ -190,15 +222,20 @@ public final class ContextManager extends HandleObjectManager implements
 			return;
 		}
 
-		final Set previouslyActiveContextIds = new HashSet(activeContextIds);
-		activeContextIds.remove(contextId);
+		activeContextsChange = true;
+		if (caching) {
+			activeContextIds.remove(contextId);
+		} else {
+			final Set previouslyActiveContextIds = new HashSet(activeContextIds);
+			activeContextIds.remove(contextId);
+
+			fireContextManagerChanged(new ContextManagerEvent(this, null,
+					false, true, previouslyActiveContextIds));
+		}
 
 		if (DEBUG) {
 			Tracing.printTrace("CONTEXTS", activeContextIds.toString()); //$NON-NLS-1$
 		}
-
-		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
-				true, previouslyActiveContextIds));
 	}
 
 	/**
@@ -226,6 +263,8 @@ public final class ContextManager extends HandleObjectManager implements
 			return;
 		}
 
+		activeContextsChange = true;
+		
 		final Set previouslyActiveContextIds = this.activeContextIds;
 		if (activeContextIds != null) {
 			this.activeContextIds = new HashSet();
@@ -239,7 +278,38 @@ public final class ContextManager extends HandleObjectManager implements
 					: activeContextIds.toString());
 		}
 
-		fireContextManagerChanged(new ContextManagerEvent(this, null, false,
-				true, previouslyActiveContextIds));
+		if (!caching) {
+			fireContextManagerChanged(new ContextManagerEvent(this, null,
+					false, true, previouslyActiveContextIds));
+		}
+	}
+	
+	/**
+	 * Set the manager to cache context id changes.
+	 * 
+	 * @param cache
+	 *            <code>true</code> to turn caching on, <code>false</code>
+	 *            to turn caching off and send an event if necessary.
+	 * @since 3.3
+	 */
+	private void setEventCaching(boolean cache) {
+		if (caching == cache) {
+			return;
+		}
+		caching = cache;
+		boolean fireChange = activeContextsChange;
+		Set holdOldIds = (oldIds==null?Collections.EMPTY_SET:oldIds);
+		
+		if (caching) {
+			oldIds = new HashSet(activeContextIds);
+		} else {
+			oldIds = null;
+		}
+		activeContextsChange = false;
+
+		if (!caching && fireChange) {
+			fireContextManagerChanged(new ContextManagerEvent(this, null,
+					false, true, holdOldIds));
+		}
 	}
 }

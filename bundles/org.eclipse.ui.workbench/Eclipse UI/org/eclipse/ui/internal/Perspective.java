@@ -51,7 +51,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -761,10 +763,24 @@ public class Perspective {
         List temp = new ArrayList();
         createInitialActionSets(temp, layout.getActionSets());
 
-        for (Iterator iter = temp.iterator(); iter.hasNext();) {
-            IActionSetDescriptor descriptor = (IActionSetDescriptor) iter.next();
-            
-            addAlwaysOn(descriptor);
+        IContextService service = null;
+        if (page != null) {
+			service = (IContextService) page.getWorkbenchWindow().getService(
+					IContextService.class);
+		}
+        try {
+        	if (service!=null) {
+        		service.activateContext(ContextAuthority.DEFER_EVENTS);
+        	}
+			for (Iterator iter = temp.iterator(); iter.hasNext();) {
+				IActionSetDescriptor descriptor = (IActionSetDescriptor) iter
+						.next();
+				addAlwaysOn(descriptor);
+			}
+		} finally {
+			if (service!=null) {
+				service.activateContext(ContextAuthority.SEND_EVENTS);
+			}
         }
         newWizardShortcuts = layout.getNewWizardShortcuts();
         showViewShortcuts = layout.getShowViewShortcuts();
@@ -1209,125 +1225,156 @@ public class Perspective {
             }
         }
 
-        HashSet knownActionSetIds = new HashSet();
-
-        // Load the always on action sets.
-        IMemento[] actions = memento
-                .getChildren(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
-        for (int x = 0; x < actions.length; x++) {
-            String actionSetID = actions[x]
-                    .getString(IWorkbenchConstants.TAG_ID);
-            final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
-                    .getActionSetRegistry().findActionSet(actionSetID);
-            if (d != null) {
-                StartupThreading.runWithoutExceptions(new StartupRunnable() {
-        			public void runWithException() throws Throwable {
-                        addAlwaysOn(d);
-        			}});
-
-                knownActionSetIds.add(actionSetID);
-            }
-        }
-
-        // Load the always off action sets.
-        actions = memento
-                .getChildren(IWorkbenchConstants.TAG_ALWAYS_OFF_ACTION_SET);
-        for (int x = 0; x < actions.length; x++) {
-            String actionSetID = actions[x]
-                    .getString(IWorkbenchConstants.TAG_ID);
-            final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
-                    .getActionSetRegistry().findActionSet(actionSetID);
-            if (d != null) {
-                StartupThreading.runWithoutExceptions(new StartupRunnable() {
-        			public void runWithException() throws Throwable {
-                        addAlwaysOff(d);
-        			}});
-                knownActionSetIds.add(actionSetID);
-            }
-        }
-
-        // Load "show view actions".
-        actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
-        showViewShortcuts = new ArrayList(actions.length);
-        for (int x = 0; x < actions.length; x++) {
-            String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            showViewShortcuts.add(id);
-        }
-
-        // Load "show in times".
-        actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_TIME);
-        for (int x = 0; x < actions.length; x++) {
-            String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            String timeStr = actions[x].getString(IWorkbenchConstants.TAG_TIME);
-            if (id != null && timeStr != null) {
-                try {
-                    long time = Long.parseLong(timeStr);
-                    showInTimes.put(id, new Long(time));
-                } catch (NumberFormatException e) {
-                    // skip this one
-                }
-            }
-        }
-
-        // Load "show in parts" from registry, not memento
-        showInPartIds = getShowInIdsFromRegistry();
-
-        // Load "new wizard actions".
-        actions = memento
-                .getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
-        newWizardShortcuts = new ArrayList(actions.length);
-        for (int x = 0; x < actions.length; x++) {
-            String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            newWizardShortcuts.add(id);
-        }
-
-        // Load "perspective actions".
-        actions = memento
-                .getChildren(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
-        perspectiveShortcuts = new ArrayList(actions.length);
-        for (int x = 0; x < actions.length; x++) {
-            String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
-            perspectiveShortcuts.add(id);
-        }
-
-        ArrayList extActionSets = getPerspectiveExtensionActionSets();
-        for (int i = 0; i < extActionSets.size(); i++) {
-            String actionSetID = (String) extActionSets.get(i);
-            if (knownActionSetIds.contains(actionSetID)) {
-				continue;
+        final IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
+        try { // one big try block, don't kill me here
+			// defer context events
+			if (service != null) {
+				service.activateContext(ContextAuthority.DEFER_EVENTS);
 			}
-            IActionSetDescriptor d = WorkbenchPlugin.getDefault()
-                    .getActionSetRegistry().findActionSet(actionSetID);
-            if (d != null) {
-                addAlwaysOn(d);
-                knownActionSetIds.add(d.getId());
-            }
+
+			HashSet knownActionSetIds = new HashSet();
+
+			// Load the always on action sets.
+			IMemento[] actions = memento
+					.getChildren(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
+			for (int x = 0; x < actions.length; x++) {
+				String actionSetID = actions[x]
+						.getString(IWorkbenchConstants.TAG_ID);
+				final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().findActionSet(actionSetID);
+				if (d != null) {
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
+								public void runWithException() throws Throwable {
+									addAlwaysOn(d);
+								}
+							});
+
+					knownActionSetIds.add(actionSetID);
+				}
+			}
+
+			// Load the always off action sets.
+			actions = memento
+					.getChildren(IWorkbenchConstants.TAG_ALWAYS_OFF_ACTION_SET);
+			for (int x = 0; x < actions.length; x++) {
+				String actionSetID = actions[x]
+						.getString(IWorkbenchConstants.TAG_ID);
+				final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().findActionSet(actionSetID);
+				if (d != null) {
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
+								public void runWithException() throws Throwable {
+									addAlwaysOff(d);
+								}
+							});
+					knownActionSetIds.add(actionSetID);
+				}
+			}
+
+			// Load "show view actions".
+			actions = memento
+					.getChildren(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
+			showViewShortcuts = new ArrayList(actions.length);
+			for (int x = 0; x < actions.length; x++) {
+				String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+				showViewShortcuts.add(id);
+			}
+
+			// Load "show in times".
+			actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_IN_TIME);
+			for (int x = 0; x < actions.length; x++) {
+				String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+				String timeStr = actions[x]
+						.getString(IWorkbenchConstants.TAG_TIME);
+				if (id != null && timeStr != null) {
+					try {
+						long time = Long.parseLong(timeStr);
+						showInTimes.put(id, new Long(time));
+					} catch (NumberFormatException e) {
+						// skip this one
+					}
+				}
+			}
+
+			// Load "show in parts" from registry, not memento
+			showInPartIds = getShowInIdsFromRegistry();
+
+			// Load "new wizard actions".
+			actions = memento
+					.getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
+			newWizardShortcuts = new ArrayList(actions.length);
+			for (int x = 0; x < actions.length; x++) {
+				String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+				newWizardShortcuts.add(id);
+			}
+
+			// Load "perspective actions".
+			actions = memento
+					.getChildren(IWorkbenchConstants.TAG_PERSPECTIVE_ACTION);
+			perspectiveShortcuts = new ArrayList(actions.length);
+			for (int x = 0; x < actions.length; x++) {
+				String id = actions[x].getString(IWorkbenchConstants.TAG_ID);
+				perspectiveShortcuts.add(id);
+			}
+
+			ArrayList extActionSets = getPerspectiveExtensionActionSets();
+			for (int i = 0; i < extActionSets.size(); i++) {
+				String actionSetID = (String) extActionSets.get(i);
+				if (knownActionSetIds.contains(actionSetID)) {
+					continue;
+				}
+				final IActionSetDescriptor d = WorkbenchPlugin.getDefault()
+						.getActionSetRegistry().findActionSet(actionSetID);
+				if (d != null) {
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
+								public void runWithException() throws Throwable {
+									addAlwaysOn(d);
+								}
+							});
+					knownActionSetIds.add(d.getId());
+				}
+			}
+
+			// Add the visible set of action sets to our knownActionSetIds
+			// Now go through the registry to ensure we pick up any new action
+			// sets
+			// that have been added but not yet considered by this perspective.
+			ActionSetRegistry reg = WorkbenchPlugin.getDefault()
+					.getActionSetRegistry();
+			IActionSetDescriptor[] array = reg.getActionSets();
+			int count = array.length;
+			for (int i = 0; i < count; i++) {
+				IActionSetDescriptor desc = array[i];
+				if ((!knownActionSetIds.contains(desc.getId()))
+						&& (desc.isInitiallyVisible())) {
+					addActionSet(desc);
+				}
+			}
+		} finally {
+        	// restart context changes
+        	if (service != null) {
+				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+					public void runWithException() throws Throwable {
+						service.activateContext(ContextAuthority.SEND_EVENTS);
+					}
+				});
+			}
         }
 
-        // Add the visible set of action sets to our knownActionSetIds
-        // Now go through the registry to ensure we pick up any new action sets
-        // that have been added but not yet considered by this perspective.
-        ActionSetRegistry reg = WorkbenchPlugin.getDefault()
-                .getActionSetRegistry();
-        IActionSetDescriptor[] array = reg.getActionSets();
-        int count = array.length;
-        for (int i = 0; i < count; i++) {
-            IActionSetDescriptor desc = array[i];
-            if ((!knownActionSetIds.contains(desc.getId()))
-                    && (desc.isInitiallyVisible())) {
-                addActionSet(desc);
-            }
-        }
-
-        // Save presentation.	
+        // Save presentation.
         presentation = pres;
 
         // Hide the editor area if needed. Need to wait for the
         // presentation to be fully setup first.
         Integer areaVisible = memento
                 .getInteger(IWorkbenchConstants.TAG_AREA_VISIBLE);
-        // Rather than hiding the editors now we must wait until after their controls
-        // are created. This ensures that if an editor is instantiated, createPartControl
+        // Rather than hiding the editors now we must wait until after their
+		// controls
+        // are created. This ensures that if an editor is instantiated,
+		// createPartControl
         // is also called. See bug 20166.
         shouldHideEditorsOnActivate = (areaVisible != null && areaVisible
                 .intValue() == 0);
@@ -2004,38 +2051,49 @@ public class Perspective {
 
     //for dynamic UI
     /* package */void addActionSet(IActionSetDescriptor newDesc) {
-        for (int i = 0; i < alwaysOnActionSets.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
-                    .get(i);
-            if (desc.getId().equals(newDesc.getId())) {
-                removeAlwaysOn(desc);
-                removeAlwaysOff(desc);
-                break;
-            }
-        }
-        addAlwaysOn(newDesc);
+    	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
+    	try {
+			service.activateContext(ContextAuthority.DEFER_EVENTS);
+			for (int i = 0; i < alwaysOnActionSets.size(); i++) {
+				IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
+						.get(i);
+				if (desc.getId().equals(newDesc.getId())) {
+					removeAlwaysOn(desc);
+					removeAlwaysOff(desc);
+					break;
+				}
+			}
+			addAlwaysOn(newDesc);
+		} finally {
+    		service.activateContext(ContextAuthority.SEND_EVENTS);
+    	}
     }
 
-    //for dynamic UI
+    // for dynamic UI
     /* package */void removeActionSet(String id) {
-        
-        for (int i = 0; i < alwaysOnActionSets.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
-                    .get(i);
-            if (desc.getId().equals(id)) {
-                removeAlwaysOn(desc);
-                break;
-            }
-        }
-       
-        for (int i = 0; i < alwaysOffActionSets.size(); i++) {
-            IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOffActionSets
-                    .get(i);
-            if (desc.getId().equals(id)) {
-                removeAlwaysOff(desc);
-                break;
-            }
-        }
+    	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
+    	try {
+			service.activateContext(ContextAuthority.DEFER_EVENTS);
+			for (int i = 0; i < alwaysOnActionSets.size(); i++) {
+				IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOnActionSets
+						.get(i);
+				if (desc.getId().equals(id)) {
+					removeAlwaysOn(desc);
+					break;
+				}
+			}
+
+			for (int i = 0; i < alwaysOffActionSets.size(); i++) {
+				IActionSetDescriptor desc = (IActionSetDescriptor) alwaysOffActionSets
+						.get(i);
+				if (desc.getId().equals(id)) {
+					removeAlwaysOff(desc);
+					break;
+				}
+			}
+		} finally {
+    		service.activateContext(ContextAuthority.SEND_EVENTS);
+    	}
     }
     
     void removeActionSet(IActionSetDescriptor toRemove) {

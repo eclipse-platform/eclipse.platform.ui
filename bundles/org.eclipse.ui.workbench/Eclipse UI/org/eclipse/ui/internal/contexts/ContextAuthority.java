@@ -44,7 +44,10 @@ import org.eclipse.ui.internal.services.ExpressionAuthority;
  * 
  * @since 3.1
  */
-final class ContextAuthority extends ExpressionAuthority {
+public final class ContextAuthority extends ExpressionAuthority {
+	public static final String DEFER_EVENTS = "org.eclipse.ui.internal.contexts.deferEvents"; //$NON-NLS-1$
+	public static final String SEND_EVENTS = "org.eclipse.ui.internal.contexts.sendEvents"; //$NON-NLS-1$
+
 
 	/**
 	 * The default size of the set containing the activations to recompute. This
@@ -177,7 +180,7 @@ final class ContextAuthority extends ExpressionAuthority {
 		for (int i = 1; i <= 32; i++) {
 			if ((sourcePriority & (1 << i)) != 0) {
 				Set activations = activationsBySourcePriority[i];
-				if (activations == null) { 
+				if (activations == null) {
 					activations = new HashSet(1);
 					activationsBySourcePriority[i] = activations;
 				}
@@ -418,9 +421,10 @@ final class ContextAuthority extends ExpressionAuthority {
 			}
 
 			// This shouldn't be possible.
-			Assert.isTrue(
-						false,
-						"A registered shell should have at least one submission matching TYPE_WINDOW or TYPE_DIALOG"); //$NON-NLS-1$
+			Assert
+					.isTrue(
+							false,
+							"A registered shell should have at least one submission matching TYPE_WINDOW or TYPE_DIALOG"); //$NON-NLS-1$
 			return IContextService.TYPE_NONE; // not reachable
 
 		} else if (shell.getParent() != null) {
@@ -607,7 +611,7 @@ final class ContextAuthority extends ExpressionAuthority {
 		if (DEBUG_PERFORMANCE) {
 			startTime = System.currentTimeMillis();
 		}
-		
+
 		/*
 		 * In this first phase, we cycle through all of the activations that
 		 * could have potentially changed. Each such activation is added to a
@@ -647,24 +651,30 @@ final class ContextAuthority extends ExpressionAuthority {
 			}
 		}
 
-		/*
-		 * For every context identifier with a changed activation, we resolve
-		 * conflicts and trigger an update.
-		 */
-		final Iterator changedContextIdItr = changedContextIds.iterator();
-		while (changedContextIdItr.hasNext()) {
-			final String contextId = (String) changedContextIdItr.next();
-			final Object value = contextActivationsByContextId.get(contextId);
-			if (value instanceof IContextActivation) {
-				final IContextActivation activation = (IContextActivation) value;
-				updateContext(contextId, evaluate(activation));
-			} else if (value instanceof Collection) {
-				updateContext(contextId, containsActive((Collection) value));
-			} else {
-				updateContext(contextId, false);
+		try {
+			contextManager.addActiveContext(DEFER_EVENTS);
+			/*
+			 * For every context identifier with a changed activation, we
+			 * resolve conflicts and trigger an update.
+			 */
+			final Iterator changedContextIdItr = changedContextIds.iterator();
+			while (changedContextIdItr.hasNext()) {
+				final String contextId = (String) changedContextIdItr.next();
+				final Object value = contextActivationsByContextId
+						.get(contextId);
+				if (value instanceof IContextActivation) {
+					final IContextActivation activation = (IContextActivation) value;
+					updateContext(contextId, evaluate(activation));
+				} else if (value instanceof Collection) {
+					updateContext(contextId, containsActive((Collection) value));
+				} else {
+					updateContext(contextId, false);
+				}
 			}
+		} finally {
+			contextManager.addActiveContext(SEND_EVENTS);
 		}
-		
+
 		// If tracing performance, then print the results.
 		if (DEBUG_PERFORMANCE) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;

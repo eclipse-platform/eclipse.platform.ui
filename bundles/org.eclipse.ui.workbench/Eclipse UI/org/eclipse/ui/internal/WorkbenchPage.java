@@ -87,7 +87,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -4334,54 +4336,67 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         
         private void updateActionSets(Perspective oldPersp, Perspective newPersp) {
-            // Update action sets
-            if (newPersp != null) {
-                IActionSetDescriptor[] newAlwaysOn = newPersp.getAlwaysOnActionSets();
-                for (int i = 0; i < newAlwaysOn.length; i++) {
-                    IActionSetDescriptor descriptor = newAlwaysOn[i];
-                    
-                    actionSets.showAction(descriptor);
-                }
-                
-                IActionSetDescriptor[] newAlwaysOff = newPersp.getAlwaysOffActionSets();
-                for (int i = 0; i < newAlwaysOff.length; i++) {
-                    IActionSetDescriptor descriptor = newAlwaysOff[i];
-                    
-                    actionSets.maskAction(descriptor);
-                }
-            }
-            
-            if (oldPersp != null) {
-                IActionSetDescriptor[] newAlwaysOn = oldPersp.getAlwaysOnActionSets();
-                for (int i = 0; i < newAlwaysOn.length; i++) {
-                    IActionSetDescriptor descriptor = newAlwaysOn[i];
-                    
-                    actionSets.hideAction(descriptor);
-                }
-                
-                IActionSetDescriptor[] newAlwaysOff = oldPersp.getAlwaysOffActionSets();
-                for (int i = 0; i < newAlwaysOff.length; i++) {
-                    IActionSetDescriptor descriptor = newAlwaysOff[i];
-                    
-                    actionSets.unmaskAction(descriptor);
-                }
-            }
-        }
+			// Update action sets
+
+			IContextService service = (IContextService) window
+					.getService(IContextService.class);
+			try {
+				service.activateContext(ContextAuthority.DEFER_EVENTS);
+				if (newPersp != null) {
+					IActionSetDescriptor[] newAlwaysOn = newPersp
+							.getAlwaysOnActionSets();
+					for (int i = 0; i < newAlwaysOn.length; i++) {
+						IActionSetDescriptor descriptor = newAlwaysOn[i];
+
+						actionSets.showAction(descriptor);
+					}
+
+					IActionSetDescriptor[] newAlwaysOff = newPersp
+							.getAlwaysOffActionSets();
+					for (int i = 0; i < newAlwaysOff.length; i++) {
+						IActionSetDescriptor descriptor = newAlwaysOff[i];
+
+						actionSets.maskAction(descriptor);
+					}
+				}
+
+				if (oldPersp != null) {
+					IActionSetDescriptor[] newAlwaysOn = oldPersp
+							.getAlwaysOnActionSets();
+					for (int i = 0; i < newAlwaysOn.length; i++) {
+						IActionSetDescriptor descriptor = newAlwaysOn[i];
+
+						actionSets.hideAction(descriptor);
+					}
+
+					IActionSetDescriptor[] newAlwaysOff = oldPersp
+							.getAlwaysOffActionSets();
+					for (int i = 0; i < newAlwaysOff.length; i++) {
+						IActionSetDescriptor descriptor = newAlwaysOff[i];
+
+						actionSets.unmaskAction(descriptor);
+					}
+				}
+			} finally {
+				service.activateContext(ContextAuthority.SEND_EVENTS);
+			}
+		}
     }
 
-    //for dynamic UI
+    // for dynamic UI
     protected void addPerspective(Perspective persp) {
         perspList.add(persp);
         window.firePerspectiveOpened(this, persp.getDesc());
     }
 
     /**
-     * Find the stack of view references stacked with this view part.
-     * 
-     * @param part the part
-     * @return the stack of references
-     * @since 3.0
-     */
+	 * Find the stack of view references stacked with this view part.
+	 * 
+	 * @param part
+	 *            the part
+	 * @return the stack of references
+	 * @since 3.0
+	 */
     private IViewReference[] getViewReferenceStack(IViewPart part) {
         // Sanity check.
         Perspective persp = getActivePerspective();

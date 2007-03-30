@@ -649,7 +649,8 @@ public final class BindingManager extends HandleObjectManager implements
 	public final void contextManagerChanged(
 			final ContextManagerEvent contextManagerEvent) {
 		if (contextManagerEvent.isActiveContextsChanged()) {
-			clearSolution();
+//			clearSolution();
+			recomputeBindings();
 		}
 	}
 
