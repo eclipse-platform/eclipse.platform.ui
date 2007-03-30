@@ -2360,7 +2360,7 @@
          point="org.eclipse.ui.handlers">
    	  <handler
    	        commandId="org.eclipse.ui.tests.commands.bug102666"
-   	        class="doesntmatter">
+   	        class="org.eclipse.ui.tests.menus.HelloEHandler">
    	     <activeWhen>
                <count value="1" />
          </activeWhen>
@@ -2878,7 +2878,7 @@
          point="org.eclipse.ui.handlers">
       <handler
             commandId="org.eclipse.ui.tests.helpContextId"
-            class="doesn't matter"
+            class="org.eclipse.ui.tests.menus.HelloEHandler"
             helpContextId="org.eclipse.ui.tests.handlerHelp" />
    </extension>
    <extension
