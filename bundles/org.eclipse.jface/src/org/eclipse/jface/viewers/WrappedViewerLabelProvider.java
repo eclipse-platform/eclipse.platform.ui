@@ -165,14 +165,14 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 		
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
 		
-		if (viewerLabelProvider != null) {
-			viewerLabelProvider.updateLabel(label, cell.getElement());
-		} else if (treePathLabelProvider != null) {
+		if (treePathLabelProvider != null) {
 			TreePath treePath = cell.getViewerRow().getTreePath();
 
 			Assert.isNotNull(treePath);
 			treePathLabelProvider.updateLabel(label, treePath);
-		}
+		} else if (viewerLabelProvider != null) {
+			viewerLabelProvider.updateLabel(label, cell.getElement());
+		} 
 		if (!label.hasNewForeground() && colorProvider != null) 
 			label.setForeground(getForeground(cell.getElement()));
 		
