@@ -121,6 +121,8 @@ public class CommonNavigatorMessages extends NLS {
 	/** */
 	public static String FilterDialogSelectionListener_Enable_the_0_filter_;
 
+	public static String NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CommonNavigatorMessages.class);
 	}

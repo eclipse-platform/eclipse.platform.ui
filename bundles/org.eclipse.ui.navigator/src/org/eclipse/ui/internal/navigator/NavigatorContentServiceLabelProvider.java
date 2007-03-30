@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.ITreePathLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -122,7 +123,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			text = findText((NavigatorContentExtension) itr.next(), anElement);
 		}
 		// decorate the element
-		return text == null ? "Null Label" : text; //$NON-NLS-1$
+		return text == null ? (NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement)) : text; 
 	}
 	
 	/**
