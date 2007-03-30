@@ -12,16 +12,19 @@ package org.eclipse.core.tests.harness;
 
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.test.performance.*;
+import org.eclipse.test.performance.Dimension;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * Helper class for executing a performance test. Takes care of starting, stopping,
  * and commiting performance timers.
  */
 public abstract class PerformanceTestRunner {
-	
+
 	private String regressionReason;
-	
+	private String fingerprintName;
+
 	public void setRegressionReason(String comment) {
 		this.regressionReason = comment;
 	}
@@ -74,6 +77,8 @@ public abstract class PerformanceTestRunner {
 			}
 			if (localName != null)
 				Performance.getDefault().tagAsSummary(meter, localName, Dimension.ELAPSED_PROCESS);
+			if (fingerprintName != null)
+				perf.tagAsSummary(meter, fingerprintName, Dimension.ELAPSED_PROCESS);
 			meter.commit();
 			perf.assertPerformance(meter);
 		} catch (CoreException e) {
@@ -83,11 +88,21 @@ public abstract class PerformanceTestRunner {
 		}
 	}
 
-	protected void setUp() throws CoreException{
+	protected void setUp() throws CoreException {
 		// subclasses to override
 	}
 
 	protected void tearDown() throws CoreException {
 		// subclasses to override
+	}
+
+	/**
+	 * Sets the finger print name. Setting this value will make the test part
+	 * of the component finger print results.  A value of null indicates that the
+	 * test is not a finger print test.
+	 * @param fingerprintName
+	 */
+	public void setFingerprintName(String fingerprintName) {
+		this.fingerprintName = fingerprintName;
 	}
 }

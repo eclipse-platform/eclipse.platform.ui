@@ -95,11 +95,12 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		return result;
 	}
 
-	/*
+	/**
 	 * Time how long it takes to retrieve KEYS_PER_NODE keys with a common prefix.
+	 * This is a good finger print test because preference keys typically have a common
+	 * prefix (org.eclipse.component.keyName).
 	 */
 	public void testGetStringCommonPrefixKeys() {
-
 		// setup
 		final String qualifier = getUniqueString();
 		String[][] kvp = getCommonPrefixKeys(KEYS_PER_NODE, qualifier);
@@ -107,7 +108,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		final String[] values = kvp[1];
 
 		// run the test
-		new PerformanceTestRunner() {
+		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			Preferences prefs;
 
 			// set the values outside the timed loop
@@ -131,7 +132,9 @@ public class PreferencePerformanceTest extends RuntimeTest {
 				for (int i = 0; i < keys.length; i++)
 					prefs.get(keys[i], null);
 			}
-		}.run(this, 10, INNER_LOOP);
+		};
+		runner.setFingerprintName("Retrieve preference values");
+		runner.run(this, 10, INNER_LOOP);
 	}
 
 	/*
