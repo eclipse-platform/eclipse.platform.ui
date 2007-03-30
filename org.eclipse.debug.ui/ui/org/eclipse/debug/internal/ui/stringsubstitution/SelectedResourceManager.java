@@ -10,51 +10,28 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import java.util.EmptyStackException;
-import java.util.Stack;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Maintains the context used to expand variables. The context is based on
  * the selected resource.
  */
-public class SelectedResourceManager implements IWindowListener, ISelectionListener {
+public class SelectedResourceManager  {
 
 	// singleton
 	private static SelectedResourceManager fgDefault;
-	
-	private IResource fSelectedResource = null;
-	private ITextSelection fSelectedText = null;
-	private Stack fWindowStack = new Stack();
-	
-	/**
-	 * Constructor
-	 */
-	private SelectedResourceManager() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench != null) { //may be running headless
-			workbench.addWindowListener(this);
-			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-			if (activeWindow != null) {
-				windowActivated(activeWindow);
-			}
-		} 
-	}
 	
 	/**
 	 * Returns the singleton resource selection manager
@@ -69,86 +46,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	}
 	
 	/**
-	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowActivated(IWorkbenchWindow window) {
-		fWindowStack.remove(window);
-		fWindowStack.push(window);
-		ISelectionService service = window.getSelectionService(); 
-		service.addSelectionListener(this);
-		IWorkbenchPage page = window.getActivePage();
-		if (page != null) {
-			IWorkbenchPart part = page.getActivePart();
-			if (part != null) {				
-				ISelection selection = service.getSelection();
-				if (selection != null) {
-					selectionChanged(part, selection);
-				}
-			}
-		}
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowClosed(IWorkbenchWindow window) {
-		ISelectionService selectionService = window.getSelectionService();
-        selectionService.removeSelectionListener(this);
-		fWindowStack.remove(window);
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowDeactivated(IWorkbenchWindow window) {
-	}
-
-	/**
-	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void windowOpened(IWorkbenchWindow window) {
-		windowActivated(window);
-	}
-
-	/**
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
-		if (fWindowStack.isEmpty() || !fWindowStack.peek().equals(window)) {
-			// selection is not in the active window
-			return;
-		}
-		IResource selectedResource = null;
-		if (selection instanceof IStructuredSelection) {
-			Object result = ((IStructuredSelection)selection).getFirstElement();
-			if (result instanceof IResource) {
-				selectedResource = (IResource) result;
-			} else if (result instanceof IAdaptable) {
-			    IAdaptable adaptable = (IAdaptable) result;
-				selectedResource = (IResource)adaptable.getAdapter(IResource.class);
-			}
-		}
-		
-		if (selectedResource == null) {
-			// If the active part is an editor, get the file resource used as input.
-			if (part instanceof IEditorPart) {
-				IEditorPart editorPart = (IEditorPart) part;
-				IEditorInput input = editorPart.getEditorInput();
-				selectedResource = (IResource) input.getAdapter(IResource.class);
-			} 
-		}
-		
-		if (selectedResource != null) {
-			fSelectedResource = selectedResource;
-		}
-		
-		if (selection instanceof ITextSelection) {
-			fSelectedText = (ITextSelection)selection;
-		}
-	}
-	
-	/**
 	 * Returns the currently selected resource in the active workbench window,
 	 * or <code>null</code> if none. If an editor is active, the resource adapter
 	 * associated with the editor is returned.
@@ -156,7 +53,58 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @return selected resource or <code>null</code>
 	 */
 	public IResource getSelectedResource() {
-		return fSelectedResource;
+		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			return getSelectedResource0();
+		}
+		else {
+			final IResource[] resource = new IResource[1];
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					resource[0] = getSelectedResource0();
+				}
+			});
+			return resource[0];
+		}
+	}
+	
+	/**
+	 * Returns the currently selected resource from the active part, or <code>null</code> if one cannot be
+	 * resolved.
+	 * @return the currently selected <code>IResource</code>, or <code>null</code> if none.
+	 * @since 3.3
+	 */
+	public IResource getSelectedResource0() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		IResource resource = null;
+		if(window != null) {
+			IWorkbenchPage page  = window.getActivePage();
+			if(page != null) {
+				IWorkbenchPart part = page.getActivePart();
+				if(part instanceof IEditorPart) {
+					IEditorPart epart = (IEditorPart) part;
+					resource = (IResource) epart.getEditorInput().getAdapter(IResource.class);
+				}
+				else if(part != null) {
+					IWorkbenchPartSite site = part.getSite();
+					if(site != null) {
+						ISelectionProvider provider = site.getSelectionProvider();
+						if(provider != null) {
+							ISelection selection = provider.getSelection();
+							if(selection instanceof IStructuredSelection) {
+								IStructuredSelection ss = (IStructuredSelection) selection;
+								if(!ss.isEmpty()) {
+									Object o = ss.getFirstElement();
+									if(o instanceof IAdaptable) {
+										resource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return resource;
 	}
 	
 	/**
@@ -166,7 +114,57 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @return the current text selection as a <code>String</code> or <code>null</code>
 	 */
 	public String getSelectedText() {
-		return fSelectedText.getText();
+		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			return getSelectedText0();
+		}
+		else {
+			final String[] text = new String[1];
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					text[0] = getSelectedText0();
+				}
+			});
+			return text[0];
+		}
+	}
+	
+	/**
+	 * Returns the selected text from the most currently active editor. The editor does not have to 
+	 * have focus at the time this method is called.
+	 * @return the currently selected text in the most recent active editor.
+	 * 
+	 * @since 3.3
+	 */
+	protected String getSelectedText0() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if(page != null) {
+				IEditorPart epart = page.getActiveEditor();
+				if(epart != null) {
+					IEditorSite esite = epart.getEditorSite();
+					if(esite != null) {
+						ISelectionProvider sprovider = esite.getSelectionProvider();
+						if(sprovider != null) {
+							ISelection selection = sprovider.getSelection();
+							if(selection instanceof ITextSelection) {
+								return ((ITextSelection)selection).getText();
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the currently active workbench window
+	 * @return the currently active workbench window
+	 * @since 3.3
+	 */
+	public IWorkbenchWindow getActiveWindow0() {
+		return DebugUIPlugin.getActiveWorkbenchWindow();
 	}
 	
 	/**
@@ -176,11 +174,18 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @since 3.2
 	 */
 	public IWorkbenchWindow getActiveWindow() {
-		try {
-			return (IWorkbenchWindow) fWindowStack.peek();
-		} 
-		catch (EmptyStackException e) {}
-		return null;
+		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			return getActiveWindow0();
+		}
+		else {
+			final IWorkbenchWindow[] window = new IWorkbenchWindow[1];
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					window[0] = getActiveWindow0();
+				}
+			});
+			return window[0];
+		}
 	}
 
 }
