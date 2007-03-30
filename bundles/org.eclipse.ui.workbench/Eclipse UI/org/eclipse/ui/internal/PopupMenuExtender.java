@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,6 +78,8 @@ public class PopupMenuExtender implements IMenuListener2,
      * save memory.
      */
 	private int bitSet = 0;
+	
+	private ArrayList contributionCache = new ArrayList();
 
     /**
      * Construct a new menu extender.
@@ -330,6 +333,7 @@ public class PopupMenuExtender implements IMenuListener2,
         addObjectActions(mgr);
         addStaticActions(mgr);
         addMenuContributions(mgr);
+        cleanUpContributionCache();
     }
     
     private boolean contributionsPopulated = false;
@@ -358,6 +362,7 @@ public class PopupMenuExtender implements IMenuListener2,
 	 * Notifies the listener that the menu is about to be hidden.
 	 */
     public final void menuAboutToHide(final IMenuManager mgr) {
+    	gatherContributions(mgr);
     	// Remove this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
@@ -376,8 +381,32 @@ public class PopupMenuExtender implements IMenuListener2,
 			}
     	}
     }
+    
 
     /**
+	 * @param mgr
+	 */
+	private void gatherContributions(final IMenuManager mgr) {
+		final IContributionItem[] items = mgr.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof PluginActionContributionItem) {
+				contributionCache.add(items[i]);
+			} else if (items[i] instanceof IMenuManager) {
+				gatherContributions(((IMenuManager)items[i]));
+			}
+		}
+	}
+	
+	private void cleanUpContributionCache() {
+		IContributionItem[] items = (IContributionItem[]) contributionCache
+				.toArray(new IContributionItem[contributionCache.size()]);
+		contributionCache.clear();
+		for (int i = 0; i < items.length; i++) {
+			items[i].dispose();
+		}
+	}
+
+	/**
      * Read all of the static items for the content menu.
      */
     private final void readStaticActions() {

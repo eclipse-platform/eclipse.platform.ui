@@ -11,6 +11,8 @@
 package org.eclipse.ui.part;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
@@ -121,8 +123,18 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	protected void dispose() {
 		if (menuExtenders != null) {
+			HashSet managers = new HashSet(menuExtenders.size());
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				((PopupMenuExtender) menuExtenders.get(i)).dispose();
+				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
+				managers.add(ext.getManager());
+				ext.dispose();
+			}
+			if (managers.size()>0) {
+				for (Iterator iterator = managers.iterator(); iterator
+						.hasNext();) {
+					MenuManager mgr = (MenuManager) iterator.next();
+					mgr.dispose();
+				}
 			}
 			menuExtenders = null;
 		}
