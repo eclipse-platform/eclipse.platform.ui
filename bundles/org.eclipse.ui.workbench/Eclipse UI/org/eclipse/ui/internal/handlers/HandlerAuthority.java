@@ -361,7 +361,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			String conflictMessage = "Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
 					+ bestActivation + ": " //$NON-NLS-1$
 					+ currentActivation;
-			if (previousLogs.add(conflictMessage)) {
+			if (previousLogs.add(commandId)) {
 				IStatus s = new Status(IStatus.WARNING,
 						"org.eclipse.ui.workbench", //$NON-NLS-1$
 						conflictMessage);
