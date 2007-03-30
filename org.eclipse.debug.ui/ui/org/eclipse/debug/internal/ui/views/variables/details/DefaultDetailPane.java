@@ -244,7 +244,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 								insert = "\n" + result; //$NON-NLS-1$
 							}
 							try {
-								int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
+								int max = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH);
 								if (max > 0 && insert.length() > max) {
 									insert = insert.substring(0, max) + "..."; //$NON-NLS-1$
 								}
@@ -859,12 +859,11 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		String propertyName= event.getProperty();
 		if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			fSourceViewer.getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));
-		} else if (propertyName.equals(IInternalDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
+		} else if (propertyName.equals(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH)) {
 			display(fLastDisplayed);
 		} else if (propertyName.equals(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
 			fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
 			getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));	
-
 		}
 		
 	}

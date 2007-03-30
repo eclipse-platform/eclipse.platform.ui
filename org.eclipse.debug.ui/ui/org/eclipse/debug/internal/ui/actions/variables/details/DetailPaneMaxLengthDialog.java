@@ -36,7 +36,7 @@ import org.eclipse.ui.PlatformUI;
  */
 public class DetailPaneMaxLengthDialog extends TrayDialog {
 
-	private static final String SETTINGS_ID = ".MAX_DETAILS_LENGTH_DIALOG"; //$NON-NLS-1$
+	private static final String SETTINGS_ID = DebugUIPlugin.getUniqueIdentifier() + ".MAX_DETAILS_LENGTH_DIALOG"; //$NON-NLS-1$
 	
 	private Text fTextWidget;
 	private Text fErrorTextWidget;
@@ -45,7 +45,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 	private IInputValidator fValidator;
 	
 	/**
-	 * Cosntructs a new dialog on the given shell.
+	 * Constructs a new dialog on the given shell.
 	 * 
 	 * @param parent shell
 	 */
@@ -145,7 +145,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
     }
 	
     /**
-     * validates th current input
+     * Validates the current input
      * @since 3.3
      */
     private void validateInput() {
