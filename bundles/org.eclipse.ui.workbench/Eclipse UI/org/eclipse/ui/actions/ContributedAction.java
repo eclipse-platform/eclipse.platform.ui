@@ -11,13 +11,17 @@
 
 package org.eclipse.ui.actions;
 
+import java.util.Collections;
+
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISources;
@@ -26,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.actions.CommandAction;
+import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -45,6 +50,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public final class ContributedAction extends CommandAction {
 	private IEvaluationContext appContext;
+
 	private IHandler partHandler;
 
 	/**
@@ -96,16 +102,17 @@ public final class ContributedAction extends CommandAction {
 					+ " not mapped to a command"); //$NON-NLS-1$
 		}
 
+		init(locator, commandId, null);
+
 		if (locator instanceof PartSite) {
-			updateSiteAssociations(locator, commandId);
+			updateSiteAssociations(locator, commandId, actionId, element);
 		}
 
-		init(locator, commandId, null);
 		setId(actionId);
 	}
 
 	private void updateSiteAssociations(IServiceLocator locator,
-			String commandId) {
+			String commandId, String actionId, IConfigurationElement element) {
 		PartSite site = (PartSite) locator;
 		IWorkbench workbench = (IWorkbench) locator
 				.getService(IWorkbench.class);
@@ -113,9 +120,12 @@ public final class ContributedAction extends CommandAction {
 				.getService(IWorkbenchWindow.class);
 		IHandlerService serv = (IHandlerService) workbench
 				.getService(IHandlerService.class);
-		appContext = serv.getCurrentState();
+		appContext = new EvaluationContext(serv.getCurrentState(),
+				Collections.EMPTY_LIST);
 
 		// set up the appContext as we would want it.
+		appContext.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME,
+				StructuredSelection.EMPTY);
 		appContext.addVariable(ISources.ACTIVE_PART_NAME, site.getPart());
 		appContext.addVariable(ISources.ACTIVE_PART_ID_NAME, site.getId());
 		appContext.addVariable(ISources.ACTIVE_SITE_NAME, site);
@@ -130,6 +140,14 @@ public final class ContributedAction extends CommandAction {
 
 		HandlerService realService = (HandlerService) serv;
 		partHandler = realService.findHandler(commandId, appContext);
+		if (partHandler == null) {
+			// if we can't find the handler, then at least we can
+			// call the action delegate run method
+			partHandler = new ActionDelegateHandlerProxy(element,
+					IWorkbenchRegistryConstants.ATT_CLASS, actionId,
+					getParameterizedCommand(), site.getWorkbenchWindow(), null,
+					null, null);
+		}
 	}
 
 	/*
@@ -159,12 +177,14 @@ public final class ContributedAction extends CommandAction {
 			super.runWithEvent(event);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.Action#isEnabled()
 	 */
 	public boolean isEnabled() {
-		if (partHandler!=null) {
+		if (partHandler != null) {
 			return partHandler.isEnabled();
 		}
 		return super.isEnabled();
