@@ -481,13 +481,24 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		// want to get the cheatsheets of the collection element
 		return new BaseWorkbenchContentProvider() {
 			public Object[] getChildren(Object o) {
+				Object[] cheatsheets;
 				if (o instanceof CheatSheetCollectionElement) {
-					Object[] cheatsheets = ((CheatSheetCollectionElement) o)
+					cheatsheets = ((CheatSheetCollectionElement) o)
 							.getCheatSheets();
-					if (cheatsheets.length > 0)
-						return cheatsheets;
+				} else {
+					cheatsheets = new Object[0];
 				}
-				return super.getChildren(o);
+				Object[] subCategories = super.getChildren(o);
+				if (cheatsheets.length == 0) {
+					return subCategories;
+				} else if (subCategories.length == 0) {
+					return cheatsheets;
+				} else {
+					Object[] result = new Object[cheatsheets.length + subCategories.length];
+					System.arraycopy(subCategories, 0, result, 0, subCategories.length);
+					System.arraycopy(cheatsheets, 0, result, subCategories.length, cheatsheets.length);
+					return result;
+				}
 			}
 		};
 	}
