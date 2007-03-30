@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.tests.labelProviders;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -111,6 +110,8 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 		assertTrue("Foreground was not set", item.getForeground(0).equals(
 				foreground));
 		assertTrue("Font was not set", item.getFont(0).equals(font));
+		
+		Font oldFont = font;
 
 		clearColors();
 		fViewer.refresh(item.getData());
@@ -120,8 +121,8 @@ public class ColorAndFontLabelProviderTest extends CompositeLabelProviderTest {
 				display.getSystemColor(SWT.COLOR_LIST_BACKGROUND)));
 		assertTrue("Foreground was not cleared", item.getForeground(0).equals(
 				display.getSystemColor(SWT.COLOR_LIST_FOREGROUND)));
-		assertTrue("Font was not cleared", item.getFont(0).getFontData()[0]
-				.equals(JFaceResources.getDefaultFont().getFontData()[0]));
+		assertFalse("Font was not cleared", item.getFont(0).getFontData()[0]
+				.equals(oldFont.getFontData()[0]));
 
 	}
 
