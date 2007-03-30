@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -56,12 +57,15 @@ import org.eclipse.ui.PartInitException;
  */
 public class InspectPopupDialog extends DebugPopup {
     
+	private static final String PREF_INSPECT_POPUP_SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + "inspectPopupSashWeights";
+	
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
     private static final int MIN_WIDTH = 250;
     private static final int MIN_HEIGHT = 200;
 
     private TreeModelViewer fViewer;
     private SashForm fSashForm;
+    private Composite fDetailPaneComposite;
     private DetailPaneProxy fDetailPane;
     private Tree fTree;
     private IExpression fExpression;
@@ -103,6 +107,8 @@ public class InspectPopupDialog extends DebugPopup {
         }
         fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, context);
 
+        fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
+        
         fDetailPane = new DetailPaneProxy(new DetailPaneContainer());
         fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
       
@@ -114,7 +120,7 @@ public class InspectPopupDialog extends DebugPopup {
             public void widgetDefaultSelected(SelectionEvent e) {}
         });
 
-        fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+        initSashWeights();
       
         fViewer.getContentProvider();
         if (view != null) {
@@ -132,6 +138,41 @@ public class InspectPopupDialog extends DebugPopup {
         fViewer.expandToLevel(new TreePath(new Object[] {fExpression}), 1);
 
         return fTree;
+    }
+    
+    /**
+     * Initializes the sash form weights from the preference store (using default values if 
+     * no sash weights were stored previously).
+     */
+    protected void initSashWeights(){
+    	String prefWeights = DebugUIPlugin.getDefault().getPreferenceStore().getString(PREF_INSPECT_POPUP_SASH_WEIGHTS);
+    	if (prefWeights.length() > 0){
+	    	String[] weights = prefWeights.split(":"); //$NON-NLS-1$
+	    	if (weights.length == 2){
+	    		try{
+	    			int[] intWeights = new int[2];
+	    			intWeights[0] = Integer.parseInt(weights[0]);
+	    			intWeights[1] = Integer.parseInt(weights[1]);
+	    			fSashForm.setWeights(intWeights);
+	    			return;
+	    		} catch (NumberFormatException e){} 
+	    	}
+    	}
+    	fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.PopupDialog#saveDialogBounds(org.eclipse.swt.widgets.Shell)
+     */
+    protected void saveDialogBounds(Shell shell) {
+    	super.saveDialogBounds(shell);
+    	if (fSashForm != null && !fSashForm.isDisposed()){
+	    	int[] weights = fSashForm.getWeights();
+	    	if (weights.length == 2){
+	    		String weightString = weights[0] + ":" + weights[1]; //$NON-NLS-1$
+	    		DebugUIPlugin.getDefault().getPluginPreferences().setValue(PREF_INSPECT_POPUP_SASH_WEIGHTS, weightString);
+	    	}
+	    }
     }
     
     /**
@@ -270,7 +311,7 @@ public class InspectPopupDialog extends DebugPopup {
 		 * @see org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer#getParentComposite()
 		 */
 		public Composite getParentComposite() {
-			return fSashForm;
+			return fDetailPaneComposite;
 		}
 	
 		/* (non-Javadoc)
