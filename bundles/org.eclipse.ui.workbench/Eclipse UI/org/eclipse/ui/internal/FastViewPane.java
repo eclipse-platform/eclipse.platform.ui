@@ -438,8 +438,6 @@ public class FastViewPane {
         ctrl.setEnabled(true); // Add focus support.
         Composite parent = ctrl.getParent();
 
-        pane.setFocus();
-
         boolean horizontal = Geometry.isHorizontal(side);
         sash = new Sash(parent, Geometry
                 .getSwtHorizontalOrVerticalConstant(horizontal));
@@ -457,6 +455,8 @@ public class FastViewPane {
         Display display = sash.getDisplay();
 
         display.addFilter(SWT.MouseDown, mouseDownListener);
+
+        pane.setFocus();
     }
 
     /**
