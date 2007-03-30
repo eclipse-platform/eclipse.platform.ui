@@ -94,7 +94,8 @@ public class ColorFieldEditor extends FieldEditor {
 		gd.horizontalSpan = numColumns - 1;
 		control.setLayoutData(gd);
 
-		getChangeControl(parent);
+		Button colorButton = getChangeControl(parent);
+		colorButton.setLayoutData(new GridData());
 		
 	}
 
