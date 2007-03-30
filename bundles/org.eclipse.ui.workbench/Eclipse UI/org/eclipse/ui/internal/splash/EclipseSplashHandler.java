@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.splash;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Point;
@@ -42,16 +43,12 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			foregroundColorString = product
 					.getProperty(IProductConstants.STARTUP_FOREGROUND_COLOR);
 		}
-		Rectangle progressRect = parseRect(progressRectString);
-		if (progressRect == null) {
-			progressRect = new Rectangle(10, 10, 300, 15);
-		}
+		Rectangle progressRect = StringConverter.asRectangle(
+				progressRectString, new Rectangle(10, 10, 300, 15));
 		setProgressRect(progressRect);
 
-		Rectangle messageRect = parseRect(messageRectString);
-		if (messageRect == null) {
-			messageRect = new Rectangle(10, 35, 300, 15);
-		}
+		Rectangle messageRect = StringConverter.asRectangle(messageRectString,
+				new Rectangle(10, 35, 300, 15));
 		setMessageRect(messageRect);
 
 		int foregroundColorInteger;
@@ -73,60 +70,18 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			// find the specified location.  Not currently API
 			// hardcoded to be sensible with our current Europa Graphic
 			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
-			Point buildIdPoint = parsePoint(buildIdLocString);
-			final int buildX = buildIdPoint == null ? 322 : buildIdPoint.x, buildY = buildIdPoint == null ? 190
-					: buildIdPoint.y;
-			
+			final Point buildIdPoint = StringConverter.asPoint(buildIdLocString,
+					new Point(322, 190));
 			getContent().addPaintListener(new PaintListener() {
 
 				public void paintControl(PaintEvent e) {
 					e.gc.setForeground(getForeground());
-					e.gc.drawText(buildId, buildX, buildY, true);
+					e.gc.drawText(buildId, buildIdPoint.x, buildIdPoint.y, true);
 				}
 			});
 		}
 		else {
 			getContent(); // ensure creation of the progress
 		}
-	}
-
-	private Rectangle parseRect(String string) {
-		if (string == null)
-			return null;
-		int x, y, w, h;
-		int lastPos = 0;
-		try {
-			int i = string.indexOf(',', lastPos);
-			x = Integer.parseInt(string.substring(lastPos, i));
-			lastPos = i + 1;
-			i = string.indexOf(',', lastPos);
-			y = Integer.parseInt(string.substring(lastPos, i));
-			lastPos = i + 1;
-			i = string.indexOf(',', lastPos);
-			w = Integer.parseInt(string.substring(lastPos, i));
-			lastPos = i + 1;
-			h = Integer.parseInt(string.substring(lastPos));
-		} catch (RuntimeException e) {
-			// sloppy error handling
-			return null;
-		}
-		return new Rectangle(x, y, w, h);
-	}
-	
-	private Point parsePoint(String string) {
-		if (string == null)
-			return null;
-		int x, y;
-		int lastPos = 0;
-		try {
-			int i = string.indexOf(',', lastPos);
-			x = Integer.parseInt(string.substring(lastPos, i));
-			lastPos = i + 1;			
-			y = Integer.parseInt(string.substring(lastPos));
-		} catch (RuntimeException e) {
-			// sloppy error handling
-			return null;
-		}
-		return new Point(x, y);
 	}
 }
