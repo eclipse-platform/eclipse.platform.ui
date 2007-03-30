@@ -242,6 +242,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     private AbstractPresentationFactory factory;
 
 	private boolean smartZoomed = false;
+	private boolean doingUnzoom = false;
             
     protected abstract boolean isMoveable(IPresentablePart part);
 
@@ -1342,7 +1343,12 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		smartZoomed = true;
     }
 
-    private void smartUnzoom() {
+    protected void smartUnzoom() {
+    	// Prevent recursion through 'setMinimized'
+    	if (doingUnzoom)
+    		return;
+    	doingUnzoom = true;
+    	
 		WorkbenchWindow wbw = (WorkbenchWindow) getPage().getWorkbenchWindow();
 		if (wbw == null || wbw.getShell() == null)
 			return;
@@ -1398,6 +1404,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		
 		fvm.deferUpdates(false);
 		smartZoomed = false;
+		
+		doingUnzoom = false;
     }
     
 	protected void setState(final int newState) {

@@ -903,7 +903,7 @@ public class Perspective {
 						.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
 				preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 				
-				List minStacks = layout.GetMinimizedStacks();
+				List minStacks = layout.getMinimizedStacks();
 				for (Iterator msIter = minStacks.iterator(); msIter.hasNext();) {
 					ViewStack vs = (ViewStack) msIter.next();
 					vs.setMinimized(true);
@@ -914,6 +914,7 @@ public class Perspective {
 
 				// this is a one-off deal...set during the extension reading
 				minStacks.clear();
+				layout = null;
 			}
     	}
 
@@ -1872,6 +1873,10 @@ public class Perspective {
 		
 		// Force it to display the correct state
 		editorStack.setState(editorAreaState);
+		
+		// Keep the presentation up to date with the correct editor stack
+		if (editorAreaState == IStackPresentationSite.STATE_MAXIMIZED)
+			getPresentation().setMaximizedStack(editorStack);
 	}
 
 	protected EditorAreaTrimToolBar setEditorAreaTrimVisibility(boolean visible) {

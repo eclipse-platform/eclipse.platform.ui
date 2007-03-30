@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -128,6 +129,19 @@ public class ViewStack extends PartStack {
 			if (minimized) {
 				fvm.moveToTrim(this, false);
 			} else {
+				// First, if we're maximized then revert
+				if (persp.getPresentation().getMaximizedStack() != null) {
+					PartStack maxStack = persp.getPresentation().getMaximizedStack();
+					if (maxStack instanceof ViewStack) {
+						maxStack.setState(IStackPresentationSite.STATE_RESTORED);
+					}
+					else if (maxStack instanceof EditorStack) {
+						// We handle editor max through the perspective since it's
+						// shared between pages...
+						persp.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
+					}
+				}
+				
 				fvm.restoreToPresentation(getID());
 			}
 		}

@@ -427,7 +427,7 @@ public class PageLayout implements IPageLayout {
         }
     }
 
-    public List GetMinimizedStacks() {
+    public List getMinimizedStacks() {
     	return minimizedStacks;
     }
     
