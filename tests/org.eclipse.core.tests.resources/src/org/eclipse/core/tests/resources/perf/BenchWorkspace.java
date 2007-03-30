@@ -164,10 +164,24 @@ public class BenchWorkspace extends ResourceTest {
 		final Workspace workspace = (Workspace) getWorkspace();
 		final IWorkspaceRoot root = workspace.getRoot();
 		new PerformanceTestRunner() {
+			protected void setUp() throws CoreException {
+				super.setUp();
+				waitForBackgroundActivity();
+			}
+
 			protected void test() {
 				workspace.countResources(root.getFullPath(), IResource.DEPTH_INFINITE, true);
 			}
 		}.run(this, 10, 100);
+	}
+
+	/**
+	 * Waits until background activity settles down before running a performance test.
+	 *
+	 */
+	public void waitForBackgroundActivity() {
+		waitForRefresh();
+		waitForBuild();
 	}
 
 	public void testCountResourcesDuringOperation() {
