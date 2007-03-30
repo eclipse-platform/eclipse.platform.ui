@@ -337,8 +337,4 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 	public void testHistoryCleanUp20x20() {
 		testHistoryCleanUp(20, 20);
 	}
-
-	public void testHistoryCleanUp4x100() {
-		testHistoryCleanUp(4, 100);
-	}
 }
