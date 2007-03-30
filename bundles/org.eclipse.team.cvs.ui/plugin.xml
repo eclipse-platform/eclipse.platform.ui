@@ -959,13 +959,13 @@
                relationship="stack">
          </view>
          <view
-               relative="org.eclipse.ui.views.ResourceNavigator"
+               relative="org.eclipse.ui.navigator.ProjectExplorer"
                visible="false"
                id="org.eclipse.team.ccvs.ui.RepositoriesView"
                relationship="stack">
          </view>
          <view
-               relative="org.eclipse.ui.views.ResourceNavigator"
+               relative="org.eclipse.ui.navigator.ProjectExplorer"
                visible="false"
                id="org.eclipse.team.ccvs.ui.AnnotateView"
                relationship="stack">
