@@ -13,6 +13,7 @@ package org.eclipse.update.internal.jarprocessor;
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
+import java.util.zip.ZipException;
 
 /**
  * @author aniefer@ca.ibm.com
@@ -250,6 +251,17 @@ public class Utils {
 		JarFile jar = null;
 		try {
 			jar = new JarFile(jarFile, false);
+		} catch (ZipException e) {
+			//not a jar, don't bother logging this.
+			return null;
+		} catch (IOException e) {
+			if (verbose) {
+				System.out.println("Failed to obtain eclipse.inf due to IOException: " + jarFile);
+				e.printStackTrace();
+			}
+			return null;
+		}
+		try {
 			JarEntry mark = jar.getJarEntry(MARK_FILE_NAME);
 			if (mark != null) {
 				InputStream in = jar.getInputStream(mark);
@@ -264,7 +276,6 @@ public class Utils {
 				System.out.println("Failed to obtain eclipse.inf due to IOException: " + jarFile);
 				e.printStackTrace();
 			}
-			//not a jar
 			return null;
 		} finally {
 			close(jar);
