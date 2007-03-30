@@ -558,6 +558,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 			if (fileBuffer == null && provider != null) {
 				IPath location= provider.getPath(element);
+				if (location == null)
+					return null;
 				manager.connect(location, LocationKind.NORMALIZE, getProgressMonitor());
 				fileBuffer= manager.getTextFileBuffer(location, LocationKind.NORMALIZE);
 				file= FileBuffers.getWorkspaceFileAtLocation(location);
