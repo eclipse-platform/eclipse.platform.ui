@@ -86,11 +86,13 @@ public class BenchFileStore extends ResourceTest {
 	}
 
 	public void testStoreLastModified() {
-		new StoreTestRunner() {
+		StoreTestRunner runner = new StoreTestRunner() {
 			protected void test() {
 				existingStore.fetchInfo().getLastModified();
 				nonexistingStore.fetchInfo().getLastModified();
 			}
-		}.run(this, REPEATS, LOOP_SIZE);
+		};
+		runner.setFingerprintName("Get file last modified time");
+		runner.run(this, REPEATS, LOOP_SIZE);
 	}
 }

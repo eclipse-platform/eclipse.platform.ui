@@ -35,9 +35,9 @@ public class WorkspacePerformanceTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(WorkspacePerformanceTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new WorkspacePerformanceTest("testRefreshProject"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new WorkspacePerformanceTest("testRefreshProject"));
+		//		return suite;
 	}
 
 	public WorkspacePerformanceTest() {
@@ -152,7 +152,7 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	 * Benchmark test of creating a project and populating it with folders and files.
 	 */
 	public void testCreateResources() {
-		new PerformanceTestRunner() {
+		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			protected void setUp() {
 				waitForBackgroundActivity();
 			}
@@ -164,12 +164,14 @@ public class WorkspacePerformanceTest extends ResourceTest {
 			protected void test() {
 				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 			}
-		}.run(this, REPEATS, 1);
+		};
+		runner.setFingerprintName("Create Resources");
+		runner.run(this, REPEATS, 1);
 	}
 
 	public void testDeleteProject() {
 		//create the project contents
-		new PerformanceTestRunner() {
+		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			protected void setUp() {
 				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 				waitForBackgroundActivity();
@@ -182,7 +184,9 @@ public class WorkspacePerformanceTest extends ResourceTest {
 					fail("Failed to delete project during performance test", e);
 				}
 			}
-		}.run(this, REPEATS, 1);
+		};
+		runner.setFingerprintName("Delete Project");
+		runner.run(this, REPEATS, 1);
 	}
 
 	public void testFolderCopy() {
@@ -222,7 +226,7 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	}
 
 	public void testRefreshProject() {
-		new PerformanceTestRunner() {
+		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			protected void setUp() throws CoreException {
 				createAndPopulateProject(50000);
 				deleteAndRecreateProject();
@@ -240,7 +244,9 @@ public class WorkspacePerformanceTest extends ResourceTest {
 					fail("Failed to refresh during testRefreshProject", e);
 				}
 			}
-		}.run(this, REPEATS, 1);
+		};
+		runner.setFingerprintName("Refresh Project");
+		runner.run(this, REPEATS, 1);
 	}
 
 	/**

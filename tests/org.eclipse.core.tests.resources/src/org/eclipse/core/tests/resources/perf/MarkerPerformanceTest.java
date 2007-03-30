@@ -58,7 +58,7 @@ public class MarkerPerformanceTest extends ResourceTest {
 				}
 			}
 		};
-		new PerformanceTestRunner() {
+		PerformanceTestRunner runner = new PerformanceTestRunner() {
 			protected void test() {
 				try {
 					getWorkspace().run(runnable, null);
@@ -66,7 +66,9 @@ public class MarkerPerformanceTest extends ResourceTest {
 					fail("2.0", e);
 				}
 			}
-		}.run(this, 1, 1);
+		};
+		runner.setFingerprintName("Set marker attributes");
+		runner.run(this, 1, 1);
 	}
 
 	public void testSetAttributes2() {
