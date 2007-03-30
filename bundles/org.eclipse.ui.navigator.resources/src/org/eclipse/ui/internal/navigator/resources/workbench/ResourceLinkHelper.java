@@ -16,8 +16,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.navigator.ILinkHelper;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -34,8 +34,10 @@ public class ResourceLinkHelper implements ILinkHelper {
 	 * @see org.eclipse.ui.navigator.ILinkHelper#findSelection(org.eclipse.ui.IEditorInput)
 	 */
 	public IStructuredSelection findSelection(IEditorInput anInput) {
-		if (anInput instanceof IFileEditorInput)
-			return new StructuredSelection(((IFileEditorInput) anInput).getFile());
+		IFile file = ResourceUtil.getFile(anInput);
+		if (file != null) {
+			return new StructuredSelection(file);
+		}
 		return StructuredSelection.EMPTY;
 	}
 
