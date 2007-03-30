@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
@@ -69,14 +70,18 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 				"SHOW_BUILDID_ON_STARTUP")) { //$NON-NLS-1$
 			final String buildId = System.getProperty(
 					"eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
-
+			// find the specified location.  Not currently API
+			// hardcoded to be sensible with our current Europa Graphic
+			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
+			Point buildIdPoint = parsePoint(buildIdLocString);
+			final int buildX = buildIdPoint == null ? 322 : buildIdPoint.x, buildY = buildIdPoint == null ? 190
+					: buildIdPoint.y;
+			
 			getContent().addPaintListener(new PaintListener() {
 
 				public void paintControl(PaintEvent e) {
 					e.gc.setForeground(getForeground());
-					// hardcoded to be sensible with our current Europa Graphic
-					e.gc.drawText(buildId, 322, 190, true);
-
+					e.gc.drawText(buildId, buildX, buildY, true);
 				}
 			});
 		}
@@ -106,5 +111,22 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			return null;
 		}
 		return new Rectangle(x, y, w, h);
+	}
+	
+	private Point parsePoint(String string) {
+		if (string == null)
+			return null;
+		int x, y;
+		int lastPos = 0;
+		try {
+			int i = string.indexOf(',', lastPos);
+			x = Integer.parseInt(string.substring(lastPos, i));
+			lastPos = i + 1;			
+			y = Integer.parseInt(string.substring(lastPos));
+		} catch (RuntimeException e) {
+			// sloppy error handling
+			return null;
+		}
+		return new Point(x, y);
 	}
 }
