@@ -1841,6 +1841,12 @@ public class Perspective {
 	private void refreshEditorAreaVisibility() {
 		// If it's minimized then it's in the trim
 		if (editorAreaState == IStackPresentationSite.STATE_MINIMIZED) {
+			// find the right editor stack and declare it minimized (needed to support
+			// 'auto-activation'...
+			EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);			
+			editorStack.setMinimized(editorAreaState == IStackPresentationSite.STATE_MINIMIZED);
+			
+			// Hide the editor area and show its trim 
 			hideEditorAreaLocal();
 			setEditorAreaTrimVisibility(true);
 			return;
