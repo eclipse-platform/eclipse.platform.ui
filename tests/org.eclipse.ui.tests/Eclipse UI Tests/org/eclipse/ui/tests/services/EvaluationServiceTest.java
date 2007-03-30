@@ -199,7 +199,8 @@ public class EvaluationServiceTest extends UITestCase {
 		assertFalse(contextService.getActiveContextIds().contains(CONTEXT_ID1));
 		propertyChanged[0] = false;
 		
-		IWorkbenchWindow secondWindow = openTestWindow();
+		// open second window
+		openTestWindow();
 		// ensure that our context expression was not re-evaluated
 		activation = contextService.activateContext(CONTEXT_ID1);
 		assertFalse(propertyChanged[0]);
