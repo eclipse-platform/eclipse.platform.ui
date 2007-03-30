@@ -144,6 +144,8 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 				public void fileInformation(int type, ICVSFolder parent, String filename) {
 					// We can't set exists true here as we may get a conflict on a deleted file.
 					// i.e. remote files are always communicated to the server as modified.
+					if (type == Update.STATE_ADDED_LOCAL)
+						exists[0] = false;
 				}
 				public void fileDoesNotExist(ICVSFolder parent, String filename) {
 					exists[0] = false;
