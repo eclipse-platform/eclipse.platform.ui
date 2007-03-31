@@ -31,7 +31,7 @@ public interface IExtensionActivationListener {
 	 * @param aViewerId
 	 *            The viewer id of the INavigatorContentService
 	 * @param theNavigatorExtensionIds
-	 *            An array of updated extension ids
+	 *            A sorted array of updated extension ids
 	 * @param isActive
 	 *            The new activation state of the extensions
 	 */

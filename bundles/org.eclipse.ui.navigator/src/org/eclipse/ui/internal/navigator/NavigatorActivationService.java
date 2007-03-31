@@ -245,11 +245,17 @@ public final class NavigatorActivationService implements
 
 	private void notifyListeners(String[] navigatorExtensionIds,
 			boolean toEnable) {
-		Object[] listenerArray = listeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			((IExtensionActivationListener) listenerArray[i])
-					.onExtensionActivation(contentService.getViewerId(),
-							navigatorExtensionIds, toEnable);
+		
+		if(navigatorExtensionIds != null) { // should really never be null, but just in case
+			if(navigatorExtensionIds.length > 1)
+				Arrays.sort(navigatorExtensionIds);
+			
+			Object[] listenerArray = listeners.getListeners();
+			for (int i = 0; i < listenerArray.length; i++) {
+				((IExtensionActivationListener) listenerArray[i])
+						.onExtensionActivation(contentService.getViewerId(),
+								navigatorExtensionIds, toEnable);
+			}
 		}
 
 	}
