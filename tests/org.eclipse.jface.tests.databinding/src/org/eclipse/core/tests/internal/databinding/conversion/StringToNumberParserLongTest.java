@@ -9,28 +9,32 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.validation;
+package org.eclipse.core.tests.internal.databinding.conversion;
 
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 
 /**
- * @since 1.0
+ * @since 1.1
+ *
  */
-public class StringToByteValidator extends AbstractStringToNumberValidator {
-	private static final Byte MIN = new Byte(Byte.MIN_VALUE);
-	private static final Byte MAX = new Byte(Byte.MAX_VALUE);
-	
-	/**
-	 * @param converter
-	 */
-	public StringToByteValidator(NumberFormatConverter converter) {
-		super(converter, MIN, MAX);
+public class StringToNumberParserLongTest extends
+		StringToNumberParserTestHarness {
+
+	protected boolean assertValid(Number number) {
+		return StringToNumberParser.inLongRange(number);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#isInRange(java.lang.Number)
+	 * @see org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTestHarness#getValidMax()
 	 */
-	protected boolean isInRange(Number number) {
-		return StringToNumberParser.inByteRange(number);
+	protected Number getValidMax() {
+		return new Long(Long.MAX_VALUE);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTestHarness#getValidMin()
+	 */
+	protected Number getValidMin() {
+		return new Long(Long.MIN_VALUE);
 	}
 }

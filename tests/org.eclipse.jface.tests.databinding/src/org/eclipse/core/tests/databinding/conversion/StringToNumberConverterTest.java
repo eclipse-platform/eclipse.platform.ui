@@ -22,6 +22,7 @@ import com.ibm.icu.text.NumberFormat;
 /**
  * @since 1.1
  */
+//TODO test for ICU4Js BigDecimal
 public class StringToNumberConverterTest extends TestCase {
 	private NumberFormat numberFormat;
 	private NumberFormat numberIntegerFormat;
@@ -172,6 +173,15 @@ public class StringToNumberConverterTest extends TestCase {
 
 		try {
 			converter.convert("1 1 1");
+			fail("exception should have been thrown");
+		} catch (IllegalArgumentException e) {
+		}
+	}
+	
+	public void testThrowsIllegalArgumentExceptionIfNumberIsOutOfRange() throws Exception {
+		StringToNumberConverter converter = StringToNumberConverter.toInteger(false);
+		try {
+			converter.convert(numberFormat.format(Long.MAX_VALUE));
 			fail("exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 		}

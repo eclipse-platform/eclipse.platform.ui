@@ -11,8 +11,12 @@
 
 package org.eclipse.core.databinding.conversion;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.ParsePosition;
+
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser.ParseResult;
+import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 
 import com.ibm.icu.text.NumberFormat;
 
@@ -22,7 +26,7 @@ import com.ibm.icu.text.NumberFormat;
  * 
  * @since 1.0
  */
-public class StringToNumberConverter extends Converter {
+public class StringToNumberConverter extends NumberFormatConverter {
 	private Class toType;
 	/**
 	 * NumberFormat instance to use for conversion. Access must be synchronized.
@@ -30,63 +34,123 @@ public class StringToNumberConverter extends Converter {
 	private NumberFormat numberFormat;
 
 	/**
-	 * @param toType
+	 * Minimum possible value for the type. Can be <code>null</code> as
+	 * BigInteger doesn't have bounds.
 	 */
-	private StringToNumberConverter(NumberFormat numberFormat, Class toType) {
-		super(String.class, toType);
-		
+	private final Number min;
+	/**
+	 * Maximum possible value for the type. Can be <code>null</code> as
+	 * BigInteger doesn't have bounds.
+	 */
+	private final Number max;
+
+	/**
+	 * The boxed type of the toType;
+	 */
+	private final Class boxedType;
+
+	private static final Integer MIN_INTEGER = new Integer(Integer.MIN_VALUE);
+	private static final Integer MAX_INTEGER = new Integer(Integer.MAX_VALUE);
+
+	private static final Double MIN_DOUBLE = new Double(-Double.MAX_VALUE);
+	private static final Double MAX_DOUBLE = new Double(Double.MAX_VALUE);
+
+	private static final Long MIN_LONG = new Long(Long.MIN_VALUE);
+	private static final Long MAX_LONG = new Long(Long.MIN_VALUE);
+
+	private static final Float MIN_FLOAT = new Float(-Float.MAX_VALUE);
+	private static final Float MAX_FLOAT = new Float(Float.MAX_VALUE);
+
+	/**
+	 * @param numberFormat
+	 * @param toType
+	 * @param min
+	 *            minimum possible value for the type, can be <code>null</code>
+	 *            as BigInteger doesn't have bounds
+	 * @param max
+	 *            maximum possible value for the type, can be <code>null</code>
+	 *            as BigInteger doesn't have bounds
+	 * @param boxedType
+	 *            a convenience that allows for the checking against one type
+	 *            rather than boxed and unboxed types
+	 */
+	private StringToNumberConverter(NumberFormat numberFormat, Class toType,
+			Number min, Number max, Class boxedType) {
+		super(String.class, toType, numberFormat);
+
 		this.toType = toType;
 		this.numberFormat = numberFormat;
+		this.min = min;
+		this.max = max;
+		this.boxedType = boxedType;
 	}
 
 	/**
-	 * 
+	 * Converts the provided <code>fromObject</code> to the requested
+	 * {@link #getToType() to type}.
 	 * 
 	 * @see org.eclipse.core.databinding.conversion.IConverter#convert(java.lang.Object)
+	 * @throws IllegalArgumentException
+	 *             if the value isn't in the format required by the NumberFormat
+	 *             or the value is out of range for the
+	 *             {@link #getToType() to type}.
+	 * @throws IllegalArgumentException
+	 *             if conversion was not possible
 	 */
 	public Object convert(Object fromObject) {
-		if (!(fromObject instanceof String)) {
-			throw new IllegalArgumentException(
-					"'fromObject' not instanceof String"); //$NON-NLS-1$
-		}
-		String source = (String) fromObject;
-		if (!toType.isPrimitive() && source.trim().length() == 0) {
+		ParseResult result = StringToNumberParser.parse(fromObject,
+				numberFormat, toType.isPrimitive());
+
+		if (result.getPosition() != null) {
+			// this shouldn't happen in the pipeline as validation should catch
+			// it but anyone can call convert so we should return a properly
+			// formatted message in an exception
+			throw new IllegalArgumentException(StringToNumberParser
+					.createParseErrorMessage((String) fromObject, result
+							.getPosition()));
+		} else if (result.getNumber() == null) {
+			// if an error didn't occur and the number is null then it's a boxed
+			// type and null should be returned
 			return null;
 		}
 
-		Number result = null;
-
-		synchronized (numberFormat) {
-			ParsePosition position = new ParsePosition(0);
-			result = numberFormat.parse(source, position);
-
-			if (position.getIndex() != source.length()
-					|| position.getErrorIndex() > -1) {
-				int errorIndex = (position.getErrorIndex() > -1) ? position
-						.getErrorIndex() : position.getIndex();
-
-				throw new IllegalArgumentException(
-						"FromObject " + fromObject + " was invalid at character " + errorIndex); //$NON-NLS-1$ //$NON-NLS-2$
+		/*
+		 * Technically the checks for ranges aren't needed here because the
+		 * validator should have validated this already but we shouldn't assume
+		 * this has occurred.
+		 */
+		if (Integer.class.equals(boxedType)) {
+			if (StringToNumberParser.inIntegerRange(result.getNumber())) {
+				return new Integer(result.getNumber().intValue());
 			}
-		}
-		
-		if (Integer.class.equals(toType)
-				|| Integer.TYPE.equals(toType)) {
-			return new Integer(result.intValue());
-		} else if (Double.class.equals(toType)
-				|| Double.TYPE.equals(toType)) {
-			return new Double(result.doubleValue());
-		} else if (Long.class.equals(toType)
-				|| Long.TYPE.equals(toType)) {
-			return new Long(result.longValue());
-		} else if (Float.class.equals(toType)
-				|| Float.TYPE.equals(toType)) {
-			return new Float(result.floatValue());
-		} else if (BigInteger.class.equals(toType)) {
-			return BigInteger.valueOf(result.longValue());
+		} else if (Double.class.equals(boxedType)) {
+			if (StringToNumberParser.inDoubleRange(result.getNumber())) {
+				return new Double(result.getNumber().doubleValue());
+			}
+		} else if (Long.class.equals(boxedType)) {
+			if (StringToNumberParser.inLongRange(result.getNumber())) {
+				return new Long(result.getNumber().longValue());
+			}
+		} else if (Float.class.equals(boxedType)) {
+			if (StringToNumberParser.inFloatRange(result.getNumber())) {
+				return new Float(result.getNumber().floatValue());
+			}
+		} else if (BigInteger.class.equals(boxedType)) {
+			return new BigDecimal(result.getNumber().doubleValue())
+					.toBigInteger();
 		}
 
-		return null;
+		if (min != null && max != null) {
+			throw new IllegalArgumentException(StringToNumberParser
+					.createOutOfRangeMessage(min, max, numberFormat));
+		}
+
+		/*
+		 * Fail safe. I don't think this could even be thrown but throwing the
+		 * exception is better than returning null and hiding the error.
+		 */
+		throw new IllegalArgumentException(
+				"Could not convert [" + fromObject + "] to type [" + toType + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	/**
@@ -106,7 +170,8 @@ public class StringToNumberConverter extends Converter {
 	public static StringToNumberConverter toInteger(NumberFormat numberFormat,
 			boolean primitive) {
 		return new StringToNumberConverter(numberFormat,
-				(primitive) ? Integer.TYPE : Integer.class);
+				(primitive) ? Integer.TYPE : Integer.class, MIN_INTEGER,
+				MAX_INTEGER, Integer.class);
 	}
 
 	/**
@@ -126,7 +191,8 @@ public class StringToNumberConverter extends Converter {
 	public static StringToNumberConverter toDouble(NumberFormat numberFormat,
 			boolean primitive) {
 		return new StringToNumberConverter(numberFormat,
-				(primitive) ? Double.TYPE : Double.class);
+				(primitive) ? Double.TYPE : Double.class, MIN_DOUBLE,
+				MAX_DOUBLE, Double.class);
 	}
 
 	/**
@@ -137,15 +203,17 @@ public class StringToNumberConverter extends Converter {
 	public static StringToNumberConverter toLong(boolean primitive) {
 		return toLong(NumberFormat.getIntegerInstance(), primitive);
 	}
-	
+
 	/**
 	 * @param numberFormat
 	 * @param primitive
 	 * @return to Long converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toLong(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter toLong(NumberFormat numberFormat,
+			boolean primitive) {
 		return new StringToNumberConverter(numberFormat,
-				(primitive) ? Long.TYPE : Long.class);		
+				(primitive) ? Long.TYPE : Long.class, MIN_LONG, MAX_LONG,
+				Long.class);
 	}
 
 	/**
@@ -156,15 +224,17 @@ public class StringToNumberConverter extends Converter {
 	public static StringToNumberConverter toFloat(boolean primitive) {
 		return toFloat(NumberFormat.getNumberInstance(), primitive);
 	}
-	
+
 	/**
 	 * @param numberFormat
 	 * @param primitive
 	 * @return to Float converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter toFloat(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter toFloat(NumberFormat numberFormat,
+			boolean primitive) {
 		return new StringToNumberConverter(numberFormat,
-				(primitive) ? Float.TYPE : Float.class);		
+				(primitive) ? Float.TYPE : Float.class, MIN_FLOAT, MAX_FLOAT,
+				Float.class);
 	}
 
 	/**
@@ -173,12 +243,13 @@ public class StringToNumberConverter extends Converter {
 	public static StringToNumberConverter toBigInteger() {
 		return toBigInteger(NumberFormat.getIntegerInstance());
 	}
-	
+
 	/**
 	 * @param numberFormat
 	 * @return to BigInteger converter with the provided numberFormat
 	 */
 	public static StringToNumberConverter toBigInteger(NumberFormat numberFormat) {
-		return new StringToNumberConverter(numberFormat, BigInteger.class);
+		return new StringToNumberConverter(numberFormat, BigInteger.class,
+				null, null, BigInteger.class);
 	}
 }

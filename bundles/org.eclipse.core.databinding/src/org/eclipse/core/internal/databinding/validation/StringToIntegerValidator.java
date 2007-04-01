@@ -11,27 +11,30 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.internal.databinding.BindingMessages;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
+
 
 /**
+ * Validates that a string is of the appropriate format and is in the range of
+ * an integer.
+ * 
  * @since 1.0
  */
-public class StringToIntegerValidator extends WrappedConverterValidator {
+public class StringToIntegerValidator extends AbstractStringToNumberValidator {
+	private static final Integer MIN = new Integer(Integer.MIN_VALUE);
+	private static final Integer MAX = new Integer(Integer.MAX_VALUE);
+
 	/**
 	 * @param converter
 	 */
-	public StringToIntegerValidator(IConverter converter) {
-		super(converter);
+	public StringToIntegerValidator(NumberFormatConverter converter) {
+		super(converter, MIN, MAX);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.databinding.validation.WrappedConverterValidator#getErrorMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#inRange(java.lang.Number)
 	 */
-	protected String getErrorMessage() {
-		return BindingMessages.getString("Validate_RangeStart") + Integer.MIN_VALUE + //$NON-NLS-1$
-				BindingMessages.getString("and") + Integer.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+	protected boolean isInRange(Number number) {
+		return StringToNumberParser.inIntegerRange(number);
 	}
 }

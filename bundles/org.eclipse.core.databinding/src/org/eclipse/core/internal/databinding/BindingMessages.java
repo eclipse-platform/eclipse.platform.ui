@@ -13,6 +13,8 @@ package org.eclipse.core.internal.databinding;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * @since 1.0
  * 
@@ -24,7 +26,7 @@ public class BindingMessages {
 	 */
 	private static final ResourceBundle bundle = ResourceBundle
 			.getBundle("org.eclipse.core.internal.databinding.messages"); //$NON-NLS-1$
-	
+
 	/**
 	 * Key to be used for an index out of range message.
 	 */
@@ -47,6 +49,22 @@ public class BindingMessages {
 	public static String getString(String key) {
 		try {
 			return bundle.getString(key);
+		} catch (MissingResourceException e) {
+			return key;
+		}
+	}
+
+	/**
+	 * Returns a formatted string with the given key in the resource bundle for
+	 * JFace Data Binding.
+	 * 
+	 * @param key
+	 * @param arguments
+	 * @return formatted string, the key if the key is invalid
+	 */
+	public static String formatString(String key, Object[] arguments) {
+		try {
+			return MessageFormat.format(bundle.getString(key), arguments);
 		} catch (MissingResourceException e) {
 			return key;
 		}

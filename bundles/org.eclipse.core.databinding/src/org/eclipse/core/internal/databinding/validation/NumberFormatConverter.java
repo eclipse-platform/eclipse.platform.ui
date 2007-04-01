@@ -11,26 +11,33 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
+import org.eclipse.core.databinding.conversion.Converter;
+
+import com.ibm.icu.text.NumberFormat;
 
 /**
+ * Converter that uses a number format for conversion.
+ * 
  * @since 1.0
  */
-public class StringToByteValidator extends AbstractStringToNumberValidator {
-	private static final Byte MIN = new Byte(Byte.MIN_VALUE);
-	private static final Byte MAX = new Byte(Byte.MAX_VALUE);
+public abstract class NumberFormatConverter extends Converter {
+	private final NumberFormat numberFormat;
 	
 	/**
-	 * @param converter
+	 * @param fromType
+	 * @param toType
+	 * @param numberFormat 
 	 */
-	public StringToByteValidator(NumberFormatConverter converter) {
-		super(converter, MIN, MAX);
+	public NumberFormatConverter(Object fromType, Object toType, NumberFormat numberFormat) {
+		super(fromType, toType);
+		
+		this.numberFormat = numberFormat;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#isInRange(java.lang.Number)
+	/**
+	 * @return number format
 	 */
-	protected boolean isInRange(Number number) {
-		return StringToNumberParser.inByteRange(number);
+	/*package */ NumberFormat getNumberFormat() {
+		return numberFormat;
 	}
 }

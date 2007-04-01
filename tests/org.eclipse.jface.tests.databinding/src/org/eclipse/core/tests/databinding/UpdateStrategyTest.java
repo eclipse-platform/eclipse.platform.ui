@@ -21,14 +21,13 @@ import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.conversion.DateToStringConverter;
+import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToBooleanConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToBooleanPrimitiveConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
-import org.eclipse.core.internal.databinding.conversion.StringToBytePrimitiveConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
-import org.eclipse.core.internal.databinding.conversion.StringToShortPrimitiveConverter;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -124,7 +123,7 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 	}
 	
 	public void testDefaultConverterForStringToBytePrimitive() throws Exception {
-		assertDefaultConverter(String.class, Byte.TYPE, StringToBytePrimitiveConverter.class);
+		assertDefaultConverter(String.class, Byte.TYPE, StringToByteConverter.class);
 	}
 	
 	public void testDefaultConverterForStringToCharacter() throws Exception {
@@ -140,7 +139,23 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 	}
 	
 	public void testDefaultConverterForStringToShortPrimitive() throws Exception {
-		assertDefaultConverter(String.class, Short.TYPE, StringToShortPrimitiveConverter.class);
+		assertDefaultConverter(String.class, Short.TYPE, StringToShortConverter.class);
+	}
+	
+	public void testDefaultConverterForByteToString() throws Exception {
+		assertDefaultConverter(Byte.class, String.class, IntegerToStringConverter.class);
+	}
+	
+	public void testDefaultConverterForBytePrimitiveToString() throws Exception {
+		assertDefaultConverter(Byte.TYPE, String.class, IntegerToStringConverter.class);
+	}
+	
+	public void testDefaultConverterForShortToString() throws Exception {
+		assertDefaultConverter(Short.class, String.class, IntegerToStringConverter.class);
+	}
+	
+	public void testDefaultConverterForShortPrimitiveToString() throws Exception {
+		assertDefaultConverter(Short.TYPE, String.class, IntegerToStringConverter.class);
 	}
 	
 	private void assertDefaultConverter(Class fromType, Class toType, Class converterType) {

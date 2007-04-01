@@ -11,28 +11,29 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.internal.databinding.BindingMessages;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 
 /**
- * @since 3.3
+ * Validates that a string is of the appropriate format and is in the range of
+ * an long.
  * 
+ * @since 1.0
  */
-public class StringToLongValidator extends WrappedConverterValidator {
+public class StringToLongValidator extends AbstractStringToNumberValidator {
+	private static final Long MIN = new Long(Long.MIN_VALUE);
+	private static final Long MAX = new Long(Long.MAX_VALUE);
+
 	/**
 	 * @param converter
 	 */
-	public StringToLongValidator(IConverter converter) {
-		super(converter);
+	public StringToLongValidator(NumberFormatConverter converter) {
+		super(converter, MIN, MAX);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.databinding.validation.WrappedConverterValidator#getErrorMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#inRange(java.lang.Number)
 	 */
-	protected synchronized String getErrorMessage() {
-		return BindingMessages.getString("Validate_RangeStart") + Long.MIN_VALUE + //$NON-NLS-1$
-				BindingMessages.getString("and") + Long.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$ 
+	protected boolean isInRange(Number number) {
+		return StringToNumberParser.inLongRange(number);
 	}
 }

@@ -11,28 +11,26 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.internal.databinding.BindingMessages;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 
 /**
  * @since 1.0
  */
-public class StringToShortValidator extends WrappedConverterValidator {
-
+public class StringToShortValidator extends AbstractStringToNumberValidator {
+	private static final Short MIN = new Short(Short.MIN_VALUE);
+	private static final Short MAX = new Short(Short.MAX_VALUE);
+	
 	/**
 	 * @param converter
 	 */
-	public StringToShortValidator(IConverter converter) {
-		super(converter);
+	public StringToShortValidator(NumberFormatConverter converter) {
+		super(converter, MIN, MAX);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.internal.databinding.validation.WrappedConverterValidator#getErrorMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#inRange(java.lang.Number)
 	 */
-	protected String getErrorMessage() {
-		return BindingMessages.getString("Validate_RangeStart") + Short.MIN_VALUE + //$NON-NLS-1$
-				BindingMessages.getString("and") + Short.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$;
+	protected boolean isInRange(Number number) {
+		return StringToNumberParser.inShortRange(number);
 	}
 }

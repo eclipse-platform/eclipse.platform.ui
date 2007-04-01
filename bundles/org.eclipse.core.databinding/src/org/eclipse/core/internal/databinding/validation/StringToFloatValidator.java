@@ -11,27 +11,32 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.internal.databinding.BindingMessages;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 
 /**
+ * Validates that a string is of the appropriate format and is in the range of a
+ * float.
+ * 
  * @since 1.0
  */
-public class StringToFloatValidator extends WrappedConverterValidator {
+public class StringToFloatValidator extends AbstractStringToNumberValidator {
+
+	private static final Float MIN = new Float(-Float.MAX_VALUE);
+	private static final Float MAX = new Float(Float.MAX_VALUE);
+
 	/**
 	 * @param converter
 	 */
-	public StringToFloatValidator(IConverter converter) {
-		super(converter);
+	public StringToFloatValidator(NumberFormatConverter converter) {
+		super(converter, MIN, MAX);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.internal.databinding.validation.WrappedConverterValidator#getErrorMessage()
+	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#inRange(java.lang.Number)
 	 */
-	protected synchronized String getErrorMessage() {
-		return BindingMessages.getString("Validate_RangeStart") + Short.MIN_VALUE + //$NON-NLS-1$
-				BindingMessages.getString("and") + Short.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+	protected boolean isInRange(Number number) {
+		return StringToNumberParser.inFloatRange(number);
 	}
 }

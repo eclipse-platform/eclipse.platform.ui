@@ -21,6 +21,7 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.internal.databinding.Pair;
 import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
+import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
 import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
 import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
@@ -222,22 +223,22 @@ public class UpdateValueStrategy extends UpdateStrategy {
 					// TODO sring based lookup
 					if (Integer.class.equals(toType)
 							|| Integer.TYPE.equals(toType)) {
-						result = new StringToIntegerValidator(converter);
+						result = new StringToIntegerValidator((NumberFormatConverter) converter);
 					} else if (Long.class.equals(toType)
 							|| Long.TYPE.equals(toType)) {
-						result = new StringToLongValidator(converter);
+						result = new StringToLongValidator((NumberFormatConverter) converter);
 					} else if (Float.class.equals(toType)
 							|| Float.TYPE.equals(toType)) {
-						result = new StringToFloatValidator(converter);
+						result = new StringToFloatValidator((NumberFormatConverter) converter);
 					} else if (Double.class.equals(toType)
 							|| Double.TYPE.equals(toType)) {
-						result = new StringToDoubleValidator(converter);
+						result = new StringToDoubleValidator((NumberFormatConverter) converter);
 					} else if (Byte.class.equals(toType)
 							|| Byte.TYPE.equals(toType)) {
-						result = new StringToByteValidator(converter);
+						result = new StringToByteValidator((NumberFormatConverter) converter);
 					} else if (Short.class.equals(toType)
 							|| Short.TYPE.equals(toType)) {
-						result = new StringToShortValidator(converter);
+						result = new StringToShortValidator((NumberFormatConverter) converter);
 					} else if (Date.class.equals(toType)
 							&& converter instanceof StringToDateConverter) {
 						result = new StringToDateValidator(

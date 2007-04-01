@@ -11,28 +11,28 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.internal.databinding.BindingMessages;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 
 /**
  * @since 1.0
  */
-public class StringToDoubleValidator extends WrappedConverterValidator {
+public class StringToDoubleValidator extends AbstractStringToNumberValidator {
+	private static final Double MIN = new Double(-Double.MAX_VALUE);
+	private static final Double MAX = new Double(Double.MAX_VALUE);
+	
 	/**
 	 * @param converter
 	 */
-	public StringToDoubleValidator(IConverter converter) {
-		super(converter);
+	public StringToDoubleValidator(NumberFormatConverter converter) {
+		super(converter, MIN, MAX);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.internal.databinding.validation.WrappedConverterValidator#getErrorMessage()
+	 * @see org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator#inRange(java.lang.Number)
 	 */
-	protected String getErrorMessage() {
-		return BindingMessages.getString("Validate_Like") + //$NON-NLS-1$
-				BindingMessages.getString("Validate_Number_Examples") //$NON-NLS-1$
-				+ Double.MIN_VALUE + ", " + Double.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$;
+	protected boolean isInRange(Number number) {
+		return StringToNumberParser.inDoubleRange(number);
 	}
 }

@@ -27,10 +27,26 @@ import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
+import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
+import org.eclipse.core.tests.internal.databinding.conversion.IntegerToStringConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToByteConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserByteTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserDoubleTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserFloatTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserIntegerTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserLongTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserShortTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToShortConverterTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
-import org.eclipse.core.tests.internal.databinding.validation.WrappedConverterValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToByteValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToDoubleValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToFloatValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToIntegerValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToLongValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToShortValidatorTest;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimitiveTest;
@@ -108,14 +124,34 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
 		addTestSuite(WritableMapTest.class);
+		
+		//org.eclipse.core.tests.internal.databinding
+		addTestSuite(BindingMessagesTest.class);
 
+		//org.eclipse.core.tests.internal.databinding.conversion
+		addTestSuite(IntegerToStringConverterTest.class);
+		addTestSuite(StringToByteConverterTest.class);
+		addTestSuite(StringToNumberParserByteTest.class);
+		addTestSuite(StringToNumberParserDoubleTest.class);
+		addTestSuite(StringToNumberParserFloatTest.class);
+		addTestSuite(StringToNumberParserIntegerTest.class);
+		addTestSuite(StringToNumberParserLongTest.class);
+		addTestSuite(StringToNumberParserShortTest.class);
+		addTestSuite(StringToNumberParserTest.class);
+		addTestSuite(StringToShortConverterTest.class);
+		
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTestSuite(DetailObservableListTest.class);
 		addTestSuite(DetailObservableSetTest.class);
 		addTestSuite(DetailObservableValueTest.class);
 		
 		//org.eclipse.core.tests.internal.databinding.validation
-		addTestSuite(WrappedConverterValidatorTest.class);
+		addTestSuite(StringToByteValidatorTest.class);
+		addTestSuite(StringToDoubleValidatorTest.class);
+		addTestSuite(StringToFloatValidatorTest.class);
+		addTestSuite(StringToIntegerValidatorTest.class);
+		addTestSuite(StringToLongValidatorTest.class);
+		addTestSuite(StringToShortValidatorTest.class);
 
 		// org.eclipse.core.tests.databinding.observable
 		addTestSuite(RealmTest.class);
