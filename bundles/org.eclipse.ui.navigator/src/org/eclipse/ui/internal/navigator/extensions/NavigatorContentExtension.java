@@ -49,14 +49,10 @@ public class NavigatorContentExtension implements IMementoAware,
 	private NavigatorContentService contentService;
 
 	private NavigatorContentDescriptor descriptor;
-
-	private final String viewerId;
-
+ 
 	private ICommonContentProvider contentProvider;
 
 	private ICommonLabelProvider labelProvider;
-
-	private IExtensionStateModel stateModel;
 
 	private boolean labelProviderInitializationFailed = false;
 
@@ -87,8 +83,7 @@ public class NavigatorContentExtension implements IMementoAware,
 		Assert.isNotNull(aDescriptor);
 
 		descriptor = aDescriptor;
-		contentService = aContentService;
-		viewerId = contentService.getViewerId();
+		contentService = aContentService; 
 		viewerManager = aViewerManager;
 	}
 
@@ -337,10 +332,7 @@ public class NavigatorContentExtension implements IMementoAware,
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtension#getStateModel()
 	 */
 	public IExtensionStateModel getStateModel() {
-		if (stateModel == null) {
-			stateModel = new ExtensionStateModel(descriptor.getId(), viewerId);
-		}
-		return stateModel;
+		return contentService.getExtensionStateService().getExtensionStateModel(getDescriptor());
 	}
 
 	/**

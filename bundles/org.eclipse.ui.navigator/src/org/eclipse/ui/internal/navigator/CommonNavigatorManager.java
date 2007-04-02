@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -38,6 +43,7 @@ import org.eclipse.ui.navigator.ICommonViewerSite;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * <p>
@@ -53,6 +59,9 @@ import org.eclipse.ui.navigator.NavigatorActionService;
  */
 public final class CommonNavigatorManager implements ISelectionChangedListener {
 
+	// delay for updating the action bars (in ms)
+	private static final long DELAY = 200;
+
 	private final CommonNavigator commonNavigator;
 
 	private final INavigatorContentService contentService;
@@ -64,6 +73,39 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	private final IStatusLineManager statusLineManager;
 
 	private final ILabelProvider labelProvider;
+
+	private UpdateActionBarsJob updateActionBars;
+	
+	private class UpdateActionBarsJob extends UIJob {
+		public UpdateActionBarsJob(String label) {
+			super(label);
+		}
+		  
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+
+			SafeRunner.run(new ISafeRunnable() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+				 */
+				public void run() throws Exception {
+					IStructuredSelection selection = new StructuredSelection(commonNavigator.getCommonViewer().getInput());
+					actionService.setContext(new ActionContext(selection));
+					actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());				
+				}
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+				 */
+				public void handleException(Throwable exception) {
+					NavigatorPlugin.logError(0, exception.getMessage(), exception);
+				}
+			});
+			return Status.OK_STATUS;
+		} 
+	}
 
 	/**
 	 * <p>
@@ -89,6 +131,9 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	}
 
 	private void init() {
+		
+		updateActionBars = new UpdateActionBarsJob(commonNavigator.getTitle());
+		
 		CommonViewer commonViewer = commonNavigator.getCommonViewer();
 		commonViewer.addPostSelectionChangedListener(this);
 		updateStatusBar(commonViewer.getSelection());
@@ -96,10 +141,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory
 				.createCommonViewerSite(commonNavigator.getViewSite());
 		actionService = new NavigatorActionService(commonViewerSite,
-				commonViewer, commonViewer.getNavigatorContentService());
-
-		initContextMenu();
-		initViewMenu();
+				commonViewer, commonViewer.getNavigatorContentService()); 
 
 		final RetargetAction openAction = new RetargetAction(
 				ICommonActionConstants.OPEN,
@@ -113,7 +155,10 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());							
 				openAction.run();
 			}
-		}); 
+		});  
+
+		initContextMenu();
+		initViewMenu();
 
 	}
 
@@ -154,10 +199,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	public void restoreState(IMemento aMemento) {
 		actionService.restoreState(aMemento);
 		
-		if(commonNavigator.getCommonViewer().getInput() != null) {
-			actionService.setContext(new ActionContext(new StructuredSelection(commonNavigator.getCommonViewer().getInput())));		
-			actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
-		}
+		updateActionBars.schedule(DELAY);
 	}
 
 	/**
@@ -217,6 +259,9 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS
 				+ "-end"));//$NON-NLS-1$	
+		
+		updateActionBars.schedule(DELAY);
+		
 	}
 
 	/**

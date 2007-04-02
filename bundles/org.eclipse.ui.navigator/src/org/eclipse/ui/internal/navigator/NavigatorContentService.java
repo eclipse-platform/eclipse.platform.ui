@@ -119,13 +119,15 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private INavigatorActivationService navigatorActivationService;
 
+	private NavigatorSaveablesService navigatorSaveablesService;
+	
+	private NavigatorExtensionStateService navigatorExtensionStateService;
+
 	private IDescriptionProvider descriptionProvider;
 
 	private boolean contentProviderInitialized;
 
 	private boolean labelProviderInitialized;
-
-	private NavigatorSaveablesService navigatorSaveablesService;
 
 	/**
 	 * @param aViewerId
@@ -998,6 +1000,31 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return navigatorActivationService;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorContentService#getSaveableService()
+	 */
+	public INavigatorSaveablesService getSaveablesService() {
+		synchronized (this) {
+			if (navigatorSaveablesService == null) {
+				navigatorSaveablesService = new NavigatorSaveablesService(this);
+				assistant.addListener(navigatorSaveablesService);
+			}
+			return navigatorSaveablesService;
+		}
+	}
+	
+	/** 
+	 * Not API as of 3.3. 
+	 * @return The extension state service for this content service. 
+	 * 
+	 */
+	public NavigatorExtensionStateService getExtensionStateService() {
+		if (navigatorExtensionStateService == null) {
+			navigatorExtensionStateService = new NavigatorExtensionStateService(this);
+		}
+		return navigatorExtensionStateService;
+	}
+	
 	/**
 	 * Non-API method to return a shell.
 	 * @return A shell associated with the current viewer (if any) or <b>null</b>.
@@ -1102,17 +1129,6 @@ public class NavigatorContentService implements IExtensionActivationListener,
 				.toArray(new ILabelProvider[resultProvidersList.size()]);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.navigator.INavigatorContentService#getSaveableService()
-	 */
-	public INavigatorSaveablesService getSaveablesService() {
-		synchronized (this) {
-			if (navigatorSaveablesService == null) {
-				navigatorSaveablesService = new NavigatorSaveablesService(this);
-				assistant.addListener(navigatorSaveablesService);
-			}
-			return navigatorSaveablesService;
-		}
-	}
+
 
 }
