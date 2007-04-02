@@ -107,7 +107,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected boolean isShowInVerticalRuler(Annotation annotation) {
 		AnnotationPreference preference= getAnnotationPreference(annotation);
 		if (preference == null)
-			return false;
+			return true;
 		String key= preference.getVerticalRulerPreferenceKey();
 		// backward compatibility
 		if (key != null && !fPreferenceStore.getBoolean(key))
@@ -135,7 +135,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected boolean isShowInOverviewRuler(Annotation annotation) {
 		AnnotationPreference preference= getAnnotationPreference(annotation);
 		if (preference == null)
-			return false;
+			return true;
 		String key= preference.getOverviewRulerPreferenceKey();
 		if (key == null || !fPreferenceStore.getBoolean(key))
 			return false;
