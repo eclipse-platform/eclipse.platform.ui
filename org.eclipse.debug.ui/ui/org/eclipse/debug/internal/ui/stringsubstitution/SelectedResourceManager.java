@@ -73,7 +73,7 @@ public class SelectedResourceManager  {
 	 * @return the currently selected <code>IResource</code>, or <code>null</code> if none.
 	 * @since 3.3
 	 */
-	public IResource getSelectedResource0() {
+	protected IResource getSelectedResource0() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		IResource resource = null;
 		if(window != null) {
