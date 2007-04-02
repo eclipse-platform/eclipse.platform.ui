@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.ide.undo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -42,6 +45,16 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * restore overwritten resources.
 	 */
 	protected ResourceDescription[] resourceDescriptions;
+	
+	/*
+	 * Return true if the specified subResource is a descendant of the specified
+	 * super resource.  Used to remove descendants from the resource array when
+	 * an operation is requested on a parent and its descendant.
+	 */
+	private static boolean isDescendantOf(IResource subResource, IResource superResource) {
+		return ! subResource.equals(superResource) && superResource.getFullPath().isPrefixOf(subResource.getFullPath());
+	}
+
 
 	/**
 	 * Create an Abstract Resources Operation
@@ -275,5 +288,34 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		}
 		return MultiRule.combine(ruleArray);
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#setTargetResources(org.eclipse.core.resources.IResource[])
+	 */
+	protected void setTargetResources(IResource[] resources) {
+		// Remove any descendants if the parent has also
+		// been specified.
+		List subResources = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource subResource = resources[i];
+			for (int j = 0; j < resources.length; j++) {
+				IResource superResource = resources[j];
+				if (isDescendantOf(subResource, superResource))
+					subResources.add(subResource);
+			}
+		}
+		IResource[] nestedResourcesRemoved = new IResource[resources.length
+				- subResources.size()];
+		int j = 0;
+		for (int i = 0; i < resources.length; i++) {
+			if (!subResources.contains(resources[i])) {
+				nestedResourcesRemoved[j] = resources[i];
+				j++;
+			}
+		}
+		super.setTargetResources(nestedResourcesRemoved);
 	}
 }

@@ -46,7 +46,8 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	 * 
 	 * @param resources
 	 *            the resources to be moved or copied.  May not contain null
-	 *            resources.
+	 *            resources, or resources that are descendants of already 
+	 *            included resources.
 	 * @param destinationPaths
 	 *            the destination paths for the resources, including the name to
 	 *            be assigned to the resource at its new location.  May not contain
@@ -58,13 +59,20 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	AbstractCopyOrMoveResourcesOperation(IResource[] resources,
 			IPath[] destinationPaths, String label) {
 		super(resources, label);
-		if (resources == null || destinationPaths == null)
+		// Check for null arguments
+		if (this.resources == null || destinationPaths == null)
 			throw new IllegalArgumentException("The resource and destination paths may not be null"); //$NON-NLS-1$
-		if (resources.length != destinationPaths.length) {
+		// Special case to flag descendants.  Note this would fail on the next check
+		// anyway, so we are first giving a more specific explanation.
+		// See bug #176764
+		if (this.resources.length != resources.length)
+			throw new IllegalArgumentException("The resource list contained descendants that cannot be moved to separate destination paths"); //$NON-NLS-1$
+		// Check for destination paths corresponding for each resource
+		if (this.resources.length != destinationPaths.length) {
 			throw new IllegalArgumentException("The resource and destination paths must be the same length"); //$NON-NLS-1$
 		}
-		for (int i=0; i<resources.length; i++) {
-			if (resources[i] == null) {
+		for (int i=0; i<this.resources.length; i++) {
+			if (this.resources[i] == null) {
 				throw new IllegalArgumentException("The resources array may not contain null resources"); //$NON-NLS-1$
 			}
 			if (destinationPaths[i] == null) {

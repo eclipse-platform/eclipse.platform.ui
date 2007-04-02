@@ -83,7 +83,7 @@ public class CopyResourcesOperation extends
 	public CopyResourcesOperation(IResource[] resources, IPath destinationPath,
 			String label) {
 		super(resources, destinationPath, label);
-		setOriginalResources(resources);
+		setOriginalResources(this.resources);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class CopyResourcesOperation extends
 	public CopyResourcesOperation(IResource[] resources,
 			IPath[] destinationPaths, String label) {
 		super(resources, destinationPaths, label);
-		setOriginalResources(resources);
+		setOriginalResources(this.resources);
 	}
 
 	/*

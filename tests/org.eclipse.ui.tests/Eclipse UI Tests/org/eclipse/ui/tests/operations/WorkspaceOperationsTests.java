@@ -1243,6 +1243,56 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder content was altered", snap.isValid(targetProject));
 	}
 
+	public void testRedundantSubFolderMoveUndoRedo() throws ExecutionException,
+			CoreException {
+		IPath targetPath = targetProject.getFullPath();
+		IPath targetPathWithName = targetPath.append(testFolder.getName());
+		MoveResourcesOperation op = new MoveResourcesOperation(new IResource[] {
+				testFolder, testSubFolder }, targetPath,
+				"testRedundantSubFolderMove");
+		FolderSnapshot snap = new FolderSnapshot(testFolder);
+		execute(op);
+		IFolder movedFolder = getWorkspaceRoot().getFolder(targetPathWithName);
+		assertTrue("Folder move failed", movedFolder.exists());
+		assertTrue("Folder content was altered", snap.isValid(targetProject));
+
+		undo();
+		movedFolder = getWorkspaceRoot().getFolder(targetPathWithName);
+		assertFalse("Move undo failed", movedFolder.exists());
+		assertTrue("Folder content was altered on undo", snap
+				.isValid(testProject));
+
+		redo();
+		movedFolder = getWorkspaceRoot().getFolder(targetPathWithName);
+		assertTrue("Folder move failed", movedFolder.exists());
+		assertTrue("Folder content was altered", snap.isValid(targetProject));
+	}
+
+	public void testRedundantFolderFileMoveUndoRedo()
+			throws ExecutionException, CoreException {
+		IPath targetPath = targetProject.getFullPath();
+		IPath targetPathWithName = targetPath.append(testFolder.getName());
+		MoveResourcesOperation op = new MoveResourcesOperation(new IResource[] {
+				testFolder, testFileWithContent }, targetPath,
+				"testRedundantFolderFileMove");
+		FolderSnapshot snap = new FolderSnapshot(testFolder);
+		execute(op);
+		IFolder movedFolder = getWorkspaceRoot().getFolder(targetPathWithName);
+		assertTrue("Folder move failed", movedFolder.exists());
+		assertTrue("Folder content was altered", snap.isValid(targetProject));
+
+		undo();
+		movedFolder = getWorkspaceRoot().getFolder(targetPathWithName);
+		assertFalse("Move undo failed", movedFolder.exists());
+		assertTrue("Folder content was altered on undo", snap
+				.isValid(testProject));
+
+		redo();
+		movedFolder = getWorkspaceRoot().getFolder(targetPathWithName);
+		assertTrue("Folder move failed", movedFolder.exists());
+		assertTrue("Folder content was altered", snap.isValid(targetProject));
+	}
+
 	public void testFolderCopyUndoRedo() throws ExecutionException,
 			CoreException {
 		// copying with same name to a new project
@@ -1352,6 +1402,41 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(testSubFolder.getParent()));
 		redo();
 		assertFalse("Redo delete failed", testSubFolder.exists());
+	}
+
+	public void testNestedRedundantFolderDeleteUndoRedo()
+			throws ExecutionException, CoreException {
+		DeleteResourcesOperation op = new DeleteResourcesOperation(
+				new IResource[] { testFolder, testSubFolder },
+				"testNestedRedundantFolderDelete", false);
+		FolderSnapshot snap = new FolderSnapshot(testFolder);
+		execute(op);
+		assertFalse("Folder delete failed", testFolder.exists());
+		undo();
+		assertTrue("Folder recreation failed", testFolder.exists());
+		assertTrue("SubFolder recreation failed", testSubFolder.exists());
+		assertTrue("Folder content was altered on undo", snap
+				.isValid(testFolder.getParent()));
+		redo();
+		assertFalse("Redo delete failed", testFolder.exists());
+	}
+
+	public void testNestedRedundantFileDeleteUndoRedo()
+			throws ExecutionException, CoreException {
+		DeleteResourcesOperation op = new DeleteResourcesOperation(
+				new IResource[] { testFolder, testFileWithContent },
+				"testNestedRedundantFileDelete", false);
+		FolderSnapshot snap = new FolderSnapshot(testFolder);
+		execute(op);
+		assertFalse("Folder delete failed", testFolder.exists());
+		undo();
+		assertTrue("Folder recreation failed", testFolder.exists());
+		assertTrue("SubFolder recreation failed", testSubFolder.exists());
+		assertTrue("File recreation failed", testFileWithContent.exists());
+		assertTrue("Folder content was altered on undo", snap
+				.isValid(testFolder.getParent()));
+		redo();
+		assertFalse("Redo delete failed", testFolder.exists());
 	}
 
 	public void testFolderDeleteLinkedUndoRedo() throws ExecutionException,
@@ -1844,6 +1929,42 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(targetProject));
 	}
 
+	public void testRedundantFileAndFolderCopy() throws CoreException,
+			ExecutionException {
+		// copying a file which is a child of a folder, keeping same name to a new project
+		CopyResourcesOperation op = new CopyResourcesOperation(new IResource[] {
+				testFolder, testFileWithContent }, targetProject
+				.getFullPath(), "testRedundantFileAndFolderCopy");
+		FolderSnapshot snapFolder = new FolderSnapshot(testFolder);
+		FileSnapshot snapFile = new FileSnapshot(testFileWithContent);
+		execute(op);
+		IFolder copiedFolder = targetProject.getFolder(testFolder.getName());
+		assertTrue("Folder copy failed", copiedFolder.exists());
+		assertTrue("Source folder was altered", snapFolder.isValid(testProject));
+		assertTrue("Folder copy does not match", snapFolder
+				.isValid(targetProject));
+		IFile copiedFile = targetProject.getFile(testFileWithContent.getName());
+		assertFalse("Nested file should not have been copied to new location", copiedFile.exists());
+		copiedFile = testFolder.getFile(testFileWithContent.getName());
+		assertTrue("Nested file should have been copied to existing parent", copiedFile.exists());
+		assertTrue("Source file was altered", snapFile.isValid(testFolder));
+
+		undo();
+		assertFalse("Copy folder undo failed", copiedFolder.exists());
+		assertTrue("Source file was altered during undo", snapFile
+				.isValid(testFolder));
+		assertTrue("Source folder was altered during undo", snapFolder
+				.isValid(testProject));
+
+		redo();
+		assertTrue("Source folder was altered during redo", snapFolder
+				.isValid(testProject));
+		assertTrue("Folder copy does not match on redo", snapFolder
+				.isValid(targetProject));
+		assertTrue("Source file was altered during redo", snapFile
+				.isValid(testFolder));
+	}
+
 	public void testFileAndFolderCopySameDests() throws ExecutionException,
 			CoreException {
 		// copying a file and folder, keeping same name to a new project
@@ -1953,19 +2074,19 @@ public class WorkspaceOperationsTests extends UITestCase {
 		// The operation should know that undoing is dangerous
 		undoExpectFail(op);
 	}
-	
+
 	public void test162655() throws ExecutionException, CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
 				new IResource[] { testProject }, "testProjectDelete", false);
 		execute(op);
 		assertFalse("Project delete failed", testProject.exists());
-		
+
 		// recreate outside the scope of undo
 		testProject = getWorkspace().getRoot().getProject(TEST_PROJECT_NAME);
 		testProject.create(getMonitor());
 		testProject.open(getMonitor());
 		assertTrue("Project creation failed", testProject.exists());
-	
+
 		// Now that project exists again, the undo should fail.
 		undoExpectFail(op);
 	}
