@@ -22,9 +22,11 @@ import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -582,12 +584,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				redoList.remove(operation);
 				internalRemove(operation);
 			} else {
-				// remove the reference to the context.  
+				// remove the reference to the context.
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=161786
-				// It is not enough to simply remove the context.  There could
-				// be one or more contexts that match the one we are trying to dispose.
+				// It is not enough to simply remove the context. There could
+				// be one or more contexts that match the one we are trying to
+				// dispose.
 				IUndoContext[] contexts = operation.getContexts();
-				for (int j=0; j<contexts.length; j++) {
+				for (int j = 0; j < contexts.length; j++) {
 					if (contexts[j].matches(context)) {
 						operation.removeContext(contexts[j]);
 					}
@@ -620,12 +623,13 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				undoList.remove(operation);
 				internalRemove(operation);
 			} else {
-				// remove the reference to the context.  
+				// remove the reference to the context.
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=161786
-				// It is not enough to simply remove the context.  There could
-				// be one or more contexts that match the one we are trying to dispose.
+				// It is not enough to simply remove the context. There could
+				// be one or more contexts that match the one we are trying to
+				// dispose.
 				IUndoContext[] contexts = operation.getContexts();
-				for (int j=0; j<contexts.length; j++) {
+				for (int j = 0; j < contexts.length; j++) {
 					if (contexts[j].matches(context)) {
 						operation.removeContext(contexts[j]);
 					}
@@ -889,22 +893,42 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/*
 	 * Notify listeners of an operation event.
 	 */
-	private void notifyListeners(OperationHistoryEvent event) {
-		preNotifyOperation(event.getOperation(), event);
+	private void notifyListeners(final OperationHistoryEvent event) {
+		if (event.getOperation() instanceof IAdvancedUndoableOperation) {
+			final IAdvancedUndoableOperation advancedOp = (IAdvancedUndoableOperation) event
+					.getOperation();
+			SafeRunner.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+						Tracing
+								.printTrace(
+										"OPERATIONHISTORY", //$NON-NLS-1$
+										"Exception during notification callback " + exception); //$NON-NLS-1$
+					}
+				}
 
-		// copying listener list to array to prevent concurrent
-		// modification of the list. See
-		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=91343
-
+				public void run() throws Exception {
+					advancedOp.aboutToNotify(event);
+				}
+			});
+		}
 		final Object[] listenerArray = listeners.getListeners();
-
 		for (int i = 0; i < listenerArray.length; i++) {
-			try {
-				((IOperationHistoryListener) listenerArray[i])
-						.historyNotification(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
+			final IOperationHistoryListener listener = (IOperationHistoryListener) listenerArray[i];
+			SafeRunner.run(new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
+						Tracing
+								.printTrace(
+										"OPERATIONHISTORY", //$NON-NLS-1$
+										"Exception during notification callback " + exception); //$NON-NLS-1$
+					}
+				}
+
+				public void run() throws Exception {
+					listener.historyNotification(event);
+				}
+			});
 		}
 	}
 
@@ -1042,27 +1066,6 @@ public final class DefaultOperationHistory implements IOperationHistory {
 
 		notifyListeners(new OperationHistoryEvent(
 				OperationHistoryEvent.OPERATION_CHANGED, this, operation));
-	}
-
-	/*
-	 * A history notification is about to be sent. Notify the operation before
-	 * hand if it implements IHistoryNotificationAwareOperation.
-	 * 
-	 * This method is provided for legacy undo frameworks that rely on
-	 * notification from their undo managers before any listeners are notified
-	 * about changes in the operation.
-	 */
-
-	private void preNotifyOperation(IUndoableOperation operation,
-			OperationHistoryEvent event) {
-
-		if (operation instanceof IAdvancedUndoableOperation) {
-			try {
-				((IAdvancedUndoableOperation) operation).aboutToNotify(event);
-			} catch (Exception e) {
-				handleNotificationException(e);
-			}
-		}
 	}
 
 	/*
@@ -1376,23 +1379,4 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			notifyChanged(operation);
 		}
 	}
-
-	/*
-	 * Handle an exception that occurred while sending a notification about
-	 * something happening in the operation history. When notifications fail,
-	 * execution should continue, but the exception should be logged.
-	 */
-	private void handleNotificationException(Throwable e) {
-		if (e instanceof OperationCanceledException) {
-			return;
-		}
-		// This plug-in is intended to run stand-alone outside of the
-		// platform, so we do not employ standard platform exception logging.
-		if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
-			Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
-					"Exception during notification callback " + e); //$NON-NLS-1$
-		}
-		e.printStackTrace();
-	}
-
 }
