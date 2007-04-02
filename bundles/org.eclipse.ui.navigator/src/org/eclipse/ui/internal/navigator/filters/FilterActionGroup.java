@@ -16,8 +16,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -34,6 +36,12 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
  */
 public class FilterActionGroup extends ActionGroup {	
 
+	private static final String FILTER_ACTION_GROUP = "filterActionGroup"; //$NON-NLS-1$
+	
+	private static final String FILTER_ACTION_GROUP_FILTERS_START = FILTER_ACTION_GROUP+"Filters-start"; //$NON-NLS-1$
+
+	private static final String FILTER_ACTION_GROUP_FILTERS_END = FILTER_ACTION_GROUP+"Filters-end"; //$NON-NLS-1$	
+	
 	private SelectFiltersAction selectFiltersAction;
 	private CommonViewer commonViewer;
 	private INavigatorViewerDescriptor viewerDescriptor;
@@ -58,14 +66,24 @@ public class FilterActionGroup extends ActionGroup {
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		IMenuManager menu = actionBars.getMenuManager();
-		if (selectFiltersAction != null) {
+		menu.appendToGroup(IWorkbenchActionConstants.MB_ADDITIONS,
+				new Separator(FILTER_ACTION_GROUP));
+		if (selectFiltersAction != null) { 
+			menu.appendToGroup(FILTER_ACTION_GROUP,
+					selectFiltersAction);
+			
+			menu.appendToGroup(FILTER_ACTION_GROUP,
+					new GroupMarker(FILTER_ACTION_GROUP_FILTERS_START));
+			
+			menu.appendToGroup(FILTER_ACTION_GROUP_FILTERS_START,
+					new Separator(FILTER_ACTION_GROUP_FILTERS_END));
+			
+			
 			for (Iterator iter = filterShortcutActions.iterator(); iter.hasNext();) {
 				IAction action = (IAction) iter.next();
-				menu.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, action);				
+				menu.appendToGroup(FILTER_ACTION_GROUP_FILTERS_START, action);				
 			}			
 			
-			menu.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS,
-					selectFiltersAction);
 		}
 	}
 	

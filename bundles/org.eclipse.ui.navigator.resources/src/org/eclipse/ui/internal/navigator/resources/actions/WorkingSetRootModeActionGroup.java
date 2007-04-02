@@ -53,8 +53,8 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		private final boolean groupWorkingSets;
 
 		/**
-		 * Construct an Action that represents a toggle-able state between Showing top level Working
-		 * Sets and Projects.
+		 * Construct an Action that represents a toggle-able state between
+		 * Showing top level Working Sets and Projects.
 		 * 
 		 * @param toGroupWorkingSets
 		 */
@@ -67,8 +67,11 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
 		public void run() {
-			if (stateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) != groupWorkingSets) {
-				stateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, groupWorkingSets);
+			if (stateModel
+					.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) != groupWorkingSets) {
+				stateModel.setBooleanProperty(
+						WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+						groupWorkingSets);
 
 				structuredViewer.getControl().setRedraw(false);
 				try {
@@ -80,21 +83,19 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		}
 	}
 
-
 	/**
-	 * Create an action group that will listen to the stateModel and update the structuredViewer
-	 * when necessary.
+	 * Create an action group that will listen to the stateModel and update the
+	 * structuredViewer when necessary.
 	 * 
 	 * @param structuredViewer
 	 * @param stateModel
 	 */
-	public WorkingSetRootModeActionGroup(StructuredViewer aStructuredViewer, IExtensionStateModel aStateModel) {
+	public WorkingSetRootModeActionGroup(StructuredViewer aStructuredViewer,
+			IExtensionStateModel aStateModel) {
 		super();
 		structuredViewer = aStructuredViewer;
 		stateModel = aStateModel;
- 	}
-
-
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -102,32 +103,22 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
-		if (!hasContributedToViewMenu) {
-			synchronized (this) {
-				if (!hasContributedToViewMenu) {
-					hasContributedToViewMenu = true;
-					contributeToViewMenu(actionBars.getMenuManager());
-				}
+		synchronized (this) {
+			if (!hasContributedToViewMenu) {
+				contributeToViewMenu(actionBars.getMenuManager()); 
+				hasContributedToViewMenu = true;
 			}
 		}
 	}
 
 	private void contributeToViewMenu(IMenuManager viewMenu) {
-		viewMenu.add(new Separator());
 
-		// Create layout sub menu
-
-		IMenuManager topLevelSubMenu = new MenuManager(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Top_Level_Element_);
-		final String layoutGroupName = "topLevelElements"; //$NON-NLS-1$
-		Separator marker = new Separator(layoutGroupName);
-
-		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		viewMenu.add(marker);
-		viewMenu.appendToGroup(layoutGroupName, topLevelSubMenu);
-		viewMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));//$NON-NLS-1$		
+		IMenuManager topLevelSubMenu = new MenuManager(
+				WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Top_Level_Element_);
 		addActions(topLevelSubMenu);
+		viewMenu.insertBefore(IWorkbenchActionConstants.MB_ADDITIONS,
+				topLevelSubMenu);
 	}
-
 
 	/**
 	 * Adds the actions to the given menu manager.
@@ -147,8 +138,8 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 					int style = SWT.CHECK;
 					if ((actions[j].getStyle() & IAction.AS_RADIO_BUTTON) != 0)
 						style = SWT.RADIO;
-					
-					final MenuItem mi = new MenuItem(menu, style, index);  
+
+					final MenuItem mi = new MenuItem(menu, style, index);
 					items[j] = mi;
 					mi.setText(actions[j].getText());
 					mi.setSelection(currentSelection == j);
@@ -168,7 +159,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 						}
 
 					});
-					 
+
 				}
 
 				public boolean isDynamic() {
@@ -178,44 +169,54 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		}
 	}
 
-
 	private IAction[] createActions() {
 
-		ISharedImages sharedImages = PlatformUI.getWorkbench().getSharedImages();
+		ISharedImages sharedImages = PlatformUI.getWorkbench()
+				.getSharedImages();
 
 		projectsAction = new TopLevelContentAction(false);
-		projectsAction.setText(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Project_);
-		projectsAction.setImageDescriptor(sharedImages.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT));
+		projectsAction
+				.setText(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Project_);
+		projectsAction.setImageDescriptor(sharedImages
+				.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT));
 
 		workingSetsAction = new TopLevelContentAction(true);
-		workingSetsAction.setText(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Working_Set_);
-		workingSetsAction.setImageDescriptor(WorkbenchNavigatorPlugin.getDefault().getImageRegistry().getDescriptor("full/obj16/workingsets.gif")); //$NON-NLS-1$
+		workingSetsAction
+				.setText(WorkbenchNavigatorMessages.WorkingSetRootModeActionGroup_Working_Set_);
+		workingSetsAction.setImageDescriptor(WorkbenchNavigatorPlugin
+				.getDefault().getImageRegistry().getDescriptor(
+						"full/obj16/workingsets.gif")); //$NON-NLS-1$
 
-
-		return new IAction[]{projectsAction, workingSetsAction};
+		return new IAction[] { projectsAction, workingSetsAction };
 	}
 
 	/**
-	 * Toggle whether top level working sets should be displayed as a group or collapse to just show
-	 * their contents.
+	 * Toggle whether top level working sets should be displayed as a group or
+	 * collapse to just show their contents.
 	 * 
 	 * @param showTopLevelWorkingSets
 	 */
 	public void setShowTopLevelWorkingSets(boolean showTopLevelWorkingSets) {
 		if (actions == null) {
 			actions = createActions();
-			setActions(actions, showTopLevelWorkingSets ? 1 /* Show Top Level Working Sets */: 0);
+			setActions(actions, showTopLevelWorkingSets ? 1 /*
+															 * Show Top Level
+															 * Working Sets
+															 */
+					: 0);
 		}
 		workingSetsAction.setChecked(showTopLevelWorkingSets);
 		projectsAction.setChecked(!showTopLevelWorkingSets);
-		
-		if(items != null) {
+
+		if (items != null) {
 			for (int i = 0; i < items.length; i++) {
 				items[i].setSelection(actions[i].isChecked());
 			}
 		}
-		if(stateModel != null) {
-			stateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showTopLevelWorkingSets);
+		if (stateModel != null) {
+			stateModel.setBooleanProperty(
+					WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS,
+					showTopLevelWorkingSets);
 		}
 
 	}
@@ -232,7 +233,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 		actions = theActions;
 		currentSelection = selected;
 
-	} 
+	}
 
 	public void setStateModel(IExtensionStateModel sStateModel) {
 		stateModel = sStateModel;
