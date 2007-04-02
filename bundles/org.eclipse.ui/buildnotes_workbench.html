@@ -12,6 +12,56 @@
 <h1>Eclipse Platform Build Notes (3.3)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (April 02, 2007, 7:20 p.m.)</p>
+  <p>Problem reports updated</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=107599">Bug 107599</a>. [Preferences] Line delimiter field editor will not switch to defaults (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=137073">Bug 137073</a>. [Preferences] Encoding field editor never fires value change events (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=159198">Bug 159198</a>. [About] Date and Time of Configuration Details panel are not localized (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=163281">Bug 163281</a>. FieldEditorPreferencePage needs a default constructor (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171099">Bug 171099</a>. [Sync View] Java content provider provides wrong label for folder (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171815">Bug 171815</a>. [Metadata] org.eclipse.ui.ide.application doesn't specify plugin requirements in its manifest (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=171845">Bug 171845</a>. [Viewers] AbstractListViewer#insert should get @since 3.3 tag (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173088">Bug 173088</a>. [Dialogs] Remove from type selection history action label could be less generic (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=173438">Bug 173438</a>. [Contexts] ContextAuthority$1.widgetDisposed(..) does not handle case where shell is already disposed (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174846">Bug 174846</a>. [Menus] Strange entry in log opening Commit Wizard (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174908">Bug 174908</a>. [Contributions] Leakage: PluginActionContributionItem not being removed as activity manager listener (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175085">Bug 175085</a>. SWT errors due to oversized overlay icon (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=175859">Bug 175859</a>. [DataBinding] Use MessageFormat for validation hints (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176282">Bug 176282</a>. Link With Editor in Navigator and Project Explorer should work for IEditInput that can adapt to IFile (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176607">Bug 176607</a>. [Dialogs] FilteredItemsSelectionDialog.GranualProgressMonitor does not support subTask(..) and misses message updates (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176764">Bug 176764</a>. [Undo] - DeleteResourcesOperation does not handle overlapped selections (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176845">Bug 176845</a>. [Min/Max] Restore from Editor-Area leaves View unrestored (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176873">Bug 176873</a>. [Preferences] ColorFieldEditor should not set button size to IDialogConstants.BUTTON_WIDTH (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177183">Bug 177183</a>. [Dialogs] PopupDialog should show the view menu on mouseDown (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178189">Bug 178189</a>. [Preferences][Dialogs] New File Type dialog problems (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178228">Bug 178228</a>. Double-Click in Java editor ruler broken (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178297">Bug 178297</a>. [Dialogs] - remove required field color (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178331">Bug 178331</a>. [Dialog] Invalid result in Open Resource dialog when spaces in pattern (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178399">Bug 178399</a>. [Mni/Max] Editor area both visible and minimized (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178458">Bug 178458</a>. Tab from other window shows displaying Intro if new content available (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178522">Bug 178522</a>. [Progress] Progress dialog is updating for blocked after it is closed (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178791">Bug 178791</a>. [FastViews] 'Context menu > Close' on 'Restore' button does nothing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178798">Bug 178798</a>. [FastViews] Duplicated new FVB after moving around (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178987">Bug 178987</a>. [Min./Max] Unchecking the 'Fast View' menu entry causes floating TB's (REOPENED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179031">Bug 179031</a>. Breakpoints View showing Search results (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179036">Bug 179036</a>. [Commands][Contributions][Context][KitchenSink] verify expression evaluation characteristics (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179110">Bug 179110</a>. [Perspectives] Log entry switching perspectives (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179369">Bug 179369</a>. [Viewers]NPE when only using Tab-Editing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179422">Bug 179422</a>. [Viewers] ColumnViewerToolTipSupport shows blank tooltips if no text or image is provided (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179455">Bug 179455</a>. [DataBinding] core.databinding package.html outdated (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179461">Bug 179461</a>. [Viewers] ViewerLabelProviders that implement IColorProvider do not clear colours (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179679">Bug 179679</a>. [Dialogs] FilteredItemsSelectionDialog: make sure all jobs are cancelled when closing dialog (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179875">Bug 179875</a>. [Trim] [Presentations] NPE when using IStackPresentationSite#dragStart (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179980">Bug 179980</a>. [Contributions] visibleWhen does not work properly for multiple workbench windows (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180177">Bug 180177</a>. ColorsAndFonts test cannot check against the default font (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180178">Bug 180178</a>. Compiler warning in N20070330-0010 (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180194">Bug 180194</a>. [WorkbenchLauncher] allow placement of buildID by product variable (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180245">Bug 180245</a>. [Preferences] JFace NPE while running tests (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180287">Bug 180287</a>. [WorkingSets] Working Set tools should not be visible by default (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180293">Bug 180293</a>. [FastViews] NPE in bring up a fast view (FIXED)<br>
+  </p>
+
 <p>Integration Build (March 26, 2007, 3:53 p.m.)</p>
   <p>Problem reports updated</p>
   <p>
