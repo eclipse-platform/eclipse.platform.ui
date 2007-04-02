@@ -45,7 +45,7 @@ public class ProfileLastAction extends RelaunchLastAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getText()
 	 */
 	protected String getText() {
-		if(DebugUIPlugin.getDefault().getContextLaunchingResourceManager().isContextLaunchEnabled()) {
+		if(DebugUIPlugin.getDefault().getLaunchingResourceManager().isContextLaunchEnabled()) {
 			return ActionMessages.ProfileLastAction_1;
 		}
 		else {

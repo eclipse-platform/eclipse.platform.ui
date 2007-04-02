@@ -44,7 +44,7 @@ public class DebugLastAction extends RelaunchLastAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getText()
 	 */
 	protected String getText() {
-		if(DebugUIPlugin.getDefault().getContextLaunchingResourceManager().isContextLaunchEnabled()) {
+		if(DebugUIPlugin.getDefault().getLaunchingResourceManager().isContextLaunchEnabled()) {
 			return ActionMessages.DebugLastAction_1;
 		}
 		else {

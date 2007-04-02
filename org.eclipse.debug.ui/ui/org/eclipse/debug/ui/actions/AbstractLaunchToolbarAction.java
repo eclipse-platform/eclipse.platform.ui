@@ -73,7 +73,9 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		if(DebugUIPlugin.getDefault().getContextLaunchingResourceManager().isContextLaunchEnabled()) {
+		//always ignore external tools during context launching
+		if(DebugUIPlugin.getDefault().getLaunchingResourceManager().isContextLaunchEnabled() && 
+				!getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
 			ContextRunner.getDefault().launch(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 		}
 		else {

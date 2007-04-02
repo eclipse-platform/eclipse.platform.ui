@@ -11,19 +11,18 @@
 package org.eclipse.debug.ui.actions;
 
  
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
+import org.eclipse.debug.internal.ui.ILaunchLabelChangedListener;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingResourceManager;
+import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,6 +40,10 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Abstract implementation of an action that displays a drop-down launch
  * history for a specific launch group.
+ * 
+ * @see LaunchingResourceManager
+ * @see ILaunchLabelChangedListener
+ * 
  * <p>
  * Clients may subclass this class.
  * </p>
@@ -59,15 +62,16 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	private IAction fAction;
 	
 	/**
-	 * Launch group identifier
+	 * The associated <code>ILaunchGroup</code>
+	 * @since 3.3
 	 */
-	private String fLaunchGroupIdentifier;
+	private ILaunchGroup fLaunchGroup = null;
 	
 	/**
 	 * Indicates whether the launch history has changed and
 	 * the sub menu needs to be recreated.
 	 */
-	protected boolean fRecreateMenu= false;
+	protected boolean fRecreateMenu = false;
 	
 	/**
 	 * Constructs a launch history action.
@@ -76,19 +80,19 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * extension that this action displays a launch history for.
 	 */
 	public AbstractLaunchHistoryAction(String launchGroupIdentifier) {
-		fLaunchGroupIdentifier = launchGroupIdentifier;
+		fLaunchGroup = getLaunchConfigurationManager().getLaunchGroup(launchGroupIdentifier);
 	}
 	
 	/**
-	 * Resource change listener to update tool-tip
+	 * A listener to be notified of launch label updates
+	 * @since 3.3
 	 */
-	private IResourceChangeListener fListener = new IResourceChangeListener() {
-		public void resourceChanged(IResourceChangeEvent event) {
-			// need to update the tool-tip in the event that one of the launch filters has removed the most recent entry.
-			// bug 156516  we only want to respond to after-the-fact updates
-			if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
-				updateTooltip();
-			}
+	private ILaunchLabelChangedListener fLabelListener = new ILaunchLabelChangedListener() {
+		public ILaunchGroup getLaunchGroup() {
+			return fLaunchGroup;
+		}
+		public void labelChanged() {
+			updateTooltip();
 		}
 	};
 	
@@ -139,7 +143,6 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	private void initialize(IAction action) {
 		getLaunchConfigurationManager().addLaunchHistoryListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener);
 		setAction(action);
 		updateTooltip(); 		
 		action.setEnabled(existsConfigTypesForMode());	
@@ -166,14 +169,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * Updates this action's tool-tip to correspond to the most recent launch.
 	 */
 	protected void updateTooltip() {
-		ILaunchConfiguration lastLaunched = getLastLaunch();
-		String tooltip = null;
-		if (lastLaunched == null) {
-			tooltip = DebugUIPlugin.removeAccelerators(internalGetHistory().getLaunchGroup().getLabel());
-		} else {
-			tooltip = getToolTip(lastLaunched); 
-		}
-		getAction().setToolTipText(tooltip);
+		getAction().setToolTipText(getToolTip(getLastLaunch()));
 	}
 	
 	/**
@@ -183,12 +179,11 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @return the string for the tool tip
 	 */
 	protected String getToolTip(ILaunchConfiguration configuration) {
-		String launchName = configuration.getName();
-		String label = null;
-		//CONTEXTLAUNCHING
-		if(getContextLaunchingResourceManager().isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-			launchName = getContextLaunchingResourceManager().getContextLabel(getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
+		String launchName = getLaunchingResourceManager().getLaunchLabel(fLaunchGroup);
+		if(launchName == null) {
+			return DebugUIPlugin.removeAccelerators(internalGetHistory().getLaunchGroup().getLabel());
 		}
+		String label = null;
 		String mode = getMode();
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
 			label = ActionMessages.AbstractLaunchHistoryAction_1; 
@@ -199,7 +194,12 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		} else {
 			label = ActionMessages.AbstractLaunchHistoryAction_4; 
 		}
-		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName});
+		if("".equals(launchName)) { //$NON-NLS-1$
+			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_5, new String[] {label});
+		}
+		else {
+			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName});
+		}
 	}
 	
 	/**
@@ -207,7 +207,6 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	public void launchHistoryChanged() {
 		fRecreateMenu = true;
-		updateTooltip();
 	}
 
 	/**
@@ -216,8 +215,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	public void dispose() {
 		setMenu(null);
 		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
-		getContextLaunchingResourceManager().removeUpdateListener(this, getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
+		getLaunchingResourceManager().removeLaunchLabelChangedListener(fLabelListener);
 	}
 	
 	/**
@@ -227,12 +225,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 *  action's launch history that is not filtered from the menu
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
-		LaunchConfigurationManager manager = getLaunchConfigurationManager();
-		ILaunchConfiguration configuration = manager.getLastLaunch(getLaunchGroupIdentifier());
-		if (configuration == null) {
-			return manager.getFilteredLastLaunch(getLaunchGroupIdentifier());
-		}
-		return configuration;
+		return getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
 	}
 
 	/**
@@ -349,7 +342,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		getContextLaunchingResourceManager().addUpdateListener(this, getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
+		getLaunchingResourceManager().addLaunchLabelUpdateListener(fLabelListener);
 	}
 	
 	/**
@@ -425,8 +418,8 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * 
 	 * @return <code>ContextualLaunchingResourceManager</code>
 	 */
-	private ContextLaunchingResourceManager getContextLaunchingResourceManager() {
-		return DebugUIPlugin.getDefault().getContextLaunchingResourceManager();
+	private LaunchingResourceManager getLaunchingResourceManager() {
+		return DebugUIPlugin.getDefault().getLaunchingResourceManager();
 	}
 	
 	/**
@@ -437,6 +430,6 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * with
 	 */
 	protected String getLaunchGroupIdentifier() {
-		return fLaunchGroupIdentifier;
+		return fLaunchGroup.getIdentifier();
 	}
 }

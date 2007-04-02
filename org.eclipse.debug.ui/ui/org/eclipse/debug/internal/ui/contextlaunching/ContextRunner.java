@@ -27,6 +27,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -75,7 +76,7 @@ public final class ContextRunner {
 	 * @param group 
 	 */
 	public void launch(ILaunchGroup group) {
-		IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
+		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
 		//1. resolve resource
 		if(resource != null) {
 			selectAndLaunch(resource, group);

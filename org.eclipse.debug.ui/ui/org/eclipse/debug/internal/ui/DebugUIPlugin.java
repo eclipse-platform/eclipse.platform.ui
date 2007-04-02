@@ -69,7 +69,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingResourceManager;
+import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
@@ -182,7 +182,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Context launching manager
 	 */
-	private ContextLaunchingResourceManager fContextLaunchingManager = null;
+	private LaunchingResourceManager fContextLaunchingManager = null;
 	
     /**
      * Image descriptor registry used for images with common overlays.
@@ -310,13 +310,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * 
 	 * @since 3.3
 	 */
-	public ContextLaunchingResourceManager getContextLaunchingResourceManager() {
+	public LaunchingResourceManager getLaunchingResourceManager() {
 		if(fContextLaunchingManager == null) {
-			fContextLaunchingManager = new ContextLaunchingResourceManager();
-			getPreferenceStore().addPropertyChangeListener(fContextLaunchingManager);
-			if(fContextLaunchingManager.isContextLaunchEnabled()) {
-				fContextLaunchingManager.startup();
-			}
+			fContextLaunchingManager = new LaunchingResourceManager();
+			fContextLaunchingManager.startup();
 		}
 		return fContextLaunchingManager;
 	}
@@ -419,7 +416,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				fLaunchConfigurationManager.shutdown();
 			}
 			if(fContextLaunchingManager != null) {
-				getPreferenceStore().removePropertyChangeListener(fContextLaunchingManager);
 				fContextLaunchingManager.shutdown();
 			}
 	
@@ -508,7 +504,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fPerspectiveManager = new PerspectiveManager();
 		fPerspectiveManager.startup();		
 		
-		getContextLaunchingResourceManager();
+		getLaunchingResourceManager();
 		
 		// Listen to launches to lazily create "launch processors"
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
