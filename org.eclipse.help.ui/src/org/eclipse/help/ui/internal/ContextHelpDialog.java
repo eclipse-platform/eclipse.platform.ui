@@ -224,6 +224,9 @@ public class ContextHelpDialog {
 		String styledText;
 		if (context instanceof IContext2) {
 			styledText = ((IContext2) context).getStyledText();
+			if (styledText == null) {
+				styledText = context.getText();
+			}
 		} else {
 			styledText = context.getText();
 		}
