@@ -12,6 +12,7 @@
  * 20070123   154100 eu@md.pp.ru - Eugene Kuleshov, Initial UI coding
  * 20070201   154100 pmoogk@ca.ibm.com - Peter Moogk, Port internet code from WTP to Eclipse base.
  * 20070219   174674 pmoogk@ca.ibm.com - Peter Moogk
+ * 20070402   180622 brockj@tpg.com.au - Brock Janiczak, Inconsistent enablement states in network preference page
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 
@@ -40,7 +41,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 
 	Button useSameProxyButton;
 
-	private Text nonHostLabel;
+	private Label nonHostLabel;
 
 	private NonProxyHostsComposite nonHostComposite;
 
@@ -138,8 +139,8 @@ public class ProxyPreferencePage extends PreferencePage implements
 		Label separator = new Label(manualProxyConfigurationComposite,
 				SWT.HORIZONTAL | SWT.SEPARATOR);
 		separator.setLayoutData(newGridData(4, 5, true, false));
-		nonHostLabel = new Text(manualProxyConfigurationComposite,
-				SWT.READ_ONLY);
+		nonHostLabel = new Label(manualProxyConfigurationComposite,
+				SWT.NONE);
 		nonHostLabel.setText(NetUIMessages.ProxyPreferencePage_6);
 		nonHostLabel
 				.setToolTipText(NetUIMessages.ProxyPreferencePage_24);
@@ -331,10 +332,10 @@ public class ProxyPreferencePage extends PreferencePage implements
 		for (int index = 0; index < entryList.length; index++) {
 			Entry entry = entryList[index];
 
-			entry.hostname.setEnabled(enabled);
-			entry.nameLabel.setEnabled(enabled);
-			entry.portLabel.setEnabled(enabled);
-			entry.port.setEnabled(enabled);
+			entry.hostname.setEnabled((index == 0 && enabled) || (index != 0 && !useSameProxyButton.getSelection() && enabled));
+			entry.nameLabel.setEnabled((index == 0 && enabled) || (index != 0 && !useSameProxyButton.getSelection() && enabled));
+			entry.portLabel.setEnabled((index == 0 && enabled) || (index != 0 && !useSameProxyButton.getSelection() && enabled));
+			entry.port.setEnabled((index == 0 && enabled) || (index != 0 && !useSameProxyButton.getSelection() && enabled));
 		}
 
 		useSameProxyButton.setEnabled(enabled);
