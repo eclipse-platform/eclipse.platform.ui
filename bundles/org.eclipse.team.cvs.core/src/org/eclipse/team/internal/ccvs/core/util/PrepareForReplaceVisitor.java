@@ -29,7 +29,16 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 
 	private IProgressMonitor monitor;
 	private int depth;
+	private CVSTag tag; 
 
+	public PrepareForReplaceVisitor(CVSTag tag){
+		this.tag = tag;
+	}
+	
+	public PrepareForReplaceVisitor(){
+		
+	}
+	
 	/**
 	 * @see ICVSResourceVisitor#visitFile(ICVSFile)
 	 */
@@ -44,17 +53,26 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			file.delete();
 			file.unmanage(null);
 		} else if (ResourceSyncInfo.isDeletion(syncBytes)) {
-			// If deleted, null the sync info so the file will be refetched
+			// If deleted, null the sync info so the file will be refetched.
+			// If we are replacing with the "BASE" tag, the file will not be refetched.
+			// However, it is better to get ride of the outgoing deletion than to leave it.
 			file.unmanage(null);
-		} else if (file.isModified(null)) {
+		} else if (file.isModified(null) && shouldDeleteModifications()) {
 			// If the file is modified, delete and unmanage it and allow the 
-			// replace operaton to fetch it again. This is required because "update -C" 
+			// replace operation to fetch it again. This is required because "update -C" 
 			// will fail for locally modified resources that have been deleted remotely.
 			file.delete();
-			// Only unmanage if the delete was succesful (bug 76029)
+			// Only unmanage if the delete was successful (bug 76029)
 			file.unmanage(null);
 		}
 		monitor.worked(1);
+	}
+
+	/*
+	 * see bug 150158
+	 */
+	private boolean shouldDeleteModifications() {
+		return tag == null || !tag.getName().equals("BASE"); //$NON-NLS-1$
 	}
 
 	/**

@@ -429,10 +429,19 @@
                helpContextId="org.eclipse.team.cvs.ui.replace_with_tag_action_context"
                label="%ReplaceWithTagAction.label"
                definitionId="org.eclipse.team.cvs.ui.replaceWithTag"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithSelectableTagAction"
                tooltip="%ReplaceWithTagAction.tooltip"
                menubarPath="replaceWithMenu/replaceWithGroup"
                id="org.eclipse.team.cvs.ui.replaceWithTag">
+         </action>
+         <action
+               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithLatestRevisionAction"
+               definitionId="org.eclipse.team.cvs.ui.replaceWithBase"
+               helpContextId="org.eclipse.team.cvs.ui.replace_with_tag_action_context"
+               id="org.eclipse.team.cvs.ui.replaceWithBase"
+               label="%ReplaceWithLastRevision.label"
+               menubarPath="team.main/group4"
+               tooltip="%ReplaceWithLastRevision.tooltip">
          </action>
          <action
                helpContextId="org.eclipse.team.cvs.ui.replace_with_latest_action_context"

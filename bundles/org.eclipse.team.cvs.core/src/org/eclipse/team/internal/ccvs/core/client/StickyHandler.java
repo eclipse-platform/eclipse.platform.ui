@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableFolderSyncInfo;
@@ -57,7 +56,7 @@ class StickyHandler extends ResponseHandler {
 		String tag = null;
 		if (setSticky) {
 			tag = session.readLine();
-			if (tag.length() == 0) tag = null; // FIXME: is this correct
+			if (tag != null && tag.length() == 0) tag = null;
 		}
 
 		// create the directory then set or clear the sticky tag
@@ -70,6 +69,10 @@ class StickyHandler extends ResponseHandler {
             if (syncInfo == null) return;
             MutableFolderSyncInfo newInfo = syncInfo.cloneMutable();
             newInfo.setTag(tag != null ? new CVSEntryLineTag(tag) : null);
+            /* if we are reverting to BASE we do not change anything here 
+             * see bug 106876 */
+            if(tag != null && tag.equals("TBASE"))  //$NON-NLS-1$
+            	newInfo.setTag(syncInfo.getTag());
             // only set the sync info if it has changed
             if (!syncInfo.equals(newInfo))
             	folder.setFolderSyncInfo(newInfo);

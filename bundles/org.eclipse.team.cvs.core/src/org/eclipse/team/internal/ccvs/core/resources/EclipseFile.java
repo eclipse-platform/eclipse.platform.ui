@@ -495,7 +495,15 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	        newInfo = new ResourceSyncInfo(entryLine, timeStamp);
 			
 		}
-		if (newInfo != null) setSyncInfo(newInfo, modificationState);
+		//see bug 106876
+		if (newInfo != null){
+			CVSTag tag = newInfo.getTag();
+			if(tag != null && CVSEntryLineTag.BASE.getName().equals(tag.getName())){
+				newInfo = newInfo.cloneMutable();
+				((MutableResourceSyncInfo)newInfo).setTag(oldInfo.getTag());
+			}
+			setSyncInfo(newInfo, modificationState);
+		}
 		clearCachedBase();
 	}
 	

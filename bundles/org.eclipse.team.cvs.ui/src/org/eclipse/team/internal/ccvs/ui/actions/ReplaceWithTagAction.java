@@ -20,14 +20,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
 
 /**
  * Action for replace with tag.
  */
-public class ReplaceWithTagAction extends WorkspaceTraversalAction {
+public abstract class ReplaceWithTagAction extends WorkspaceTraversalAction {
     
 	/*
 	 * Method declared on IActionDelegate.
@@ -59,17 +57,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
                 monitor = Policy.monitorFor(monitor);
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), TagSource.create(replaceOperation.getScope().getMappings()), 
-					CVSUIMessages.ReplaceWithTagAction_message, 
-					CVSUIMessages.TagSelectionDialog_Select_a_Tag_1, 
-					TagSelectionDialog.INCLUDE_ALL_TAGS, 
-					false, /*show recurse*/
-					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); 
-				dialog.setBlockOnOpen(true);
-				if (dialog.open() == Window.CANCEL) {
-					return;
-				}
-				tag[0] = dialog.getResult();
+				tag[0] = getTag(replaceOperation);
 				
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
@@ -104,5 +92,14 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 	protected boolean isEnabledForNonExistantResources() {
 		return true;
 	}
+	
+	/**
+	 * This function should obtain a tag which user wants to load.
+	 * @param replaceOperation 
+	 *    replaceOperation is an operation for which the tag is obtained
+	 * @return tag
+	 * 		marks the resources revision the user wants to load
+	 */
+	abstract protected CVSTag getTag(final ReplaceOperation replaceOperation);
 	
 }

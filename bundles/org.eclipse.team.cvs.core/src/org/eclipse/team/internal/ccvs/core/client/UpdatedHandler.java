@@ -125,6 +125,13 @@ public class UpdatedHandler extends ResponseHandler {
 		ResourceSyncInfo info = new ResourceSyncInfo(entryLine, null);
 		MutableResourceSyncInfo newInfoWithTimestamp = info.cloneMutable();
 		newInfoWithTimestamp.setTimeStamp(modTime);
+		
+		//see bug 106876
+		CVSTag tag = newInfoWithTimestamp.getTag();
+		if(tag != null && CVSTag.BASE.getName().equals(tag.getName())){
+			newInfoWithTimestamp.setTag(mFile.getSyncInfo().getTag());
+		}
+		
 		int modificationState = ICVSFile.UNKNOWN;
 		if(handlerType==HANDLE_MERGED) {
 			newInfoWithTimestamp.setMerged();

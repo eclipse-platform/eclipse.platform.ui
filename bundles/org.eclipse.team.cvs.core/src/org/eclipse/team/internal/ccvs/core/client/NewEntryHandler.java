@@ -48,6 +48,10 @@ public class NewEntryHandler extends ResponseHandler {
 		ResourceSyncInfo fileInfo = mFile.getSyncInfo();
 		MutableResourceSyncInfo newInfo = fileInfo.cloneMutable();
 		newInfo.setEntryLine(entryLine);
+		// see bug 106876
+		if(newInfo.getTag() != null && !newInfo.getTag().getName().equals("TBASE")){ //$NON-NLS-1$
+			newInfo.setTag(fileInfo.getTag());
+		}
 		mFile.setSyncInfo(newInfo, ICVSFile.UNKNOWN);
 	}
 }

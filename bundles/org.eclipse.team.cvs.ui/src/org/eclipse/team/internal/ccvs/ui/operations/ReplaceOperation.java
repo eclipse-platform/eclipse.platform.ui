@@ -80,7 +80,7 @@ public class ReplaceOperation extends UpdateOperation {
         ICVSResource[] managedResources = getResourcesToUpdate(resources);
         try {
         	// Purge any unmanaged or added files
-        	new PrepareForReplaceVisitor().visitResources(
+        	new PrepareForReplaceVisitor(getTag()).visitResources(
         		provider.getProject(), 
         		resources, 
         		CVSUIMessages.ReplaceOperation_1, 

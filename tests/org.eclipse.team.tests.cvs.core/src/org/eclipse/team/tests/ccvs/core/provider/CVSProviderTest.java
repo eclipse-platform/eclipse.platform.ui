@@ -9,16 +9,38 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.provider;
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.*;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.IFileTypeInfo;
+import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -649,6 +671,39 @@ public class CVSProviderTest extends EclipseTest {
 		assertTrue("File contents are not correct after merge", compareContent(
 				new ByteArrayInputStream(("line0" + eol + "line1" + eol + "line2" + eol + "line2.5" + eol + "line3" + eol).getBytes()), 
 						project.getFile("file1.txt").getContents()));
+    }
+    
+    public void testRevertToBaseHeadTag() throws CoreException, IOException{
+    	IProject project = createProject("testRevertToBase", new String[] {"file1.txt"});
+    	setContentsAndEnsureModified(project.getFile("file1.txt"), "line1" + eol + "line2" + eol + "line3" + eol);
+    	commitProject(project);
+    	IProject copy = checkoutCopy(project, "-copy");
+    	appendText(project.getFile("file1.txt"), "line0" + eol, true);
+    	updateProject(project, CVSTag.BASE, true);
+    	assertTrue("File has changed after revert to base",
+    			compareContent(new ByteArrayInputStream(("line1" + eol + "line2" + eol + "line3" + eol).getBytes()),
+    					project.getFile("file1.txt").getContents()));
+    	assertEquals(getRepositoryProvider(project), getRepositoryProvider(copy), false, true);
+    }
+    
+    private CVSTeamProvider getRepositoryProvider(IProject project) {
+		return (CVSTeamProvider)RepositoryProvider.getProvider(project);
+	}
+
+	public void testRevertToBaseNonHeadTag() throws CoreException, IOException{
+    	IProject project = createProject("testRevertToBaseNonHead", new String[] {"file1.txt"});
+    	setContentsAndEnsureModified(project.getFile("file1.txt"), "line1" + eol + "line2" + eol);
+    	commitProject(project);
+    	tagProject(project, new CVSTag("testtag", CVSTag.BRANCH), true);
+    	appendText(project.getFile("file1.txt"), "line3" + eol, true);
+    	commitProject(project);
+    	IProject copy = checkoutCopy(project, "-copy");
+    	appendText(copy.getFile("file1.txt"), "line0" + eol, true);
+    	updateProject(copy, CVSTag.BASE, true);
+    	assertTrue("File has changed after revert to base",
+    			compareContent(new ByteArrayInputStream(("line3" + eol + "line1" + eol + "line2" + eol).getBytes()),
+    					copy.getFile("file1.txt").getContents()));
+    	assertEquals(getRepositoryProvider(project), getRepositoryProvider(copy), false, true);
     }
 }
 

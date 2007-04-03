@@ -398,7 +398,7 @@ public class MenuEnablementTest extends EclipseTest {
 	 * Should be the same as testCompareWithTagAction
 	 */
 	public void testReplaceWithTagAction() throws CoreException, TeamException {
-		IActionDelegate action = new ReplaceWithTagAction();
+		IActionDelegate action = new ReplaceWithSelectableTagAction();
 		IProject project = createTestProject(action);
 		assertDisabledForCommonReasons(action, project);
 		assertEnabledForFolderOnlyOverlap(action, project);
