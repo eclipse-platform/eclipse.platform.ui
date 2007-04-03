@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
+import org.eclipse.ui.internal.intro.impl.model.ExtensionMap;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 
@@ -105,6 +106,7 @@ public class ExtensionPointManager extends BaseExtensionPointManager {
         currentModel = null;
         sharedConfigExtensionsManager = null;
         introModels.clear();
+        ExtensionMap.getInstance().clear();
         if (Log.logInfo)
             Log.info("Cleared Intro model"); //$NON-NLS-1$
     }

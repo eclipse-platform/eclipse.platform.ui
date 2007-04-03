@@ -11,13 +11,12 @@
 
 package org.eclipse.ua.tests.intro.contentdetect;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.eclipse.ui.internal.intro.impl.model.ExtensionMap;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetectHelper;
 import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetector;
 
@@ -46,7 +45,7 @@ public class ContentDetectorTest extends TestCase {
 		contributors.add("two");
 		contributors.add("three");
 		helper.saveContributors(contributors);
-		List savedContributors = helper.getContributors();
+		Set savedContributors = helper.getContributors();
 		assertTrue(savedContributors.size() == 3);
 		assertTrue(savedContributors.contains("one"));
 		assertTrue(savedContributors.contains("two"));
@@ -60,15 +59,14 @@ public class ContentDetectorTest extends TestCase {
 		contributors.add("two");
 		contributors.add("three");
 		contributors.add("four");
-		List previous = new ArrayList();
+		Set previous = new HashSet();
 		previous.add("five");
 		previous.add("two");
 		previous.add("one");
-		String[] newContributors = helper.findNewContributors(contributors, previous);
-		Arrays.sort(newContributors);
-		assertTrue(newContributors.length == 2);
-		assertTrue(newContributors[0] == "four");
-		assertTrue(newContributors[1] == "three");
+		Set newContributors = helper.findNewContributors(contributors, previous);
+		assertTrue(newContributors.size() == 2);
+		assertTrue(newContributors.contains("four"));
+		assertTrue(newContributors.contains("three"));
 	}
 
 	public void testNoSavedState() {
@@ -78,6 +76,10 @@ public class ContentDetectorTest extends TestCase {
 		assertEquals(ContentDetectHelper.NO_STATE, helper.getExtensionCount());	
 		ContentDetector detector = new ContentDetector();
 		assertFalse(detector.isNewContentAvailable());
+		Set newContent = ContentDetector.getNewContributors();
+		assertTrue(newContent == null || newContent.size() == 0);
+		String firstContribution = (String) helper.getContributors().iterator().next();
+		assertFalse(ContentDetector.isNew(firstContribution));
 	}
 	
 	public void testStateChanges() {
@@ -88,11 +90,62 @@ public class ContentDetectorTest extends TestCase {
 		// Calling the detector should save the state
 		int extensionCount = helper.getExtensionCount();
 		assertTrue(extensionCount > 0);
-		assertEquals(extensionCount, helper.getContributors().size());
+		// Simulate removing an extension
 		helper.saveExtensionCount(extensionCount + 1);
 		assertFalse(detector.isNewContentAvailable());
+		// Make the first extension appear new
 		helper.saveExtensionCount(extensionCount - 1);
+		assertEquals(extensionCount, helper.getContributors().size());
+		Set contributors = helper.getContributors();
+		String firstContribution = (String) contributors.iterator().next();
+		String copyOfFirstContribution = "" + firstContribution;
+		contributors.remove(firstContribution);
+		helper.saveContributors(contributors);
 		assertTrue(detector.isNewContentAvailable());
+		assertEquals(1, ContentDetector.getNewContributors().size());
+		assertTrue(ContentDetector.isNew(firstContribution));
+		assertTrue(ContentDetector.isNew(copyOfFirstContribution));
+		// Calling a new detector should yield the same result
+		ContentDetector detector2 = new ContentDetector();
+		assertTrue(detector2.isNewContentAvailable());
+		assertEquals(1, ContentDetector.getNewContributors().size());
+		assertTrue(ContentDetector.isNew(firstContribution));
+		assertTrue(ContentDetector.isNew(copyOfFirstContribution));
+	}
+	
+	public void testExtensionMapSingleton() {
+		ExtensionMap map1 = ExtensionMap.getInstance();
+		ExtensionMap map2 = ExtensionMap.getInstance();
+		assertEquals(map1, map2);
+	}
+	
+	public void testExtensionMapping() {
+		ExtensionMap map = ExtensionMap.getInstance();
+		map.clear();
+		map.putPluginId("anchor1", "org.eclipse.test");
+		map.putPluginId("anchor2", "org.eclipse.test");
+		map.putPluginId("anchor3", "org.eclipse.test3");
+		assertEquals("org.eclipse.test", map.getPluginId("anchor1"));
+		assertEquals("org.eclipse.test", map.getPluginId("anchor2"));
+		assertEquals("org.eclipse.test3", map.getPluginId("anchor3"));
+		map.clear();
+		assertNull(map.getPluginId("anchor1"));
+	}
+	
+	public void testStartPage() {
+		ExtensionMap map = ExtensionMap.getInstance();
+		map.setStartPage("tutorials");
+		map.setStartPage("whats-new");
+		assertEquals("whats-new", map.getStartPage());
+		map.clear();
+		assertNull(map.getStartPage());
+	}
+
+	protected void finalize() throws Throwable {
+		// Delete state files so that if we start Eclipse we don't see all content as new
+		ContentDetectHelper helper = new ContentDetectHelper();
+		helper.deleteStateFiles();
+		super.finalize();
 	}
 
 }

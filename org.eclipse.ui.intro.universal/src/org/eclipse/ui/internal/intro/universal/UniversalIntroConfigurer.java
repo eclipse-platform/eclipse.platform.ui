@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2006 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2007 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -28,6 +28,8 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.util.SequenceResolver;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.internal.intro.impl.model.ExtensionMap;
+import org.eclipse.ui.internal.intro.universal.contentdetect.ContentDetector;
 import org.eclipse.ui.internal.intro.universal.util.ImageUtil;
 import org.eclipse.ui.internal.intro.universal.util.PreferenceArbiter;
 import org.eclipse.ui.intro.IIntroSite;
@@ -135,6 +137,11 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	 * given intro data.
 	 */
 	private int getImportance(IntroData data, String pageId, String extensionId) {
+		String pluginId = ExtensionMap.getInstance().getPluginId(extensionId);
+		if (ContentDetector.isNew(pluginId)) {
+			ExtensionMap.getInstance().setStartPage(pageId);
+			return ExtensionData.NEW;
+		}
 		PageData pdata = data.getPage(pageId);
 		if (pdata != null) {
 			ExtensionData ed = pdata.findExtension(extensionId, false);

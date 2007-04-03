@@ -19,9 +19,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Platform;
@@ -87,8 +86,8 @@ public class ContentDetectHelper {
 		saveMemento(writeMemento, EXTENSION_NAMES_XML);
 	}
 	
-	public List getContributors() {	
-		List contributors = new ArrayList();
+	public Set getContributors() {	
+		Set contributors = new HashSet();
 		XMLMemento readMemento = getReadMemento(EXTENSION_NAMES_XML);
 		if (readMemento == null) {
 			return contributors;
@@ -156,11 +155,12 @@ public class ContentDetectHelper {
 		return stateFile;
 	}
 	
-	public String[] findNewContributors(Set contributors, List previousContributors) {
+	public Set findNewContributors(Set contributors, Set previousContributors) {
+		Set result = new HashSet(contributors);
 		for (Iterator iter = previousContributors.iterator(); iter.hasNext();) {
-			contributors.remove(iter.next());
+			result.remove(iter.next());
 		}
-		return (String[])contributors.toArray(new String[contributors.size()]);
+		return result;
 	}
 
 	public void deleteStateFiles() {

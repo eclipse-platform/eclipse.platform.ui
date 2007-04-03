@@ -355,7 +355,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .getBundleFromConfigurationElement(configExtConfigurationElement);
             String base = getBase(configExtConfigurationElement);
             children.add(new IntroExtensionContent(configExtensionElement,
-                bundle, base));
+                bundle, base, null));
 
             // INTRO: fix log strings.
             Log
@@ -486,7 +486,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         
         // Create the model class for extension content.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
-            extensionContentElement, bundle, base);
+            extensionContentElement, bundle, base, configExtElement);
         boolean success = false;
         if (extensionContent.isXHTMLContent())
             success = loadXHTMLExtensionContent(extensionContent);

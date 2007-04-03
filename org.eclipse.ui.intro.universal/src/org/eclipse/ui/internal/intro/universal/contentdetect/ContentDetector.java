@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.intro.universal.contentdetect;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IExtension;
@@ -21,13 +20,19 @@ import org.eclipse.ui.intro.IntroContentDetector;
 
 public class ContentDetector extends IntroContentDetector {
 
-	private String[] newContributors;
+	private static Set newContributors;
+	private static boolean detectorCalled = false;
 	
 	public ContentDetector() {
 	}
 
 	public boolean isNewContentAvailable() {		
 		try {
+			detectorCalled = true;
+			// If we have previously found new content no need to recompute
+			if (newContributors != null && !newContributors.isEmpty()) {
+				return true;
+			}
 			IExtension[] extensions = Platform
 					.getExtensionRegistry()
 					.getExtensionPoint("org.eclipse.ui.intro.configExtension").getExtensions(); //$NON-NLS-1$
@@ -42,7 +47,7 @@ public class ContentDetector extends IntroContentDetector {
 					contributors.add(extensions[i].getContributor().getName());
 				}
 				if (numIntroExtensions > previous && previous != ContentDetectHelper.NO_STATE) {
-					List previousContributors = helper.getContributors();
+					Set previousContributors = helper.getContributors();
 					newContributors = helper.findNewContributors(contributors, previousContributors);
 					helper.saveContributors(contributors);
 					return true;
@@ -55,8 +60,25 @@ public class ContentDetector extends IntroContentDetector {
 		return false;
 	}
 	
-	public String[] getNewContributors() {
+	/**
+	 * @return The set of the ids of config extensions which are new since the last time
+	 * intro was opened. May be null if there are no contributors.
+	 */
+	public static Set getNewContributors() {
 		return newContributors;
+	}
+	
+	/**
+	 * Test to see if this contribution was newly installed
+	 * @param contributionId
+	 * @return
+	 */
+	public static boolean isNew(String contributionId) {
+		if (!detectorCalled) {
+			detectorCalled = true;
+			new ContentDetector().isNewContentAvailable();
+		}
+		return newContributors != null && newContributors.contains(contributionId);
 	}
 
 }

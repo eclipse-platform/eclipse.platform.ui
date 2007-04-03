@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -62,7 +63,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
     private Vector styles = new Vector();
     private Hashtable altStyles = new Hashtable();
 
-    IntroExtensionContent(Element element, Bundle bundle, String base) {
+    IntroExtensionContent(Element element, Bundle bundle, String base, IConfigurationElement configExtElement) {
         super(element, bundle);
         path = getAttribute(element, ATT_PATH);
         content = getAttribute(element, ATT_CONTENT);
@@ -85,7 +86,10 @@ public class IntroExtensionContent extends AbstractIntroElement {
                 bundle);
             this.base = newBase;
         }
-
+        
+        // Save the mapping between plugin registry id and base/anchor id
+        String contributor = configExtElement.getContributor().getName();
+        ExtensionMap.getInstance().putPluginId(anchorId, contributor);
     }
     
     public String getId() {
