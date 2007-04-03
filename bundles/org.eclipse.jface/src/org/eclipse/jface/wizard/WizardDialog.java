@@ -455,6 +455,22 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
                 IDialogConstants.FINISH_LABEL, true);
         cancelButton = createCancelButton(parent);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
+     */
+    protected void setButtonLayoutData(Button button) {
+    	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		
+		//On large fonts this can make this dialog huge
+		widthHint = Math.min(widthHint, button.getDisplay().getBounds().width / 5);
+		Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		data.widthHint = Math.max(widthHint, minSize.x);
+		
+		
+		button.setLayoutData(data);
+    }
 
     /**
      * Creates the Cancel button for this wizard dialog.
