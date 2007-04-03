@@ -12,7 +12,7 @@
 package org.eclipse.core.internal.filesystem.local;
 
 import java.io.UnsupportedEncodingException;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class Convert {
 
@@ -20,7 +20,7 @@ public class Convert {
 	private static String defaultEncoding = new java.io.InputStreamReader(new java.io.ByteArrayInputStream(new byte[0])).getEncoding();
 
 	/** Indicates if we are running on windows */
-	private static final boolean isWindows = Platform.isRunning() ? Platform.OS_WIN32.equals(Platform.getOS()) : false;
+	private static final boolean isWindows = Constants.OS_WIN32.equals(LocalFileSystem.getOS());
 
 	private static final String WIN32_FILE_PREFIX = "\\\\?\\"; //$NON-NLS-1$
 	private static final String WIN32_UNC_FILE_PREFIX = "\\\\?\\UNC"; //$NON-NLS-1$

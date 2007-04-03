@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,8 @@ package org.eclipse.core.internal.filesystem;
 
 import java.io.*;
 import java.util.Date;
+import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
-import org.osgi.framework.Bundle;
 
 /**
  * Grab bag of utility methods for the file system plugin
@@ -57,12 +57,9 @@ public class Policy {
 	}
 
 	public static void log(int severity, String message, Throwable t) {
-		final Bundle bundle = Platform.getBundle(PI_FILE_SYSTEM);
-		if (bundle == null)
-			return;
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Platform.getLog(bundle).log(new Status(severity, PI_FILE_SYSTEM, 1, message, t));
+		RuntimeLog.log(new Status(severity, PI_FILE_SYSTEM, 1, message, t));
 	}
 
 	public static IProgressMonitor monitorFor(IProgressMonitor monitor) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,7 @@ public class FileCache {
 	 * @throws CoreException If the file cache could not be created
 	 */
 	private FileCache() throws CoreException {
-		IPath location = Platform.getStateLocation(Platform.getBundle(Policy.PI_FILE_SYSTEM));
+		IPath location = Activator.getCacheLocation();
 		File cacheParent = new File(location.toFile(), CACHE_DIR_NAME);
 		cleanOldCache(cacheParent);
 		cacheParent.mkdirs();

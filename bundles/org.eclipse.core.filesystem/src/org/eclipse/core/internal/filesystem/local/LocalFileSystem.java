@@ -16,7 +16,7 @@ import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * File system provider for the "file" scheme.  This file system provides access to
@@ -28,7 +28,7 @@ public class LocalFileSystem extends FileSystem {
 	/**
 	 * Cached constant indicating if the current OS is Mac OSX
 	 */
-	static final boolean MACOSX = LocalFileSystem.getOS().equals(Platform.OS_MACOSX);
+	static final boolean MACOSX = LocalFileSystem.getOS().equals(Constants.OS_MACOSX);
 
 	/**
 	 * Whether the current file system is case sensitive
@@ -87,11 +87,11 @@ public class LocalFileSystem extends FileSystem {
 
 		//this must be kept in sync with the actual native implementations.
 		String os = getOS();
-		if (os.equals(Platform.OS_WIN32))
+		if (os.equals(Constants.OS_WIN32))
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else if (os.equals(Platform.OS_LINUX))
+		else if (os.equals(Constants.OS_LINUX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
-		else if (os.equals(Platform.OS_MACOSX) || os.equals(Platform.OS_HPUX) || os.equals(Platform.OS_QNX))
+		else if (os.equals(Constants.OS_MACOSX) || os.equals(Constants.OS_HPUX) || os.equals(Constants.OS_QNX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
 		return attributes;
 	}
