@@ -27,8 +27,7 @@ import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 
 /**
  * <p>
- * Status manager is responsible for handling statuses due to the set handling
- * policy.
+ * Status manager is responsible for handling statuses.
  * </p>
  * 
  * <p>
@@ -102,7 +101,6 @@ public class StatusManager {
 	 * {@link Dialog}.
 	 */
 	public static final int BLOCK = 0x04;
-	
 
 	private static StatusManager MANAGER;
 
@@ -111,15 +109,11 @@ public class StatusManager {
 	private List loggedStatuses = new ArrayList();
 
 	/**
-	 * Returns StatusManager singleton instance. Because the facility depends on
-	 * Workbench, this method will return null, if Workbench isn't initialized.
+	 * Returns StatusManager singleton instance.
 	 * 
 	 * @return StatusManager instance
 	 */
 	public static StatusManager getManager() {
-		if (!PlatformUI.isWorkbenchRunning()) 
-			return null;
-
 		if (MANAGER == null) {
 			MANAGER = new StatusManager();
 		}
@@ -142,14 +136,28 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles the given status adapter due to the style.
+	 * Handles the given status adapter due to the style. Because the facility
+	 * depends on Workbench, this method will log the status, if Workbench isn't
+	 * initialized and the style isn't NONE. If Workbench isn't initialized and
+	 * the style is NONE, the manager will do nothing.
 	 * 
 	 * @param statusAdapter
 	 * @param style
-	 *            style
+	 *            style, values are defined in {@link StatusManager} and can be
+	 *            combined with logical OR
 	 */
 	public void handle(StatusAdapter statusAdapter, int style) {
 		try {
+			// The manager will only log the status, if Workbench isn't
+			// initialized and the style isn't NONE. If Workbench isn't
+			// initialized and the style is NONE, the manager will do nothing.
+			if (!PlatformUI.isWorkbenchRunning()) {
+				if (style != StatusManager.NONE) {
+					logError(statusAdapter.getStatus());
+				}
+				return;
+			}
+			
 			// tries to handle the problem with default (product) handler
 			if (StatusHandlerRegistry.getDefault()
 					.getDefaultHandlerDescriptor() != null) {
@@ -182,12 +190,16 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles the given status due to the style.
+	 * Handles the given status due to the style. Because the facility depends
+	 * on Workbench, this method will log the status, if Workbench isn't
+	 * initialized and the style isn't NONE. If Workbench isn't initialized and
+	 * the style is NONE, the manager will do nothing.
 	 * 
 	 * @param status
 	 *            status to handle
 	 * @param style
-	 *            style
+	 *            style, values are defined in {@link StatusManager} and can be
+	 *            combined with logical OR
 	 */
 	public void handle(IStatus status, int style) {
 		StatusAdapter statusAdapter = new StatusAdapter(status);
@@ -202,7 +214,7 @@ public class StatusManager {
 	 *            status to handle
 	 */
 	public void handle(IStatus status) {
-		handle(status, LOG);
+		handle(status, StatusManager.LOG);
 	}
 
 	/**
@@ -219,6 +231,11 @@ public class StatusManager {
 	private void logError(String message, Throwable ex) {
 		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
 				message, ex);
+		addLoggedStatus(status);
+		WorkbenchPlugin.log(status);
+	}
+	
+	private void logError(IStatus status) {
 		addLoggedStatus(status);
 		WorkbenchPlugin.log(status);
 	}
@@ -240,7 +257,7 @@ public class StatusManager {
 		 */
 		public void logging(IStatus status, String plugin) {
 			if (!loggedStatuses.contains(status)) {
-				handle(status, NONE);
+				handle(status, StatusManager.NONE);
 			} else {
 				loggedStatuses.remove(status);
 			}
