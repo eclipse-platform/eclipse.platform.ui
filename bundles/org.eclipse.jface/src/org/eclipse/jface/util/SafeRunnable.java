@@ -13,8 +13,9 @@
 package org.eclipse.jface.util;
 
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 
 /**
@@ -57,8 +58,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
             if (message == null) {
 				message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 			}
-            MessageDialog.openError(null,
-                    JFaceResources.getString("error"), message); //$NON-NLS-1$
+            Policy.getStatusManager().handle(new Status(IStatus.ERROR, Policy.JFACE, message, e), AbstractStatusManager.SHOW);
         }
     }
 

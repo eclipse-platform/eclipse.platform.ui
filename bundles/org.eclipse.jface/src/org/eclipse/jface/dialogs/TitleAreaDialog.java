@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -80,11 +78,6 @@ public class TitleAreaDialog extends TrayDialog {
 
 	// Minimum dialog height (in dialog units)
 	private static final int MIN_DIALOG_HEIGHT = 150;
-	static {
-		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(
-				TitleAreaDialog.class, "images/title_banner.gif"));//$NON-NLS-1$
-	}
 
 	private Label titleLabel;
 

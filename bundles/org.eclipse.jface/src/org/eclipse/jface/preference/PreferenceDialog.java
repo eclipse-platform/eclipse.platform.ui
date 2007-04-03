@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -27,10 +28,7 @@ import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
 import org.eclipse.jface.dialogs.TrayDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -144,12 +142,6 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	protected static final int FAILED = 2;
 	
-	static {
-		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class,
-				"images/pref_dialog_title.gif")); //$NON-NLS-1$
-	}
-
 	/**
 	 * The current preference page, or <code>null</code> if there is none.
 	 */
