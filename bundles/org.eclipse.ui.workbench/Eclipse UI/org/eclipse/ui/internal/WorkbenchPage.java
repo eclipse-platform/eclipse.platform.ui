@@ -492,47 +492,57 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
          * @return <code>true</code> if the action sets changed
          */
         private boolean updateActionSets(ArrayList newActionSets) {
-            if (oldActionSets.equals(newActionSets)) {
+			if (oldActionSets.equals(newActionSets)) {
 				return false;
 			}
 
-            // show the new
-            for (int i = 0; i < newActionSets.size(); i++) {
-                actionSets.showAction((IActionSetDescriptor) newActionSets
-                        .get(i));
-            }
-            
-            // hide the old
-            for (int i = 0; i < oldActionSets.size(); i++) {
-                actionSets.hideAction((IActionSetDescriptor) oldActionSets
-                        .get(i));            }
+			IContextService service = (IContextService) window
+					.getService(IContextService.class);
+			try {
+				service.activateContext(ContextAuthority.DEFER_EVENTS);
 
-            oldActionSets = newActionSets;
+				// show the new
+				for (int i = 0; i < newActionSets.size(); i++) {
+					actionSets.showAction((IActionSetDescriptor) newActionSets
+							.get(i));
+				}
 
-            Perspective persp = getActivePerspective();
-            if (persp == null) {
-                return false;
-            }
-            
-            window.updateActionSets(); // this calls updateActionBars
-            window.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
-                    CHANGE_ACTION_SET_SHOW);
-            return true;
-        }
+				// hide the old
+				for (int i = 0; i < oldActionSets.size(); i++) {
+					actionSets.hideAction((IActionSetDescriptor) oldActionSets
+							.get(i));
+				}
+
+				oldActionSets = newActionSets;
+
+			} finally {
+				service.activateContext(ContextAuthority.SEND_EVENTS);
+			}
+			Perspective persp = getActivePerspective();
+			if (persp == null) {
+				return false;
+			}
+
+			window.updateActionSets(); // this calls updateActionBars
+			window.firePerspectiveChanged(WorkbenchPage.this, getPerspective(),
+					CHANGE_ACTION_SET_SHOW);
+			return true;
+		}
 
     }
 
     /**
-     * Constructs a new page with a given perspective and input.
-     * 
-     * @param w
-     *            the parent window
-     * @param layoutID
-     *            must not be <code>null</code>
-     * @param input
-     *            the page input
-     * @throws WorkbenchException on null layout id
-     */
+	 * Constructs a new page with a given perspective and input.
+	 * 
+	 * @param w
+	 *            the parent window
+	 * @param layoutID
+	 *            must not be <code>null</code>
+	 * @param input
+	 *            the page input
+	 * @throws WorkbenchException
+	 *             on null layout id
+	 */
     public WorkbenchPage(WorkbenchWindow w, String layoutID, IAdaptable input)
             throws WorkbenchException {
         super();
