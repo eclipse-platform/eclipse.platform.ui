@@ -728,6 +728,7 @@
          </action>
          <action
                label="%TagInRepositoryAction.label"
+               icon="$nl$/icons/full/obj16/versions_rep.gif"
                helpContextId="org.eclipse.team.cvs.ui.tag_remote_action_context"
                tooltip="%TagInRepositoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagInRepositoryAction"
