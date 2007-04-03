@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *       Brock Janiczak (brockj@tpg.com.au) - Bug 180436 Use table sort indicators on CVS
  *******************************************************************************/
-
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.Date;
