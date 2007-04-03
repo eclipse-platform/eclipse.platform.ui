@@ -83,9 +83,15 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	private ListenerList fUpdateListeners = new ListenerList();
 	
 	/**
-	 * List of updates in progress
+	 * Map of updates in progress: element path -> list of requests
 	 */
-	private List fUpdatesInProgress = new ArrayList(); 
+	private Map fRequestsInProgress = new HashMap();
+	
+	/**
+	 * Map of dependent requests waiting for parent requests to complete:
+	 *  element path -> list of requests
+	 */
+	private Map fWaitingRequests = new HashMap();
 	
 	/**
 	 * Map of viewer states keyed by viewer input mementos
@@ -164,10 +170,14 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	public synchronized void dispose() {
 		// cancel pending updates
-		synchronized (fUpdatesInProgress) {
-			Iterator iterator = fUpdatesInProgress.iterator();
+		synchronized (fRequestsInProgress) {
+			Iterator iterator = fRequestsInProgress.values().iterator();
 			while (iterator.hasNext()) {
-				((IRequest) iterator.next()).cancel();
+				List requests = (List) iterator.next();
+				Iterator reqIter = requests.iterator();
+				while (reqIter.hasNext()) {
+					((IRequest) reqIter.next()).cancel();
+				}
 			}
 		}
 		fModelListeners.clear();
@@ -797,6 +807,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected void unmapPath(TreePath path) {
 		//System.out.println("Unmap " + path.getLastSegment());
 		fTransform.clear(path);
+		cancelSubtreeUpdates(path);
 	}
 
 	/**
@@ -845,9 +856,14 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	void updateStarted(IViewerUpdate update) {
 		boolean begin = false;
-		synchronized (fUpdatesInProgress) {
-			begin = fUpdatesInProgress.isEmpty();
-			fUpdatesInProgress.add(update);
+		synchronized (fRequestsInProgress) {
+			begin = fRequestsInProgress.isEmpty();
+			List requests = (List) fRequestsInProgress.get(update.getElementPath());
+			if (requests == null) {
+				requests = new ArrayList();
+				fRequestsInProgress.put(update.getElementPath(), requests);
+			}
+			requests.add(update);
 		}
 		if (begin) {
 			if (DEBUG_UPDATE_SEQUENCE) {
@@ -868,9 +884,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	void updateComplete(IViewerUpdate update) {
 		boolean end = false;
-		synchronized (fUpdatesInProgress) {
-			fUpdatesInProgress.remove(update);
-			end = fUpdatesInProgress.isEmpty();
+		synchronized (fRequestsInProgress) {
+			List requests = (List) fRequestsInProgress.get(update.getElementPath());
+			if (requests != null) {
+				requests.remove(update);
+				trigger((ViewerUpdateMonitor) update);
+				if (requests.isEmpty()) {
+					fRequestsInProgress.remove(update.getElementPath());
+				}
+			}
+			end = fRequestsInProgress.isEmpty();
 		}
 		notifyUpdate(UPDATE_COMPLETE, update);
 		if (DEBUG_UPDATE_SEQUENCE) {
@@ -915,14 +938,132 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	}	
 	
 	protected void cancelSubtreeUpdates(TreePath path) {
-		synchronized (fUpdatesInProgress) {
-			for (int i = 0; i < fUpdatesInProgress.size(); i++) {
-				ViewerUpdateMonitor update = (ViewerUpdateMonitor) fUpdatesInProgress.get(i);
-				if (update.isContained(path)) {
-					update.cancel();
+		synchronized (fRequestsInProgress) {
+			Iterator iterator = fRequestsInProgress.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry entry = (Entry) iterator.next();
+				TreePath entryPath = (TreePath) entry.getKey();
+				if (entryPath.startsWith(path, null)) {
+					List requests = (List) entry.getValue();
+					Iterator reqIter = requests.iterator();
+					while (reqIter.hasNext()) {
+						((IRequest)reqIter.next()).cancel();
+					}
 				}
 			}
+			List purge = new ArrayList(); 
+			iterator = fWaitingRequests.keySet().iterator();
+			while (iterator.hasNext()) {
+				TreePath entryPath = (TreePath) iterator.next();
+				if (entryPath.startsWith(path, null)) {
+					purge.add(entryPath);
+				}
+			}
+			iterator = purge.iterator();
+			while (iterator.hasNext()) {
+				fWaitingRequests.remove(iterator.next());
+			}
 		}
+	}
+	
+	/**
+	 * Returns whether this given request should be run, or should wait for parent
+	 * update to complete.
+	 * 
+	 * @param update
+	 * @return whether to start the given request
+	 */
+	void schedule(ViewerUpdateMonitor update) {
+		synchronized (fRequestsInProgress) {
+			TreePath schedulingPath = update.getSchedulingPath();
+			List requests = (List) fWaitingRequests.get(schedulingPath);
+			if (requests == null) {
+				// no waiting requests
+				TreePath parentPath = schedulingPath;
+				while (fRequestsInProgress.get(parentPath) == null) {
+					parentPath = parentPath.getParentPath();
+					if (parentPath == null) {
+						// no running requests: start request
+						update.start();
+						return;
+					}
+				}
+				// request running on parent, add to waiting list
+				requests = new ArrayList();
+				requests.add(update);
+				fWaitingRequests.put(schedulingPath, requests);
+			} else {
+				// there are waiting requests: coalesce with existing request?
+				Iterator reqIter = requests.iterator();
+				while (reqIter.hasNext()) {
+					ViewerUpdateMonitor waiting = (ViewerUpdateMonitor) reqIter.next();
+					if (waiting.coalesce(update)) {
+						// coalesced with existing request, done
+						return;
+					}
+				}
+				// add to list of waiting requests
+				requests.add(update);
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Triggers waiting requests based on the given request that just completed.
+	 * 
+	 * TODO: should we cancel child updates if a request has been canceled?
+	 * 
+	 * @param request
+	 */
+	void trigger(ViewerUpdateMonitor request) {
+		if (fWaitingRequests.isEmpty()) {
+			return;
+		}
+		TreePath schedulingPath = request.getSchedulingPath();
+		List waiting = (List) fWaitingRequests.get(schedulingPath);
+		if (waiting == null) {
+			// no waiting, update the entry with the shortest path
+			int length = Integer.MAX_VALUE;
+			Iterator entries = fWaitingRequests.entrySet().iterator();
+			Entry candidate = null;
+			while (entries.hasNext()) {
+				Entry entry = (Entry) entries.next();
+				TreePath key = (TreePath) entry.getKey();
+				if (key.getSegmentCount() < length) {
+					candidate = entry;
+					length = key.getSegmentCount();
+				}
+			}
+			if (candidate != null) {
+				startHighestPriorityRequest((TreePath) candidate.getKey(), (List) candidate.getValue());
+			}
+		} else {
+			// start the highest priority request
+			startHighestPriorityRequest(schedulingPath, waiting);
+		}
+	}
+
+	/**
+	 * @param key
+	 * @param waiting
+	 */
+	private void startHighestPriorityRequest(TreePath key, List waiting) {
+		int priority = 4;
+		ViewerUpdateMonitor next = null;
+		Iterator requests = waiting.iterator();
+		while (requests.hasNext()) {
+			ViewerUpdateMonitor vu = (ViewerUpdateMonitor) requests.next();
+			if (vu.getPriority() < priority) {
+				next = vu;
+				priority = next.getPriority();
+			}
+		}
+		waiting.remove(next);
+		if (waiting.isEmpty()) {
+			fWaitingRequests.remove(key);
+		}
+		next.start();
 	}
 	
 	/**

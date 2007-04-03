@@ -10,21 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -49,23 +41,6 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	protected static final String[] STATE_PROPERTIES = new String[]{IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE};
 	
 	/**
-	 * Map of parent paths to requests
-	 */
-	private Map fPendingChildRequests = new HashMap();
-	
-	/**
-	 * Map of content adapters to requests
-	 */
-	private Map fPendingCountRequests = new HashMap();
-	
-	/**
-	 * Map of content adapters to requests
-	 */
-	private Map fPendingHasChildrenRequests = new HashMap();	
-	
-	private Timer fTimer = new Timer();
-	
-	/**
 	 * Re-filters any filtered children of the given parent element.
 	 * 
 	 * @param path parent element
@@ -85,49 +60,17 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path, element);
-			List requests = (List) fPendingCountRequests.get(contentAdapter);
-			if (requests != null) {
-				requests.add(request);
-				return;
-			}
-			requests = new ArrayList();
-			requests.add(request);
-			fPendingCountRequests.put(contentAdapter, requests);
-			final IElementContentProvider adapter = contentAdapter;
-			fTimer.schedule(new TimerTask() {
-				public void run() {
-					List updates = null;
-					synchronized (TreeModelContentProvider.this) {
-						updates = (List) fPendingCountRequests.remove(adapter);
-					}
-					ChildrenCountUpdate[] array = (ChildrenCountUpdate[]) updates.toArray(new ChildrenCountUpdate[updates.size()]);
-					batch(array);
-					adapter.update(array);
-				}
-			}, 10L);
+			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path, element, contentAdapter);
+			schedule(request);
 		}
 	}	
 	
 	protected synchronized void doUpdateElement(TreePath parentPath, int modelIndex) {
-		ChildrenUpdate request = (ChildrenUpdate) fPendingChildRequests.get(parentPath);
-		if (request != null) {
-			if (request.coalesce(modelIndex)) {
-				return;
-			} else {
-				request.start();
-			}
-		} 
 		Object parent = getElement(parentPath);
 		IElementContentProvider contentAdapter = getContentAdapter(parent);
 		if (contentAdapter != null) {
-			final ChildrenUpdate newRequest = new ChildrenUpdate(this, parentPath, parent, modelIndex, contentAdapter);
-			fPendingChildRequests.put(parentPath, newRequest);
-			fTimer.schedule(new TimerTask() {
-				public void run() {
-					newRequest.start();
-				}
-			}, 10L);
+			ChildrenUpdate request = new ChildrenUpdate(this, parentPath, parent, modelIndex, contentAdapter);
+			schedule(request);
 		}			
 	}	
 	
@@ -135,43 +78,10 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			HasChildrenUpdate request = new HasChildrenUpdate(this, path, element);
-			List requests = (List) fPendingHasChildrenRequests.get(contentAdapter);
-			if (requests != null) {
-				requests.add(request);
-				return;
-			}
-			requests = new ArrayList();
-			requests.add(request);
-			fPendingHasChildrenRequests.put(contentAdapter, requests);
-			final IElementContentProvider adapter = contentAdapter;
-			fTimer.schedule(new TimerTask() {
-				public void run() {
-					List list = null;
-					synchronized (TreeModelContentProvider.this) {
-						list = (List) fPendingHasChildrenRequests.remove(adapter);
-					}
-					adapter.update((IHasChildrenUpdate[]) list.toArray(new IHasChildrenUpdate[list.size()]));
-				}
-			}, 10L);
+			HasChildrenUpdate request = new HasChildrenUpdate(this, path, element, contentAdapter);
+			schedule(request);
 		}
 	}		
-	
-	/**
-	 * Batches the given update requests into one UI job on completion
-	 * 
-	 * @param updates updates to batch
-	 */
-	protected void batch(ViewerUpdateMonitor[] updates) {
-		BatchUpdate batch = new BatchUpdate();
-		for (int i = 0; i < updates.length; i++) {
-			updates[i].setBatchUpdate(batch);
-		}
-	}
-	
-	protected synchronized void childRequestStarted(IChildrenUpdate update) {
-		fPendingChildRequests.remove(update.getElementPath());
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#getPresentationContext()
@@ -320,13 +230,6 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 */
 	protected void handleState(IModelDelta delta) {
 		getTreeViewer().update(delta.getElement(), STATE_PROPERTIES);
-	}
-
-	public synchronized void dispose() {
-		fTimer.cancel();
-		fPendingChildRequests.clear();
-		fPendingCountRequests.clear();
-		super.dispose();
 	}
 
 	/* (non-Javadoc)

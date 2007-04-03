@@ -22,8 +22,6 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 	private Object[] fElements;
 	private int fIndex;
 	private int fLength;
-	private IElementContentProvider fContentProvider;
-	private boolean fStarted = false;
 
 	/**
 	 * Constructs a request to update an element
@@ -31,11 +29,10 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 	 * @param node node to update
 	 * @param model model containing the node
 	 */
-	public ChildrenUpdate(ModelContentProvider provider, TreePath elementPath, Object element, int index, IElementContentProvider presentation) {
-		super(provider, elementPath, element);
+	public ChildrenUpdate(ModelContentProvider provider, TreePath elementPath, Object element, int index, IElementContentProvider elementContentProvider) {
+		super(provider, elementPath, element, elementContentProvider);
 		fIndex = index;
 		fLength = 1;
-		fContentProvider = presentation;
 	}
 
 	/*
@@ -93,37 +90,30 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 		}
 		fElements[index - fIndex] = child;
 	}
-	
-	/**
-	 * Coalesce the request with the given index. Return whether the requests can be 
-	 * coalesced.
-	 * 
-	 * @param index
-	 * @return whether it worked
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
 	 */
-	public boolean coalesce(int index) {
-		if (index == fIndex + fLength) {
-			fLength++;
-			return true;
+	boolean coalesce(ViewerUpdateMonitor request) {
+		if (request instanceof ChildrenUpdate) {
+			ChildrenUpdate cu = (ChildrenUpdate) request;
+			int end = fIndex + fLength;
+			int otherStart = cu.getOffset();
+			if (otherStart == end) {
+				fLength = fLength + cu.getLength();
+				return true;
+			} else if (otherStart == fIndex) {
+				if (cu.getLength() > getLength()) {
+					fLength = cu.getLength();
+				}
+				return true;
+			} else if ((otherStart > fIndex) && (otherStart < end)) {
+				int otherEnd = otherStart + cu.getLength();
+				fLength = otherEnd - fIndex;
+				return true;
+			}
 		}
 		return false;
-	}
-	
-	public void start() {
-		synchronized (this) {
-			if (fStarted) {
-				return;
-			}
-			fStarted = true;
-		}
-		//System.out.println("\tRequest (" + fParent + "): " + fIndex + " length: " + fLength);
-		TreeModelContentProvider contentProvider = (TreeModelContentProvider)getContentProvider();
-		contentProvider.childRequestStarted(this);
-		if (!isCanceled()) {
-			fContentProvider.update(new IChildrenUpdate[]{this});
-		} else {
-			done();
-		}
 	}
 
 	/* (non-Javadoc)
@@ -139,14 +129,14 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 	public int getOffset() {
 		return fIndex;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#isContained(org.eclipse.jface.viewers.TreePath)
-	 */
-	boolean isContained(TreePath path) {
-		return getElementPath().startsWith(path, null);
-	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
+	 */
+	void startRequest() {
+		getElementContentProvider().update(new IChildrenUpdate[]{this});
+	}
+
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("IChildrenUpdate: "); //$NON-NLS-1$
@@ -157,6 +147,20 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 		buf.append(getLength());
 		buf.append("}"); //$NON-NLS-1$
 		return buf.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
+	 */
+	int getPriority() {
+		return 3;
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
+	 */
+	TreePath getSchedulingPath() {
+		return getElementPath();
+	}		
 }
 

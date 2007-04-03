@@ -1042,4 +1042,41 @@ public class InternalTreeModelViewer extends TreeViewer {
 		((TreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
 	}
 
+	/**
+	 * Overrides replace to perform a 'clearAll' when an item is replaced. This will
+	 * re-ask for children since the parent has changed.
+	 * 
+	 * TODO: this should be removed when bug 172640 is fixed.
+	 */
+	public void replace(final Object parentElementOrTreePath, final int index,
+			final Object element) {
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
+					if (index < getTree().getItemCount()) {
+						updateItem(getTree().getItem(index), element);
+					}
+				} else {
+					Widget[] parentItems = internalFindItems(parentElementOrTreePath);
+					for (int i = 0; i < parentItems.length; i++) {
+						TreeItem parentItem = (TreeItem) parentItems[i];
+						if (index < parentItem.getItemCount()) {
+							TreeItem item = parentItem.getItem(index);
+							boolean clear = false;
+							if (item.getData() != null) {
+								if (!item.getData().equals(element)) {
+									clear = true;
+								}
+							}
+							updateItem(item, element);
+							if (clear) {
+								item.clearAll(true);
+							}
+						}
+					}
+				}
+			}
+
+		});
+	}
 }

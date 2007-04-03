@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
@@ -37,6 +38,11 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 	 * Element
 	 */
 	private Object fElement;
+	
+	/**
+	 * Element content provider
+	 */
+	private IElementContentProvider fElementContentProvider;
     
     /**
      * Whether this request's 'done' method has been called.
@@ -44,9 +50,9 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
     private boolean fDone = false;
     
     /**
-     * Associated batch operation, or <code>null</code>
+     * Whether this request has been started
      */
-    private BatchUpdate fBatchUpdate = null;
+    private boolean fStarted = false;
     
     protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -72,14 +78,14 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
      * @param elementPath path to associated model element - empty for root element
      * @param element associated model element
      */
-    public ViewerUpdateMonitor(ModelContentProvider contentProvider, TreePath elementPath, Object element) {
+    public ViewerUpdateMonitor(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider) {
+    	fElementContentProvider = elementContentProvider;
         fContentProvider = contentProvider;
         fElement = element;
         fElementPath = elementPath;
         // serialize updates per viewer
         fViewerUpdateJob.setRule(getUpdateSchedulingRule());
         fViewerUpdateJob.setSystem(true);
-        contentProvider.updateStarted(this);
     }
     
     /**
@@ -98,7 +104,16 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
      */
     protected ModelContentProvider getContentProvider() {
         return fContentProvider;
-    }    
+    }   
+    
+    /**
+     * Returns the element content provider to use for this request
+     * 
+     * @return element content provider
+     */
+    protected IElementContentProvider getElementContentProvider() {
+    	return fElementContentProvider;
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IProgressMonitor#done()
@@ -110,11 +125,7 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
     		}
     		fDone = true;
 		}
-    	if (fBatchUpdate != null) {
-    		fBatchUpdate.done(this);
-    	} else {
-    		scheduleViewerUpdate();
-    	}
+    	scheduleViewerUpdate();
 	}
     
     /**
@@ -162,16 +173,52 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 	}
 	
 	/**
-	 * Whether this update is rooted at or below the given path.
+	 * Returns whether this request can coalesce the given request, and performs the
+	 * coalesce if it can.
 	 * 
-	 * @param path
-	 * @return whether this update is rooted at or below the given path
+	 * @param update request to coalesce with this request
+	 * @return whether it worked
 	 */
-	abstract boolean isContained(TreePath path);
+	abstract boolean coalesce(ViewerUpdateMonitor update);
 	
-	synchronized void setBatchUpdate(BatchUpdate batchUpdate) {
-		fBatchUpdate = batchUpdate;
-		batchUpdate.batch(this);
-	}
+	/**
+	 * Starts this request. Subclasses must override startRequest().
+	 */
+	final void start() {
+		synchronized (this) {
+			if (fStarted) {
+				return;
+			}
+			fStarted = true;
+		}
+		getContentProvider().updateStarted(this);
+		if (!isCanceled()) {
+			startRequest();
+		} else {
+			done();
+		}
+	}	
 	
+	/**
+	 * Subclasses must override to initiate specific request types.
+	 */
+	abstract void startRequest();
+	
+	/**
+	 * Returns the priority of this request. Subclasses must override. The
+	 * highest priority is 1. Priorities indicate the order that waiting
+	 * requests should be started in (for example, 'hasChildren' before 'update child count'). 
+	 * 
+	 * @return priority
+	 */
+	abstract int getPriority();
+	
+	/**
+	 * Returns a path used to schedule this request - i.e. based on this path, this
+	 * request will be scheduled to run when no requests are running against the
+	 * same element or a parent of the element denoted by the path.
+	 * 
+	 * @return path used to schedule request
+	 */
+	abstract TreePath getSchedulingPath();
 }

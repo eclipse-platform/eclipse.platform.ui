@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -21,11 +25,13 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 
 	private boolean fHasChildren = false;
 	
+	private List fBatchedRequests = null;
+	
 	/**
 	 * @param contentProvider
 	 */
-	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element) {
-		super(contentProvider, elementPath, element);
+	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider) {
+		super(contentProvider, elementPath, element, elementContentProvider);
 	}
 
 	/* (non-Javadoc)
@@ -50,17 +56,59 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		fHasChildren = hasChildren;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#isContained(org.eclipse.jface.viewers.TreePath)
-	 */
-	boolean isContained(TreePath path) {
-		return getElementPath().startsWith(path, null);
-	}
-
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("IHasChildrenUpdate: "); //$NON-NLS-1$
 		buf.append(getElement());
 		return buf.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
+	 */
+	boolean coalesce(ViewerUpdateMonitor request) {
+		if (request instanceof HasChildrenUpdate) {
+			if (getElementPath().equals(request.getElementPath())) {
+				// duplicate request
+				return true;
+			} else if (getElementContentProvider().equals(request.getElementContentProvider())) {
+				if (fBatchedRequests == null) {
+					fBatchedRequests = new ArrayList();
+					fBatchedRequests.add(this);
+				}
+				fBatchedRequests.add(request);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#startRequest()
+	 */
+	void startRequest() {
+		if (fBatchedRequests == null) {
+			getElementContentProvider().update(new IHasChildrenUpdate[]{this});
+		} else {
+			getElementContentProvider().update((IHasChildrenUpdate[]) fBatchedRequests.toArray(new IHasChildrenUpdate[fBatchedRequests.size()]));
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
+	 */
+	int getPriority() {
+		return 1;
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getSchedulingPath()
+	 */
+	TreePath getSchedulingPath() {
+		TreePath path = getElementPath();
+		if (path.getSegmentCount() > 0) {
+			return path.getParentPath();
+		}
+		return path;
+	}		
 }

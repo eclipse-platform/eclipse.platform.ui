@@ -29,12 +29,6 @@ import org.eclipse.jface.viewers.TreePath;
  * <p>
  * This class not intended to be subclassed or instantiated. For internal use only.
  * </p>
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  * @since 3.3
  */
 class FilterTransform {
@@ -101,7 +95,7 @@ class FilterTransform {
 					children.remove(child);
 				}
 			}
-			return children.isEmpty();
+			return children.isEmpty() && (filteredChildren == null || filteredChildren.length == 0);
 		}
 		
 		boolean clear(TreePath path, int childIndex, int pathIndex) {
