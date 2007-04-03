@@ -68,14 +68,20 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#dispose()
 	 */
 	public void dispose() {
+		fGroup.dispose();
 		if(fTabs != null) {
+			List tabs = Arrays.asList(fGroup.getTabs());
+			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				((ILaunchConfigurationTab)fTabs.get(i)).dispose();
+				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				if(!tabs.contains(tab)) {
+					tab.dispose();
+				}
 			}
-			fTabs = null;
 		}
+		fTabs.clear();
 	}
-
+	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#getTabs()
 	 */
@@ -134,9 +140,15 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
+		fGroup.initializeFrom(configuration);
 		if(fTabs != null) {
+			List tabs = Arrays.asList(fGroup.getTabs());
+			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				((ILaunchConfigurationTab)fTabs.get(i)).initializeFrom(configuration);
+				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				if(!tabs.contains(tab)) {
+					tab.initializeFrom(configuration);
+				}
 			}
 		}
 	}
@@ -154,9 +166,15 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
+		fGroup.performApply(configuration);
 		if(fTabs != null) {
+			List tabs = Arrays.asList(fGroup.getTabs());
+			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				((ILaunchConfigurationTab)fTabs.get(i)).performApply(configuration);
+				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				if(!tabs.contains(tab)) {
+					tab.performApply(configuration);
+				}
 			}
 		}
 	}
@@ -165,9 +183,15 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
+		fGroup.setDefaults(configuration);
 		if(fTabs != null) {
+			List tabs = Arrays.asList(fGroup.getTabs());
+			ILaunchConfigurationTab tab = null;
 			for(int i = 0; i < fTabs.size(); i++) {
-				((ILaunchConfigurationTab)fTabs.get(i)).setDefaults(configuration);
+				tab = (ILaunchConfigurationTab)fTabs.get(i);
+				if(!tabs.contains(tab)) {
+					tab.setDefaults(configuration);
+				}
 			}
 		}
 	}
