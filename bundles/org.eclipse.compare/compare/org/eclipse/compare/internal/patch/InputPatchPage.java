@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - layout tweaks
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 180358 [Apply Patch] Cursor jumps to beginning of filename field on keystroke
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
@@ -375,7 +376,6 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		});
 		fPatchFileNameField.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setSourceName(fPatchFileNameField.getText());
 				updateWidgetEnablements();
 			}
 		});
