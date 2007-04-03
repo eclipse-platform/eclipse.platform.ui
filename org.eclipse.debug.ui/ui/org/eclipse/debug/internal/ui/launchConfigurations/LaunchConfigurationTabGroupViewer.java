@@ -1332,12 +1332,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 			copy.rename(trimmed);
 			getTabGroup().performApply(copy);
-			fInitializingTabs = false;
-
 			if (isDirty()) {
 				copy.doSave();
 			}
 			updateButtons();
+			fInitializingTabs = false;
 		} catch (CoreException e) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, e); // 
 			return;
