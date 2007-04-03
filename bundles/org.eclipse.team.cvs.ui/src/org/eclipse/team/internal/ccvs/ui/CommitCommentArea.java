@@ -10,6 +10,7 @@
  *     Sebastian Davids - bug 57208
  *     Maik Schreiber - bug 102461
  *     Eugene Kuleshov (eu@md.pp.ru) - Bug 112742 [Wizards] Add spell check to commit dialog
+ *     Brock Janiczak <brockj@tpg.com.au>  - Bug 179183 Use spelling support from JFace in CVS commit dialog
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
