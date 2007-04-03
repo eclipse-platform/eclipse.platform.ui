@@ -26,6 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -52,8 +53,12 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      * Indicates if working set was changed
      */
     public static final String CHANGE_WORKING_SET = "changeWorkingSet"; //$NON-NLS-1$
+    
+    private static final String START_SEPARATOR_ID = "workingSetGroupStartSeparator"; //$NON-NLS-1$
 
     private static final String SEPARATOR_ID = "workingSetGroupSeparator"; //$NON-NLS-1$
+
+	private static final String WORKING_SET_ACTION_GROUP = "workingSetActionGroup"; //$NON-NLS-1$
 
     private IWorkingSet workingSet = null;
 
@@ -154,11 +159,17 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
      */
     public void fillActionBars(IActionBars actionBars) {
         menuManager = actionBars.getMenuManager();
-        menuManager.add(selectWorkingSetAction);
-        menuManager.add(clearWorkingSetAction);
-        menuManager.add(editWorkingSetAction);
-        menuManager.add(new Separator());
-        menuManager.add(new Separator(SEPARATOR_ID));
+        
+        if(menuManager.find(IWorkbenchActionConstants.MB_ADDITIONS) != null) 
+        	menuManager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator(WORKING_SET_ACTION_GROUP));
+        else
+        	menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
+        
+        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, selectWorkingSetAction);
+        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, clearWorkingSetAction);
+        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, editWorkingSetAction);
+        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(START_SEPARATOR_ID));
+        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(SEPARATOR_ID));
 
         menuListener = new IMenuListener() {
             public void menuAboutToShow(IMenuManager manager) {
