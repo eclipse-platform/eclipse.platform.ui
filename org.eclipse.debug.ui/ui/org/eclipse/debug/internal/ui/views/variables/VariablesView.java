@@ -290,7 +290,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
 		if (propertyName.equals(IDebugUIConstants.PREF_CHANGED_DEBUG_ELEMENT_COLOR) || 
-				propertyName.equals(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND)) {
+				propertyName.equals(IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND) ||
+				propertyName.equals(IInternalDebugUIConstants.VARIABLE_TEXT_FONT)) {
 			getViewer().refresh();
 		}
 	}
@@ -307,6 +308,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		
 		fModelPresentation = new VariablesViewModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		JFaceResources.getFontRegistry().addListener(this);
 
 		TreeModelViewer variablesViewer = createTreeViewer(fSashForm);
 			

@@ -20,7 +20,9 @@ import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentatio
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
 /**
@@ -72,6 +74,13 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getFontData(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
+	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId)	throws CoreException {
+		return JFaceResources.getFontDescriptor(IInternalDebugUIConstants.VARIABLE_TEXT_FONT).getFontData()[0];
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
 	 */

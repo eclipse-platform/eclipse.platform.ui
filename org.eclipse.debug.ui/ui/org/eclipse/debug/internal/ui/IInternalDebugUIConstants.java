@@ -193,6 +193,14 @@ public interface IInternalDebugUIConstants {
      * @since 2.1
      */ 
     public static final String DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$   
+    
+    /**
+     * The name of the font to use for the variable text in the variables, registers and expression views.
+     * This font is managed via the workbench font preference page.
+     * 
+     * @since 3.3
+     */ 
+    public static final String VARIABLE_TEXT_FONT= "org.eclipse.debug.ui.VariableTextFont"; //$NON-NLS-1$   
 
     /**
      * Boolean preference indicating if contextual launch options should be visible
