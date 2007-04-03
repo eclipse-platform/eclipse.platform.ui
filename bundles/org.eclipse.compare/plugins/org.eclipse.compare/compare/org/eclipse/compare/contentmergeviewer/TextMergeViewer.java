@@ -10,6 +10,7 @@
  *     channingwalton@mac.com - curved line code
  *     gilles.querret@free.fr - fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=72995
  *     Max Weninger (max.weninger@windriver.com) - Bug 131895 [Edit] Undo in compare
+ *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
@@ -2884,14 +2885,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				x+= fMarginWidth;
 				width-= fMarginWidth;
 			}
-			fAncestor.getTextWidget().setBounds(x, y, width, height);
+			fAncestor.setBounds(x, y, width, height);
 		} else {
 			if (Utilities.okToUse(fAncestorCanvas))
 				fAncestorCanvas.setVisible(false);
 			if (fAncestor.isControlOkToUse()) {
 				StyledText t= fAncestor.getTextWidget();
 				t.setVisible(false);
-				t.setBounds(0, 0, 0, 0);
+				fAncestor.setBounds(0, 0, 0, 0);
 				if (fFocusPart == fAncestor) {
 					fFocusPart= fLeft;
 					fFocusPart.getTextWidget().setFocus();
@@ -2920,7 +2921,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			leftTextWidth-= fMarginWidth;
 		}
 		
-		fLeft.getTextWidget().setBounds(x, y, leftTextWidth, height);
+		fLeft.setBounds(x, y, leftTextWidth, height);
 		x+= leftTextWidth;
 		
 		if (fCenter == null || fCenter.isDisposed())
@@ -2946,7 +2947,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		int rightTextWidth= width2-scrollbarWidth;
 		if (fRightCanvas != null)
 			rightTextWidth-= fMarginWidth;
-		fRight.getTextWidget().setBounds(x, y, rightTextWidth, height);
+		fRight.setBounds(x, y, rightTextWidth, height);
 		x+= rightTextWidth;
 			
 		if (fSynchronizedScrolling) {

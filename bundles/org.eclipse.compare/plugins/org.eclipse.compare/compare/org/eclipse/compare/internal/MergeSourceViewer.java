@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Max Weninger (max.weninger@windriver.com) - Bug 131895 [Edit] Undo in compare
+ *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -29,6 +30,10 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 /**
@@ -80,8 +85,13 @@ public class MergeSourceViewer extends SourceViewer
 	private boolean fAddSaveAction= true;
 	private boolean isConfigured = false;
 	
+	// line number ruler support
+	private IPropertyChangeListener fPreferenceChangeListener;
+	private boolean fShowLineNumber=false;
+	private LineNumberRulerColumn fLineNumberColumn;
+
 	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle, ICompareContainer container) {
-		super(parent, null, style | SWT.H_SCROLL | SWT.V_SCROLL);
+		super(parent, new CompositeRuler(), style | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fResourceBundle= bundle;
 		
@@ -91,6 +101,18 @@ public class MergeSourceViewer extends SourceViewer
 		StyledText te= getTextWidget();
 		te.setMenu(menu.createContextMenu(te));
 		container.registerContextMenu(menu, this);
+		
+		// for listening to editor show/hide line number preference value
+		fPreferenceChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				MergeSourceViewer.this.handlePropertyChangeEvent(event);
+			}
+		};
+		EditorsUI.getPreferenceStore().addPropertyChangeListener(fPreferenceChangeListener);
+		fShowLineNumber= EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
+		if(fShowLineNumber){
+			updateLineNumberRuler();
+		}
 	}
 	
 	public void rememberDocument(IDocument doc) {
@@ -425,6 +447,7 @@ public class MergeSourceViewer extends SourceViewer
 		
 		removeTextListener(this);
 		removeSelectionChangedListener(this);
+		EditorsUI.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
 		
 		super.handleDispose();
 	}
@@ -446,5 +469,68 @@ public class MergeSourceViewer extends SourceViewer
 			unconfigure();
 		isConfigured = true;
 		super.configure(configuration);
+	}
+	
+	/**
+	 * specific implemenation to support a vertical ruler
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
+	public void setBounds (int x, int y, int width, int height) {
+		if(getControl() instanceof Composite){
+			((Composite)getControl()).setBounds(x, y, width, height);
+		} else {
+			getTextWidget().setBounds(x, y, width, height);			
+		}
+	}
+	
+	/**
+	 * handle show/hide line numbers from editor preferences
+	 * @param event
+	 */
+	protected void handlePropertyChangeEvent(PropertyChangeEvent event) {
+		
+		String key= event.getProperty();
+		
+		if(key.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)){
+			boolean b= EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
+			if (b != fShowLineNumber){
+				toogleLineNumberRuler();	
+			}
+		}
+	}
+
+	/**
+	 * Hides or shows line number ruler column based of pref setting
+	 */
+	private void updateLineNumberRuler() 
+	{
+		IVerticalRuler v= getVerticalRuler();
+		if (v!=null && v instanceof CompositeRuler) {
+			CompositeRuler c= (CompositeRuler) v;
+
+			if(!fShowLineNumber){
+				if(fLineNumberColumn!=null){
+					c.removeDecorator(fLineNumberColumn);
+				}
+			} else {
+				if(fLineNumberColumn==null){
+					fLineNumberColumn = new LineNumberRulerColumn();
+				}
+				c.addDecorator(0, fLineNumberColumn);
+			}
+		}
+	}
+
+	/**
+	 * Toogles line number ruler column.
+	 */
+	private void toogleLineNumberRuler() 
+	{	
+		fShowLineNumber=!fShowLineNumber;
+		
+		updateLineNumberRuler();
 	}
 }
