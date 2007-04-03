@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.presentations.util;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -76,6 +78,8 @@ public class StandardViewSystemMenu implements ISystemMenu {
     	return WorkbenchMessages.ViewPane_moveView;
     }
     
+    private boolean cleanupListenerAdded = false;
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.util.ISystemMenu#show(org.eclipse.swt.graphics.Point, org.eclipse.ui.presentations.IPresentablePart)
      */
@@ -91,6 +95,16 @@ public class StandardViewSystemMenu implements ISystemMenu {
         menuManager.update(true);
         aMenu.setLocation(displayCoordinates.x, displayCoordinates.y);
         aMenu.setVisible(true);
+        
+        if (!cleanupListenerAdded) {
+			cleanupListenerAdded = true;
+			parent.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					// A menu is not disposed with its parent control
+					dispose();
+				}
+			});
+		}
     }
     
     /**
