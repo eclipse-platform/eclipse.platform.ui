@@ -537,6 +537,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @since 3.3
 	 */
 	protected void handleDispose() {
+		fContainerProvided = false;
+		fContainer = null;
 		fCompareConfiguration.dispose();
 	}
 	
