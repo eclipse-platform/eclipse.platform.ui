@@ -344,7 +344,7 @@ public class CVSHistoryTableProvider {
 					if (date1 == date2)
 						return 0;
 
-					return date1 > date2 ? -1 : 1;
+					return date1 > date2 ? 1 : -1;
 
 				case 3 : /* author */
 					String author1 = e1.getAuthor();
@@ -461,6 +461,9 @@ public class CVSHistoryTableProvider {
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
+		tree.setSortColumn(col);
+		tree.setSortDirection(SWT.DOWN);
+		
 		// tags
 		col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
@@ -514,10 +517,16 @@ public class CVSHistoryTableProvider {
 				// column selected - need to sort
 				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
 				HistoryComparator oldSorter = (HistoryComparator) treeViewer.getComparator();
+				TreeColumn treeColumn = ((TreeColumn)e.widget);
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
+					
+					treeViewer.getTree().setSortColumn(treeColumn);
+					treeViewer.getTree().setSortDirection(oldSorter.isReversed() ? SWT.DOWN : SWT.UP);
 					treeViewer.refresh();
 				} else {
+				    treeViewer.getTree().setSortColumn(treeColumn);
+                    treeViewer.getTree().setSortDirection(SWT.UP);
 					treeViewer.setComparator(new HistoryComparator(column));
 				}
 			}
