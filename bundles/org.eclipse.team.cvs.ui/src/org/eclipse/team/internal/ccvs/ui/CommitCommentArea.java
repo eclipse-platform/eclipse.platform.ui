@@ -14,23 +14,16 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.*;
-import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.reconciler.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -41,17 +34,13 @@ import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AnnotationPreference;
-import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
-import org.eclipse.ui.texteditor.spelling.*;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.texteditor.*;
 
 /**
  * This area provides the widgets for providing the CVS commit comment
  */
 public class CommitCommentArea extends DialogArea {
-    
-    public static final String SPELLING_ERROR = "spelling.error"; //$NON-NLS-1$
-    
 
     private class TextBox implements ModifyListener, TraverseListener, FocusListener, Observer {
         
@@ -59,14 +48,11 @@ public class CommitCommentArea extends DialogArea {
         private final String fMessage;
         
         private String fText;
-		private LocalResourceManager fResources;
         
         public TextBox(Composite composite, String message, String initialText) {
             
             fMessage= message;
             fText= initialText;
-            // Create a resource manager for the composite so it gets automatically disposed
-            fResources= new LocalResourceManager(JFaceResources.getResources(), composite);
             
             AnnotationModel annotationModel = new AnnotationModel();
             IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
@@ -78,24 +64,27 @@ public class CommitCommentArea extends DialogArea {
             SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
             sourceViewer.getTextWidget().setIndent(2);
             
-            if (isSpellingAnnotationEnabled()) {
-	            // to paint the annotations
-	            AnnotationPainter ap = new AnnotationPainter(sourceViewer, annotationAccess);
-	            ap.addAnnotationType(SPELLING_ERROR);
-	            ap.setAnnotationTypeColor(SPELLING_ERROR, getSpellingErrorColor(composite));
-	
-	            // this will draw the squiggles under the text
-	            sourceViewer.addPainter(ap);
-            }
-
+            final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
+    		Iterator e= new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
+    		while (e.hasNext())
+    			support.setAnnotationPreference((AnnotationPreference) e.next());
+    		
+            support.install(EditorsUI.getPreferenceStore());
+            
+            sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
+			
+				public void widgetDisposed(DisposeEvent e) {
+					support.uninstall();
+				}
+			
+			});
+            
             Document document = new Document(initialText);
 
             // NOTE: Configuration must be applied before the document is set in order for
             // Hyperlink coloring to work. (Presenter needs document object up front)
-            sourceViewer.configure(new SourceViewerConfig(annotationModel, document));
-            
+            sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
             sourceViewer.setDocument(document, annotationModel);
-            
             fTextField = sourceViewer.getTextWidget();
             
             fTextField.addTraverseListener(this);
@@ -103,24 +92,6 @@ public class CommitCommentArea extends DialogArea {
             fTextField.addFocusListener(this);
         }
 
-		private boolean isSpellingAnnotationEnabled() {
-			// Need to determine how to ask the proper question to the AnnotationPreferences
-			return true;
-		}
-
-		private Color getSpellingErrorColor(Composite composite) {
-			AnnotationPreference pref = EditorsUI
-					.getAnnotationPreferenceLookup().getAnnotationPreference(
-							"org.eclipse.ui.workbench.texteditor.spelling"); //$NON-NLS-1$ 
-			String preferenceKey = pref.getColorPreferenceKey();
-			try {
-				return fResources.createColor(PreferenceConverter.getColor(EditorsUI.getPreferenceStore(), preferenceKey));
-			} catch (DeviceResourceException e) {
-				CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.internal, e);
-				return JFaceColors.getErrorText(composite.getDisplay());
-			}
-		}
-        
         public void modifyText(ModifyEvent e) {
             final String old = fText;
             fText = fTextField.getText();
@@ -188,117 +159,6 @@ public class CommitCommentArea extends DialogArea {
         }
     }
     
-    public class SourceViewerConfig extends SourceViewerConfiguration {
-
-      private CommentSpellingReconcileStrategy strategy;
-  
-      public SourceViewerConfig(AnnotationModel annotationModel, Document document) {
-        strategy = new CommentSpellingReconcileStrategy(annotationModel);
-        strategy.setDocument(document);
-      }
-
-      public IReconciler getReconciler(ISourceViewer sourceViewer) {
-          MonoReconciler reconciler = new MonoReconciler(strategy, false);
-          reconciler.setIsIncrementalReconciler(false);
-          reconciler.setProgressMonitor(new NullProgressMonitor());
-          reconciler.setDelay(200);
-          return reconciler;
-      }
-    }
-    
-    public class CommentSpellingReconcileStrategy implements IReconcilingStrategy {
-
-
-      /** The document to operate on. */
-      private IDocument fDocument;
-
-      private SpellingContext fSpellingContext;
-
-      private IAnnotationModel fAnnotationModel;
-
-
-      public CommentSpellingReconcileStrategy(AnnotationModel annotationModel) {
-        this.fAnnotationModel = annotationModel;
-        fSpellingContext = new SpellingContext();
-        fSpellingContext.setContentType(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT));
-      }
-
-      public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
-        reconcile(subRegion);
-      }
-
-      public void reconcile(IRegion region) {
-        SpellingProblemCollector collector = new SpellingProblemCollector(fAnnotationModel);
-        EditorsUI.getSpellingService().check(fDocument, fSpellingContext, collector, null);
-      }
-
-      public void setDocument(IDocument document) {
-        fDocument = document;
-      }
-
-      
-      /**
-       * Spelling problem collector that forwards {@link SpellingProblem}s as
-       * {@link IProblem}s to the {@link org.eclipse.jdt.core.IProblemRequestor}.
-       */
-      private class SpellingProblemCollector implements ISpellingProblemCollector {
-
-        /** Annotation model */
-        private IAnnotationModel fAnnotationModel;
-
-        /** Annotations to add <ErrorAnnotation, Position> */
-        private Map fAddAnnotations;
-
-        /**
-         * Initializes this collector with the given annotation model.
-         * 
-         * @param annotationModel
-         *          the annotation model
-         */
-        public SpellingProblemCollector(IAnnotationModel annotationModel) {
-          fAnnotationModel = annotationModel;
-        }
-
-        /*
-         * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#accept(org.eclipse.ui.texteditor.spelling.SpellingProblem)
-         */
-        public void accept(SpellingProblem problem) {
-          fAddAnnotations.put(new Annotation(SPELLING_ERROR, false, SPELLING_ERROR), 
-              new Position(problem.getOffset(), problem.getLength()));
-        }
-
-        /*
-         * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#beginCollecting()
-         */
-        public void beginCollecting() {
-          fAddAnnotations = new HashMap();
-        }
-
-        /*
-         * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endCollecting()
-         */
-        public void endCollecting() {
-          List removeAnnotations = new ArrayList();
-          for(Iterator iter = fAnnotationModel.getAnnotationIterator(); iter.hasNext();) {
-            Annotation annotation = (Annotation) iter.next();
-            if(SPELLING_ERROR.equals(annotation.getType()))
-              removeAnnotations.add(annotation);
-          }
-
-          for(Iterator iter = removeAnnotations.iterator(); iter.hasNext();)
-            fAnnotationModel.removeAnnotation((Annotation) iter.next());
-          for(Iterator iter = fAddAnnotations.keySet().iterator(); iter.hasNext();) {
-            Annotation annotation = (Annotation) iter.next();
-            fAnnotationModel.addAnnotation(annotation, (Position) fAddAnnotations.get(annotation));
-          }
-
-          fAddAnnotations = null;
-        }
-      }
-      
-    }
-
-
     private static class ComboBox extends Observable implements SelectionListener, FocusListener {
         
         private final String fMessage;
