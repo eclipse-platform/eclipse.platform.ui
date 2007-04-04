@@ -246,6 +246,13 @@ public class DragTest extends UITestCaseWithResult {
         // Uncomment the following line to 'stall' the tests here...
         //stallTest();
 
+    	// KLUDGE!! revert to the old min/max when dragging maximized views
+    	// see bug 180242. This code should disappear before release...
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (getName().indexOf("drag maximized") >= 0)
+    		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+    		
     	dragSource.setPage(page);
 
         dragSource.drag(dropTarget);
@@ -254,6 +261,9 @@ public class DragTest extends UITestCaseWithResult {
         
         // Uncomment the following line to 'stall' the tests here...
         //stallTest();
+        
+        // KLUDGE!! Restore the min/max pref
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, curMinMaxState);
         
         return DragOperations.getLayoutDescription(page);
     }
