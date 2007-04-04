@@ -31,6 +31,8 @@ public class ViewerCell {
 
 	private ViewerRow row;
 
+	private Object element;
+
 	/**
 	 * Constant denoting the cell above current one (value is 1).
 	 */
@@ -57,9 +59,10 @@ public class ViewerCell {
 	 * @param row
 	 * @param columnIndex
 	 */
-	ViewerCell(ViewerRow row, int columnIndex) {
+	ViewerCell(ViewerRow row, int columnIndex, Object element) {
 		this.row = row;
 		this.columnIndex = columnIndex;
+		this.element = element;
 	}
 
 	/**
@@ -86,6 +89,9 @@ public class ViewerCell {
 	 * @return {@link Object}
 	 */
 	public Object getElement() {
+		if (element!=null) {
+			return element;
+		}
 		return row.getElement();
 	}
 
@@ -173,9 +179,10 @@ public class ViewerCell {
 	 * @param rowItem
 	 * @param column
 	 */
-	void update(ViewerRow rowItem, int column) {
+	void update(ViewerRow rowItem, int column, Object element) {
 		row = rowItem;
 		columnIndex = column;
+		this.element = element;
 	}
 
 	/**

@@ -45,7 +45,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	/**
 	 * The cell is a cached viewer cell used for refreshing.
 	 */
-	private ViewerCell cell = new ViewerCell(null, 0);
+	private ViewerCell cell = new ViewerCell(null, 0, null);
 
 	private ColumnViewerEditor viewerEditor;
 
@@ -260,8 +260,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * @param column
 	 * @return ViewerCell
 	 */
-	/* package */ViewerCell updateCell(ViewerRow rowItem, int column) {
-		cell.update(rowItem, column);
+	/* package */ViewerCell updateCell(ViewerRow rowItem, int column, Object element) {
+		cell.update(rowItem, column, element);
 		return cell;
 	}
 

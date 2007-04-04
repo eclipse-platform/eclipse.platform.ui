@@ -149,7 +149,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.3
 	 */
 	final protected Widget[] internalFindItems(Object parentElementOrTreePath) {
-		Widget[] widgets = findItems(parentElementOrTreePath);
+		Widget[] widgets;
 		if (parentElementOrTreePath instanceof TreePath) {
 			TreePath path = (TreePath) parentElementOrTreePath;
 			Widget w = internalFindItem(path);
@@ -882,10 +882,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (columnCount == 0)// If no columns are created then fake one
 			columnCount = 1;
 
+		ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
 		for (int column = 0; column < columnCount; column++) {
 			ViewerColumn columnViewer = getViewerColumn(column);
-			columnViewer.refresh(updateCell(getViewerRowFromItem(item),
-					column));
+			columnViewer.refresh(updateCell(viewerRowFromItem,
+					column, element));
 
 			// As it is possible for user code to run the event
 			// loop check here.

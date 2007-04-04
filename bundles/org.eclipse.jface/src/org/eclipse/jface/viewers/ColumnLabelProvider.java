@@ -30,11 +30,15 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	 * @see org.eclipse.jface.viewers.CellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	public void update(ViewerCell cell) {
-		cell.setText(getText(cell.getElement()));
-		cell.setImage(getImage(cell.getElement()));
-		cell.setBackground(getBackground(cell.getElement()));
-		cell.setForeground(getForeground(cell.getElement()));
-		cell.setFont(getFont(cell.getElement()));
+		Object element = cell.getElement();
+		cell.setText(getText(element));
+		Image image = getImage(element);
+		if (image != cell.getImage()) {
+			cell.setImage(image);
+		}
+		cell.setBackground(getBackground(element));
+		cell.setForeground(getForeground(element));
+		cell.setFont(getFont(element));
 
 	}
 

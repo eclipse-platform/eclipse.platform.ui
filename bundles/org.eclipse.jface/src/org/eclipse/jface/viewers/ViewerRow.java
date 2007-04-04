@@ -198,7 +198,7 @@ public abstract class ViewerRow implements Cloneable {
 	 */
 	public ViewerCell getCell(int column) {
 		if (column >= 0)
-			return new ViewerCell((ViewerRow) clone(), column);
+			return new ViewerCell((ViewerRow) clone(), column, getElement());
 
 		return null;
 	}

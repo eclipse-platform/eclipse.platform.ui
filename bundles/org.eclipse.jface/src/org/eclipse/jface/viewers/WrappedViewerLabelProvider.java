@@ -158,8 +158,21 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 	}
 
 	public void update(ViewerCell cell) {
+		Object element = cell.getElement();
 		if(viewerLabelProvider == null && treePathLabelProvider == null){
-			super.update(cell);
+			// inlined super implementation with performance optimizations
+			cell.setText(getText(element));
+			Image image = getImage(element);
+			if (image != cell.getImage()) {
+				cell.setImage(image);
+			}
+			if (colorProvider != null) {
+				cell.setBackground(getBackground(element));
+				cell.setForeground(getForeground(element));
+			}
+			if (fontProvider != null) {
+				cell.setFont(getFont(element));
+			}
 			return;
 		}
 		
@@ -171,16 +184,16 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 			Assert.isNotNull(treePath);
 			treePathLabelProvider.updateLabel(label, treePath);
 		} else if (viewerLabelProvider != null) {
-			viewerLabelProvider.updateLabel(label, cell.getElement());
+			viewerLabelProvider.updateLabel(label, element);
 		} 
 		if (!label.hasNewForeground() && colorProvider != null) 
-			label.setForeground(getForeground(cell.getElement()));
+			label.setForeground(getForeground(element));
 		
 		if (!label.hasNewBackground() && colorProvider != null) 
-			label.setBackground(getBackground(cell.getElement()));
+			label.setBackground(getBackground(element));
 		
 		if (!label.hasNewFont() && fontProvider != null) 
-			label.setFont(getFont(cell.getElement()));
+			label.setFont(getFont(element));
 		
 		applyViewerLabel(cell, label);
 	}
