@@ -57,7 +57,7 @@ import org.eclipse.ui.PartInitException;
  */
 public class InspectPopupDialog extends DebugPopup {
     
-	private static final String PREF_INSPECT_POPUP_SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + "inspectPopupSashWeights";
+	private static final String PREF_INSPECT_POPUP_SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + "inspectPopupSashWeights"; //$NON-NLS-1$
 	
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
     private static final int MIN_WIDTH = 250;
