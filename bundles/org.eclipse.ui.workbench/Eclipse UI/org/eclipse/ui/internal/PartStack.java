@@ -1441,9 +1441,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			return;
 		}
 
-		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-		boolean useNewMinMax = preferenceStore
-				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		final WorkbenchWindow wbw = (WorkbenchWindow) getPage().getWorkbenchWindow();
+		if (wbw == null || wbw.getShell() == null)
+			return;
+
+		boolean useNewMinMax = Perspective.useNewMinMax(wbw.getActiveWorkbenchPage().getActivePerspective());
 
 		// we have to fiddle with the zoom behavior to satisfy Intro req's
 		// by usning the old zoom behavior for its stack
@@ -1453,11 +1455,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			useNewMinMax = useNewMinMax && smartZoomed;
 
 		if (useNewMinMax) {
-			final WorkbenchWindow wbw = (WorkbenchWindow) getPage()
-					.getWorkbenchWindow();
-			if (wbw == null || wbw.getShell() == null)
-				return;
-
         	StartupThreading.runWithoutExceptions(new StartupRunnable() {
 				public void runWithException() throws Throwable {
 					wbw.getPageComposite().setRedraw(false);

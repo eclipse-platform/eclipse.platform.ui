@@ -18,7 +18,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
@@ -26,11 +25,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -81,9 +78,7 @@ public class EditorSashContainer extends PartSashContainer {
 	private void updateStackButtons() {
 		 // This is applicable only when the new
 		 // min/max behaviour is being used
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-        if (!useNewMinMax)
+        if (!Perspective.useNewMinMax(getPage().getActivePerspective()))
         	return;
 		
 		// Find the upper Right editor stack

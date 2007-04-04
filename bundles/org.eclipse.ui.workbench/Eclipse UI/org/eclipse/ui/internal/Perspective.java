@@ -65,6 +65,7 @@ import org.eclipse.ui.internal.registry.PerspectiveExtensionReader;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.registry.StickyViewDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -907,14 +908,14 @@ public class Perspective {
 		presentation.activate(getClientComposite());
 
 		// Trim Stack Support
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax && fastViewManager != null) {
+        boolean useNewMinMax = Perspective.useNewMinMax(this);
+    	if (useNewMinMax) {
     		fastViewManager.activate();
 
 			// Move any minimized extension stacks to the trim			
 			if (layout != null) {
 				// Turn aimations off
+		        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
 				boolean useAnimations = preferenceStore
 						.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
 				preferenceStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
@@ -2285,4 +2286,41 @@ public class Perspective {
 	public boolean getEditorAreaRestoreOnUnzoom() {
 		return editorAreaRestoreOnUnzoom;
 	}
+
+	/**
+	 * Used to restrict the use of the new min/max behavior to envoronments
+	 * in which it has a chance of working...
+	 * 
+	 * @param activePerspective We pass this in as an arg so others won't have
+	 * to check it for 'null' (which is one of the failure cases)
+	 * 
+	 */
+	public static boolean useNewMinMax(Perspective activePerspective) {
+		// We need to have an active perspective
+		if (activePerspective == null)
+			return false;
+		
+		// We need to have a trim manager (if we don't then we
+		// don't create a FastViewManager because it'd be useless)
+		if (activePerspective.getFastViewManager() == null)
+			return false;
+		
+		// Make sure we don't NPE anyplace
+        WorkbenchWindow wbw = (WorkbenchWindow) activePerspective.page.getWorkbenchWindow();
+        if (wbw == null)
+        	return false;
+        
+        WorkbenchWindowConfigurer configurer = wbw.getWindowConfigurer();
+        if (configurer == null)
+        	return false;
+        
+        AbstractPresentationFactory factory = configurer.getPresentationFactory();
+        if (factory == null)
+        	return false;
+        
+		// Ok, we should be good to go, return the pref
+	    IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        return useNewMinMax;
+    }
 }

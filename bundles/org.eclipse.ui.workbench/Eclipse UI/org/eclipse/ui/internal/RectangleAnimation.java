@@ -47,7 +47,7 @@ public class RectangleAnimation extends Job {
 		private static final int IMAGE_ANIMATION_THRESHOLD = 25; // Frame captures / Sec
 		private static final int IMAGE_ANIMATION_TEST_LOOP_COUNT = 20; // test the copy 'n' times
 	    
-		private static double framesPerSec = 0.0;
+		//private static double framesPerSec = 0.0;
 		
 	    public static double getCaptureSpeed(Shell wb) {
 	    	// OK, capture
@@ -78,14 +78,14 @@ public class RectangleAnimation extends Job {
 			// whether to use image animations or not...
 //			if (framesPerSec == 0.0)
 //				framesPerSec = getCaptureSpeed(parentShell);
-			
-	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-
-			if (useNewMinMax && framesPerSec >= IMAGE_ANIMATION_THRESHOLD) {
-				return new ImageAnimationFeedback();
-			}
-			
+//			
+//	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+//	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+//
+//			if (useNewMinMax && framesPerSec >= IMAGE_ANIMATION_THRESHOLD) {
+//				return new ImageAnimationFeedback();
+//			}
+//			
 			return new DefaultAnimationFeedback();
 		}
 	}

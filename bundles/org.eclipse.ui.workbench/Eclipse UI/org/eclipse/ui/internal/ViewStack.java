@@ -13,15 +13,12 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuDetach;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -121,10 +118,7 @@ public class ViewStack extends PartStack {
 	public void setMinimized(boolean minimized) {
 		// 'Smart' minimize; move the stack to the trim
 		Perspective persp = getPage().getActivePerspective();
-		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-		boolean useNewMinMax = preferenceStore
-				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-		if (useNewMinMax && persp != null) {
+		if (Perspective.useNewMinMax(persp)) {
 			FastViewManager fvm = persp.getFastViewManager();
 			if (minimized) {
 				fvm.moveToTrim(this, false);

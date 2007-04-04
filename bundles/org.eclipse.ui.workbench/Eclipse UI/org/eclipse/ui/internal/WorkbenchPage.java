@@ -42,7 +42,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
@@ -2436,9 +2435,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
      */
     public boolean isPageZoomed() {
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
+    	if (Perspective.useNewMinMax(getActivePerspective())) {
     		boolean zoomed = false;
     		
     		// Can we find a presentation container whose state is maximized ?
@@ -3667,9 +3664,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             return;
         }
 
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
+    	if (Perspective.useNewMinMax(persp)) {
 	        // set the container's state to the new one
 	        PartStack parent = ((PartStack)pane.getContainer());
 	        parent.setState(newState);

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
@@ -32,13 +31,11 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPlaceholderFolderLayout;
 import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -411,11 +408,8 @@ public class PageLayout implements IPageLayout {
                 // force creation of the view layout rec
                 getViewLayoutRec(viewId, true);
                 
-                // Minimizing only makes sense with the minimize-to-trim behavior
-                IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        		boolean useNewMinMax = preferenceStore
-        				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-                if (minimized && useNewMinMax) {
+                // Capture any minimized stacks
+                if (minimized) {
                 	// Remember the minimized stacks so we can
                 	// move them to the trim when the Perspective
                 	// activates...

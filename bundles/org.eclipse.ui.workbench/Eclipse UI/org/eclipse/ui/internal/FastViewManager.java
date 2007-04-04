@@ -468,20 +468,30 @@ public class FastViewManager {
 	 */
 	private List getTrueViewOrder(ViewStack stack) {
 		List orderedViews = new ArrayList();
+		IPresentablePart[] parts = null;
 		if (stack.getPresentation() instanceof TabbedStackPresentation) {
 			TabbedStackPresentation tsp = (TabbedStackPresentation) stack
 					.getPresentation();
+			// KLUDGE!! uses a 'testing only' API to get the parts in their 'visible' order
+			parts = tsp.getPartList();
+		}
+		else {
+			// We'll have to process the parts in the order given...
+			// This is certain to fail on drag re-ordering of the
+			// icons in the trim since we have no API to inform the
+			// custom presentation
+			List partList = stack.getPresentableParts();
+			parts = (IPresentablePart[]) partList.toArray(new IPresentablePart[partList.size()]);
+		}			
 
-			// KLUDGE!! uses a 'testing only' API
-			IPresentablePart[] parts = tsp.getPartList();
-			for (int i = 0; i < parts.length; i++) {
-				if (parts[i] instanceof PresentablePart) {
-					PresentablePart part = (PresentablePart) parts[i];
-					IWorkbenchPartReference ref = part.getPane()
-							.getPartReference();
-					if (ref instanceof IViewReference)
-						orderedViews.add(ref);
-				}
+		// Now, process the parts...
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i] instanceof PresentablePart) {
+				PresentablePart part = (PresentablePart) parts[i];
+				IWorkbenchPartReference ref = part.getPane()
+						.getPartReference();
+				if (ref instanceof IViewReference)
+					orderedViews.add(ref);
 			}
 		}
 
