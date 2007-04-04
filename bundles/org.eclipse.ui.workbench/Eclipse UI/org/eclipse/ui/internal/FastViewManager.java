@@ -74,12 +74,13 @@ public class FastViewManager {
 	 * animation whose life-cycle spans a
 	 * 'deferUpdates' cycle.
 	 */
-	private RectangleAnimation batchAnimation = null;
+	private AnimationEngine batchAnimation = null;
 	
 	/**
 	 * Used for non-deferred animations
 	 */
-	private RectangleAnimation oneShotAnimation = null;
+	private AnimationEngine oneShotAnimation = null;
+	//private RectangleAnimation oneShotAnimation = null;
 	
 	/**
 	 * Creates a new manager for a particular perspective
@@ -523,7 +524,7 @@ public class FastViewManager {
 		vs.deferUpdates(true);
 		
 		// animate the minimize
-		RectangleAnimation animation = getDeferrableAnimation();
+		RectangleAnimationFeedbackBase animation = (RectangleAnimationFeedbackBase) getDeferrableAnimation().getFeedback();
 		animation.addStartRect(vs.getControl());
 
 		//long startTick = System.currentTimeMillis();
@@ -882,7 +883,8 @@ public class FastViewManager {
 	 */
 	private void deferAnimations(boolean defer) {
 		if (defer) {
-			batchAnimation = new RectangleAnimation(wbw.getShell(), null, null);
+			batchAnimation = new AnimationEngine(new LegacyAnimationFeedback(
+					wbw.getShell(), null, null), 400);
 			return;
 		}
 
@@ -895,12 +897,13 @@ public class FastViewManager {
 	 * Returns the animation object appropriate for the deferred state
 	 * @return Either a 'one-shot' or a 'batch' animation object
 	 */
-	private RectangleAnimation getDeferrableAnimation() {
+	private AnimationEngine getDeferrableAnimation() {
 		if (deferringUpdates)
 			return batchAnimation;
 		
 		// Create a 'one-shot' animation
-		oneShotAnimation = new RectangleAnimation(wbw.getShell(), null, null);
+		oneShotAnimation = new AnimationEngine(new LegacyAnimationFeedback(
+				wbw.getShell(), null, null), 400);
 		return oneShotAnimation;
 	}
 	
