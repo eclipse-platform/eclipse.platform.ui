@@ -355,7 +355,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 .getBundleFromConfigurationElement(configExtConfigurationElement);
             String base = getBase(configExtConfigurationElement);
             children.add(new IntroExtensionContent(configExtensionElement,
-                bundle, base, null));
+                bundle, base, configExtConfigurationElement));
 
             // INTRO: fix log strings.
             Log
