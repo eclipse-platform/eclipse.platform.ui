@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -44,7 +44,7 @@ public class RunLastAction extends RelaunchLastAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getText()
 	 */
 	protected String getText() {
-		if(DebugUIPlugin.getDefault().getLaunchingResourceManager().isContextLaunchEnabled()) {
+		if(LaunchingResourceManager.isContextLaunchEnabled()) {
 			return ActionMessages.RunLastAction_1;
 		}
 		else {

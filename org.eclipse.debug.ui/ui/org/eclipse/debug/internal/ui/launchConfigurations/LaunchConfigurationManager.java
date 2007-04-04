@@ -201,18 +201,19 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @return the given collection minus any configurations from disabled activities
 	 */
 	public static ILaunchConfiguration[] filterConfigs(ILaunchConfiguration[] configurations) {
-		IWorkbenchActivitySupport activitySupport= PlatformUI.getWorkbench().getActivitySupport();
+		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		if (activitySupport == null) {
 			return configurations;
 		}
-
-		List filteredConfigs= new ArrayList();
+		List filteredConfigs = new ArrayList();
+		ILaunchConfigurationType type = null;
+		LaunchConfigurationTypeContribution contribution = null;
+		ILaunchConfiguration configuration = null;
 		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration configuration = configurations[i];
-			ILaunchConfigurationType type= null;
+			configuration = configurations[i];
 			try {
 				type = configuration.getType();
-				LaunchConfigurationTypeContribution contribution = new LaunchConfigurationTypeContribution(type);
+				contribution = new LaunchConfigurationTypeContribution(type);
 				if (DebugUIPlugin.doLaunchConfigurationFiltering(configuration) & !WorkbenchActivityHelper.filterItem(contribution)) {
 					filteredConfigs.add(configuration);
 				}
@@ -248,7 +249,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Performs cleanup operations when the manager is being disposed of. 
 	 */
 	public void shutdown() {
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		if (fLaunchHistories != null) {
 			Iterator histories = fLaunchHistories.values().iterator();
@@ -298,8 +299,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	
 	/**
 	 * Returns the most recent launch for the given group, or <code>null</code>
-	 * if none.
+	 * if none. This method does not include any filtering for the returned launch configuration.
 	 *	
+	 * This method is exposed via DebugTools.getLastLaunch
+	 *
 	 * @return the last launch, or <code>null</code> if none
 	 */	
 	public ILaunchConfiguration getLastLaunch(String groupId) {
@@ -716,7 +719,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		IPath resourcePath = resource.getFullPath();
 		try {
 			List types = getApplicableConfigurationTypes(resource);
-			ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
+			ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
 			ILaunchConfiguration configuration = null;
 			IResource[] resources = null;
 			for(int i = 0; i < configurations.length; i++) {
@@ -846,7 +849,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 */
 	public ILaunchConfiguration getMRUConfiguration(List configurations, ILaunchGroup group) {
 		if(group != null) {
-			ILaunchConfiguration config = getLastLaunch(group.getIdentifier());
+			ILaunchConfiguration config = getFilteredLastLaunch(group.getIdentifier());
 			if(configurations.contains(config)) {
 				return config;
 			}

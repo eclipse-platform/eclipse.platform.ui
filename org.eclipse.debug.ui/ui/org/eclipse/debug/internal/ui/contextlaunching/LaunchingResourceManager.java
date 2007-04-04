@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchLabelChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.CoolBarManager;
@@ -85,7 +84,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * Returns if context launching is enabled
 	 * @return if context launching is enabled
 	 */
-	public boolean isContextLaunchEnabled() {
+	public static boolean isContextLaunchEnabled() {
 		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 	}
 	
@@ -147,7 +146,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
 				}
 				else {
-					config = getLastLaunch(group);
+					config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
 					if(config != null) {
 						label = config.getName();
 					}
@@ -170,21 +169,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	}
 	
 	/**
-	 * Return the last launch in this action's launch history.
-	 * 
-	 * @return the most recent configuration that was launched from this
-	 *  action's launch history that is not filtered from the menu
-	 */
-	protected ILaunchConfiguration getLastLaunch(ILaunchGroup group) {
-		LaunchConfigurationManager manager = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-		ILaunchConfiguration configuration = manager.getLastLaunch(group.getIdentifier());
-		if (configuration == null) {
-			return manager.getFilteredLastLaunch(group.getIdentifier());
-		}
-		return configuration;
-	}
-	
-	/**
 	 * Returns the label for the specified resource or the empty string, never <code>null</code>
 	 * @param resource
 	 * @param group
@@ -194,12 +178,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		if(resource == null) {
 			//no resource try last launch like the runner does
 			if(group != null) {
-				LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(group.getIdentifier());
-				if(history != null) {
-					ILaunchConfiguration config = history.getRecentLaunch();
-					if(config != null) {
-						return config.getName();
-					}
+				ILaunchConfiguration config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
+				if(config != null) {
+					return config.getName();
 				}
 			}
 			//otherwise try to determine if there is a way to launch it

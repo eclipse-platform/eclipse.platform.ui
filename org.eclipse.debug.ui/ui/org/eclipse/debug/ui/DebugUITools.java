@@ -708,7 +708,8 @@ public class DebugUITools {
 	
 	/**
 	 * Returns the last configuration that was launched for specified launch group or
-	 * <code>null</code>, if there is not one.
+	 * <code>null</code>, if there is not one. This method does not provide any form of
+	 * filtering on the returned launch configurations.
 	 * 
 	 * @param groupId the unique identifier of a launch group
 	 * @return the last launched configuration for the specified group or <code>null</code>.

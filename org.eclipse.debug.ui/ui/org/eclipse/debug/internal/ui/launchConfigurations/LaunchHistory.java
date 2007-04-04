@@ -39,10 +39,20 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	private Vector fCompleteHistory = new Vector();
 	
+	/**
+	 * The launch group this history is provided for
+	 */
 	private ILaunchGroup fGroup;
+	
+	/**
+	 * Ordered listing of the favorites of this history
+	 */
 	private Vector fFavorites = new Vector();
 	
-	private static List fgLaunchHistoryInstances= new ArrayList();
+	/**
+	 * List of instances of this launch history 
+	 */
+	private static List fgLaunchHistoryInstances = new ArrayList();
 	
 	/**
 	 * Creates a new launch history for the given launch group

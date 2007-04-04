@@ -24,7 +24,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -85,10 +84,7 @@ public final class ContextRunner {
 		//2. launch last if no resource
 		ILaunchConfiguration config = null;
 		if(group != null) {
-			LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(group.getIdentifier());
-			if(history != null) {
-				config = history.getRecentLaunch();
-			}
+			config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
 		}
 		if(config != null) {
 			DebugUITools.launch(config, group.getMode());

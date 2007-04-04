@@ -79,7 +79,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPro
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTypeFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.WorkingSetsFilter;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -1238,9 +1237,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		}
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED)) {
 			ret &= new DeletedProjectFilter().select(null, null, config);
-		}
-		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_WORKING_SETS)) {
-			ret &= new WorkingSetsFilter().select(null, null, config);
 		}
 		if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
 			try {

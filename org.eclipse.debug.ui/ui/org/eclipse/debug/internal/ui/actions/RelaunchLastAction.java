@@ -20,6 +20,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
+import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
@@ -68,7 +69,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action){		
-		if(DebugUIPlugin.getDefault().getLaunchingResourceManager().isContextLaunchEnabled()) {
+		if(LaunchingResourceManager.isContextLaunchEnabled()) {
 			ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupId());
 			ContextRunner.getDefault().launch(group);
 			return;
@@ -151,7 +152,7 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 * Return the last launch that occurred in the workspace.
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
-		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLastLaunch(getLaunchGroupId());
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupId());
 	}
 	
 	/**

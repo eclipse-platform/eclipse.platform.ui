@@ -14,6 +14,7 @@ package org.eclipse.debug.ui.actions;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
+import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.OrganizeFavoritesAction;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
@@ -74,7 +75,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 */
 	public void run(IAction action) {
 		//always ignore external tools during context launching
-		if(DebugUIPlugin.getDefault().getLaunchingResourceManager().isContextLaunchEnabled() && 
+		if(LaunchingResourceManager.isContextLaunchEnabled() && 
 				!getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
 			ContextRunner.getDefault().launch(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(getLaunchGroupIdentifier()));
 		}
