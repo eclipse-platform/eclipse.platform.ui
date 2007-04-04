@@ -30,6 +30,7 @@ public class ContextMessages extends NLS {
 	public static String ContextRunner_7;
 	public static String ContextRunner_8;
 	public static String ContextRunner_9;
+	public static String LaunchingResourceManager_0;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, ContextMessages.class);

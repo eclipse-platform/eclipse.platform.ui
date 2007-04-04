@@ -17,6 +17,8 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -38,6 +40,8 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This manager is used to calculate the labels for the current resource or for the current 
@@ -148,7 +152,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				else {
 					config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
 					if(config != null) {
-						label = config.getName();
+						label = appendLaunched(config);
 					}
 					else {
 						//need to force an update to display the default label.
@@ -169,6 +173,27 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	}
 	
 	/**
+	 * Appends the text '(already running)' to the tooltip label if there is a launch currently
+	 * running (not terminated) with the same backing launch configuration as the one specified
+	 * @param config
+	 * @return the appended string for the tooltip label or the configuration name (default)
+	 */
+	private String appendLaunched(ILaunchConfiguration config) {
+		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
+		boolean launched = false;
+		for(int i = 0; i < launches.length; i++) {
+			if(!launches[i].isTerminated() && launches[i].getLaunchConfiguration().equals(config)) {
+				launched = true;
+				break;
+			}
+		}
+		if(launched) {
+			return MessageFormat.format(ContextMessages.LaunchingResourceManager_0, new String[] {config.getName()});
+		}
+		return config.getName();
+	}
+	
+	/**
 	 * Returns the label for the specified resource or the empty string, never <code>null</code>
 	 * @param resource
 	 * @param group
@@ -180,7 +205,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			if(group != null) {
 				ILaunchConfiguration config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
 				if(config != null) {
-					return config.getName();
+					return appendLaunched(config);
 				}
 			}
 			//otherwise try to determine if there is a way to launch it
@@ -196,17 +221,17 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		//see if the context is a shared configuration
 		ILaunchConfiguration config = lcm.isSharedConfig(resource);
 		if(config != null) {
-			return config.getName();
+			return appendLaunched(config);
 		}
 		List configs = lcm.getApplicableLaunchConfigurations(resource);
 		int csize = configs.size();
 		if(csize == 1) {
-			return ((ILaunchConfiguration)configs.get(0)).getName();
+			return appendLaunched((ILaunchConfiguration)configs.get(0));
 		}
 		else if(csize > 1) {
 			config = lcm.getMRUConfiguration(configs, group);
 			if(config != null) {
-				return config.getName();
+				return appendLaunched(config);
 			}
 			else {
 				//TODO could cause TVT issues
