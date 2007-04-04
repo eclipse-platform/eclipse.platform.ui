@@ -107,6 +107,17 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 			
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);
-		}		
+		} else {
+			IActionBars actionBars= getActionBars();
+			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), null);
+			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), null);
+			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, null);
+			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, null);
+		}
+	}
+	
+	public void dispose() {
+		setActiveEditor(null);
+		super.dispose();
 	}
 }

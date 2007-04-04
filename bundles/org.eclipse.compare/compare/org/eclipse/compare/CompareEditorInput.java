@@ -1012,7 +1012,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void addCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
-		fContainer.addCompareInputChangeListener(input, listener);
+		if (fContainer == null) {
+			input.addCompareInputChangeListener(listener);
+		} else {
+			fContainer.addCompareInputChangeListener(input, listener);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -1020,7 +1024,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void removeCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
-		fContainer.removeCompareInputChangeListener(input, listener);
+		if (fContainer == null) {
+			input.removeCompareInputChangeListener(listener);
+		} else {
+			fContainer.removeCompareInputChangeListener(input, listener);
+		}
 	}
 	
 	/* (non-Javadoc)
