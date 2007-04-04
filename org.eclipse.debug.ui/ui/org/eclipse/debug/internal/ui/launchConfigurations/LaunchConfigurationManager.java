@@ -1109,10 +1109,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Sets the given launch to be the most recent launch in the launch
 	 * history (for applicable histories).
 	 * <p>
-	 * <b>EXPERIMENTAL</b> - This method has been added in support of bug 75762.
-	 * We should consider alternate solutions in a later release. It allows
-	 * clients performing multiple launches to modify the launch history.
-	 * </p>
 	 * @param configuration configuration to be set as most recent
 	 * @since 3.3
 	 */
