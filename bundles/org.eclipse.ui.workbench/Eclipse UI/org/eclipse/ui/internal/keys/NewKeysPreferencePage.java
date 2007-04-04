@@ -42,6 +42,7 @@ import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
@@ -52,6 +53,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -253,7 +255,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		/**
 		 * The index of the column with the button for adding an item.
 		 */
-		private static final int COLUMN_ADD = 2;
+		private static final int COLUMN_ADD = 3;
 
 		/**
 		 * The index of the column containing the command name.
@@ -263,8 +265,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		/**
 		 * The index of the column with the button for removing an item.
 		 */
-		private static final int COLUMN_REMOVE = 3;
+		private static final int COLUMN_REMOVE = 4;
 
+
+		/**
+		 * The index of the column containing the Category.
+		 */
+		private static final int COLUMN_CATEGORY = 2;
+		
 		/**
 		 * The index of the column containing the trigger sequence.
 		 */
@@ -273,7 +281,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		/**
 		 * The number of columns being displayed.
 		 */
-		private static final int NUMBER_OF_COLUMNS = 4;
+		private static final int NUMBER_OF_COLUMNS = 5;
 
 		/**
 		 * A resource manager for this preference page.
@@ -377,11 +385,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				case COLUMN_COMMAND:
 					try {
 						return binding.getParameterizedCommand().getName();
+						
 					} catch (final NotDefinedException e) {
 						return null;
 					}
 				case COLUMN_TRIGGER_SEQUENCE:
 					return binding.getTriggerSequence().format();
+					
+				case COLUMN_CATEGORY:
+					try {
+							return binding.getParameterizedCommand().getCommand().getCategory().getName();
+						} catch (NotDefinedException e) {
+							// TODO Auto-generated catch block
+							return null;
+						}
 				default:
 					return null;
 				}
@@ -416,7 +433,16 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						return null;
 					}
 				}
-
+				if (columnIndex== COLUMN_TRIGGER_SEQUENCE)
+					return ""; //$NON-NLS-1$
+				if (columnIndex==COLUMN_CATEGORY){
+					try {
+						return ((ParameterizedCommand) value).getCommand().getCategory().getName();
+					} catch (NotDefinedException e) {
+						// TODO Auto-generated catch block
+						return null;
+					}
+				}
 				return null;
 			}
 
@@ -429,6 +455,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 */
 	private final class BindingComparator extends ViewerComparator {
 
+		private int sortColumn = 0;
+		private boolean ascending = true;
+		
 		public final int category(final Object element) {
 			switch (grouping) {
 			case GROUPING_CATEGORY:
@@ -573,26 +602,51 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					}
 
 				} else { // (GROUPING_NONE_NAME.equals(selectedText))
-					/*
-					 * The tree node values will be Binding or
-					 * ParameterizedCommand instances.
-					 */
-					final Object x = ((TreeNode) a).getValue();
-					final Object y = ((TreeNode) b).getValue();
-					final ParameterizedCommand commandX = (x instanceof Binding) ? ((Binding) x)
-							.getParameterizedCommand()
-							: (ParameterizedCommand) x;
-					final ParameterizedCommand commandY = (y instanceof Binding) ? ((Binding) y)
-							.getParameterizedCommand()
-							: (ParameterizedCommand) y;
+					IBaseLabelProvider baseLabel = filteredTree.getViewer().getLabelProvider();
+					if (baseLabel instanceof ITableLabelProvider) {
+						ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+						String e1p = tableProvider.getColumnText(a, sortColumn);
+						String e2p = tableProvider.getColumnText(b, sortColumn);
+						int result = getComparator().compare(e1p, e2p);
+						return ascending ?  result : (-1) * result;
+					}
+					return super.compare(viewer, a, b);
+					
 
-					return Util.compare(commandX, commandY);
 				}
 			} catch (final NotDefinedException e) {
 				// This could be made a lot more fine-grained.
 			}
 
 			return 0;
+		}
+	
+		/**
+		 * @return Returns the sortColumn.
+		 */
+		public int getSortColumn() {
+			return sortColumn;
+		}
+
+		/**
+		 * @param sortColumn The sortColumn to set.
+		 */
+		public void setSortColumn(int sortColumn) {
+			this.sortColumn = sortColumn;
+		}
+
+		/**
+		 * @return Returns the ascending.
+		 */
+		public boolean isAscending() {
+			return ascending;
+		}
+
+		/**
+		 * @param ascending The ascending to set.
+		 */
+		public void setAscending(boolean ascending) {
+			this.ascending = ascending;
 		}
 	}
 
@@ -659,6 +713,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * <code>NamedHandleObject</code> instances to the end user.
 	 */
 	private static final NamedHandleObjectComparator NAMED_HANDLE_OBJECT_COMPARATOR = new NamedHandleObjectComparator();
+	
+	private final static String TAG_DIALOG_SECTION = "org.eclipse.ui.preferences.keysPreferencePage"; //$NON-NLS-1$
+	
+	private final String TAG_FIELD = "showAllField"; //$NON-NLS-1$
 
 	/**
 	 * Sorts the given array of <code>NamedHandleObject</code> instances based
@@ -717,7 +775,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * command. This value is <code>null</code> until the controls are
 	 * created.
 	 */
-	private Label descriptionValueLabel;
+	private Text descriptionValueText;
 
 	/**
 	 * The filtered tree containing the list of commands and bindings to edit.
@@ -1019,8 +1077,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final Composite rightDataArea = new Composite(dataArea, SWT.NONE);
 		layout = new GridLayout(1, false);
 		rightDataArea.setLayout(layout);
-		gridData = new GridData();
-		gridData.grabExcessHorizontalSpace = true;
+		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.verticalAlignment = SWT.TOP;
 		gridData.horizontalAlignment = SWT.FILL;
 		rightDataArea.setLayoutData(gridData);
@@ -1031,20 +1088,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = SWT.FILL;
-		descriptionLabel.setLayoutData(gridData);
-
+		descriptionLabel.setLayoutData(gridData);		
+		
 		// The description value.
-		descriptionValueLabel = new Label(rightDataArea, SWT.WRAP);
-		gridData = new GridData();
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.verticalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.horizontalIndent = 30;
-		gridData.verticalIndent = 5;
-		gridData.widthHint = 200;
-		descriptionValueLabel.setLayoutData(gridData);
-
+		descriptionValueText = new Text(rightDataArea,SWT.BORDER|SWT.MULTI|SWT.H_SCROLL);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalIndent = 20;
+		descriptionValueText.setLayoutData(gridData);
+		descriptionValueText.setEditable(false);
 		return dataArea;
 	}
 
@@ -1122,22 +1173,66 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			}
 		}
 
+        final BindingComparator comparator = new BindingComparator();
+        comparator.setSortColumn(0);
+		
 		// Create the columns for the tree.
+		
 		final TreeColumn commandNameColumn = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_COMMAND);
-		commandNameColumn.setText(NewKeysPreferenceMessages.CommandNameColumn_Text); 
+		commandNameColumn.setText(NewKeysPreferenceMessages.CommandNameColumn_Text);
+		commandNameColumn.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+            	if (comparator.getSortColumn()==0) {
+            		comparator.setAscending(!comparator.isAscending());
+            	}
+                comparator.setSortColumn(0);
+                filteredTree.getViewer().refresh();
+				
+			}
+			
+		});
 		final TreeColumn triggerSequenceColumn = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE);
-		triggerSequenceColumn.setText(NewKeysPreferenceMessages.TriggerSequenceColumn_Text); 
+		triggerSequenceColumn.setText(NewKeysPreferenceMessages.TriggerSequenceColumn_Text);
+		triggerSequenceColumn.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+            	if (comparator.getSortColumn()==1) {
+            		comparator.setAscending(!comparator.isAscending());
+            	}
+                comparator.setSortColumn(1);
+                filteredTree.getViewer().refresh();
+				
+			}
+			
+		});
+		
+
+		final TreeColumn categoryColumn = new TreeColumn(tree, SWT.LEFT,
+				BindingLabelProvider.COLUMN_CATEGORY);
+		categoryColumn.setText(NewKeysPreferenceMessages.CategoryColumn_Text);
+		categoryColumn.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+            	if (comparator.getSortColumn()==2) {
+            		comparator.setAscending(!comparator.isAscending());
+            	}
+                comparator.setSortColumn(2);
+                filteredTree.getViewer().refresh();
+				
+			}
+			
+		});
+				
 		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_ADD);
 		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_REMOVE);
-
+		
 		// Set up the providers for the viewer.
 		final TreeViewer viewer = filteredTree.getViewer();
 		viewer.setLabelProvider(new BindingLabelProvider());
 		viewer.setContentProvider(new TreeNodeContentProvider());
-		viewer.setComparator(new BindingComparator());
-
+		    
+		viewer.setComparator(comparator);
+				
 		/*
 		 * Listen for selection changes so that the data controls can be
 		 * updated.
@@ -1174,7 +1269,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		return filteredTree;
 	}
-
+	
 	private final Control createTreeControls(final Composite parent) {
 		GridLayout layout;
 		GridData gridData;
@@ -1197,7 +1292,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.verticalAlignment = SWT.TOP;
 		showAllCheckBox.setLayoutData(gridData);
-		showAllCheckBox.setText(NewKeysPreferenceMessages.ShowAllCheckBox_Text); 
+		showAllCheckBox.setText(NewKeysPreferenceMessages.ShowAllCheckBox_Text);
+		IDialogSettings settings=getDialogSettings();
+		showAllCheckBox.setSelection(settings.getBoolean(TAG_FIELD));
 		showAllCheckBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateTree();
@@ -1405,6 +1502,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 
 		setScheme(localChangeManager.getActiveScheme());
+		showAllCheckBox.setSelection(false);
 		super.performDefaults();
 	}
 
@@ -1417,7 +1515,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		} catch (final IOException e) {
 			logPreferenceStoreException(e);
 		}
-
+		saveState(getDialogSettings());
 		return super.performOk();
 	}
 
@@ -1601,8 +1699,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						if (description == null) {
 							description = Util.ZERO_LENGTH_STRING;
 						}
-						descriptionValueLabel.setText(description);
-						descriptionValueLabel.pack(true);
+						descriptionValueText.setText(description);
 					} catch (final NotDefinedException e) {
 						// It's probably okay to just let this one slide.
 					}
@@ -1619,8 +1716,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						if (description == null) {
 							description = Util.ZERO_LENGTH_STRING;
 						}
-						descriptionValueLabel.setText(description);
-						descriptionValueLabel.pack(true);
+						descriptionValueText.setText(description);
 					} catch (final NotDefinedException e) {
 						// It's probably okay to just let this one slide.
 					}
@@ -1809,8 +1905,34 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		} else {
 			columns[0].setWidth(292);
 		}
-		columns[1].setWidth(234);
-		columns[2].setWidth(22);
+		columns[1].setWidth(150);
+		columns[2].setWidth(150);
 		columns[3].setWidth(22);
+		columns[4].setWidth(22);
+	}
+	
+  
+	/**
+	 * Save the state of the receiver.
+	 * 
+	 * @param dialogSettings
+	 */
+	public void saveState(IDialogSettings dialogSettings) {
+		if (dialogSettings == null) {
+			return;
+		}
+		dialogSettings.put(TAG_FIELD, showAllCheckBox.getSelection());
+	}
+	
+	protected IDialogSettings getDialogSettings() {
+		IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
+		
+		IDialogSettings settings = workbenchSettings
+				.getSection(TAG_DIALOG_SECTION);
+
+		if (settings == null) {
+			settings = workbenchSettings.addNewSection(TAG_DIALOG_SECTION);
+		}
+		return settings;
 	}
 }

@@ -27,6 +27,7 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String AdvancedButton_Text;
 	public static String BindingLabel_Text;
 	public static String CommandNameColumn_Text;
+	public static String CategoryColumn_Text;
 	public static String CommandNameLabel_Text;
 	public static String DeleteSchemeButton_Text;
 	public static String DescriptionLabel_Text;
