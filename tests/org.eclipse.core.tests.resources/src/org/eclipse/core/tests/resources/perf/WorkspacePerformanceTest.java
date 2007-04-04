@@ -15,8 +15,8 @@ import java.util.Random;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
@@ -254,7 +254,27 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	 *
 	 */
 	public void waitForBackgroundActivity() {
+		waitForSnapshot();
 		waitForRefresh();
 		waitForBuild();
+	}
+
+	/**
+	 * Wait for snapshot to complete by running and joining a workspace modification job.
+	 * This job will get queued to run behind any scheduled snapshot job.
+	 */
+	private void waitForSnapshot() {
+		Job wait = new Job("Wait") {
+			protected IStatus run(IProgressMonitor monitor) {
+				return Status.OK_STATUS;
+			}
+		};
+		wait.setRule(getWorkspace().getRoot());
+		wait.schedule();
+		try {
+			wait.join();
+		} catch (InterruptedException e) {
+			//ignore interruption
+		}
 	}
 }
