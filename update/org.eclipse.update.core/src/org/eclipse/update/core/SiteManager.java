@@ -11,11 +11,14 @@
  *******************************************************************************/
 package org.eclipse.update.core;
 
-import java.net.*;
+import java.net.URL;
 
+import org.eclipse.core.net.proxy.IProxyData;
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.internal.core.InternalSiteManager;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Site Manager.
@@ -243,26 +246,52 @@ public class SiteManager {
 	}
 
 	/**
-	 * Returns the HTTP Proxy Server or <code>null</code> if none
+	 * Returns the HTTP Proxy Server or <code>null</code> if none.
 	 * @return the HTTP proxy Server 
+	 * @deprecated clients should access the {@link IProxyService} directly
 	 */
 	public static String getHttpProxyServer() {
-		return UpdateCore.getPlugin().getPluginPreferences().getString(UpdateCore.HTTP_PROXY_HOST);
+		IProxyService service = UpdateCore.getPlugin().getProxyService();
+		if (service != null && service.isProxiesEnabled()) {
+			IProxyData data = service.getProxyData(IProxyData.HTTP_PROXY_TYPE);
+			if (data != null)
+				return data.getHost();
+			
+		}
+		return null;
 	}
 	/**
 	 * Returns the HTTP Proxy Port or <code>null</code> if none
-	 * @return the HTTP proxy Port 
+	 * @return the HTTP proxy Port
+	 * @deprecated clients should access the {@link IProxyService} directly
 	 */
 	public static String getHttpProxyPort() {
-		return UpdateCore.getPlugin().getPluginPreferences().getString(UpdateCore.HTTP_PROXY_PORT);
+		IProxyService service = UpdateCore.getPlugin().getProxyService();
+		if (service != null && service.isProxiesEnabled()) {
+			IProxyData data = service.getProxyData(IProxyData.HTTP_PROXY_TYPE);
+			if (data != null) {
+				if (data.getPort() == -1)
+					return "80";
+				return String.valueOf(data.getPort());
+			}
+			
+		}
+		return null;
 	}
+	
 	/**
 	 * Returns <code>true</code> if the connection should use the 
 	 * http proxy server, <code>false</code> otherwise
 	 * @return is the http proxy server enable
+	 * @deprecated clients should access the {@link IProxyService} directly
 	 */
 	public static boolean isHttpProxyEnable() {
-		return isHttpProxyEnable;
+		IProxyService service = UpdateCore.getPlugin().getProxyService();
+		if (service != null && service.isProxiesEnabled()) {
+			IProxyData data = service.getProxyData(IProxyData.HTTP_PROXY_TYPE);
+			return (data != null && data.getHost() != null);
+		}
+		return false;
 	}
 	/**
 	 * Sets the HTTP Proxy information
@@ -273,33 +302,40 @@ public class SiteManager {
 	 * 
 	 * @param enable <code>true</code> if the connection should use an http
 	 * proxy server, <code>false </code> otherwise.
-	 * @param httpProxyServer the HTTP proxy server name or IP adress
+	 * @param httpProxyServer the HTTP proxy server name or IP address
 	 * @param httpProxyPort the HTTP proxy port
+	 * 
+	 * @deprecated clients should use the {@link IProxyService} directly
 	 */
 	public static void setHttpProxyInfo(boolean enable, String httpProxyServer, String httpProxyPort) {
-		isHttpProxyEnable = enable;
-
-		// if enable is false, or values are null,
-		// we should remove the properties and save the fact that proxy is disable 
-		if (!enable || httpProxyServer == null || httpProxyPort == null) {
-			System.getProperties().remove(UpdateCore.P_HTTP_HOST);
-			System.getProperties().remove(UpdateCore.P_HTTP_PORT);
-			System.getProperties().remove(UpdateCore.P_HTTP_PROXY);
-			//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-			UpdateCore.warn("Remove proxy server info"); //$NON-NLS-1$
-			UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, enable);
-			UpdateCore.getPlugin().savePluginPreferences();
+		IProxyService service = UpdateCore.getPlugin().getProxyService();
+		if (service == null)
 			return;
+		// Make sure that the proxy service is enabled if needed but don't disable the
+		// service if the http proxy is being disabled
+		if (enable && !service.isProxiesEnabled())
+			service.setProxiesEnabled(enable);
+
+		if (service.isProxiesEnabled()) {
+			IProxyData data = service.getProxyData(IProxyData.HTTP_PROXY_TYPE);
+			if (data != null) {
+				data.setHost(httpProxyServer);
+				if (httpProxyPort == null || httpProxyPort.equals("80")) {
+					data.setPort(-1);
+				} else {
+					try {
+						int port = Integer.parseInt(httpProxyPort);
+						data.setPort(port);
+					} catch (NumberFormatException e) {
+						UpdateCore.log(e);
+					}
+				}
+				try {
+					service.setProxyData(new IProxyData[] { data });
+				} catch (CoreException e) {
+					UpdateCore.log(e);
+				}
+			}
 		}
-		
-		System.getProperties().setProperty(UpdateCore.P_HTTP_PROXY, enable?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-		System.getProperties().setProperty(UpdateCore.P_HTTP_HOST, httpProxyServer);
-		System.getProperties().setProperty(UpdateCore.P_HTTP_PORT, httpProxyPort);
-		//if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_WARNINGS)
-		UpdateCore.warn("Added proxy server info:" + httpProxyServer + ":" + httpProxyPort); //$NON-NLS-1$ //$NON-NLS-2$
-		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_HOST, httpProxyServer);
-		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_PORT, httpProxyPort);
-		UpdateCore.getPlugin().getPluginPreferences().setValue(UpdateCore.HTTP_PROXY_ENABLE, enable);
-		UpdateCore.getPlugin().savePluginPreferences();
 	}
 }

@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -29,6 +30,7 @@ import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.core.connection.ConnectionThreadManagerFactory;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -47,16 +49,6 @@ public class UpdateCore extends Plugin {
 	public static boolean DEBUG_SHOW_WEB;
 	public static boolean DEBUG_SHOW_IHANDLER;
 	public static boolean DEBUG_SHOW_RECONCILER;
-
-
-	public static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
-	public static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
-	public static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
-	
-	// preference keys
-	public static final String P_HTTP_HOST = "http.proxyHost"; //$NON-NLS-1$
-	public static final String P_HTTP_PORT = "http.proxyPort";	 //$NON-NLS-1$
-	public static final String P_HTTP_PROXY = "http.proxySet"; //$NON-NLS-1$
 		
 	private static final String PREFIX = "org.eclipse.update.core"; //$NON-NLS-1$
 	public static final String P_HISTORY_SIZE = PREFIX + ".historySize"; //$NON-NLS-1$
@@ -79,6 +71,7 @@ public class UpdateCore extends Plugin {
 	private BundleContext context;
 	private ServiceTracker pkgAdminTracker;
 	private ServiceTracker verifierFactoryTracker;
+	private ServiceTracker proxyTracker;
 	
 	// Session
 	private UpdateSession updateSession = null;
@@ -261,8 +254,6 @@ public class UpdateCore extends Plugin {
 		} catch (IOException e){
 			warn("",e); //$NON-NLS-1$
 		}
-		
-		initProxySettings();
 	}
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
@@ -287,6 +278,10 @@ public class UpdateCore extends Plugin {
 			verifierFactoryTracker.close();
 			verifierFactoryTracker = null;
 		}
+		if (proxyTracker != null) {
+			proxyTracker.close();
+			proxyTracker = null;
+		}
 	}
 	
 	BundleContext getBundleContext() {
@@ -301,26 +296,13 @@ public class UpdateCore extends Plugin {
 		return (PackageAdmin)pkgAdminTracker.getService();
 	}
 	
-	private void initProxySettings() {
-		// Get system properties for proxy setup.
-		// If system properties are not set then pick up values from preference store
-		String httpProxyHost = System.getProperty(P_HTTP_HOST) != null ? 
-				System.getProperty(P_HTTP_HOST)
-				: getPluginPreferences().getString(HTTP_PROXY_HOST);
-		if ("".equals(httpProxyHost)) //$NON-NLS-1$
-			httpProxyHost = null;
-		
-		String httpProxyPort = System.getProperty(P_HTTP_PORT) != null ?
-				System.getProperty(P_HTTP_PORT)
-				: getPluginPreferences().getString(HTTP_PROXY_PORT);
-		if ("".equals(httpProxyPort)) //$NON-NLS-1$
-			httpProxyPort = null;
-		
-		boolean httpProxyEnable = System.getProperty(P_HTTP_HOST) != null && System.getProperty(P_HTTP_PORT) != null ? 
-				true
-				: getPluginPreferences().getBoolean(HTTP_PROXY_ENABLE);
-		
-		SiteManager.setHttpProxyInfo(httpProxyEnable, httpProxyHost, httpProxyPort );
+	public IProxyService getProxyService() {
+		if (proxyTracker == null) {
+		    proxyTracker=new ServiceTracker(getBundle().getBundleContext(),
+		            IProxyService.class.getName(), null);
+		    proxyTracker.open();
+		}
+		return (IProxyService)proxyTracker.getService();
 	}
 
 

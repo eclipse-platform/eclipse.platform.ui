@@ -43,11 +43,6 @@ public class MainPreferencePage
 	private Button equivalentButton;
 	private Button compatibleButton;
 	private Text updatePolicyText;
-	private Label httpProxyHostLabel;
-	private Label httpProxyPortLabel;
-	private Text httpProxyHostText;
-	private Text httpProxyPortText;
-	private Button enableHttpProxy;
 
 	// these two values are for compatibility with old code
 	public static final String EQUIVALENT_VALUE = "equivalent"; //$NON-NLS-1$
@@ -175,57 +170,6 @@ public class MainPreferencePage
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = columnSpan;
 		group.setLayoutData(gd);
-
-		enableHttpProxy = new Button(group, SWT.CHECK);
-		enableHttpProxy.setText(UpdateUIMessages.MainPreferencePage_enableHttpProxy); 
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		enableHttpProxy.setLayoutData(gd);
-
-		httpProxyHostLabel = new Label(group, SWT.NONE);
-		httpProxyHostLabel.setText(UpdateUIMessages.MainPreferencePage_httpProxyHost); 
-
-		httpProxyHostText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		httpProxyHostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		httpProxyPortLabel = new Label(group, SWT.NONE);
-		httpProxyPortLabel.setText(UpdateUIMessages.MainPreferencePage_httpProxyPort); 
-
-		httpProxyPortText = new Text(group, SWT.SINGLE | SWT.BORDER);
-		httpProxyPortText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		// Validation of port field
-		httpProxyPortText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				try {
-					String portValue = httpProxyPortText.getText();
-					int num = 80;
-					if (portValue != null && portValue.trim().length() > 0)
-						num = Integer.valueOf(portValue).intValue();
-					if (0 <= num && num <= 0xFFFF) {
-						// port is valid
-						MainPreferencePage.this.setValid(true);
-						setErrorMessage(null);
-						return;
-					}
-
-					// port is invalid
-				} catch (NumberFormatException nfe) {
-				}
-				MainPreferencePage.this.setValid(false);
-				setErrorMessage(UpdateUIMessages.MainPreferencePage_invalidPort); 
-			}
-		});
-
-		enableHttpProxy.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				boolean enable = enableHttpProxy.getSelection();
-				httpProxyPortLabel.setEnabled(enable);
-				httpProxyHostLabel.setEnabled(enable);
-				httpProxyPortText.setEnabled(enable);
-				httpProxyHostText.setEnabled(enable);
-			}
-		});
-
 	}
 
 	private int getHistoryCount() {
@@ -262,10 +206,6 @@ public class MainPreferencePage
 				try {
 					SiteManager.getLocalSite().setMaximumHistoryCount(
 						getHistoryCount());
-					SiteManager.setHttpProxyInfo(
-						enableHttpProxy.getSelection(),
-						httpProxyHostText.getText(),
-						httpProxyPortText.getText());
 				} catch (CoreException e) {
 					UpdateUI.logException(e);
 				}
@@ -294,19 +234,6 @@ public class MainPreferencePage
 
 	private void initialize() {
 		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
-		
-		enableHttpProxy.setSelection(prefs.getBoolean(UpdateCore.HTTP_PROXY_ENABLE));
-		String serverValue = prefs.getString(UpdateCore.HTTP_PROXY_HOST);
-		if (serverValue != null)
-			httpProxyHostText.setText(serverValue);
-		String portValue = prefs.getString(UpdateCore.HTTP_PROXY_PORT);
-		if (portValue != null)
-			httpProxyPortText.setText(portValue);
-
-		httpProxyPortLabel.setEnabled(enableHttpProxy.getSelection());
-		httpProxyHostLabel.setEnabled(enableHttpProxy.getSelection());
-		httpProxyPortText.setEnabled(enableHttpProxy.getSelection());
-		httpProxyHostText.setEnabled(enableHttpProxy.getSelection());
 
 		checkSignatureCheckbox.setSelection(
 			prefs.getBoolean(UpdateCore.P_CHECK_SIGNATURE));
@@ -343,14 +270,6 @@ public class MainPreferencePage
 	public void performDefaults() {
 		super.performDefaults();
 		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
-
-		enableHttpProxy.setSelection(false);
-		httpProxyHostText.setText(""); //$NON-NLS-1$
-		httpProxyPortText.setText(""); //$NON-NLS-1$
-		httpProxyPortLabel.setEnabled(false);
-		httpProxyHostLabel.setEnabled(false);
-		httpProxyPortText.setEnabled(false);
-		httpProxyHostText.setEnabled(false);
 
 		updatePolicyText.setText(""); //$NON-NLS-1$
 

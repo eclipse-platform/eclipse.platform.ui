@@ -11,22 +11,25 @@
 package org.eclipse.update.internal.ui;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.*;
-import java.net.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
-import org.eclipse.ui.browser.*;
-import org.eclipse.ui.plugin.*;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.security.*;
-import org.osgi.framework.*;
+import org.eclipse.update.internal.core.UpdateCore;
+import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -39,7 +42,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	//The shared instance.
 	private static UpdateUI plugin;
 	private UpdateModel model;
-	private UpdateManagerAuthenticator authenticator;
 	private String appServerHost;
 	private int appServerPort;
 	private UpdateLabelProvider labelProvider;
@@ -96,8 +98,6 @@ public class UpdateUI extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		model = new UpdateModel();
-		authenticator = new UpdateManagerAuthenticator();
-		Authenticator.setDefault(authenticator);
 		int historyPref =
 			getPluginPreferences().getInt(UpdateCore.P_HISTORY_SIZE);
 		if (historyPref > 0) {
@@ -235,15 +235,6 @@ public class UpdateUI extends AbstractUIPlugin {
 			UpdateUI.logException(e);
 		}
 		return (IFeature[]) features.toArray(new IFeature[features.size()]);
-	}
-
-
-	/**
-	 * Gets the authenticator.
-	 * @return Returns a UpdateManagerAuthenticator
-	 */
-	public UpdateManagerAuthenticator getAuthenticator() {
-		return authenticator;
 	}
 
 	public static URL getOriginatingURL(String id) {

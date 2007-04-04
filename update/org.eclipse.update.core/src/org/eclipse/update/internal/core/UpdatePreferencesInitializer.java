@@ -47,16 +47,5 @@ public class UpdatePreferencesInitializer extends AbstractPreferenceInitializer 
 		plugin.getPluginPreferences().setDefault(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR, false);
 		plugin.getPluginPreferences().setDefault(UpdateCore.P_HISTORY_SIZE, UpdateCore.DEFAULT_HISTORY);
 		plugin.getPluginPreferences().setDefault(UpdateCore.P_UPDATE_VERSIONS, UpdateCore.EQUIVALENT_VALUE);
-		
-		// If proxy host and port are set as system properties, use them as defaults
-		String proxyHost = System.getProperty("http.proxyHost"); //$NON-NLS-1$
-		if (proxyHost != null && proxyHost.trim().length() > 0) {
-			String proxyPort = System.getProperty("http.proxyPort"); //$NON-NLS-1$
-			if (proxyPort == null || proxyPort.trim().length() == 0)
-				proxyPort = "80"; //$NON-NLS-1$
-			plugin.getPluginPreferences().setDefault(UpdateCore.HTTP_PROXY_ENABLE, true);
-			plugin.getPluginPreferences().setDefault(UpdateCore.HTTP_PROXY_HOST, proxyHost);
-			plugin.getPluginPreferences().setDefault(UpdateCore.HTTP_PROXY_PORT, proxyPort);
-		}
 	}
 }
