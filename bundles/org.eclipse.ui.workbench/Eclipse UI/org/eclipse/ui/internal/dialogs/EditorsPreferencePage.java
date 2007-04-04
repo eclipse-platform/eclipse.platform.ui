@@ -54,6 +54,8 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     protected Button showMultipleEditorTabs;
 
+    protected Button useIPersistableEditor;
+
     private Composite editorReuseIndentGroup;
 
     private Composite editorReuseThresholdGroup;
@@ -83,6 +85,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
+        createUseIPersistablePref(composite);
 		createEditorReuseGroup(composite);
 		((TabBehaviour)Tweaklets.get(TabBehaviour.class)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
@@ -112,6 +115,15 @@ public class EditorsPreferencePage extends PreferencePage implements
         setButtonLayoutData(showMultipleEditorTabs);
     }
 
+    protected void createUseIPersistablePref(Composite composite) {
+        useIPersistableEditor = new Button(composite, SWT.CHECK);
+        useIPersistableEditor.setText(WorkbenchMessages.WorkbenchPreference_useIPersistableEditorButton);
+        useIPersistableEditor.setFont(composite.getFont());
+        useIPersistableEditor.setSelection(getPreferenceStore().getBoolean(
+                IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
+        setButtonLayoutData(useIPersistableEditor);
+    }
+    
     protected Composite createComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
@@ -131,8 +143,11 @@ public class EditorsPreferencePage extends PreferencePage implements
     protected void performDefaults() {
         IPreferenceStore store = getPreferenceStore();
         showMultipleEditorTabs
-                .setSelection(store
-                        .getDefaultBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+				.setSelection(store
+						.getDefaultBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+		useIPersistableEditor
+				.setSelection(store
+						.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
         reuseEditors.setSelection(store
                 .getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
         dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -154,6 +169,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         IPreferenceStore store = getPreferenceStore();
         store.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
                 showMultipleEditorTabs.getSelection());
+        store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS,
+                useIPersistableEditor.getSelection());
         
         // store the reuse editors setting
         store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, reuseEditors

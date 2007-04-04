@@ -1558,7 +1558,8 @@ public class EditorManager implements IExtensionChangeHandler {
 				persistable.saveState(inputMem);
 				
 				// any editors that want to persist state
-				if (editor instanceof IPersistableEditor) {
+				if (editor instanceof IPersistableEditor
+						&& EditorManager.useIPersistableEditor()) {
 					IMemento editorState = editorMem
 							.createChild(IWorkbenchConstants.TAG_EDITOR_STATE);
 					((IPersistableEditor) editor).saveState(editorState);
@@ -1633,5 +1634,11 @@ public class EditorManager implements IExtensionChangeHandler {
 					StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
 		}
 		return null;
+	}
+	
+	public static boolean useIPersistableEditor() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		return store.getBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS);
 	}
 }

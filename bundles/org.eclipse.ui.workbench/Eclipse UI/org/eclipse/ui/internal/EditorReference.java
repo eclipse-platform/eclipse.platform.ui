@@ -645,7 +645,8 @@ public class EditorReference extends WorkbenchPartReference implements
             site = manager.createSite(this, part, desc, editorInput);
             
             // if there is saved state that's appropriate, pass it on
-            if (part instanceof IPersistableEditor && editorState != null) {
+            if (part instanceof IPersistableEditor && editorState != null
+            		&& EditorManager.useIPersistableEditor()) {
 				((IPersistableEditor) part).restoreState(editorState);
 			}
             

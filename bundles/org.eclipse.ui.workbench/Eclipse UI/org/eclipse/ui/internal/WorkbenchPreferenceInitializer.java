@@ -62,6 +62,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 
 		node.putBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
+		node.putBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, true);
 
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		node.putInt(IPreferenceConstants.OPEN_VIEW_MODE,

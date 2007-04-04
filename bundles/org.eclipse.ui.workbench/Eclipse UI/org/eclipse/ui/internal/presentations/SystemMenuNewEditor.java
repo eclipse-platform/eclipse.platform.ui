@@ -18,6 +18,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -69,7 +70,8 @@ public final class SystemMenuNewEditor extends Action implements ISelfUpdatingAc
 						String editorId = editor.getSite().getId();
 						if (editorId != null) {
 							try {
-								if (editor instanceof IPersistableEditor) {
+								if (editor instanceof IPersistableEditor
+										&& EditorManager.useIPersistableEditor()) {
 									XMLMemento editorState = XMLMemento
 											.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
 									((IPersistableEditor) editor)

@@ -197,6 +197,14 @@ public interface IPreferenceConstants {
     public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
 
     /**
+     * Workbench preference to use the new IPersistableEditor interface
+     * throughout the workbench new editor/open editor calls.
+     * 
+     * @since 3.3
+     */
+    public static String USE_IPERSISTABLE_EDITORS = "USE_IPERSISTABLE_EDITORS"; //$NON-NLS-1$
+    
+    /**
      * Preference to show user jobs in a dialog.
      */
     public static String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$

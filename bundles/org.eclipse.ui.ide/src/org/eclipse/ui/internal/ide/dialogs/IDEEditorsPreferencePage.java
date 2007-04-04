@@ -57,6 +57,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 
 		createSpace(composite);
 		createShowMultipleEditorTabsPref(composite);
+		createUseIPersistablePref(composite);
 		createEditorReuseGroup(composite);
 		((TabBehaviour)Tweaklets.get(TabBehaviour.class)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
