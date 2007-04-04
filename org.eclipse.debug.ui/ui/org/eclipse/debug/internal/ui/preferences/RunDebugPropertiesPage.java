@@ -388,7 +388,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		ILaunchConfigurationWorkingCopy config = getSelectedConfigurations()[0]; 
 		if(edit(config, false) == IDialogConstants.OK_ID) {
 			fChangedConfigurations.add(config);
-			fViewer.refresh();
+			fViewer.refresh(config, true, true);
 		}
 	}
 
