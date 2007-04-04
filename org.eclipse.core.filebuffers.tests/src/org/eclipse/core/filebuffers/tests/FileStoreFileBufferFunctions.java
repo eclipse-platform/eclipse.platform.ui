@@ -105,7 +105,8 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			IFileStore fileStore= fFileStore;
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
+			if (fileInfo.exists())
+				fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
 			assertTrue(lastModified == EFS.NONE || !fileBuffer.isSynchronized());
 			
@@ -167,7 +168,8 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			IFileInfo fileInfo= fFileStore.fetchInfo();
 			assertEquals(modificationStamp != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP, fileInfo.exists());
 			fileInfo.setLastModified(1000);
-			fFileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
+			if (fileInfo.exists())
+				fFileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fFileStore.fetchInfo().getLastModified();
 			assertTrue(lastModified == EFS.NONE || modificationStamp != fileBuffer.getModificationStamp());
 		} finally {
@@ -190,7 +192,8 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			// invalidate synchronization state
 			IFileInfo fileInfo= fFileStore.fetchInfo();
 			fileInfo.setLastModified(1000);
-			fFileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
+			if (fileInfo.exists())
+				fFileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			//revert
 			fileBuffer.revert(null);
 			// check assertions

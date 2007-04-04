@@ -105,7 +105,8 @@ public abstract class FileBufferFunctions extends TestCase {
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
+			if (fileInfo.exists())
+				fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
 			assertTrue(lastModified == EFS.NONE || !fileBuffer.isSynchronized());
 			
@@ -168,7 +169,8 @@ public abstract class FileBufferFunctions extends TestCase {
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			assertEquals(modificationStamp != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP, fileInfo.exists());
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
+			if (fileInfo.exists())
+				fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			long lastModified= fileStore.fetchInfo().getLastModified();
 			assertTrue(lastModified == EFS.NONE || modificationStamp != fileBuffer.getModificationStamp());
 		} finally {
@@ -192,7 +194,8 @@ public abstract class FileBufferFunctions extends TestCase {
 			IFileStore fileStore= FileBuffers.getFileStoreAtLocation(fPath);
 			IFileInfo fileInfo= fileStore.fetchInfo();
 			fileInfo.setLastModified(1000);
-			fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
+			if (fileInfo.exists())
+				fileStore.putInfo(fileInfo, EFS.SET_LAST_MODIFIED, null);
 			//revert
 			fileBuffer.revert(null);
 			// check assertions
