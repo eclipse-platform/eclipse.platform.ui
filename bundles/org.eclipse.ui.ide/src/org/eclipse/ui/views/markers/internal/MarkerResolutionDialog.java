@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
@@ -126,10 +127,15 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		
-        setTitleImage(JFaceResources.getResources().createImageWithDefault(
-				IDEInternalWorkbenchImages.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG)));
-        
+
+		initializeDialogUnits(parent);
+
+		setTitleImage(JFaceResources
+				.getResources()
+				.createImageWithDefault(
+						IDEInternalWorkbenchImages
+								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG)));
+
 		Composite mainArea = (Composite) super.createDialogArea(parent);
 
 		// Create a new composite as there is the title bar seperator
@@ -138,23 +144,16 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		FormLayout layout = new FormLayout();
-		layout.marginLeft = IDialogConstants.BUTTON_MARGIN;
-		layout.marginTop = IDialogConstants.BUTTON_MARGIN;
-		layout.marginRight = IDialogConstants.BUTTON_MARGIN;
-		layout.marginBottom = IDialogConstants.BUTTON_MARGIN;
-		layout.spacing = IDialogConstants.BUTTON_MARGIN;
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.spacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		control.setLayout(layout);
-
-		initializeDialogUnits(control);
 
 		Label resolutionsLabel = new Label(control, SWT.NONE);
 		resolutionsLabel
 				.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
 
-		FormData resolutionsLabelData = new FormData();
-		resolutionsLabelData.top = new FormAttachment(0);
-		resolutionsLabelData.left = new FormAttachment(0);
-		resolutionsLabel.setLayoutData(resolutionsLabelData);
+		resolutionsLabel.setLayoutData(new FormData());
 
 		resolutionsList = new ListViewer(control, SWT.BORDER | SWT.SINGLE);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
@@ -252,7 +251,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		progressPart.setLayoutData(progressData);
 
 		Dialog.applyDialogFont(control);
-		markerView.getTree();
 
 		setMessage(NLS.bind(MarkerMessages.MarkerResolutionDialog_Description,
 				Util.getProperty(IMarker.MESSAGE, originalMarker)));
@@ -287,7 +285,12 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	private Composite createTableButtons(Composite control) {
 
 		Composite buttonComposite = new Composite(control, SWT.NONE);
-		buttonComposite.setLayout(new GridLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		buttonComposite.setLayout(layout);
 
 		Button selectAll = new Button(buttonComposite, SWT.PUSH);
 		selectAll.setText(MarkerMessages.selectAllAction_title);
@@ -603,18 +606,22 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 */
 	private void createTableColumns() {
 		TableLayout layout = new TableLayout();
-		markersTable.getTable().setLayout(layout);
-		markersTable.getTable().setLinesVisible(true);
+		int width = convertWidthInCharsToPixels(20);
+		
 
-		// Description column
-		layout.addColumnData(new ColumnPixelData(200, true, true));
-		TableColumn tc = new TableColumn(markersTable.getTable(), SWT.NONE, 0);
-		tc.setResizable(true);
+		Table table = markersTable.getTable();
+		table.setLayout(layout);
+		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
 
-		// Line column
-		layout.addColumnData(new ColumnPixelData(50, true, true));
-		tc = new TableColumn(markersTable.getTable(), SWT.NONE, 0);
-		tc.setResizable(true);
+		layout.addColumnData(new ColumnPixelData(width, true, true));
+		TableColumn tc = new TableColumn(table, SWT.NONE, 0);
+		tc
+				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Location);
+		layout.addColumnData(new ColumnPixelData(width, true, true));
+		tc = new TableColumn(table, SWT.NONE, 0);
+		tc
+				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Resource);
 
 	}
 
