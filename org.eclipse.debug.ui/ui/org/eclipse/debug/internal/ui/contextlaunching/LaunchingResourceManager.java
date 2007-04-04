@@ -82,9 +82,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	};
 	
 	/**
-	private IResource fCurrentResource = null;
-	
-	/**
 	 * Returns if context launching is enabled
 	 * @return if context launching is enabled
 	 */
@@ -285,7 +282,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
 			window = (IWorkbenchWindow) iter.next();
 			bar = (ToolBar) fToolbars.remove(window);
-			if(bar != null) {
+			if(bar != null && !bar.isDisposed()) {
 				bar.removeMouseTrackListener(fMouseListener);
 			}
 		}
@@ -308,7 +305,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
 		ToolBar bar = (ToolBar) fToolbars.remove(window);
-		if(bar != null) {
+		if(bar != null && !bar.isDisposed()) {
 			bar.removeMouseTrackListener(fMouseListener);
 		}
 	}
@@ -335,7 +332,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			if(item instanceof ToolBarContributionItem) {
 				ToolBarManager tmgr = (ToolBarManager) ((ToolBarContributionItem)item).getToolBarManager();
 				ToolBar bar = tmgr.getControl();
-				if(bar != null) {
+				if(bar != null && !bar.isDisposed()) {
 					bar.addMouseTrackListener(fMouseListener);
 					fToolbars.put(window, bar);
 				}
