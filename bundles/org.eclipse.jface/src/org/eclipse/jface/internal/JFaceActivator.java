@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.util;
+package org.eclipse.jface.internal;
 
 import org.osgi.framework.*;
 

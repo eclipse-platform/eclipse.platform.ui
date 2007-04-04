@@ -17,9 +17,6 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.AnimatorFactory;
 import org.eclipse.jface.dialogs.ErrorSupportProvider;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * The Policy class handles settings for behaviour, debug flags and logging
@@ -63,8 +60,6 @@ public class Policy {
 
 	private static ErrorSupportProvider errorSupportProvider;
 
-	private static AbstractStatusManager statusManager;
-
 	/**
 	 * Returns the dummy log to use if none has been set
 	 */
@@ -102,57 +97,6 @@ public class Policy {
 			log = getDummyLog();
 		}
 		return log;
-	}
-
-	/**
-	 * Sets the status manager used by JFace to handle errors and warnings.
-	 * 
-	 * @param manager
-	 *            the manager to use, or <code>null</code> to use the default
-	 *            manager
-	 * @since 3.1
-	 */
-	public static void setStatusManager(AbstractStatusManager manager) {
-		statusManager = manager;
-	}
-
-	/**
-	 * Returns the status manager used by JFace to handle errors and warnings.
-	 * <p>
-	 * The default status manager prints the status to <code>System.err</code>.
-	 * </p>
-	 * 
-	 * @return the logger
-	 * @since 3.1
-	 */
-	public static AbstractStatusManager getStatusManager() {
-		if (statusManager == null) {
-			statusManager = getDummyStatusManager();
-		}
-		return statusManager;
-	}
-
-	private static AbstractStatusManager getDummyStatusManager() {
-		return new AbstractStatusManager() {
-			public void handle(IStatus status, int style) {
-				String title = JFaceResources
-						.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
-				switch (style) {
-				case AbstractStatusManager.BLOCK:
-					MessageDialog.openError(null, title, status.getMessage());
-					break;
-				case AbstractStatusManager.SHOW:
-					MessageDialog dialog = new MessageDialog(null, title, null,
-							status.getMessage(), MessageDialog.ERROR,
-							new String[] { IDialogConstants.OK_LABEL }, 0);
-					dialog.setBlockOnOpen(false);
-					dialog.open();
-					break;
-				default:
-					getLog().log(status);
-				}
-			}
-		};
 	}
 
 	/**
