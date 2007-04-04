@@ -103,7 +103,7 @@ public class PackStep extends CommandStep {
 			if (container.containsKey(Utils.MARK_EXCLUDE_CHILDREN_PACK)) {
 				if (Boolean.valueOf(container.getProperty(Utils.MARK_EXCLUDE_CHILDREN_PACK)).booleanValue()) {
 					if (verbose)
-						System.out.println(input.getName() + "is excluded from pack200 by its containers.");
+						System.out.println(input.getName() + " is excluded from pack200 by its containers.");
 					return false;
 				}
 				break;

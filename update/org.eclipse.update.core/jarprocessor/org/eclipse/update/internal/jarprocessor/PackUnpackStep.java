@@ -44,7 +44,7 @@ public class PackUnpackStep extends PackStep {
 	 * @see org.eclipse.update.internal.jarprocessor.PackStep#postProcess(java.io.File, java.io.File, java.util.LinkedList)
 	 */
 	public File postProcess(File input, File workingDirectory, List containers) {
-		if (canPack() && packCommand != null) {
+		if (canPack() && packCommand != null && input != null) {
 			Properties inf = Utils.getEclipseInf(input, verbose);
 			if (!shouldPack(input, containers, inf))
 				return null;

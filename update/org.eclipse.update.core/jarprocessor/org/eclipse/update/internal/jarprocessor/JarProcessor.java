@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -123,11 +123,33 @@ public class JarProcessor {
 				if (replacements.containsKey(entry.getName())) {
 					String name = (String) replacements.get(entry.getName());
 					replacement = new File(directory, name);
-					in = new BufferedInputStream(new FileInputStream(replacement));
-					newEntry = new JarEntry(name);
-				} else {
-					in = new BufferedInputStream(jar.getInputStream(entry));
-					newEntry = new JarEntry(entry.getName());
+					if (name != null) {
+						if (replacement.exists()) {
+							try {
+								in = new BufferedInputStream(new FileInputStream(replacement));
+								newEntry = new JarEntry(name);
+							} catch (Exception e) {
+								if (verbose) {
+									e.printStackTrace();
+									System.out.println("Warning: Problem reading " +replacement.getPath() + ", using " + jar.getName() + File.separator + entry.getName()  + " instead.");
+								}
+							}
+						} else if (verbose) {
+							System.out.println("Warning: " + replacement.getPath() + " not found, using " + jar.getName() + File.separator + entry.getName() + " instead.");	
+						}
+					}
+				}
+				if (newEntry == null) {
+					try {
+						in = new BufferedInputStream(jar.getInputStream(entry));
+						newEntry = new JarEntry(entry.getName());
+					} catch( Exception e ) {
+						if(verbose) {
+							e.printStackTrace();
+							System.out.println("ERROR: problem reading " + entry.getName() + " from " + jar.getName());
+						}
+						continue;
+					}
 				}
 				newEntry.setTime(entry.getTime());
 				outputJar.putNextEntry(newEntry);
@@ -214,13 +236,16 @@ public class JarProcessor {
 						Utils.close(out);
 					}
 					extracted.setLastModified(entry.getTime());
-					data.put(name, newName);
 
 					//recurse
 					containingInfs.addFirst(inf);
 					String dir = getWorkingDirectory();
 					setWorkingDirectory(parentDir.getCanonicalPath());
-					processJar(extracted);
+					File result = processJar(extracted);
+
+					newName = name.substring(0, name.length() - extracted.getName().length()) + result.getName();
+					data.put(name, newName);
+
 					setWorkingDirectory(dir);
 					containingInfs.removeFirst();
 
@@ -261,7 +286,7 @@ public class JarProcessor {
 		}
 	}
 
-	public void processJar(File input) throws IOException {
+	public File processJar(File input) throws IOException {
 		++depth;
 		long lastModified = input.lastModified();
 		File workingDir = new File(getWorkingDirectory());
@@ -285,7 +310,7 @@ public class JarProcessor {
 		if (skip) {
 			//This jar was not marked as conditioned, and we are only processing conditioned jars, so do nothing
 			--depth;
-			return;
+			return input;
 		}
 
 		//pre
@@ -335,6 +360,7 @@ public class JarProcessor {
 			if (finalFile.exists())
 				finalFile.delete();
 			result.renameTo(finalFile);
+			result = finalFile;
 		}
 
 		if (tempDir.exists())
@@ -342,5 +368,6 @@ public class JarProcessor {
 
 		result.setLastModified(lastModified);
 		--depth;
+		return result;
 	}
 }

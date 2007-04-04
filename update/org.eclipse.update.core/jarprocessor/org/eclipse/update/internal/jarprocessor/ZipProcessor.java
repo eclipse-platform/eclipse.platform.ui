@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,7 +114,8 @@ public class ZipProcessor {
 					if (verbose)
 						System.out.println("Extracting " + entry.getName()); //$NON-NLS-1$
 					FileOutputStream extracted = new FileOutputStream(extractedFile);
-					Utils.transferStreams(entryStream, extracted, true);
+					Utils.transferStreams(entryStream, extracted, true); // this will close the stream
+					entryStream = null;
 
 					boolean skip = Utils.shouldSkipJar(extractedFile, processAll, verbose);
 					if (skip) {
@@ -124,48 +125,86 @@ public class ZipProcessor {
 							System.out.println(entry.getName() + " is not marked, skipping."); //$NON-NLS-1$
 					} else {
 						if (unpacking) {
-							processor.processJar(extractedFile);
-							name = name.substring(0, name.length() - Utils.PACKED_SUFFIX.length());
-							extractedFile = new File(tempDir, name);
+							File result = processor.processJar(extractedFile);
+							name = name.substring(0, name.length() - extractedFile.getName().length()) + result.getName();
+							extractedFile = result;
 						} else {
-							processor.clearProcessSteps();
-							if (repack)
-								processor.addProcessStep(packUnpackStep);
-							if (sign)
-								processor.addProcessStep(signStep);
-							processor.processJar(extractedFile);
-							extractedFile = new File(tempDir, extractedFile.getName());
+							if (repack || sign) {
+								processor.clearProcessSteps();
+								if (repack)
+									processor.addProcessStep(packUnpackStep);
+								if (sign)
+									processor.addProcessStep(signStep);
+								extractedFile = processor.processJar(extractedFile);
+							}
 							if (pack) {
 								processor.clearProcessSteps();
 								processor.addProcessStep(packStep);
-								processor.processJar(extractedFile);
-
-								File modifiedFile = new File(tempDir, extractedFile.getName() + Utils.PACKED_SUFFIX);
-								ZipEntry zipEntry = new ZipEntry(name + Utils.PACKED_SUFFIX);
-								entryStream = new FileInputStream(modifiedFile);
-								zipOut.putNextEntry(zipEntry);
-								Utils.transferStreams(entryStream, zipOut, false);
-								entryStream.close();
-								Utils.clear(modifiedFile);
+								File modifiedFile = processor.processJar(extractedFile);
+								if (modifiedFile.exists()) {
+									try {
+										String newName = name.substring(0, name.length() - extractedFile.getName().length()) + modifiedFile.getName();
+										if (verbose) {
+											System.out.println("Adding " + newName + " to " + outputFile.getPath()); //$NON-NLS-1$ //$NON-NLS-2$
+											System.out.println();
+										}
+										ZipEntry zipEntry = new ZipEntry(newName);
+										entryStream = new FileInputStream(modifiedFile);
+										zipOut.putNextEntry(zipEntry);
+										Utils.transferStreams(entryStream, zipOut, false); //we want to keep zipOut open
+										entryStream.close();
+										Utils.clear(modifiedFile);
+									} catch (IOException e) {
+										Utils.close(entryStream);
+										if (verbose) {
+											e.printStackTrace();
+											System.out.println("Warning: Problem reading " + modifiedFile.getPath() + ".");
+										}
+									}
+									entryStream = null;
+								} else if (verbose) {
+									System.out.println("Warning: " + modifiedFile.getPath() + " not found.");
+								}
 							}
 						}
-						entryStream = new FileInputStream(extractedFile);
-						if (verbose) {
-							System.out.println("Adding " + entry.getName() + " to " + outputFile.getPath()); //$NON-NLS-1$ //$NON-NLS-2$
-							System.out.println();
+						if (extractedFile.exists()) {
+							try {
+								entryStream = new FileInputStream(extractedFile);
+							} catch (IOException e) {
+								if (verbose) {
+									e.printStackTrace();
+									System.out.println("Warning: Problem reading " + extractedFile.getPath() + ".");
+								}
+							}
+						}
+
+						if (verbose && entryStream != null) {
+							System.out.println("Adding " + name + " to " + outputFile.getPath()); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					}
 				}
-				ZipEntry newEntry = new ZipEntry(name);
-				zipOut.putNextEntry(newEntry);
-				Utils.transferStreams(entryStream, zipOut, false);
-				zipOut.closeEntry();
-				entryStream.close();
+				if (entryStream != null) {
+					ZipEntry newEntry = new ZipEntry(name);
+					try {
+						zipOut.putNextEntry(newEntry);
+						Utils.transferStreams(entryStream, zipOut, false);
+						zipOut.closeEntry();
+					} catch (ZipException e) {
+						if(verbose) {
+							System.out.println("Warning: " + name + " already exists in " + outputFile.getName() + ".  Skipping.");
+						}
+					}
+					entryStream.close();
+				}
 
 				if (extractedFile != null)
 					Utils.clear(extractedFile);
+				
+				if (verbose) {
+					System.out.println();
+					System.out.println("Processing " + zipFile.getPath()); //$NON-NLS-1$
+				}
 			}
-
 		}
 		zipOut.close();
 		zip.close();

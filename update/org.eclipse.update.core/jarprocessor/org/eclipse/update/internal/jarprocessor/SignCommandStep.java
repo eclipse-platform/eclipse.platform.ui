@@ -62,7 +62,7 @@ public class SignCommandStep extends CommandStep {
 	 * @see org.eclipse.update.jarprocessor.IProcessStep#postProcess(java.io.File, java.io.File)
 	 */
 	public File postProcess(File input, File workingDirectory, List containers) {
-		if (command != null && shouldSign(input, containers)) {
+		if (command != null && input != null && shouldSign(input, containers)) {
 			try {
 				String[] cmd = new String[] {command, input.getCanonicalPath()};
 				int result = execute(cmd, verbose);
