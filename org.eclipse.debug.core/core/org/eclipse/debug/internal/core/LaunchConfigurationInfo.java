@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -64,7 +65,7 @@ public class LaunchConfigurationInfo {
 	 * values are one of <code>String</code>, <code>Integer</code>, or
 	 * <code>Boolean</code>.
 	 */
-	private HashMap fAttributes;
+	private TreeMap fAttributes;
 	
 	/**
 	 * This launch configuration's type
@@ -90,7 +91,7 @@ public class LaunchConfigurationInfo {
 	 * Constructs a new empty info
 	 */
 	protected LaunchConfigurationInfo() {
-		setAttributeTable(new HashMap(10));
+		setAttributeTable(new TreeMap());
 	}
 	
 	/**
@@ -98,7 +99,7 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return attribute table
 	 */
-	private HashMap getAttributeTable() {
+	private TreeMap getAttributeTable() {
 		return fAttributes;
 	}
 
@@ -108,7 +109,7 @@ public class LaunchConfigurationInfo {
 	 * @param table
 	 *            attribute table
 	 */	
-	private void setAttributeTable(HashMap table) {
+	private void setAttributeTable(TreeMap table) {
 		fAttributes = table;
 	}
 	
@@ -119,17 +120,10 @@ public class LaunchConfigurationInfo {
 	 */
 	protected void setAttributes(Map map) {
 		if (map == null) {
-			setAttributeTable(new HashMap());
+			setAttributeTable(new TreeMap());
 			return;
 		}
-		Set entrySet = map.entrySet();
-		HashMap attributes = new HashMap(entrySet.size());
-		Iterator iter = entrySet.iterator();
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry)iter.next();
-			attributes.put(entry.getKey(), entry.getValue());
-		}
-		setAttributeTable(attributes);
+		setAttributeTable(new TreeMap(map));
 	}
 	
 	/**
@@ -321,8 +315,8 @@ public class LaunchConfigurationInfo {
 	 * 
 	 * @return a copy of this info's attribute map
 	 */
-	protected HashMap getAttributes() {
-		return (HashMap)getAttributeTable().clone();
+	protected TreeMap getAttributes() {
+		return (TreeMap)getAttributeTable().clone();
 	}
 	
 	/**
@@ -724,7 +718,7 @@ public class LaunchConfigurationInfo {
 	 * @param map2 attribute map
 	 * @return whether the two attribute maps are equal
 	 */
-	protected boolean compareAttributes(HashMap map1, HashMap map2) {
+	protected boolean compareAttributes(TreeMap map1, TreeMap map2) {
 		LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 		if (map1.size() == map2.size()) {
 			Iterator attributes = map1.keySet().iterator();
