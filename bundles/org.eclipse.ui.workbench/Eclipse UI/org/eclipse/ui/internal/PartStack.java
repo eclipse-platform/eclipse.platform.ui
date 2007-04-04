@@ -34,11 +34,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
@@ -202,6 +204,27 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             Object cookie = null;
             if (dropResult != null) {
                 cookie = dropResult.getCookie();
+            }
+
+            // Handle cross window drops by opening a new editor
+            if (pane instanceof EditorPane) {
+            	if (pane.getWorkbenchWindow() != stack.getWorkbenchWindow()) {
+            		EditorPane editor = (EditorPane) pane;
+            		try {
+						IEditorInput input = editor.getEditorReference().getEditorInput();
+						
+						// Close the old editor and capture the actual closed state incase of a 'cancel'
+						boolean editorClosed = editor.getPage().closeEditor(editor.getEditorReference(), true);
+						
+						// Only open open the new editor if the old one closed
+						if (editorClosed)
+							stack.getPage().openEditor(input, editor.getEditorReference().getId());
+						return;
+					} catch (PartInitException e) {
+						e.printStackTrace();
+					}
+            		
+            	}
             }
             
             if (pane.getContainer() != stack) {
@@ -569,7 +592,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
 
         // Don't allow views to be dragged between windows
-        if (pane.getWorkbenchWindow() != getWorkbenchWindow()) {
+        boolean differentWindows = pane.getWorkbenchWindow() != getWorkbenchWindow();
+        boolean editorDropOK = ((pane instanceof EditorPane) && 
+        		pane.getWorkbenchWindow().getWorkbench() == 
+        			getWorkbenchWindow().getWorkbench());
+        if (differentWindows && !editorDropOK) {
             return null;
         }
 

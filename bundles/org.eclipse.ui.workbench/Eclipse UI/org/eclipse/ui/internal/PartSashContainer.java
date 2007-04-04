@@ -993,7 +993,6 @@ public abstract class PartSashContainer extends LayoutPart implements
      */
     public IDropTarget drag(Control currentControl, Object draggedObject,
             Point position, Rectangle dragRectangle) {
-
         if (!(draggedObject instanceof LayoutPart)) {
             return null;
         }
@@ -1004,7 +1003,11 @@ public abstract class PartSashContainer extends LayoutPart implements
             return null;
         }
 
-        if (sourcePart.getWorkbenchWindow() != getWorkbenchWindow()) {
+        boolean differentWindows = sourcePart.getWorkbenchWindow() != getWorkbenchWindow();
+        boolean editorDropOK = ((sourcePart instanceof EditorPane) && 
+        							sourcePart.getWorkbenchWindow().getWorkbench() == 
+        							getWorkbenchWindow().getWorkbench());
+        if (differentWindows && !editorDropOK) {
             return null;
         }
 
@@ -1039,6 +1042,12 @@ public abstract class PartSashContainer extends LayoutPart implements
                 	|| (isPaneType(sourcePart) 
                 			&& ((PartPane) sourcePart).getStack()!=null
                 			&& ((PartPane) sourcePart).getStack().isStandalone());
+                
+                // Only allow dropping onto an existing stack from different windows
+                if (differentWindows && targetPart instanceof EditorStack) {
+                    IDropTarget target = targetPart.getDropTarget(draggedObject, position);
+                   	return target;
+                }
                 
                 // Reserve the 5 pixels around the edge of the part for the drop-on-edge cursor
                 if (distance >= 5 && !standalone) {
@@ -1091,7 +1100,10 @@ public abstract class PartSashContainer extends LayoutPart implements
                 return createDropTarget(sourcePart, side, cursor, targetPart);
             }
         } else {
-
+        	// We only allow dropping into a stack, not creating one
+        	if (differentWindows)
+        		return null;
+        	
             int side = Geometry.getClosestSide(containerBounds, position);
 
             boolean pointlessDrop = isZoomed();
