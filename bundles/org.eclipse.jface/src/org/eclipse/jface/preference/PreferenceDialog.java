@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -200,6 +201,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
      *  Composite with a FormLayout to contain the title area
      */
     Composite formTitleComposite;
+
+	private ScrolledComposite scrolled;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -509,8 +512,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * @return Composite
 	 */
 	protected Composite createPageContainer(Composite parent) {
-		
-		//Create an outer composite for spacing
+	
 		Composite outer = new Composite(parent, SWT.NONE);
 		
 		GridData outerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
@@ -518,14 +520,27 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				
 		outer.setLayout(new GridLayout());
 		outer.setLayoutData(outerData);
+		
+		//Create an outer composite for spacing
+		scrolled = new ScrolledComposite(outer, SWT.V_SCROLL | SWT.H_SCROLL);
 
-		Composite result = new Composite(outer, SWT.NONE);
+		scrolled.setExpandHorizontal(true);
+		scrolled.setExpandVertical(true);
+		
+		GridData scrolledData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL);
+				
+		scrolled.setLayoutData(scrolledData);
+		
+		Composite result = new Composite(scrolled, SWT.NONE);
 		
 		GridData resultData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL);
 				
 		result.setLayout(getPageLayout());
 		result.setLayoutData(resultData);
+		
+		scrolled.setContent(result);
 		
 		return result;
 	}
@@ -1229,6 +1244,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 				currentPage.setSize(containerSize);
 			}
 		}
+		
+		scrolled.setMinSize(contentSize);
 		// Ensure that all other pages are invisible
 		// (including ones that triggered an exception during
 		// their creation).
