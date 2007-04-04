@@ -28,6 +28,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	private Action configureSchedule;
 	private Action refreshSelectionAction;
 	private RemoveFromViewAction removeFromViewAction;
+	private RestoreRemovedItemsAction restoreRemovedItemsAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -66,6 +67,8 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 		}
 		
 		removeFromViewAction = new RemoveFromViewAction(configuration);
+		restoreRemovedItemsAction = new RestoreRemovedItemsAction(configuration);
+		appendToGroup(ISynchronizePageConfiguration.P_VIEW_MENU, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, restoreRemovedItemsAction);
 	}
 
 	/* (non-Javadoc)
@@ -87,6 +90,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#setActionBars(org.eclipse.ui.IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
+		super.fillActionBars(actionBars);
 		if(actionBars != null) {
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();
