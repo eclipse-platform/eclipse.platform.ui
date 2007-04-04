@@ -354,6 +354,15 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 					}
 					delta.setFlags(IModelDelta.NO_CHANGE);
 					checkIfRestoreComplete();
+					// force child deltas to update, so viewer is populated
+					IModelDelta[] childDeltas = delta.getChildDeltas();
+					for (int i = 0; i < childDeltas.length; i++) {
+						IModelDelta childDelta = childDeltas[i];
+						int modelIndex = childDelta.getIndex();
+						if (modelIndex >= 0) {
+							doUpdateElement(treePath, modelIndex);
+						}
+					}
 					return Status.OK_STATUS;
 				}
 			};
