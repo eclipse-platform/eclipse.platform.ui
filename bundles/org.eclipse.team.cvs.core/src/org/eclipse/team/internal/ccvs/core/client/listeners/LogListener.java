@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 179977 CVS log command doesn't scale well with lots of tags and versions
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +34,8 @@ public class LogListener extends CommandOutputListener {
     private static final String LOG_TIMESTAMP_FORMAT_OLD= "yyyy/MM/dd HH:mm:ss zzz";//$NON-NLS-1$
     private static final String LOG_TIMESTAMP_FORMAT= "yyyy-MM-dd HH:mm:ss zzz";//$NON-NLS-1$
     private static final Locale LOG_TIMESTAMP_LOCALE= Locale.US;
+    private final DateFormat LOG_DATE_FORMATTER_OLD = new SimpleDateFormat(LOG_TIMESTAMP_FORMAT_OLD, LOG_TIMESTAMP_LOCALE);
+    private final DateFormat LOG_DATE_FORMATTER = new SimpleDateFormat(LOG_TIMESTAMP_FORMAT, LOG_TIMESTAMP_LOCALE);
     
     // Server message prefix used for error detection
     private static final String NOTHING_KNOWN_ABOUT = "nothing known about "; //$NON-NLS-1$
@@ -56,8 +58,7 @@ public class LogListener extends CommandOutputListener {
     private String revision;
     private String author;
     private String creationDate;
-    private List tagRevisions = new ArrayList(5);
-    private List tagNames = new ArrayList(5);
+    private List versions = new ArrayList();
     
     private final ILogEntryListener listener;
     
@@ -146,8 +147,7 @@ public class LogListener extends CommandOutputListener {
     				int firstColon = line.indexOf(':');
     				String tagName = line.substring(1, firstColon);
     				String tagRevision = line.substring(firstColon + 2);
-    				tagNames.add(tagName);
-    				tagRevisions.add(tagRevision);
+    				versions.add(new VersionInfo(tagRevision, tagName));
     			}
     			break;
     		case REVISION:
@@ -186,27 +186,14 @@ public class LogListener extends CommandOutputListener {
     		List thisRevisionTags = new ArrayList(3);
     		//a parallel lists for revision tags (used only for branches with no commits on them)
     		List revisionVersions = new ArrayList(3);
-    		for (int i = 0; i < tagNames.size(); i++) {
-    			String tagName = (String) tagNames.get(i);
-    			String tagRevision = (String) tagRevisions.get(i);
-    			// If this is a branch tag then only include this tag with the revision
-    			// that is the root of this branch (e.g. 1.1 is root of branch 1.1.2).
-    			boolean isBranch = isBranchTag(tagRevision);
-    			if (isBranch) {
-    				int lastDot = tagRevision.lastIndexOf('.');
-    				if (lastDot == -1) {
-    					CVSProviderPlugin.log(IStatus.ERROR, 
-    						NLS.bind(CVSMessages.LogListener_invalidRevisionFormat, new String[] { tagName, tagRevision }), null); 
-    				} else {
-    					if (tagRevision.charAt(lastDot - 1) == '0' && tagRevision.charAt(lastDot - 2) == '.') {
-    						lastDot = lastDot - 2;
-    					}
-    					tagRevision = tagRevision.substring(0, lastDot);
-    				}
-    			}
+    		for (Iterator i = versions.iterator(); i.hasNext();) {
+    			VersionInfo version = (VersionInfo) i.next();
+    			String tagName = version.getTagName();
+    			String tagRevision = version.getTagRevision();
+    			
     			if (tagRevision.equals(revision) ||
     				revision.equals(BRANCH_REVISION)) {
-    				int type = isBranch ? CVSTag.BRANCH : CVSTag.VERSION;
+    				int type = version.isBranch() ? CVSTag.BRANCH : CVSTag.VERSION;
     				thisRevisionTags.add(new CVSTag(tagName, type));
     				if (revision.equals(BRANCH_REVISION)){
     					//also record the tag revision
@@ -220,7 +207,7 @@ public class LogListener extends CommandOutputListener {
     		
     		if (currentFile != null) {
     			LogEntry entry = new LogEntry(currentFile, revision, author, date,
-    				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[0]), (String[]) revisionVersions.toArray(new String[revisionVersions.size()]));
+    				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[thisRevisionTags.size()]), (String[]) revisionVersions.toArray(new String[revisionVersions.size()]));
     			addEntry(entry);
     		}
     		state = BEGIN;
@@ -230,8 +217,7 @@ public class LogListener extends CommandOutputListener {
 
     protected void beginFile(ICVSRepositoryLocation location, String fileName) {
     	currentFile = RemoteFile.create(fileName, location);
-    	tagNames.clear();
-    	tagRevisions.clear();  
+    	versions.clear();
     }
 
     protected void addEntry(LogEntry entry) {
@@ -242,44 +228,84 @@ public class LogListener extends CommandOutputListener {
         CVSProviderPlugin.log(IStatus.WARNING, "Invalid file path '" + badFilePath + "' received from " + location.toString(), null); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    /** branch tags have odd number of segments or have
-     *  an even number with a zero as the second last segment
-     *  e.g: 1.1.1, 1.26.0.2 are branch revision numbers */
-    protected boolean isBranchTag(String tagName) {
-    	// First check if we have an odd number of segments (i.e. even number of dots)
-    	int numberOfDots = 0;
-    	int lastDot = 0;
-    	for (int i = 0; i < tagName.length(); i++) {
-    		if (tagName.charAt(i) == '.') {
-    			numberOfDots++;
-    			lastDot = i;
-    		}
-    	}
-    	if ((numberOfDots % 2) == 0) return true;
-    	if (numberOfDots == 1) return false;
-    	
-    	// If not, check if the second lat segment is a zero
-    	if (tagName.charAt(lastDot - 1) == '0' && tagName.charAt(lastDot - 2) == '.') return true;
-    	return false;
-    }
-    
     /**
      * Converts a time stamp as sent from a cvs server for a "log" command into a
      * <code>Date</code>.
      */
     private Date convertFromLogTime(String modTime) {
-        String timestampFormat = LOG_TIMESTAMP_FORMAT;
+        DateFormat format = LOG_DATE_FORMATTER;
         // Compatibility for older cvs version (pre 1.12.9)
         if (modTime.length() > 4 && modTime.charAt(4) == '/')
-            timestampFormat = LOG_TIMESTAMP_FORMAT_OLD;
-            
-        SimpleDateFormat format= new SimpleDateFormat(timestampFormat, 
-            LOG_TIMESTAMP_LOCALE);
+            format = LOG_DATE_FORMATTER_OLD;
+        
         try {
             return format.parse(modTime);
         } catch (ParseException e) {
             // fallback is to return null
             return null;
+        }
+    }
+    
+    private static class VersionInfo {
+		private final String version;
+		private final boolean isBranch;
+		private String tagRevision;
+		private final String tagName;
+		
+    	public VersionInfo(String version, String tagName) {
+			this.version = version;
+			this.tagName = tagName;
+			this.isBranch = isBranchTag(version);
+			tagRevision = version;
+			if (isBranch) {
+				int lastDot = version.lastIndexOf('.');
+				if (lastDot == -1) {
+					CVSProviderPlugin.log(IStatus.ERROR, 
+						NLS.bind(CVSMessages.LogListener_invalidRevisionFormat, new String[] { tagName, version }), null); 
+				} else {
+					if (version.charAt(lastDot - 1) == '0' && version.charAt(lastDot - 2) == '.') {
+						lastDot = lastDot - 2;
+					}
+					tagRevision = version.substring(0, lastDot);
+				}
+			}
+    	}
+    	
+		public String getVersion() {
+			return this.version;
+		}
+		
+		public String getTagName() {
+			return this.tagName;
+		}
+		
+		public String getTagRevision() {
+			return this.tagRevision;
+		}
+    	
+    	public boolean isBranch() {
+    		return isBranch;
+    	}
+    	
+        /** branch tags have odd number of segments or have
+         *  an even number with a zero as the second last segment
+         *  e.g: 1.1.1, 1.26.0.2 are branch revision numbers */
+        private boolean isBranchTag(String tagName) {
+        	// First check if we have an odd number of segments (i.e. even number of dots)
+        	int numberOfDots = 0;
+        	int lastDot = 0;
+        	for (int i = 0; i < tagName.length(); i++) {
+        		if (tagName.charAt(i) == '.') {
+        			numberOfDots++;
+        			lastDot = i;
+        		}
+        	}
+        	if ((numberOfDots % 2) == 0) return true;
+        	if (numberOfDots == 1) return false;
+        	
+        	// If not, check if the second lat segment is a zero
+        	if (tagName.charAt(lastDot - 1) == '0' && tagName.charAt(lastDot - 2) == '.') return true;
+        	return false;
         }
     }
 }
