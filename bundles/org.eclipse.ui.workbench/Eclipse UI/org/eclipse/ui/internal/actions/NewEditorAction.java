@@ -18,7 +18,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ActiveEditorAction;
-import org.eclipse.ui.internal.EditorManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
@@ -57,8 +56,7 @@ public class NewEditorAction extends ActiveEditorAction {
 			return;
 		}
 		try {
-			if (editor instanceof IPersistableEditor 
-					&& EditorManager.useIPersistableEditor()) {
+			if (editor instanceof IPersistableEditor) {
 				XMLMemento editorState = XMLMemento
 						.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
 				((IPersistableEditor) editor).saveState(editorState);

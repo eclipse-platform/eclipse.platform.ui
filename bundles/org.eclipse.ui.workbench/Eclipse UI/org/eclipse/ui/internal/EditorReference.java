@@ -135,7 +135,11 @@ public class EditorReference extends WorkbenchPartReference implements
         this.manager = manager;
         initListenersAndHandlers();
         this.editorMemento = memento;
-        editorState = editorMemento.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+        if (EditorManager.useIPersistableEditor()) {
+        	editorState = editorMemento.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
+        } else {
+        	editorState = null;
+        }
         String id = memento.getString(IWorkbenchConstants.TAG_ID);
         String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
         String tooltip = Util.safeString(memento
@@ -645,8 +649,7 @@ public class EditorReference extends WorkbenchPartReference implements
             site = manager.createSite(this, part, desc, editorInput);
             
             // if there is saved state that's appropriate, pass it on
-            if (part instanceof IPersistableEditor && editorState != null
-            		&& EditorManager.useIPersistableEditor()) {
+            if (part instanceof IPersistableEditor && editorState != null) {
 				((IPersistableEditor) part).restoreState(editorState);
 			}
             

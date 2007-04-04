@@ -1558,8 +1558,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				persistable.saveState(inputMem);
 				
 				// any editors that want to persist state
-				if (editor instanceof IPersistableEditor
-						&& EditorManager.useIPersistableEditor()) {
+				if (editor instanceof IPersistableEditor) {
 					IMemento editorState = editorMem
 							.createChild(IWorkbenchConstants.TAG_EDITOR_STATE);
 					((IPersistableEditor) editor).saveState(editorState);
