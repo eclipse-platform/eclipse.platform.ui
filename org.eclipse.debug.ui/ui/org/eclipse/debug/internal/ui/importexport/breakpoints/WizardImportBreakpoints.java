@@ -71,7 +71,7 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 		super.addPages();
 		fMainPage = new WizardImportBreakpointsPage(ImportExportMessages.WizardImportBreakpoints_0);
 		addPage(fMainPage);
-	}//end addPages
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#dispose()
@@ -79,14 +79,14 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	public void dispose() {
 		super.dispose();
 		fMainPage = null;
-	}//end dispose
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
 		return fMainPage.finish();
-	}//end performFinish
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
@@ -94,5 +94,5 @@ public class WizardImportBreakpoints extends Wizard implements IImportWizard {
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		setWindowTitle(ImportExportMessages.WizardImportBreakpoints_0);
         setNeedsProgressMonitor(true);
-	}//end init
-}//end class
+	}
+}

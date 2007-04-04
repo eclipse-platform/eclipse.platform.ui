@@ -49,7 +49,7 @@ public class ExportBreakpoints extends AbstractDebugActionDelegate {
 		WizardDialog wizdialog = new WizardDialog(DebugUIPlugin.getShell(), wiz);
 		wizdialog.setBlockOnOpen(true);
 		wizdialog.open();
-	}//end run
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#update(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
@@ -62,4 +62,4 @@ public class ExportBreakpoints extends AbstractDebugActionDelegate {
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
 	 */
 	protected void doAction(Object element) throws DebugException {}
-}//end class
+}

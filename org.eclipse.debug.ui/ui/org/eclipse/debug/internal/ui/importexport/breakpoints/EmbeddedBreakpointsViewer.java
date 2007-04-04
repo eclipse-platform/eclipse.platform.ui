@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public class EmbeddedBreakpointsViewer {
 		Assert.isNotNull(parent);
 		Assert.isNotNull(input);
 		createControl(parent, input, null);
-	}//end constructor
+	}
 	
 	/**
 	 * This constructor allows a specific selction to be used in stead of the default
@@ -108,11 +108,11 @@ public class EmbeddedBreakpointsViewer {
 			IViewPart fViewpart = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW);
 			if(fViewpart != null) {
 				fSelection = (IStructuredSelection)fViewpart.getViewSite().getSelectionProvider().getSelection();
-			}//end if
+			}
 			else {
 				fSelection = new StructuredSelection();
-			}//end else
-		}//end if
+			}
+		}
 		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout(1, true));
@@ -138,8 +138,9 @@ public class EmbeddedBreakpointsViewer {
 		fViewer.setLabelProvider(labelProvider);
 		fViewer.addCheckStateListener(fCheckListener);
 		IBreakpointOrganizer[] orgs = null;
-		if(fView != null)
-			 orgs = fView.getBreakpointOrganizers(); 
+		if(fView != null) {
+			 orgs = fView.getBreakpointOrganizers();
+		}
 		fViewer.setContentProvider(fProvider);
 		fViewer.setInput(input);
 		fProvider.setOrganizers(orgs);
@@ -158,15 +159,15 @@ public class EmbeddedBreakpointsViewer {
 			Object item = items[i];
 			if(item instanceof IBreakpoint) {
 				list.add(item);
-			}//end if
+			}
 			else if (item instanceof BreakpointContainer) {
 				getBreakpointsFromContainers((BreakpointContainer)item, list);
-			}//end if
-		}//end for
+			}
+		}
 		for(int i = 0; i < list.size(); i++) {
 			updateCheckedState(list.get(i), true);
 		}
-	}//end initViewerState
+	}
 	
 	/**
 	 * FInds the breakpoints of a given container
@@ -178,12 +179,12 @@ public class EmbeddedBreakpointsViewer {
 		for(int i = 0; i < elements.length; i++) {
 			if(elements[i] instanceof IBreakpoint) {
 				list.add(elements[i]);
-			}//end if
+			}
 			else {
 				getBreakpointsFromContainers((BreakpointContainer)elements[i], list);
-			}//end else
-		}//end for
-	}//getBreakpointsFromContainers
+			}
+		}
+	}
 	
 	/**
 	 * Returns the selection from the viewer with no duplicates
@@ -195,8 +196,8 @@ public class EmbeddedBreakpointsViewer {
 		for(int i = 0; i < list.length; i++) {
 			if(!selected.contains(list[i])) {
 				selected.addElement(list[i]);
-			}//end if
-		}//end for
+			}
+		}
 		return new StructuredSelection(selected);
 	}
 	
@@ -206,7 +207,7 @@ public class EmbeddedBreakpointsViewer {
 	 */
 	public BreakpointsViewer getViewer() {
 		return fViewer;
-	}//end getViewer
+	}
    
 	/**
 	 * finds all occurrences of a widget to update
@@ -218,7 +219,7 @@ public class EmbeddedBreakpointsViewer {
         TreeItem[] items = fTree.getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);
-        }//end for
+        }
         return (Widget[]) list.toArray(new Widget[0]);
     }
     
@@ -231,7 +232,7 @@ public class EmbeddedBreakpointsViewer {
     private void findAllOccurrences(TreeItem item, Object element, ArrayList list) {
         if (element.equals(item.getData())) {
                 list.add(item);
-        }//end if
+        }
         TreeItem[] items = item.getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);
@@ -252,18 +253,16 @@ public class EmbeddedBreakpointsViewer {
 		        	item = (TreeItem)list[i];
 		            item.setChecked(enable);
 		            refreshParents(item);
-	        	}//end for
-	        }//end if
+	        	}
+	        }
 	        else if (obj instanceof BreakpointContainer) {
 	        	ArrayList bps = new ArrayList();
 	        	getBreakpointsFromContainers((BreakpointContainer)obj, bps);
 	        	for(int j = 0; j < bps.size(); j++) {
 	        		updateCheckedState(bps.get(j), enable);
 	        	}
-	        }//end if
-	        //refreshParents(item);
-    
-     }//end updateCheckedState 
+	        }
+     }
 
     /**
      * refreshes the grayed/checked state of the parents of item
@@ -276,23 +275,23 @@ public class EmbeddedBreakpointsViewer {
         	if(checked == 0) {
         		parent.setGrayed(false);
             	parent.setChecked(false);
-        	}//end if
+        	}
         	else if(checked == parent.getItemCount()) {
         		if(getNumberChildrenGrayed(parent) > 0) {
         			parent.setGrayed(true);
-        		}//end if
+        		}
         		else {
         			parent.setGrayed(false);
-        		}//end else
+        		}
          		parent.setChecked(true);
-        	}//end if
+        	}
         	else {
         		parent.setGrayed(true);
             	parent.setChecked(true);
-        	}//end else
+        	}
     		parent = parent.getParentItem();
-    	}//end while
-    }//end refreshParents
+    	}
+    }
     
     /**
      * Gets the number of grayed children for this parent
@@ -305,10 +304,10 @@ public class EmbeddedBreakpointsViewer {
     	for(int i = 0; i < children.length; i++) {
     		if(children[i].getGrayed()) {
     			count++;
-    		}//end if
-    	}//end for
+    		}
+    	}
     	return count;
-    }//end getNumberChildrenGrayed
+    }
     
     /**
      * Checks to see if all of the children under an given parent are checked or not
@@ -321,8 +320,8 @@ public class EmbeddedBreakpointsViewer {
     	for(int i = 0; i < children.length; i++) {
     		if(children[i].getChecked()) {
     			count++;
-    		}//end if
-    	}//end for
+    		}
+    	}
     	return count;
-    }//end allChildrenChecked
-}//end class
+    }
+}

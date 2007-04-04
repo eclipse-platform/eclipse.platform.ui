@@ -186,6 +186,10 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 			}
 		});
 		fTView.getViewer().setSelection(fSelection);
+		//ensure we can see the beginning check-boxes etc. (bug 180971)
+		//this will not work in Windows Vista as there is no way to over-ride the default viewer item showing policy
+		//by setting the horizontal bar selection index. I.e. the following line of code is ignored in Vista
+		fTView.getViewer().getTree().getHorizontalBar().setSelection(0);
 		createButtonsGroup(composite);
 		createDestinationGroup(composite);
 		createOptionsGroup(composite);

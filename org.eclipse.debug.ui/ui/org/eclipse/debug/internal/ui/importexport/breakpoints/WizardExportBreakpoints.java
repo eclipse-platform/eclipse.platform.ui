@@ -67,7 +67,7 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 		if (section == null)
 			section = workbenchSettings.addNewSection(EXPORT_DIALOG_SETTINGS);
 		setDialogSettings(section);
-	}//end constructor
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#addPages()
@@ -76,7 +76,7 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 		super.addPages();
 		fMainPage = new WizardExportBreakpointsPage(ImportExportMessages.WizardExportBreakpoints_0, fSelection); 
 		addPage(fMainPage);
-	}//end addPages
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#dispose()
@@ -85,14 +85,14 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 		super.dispose();
 		fMainPage = null;
 		fSelection = null;
-	}//end dispose
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
 		return fMainPage.finish();
-	}//end performFinish
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
@@ -101,5 +101,5 @@ public class WizardExportBreakpoints extends Wizard implements IExportWizard {
 		fSelection = selection;
 		setWindowTitle(ImportExportMessages.WizardExportBreakpoints_0);
         setNeedsProgressMonitor(true);
-	}//end init
-}//end class
+	}
+}
