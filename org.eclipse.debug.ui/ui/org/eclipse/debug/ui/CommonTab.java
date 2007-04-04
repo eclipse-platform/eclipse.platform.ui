@@ -110,6 +110,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
+	/**
+	 * This attribute exists solely for the purpose of making sure that invalid shared locations
+	 * can be revertable. This attirbute is not saveable and will never appear in a saved
+	 * launch configuration.
+	 * @since 3.3
+	 */
+	private static final String BAD_CONTAINER = "bad_container_name"; //$NON-NLS-1$
+	
 	// Local/shared UI widgets
 	private Button fLocalRadioButton;
 	private Button fSharedRadioButton;
@@ -576,7 +584,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		if (isShared()) {
 			String containerPathString = fSharedLocationText.getText();
 			IContainer container = getContainer(containerPathString);
-			config.setContainer(container);
+			if(container == null) {
+				//we need to force an attribute to allow the invalid container path to be revertable
+				config.setAttribute(BAD_CONTAINER, containerPathString);
+			}
+			else {
+				config.setContainer(container);
+			}
 		} else {
 			config.setContainer(null);
 		}
