@@ -89,10 +89,10 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 				if (fToolBarManager != null) {
 					fToolBarManager.removeAll();
 					fToolBarManager.dispose();
-					fToolBarManager= null;
 				}
 				fInput= null;
 				fSelectionListeners= null;
+				setImage(null);
 			}
 		});
 	}
@@ -152,6 +152,8 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 	//---- private stuff
 	
 	private ToolBarManager getToolBarManager() {
+		if (fToolBarManager != null && fToolBarManager.getControl() == null)
+			return null;
 		if (fToolBarManager == null) {
 			final ToolBar tb = new ToolBar(this, SWT.FLAT);
 			setTopCenter(tb);
@@ -297,10 +299,5 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 	 */
 	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
-	}
-	
-	public void dispose() {
-		setImage(null);
-		super.dispose();
 	}
 }
