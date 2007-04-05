@@ -131,11 +131,6 @@ public class PluginActionContributionItem extends ActionContributionItem
      * interface.
      */
     public void dispose() {
-        PluginAction pluginAction = (PluginAction) getAction();
-        if (pluginAction != null) {
-            pluginAction.disposeDelegate();
-        }
-
         unhookListeners();
         disposeIdentifier();
     }

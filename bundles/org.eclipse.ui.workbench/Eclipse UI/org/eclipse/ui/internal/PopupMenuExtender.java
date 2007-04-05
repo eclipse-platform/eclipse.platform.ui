@@ -398,8 +398,8 @@ public class PopupMenuExtender implements IMenuListener2,
 	}
 	
 	private void cleanUpContributionCache() {
-		IContributionItem[] items = (IContributionItem[]) contributionCache
-				.toArray(new IContributionItem[contributionCache.size()]);
+		PluginActionContributionItem[] items = (PluginActionContributionItem[]) contributionCache
+				.toArray(new PluginActionContributionItem[contributionCache.size()]);
 		contributionCache.clear();
 		for (int i = 0; i < items.length; i++) {
 			items[i].dispose();
