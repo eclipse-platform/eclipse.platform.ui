@@ -1923,8 +1923,6 @@ public class Perspective {
 		// find the right editor stack...
 		EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);
 		
-		editorStack.setMinimized(false);
-		
 		// Force it to display the correct state
 		editorStack.setState(editorAreaState);
 		
