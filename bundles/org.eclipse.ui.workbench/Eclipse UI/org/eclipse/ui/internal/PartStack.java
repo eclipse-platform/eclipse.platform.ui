@@ -1442,7 +1442,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		}
 
 		final WorkbenchWindow wbw = (WorkbenchWindow) getPage().getWorkbenchWindow();
-		if (wbw == null || wbw.getShell() == null)
+		if (wbw == null || wbw.getShell() == null || wbw.getActiveWorkbenchPage() == null)
 			return;
 
 		boolean useNewMinMax = Perspective.useNewMinMax(wbw.getActiveWorkbenchPage().getActivePerspective());
