@@ -1007,5 +1007,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkingSets_Name;
 	public static String WorkingSets_CannotSave;
 
-
+	// StatusDialog
+	public static String StatusDialog_reason;
+	public static String StatusDialog_checkDetailsMessage;
 }
