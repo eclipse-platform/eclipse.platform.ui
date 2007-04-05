@@ -85,5 +85,23 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
      * @see IPresentablePart#PROP_HIGHLIGHT_IF_BACK
      */
     public void warnOfContentChange();
+    
+    /**
+	 * Show busy state if the given boolean is true. To be used by clients who
+	 * do not use jobs for background work. Note that calling this method with
+	 * <code>false</code> will only clear this flag; the workbench part may
+	 * still be shown as busy if other methods on this class have been called
+	 * that result in a busy state. It is up to clients to manage calls to this
+	 * method; there is no counter that remembers the number of calls to
+	 * <code>showBusy(true)</code>.
+	 * 
+	 * @param busy
+	 *            <code>true</code> if the part is to be considered busy,
+	 *            <code>false</code> to signal that the background work has
+	 *            ended.
+	 * 
+	 * @since 3.3
+	 */
+	public void showBusy(boolean busy);
 
 }

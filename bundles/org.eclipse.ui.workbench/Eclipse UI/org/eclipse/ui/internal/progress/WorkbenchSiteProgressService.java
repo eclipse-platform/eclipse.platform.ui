@@ -61,6 +61,11 @@ public class WorkbenchSiteProgressService implements
 
     private SiteUpdateJob updateJob;
 
+    /**
+     * Flag that keeps state from calls to {@link #showBusy(boolean)}
+     */
+	private boolean explicitlyBusy;
+
     private class SiteUpdateJob extends WorkbenchJob {
         private boolean busy;
 
@@ -255,7 +260,7 @@ public class WorkbenchSiteProgressService implements
 				return;
 			}
             busyJobs.remove(job);
-            if (busyJobs.size() > 0) {
+            if (busyJobs.size() > 0 || explicitlyBusy) {
 				return;
 			}
         }
@@ -361,4 +366,28 @@ public class WorkbenchSiteProgressService implements
     public Image getIconFor(Job job) {
         return getWorkbenchProgressService().getIconFor(job);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusy(boolean)
+	 */
+	public void showBusy(boolean busy) {
+		boolean oldBusy = this.explicitlyBusy;
+		this.explicitlyBusy = busy;
+
+		if (oldBusy == busy) {
+			return;
+		} else if (oldBusy && !busy) {
+			synchronized (busyLock) {
+				if (busyJobs.size() > 0) {
+					return;
+				}
+			}
+		}
+		if (PlatformUI.isWorkbenchRunning()) {
+			updateJob.setBusy(busy);
+			updateJob.schedule(100);
+		} else {
+			updateJob.cancel();
+		}
+	}
 }

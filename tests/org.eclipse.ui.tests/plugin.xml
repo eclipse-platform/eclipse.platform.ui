@@ -430,6 +430,11 @@
             id="org.eclipse.ui.tests.api.MenuTestHarness"
             name="Menu Test Harness">
       </view>
+      <view
+            allowMultiple="false"
+            class="org.eclipse.ui.tests.manual.ExplicitlyBusyView"
+            id="org.eclipse.ui.tests.ExplicitlyBusyView"
+            name="ExplicitlyBusyView"/>
 
    </extension>
    <extension
