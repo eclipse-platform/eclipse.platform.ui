@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -45,6 +46,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
@@ -82,13 +84,23 @@ public class StatusDialog extends ErrorDialog {
 	 * @param statusInfo
 	 * @param displayMask
 	 */
-	public StatusDialog(Shell parentShell, String title, String msg,
-			StatusInfo statusInfo, int displayMask) {
-		super(parentShell, (title == null ? statusInfo.getStatus().getMessage()
-				: title), msg, statusInfo.getStatus(), displayMask);
+	public StatusDialog(Shell parentShell, String title, StatusInfo statusInfo,
+			int displayMask) {
+		super(parentShell, statusInfo.getStatus().getMessage(), null,
+				statusInfo.getStatus(), displayMask);
 		setShellStyle(SWT.RESIZE | SWT.MIN | getShellStyle());
 		this.selectedStatus = statusInfo;
 		setBlockOnOpen(false);
+
+		String reason = WorkbenchMessages.StatusDialog_checkDetailsMessage;
+		if (statusInfo.getStatus().getException() != null) {
+			reason = statusInfo.getStatus().getException().getMessage() == null ? statusInfo
+					.getStatus().getException().toString()
+					: statusInfo.getStatus().getException().getMessage();
+		}
+		this.message = JFaceResources.format(
+				WorkbenchMessages.StatusDialog_reason, new Object[] {
+						statusInfo.getDisplayString(), reason });
 	}
 
 	/**
@@ -146,8 +158,7 @@ public class StatusDialog extends ErrorDialog {
 	private void updateEnablements() {
 		Button details = getButton(IDialogConstants.DETAILS_ID);
 		if (details != null) {
-			details.setEnabled(selectedStatus.getStatus().isMultiStatus()
-					|| isMultipleStatusDialog());
+			details.setEnabled(true);
 		}
 		Button gotoButton = getButton(GOTO_ACTION_ID);
 		if (gotoButton != null) {
@@ -499,6 +510,12 @@ public class StatusDialog extends ErrorDialog {
 		return result;
 	}
 
+	public int open() {
+		int result = super.open();
+		setStatus(selectedStatus.getStatus());
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -553,8 +570,6 @@ public class StatusDialog extends ErrorDialog {
 			public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
 				StatusNotificationManager.getInstance().dialogClosed();
 			}
-
 		});
 	}
-
 }

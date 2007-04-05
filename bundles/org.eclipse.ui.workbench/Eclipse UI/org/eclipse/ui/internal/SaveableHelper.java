@@ -275,9 +275,10 @@ public class SaveableHelper {
 		} catch (InvocationTargetException e) {
 			String title = NLS.bind(WorkbenchMessages.EditorManager_operationFailed, opName ); 
 			Throwable targetExc = e.getTargetException();
-			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
-			StatusUtil.handleStatus(title + ": " + targetExc.getMessage(), //$NON-NLS-1$
-					StatusManager.SHOW, shellProvider.getShell());
+			WorkbenchPlugin.log(title, new Status(IStatus.WARNING,
+					PlatformUI.PLUGIN_ID, 0, title, targetExc));			
+			StatusUtil.handleStatus(title, targetExc, StatusManager.SHOW,
+					shellProvider.getShell());
 			// Fall through to return failure
 		} catch (InterruptedException e) {
 			// The user pressed cancel. Fall through to return failure

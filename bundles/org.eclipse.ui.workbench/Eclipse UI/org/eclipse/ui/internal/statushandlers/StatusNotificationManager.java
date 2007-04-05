@@ -180,7 +180,7 @@ public class StatusNotificationManager {
 			return Status.CANCEL_STATUS;
 		}
 		dialog = new StatusDialog(ProgressManagerUtil.getDefaultParent(),
-				title, msg, statusInfo, IStatus.OK | IStatus.INFO
+				title, statusInfo, IStatus.OK | IStatus.INFO
 						| IStatus.WARNING | IStatus.ERROR);
 
 		dialog.open();
