@@ -15,7 +15,13 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.legacy.PreferenceForwarder;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.internal.runtime.RuntimeLog;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Test suite for API class org.eclipse.core.runtime.Preferences
@@ -65,9 +71,9 @@ public class PreferenceForwarderTest extends RuntimeTest {
 		// all test methods are named "test..."
 		return new TestSuite(PreferenceForwarderTest.class);
 
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new PreferenceForwarderTest("testDefaultPropertyNames"));
-		//		return suite;
+//				TestSuite suite = new TestSuite();
+//				suite.addTest(new PreferenceForwarderTest("testListenerOnRemove"));
+//				return suite;
 	}
 
 	/*
@@ -817,4 +823,44 @@ public class PreferenceForwarderTest extends RuntimeTest {
 	 int b = 3;
 	 }
 	 */
+
+	/*
+	 * Regression test for bug 178815.
+	 */
+	public void testListenerOnRemove() {
+		// create a new log listener that will fail if anything is written
+		ILogListener logListener = new ILogListener() {
+			public void logging(IStatus status, String plugin) {
+				CoreException ex = new CoreException(status);
+				fail("0.99", ex);
+			}
+		};
+
+		// set a preference value to get everything initialized
+		String id = getUniqueString();
+		Preferences ps = new PreferenceForwarder(id);
+		ps.setValue("key", "value");
+		
+		// add a property change listener which will cause one to be 
+		// added at the preference node level
+		IPropertyChangeListener listener = new Preferences.IPropertyChangeListener(){
+			public void propertyChange(PropertyChangeEvent event) {
+			}
+		};
+		ps.addPropertyChangeListener(listener);
+		ps.setValue("key2", "value2");
+		IEclipsePreferences node = new InstanceScope().getNode(id);
+		
+		// add our log listener and remove the node. nothing should be logged.
+		RuntimeLog.addLogListener(logListener);
+		try {
+			node.removeNode();
+		} catch (BackingStoreException e) {
+			fail("4.99", e);
+		} catch (IllegalStateException e) {
+			fail("5.00", e);
+		} finally {
+			RuntimeLog.removeLogListener(logListener);
+		}
+	}
 }

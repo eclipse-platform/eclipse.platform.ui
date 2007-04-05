@@ -73,14 +73,8 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
 	 */
 	public synchronized void removed(IEclipsePreferences.NodeChangeEvent event) {
-		if (listeners.size() > 0 && pluginID.equals(event.getChild().name())) {
-			try {
-				EclipsePreferences prefs = (EclipsePreferences) event.getChild();
-				prefs.removePreferenceChangeListener(this);
-			} catch (ClassCastException e) {
-				throw new RuntimeException("Plug-in preferences must be instances of EclipsePreferences: " + e.getMessage()); //$NON-NLS-1$
-			}
-		}
+		// Do nothing. We can't remove ourselves from the node's list of preference change
+		// listeners because the node has already been removed.
 	}
 
 	/**
