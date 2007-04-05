@@ -1086,4 +1086,31 @@ public class InternalTreeModelViewer extends TreeViewer {
 
 		});
 	}
+	
+	/**
+	 * Returns the item for the element at the given tree path or <code>null</code>
+	 * if none.
+	 * 
+	 * @param path tree path
+	 * @return item or <code>null</code>
+	 */
+	Widget findItem(TreePath path) {
+		if (path.getSegmentCount() == 0) {
+			return getTree();
+		}
+		Widget[] items = super.findItems(path.getLastSegment());
+		if (items.length == 1) {
+			return items[0];
+		}
+		for (int i = 0; i < items.length; i++) {
+			if (getTreePathFromItem((Item)items[i]).equals(path)) {
+				return items[i];
+			}
+		}
+		return null;
+	}
+	
+	public Item[] getChildren(Widget widget) {
+		return super.getChildren(widget);
+	}
 }

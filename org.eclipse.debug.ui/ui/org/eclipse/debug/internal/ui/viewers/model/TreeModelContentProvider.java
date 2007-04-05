@@ -27,8 +27,10 @@ import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -183,10 +185,52 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 */
 	protected void handleRemove(IModelDelta delta) {
 		IModelDelta parentDelta = delta.getParentDelta();
+		InternalTreeModelViewer treeViewer = (InternalTreeModelViewer)getViewer();
 		TreePath parentPath = getViewerTreePath(parentDelta);
-		getTreeViewer().remove(getViewerTreePath(delta));
-		// refresh the parent to properly update for non-visible/unmapped children
+		Widget parentItem = treeViewer.findItem(parentPath);
+		if (parentItem == null) {
+			// if we can't see the parent, nothing to worry about (but clear the filters, if any)
+			clearFilters(parentPath);
+			return;
+		}
+		Object element = delta.getElement();
+		int viewIndex = -1;
+		int modelIndex = delta.getIndex();
+		int unmappedIndex = -1;
+		if (modelIndex < 0) {
+			// index not provided by delta
+			Item[] children = treeViewer.getChildren(parentItem);
+			for (int i = 0; i < children.length; i++) {
+				Item item = children[i];
+				Object data = item.getData();
+				if (element.equals(data)) {
+					viewIndex = i;
+					modelIndex = viewToModelIndex(parentPath, i);
+					break;
+				} else if (data == null) {
+					unmappedIndex = i;
+				}
+			}
+		} else {
+			viewIndex = modelToViewIndex(parentPath, modelIndex);
+		}
+		if (modelIndex >= 0) {
+			// found the element
+			getTreeViewer().remove(parentPath, viewIndex);
+			removeElementFromFilters(parentPath, modelIndex);
+			return;
+		}
+		if (unmappedIndex >= 0) {
+			// did not find the element, but found an unmapped item.
+			// remove the unmapped item in it's place and update filters
+			getTreeViewer().remove(parentPath, unmappedIndex);
+			removeElementFromFilters(parentPath, viewToModelIndex(parentPath, unmappedIndex));
+			return;
+		}
+		
+		// failing that, refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
+		getTreeViewer().remove(getViewerTreePath(delta));
 		clearFilters(parentPath);
 		getTreeViewer().refresh(parentDelta.getElement());
 	}

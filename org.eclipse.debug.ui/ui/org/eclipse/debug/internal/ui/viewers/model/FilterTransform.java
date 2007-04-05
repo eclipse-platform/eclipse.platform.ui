@@ -247,6 +247,50 @@ class FilterTransform {
 				}
 			}
 		}
+		
+		/**
+		 * Updates filter index for a removed element at the given index
+		 * 
+		 * @param index index at which an element was removed
+		 */
+		void removeElementFromFilters(int index) {
+			if (filteredChildren != null) {
+				int location = Arrays.binarySearch(filteredChildren, index);
+				if (location > 0) {
+					// remove a filtered item
+					if (filteredChildren.length == 1) {
+						// only filtered item
+						filteredChildren = null;
+					} else {
+						if (location == 0) {
+							// first
+							int[] next = new int[filteredChildren.length - 1];
+							System.arraycopy(filteredChildren, 1, next, 0, next.length);
+							filteredChildren = next;
+						} else if (location == (filteredChildren.length - 1)) {
+							// last
+							int[] next = new int[filteredChildren.length - 1];
+							System.arraycopy(filteredChildren, 0, next, 0, next.length);
+							filteredChildren = next;
+						} else {
+							// middle
+							int[] next = new int[filteredChildren.length - 1];
+							System.arraycopy(filteredChildren, 0, next, 0, location);
+							System.arraycopy(filteredChildren, location + 1, next, location, filteredChildren.length - location);
+							filteredChildren = next;
+						}
+					}
+				} else {
+					location = 0 - (location + 1);
+				}
+				if (filteredChildren != null) {
+					// decrement remaining indexes
+					for (int i = location; location < filteredChildren.length; i ++) {
+						filteredChildren[i]--;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -391,6 +435,20 @@ class FilterTransform {
 		Node parentNode = root.find(parentPath, 0);
 		if (parentNode != null) {
 			parentNode.setModelChildCount(childCount);
+		}
+	}
+	
+	/**
+	 * The element at the given index has been removed from the parent. Update
+	 * indexes.
+	 * 
+	 * @param parentPath path to parent element
+	 * @param index index of child element in model coordinates
+	 */
+	public synchronized void removeElementFromFilters(TreePath parentPath, int index) {
+		Node parentNode = root.find(parentPath, 0);
+		if (parentNode != null) {
+			parentNode.removeElementFromFilters(index);
 		}
 	}
 }

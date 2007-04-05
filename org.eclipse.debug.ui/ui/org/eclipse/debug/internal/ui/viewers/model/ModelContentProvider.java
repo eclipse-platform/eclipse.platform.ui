@@ -757,6 +757,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	}
 	
 	/**
+	 * Notes that the element at the given index has been removed from its parent
+	 * and filtered indexes should be updated accordingly.
+	 * 
+	 * @param parentPath path to parent element
+	 * @param index index of element that was removed
+	 */
+	protected void removeElementFromFilters(TreePath parentPath, int index) {
+		fTransform.removeElementFromFilters(parentPath, index);
+	}
+	
+	/**
 	 * The child count for a parent has been computed. Ensure any filtered items
 	 * above the given count are cleared.
 	 * 
