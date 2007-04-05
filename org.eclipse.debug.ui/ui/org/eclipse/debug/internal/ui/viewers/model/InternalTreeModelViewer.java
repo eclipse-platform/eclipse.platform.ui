@@ -41,6 +41,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -300,7 +301,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 		Tree treeControl = (Tree) control;
 		treeControl.addListener(SWT.SetData, new Listener() {
 			public void handleEvent(Event event) {
-				// to avoid flash, reset previous labels/image
+				// to avoid flash, reset previous labels/images/fonts
 				TreeItem item = (TreeItem) event.item;
 				Object[] labels = (Object[]) item.getData(LabelUpdate.PREV_LABEL_KEY);
 				if (labels != null) {
@@ -314,6 +315,12 @@ public class InternalTreeModelViewer extends TreeViewer {
 				if (images != null) {
 					for (int i = 0; i < images.length; i++) {
 						item.setImage(i, (Image) images[i]);
+					}
+				}
+				Object[] fonts = (Object[]) item.getData(LabelUpdate.PREV_FONT_KEY);
+				if (fonts != null) {
+					for (int i = 0; i < fonts.length; i++) {
+						item.setFont(i, (Font) fonts[i]);
 					}
 				}
 			}

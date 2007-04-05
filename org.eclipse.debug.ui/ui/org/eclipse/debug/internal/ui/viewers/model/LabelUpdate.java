@@ -39,11 +39,12 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	private int fNumColumns; 
 	
 	/**
-	 * Label/Image cache keys
+	 * Label/Image/Font cache keys
 	 * TODO: workaround for bug 159461
 	 */
 	static String PREV_LABEL_KEY = "PREV_LABEL_KEY"; //$NON-NLS-1$
 	static String PREV_IMAGE_KEY = "PREV_IMAGE_KEY"; //$NON-NLS-1$
+	static String PREV_FONT_KEY = "PREV_FONT_KEY"; //$NON-NLS-1$
 	
 	/**
 	 * @param element element the label is for
@@ -154,33 +155,32 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 * Applies settings to viewer cell
 	 */
 	public void update() {
+		//  text, image and font data is stored to prevent flickering of asynchronous view, see bug 159461
 		if (!fItem.isDisposed()) {
+
 			if (fColumnIds == null) {
 				fItem.setText(fLabels[0]);
 			} else {
 				fItem.setText(fLabels);
 			}
 			fItem.setData(PREV_LABEL_KEY, fLabels);
+			
 			if (fImageDescriptors == null) {
 				fItem.setImage((Image)null);
-				fItem.setData(PREV_IMAGE_KEY, null); // TODO: bug 159461
+				fItem.setData(PREV_IMAGE_KEY, null);
 			} else {
-				if (fImageDescriptors == null) {
-					fItem.setImage((Image)null);
-					fItem.setData(PREV_IMAGE_KEY, null);
-				} else {
-					Image[] images = new Image[fImageDescriptors.length];
-					for (int i = 0; i < fImageDescriptors.length; i++) {
-						images[i] = fProvider.getImage(fImageDescriptors[i]);
-					}
-					if (fColumnIds == null) {
-						fItem.setImage(images[0]);
-					} else {
-						fItem.setImage(images);
-					}
-					fItem.setData(PREV_IMAGE_KEY, images); // TODO: bug 159461
+				Image[] images = new Image[fImageDescriptors.length];
+				for (int i = 0; i < fImageDescriptors.length; i++) {
+					images[i] = fProvider.getImage(fImageDescriptors[i]);
 				}
+				if (fColumnIds == null) {
+					fItem.setImage(images[0]);
+				} else {
+					fItem.setImage(images);
+				}
+				fItem.setData(PREV_IMAGE_KEY, images);
 			}
+			
 			if (fForegrounds == null) {
 				fItem.setForeground((Color)null);
 			} else {
@@ -192,6 +192,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 					}
 				}
 			}
+			
 			if (fBackgrounds == null) {
 				fItem.setBackground((Color)null);
 			} else {
@@ -203,16 +204,23 @@ class LabelUpdate extends Request implements ILabelUpdate {
 					}
 				}
 			}
+			
 			if (fFontDatas == null) {
 				fItem.setFont((Font)null);
+				fItem.setData(PREV_FONT_KEY, null);
 			} else {
+				Font[] fonts = new Font[fFontDatas.length];
+				for (int i = 0; i < fFontDatas.length; i++) {
+					fonts[i] = fProvider.getFont(fFontDatas[i]);
+				}
 				if (fColumnIds == null) {
-					fItem.setFont(fProvider.getFont(fFontDatas[0]));
+					fItem.setFont(0,fonts[0]);
 				} else {
-					for (int i = 0; i < fFontDatas.length; i++) {
-						fItem.setFont(i, fProvider.getFont(fFontDatas[i]));
+					for (int i = 0; i < fonts.length; i++) {
+						fItem.setFont(i, fonts[i]);
 					}
 				}
+				fItem.setData(PREV_FONT_KEY, fonts);
 			}
 		}
 		fProvider.updateComplete(this);
