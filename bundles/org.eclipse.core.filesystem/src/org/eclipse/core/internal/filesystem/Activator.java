@@ -42,7 +42,7 @@ public class Activator implements BundleActivator {
 						if (location != null) {
 							IPath instancePath = new Path(new File(location.getURL().getFile()).toString());
 							ctx.ungetService(refs[0]);
-							return instancePath.append(".plugins").append(Policy.PI_FILE_SYSTEM); //$NON-NLS-1$
+							return instancePath.append(".metadata/.plugins").append(Policy.PI_FILE_SYSTEM); //$NON-NLS-1$
 						}
 					}
 				}
