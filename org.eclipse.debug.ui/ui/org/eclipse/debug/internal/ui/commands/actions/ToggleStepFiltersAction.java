@@ -71,7 +71,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getText()
 	 */
 	public String getText() {
-		return ActionMessages.ToggleStepFiltersAction_0;
+		return ActionMessages.ToggleStepFiltersAction_1;
 	}
 
 	/**

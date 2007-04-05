@@ -130,6 +130,8 @@ public class ActionMessages extends NLS {
     public static String ToggleBreakpointAction_2;
 	public static String ToggleStepFiltersAction_0;
 
+	public static String ToggleStepFiltersAction_1;
+
     public static String WatchExpressionDialog_0;
     public static String WatchExpressionDialog_1;
     public static String WatchExpressionDialog_2;
