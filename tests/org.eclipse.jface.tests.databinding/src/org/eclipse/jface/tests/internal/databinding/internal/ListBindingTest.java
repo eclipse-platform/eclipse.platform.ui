@@ -13,6 +13,7 @@
 package org.eclipse.jface.tests.internal.databinding.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.databinding.Binding;
@@ -20,11 +21,13 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateListStrategy;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.internal.databinding.BindingStatus;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
- * @since 3.2
- * 
+ * @since 1.1
  */
 public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	private IObservableList target;
@@ -91,5 +94,95 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 				null,
 				null);
 		assertEquals(model, binding.getModel());
+	}
+	
+	public void testStatusIsInstanceOfBindingStatus() throws Exception {
+		Binding binding = dbc.bindList(target, model, null, null);
+		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
+	}
+	
+	public void testAddValidationStatusContainsMultipleStatuses() throws Exception {
+		UpdateListStrategy strategy = new UpdateListStrategy() {
+			protected IStatus doAdd(IObservableList observableList,
+					Object element, int index) {
+				super.doAdd(observableList, element, index);
+				
+				switch (index) {
+				case 0:
+					return ValidationStatus.error("");
+				case 1:
+					return ValidationStatus.info("");
+				}
+				
+				return null;
+			}
+		};
+		
+		Binding binding = dbc.bindList(target, model, strategy, null);
+		target.addAll(Arrays.asList(new String[] {"1", "2"}));
+		
+		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		assertEquals("maximum status", IStatus.ERROR, status.getSeverity());
+		assertTrue("multi status", status.isMultiStatus());
+		
+		IStatus[] children = status.getChildren();
+		assertEquals("multi status children", 2, children.length);
+		assertEquals("first status severity", IStatus.ERROR, children[0].getSeverity());
+		assertEquals("second status severity", IStatus.INFO, children[1].getSeverity());
+	}
+	
+	public void testRemoveValidationStatusContainsMultipleStatuses() throws Exception {
+		List items = Arrays.asList(new String[] {"1", "2"});
+		model.addAll(items);
+		
+		UpdateListStrategy strategy = new UpdateListStrategy() {
+			int count;
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.databinding.UpdateListStrategy#doRemove(org.eclipse.core.databinding.observable.list.IObservableList, int)
+			 */
+			protected IStatus doRemove(IObservableList observableList, int index) {
+				super.doRemove(observableList, index);
+				
+				switch (count++) {
+				case 0:
+					return ValidationStatus.error("");
+				case 1:
+					return ValidationStatus.info("");
+				}
+				
+				return null; 	
+			}
+		};
+		
+		Binding binding = dbc.bindList(target, model, strategy, null);
+		target.removeAll(items);
+		
+		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		assertEquals("maximum status", IStatus.ERROR, status.getSeverity());
+		assertTrue("multi status", status.isMultiStatus());
+		
+		IStatus[] children = status.getChildren();
+		assertEquals("multi status children", 2, children.length);
+		assertEquals("first status severity", IStatus.ERROR, children[0].getSeverity());
+		assertEquals("second status severity", IStatus.INFO, children[1].getSeverity());
+	}
+	
+	public void testAddOKValidationStatus() throws Exception {
+		Binding binding = dbc.bindList(target, model, null, null);
+		target.add("1");
+		
+		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		assertTrue(status.isOK());
+		assertEquals(0, status.getChildren().length);
+	}
+	
+	public void testRemoveOKValidationStatus() throws Exception {
+		model.add("1");
+		Binding binding = dbc.bindList(target, model, null, null);
+		
+		target.remove("1");
+		IStatus status = (IStatus) binding.getValidationStatus().getValue();
+		assertTrue(status.isOK());
+		assertEquals(0, status.getChildren().length);
 	}
 }

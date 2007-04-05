@@ -72,6 +72,7 @@ import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
+import org.eclipse.jface.tests.internal.databinding.BindingStatusTest;
 import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.BeanObservableListDecoratorTest;
@@ -223,9 +224,11 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.jface.tests.examples.model
 		addTestSuite(PersonTests.class);
 
+		//org.eclipse.jface.tests.internal.databinding
+		addTestSuite(BindingStatusTest.class);
+		
 		// org.eclipse.jface.tests.internal.databinding.internal
 		addTestSuite(ListBindingTest.class);
-
 		addTestSuite(ValueBindingTest.class);
 
 		// org.eclipse.jface.tests.internal.databinding.internal.beans

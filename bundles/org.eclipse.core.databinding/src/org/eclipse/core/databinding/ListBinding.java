@@ -21,11 +21,13 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * @since 3.3
+ * @since 1.0
  * 
  */
 public class ListBinding extends Binding {
@@ -147,6 +149,8 @@ public class ListBinding extends Binding {
 						} else {
 							updatingModel = true;
 						}
+						MultiStatus multiStatus = BindingStatus.ok();
+
 						try {
 							if (clearDestination) {
 								destination.clear();
@@ -162,25 +166,23 @@ public class ListBinding extends Binding {
 															.convert(listDiffEntry
 																	.getElement()),
 													listDiffEntry.getPosition());
-									if (!setterStatus.isOK()) {
-										validationStatusObservable
-												.setValue(setterStatus);
-										// TODO - at this point, the two lists
-										// will be out of sync...
-									}
+
+									mergeStatus(multiStatus, setterStatus);
+									// TODO - at this point, the two lists
+									// will be out of sync if an error occurred...
 								} else {
 									IStatus setterStatus = updateListStrategy
 											.doRemove(destination,
 													listDiffEntry.getPosition());
-									if (!setterStatus.isOK()) {
-										validationStatusObservable
-												.setValue(setterStatus);
-										// TODO - at this point, the two lists
-										// will be out of sync...
-									}
+									
+									mergeStatus(multiStatus, setterStatus);
+									// TODO - at this point, the two lists
+									// will be out of sync if an error occurred...
 								}
 							}
 						} finally {
+							validationStatusObservable.setValue(multiStatus);
+
 							if (destination == getTarget()) {
 								updatingTarget = false;
 							} else {
@@ -190,6 +192,19 @@ public class ListBinding extends Binding {
 					}
 				});
 			}
+		}
+	}
+
+	/**
+	 * Merges the provided <code>newStatus</code> into the
+	 * <code>multiStatus</code>.
+	 * 
+	 * @param multiStatus
+	 * @param newStatus
+	 */
+	/* package */void mergeStatus(MultiStatus multiStatus, IStatus newStatus) {
+		if (!newStatus.isOK()) {
+			multiStatus.add(newStatus);
 		}
 	}
 

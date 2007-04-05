@@ -16,11 +16,13 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * @since 3.3
+ * @since 1.0
  * 
  */
 class ValueBinding extends Binding {
@@ -100,6 +102,22 @@ class ValueBinding extends Binding {
 		doUpdate(model, target, modelToTarget, true, false);
 	}
 
+	/**
+	 * Incorporates the provided <code>newStats</code> into the
+	 * <code>multieStatus</code>.
+	 * 
+	 * @param multiStatus
+	 * @param newStatus
+	 * @return <code>true</code> if the update should proceed
+	 */
+	/* package */boolean mergeStatus(MultiStatus multiStatus, IStatus newStatus) {
+		if (!newStatus.isOK()) {
+			multiStatus.add(newStatus);
+			return multiStatus.getSeverity() < IStatus.ERROR;
+		}
+		return true;
+	}
+
 	/*
 	 * This method may be moved to UpdateValueStrategy in the future if clients
 	 * need more control over how the source value is copied to the destination
@@ -110,7 +128,7 @@ class ValueBinding extends Binding {
 			final UpdateValueStrategy updateValueStrategy,
 			final boolean explicit, final boolean validateOnly) {
 		final int policy = updateValueStrategy.getUpdatePolicy();
-		final IStatus[] statusHolder = { Status.OK_STATUS };
+		final MultiStatus[] statusHolder = { BindingStatus.ok() };
 		if (policy != UpdateValueStrategy.POLICY_NEVER) {
 			if (policy != UpdateValueStrategy.POLICY_ON_REQUEST || explicit) {
 				source.getRealm().exec(new Runnable() {
@@ -120,24 +138,18 @@ class ValueBinding extends Binding {
 							Object value = source.getValue();
 							IStatus status = updateValueStrategy
 									.validateAfterGet(value);
-							if (!status.isOK()) {
-								statusHolder[0] = status;
-							} else {
+							if (mergeStatus(statusHolder[0], status)) {
 								final Object convertedValue = updateValueStrategy
 										.convert(value);
 								status = updateValueStrategy
 										.validateAfterConvert(convertedValue);
-								if (!status.isOK()) {
-									statusHolder[0] = status;
-								} else {
+								if (mergeStatus(statusHolder[0], status)) {
 									if (policy == UpdateValueStrategy.POLICY_CONVERT
 											&& !explicit) {
 									} else {
 										status = updateValueStrategy
 												.validateBeforeSet(convertedValue);
-										if (!status.isOK()) {
-											statusHolder[0] = status;
-										} else {
+										if (mergeStatus(statusHolder[0], status)) {
 											if (!validateOnly) {
 												destinationRealmReached = true;
 												destination.getRealm().exec(
@@ -149,10 +161,14 @@ class ValueBinding extends Binding {
 																	updatingModel = true;
 																}
 																try {
-																	IStatus setterStatus = updateValueStrategy.doSet(destination, convertedValue);
-																	if (!setterStatus.isOK()) {
-																		statusHolder[0] = setterStatus;
-																	}
+																	IStatus setterStatus = updateValueStrategy
+																			.doSet(
+																					destination,
+																					convertedValue);
+
+																	mergeStatus(
+																			statusHolder[0],
+																			setterStatus);
 																} finally {
 																	if (destination == target) {
 																		updatingTarget = false;
@@ -169,11 +185,14 @@ class ValueBinding extends Binding {
 								}
 							}
 						} catch (Exception ex) {
-							//This check is necessary as in 3.2.2 Status doesn't accept a null message (bug 177264).
-							String message = (ex.getMessage() != null) ? ex.getMessage() : ""; //$NON-NLS-1$
-							
-							statusHolder[0] = new Status(IStatus.ERROR,
-									Policy.JFACE_DATABINDING, IStatus.ERROR, message, ex);
+							// This check is necessary as in 3.2.2 Status
+							// doesn't accept a null message (bug 177264).
+							String message = (ex.getMessage() != null) ? ex
+									.getMessage() : ""; //$NON-NLS-1$
+
+							mergeStatus(statusHolder[0], new Status(
+									IStatus.ERROR, Policy.JFACE_DATABINDING,
+									IStatus.ERROR, message, ex));
 						} finally {
 							if (!destinationRealmReached) {
 								setValidationStatus(statusHolder[0]);
