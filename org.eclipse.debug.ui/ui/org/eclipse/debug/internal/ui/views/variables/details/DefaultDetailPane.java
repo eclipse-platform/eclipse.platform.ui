@@ -76,6 +76,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -466,7 +467,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		
 		// TODO: Still using "old" resource access, find/replace won't work in popup dialogs
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewResourceBundleMessages"); //$NON-NLS-1$
-		IAction action = new FindReplaceAction(bundle, "find_replace_action_", getWorkbenchPartSite().getPart());	 //$NON-NLS-1$
+		IAction action = new FindReplaceAction(bundle, "find_replace_action_", getWorkbenchPartSite().getShell(), new FindReplaceTargetWrapper(fSourceViewer.getFindReplaceTarget())); //$NON-NLS-1$
 		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IDebugHelpContextIds.DETAIL_PANE_FIND_REPLACE_ACTION);
 		setAction(DETAIL_FIND_REPLACE_TEXT_ACTION, action);
@@ -868,5 +869,73 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		
 	}
 
+	/**
+	 * Wrapper class that wraps around an IFindReplaceTarget.  Allows the detail pane to scroll
+	 * to text selected by the find/replace action.  The source viewer treats the text as a single
+	 * line, even when the text is wrapped onto several lines so the viewer will not scroll properly
+	 * on it's own.  See bug 178106.
+	 */
+	class FindReplaceTargetWrapper implements IFindReplaceTarget{
+		
+		private IFindReplaceTarget fTarget;
+		
+		/**
+		 * Constructor
+		 * 
+		 * @param target find/replace target this class will wrap around.
+		 */
+		public FindReplaceTargetWrapper(IFindReplaceTarget target){
+			fTarget = target;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#canPerformFind()
+		 */
+		public boolean canPerformFind() {
+			return fTarget.canPerformFind();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
+		 */
+		public int findAndSelect(int widgetOffset, String findString,
+				boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+			int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
+			// Explicitly tell the widget to show the selection because the viewer thinks the text is all on one line, even if wrapping is turned on.
+			if (fSourceViewer != null && fSourceViewer.getTextWidget() != null && !fSourceViewer.getTextWidget().isDisposed()){
+				fSourceViewer.getTextWidget().showSelection();
+			}
+			return position;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelection()
+		 */
+		public Point getSelection() {
+			return fTarget.getSelection();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#getSelectionText()
+		 */
+		public String getSelectionText() {
+			return fTarget.getSelectionText();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#isEditable()
+		 */
+		public boolean isEditable() {
+			return fTarget.isEditable();
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IFindReplaceTarget#replaceSelection(java.lang.String)
+		 */
+		public void replaceSelection(String text) {
+			fTarget.replaceSelection(text);
+		}
+	}
+	
 }
 
