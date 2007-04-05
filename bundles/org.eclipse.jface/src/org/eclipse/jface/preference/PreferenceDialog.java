@@ -126,7 +126,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	private static String lastPreferenceId = null;
 
 	//The last known tree width
-	private static int lastTreeWidth = 150;
+	private static int lastTreeWidth = 180;
 
 	/**
 	 * Indentifier for the error image
