@@ -91,6 +91,8 @@
             		  value="$theme$graphics/icons/ctool/webresources.png"/>
             <property name="highContrast-migrate"
             		  value="$theme$graphics/icons/ctool/migrate.png"/>    
+            <property name="highContrast-workbench"
+            		  value="$theme$graphics/icons/ctool/workbench.png"/>    
             		  
             <property name="highContrastNav-overview"
             		  value="$theme$graphics/icons/ctool/ov_nav.png"/>
@@ -105,7 +107,9 @@
             <property name="highContrastNav-webresources"
             		  value="$theme$graphics/icons/ctool/wr_nav.png"/>
             <property name="highContrastNav-migrate"
-            		  value="$theme$graphics/icons/ctool/mi_nav.png"/>            		  
+            		  value="$theme$graphics/icons/ctool/mi_nav.png"/> 
+            <property name="highContrastNav-workbench"
+            		  value="$theme$graphics/icons/ctool/wb_nav.png"/>            		  
       </theme>
       <theme
             id="org.eclipse.ui.intro.universal.purpleMesh"

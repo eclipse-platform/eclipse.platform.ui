@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2007 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2006, 2007 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -262,7 +262,14 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	private IntroElement[] getNavLinks(String pageId) {
 		ArrayList links = new ArrayList();
-		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
+		String ids = getVariable(VAR_INTRO_ROOT_PAGES);		
+		/*
+		 * In high contrast mode the workbench link must be generated in the nav links 
+		 * otherwise it will not show
+		 */
+		if (ImageUtil.isHighContrast()) {
+			ids = ids + ',' + IUniversalIntroConstants.ID_WORKBENCH;
+		}
 		if (ids != null) {
 			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
 			int [] counter = new int [1];
@@ -273,6 +280,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 					links.add(page);
 			}
 		}
+
 		return (IntroElement[]) links.toArray(new IntroElement[links.size()]);
 	}
 
@@ -362,6 +370,12 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			return createNavLink(
 					Messages.SharedIntroConfigurer_webresources_nav,
 					createPageURL(id, false), id, "right nav_link"+(++counter[0])); //$NON-NLS-1$
+		if (id.equals(ID_WORKBENCH))
+			return createNavLink(
+					Messages.SharedIntroConfigurer_workbench_name,
+					"http://org.eclipse.ui.intro/switchToLaunchBar", //$NON-NLS-1$
+					id, 
+					"right nav_link"+(++counter[0])); //$NON-NLS-1$
 		return null;
 	}
 
