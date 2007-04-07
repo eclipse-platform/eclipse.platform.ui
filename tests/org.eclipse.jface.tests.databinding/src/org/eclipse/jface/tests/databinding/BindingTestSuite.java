@@ -30,6 +30,7 @@ import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
 import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IntegerToStringConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToBooleanConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToByteConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserByteTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserDoubleTest;
@@ -133,6 +134,7 @@ public class BindingTestSuite extends TestSuite {
 		//org.eclipse.core.tests.internal.databinding.conversion
 		addTestSuite(DateConversionSupportTest.class);
 		addTestSuite(IntegerToStringConverterTest.class);
+		addTestSuite(StringToBooleanConverterTest.class);
 		addTestSuite(StringToByteConverterTest.class);
 		addTestSuite(StringToNumberParserByteTest.class);
 		addTestSuite(StringToNumberParserDoubleTest.class);

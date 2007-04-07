@@ -11,26 +11,68 @@
  */
 package org.eclipse.core.internal.databinding.conversion;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.internal.databinding.BindingMessages;
-
-
 
 /**
  * StringToBooleanPrimitiveConverter.
  */
 public class StringToBooleanPrimitiveConverter implements IConverter {
+	private static final String[] trueValues;
 
-	/* (non-Javadoc)
+	private static final String[] falseValues;
+
+	static {
+		String delimiter = BindingMessages.getString("ValueDelimiter"); //$NON-NLS-1$
+		String values = BindingMessages.getString("TrueStringValues"); //$NON-NLS-1$
+		trueValues = valuesToSortedArray(delimiter, values);
+
+		values = BindingMessages.getString("FalseStringValues"); //$NON-NLS-1$
+		falseValues = valuesToSortedArray(delimiter, values);
+	}
+
+	/**
+	 * Returns a sorted array with all values converted to upper case.
+	 * 
+	 * @param delimiter
+	 * @param values
+	 * @return sorted array of values
+	 */
+	private static String[] valuesToSortedArray(String delimiter, String values) {
+		List list = new LinkedList();
+		StringTokenizer tokenizer = new StringTokenizer(values, delimiter);
+		while (tokenizer.hasMoreTokens()) {
+			list.add(tokenizer.nextToken().toUpperCase());
+		}
+
+		String[] array = (String[]) list.toArray(new String[list.size()]);
+		Arrays.sort(array);
+
+		return array;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
-        String s = (String) source;
-        if (s.equals(BindingMessages.getString("Yes")) || s.equals(BindingMessages.getString("yes")) || s.equals(BindingMessages.getString("true")) || s.equals(BindingMessages.getString("True"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-            return Boolean.TRUE;
-        if (s.equals(BindingMessages.getString("No")) || s.equals(BindingMessages.getString("no")) || s.equals(BindingMessages.getString("false")) || s.equals(BindingMessages.getString("False")))    //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
-            return Boolean.FALSE;
-        
+		String s = (String) source;
+		s = s.toUpperCase();
+
+		if (Arrays.binarySearch(trueValues, s) > -1) {
+			return Boolean.TRUE;
+		}
+
+		if (Arrays.binarySearch(falseValues, s) > -1) {
+			return Boolean.FALSE;
+		}
+
 		throw new IllegalArgumentException(s + " is not a legal boolean value"); //$NON-NLS-1$
 	}
 
