@@ -11,18 +11,22 @@
  */
 package org.eclipse.core.internal.databinding.conversion;
 
-import com.ibm.icu.text.DateFormat;
 import java.text.ParsePosition;
-import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.internal.databinding.BindingMessages;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
+
 /**
- * Base support for date/string conversion handling according to the
- * default locale or in plain long milliseconds.
- * 
+ * Base support for date/string conversion handling according to the default
+ * locale or in plain long milliseconds.
+ * <p>
  * NOTE: parse(format(date)) will generally *not* be equal to date, since the
  * string representation may not cover the sub-second range, time-only string
  * representations will be counted from the beginning of the era, etc.
+ * </p>
  */
 public abstract class DateConversionSupport {
 	private final static int DATE_FORMAT=DateFormat.SHORT;
@@ -35,10 +39,10 @@ public abstract class DateConversionSupport {
 	 * Raw milliseconds are covered as a special case.
 	 */
 	// TODO: These could be shared, but would have to be synchronized.
-	private DateFormat[] formatters={
-			new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS Z"), //$NON-NLS-1$
-            new SimpleDateFormat("HH:mm:ss.SSS"), //$NON-NLS-1$
-			DateFormat.getDateTimeInstance(DATE_FORMAT,DateFormat.SHORT),
+	private DateFormat[] formatters = {
+			new SimpleDateFormat(BindingMessages.getString("DateFormat_DateTime")), //$NON-NLS-1$
+			new SimpleDateFormat(BindingMessages.getString("DateFormat_Time")), //$NON-NLS-1$
+			DateFormat.getDateTimeInstance(DATE_FORMAT, DateFormat.SHORT),
 			DateFormat.getDateInstance(DATE_FORMAT),
 			DateFormat.getTimeInstance(DateFormat.SHORT),
             DateFormat.getDateTimeInstance(DATE_FORMAT,DateFormat.MEDIUM),
@@ -102,5 +106,23 @@ public abstract class DateConversionSupport {
 
 	protected int numFormatters() {
 		return formatters.length+NUM_VIRTUAL_FORMATTERS;
+	}
+	
+	/**
+	 * Returns the date format for the provided <code>index</code>.
+	 * <p>
+	 * This is for testing purposes only and should not be a part of the API if
+	 * this class was to be exposed.
+	 * </p>
+	 * 
+	 * @param index
+	 * @return date format
+	 */
+	protected DateFormat getDateFormat(int index) {
+		if (index < 0 || index >= formatters.length) {
+			throw new IllegalArgumentException("'index' [" + index + "] is out of bounds.");  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		
+		return formatters[index];
 	}
 }
