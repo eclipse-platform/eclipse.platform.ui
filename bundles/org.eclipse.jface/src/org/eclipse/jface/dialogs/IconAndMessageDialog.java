@@ -60,8 +60,12 @@ public abstract class IconAndMessageDialog extends Dialog {
 	}
 
 	/**
-	 * Create the area the message will be shown in.
-	 * 
+	 * Create the area the message will be shown in.  
+	 * <p>
+	 * The parent composite is assumed to use GridLayout as its layout manager, 
+	 * since the parent is typically the composite created in
+	 * {@link Dialog#createDialogArea}.
+	 * </p>
 	 * @param composite
 	 *            The composite to parent from.
 	 * @return Control
