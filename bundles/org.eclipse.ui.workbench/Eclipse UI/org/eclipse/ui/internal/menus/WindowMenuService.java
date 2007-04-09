@@ -144,8 +144,8 @@ public final class WindowMenuService extends InternalMenuService {
 	}
 	
 	public void registerVisibleWhen(final IContributionItem item, 
-			final Expression visibleWhen, final Expression restriction) {
-		parent.registerVisibleWhen(item, visibleWhen, restriction);
+			final Expression visibleWhen, final Expression restriction, String identifierID) {
+		parent.registerVisibleWhen(item, visibleWhen, restriction, identifierID);
 	}
 			
 	public void unregisterVisibleWhen(IContributionItem item) {

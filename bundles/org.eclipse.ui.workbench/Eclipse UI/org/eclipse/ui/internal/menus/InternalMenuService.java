@@ -35,9 +35,11 @@ public abstract class InternalMenuService implements IMenuService {
 	 *            the expression
 	 * @param restriction
 	 *            the restriction expression
+	 * @param identifierId
+	 * 			  the activity identifier id
 	 */
 	public abstract void registerVisibleWhen(final IContributionItem item,
-			final Expression visibleWhen, final Expression restriction);
+			final Expression visibleWhen, final Expression restriction, String identifierID);
 
 	/**
 	 * Removes any expressions bound to

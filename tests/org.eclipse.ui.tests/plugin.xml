@@ -2759,6 +2759,24 @@
       <categoryActivityBinding
             activityId="org.eclipse.ui.tests.util.5"
             categoryId="org.eclipse.ui.tests.util.5"/>
+      <activity
+            description="Use for testing the new menu support"
+            id="menuTest1"
+            name="MenuTest 1">
+      </activity>
+      <activityPatternBinding
+            activityId="menuTest1"
+            pattern="org\.eclipse\.ui\.tests/foo">
+      </activityPatternBinding>
+      <activity
+            description="Use for testing the new menu support"
+            id="menuTest2"
+            name="MenuTest 2">
+      </activity>
+      <activityPatternBinding
+            activityId="menuTest2"
+            pattern="org\.eclipse\.ui\.tests/bar">
+      </activityPatternBinding>
    </extension>
    <extension
          point="org.eclipse.ui.activitySupport">

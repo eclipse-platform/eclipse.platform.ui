@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.ui.internal.expressions.AlwaysEnabledExpression;
 import org.eclipse.ui.menus.IContributionRoot;
 
 /**
@@ -29,13 +30,15 @@ final class ContributionRoot implements
 		IContributionRoot {
 
 	private List topLevelItems = new ArrayList();
-	private List itemsWithExpressions = new ArrayList();
+	private List itemsToExpressions = new ArrayList();
 	private InternalMenuService menuService;
 	private Expression restriction;
+	private String namespace;
 
-	public ContributionRoot(InternalMenuService menuService, Expression restriction) {
+	public ContributionRoot(InternalMenuService menuService, Expression restriction, String namespace) {
 		this.menuService = menuService;
 		this.restriction = restriction;
+		this.namespace = namespace;
 	}
 
 	/* (non-Javadoc)
@@ -47,10 +50,25 @@ final class ContributionRoot implements
 			throw new IllegalArgumentException();
 		topLevelItems.add(item);
 		if (visibleWhen == null) 
-			return;
+			visibleWhen = AlwaysEnabledExpression.INSTANCE;
 		
-		menuService.registerVisibleWhen(item, visibleWhen, restriction);
-		itemsWithExpressions.add(item);
+		menuService.registerVisibleWhen(item, visibleWhen, restriction,
+				createIdentifierId(item));
+		itemsToExpressions.add(item);
+	}
+
+	/**
+     * Create the activity identifier for this contribution item.
+     *
+	 * @param item the item
+	 * @return the identifier
+	 */
+	private String createIdentifierId(IContributionItem item) {
+		String identifierID = namespace != null ? namespace + '/'
+				+ item.getId() : null; // create the activity identifier ID. If
+										// this factory doesn't have a namespace
+										// it will be null.
+		return identifierID;
 	}
 
 	public Collection getItems() {
@@ -61,22 +79,27 @@ final class ContributionRoot implements
 	 * Unregister all visible when expressions from the menu service.
 	 */
 	public void release() {
-		for (Iterator itemIter = itemsWithExpressions.iterator(); itemIter.hasNext();) {
+		for (Iterator itemIter = itemsToExpressions.iterator(); itemIter.hasNext();) {
 			IContributionItem item = (IContributionItem) itemIter.next();
 			menuService.unregisterVisibleWhen(item);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.menus.IContributionRoot#registerVisibilityForChild(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression, org.eclipse.core.expressions.Expression)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.menus.IContributionRoot#registerVisibilityForChild(org.eclipse.jface.action.IContributionItem,
+	 *      org.eclipse.core.expressions.Expression,
+	 *      org.eclipse.core.expressions.Expression)
 	 */
 	public void registerVisibilityForChild(IContributionItem item,
 			Expression visibleWhen) {
 		if (item == null)
 			throw new IllegalArgumentException();
-		if (visibleWhen == null)
-			return;
-		menuService.registerVisibleWhen(item, visibleWhen, restriction);
-		itemsWithExpressions.add(item);
+		if (visibleWhen == null) 
+			visibleWhen = AlwaysEnabledExpression.INSTANCE;
+		menuService.registerVisibleWhen(item, visibleWhen, restriction,
+				createIdentifierId(item));
+		itemsToExpressions.add(item);
 	}
 }
