@@ -36,36 +36,47 @@ class FilterTransform {
 	private Node root = new Node();
 	
 	class Node {
-		private int[] filteredChildren = null; // only set for leaves
+		private int[] filteredIndexes = null;
+		private Object[] filteredElements = null;
 		private Map children = null; // only set for parent nodes, indexed by child
 		
 		Node() {
 		}
 		
-		boolean addFilter(TreePath path, int childIndex, int pathIndex) {
+		boolean addFilter(TreePath path, int childIndex, int pathIndex, Object filtered) {
 			if (pathIndex == path.getSegmentCount()) {
-				if (filteredChildren == null) {
-					filteredChildren = new int[]{childIndex};
+				if (filteredIndexes == null) {
+					filteredIndexes = new int[]{childIndex};
+					filteredElements = new Object[]{filtered};
 					return true;
 				}
-				int location = Arrays.binarySearch(filteredChildren, childIndex);
+				int location = Arrays.binarySearch(filteredIndexes, childIndex);
 				if (location >= 0) {
 					return false;
 				}
 				location = 0 - (location + 1);
-				int[] next = new int[filteredChildren.length + 1];
+				int[] next = new int[filteredIndexes.length + 1];
+				Object[] filt = new Object[next.length];
 				if (location == 0) {
 					next[0] = childIndex;
-					System.arraycopy(filteredChildren, 0, next, 1, filteredChildren.length);
-				} else if (location == filteredChildren.length) {
-					next[filteredChildren.length] = childIndex;
-					System.arraycopy(filteredChildren, 0, next, 0, filteredChildren.length);
+					filt[0] = filtered;
+					System.arraycopy(filteredIndexes, 0, next, 1, filteredIndexes.length);
+					System.arraycopy(filteredElements, 0, filt, 1, filteredElements.length);
+				} else if (location == filteredIndexes.length) {
+					next[filteredIndexes.length] = childIndex;
+					filt[filteredElements.length] = filtered;
+					System.arraycopy(filteredIndexes, 0, next, 0, filteredIndexes.length);
+					System.arraycopy(filteredElements, 0, filt, 0, filteredElements.length);
 				} else {
-					System.arraycopy(filteredChildren, 0, next, 0, location);
+					System.arraycopy(filteredIndexes, 0, next, 0, location);
+					System.arraycopy(filteredElements, 0, filt, 0, location);
 					next[location] = childIndex;
-					System.arraycopy(filteredChildren, location, next, location + 1, filteredChildren.length - location);
+					filt[location] = filtered;
+					System.arraycopy(filteredIndexes, location, next, location + 1, filteredIndexes.length - location);
+					System.arraycopy(filteredElements, location, filt, location + 1, filteredElements.length - location);
 				}
-				filteredChildren = next;
+				filteredIndexes = next;
+				filteredElements = filt;
 				return true;
 			}
 			
@@ -78,7 +89,7 @@ class FilterTransform {
 				node = new Node();
 				children.put(element, node);
 			}
-			return node.addFilter(path, childIndex, pathIndex + 1);
+			return node.addFilter(path, childIndex, pathIndex + 1, filtered);
 		}
 		
 		boolean clear(TreePath path, int pathIndex) {
@@ -95,34 +106,36 @@ class FilterTransform {
 					children.remove(child);
 				}
 			}
-			return children.isEmpty() && (filteredChildren == null || filteredChildren.length == 0);
+			return children.isEmpty() && (filteredIndexes == null || filteredIndexes.length == 0);
 		}
 		
 		boolean clear(TreePath path, int childIndex, int pathIndex) {
 			if (pathIndex == path.getSegmentCount()) {
-				if (filteredChildren != null) {
-					int location = Arrays.binarySearch(filteredChildren, childIndex);
+				if (filteredIndexes != null) {
+					int location = Arrays.binarySearch(filteredIndexes, childIndex);
 					if (location >= 0) {
 						// remove it
-						if (location == 0) {
-							if (filteredChildren.length == 1) {
-								filteredChildren = null;
-								return true;
-							} else {
-								int[] next = new int[filteredChildren.length - 1];
-								System.arraycopy(filteredChildren, 1, next, 0, next.length);
-								filteredChildren = next;
-							}
-						} else if (location == (filteredChildren.length - 1)) {
-							int[] next = new int[filteredChildren.length - 1];
-							System.arraycopy(filteredChildren, 0, next, 0, location);
-							filteredChildren = next;
-						} else {
-							int[] next = new int[filteredChildren.length - 1];
-							System.arraycopy(filteredChildren, 0, next, 0, location);
-							System.arraycopy(filteredChildren, location + 1, next, location, next.length - location);
-							filteredChildren = next;
+						if (location == 0 && filteredIndexes.length == 1) {
+							filteredIndexes = null;
+							filteredElements = null;
+							return true;
 						}
+						int[] next = new int[filteredIndexes.length - 1];
+						Object[] filt = new Object[next.length];
+						if (location == 0) {
+							System.arraycopy(filteredIndexes, 1, next, 0, next.length);
+							System.arraycopy(filteredElements, 1, filt, 0, filt.length);
+						} else if (location == (filteredIndexes.length - 1)) {
+							System.arraycopy(filteredIndexes, 0, next, 0, location);
+							System.arraycopy(filteredElements, 0, filt, 0, location);
+						} else {
+							System.arraycopy(filteredIndexes, 0, next, 0, location);
+							System.arraycopy(filteredElements, 0, filt, 0, location);
+							System.arraycopy(filteredIndexes, location + 1, next, location, next.length - location);
+							System.arraycopy(filteredElements, location + 1, filt, location, filt.length - location);
+						}
+						filteredIndexes = next;
+						filteredElements = filt;
 						return false;
 					}
 				} else {
@@ -140,11 +153,11 @@ class FilterTransform {
 			boolean remove = node.clear(path, childIndex, pathIndex + 1);
 			if (remove) {
 				children.remove(element);
-				return filteredChildren == null && children.isEmpty();
+				return filteredIndexes == null && children.isEmpty();
 			} else {
 				return false;
 			}
-		}
+		}	
 		
 		Node find(TreePath path, int pathIndex) {
 			if (pathIndex == path.getSegmentCount()) 
@@ -161,7 +174,7 @@ class FilterTransform {
 		}
 		
 		int viewToModel(int childIndex) {
-			if (filteredChildren == null) {
+			if (filteredIndexes == null) {
 				return childIndex;
 			}
 			// If there are filtered children, then we want to find the
@@ -177,8 +190,8 @@ class FilterTransform {
 			
 			while (missingNumbers < (childIndex + 1)) {
 				count++;
-				if (offset < filteredChildren.length) {
-					if (filteredChildren[offset] == count) {
+				if (offset < filteredIndexes.length) {
+					if (filteredIndexes[offset] == count) {
 						// not missing
 						offset++;
 					} else {
@@ -193,14 +206,14 @@ class FilterTransform {
 		}
 		
 		int modelToView(int childIndex) {
-			if (filteredChildren == null) {
+			if (filteredIndexes == null) {
 				return childIndex;
 			}
 			int offset = 0;
-			for (int i = 0; i < filteredChildren.length; i++) {
-				if (childIndex == filteredChildren[i] ) {
+			for (int i = 0; i < filteredIndexes.length; i++) {
+				if (childIndex == filteredIndexes[i] ) {
 					return -1;
-				} else if (childIndex > filteredChildren[i]) {
+				} else if (childIndex > filteredIndexes[i]) {
 					offset++;
 				} else {
 					break;
@@ -210,18 +223,29 @@ class FilterTransform {
 		}	
 		
 		int modelToViewCount(int childCount) {
-			if (filteredChildren == null) {
+			if (filteredIndexes == null) {
 				return childCount;
 			}
-			return childCount - filteredChildren.length;
+			return childCount - filteredIndexes.length;
 		}
 		
 		boolean isFiltered(int index) {
-			if (filteredChildren != null) {
-				int location = Arrays.binarySearch(filteredChildren, index);
+			if (filteredIndexes != null) {
+				int location = Arrays.binarySearch(filteredIndexes, index);
 				return location >= 0;
 			}
 			return false;
+		}
+		
+		int indexOfFilteredElement(Object element) {
+			if (filteredElements != null) {
+				for (int i = 0; i < filteredElements.length; i++) {
+					if (element.equals(filteredElements[i])) {
+						return filteredIndexes[i];
+					}
+				}
+			}
+			return -1;
 		}
 		
 		/**
@@ -231,17 +255,17 @@ class FilterTransform {
 		 * @param childCount new child count
 		 */
 		void setModelChildCount(int childCount) {
-			if (filteredChildren != null) {
-				for (int i = 0; i < filteredChildren.length; i++) {
-					if (filteredChildren[i] >= childCount) {
+			if (filteredIndexes != null) {
+				for (int i = 0; i < filteredIndexes.length; i++) {
+					if (filteredIndexes[i] >= childCount) {
 						// trim
 						if (i == 0) {
-							filteredChildren = null;
+							filteredIndexes = null;
 							return;
 						} else {
 							int[] temp = new int[i + 1];
-							System.arraycopy(filteredChildren, 0, temp, 0, temp.length);
-							filteredChildren = temp;
+							System.arraycopy(filteredIndexes, 0, temp, 0, temp.length);
+							filteredIndexes = temp;
 						}
 					}
 				}
@@ -254,39 +278,42 @@ class FilterTransform {
 		 * @param index index at which an element was removed
 		 */
 		void removeElementFromFilters(int index) {
-			if (filteredChildren != null) {
-				int location = Arrays.binarySearch(filteredChildren, index);
+			if (filteredIndexes != null) {
+				int location = Arrays.binarySearch(filteredIndexes, index);
 				if (location > 0) {
 					// remove a filtered item
-					if (filteredChildren.length == 1) {
+					if (filteredIndexes.length == 1) {
 						// only filtered item
-						filteredChildren = null;
+						filteredIndexes = null;
+						filteredElements = null;
 					} else {
+						int[] next = new int[filteredIndexes.length - 1];
+						Object[] filt = new Object[next.length];
 						if (location == 0) {
 							// first
-							int[] next = new int[filteredChildren.length - 1];
-							System.arraycopy(filteredChildren, 1, next, 0, next.length);
-							filteredChildren = next;
-						} else if (location == (filteredChildren.length - 1)) {
+							System.arraycopy(filteredIndexes, 1, next, 0, next.length);
+							System.arraycopy(filteredElements, 1, filt, 0, filt.length);
+						} else if (location == (filteredIndexes.length - 1)) {
 							// last
-							int[] next = new int[filteredChildren.length - 1];
-							System.arraycopy(filteredChildren, 0, next, 0, next.length);
-							filteredChildren = next;
+							System.arraycopy(filteredIndexes, 0, next, 0, next.length);
+							System.arraycopy(filteredElements, 0, filt, 0, filt.length);
 						} else {
 							// middle
-							int[] next = new int[filteredChildren.length - 1];
-							System.arraycopy(filteredChildren, 0, next, 0, location);
-							System.arraycopy(filteredChildren, location + 1, next, location, filteredChildren.length - location);
-							filteredChildren = next;
+							System.arraycopy(filteredIndexes, 0, next, 0, location);
+							System.arraycopy(filteredElements, 0, filt, 0, location);
+							System.arraycopy(filteredIndexes, location + 1, next, location, filteredIndexes.length - location);
+							System.arraycopy(filteredElements, location + 1, filt, location, filteredElements.length - location);
 						}
+						filteredIndexes = next;
+						filteredElements = filt;
 					}
 				} else {
 					location = 0 - (location + 1);
 				}
-				if (filteredChildren != null) {
+				if (filteredIndexes != null) {
 					// decrement remaining indexes
-					for (int i = location; i < filteredChildren.length; i ++) {
-						filteredChildren[i]--;
+					for (int i = location; i < filteredIndexes.length; i ++) {
+						filteredIndexes[i]--;
 					}
 				}
 			}
@@ -299,10 +326,11 @@ class FilterTransform {
 	 * 
 	 * @param parentPath path to parent element
 	 * @param childIndex index of filtered child relative to parent (in model coordinates)
+	 * @param element the filtered element
 	 * @return whether the child was already filtered
 	 */
-	public synchronized boolean addFilteredIndex(TreePath parentPath, int childIndex) {
-		return root.addFilter(parentPath, childIndex, 0);
+	public synchronized boolean addFilteredIndex(TreePath parentPath, int childIndex, Object element) {
+		return root.addFilter(parentPath, childIndex, 0, element);
 	}
 	
 	/**
@@ -373,8 +401,8 @@ class FilterTransform {
 	public synchronized int viewToModelCount(TreePath parentPath, int viewCount) {
 		Node parentNode = root.find(parentPath, 0);
 		if (parentNode != null) {
-			if (parentNode.filteredChildren != null) {
-				return viewCount + parentNode.filteredChildren.length;
+			if (parentNode.filteredIndexes != null) {
+				return viewCount + parentNode.filteredIndexes.length;
 			}
 		}
 		return viewCount;
@@ -422,7 +450,7 @@ class FilterTransform {
 		if (parentNode == null) {
 			return null;
 		}
-		return parentNode.filteredChildren;
+		return parentNode.filteredIndexes;
 	}
 	
 	/**
@@ -451,4 +479,23 @@ class FilterTransform {
 			parentNode.removeElementFromFilters(index);
 		}
 	}
+	
+	/**
+	 * The element has been removed from the parent. Update
+	 * filtered indexes, in case it was a filtered object.
+	 * 
+	 * @param parentPath path to parent element
+	 * @param element removed element
+	 */
+	public synchronized boolean removeElementFromFilters(TreePath parentPath, Object element) {
+		Node parentNode = root.find(parentPath, 0);
+		if (parentNode != null) {
+			int index = parentNode.indexOfFilteredElement(element);
+			if (index >= 0) {
+				parentNode.removeElementFromFilters(index);
+				return true;
+			}
+		}
+		return false;
+	}	
 }

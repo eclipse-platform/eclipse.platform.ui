@@ -194,6 +194,10 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 			return;
 		}
 		Object element = delta.getElement();
+		if (removeElementFromFilters(parentPath, element)) {
+			// element was filtered - done
+			return;
+		}
 		int viewIndex = -1;
 		int modelIndex = delta.getIndex();
 		int unmappedIndex = -1;
@@ -227,7 +231,6 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 			removeElementFromFilters(parentPath, viewToModelIndex(parentPath, unmappedIndex));
 			return;
 		}
-		
 		// failing that, refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
 		getTreeViewer().remove(getViewerTreePath(delta));

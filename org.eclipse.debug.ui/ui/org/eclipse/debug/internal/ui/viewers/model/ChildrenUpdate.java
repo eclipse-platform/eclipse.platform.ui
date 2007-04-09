@@ -51,7 +51,7 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 				if (element != null) {
 					int viewIndex = provider.modelToViewIndex(elementPath, modelIndex);
 					if (provider.shouldFilter(elementPath, element)) {
-						if (provider.addFilteredIndex(elementPath, modelIndex)) {
+						if (provider.addFilteredIndex(elementPath, modelIndex, element)) {
 							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
 								System.out.println("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}

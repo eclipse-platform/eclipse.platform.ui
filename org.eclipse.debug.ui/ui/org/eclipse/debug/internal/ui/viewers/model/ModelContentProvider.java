@@ -750,10 +750,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param parentPath path to parent element
 	 * @param index index of child element to be filtered
+	 * @param element the filtered element
 	 * @return whether the child was already filtered
 	 */
-	protected boolean addFilteredIndex(TreePath parentPath, int index) {
-		return fTransform.addFilteredIndex(parentPath, index);
+	protected boolean addFilteredIndex(TreePath parentPath, int index, Object element) {
+		return fTransform.addFilteredIndex(parentPath, index, element);
 	}
 	
 	/**
@@ -766,6 +767,18 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected void removeElementFromFilters(TreePath parentPath, int index) {
 		fTransform.removeElementFromFilters(parentPath, index);
 	}
+	
+	/**
+	 * Removes the given element from filtered elements of the given parent
+	 * element. Return true if the element was removed, otherwise false.
+	 * 
+	 * @param parentPath path to parent element
+	 * @param element element to remove
+	 * @return whether the element was removed
+	 */
+	protected boolean removeElementFromFilters(TreePath parentPath, Object element) {
+		return fTransform.removeElementFromFilters(parentPath, element);
+	}	
 	
 	/**
 	 * The child count for a parent has been computed. Ensure any filtered items
