@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 179174 CVS client sets timestamps back when replacing
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
+
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -30,6 +33,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	private IProgressMonitor monitor;
 	private int depth;
 	private CVSTag tag; 
+	private Set/*<ICVSFile>*/ deletedFiles;
 
 	public PrepareForReplaceVisitor(CVSTag tag){
 		this.tag = tag;
@@ -48,9 +52,11 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			// Delete unmanaged files if the user wants them deleted
 			if (CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
 				file.delete();
+				deletedFiles.add(file);
 			}
 		} else if (ResourceSyncInfo.isAddition(syncBytes)) {
 			file.delete();
+			deletedFiles.add(file);
 			file.unmanage(null);
 		} else if (ResourceSyncInfo.isDeletion(syncBytes)) {
 			// If deleted, null the sync info so the file will be refetched.
@@ -62,6 +68,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			// replace operation to fetch it again. This is required because "update -C" 
 			// will fail for locally modified resources that have been deleted remotely.
 			file.delete();
+			deletedFiles.add(file);
 			// Only unmanage if the delete was successful (bug 76029)
 			file.unmanage(null);
 		}
@@ -106,6 +113,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	
 	public void visitResources(IProject project, final ICVSResource[] resources, final String oneArgMessage, int depth, IProgressMonitor pm) throws CVSException {
 		this.depth = depth;
+		deletedFiles = new HashSet();
 		CVSWorkspaceRoot.getCVSFolderFor(project).run(new ICVSRunnable() {
 			public void run(IProgressMonitor pm) throws CVSException {
 				monitor = Policy.infiniteSubMonitorFor(pm, 100);
@@ -119,5 +127,9 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 				monitor.done();
 			}
 		}, pm);
+	}
+	
+	public Set/*<ICVSFile>*/ getDeletedFiles() {
+		return Collections.unmodifiableSet(deletedFiles);
 	}
 }

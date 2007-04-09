@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 179174 CVS client sets timestamps back when replacing
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
@@ -46,7 +47,7 @@ public abstract class Command extends Request {
 	public final static Tag CUSTOM_TAG = new Tag(true);
 	public final static RTag RTAG = new RTag();
 	public final static Update UPDATE = new Update();
-	public final static Update REPLACE = new UpdateWithOverwrite();
+	public final static Update REPLACE = new Replace();
 	public final static SyncUpdate SYNCUPDATE = new SyncUpdate();
 	public final static Version VERSION = new Version();
 	public final static NOOPCommand NOOP = new NOOPCommand();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,11 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 179174 CVS client sets timestamps back when replacing
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -28,7 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Thsi operation replaces the local resources with their remote contents
+ * This operation replaces the local resources with their remote contents
  */
 public class ReplaceOperation extends UpdateOperation {
 
@@ -75,17 +77,22 @@ public class ReplaceOperation extends UpdateOperation {
 		return status[0];
 	}
 
+	// Files deleted by the PrepareForReplaceVisitor.
+	private Set/*<ICVSFile>*/ prepDeletedFiles;
+
     private IStatus internalExecuteCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
         monitor.beginTask(null, 100);
         ICVSResource[] managedResources = getResourcesToUpdate(resources);
         try {
         	// Purge any unmanaged or added files
-        	new PrepareForReplaceVisitor(getTag()).visitResources(
+        	PrepareForReplaceVisitor pfrv = new PrepareForReplaceVisitor(getTag());
+        	pfrv.visitResources(
         		provider.getProject(), 
         		resources, 
         		CVSUIMessages.ReplaceOperation_1, 
         		recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
-        		Policy.subMonitorFor(monitor, 30)); 
+        		Policy.subMonitorFor(monitor, 30));
+        	prepDeletedFiles = pfrv.getDeletedFiles();
         	
         	// Only perform the remote command if some of the resources being replaced were managed
         	IStatus status = OK;
@@ -110,7 +117,7 @@ public class ReplaceOperation extends UpdateOperation {
 	 * Return the resources that need to be updated from the server.
 	 * By default, this is all resources that are managed.
 	 * @param resources all resources being replaced
-	 * @return resources that ae to be updated from the server
+	 * @return resources that are to be updated from the server
 	 * @throws CVSException
 	 */
 	protected ICVSResource[] getResourcesToUpdate(ICVSResource[] resources) throws CVSException {
@@ -134,7 +141,9 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation#getUpdateCommand()
 	 */
 	protected Update getUpdateCommand() {
-		return Command.REPLACE;
+		// Use a special replace command that doesn't set back the timestamps
+		// of files in the passed set if it recreates them.
+		return new Replace(prepDeletedFiles);
 	}
 
 	/* (non-Javadoc)
