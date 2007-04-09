@@ -1189,7 +1189,7 @@
       <colorDefinition
             label="%Color.activeTabText"
             categoryId="org.eclipse.ui.presentation.default"
-            value="COLOR_TITLE_FOREGROUND"
+            value="COLOR_WIDGET_FOREGROUND"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
          <description>
             %Color.activeTabTextDesc
@@ -1202,8 +1202,7 @@
       <colorDefinition
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
-            label="%Color.activeTabBGEnd"
-            >
+            label="%Color.activeTabBGEnd">
          <description>
             %Color.activeTabBGEndDesc
          </description>
@@ -1212,15 +1211,13 @@
                value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT">
          </colorValue>
          <colorFactory
-               class="org.eclipse.ui.internal.themes.DarkColorSelectionFactory"
+               class="org.eclipse.ui.internal.themes.LightColorFactory"
                plugin="org.eclipse.ui">
           <parameter
-                  name="color1"
-                  value="COLOR_TITLE_BACKGROUND_GRADIENT">
+                  name="base" value="COLOR_TITLE_BACKGROUND">
           </parameter>
           <parameter
-                  name="color2"
-                  value="COLOR_TITLE_BACKGROUND">
+                  name="definitionId" value="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END">
           </parameter>
          </colorFactory>
       </colorDefinition>
@@ -1236,16 +1233,14 @@
                value="COLOR_TITLE_INACTIVE_BACKGROUND">
          </colorValue>
          <colorFactory
-               class="org.eclipse.ui.internal.themes.LightColorSelectionFactory"
+               class="org.eclipse.ui.internal.themes.LightColorFactory"
                plugin="org.eclipse.ui">
-            <parameter
-                  name="color1"
-                  value="COLOR_TITLE_BACKGROUND_GRADIENT">
-            </parameter>
-            <parameter
-                  name="color2"
-                  value="COLOR_TITLE_BACKGROUND">
-            </parameter>
+          <parameter
+                  name="base" value="COLOR_TITLE_BACKGROUND">
+          </parameter>
+          <parameter
+                  name="definitionId" value="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
+          </parameter>
          </colorFactory>
       </colorDefinition>
 <!-- Active (Nofocus) Tab Colors -->
