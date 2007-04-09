@@ -46,7 +46,7 @@ public class Bug_160251 extends ResourceTest {
 		ensureExistsInWorkspace(source, true);
 		ensureExistsInWorkspace(sourceFile, true);
 
-		//move the project (should suceed)
+		//move the project (should succeed)
 		try {
 			IProjectDescription description = source.getDescription();
 			description.setLocationURI(destination.toURI());
@@ -78,7 +78,7 @@ public class Bug_160251 extends ResourceTest {
 			fail("0.99", e);
 		}
 
-		//move the project (should suceed)
+		//move the project (should succeed)
 		try {
 			IProjectDescription description = source.getDescription();
 			description.setLocationURI(destination.toURI());
