@@ -19,7 +19,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -62,9 +61,6 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 		if(group != null) {
 			setImageDescriptor(group.getImageDescriptor());
 			String lbl = group.getLabel();
-			if(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP.equals(fIdentifier)) {
-				lbl = ActionMessages.OpenLaunchDialogAction_0;
-			}
 			setText(MessageFormat.format(ActionMessages.OpenLaunchDialogAction_1, new String[] {lbl}));
 		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.OPEN_LAUNCH_CONFIGURATION_ACTION);
