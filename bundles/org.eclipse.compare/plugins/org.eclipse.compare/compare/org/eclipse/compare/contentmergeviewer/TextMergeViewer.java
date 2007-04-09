@@ -4490,7 +4490,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				diff = getWrappedDiff(diff, down);
 			}
 			if (diff != null)
-				setCurrentDiff(diff, true);
+				setCurrentDiff(diff, true, deep);
 			if (diff != null && diff.fDirection == RangeDifference.ANCESTOR
 					&& !isAncestorVisible())
 				continue;
@@ -4680,6 +4680,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 * selected in both TextParts.
 	 */
 	private void setCurrentDiff(Diff d, boolean revealAndSelect) {
+		setCurrentDiff(d, revealAndSelect, false);
+	}
+		
+	/*
+	 * Set the currently active Diff and update the toolbars controls and lines.
+	 * If <code>revealAndSelect</code> is <code>true</code> the Diff is revealed and
+	 * selected in both TextParts.
+	 */
+	private void setCurrentDiff(Diff d, boolean revealAndSelect, boolean deep) {
 
 //		if (d == fCurrentDiff)
 //			return;
@@ -4694,10 +4703,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			// before we set fCurrentDiff we change the selection
 			// so that the paint code uses the old background colors
 			// otherwise selection isn't drawn correctly
-			if (isThreeWay() && !isIgnoreAncestor())
-				fAncestor.setSelection(d.fAncestorPos);
-			fLeft.setSelection(d.fLeftPos);
-			fRight.setSelection(d.fRightPos);
+			if (d.fIsToken || !fHighlightTokenChanges || deep || !d.hasChildren()) {
+				if (isThreeWay() && !isIgnoreAncestor())
+					fAncestor.setSelection(d.fAncestorPos);
+				fLeft.setSelection(d.fLeftPos);
+				fRight.setSelection(d.fRightPos);
+			} else {
+				if (isThreeWay() && !isIgnoreAncestor())
+					fAncestor.setSelection(new Position(d.fAncestorPos.offset, 0));
+				fLeft.setSelection(new Position(d.fLeftPos.offset, 0));
+				fRight.setSelection(new Position(d.fRightPos.offset, 0));
+			}
 			
 			// now switch diffs
 			fCurrentDiff= d;
