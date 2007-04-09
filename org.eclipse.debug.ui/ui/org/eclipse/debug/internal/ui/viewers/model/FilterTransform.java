@@ -285,7 +285,7 @@ class FilterTransform {
 				}
 				if (filteredChildren != null) {
 					// decrement remaining indexes
-					for (int i = location; location < filteredChildren.length; i ++) {
+					for (int i = location; i < filteredChildren.length; i ++) {
 						filteredChildren[i]--;
 					}
 				}
