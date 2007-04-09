@@ -65,7 +65,7 @@ public class LegacyAnimationFeedback extends RectangleAnimationFeedbackBase {
 
 		theShell = new Shell(getAnimationShell(), SWT.NO_TRIM | SWT.ON_TOP);
 		display = theShell.getDisplay();
-		Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+		Color color = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
 		theShell.setBackground(color);
 
 		// Ensure that the background won't show on the initial display
