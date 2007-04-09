@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -65,7 +66,7 @@ public abstract class ViewerTestCase extends TestCase {
 	    if (fDisplay == null) {
 	        fDisplay = new Display();
 	    }
-	    fShell = new Shell(fDisplay);
+	    fShell = new Shell(fDisplay, getShellStyle());
 	    fShell.setSize(500, 500);
 	    fShell.setLayout(new FillLayout());
 	    fViewer = createViewer(fShell);
@@ -73,6 +74,13 @@ public abstract class ViewerTestCase extends TestCase {
 	    setInput();
 	    fShell.open();
 	    //processEvents();
+	}
+
+	/**
+	 * @return
+	 */
+	protected int getShellStyle() {
+		return SWT.SHELL_TRIM;
 	}
 
 	protected void setInput() {

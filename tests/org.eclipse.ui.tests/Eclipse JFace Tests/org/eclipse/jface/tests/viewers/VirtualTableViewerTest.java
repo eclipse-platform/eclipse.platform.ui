@@ -41,6 +41,10 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	public VirtualTableViewerTest(String name) {
 		super(name);
 	}
+	
+	protected int getShellStyle() {
+		return super.getShellStyle() | SWT.ON_TOP;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -90,7 +94,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 		for (int i = 0; i < items.length; i++) {
 			TableItem item = items[i];
-			assertTrue("Missing data in item " + String.valueOf(i), item
+			assertTrue("Missing data in item " + String.valueOf(i) + " of " + items.length, item
 					.getData() instanceof TestElement);
 		}
 	}
