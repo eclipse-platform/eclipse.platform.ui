@@ -31,7 +31,7 @@ public class ExtensionMap {
 	}
 	
 	/**
-	 * Get the one and only instance of theis class
+	 * Get the one and only instance of this class
 	 * @return
 	 */
 	static public ExtensionMap getInstance() {
