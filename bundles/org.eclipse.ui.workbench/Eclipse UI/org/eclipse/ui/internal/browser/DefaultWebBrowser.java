@@ -146,7 +146,7 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 		Process p = null;
 		if (webBrowser == null) {
 			try {
-				webBrowser = "netscape"; //$NON-NLS-1$
+				webBrowser = "firefox"; //$NON-NLS-1$
 				p = Runtime.getRuntime().exec(webBrowser + "  " + href); //$NON-NLS-1$;
 			} catch (IOException e) {
 				p = null;
@@ -159,9 +159,19 @@ public class DefaultWebBrowser extends AbstractWebBrowser {
 				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$;
 			} catch (IOException e) {
 				p = null;
+				webBrowser = "netscape"; //$NON-NLS-1$
+			}
+		}
+		
+		if (p == null) {
+			try {
+				p = Runtime.getRuntime().exec(webBrowser + " " + href); //$NON-NLS-1$;
+			} catch (IOException e) {
+				p = null;
 				throw e;
 			}
 		}
+		
 		return p;
 	}
 
