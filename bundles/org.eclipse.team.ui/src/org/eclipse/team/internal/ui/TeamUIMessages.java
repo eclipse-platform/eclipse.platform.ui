@@ -94,6 +94,12 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_AddToWorkingSet;
 
 	public static String ImportProjectSetMainPage_Browse;
+	
+	public static String ImportProjectSetDialog_duplicatedWorkingSet_title;
+	public static String ImportProjectSetDialog_duplicatedWorkingSet_message;
+	public static String ImportProjectSetDialog_duplicatedWorkingSet_replace;
+	public static String ImportProjectSetDialog_duplicatedWorkingSet_merge;
+	public static String ImportProjectSetDialog_duplicatedWorkingSet_skip;
 
 	public static String information;
     

@@ -16,6 +16,8 @@ import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.*;
@@ -89,11 +91,61 @@ public class ProjectSetImporter {
 			  	//try working sets
 			  	IMemento[] sets = xmlMemento.getChildren("workingSets"); //$NON-NLS-1$
 			  	IWorkingSetManager wsManager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
-			  
+			  	
 			  	for (int i = 0; i < sets.length; i++) {
-			  		IWorkingSet ws = wsManager.createWorkingSet(sets[i]);
-			  		if (ws != null)
-			  			wsManager.addWorkingSet(ws);
+					IWorkingSet newWs = wsManager.createWorkingSet(sets[i]);
+					if (newWs != null) {
+						IWorkingSet oldWs = wsManager.getWorkingSet(newWs
+								.getName());
+						if (oldWs == null) {
+							wsManager.addWorkingSet(newWs);
+						} else {
+							// a working set with the same name has been found
+							String title = TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_title;
+							String msg = NLS
+									.bind(
+											TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_message,
+											newWs.getName());
+							String[] buttons = new String[] {
+									TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_replace,
+									TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_merge,
+									TeamUIMessages.ImportProjectSetDialog_duplicatedWorkingSet_skip,
+									IDialogConstants.CANCEL_LABEL };
+
+							final MessageDialog dialog = new MessageDialog(
+									shell, title, null, msg,
+									MessageDialog.QUESTION, buttons, 0);
+							
+							shell.getDisplay().syncExec(new Runnable() {
+								public void run() {
+									 dialog.open();
+								}
+							});
+							
+							switch (dialog.getReturnCode()) {
+							case 0: // overwrite
+								if (oldWs != null)
+									wsManager.removeWorkingSet(oldWs);
+								wsManager.addWorkingSet(newWs);
+								break;
+							case 1: // combine
+								IAdaptable[] oldElements = oldWs.getElements();
+								IAdaptable[] newElements = newWs.getElements();
+								
+								Set combinedElements = new HashSet();
+								combinedElements.addAll(Arrays.asList(oldElements));
+								combinedElements.addAll(Arrays.asList(newElements));
+								
+								oldWs.setElements((IAdaptable[]) combinedElements.toArray(new IAdaptable[0]));
+								break;
+							case 2: // skip
+								break;
+							case 3: // cancel
+							default:
+								throw new OperationCanceledException();
+							}
+						}
+					}
 				}
 			  	
 			}
