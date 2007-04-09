@@ -126,13 +126,8 @@ public class ViewStack extends PartStack {
 				// First, if we're maximized then revert
 				if (persp.getPresentation().getMaximizedStack() != null) {
 					PartStack maxStack = persp.getPresentation().getMaximizedStack();
-					if (maxStack instanceof ViewStack) {
+					if (maxStack != null) {
 						maxStack.setState(IStackPresentationSite.STATE_RESTORED);
-					}
-					else if (maxStack instanceof EditorStack) {
-						// We handle editor max through the perspective since it's
-						// shared between pages...
-						persp.setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
 					}
 				}
 				

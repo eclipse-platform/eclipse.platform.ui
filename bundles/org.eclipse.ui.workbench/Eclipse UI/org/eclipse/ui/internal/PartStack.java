@@ -111,7 +111,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     protected IMemento savedPresentationState = null;
 
-    private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
+    protected DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
 
         public void close(IPresentablePart part) {
             PartStack.this.close(part);
@@ -254,7 +254,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
     private static final PartStackDropResult dropResult = new PartStackDropResult();
 
-    private boolean isMinimized;
+    protected boolean isMinimized;
 
     private ListenerList listeners = new ListenerList();
 
@@ -982,9 +982,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         if (useNewMinMax && expanded != null) {
             StartupThreading.runWithoutExceptions(new StartupRunnable() {
     			public void runWithException() throws Throwable {    		        
-    		        if (expanded.intValue() == IStackPresentationSite.STATE_MAXIMIZED)
-    		        	smartZoomed = true;
-    		        
     		        setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
     		                : IStackPresentationSite.STATE_MINIMIZED);
     			}
@@ -1324,21 +1321,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		FastViewManager fvm = perspective.getFastViewManager();
 
 		fvm.deferUpdates(true);
-		ILayoutContainer root = getContainer();
-
-		// We go up one more level when maximizing an editor stack
-		// so that we 'zoom' the editor area
-		// should be a better way to get the layout root...
-		boolean zoomingEditorArea = false;
-		if (root instanceof EditorSashContainer) {
-			root = ((EditorSashContainer) root).getContainer();
-			zoomingEditorArea = true;
-		}
 
 		// Cache the layout bounds
 		perspective.getPresentation().updateBoundsMap();
 		
-		LayoutPart[] children = root.getChildren();
+		LayoutPart[] children = perspective.getPresentation().getLayout().getChildren();
 		for (int i = 0; i < children.length; i++) {
 			if (children[i] != this) {
 				if (children[i] instanceof ViewStack) {
@@ -1348,8 +1335,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 									.getID());
 					vstb.setRestoreOnUnzoom(true);
 				}
-				else if (children[i] instanceof EditorSashContainer
-						&& !zoomingEditorArea) {
+				else if (children[i] instanceof EditorSashContainer) {
 					perspective.setEditorAreaState(IStackPresentationSite.STATE_MINIMIZED);
 					perspective.setEditorAreaRestoreOnUnzoom(true);
 				}
@@ -1357,7 +1343,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		}
 
 		// If the editor area has changed state tell the perspective
-		if (zoomingEditorArea)
+		if (this instanceof EditorStack)
 			perspective.setEditorAreaState(IStackPresentationSite.STATE_MAXIMIZED);
 
 		// Clear the boundsMap
@@ -1445,14 +1431,20 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		if (wbw == null || wbw.getShell() == null || wbw.getActiveWorkbenchPage() == null)
 			return;
 
-		boolean useNewMinMax = Perspective.useNewMinMax(wbw.getActiveWorkbenchPage().getActivePerspective());
+		WorkbenchPage page = wbw.getActiveWorkbenchPage();
+		if (page == null)
+			return;
+		
+		boolean useNewMinMax = Perspective.useNewMinMax(page.getActivePerspective());
 
 		// we have to fiddle with the zoom behavior to satisfy Intro req's
 		// by usning the old zoom behavior for its stack
 		if (newState == IStackPresentationSite.STATE_MAXIMIZED)
 			useNewMinMax = useNewMinMax && !isIntroInStack();
-		else if (newState == IStackPresentationSite.STATE_RESTORED)
-			useNewMinMax = useNewMinMax && smartZoomed;
+		else if (newState == IStackPresentationSite.STATE_RESTORED) {
+			PartStack maxStack = page.getActivePerspective().getPresentation().getMaximizedStack();
+			useNewMinMax = useNewMinMax && maxStack == this;
+		}
 
 		if (useNewMinMax) {
         	StartupThreading.runWithoutExceptions(new StartupRunnable() {

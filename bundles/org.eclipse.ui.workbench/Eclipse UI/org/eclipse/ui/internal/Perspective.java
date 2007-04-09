@@ -1873,6 +1873,7 @@ public class Perspective {
     	
     	editorAreaState = newState;
     	
+    	// reset the restore flag if we're not minimized
     	if (newState != IStackPresentationSite.STATE_MINIMIZED)
     		editorAreaRestoreOnUnzoom = false;
     	
@@ -1887,48 +1888,34 @@ public class Perspective {
 	 * 
 	 */
 	private void refreshEditorAreaVisibility() {
-		// If it's minimized then it's in the trim
-		if (editorAreaState == IStackPresentationSite.STATE_MINIMIZED) {
-			// find the right editor stack and declare it minimized (needed to support
-			// 'auto-activation'...
-			EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);			
-			editorStack.setMinimized(editorAreaState == IStackPresentationSite.STATE_MINIMIZED);
-			
-			// Hide the editor area and show its trim 
+		// Nothing shows up if the editor area isn't visible at all
+		if (editorHidden) {
 			hideEditorAreaLocal();
-			setEditorAreaTrimVisibility(true);
+			setEditorAreaTrimVisibility(false);
 			return;
 		}
 		
-		if (!editorHidden) {
-			showEditorAreaLocal();
-			
-			// Show the editor area in the presentation
-			// We have to explicitly set the buttons on the site since
-			// it could be maximized in one perspective and not in another
-			if (editorAreaState != IStackPresentationSite.STATE_MINIMIZED)
-				updateEditorSiteState();
+		EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);
+		if (editorStack == null)
+			return;
+		
+		// Whatever we're doing, make the current editor stack match it
+		editorStack.setStateLocal(editorAreaState);
+		
+		// If it's minimized then it's in the trim
+		if (editorAreaState == IStackPresentationSite.STATE_MINIMIZED) {
+			// Hide the editor area and show its trim 
+			hideEditorAreaLocal();
+			setEditorAreaTrimVisibility(true);
 		}
 		else {
-			hideEditorAreaLocal();
+			// Show the editor area and hide its trim 
+			setEditorAreaTrimVisibility(false);
+			showEditorAreaLocal();
+			
+			if (editorAreaState == IStackPresentationSite.STATE_MAXIMIZED)
+				getPresentation().setMaximizedStack(editorStack);
 		}
-
-		setEditorAreaTrimVisibility(false);
-	}
-
-	/**
-	 * 
-	 */
-	private void updateEditorSiteState() {
-		// find the right editor stack...
-		EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);
-		
-		// Force it to display the correct state
-		editorStack.setState(editorAreaState);
-		
-		// Keep the presentation up to date with the correct editor stack
-		if (editorAreaState == IStackPresentationSite.STATE_MAXIMIZED)
-			getPresentation().setMaximizedStack(editorStack);
 	}
 
 	protected EditorAreaTrimToolBar setEditorAreaTrimVisibility(boolean visible) {

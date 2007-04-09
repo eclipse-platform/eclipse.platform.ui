@@ -330,6 +330,23 @@ public class EditorStack extends PartStack {
     	
 		super.setMinimized(minimized);
 	}
+
+	/**
+	 * Changes the editor stack's state to the given one -without-
+	 * side-effects. This is used when switching perspectives because
+	 * the Editor Area is perspective based but is shared between all
+	 * perspectives...
+	 * 
+	 * @param newState The new state to set the editor stack to
+	 */
+	public void setStateLocal(int newState) {
+		if (newState == getState())
+			return;
+		
+		//isMinimized = getState() == IStackPresentationSite.STATE_MINIMIZED;
+		super.setMinimized(newState == IStackPresentationSite.STATE_MINIMIZED);
+		presentationSite.setPresentationState(newState);
+	}
 	
 	/**
 	 * Cause the folder to hide or show its
