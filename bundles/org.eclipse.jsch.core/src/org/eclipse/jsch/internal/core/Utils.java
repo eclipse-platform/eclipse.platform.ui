@@ -77,9 +77,9 @@ public class Utils{
   }
 
   public static void setProxy(Session session){
-    Proxy proxy=getProxyForHost(session.getHost(), IProxyData.HTTPS_PROXY_TYPE);
+    Proxy proxy=getProxyForHost(session.getHost(), IProxyData.SOCKS_PROXY_TYPE);
     if(proxy==null)
-      proxy=getProxyForHost(session.getHost(), IProxyData.SOCKS_PROXY_TYPE);
+      proxy=getProxyForHost(session.getHost(), IProxyData. HTTPS_PROXY_TYPE);
     if(proxy!=null)
       session.setProxy(proxy);
   }

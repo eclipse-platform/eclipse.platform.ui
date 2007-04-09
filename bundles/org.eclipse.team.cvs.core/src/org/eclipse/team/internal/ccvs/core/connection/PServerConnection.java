@@ -145,9 +145,9 @@ public class PServerConnection implements IServerConnection {
 		IJSchService service = CVSProviderPlugin.getPlugin().getJSchService();
 		if (service == null)
 			return null;
-		Proxy proxy = service.getProxyForHost(cvsroot.getHost(), IProxyData.HTTPS_PROXY_TYPE);
+		Proxy proxy = service.getProxyForHost(cvsroot.getHost(), IProxyData.SOCKS_PROXY_TYPE);
 		if (proxy == null)
-			proxy = service.getProxyForHost(cvsroot.getHost(), IProxyData.SOCKS_PROXY_TYPE);
+			proxy = service.getProxyForHost(cvsroot.getHost(), IProxyData.HTTPS_PROXY_TYPE);
         return proxy;
     }
 
