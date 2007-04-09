@@ -139,7 +139,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	private int getImportance(IntroData data, String pageId, String extensionId) {
 		String pluginId = ExtensionMap.getInstance().getPluginId(extensionId);
 		if (ContentDetector.isNew(pluginId)) {
-			ExtensionMap.getInstance().setStartPage(pageId);
+			updateStartPage(pageId);
 			return ExtensionData.NEW;
 		}
 		PageData pdata = data.getPage(pageId);
@@ -151,6 +151,29 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		}
 		// none specified
 		return -1;
+	}
+
+	/*
+	 * Modify the start page if this is a root page and it's position
+	 * in the root page list is earlier than the current start page
+	 */
+	private void updateStartPage(String pageId) {
+		String currentStartPage = ExtensionMap.getInstance().getStartPage();
+		String ids = getVariable(VAR_INTRO_ROOT_PAGES);
+		if (ids != null) {
+			StringTokenizer stok = new StringTokenizer(ids, ","); //$NON-NLS-1$
+			while (stok.hasMoreTokens()) {
+				String id = stok.nextToken().trim();
+				if (id.equals(pageId)) {
+					ExtensionMap.getInstance().setStartPage(pageId);
+					return;
+				}
+				if (id.equals(currentStartPage)) {
+					// The current start page has higher priority than the new page
+					return;
+				}
+			}
+		}
 	}
 
 	private String resolveVariable(Bundle bundle, String value) {
