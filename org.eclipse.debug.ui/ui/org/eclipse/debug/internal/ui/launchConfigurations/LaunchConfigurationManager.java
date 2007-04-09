@@ -323,7 +323,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	public ILaunchConfiguration getFilteredLastLaunch(String groupId) {
 		LaunchHistory history = getLaunchHistory(groupId);
 		if (history != null) {
-			ILaunchConfiguration[] filterConfigs = filterConfigs(history.getHistory());
+			ILaunchConfiguration[] filterConfigs = history.getCompleteLaunchHistory();
 			if (filterConfigs.length > 0) {
 				return filterConfigs[0];
 			}
