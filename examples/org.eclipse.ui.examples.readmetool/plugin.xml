@@ -392,9 +392,9 @@
                   commandId="org.eclipse.ui.examples.readmetool.item2"
                   icon="icons/obj16/editor.gif"
                   id="readmeTool.trimItem"
-                  label="Trim Item"
+                  label="%Trim.item"
                   style="push"
-                  tooltip="TrimItem ToolTip">
+                  tooltip="%TrimItem.toolTip">
             </command>
             <control
                   class="org.eclipse.ui.examples.readmetool.ReadmeControlContribution"
@@ -404,9 +404,9 @@
                   commandId="org.eclipse.ui.examples.readmetool.item2"
                   icon="icons/obj16/editor.gif"
                   id="readmeTool.trimItem2"
-                  label="Trim Item 2"
+                  label="%Trim2.item"
                   style="push"
-                  tooltip="TrimItem 2 ToolTip">
+                  tooltip="%TrimItem2.toolTip">
             </command>
          </toolbar>
       </menuContribution>
