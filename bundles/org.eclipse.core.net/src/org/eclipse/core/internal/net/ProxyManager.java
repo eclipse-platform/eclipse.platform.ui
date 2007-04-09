@@ -116,7 +116,7 @@ public class ProxyManager implements IProxyService {
 		IProxyData[] result = new IProxyData[proxies.length];
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
-			result[i] = type.getProxyData();
+			result[i] = type.getProxyData(ProxyType.VERIFY_EQUAL);
 		}
 		return result;
 	}
@@ -190,7 +190,7 @@ public class ProxyManager implements IProxyService {
 	private void updateSystemProperties() {
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
-			type.updateSystemProperties(getProxyData(type.getName()), isProxiesEnabled());
+			type.updateSystemProperties(internalGetProxyData(type.getName(), ProxyType.DO_NOT_VERIFY), isProxiesEnabled());
 		}
 	}
 
@@ -203,11 +203,14 @@ public class ProxyManager implements IProxyService {
 	}
 
 	public IProxyData getProxyData(String type) {
-		IProxyData[] data = getProxyData();
-		for (int i = 0; i < data.length; i++) {
-			IProxyData proxyData = data[i];
-			if (proxyData.getType().equals(type)) {
-				return proxyData;
+		return internalGetProxyData(type, ProxyType.VERIFY_EQUAL);
+	}
+
+	private IProxyData internalGetProxyData(String type, int verifySystemProperties) {
+		for (int i = 0; i < proxies.length; i++) {
+			ProxyType pt = proxies[i];
+			if (pt.getName().equals(type)) {
+				return pt.getProxyData(verifySystemProperties);
 			}
 		}
 		return null;

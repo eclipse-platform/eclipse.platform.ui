@@ -30,6 +30,13 @@ public class ProxyType {
 	private static final String PREF_PROXY_PORT = "port"; //$NON-NLS-1$
 	private static final String PREF_PROXY_HAS_AUTH = "hasAuth"; //$NON-NLS-1$
 
+	/**
+	 * Verification tags used when creating a proxy data
+	 */
+	public static int DO_NOT_VERIFY = 1;
+	public static int VERIFY_EMPTY = 2;
+	public static int VERIFY_EQUAL = 4;
+	
 	/*
 	 * Fields used to cache authentication information in the keyring
 	 */
@@ -91,11 +98,11 @@ public class ProxyType {
 				PREF_PROXY_DATA_NODE);
 	}
 
-	public IProxyData getProxyData() {
-		return createProxyData(name, getPreferenceNode());
+	public IProxyData getProxyData(int verifyFlag) {
+		return createProxyData(name, getPreferenceNode(), verifyFlag);
 	}
 
-	private IProxyData createProxyData(String type, Preferences node) {
+	private IProxyData createProxyData(String type, Preferences node, int verifyFlag) {
 		String host = node.get(PREF_PROXY_HOST, null);
 		if (host != null && host.length() == 0)
 			host = null;
@@ -103,12 +110,19 @@ public class ProxyType {
 		boolean requiresAuth = node.getBoolean(PREF_PROXY_HAS_AUTH, false);
 		ProxyData proxyData = new ProxyData(type, host, port, requiresAuth);
 		loadProxyAuth(proxyData);
+		if (verifyFlag == VERIFY_EMPTY) {
+			// We are initializing so verify that the system properties are empty
+			verifySystemPropertiesEmpty(type);
+		} else if (verifyFlag == VERIFY_EQUAL) {
+			// Verify that the data in the preferences matches the system properties 
+			verifyDataMatchesSystemProperties(proxyData);
+		}
 		return proxyData;
 	}
 
 	public boolean setProxyData(IProxyData proxyData, boolean proxiesEnabled) {
 		Assert.isTrue(proxyData.getType().equals(getName()));
-		IProxyData oldData = getProxyData();
+		IProxyData oldData = getProxyData(VERIFY_EQUAL);
 		if (oldData.equals(proxyData))
 			return false;
 		Preferences node = getPreferenceNode();
@@ -149,6 +163,153 @@ public class ProxyType {
 		} catch (SecurityException e) {
 			Activator.logError("A security exception occurred while trying to put the proxy data into the system properties", e); //$NON-NLS-1$
 		}
+	}
+	
+	private boolean verifyDataMatchesSystemProperties(ProxyData proxyData) {
+		try {
+			boolean proxiesEnabled = ProxyManager.getProxyManager().isProxiesEnabled();
+			if (proxyData.getType().equals(IProxyData.HTTP_PROXY_TYPE)) {
+				return verifyDataMatchesHttpSystemProperties(proxyData, proxiesEnabled);
+			} else if (proxyData.getType().equals(IProxyData.HTTPS_PROXY_TYPE)) {
+				return verifyDataMatchesHttpsSystemProperties(proxyData, proxiesEnabled);
+			} else if (proxyData.getType().equals(IProxyData.SOCKS_PROXY_TYPE)) {
+				return verifyDataMatchesSocksSystemProperties(proxyData, proxiesEnabled);
+			}
+			
+		} catch (SecurityException e) {
+			// Just ignore this here since it will be surfaced elsewhere
+		}
+		return true;
+	}
+
+	private boolean verifyDataMatchesHttpSystemProperties(ProxyData proxyData,
+			boolean proxiesEnabled) {
+		if (proxiesEnabled) {
+			boolean verified = true;
+			String dHost = proxyData.getHost();
+			if (!verifySystemPropertyEquals("http.proxyHost", dHost)) { //$NON-NLS-1$
+				verified = false;
+			} else if (dHost != null && !Boolean.getBoolean("http.proxySet")) {  //$NON-NLS-1$
+				Activator.logInfo("The HTTP proxy is enabled in the preferences but disabled in the system settings", null); //$NON-NLS-1$
+				verified = false;
+			}
+			int port = proxyData.getPort();
+			if (!verifySystemPropertyEquals("http.proxyPort", port == -1 ? null : String.valueOf(port))) { //$NON-NLS-1$
+				verified = false;
+			}
+			return verified;
+		}
+		return verifyHttpSystemPropertiesEmpty();
+	}
+
+	private boolean verifyDataMatchesHttpsSystemProperties(ProxyData proxyData,
+			boolean proxiesEnabled) {
+		if (proxiesEnabled) {
+			boolean verified = true;
+			String dHost = proxyData.getHost();
+			if (!verifySystemPropertyEquals("https.proxyHost", dHost)) { //$NON-NLS-1$
+				verified = false;
+			} else if (dHost != null && !Boolean.getBoolean("https.proxySet")) {  //$NON-NLS-1$
+				Activator.logInfo("The SSL proxy is enabled in the preferences but disabled in the system settings", null); //$NON-NLS-1$
+				verified = false;
+			}
+			int port = proxyData.getPort();
+			if (!verifySystemPropertyEquals("https.proxyPort", port == -1 ? null : String.valueOf(port))) { //$NON-NLS-1$
+				verified = false;
+			}
+			return verified;
+		}
+		return verifyHttpsSystemPropertiesEmpty();
+	}
+
+	private boolean verifyDataMatchesSocksSystemProperties(ProxyData proxyData,
+			boolean proxiesEnabled) {
+		if (proxiesEnabled && (hasJavaNetProxyClass() || alwaysSetSocksProperties)) {
+			boolean verified = true;
+			String dHost = proxyData.getHost();
+			if (!verifySystemPropertyEquals("socksProxyHost", dHost)) { //$NON-NLS-1$
+				verified = false;
+			}
+			int port = proxyData.getPort();
+			if (!verifySystemPropertyEquals("socksProxyPort", port == -1 ? null : String.valueOf(port))) { //$NON-NLS-1$
+				verified = false;
+			}
+			return verified;
+		}
+		return verifySocksSystemPropertiesEmpty();
+	}
+
+	private boolean verifySystemPropertyEquals(String key, String expected) {
+		String value = System.getProperty(key);
+		if (value == expected)
+			return true;
+		if (value == null && expected != null) {
+			Activator.logInfo(NLS.bind("System property {0} is not set but should be {1}.", key, expected), null); //$NON-NLS-1$
+			return false;
+		}
+		if (value != null && expected == null) {
+			Activator.logInfo(NLS.bind("System property {0} is set to {1} but should not be set.", key, value), null); //$NON-NLS-1$
+			return false;
+		}
+		if (!value.equals(expected)) {
+			Activator.logInfo(NLS.bind("System property {0} is set to {1} but should be {2}.", new Object[] {key, value, expected }), null); //$NON-NLS-1$
+			return false;
+		}
+		return true;
+	}
+
+	private boolean verifySystemPropertiesEmpty(String proxyType) {
+		try {
+			if (proxyType.equals(IProxyData.HTTP_PROXY_TYPE)) {
+				return verifyHttpSystemPropertiesEmpty();
+			} else if (proxyType.equals(IProxyData.HTTPS_PROXY_TYPE)) {
+				return verifyHttpsSystemPropertiesEmpty();
+			} else if (proxyType.equals(IProxyData.SOCKS_PROXY_TYPE)) {
+				return verifySocksSystemPropertiesEmpty();
+			}
+		} catch (SecurityException e) {
+			// Just ignore this here since it will be surfaced elsewhere
+		}
+		return true;
+	}
+
+	private boolean verifyHttpSystemPropertiesEmpty() {
+		boolean verified = true;
+		verified &= verifyIsNotSet("http.proxySet"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("http.proxyHost"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("http.proxyPort"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("http.nonProxyHosts"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("http.proxyUser"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("http.proxyUserName"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("http.proxyPassword"); //$NON-NLS-1$
+		return verified;
+	}
+
+	private boolean verifyIsNotSet(String key) {
+		String value = System.getProperty(key);
+		if (value != null) {
+			Activator.logInfo(NLS.bind("System property {0} has been set to {1} by an external source. This value will be overwritten using the values from the preferences", key, value), null); //$NON-NLS-1$
+		}
+		return value == null;
+	}
+
+	private boolean verifyHttpsSystemPropertiesEmpty() {
+		boolean verified = true;
+		verified &= verifyIsNotSet("https.proxySet"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("https.proxyHost"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("https.proxyPort"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("https.nonProxyHosts"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("https.proxyUser"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("https.proxyUserName"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("https.proxyPassword"); //$NON-NLS-1$
+		return verified;
+	}
+
+	private boolean verifySocksSystemPropertiesEmpty() {
+		boolean verified = true;
+		verified &= verifyIsNotSet("socksProxyHost"); //$NON-NLS-1$
+		verified &= verifyIsNotSet("socksProxyPort"); //$NON-NLS-1$
+		return verified;
 	}
 
 	public String getName() {
@@ -257,7 +418,7 @@ public class ProxyType {
 	}
 
 	public void initialize(boolean proxiesEnabled) {
-		updateSystemProperties(getProxyData(), proxiesEnabled);
+		updateSystemProperties(getProxyData(VERIFY_EMPTY), proxiesEnabled);
 	}
 	
     private Map getAuthInfo() {

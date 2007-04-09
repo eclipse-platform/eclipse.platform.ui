@@ -53,6 +53,8 @@ public class ProxyData implements IProxyData {
 	}
 
 	public void setHost(String host) {
+		if (host.length() == 0)
+			host = null;
 		this.host = host;
 	}
 
