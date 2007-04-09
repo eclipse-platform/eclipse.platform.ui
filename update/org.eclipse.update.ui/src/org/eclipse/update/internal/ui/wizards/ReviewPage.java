@@ -300,8 +300,10 @@ public class ReviewPage	extends BannerPage {
         public String getText(Object obj) {
             if (obj instanceof SiteBookmark) 
                 return ((SiteBookmark) obj).getLabel();
+            /*
             if (obj instanceof SiteCategory)
-                return ((SiteCategory)obj).getName();
+                return obj.toString();
+                */
             if (obj instanceof IInstallFeatureOperation) {
                 IInstallFeatureOperation job = (IInstallFeatureOperation) obj;
                 IFeature feature = job.getFeature();
