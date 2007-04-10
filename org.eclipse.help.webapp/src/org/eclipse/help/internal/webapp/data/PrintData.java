@@ -251,6 +251,11 @@ public class PrintData extends RequestData {
 					if (topic != null) {
 						return topic;
 					}
+					// Test for root node as topic
+					topic = tocs[i].getTopic(null);
+					if (topicParam.equals(topic.getHref())) {
+						return topic;
+					}
 				}
 			}
 			return null;
