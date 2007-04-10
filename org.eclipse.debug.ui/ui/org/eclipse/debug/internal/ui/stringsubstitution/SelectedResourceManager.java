@@ -17,11 +17,13 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -43,6 +45,46 @@ public class SelectedResourceManager  {
 			fgDefault = new SelectedResourceManager(); 
 		}
 		return fgDefault;
+	}
+	
+	/**
+	 * Returns the selection from the currently active part. If the active part is an
+	 * editor a new selection of the editor input is made, otherwise the selection 
+	 * from the parts' selection provider is returned if it is a structured selection. Otherwise
+	 * and empty selection is returned, never <code>null</code>
+	 * 
+	 * This method is intended to be called from the UI thread.
+	 * 
+	 * @return the <code>IStructuredSelection</code> from the current parts' selection provider, or
+	 * a new <code>IStructuredSelection</code> of the current editor input, depending on what the current part
+	 * is.
+	 * 
+	 * @since 3.3
+	 */
+	public IStructuredSelection getCurrentSelection() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if(window != null) {
+			IWorkbenchPage page  = window.getActivePage();
+			if(page != null) {
+				IWorkbenchPart part = page.getActivePart();
+				if(part instanceof IEditorPart) {
+					return new StructuredSelection(((IEditorPart)part).getEditorInput());
+				}
+				else if(part != null) {
+					IWorkbenchSite site = part.getSite();
+					if(site != null) {
+						ISelectionProvider provider = site.getSelectionProvider();
+						if(provider != null) {
+							ISelection selection = provider.getSelection();
+							if(selection instanceof IStructuredSelection) {
+								return (IStructuredSelection) provider.getSelection();
+							}
+						}
+					}
+				}
+			}
+		}
+		return StructuredSelection.EMPTY;
 	}
 	
 	/**

@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -63,7 +64,6 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  */
 public abstract class ContextualLaunchAction implements IObjectActionDelegate, IMenuCreator {
 
-	private IStructuredSelection fSelection;
 	private IAction fDelegateAction;
 	private String fMode;
 	// default launch group for this mode (null category)
@@ -158,8 +158,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				fDelegateAction = action;
 				fDelegateAction.setMenuCreator(this);
 			}
-			// save selection and enable our menu
-			fSelection = (IStructuredSelection) selection;
+			//enable our menu
 			action.setEnabled(true);
 			return;
 		}
@@ -180,28 +179,30 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
      * @param menu The menu to fill
      */
 	protected void fillMenu(Menu menu) {
-		if (fSelection == null) {
-			return;
-		}
-		IEvaluationContext context = createContext();
-		//CONTEXTLAUNCHING
-		Object obj = fSelection.getFirstElement();
+		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		int accelerator = 1;
-		try {
-			//try to add the shared config it the context is one.
-			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(obj);
-	        if(config != null && config.exists() && config.supportsMode(fMode)) {
-	        	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-	            ActionContributionItem item = new ActionContributionItem(action);
-	            item.fill(menu, -1);
-	            new MenuItem(menu, SWT.SEPARATOR);
+		if(!ss.isEmpty()) {
+			try {
+				//try to add the shared config it the context is one.
+				ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(ss.getFirstElement());
+		        if(config != null && config.exists() && config.supportsMode(fMode)) {
+		        	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+		            ActionContributionItem item = new ActionContributionItem(action);
+		            item.fill(menu, -1);
+				}
 			}
+			catch (CoreException ce) {}
 		}
-		catch (CoreException ce) {}
 		
 		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
+	
+	//create a context
+		List selection = ss.toList();
+		IEvaluationContext context = new EvaluationContext(null, selection);
+		context.setAllowPluginActivation(true);
+		context.addVariable("selection", selection); //$NON-NLS-1$
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
 			try {
@@ -212,7 +213,11 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			catch (CoreException e) {}
 		}
 		iter = filteredShortCuts.iterator();
-		
+	
+	//we need a separator iff the shared config entry has been added and there are following shortcuts
+		if(menu.getItemCount() > 0 && filteredShortCuts.size() > 0) {
+			 new MenuItem(menu, SWT.SEPARATOR);
+		}
 		List categories = new ArrayList();
 		while (iter.hasNext()) {
 			LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
@@ -231,14 +236,16 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			}
 		}
 		
-		if (accelerator > 1) {
-			new MenuItem(menu, SWT.SEPARATOR);
-		}
+	// add in the open ... dialog shortcut(s)
 		if (categories.isEmpty()) {
+			if (accelerator > 1) {
+				new MenuItem(menu, SWT.SEPARATOR);
+			}
 			IAction action = new OpenLaunchDialogAction(fGroup.getIdentifier());
 		    ActionContributionItem item = new ActionContributionItem(action);
 		    item.fill(menu, -1);
 		} else {
+			boolean addedSep = false;
 			iter = categories.iterator();
 			while (iter.hasNext()) {
 				// NOTE: category can be null
@@ -248,6 +255,10 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 					group = (ILaunchGroup) fGroupsByCategory.get(category);
 				}
 				if (group != null) {
+					if (accelerator > 1 && !addedSep) {
+						new MenuItem(menu, SWT.SEPARATOR);
+						addedSep = true;
+					}
 				    IAction action = new OpenLaunchDialogAction(group.getIdentifier());
 				    ActionContributionItem item= new ActionContributionItem(action);
 				    item.fill(menu, -1);
@@ -255,31 +266,6 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			}
 		}
 
-	}
-
-	/**
-	 * @return an Evaluation context with default variable = selection
-	 */
-	private IEvaluationContext createContext() {
-		// create a default evaluation context with default variable of the user selection
-		List selection = getSelectedElements();
-		IEvaluationContext context = new EvaluationContext(null, selection);
-		context.setAllowPluginActivation(true);
-		context.addVariable("selection", selection); //$NON-NLS-1$
-		return context;
-	}
-	
-	/**
-	 * @return current selection as a List.
-	 */
-	private List getSelectedElements() {
-		ArrayList result = new ArrayList();
-		Iterator iter = fSelection.iterator();
-		while (iter.hasNext()) {
-			Object next = iter.next();
-			result.add(next);
-		}
-		return result;
 	}
 
 	/**
