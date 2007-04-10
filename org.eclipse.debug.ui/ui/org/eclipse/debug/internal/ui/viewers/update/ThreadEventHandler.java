@@ -316,6 +316,17 @@ public class ThreadEventHandler extends DebugEventHandler {
 		return thread;
 	}
 	
+	protected synchronized IThread queueSuspendedThread(IThread thread) {
+		if (!isDisposed()) {
+			fThreadQueue.add(thread);
+		}
+		return thread;
+	}	
+	
+	protected synchronized void removeQueuedThread(IThread thread) {
+		fThreadQueue.remove(thread);
+	}
+	
 	protected synchronized IThread getNextSuspendedThread() {
 		if (!fThreadQueue.isEmpty()) {
 			return (IThread) fThreadQueue.iterator().next();
