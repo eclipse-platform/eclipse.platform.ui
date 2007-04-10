@@ -42,7 +42,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -685,14 +687,18 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", list); //$NON-NLS-1$
 		HashSet set = new HashSet();
-		for(Iterator iter = exts.iterator(); iter.hasNext();) {
+		for(Iterator iter = exts.listIterator(); iter.hasNext();) {
 			ext = (LaunchShortcutExtension) iter.next();
 			try {
 				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression())) {
 					set.addAll(ext.getAssociatedConfigurationTypes());
 				}
 			}
-			catch(CoreException ce) {}
+			catch(CoreException ce) {
+				IStatus status = new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Launch shortcut '" + ext.getId() + "' enablement expression caused exception. Shortcut was removed.", ce); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugUIPlugin.log(status);
+				iter.remove();
+			}
 		}
 		LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = null;
