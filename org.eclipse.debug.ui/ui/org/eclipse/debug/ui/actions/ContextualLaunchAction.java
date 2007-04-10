@@ -127,15 +127,12 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		menu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {
 				if (fFillMenu) {
-					try {
-						Menu m = (Menu)e.widget;
-						MenuItem[] items = m.getItems();
-						for (int i=0; i < items.length; i++) {
-							items[i].dispose();
-						}
-						fillMenu(m);
+					Menu m = (Menu)e.widget;
+					MenuItem[] items = m.getItems();
+					for (int i=0; i < items.length; i++) {
+						items[i].dispose();
 					}
-					catch(CoreException ce) {}
+					fillMenu(m);
 					fFillMenu = false;
 				}
 			}
@@ -182,7 +179,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
      * Fills the menu with applicable launch shortcuts
      * @param menu The menu to fill
      */
-	protected void fillMenu(Menu menu) throws CoreException {
+	protected void fillMenu(Menu menu) {
 		if (fSelection == null) {
 			return;
 		}
@@ -190,14 +187,18 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		//CONTEXTLAUNCHING
 		Object obj = fSelection.getFirstElement();
 		int accelerator = 1;
-		//IResource resource = DebugUIPlugin.getDefault().getContextLaunchingResourceManager().getCurrentResource();
-		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(obj);
-        if(config != null && config.exists() && config.supportsMode(fMode)) {
-        	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
-            ActionContributionItem item = new ActionContributionItem(action);
-            item.fill(menu, -1);
-            new MenuItem(menu, SWT.SEPARATOR);
+		try {
+			//try to add the shared config it the context is one.
+			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(obj);
+	        if(config != null && config.exists() && config.supportsMode(fMode)) {
+	        	IAction action = new LaunchConfigurationAction(config, fMode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+	            ActionContributionItem item = new ActionContributionItem(action);
+	            item.fill(menu, -1);
+	            new MenuItem(menu, SWT.SEPARATOR);
+			}
 		}
+		catch (CoreException ce) {}
+		
 		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
@@ -230,7 +231,9 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			}
 		}
 		
-		
+		if (accelerator > 1) {
+			new MenuItem(menu, SWT.SEPARATOR);
+		}
 		if (categories.isEmpty()) {
 			IAction action = new OpenLaunchDialogAction(fGroup.getIdentifier());
 		    ActionContributionItem item = new ActionContributionItem(action);
@@ -245,9 +248,6 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 					group = (ILaunchGroup) fGroupsByCategory.get(category);
 				}
 				if (group != null) {
-				    if (accelerator > 1) {
-						new MenuItem(menu, SWT.SEPARATOR);
-					}
 				    IAction action = new OpenLaunchDialogAction(group.getIdentifier());
 				    ActionContributionItem item= new ActionContributionItem(action);
 				    item.fill(menu, -1);
