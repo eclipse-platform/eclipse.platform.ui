@@ -28,6 +28,10 @@ public class PromptingDialog extends MultipleYesNoPrompter {
 	/**
 	 * Prompt for the given resources using the specific condition. The prompt dialog will
 	 * have the title specified.
+	 * @param shell 
+	 * @param resources 
+	 * @param condition 
+	 * @param title 
 	 */
 	public PromptingDialog(Shell shell, IResource[] resources, IPromptCondition condition, String title) {
 		this(shell, resources, condition, title, false /* all or nothing */);		 
@@ -43,9 +47,13 @@ public class PromptingDialog extends MultipleYesNoPrompter {
 		this.condition = condition;
 	}
 	/**
-	 * Call to calculate and show prompt. If no resources satisfy the prompt condition
-	 * a dialog won't be shown. The resources for which the user confirmed the action
-	 * are returned.
+	 * Call to calculate and show prompt. If no resources satisfy the prompt
+	 * condition a dialog won't be shown. The resources for which the user
+	 * confirmed the action are returned.
+	 * @return the resources
+	 * 
+	 * @throws InterruptedException
+	 *             if the user choose to cancel on the prompt dialog
 	 */
 	public IResource[] promptForMultiple() throws InterruptedException {
 		List targetResources = new ArrayList();

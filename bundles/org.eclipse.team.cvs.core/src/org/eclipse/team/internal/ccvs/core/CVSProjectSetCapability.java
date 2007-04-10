@@ -125,7 +125,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		IProject[] projects = asProjects(referenceStrings, infoMap);
 		projects = confirmOverwrite(context, projects);
 		if (projects == null)
-			return new IProject[0];
+			throw new OperationCanceledException();
 
 		// Load the projects
 		return checkout(projects, infoMap, monitor);
