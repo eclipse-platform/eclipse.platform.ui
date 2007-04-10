@@ -475,14 +475,23 @@ public class Perspective {
         if (!isEditorAreaVisible()) {
 			return;
 		}
-
-        // When hiding the editor area, always restore it so we won't
-        // leave trim elements and we always show something
-        if (editorAreaState != IStackPresentationSite.STATE_RESTORED) {
-        	setEditorAreaState(IStackPresentationSite.STATE_RESTORED);
-        }
         
-        hideEditorAreaLocal();
+        // Show the editor in the appropriate location
+        if (useNewMinMax(this)) {
+        	// If it's the currently maximized part we have to restore first
+        	if (getPresentation().getMaximizedStack() instanceof EditorStack) {
+        		getPresentation().getMaximizedStack().setState(IStackPresentationSite.STATE_RESTORED);
+        	}
+        	
+        	boolean isMinimized = editorAreaState == IStackPresentationSite.STATE_MINIMIZED;
+        	if (!isMinimized)
+        		hideEditorAreaLocal();
+        	else
+        		setEditorAreaTrimVisibility(false);
+        }
+        else {
+        	hideEditorAreaLocal();
+        }
         
         editorHidden = true;
     }
@@ -872,15 +881,15 @@ public class Perspective {
 	protected void onActivate() {
 		// Update editor area state.
 		if (editorArea.getControl() != null) {
-			boolean notHidden = isEditorAreaVisible();
-			boolean notInTrim = editorAreaState != IStackPresentationSite.STATE_MINIMIZED;
+			boolean visible = isEditorAreaVisible();
+			boolean inTrim = editorAreaState == IStackPresentationSite.STATE_MINIMIZED;
 			
 			// Funky check: Intro uses the old zoom behaviour when maximized. Make sure we don't show the
 			// editor if it's supposed to be hidden because the intro is maximized. Note that
 			// 'childObscuredByZoom' will only respond 'true' when using the old behaviour.
-			boolean notIntroMaxed = !getPresentation().getLayout().childObscuredByZoom(editorArea);
+			boolean introMaxed = getPresentation().getLayout().childObscuredByZoom(editorArea);
 			
-			editorArea.setVisible(notHidden && notInTrim && notIntroMaxed);
+			editorArea.setVisible(visible && !inTrim && !introMaxed);
 		}
 
 		// Update fast views.
@@ -935,7 +944,7 @@ public class Perspective {
 			}
     	}
 
-		if (shouldHideEditorsOnActivate) {
+		if (shouldHideEditorsOnActivate || (editorHidden && editorHolder == null)) {
 			// We do this here to ensure that createPartControl is called on the
 			// top editor
 			// before it is hidden. See bug 20166.
@@ -1380,9 +1389,6 @@ public class Perspective {
         shouldHideEditorsOnActivate = (areaVisible != null && areaVisible
                 .intValue() == 0);
 
-        Integer editorWasHidden = memento.getInteger(IWorkbenchConstants.TAG_AREA_HIDDEN);
-        editorHidden = (editorWasHidden != null && editorWasHidden.intValue() != 0);
-
         // Restore the trim state of the editor area
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
@@ -1671,14 +1677,11 @@ public class Perspective {
         result.add(presentation.saveState(childMem));
 
         // Save the editor visibility state
-        if (isEditorAreaVisible()  || editorAreaState != IStackPresentationSite.STATE_MINIMIZED) {
+        if (isEditorAreaVisible()) {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 1);
 		} else {
 			memento.putInteger(IWorkbenchConstants.TAG_AREA_VISIBLE, 0);
 		}
-
-        // Remember if we were -explicitly- hidden
-        memento.putInteger(IWorkbenchConstants.TAG_AREA_HIDDEN, editorHidden ? 1 : 0);
 
         // Save the trim state of the editor area if using the new min/max
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
@@ -1833,7 +1836,23 @@ public class Perspective {
 		}
 
         editorHidden = false;
-        showEditorAreaLocal();
+        
+        // Show the editor in the appropriate location
+        if (useNewMinMax(this)) {
+        	boolean isMinimized = editorAreaState == IStackPresentationSite.STATE_MINIMIZED;
+        	if (!isMinimized) {
+        		// If the editor area is going to show then we have to restore
+            	if (getPresentation().getMaximizedStack() != null)
+            		getPresentation().getMaximizedStack().setState(IStackPresentationSite.STATE_RESTORED);
+            	
+        		showEditorAreaLocal();
+        	}
+        	else
+        		setEditorAreaTrimVisibility(true);
+        }
+        else {
+        	showEditorAreaLocal();
+        }
     }
 
     /**
