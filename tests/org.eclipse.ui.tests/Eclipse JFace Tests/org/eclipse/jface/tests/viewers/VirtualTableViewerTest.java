@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.TableViewer;
  */
 public class VirtualTableViewerTest extends TableViewerTest {
 
-	int currentVisibleIndex = -1;
+	Set visibleItems = new HashSet();
 
 	/**
 	 * Create a new instance of the receiver.
@@ -63,10 +63,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 			 */
 			public void handleEvent(Event event) {
 				TableItem item = (TableItem) event.item;
-				int index = table.indexOf(item);
-				if (index > currentVisibleIndex)
-					currentVisibleIndex = index;
-
+				visibleItems.add(item);
 			}
 		});
 		return viewer;
@@ -78,14 +75,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @return TableItem[]
 	 */
 	private TableItem[] getVisibleItems() {
-		if (currentVisibleIndex < 0)// Anything shown yet?
-			return new TableItem[0];
-		Table table = ((TableViewer) fViewer).getTable();
-		TableItem[] visible = new TableItem[currentVisibleIndex];
-		for (int i = 0; i < visible.length; i++) {
-			visible[i] = table.getItem(i);
-		}
-		return visible;
+		return (TableItem[]) visibleItems.toArray(new TableItem[visibleItems.size()]);
 	}
 
 	public void testElementsCreated() {
