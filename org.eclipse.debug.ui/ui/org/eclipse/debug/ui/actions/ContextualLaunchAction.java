@@ -21,9 +21,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
@@ -163,15 +161,6 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 			return;
 		}
 		action.setEnabled(false);
-	}
-	
-	/**
-	 * Returns the launch manager
-	 * @return the launch manager
-	 * @since 3.3
-	 */
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
     /**
