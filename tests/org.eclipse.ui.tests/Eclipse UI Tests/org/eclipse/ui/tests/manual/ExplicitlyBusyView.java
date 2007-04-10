@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
-
 /**
  * @since 3.3
  * 
@@ -34,11 +33,12 @@ public class ExplicitlyBusyView extends ViewPart {
 	private IWorkbenchSiteProgressService progressService;
 	private Object family = new Object();
 	private int counter;
-	
+
 	class SomeJob extends Job {
 		public SomeJob(String name) {
 			super(name);
 		}
+
 		protected IStatus run(IProgressMonitor monitor) {
 			try {
 				Thread.sleep(5000);
@@ -47,6 +47,7 @@ public class ExplicitlyBusyView extends ViewPart {
 			}
 			return Status.OK_STATUS;
 		}
+
 		public boolean belongsTo(Object family) {
 			return family == ExplicitlyBusyView.this.family;
 		}
@@ -56,21 +57,46 @@ public class ExplicitlyBusyView extends ViewPart {
 		progressService = (IWorkbenchSiteProgressService) getSite().getAdapter(
 				IWorkbenchSiteProgressService.class);
 		progressService.showBusyForFamily(family);
-		final Button button = new Button(parent, SWT.CHECK);
-		button.setText("Busy");
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				progressService.showBusy(button.getSelection());
-			}
-		});
-		Button button2 = new Button(parent, SWT.PUSH);
-		button2.setText("Spawn Job");
-		button2.addSelectionListener(new SelectionAdapter(){
-
-			public void widgetSelected(SelectionEvent e) {
-				new SomeJob("Some Job " + counter++).schedule();
-			}
-		});
+		{
+			final Button button = new Button(parent, SWT.CHECK);
+			button.setText("Busy");
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (button.getSelection()) {
+						progressService.incrementBusy();
+					} else {
+						progressService.decrementBusy();
+					}
+				}
+			});
+		}
+		{
+			Button button = new Button(parent, SWT.PUSH);
+			button.setText("Increment Busy");
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					progressService.incrementBusy();
+				}
+			});
+		}
+		{
+			Button button = new Button(parent, SWT.PUSH);
+			button.setText("Decrement Busy");
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					progressService.decrementBusy();
+				}
+			});
+		}
+		{
+			Button button = new Button(parent, SWT.PUSH);
+			button.setText("Spawn Job");
+			button.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					new SomeJob("Some Job " + counter++).schedule();
+				}
+			});
+		}
 		GridLayoutFactory.swtDefaults().applyTo(parent);
 	}
 

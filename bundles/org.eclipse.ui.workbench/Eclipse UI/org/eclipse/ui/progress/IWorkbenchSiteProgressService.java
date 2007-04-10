@@ -87,21 +87,30 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
     public void warnOfContentChange();
     
     /**
-	 * Show busy state if the given boolean is true. To be used by clients who
-	 * do not use jobs for background work. Note that calling this method with
-	 * <code>false</code> will only clear this flag; the workbench part may
-	 * still be shown as busy if other methods on this class have been called
-	 * that result in a busy state. It is up to clients to manage calls to this
-	 * method; there is no counter that remembers the number of calls to
-	 * <code>showBusy(true)</code>.
-	 * 
-	 * @param busy
-	 *            <code>true</code> if the part is to be considered busy,
-	 *            <code>false</code> to signal that the background work has
-	 *            ended.
+	 * Increments the busy counter for this workbench site. This API should only
+	 * be used for background work that does not use jobs. As long as there have
+	 * been more calls to incrementBusy() than to decrementBusy(), the part will
+	 * show a busy affordance. Each call to incrementBusy must be followed by a
+	 * call to decrementBusy once the caller no longer needs the part to show
+	 * the busy affordance.
+	 * <p>
+	 * Note that the job-related methods on this class are another way to let
+	 * the part show a busy affordance.  A part will only appear non-busy if no
+	 * jobs have been scheduled through this service, and the internal busy
+	 * counter is not positive.
+	 * </p>
 	 * 
 	 * @since 3.3
 	 */
-	public void showBusy(boolean busy);
+	public void incrementBusy();
 
+    /**
+	 * Decrements the busy counter for this workbench site. This API should only
+	 * be used for background work that does not use jobs. It is an error to call
+	 * this method without first making a matching call to {@link #incrementBusy()}.
+	 * 
+	 * @since 3.3
+	 */
+	public void decrementBusy();
+	
 }

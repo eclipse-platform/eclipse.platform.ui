@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -64,7 +66,7 @@ public class WorkbenchSiteProgressService implements
     /**
      * Flag that keeps state from calls to {@link #showBusy(boolean)}
      */
-	private boolean explicitlyBusy;
+	private int busyCount = 0;
 
     private class SiteUpdateJob extends WorkbenchJob {
         private boolean busy;
@@ -260,16 +262,13 @@ public class WorkbenchSiteProgressService implements
 				return;
 			}
             busyJobs.remove(job);
-            if (busyJobs.size() > 0 || explicitlyBusy) {
-				return;
-			}
         }
-        if (PlatformUI.isWorkbenchRunning()) {
-            updateJob.setBusy(false);
-            updateJob.schedule(100);
-        } else {
-			updateJob.cancel();
-		}
+        try {
+        	decrementBusy();
+        } catch (Exception ex) {
+        	// protecting against assertion failures
+        	WorkbenchPlugin.log(ex);
+        }
     }
 
     /*
@@ -283,17 +282,8 @@ public class WorkbenchSiteProgressService implements
 				return;
 			}
             busyJobs.add(job);
-            //If it is greater than one we already set busy
-            if (busyJobs.size() > 1) {
-				return;
-			}
         }
-        if (PlatformUI.isWorkbenchRunning()) {
-            updateJob.setBusy(true);
-            updateJob.schedule(100);
-        } else {
-			updateJob.cancel();
-		}
+        incrementBusy();
     }
 
     /*
@@ -367,24 +357,39 @@ public class WorkbenchSiteProgressService implements
         return getWorkbenchProgressService().getIconFor(job);
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusy(boolean)
+     */
+    public void incrementBusy() {
+		synchronized (busyLock) {
+			this.busyCount++;
+			if (busyCount != 1) {
+				return;
+			}
+			updateJob.setBusy(true);
+		}
+		if (PlatformUI.isWorkbenchRunning()) {
+			updateJob.schedule(100);
+		} else {
+			updateJob.cancel();
+		}
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IWorkbenchSiteProgressService#showBusy(boolean)
 	 */
-	public void showBusy(boolean busy) {
-		boolean oldBusy = this.explicitlyBusy;
-		this.explicitlyBusy = busy;
-
-		if (oldBusy == busy) {
-			return;
-		} else if (oldBusy && !busy) {
-			synchronized (busyLock) {
-				if (busyJobs.size() > 0) {
-					return;
-				}
+	public void decrementBusy() {
+		synchronized (busyLock) {
+			Assert
+					.isTrue(
+							busyCount > 0,
+							"Ignoring unexpected call to IWorkbenchSiteProgressService.decrementBusy().  This might be due to an earlier call to this method."); //$NON-NLS-1$
+			this.busyCount--;
+			if (busyCount != 0) {
+				return;
 			}
+			updateJob.setBusy(false);
 		}
 		if (PlatformUI.isWorkbenchRunning()) {
-			updateJob.setBusy(busy);
 			updateJob.schedule(100);
 		} else {
 			updateJob.cancel();
