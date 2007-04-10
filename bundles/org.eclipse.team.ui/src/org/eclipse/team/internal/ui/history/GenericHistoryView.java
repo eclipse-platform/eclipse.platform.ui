@@ -478,7 +478,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		getSite().getPage().addPartListener(partListener2);
 
 		// add listener for selections
-		getSite().getPage().addSelectionListener(selectionListener);
+		getSite().getPage().addPostSelectionListener(selectionListener);
 	}
 
 	private void configureToolbars(IActionBars actionBars) {
@@ -887,7 +887,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		getSite().getPage().removePartListener(partListener);
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
-		getSite().getPage().removeSelectionListener(selectionListener);
+		getSite().getPage().removePostSelectionListener(selectionListener);
 		navigateAction.dispose();
 	}
 
