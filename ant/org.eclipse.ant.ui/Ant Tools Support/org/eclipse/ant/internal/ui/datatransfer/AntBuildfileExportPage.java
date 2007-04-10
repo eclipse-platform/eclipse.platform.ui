@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Richard Hoefter and others.
+ * Copyright (c) 2004, 2007 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -392,7 +392,7 @@ public class AntBuildfileExportPage extends WizardPage {
         {
             String message = DataTransferMessages.AntBuildfileExportPage_3 + ExportUtil.NEWLINE +
                 ExportUtil.toString(confirmOverwrite, ExportUtil.NEWLINE);
-            if (! ExportUtil.confirm(message, getShell()))
+            if (!MessageDialog.openConfirm(getShell(), DataTransferMessages.AntBuildfileExportPage_4, message))
             {
                 return new TreeSet(ExportUtil.getJavaProjectComparator());
             }

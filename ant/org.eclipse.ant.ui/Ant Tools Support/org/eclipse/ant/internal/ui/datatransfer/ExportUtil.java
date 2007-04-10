@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Richard Hoefter and others.
+ * Copyright (c) 2004, 2007 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104 
  *     IBM Corporation - nlsing and incorporating into Eclipse. 
  *                          Class created from combination of all utility classes of contribution
+ *                          Bug 177833
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
@@ -29,7 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,7 +49,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileModificationValidator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -58,13 +57,9 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jdt.core.Flags;
@@ -91,11 +86,9 @@ import org.eclipse.jdt.core.search.SearchParticipant;
 import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.SearchRequestor;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.ui.IFileEditorInput;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -539,7 +532,7 @@ public class ExportUtil
     }
 
     // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
-    private static Object computeScope(Object element) throws JavaModelException {
+    private static Object computeScope(Object element) {
         if (element instanceof IFileEditorInput)
             element= ((IFileEditorInput)element).getFile();
         if (element instanceof IResource)
@@ -912,192 +905,70 @@ public class ExportUtil
     }
 
     /**
-     * Asks user for confirmation.
-     * @param message    message to display
-     * @param shell      parent instance for dialogs
-     */
-    public static boolean confirm(String message, Shell shell)
-    {
-        return MessageDialog.openConfirm(shell,
-                DataTransferMessages.AntBuildfileExportPage_4, message);
-    }
-    
-    /**
-     * Get file modification validator for given file.
-     */
-    public static IFileModificationValidator getFileModificationValidator(IFile file)
-    {
-        List files = new ArrayList();
-        files.add(file);
-        Map validator2files = getFileModificationValidator(files);
-        return (IFileModificationValidator) validator2files.keySet().iterator().next();
-    }
-    
-    /**
-     * Get file modification validators for given files.
-     * Each file may under control of a different file modification validator,
-     * so it's required to use a map to represent result.
-     * 
-     * @param files                  IFile objects
-     * @return                       Validator map. Key is validator, value is
-     *                               List of IFile objects.
-     */
-    public static Map getFileModificationValidator(List files)
-    {
-        Map validator2files = new TreeMap(getClassnameComparator());
-        for (Iterator iter = files.iterator(); iter.hasNext();)
-        {
-            IFile file = (IFile) iter.next();
-            RepositoryProvider rp = RepositoryProvider.getProvider(file.getProject());
-            IFileModificationValidator validator = (rp != null)
-                ? rp.getFileModificationValidator()
-                : getDefaultValidator();
-            if (validator == null)
-            {
-                // some version control plugins don't provide a validator
-                // (e.g. subversion)
-                validator = getDefaultValidator();
-            }
-            List list =  (List) validator2files.get(validator);
-            if (list == null)
-            {
-                list = new ArrayList();
-            }
-            list.add(file);
-            validator2files.put(validator, list);
-        }
-        return validator2files;
-    }
-    
-    /**
      * Request write access to given file.
-     * Depending on the version control plugin opens a confirm checkout dialog.
+     * Depending on the version control plug-in opens a confirm checkout dialog.
      * 
      * @param shell              parent instance for dialogs
      * @param file               file to request write access for 
-     * @return                   true if user confirmed checkout
-     * @throws CoreException     thrown if project is under version control, but
-     *                           not connected
+     * @return                   <code>true</code> if user confirmed checkout
      */
-    public static boolean validateEdit(Shell shell, IFile file) throws CoreException
-    {
-        List files = new ArrayList();
-        files.add(file);
-        Map validator2files = getFileModificationValidator(files);
-        return validateEdit(shell, validator2files).size() > 0;
+    public static boolean validateEdit(Shell shell, IFile file) {
+    	return file.getWorkspace().validateEdit(new IFile[] {file}, shell).isOK();
     }
     
     /**
-     * Request write access to given files in validatorname2files map.
-     * Depending on the version control plugin opens a confirm checkout dialog.
+     * Request write access to given files.
+     * Depending on the version control plug-in opens a confirm checkout dialog.
      * 
      * @param shell              parent instance for dialogs
-     * @param validator2files    Validator map. Key is validator name, value is
-     *                           List of IFile objects.
-     * @return                   IFile objects for which user confirmed checkout
+     * @return                   <code>IFile</code> objects for which user confirmed checkout
      * @throws CoreException     thrown if project is under version control,
      *                           but not connected
      */
-    public static Set validateEdit(Shell shell, Map validator2files) throws CoreException
+    public static Set validateEdit(Shell shell, List files) throws CoreException
     {
-        Set confirmedFiles = new TreeSet(getIFileComparator());
-        for (Iterator iter = validator2files.keySet().iterator(); iter.hasNext();)
-        {
-            IFileModificationValidator validator = (IFileModificationValidator) iter.next();
-            List files = (List) validator2files.get(validator);
-            IFile[] filesArray = (IFile[]) files.toArray(new IFile[files.size()]);
-            IStatus status = validator.validateEdit(filesArray, shell);
-            if (status.isMultiStatus() && status.getChildren().length > 0)
-            {
-                for (int i = 0; i < status.getChildren().length; i++)
-                {
-                    IStatus statusChild = status.getChildren()[i];
-                    if (statusChild.isOK())
-                    {
-                        confirmedFiles.add(filesArray[i]);
-                    }
-                }
-            }
-            else if (status.isOK())
-            {
-                for (Iterator iterator = files.iterator(); iterator.hasNext();)
-                {
-                    IFile file = (IFile) iterator.next();
-                    confirmedFiles.add(file);                    
-                }
-            }
-            // default validator sets error status if user pressed cancel, so
-            // ignore its error
-            if (validator != getDefaultValidator() &&
-                status.getSeverity() == IStatus.ERROR)
-            {
-                // not possible to checkout files: not connected to version
-                // control plugin or hijacked files and made read-only, so
-                // collect error messages provided by validator and rethrow
-                StringBuffer message = new StringBuffer(status.getPlugin() + ": " //$NON-NLS-1$
-                        + status.getMessage() + NEWLINE);
-                if (status.isMultiStatus())
-                {
-                    for (int i = 0; i < status.getChildren().length; i++)
-                    {
-                        IStatus statusChild = status.getChildren()[i];
-                        message.append(statusChild.getMessage() + NEWLINE);
-                    }
-                }
-                throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, 0,
-                        message.toString(), null));               
-            }
-            
-        }
-        return confirmedFiles;
+    	Set confirmedFiles = new TreeSet(getIFileComparator());
+    	IStatus status = ((IFile) files.get(0)).getWorkspace().validateEdit((IFile[]) files.toArray(new IFile[files.size()]), shell);
+    	if (status.isMultiStatus() && status.getChildren().length > 0)
+    	{
+    		for (int i = 0; i < status.getChildren().length; i++)
+    		{
+    			IStatus statusChild = status.getChildren()[i];
+    			if (statusChild.isOK())
+    			{
+    				confirmedFiles.add(files.get(i));
+    			}
+    		}
+    	}
+    	else if (status.isOK())
+    	{
+    		for (Iterator iterator = files.iterator(); iterator.hasNext();)
+    		{
+    			IFile file = (IFile) iterator.next();
+    			confirmedFiles.add(file);                    
+    		}
+    	}
+    	if (status.getSeverity() == IStatus.ERROR) {
+    		// not possible to checkout files: not connected to version
+    		// control plugin or hijacked files and made read-only, so
+    		// collect error messages provided by validator and rethrow
+    		StringBuffer message = new StringBuffer(status.getPlugin() + ": " //$NON-NLS-1$
+    				+ status.getMessage() + NEWLINE);
+    		if (status.isMultiStatus())
+    		{
+    			for (int i = 0; i < status.getChildren().length; i++)
+    			{
+    				IStatus statusChild = status.getChildren()[i];
+    				message.append(statusChild.getMessage() + NEWLINE);
+    			}
+    		}
+    		throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, 0,
+    				message.toString(), null));               
+    	}
+
+    	return confirmedFiles;
     }
     
-    private static IFileModificationValidator defaultValidator;        
-
-    /**
-     * Get default file modification validator.
-     */
-    public static synchronized IFileModificationValidator getDefaultValidator() {
-        if (defaultValidator == null) {
-            defaultValidator = loadUIValidator();
-        }
-        return defaultValidator;
-    }
-
-    // copied from org.eclipse.team.internal.core.DefaultFileModificationValidator
-    private static IFileModificationValidator loadUIValidator() {
-        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.team.core", "defaultFileModificationValidator"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (extension != null) {
-            IExtension[] extensions =  extension.getExtensions();
-            if (extensions.length > 0) {
-                IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
-                if (configElements.length > 0) {
-                    try {
-                        Object o = configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
-                        if (o instanceof IFileModificationValidator) {
-                            return (IFileModificationValidator)o;
-                        }
-                    } catch (CoreException e) {
-                        AntUIPlugin.log(e);
-                    }
-                }
-            }
-        }
-        // default validator not found, return validator that always accepts 
-        return new IFileModificationValidator()
-        {
-            public IStatus validateEdit(IFile[] files, Object context)
-            {
-                return Status.OK_STATUS;
-            }
-
-            public IStatus validateSave(IFile file)
-            {
-                return Status.OK_STATUS;
-            }           
-        };
-    }
-
     /**
      * Check if given classpath is a reference to the default classpath of the project.
      * Ideal for testing if runtime classpath was customized.

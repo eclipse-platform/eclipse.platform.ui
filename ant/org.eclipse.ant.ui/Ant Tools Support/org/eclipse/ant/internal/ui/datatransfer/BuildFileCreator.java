@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, 97051, 128103
- *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845
+ *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845, bug 177833
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *******************************************************************************/
 
@@ -54,6 +54,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -150,8 +151,7 @@ public class BuildFileCreator
         }
 
         // trigger checkout
-        Map validator2files = ExportUtil.getFileModificationValidator(files);
-        Set confirmedFiles = ExportUtil.validateEdit(shell, validator2files);
+        Set confirmedFiles = ExportUtil.validateEdit(shell, files);
 
         if (pm != null) {
             pm.beginTask(DataTransferMessages.AntBuildfileExportPage_0,
@@ -1000,7 +1000,7 @@ public class BuildFileCreator
 
         String htmlfile = ((value != null) ? value : dir) + '/' + conf.getName() + ".html"; //$NON-NLS-1$
         // confirm overwrite
-        if (ExportUtil.existsUserFile(htmlfile) && !ExportUtil.confirm(DataTransferMessages.AntBuildfileExportPage_4 + ": " + htmlfile, shell)) //$NON-NLS-1$
+        if (ExportUtil.existsUserFile(htmlfile) && !MessageDialog.openConfirm(shell, DataTransferMessages.AntBuildfileExportPage_4, DataTransferMessages.AntBuildfileExportPage_4 + ": " + htmlfile)) //$NON-NLS-1$
         {
             return;
         }
