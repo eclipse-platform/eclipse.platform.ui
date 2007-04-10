@@ -22,21 +22,21 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 
 public class ExportProjectSetMainPage extends TeamWizardPage {
-
 	
 	PageBook book;
 	ProjectPage projectPage;
@@ -99,31 +99,28 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				IWorkingSetManager manager = (IWorkingSetManager) inputElement;
 				IWorkingSet[] allSets = manager.getAllWorkingSets();
 				ArrayList resourceSets = new ArrayList();
-				for (int i = 0; i < allSets.length; i++) {
-					String id = allSets[i].getId();
-					if (id != null && id.equals(WorkingSetsDialog.resourceWorkingSetId)) {
+				for (int i = 0; i < allSets.length; i++) 
+					if (isWorkingSetSupported(allSets[i]))
 						resourceSets.add(allSets[i]);
-					}
-				}
 				
 				return resourceSets.toArray(new IWorkingSet[resourceSets.size()]);
 			} else if (inputElement instanceof IAdaptable){
-				Object tempProject = ((IAdaptable) inputElement).getAdapter(IProject.class);
-				if (tempProject != null){
-					return new IProject[]{((IProject)tempProject)};
-				}
+				IProject tempProject = getProjectForElement(inputElement);
+				if (tempProject != null)
+					return new IProject[] { tempProject };
 			}
 			else if (inputElement instanceof IAdaptable[]){
 				IAdaptable[] tempAdaptable = (IAdaptable[]) inputElement;
-				List projectList = new ArrayList();
-				for (int i = 0; i < tempAdaptable.length; i++) {
-					if (tempAdaptable[i].getAdapter(IProject.class) != null){
-						projectList.add(tempAdaptable[i]);
-					}
-				}
-				return projectList.toArray(new IProject[projectList.size()]);
+				return getProjectsForElements(tempAdaptable);
 			} else if (inputElement instanceof HashSet){
-				HashSet tempList = (HashSet) inputElement;
+				Set tempList = new HashSet();
+				HashSet inputElementSet = (HashSet) inputElement;
+				for (Iterator iterator = inputElementSet.iterator(); iterator.hasNext();) {
+					IProject project = getProjectForElement(iterator.next());
+					if (project != null)
+						tempList.add(project);
+				}
+				
 				return (IProject[]) tempList.toArray(new IProject[tempList.size()]);
 			}
 			
@@ -139,6 +136,36 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		}
 	
 	};
+	
+	private static IProject getProjectForElement(Object adaptableElement) {
+		IResource resource = ResourceUtil.getResource(adaptableElement);
+		if (resource != null && resource.getType() != IResource.ROOT)
+			return resource.getProject();
+		return null;
+	}
+	
+	private static IProject[] getProjectsForElements(IAdaptable[] adaptableElement) {
+		List projectList = new ArrayList();
+		for (int i = 0; i < adaptableElement.length; i++) {
+			IProject project = getProjectForElement(adaptableElement[i]);
+			if (project != null)
+				projectList.add(project);
+		}
+		return (IProject[]) projectList.toArray(new IProject[0]);
+	}
+	
+	private static boolean isWorkingSetSupported(IWorkingSet workingSet) {
+		if (!workingSet.isEmpty() && !workingSet.isAggregateWorkingSet()) {
+			IAdaptable[] elements = workingSet.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				IResource resource = ResourceUtil.getResource(elements[i]);
+				if (resource != null)
+					// support a working set if it contains at least one resource
+					return true;
+			}
+		}
+		return false;
+	}
 	
 	public ExportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -177,10 +204,6 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		Dialog.applyDialogFont(parent);
 	}
 
-	
-
-
-	
 	private void exportWorkingSets(Composite composite) {
 		exportWorkingSets = new Button(composite, SWT.CHECK | SWT.LEFT);
 		exportWorkingSets.setText(TeamUIMessages.ExportProjectSetMainPage_ExportWorkingSets);
@@ -230,23 +253,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		ArrayList selectedWorkingSet = new ArrayList();
 
 		public void createControl(Composite parent) {
-			//projectComposite = createComposite(parent, 1);
 			
-			projectComposite = new Composite(parent, SWT.NULL);
-			
-			// GridLayout
-			GridLayout layout = new GridLayout();
-			layout.numColumns = 1;
-			projectComposite.setLayout(layout);
-		
-			// GridData
-			GridData data = new GridData();
-			data.verticalAlignment = GridData.FILL;
-			data.horizontalAlignment = GridData.FILL;
-			data.grabExcessHorizontalSpace=true;
-			data.grabExcessVerticalSpace=true;
-			projectComposite.setLayoutData(data);
-			
+			projectComposite = SWTUtils.createHVFillComposite(parent, 1);			
 			initializeDialogUnits(projectComposite);
 			
 			//Adds the project table
@@ -400,19 +408,25 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		
 		public void createControl(Composite parent) {
 		   
-			projectComposite = SWTUtils.createHVFillComposite(parent, 0, 2);			
+			projectComposite = SWTUtils.createHVFillComposite(parent, 1);			
 			initializeDialogUnits(projectComposite);
 
 			Label label = createLabel (projectComposite, TeamUIMessages.ExportProjectSetMainPage_SelectButton);
 			GridData grid = (GridData) label.getLayoutData();
-			grid.horizontalSpan = 2;
 			label.setData(grid);
 			
-			//Adds the working set table
-			addWorkingSetSection(projectComposite);
-			
-			addProjectSection(projectComposite);
-			
+			SashForm form = new SashForm(projectComposite, SWT.HORIZONTAL);
+			form.setLayout(new FillLayout());
+			GridData data = new GridData(GridData.FILL_BOTH);
+			form.setLayoutData(data);
+
+			// Adds the working set table
+			addWorkingSetSection(form);
+
+			addProjectSection(form);
+
+			form.setWeights(new int[] { 75, 25 });
+
 			addButtons(projectComposite);
 			updateEnablement();
 		}
@@ -491,8 +505,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 						if (checked[i] instanceof IWorkingSet){
 							IWorkingSet ws = (IWorkingSet) checked[i];
 							IAdaptable[] elements = ws.getElements();
-							selectedProjects.addAll(Arrays.asList(elements));
-							referenceCountProjects.addAll(Arrays.asList(elements));
+							addProjects(elements);
 						}
 						tableViewer.setInput(selectedProjects);
 					}
@@ -553,10 +566,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 								if (checked[i] instanceof IWorkingSet) {
 									IWorkingSet ws = (IWorkingSet) checked[i];
 									IAdaptable[] elements = ws.getElements();
-									selectedProjects.addAll(Arrays.asList(elements));
-									referenceCountProjects.addAll(Arrays.asList(elements));
+									addProjects(elements);
 								}
-
 							}
 						
 							wsTableViewer.setInput(workingSetManager);
@@ -608,20 +619,38 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		private void workingSetAdded(IWorkingSet workingSet) {
 			IAdaptable[] elements = workingSet.getElements();
 			selectedWorkingSet.add(workingSet);
-			for (int i = 0; i < elements.length; i++) {
-				selectedProjects.add(elements[i]);
-				referenceCountProjects.add(elements[i]);
-			}
+			addProjects(elements);
 		}
 
 		private void workingSetRemoved(IWorkingSet workingSet) {
 			IAdaptable[] elements = workingSet.getElements();
 			selectedWorkingSet.remove(workingSet);
-			selectedProjects.removeAll(Arrays.asList(elements));
+			
+			Set tempSet = new HashSet();
 			for (int i = 0; i < elements.length; i++) {
-				referenceCountProjects.remove(elements[i]);
+				IProject project = getProjectForElement(elements[i]);
+				if (project != null)
+					tempSet.add(project);
+			}
+			
+			selectedProjects.removeAll(tempSet);
+			for (Iterator iterator = tempSet.iterator(); iterator.hasNext();) {
+				Object element = (Object) iterator.next();
+				referenceCountProjects.remove(element);
 			}
 			selectedProjects.addAll(referenceCountProjects);
+		}
+		
+		private void addProjects(IAdaptable[] elements) {
+			Set tempSet = new HashSet();
+			for (int j = 0; j < elements.length; j++) {
+				IProject project = getProjectForElement(elements[j]);
+				if (project != null)
+					tempSet.add(project);
+			}
+
+			selectedProjects.addAll(tempSet);
+			referenceCountProjects.addAll(tempSet);
 		}
 	}
 }
