@@ -161,72 +161,10 @@ public class Util {
 	 * timeout at all.
 	 */
 	public static Socket createSocket(final String host, final int port, IProgressMonitor monitor) throws UnknownHostException, IOException {
-		
-		// Start a thread to open a socket
-		final Socket[] socket = new Socket[] { null };
-		final Exception[] exception = new Exception[] {null };
-		final Thread thread = new Thread(new Runnable() {
-			public void run() {
-				try {
-					Socket newSocket = new Socket(host, port);
-					synchronized (socket) {
-						if (Thread.interrupted()) {
-							// we we're either cancelled or timed out so just close the socket
-							newSocket.close();
-						} else {
-							socket[0] = newSocket;
-						}
-					}
-				} catch (UnknownHostException e) {
-					exception[0] = e;
-				} catch (IOException e) {
-					exception[0] = e;
-				}
-			}
-		});
-		thread.start();
-		
-		// Wait the appropriate number of seconds
 		int timeout = CVSProviderPlugin.getPlugin().getTimeout();
 		if (timeout == 0) timeout = CVSProviderPlugin.DEFAULT_TIMEOUT;
-		for (int i = 0; i < timeout; i++) {
-			try {
-				// wait for the thread to complete or 1 second, which ever comes first
-				thread.join(1000);
-			} catch (InterruptedException e) {
-				// I think this means the thread was interupted but not necessarily timed out
-				// so we don't need to do anything
-			}
-			synchronized (socket) {
-				// if the user cancelled, clean up before preempting the operation
-				if (monitor.isCanceled()) {
-					if (thread.isAlive()) {
-						thread.interrupt();
-					}
-					if (socket[0] != null) {
-						socket[0].close();
-					}
-					// this method will throw the proper exception
-					Policy.checkCanceled(monitor);
-				}
-			}
-		}
-		// If the thread is still running (i.e. we timed out) signal that it is too late
-		synchronized (socket) {
-			if (thread.isAlive()) {
-				thread.interrupt();
-			}
-		}
-		if (exception[0] != null) {
-			if (exception[0] instanceof UnknownHostException)
-				throw (UnknownHostException)exception[0];
-			else
-				throw (IOException)exception[0];
-		}
-		if (socket[0] == null) {
-			throw new InterruptedIOException(NLS.bind(CVSMessages.Util_timeout, new String[] { host })); 
-		}
-		return socket[0];
+		ResponsiveSocketFactory factory = new ResponsiveSocketFactory(monitor, timeout);
+		return factory.createSocket(host, port);
 	}
 	
 	/**
