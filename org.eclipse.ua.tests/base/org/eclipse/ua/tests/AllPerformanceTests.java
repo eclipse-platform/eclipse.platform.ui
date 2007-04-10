@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.cheatsheet.AllCheatSheetPerformanceTests;
-import org.eclipse.ua.tests.help.AllHelpPerformanceTests;
 
 /*
  * Tests all user assistance performance (automated).
@@ -32,9 +31,14 @@ public class AllPerformanceTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllPerformanceTests() {
-		addTest(AllHelpPerformanceTests.suite());
 		addTest(AllCheatSheetPerformanceTests.suite());
 
+		/*
+		 * Disabled due to inability to get reliable results. Browser/SWT
+		 * changes in timing of listener events no longer consistent in 3.3. 
+		 */
+		//addTest(AllHelpPerformanceTests.suite());
+		
 		/*
 		 * Disabled due to inability to backport test to 3.2. Internal
 		 * test hooks were added in 3.2.2 code base but do not exist in 3.2
