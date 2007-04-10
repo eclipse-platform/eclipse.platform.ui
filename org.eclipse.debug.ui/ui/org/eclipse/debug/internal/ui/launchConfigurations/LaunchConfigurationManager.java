@@ -677,33 +677,33 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 */
 	public List getApplicableConfigurationTypes(IResource resource) {
 		List types = new ArrayList();
-		try {
-			List exts = getLaunchShortcuts();
-			LaunchShortcutExtension ext = null;
-			List list = new ArrayList();
-			list.add(resource);
-			IEvaluationContext context = new EvaluationContext(null, list);
-			context.setAllowPluginActivation(true);
-			context.addVariable("selection", list); //$NON-NLS-1$
-			HashSet set = new HashSet();
-			for(Iterator iter = exts.iterator(); iter.hasNext();) {
-				ext = (LaunchShortcutExtension) iter.next();
+		List exts = getLaunchShortcuts();
+		LaunchShortcutExtension ext = null;
+		List list = new ArrayList();
+		list.add(resource);
+		IEvaluationContext context = new EvaluationContext(null, list);
+		context.setAllowPluginActivation(true);
+		context.addVariable("selection", list); //$NON-NLS-1$
+		HashSet set = new HashSet();
+		for(Iterator iter = exts.iterator(); iter.hasNext();) {
+			ext = (LaunchShortcutExtension) iter.next();
+			try {
 				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression())) {
 					set.addAll(ext.getAssociatedConfigurationTypes());
 				}
 			}
-			LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = null;
-			for(Iterator iter = set.iterator(); iter.hasNext();) {
-				type = lm.getLaunchConfigurationType((String)iter.next());
-				if(type != null) { 
-					if(!types.contains(type) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
-						types.add(type);
-					}
+			catch(CoreException ce) {}
+		}
+		LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType type = null;
+		for(Iterator iter = set.iterator(); iter.hasNext();) {
+			type = lm.getLaunchConfigurationType((String)iter.next());
+			if(type != null) { 
+				if(!types.contains(type) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
+					types.add(type);
 				}
 			}
 		}
-		catch(CoreException ce) {/*do nothing*/}
 		return types;
 	}
 	
