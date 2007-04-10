@@ -39,12 +39,14 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	private int fNumColumns; 
 	
 	/**
-	 * Label/Image/Font cache keys
+	 * Label data cache keys
 	 * TODO: workaround for bug 159461
 	 */
 	static String PREV_LABEL_KEY = "PREV_LABEL_KEY"; //$NON-NLS-1$
 	static String PREV_IMAGE_KEY = "PREV_IMAGE_KEY"; //$NON-NLS-1$
 	static String PREV_FONT_KEY = "PREV_FONT_KEY"; //$NON-NLS-1$
+	static String PREV_FOREGROUND_KEY = "PREV_FOREGROUND_KEY"; //$NON-NLS-1$
+	static String PREV_BACKGROUND_KEY = "PREV_BACKGROUND_KEY"; //$NON-NLS-1$
 	
 	/**
 	 * @param element element the label is for
@@ -155,18 +157,18 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 * Applies settings to viewer cell
 	 */
 	public void update() {
-		//  text, image and font data is stored to prevent flickering of asynchronous view, see bug 159461
+		//  label data is stored to prevent flickering of asynchronous view, see bug 159461
 		if (!fItem.isDisposed()) {
-
-			if (fColumnIds == null) {
-				fItem.setText(fLabels[0]);
-			} else {
-				fItem.setText(fLabels);
+			
+			for (int i=0; i<fNumColumns; i++){
+				fItem.setText(i,fLabels[i]);
 			}
 			fItem.setData(PREV_LABEL_KEY, fLabels);
 			
 			if (fImageDescriptors == null) {
-				fItem.setImage((Image)null);
+				for (int i=0; i<fNumColumns; i++){
+					fItem.setImage(i,null);
+				}
 				fItem.setData(PREV_IMAGE_KEY, null);
 			} else {
 				Image[] images = new Image[fImageDescriptors.length];
@@ -181,32 +183,50 @@ class LabelUpdate extends Request implements ILabelUpdate {
 				fItem.setData(PREV_IMAGE_KEY, images);
 			}
 			
-			if (fForegrounds == null) {
-				fItem.setForeground((Color)null);
+			if (fForegrounds == null) {	
+				for (int i=0; i<fNumColumns; i++){
+					fItem.setForeground(i,null);
+				}
+				fItem.setData(PREV_FOREGROUND_KEY, null);
 			} else {
+				Color[] foregrounds = new Color[fForegrounds.length];
+				for (int i = 0; i< foregrounds.length; i++) {
+					foregrounds[i] = fProvider.getColor(fForegrounds[0]);
+				}
 				if (fColumnIds == null) {
-					fItem.setForeground(fProvider.getColor(fForegrounds[0]));
+					fItem.setForeground(0,foregrounds[0]);
 				} else {
-					for (int i = 0; i< fForegrounds.length; i++) {
-						fItem.setForeground(i, fProvider.getColor(fForegrounds[i]));
+					for (int i = 0; i< foregrounds.length; i++) {
+						fItem.setForeground(i, foregrounds[i]);
 					}
 				}
+				fItem.setData(PREV_FOREGROUND_KEY, foregrounds);
 			}
 			
 			if (fBackgrounds == null) {
-				fItem.setBackground((Color)null);
+				for (int i=0; i<fNumColumns; i++){
+					fItem.setBackground(i,null);
+				}
+				fItem.setData(PREV_BACKGROUND_KEY, null);
 			} else {
+				Color[] backgrounds = new Color[fBackgrounds.length];
+				for (int i = 0; i< backgrounds.length; i++) {
+					backgrounds[i] = fProvider.getColor(fBackgrounds[0]);
+				}
 				if (fColumnIds == null) {
-					fItem.setBackground(fProvider.getColor(fBackgrounds[0]));
+					fItem.setBackground(0,backgrounds[0]);
 				} else {
-					for (int i = 0; i< fBackgrounds.length; i++) {
-						fItem.setBackground(i, fProvider.getColor(fBackgrounds[i]));
+					for (int i = 0; i< backgrounds.length; i++) {
+						fItem.setBackground(i, backgrounds[i]);
 					}
 				}
+				fItem.setData(PREV_BACKGROUND_KEY, backgrounds);
 			}
 			
 			if (fFontDatas == null) {
-				fItem.setFont((Font)null);
+				for (int i=0; i<fNumColumns; i++){
+					fItem.setFont(i,null);
+				}
 				fItem.setData(PREV_FONT_KEY, null);
 			} else {
 				Font[] fonts = new Font[fFontDatas.length];
