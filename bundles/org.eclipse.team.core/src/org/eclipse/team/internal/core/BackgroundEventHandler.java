@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 
 /**
- * This class provides the infrastucture for processing/dispatching of events using a 
+ * This class provides the infrastructure for processing/dispatching of events using a 
  * background job. This is useful in the following situations. 
  * <ul>
- * <li>an operation is potentially long running but a resposive UI is desired
+ * <li>an operation is potentially long running but a responsive UI is desired
  * while the operation is being performed. To do this incoming events are processed
- * and resulting outgoing events are queued and then dispatched at an appropriuate time,
+ * and resulting outgoing events are queued and then dispatched at an appropriate time,
  * thus batching UI updates.</li>
  * <li>a change is a POST_CHANGE delta requires further modifications to the workspace
  * which cannot be performed in the delta handler because the workspace is locked.</li>
@@ -70,7 +70,7 @@ public abstract class BackgroundEventHandler {
 	// Accumulate exceptions that occur
 	private ExceptionCollector errors;
 	
-	// time the last dispath occured
+	// time the last dispatch occurred
 	private long timeOfLastDispatch = 0L;
 	
 	// the number of dispatches that have occurred since the job started
@@ -79,14 +79,14 @@ public abstract class BackgroundEventHandler {
 	// time between event dispatches
 	private static final long DISPATCH_DELAY = 1500;
 	
-	// time between dispatches if the dispatch threshoild has been exceeded
+	// time between dispatches if the dispatch threshold has been exceeded
 	private static final long LONG_DISPATCH_DELAY = 10000;
 	
-	// the numbver of dispatches that can occur before using the long delay
+	// the number of dispatches that can occur before using the long delay
 	private static final int DISPATCH_THRESHOLD = 3;
 	
 	// time to wait for messages to be queued
-	private static final long WAIT_DELAY = 1000;
+	private static final long WAIT_DELAY = 100;
 
 	private String jobName;
 	
@@ -343,9 +343,9 @@ public abstract class BackgroundEventHandler {
 	 * Process events from the events queue and dispatch results. This method does not
 	 * directly check for or handle cancelation of the provided monitor. However,
 	 * it does invoke <code>processEvent(Event)</code> which may check for and handle
-	 * cancelation by shuting down the receiver.
+	 * cancelation by shutting down the receiver.
 	 * <p>
-	 * The <code>isReadyForDispatch()</code> method is used in conjuntion
+	 * The <code>isReadyForDispatch()</code> method is used in conjunction
 	 * with the <code>dispatchEvents(IProgressMonitor)</code> to allow
 	 * the output of the event handler to be batched in order to avoid
 	 * fine grained UI updating.
@@ -417,23 +417,39 @@ public abstract class BackgroundEventHandler {
 	 * @return <code>true</code> if processed events should be dispatched and
 	 * <code>false</code> otherwise
 	 */
-	protected boolean isReadyForDispatch(boolean wait) {		
-		long duration = System.currentTimeMillis() - timeOfLastDispatch;
-		if((dispatchCount < DISPATCH_THRESHOLD && duration >= getShortDispatchDelay()) ||
-				duration >= getLongDispatchDelay()) {
+	protected boolean isReadyForDispatch(boolean wait) {
+		// Check if the time since the last dispatch is greater than the delay.
+		if (isDispatchDelayExceeded())
 			return true;
-		}
+		
 		synchronized(this) {
+			// If we have incoming events, process them before dispatching
 			if(! isQueueEmpty() || ! wait) {
 				return false;
 			}
+			// There are no incoming events but we want to wait a little before
+			// dispatching in case more events come in.
 			try {
-				wait(WAIT_DELAY);
+				wait(getDispatchWaitDelay());
 			} catch (InterruptedException e) {
 				// just continue
 			}
 		}
-		return isQueueEmpty();
+		return isQueueEmpty() || isDispatchDelayExceeded();
+	}
+	
+	private boolean isDispatchDelayExceeded() {
+		long duration = System.currentTimeMillis() - timeOfLastDispatch;
+		return ((dispatchCount < DISPATCH_THRESHOLD && duration >= getShortDispatchDelay()) ||
+				duration >= getLongDispatchDelay());
+	}
+
+	/**
+	 * Return the amount of time to wait for more events before dispatching.
+	 * @return the amount of time to wait for more events before dispatching.
+	 */
+	protected long getDispatchWaitDelay() {
+		return WAIT_DELAY;
 	}
 
     /**
@@ -472,7 +488,7 @@ public abstract class BackgroundEventHandler {
 	 * <p>
 	 * In many cases, a background event handler will translate incoming events into outgoing
 	 * events. If this is the case, the handler should accumulate these events in the 
-	 * <code>proceessEvent</code> method and propogate them from the <code>dispatchEvent</code>
+	 * <code>proceessEvent</code> method and propagate them from the <code>dispatchEvent</code>
 	 * method which is invoked periodically in order to batch outgoing events and avoid
 	 * the UI becoming too jumpy.
 	 * 
@@ -483,7 +499,7 @@ public abstract class BackgroundEventHandler {
 
 	/**
 	 * Return the job from which the <code>processedEvent</code> method is invoked. 
-	 * @return Returns the background event handlig job.
+	 * @return Returns the background event handling job.
 	 */ 
 	public Job getEventHandlerJob() {
 		return eventHandlerJob;
