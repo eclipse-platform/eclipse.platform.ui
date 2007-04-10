@@ -87,8 +87,12 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	 */
 	public void visitFolder(ICVSFolder folder) throws CVSException {
 		// Delete unmanaged folders if the user wants them deleted
-		if (!folder.isCVSFolder() && CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
-			folder.delete();
+		if (!folder.isCVSFolder()) {
+			if (CVSProviderPlugin.getPlugin().isReplaceUnmanaged()) {
+				// Needed to add files inside to deletedFiles set.
+				folder.acceptChildren(this);
+				folder.delete();
+			}
 		} else {
 			// Visit the children of the folder as appropriate
 			if (depth == IResource.DEPTH_INFINITE) {
