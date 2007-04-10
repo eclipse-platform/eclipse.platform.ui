@@ -808,23 +808,27 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
 					textViewer.setDocument(new Document("")); //$NON-NLS-1$
 					tagViewer.setInput(null);
+					setStatusLineMessage(null);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if (ss.size() != 1) {
 					textViewer.setDocument(new Document("")); //$NON-NLS-1$
 					tagViewer.setInput(null);
+					setStatusLineMessage(null);
 					return;
 				}
 				Object o = ss.getFirstElement();
 				if (o instanceof AbstractHistoryCategory){
 					textViewer.setDocument(new Document("")); //$NON-NLS-1$
 					tagViewer.setInput(null);
+					setStatusLineMessage(null);
 					return;
 				}
 				IFileRevision entry = (IFileRevision)o;
 				textViewer.setDocument(new Document(entry.getComment()));
 				tagViewer.setInput(entry.getTags());
+				setStatusLineMessage(CVSHistoryTableProvider.getCommentAsSingleLine(entry));
 			}
 		});
 
@@ -1937,6 +1941,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (fileElement instanceof LocalResourceTypedElement) {
 			LocalResourceTypedElement element = (LocalResourceTypedElement) fileElement;
 			element.commit(monitor);
+		}
+	}
+
+	private void setStatusLineMessage(String message) {
+		IPageSite workbenchPageSite = getHistoryPageSite().getWorkbenchPageSite();
+		if (workbenchPageSite != null) {
+			workbenchPageSite.getActionBars().getStatusLineManager().setMessage(message);
 		}
 	}
 }

@@ -171,18 +171,7 @@ public class CVSHistoryTableProvider {
 				case COL_AUTHOR :
 					return entry.getAuthor();
 				case COL_COMMENT :
-					String comment = entry.getComment();
-					if (comment != null){
-						int index = comment.indexOf("\n"); //$NON-NLS-1$
-						switch (index) {
-							case -1:
-								return comment;
-							case 0:
-								return CVSUIMessages.HistoryView_______4; 
-							default:
-								return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) });
-						}
-					}
+					return getCommentAsSingleLine(entry);
 			}
 			return ""; //$NON-NLS-1$
 		}
@@ -604,5 +593,21 @@ public class CVSHistoryTableProvider {
 
 	public void setWorkspaceFile(IFile workspaceFile) {
 		this.workspaceFile = workspaceFile;
+	}
+	
+	public static String getCommentAsSingleLine(IFileRevision entry) {
+		String comment = entry.getComment();
+		if (comment != null){
+			int index = comment.indexOf("\n"); //$NON-NLS-1$
+			switch (index) {
+				case -1:
+					return comment;
+				case 0:
+					return CVSUIMessages.HistoryView_______4;
+				default:
+					return NLS.bind(CVSUIMessages.CVSCompareRevisionsInput_truncate, new String[] { comment.substring(0, index) });
+			}
+		}
+		return ""; //$NON-NLS-1$
 	}
 }
