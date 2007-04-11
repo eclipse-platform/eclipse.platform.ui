@@ -37,6 +37,15 @@ public class ProxyType {
 	public static int VERIFY_EMPTY = 2;
 	public static int VERIFY_EQUAL = 4;
 	
+	/**
+	 * Constants that control the setting of the SOCKS system properties
+	 */
+	private static final String PROP_SOCKS_SYSTEM_PROPERTY_HANDLING = "org.eclipse.net.core.setSocksSystemProperties"; //$NON-NLS-1$
+	public static final int ONLY_SET_FOR_1_5_OR_LATER = 0;
+	public static final int ALWAYS_SET = 1;
+	public static final int NEVER_SET = 2;
+	public static int socksSystemPropertySetting;
+	
 	/*
 	 * Fields used to cache authentication information in the keyring
 	 */
@@ -51,11 +60,19 @@ public class ProxyType {
             // Should never fail
         }
         FAKE_URL = temp;
+        String value = System.getProperty(PROP_SOCKS_SYSTEM_PROPERTY_HANDLING);
+        if (value == null) {
+        	socksSystemPropertySetting = ONLY_SET_FOR_1_5_OR_LATER;
+        } else if (value.equals("always")) { //$NON-NLS-1$
+        	socksSystemPropertySetting = ALWAYS_SET;
+        } else if (value.equals("never")) { //$NON-NLS-1$
+        	socksSystemPropertySetting = NEVER_SET;
+        } else {
+        	socksSystemPropertySetting = ONLY_SET_FOR_1_5_OR_LATER;
+        }
     }
     
 	private String name;
-	
-	public static boolean alwaysSetSocksProperties = false;
 
 	public static String convertHostsToPropertyString(String[] value) {
 		StringBuffer buffer = new StringBuffer();
@@ -224,7 +241,7 @@ public class ProxyType {
 
 	private boolean verifyDataMatchesSocksSystemProperties(ProxyData proxyData,
 			boolean proxiesEnabled) {
-		if (proxiesEnabled && (hasJavaNetProxyClass() || alwaysSetSocksProperties)) {
+		if (proxiesEnabled && shouldSetSocksSystemProperties()) {
 			boolean verified = true;
 			String dHost = proxyData.getHost();
 			if (!verifySystemPropertyEquals("socksProxyHost", dHost)) { //$NON-NLS-1$
@@ -237,6 +254,14 @@ public class ProxyType {
 			return verified;
 		}
 		return verifySocksSystemPropertiesEmpty();
+	}
+	
+	private boolean shouldSetSocksSystemProperties() {
+		if (socksSystemPropertySetting == ALWAYS_SET)
+			return true;
+		if (socksSystemPropertySetting == NEVER_SET)
+			return false;
+		return hasJavaNetProxyClass();
 	}
 
 	private boolean verifySystemPropertyEquals(String key, String expected) {
@@ -399,9 +424,10 @@ public class ProxyType {
 			sysProps.remove("socksProxyHost"); //$NON-NLS-1$
 			sysProps.remove("socksProxyPort"); //$NON-NLS-1$
 		} else {
-			if (!hasJavaNetProxyClass() && !alwaysSetSocksProperties) {
-				// TODO: For now, don't set the Java system properties if using a 1.4 VM (see bug 177550)
-				Activator.logError("Setting the SOCKS system properties for a 1.4 VM can interfere with other proxy services (e.g. JSch). Please upgrade to a 1.5 JRE or later if you need to use Java's SOCKS proxy support.", null); //$NON-NLS-1$
+			if (!shouldSetSocksSystemProperties()) {
+				// Log an error if we are not setting the property because we are using a pre-1.5 JRE
+				if (socksSystemPropertySetting == ONLY_SET_FOR_1_5_OR_LATER)
+					Activator.logError("Setting the SOCKS system properties for a 1.4 VM can interfere with other proxy services (e.g. JSch). Please upgrade to a 1.5 JRE or later if you need to use Java's SOCKS proxy support.", null); //$NON-NLS-1$
 				return;
 			}
 			sysProps.put("socksProxyHost", data.getHost()); //$NON-NLS-1$
