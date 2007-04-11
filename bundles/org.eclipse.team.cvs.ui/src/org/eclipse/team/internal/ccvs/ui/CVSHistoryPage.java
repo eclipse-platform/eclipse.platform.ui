@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Eugene Kuleshov <eu@md.pp.ru> - Bug 153932 [History] Custom hyperlink detectors for comments in History view
+ *     Brock Janiczak (brockj@tpg.com.au) - Bug 181899 CVS History wrongly ordered
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;

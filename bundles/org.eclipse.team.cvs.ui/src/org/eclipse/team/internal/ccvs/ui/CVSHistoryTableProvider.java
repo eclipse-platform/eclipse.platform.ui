@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *       Brock Janiczak (brockj@tpg.com.au) - Bug 180436 Use table sort indicators on CVS
+ *     Brock Janiczak (brockj@tpg.com.au) - Bug 180436 Use table sort indicators on CVS
+ *     Brock Janiczak (brockj@tpg.com.au) - Bug 181899 CVS History wrongly ordered
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
