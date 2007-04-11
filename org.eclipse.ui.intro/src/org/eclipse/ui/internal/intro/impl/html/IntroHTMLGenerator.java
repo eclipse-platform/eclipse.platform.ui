@@ -763,7 +763,7 @@ public class IntroHTMLGenerator {
 		HTMLElement link = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_LINK, indentLevel, true,
 				false);
 		link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_RELATIONSHIP, IIntroHTMLConstants.LINK_REL);
-		link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, IIntroHTMLConstants.LINK_STYLE);
+		link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TYPE, IIntroHTMLConstants.LINK_STYLE);
 		if (href != null)
 			link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_HREF, href);
 		return link;
