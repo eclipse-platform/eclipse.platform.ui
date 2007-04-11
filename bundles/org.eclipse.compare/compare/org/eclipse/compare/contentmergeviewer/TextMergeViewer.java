@@ -285,6 +285,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ActionContributionItem fPreviousChange;
 	private ShowWhitespaceAction showWhitespaceAction;
 	private InternalOutlineViewerCreator fOutlineViewerCreator;
+	private TextEditorPropertyAction toggleLineNumbersAction;
 
 	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
 		public Viewer findStructureViewer(Viewer oldViewer,
@@ -1758,6 +1759,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (showWhitespaceAction != null)
 			showWhitespaceAction.dispose();
+		
+		if (toggleLineNumbersAction != null)
+			toggleLineNumbersAction.dispose();
 		
 		super.handleDispose(event);
   	}
@@ -3876,6 +3880,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fLeft, fRight, fAncestor
 		});
 		Utilities.registerAction(fHandlerService, showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, fActivations);
+		
+		toggleLineNumbersAction = new TextEditorPropertyAction(new MergeSourceViewer[] {
+				fLeft, fRight, fAncestor
+		}, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
+		Utilities.registerAction(fHandlerService, toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE, fActivations);
 		
 		IAction findAction = new Action() {
 			public void run() {

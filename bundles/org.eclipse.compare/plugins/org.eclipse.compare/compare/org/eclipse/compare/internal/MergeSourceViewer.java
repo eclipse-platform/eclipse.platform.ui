@@ -497,7 +497,7 @@ public class MergeSourceViewer extends SourceViewer
 		if(key.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)){
 			boolean b= EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
 			if (b != fShowLineNumber){
-				toogleLineNumberRuler();	
+				toggleLineNumberRuler();	
 			}
 		}
 	}
@@ -525,9 +525,9 @@ public class MergeSourceViewer extends SourceViewer
 	}
 
 	/**
-	 * Toogles line number ruler column.
+	 * Toggles line number ruler column.
 	 */
-	private void toogleLineNumberRuler() 
+	private void toggleLineNumberRuler() 
 	{	
 		fShowLineNumber=!fShowLineNumber;
 		
