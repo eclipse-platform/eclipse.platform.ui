@@ -551,7 +551,7 @@ public class ConfigurationView
 		
 		propertiesAction =
 			new PropertyDialogAction(
-				getConfigurationWindow().getShell(),
+				getConfigurationWindow(),
 				treeViewer);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(
 			propertiesAction,

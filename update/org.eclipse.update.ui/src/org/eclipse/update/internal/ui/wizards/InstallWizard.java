@@ -11,7 +11,6 @@
 package org.eclipse.update.internal.ui.wizards;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -99,7 +98,7 @@ public class InstallWizard
 	}
 
 	public static synchronized boolean isRunning() {
-		return isRunning || Platform.getJobManager().find(UpdateJob.family).length > 0;
+		return isRunning || Job.getJobManager().find(UpdateJob.FAMILY).length > 0;
 	}
 
     /**
@@ -109,7 +108,7 @@ public class InstallWizard
 
         saveSettings();
         
-        if (Platform.getJobManager().find(UpdateJob.family).length > 0) {
+        if (Job.getJobManager().find(UpdateJob.FAMILY).length > 0) {
             // another update/install job is running, need to wait to finish or cancel old job
             boolean proceed = MessageDialog.openQuestion(
                     UpdateUI.getActiveWorkbenchShell(),

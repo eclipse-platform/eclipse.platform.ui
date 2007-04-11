@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui;
 
-import java.net.*;
+import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Bundle of all images used by the PDE plugin.
@@ -111,7 +111,7 @@ public class UpdateUIImages {
 
 	private static URL makeImageURL(String prefix, String name) {
 		String path = "$nl$/" + prefix + name; //$NON-NLS-1$
-		return Platform.find(UpdateUI.getDefault().getBundle(), new Path(path));
+		return FileLocator.find(UpdateUI.getDefault().getBundle(), new Path(path), null);
 	}
 
 }

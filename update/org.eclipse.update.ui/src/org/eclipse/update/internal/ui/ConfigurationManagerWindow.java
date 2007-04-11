@@ -13,7 +13,6 @@ package org.eclipse.update.internal.ui;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -179,7 +178,7 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 				public void done(IJobChangeEvent event) {
 					Job job = event.getJob();
 					if (job.belongsTo(UpdateJob.FAMILY)) {
-						Job [] remaining = Platform.getJobManager().find(UpdateJob.FAMILY);
+						Job [] remaining = Job.getJobManager().find(UpdateJob.FAMILY);
 						updateProgress(false, remaining);
 						jobNames.remove(job);
 					}
@@ -188,7 +187,7 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 				public void running(IJobChangeEvent event) {
 					Job job = event.getJob();
 					if (job.belongsTo(UpdateJob.FAMILY)) {
-						Job [] existing = Platform.getJobManager().find(UpdateJob.FAMILY);
+						Job [] existing = Job.getJobManager().find(UpdateJob.FAMILY);
 						updateProgress(true, existing);
 					}
 				}
@@ -199,7 +198,7 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 				public void sleeping(IJobChangeEvent event) {
 				}
 			};
-			Platform.getJobManager().addJobChangeListener(jobListener);
+			Job.getJobManager().addJobChangeListener(jobListener);
 		}
 		jobNames.put(job, name);
 	}
@@ -263,7 +262,7 @@ public class ConfigurationManagerWindow extends ApplicationWindow {
 	 */
 	public boolean close() {
 		if (jobListener != null)
-			Platform.getJobManager().removeJobChangeListener(jobListener);
+			Job.getJobManager().removeJobChangeListener(jobListener);
 		if (view != null)
 			view.dispose();
 		return super.close();

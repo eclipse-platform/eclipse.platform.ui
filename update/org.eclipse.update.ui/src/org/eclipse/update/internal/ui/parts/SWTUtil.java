@@ -13,10 +13,10 @@ package org.eclipse.update.internal.ui.parts;
  * @version 	1.0
  * @author
  */
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.*;
-import org.eclipse.jface.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.graphics.*;

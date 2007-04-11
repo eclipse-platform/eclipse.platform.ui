@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -36,14 +38,14 @@ public class InstallWizardOperation {
 			parentShell = (Shell)shell.getParent();
 		// cancel any existing jobs and remove listeners
 		if (jobListener != null)
-			Platform.getJobManager().removeJobChangeListener(jobListener);
+			Job.getJobManager().removeJobChangeListener(jobListener);
 		if (job != null)
-			Platform.getJobManager().cancel(job);
+			Job.getJobManager().cancel(job);
 		
 		// then setup the new job and listener and schedule the job
 		job = task;
 		jobListener = new UpdateJobChangeListener();
-		Platform.getJobManager().addJobChangeListener(jobListener);
+		Job.getJobManager().addJobChangeListener(jobListener);
 		job.schedule();
 	}
 	
@@ -58,8 +60,8 @@ public class InstallWizardOperation {
 			final Shell validShell = getValidShell();
 			// the job listener is triggered when the search job is done, and proceeds to next wizard
 			if (event.getJob() == job) {
-				Platform.getJobManager().removeJobChangeListener(this);
-				Platform.getJobManager().cancel(job);
+				Job.getJobManager().removeJobChangeListener(this);
+				Job.getJobManager().cancel(job);
 				if (job.getStatus() == Status.CANCEL_STATUS)
 					return;
 				if (job.getStatus() != Status.OK_STATUS)
