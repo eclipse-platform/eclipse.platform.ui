@@ -184,8 +184,12 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 				appendNewText(buf, text);
 			} else if (child instanceof IntroText) {
 				appendNewText(buf, ((IntroText) child).getText());
-				if (child instanceof IntroPageTitle)
-					addTitle(((IntroPageTitle) child).getTitle(), doc);
+				if (child instanceof IntroPageTitle) {
+					String title = ((IntroPageTitle) child).getTitle();
+					if (title != null) {
+						addTitle(title, doc);
+					}				
+				}
 			} else if (child instanceof AbstractIntroContainer) {
 				AbstractIntroContainer container = (AbstractIntroContainer) child;
 				AbstractIntroElement[] cc = container.getChildren();
