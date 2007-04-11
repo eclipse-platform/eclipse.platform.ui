@@ -333,8 +333,8 @@ public class JarProcessor {
 		if (inf != null)
 			adjustInf(workingFile, inf);
 
-		//Recreate the jar with replacements.  This also has the effect of normalizing the jar, so we want to do this even if
-		//we aren't actually replacing anything
+		//Recreate the jar with replacements. 
+		//TODO: This is not strictly necessary if we didn't change the inf file and didn't change any content
 		File tempJar = null;
 		tempJar = new File(tempDir, workingFile.getName());
 		File parent = tempJar.getParentFile();
@@ -353,6 +353,10 @@ public class JarProcessor {
 
 		//post
 		File result = postProcess(workingFile, workingDir);
+		
+		//have to normalize after the post steps
+		normalize(result, workingDir);
+		
 		if (!result.equals(workingFile) && !workingFile.equals(input))
 			workingFile.delete();
 		if (!result.getParentFile().equals(workingDir)) {
@@ -369,5 +373,48 @@ public class JarProcessor {
 		result.setLastModified(lastModified);
 		--depth;
 		return result;
+	}
+	
+	private void normalize(File input, File workingDirectory) {
+		if(input.getName().endsWith(Utils.PACKED_SUFFIX)) {
+			//not a jar
+			return;
+		}
+		try {
+			File tempJar = new File(workingDirectory, "temp_" + input.getName()); //$NON-NLS-1$
+			JarFile jar = null;
+			try {
+				jar = new JarFile(input, false);
+			} catch (JarException e) {
+				//not a jar
+				return ;
+			}
+			JarOutputStream jarOut = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(tempJar)));
+			InputStream in = null;
+			try {
+				Enumeration entries = jar.entries();
+				for (JarEntry entry = (JarEntry) entries.nextElement(); entry != null; entry = entries.hasMoreElements() ? (JarEntry) entries.nextElement() : null) {
+					JarEntry newEntry = new JarEntry(entry.getName());
+					newEntry.setTime(entry.getTime());
+					in = new BufferedInputStream(jar.getInputStream(entry));
+					jarOut.putNextEntry(newEntry);
+					Utils.transferStreams(in, jarOut, false);
+					jarOut.closeEntry();
+					in.close();
+				}
+			} finally {
+				Utils.close(jarOut);
+				Utils.close(jar);
+				Utils.close(in);
+			}
+			tempJar.setLastModified(input.lastModified());
+			input.delete();
+			tempJar.renameTo(input);
+		} catch (IOException e) {
+			if (verbose) {
+				System.out.println("Error normalizing jar " + input.getName()); //$NON-NLS-1$
+				e.printStackTrace();
+			}
+		}
 	}
 }
