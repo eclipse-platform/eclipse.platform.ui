@@ -229,7 +229,7 @@ public class CoreItem extends ViewItem {
 		TableWrapData padData = new TableWrapData();
 		padData.maxWidth = 0;
 		pad.setLayoutData(padData);
-		Composite separator = page.getToolkit().createCompositeSeparator(buttonComposite);			
+		Label separator = new Label(buttonComposite, SWT.SEPARATOR + SWT.HORIZONTAL); 
 		TableWrapData separatorData = new TableWrapData();
 		separatorData.align = TableWrapData.FILL;
 		separatorData.grabHorizontal = true;
