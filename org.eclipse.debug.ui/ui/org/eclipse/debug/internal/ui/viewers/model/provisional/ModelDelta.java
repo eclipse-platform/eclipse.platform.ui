@@ -115,6 +115,24 @@ public class ModelDelta implements IModelDelta {
 		addDelta(node);
 		return node;
 	}
+	
+	/**
+	 * Returns the child delta for the given element, or <code>null</code> if none.
+	 * 
+	 * @param element child element
+	 * @return corresponding delta node, or <code>null</code>
+	 */
+	public ModelDelta getChildDelta(Object element) {
+		if (fNodes != null) {
+			for (int i = 0; i < fNodes.length; i++) {
+				ModelDelta delta = fNodes[i];
+				if (element.equals(delta.getElement())) {
+					return delta;
+				}
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Adds a child node to this delta to replace the given element with the

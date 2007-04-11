@@ -87,6 +87,12 @@ public interface IModelDelta {
 	public static int SELECT = 1 << 21;
 	
 	/**
+	 * Suggests that the element should be revealed, as described by its path.
+	 * @since 3.3
+	 */
+	public static int REVEAL = 1 << 24;	
+	
+	/**
 	 * Indicates a model proxy should be installed for the given element
 	 * @since 3.3
 	 */

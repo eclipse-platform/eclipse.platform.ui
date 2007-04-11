@@ -1126,4 +1126,13 @@ public class InternalTreeModelViewer extends TreeViewer {
 	public Item[] getChildren(Widget widget) {
 		return super.getChildren(widget);
 	}
+	
+	/**
+	 * Returns the tree path for the given item.
+	 * @param item
+	 * @return {@link TreePath}
+	 */
+	protected TreePath getTreePathFromItem(Item item) {
+		return super.getTreePathFromItem(item);
+	}	
 }

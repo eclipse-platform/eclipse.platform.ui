@@ -108,19 +108,28 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	class CheckState implements IModelDeltaVisitor {
 		private boolean complete = true;
+		private IModelDelta topDelta = null;
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor#visit(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta, int)
 		 */
 		public boolean visit(IModelDelta delta, int depth) {
 			if (delta.getFlags() != IModelDelta.NO_CHANGE) {
-				complete = false;
-				return false;
+				if (delta.getFlags() == IModelDelta.REVEAL && !(delta.getElement() instanceof IMemento)) {
+					topDelta = delta;
+				} else {
+					complete = false;
+					return false;
+				}
 			}
 			return true;
 		}
 		
 		public boolean isComplete() {
 			return complete;
+		}
+		
+		public IModelDelta getTopItemDelta() {
+			return topDelta;
 		}
 	}
 	
@@ -619,6 +628,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			if ((flags & IModelDelta.UNINSTALL) != 0) {
 				handleUninstall(node);
 			}
+			if ((flags & IModelDelta.REVEAL) != 0) {
+				handleReveal(node);
+			}
 			updateNodes(node.getChildDeltas());
 		}
 	}
@@ -659,6 +671,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected abstract void handleInsert(IModelDelta delta);
 
 	protected abstract void handleReplace(IModelDelta delta);
+	
+	protected abstract void handleReveal(IModelDelta delta);
 	
 	protected void handleInstall(IModelDelta delta) {
 		installModelProxy(delta.getElement());
@@ -851,9 +865,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		fTransform.clear(parent);
 	}
 
-	protected synchronized void checkIfRestoreComplete() {
+	protected synchronized IModelDelta checkIfRestoreComplete() {
 		if (fPendingState == null) {
-			return;
+			return null;
 		}
 		CheckState state = new CheckState();
 		fPendingState.accept(state);
@@ -862,7 +876,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			if (DEBUG_CONTENT_PROVIDER) {
 				System.out.println("RESTORE COMPELTE"); //$NON-NLS-1$
 			}
+			return state.getTopItemDelta();
 		}
+		return null;
 	}
 	
 	void addViewerUpdateListener(IViewerUpdateListener listener) {

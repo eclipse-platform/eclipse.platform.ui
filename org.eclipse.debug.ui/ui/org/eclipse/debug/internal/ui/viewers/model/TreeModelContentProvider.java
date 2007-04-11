@@ -21,7 +21,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -154,7 +153,6 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 				System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			TreePath parentPath = elementPath.getParentPath();
-			// TODO: I think that getParentPath() should return empty for a 1 segment path
 			if (parentPath == null) {
 				parentPath = TreePath.EMPTY;
 			}
@@ -280,6 +278,38 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#handleReveal(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
+	 */
+	protected void handleReveal(IModelDelta delta) {
+		IModelDelta parentDelta = delta.getParentDelta();
+		if (parentDelta != null) {
+			handleExpand(parentDelta);
+			reveal(delta);
+		}
+	}
+	
+	protected void reveal(IModelDelta delta) {
+		int modelIndex = delta.getIndex();
+		InternalTreeModelViewer treeViewer = (InternalTreeModelViewer) getTreeViewer();
+		TreePath elementPath = getViewerTreePath(delta);
+		if (modelIndex >= 0) {
+			int viewIndex = modelToViewIndex(getViewerTreePath(delta.getParentDelta()), modelIndex);
+			if (DEBUG_CONTENT_PROVIDER) {
+				System.out.println("[reveal] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			}
+			TreePath parentPath = elementPath.getParentPath();
+			if (parentPath == null) {
+				parentPath = TreePath.EMPTY;
+			}
+			treeViewer.replace(parentPath, viewIndex, delta.getElement());
+			Widget item = treeViewer.findItem(elementPath);
+			if (item instanceof TreeItem) {
+				treeViewer.getTree().setTopItem((TreeItem) item);
+			}
+		}
+	}	
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#buildViewerState(org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta)
 	 */
 	protected void buildViewerState(ModelDelta delta) {
@@ -292,6 +322,22 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		TreeItem[] items = tree.getItems();
 		for (int i = 0; i < items.length; i++) {
 			buildViewerState(EMPTY_TREE_PATH, delta, items[i], set, i);
+		}
+		// add memento for top item
+		TreeItem topItem = tree.getTopItem();
+		if (topItem != null) {
+			TreePath path = ((InternalTreeModelViewer)getTreeViewer()).getTreePathFromItem(topItem);
+			ModelDelta parentDelta = delta;
+			for (int i = 0; i < path.getSegmentCount(); i++) {
+				Object element = path.getSegment(i);
+				ModelDelta childDelta = parentDelta.getChildDelta(element);
+				if (childDelta == null) {
+					parentDelta = parentDelta.addNode(element, IModelDelta.NO_CHANGE);
+				} else {
+					parentDelta = childDelta;
+				}
+			}
+			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
 		}
 	}
 
@@ -392,15 +438,19 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 			UIJob job = new UIJob("restore delta") { //$NON-NLS-1$
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					TreePath treePath = getViewerTreePath(delta);
-					AbstractTreeViewer viewer = (AbstractTreeViewer)getViewer();
+					InternalTreeModelViewer viewer = (InternalTreeModelViewer)getViewer();
 					if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
 						viewer.expandToLevel(treePath, 1);
 					}
 					if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
 						viewer.setSelection(new TreeSelection(treePath));
 					}
-					delta.setFlags(IModelDelta.NO_CHANGE);
-					checkIfRestoreComplete();
+					int flag = IModelDelta.NO_CHANGE;
+					if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
+						flag = IModelDelta.REVEAL;
+					}
+					delta.setFlags(flag);
+					IModelDelta topItemDelta = checkIfRestoreComplete();
 					// force child deltas to update, so viewer is populated
 					IModelDelta[] childDeltas = delta.getChildDeltas();
 					for (int i = 0; i < childDeltas.length; i++) {
@@ -408,6 +458,13 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 						int modelIndex = childDelta.getIndex();
 						if (modelIndex >= 0) {
 							doUpdateElement(treePath, modelIndex);
+						}
+					}
+					if (topItemDelta != null) {
+						TreePath itemPath = getViewerTreePath(topItemDelta);
+						Widget topItem = viewer.findItem(itemPath);
+						if (topItem instanceof TreeItem) {
+							viewer.getTree().setTopItem((TreeItem) topItem);
 						}
 					}
 					return Status.OK_STATUS;
