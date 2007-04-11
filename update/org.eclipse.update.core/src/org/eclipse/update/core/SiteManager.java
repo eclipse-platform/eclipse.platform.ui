@@ -43,7 +43,6 @@ public class SiteManager {
 	private static String ws;
 	private static String arch;
 	private static String nl;
-	private static boolean isHttpProxyEnable;
 
 	private SiteManager() {
 	}

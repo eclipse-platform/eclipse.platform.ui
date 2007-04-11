@@ -168,9 +168,6 @@ public class SiteSearchCategory extends BaseSearchCategory {
 
 		private Map liteFeatures;
 
-		private FeatureDownloader() {			
-		}
-		
 		public FeatureDownloader(List siteFeatureReferences, IUpdateSearchResultCollector collector, IUpdateSearchFilter filter, HashSet ignores, IProgressMonitor monitor) {
 			super();
 
