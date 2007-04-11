@@ -116,34 +116,6 @@ public class ListViewerRefreshTest extends TestCase {
 		
 		assertTrue(viewer.getList().getTopIndex() != 0);
 	}
-
-	public void testSelectionReveal() throws Exception {
-		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
-		readAndDispatch();
-
-		run("Setting selection to index 30.", new Runnable() { //$NON-NLS-1$
-					public void run() {
-						viewer.setSelection(new StructuredSelection(input
-								.get(30)),true);
-					}
-				});
-
-		assertTrue(viewer.getList().getTopIndex() != 0);
-	}
-	
-	public void testSelectionNoReveal() throws Exception {
-		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
-		readAndDispatch();
-
-		run("Setting selection to index 30.", new Runnable() { //$NON-NLS-1$
-					public void run() {
-						viewer.setSelection(new StructuredSelection(input
-								.get(30)),false);
-					}
-				});
-
-		assertTrue(viewer.getList().getTopIndex() == 0);
-	}
 	
 	/**
 	 * Runs the runnable and displays the description.

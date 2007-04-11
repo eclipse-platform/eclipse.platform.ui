@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl - test case for bug 157309
+ *     Tom Schindl <tom.schindl@bestsolution.at> - test case for bug 157309, 177619
  *     Brad Reynolds - test case for bug 141435
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
@@ -141,5 +141,21 @@ public class ListViewerTest extends StructuredViewerTest {
 		} catch (Exception e) {
 			fail("Refresh failure when refreshing with an empty model.");
 		}		
+	}
+    
+    public void testSelectionRevealBug177619() throws Exception {
+    	TestElement model = TestElement.createModel(1, 50);
+		fViewer.setInput(model);
+		
+    	fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(30)),true);
+    	assertTrue(((ListViewer)fViewer).getList().getTopIndex() != 0);
+	}
+	
+	public void testSelectionNoRevealBug177619() throws Exception {
+		TestElement model = TestElement.createModel(1, 50);
+		fViewer.setInput(model);
+		
+		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(30)),false);
+		assertTrue(((ListViewer)fViewer).getList().getTopIndex() == 0);
 	}
 }

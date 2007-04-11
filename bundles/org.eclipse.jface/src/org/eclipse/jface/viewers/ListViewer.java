@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 141435
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bug 157309, 177619
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
