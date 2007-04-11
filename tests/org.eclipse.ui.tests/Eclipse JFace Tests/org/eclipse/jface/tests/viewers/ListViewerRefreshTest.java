@@ -99,16 +99,52 @@ public class ListViewerRefreshTest extends TestCase {
 								.get(30)));
 					}
 				});
-
+		
+		// Ensure that to index is 0
+		viewer.getList().setTopIndex(0);
+		
 		run("Refreshed viewer with selection.", new Runnable() { //$NON-NLS-1$
 					public void run() {
 						viewer.refresh();
 					}
 				});
-
+		
+		// Checking that the viewer is not scrolling
+		assertTrue(viewer.getList().getTopIndex() == 0);
+		
+		viewer.getList().showSelection();
+		
 		assertTrue(viewer.getList().getTopIndex() != 0);
 	}
 
+	public void testSelectionReveal() throws Exception {
+		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
+		readAndDispatch();
+
+		run("Setting selection to index 30.", new Runnable() { //$NON-NLS-1$
+					public void run() {
+						viewer.setSelection(new StructuredSelection(input
+								.get(30)),true);
+					}
+				});
+
+		assertTrue(viewer.getList().getTopIndex() != 0);
+	}
+	
+	public void testSelectionNoReveal() throws Exception {
+		shell.setText("Preserved Scrolled Position Test"); //$NON-NLS-1$
+		readAndDispatch();
+
+		run("Setting selection to index 30.", new Runnable() { //$NON-NLS-1$
+					public void run() {
+						viewer.setSelection(new StructuredSelection(input
+								.get(30)),false);
+					}
+				});
+
+		assertTrue(viewer.getList().getTopIndex() == 0);
+	}
+	
 	/**
 	 * Runs the runnable and displays the description.
 	 * 
