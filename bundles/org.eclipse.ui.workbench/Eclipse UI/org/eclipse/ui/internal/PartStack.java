@@ -1335,7 +1335,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 									.getID());
 					vstb.setRestoreOnUnzoom(true);
 				}
-				else if (children[i] instanceof EditorSashContainer) {
+				else if (children[i] instanceof EditorSashContainer && !(this instanceof EditorStack)) {
 					perspective.setEditorAreaState(IStackPresentationSite.STATE_MINIMIZED);
 					perspective.setEditorAreaRestoreOnUnzoom(true);
 				}
