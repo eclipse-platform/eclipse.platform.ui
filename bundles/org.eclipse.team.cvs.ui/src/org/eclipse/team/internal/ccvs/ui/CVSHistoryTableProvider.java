@@ -314,7 +314,7 @@ public class CVSHistoryTableProvider {
 						if (date1 == date2)
 							return 0;
 
-						return date1 > date2 ? -1 : 1;
+						return date1 > date2 ? 1 : -1;
 					}
 					return versionCollator.compare(e1.getContentIdentifier(), e2.getContentIdentifier());
 				case 1: /* tags */
@@ -450,9 +450,6 @@ public class CVSHistoryTableProvider {
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
-		tree.setSortColumn(col);
-		tree.setSortDirection(SWT.DOWN);
-		
 		// tags
 		col = new TreeColumn(tree, SWT.NONE);
 		col.setResizable(true);
@@ -565,13 +562,14 @@ public class CVSHistoryTableProvider {
 		
 		HistoryComparator oldSorter = (HistoryComparator) viewer.getComparator();
 		if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-			oldSorter.setReversed(column == COL_REVISIONID);
 			viewer.refresh();
 		} else {
 			HistoryComparator newSorter = new HistoryComparator(column);
-			newSorter.setReversed(column == COL_REVISIONID);
+			newSorter.setReversed(true);
 			viewer.setComparator(newSorter);
-			
+			viewer.getTree().setSortColumn(viewer.getTree().getColumn(column));
+			viewer.getTree().setSortDirection(newSorter.isReversed() ? SWT.DOWN : SWT.UP);
+		 
 		}
 	}
 

@@ -1344,7 +1344,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			
 			Utils.asyncExec(new Runnable() {
 				public void run() {
-					historyTableProvider.setLocalRevisionsDisplayed(fileHistory.getIncludesExists());
+					historyTableProvider.setLocalRevisionsDisplayed(fileHistory.isIncludeLocal());
 					historyTableProvider.setFile(fileHistory, workspaceFile);
 					//historyTableProvider.setWorkspaceFile(workspaceFile);
 					if (!selectOnly){
