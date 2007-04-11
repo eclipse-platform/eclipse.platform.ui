@@ -51,7 +51,9 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
         Perspective persp = viewPane.getPane().getPage().getActivePerspective();
         FastViewManager fvm = persp.getFastViewManager();
         
-        String trimId = fvm.getIdForRef(viewRef);
+        String trimId = null;
+        if (fvm != null)
+        	trimId = fvm.getIdForRef(viewRef);
         realFV = trimId == null || FastViewBar.FASTVIEWBAR_ID.equals(trimId);
 
         // it's 'restore' if we're not using a real fast view
