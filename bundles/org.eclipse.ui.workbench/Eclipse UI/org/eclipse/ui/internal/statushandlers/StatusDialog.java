@@ -22,7 +22,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -35,6 +34,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -98,9 +98,8 @@ public class StatusDialog extends ErrorDialog {
 					.getStatus().getException().toString()
 					: statusInfo.getStatus().getException().getMessage();
 		}
-		this.message = JFaceResources.format(
-				WorkbenchMessages.StatusDialog_reason, new Object[] {
-						statusInfo.getDisplayString(), reason });
+		this.message = NLS.bind(WorkbenchMessages.StatusDialog_reason,
+				new Object[] { statusInfo.getDisplayString(), reason });
 	}
 
 	/**
