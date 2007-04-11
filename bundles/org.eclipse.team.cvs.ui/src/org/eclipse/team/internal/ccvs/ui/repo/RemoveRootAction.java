@@ -17,9 +17,10 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -75,8 +76,25 @@ public class RemoveRootAction extends SelectionListenerAction {
 	}
 
 	public void run() {
-		ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
+		final ICVSRepositoryLocation[] roots = getSelectedRemoteRoots();
 		if (roots.length == 0) return;
+		final boolean[] proceed = new boolean[1];
+		shell.getDisplay().syncExec(new Runnable(){
+			public void run() {
+				String message;
+				if(roots.length == 1){
+					message = NLS.bind(CVSUIMessages.RemoveRootAction_RepositoryRemovalDialogMessageSingle, roots[0].getLocation(true)); 
+				} else {
+					message = NLS.bind(CVSUIMessages.RemoveRootAction_RepositoryRemovalDialogMessageMultiple, new Integer(roots.length));
+				}
+				proceed[0] = MessageDialog.openQuestion(shell, 
+						CVSUIMessages.RemoveRootAction_RepositoryRemovalDialogTitle, 
+						message);
+			}
+		});
+		if(!proceed[0]){
+			return;
+		}
 		for (int i = 0; i < roots.length; i++) {
 			final ICVSRepositoryLocation root = roots[i];
 			try {	
@@ -116,11 +134,11 @@ public class RemoveRootAction extends SelectionListenerAction {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								final ISchedulingRule rule = new RepositoryLocationSchedulingRule(root);
 								try {
-									Platform.getJobManager().beginRule(rule, monitor);
+									Job.getJobManager().beginRule(rule, monitor);
 									view.getContentProvider().cancelJobs(root);
 									KnownRepositories.getInstance().disposeRepository(root);
 								} finally {
-									Platform.getJobManager().endRule(rule);
+									Job.getJobManager().endRule(rule);
 								}
 
 							}

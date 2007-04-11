@@ -79,6 +79,9 @@ public class CVSUIMessages extends NLS {
 	public static String PasswordManagementPreferencePage_4;
 	public static String PasswordManagementPreferencePage_5;
 	public static String PasswordManagementPreferencePage_6;
+	public static String RemoveRootAction_RepositoryRemovalDialogMessageMultiple;
+	public static String RemoveRootAction_RepositoryRemovalDialogMessageSingle;
+	public static String RemoveRootAction_RepositoryRemovalDialogTitle;
 	public static String ReplaceWithLatestRevisionAction_error;
 	public static String ShowAnnotationOperation_QDAnnotateMessage;
 	public static String ShowAnnotationOperation_QDAnnotateTitle;
