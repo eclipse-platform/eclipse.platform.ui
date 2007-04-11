@@ -41,8 +41,7 @@ public class OpenCloseViewTest extends BasicPerformanceTest {
         processEvents();
         
        	tagIfNecessary("UI - Open/Close " + view1.getTitle(), Dimension.ELAPSED_PROCESS);
-       	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98144>See Bug 98144</a> ");
-       	
+        	
 		for (int j = 0; j < 100; j++) {
 
 			startMeasuring();

@@ -26,14 +26,11 @@ import org.eclipse.ui.views.IViewDescriptor;
  */
 public class ViewPerformanceSuite extends TestSuite {
 
-	public static final String RESOURCE_NAVIGATOR = "org.eclipse.ui.views.ResourceNavigator";
+	public static final String PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer";
 
 	public static final String BASIC_PATH = "org.eclipse.ui";
-	
-	public static final String VIEWS_PATTERN = "org.eclipse.ui.views";
 
-	// public static final String [] VIEW_IDS = {BASIC_VIEW,
-	// IPageLayout.ID_RES_NAV, MockViewPart.ID};
+	public static final String VIEWS_PATTERN = "org.eclipse.ui.views";
 
 	/**
 	 * Returns the suite. This is required to use the JUnit Launcher.
@@ -60,11 +57,8 @@ public class ViewPerformanceSuite extends TestSuite {
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
 
-			// Use the BASIC_VIEW as the fingerprint test.
-			// Do not change this as this is an empty view
-			// and not dependant on other components
 			addTest(new OpenCloseViewTest(id,
-					id.equals(RESOURCE_NAVIGATOR) ? BasicPerformanceTest.GLOBAL
+					id.equals(PROJECT_EXPLORER) ? BasicPerformanceTest.GLOBAL
 							: BasicPerformanceTest.NONE));
 		}
 	}
@@ -87,6 +81,7 @@ public class ViewPerformanceSuite extends TestSuite {
 				.getViewRegistry().getViews();
 		for (int i = 0; i < descriptors.length; i++) {
 			IViewDescriptor descriptor = descriptors[i];
+
 			String[] categoryPath = descriptor.getCategoryPath();
 
 			if (categoryPath == null)
@@ -94,10 +89,12 @@ public class ViewPerformanceSuite extends TestSuite {
 
 			for (int j = 0; j < categoryPath.length; j++) {
 				// Only test basic views
-				if (categoryPath[j].equals(BASIC_PATH)){
-					if(descriptor.getId().indexOf(VIEWS_PATTERN) >= 0) {
+				if (categoryPath[j].equals(BASIC_PATH)) {
+					if (descriptor.getId().indexOf(VIEWS_PATTERN) >= 0
+							|| descriptor.getId().equals(PROJECT_EXPLORER)) {
 						result.add(descriptor.getId());
-				}}
+					}
+				}
 			}
 
 		}
