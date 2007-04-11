@@ -378,12 +378,16 @@ public abstract class Viewer implements IInputSelectionProvider {
     public abstract void setInput(Object input);
 
     /**
-     * The viewer implementation of this <code>ISelectionProvider</code> 
-     * method make the new selection for this viewer without making it visible.
-     * <p>
-     * This method is equivalent to <code>setSelection(selection,false)</code>.
-     * </p>
-     */
+	 * The viewer implementation of this <code>ISelectionProvider</code>
+	 * method make the new selection for this viewer without making it visible.
+	 * <p>
+	 * This method is equivalent to <code>setSelection(selection,false)</code>.
+	 * </p>
+	 * <p>
+	 * Note that some implementations may not be able to set the selection
+	 * without also revealing it, for example (as of 3.3) TreeViewer.
+	 * </p>
+	 */
     public void setSelection(ISelection selection) {
         setSelection(selection, false);
     }
