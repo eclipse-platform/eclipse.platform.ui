@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -519,7 +520,7 @@ public class FastViewManager {
 		String selId = ""; //$NON-NLS-1$
 		PartPane selectedTab = vs.getSelection();
 		if (selectedTab != null)
-			selId  = selectedTab.getID();
+			selId  = selectedTab.getCompoundId();
 		
 		vs.deferUpdates(true);
 		
@@ -569,7 +570,12 @@ public class FastViewManager {
 		// remove any showing fast view
 		page.hideFastView();
 
+		// The stored id may be 'compound' if it's a multi-instance
+		// view; split out the secondary id (if any)
 		String selectedTabId = vstb.getSelectedTabId();
+		String[] idParts = Util.split(selectedTabId, ':');
+		if (idParts[0].length() == selectedTabId.length())
+			idParts[1] = null;
 		
 		List fvs = getFastViews(id);
 		for (Iterator fvIter = fvs.iterator(); fvIter.hasNext();) {
@@ -580,7 +586,7 @@ public class FastViewManager {
 		// Restore the correct tab to the 'top'
 		LayoutPart stack = perspective.getPresentation().findPart(id, null);
 		if (stack instanceof PartStack) {
-			LayoutPart selTab = perspective.getPresentation().findPart(selectedTabId, null);
+			LayoutPart selTab = perspective.getPresentation().findPart(idParts[0], idParts[1]);
 			if (selTab instanceof PartPane && selTab instanceof ViewPane) {
 				((PartStack)stack).setSelection(selTab);
 				

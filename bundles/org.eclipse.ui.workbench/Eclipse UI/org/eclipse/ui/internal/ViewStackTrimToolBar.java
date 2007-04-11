@@ -159,8 +159,13 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 		if (item != null) {
 			item.setSelection(selected);
 			
-			if (selected)
+			if (selected) {
 				selectedTabId = ref.getId();
+				
+				// Create a 'compound' id if this is a multi-instance part
+				if (ref.getSecondaryId() != null)
+					selectedTabId = selectedTabId + ':' + ref.getSecondaryId();
+			}
 		}
 	}
 
