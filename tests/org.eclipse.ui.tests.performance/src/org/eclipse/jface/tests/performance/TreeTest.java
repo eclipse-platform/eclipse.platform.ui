@@ -103,7 +103,7 @@ public class TreeTest extends ViewerTest {
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				return new Object[] { inputElement };
+				return getChildren(inputElement);
 			}
 
 			/*
