@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -254,7 +255,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
                 dialog.setFilterPath(getInitialBrowsePath());
                 String dir = dialog.open();
                 if (dir != null) {
-					text.setText(dir);
+					text.setText(TextProcessor.process(dir));
 				}
             }
         });
@@ -332,8 +333,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 			}
 		}
 
-        text.setText(text.getItemCount() > 0 ? text.getItem(0) : launchData
-                .getInitialDefault());
+        text.setText(TextProcessor.process((text.getItemCount() > 0 ? text
+				.getItem(0) : launchData.getInitialDefault())));
     }
     
 	/* (non-Javadoc)
