@@ -731,9 +731,8 @@ public class ControlDecoration {
 			c.addListener(SWT.MouseDown, compositeListener);
 			printAddListener(c, "SWT.MouseDoubleClick"); //$NON-NLS-1$
 			c.addListener(SWT.MouseDoubleClick, compositeListener);
-			// This redraw was used in the original platform text 
-			// implementation to force a paint.  Let's see what happens without it.
-			// c.redraw();
+			// force a redraw of the decoration area.
+			update();
 		}
 	}
 
