@@ -15,10 +15,23 @@ import java.util.*;
 
 import org.eclipse.core.net.proxy.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 
-public class ProxyManager implements IProxyService {
+public class ProxyManager implements IProxyService, IPreferenceChangeListener {
+	
+	private static final String PREF_HAS_MIGRATED = "org.eclipse.core.net.hasMigrated"; //$NON-NLS-1$
+	
+	/**
+	 * Preference constants used by Update to record the HTTP proxy
+	 */
+	private static String HTTP_PROXY_HOST = "org.eclipse.update.core.proxy.host"; //$NON-NLS-1$
+	private static String HTTP_PROXY_PORT = "org.eclipse.update.core.proxy.port"; //$NON-NLS-1$
+	private static String HTTP_PROXY_ENABLE = "org.eclipse.update.core.proxy.enable"; //$NON-NLS-1$
 	
 	private static final String PREF_NON_PROXIED_HOSTS = "nonProxiedHosts"; //$NON-NLS-1$
 	private static final String PREF_ENABLED = "proxiesEnabled"; //$NON-NLS-1$
@@ -171,7 +184,12 @@ public class ProxyManager implements IProxyService {
 		boolean current = isProxiesEnabled();
 		if (current == enabled)
 			return;
+		// Setting the preference will trigger the system property update
+		// (see preferenceChange)
 		Activator.getInstance().getInstancePreferences().putBoolean(PREF_ENABLED, enabled);
+	}
+
+	private void internalSetEnabled(boolean enabled) {
 		Properties sysProps = System.getProperties();
 		sysProps.put("proxySet", enabled ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		updateSystemProperties();
@@ -196,12 +214,8 @@ public class ProxyManager implements IProxyService {
 
 	public void initialize() {
 		// First see if there is an http proxy to migrate
-		IProxyData httpProxy = PreferenceInitializer.getMigratedHttpProxy();
-		if (httpProxy != null) {
-			Activator.getInstance().getInstancePreferences().putBoolean(PREF_ENABLED, true);
-			ProxyType type = getType(httpProxy);
-			type.updatePreferences(httpProxy);
-		}
+		migrateUpdateHttpProxy(new InstanceScope().getNode("")); //$NON-NLS-1$
+		((IEclipsePreferences)Activator.getInstance().getInstancePreferences()).addPreferenceChangeListener(this);
 		// Now initialize each proxy type
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
@@ -288,6 +302,48 @@ public class ProxyManager implements IProxyService {
 		} catch (CoreException ex) {
 			Activator.log(IStatus.ERROR, NLS.bind("Unable to instantiate authenticator {0}", (new Object[] {extension.getUniqueIdentifier()})), ex);//$NON-NLS-1$ 
 			return null;
+		}
+	}
+	
+	void migrateUpdateHttpProxy(Preferences node) {
+		Preferences netPrefs = node.node(Activator.ID);
+		if (!netPrefs.getBoolean(PREF_HAS_MIGRATED, false)) {
+			netPrefs.putBoolean(PREF_HAS_MIGRATED, true);
+			Preferences updatePrefs = node.node("org.eclipse.update.core"); //$NON-NLS-1$
+			String httpProxyHost = updatePrefs.get(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
+			if ("".equals(httpProxyHost)) //$NON-NLS-1$
+				httpProxyHost = null;
+			updatePrefs.remove(HTTP_PROXY_HOST);
+			
+			String httpProxyPort = updatePrefs.get(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
+			if ("".equals(httpProxyPort)) //$NON-NLS-1$
+				httpProxyPort = null;
+			int port = -1;
+			if (httpProxyPort != null)
+				try {
+					port = Integer.parseInt(httpProxyPort);
+				} catch (NumberFormatException e) {
+					// Ignore
+				}
+			updatePrefs.remove(HTTP_PROXY_PORT);
+			
+			boolean httpProxyEnable = updatePrefs.getBoolean(HTTP_PROXY_ENABLE, false);
+			updatePrefs.remove(HTTP_PROXY_ENABLE);
+			
+			if (httpProxyHost != null) {
+				ProxyData proxyData = new ProxyData(IProxyData.HTTP_PROXY_TYPE, httpProxyHost, port, false);
+				ProxyType type = getType(proxyData);
+				type.updatePreferencesIfMissing(netPrefs, proxyData);
+				if (httpProxyEnable) {
+					netPrefs.putBoolean(ProxyManager.PREF_ENABLED, true);
+				}
+			}
+		}
+	}
+
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (event.getKey().equals(PREF_ENABLED)) {
+			internalSetEnabled(Activator.getInstance().getInstancePreferences().getBoolean(PREF_ENABLED, false));
 		}
 	}
 

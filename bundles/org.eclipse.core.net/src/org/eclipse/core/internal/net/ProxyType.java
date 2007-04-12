@@ -16,11 +16,13 @@ import java.util.*;
 
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class ProxyType {
+public class ProxyType implements INodeChangeListener, IPreferenceChangeListener {
 
 	/**
 	 * Preference keys
@@ -73,6 +75,7 @@ public class ProxyType {
     }
     
 	private String name;
+	private boolean updatingPreferences;
 
 	public static String convertHostsToPropertyString(String[] value) {
 		StringBuffer buffer = new StringBuffer();
@@ -143,13 +146,27 @@ public class ProxyType {
 		if (oldData.equals(proxyData))
 			return false;
 		saveProxyAuth(proxyData);
-		updatePreferences(proxyData);
+		try {
+			updatingPreferences = true;
+			updatePreferences(proxyData);
+		} finally {
+			updatingPreferences = false;
+		}
 		updateSystemProperties(proxyData, proxiesEnabled);
 		return true;
 	}
 
-	/* package */ void updatePreferences(IProxyData proxyData) {
-		Preferences node = getPreferenceNode();
+	private void updatePreferences(IProxyData proxyData) {
+		updatePreferences(getPreferenceNode(), proxyData);
+	}
+	
+	/* package */ void updatePreferencesIfMissing(Preferences node, IProxyData proxyData) {
+		Preferences proxyNode = node.node(PREF_PROXY_DATA_NODE).node(getName());
+		if (node.get(PREF_PROXY_HOST, null) == null)
+			updatePreferences(proxyNode, proxyData);
+	}
+	
+	private void updatePreferences(Preferences node, IProxyData proxyData) {
 		if (proxyData.getHost() == null) {
 			try {
 				Preferences parent = node.parent();
@@ -449,6 +466,8 @@ public class ProxyType {
 
 	public void initialize(boolean proxiesEnabled) {
 		updateSystemProperties(getProxyData(VERIFY_EMPTY), proxiesEnabled);
+		((IEclipsePreferences)getParentPreferences()).addNodeChangeListener(this);
+		((IEclipsePreferences)getPreferenceNode()).addPreferenceChangeListener(this);
 	}
 	
     private Map getAuthInfo() {
@@ -499,6 +518,23 @@ public class ProxyType {
 			// Ignore
 		}
 		return false;
+	}
+
+	public void added(NodeChangeEvent event) {
+		// Add a preference listener so we'll get changes to the fields of the node
+		if (event.getChild().name().equals(getName()))
+			((IEclipsePreferences)event.getChild()).addPreferenceChangeListener(this);
+	}
+
+	public void removed(NodeChangeEvent event) {
+		// Nothing to do
+	}
+
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (updatingPreferences)
+			return;
+		updateSystemProperties(getProxyData(DO_NOT_VERIFY), ProxyManager.getProxyManager().isProxiesEnabled());
+		
 	}
 
 }

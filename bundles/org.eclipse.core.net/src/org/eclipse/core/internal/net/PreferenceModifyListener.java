@@ -10,17 +10,18 @@
  *******************************************************************************/
 package org.eclipse.core.internal.net;
 
-import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
-public class PreferenceInitializer extends AbstractPreferenceInitializer {
-	
-	public PreferenceInitializer() {
-		super();
+public class PreferenceModifyListener extends
+		org.eclipse.core.runtime.preferences.PreferenceModifyListener {
+
+	public PreferenceModifyListener() {
+		// Nothing to do
 	}
-
-	public void initializeDefaultPreferences() {
-		// TODO: We should set defaults in the default scope
-		//((ProxyManager)ProxyManager.getProxyManager()).initialize();
+	
+	public IEclipsePreferences preApply(IEclipsePreferences node) {
+		((ProxyManager)ProxyManager.getProxyManager()).migrateUpdateHttpProxy(node.node("instance")); //$NON-NLS-1$
+		return super.preApply(node);
 	}
 
 }

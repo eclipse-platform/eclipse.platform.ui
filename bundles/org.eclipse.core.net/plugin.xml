@@ -7,6 +7,9 @@
       <initializer
             class="org.eclipse.core.internal.net.PreferenceInitializer">
       </initializer>
+      <modifier
+            class="org.eclipse.core.internal.net.PreferenceModifyListener">
+      </modifier>
    </extension>
 
 </plugin>
