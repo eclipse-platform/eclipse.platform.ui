@@ -378,6 +378,8 @@ public abstract class MarkerView extends TableView {
 		 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
+			if (!hasMarkerDelta(event))
+				return;
 
 			if (event.getType() == IResourceChangeEvent.POST_BUILD) {
 				scheduleMarkerUpdate(Util.SHORT_DELAY);
@@ -396,36 +398,25 @@ public abstract class MarkerView extends TableView {
 		}
 
 		/**
-		 * Return whether or not any of the deltas indicate a required update.
+		 * Returns whether or not the given even contains marker deltas for this
+		 * view.
 		 * 
 		 * @param event
-		 * @param markerTypes
-		 * @param needsUpdate
-		 * @return boolean
+		 *            the resource change event
+		 * @return <code>true</code> if the event contains at least one
+		 *         relevant marker delta
+		 * @since 3.3
 		 */
-		// boolean checkIfUpdateRequired(IResourceChangeEvent event,
-		// String[] markerTypes) {
-		// for (int idx = 0; idx < markerTypes.length; idx++) {
-		// IMarkerDelta[] markerDeltas = event.findMarkerDeltas(
-		// markerTypes[idx], true);
-		// for (int i = 0; i < markerDeltas.length; i++) {
-		// IMarkerDelta delta = markerDeltas[i];
-		// int kind = delta.getKind();
-		//
-		// if (kind == IResourceDelta.CHANGED) {
-		// return true;
-		// }
-		// if (kind == IResourceDelta.ADDED) {
-		// return true;
-		// }
-		// if (kind == IResourceDelta.REMOVED) {
-		// return true;
-		// }
-		// }
-		//
-		// }
-		// return false;
-		// }
+		private boolean hasMarkerDelta(IResourceChangeEvent event) {
+			String[] markerTypes = getMarkerTypes();
+			for (int i = 0; i < markerTypes.length; i++) {
+				if (event.findMarkerDeltas(markerTypes[i], true).length > 0) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 	};
 
 	private class ContextProvider implements IContextProvider {
@@ -755,7 +746,7 @@ public abstract class MarkerView extends TableView {
 			}
 		});
 
-		//Hook up to the resource changes after all widget have been created
+		// Hook up to the resource changes after all widget have been created
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
 				markerUpdateListener,
 				IResourceChangeEvent.POST_CHANGE
