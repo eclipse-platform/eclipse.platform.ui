@@ -230,6 +230,11 @@ public final class WorkbenchMenuService extends InternalMenuService {
 				if (!updateCoolBar((ToolBarManager) mgr)) {
 					updateTrim((ToolBarManager) mgr);
 				}
+			} else if (mgr instanceof MenuManager) {
+				IContributionManager parent = ((MenuManager)mgr).getParent();
+				if (parent!=null) {
+					parent.update(true);
+				}
 			}
 		}
 	}

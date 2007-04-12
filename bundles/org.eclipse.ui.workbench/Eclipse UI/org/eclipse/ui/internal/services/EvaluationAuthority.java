@@ -123,32 +123,47 @@ public class EvaluationAuthority extends ExpressionAuthority {
 							IEvaluationReference[] refs = (IEvaluationReference[]) expressionCaches[j]
 									.toArray(new IEvaluationReference[expressionCaches[j]
 											.size()]);
-							IEvaluationReference ref = refs[0];
-							boolean oldValue = evaluate(ref);
-							ref.clearResult();
-							final boolean newValue = evaluate(ref);
-							if (oldValue != newValue && ref.isPostingChanges()) {
-								firePropertyChange(ref, new Boolean(oldValue),
-										new Boolean(newValue));
-							}
-							for (int k = 1; k < refs.length; k++) {
-								ref = refs[k];
-								// this is not as expensive as it looks
-								oldValue = evaluate(ref);
-								if (oldValue != newValue) {
-									ref.setResult(newValue);
-									if (ref.isPostingChanges())
-										firePropertyChange(ref, new Boolean(
-												oldValue),
-												new Boolean(newValue));
-								}
-							}
+							refsWithSameExpression(refs);
 						}
 					}
 				}
 			}
 		} finally {
 			endSourceChange(sourceNames);
+		}
+	}
+
+	/**
+	 * This will evaluate all refs with the same expression.
+	 * @param refs
+	 */
+	private void refsWithSameExpression(IEvaluationReference[] refs) {
+		int k=0;
+		while (k<refs.length && !refs[k].isPostingChanges()) {
+			k++;
+		}
+		if (k>=refs.length) {
+			return;
+		}
+		IEvaluationReference ref = refs[k];
+		boolean oldValue = evaluate(ref);
+		ref.clearResult();
+		final boolean newValue = evaluate(ref);
+		if (oldValue != newValue) {
+			firePropertyChange(ref, new Boolean(oldValue),
+					new Boolean(newValue));
+		}
+		for (k++; k < refs.length; k++) {
+			ref = refs[k];
+			// this is not as expensive as it looks
+			if (ref.isPostingChanges()) {
+				oldValue = evaluate(ref);
+				if (oldValue != newValue) {
+					ref.setResult(newValue);
+					firePropertyChange(ref, new Boolean(oldValue), new Boolean(
+							newValue));
+				}
+			}
 		}
 	}
 
