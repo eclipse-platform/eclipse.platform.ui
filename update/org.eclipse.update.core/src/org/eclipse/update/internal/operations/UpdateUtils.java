@@ -628,18 +628,31 @@ public class UpdateUtils {
 				provider.getPluginEntryArchiveReferences(pluginsToInstall[i], monitor);
 				monitorWork(monitor,1);
 			}
+			
+			
 
 			// Download non-plugin archives. Verification handled by optional install handler
             // Note: do not download non-plugin archives for installed features
-            if (nonPluginsToInstall.length > 0)
+            if (nonPluginsToInstall.length > 0) {
+                // Setup optional install handler
+                InstallHandlerProxy handler = null;
+                if (feature.getInstallHandlerEntry()!=null)
+                    handler = new InstallHandlerProxy(
+                        IInstallHandler.HANDLER_ACTION_INSTALL,
+                        feature,
+                        feature.getInstallHandlerEntry(),
+                        monitor);
+            	
                 if (!featureAlreadyInstalled)
                     for (int i = 0; i < nonPluginsToInstall.length; i++) {
-                        provider.getNonPluginEntryArchiveReferences(
+                        if (handler==null || handler.acceptNonPluginData(nonPluginsToInstall[i]))
+                        	provider.getNonPluginEntryArchiveReferences(
                                 nonPluginsToInstall[i], monitor);
                         monitorWork(monitor, 1);
                     }
                 else
                     monitorWork(monitor, nonPluginsToInstall.length);
+            }
            
 			// Download child features
 			for (int i = 0; i < children.length; i++) {
