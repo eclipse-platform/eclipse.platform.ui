@@ -280,7 +280,7 @@ class FilterTransform {
 		void removeElementFromFilters(int index) {
 			if (filteredIndexes != null) {
 				int location = Arrays.binarySearch(filteredIndexes, index);
-				if (location > 0) {
+				if (location >= 0) {
 					// remove a filtered item
 					if (filteredIndexes.length == 1) {
 						// only filtered item
