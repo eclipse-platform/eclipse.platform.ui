@@ -67,6 +67,8 @@ public class MarkerMessages extends NLS{
 	public static String deleteAction_title;
 	public static String deleteAction_tooltip;
 	public static String selectAllAction_title;
+	public static String selectAllAction_calculating;
+	public static String selectAllAction_applying;
 	public static String propertiesAction_title;
 
 	public static String filtersDialog_title;

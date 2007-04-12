@@ -95,7 +95,7 @@ public class MarkerAdapter {
 		 * 
 		 * @return int
 		 */
-		private int getDisplayedSize() {
+		int getDisplayedSize() {
 			if (view.getMarkerLimit() > 0) {
 				return Math.min(getTotalSize(), view.getMarkerLimit());
 			}
@@ -295,7 +295,7 @@ public class MarkerAdapter {
 	 * 
 	 * @return boolean
 	 */
-	private boolean isShowingHierarchy() {
+	boolean isShowingHierarchy() {
 
 		ViewerComparator sorter = view.getViewer().getComparator();
 		if (sorter instanceof CategoryComparator) {
