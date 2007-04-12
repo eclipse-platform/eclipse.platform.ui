@@ -108,6 +108,7 @@ import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
@@ -121,6 +122,7 @@ import org.eclipse.ui.internal.editors.quickdiff.RevertLineAction;
 import org.eclipse.ui.internal.editors.quickdiff.RevertSelectionAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
+import org.eclipse.ui.internal.editors.text.RefreshEditorAction;
 import org.eclipse.ui.internal.texteditor.AnnotationColumn;
 import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
@@ -1140,6 +1142,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		IAction showWhitespaceCharactersAction= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
 		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction)
 			((ShowWhitespaceCharactersAction)showWhitespaceCharactersAction).setPreferenceStore(EditorsUI.getPreferenceStore());
+		
+		setAction(ActionFactory.REFRESH.getId(), new RefreshEditorAction(this));
+		markAsPropertyDependentAction(ActionFactory.REFRESH.getId(), true);
 	}
 
 	public Object getAdapter(Class adapter) {
