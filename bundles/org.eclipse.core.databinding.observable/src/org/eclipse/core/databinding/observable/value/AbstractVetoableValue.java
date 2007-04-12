@@ -15,6 +15,12 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
+ * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
  * @since 1.0
  * 
  */
@@ -78,7 +84,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		return !event.veto;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 	}
 

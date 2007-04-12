@@ -24,7 +24,11 @@ import org.eclipse.core.databinding.observable.StaleEvent;
  * A Lazily calculated value that automatically computes and registers listeners
  * on its dependencies as long as all of its dependencies are IObservable
  * objects
- * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
  * @since 1.0
  */
 public abstract class ComputedValue extends AbstractObservableValue {
@@ -197,14 +201,14 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		return valueType;
 	}
 
-	public void addChangeListener(IChangeListener listener) {
+	public synchronized void addChangeListener(IChangeListener listener) {
 		super.addChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners
 		getValue();
 	}
 
-	public void addValueChangeListener(IValueChangeListener listener) {
+	public synchronized void addValueChangeListener(IValueChangeListener listener) {
 		super.addValueChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners

@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.internal.databinding.observable.IStalenessConsumer;
 import org.eclipse.core.internal.databinding.observable.StalenessTracker;
 
@@ -26,6 +27,12 @@ import org.eclipse.core.internal.databinding.observable.StalenessTracker;
  * Represents a set consisting of the union of elements from one or more other
  * sets. This object does not need to be explicitly disposed. If nobody is
  * listening to the UnionSet, the set will remove its listeners.
+ * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
  * 
  * @since 1.0
  */
@@ -74,6 +81,7 @@ public final class UnionSet extends ObservableSet {
 	};
 
 	public boolean isStale() {
+		checkRealm();
 		if (refCounts != null) {
 			return stale;
 		}

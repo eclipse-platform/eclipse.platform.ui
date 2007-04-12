@@ -19,7 +19,11 @@ import org.eclipse.core.databinding.observable.Realm;
 /**
  * Mutable (writable) implementation of {@link IObservableValue} that will maintain a value and fire
  * change events when the value changes.
- * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
  * @since 1.0
  */
 public class WritableValue extends AbstractObservableValue {

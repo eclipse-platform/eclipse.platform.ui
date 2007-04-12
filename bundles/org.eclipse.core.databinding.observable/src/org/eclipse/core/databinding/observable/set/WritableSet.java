@@ -22,8 +22,15 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * @since 1.0
+ * Mutable (writable) implementation of {@link IObservableSet}.
  * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
+ * 
+ * @since 1.0
  */
 public class WritableSet extends ObservableSet {
 
@@ -70,6 +77,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean add(Object o) {
+		checkRealm();
 		boolean added = wrappedSet.add(o);
 		if (added) {
 			fireSetChange(Diffs.createSetDiff(Collections.singleton(o), Collections.EMPTY_SET));
@@ -78,6 +86,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean addAll(Collection c) {
+		checkRealm();
 		Set adds = new HashSet();
 		Iterator it = c.iterator();
 		while (it.hasNext()) {
@@ -94,6 +103,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean remove(Object o) {
+		checkRealm();
 		boolean removed = wrappedSet.remove(o);
 		if (removed) {
 			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, Collections
@@ -103,6 +113,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean removeAll(Collection c) {
+		checkRealm();
 		Set removes = new HashSet();
 		Iterator it = c.iterator();
 		while (it.hasNext()) {
@@ -119,6 +130,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean retainAll(Collection c) {
+		checkRealm();
 		Set removes = new HashSet();
 		Iterator it = wrappedSet.iterator();
 		while (it.hasNext()) {
@@ -136,6 +148,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public void clear() {
+		checkRealm();
 		Set removes = new HashSet(wrappedSet);
 		wrappedSet.clear();
 		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));

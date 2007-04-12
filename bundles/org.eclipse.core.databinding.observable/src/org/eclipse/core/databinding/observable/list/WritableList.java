@@ -23,8 +23,13 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * Mutable observable list backed by an ArrayList. All mutators (e.g. set, add,
- * remove, etc.) must be invoked from the current realm.
+ * Mutable observable list backed by an ArrayList.
+ * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
  * 
  * @since 1.0
  */

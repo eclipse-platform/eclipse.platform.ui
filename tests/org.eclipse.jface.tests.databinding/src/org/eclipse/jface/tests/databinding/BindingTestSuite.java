@@ -64,6 +64,10 @@ import org.eclipse.jface.tests.databinding.mask.EditMaskParserTest;
 import org.eclipse.jface.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.jface.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.jface.tests.databinding.observable.list.WritableListTest;
+import org.eclipse.jface.tests.databinding.observable.set.AbstractObservableSetRealmTest;
+import org.eclipse.jface.tests.databinding.observable.set.ObservableSetRealmTest;
+import org.eclipse.jface.tests.databinding.observable.set.UnionSetRealmTest;
+import org.eclipse.jface.tests.databinding.observable.set.WritableSetRealmTest;
 import org.eclipse.jface.tests.databinding.observable.set.WritableSetTest;
 import org.eclipse.jface.tests.databinding.observable.value.AbstractObservableValueTest;
 import org.eclipse.jface.tests.databinding.observable.value.AbstractVetoableValueTest;
@@ -194,6 +198,10 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(WritableListTest.class);
 
 		// org.eclipse.jface.tests.databinding.observable.set
+		addTestSuite(AbstractObservableSetRealmTest.class);
+		addTestSuite(ObservableSetRealmTest.class);
+		addTestSuite(UnionSetRealmTest.class);
+		addTestSuite(WritableSetRealmTest.class);
 		addTestSuite(WritableSetTest.class);
 
 		// org.eclipse.jface.tests.databinding.observable.value

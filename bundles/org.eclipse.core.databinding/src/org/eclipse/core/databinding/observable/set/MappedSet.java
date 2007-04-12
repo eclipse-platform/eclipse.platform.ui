@@ -19,12 +19,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 
 /**
+ * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
+ * 
  * @since 1.0
  * 
  */
@@ -141,7 +149,7 @@ public class MappedSet extends ObservableSet {
 		return false;
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		wrappedMap.removeMapChangeListener(mapChangeListener);
 		input.removeSetChangeListener(domainListener);
 	}

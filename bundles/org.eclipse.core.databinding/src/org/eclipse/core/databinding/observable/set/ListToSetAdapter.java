@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -24,7 +25,13 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
  * Observable set backed by an observable list. The wrapped list must not
  * contain duplicate elements.
  * 
- * @since 3.2
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
+ * 
+ * @since 1.0
  * 
  */
 public class ListToSetAdapter extends ObservableSet {
@@ -66,7 +73,7 @@ public class ListToSetAdapter extends ObservableSet {
 		this.list.addListChangeListener(listener);
 	}
 
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 		if (list != null && listener != null) {
 			list.removeListChangeListener(listener);

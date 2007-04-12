@@ -23,6 +23,12 @@ import org.eclipse.core.databinding.observable.Realm;
  * 
  * Abstract implementation of {@link IObservableSet}. 
  * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
+ * 
  * @since 1.0
  * 
  */
@@ -45,11 +51,11 @@ public abstract class ObservableSet extends AbstractObservable implements
 		this.elementType = elementType;
 	}
 	
-	public void addSetChangeListener(ISetChangeListener listener) {
+	public synchronized void addSetChangeListener(ISetChangeListener listener) {
 		addListener(SetChangeEvent.TYPE, listener);
 	}
 
-	public void removeSetChangeListener(ISetChangeListener listener) {
+	public synchronized void removeSetChangeListener(ISetChangeListener listener) {
 		removeListener(SetChangeEvent.TYPE, listener);
 	}
 
@@ -86,6 +92,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 	}
 
 	public Iterator iterator() {
+		getterCalled();
 		final Iterator wrappedIterator = wrappedSet.iterator();
 		return new Iterator() {
 
@@ -157,6 +164,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 	 * @return Returns the stale state.
 	 */
 	public boolean isStale() {
+		checkRealm();
 		return stale;
 	}
 
@@ -167,6 +175,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 	 *            stale.
 	 */
 	public void setStale(boolean stale) {
+		checkRealm();
 		boolean wasStale = this.stale;
 		this.stale = stale;
 		if (!wasStale && stale) {
@@ -188,7 +197,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		super.dispose();
 	}
 	
