@@ -7,12 +7,14 @@
  *
  * Contributors:
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                               - fix for bug 178280
  *     IBM Corporation - API refactoring and general maintenance
  *******************************************************************************/
 
 package org.eclipse.jface.layout;
 
 import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Scrollable;
@@ -66,11 +68,20 @@ public class TableColumnLayout extends AbstractColumnLayout {
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
 	}
 
-	int getColumnWidth(Widget column) {
-		return ((TableColumn) column).getWidth();
-	}
-
 	Composite getComposite(Widget column) {
 		return ((TableColumn) column).getParent().getParent();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.layout.AbstractColumnLayout#updateColumnData(org.eclipse.swt.widgets.Widget)
+	 */
+	void updateColumnData(Widget column) {
+		TableColumn tColumn = (TableColumn) column;
+		Table t = tColumn.getParent();
+		
+		if( ! IS_GTK || t.getColumn(t.getColumnCount()-1) != tColumn ){
+			tColumn.setData(LAYOUT_DATA,new ColumnPixelData(tColumn.getWidth()));
+			layout(t.getParent(), true);
+		}	
 	}
 }

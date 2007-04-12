@@ -7,6 +7,7 @@
  *
  * Contributors:
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                               - fix for bug 178280
  *     IBM Corporation - API refactoring and general maintenance
  *******************************************************************************/
 
@@ -14,7 +15,7 @@ package org.eclipse.jface.layout;
 
 
 import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
@@ -60,11 +61,13 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 		return (ColumnLayoutData) column.getData(LAYOUT_DATA);
 	}
 	
-	int getColumnWidth(Widget column) {
-		return ((TreeColumn)column).getWidth();
-	}
-	
-	Composite getComposite(Widget column) {
-		return ((TreeColumn)column).getParent().getParent();
+	void updateColumnData(Widget column) {
+		TreeColumn tColumn = (TreeColumn) column;
+		Tree t = tColumn.getParent();
+		
+		if( ! IS_GTK || t.getColumn(t.getColumnCount()-1) != tColumn ){
+			layout(t.getParent(), true);
+			tColumn.setData(LAYOUT_DATA,new ColumnPixelData(tColumn.getWidth()));
+		}
 	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation (original file org.eclipse.ui.texteditor.templates.ColumnLayout)
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactored to be widget independent (bug 171824)
+ *                                               - fix for bug 178280
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
@@ -50,6 +51,8 @@ abstract class AbstractColumnLayout extends Layout {
 	 */
 	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
 
+	static final boolean IS_GTK = "gtk".equals(SWT.getPlatform());//$NON-NLS-1$
+	
 	private static final String RECALCULATE_LAYOUT = Policy.JFACE + ".RELAYOUT"; //$NON-NLS-1$
 
 	static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
@@ -60,8 +63,7 @@ abstract class AbstractColumnLayout extends Layout {
 
 		public void handleEvent(Event event) {
 			if( ! inupdateMode ) {
-				event.widget.setData(LAYOUT_DATA,new ColumnPixelData(getColumnWidth(event.widget)));
-				layout(getComposite(event.widget), true);
+				updateColumnData(event.widget);
 			}
 		}
 		
@@ -77,6 +79,7 @@ abstract class AbstractColumnLayout extends Layout {
 	 *            the column layout data
 	 */
 	public void setColumnData(Widget column, ColumnLayoutData data) {
+
 		if( column.getData(LAYOUT_DATA) == null ) {
 			column.addListener(SWT.Resize, resizeListener);
 		}
@@ -99,7 +102,7 @@ abstract class AbstractColumnLayout extends Layout {
 	private Point computeTableTreeSize(Scrollable scrollable, int wHint,
 			int hHint) {
 		Point result = scrollable.computeSize(wHint, hHint);
-
+				
 		int width = 0;
 		int size = getColumnCount(scrollable);
 		for (int i = 0; i < size; ++i) {
@@ -119,6 +122,7 @@ abstract class AbstractColumnLayout extends Layout {
 		}
 		if (width > result.x)
 			result.x = width;
+		
 		return result;
 	}
 
@@ -206,6 +210,7 @@ abstract class AbstractColumnLayout extends Layout {
 
 		inupdateMode = true;
 		setColumnWidths(scrollable, widths);
+		scrollable.update();
 		inupdateMode = false;
 		
 		if (!increase) {
@@ -313,7 +318,5 @@ abstract class AbstractColumnLayout extends Layout {
 	
 	abstract ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex);
 	
-	abstract int getColumnWidth(Widget column);
-	
-	abstract Composite getComposite(Widget column);
+	abstract void updateColumnData(Widget column);
 }
