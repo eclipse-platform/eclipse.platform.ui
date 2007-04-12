@@ -144,18 +144,18 @@ public class ListViewerTest extends StructuredViewerTest {
 	}
     
     public void testSelectionRevealBug177619() throws Exception {
-    	TestElement model = TestElement.createModel(1, 50);
+    	TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
 		
-    	fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(30)),true);
+    	fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),true);
     	assertTrue(((ListViewer)fViewer).getList().getTopIndex() != 0);
 	}
 	
 	public void testSelectionNoRevealBug177619() throws Exception {
-		TestElement model = TestElement.createModel(1, 50);
+		TestElement model = TestElement.createModel(1, 100);
 		fViewer.setInput(model);
 		
-		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(30)),false);
+		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),false);
 		assertTrue(((ListViewer)fViewer).getList().getTopIndex() == 0);
 	}
 }
