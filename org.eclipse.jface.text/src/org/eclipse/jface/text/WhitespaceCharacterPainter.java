@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Point;
 public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	private static final char SPACE_SIGN= '\u00b7';
+	private static final char IDEOGRAPHIC_SPACE_SIGN= '\u00b0';
 	private static final char TAB_SIGN= '\u00bb';
 	private static final char CARRIAGE_RETURN_SIGN= '\u00a4';
 	private static final char LINE_FEED_SIGN= '\u00b6';
@@ -170,7 +171,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 					// for long runs of space if width of space and dot differ
 					break;
 				case '\u3000' : // ideographic whitespace
-					visibleChar.append(SPACE_SIGN);
+					visibleChar.append(IDEOGRAPHIC_SPACE_SIGN);
 					// 'continue' would improve performance but may produce drawing errors
 					// for long runs of space if width of space and dot differ
 					break;
