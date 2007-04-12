@@ -142,8 +142,14 @@ public class ProxyType {
 		IProxyData oldData = getProxyData(VERIFY_EQUAL);
 		if (oldData.equals(proxyData))
 			return false;
-		Preferences node = getPreferenceNode();
 		saveProxyAuth(proxyData);
+		updatePreferences(proxyData);
+		updateSystemProperties(proxyData, proxiesEnabled);
+		return true;
+	}
+
+	/* package */ void updatePreferences(IProxyData proxyData) {
+		Preferences node = getPreferenceNode();
 		if (proxyData.getHost() == null) {
 			try {
 				Preferences parent = node.parent();
@@ -164,8 +170,6 @@ public class ProxyType {
 					"The {0} proxy node could not be written", proxyData.getType()), e); //$NON-NLS-1$
 			}
 		}
-		updateSystemProperties(proxyData, proxiesEnabled);
-		return true;
 	}
 	
 	/* package */void updateSystemProperties(IProxyData proxyData, boolean proxiesEnabled) {

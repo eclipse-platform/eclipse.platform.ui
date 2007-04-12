@@ -195,6 +195,14 @@ public class ProxyManager implements IProxyService {
 	}
 
 	public void initialize() {
+		// First see if there is an http proxy to migrate
+		IProxyData httpProxy = PreferenceInitializer.getMigratedHttpProxy();
+		if (httpProxy != null) {
+			Activator.getInstance().getInstancePreferences().putBoolean(PREF_ENABLED, true);
+			ProxyType type = getType(httpProxy);
+			type.updatePreferences(httpProxy);
+		}
+		// Now initialize each proxy type
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
 			type.initialize(isProxiesEnabled());
