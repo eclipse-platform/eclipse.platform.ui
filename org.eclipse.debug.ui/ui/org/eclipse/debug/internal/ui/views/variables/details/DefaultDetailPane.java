@@ -898,12 +898,14 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.IFindReplaceTarget#findAndSelect(int, java.lang.String, boolean, boolean, boolean)
 		 */
-		public int findAndSelect(int widgetOffset, String findString,
-				boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+		public int findAndSelect(int widgetOffset, String findString, boolean searchForward, boolean caseSensitive, boolean wholeWord) {
 			int position = fTarget.findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
 			// Explicitly tell the widget to show the selection because the viewer thinks the text is all on one line, even if wrapping is turned on.
-			if (fSourceViewer != null && fSourceViewer.getTextWidget() != null && !fSourceViewer.getTextWidget().isDisposed()){
-				fSourceViewer.getTextWidget().showSelection();
+			if (fSourceViewer != null){
+				StyledText text = fSourceViewer.getTextWidget();
+				if(text != null && !text.isDisposed()) {
+					text.showSelection();
+				}
 			}
 			return position;
 		}
