@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Synchronizer;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 public class UISynchronizer extends Synchronizer {
     protected UILockListener lockListener;
@@ -88,7 +89,7 @@ public class UISynchronizer extends Synchronizer {
     	if (runnable != null) {
 			synchronized (this) {
 				if (isStarting
-						&& UISynchronizer.startupThread.get() == Boolean.FALSE) {
+						&& !(runnable instanceof StartupRunnable)) {
 					pendingStartup.add(runnable);
 					
 					return;
