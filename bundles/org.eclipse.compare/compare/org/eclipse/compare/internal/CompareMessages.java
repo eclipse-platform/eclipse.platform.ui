@@ -52,6 +52,7 @@ public final class CompareMessages extends NLS {
 	public static String NavigationEndDialog_0;
 	public static String NavigationEndDialog_1;
 	public static String RangeComparatorLCS_0;
+	public static String ShowWhitespaceAction_0;
 	public static String StructureDiffViewer_0;
 	public static String StructureDiffViewer_1;
 	public static String StructureDiffViewer_2;
@@ -66,6 +67,7 @@ public final class CompareMessages extends NLS {
 	public static String TextMergeViewer_13;
 	public static String TextMergeViewer_14;
 	public static String TextMergeViewer_15;
+	public static String TextMergeViewer_16;
 	public static String TextMergeViewer_2;
 	public static String TextMergeViewer_3;
 	public static String TextMergeViewer_4;

@@ -23,14 +23,22 @@ public class TextEditorPropertyAction extends Action implements IPropertyChangeL
 	private final String preferenceKey;
 	private IPreferenceStore store;
 	
-	public TextEditorPropertyAction(MergeSourceViewer[] viewers, String preferenceKey) {
-		super(null, IAction.AS_CHECK_BOX);
+	public TextEditorPropertyAction(String label, MergeSourceViewer[] viewers, String preferenceKey) {
+		super(label, IAction.AS_CHECK_BOX);
 		this.viewers = viewers;
 		this.preferenceKey = preferenceKey;
 		this.store = EditorsUI.getPreferenceStore();
 		if (store != null)
 			store.addPropertyChangeListener(this);
 		synchronizeWithPreference();
+		addActionToViewers();
+	}
+
+	private void addActionToViewers() {
+		for (int i = 0; i < viewers.length; i++) {
+			MergeSourceViewer viewer = viewers[i];
+			viewer.addTextAction(this);
+		}
 	}
 
 	public MergeSourceViewer[] getViewers() {

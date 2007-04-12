@@ -21,7 +21,7 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 	private boolean isWhitespaceShowing;
 	
 	public ShowWhitespaceAction(MergeSourceViewer[] viewers) {
-		super(viewers, AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
+		super(CompareMessages.ShowWhitespaceAction_0, viewers, AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS);
 	}
 	
 	protected void toggleState(boolean checked) {

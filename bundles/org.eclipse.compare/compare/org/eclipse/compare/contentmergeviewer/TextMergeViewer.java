@@ -3881,7 +3881,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		});
 		Utilities.registerAction(fHandlerService, showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, fActivations);
 		
-		toggleLineNumbersAction = new TextEditorPropertyAction(new MergeSourceViewer[] {
+		toggleLineNumbersAction = new TextEditorPropertyAction(CompareMessages.TextMergeViewer_16, new MergeSourceViewer[] {
 				fLeft, fRight, fAncestor
 		}, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
 		Utilities.registerAction(fHandlerService, toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE, fActivations);

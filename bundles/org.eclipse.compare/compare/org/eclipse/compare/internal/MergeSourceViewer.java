@@ -12,30 +12,25 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import org.eclipse.compare.ICompareContainer;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.texteditor.FindReplaceAction;
-
-import org.eclipse.compare.ICompareContainer;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.text.*;
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.texteditor.FindReplaceAction;
 /**
  * Extends the JFace SourceViewer with some convenience methods.
  */
@@ -89,6 +84,7 @@ public class MergeSourceViewer extends SourceViewer
 	private IPropertyChangeListener fPreferenceChangeListener;
 	private boolean fShowLineNumber=false;
 	private LineNumberRulerColumn fLineNumberColumn;
+	private List textActions = new ArrayList();
 
 	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle, ICompareContainer container) {
 		super(parent, new CompositeRuler(), style | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -430,6 +426,12 @@ public class MergeSourceViewer extends SourceViewer
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
+		menu.add(new Separator("text")); //$NON-NLS-1$
+		for (Iterator iterator = textActions.iterator(); iterator.hasNext();) {
+			IAction action = (IAction) iterator.next();
+			menu.add(action);
+		}
+		
 		menu.add(new Separator("rest")); //$NON-NLS-1$
 		
 		// update all actions
@@ -532,5 +534,9 @@ public class MergeSourceViewer extends SourceViewer
 		fShowLineNumber=!fShowLineNumber;
 		
 		updateLineNumberRuler();
+	}
+
+	public void addTextAction(TextEditorPropertyAction textEditorPropertyAction) {
+		textActions.add(textEditorPropertyAction);
 	}
 }
