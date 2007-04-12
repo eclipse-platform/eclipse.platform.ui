@@ -184,6 +184,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public Object fElement;
 		public int fCount;
 		public ITextFileBuffer fTextFileBuffer;
+		
+		// private due to 3.3 API freeze, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=182086
+		private LocationKind fTextFileBufferLocationKind;
+		
 		public IAnnotationModel fModel;
 		public boolean fCachedReadOnlyState;
 	}
@@ -540,12 +544,14 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		IFile file= null;
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		ITextFileBuffer fileBuffer= null;
+		LocationKind locationKind= null;
 		
 		file= (IFile)adaptable.getAdapter(IFile.class);
 		if (file != null) {
 			IPath location= file.getFullPath();
-			manager.connect(location, LocationKind.IFILE, getProgressMonitor());
-			fileBuffer= manager.getTextFileBuffer(location, LocationKind.IFILE);
+			locationKind= LocationKind.IFILE;
+			manager.connect(location, locationKind,getProgressMonitor());
+			fileBuffer= manager.getTextFileBuffer(location, locationKind);
 		} else {
 			ILocationProvider provider= (ILocationProvider) adaptable.getAdapter(ILocationProvider.class);
 			if (provider instanceof ILocationProviderExtension) {
@@ -560,8 +566,9 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 				IPath location= provider.getPath(element);
 				if (location == null)
 					return null;
-				manager.connect(location, LocationKind.NORMALIZE, getProgressMonitor());
-				fileBuffer= manager.getTextFileBuffer(location, LocationKind.NORMALIZE);
+				locationKind= LocationKind.NORMALIZE;
+				manager.connect(location, locationKind, getProgressMonitor());
+				fileBuffer= manager.getTextFileBuffer(location, locationKind);
 				file= FileBuffers.getWorkspaceFileAtLocation(location);
 			}
 		}
@@ -571,6 +578,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 			FileInfo info= createEmptyFileInfo();
 			info.fTextFileBuffer= fileBuffer;
+			info.fTextFileBufferLocationKind= locationKind;
 			info.fCachedReadOnlyState= isSystemFileReadOnly(info);
 
 			if (file != null)
@@ -673,8 +681,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		IFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		try {
 			info.fTextFileBuffer.releaseSynchronizationContext();
-			IPath location= info.fTextFileBuffer.getLocation();
-			manager.disconnect(location, LocationKind.NORMALIZE, getProgressMonitor());
+			if (info.fTextFileBufferLocationKind != null)
+				manager.disconnect(info.fTextFileBuffer.getLocation(), info.fTextFileBufferLocationKind, getProgressMonitor());
+			else
+				manager.disconnectFileStore(info.fTextFileBuffer.getFileStore(), getProgressMonitor());
 		} catch (CoreException x) {
 			handleCoreException(x, "FileDocumentProvider.disposeElementInfo"); //$NON-NLS-1$
 		}
