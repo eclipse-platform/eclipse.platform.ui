@@ -20,13 +20,14 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
@@ -141,7 +142,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                                         IStatus.ERROR,
                                         contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
                                         IStatus.OK,
-                                        e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$,
+                                        WorkbenchMessages.WorkbenchWizard_errorMessage,
                                         e);
                             }
 
@@ -150,7 +151,13 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                                     workbenchWizard[0] = createWizard();
                                     // create instance of target wizard
                                 } catch (CoreException e) {
-                                    statuses[0] = e.getStatus();
+                                	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement, IPluginContribution.class);
+                                	statuses[0] = new Status(
+                                            IStatus.ERROR,
+                                            contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
+                                            IStatus.OK,
+                                            WorkbenchMessages.WorkbenchWizard_errorMessage,
+                                            e);
                                 }
                             }
                         });
@@ -158,11 +165,14 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                 });
 
         if (statuses[0] != null) {
-            parentWizardPage.setErrorMessage(WorkbenchMessages.WorkbenchWizard_errorMessage);
-            StatusUtil.handleStatus(statuses[0],
-					WorkbenchMessages.WorkbenchWizard_errorTitle + ": " //$NON-NLS-1$
-							+ WorkbenchMessages.WorkbenchWizard_errorMessage,
-					StatusManager.SHOW, parentWizardPage.getShell());
+            parentWizardPage
+					.setErrorMessage(WorkbenchMessages.WorkbenchWizard_errorMessage);
+			StatusAdapter statusAdapter = new StatusAdapter(statuses[0]);
+			statusAdapter.addAdapter(Shell.class, parentWizardPage.getShell());
+			statusAdapter.setProperty(StatusAdapter.TITLE_PROPERTY,
+					WorkbenchMessages.WorkbenchWizard_errorTitle);
+			StatusManager.getManager()
+					.handle(statusAdapter, StatusManager.SHOW);
 			return null;
         }
 
