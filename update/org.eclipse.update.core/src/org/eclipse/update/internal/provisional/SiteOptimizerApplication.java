@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 	public final static String JAR_PROCESSOR_REPACK = "-repack"; //$NON-NLS-1$
 
 	public final static String JAR_PROCESSOR_SIGN = "-sign"; //$NON-NLS-1$
-	
+
 	public final static String JAR_PROCESSOR_PROCESS_ALL = "-processAll"; //$NON-NLS-1$
 
 	public final static String SITE_XML = "-siteXML"; //$NON-NLS-1$
@@ -207,7 +207,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		}
 
 		for(int i = 0; i < featureList.size(); i++) {
-			
+
 			String featureJarFileName = (String) featureList.get(i);
 
 			if (featureJarFileName.endsWith("jar")) { //$NON-NLS-1$
@@ -235,15 +235,15 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 				FeatureModel featureModel = fmf.parseFeature(featureJar
 						.getInputStream(featureXMLEntry));
-				
+
 				featureList = addFeaturesToList( (String) params.get(SITE_XML), featureList, featureModel.getFeatureIncluded(), availableLocales, perFeatureLocales);
 
 				Iterator availableLocalesIterator = availableLocales.values()
-						.iterator();
+				.iterator();
 				while (availableLocalesIterator.hasNext()) {
 					((AvailableLocale) availableLocalesIterator.next())
-							.writeFeatureDigests(featureModel,
-									featureProperties);
+					.writeFeatureDigests(featureModel,
+							featureProperties);
 				}
 
 			} catch (SAXException e) {
@@ -258,7 +258,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			}
 		}
 		Iterator availableLocalesIterator = availableLocales.values()
-				.iterator();
+		.iterator();
 		String outputDirectory = (String) params.get(DIGEST_OUTPUT_DIR);
 
 		outputDirectory = outputDirectory.substring(outputDirectory
@@ -269,7 +269,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		while (availableLocalesIterator.hasNext()) {
 			try {
 				((AvailableLocale) availableLocalesIterator.next())
-						.finishDigest(outputDirectory);
+				.finishDigest(outputDirectory);
 			} catch (IOException e) {
 				System.out.println("Can not write in digest output directory: " //$NON-NLS-1$
 						+ outputDirectory);
@@ -282,13 +282,13 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 	}
 
 	private List addFeaturesToList( String siteXML, List featureList, IIncludedFeatureReference[] iIncludedFeatureReferences, Map availableLocales, Map perFeatureLocales ) throws CoreException {
-		
+
 		String directoryName = (new File(siteXML)).getParent();
 		if (!directoryName.endsWith(File.separator)) {
 			directoryName = directoryName + File.separator;
 		}
 		directoryName = directoryName + "features" + File.separator; //$NON-NLS-1$
-		
+
 		for (int i = 0; i < iIncludedFeatureReferences.length; i++) {
 			String featureURL = directoryName + iIncludedFeatureReferences[i].getVersionedIdentifier() + ".jar"; //$NON-NLS-1$
 			if (!(isFeatureAlreadyInList(featureList, featureURL))) {
@@ -305,7 +305,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				featureList.add(featureURL);
 			}
 		}
-		
+
 		return featureList;
 	}
 
@@ -324,13 +324,13 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		// System.out.println(
 		// ((List)perFeatureLocales.get(featureJarFileName)).size());
 		Iterator it = ((List) perFeatureLocales.get(featureJarFileName))
-				.iterator();
+		.iterator();
 		Map result = new HashMap();
 		while (it.hasNext()) {
 			String propertyFileName = (String) it.next();
 
 			ZipEntry featurePropertiesEntry = featureJar
-					.getEntry(propertyFileName);
+			.getEntry(propertyFileName);
 			Properties featureProperties = new Properties();
 			if (featurePropertiesEntry != null) {
 				try {
@@ -468,17 +468,15 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		try {
 			SiteModel site = siteParser.parse(new FileInputStream(siteXML));
-			site.getFeatureReferenceModels()[0].getURLString();
-			FeatureReferenceModel[] featureReferenceModel = site
-					.getFeatureReferenceModels();
-			// System.out.println("featureReferenceModel# =" +
-			// featureReferenceModel.length);
-			for (int i = 0; i < featureReferenceModel.length; i++) {
-				featuresURLs.add(directoryName
-						+ featureReferenceModel[i].getURLString());
+			if(site.getFeatureReferenceModels().length > 0) {
+				site.getFeatureReferenceModels()[0].getURLString();
+				FeatureReferenceModel[] featureReferenceModel = site
+				.getFeatureReferenceModels();
+				for (int i = 0; i < featureReferenceModel.length; i++) {
+					featuresURLs.add(directoryName
+							+ featureReferenceModel[i].getURLString());
+				}
 			}
-			// System.out.println("featureReferenceModel# =" +
-			// featuresURLs.size());
 			return featuresURLs;
 		} catch (FileNotFoundException e) {
 			System.out.println("File not found: " + e.getMessage()); //$NON-NLS-1$
@@ -540,7 +538,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			if (localizedPrintStream != null) {
 				localizedPrintStream.close();
 			}
-			
+
 			File digest = new File(outputDirectory + File.separator + "digest" //$NON-NLS-1$
 					+ (locale == null || locale.equals("") ? "" : "_"+locale) + ".zip"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			System.out.println(digest.getAbsolutePath());
@@ -599,7 +597,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			FileOutputStream fstream = new FileOutputStream(tempDigestDirectory);
 			localizedPrintStream = new PrintStream(fstream);
 			localizedPrintStream
-					.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <digest>"); //$NON-NLS-1$
+			.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <digest>"); //$NON-NLS-1$
 			tempDigestDirectory.deleteOnExit();
 		}
 
@@ -674,14 +672,14 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		if ((featureProperties != null)
 				&& (featureModel.getDescriptionModel() != null)
 				&& featureModel.getDescriptionModel().getAnnotation()
-						.startsWith("%")) { //$NON-NLS-1$
+				.startsWith("%")) { //$NON-NLS-1$
 			// System.out.println(featureProperties.getProperty(featureModel.getDescriptionModel().getAnnotation().substring(1)));
 			description = featureProperties.getProperty(featureModel
 					.getDescriptionModel().getAnnotation().substring(1));
 		} else {
 			URLEntryModel descriptionModel = featureModel.getDescriptionModel();
 			if( descriptionModel == null )
-					description = "";
+				description = "";
 			else
 				description = descriptionModel.getAnnotation();
 		}
@@ -697,7 +695,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		if (((featureProperties != null) && featureModel.getCopyrightModel() != null)
 				&& featureModel.getCopyrightModel().getAnnotation().startsWith(
-						"%")) { //$NON-NLS-1$
+				"%")) { //$NON-NLS-1$
 			copyright = featureProperties.getProperty(featureModel
 					.getCopyrightModel().getAnnotation().substring(1));
 		} else {
@@ -711,7 +709,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		if ((featureProperties != null)
 				&& (featureModel.getLicenseModel() != null)
 				&& featureModel.getLicenseModel().getAnnotation().startsWith(
-						"%")) { //$NON-NLS-1$
+				"%")) { //$NON-NLS-1$
 			license = featureProperties.getProperty(featureModel
 					.getLicenseModel().getAnnotation().substring(1));
 		} else {
@@ -738,15 +736,15 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				.getImportModels().length == 0))
 				&& ((featureModel.getDescriptionModel() == null)
 						|| (featureModel.getDescriptionModel().getAnnotation() == null) || (featureModel
-						.getDescriptionModel().getAnnotation().trim().length() == 0))
-				&& ((featureModel.getCopyrightModel() == null)
-						|| (featureModel.getCopyrightModel().getAnnotation() == null) || (featureModel
-						.getCopyrightModel().getAnnotation().trim().length() == 0))
-				&& ((featureModel.getLicenseModel() == null)
-						|| (featureModel.getLicenseModel().getAnnotation() == null) || (featureModel
-						.getLicenseModel().getAnnotation().trim().length() == 0)) 
-				&& ((featureModel.getFeatureIncluded() == null) || (featureModel
-						.getFeatureIncluded().length == 0))){
+								.getDescriptionModel().getAnnotation().trim().length() == 0))
+								&& ((featureModel.getCopyrightModel() == null)
+										|| (featureModel.getCopyrightModel().getAnnotation() == null) || (featureModel
+												.getCopyrightModel().getAnnotation().trim().length() == 0))
+												&& ((featureModel.getLicenseModel() == null)
+														|| (featureModel.getLicenseModel().getAnnotation() == null) || (featureModel
+																.getLicenseModel().getAnnotation().trim().length() == 0)) 
+																&& ((featureModel.getFeatureIncluded() == null) || (featureModel
+																		.getFeatureIncluded().length == 0))){
 			digest.println("/> "); //$NON-NLS-1$
 		} else {
 			digest.println("> "); //$NON-NLS-1$
@@ -822,8 +820,8 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 						digest.print("ws=\"" + plugins[i].getWS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 					if (plugins[i].getOSArch() != null)
 						digest
-								.print("arch=\"" + plugins[i].getOSArch() //$NON-NLS-1$
-										+ "\" "); //$NON-NLS-1$
+						.print("arch=\"" + plugins[i].getOSArch() //$NON-NLS-1$
+								+ "\" "); //$NON-NLS-1$
 					if (plugins[i].getDownloadSize() > 0)
 						digest.print("download-size=\"" //$NON-NLS-1$
 								+ plugins[i].getDownloadSize() + "\" "); //$NON-NLS-1$
@@ -837,14 +835,14 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 					digest.println("/> "); //$NON-NLS-1$
 				}
 			}	
-				
+
 			IIncludedFeatureReference[] inlcudedFeatures = featureModel.getFeatureIncluded();
-				
+
 			if ((inlcudedFeatures != null) && (inlcudedFeatures.length != 0)) {
 				for (int i = 0; i < inlcudedFeatures.length; i++) {
 					try {
 						digest.print("\t<includes "); //$NON-NLS-1$
-						
+
 						digest.print("id=\"" + inlcudedFeatures[i].getVersionedIdentifier().getIdentifier() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 						digest.print("version=\"" + inlcudedFeatures[i].getVersionedIdentifier().getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 						if (inlcudedFeatures[i].getOS() != null)
