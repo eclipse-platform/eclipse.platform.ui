@@ -2,12 +2,6 @@
 <projectDescription>
 	<name>org.eclipse.update.configurator</name>
 	<comment></comment>
-	<projects>
-		<project>org.eclipse.core.boot</project>
-		<project>org.eclipse.core.runtime</project>
-		<project>org.eclipse.osgi</project>
-		<project>org.eclipse.osgi.util</project>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>

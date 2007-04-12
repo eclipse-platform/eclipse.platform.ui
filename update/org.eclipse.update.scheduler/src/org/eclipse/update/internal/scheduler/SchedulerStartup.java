@@ -13,7 +13,6 @@ package org.eclipse.update.internal.scheduler;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -211,8 +210,8 @@ public class SchedulerStartup implements IStartup {
 			// We need to deregister the listener first,so we won't
 			// automatically start another job
 			if (jobListener != null)
-				Platform.getJobManager().removeJobChangeListener(jobListener);
-			Platform.getJobManager().cancel(automaticJobFamily);
+				Job.getJobManager().removeJobChangeListener(jobListener);
+			Job.getJobManager().cancel(automaticJobFamily);
 		}
 		if (jobListener == null) {
 			// using reflection to avoid premature class loading
@@ -220,7 +219,7 @@ public class SchedulerStartup implements IStartup {
 			if (jobListener == null)
 				return;
 		}
-		Platform.getJobManager().addJobChangeListener(jobListener);
+		Job.getJobManager().addJobChangeListener(jobListener);
 		String jobName = UpdateSchedulerMessages.AutomaticUpdatesJob_AutomaticUpdateSearch; //);
 		boolean download = UpdateSchedulerPlugin.getDefault()
 				.getPluginPreferences().getBoolean(
