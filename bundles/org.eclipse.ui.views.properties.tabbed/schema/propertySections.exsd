@@ -57,7 +57,7 @@
    <element name="propertySection">
       <complexType>
          <sequence>
-            <element ref="input" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="input" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="tab" type="string" use="required">
             <annotation>
