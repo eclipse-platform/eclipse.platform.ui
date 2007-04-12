@@ -191,6 +191,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * widgets
 	 */
 	private Control fLastControl;
+	private Composite fButtonComp;
 	private SashForm fSashForm;
 	private LaunchConfigurationView fLaunchConfigurationView;
 	private LaunchConfigurationTabGroupViewer fTabViewer;
@@ -416,7 +417,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		 */
 		boolean helpAvailable = isHelpAvailable();
 		setHelpAvailable(false);
-		super.createButtonBar(composite);
+		fButtonComp = (Composite) super.createButtonBar(composite);
 		setHelpAvailable(helpAvailable);
 		return composite;
 	}
@@ -1262,17 +1263,19 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (fLastControl != null && fLastControl.getShell() != getShell()) {
 				fLastControl = null;
 			}
-			fProgressMonitorCancelButton.setEnabled(true);
+			fProgressMonitorCancelButton.setEnabled(cancelable);
 			// Attach the progress monitor part to the cancel button
 			fProgressMonitorPart.attachToCancelComponent(fProgressMonitorCancelButton);
 			fProgressMonitorPart.getParent().setVisible(true);
 			fProgressMonitorCancelButton.setFocus();
 			fActiveRunningOperations++;
 			try {
+				updateRunnnableControls(false);
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
 			} 
 			finally {
 				fActiveRunningOperations--;
+				updateRunnnableControls(true);
 				if (getShell() != null) {
 					fProgressMonitorPart.getParent().setVisible(false);
 					fProgressMonitorPart.removeFromCancelComponent(fProgressMonitorCancelButton);
@@ -1286,7 +1289,24 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 		}
 	}
-
+	
+	/**
+	 * Updates the enablement of the runnable controls to appear disabled as a job is running
+	 * @param enabled the desired enable status of the dialog area, revert//apply buttons, and
+	 * any children of the button bar
+	 * @since 3.3
+	 */
+	private void updateRunnnableControls(boolean enabled) {
+		//the arrangement never differs: button comp has one child that holds all the buttons
+		Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
+		for(int i = 0; i < children.length; i++) {
+			children[i].setEnabled(enabled);
+		}
+		getTabViewer().getApplyButton().setEnabled(enabled);
+		getTabViewer().getRevertButton().setEnabled(enabled);
+		getDialogArea().setEnabled(enabled);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
 	 */

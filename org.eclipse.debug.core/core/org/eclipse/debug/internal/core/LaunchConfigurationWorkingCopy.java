@@ -34,7 +34,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -199,22 +201,73 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			if (useRunnable) {
 				IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 					public void run(IProgressMonitor pm) throws CoreException {
-						doSave0();
+						doSave0(pm);
 					}
 				};
-				
-				ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
+				ResourcesPlugin.getWorkspace().run(wr, null, 0, new NullProgressMonitor());
 			} else {
 				//file is persisted in the metadata not the workspace
-				doSave0();
+				doSave0(new NullProgressMonitor());
 			}
 			getLaunchManager().setMovedFromTo(null, null);
 		}
 		return new LaunchConfiguration(getLocation());
 	}
 
+	/**
+	 * This method is analagous to ILaunchConfigurationWorkingCopy#doSave(), except that it accepts 
+	 * a proress monitor to report back to
+	 * @param monitor
+	 * @return the saved <code>ILaunchConfiguration</code>
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 */
+	public synchronized ILaunchConfiguration doSave(IProgressMonitor monitor) throws CoreException {
+		if (getParent() != null) {
+			// save to parent working copy
+			LaunchConfigurationWorkingCopy wc = (LaunchConfigurationWorkingCopy) getParent();
+			if(fRenamed) {
+				wc.rename(getName());
+			}
+			else {
+				wc.setName(getName());
+			}
+			wc.setAttributes(getInfo().getAttributes());
+			return wc;
+		}
+		else {
+			boolean useRunnable= true;
+			if (isLocal()) {
+				if (isMoved()) {
+					// If this config was moved from a shared location, saving
+					// it will delete the original from the workspace. Use runnable.
+					useRunnable= !isNew() && !getOriginal().isLocal();
+				} else {
+					useRunnable= false;
+				}
+			}
+			if (useRunnable) {
+				IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+					public void run(IProgressMonitor pm) throws CoreException {
+						doSave0(pm);
+					}
+				};
+				ResourcesPlugin.getWorkspace().run(wr, null, 0, monitor);
+			} else {
+				//file is persisted in the metadata not the workspace
+				doSave0(monitor);
+			}
+			getLaunchManager().setMovedFromTo(null, null);
+		}
+		return new LaunchConfiguration(getLocation());
+	}
 	
-	private void doSave0() throws CoreException {
+	/**
+	 * Performs the actual saving of the launch configuration.
+	 * @throws CoreException
+	 */
+	private void doSave0(IProgressMonitor monitor) throws CoreException {
 		// set up from/to information if this is a move
 		boolean moved = (!isNew() && isMoved());
 		if (moved) {
@@ -228,7 +281,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			getOriginal().delete();
 		}
 		// write the new file
-		writeNewFile();
+		if(monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
+		monitor.beginTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_0, new String[] {getName()}), 2);
+		writeNewFile(monitor);
+		monitor.done();
 		fDirty = false;
 	}
 	
@@ -237,7 +295,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * 
 	 * @exception CoreException if writing the file fails
 	 */
-	protected void writeNewFile() throws CoreException {
+	protected void writeNewFile(IProgressMonitor monitor) throws CoreException {
 		String xml = null;
 		Exception e= null;
 		try {
@@ -262,22 +320,28 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			// use java.io to update configuration file
 			try {
 				boolean added = false;
+				monitor.subTask(DebugCoreMessages.LaunchConfigurationWorkingCopy_1);
 				File file = getLocation().toFile();
 				File dir = getLocation().removeLastSegments(1).toFile();
 				dir.mkdirs();
 				if (!file.exists()) {
 					added = true;
 					file.createNewFile();
+					monitor.worked(1);
 				}
 				FileOutputStream stream = new FileOutputStream(file);
 				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 				stream.close();
+				
 				if (added) {
 					getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
 				} else {
 					getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
 				}
+				//notify file saved
+				monitor.worked(1);
 			} catch (IOException ie) {
+				monitor.setCanceled(true);
 				throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
@@ -289,6 +353,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			// use resource API to update configuration file
 			IFile file = getFile();
 			if (file == null) {
+				monitor.setCanceled(true);
 				throw new DebugException(
 						new Status(
 							 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
@@ -297,6 +362,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			}
 			IContainer dir = file.getParent();
 			if (!dir.exists()) {
+				monitor.setCanceled(true);
 				throw new DebugException(
 					new Status(
 					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
@@ -308,25 +374,37 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			try {
 				stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException ue) {
+				monitor.setCanceled(true);
 				throw new DebugException(
 					new Status(
 						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
 						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, ue 
 					));
 			}
+			SubProgressMonitor spm = null;
 			if (!file.exists()) {
-				file.create(stream, false, null);
+	//create file input stream: work one unit in a sub monitor
+				spm = new SubProgressMonitor(monitor, 1);
+				spm.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_2, new String[] {getName()}));
+				file.create(stream, false, spm);
 			} else {
 				// validate edit
 				if (file.isReadOnly()) {
 					IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
 					if (!status.isOK()) {
+						monitor.setCanceled(true);
 						throw new CoreException(status);
 					}
 				}				
-				file.setContents(stream, false, false, null);
+	//set the contents of the file: work 1 unit in a sub monitor
+				spm = new SubProgressMonitor(monitor, 1);
+				spm.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_3, new String[] {getName()}));
+				file.setContents(stream, true, false, spm);
 			}
-		}		
+		}
+		if(monitor.isCanceled()) {
+			return;
+		}
 	}
 
 	/**

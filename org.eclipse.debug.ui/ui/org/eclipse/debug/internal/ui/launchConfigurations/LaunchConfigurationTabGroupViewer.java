@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -25,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -35,6 +38,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
@@ -604,7 +608,25 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
-	public void setInput(Object input) {
+	public void setInput(final Object input) {
+		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			setInput0(input);
+		}
+		else {
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					setInput0(input);
+				}
+			});
+		}
+		
+	}
+	/**
+	 * Sets the input to the tab group viewer
+	 * @param input the new input
+	 * @since 3.3
+	 */
+	private void setInput0(Object input) {
 		if (input == null) {
 			if (fInput == null) {
 				return;
@@ -1320,27 +1342,44 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification that the 'Apply' button has been pressed
 	 */
 	protected void handleApplyPressed() {
+		Exception exception = null;
 		try {
 			// update launch config
 			fInitializingTabs = true;
 			// trim name
 			String trimmed = fNameWidget.getText().trim();
 			fNameWidget.setText(trimmed);
-			ILaunchConfigurationWorkingCopy copy = getWorkingCopy();
-			if(copy == null) {
-				copy = fOriginal.getWorkingCopy();
+			if(fWorkingCopy == null) {
+				fWorkingCopy = fOriginal.getWorkingCopy();
 			}
-			copy.rename(trimmed);
-			getTabGroup().performApply(copy);
+			fWorkingCopy.rename(trimmed);
+			getTabGroup().performApply(fWorkingCopy);
 			if (isDirty()) {
-				copy.doSave();
+				if(!fWorkingCopy.isLocal()) {
+					IRunnableWithProgress runnable = new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							try {
+								((LaunchConfigurationWorkingCopy)fWorkingCopy).doSave(monitor);
+							} 
+							catch (CoreException e) {DebugUIPlugin.log(e);}
+						}
+					};
+					getLaunchConfigurationDialog().run(true, false, runnable);
+				}
+				else {
+					fWorkingCopy.doSave();
+				}
 			}
 			updateButtons();
 			fInitializingTabs = false;
-		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, e); // 
-			return;
 		} 
+		catch (CoreException e) {exception = e;} 
+		catch (InvocationTargetException e) {exception = e;} 
+		catch (InterruptedException e) {exception = e;} 
+		if(exception != null) {
+			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, exception); // 
+			return;
+		}
 	}
 
 	/**
