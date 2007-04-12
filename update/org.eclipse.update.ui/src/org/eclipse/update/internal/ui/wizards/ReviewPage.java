@@ -1422,10 +1422,10 @@ public class ReviewPage	extends BannerPage {
 		return isFeatureGood(requiredFeature, feature, new ArrayList());
 	}
 	
-	public boolean isFeatureGood(IImport requiredFeature, IFeature feature, List visitedFeatures) {
+	public boolean isFeatureGood(IImport prereq, IFeature feature, List visitedFeatures) {
 
-		if (requiredFeature.getKind() == IImport.KIND_FEATURE) { 
-			if ((!requiredFeature.getVersionedIdentifier().getIdentifier().equals(
+		if (prereq.getKind() == IImport.KIND_FEATURE) { 
+			if ((!prereq.getVersionedIdentifier().getIdentifier().equals(
 					feature.getVersionedIdentifier().getIdentifier()))) {
 				IIncludedFeatureReference[] iifr = null;
 				try {
@@ -1450,7 +1450,7 @@ public class ReviewPage	extends BannerPage {
 					}
 					if (!visitedFeatures.contains(current)) {
 						visitedFeatures.add(current);
-						if (isFeatureGood(requiredFeature, current, visitedFeatures)) {
+						if (isFeatureGood(prereq, current, visitedFeatures)) {
 							return true;
 						}
 					}
@@ -1459,33 +1459,33 @@ public class ReviewPage	extends BannerPage {
 				return false;
 			}
 
-			int rule = (requiredFeature.getRule() != IImport.RULE_NONE) ? requiredFeature.getRule() : IImport.RULE_COMPATIBLE;
+			int rule = (prereq.getRule() != IImport.RULE_NONE) ? prereq.getRule() : IImport.RULE_COMPATIBLE;
 
 			switch (rule) {
 			case IImport.RULE_PERFECT: return feature.getVersionedIdentifier().getVersion().isPerfect(
-								requiredFeature.getVersionedIdentifier()
+								prereq.getVersionedIdentifier()
 								.getVersion());
 			case IImport.RULE_EQUIVALENT:
 						return feature.getVersionedIdentifier().getVersion()
 						.isEquivalentTo(
-								requiredFeature.getVersionedIdentifier()
+								prereq.getVersionedIdentifier()
 								.getVersion());
 			case IImport.RULE_COMPATIBLE:
 				return feature.getVersionedIdentifier().getVersion()
 						.isCompatibleWith(
-								requiredFeature.getVersionedIdentifier()
+								prereq.getVersionedIdentifier()
 								.getVersion());
 			case IImport.RULE_GREATER_OR_EQUAL:
 						return feature.getVersionedIdentifier().getVersion()
 						.isGreaterOrEqualTo(
-								requiredFeature.getVersionedIdentifier()
+								prereq.getVersionedIdentifier()
 								.getVersion());
 			}
 
 			return false;
 		} else {
-			if ((requiredFeature.getKind() == IImport.KIND_PLUGIN)) { 
-				return checkIfFeatureHasPlugin( requiredFeature, feature);
+			if ((prereq.getKind() == IImport.KIND_PLUGIN)) { 
+				return checkIfFeatureHasPlugin( prereq, feature);
 			}
 			return false;
 		}
@@ -1554,17 +1554,42 @@ public class ReviewPage	extends BannerPage {
 		return false;
 	}
 
-
 	public boolean isFeatureBetter(IInstallFeatureOperation feature,
 			IInstallFeatureOperation currentFeatureSelected) {
 
 		if (currentFeatureSelected == null)
 			return true;
-
-		return !currentFeatureSelected.getFeature().getVersionedIdentifier()
-				.getVersion().isGreaterOrEqualTo(
-						feature.getFeature().getVersionedIdentifier()
-								.getVersion());
+		// If the feature is the same, pick the newer one
+		if (currentFeatureSelected.getFeature().getVersionedIdentifier().getIdentifier().equals(
+				feature.getFeature().getVersionedIdentifier().getIdentifier())) {
+			return !currentFeatureSelected.getFeature().getVersionedIdentifier()
+			.getVersion().isGreaterOrEqualTo(
+					feature.getFeature().getVersionedIdentifier()
+							.getVersion());			
+		}
+		else {
+			// Different features.
+			// Pick a feature with smaller number of plug-ins
+			NullProgressMonitor monitor = new NullProgressMonitor();
+			int currentNumber = getTotalNumberOfPluginEntries(currentFeatureSelected.getFeature(), monitor);
+			int newNumber = getTotalNumberOfPluginEntries(feature.getFeature(), monitor);
+			return newNumber<currentNumber;
+		}
+	}
+	
+	private int getTotalNumberOfPluginEntries(IFeature feature, IProgressMonitor monitor) {
+		int count = 0;
+		try {
+			count = feature.getPluginEntryCount();
+			IIncludedFeatureReference [] irefs = feature.getIncludedFeatureReferences();
+			for (int i=0; i<irefs.length; i++) {
+				IFeature child = irefs[i].getFeature(monitor);
+				count += getTotalNumberOfPluginEntries(child, monitor);
+			}
+		}
+		catch (CoreException e) {
+		}
+		return count;
 	}
 
 	public IInstallFeatureOperation decideOnFeatureSelection(
