@@ -20,28 +20,27 @@ import org.eclipse.update.operations.*;
  * ConfigOperation
  */
 public class ConfigOperation
-	extends FeatureOperation
-	implements IConfigFeatureOperation {
+extends FeatureOperation
+implements IConfigFeatureOperation {
 
 	public ConfigOperation(
-		IConfiguredSite site,
-		IFeature feature) {
+			IConfiguredSite site,
+			IFeature feature) {
 		super(site, feature);
 	}
 
 	public boolean execute(IProgressMonitor pm, IOperationListener listener)
-		throws CoreException {
+	throws CoreException {
 
 		IStatus status =
 			OperationsManager.getValidator().validatePendingConfig(feature);
 		if (status != null && status.getCode() == IStatus.ERROR) {
 			throw new CoreException(status);
 		}
-
-		targetSite.configure(feature);
-//		ensureUnique();
-
 		try {
+			targetSite.configure(feature);
+			//ensureUnique();
+
 			// Restart not needed
 			boolean restartNeeded = false;
 
