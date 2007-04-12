@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation bug 154329
+ *                                               - fixes in bug 170381
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -623,8 +624,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				&& (contentProvider instanceof IStructuredContentProvider)) {
 			// Don't cache if the root is null but cache if it is not lazy.
 			if (root != null) {
-				virtualManager.cachedElements = ((IStructuredContentProvider) getContentProvider())
-						.getElements(root);
+				virtualManager.cachedElements = getSortedChildren(root);
 				doSetItemCount(virtualManager.cachedElements.length);
 			}
 		}

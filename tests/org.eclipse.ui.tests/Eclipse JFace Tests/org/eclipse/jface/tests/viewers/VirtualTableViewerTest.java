@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl - bug 151205
+ *     Tom Schindl - bug 151205, 170381
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * The TableViewerTest is a test of the SWT#VIRTUAL support in TableViewers,
@@ -52,6 +53,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.TableViewerTest#createTableViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected TableViewer createTableViewer(Composite parent) {
+		visibleItems = new HashSet();
 		TableViewer viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.MULTI);
 		viewer.setUseHashlookup(true);
 		final Table table = viewer.getTable();
@@ -104,15 +106,36 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testFilter()
 	 */
 	public void testFilter() {
-		// The filter test is no use here as it is
-		// based on the assumption that all items
-		// are created.
+		ViewerFilter filter = new TestLabelFilter();
+
+		visibleItems = new HashSet();
+		fViewer.addFilter(filter);
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("filtered count", 5, getItemCount());
+
+		visibleItems = new HashSet();
+		fViewer.removeFilter(filter);
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("unfiltered count", 10, getItemCount());
 	}
 
 	public void testSetFilters() {
-		// The filter test is no use here as it is
-		// based on the assumption that all items
-		// are created.
+		ViewerFilter filter = new TestLabelFilter();
+
+		visibleItems = new HashSet();
+		fViewer.setFilters(new ViewerFilter[] { filter, new TestLabelFilter2() });
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("2 filters count",1, getItemCount());
+
+		visibleItems = new HashSet();
+		fViewer.setFilters(new ViewerFilter[] { filter });
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("1 filtered count",5, getItemCount());
+
+		visibleItems = new HashSet();
+		fViewer.setFilters(new ViewerFilter[0]);
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("unfiltered count",10, getItemCount());
 	}
 	/*
 	 * (non-Javadoc)
@@ -186,9 +209,18 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testRenameWithFilter()
 	 */
 	public void testRenameWithFilter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
+		fViewer.addFilter(new TestLabelFilter());
+		((TableViewer) fViewer).getControl().update();
+        TestElement first = fRootElement.getFirstChild();
+        first.setLabel("name-1111"); // should disappear
+        ((TableViewer) fViewer).getControl().update();
+        assertNull("changed sibling is not visible", fViewer
+                .testFindItem(first));
+        first.setLabel("name-2222"); // should reappear
+        fViewer.refresh();
+        ((TableViewer) fViewer).getControl().update();
+        assertNotNull("changed sibling is not visible", fViewer
+                .testFindItem(first));
 	}
 
 	/*
@@ -202,9 +234,15 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	}
 
 	public void testRenameWithSorter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
+		// Call update to make sure the viewer is in a correct state
+		// At least on MacOSX I get failures without this call
+		((TableViewer) fViewer).getControl().update();
+		fViewer.setSorter(new TestLabelSorter());
+		TestElement first = fRootElement.getFirstChild();
+		first.setLabel("name-9999");
+		String newElementLabel = first.toString();
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("sorted first", newElementLabel, getItemText(0));
 	}
 
 	/*
@@ -213,9 +251,22 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 * @see org.eclipse.jface.tests.viewers.StructuredViewerTest#testSorter()
 	 */
 	public void testSorter() {
-		// This test is no use here as it is
-		// based on the assumption that all items
-		// are created.
+		TestElement first = fRootElement.getFirstChild();
+		TestElement last = fRootElement.getLastChild();
+
+		String firstLabel = first.toString();
+		String lastLabel = last.toString();
+
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("unsorted", firstLabel, getItemText(0));
+		fViewer.setSorter(new TestLabelSorter());
+
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("reverse sorted", lastLabel, getItemText(0));
+
+		fViewer.setSorter(null);
+		((TableViewer) fViewer).getControl().update();
+		assertEquals("unsorted", firstLabel, getItemText(0));
 	}
 
 	/*

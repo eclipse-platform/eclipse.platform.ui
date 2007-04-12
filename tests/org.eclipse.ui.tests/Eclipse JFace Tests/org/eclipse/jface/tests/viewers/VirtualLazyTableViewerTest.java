@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bug 170381
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -130,4 +131,33 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 	}
 	
 
+	public void testSorter() {
+		// This test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
+	
+	public void testRenameWithSorter() {
+		// This test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
+	
+	public void testSetFilters() {
+		// This test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
+	
+	public void testFilter() {
+		// This test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
+	
+	public void testRenameWithFilter() {
+		// This test is no use here as it is
+		// based on the assumption that all items
+		// are created.
+	}
 }
