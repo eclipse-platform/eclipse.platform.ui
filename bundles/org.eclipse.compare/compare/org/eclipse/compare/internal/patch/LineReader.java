@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 181919 LineReader creating unneeded garbage
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
@@ -14,7 +15,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 public class LineReader {
 
@@ -23,7 +24,7 @@ public class LineReader {
 	private boolean fSawEOF= false;
 	private BufferedReader fReader;
 	private boolean fIgnoreSingleCR= false;
-	
+	private StringBuffer fBuffer= new StringBuffer();
 	
 	public LineReader(BufferedReader reader) {
 		fReader= reader;
@@ -37,48 +38,49 @@ public class LineReader {
     /**
      * Reads a line of text. A line is considered to be terminated by any one
      * of a line feed ('\n'), a carriage return ('\r'), or a carriage return
-     * followed immediately by a linefeed.
+     * followed immediately by a line-feed.
      * @return A string containing the contents of the line including
      *	the line-termination characters, or <code>null</code> if the end of the
      *	stream has been reached
      * @exception IOException If an I/O error occurs
      */
 	/* package */ String readLine() throws IOException {
-		StringBuffer sb= null;
-				
-		while (!fSawEOF) {
-			int c= readChar();
-			if (c == -1) {
-				fSawEOF= true;
-				break;
-			}
-			if (sb == null)
-				sb= new StringBuffer();
-			sb.append((char)c);
-			if (c == '\n')
-				break;
-			if (c == '\r') {
-				c= readChar();
+		try {
+			while (!fSawEOF) {
+				int c= readChar();
 				if (c == -1) {
 					fSawEOF= true;
-					break;	// EOF
+					break;
 				}
-				if (c != '\n') {
-					if (fIgnoreSingleCR) {
-						sb.append((char)c);	
-						continue;
+				fBuffer.append((char)c);
+				if (c == '\n')
+					break;
+				if (c == '\r') {
+					c= readChar();
+					if (c == -1) {
+						fSawEOF= true;
+						break;	// EOF
 					}
-					fHaveChar= true;
-					fLastChar= c;
-				} else
-					sb.append((char)c);	
-				break;
+					if (c != '\n') {
+						if (fIgnoreSingleCR) {
+							fBuffer.append((char)c);	
+							continue;
+						}
+						fHaveChar= true;
+						fLastChar= c;
+					} else
+						fBuffer.append((char)c);	
+					break;
+				}
 			}
+			
+			if (fBuffer.length() != 0) {
+				return fBuffer.toString();
+			}
+			return null;
+		} finally {
+			fBuffer.setLength(0);
 		}
-		
-		if (sb != null)
-			return sb.toString();
-		return null;
 	}
 	
 	/* package */ void close() {
