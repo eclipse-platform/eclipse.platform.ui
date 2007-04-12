@@ -739,7 +739,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 *  
 	 * @param parentPath path to parent element
 	 * @param index index of child element in model (raw) space
-	 * @return index of child element in viewer (filtered) space
+	 * @return index of child element in viewer (filtered) space or -1 if filtered
 	 */
 	protected int modelToViewIndex(TreePath parentPath, int index) {
 		return fTransform.modelToViewIndex(parentPath, index);

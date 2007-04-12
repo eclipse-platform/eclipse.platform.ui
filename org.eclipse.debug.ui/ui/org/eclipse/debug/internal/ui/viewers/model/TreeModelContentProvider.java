@@ -149,14 +149,16 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		TreePath elementPath = getViewerTreePath(delta);
 		if (modelIndex >= 0) {
 			int viewIndex = modelToViewIndex(getViewerTreePath(delta.getParentDelta()), modelIndex);
-			if (DEBUG_CONTENT_PROVIDER) {
-				System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			if (viewIndex >= 0) {
+				if (DEBUG_CONTENT_PROVIDER) {
+					System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				}
+				TreePath parentPath = elementPath.getParentPath();
+				if (parentPath == null) {
+					parentPath = TreePath.EMPTY;
+				}
+				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			}
-			TreePath parentPath = elementPath.getParentPath();
-			if (parentPath == null) {
-				parentPath = TreePath.EMPTY;
-			}
-			treeViewer.replace(parentPath, viewIndex, delta.getElement());
 		}
 		if (childCount > 0) {
 			int viewCount = modelToViewChildCount(elementPath, childCount);
