@@ -138,8 +138,8 @@ public class MainPreferencePage
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		updatePolicyText.setLayoutData(gd);
 
-		createSpacer(mainComposite, 2);
-		createHttpProxy(mainComposite, 2);
+		//createSpacer(mainComposite, 2);
+		//createHttpProxy(mainComposite, 2);
 		initialize();
 		updatePolicyText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
