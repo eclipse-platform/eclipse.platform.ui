@@ -199,9 +199,11 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		int viewIndex = -1;
 		int modelIndex = delta.getIndex();
 		int unmappedIndex = -1;
+		int itemCount = -1;
 		if (modelIndex < 0) {
 			// index not provided by delta
 			Item[] children = treeViewer.getChildren(parentItem);
+			itemCount = children.length;
 			for (int i = 0; i < children.length; i++) {
 				Item item = children[i];
 				Object data = item.getData();
@@ -228,6 +230,13 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 			getTreeViewer().remove(parentPath, unmappedIndex);
 			removeElementFromFilters(parentPath, viewToModelIndex(parentPath, unmappedIndex));
 			return;
+		}
+		int modelCount = parentDelta.getChildCount();
+		if (itemCount >= 0 && modelCount >= 0) {
+			if (modelToViewChildCount(parentPath, modelCount) == itemCount) {
+				// item count matches the parent's child count, don't do anything
+				return;
+			}
 		}
 		// failing that, refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
