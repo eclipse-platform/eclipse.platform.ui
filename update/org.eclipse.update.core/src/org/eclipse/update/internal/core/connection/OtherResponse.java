@@ -38,6 +38,16 @@ public class OtherResponse extends AbstractResponse {
 		return in;
 	}
 	
+	public void close() {
+        if( null != in ) {
+                try {
+					in.close();
+				} catch (IOException e) {
+				}
+                in = null;
+        }
+	}	
+	
 	/**
 	 * @see IResponse#getInputStream(IProgressMonitor)
 	 */

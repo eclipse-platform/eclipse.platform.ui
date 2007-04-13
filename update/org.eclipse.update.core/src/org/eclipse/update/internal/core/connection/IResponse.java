@@ -68,4 +68,9 @@ public interface IResponse {
 	 * @return
 	 */
 	public long getLastModified();
+	
+	/**
+	 * Close the connection if open.
+	 */
+	public void close();
 }

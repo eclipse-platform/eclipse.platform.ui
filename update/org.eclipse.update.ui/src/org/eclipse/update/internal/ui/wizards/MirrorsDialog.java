@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.osgi.util.NLS;
@@ -21,6 +22,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.update.core.ISiteWithMirrors;
 import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 
@@ -37,6 +40,7 @@ public class MirrorsDialog extends Dialog {
 	private IURLEntry[] mirrors;
 	private List mirrorsList;
 	private IURLEntry mirrorSelected;
+	private Button automaticallyChooseMirrorCheckbox;
 	//private Button okButton;
 	/**
 	 * @param parentShell
@@ -103,6 +107,13 @@ public class MirrorsDialog extends Dialog {
 
 		mirrorsList.select(0);
 		
+		automaticallyChooseMirrorCheckbox =
+			new Button(composite, SWT.CHECK | SWT.LEFT);
+		automaticallyChooseMirrorCheckbox.setText(UpdateUIMessages.MainPreferencePage_automaticallyChooseMirror);
+		data = new GridData();
+		data.horizontalSpan = 2;
+		automaticallyChooseMirrorCheckbox.setLayoutData(data);		
+		
 		Dialog.applyDialogFont(composite);
 		
 		mirrorsList.addMouseListener( new MouseListener() {
@@ -125,6 +136,11 @@ public class MirrorsDialog extends Dialog {
 		// first entry is the site itself
 		if (i <mirrors.length)
 			mirrorSelected = mirrors[i];
+		if (automaticallyChooseMirrorCheckbox.getSelection()) {
+			Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
+			prefs.setValue(UpdateCore.P_AUTOMATICALLY_CHOOSE_MIRROR, true);
+			UpdateCore.getPlugin().savePluginPreferences();
+		}
 		super.okPressed();
 	}
 	

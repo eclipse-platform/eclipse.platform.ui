@@ -40,6 +40,10 @@ public class FileResponse implements IResponse {
 	public int getStatusCode() {
 		return IStatusCodes.HTTP_OK;
 	}
+	
+	public void close() {
+		// nothing to close
+	}
 
 	public String getStatusMessage() {
 		return ""; //$NON-NLS-1$

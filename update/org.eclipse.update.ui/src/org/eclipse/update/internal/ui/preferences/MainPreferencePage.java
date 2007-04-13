@@ -101,7 +101,8 @@ public class MainPreferencePage
 		
 		automaticallyChooseMirrorCheckbox =
 			new Button(mainComposite, SWT.CHECK | SWT.LEFT);
-		automaticallyChooseMirrorCheckbox.setText(UpdateUIMessages.MainPreferencePage_automaticallyChooseMirror); 
+		automaticallyChooseMirrorCheckbox.setText(UpdateUIMessages.MainPreferencePage_automaticallyChooseMirror);
+		gd = new GridData();
 		gd.horizontalSpan = 2;
 		automaticallyChooseMirrorCheckbox.setLayoutData(gd);
 

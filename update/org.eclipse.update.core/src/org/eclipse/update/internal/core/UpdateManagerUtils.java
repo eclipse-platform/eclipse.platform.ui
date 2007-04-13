@@ -52,6 +52,7 @@ import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.core.connection.ConnectionFactory;
+import org.eclipse.update.internal.core.connection.HttpResponse;
 import org.eclipse.update.internal.core.connection.IResponse;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
@@ -558,6 +559,7 @@ public class UpdateManagerUtils {
 
 		if (result != IStatusCodes.HTTP_OK) { 
 			String serverMsg = response.getStatusMessage();
+			response.close();
 			throw new FatalIOException(NLS.bind(Messages.ContentReference_HttpNok, (new Object[] { new Integer(result), serverMsg, url })));						
 		}
 	}
