@@ -46,6 +46,6 @@ public interface IConstants{
   public final String PREF_PROXY_PORT="proxyPort"; //$NON-NLS-1$
   public final String PREF_PROXY_AUTH="proxyAuth"; //$NON-NLS-1$
 
-  public final String PREF_FIRST_STARTUP="pref_first_startup"; //$NON-NLS-1$
+  public final String PREF_HAS_MIGRATED_SSH2_PREFS="org.eclipse.jsch.core.hasMigratedSsh2Preferences"; //$NON-NLS-1$
 
 }

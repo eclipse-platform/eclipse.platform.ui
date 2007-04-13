@@ -16,6 +16,7 @@ import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import com.jcraft.jsch.*;
 
@@ -156,6 +157,29 @@ public class Utils{
       }
     }
     return proxy;
+  }
+  
+  public static void migrateSSH2Preferences() {
+    Preferences preferences = JSchCorePlugin.getPlugin().getPluginPreferences();
+    if(!preferences.getBoolean(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS)){
+      preferences.setValue(IConstants.PREF_HAS_MIGRATED_SSH2_PREFS, true);
+      migrateSSH2Preferences(new InstanceScope().getNode("")); //$NON-NLS-1$
+    }
+  }
+  
+  public static void migrateSSH2Preferences(org.osgi.service.prefs.Preferences node) {
+    org.osgi.service.prefs.Preferences jschPrefs=node.node(JSchCorePlugin.ID);
+    org.osgi.service.prefs.Preferences ssh2Prefs=node.node("org.eclipse.team.cvs.ssh2"); //$NON-NLS-1$
+    String oldHome = ssh2Prefs.get(IConstants.KEY_OLD_SSH2HOME, null);
+    String oldKey = ssh2Prefs.get(IConstants.KEY_OLD_PRIVATEKEY, null);
+    if (oldHome != null) {
+      jschPrefs.put(IConstants.KEY_SSH2HOME, oldHome);
+      ssh2Prefs.remove(IConstants.KEY_OLD_SSH2HOME);
+    }
+    if (oldKey != null) {
+      jschPrefs.put(IConstants.KEY_PRIVATEKEY, oldKey);
+      ssh2Prefs.remove(IConstants.KEY_OLD_PRIVATEKEY);
+    }
   }
 
 }

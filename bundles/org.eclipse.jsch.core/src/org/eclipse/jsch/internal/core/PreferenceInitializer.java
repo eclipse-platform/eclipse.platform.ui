@@ -12,12 +12,7 @@
 package org.eclipse.jsch.internal.core;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.core.runtime.preferences.DefaultScope;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.*;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer{
 
@@ -35,37 +30,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer{
     }
   }
   
-  private IEclipsePreferences[] getOldPreferences() {
-    return new IEclipsePreferences[]{
-        new InstanceScope().getNode("org.eclipse.team.cvs.ssh2"), //$NON-NLS-1$
-        new DefaultScope().getNode("org.eclipse.team.cvs.ssh2") //$NON-NLS-1$
-    };
-  }
-  
   public void initializeDefaultPreferences(){
-    Preferences preferences=JSchCorePlugin.getPlugin().getPluginPreferences();
-
-    preferences.setDefault(IConstants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
-    preferences.setDefault(IConstants.KEY_PRIVATEKEY, IConstants.PRIVATE_KEYS_DEFAULT);
- 
-    if(!preferences.contains(IConstants.PREF_FIRST_STARTUP)){
-
-      IEclipsePreferences[] oldPreferences=getOldPreferences();
-      IPreferencesService ps=Platform.getPreferencesService();
-
-      if(ps.get(IConstants.KEY_OLD_SSH2HOME, null, oldPreferences)!=null){
-        preferences.setValue(IConstants.KEY_SSH2HOME, ps.get(
-            IConstants.KEY_OLD_SSH2HOME, null, oldPreferences));
-      }
-
-      if(ps.get(IConstants.KEY_OLD_PRIVATEKEY, null, oldPreferences)!=null){
-        preferences.setValue(IConstants.KEY_PRIVATEKEY, ps.get(
-            IConstants.KEY_OLD_PRIVATEKEY, null, oldPreferences));
-      }
-
-      preferences.setValue(IConstants.PREF_FIRST_STARTUP, true);
-      JSchCorePlugin.getPlugin().savePluginPreferences();
-    }
+    IEclipsePreferences defaultNode=new DefaultScope().getNode(JSchCorePlugin.ID);
+    defaultNode.put(IConstants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
+    defaultNode.put(IConstants.KEY_PRIVATEKEY, IConstants.PRIVATE_KEYS_DEFAULT);
+    Utils.migrateSSH2Preferences();
   }
 
 }

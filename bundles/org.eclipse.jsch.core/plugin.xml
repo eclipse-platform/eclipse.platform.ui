@@ -6,6 +6,9 @@
       <initializer
             class="org.eclipse.jsch.internal.core.PreferenceInitializer">
       </initializer>
+      <modifier
+            class="org.eclipse.jsch.internal.core.PreferenceModifyListener">
+      </modifier>
    </extension>
 
 </plugin>
