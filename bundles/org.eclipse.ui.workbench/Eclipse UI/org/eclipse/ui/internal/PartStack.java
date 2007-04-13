@@ -1077,22 +1077,31 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     .getCompoundId());
 		}
 
-        Iterator iter = children.iterator();
+        // Write out the presentable parts (in order)
+        Iterator iter = getPresentableParts().iterator();
         while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
+            PresentablePart presPart = (PresentablePart) iter.next();
 
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_PAGE);
+            PartPane part = presPart.getPane();
+            String tabText = part.getPartReference().getPartName();
 
-            PartPane part = null;
-            if (next instanceof PartPane) {
-                part = (PartPane)next;
-            }
+            childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
+            childMem.putString(IWorkbenchConstants.TAG_CONTENT, presPart.getPane().getPlaceHolderId());
+        }
+
+        // Write out the placeholders
+        Iterator layoutIiter = children.iterator();
+        while (layoutIiter.hasNext()) {
+            LayoutPart next = (LayoutPart) layoutIiter.next();
+            if (next instanceof PartPane)
+            	continue;
+            
+            IMemento childMem = memento
+                    .createChild(IWorkbenchConstants.TAG_PAGE);
 
             String tabText = "LabelNotFound"; //$NON-NLS-1$ 
-            if (part != null) {
-                tabText = part.getPartReference().getPartName();
-            }
             childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
             childMem.putString(IWorkbenchConstants.TAG_CONTENT, next
                     .getCompoundId());
