@@ -47,6 +47,7 @@ public class MirrorsDialog extends Dialog {
 	 */
 	public MirrorsDialog(Shell parentShell, ISiteWithMirrors site, String siteName) {
 		super(parentShell);
+		setShellStyle(getShellStyle()|SWT.RESIZE);
 		//this.site = site;
 		this.siteName = siteName;
 		try {
@@ -77,7 +78,7 @@ public class MirrorsDialog extends Dialog {
 		layout.marginWidth = 10;
 		layout.verticalSpacing = 10;
 		composite.setLayout(layout);
-		GridData data = new GridData();
+		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = 450;
 		data.heightHint = 300;
 		composite.setLayoutData(data);
