@@ -25,7 +25,9 @@ import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ICellEditorListener;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -37,8 +39,6 @@ import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -50,6 +50,7 @@ import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -74,10 +75,47 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 	// cursor editor and associated listeners
 	private TableEditor fCursorEditor;
-	private FocusAdapter fEditorFocusListener;
 	private KeyAdapter fEditorKeyListener;
+	private CellEditorListener fCellEditorListener;
 	
+	private class CellEditorListener implements ICellEditorListener {
+
+		private CellEditor fEditor;
+		private int fRow;
+		private int fCol;
+		
+		public CellEditorListener(int row, int col, CellEditor editor) {
+			fEditor = editor;
+			fRow = row;
+			fCol = col;
+		}
+		
+		public void applyEditorValue() {
+			fEditor.removeListener(this);
+			modifyValue(fRow, fCol, fEditor.getValue());			
+		}
+
+		public void cancelEditor() {
+			fEditor.removeListener(this);
+		}
+		
+		public void editorValueChanged(boolean oldValidState,
+				boolean newValidState) {
+		}
+		
+		public int getRow()
+		{
+			return fRow;
+		}
+		
+		public int getCol()
+		{
+			return fCol;
+		}
+	}
+
 	private boolean fPendingFormatViewer;
+
 	
 	public AsyncTableRenderingViewer(AbstractAsyncTableRendering rendering, Composite parent, int style) {
 		super(parent, style);
@@ -103,6 +141,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	private void createCursor(Table table)
 	{
 		fTableCursor = new TableCursor(table, SWT.NONE);
+		
 		Display display = fTableCursor.getDisplay();
 		
 		// set up cursor color
@@ -167,9 +206,12 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			// activate edit as soon as user types something at the cursor
 			if (event.getSource() instanceof TableCursor)
 			{
-				String initialValue = String.valueOf(event.character);
-				activateCellEditor(initialValue);
-				return;
+				int col = fTableCursor.getColumn();
+				if (getCellEditors()[col] instanceof TextCellEditor)
+				{
+					String initialValue = String.valueOf(event.character);
+					activateCellEditor(initialValue);
+				}
 			}
 		}
 	}
@@ -583,93 +625,91 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	 * @param initialValue
 	 */
 	private void activateCellEditor(String initialValue) {
-		
-		int col = fTableCursor.getColumn();
-		int row = indexOf(fSelectionKey);
-		
+
+		final int col = fTableCursor.getColumn();
+		final int row = indexOf(fSelectionKey);
+
 		if (row < 0)
 			return;
-		
+
 		// do not allow user to edit address column
-		if (col == 0 || col > getNumCol())
-		{
+		if (col == 0 || col > getNumCol()) {
 			return;
 		}
-		
+
 		ICellModifier cellModifier = null;
-		
+
 		cellModifier = getCellModifier();
-		
+
 		TableItem tableItem = getTable().getItem(row);
-		
+
 		Object element = tableItem.getData();
-		
-		if (element != null)
-		{
+
+		if (element != null) {
 			Object property = getColumnProperties()[col];
-			Object value = cellModifier.getValue(element, (String)property);
-			boolean canEdit = cellModifier.canModify(element, (String)property);
-			
+			Object value = cellModifier.getValue(element, (String) property);
+			boolean canEdit = cellModifier
+					.canModify(element, (String) property);
+
 			if (!canEdit)
 				return;
-			
-			// activate based on current cursor position
-			TextCellEditor selectedEditor = (TextCellEditor)getCellEditors()[col];
-	
-			if (selectedEditor != null)
-			{
-				// The control that will be the editor must be a child of the Table
-				Text text = (Text)selectedEditor.getControl();
-				
-				String cellValue  = null;
-				
-				if (initialValue != null)
-				{
-					cellValue = initialValue;	
+
+			CellEditor editor = getCellEditors()[col];
+			if (editor != null) {
+				// The control that will be the editor must be a child of the
+				// Table
+				Control control = editor.getControl();
+
+				Object cellValue = null;
+
+				if (initialValue != null) {
+					cellValue = initialValue;
+				} else {
+					cellValue = value;
 				}
-				else	
-				{
-					cellValue = ((String)value);
-				}
-				
-				text.setText(cellValue);
-		
+
+				editor.setValue(cellValue);
+
 				fCursorEditor.horizontalAlignment = SWT.LEFT;
 				fCursorEditor.grabHorizontal = true;
-		
-				// Open the text editor in selected column of the selected row.
-				fCursorEditor.setEditor (text, tableItem, col);
-		
-				// Assign focus to the text control
-				selectedEditor.setFocus();
-				
-				if (initialValue != null)
-				{
-					text.clearSelection();
+
+				// Open the editor editor in selected column of the selected
+				// row.
+				fCursorEditor.setEditor(control, tableItem, col);
+
+				// Assign focus to the editor control
+				editor.setFocus();
+
+				if (initialValue != null && control instanceof Text) {
+					((Text) control).clearSelection();
 				}
+
+				control.setFont(JFaceResources
+						.getFont(IInternalDebugUIConstants.FONT_NAME));
+
+				// add listeners for the editor control
+				addListeners(control);
 				
-				text.setFont(JFaceResources.getFont(IInternalDebugUIConstants.FONT_NAME));
-	
-				// add listeners for the text control
-				addListeners(text);
-				
-				// move cursor below text control
-				fTableCursor.moveBelow(text);
+				fCellEditorListener = new CellEditorListener(row, col, editor);
+				editor.addListener(fCellEditorListener);
+
+				// move cursor below editor control
+				fTableCursor.moveBelow(control);
 			}
 		}
 	}
 	
+	private void deactivateEditor(CellEditor editor)
+	{
+		removeListeners(editor.getControl());
+		fTableCursor.moveAbove(editor.getControl());
+		fTableCursor.setFocus();
+	}
+	
 	/*
-	 * @param text
+	 * @param editor
 	 */
-	private void addListeners(Text text) {
-		fEditorFocusListener = new FocusAdapter() {
-			public void focusLost(FocusEvent e)
-			{
-				handleTableEditorFocusLost(e);
-			}
-		};
-		text.addFocusListener(fEditorFocusListener);
+	private void addListeners(Control control) {
 		
 		fEditorKeyListener = new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -677,43 +717,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			}
 		};
 
-		text.addKeyListener(fEditorKeyListener);
-	}
-	
-	private void handleTableEditorFocusLost(FocusEvent event)
-	{
-		final FocusEvent e = event;
-
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run()
-			{
-				try
-				{
-					int row = indexOf(fSelectionKey);
-					int col = fTableCursor.getColumn();
-					
-					Text text = (Text)e.getSource();
-					removeListeners(text);
-
-					// get new value
-					String newValue = text.getText();
-					
-					// modify memory at fRow and fCol
-					modifyValue(row, col, newValue);
-							
-					// show cursor after modification is completed
-					setSelection(fSelectionKey);
-					fTableCursor.moveAbove(text);
-					showTableCursor(true);
-				}
-				catch (NumberFormatException e1)
-				{
-					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, 
-						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
-				}		
-			}
-		});		
+		control.addKeyListener(fEditorKeyListener);
 	}
 	
 	/**
@@ -726,154 +730,110 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		{
 			public void run()
 			{
-				Text text = (Text)e.getSource();
-				int row = indexOf(fSelectionKey);
-				int col = fTableCursor.getColumn();
-				
-				try
+				Object obj = e.getSource();
+				if (obj instanceof Control)
 				{
-					switch (e.keyCode)
+					Control control = (Control)obj;
+					int row = fCellEditorListener.getRow();
+					int col = fCellEditorListener.getCol();
+					
+					try
 					{
-						case SWT.ARROW_UP :
-							
-							// move text editor box up one row		
-							if (row-1 < 0)
-								return;
-						
-							// modify value for current cell
-							modifyValue(row, col, text.getText());
-													
-							row--;
-
-							//	update cursor location and selection in table	
-							fTableCursor.setSelection(row, col);
-							handleCursorMoved();
-							
-							// remove listeners when focus is lost
-							removeListeners(text);
-							activateCellEditor(null);
+						switch (e.keyCode)
+						{
+							case 0:
+								doHandleKeyEvent(row, col);
+								break;	
+							case SWT.ESC:
+								cancelEditing(row, col);
+								break;	
+							default :
+								doHandleKeyEvent(row, col);
 							break;
-						case SWT.ARROW_DOWN :
-							
-							// move text editor box down one row
-							
-							if (row+1 >= getTable().getItemCount())
-								return;
-							
-							// modify value for current cell
-							modifyValue(row, col, text.getText());
-						
-							row++;
-							
-							//	update cursor location and selection in table								
-							fTableCursor.setSelection(row, col);
-							handleCursorMoved();
-												
-							// remove traverse listener when focus is lost
-							removeListeners(text);
-							activateCellEditor(null);		
-							break;
-						case 0:
-							
-						// if user has entered the max number of characters allowed in a cell, move to next cell
-						// Extra changes will be used as initial value for the next cell
-							int numCharsPerByte = fRendering.getNumCharsPerByte();
-							if (numCharsPerByte > 0)
-							{
-								if (text.getText().length() > fRendering.getBytesPerColumn()*numCharsPerByte)
-								{
-									String newValue = text.getText();
-									text.setText(newValue.substring(0, fRendering.getBytesPerColumn()*numCharsPerByte));
-									
-									modifyValue(row, col, text.getText());
-									
-									// if cursor is at the end of a line, move to next line
-									if (col >= getNumCol())
-									{
-										col = 1;
-										row++;
-									}
-									else
-									{
-										// move to next column
-										row++;
-									}
-									
-									// update cursor position and selected address
-									fTableCursor.setSelection(row, col);
-									handleCursorMoved();
-									
-									removeListeners(text);
-						
-									// activate text editor at next cell
-									activateCellEditor(newValue.substring(fRendering.getBytesPerColumn()*numCharsPerByte));
-								}
-							}
-							break;	
-						case SWT.ESC:
-
-							// if user has pressed escape, do not commit the changes
-							// that's why "modifyValue" is not called
-							fTableCursor.setSelection(row, col);
-							handleCursorMoved();
-					
-							removeListeners(text);
-							
-							// cursor needs to have focus to remove focus from cell editor
-							fTableCursor.setFocus();
-							break;	
-						default :
-							numCharsPerByte = fRendering.getNumCharsPerByte();
-							if (numCharsPerByte > 0)
-							{								
-								if (text.getText().length()> fRendering.getBytesPerColumn()* numCharsPerByte)
-								{
-									String newValue = text.getText();
-									text.setText(newValue.substring(0,fRendering.getBytesPerColumn()* numCharsPerByte));
-									modifyValue(row, col, text.getText());
-									// if cursor is at the end of a line, move to next line
-									if (col >= getNumCol())
-									{
-										col = 1;
-										row++;
-									}
-									else
-									{
-										col++;
-									}
-									
-									fTableCursor.setSelection(row, col);
-									handleCursorMoved();
-									
-									removeListeners(text);
-									
-									activateCellEditor(newValue.substring(fRendering.getBytesPerColumn()*numCharsPerByte));
-								}
-							}
-						break;
+						}
 					}
-				}
-				catch (NumberFormatException e1)
-				{
-					MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, 
-						DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
-					
-					fTableCursor.setSelection(row, col);
-					handleCursorMoved();
-			
-					removeListeners(text);
+					catch (NumberFormatException e1)
+					{
+						MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, 
+							DebugUIMessages.MemoryViewCellModifier_data_is_invalid, null);
+						
+						fTableCursor.setSelection(row, col);
+						handleCursorMoved();
+				
+						removeListeners(control);
+					}
 				}
 			}
 		});
 	}
 	
-	/**
-	 * @param text
-	 */
-	private void removeListeners(Text text) {
+	private void doHandleKeyEvent(int row, int col)
+	{
+		int numCharsPerByte = fRendering.getNumCharsPerByte();
+		if (numCharsPerByte > 0)
+		{						
+			Object value = getCellEditors()[col].getValue();
+			if (getCellEditors()[col] instanceof TextCellEditor && value instanceof String)
+			{
+				String str = (String)value;
+				
+				if (str.length() > fRendering.getBytesPerColumn()*numCharsPerByte)
+				{											
+					String newValue = str;
+					
+					CellEditor editor = getCellEditors()[col];
+					editor.setValue(newValue.substring(0,fRendering.getBytesPerColumn()* numCharsPerByte));
+					
+					// We want to call modify value here to avoid race condition.
+					// Relying on the editor event to modify the cell may introduce a race condition since
+					// we try to activate another cell editor in this method.  If we happen to use same cell
+					// editor in the next activation, the value of the editor may be incorrect when the listener gets the event.
+					// We may write the wrong value in that case.  Calling modify here allows us to capture the value
+					// now and send that to the model.
+					fCellEditorListener.cancelEditor();
+					deactivateEditor(editor);			
+					modifyValue(fCellEditorListener.getRow(), fCellEditorListener.getCol(), editor.getValue());
+					
+					// if cursor is at the end of a line, move to next line
+					if (col >= getNumCol())
+					{
+						col = 1;
+						row++;
+					}
+					else
+					{
+						col++;
+					}
+					
+					fTableCursor.setSelection(row, col);									
+					handleCursorMoved();
+														
+					activateCellEditor(newValue.substring(fRendering.getBytesPerColumn()*numCharsPerByte));
+				}
+			}
+		}
+	}
+	
+	private void cancelEditing(int row, int col)
+	{
+		// if user has pressed escape, do not commit the changes
+		// remove listener to avoid getting notified on the modify value
+		fCellEditorListener.cancelEditor();
+		deactivateEditor(getCellEditors()[col]);
 		
-		text.removeFocusListener(fEditorFocusListener);
-		text.removeKeyListener(fEditorKeyListener);
+		fTableCursor.setSelection(row, col);
+		handleCursorMoved();
+		
+		// cursor needs to have focus to remove focus from cell editor
+		fTableCursor.setFocus();		
+	}
+	
+	/**
+	 * @param control
+	 */
+	private void removeListeners(Control control) {
+		
+		control.removeKeyListener(fEditorKeyListener);
 	}
 	
 	/**
@@ -883,9 +843,9 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	 * @param newValue
 	 * @throws NumberFormatException
 	 */
-	private void modifyValue(int row, int col, String newValue) throws NumberFormatException
-	{
-		if (newValue.length() == 0)
+	private void modifyValue(int row, int col, Object newValue) throws NumberFormatException
+	{	
+		if (newValue instanceof String && ((String)newValue).length() == 0)
 		{	
 			// do not do anything if user has not entered anything
 			return;

@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.memory.MemoryRenderingElement;
@@ -122,6 +123,7 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
      *      java.lang.String)
      */
     public Object getValue(Object element, String property) {
+    	
         // give back the value of the column
 
         if (!(element instanceof MemorySegment))
@@ -173,10 +175,6 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
         
         if (segment == null)
         	return;
-
-        // validate data
-        if (!(value instanceof String))
-            return;
         
         final MemorySegment line = segment;
         
@@ -206,6 +204,12 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 					if (fCustomModifier != null) {
  						MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, oldArray);
 						fCustomModifier.modify(mElement, null, value);
+						return Status.OK_STATUS;
+					}
+					
+					if (!(value instanceof String))
+					{
+						DebugUIPlugin.logErrorMessage("Cell modifier cannot handle non-string values."); //$NON-NLS-1$
 						return Status.OK_STATUS;
 					}
 					

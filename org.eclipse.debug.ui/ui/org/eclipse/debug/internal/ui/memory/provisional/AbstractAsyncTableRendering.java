@@ -1715,7 +1715,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		doFormatTable();
 		fTableViewer.setColumnHeaders(getColumnProperties());
 		fTableViewer.showColumnHeader(true);
-		fTableViewer.setCellEditors(createCellEditors(fTableViewer.getTable()));
+		
+		Table table = fTableViewer.getTable();
+		int colCnt = table.getColumnCount();
+		CellEditor[] editors = new CellEditor[fTableViewer.getTable().getColumnCount()];
+		for (int i=0; i<colCnt; i++)
+		{
+			editors[i] = createCellEditor(table, i);
+		}
+		
+		fTableViewer.setCellEditors(editors);
 		
 		fTableViewer.formatViewer();
 		
@@ -1785,15 +1794,20 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		return columnProperties;
 	}
 	
-   private CellEditor[] createCellEditors(Table table) {
+   /**
+     * Create a cell editor from the specified composite and column.
+	 * @param composite parent composite that the cell editor is to be created from.
+	 * @param column the column where the cell editor is required
+	 * @return the cell editor for editing memory
+	 * 
+	 * @since 3.3
+     *
+	 */
+	protected CellEditor createCellEditor(Composite composite, int column) {
 	   
-        CellEditor[] editors = new CellEditor[table.getColumnCount()];
-        for (int i=0; i<editors.length; i++)
-        {
-        	editors[i] = new TextCellEditor(table);
-        }
-        return editors;
-    }
+	   return new TextCellEditor(composite);
+   }
+       
    
    private ICellModifier newInternalCellModifier()
    {
@@ -1806,7 +1820,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
    	 * @return the cell modifier for this rendering, or <code>null</code> if the 
    	 * default cell modifier is to be used.
    	 * 
-   	 * <strong> EXPERIMENTAL </strong>
+   	 * @since 3.3
+   	 * 
    	 */
    	protected ICellModifier createCellModifier() {
        return null;
