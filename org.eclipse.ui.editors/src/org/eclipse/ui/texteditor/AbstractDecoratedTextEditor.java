@@ -1072,7 +1072,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new RestoreAction(this, false);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION, action);
 
-		IAction action2= new CompositeRevertAction(new IAction[] {
+		IAction action2= new CompositeRevertAction(this, new IAction[] {
 		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION),
 		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK),
 										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION),
@@ -1113,7 +1113,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new BooleanPreferenceToggleAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ToggleRevisionIdAction.", IAction.AS_CHECK_BOX, EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION); //$NON-NLS-1$
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.REVISION_ID_TOGGLE);
 		setAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE, action);
-
+		
 		final Shell shell;
 		if (getSourceViewer() != null)
 			shell= getSourceViewer().getTextWidget().getShell();

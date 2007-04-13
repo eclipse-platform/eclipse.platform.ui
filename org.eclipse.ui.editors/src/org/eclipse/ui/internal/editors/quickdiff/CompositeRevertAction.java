@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,12 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
-
+import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
 
@@ -25,7 +29,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  *
  * @since 3.1
  */
-public final class CompositeRevertAction extends Action implements IUpdate {
+public final class CompositeRevertAction extends Action implements IUpdate, ISelectionChangedListener {
 
 	/**
 	 * The actions.
@@ -35,15 +39,21 @@ public final class CompositeRevertAction extends Action implements IUpdate {
 	/**
 	 * Creates an action combining the two given actions.
 	 *
+	 * @param editor the editor 
 	 * @param actions the list of actions
 	 */
-	public CompositeRevertAction(IAction[] actions) {
+	public CompositeRevertAction(ITextEditor editor, IAction[] actions) {
 		fActions= new IAction[actions.length];
-		for (int i= 0; i < actions.length; i++) {
+		for (int i= 0; i < actions.length; i++)
 			Assert.isNotNull(actions[i]);
-		}
+
 		System.arraycopy(actions, 0, fActions, 0, actions.length);
-		update(); // take personality of the first action
+		
+		ISelectionProvider selectionProvider= editor.getSelectionProvider();
+		if (selectionProvider instanceof IPostSelectionProvider)
+			((IPostSelectionProvider)selectionProvider).addPostSelectionChangedListener(this);
+		
+		update();
 	}
 
 	/*
@@ -55,17 +65,19 @@ public final class CompositeRevertAction extends Action implements IUpdate {
 				((IUpdate) fActions[i]).update();
 		}
 		IAction action= getEnabledAction();
-
+		setEnabled(getEnabledAction() != null);
 		if (action == null)
 			return;
 		setText(action.getText());
 		setToolTipText(action.getToolTipText());
 	}
 
-
-	public boolean isEnabled() {
+	/*
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 * @since 3.3
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
 		update();
-		return getEnabledAction() != null;
 	}
 
 	/*

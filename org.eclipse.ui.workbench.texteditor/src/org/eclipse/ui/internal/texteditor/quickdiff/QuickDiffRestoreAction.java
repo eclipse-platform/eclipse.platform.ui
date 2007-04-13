@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor.quickdiff;
 
+import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
@@ -34,7 +37,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  *
  * @since 3.0
  */
-public abstract class QuickDiffRestoreAction extends TextEditorAction {
+public abstract class QuickDiffRestoreAction extends TextEditorAction implements ISelectionChangedListener {
 
 	private int fLastLine= -1;
 	private final boolean fIsRulerAction;
@@ -49,6 +52,10 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	QuickDiffRestoreAction(String prefix, ITextEditor editor, boolean isRulerAction) {
 		super(QuickDiffMessages.getBundleForConstructedKeys(), prefix, editor);
 		fIsRulerAction= isRulerAction;
+
+		ISelectionProvider selectionProvider= editor.getSelectionProvider();
+		if (selectionProvider instanceof IPostSelectionProvider)
+			((IPostSelectionProvider)selectionProvider).addPostSelectionChangedListener(this);
 	}
 
 	/**
@@ -76,16 +83,6 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	}
 
 	/*
-	 * @see org.eclipse.jface.action.IAction#isEnabled()
-	 */
-	public boolean isEnabled() {
-		if (!fIsRulerAction)
-			setEnabled(computeEnablement());
-
-		return super.isEnabled();
-	}
-
-	/*
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
@@ -96,6 +93,14 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		super.update();
 
 		setEnabled(computeEnablement());
+	}
+
+	/*
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 * @since 3.3
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		update();
 	}
 
 	/**
