@@ -71,6 +71,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 */
 	protected ExpressionAuthority() {
 		context = new EvaluationContext(null, this);
+		context.setAllowPluginActivation(true);
 	}
 
 	/**
