@@ -47,7 +47,7 @@
     <property name="header-path" value="${jdk-path}/../include"/>
     <property name="header-linux-path" value="${header-path}/linux" />
 
-	<echo message="gcc -o  ${library-file} -shared -I${src-path} -I${header-linux-path} ${library-file} -static -lc"/>
+	<echo message="gcc -o  ${library-file} -shared -I${src-path} -I${header-linux-path} -fPIC ${library-file}"/>
 
     <apply executable="gcc" dest="${eclipse-home}/" parallel="false">
       <arg value="-o"/>
@@ -55,10 +55,9 @@
       <arg value="-shared"/>
       <arg value="-I${src-path}"/>
       <arg value="-I${header-path}"/>      
-      <arg value="-I${header-linux-path}"/>  
+      <arg value="-I${header-linux-path}"/>
+      <arg value="-fPIC"/>
 	  <srcfile/>
-	  <arg value="-static"/>           
-      <arg value="-lc"/>	  
       <fileset dir="${src-path}" includes="*.c"/>
       <mapper type="glob" from="*.c" to="*.o"/>
     </apply>
