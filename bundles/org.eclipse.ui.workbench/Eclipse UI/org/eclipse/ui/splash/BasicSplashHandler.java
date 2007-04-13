@@ -12,10 +12,12 @@ package org.eclipse.ui.splash;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -154,8 +156,11 @@ public abstract class BasicSplashHandler extends AbstractSplashHandler {
 	 */
 	public IProgressMonitor getBundleProgressMonitor() {
 		if (monitor == null) {
-			monitor = new AbsolutePositionProgressMonitorPart(getSplash());
-			monitor.setSize(getSplash().getShell().getSize());
+			Composite parent = new Composite(getSplash(), Window.getDefaultOrientation());
+			Point size = getSplash().getSize();
+			parent.setBounds(new Rectangle(0,0,size.x,size.y));
+			monitor = new AbsolutePositionProgressMonitorPart(parent);
+			monitor.setSize(size);
 			if (progressRect != null)
 				monitor.getProgressIndicator().setBounds(progressRect);
 			else
