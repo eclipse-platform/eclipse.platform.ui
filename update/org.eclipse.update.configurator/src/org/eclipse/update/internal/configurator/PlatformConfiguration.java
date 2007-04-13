@@ -120,9 +120,17 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (isTransient())
 			return;
 		
-		changeStamp = computeChangeStamp();
-		if (changeStamp > config.getDate().getTime())
+		// for 'osgi.clean' or osgi.checkConfiguration', force a refresh
+		if (Boolean.getBoolean("osgi.clean") || Boolean.getBoolean("osgi.checkConfiguration")) { //$NON-NLS-1$ //$NON-NLS-2$
+			// We have to call refresh() for features to be rescanned correctly
+			refresh();
 			reconcile();
+		}
+		else {
+			changeStamp = computeChangeStamp();
+			if (changeStamp > config.getDate().getTime())
+				reconcile();
+		}
 	}
 
 	PlatformConfiguration(URL url) throws Exception {
