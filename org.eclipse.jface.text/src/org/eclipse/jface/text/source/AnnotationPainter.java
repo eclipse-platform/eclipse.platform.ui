@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.PaintEvent;
@@ -33,7 +34,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Platform;
-
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -997,39 +997,46 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
 	 */
 	public void modelChanged(final AnnotationModelEvent event) {
-		if (fTextWidget != null && !fTextWidget.isDisposed()) {
-			if (fIsSettingModel) {
-				// inside the UI thread -> no need for posting
-				 if (fTextWidget.getDisplay() == Display.getCurrent())
-				 	updatePainting(event);
-				 else {
-				 	/*
-				 	 * we can throw away the changes since
-				 	 * further update painting will happen
-				 	 */
-				 	return;
-				 }
-			} else {
-				Display d= fTextWidget.getDisplay();
-				if (DEBUG && event != null && event.isWorldChange()) {
-					System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
-					new Throwable().printStackTrace(System.out);
-				}
+		Display textWidgetDisplay;
+		try {
+			StyledText textWidget= fTextWidget;
+			if (textWidget == null || textWidget.isDisposed())
+				return;
+			textWidgetDisplay= textWidget.getDisplay();
+		} catch (SWTException ex) {
+			if (ex.code == SWT.ERROR_WIDGET_DISPOSED)
+				return;
+			throw ex;
+		}
 
-				// XXX: posting here is a problem for annotations that are being
-				// removed and the positions of which are not updated to document
-				// changes any more. If the document gets modified between
-				// now and running the posted runnable, the position information
-				// is not accurate any longer.
-				if (d != null) {
-					d.asyncExec(new Runnable() {
-						public void run() {
-							if (fTextWidget != null && !fTextWidget.isDisposed())
-								updatePainting(event);
-						}
-					});
-				}
+		if (fIsSettingModel) {
+			// inside the UI thread -> no need for posting
+			if (textWidgetDisplay == Display.getCurrent())
+				updatePainting(event);
+			else {
+				/*
+				 * we can throw away the changes since
+				 * further update painting will happen
+				 */
+				return;
 			}
+		} else {
+			if (DEBUG && event != null && event.isWorldChange()) {
+				System.out.println("AP: WORLD CHANGED, stack trace follows:"); //$NON-NLS-1$
+				new Throwable().printStackTrace(System.out);
+			}
+
+			// XXX: posting here is a problem for annotations that are being
+			// removed and the positions of which are not updated to document
+			// changes any more. If the document gets modified between
+			// now and running the posted runnable, the position information
+			// is not accurate any longer.
+			textWidgetDisplay.asyncExec(new Runnable() {
+				public void run() {
+					if (fTextWidget != null && !fTextWidget.isDisposed())
+						updatePainting(event);
+				}
+			});
 		}
 	}
 
