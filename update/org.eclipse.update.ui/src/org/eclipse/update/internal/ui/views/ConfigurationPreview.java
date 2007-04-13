@@ -9,7 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.views;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.*;
@@ -99,9 +103,9 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 	public void setSelection(IStructuredSelection selection) {
 		Object object = selection.getFirstElement();
 		tasks = view.getPreviewTasks(object);
-		String title = getObjectLabel(object);
+		String title = getObjectLabel(selection.size()>1?selection:object);
 		form.setText(title);
-		String description = getObjectDescription(object);
+		String description = getObjectDescription(selection.size()>1?selection:object);
 		boolean tags = description.startsWith("<form>"); //$NON-NLS-1$
 		desc.setText(description, tags, !tags);
 		String taskText = getTasksText();
@@ -113,6 +117,17 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 			return ""; //$NON-NLS-1$
 		TreeViewer viewer = view.getTreeViewer();
 		LabelProvider provider = (LabelProvider) viewer.getLabelProvider();
+		if (object instanceof IStructuredSelection) {
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			int counter=1;
+			for (Iterator iter = ((IStructuredSelection)object).iterator();
+				iter.hasNext();) {
+				pw.println(counter+". "+provider.getText(iter.next())); //$NON-NLS-1$
+				counter++;
+			}
+			return sw.toString();
+		}
 		return provider.getText(object);
 	}
 	private String getObjectDescription(Object object) {

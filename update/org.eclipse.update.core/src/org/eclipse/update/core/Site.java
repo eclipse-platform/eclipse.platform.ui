@@ -512,6 +512,11 @@ public class Site extends SiteModel implements ISiteWithMirrors {
 	 */
 	public IFeature createFeature(String type, URL url, IProgressMonitor monitor) throws CoreException {
 
+		if(url == null) {
+			UpdateCore.warn("The feature URL passed is null");
+			return null;
+		}
+		
 		// First check the cache
 		URLKey key = new URLKey(url);
 		IFeature feature = (IFeature) featureCache.get(key);

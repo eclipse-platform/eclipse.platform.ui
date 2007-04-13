@@ -223,11 +223,7 @@ public class ConfigurationView
 					if (feature instanceof MissingFeature) {
 						return NLS.bind(UpdateUIMessages.ConfigurationView_missingFeature, feature.getLabel());
 					}
-					String version =
-						feature
-							.getVersionedIdentifier()
-							.getVersion()
-							.toString();
+					String version = getPrintableVersion(feature);
 					String pending = ""; //$NON-NLS-1$
 					if (OperationsManager.findPendingOperation(feature)
 						!= null)
@@ -238,6 +234,13 @@ public class ConfigurationView
 				}
 			}
 			return super.getText(obj);
+		}
+		
+		private String getPrintableVersion(IFeature feature) {
+			PluginVersionIdentifier version = feature
+					.getVersionedIdentifier()
+					.getVersion();
+			return version.getMajorComponent()+"."+version.getMinorComponent()+"."+version.getServiceComponent();
 		}
 
 		public Image getImage(Object obj) {
@@ -1056,6 +1059,9 @@ public class ConfigurationView
 			areMultipleFeaturesSelected = false;
 		}
 		
+		if (ssel.size()>1)
+			obj = null;
+		
 		if (obj!=null) {
 			ILabelProvider labelProvider = (ILabelProvider)treeViewer.getLabelProvider();
 			String text = labelProvider.getText(obj);
@@ -1074,6 +1080,7 @@ public class ConfigurationView
 			unconfigureAndUninstallFeaturesAction.setEnabled(unconfigureAndUninstallFeatureAction.canExecuteAction());
 			featuresStateAction.setSelection(ssel);
 			featuresStateAction.setEnabled(featuresStateAction.canExecuteAction());
+			propertiesAction.setEnabled(false);
 			preview.setSelection(ssel);
 			return;
 		}

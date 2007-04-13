@@ -193,20 +193,23 @@ public class BookmarkUtil {
 				Object obj = bookmarks.get(i);
 				writeObject("   ", obj, writer); //$NON-NLS-1$
 			}
+		} catch (IOException e) {
+			UpdateUI.logException(e, false);
+		} finally {
 			writer.println("</bookmarks>"); //$NON-NLS-1$
 			writer.flush();
 			writer.close();
-		} catch (IOException e) {
-		} finally {
 			try {
 				if (osw != null)
 					osw.close();
 			} catch (IOException e1) {
+				UpdateUI.logException(e1, false);
 			}
 			try {
 				if (fos != null)
 					fos.close();
 			} catch (IOException e2) {
+				UpdateUI.logException(e2, false);
 			}
 		}
 	}
