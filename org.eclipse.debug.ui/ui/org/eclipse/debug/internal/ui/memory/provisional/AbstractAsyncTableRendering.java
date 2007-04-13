@@ -733,8 +733,13 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						
 						createToolTip();
 						
+						if (isActivated())
+						{
+							activatePageActions();
+						}
+						
 						// now the rendering is successfully created
-						fIsCreated = true;
+						fIsCreated = true;											
 						
 						return Status.OK_STATUS;
 					}};
@@ -3174,41 +3179,52 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 			gotoCommand.setHandler(fGoToAddressHandler);
 			
-			if (!isDynamicLoad())
+			// The page up and page down actions can only be activated if the rendering
+			// is in manual scrolling mode.  We are unable to determine the scrolling mode
+			// until the content descriptor is created.  When the rendering is activated, the content
+			// descriptor may not be created yet.  In that case, we cannot activate the shortcuts here.
+			// We will activate the shortcut after the rendering is created.
+			if (fContentDescriptor != null && !isDynamicLoad())
 			{
-				Command nextPage = commandSupport.getCommand(ID_NEXT_PAGE_COMMAND);
-				if (fNextPageHandler == null)
-				{
-					fNextPageHandler = new AbstractHandler() {
-
-						public Object execute(ExecutionEvent arg0)
-								throws ExecutionException {
-							fNextAction.run();
-							return null;
-						}						
-					};
-				}
-				nextPage.setHandler(fNextPageHandler);
-				
-				Command prevPage = commandSupport.getCommand(ID_PREV_PAGE_COMMAND);
-				if (fPrevPageHandler == null)
-				{
-					fPrevPageHandler = new AbstractHandler() {
-
-						public Object execute(ExecutionEvent arg0)
-								throws ExecutionException {
-							fPrevAction.run();
-							return null;
-						}						
-					};
-				}
-				prevPage.setHandler(fPrevPageHandler);
-
+				activatePageActions();
 			}
-		}
-		
+		}		
 	}
 
+	private void activatePageActions() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
+		if (commandSupport != null)
+		{
+			Command nextPage = commandSupport.getCommand(ID_NEXT_PAGE_COMMAND);
+			if (fNextPageHandler == null)
+			{
+				fNextPageHandler = new AbstractHandler() {
+	
+					public Object execute(ExecutionEvent arg0)
+							throws ExecutionException {
+						fNextAction.run();
+						return null;
+					}						
+				};
+			}
+			nextPage.setHandler(fNextPageHandler);
+			
+			Command prevPage = commandSupport.getCommand(ID_PREV_PAGE_COMMAND);
+			if (fPrevPageHandler == null)
+			{
+				fPrevPageHandler = new AbstractHandler() {
+	
+					public Object execute(ExecutionEvent arg0)
+							throws ExecutionException {
+						fPrevAction.run();
+						return null;
+					}						
+				};
+			}
+			prevPage.setHandler(fPrevPageHandler);
+		}
+	}
 
 	public void deactivated() {
 		
