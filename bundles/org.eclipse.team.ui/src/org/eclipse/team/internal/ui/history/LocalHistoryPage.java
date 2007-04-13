@@ -259,11 +259,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 
 	protected IFile getFile() {
-		Object obj = getInput();
-		if (obj instanceof IFile)
-			return (IFile) obj;
-		
-		return null;
+		return LocalHistoryPageSource.getFile(getInput());
 	}
 
 	private void refreshHistory(boolean refetch) {
