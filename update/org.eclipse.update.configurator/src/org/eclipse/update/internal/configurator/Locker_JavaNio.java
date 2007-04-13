@@ -18,6 +18,7 @@ import java.nio.channels.FileLock;
  */
 public class Locker_JavaNio implements Locker {
 	private File lockFile;
+	private RandomAccessFile raf;
 	private FileLock fileLock;
 
 	public Locker_JavaNio(File lockFile) {
@@ -25,7 +26,7 @@ public class Locker_JavaNio implements Locker {
 	}
 
 	public synchronized boolean lock() throws IOException {
-		RandomAccessFile raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
+		raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 		fileLock = raf.getChannel().lock();
 		
 		if (fileLock != null)
@@ -41,6 +42,18 @@ public class Locker_JavaNio implements Locker {
 				//don't complain, we're making a best effort to clean up
 			}
 			fileLock = null;
+		}
+		if (raf != null) {
+			try {
+				raf.close();
+			} catch (IOException e) {
+				//don't complain, we're making a best effort to clean up
+			}
+			raf = null;
+		}
+		if (lockFile != null) {
+			lockFile.delete();
+			lockFile = null;
 		}
 	}
 }
