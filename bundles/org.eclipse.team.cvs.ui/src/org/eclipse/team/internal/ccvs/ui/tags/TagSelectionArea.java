@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 182267 "Add Date..." button shouldn't be visible in merge wizard
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
@@ -307,12 +308,16 @@ public class TagSelectionArea extends DialogArea {
     protected void createRefreshButtons(Composite parent) {
 	    tagSource.addListener(listener);
         parent.addDisposeListener(disposeListener);
-	    tagRefreshArea = new TagRefreshButtonArea(shell, tagSource, new Listener() {
-            public void handleEvent(Event event) {
-                CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), getLocation());
-                addDateTag(dateTag);
-            }
-        });
+        Listener listener = null;
+        if ((includeFlags & TagSourceWorkbenchAdapter.INCLUDE_DATES) != 0) {
+            listener = new Listener() {
+                public void handleEvent(Event event) {
+                    CVSTag dateTag = NewDateTagAction.getDateTag(getShell(), getLocation());
+                    addDateTag(dateTag);
+                }
+            };
+        }
+	    tagRefreshArea = new TagRefreshButtonArea(shell, tagSource, listener);
 	    if (context != null)
 	        tagRefreshArea.setRunnableContext(context);
 	    tagRefreshArea.createArea(parent);
