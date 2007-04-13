@@ -32,6 +32,7 @@
       <import plugin="org.eclipse.team.tests.core"/>
       <import plugin="org.eclipse.test.performance"/>
       <import plugin="org.eclipse.core.tests.resources"/>
+      <import plugin="org.eclipse.core.expressions"/>
    </requires>
 
 

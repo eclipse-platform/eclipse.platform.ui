@@ -10,32 +10,28 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.ui;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
-import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.ui.IActionDelegate;
 
 /**
  * Test the menu enablement code for the CVS menus
  */
-public class MenuEnablementTest extends EclipseTest {
+public class MenuEnablementTest extends EnablementTest {
 	
 	private static final int MANAGED = 1;
 	private static final int ADDED = 2;
@@ -66,119 +62,8 @@ public class MenuEnablementTest extends EclipseTest {
 		//return new CVSTestSetup(new MenuEnablementTest("testReadOnly"));
 	}
 	
-	/**
-	 * Create a test project for the given action delegate. The structure of
-	 * this test project is used by the get resource methods to return resources
-	 * of the proper type.
-	 * 
-	 * @param actionDelegate
-	 * @throws CoreException
-	 * @throws TeamException
-	 */
-	private IProject createTestProject(IActionDelegate actionDelegate) throws CoreException, TeamException {
-		String actionName = getName(actionDelegate);
-		return createProject(actionName, new String[] { "file.txt", "folder1/", "folder1/a.txt" });
-	}
 	
-	private List getManagedResources(IProject testProject, boolean includeFolders, boolean multiple) {
-		List result = new ArrayList();
-		if (includeFolders) {
-			result.add(testProject.getFolder("folder1"));
-		} else {
-			result.add(testProject.getFile("folder1/a.txt"));
-		}
-		if (multiple) {
-			result.add(testProject.getFile("file.txt"));
-		}
-		return result;
-	}
-	
-	private List getAddedResources(IProject testProject) throws CoreException, TeamException {
-		List result = new ArrayList();
-		IFile file = testProject.getFile("added.txt");
-		if (!file.exists()) {
-			addResources(testProject, new String[] {"added.txt"}, false);
-		}
-		result.add(file);
-		return result;
-	}
-	
-	private List getIgnoredResources(IProject testProject) throws CoreException, TeamException {
-		List result = new ArrayList();
-		IFile file = testProject.getFile("ignored.txt");
-		if (!file.exists()) {
-			file.create(getRandomContents(), false, null);
-		}
-		result.add(file);
-		IFile ignoreFile = testProject.getFile(".cvsignore");
-		InputStream contents = new ByteArrayInputStream("ignored.txt".getBytes());
-		if (ignoreFile.exists()) {
-			ignoreFile.setContents(contents, false, false, null);
-		} else {
-			ignoreFile.create(contents, false, null);
-		}
-		return result;
-	}
-	
-	private List getUnmanagedResources(IProject testProject) throws CoreException, TeamException {
-		List result = new ArrayList();
-		IFile file = testProject.getFile("unmanaged.txt");
-		if (!file.exists()) {
-			file.create(getRandomContents(), false, null);
-		}
-		result.add(file);
-		return result;
-	}
-
-	/**
-	 * Method getResourceWithUnmanagedParent.
-	 * @param project
-	 * @return Collection
-	 */
-	private List getResourceWithUnmanagedParent(IProject project) throws CoreException {
-		List result = new ArrayList();
-		IFolder folder = project.getFolder("newFolder");
-		if(!folder.exists()) folder.create(false, true, null);
-		IFile file = folder.getFile("unmanaged.txt");
-		if (!file.exists()) {
-			file.create(getRandomContents(), false, null);
-		}
-		result.add(file);
-		return result;
-	}
 		
-	private List getOverlappingResources(IProject testProject, boolean includeFiles) {
-		List result = new ArrayList();
-		result.add(testProject);
-		result.add(testProject.getFolder("folder1"));
-		if (includeFiles) {
-			result.add(testProject.getFile("folder1/a.txt"));
-		}
-		return result;
-	}
-
-	private ISelection asSelection(List resources) {
-		return new StructuredSelection(resources);
-	}
-	
-	private String getName(IActionDelegate actionDelegate) {
-		return actionDelegate.getClass().getName();
-	}
-		
-	/**
-	 * Assert that the enablement for the given IActionDelegate and ISelection
-	 * match that provided as expectedEnablement.
-	 * 
-	 * @param actionDelegate
-	 * @param selection
-	 * @param expectedEnablement
-	 */
-	private void assertEnablement(IActionDelegate actionDelegate, ISelection selection, boolean expectedEnablement) {
-		IAction action = new Action() {};
-		actionDelegate.selectionChanged(action, selection);
-		assertEquals(getName(actionDelegate) + " enablement wrong!", expectedEnablement, action.isEnabled());
-	}
-
 	/**
 	 * Method assertEnablement.
 	 * @param action
@@ -494,4 +379,5 @@ public class MenuEnablementTest extends EclipseTest {
 		assertEnablement(action, project, UNMANAGED | MANAGED | IGNORED, false /* expected enablement */);
 		assertEnablement(action, project, UNMANAGED_PARENT, false /* expected enablement */);
 	}
+	
 }
