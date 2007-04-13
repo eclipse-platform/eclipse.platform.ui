@@ -234,6 +234,7 @@ public class CoreItem extends ViewItem {
 		separatorData.align = TableWrapData.FILL;
 		separatorData.grabHorizontal = true;
 		separatorData.maxHeight = 1;
+		separatorData.valign = TableWrapData.MIDDLE;
 		separator.setLayoutData(separatorData);
 		for (int i = 3; i <= SUBITEM_COLUMNS; i++) {
 		    Label filler = page.getToolkit().createLabel(buttonComposite, null);

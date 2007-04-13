@@ -132,8 +132,10 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		explorerPanel.setBackground(colors.getColor(IFormColors.TB_BORDER));
 		GridLayout playout = new GridLayout();
 		playout.marginWidth = 0;
-		playout.marginHeight = 0;
+		playout.marginTop = 2;
+		playout.marginBottom = 0;
 		explorerPanel.setLayout(playout);
+		toolkit.adapt(explorerPanel);
 		explorerContainer = new PageBook(explorerPanel, SWT.NULL);
 		explorerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 		Composite editorPanel = new Composite(sash, SWT.NULL);
