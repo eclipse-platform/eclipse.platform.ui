@@ -89,6 +89,13 @@
 				<attribute name="Main-Class" value="org.eclipse.update.internal.jarprocessor.Main"/>
 			</manifest>
 		</jar>
+		
+		<echo message="UPDATE jarprocessorsrc.zip"/>
+		<delete file="${dest}/jarprocessorsrc.zip" failonerror="false" />
+		<zip destFile="${dest}/jarprocessorsrc.zip">
+			<fileset dir="${basedir}/jarprocessor" includes="**/*.java" />
+			<fileset dir="${basedir}" includes="about.html" />
+		</zip>
 	</target>
 	
 	<!-- ===================================================================== -->
