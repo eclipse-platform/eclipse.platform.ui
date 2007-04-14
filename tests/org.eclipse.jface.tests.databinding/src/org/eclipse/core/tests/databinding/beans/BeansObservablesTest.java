@@ -25,8 +25,8 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
+import org.eclipse.core.tests.internal.databinding.internal.beans.Bean;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.tests.internal.databinding.internal.beans.Bean;
 
 /**
  * @since 3.2

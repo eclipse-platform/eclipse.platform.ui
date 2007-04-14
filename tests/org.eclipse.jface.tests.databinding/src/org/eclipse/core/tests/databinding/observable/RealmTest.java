@@ -14,8 +14,8 @@ package org.eclipse.core.tests.databinding.observable;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.tests.databinding.util.RealmTester;
-import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
+import org.eclipse.jface.tests.databinding.RealmTester;
+import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * @since 3.2

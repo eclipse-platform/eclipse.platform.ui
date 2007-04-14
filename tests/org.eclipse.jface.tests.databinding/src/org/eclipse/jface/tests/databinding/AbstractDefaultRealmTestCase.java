@@ -15,7 +15,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.swt.widgets.Display;
 
 /**

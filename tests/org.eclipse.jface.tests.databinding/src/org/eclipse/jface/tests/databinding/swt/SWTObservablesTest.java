@@ -30,7 +30,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
-import org.eclipse.jface.tests.databinding.util.RealmTester;
+import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
