@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *     Fredy Dobler <fredy@dobler.net> - bug 159600
+ *     Brock Janiczak <brockj@tpg.com.au> - bug 182443
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -114,9 +115,7 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 
 			if (labelProvider.useNativeToolTip(element)) {
 				String text = labelProvider.getToolTipText(element);
-				if (text != null) {
-					viewer.getControl().setToolTipText(text);
-				}
+				viewer.getControl().setToolTipText(text);
 				rv = false;
 			} else {
 				setPopupDelay(labelProvider.getToolTipDisplayDelayTime(element));

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     											- bug fixes for 182443
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -136,9 +137,12 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	}
 
 	/**
-	 * Return whether or not to use the native tool tip. If native tool tips are
-	 * used only the textvalue is used. All other feature of custom tool tips
-	 * are not supported.
+	 * Return whether or not to use the native tool tip. If you switch to native tool tips
+	 * only the value from {@link #getToolTipText(Object)} is used all other features from
+	 * custom tooltips are not supported.
+	 *  
+	 * <p>To reset the control to native behaviour you should return true from the method
+	 * and <code>null</code> from {@link #getToolTipText(Object)}</p>
 	 * 
 	 * @param object
 	 *            the {@link Object} for which the tool tip is shown
