@@ -121,7 +121,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return;
 		
 		// for 'osgi.clean' or osgi.checkConfiguration', force a refresh
-		if (Boolean.getBoolean("osgi.clean") || Boolean.getBoolean("osgi.checkConfiguration")) { //$NON-NLS-1$ //$NON-NLS-2$
+		boolean osgiClean = "true".equals(ConfigurationActivator.getBundleContext().getProperty("osgi.clean")); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean osgiCheckConfiguration = "true".equals(ConfigurationActivator.getBundleContext().getProperty("osgi.checkConfiguration")); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		if (osgiClean || osgiCheckConfiguration) {
 			// We have to call refresh() for features to be rescanned correctly
 			refresh();
 			reconcile();
