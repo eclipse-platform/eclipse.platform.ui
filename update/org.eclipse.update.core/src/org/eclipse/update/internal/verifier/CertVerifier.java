@@ -211,7 +211,7 @@ public class CertVerifier extends Verifier {
 			return (acceptUnsignedFiles);
 		if (verifyCode == IVerificationResult.UNKNOWN_ERROR)
 			return false;
-		if (getTrustedCertificates() != null) {
+		if (result.getchains() != null) { //getTrustedCertificates() can't be null as it is lazy initialized
 			Iterator iter = getTrustedCertificates().iterator();
 			CertificateChain[] roots = result.getchains();
 
