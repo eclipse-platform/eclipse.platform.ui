@@ -110,7 +110,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		fContentAssistant.setContextSelectorForeground(foreground);
 		fContentAssistant.setProposalSelectorForeground(foreground);
 			
-        IInformationControlCreator creator = getInformationControlCreator(true);
+        IInformationControlCreator creator = getInformationControlCreator(sourceViewer);
 		fContentAssistant.setInformationControlCreator(creator);
 
 		fContentAssistant.setRepeatedInvocationMode(true);
@@ -118,15 +118,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		fContentAssistant.setShowEmptyList(true);
 		fContentAssistant.addCompletionListener(processor);
         return fContentAssistant;
-    }
-
-    protected IInformationControlCreator getInformationControlCreator(final boolean cutDown) {
-        return new IInformationControlCreator() {
-            public IInformationControl createInformationControl(Shell parent) {
-                int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-                return new DefaultInformationControl(parent, style, new HTMLTextPresenter(cutDown));
-            }
-        };
     }
 
     /* (non-Javadoc)
@@ -150,7 +141,11 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationControlCreator(org.eclipse.jface.text.source.ISourceViewer)
 	 */
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
-		return getInformationControlCreator(true);
+		return new IInformationControlCreator() {
+            public IInformationControl createInformationControl(Shell parent) {
+                return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
+            }
+        };
 	}
 
 	/*
