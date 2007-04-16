@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.util.Iterator;
-import org.eclipse.swt.widgets.Display;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.text.source.ISharedTextColors;
 
 /*
  * @see org.eclipse.jface.text.source.ISharedTextColors
@@ -42,12 +44,17 @@ class SharedTextColors implements ISharedTextColors {
 		if (fDisplayTable == null)
 			fDisplayTable= new HashMap(2);
 
-		Display display= Display.getCurrent();
+		final Display display= Display.getCurrent();
 
 		Map colorTable= (Map) fDisplayTable.get(display);
 		if (colorTable == null) {
 			colorTable= new HashMap(10);
 			fDisplayTable.put(display, colorTable);
+			display.disposeExec(new Runnable() {
+				public void run() {
+					dispose(display);
+				}
+			});
 		}
 
 		Color color= (Color) colorTable.get(rgb);
@@ -63,14 +70,41 @@ class SharedTextColors implements ISharedTextColors {
 	 * @see ISharedTextColors#dispose()
 	 */
 	public void dispose() {
-		if (fDisplayTable != null) {
-			Iterator j= fDisplayTable.values().iterator();
-			while (j.hasNext()) {
-				Iterator i= ((Map) j.next()).values().iterator();
-				while (i.hasNext())
-					((Color) i.next()).dispose();
-			}
-		}
+		if (fDisplayTable == null)
+			return;
+		
+		Iterator iter= fDisplayTable.values().iterator();
+		while (iter.hasNext())
+			dispose((Map)iter.next());
+		fDisplayTable= null;
+	}
+	
+	/**
+	 * Disposes the colors for the given display.
+	 * 
+	 * @param display the display for which to dispose the colors
+	 * @since 3.3
+	 */
+	private void dispose(Display display) {
+		if (fDisplayTable != null)
+			dispose((Map)fDisplayTable.remove(display));
+	}
+	
+	/**
+	 * Disposes the given color table.
+	 * 
+	 * @param colorTable the color table that maps <code>RGB</code> to <code>Color</code>
+	 * @since 3.3
+	 */
+	private void dispose(Map colorTable) {
+		if (colorTable == null)
+			return;
+		
+		Iterator iter= colorTable.values().iterator();
+		while (iter.hasNext())
+			((Color) iter.next()).dispose();
+		
+		colorTable.clear();
 	}
 
 }
