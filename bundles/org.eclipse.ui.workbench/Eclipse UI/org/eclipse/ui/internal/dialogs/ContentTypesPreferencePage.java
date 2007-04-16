@@ -335,7 +335,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(3, false);
 		layout.marginHeight = layout.marginWidth = 0;
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		GridData compositeData = new GridData(GridData.FILL_HORIZONTAL);
+		compositeData.horizontalSpan = 2;
+		composite.setLayoutData(compositeData);
 		composite.setLayout(layout);
 
 		Label label = new Label(composite, SWT.NONE);
@@ -351,6 +353,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 		setButton
 				.setText(WorkbenchMessages.ContentTypes_characterSetUpdateLabel);
 		setButton.setEnabled(false);
+		setButtonLayoutData(setButton);
 		setButton.addSelectionListener(new SelectionAdapter() {
 
 			/*
@@ -397,7 +400,6 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	private void createFileAssociations(final Composite composite) {
 		{
 			Label label = new Label(composite, SWT.NONE);
-			label.setFont(composite.getFont());
 			label.setText(WorkbenchMessages.ContentTypes_fileAssociationsLabel);
 			GridData data = new GridData();
 			data.horizontalSpan = 2;
@@ -445,10 +447,10 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 
 			addButton = new Button(buttonArea, SWT.PUSH);
 			addButton.setFont(composite.getFont());
-			setButtonLayoutData(addButton);
 			addButton
 					.setText(WorkbenchMessages.ContentTypes_fileAssociationsAddLabel);
 			addButton.setEnabled(false);
+			setButtonLayoutData(addButton);
 			addButton.addSelectionListener(new SelectionAdapter() {
 				/*
 				 * (non-Javadoc)
@@ -486,11 +488,10 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 			});
 
 			removeButton = new Button(buttonArea, SWT.PUSH);
-			removeButton.setFont(composite.getFont());
-			setButtonLayoutData(removeButton);
 			removeButton.setEnabled(false);
 			removeButton
 					.setText(WorkbenchMessages.ContentTypes_fileAssociationsRemoveLabel);
+			setButtonLayoutData(removeButton);
 			removeButton.addSelectionListener(new SelectionAdapter() {
 				/*
 				 * (non-Javadoc)
