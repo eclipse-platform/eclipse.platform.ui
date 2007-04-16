@@ -142,6 +142,10 @@ public class HttpResponse extends AbstractResponse {
 				}
                 in = null;
         }
+        if (connection!=null) {
+        	((HttpURLConnection)connection).disconnect();
+        	connection = null;
+        }
 	}
 	
 	/**
