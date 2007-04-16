@@ -754,13 +754,17 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm()); //$NON-NLS-1$
 					createDefaultConfiguration(configFileURL);
 				}
+			} finally {
+				// if config == null an unhandled exception has been thrown and we allow it to propagate
+				if (config != null) {
+					configLocation = configFileURL;
+					 if (config.getURL() == null)
+						config.setURL(configFileURL);
+					verifyPath(configLocation);
+					Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
+				}
 			}
-		} finally {
-			configLocation = configFileURL;
-			if (config.getURL() == null)
-				config.setURL(configFileURL);
-			verifyPath(configLocation);
-			Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
+		} finally {			
 			// releaes concurrent use lock
 			clearConfigurationLock();
 		}
