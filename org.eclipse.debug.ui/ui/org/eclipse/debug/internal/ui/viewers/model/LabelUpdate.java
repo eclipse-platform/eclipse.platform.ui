@@ -157,10 +157,14 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 * Applies settings to viewer cell
 	 */
 	public void update() {
-		//  label data is stored to prevent flickering of asynchronous view, see bug 159461
+		// label data is stored to prevent flickering of asynchronous view, see bug 159461
 		if (!fItem.isDisposed()) {
 			
 			for (int i=0; i<fNumColumns; i++){
+				// text might be null if the launch has been terminated
+				if (fLabels[i] == null){
+					fLabels[i] = ""; //$NON-NLS-1$
+				}
 				fItem.setText(i,fLabels[i]);
 			}
 			fItem.setData(PREV_LABEL_KEY, fLabels);
