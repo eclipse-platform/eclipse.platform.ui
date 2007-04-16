@@ -1150,6 +1150,7 @@ public class ReviewPage	extends BannerPage {
 			setPageComplete(validationStatus == null
 					|| validationStatus.getSeverity() == IStatus.WARNING);
 
+			lastDisplayedStatus = null;
 			updateWizardMessage();
 			
 			treeViewer.update(getSelectedJobs(), null);
