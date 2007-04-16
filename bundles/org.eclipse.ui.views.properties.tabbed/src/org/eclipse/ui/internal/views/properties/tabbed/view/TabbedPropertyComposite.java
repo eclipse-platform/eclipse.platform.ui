@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,6 @@ package org.eclipse.ui.internal.views.properties.tabbed.view;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -46,8 +40,6 @@ public class TabbedPropertyComposite
 	private TabbedPropertyTitle title;
 
 	private TabbedPropertyList listComposite;
-
-	private boolean gainedFocus;
 
 	private boolean displayTitle;
 
@@ -84,28 +76,6 @@ public class TabbedPropertyComposite
 		mainComposite.setLayoutData(formData);
 
 		createMainContents();
-
-		mainComposite.addFocusListener(new FocusListener() {
-
-			public void focusGained(FocusEvent e) {
-				gainedFocus = true;
-				mainComposite.redraw();
-			}
-
-			public void focusLost(FocusEvent e) {
-				gainedFocus = false;
-				mainComposite.redraw();
-			}
-		});
-		mainComposite.addPaintListener(new PaintListener() {
-
-			public void paintControl(PaintEvent e) {
-				if (gainedFocus) {
-					Rectangle r = getClientArea();
-					e.gc.drawFocus(0, 0, r.width, r.height);
-				}
-			}
-		});
 	}
 
 	/**
@@ -180,20 +150,6 @@ public class TabbedPropertyComposite
 		data.bottom = new FormAttachment(100, 0);
 		tabComposite.setLayoutData(data);
 
-		listComposite.addPaintListener(new PaintListener() {
-
-			public void paintControl(PaintEvent e) {
-				Point leftSize = leftComposite.computeSize(SWT.DEFAULT,
-					SWT.DEFAULT);
-				FormData formData2 = new FormData();
-				formData2.left = new FormAttachment(0, leftSize.x);
-				formData2.right = new FormAttachment(100, 0);
-				formData2.top = new FormAttachment(0, 0);
-				formData2.bottom = new FormAttachment(100, 0);
-				scrolledComposite.setLayoutData(formData2);
-				mainComposite.layout(true);
-			}
-		});
 	}
 
 	/**
