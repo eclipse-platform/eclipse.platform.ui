@@ -415,7 +415,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		if (viewTab != null)
 			setRenderingSelection(viewTab.getRendering());
 
-		if (viewTab == null) {
+		if (viewTab == null && fRenderingMgr.getRenderings().length == 0) {
 			// do not ever want to put it on the empty folder
 			if (toDisplay != fEmptyTabFolder) {
 				TabItem newItem = new TabItem(toDisplay, SWT.NULL);
@@ -451,12 +451,16 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				}
 
 				if (tabFolder.getItemCount() >= 1) {
-					// remove "Create rendering tab"
-					TabItem item = tabFolder.getItem(0);
-					if (item != null && item.getData() instanceof MemoryViewTab) {
-						MemoryViewTab viewTab = (MemoryViewTab) item.getData();
-						if (viewTab.getRendering() instanceof CreateRendering) {
-							disposeTab(item);
+					TabItem[] items = tabFolder.getItems();
+					for (int i=0; i<items.length; i++)
+					{
+						// remove "Create rendering tab"
+						TabItem item = items[i];
+						if (item.getData() instanceof MemoryViewTab) {
+							MemoryViewTab viewTab = (MemoryViewTab) item.getData();
+							if (viewTab.getRendering() instanceof CreateRendering) {
+								disposeTab(item);
+							}
 						}
 					}
 				}
