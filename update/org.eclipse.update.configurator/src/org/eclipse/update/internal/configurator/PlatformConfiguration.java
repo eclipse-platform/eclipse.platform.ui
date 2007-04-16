@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     James D Miles (IBM Corp.) - bug 176250, Configurator needs to handle more platform urls 
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
@@ -278,7 +279,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			
 		if (result == null && checkPlatformURL) {
 			try {
-				result = findConfiguredSite(Utils.asPlatformURL(url), false);
+				result = findConfiguredSite(config.asPlatformURL(url), false);
 			} catch (Exception e) {
 				//ignore
 			}
