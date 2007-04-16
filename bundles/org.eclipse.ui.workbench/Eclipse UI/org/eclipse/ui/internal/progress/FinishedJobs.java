@@ -27,7 +27,7 @@ import org.eclipse.ui.progress.IProgressConstants;
  * This singleton remembers all JobTreeElements that should be preserved (e.g.
  * because their associated Jobs have the "keep" property set).
  */
-class FinishedJobs extends EventManager {
+public class FinishedJobs extends EventManager {
 
 	/*
 	 * Interface for notify listeners.
@@ -59,7 +59,7 @@ class FinishedJobs extends EventManager {
 
 	private static JobTreeElement[] EMPTY_INFOS;
 
-	static synchronized FinishedJobs getInstance() {
+	public static synchronized FinishedJobs getInstance() {
 		if (theInstance == null) {
 			theInstance = new FinishedJobs();
 			EMPTY_INFOS = new JobTreeElement[0];
@@ -276,6 +276,27 @@ class FinishedJobs extends EventManager {
 					for (int i = 0; i < l.length; i++) {
 						KeptJobsListener jv = (KeptJobsListener) l[i];
 						jv.finished(info);
+					}
+				}
+			}
+		}
+	}
+	
+	public void removeErrorJobs() {
+		JobTreeElement[] infos = getJobInfos();
+		for (int i = 0; i < infos.length; i++) {
+			if (infos[i].isJobInfo()) {
+				JobInfo info1 = (JobInfo) infos[i];
+				Job job = info1.getJob();
+				if (job != null) {
+					IStatus status = job.getResult();
+					if (status != null && status.getSeverity() == IStatus.ERROR) {
+						JobTreeElement topElement = (JobTreeElement) info1
+								.getParent();
+						if (topElement == null) {
+							topElement = info1;
+						}
+						FinishedJobs.getInstance().remove(topElement);
 					}
 				}
 			}

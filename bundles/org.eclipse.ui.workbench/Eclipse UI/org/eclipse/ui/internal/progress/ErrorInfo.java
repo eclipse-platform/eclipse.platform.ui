@@ -88,7 +88,7 @@ public class ErrorInfo extends JobTreeElement {
 	 * @return Image
 	 */
 	Image getImage() {
-		return JFaceResources.getImage(ErrorNotificationManager.ERROR_JOB_KEY);
+		return JFaceResources.getImage(ProgressManager.ERROR_JOB_KEY);
 	}
 
 	/*

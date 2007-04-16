@@ -23,7 +23,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.progress.FinishedJobs;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
+import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * <p>
@@ -165,7 +167,13 @@ public class StatusManager {
 					StatusHandlerRegistry.getDefault()
 							.getDefaultHandlerDescriptor().getStatusHandler()
 							.handle(statusAdapter, style);
-
+					// if statuses are shown, all finished jobs with error will be removed,
+					// we should remove it from the status manager, when error icon
+					// will be part of handlers not ProgressAnimationItem
+					if ((style & StatusManager.SHOW) == StatusManager.SHOW && statusAdapter
+							.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
+						FinishedJobs.getInstance().removeErrorJobs();
+					}
 					return;
 				} catch (CoreException ex) {
 					logError("Errors during the default handler creating", ex); //$NON-NLS-1$
@@ -174,6 +182,15 @@ public class StatusManager {
 
 			// delegates the problem to workbench handler
 			getWorkbenchHandler().handle(statusAdapter, style);
+			
+			// if statuses are shown, all finished jobs with error will be removed,
+			// we should remove it from the status manager, when error icon
+			// will be part of handlers not ProgressAnimationItem
+			if ((style & StatusManager.SHOW) == StatusManager.SHOW
+					&& statusAdapter
+							.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
+				FinishedJobs.getInstance().removeErrorJobs();
+			}
 		} catch (Throwable ex) {
 			logError("Errors during status handling", ex); //$NON-NLS-1$
 		}

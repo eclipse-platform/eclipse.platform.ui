@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
@@ -37,8 +34,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -100,28 +97,19 @@ public class ProgressAnimationItem extends AnimationItem implements
                 if (job != null) {
 
                     IStatus status = job.getResult();
-                    if (status != null && status.getSeverity() == IStatus.ERROR) {
-                        // The showErrorFor method will show the user all the accumulated errors
-                        // and clear then when done
-                        String title = ProgressMessages.NewProgressView_errorDialogTitle; 
-	                    String msg = ProgressMessages.NewProgressView_errorDialogMessage; 
-                        if (!getManager().showErrorFor(job, title, msg)) {
-                            // The error is missing from the error manager.
-                            // This should only occur if what the progress view is showing is
-                            // out-of-sync with the ErrorNotificationManager
-                            // In other words, it shouldn't happen but may so it is
-                            // better to show the user something and clean up
-                            // than fail silently.
-                        	IStatus errStatus = StatusUtil.newStatus(status, msg); 
-                        	StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
-		                    JobTreeElement topElement = (JobTreeElement) ji
-		                            .getParent();
-		                    if (topElement == null) {
-								topElement = ji;
-							}
-		                    FinishedJobs.getInstance().remove(topElement);
-                        }
-                        return;
+                    if (status != null && status.getSeverity() == IStatus.ERROR) {                    
+	                    StatusAdapter statusAdapter = new StatusAdapter(job
+								.getResult());
+						statusAdapter.addAdapter(Job.class, job);
+						StatusManager.getManager().handle(statusAdapter,
+								StatusManager.SHOW);
+	                    
+						JobTreeElement topElement = (JobTreeElement) ji
+								.getParent();
+						if (topElement == null) {
+							topElement = ji;
+						}
+						FinishedJobs.getInstance().remove(topElement);
                     }
 
                     IAction action = null;
@@ -142,10 +130,6 @@ public class ProgressAnimationItem extends AnimationItem implements
                     }
                 }
             }
-        }
-
-        if (getManager().hasErrors()) {
-            getManager().showErrorFor(null, null, null);
         }
         
         progressRegion.processDoubleClick();
@@ -207,20 +191,6 @@ public class ProgressAnimationItem extends AnimationItem implements
             }
         }
         
-        // If the error manager has errors, display the error indication
-        // just in case a previous job ended in error but wasn't kept
-        ErrorNotificationManager errorNotificationManager = ProgressManager.getInstance().errorManager;
-        if (errorNotificationManager.hasErrors()) {
-            Collection errors = errorNotificationManager.getErrors();
-            for (Iterator iter = errors.iterator(); iter.hasNext();) {
-                ErrorInfo info = (ErrorInfo) iter.next();
-	            initButton(
-	                    errorImage,
-	                    NLS.bind(ProgressMessages.ProgressAnimationItem_error, info.getJob().getName())); 
-	            return;
-            }
-        }
-
         if (animationRunning) {
             initButton(noneImage, ProgressMessages.ProgressAnimationItem_tasks);
             return;
@@ -381,10 +351,4 @@ public class ProgressAnimationItem extends AnimationItem implements
         });
     }
     
-    /*
-     * Get the notificationManager that this is being created for.
-     */
-    private ErrorNotificationManager getManager() {
-        return ProgressManager.getInstance().errorManager;
-    }
 }

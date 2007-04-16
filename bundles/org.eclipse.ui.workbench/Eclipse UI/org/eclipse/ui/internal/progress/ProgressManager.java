@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -64,6 +63,8 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -80,6 +81,10 @@ public class ProgressManager extends ProgressProvider implements
 	 */
 	public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
 
+	private static final String ERROR_JOB = "errorstate.gif"; //$NON-NLS-1$
+
+	static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
+	
 	private static ProgressManager singleton;
 
 	final private Map jobs = Collections.synchronizedMap(new HashMap());
@@ -92,8 +97,6 @@ public class ProgressManager extends ProgressProvider implements
 	private IJobProgressManagerListener[] listeners = new IJobProgressManagerListener[0];
 
 	final Object listenersKey = new Object();
-
-	final ErrorNotificationManager errorManager = new ErrorNotificationManager();
 
 	IJobChangeListener changeListener;
 
@@ -351,10 +354,10 @@ public class ProgressManager extends ProgressProvider implements
 	 * Create a new instance of the receiver.
 	 */
 	ProgressManager() {
-		Platform.getJobManager().setProgressProvider(this);
+		Job.getJobManager().setProgressProvider(this);
 		Dialog.setBlockedHandler(new WorkbenchDialogBlockedHandler());
 		createChangeListener();
-		Platform.getJobManager().addJobChangeListener(this.changeListener);
+		Job.getJobManager().addJobChangeListener(this.changeListener);
 		URL iconsRoot = ProgressManagerUtil.getIconsRoot();
 		try {
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
@@ -362,10 +365,23 @@ public class ProgressManager extends ProgressProvider implements
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
 			
 			// Let the error manager set up its own icons
-			errorManager.setUpImages(iconsRoot);
+			setUpImages(iconsRoot);
 		} catch (MalformedURLException e) {
 			ProgressManagerUtil.logException(e);
 		}
+	}
+	
+	/**
+	 * Set up any images the error management needs.
+	 * 
+	 * @param iconsRoot
+	 * @throws MalformedURLException
+	 */
+	void setUpImages(URL iconsRoot) throws MalformedURLException {
+		// TODO see ErrorNotificationManager - this method isn't currently used
+		// In the ErrorNotificationManager it is invoked by ProgressManager
+		JFaceResources.getImageRegistry().put(ERROR_JOB_KEY,
+				ImageDescriptor.createFromURL(new URL(iconsRoot, ERROR_JOB)));
 	}
 
 	/**
@@ -407,14 +423,29 @@ public class ProgressManager extends ProgressProvider implements
 							.next();
 					next.decrementBusy(event.getJob());
 				}
-				JobInfo info = getJobInfo(event.getJob());
+
+				final JobInfo info = getJobInfo(event.getJob());
+				removeJobInfo(info);
+
 				if (event.getResult() != null
 						&& event.getResult().getSeverity() == IStatus.ERROR) {
-					errorManager.addError(event.getResult(), event.getJob());
+					StatusAdapter statusAdapter = new StatusAdapter(event
+							.getResult());
+					statusAdapter.addAdapter(Job.class, event.getJob());
+
+					if (event
+							.getJob()
+							.getProperty(
+									IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) == Boolean.TRUE) {
+						statusAdapter
+								.setProperty(
+										IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
+										Boolean.TRUE);
+					}
+
+					StatusManager.getManager().handle(statusAdapter,
+							StatusManager.SHOW);
 				}
-				jobs.remove(event.getJob());
-				// Only refresh if we are showing it
-				removeJobInfo(info);
 			}
 
 			/*
@@ -961,8 +992,8 @@ public class ProgressManager extends ProgressProvider implements
 		synchronized (listenersKey) {
 			this.listeners = new IJobProgressManagerListener[0];
 		}
-		Platform.getJobManager().setProgressProvider(null);
-		Platform.getJobManager().removeJobChangeListener(this.changeListener);
+		Job.getJobManager().setProgressProvider(null);
+		Job.getJobManager().removeJobChangeListener(this.changeListener);
 	}
 
 	/*
@@ -1117,7 +1148,7 @@ public class ProgressManager extends ProgressProvider implements
 	public void runInUI(final IRunnableContext context,
 			final IRunnableWithProgress runnable, final ISchedulingRule rule)
 			throws InvocationTargetException, InterruptedException {
-		final IJobManager manager = Platform.getJobManager();
+		final IJobManager manager = Job.getJobManager();
 		final InvocationTargetException[] exception = new InvocationTargetException[1];
 		final InterruptedException[] canceled = new InterruptedException[1];
 		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {

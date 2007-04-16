@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.internal.statushandlers.StatusNotificationManager.StatusInfo;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 
 /**
  * A dialog for displaying
@@ -79,24 +80,24 @@ public class StatusDialog extends ErrorDialog {
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param parentShell
-	 * @param title
 	 * @param msg
 	 * @param statusInfo
 	 * @param displayMask
 	 */
-	public StatusDialog(Shell parentShell, String title, StatusInfo statusInfo,
+	public StatusDialog(Shell parentShell, StatusInfo statusInfo,
 			int displayMask) {
-		super(parentShell, statusInfo.getStatus().getMessage(), null,
-				statusInfo.getStatus(), displayMask);
+		super(parentShell, null, statusInfo.getStatus().getStatus()
+				.getMessage(), statusInfo.getStatus().getStatus(), displayMask);
 		setShellStyle(SWT.RESIZE | SWT.MIN | getShellStyle());
 		this.selectedStatus = statusInfo;
 		setBlockOnOpen(false);
 
 		String reason = WorkbenchMessages.StatusDialog_checkDetailsMessage;
-		if (statusInfo.getStatus().getException() != null) {
-			reason = statusInfo.getStatus().getException().getMessage() == null ? statusInfo
-					.getStatus().getException().toString()
-					: statusInfo.getStatus().getException().getMessage();
+		if (statusInfo.getStatus().getStatus().getException() != null) {
+			reason = statusInfo.getStatus().getStatus().getException()
+					.getMessage() == null ? statusInfo.getStatus().getStatus()
+					.getException().toString() : statusInfo.getStatus()
+					.getStatus().getException().getMessage();
 		}
 		this.message = NLS.bind(WorkbenchMessages.StatusDialog_reason,
 				new Object[] { statusInfo.getDisplayString(), reason });
@@ -221,13 +222,12 @@ public class StatusDialog extends ErrorDialog {
 	}
 
 	private IAction getGotoAction() {
-
-		Object extension = selectedStatus.getExtension();
 		Object property = null;
 
-		if (extension != null && extension instanceof Job) {
-			property = ((Job) extension)
-					.getProperty(IProgressConstants.ACTION_PROPERTY);
+		StatusAdapter statusAdapter = selectedStatus.getStatus();
+		Job job = (Job) (statusAdapter.getAdapter(Job.class));
+		if (job != null) {
+			property = job.getProperty(IProgressConstants.ACTION_PROPERTY);
 		}
 
 		if (property instanceof IAction) {
@@ -372,7 +372,7 @@ public class StatusDialog extends ErrorDialog {
 			Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			getShell().setSize(newSize);
 		}
-		setStatus(selectedStatus.getStatus());
+		setStatus(selectedStatus.getStatus().getStatus());
 	}
 
 	private void initLabelProvider() {
@@ -411,9 +411,11 @@ public class StatusDialog extends ErrorDialog {
 			 */
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (element != null) {
-					Object extension = ((StatusInfo) element).getExtension();
-					if (extension != null && extension instanceof Job) {
-						return getIcon((Job) extension);
+					StatusAdapter statusAdapter = ((StatusInfo) element)
+							.getStatus();
+					Job job = (Job) (statusAdapter.getAdapter(Job.class));
+					if (job != null) {
+						return getIcon(job);
 					}
 				}
 				return null;
@@ -511,7 +513,7 @@ public class StatusDialog extends ErrorDialog {
 
 	public int open() {
 		int result = super.open();
-		setStatus(selectedStatus.getStatus());
+		setStatus(selectedStatus.getStatus().getStatus());
 		return result;
 	}
 
@@ -538,7 +540,7 @@ public class StatusDialog extends ErrorDialog {
 		StatusInfo newSelection = getSingleSelection();
 		if (newSelection != null && newSelection != selectedStatus) {
 			selectedStatus = newSelection;
-			setStatus(selectedStatus.getStatus());
+			setStatus(selectedStatus.getStatus().getStatus());
 			updateEnablements();
 			showDetailsArea();
 		}
