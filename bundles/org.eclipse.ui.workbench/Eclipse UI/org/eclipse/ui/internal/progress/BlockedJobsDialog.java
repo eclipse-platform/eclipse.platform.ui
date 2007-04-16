@@ -91,7 +91,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		 * @see org.eclipse.ui.internal.progress.JobTreeElement#getDisplayString()
 		 */
 		String getDisplayString() {
-			if (blockedTaskName == null) {
+			if (blockedTaskName == null || blockedTaskName.length() == 0) {
 				return ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement;
 			}
 			return blockedTaskName;
@@ -190,7 +190,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
 
-		if (taskName == null) {
+		if (taskName == null || taskName.length() == 0) {
 			if (singleton.getParentShell() != null) {
 				String shellText = singleton.getParentShell().getText();
 				if (shellText.length() == 0) {
