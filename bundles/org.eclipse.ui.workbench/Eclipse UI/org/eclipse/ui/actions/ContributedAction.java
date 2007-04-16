@@ -24,8 +24,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
@@ -52,6 +55,10 @@ public final class ContributedAction extends CommandAction {
 	private IEvaluationContext appContext;
 
 	private IHandler partHandler;
+	
+	private boolean localHandler = false;
+
+	private IPartListener partListener;
 
 	/**
 	 * Create an action that can call a command.
@@ -105,18 +112,17 @@ public final class ContributedAction extends CommandAction {
 		init(locator, commandId, null);
 
 		if (locator instanceof PartSite) {
-			updateSiteAssociations(locator, commandId, actionId, element);
+			updateSiteAssociations((PartSite) locator, commandId, actionId,
+					element);
 		}
 
 		setId(actionId);
 	}
 
-	private void updateSiteAssociations(IServiceLocator locator,
-			String commandId, String actionId, IConfigurationElement element) {
-		PartSite site = (PartSite) locator;
-		IWorkbench workbench = (IWorkbench) locator
-				.getService(IWorkbench.class);
-		IWorkbenchWindow window = (IWorkbenchWindow) locator
+	private void updateSiteAssociations(PartSite site, String commandId,
+			String actionId, IConfigurationElement element) {
+		IWorkbench workbench = (IWorkbench) site.getService(IWorkbench.class);
+		IWorkbenchWindow window = (IWorkbenchWindow) site
 				.getService(IWorkbenchWindow.class);
 		IHandlerService serv = (IHandlerService) workbench
 				.getService(IHandlerService.class);
@@ -141,6 +147,7 @@ public final class ContributedAction extends CommandAction {
 		HandlerService realService = (HandlerService) serv;
 		partHandler = realService.findHandler(commandId, appContext);
 		if (partHandler == null) {
+			localHandler = true;
 			// if we can't find the handler, then at least we can
 			// call the action delegate run method
 			partHandler = new ActionDelegateHandlerProxy(element,
@@ -148,6 +155,8 @@ public final class ContributedAction extends CommandAction {
 					getParameterizedCommand(), site.getWorkbenchWindow(), null,
 					null, null);
 		}
+
+		site.getPage().addPartListener(getPartListener());
 	}
 
 	/*
@@ -188,5 +197,50 @@ public final class ContributedAction extends CommandAction {
 			return partHandler.isEnabled();
 		}
 		return super.isEnabled();
+	}
+
+	private IPartListener getPartListener() {
+		final IWorkbenchPart currentPart = (IWorkbenchPart) appContext
+				.getVariable(ISources.ACTIVE_PART_NAME);
+		if (partListener == null) {
+			partListener = new IPartListener() {
+				public void partActivated(IWorkbenchPart part) {
+				}
+
+				public void partBroughtToTop(IWorkbenchPart part) {
+				}
+
+				public void partClosed(IWorkbenchPart part) {
+					if (part == currentPart) {
+						ContributedAction.this.disposeAction();
+					}
+				}
+
+				public void partDeactivated(IWorkbenchPart part) {
+				}
+
+				public void partOpened(IWorkbenchPart part) {
+				}
+			};
+		}
+		return partListener;
+	}
+
+	// TODO make public in 3.4
+	private void disposeAction() {
+		if (appContext != null) {
+			if (localHandler) {
+				partHandler.dispose();
+			}
+			if (partListener != null) {
+				IWorkbenchPartSite site = (IWorkbenchPartSite) appContext
+						.getVariable(ISources.ACTIVE_SITE_NAME);
+				site.getPage().removePartListener(partListener);
+				partListener = null;
+			}
+			appContext = null;
+			partHandler = null;
+		}
+		dispose();
 	}
 }
