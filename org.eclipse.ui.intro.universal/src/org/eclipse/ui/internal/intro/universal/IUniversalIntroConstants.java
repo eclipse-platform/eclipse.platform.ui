@@ -71,7 +71,9 @@ public interface IUniversalIntroConstants {
 	String STYLE_CALLOUT = "importance-callout"; //$NON-NLS-1$
 	String STYLE_NEW = "importance-new"; //$NON-NLS-1$
 	String DEFAULT_ANCHOR = "defaultAnchor"; //$NON-NLS-1$
+	String NEW_CONTENT_ANCHOR = "newContentAnchor"; //$NON-NLS-1$
 	String DEFAULT_CONTENT_PATH = "/page-content/bottom-left/"+DEFAULT_ANCHOR; //$NON-NLS-1$
+	String NEW_CONTENT_PATH = "/page-content/top-left/"+NEW_CONTENT_ANCHOR; //$NON-NLS-1$
 	// Page ids
 	String ID_ROOT = "root"; //$NON-NLS-1$
 	String ID_STANDBY = "standby"; //$NON-NLS-1$

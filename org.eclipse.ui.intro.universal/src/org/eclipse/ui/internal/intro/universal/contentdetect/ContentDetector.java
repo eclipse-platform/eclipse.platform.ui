@@ -57,6 +57,7 @@ public class ContentDetector extends IntroContentDetector {
 		} catch (Exception e) { 
 			return false;
 		}
+		newContributors = new HashSet();
 		return false;
 	}
 	
@@ -65,6 +66,10 @@ public class ContentDetector extends IntroContentDetector {
 	 * intro was opened. May be null if there are no contributors.
 	 */
 	public static Set getNewContributors() {
+		if (!detectorCalled) {
+		    detectorCalled = true;
+		    new ContentDetector().isNewContentAvailable();
+	    }
 		return newContributors;
 	}
 	

@@ -92,7 +92,7 @@
 }
 
 body .importance-new {
-	background-color: url("../graphics/contentpage/ov_high.gif");	
+	background-image: url("../graphics/contentpage/ov_high.gif");	
 	background-color: #fffacd;
 }
 

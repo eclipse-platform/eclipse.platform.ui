@@ -529,6 +529,12 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	private IntroElement[] getContent(String pageId, String groupId) {
 		List result = new ArrayList();
+		if (!ContentDetector.getNewContributors().isEmpty()) {
+			// Add a new content fallback anchor
+			IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
+			fallback.setAttribute("id", NEW_CONTENT_ANCHOR); //$NON-NLS-1$
+			result.add(fallback);
+		}
 		List anchors = getAnchors(pageId, groupId);
 		if (anchors != null) {
 			result.addAll(anchors);
@@ -627,10 +633,14 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 			return path;
 		}
 		// there was no clear winner; fall back to the default
-		return resolveDefaultPath(pageId);
+		return resolveDefaultPath(pageId, extensionId);
 	}
 	
-	private String resolveDefaultPath(String pageId) {
+	private String resolveDefaultPath(String pageId, String extensionId) {
+		String pluginId = ExtensionMap.getInstance().getPluginId(extensionId);
+		if (ContentDetector.isNew(pluginId)) {
+			return pageId + IUniversalIntroConstants.NEW_CONTENT_PATH;
+		}
 		// does the active product have a preference?
 		if (primaryIntroData != null) {
 			PageData pdata = primaryIntroData.getPage(pageId);
