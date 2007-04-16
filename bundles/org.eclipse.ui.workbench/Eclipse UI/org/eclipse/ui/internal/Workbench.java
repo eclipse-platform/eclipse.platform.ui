@@ -1453,7 +1453,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private void uninitializeImages() {
 		WorkbenchImages.dispose();
+		Image[] images = Window.getDefaultImages();
 		Window.setDefaultImage(null);
+		for (int i = 0; i < images.length; i++) {
+			images[i].dispose();			
+		}
 	}
 
 	/*
