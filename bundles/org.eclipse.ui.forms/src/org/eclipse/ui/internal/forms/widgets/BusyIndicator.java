@@ -102,10 +102,12 @@ public class BusyIndicator extends Canvas {
 
 		stop = false;
 		final Display display = getDisplay();
+		final Image offScreenImage = new Image(display,
+				loader.logicalScreenWidth,
+				loader.logicalScreenHeight);
+		final GC offScreenImageGC = new GC(offScreenImage);
 		busyThread = new Thread() {
 			private Image timage;
-			private Image offScreenImage;
-			private GC offScreenImageGC;
 
 			public void run() {
 				try {
@@ -113,12 +115,8 @@ public class BusyIndicator extends Canvas {
 					 * Create an off-screen image to draw on, and fill it with
 					 * the shell background.
 					 */
-					offScreenImage = new Image(display,
-							loader.logicalScreenWidth,
-							loader.logicalScreenHeight);
-					offScreenImageGC = new GC(offScreenImage);
-					//FormUtil.setAntialias(offScreenImageGC, SWT.ON);
-					display.asyncExec(new Runnable() {
+					FormUtil.setAntialias(offScreenImageGC, SWT.ON);
+					display.syncExec(new Runnable() {
 						public void run() {
 							if (!isDisposed())
 								drawBackground(offScreenImageGC, 0, 0,
@@ -225,12 +223,16 @@ public class BusyIndicator extends Canvas {
 					// Trace.trace(Trace.WARNING, "Busy error", e);
 					// //$NON-NLS-1$
 				} finally {
-					if (offScreenImage != null
-							&& !offScreenImage.isDisposed())
-						offScreenImage.dispose();
-					if (offScreenImageGC != null
-							&& !offScreenImageGC.isDisposed())
-						offScreenImageGC.dispose();
+					display.syncExec(new Runnable() {
+						public void run() {
+							if (offScreenImage != null
+									&& !offScreenImage.isDisposed())
+								offScreenImage.dispose();
+							if (offScreenImageGC != null
+									&& !offScreenImageGC.isDisposed())
+								offScreenImageGC.dispose();
+						}
+					});
 					if (timage != null && !timage.isDisposed())
 						timage.dispose();
 				}
