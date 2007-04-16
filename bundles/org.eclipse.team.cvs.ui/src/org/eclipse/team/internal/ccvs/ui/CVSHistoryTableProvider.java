@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak (brockj@tpg.com.au) - Bug 180436 Use table sort indicators on CVS
  *     Brock Janiczak (brockj@tpg.com.au) - Bug 181899 CVS History wrongly ordered
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 182442 Display full comment in tooltip
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
@@ -64,7 +65,7 @@ public class CVSHistoryTableProvider {
 	/**
 	 * The history label provider.
 	 */
-	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
+	class HistoryLabelProvider extends ColumnLabelProvider {
 		
 		Image dateImage = null;
 		ImageDescriptor dateDesc = null;
@@ -77,8 +78,10 @@ public class CVSHistoryTableProvider {
 		
 		ThemeListener themeListener;
 		private DateFormat dateFormat;
+		private final int column;
 		
-		public HistoryLabelProvider(CVSHistoryTableProvider provider){
+		public HistoryLabelProvider(int column, CVSHistoryTableProvider provider){
+				this.column = column;
 				PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener= new ThemeListener(provider));
 		}
 		
@@ -101,6 +104,39 @@ public class CVSHistoryTableProvider {
 			if (themeListener != null){
 				PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(themeListener);
 			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipText(java.lang.Object)
+		 */
+		public String getToolTipText(Object element) {
+			if (column == COL_COMMENT && !isSingleLine(element)) {
+				IFileRevision entry = adaptToFileRevision(element);
+				if (entry != null)
+					return entry.getComment();
+			}
+			return null;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.CellLabelProvider#useNativeToolTip(java.lang.Object)
+		 */
+		public boolean useNativeToolTip(Object object) {
+			return column != COL_COMMENT || isSingleLine(object);
+		}
+		
+		private boolean isSingleLine(Object object) {
+			IFileRevision entry = adaptToFileRevision(object);
+			if (entry != null)
+				return entry.getComment() == null || entry.getComment().indexOf('\n') == -1;
+			return true;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.Object)
+		 */
+		public Image getImage(Object element) {
+			return getColumnImage(element, column);
 		}
 		
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -133,6 +169,14 @@ public class CVSHistoryTableProvider {
 			return null;
 		}
 
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			return getColumnText(element, column);
+		}
+		
 		public String getColumnText(Object element, int columnIndex) {
 			if (element instanceof AbstractHistoryCategory){
 				if (columnIndex != COL_REVISIONID)
@@ -416,10 +460,8 @@ public class CVSHistoryTableProvider {
 		tree.setLayout(layout);
 
 		this.viewer = new TreeViewer(tree);
-		
-		createColumns(tree, layout);
-
-		viewer.setLabelProvider(new HistoryLabelProvider(this));
+		createColumns(viewer, layout);
+		ColumnViewerToolTipSupport.enableFor(viewer);
 
 		// By default, reverse sort by revision. 
 		// If local filter is on sort by date
@@ -442,37 +484,48 @@ public class CVSHistoryTableProvider {
 	/**
 	 * Creates the columns for the history table.
 	 */
-	private void createColumns(Tree tree, TableLayout layout) {
+	private void createColumns(TreeViewer tree, TableLayout layout) {
 		SelectionListener headerListener = getColumnListener(viewer);
+		
 		// revision
-		TreeColumn col = new TreeColumn(tree, SWT.NONE);
+		TreeViewerColumn viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_REVISIONID, this));
+		TreeColumn col = viewerCol.getColumn();
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Revision);
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		// tags
-		col = new TreeColumn(tree, SWT.NONE);
+		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_TAGS, this));
+		col = viewerCol.getColumn();
 		col.setResizable(true);
 		col.setText(CVSUIMessages.HistoryView_tags); 
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 		// creation date
-		col = new TreeColumn(tree, SWT.NONE);
+		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_DATE, this));
+		col = viewerCol.getColumn();
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime);
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		// author
-		col = new TreeColumn(tree, SWT.NONE);
+		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_AUTHOR, this));
+		col = viewerCol.getColumn();
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author);
 		col.addSelectionListener(headerListener);
 		layout.addColumnData(new ColumnWeightData(20, true));
 
 		//comment
-		col = new TreeColumn(tree, SWT.NONE);
+		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
+		viewerCol.setLabelProvider(new HistoryLabelProvider(COL_COMMENT, this));
+		col = viewerCol.getColumn();
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment);
 		col.addSelectionListener(headerListener);
