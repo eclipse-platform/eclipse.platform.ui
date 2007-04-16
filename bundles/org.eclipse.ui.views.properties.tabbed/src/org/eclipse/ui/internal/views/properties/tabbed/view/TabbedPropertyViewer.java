@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Control;
@@ -34,6 +34,12 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	protected List elements;
 	protected IWorkbenchPart part;
 
+	/**
+	 * Constructor for TabbedPropertyViewer.
+	 * 
+	 * @param list
+	 *            the TabbedPropertyList.
+	 */
 	public TabbedPropertyViewer(TabbedPropertyList list) {
 		this.list = list;
 		hookControl(list);
@@ -113,7 +119,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 				}
 			}
 			Assert.isTrue(index != -1, "Could not set the selected tab in the tabbed property viewer");//$NON-NLS-1$
-			list.select(index, reveal);
+			list.select(index);
 		}
 	}
 
@@ -132,11 +138,24 @@ public class TabbedPropertyViewer extends StructuredViewer {
 		list.setElements(children);
 	}
 
+	/**
+	 * Set the input for viewer.
+	 * 
+	 * @param part
+	 *            the workbench part.
+	 * @param selection
+	 *            the selection in the workbench part.
+	 */
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		this.part = part;
 		setInput(selection);
 	}
-	
+
+	/**
+	 * Get the current workbench part.
+	 * 
+	 * @return the current workbench part.
+	 */
 	public IWorkbenchPart getWorkbenchPart() {
 		return part;
 	}

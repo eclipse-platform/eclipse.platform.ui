@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,17 +16,16 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.forms.FormColors;
-import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetWidgetFactory;
 
 
@@ -46,16 +45,8 @@ public class TabbedPropertyTitle
 	
 	private static final String BLANK = ""; //$NON-NLS-1$
 
-	/**
-	 * Width of the margin that will be added around the control.
-	 */
-	public int marginWidth = 4;
-
-	/**
-	 * Height of the margin that will be added around the control.
-	 */
-	public int marginHeight = 4;
-
+	private static final String TITLE_FONT = "org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle"; //$NON-NLS-1$
+	
 	private TabbedPropertySheetWidgetFactory factory;
 
 	/**
@@ -88,16 +79,25 @@ public class TabbedPropertyTitle
 		setForeground(factory.getColors().getForeground());
 
 		FormLayout layout = new FormLayout();
-		layout.marginWidth = ITabbedPropertyConstants.HSPACE + 6;
-		layout.marginHeight = 5;
+		layout.marginWidth = 1;
+		layout.marginHeight = 2;
 		setLayout(layout);
 
+		Font font;
+		if (! JFaceResources.getFontRegistry().hasValueFor(TITLE_FONT)) {
+			FontData[] fontData = JFaceResources.getHeaderFont().getFontData();
+			fontData[0].setHeight(10);
+			JFaceResources.getFontRegistry().put(TITLE_FONT, fontData);
+		}
+		font = JFaceResources.getFont(TITLE_FONT);
+		
 		label = factory.createCLabel(this, BLANK);
 		label.setBackground(new Color[] {
-			factory.getColors().getColor(FormColors.TB_BG),
-			factory.getColors().getColor(FormColors.TB_GBG)}, new int[] {100},
-			true);
-		label.setFont(JFaceResources.getBannerFont());
+				factory.getColors().getColor(IFormColors.H_GRADIENT_END),
+				factory.getColors().getColor(IFormColors.H_GRADIENT_START) },
+				new int[] { 100 }, true);
+		label.setFont(font);
+		label.setForeground(factory.getColors().getColor(IFormColors.TITLE));
 		FormData data = new FormData();
 		data.left = new FormAttachment(0, 0);
 		data.top = new FormAttachment(0, 0);
@@ -115,50 +115,27 @@ public class TabbedPropertyTitle
 	 * @param e
 	 */
 	protected void drawTitleBackground(PaintEvent e) {
-		Color bg = factory.getColors().getColor(FormColors.TB_BG);
-		Color gbg = factory.getColors().getColor(FormColors.TB_GBG);
-		Color border = factory.getColors().getColor(FormColors.TB_BORDER);
 		Rectangle bounds = getClientArea();
-		Point tsize = null;
-		Point labelSize = null;
-		int twidth = bounds.width - marginWidth - marginWidth;
-		if (label != null) {
-			labelSize = label.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		}
-		if (labelSize != null) {
-			twidth -= labelSize.x + 4;
-		}
-		int tvmargin = 4;
-		int theight = getHeight();
-		if (tsize != null) {
-			theight += Math.max(theight, tsize.y);
-		}
-		if (labelSize != null) {
-			theight = Math.max(theight, labelSize.y);
-		}
-		theight += tvmargin + tvmargin;
-		int midpoint = (theight * 66) / 100;
-		int rem = theight - midpoint;
+		label.setBackground(new Color[] {
+				factory.getColors().getColor(IFormColors.H_GRADIENT_END),
+				factory.getColors().getColor(IFormColors.H_GRADIENT_START) },
+				new int[] { 100 }, true);
+		Color bg = factory.getColors().getColor(IFormColors.H_GRADIENT_END);
+		Color gbg = factory.getColors().getColor(IFormColors.H_GRADIENT_START);
 		GC gc = e.gc;
 		gc.setForeground(bg);
 		gc.setBackground(gbg);
-		gc.fillGradientRectangle(marginWidth, marginHeight, bounds.width - 1
-			- marginWidth - marginWidth, midpoint - 1, true);
-		gc.setForeground(gbg);
-		gc.setBackground(getBackground());
-		gc.fillGradientRectangle(marginWidth, marginHeight + midpoint - 1,
-			bounds.width - 1 - marginWidth - marginWidth, rem - 1, true);
-		gc.setForeground(border);
-		gc.drawLine(marginWidth, marginHeight + 2, marginWidth, marginHeight
-			+ theight - 1);
-		gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
-			marginHeight);
-		gc.drawLine(marginWidth + 2, marginHeight, bounds.width - marginWidth
-			- 3, marginHeight);
-		gc.drawLine(bounds.width - marginWidth - 3, marginHeight, bounds.width
-			- marginWidth - 1, marginHeight + 2);
-		gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
-			bounds.width - marginWidth - 1, marginHeight + theight - 1);
+		gc.fillGradientRectangle(bounds.x, bounds.y, bounds.width,
+				bounds.height, true);
+		// background bottom separator
+		gc.setForeground(factory.getColors().getColor(
+				IFormColors.H_BOTTOM_KEYLINE1));
+		gc.drawLine(bounds.x, bounds.height - 2, bounds.x + bounds.width - 1,
+				bounds.height - 2);
+		gc.setForeground(factory.getColors().getColor(
+				IFormColors.H_BOTTOM_KEYLINE2));
+		gc.drawLine(bounds.x, bounds.height - 1, bounds.x + bounds.width - 1,
+				bounds.height - 1);
 	}
 
 	/**
@@ -166,6 +143,8 @@ public class TabbedPropertyTitle
 	 * 
 	 * @param text
 	 *            the text label.
+	 * @param image
+	 *            the image for the label.
 	 */
 	public void setTitle(String text, Image image) {
 		this.text = text;
@@ -177,20 +156,5 @@ public class TabbedPropertyTitle
 		}
 		label.setImage(image);
 		redraw();
-	}
-
-	/**
-	 * @return the height of the title.
-	 */
-	public int getHeight() {
-		Shell shell = new Shell();
-		GC gc = new GC(shell);
-		gc.setFont(getFont());
-		Point point = gc.textExtent(BLANK);
-		point.x++;
-		int textOrImageHeight = Math.max(point.x, 16);
-		gc.dispose();
-		shell.dispose();
-		return textOrImageHeight + 8;
 	}
 }

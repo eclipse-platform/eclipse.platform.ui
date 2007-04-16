@@ -82,6 +82,16 @@ public class TabbedPropertyComposite
 	 * Create the contents in the main composite.
 	 */
 	protected void createMainContents() {
+        if (displayTitle) {
+            title = new TabbedPropertyTitle(mainComposite, factory);
+
+            FormData data = new FormData();
+            data.left = new FormAttachment(0, 0);
+            data.right = new FormAttachment(100, 0);
+            data.top = new FormAttachment(0, 0);
+            title.setLayoutData(data);
+        }
+
 		leftComposite = factory.createComposite(mainComposite, SWT.NO_FOCUS);
 		leftComposite.setLayout(new FormLayout());
 
@@ -92,26 +102,29 @@ public class TabbedPropertyComposite
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(leftComposite, 0);
 		formData.right = new FormAttachment(100, 0);
-		formData.top = new FormAttachment(0, 0);
+        if (displayTitle) {
+            formData.top = new FormAttachment(title, 0);
+        } else {
+            formData.top = new FormAttachment(0, 0);
+        }
 		formData.bottom = new FormAttachment(100, 0);
 		scrolledComposite.setLayoutData(formData);
 
 		formData = new FormData();
 		formData.left = new FormAttachment(0, 0);
 		formData.right = new FormAttachment(scrolledComposite, 0);
-		formData.top = new FormAttachment(0, 0);
+        if (displayTitle) {
+            formData.top = new FormAttachment(title, 0);
+        } else {
+            formData.top = new FormAttachment(0, 0);
+        }
 		formData.bottom = new FormAttachment(100, 0);
 		leftComposite.setLayoutData(formData);
 
-		final Composite rightComposite = factory.createComposite(scrolledComposite,
-			SWT.NO_FOCUS);
-		rightComposite.setLayout(new FormLayout());
-		FormLayout formLayout = new FormLayout();
-		formLayout.marginHeight = 0;
-		formLayout.marginWidth = 0;
-		rightComposite.setLayout(formLayout);
+        tabComposite = factory.createComposite(scrolledComposite, SWT.NO_FOCUS);
+        tabComposite.setLayout(new FormLayout());
 
-		scrolledComposite.setContent(rightComposite);
+		scrolledComposite.setContent(tabComposite);
 		scrolledComposite.setAlwaysShowScrollBars(false);
 		scrolledComposite.setExpandVertical(true);
 		scrolledComposite.setExpandHorizontal(true);
@@ -124,32 +137,12 @@ public class TabbedPropertyComposite
 		formData.bottom = new FormAttachment(100, 0);
 		listComposite.setLayoutData(formData);
 
-		if (displayTitle) {
-			title = new TabbedPropertyTitle(rightComposite, factory);
-		}
-
-		tabComposite = factory.createComposite(rightComposite, SWT.NO_FOCUS);
-		tabComposite.setLayout(new FormLayout());
-
-		if (displayTitle) {
-			FormData data = new FormData();
-			data.left = new FormAttachment(0, 0);
-			data.right = new FormAttachment(100, 0);
-			data.top = new FormAttachment(0, 0);
-			title.setLayoutData(data);
-		}
-
 		FormData data = new FormData();
 		data.left = new FormAttachment(0, 0);
 		data.right = new FormAttachment(100, 0);
-		if (displayTitle) {
-			data.top = new FormAttachment(title, 0);
-		} else {
-			data.top = new FormAttachment(0, 0);
-		}
+        data.top = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(100, 0);
 		tabComposite.setLayoutData(data);
-
 	}
 
 	/**

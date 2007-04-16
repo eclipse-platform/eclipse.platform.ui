@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,8 +30,6 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -351,14 +349,6 @@ public class TabbedPropertySheetPage
 		tabbedPropertyViewer
 			.addSelectionChangedListener(new SelectionChangedListener());
 
-		tabbedPropertyComposite.getScrolledComposite().addControlListener(
-			new ControlAdapter() {
-
-				public void controlResized(ControlEvent e) {
-					resizeScrolledComposite();
-				}
-			});
-
 		/**
 		 * Add a part activation listener.
 		 */
@@ -561,17 +551,9 @@ public class TabbedPropertySheetPage
 		if (currentTab != null) {
 			Composite sizeReference = (Composite) tabToComposite
 				.get(currentTab);
-			currentTabSize.y = (sizeReference != null) ? sizeReference
-				.computeSize(SWT.DEFAULT, SWT.DEFAULT).y
-				: 0;
-			currentTabSize.x = (sizeReference != null) ? sizeReference
-				.computeSize(SWT.DEFAULT, SWT.DEFAULT).x
-				: 0;
-		}
-		if (hasTitleBar) {
-			int titleHeight = tabbedPropertyComposite.getTitle().computeSize(
-				SWT.DEFAULT, SWT.DEFAULT).y;
-			currentTabSize.y += titleHeight;
+			if (sizeReference != null) {
+				currentTabSize = sizeReference.computeSize(SWT.DEFAULT, SWT.DEFAULT); 
+			}
 		}
 		tabbedPropertyComposite.getScrolledComposite().setMinSize(
 			currentTabSize.x, currentTabSize.y);
