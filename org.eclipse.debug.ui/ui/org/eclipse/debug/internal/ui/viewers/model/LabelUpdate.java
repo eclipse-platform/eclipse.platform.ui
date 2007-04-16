@@ -162,10 +162,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 			
 			for (int i=0; i<fNumColumns; i++){
 				// text might be null if the launch has been terminated
-				if (fLabels[i] == null){
-					fLabels[i] = ""; //$NON-NLS-1$
-				}
-				fItem.setText(i,fLabels[i]);
+				fItem.setText(i,(fLabels[i] == null ? "" : fLabels[i])); //$NON-NLS-1$
 			}
 			fItem.setData(PREV_LABEL_KEY, fLabels);
 			
