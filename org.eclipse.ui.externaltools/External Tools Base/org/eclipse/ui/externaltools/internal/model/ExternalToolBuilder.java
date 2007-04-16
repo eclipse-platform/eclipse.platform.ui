@@ -218,12 +218,14 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		switch (buildKind) {
 			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
 				buildType = IExternalToolConstants.BUILD_TYPE_INCREMENTAL;
+				buildDelta = getDelta(getProject());
 				break;
 			case IncrementalProjectBuilder.FULL_BUILD :
 				buildType = IExternalToolConstants.BUILD_TYPE_FULL;
 				break;
 			case IncrementalProjectBuilder.AUTO_BUILD :
 				buildType = IExternalToolConstants.BUILD_TYPE_AUTO;
+				buildDelta = getDelta(getProject());
 				break;
             case IncrementalProjectBuilder.CLEAN_BUILD :
                 buildType = IExternalToolConstants.BUILD_TYPE_CLEAN;
@@ -233,7 +235,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 				break;
 		}
 		buildProject= getProject();
-        buildDelta= getDelta(getProject());
 	}
 	
 	/**
