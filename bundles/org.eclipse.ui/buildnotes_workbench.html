@@ -12,6 +12,46 @@
 <h1>Eclipse Platform Build Notes (3.3)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (April 16, 2007, 7:47 p.m.)</p>
+  <p>Problem reports updated</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=98144">Bug 98144</a>. Open view tests need degradation comment removed (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138021">Bug 138021</a>. [Preferences][Themes] Appearance page cumulative fixes (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153081">Bug 153081</a>. [Commands] commands doesn't recognize the objectcontribution for popups (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=153888">Bug 153888</a>. [Markers] Marker views update on each resource delta (was: Problems view flashes when launching anything) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=166600">Bug 166600</a>. [DataBinding] Refactor tests to be in the correct packages (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=169985">Bug 169985</a>. [ErrorHandling] Hooking the error handling into jobs again (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=170381">Bug 170381</a>. [Viewers] Make Sorting and Filtering work for Virtual-Tables without ILazyContentProvider (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=176419">Bug 176419</a>. [Progress] Unlabelled progress monitors shiuld have a default value in the blocked jobs dialog (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177449">Bug 177449</a>. [Themes] Font setting changes don't take effect until restart (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177619">Bug 177619</a>. [Viewers] AbstractListViewer#setSelectionToWidget() doesn't care about the reveal flag (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178280">Bug 178280</a>. [JFace] AbstractColumnLayout updating of column sizes not working correct on gtk (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178367">Bug 178367</a>. [Min/Max] Stack 'selectedTabId' handling does no correctly handle multi-instance views (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178858">Bug 178858</a>. [Wizards][ErrorHandling] Error in wizard page creation not logged (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178875">Bug 178875</a>. all asyncExec calls from startup threads are being called prior to the workbench being fully initialized (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178906">Bug 178906</a>. Infinite error dialogs due to error closing error dialog (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=178917">Bug 178917</a>. [Databinding] Create snippet to demonstrate Databinding for Table-Inline-Editing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179458">Bug 179458</a>. [Presentations] EditorArea shown when application restored (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179580">Bug 179580</a>. [Menus] Action set not shown on startup (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179582">Bug 179582</a>. [Menus] Enablement of menu item not updated (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179584">Bug 179584</a>. OpenCloseViewTest#showView:org.eclipse.ui.views.ResourceNavigator() should be removed from the fingerprints (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=179875">Bug 179875</a>. [Trim] [Presentations] NPE when using IStackPresentationSite#dragStart (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180805">Bug 180805</a>. [Markers] Performance issue when doing 'Select all' in Problems View with large number of warnings (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181155">Bug 181155</a>. [FieldAssist] Opening Find/Replace dialog flashes whole workbench (REOPENED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181535">Bug 181535</a>. [Viewers] test failure in N20070408-0010 on GTK (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181616">Bug 181616</a>. [StatusHandling] StatusDialog formats a message with no parameters and does not use NLS (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181729">Bug 181729</a>. [FastView] View ordering not restored on restart after minimize (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181756">Bug 181756</a>. [WorkbenchLauncher] [BiDi] Bidi3.3: ProgressBar is not mirrored in mirrored eclipse (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181839">Bug 181839</a>. [Min/Max] Mazimizing the editor area causes it to lose focus (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181950">Bug 181950</a>. [WorkbenchLauncher] [BiDi] BIDI3.3<HCG:Undesired order of dir path when selecting threw "Workspace Launcher"> (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181982">Bug 181982</a>. [Viewers] content provider in TreeTest should return children when getElements is called (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=181991">Bug 181991</a>. [Contributions] ContributedAction leaks editors (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=182013">Bug 182013</a>. [Viewers] Viewer#setSelection() reveals for TreeViewer (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=182190">Bug 182190</a>. [Wizards] getControl assert on wizard page has no message (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=182395">Bug 182395</a>. [Workbench] Workbench not disposing default images (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=182443">Bug 182443</a>. [Viewers]Native tooltip behaviour lost when using ColumnViewerToolTipSupport (REOPENED)<br>
+  </p>
+
 <p>Integration Build (April 09, 2007, 10:21 p.m.)</p>
   <p>Problem reports updated</p>
   <p>
