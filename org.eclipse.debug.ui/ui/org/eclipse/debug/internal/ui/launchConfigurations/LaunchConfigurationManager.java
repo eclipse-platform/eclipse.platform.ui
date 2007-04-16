@@ -722,7 +722,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 */
 	public List getApplicableLaunchConfigurations(IResource resource) {
 		ArrayList list = new ArrayList();
-		IPath resourcePath = resource.getFullPath();
 		try {
 			List types = getApplicableConfigurationTypes(resource);
 			ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
@@ -730,21 +729,19 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			IResource[] resources = null;
 			for(int i = 0; i < configurations.length; i++) {
 				configuration = configurations[i];
-				if(types.contains(configuration.getType())) {
-					if(acceptConfiguration(configuration)) {
-						resources = configuration.getMappedResources();
-						if (resources != null) {
-							for (int j = 0; j < resources.length; j++) {
-								if (resource.equals(resources[j]) || resourcePath.isPrefixOf(resources[j].getFullPath())) {
-									list.add(configuration);
-									break;
-								}
+				if(types.contains(configuration.getType()) && acceptConfiguration(configuration)) {
+					resources = configuration.getMappedResources();
+					if (resources != null) {
+						for (int j = 0; j < resources.length; j++) {
+							if (resource.equals(resources[j]) || resource.getFullPath().isPrefixOf(resources[j].getFullPath())) {
+								list.add(configuration);
+								break;
 							}
 						}
-						else {
-							//in the event the config has no mapping
-							list.add(configuration);
-						}
+					}
+					else {
+						//in the event the config has no mapping
+						list.add(configuration);
 					}
 				}
 			}
@@ -850,23 +847,42 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * for the corresponding launch group
 	 * @param configurations
 	 * @param mode
+	 * @param resource
 	 * @return the associated launch configuration from the MRU listing or <code>null</code> if there isn't one
 	 * @since 3.3
 	 */
-	public ILaunchConfiguration getMRUConfiguration(List configurations, ILaunchGroup group) {
+	public ILaunchConfiguration getMRUConfiguration(List configurations, ILaunchGroup group, IResource resource) {
 		if(group != null) {
-			ILaunchConfiguration config = getFilteredLastLaunch(group.getIdentifier());
-			if(configurations.contains(config)) {
-				return config;
-			}
+			ArrayList candidates = new ArrayList();
 			LaunchHistory history = getLaunchHistory(group.getIdentifier());
 			if(history != null) {
 				ILaunchConfiguration[] configs = history.getCompleteLaunchHistory();
 				for(int i = 0; i < configs.length; i++) {
 					if(configurations.contains(configs[i])) {
-						return configs[i];
+						candidates.add(configs[i]);
 					}
 				}
+			}
+			//first try to find a config that exactly matches the resource mapping, and collect partial matches
+			ILaunchConfiguration config = null;
+			IResource[] res = null;
+			for(Iterator iter = candidates.iterator(); iter.hasNext();) {
+				config = (ILaunchConfiguration) iter.next();
+				try {
+					res = config.getMappedResources();
+					if(res != null) {
+						for(int i = 0; i < res.length; i++) {
+							if(res[i].equals(resource)) {
+								return config;
+							}
+						}
+					}
+				}
+				catch(CoreException ce) {}
+			}
+			config = getLastLaunch(group.getIdentifier());
+			if(candidates.contains(config)) {
+				return config;
 			}
 		}
 		return null;

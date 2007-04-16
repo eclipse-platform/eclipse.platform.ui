@@ -229,7 +229,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			return appendLaunched((ILaunchConfiguration)configs.get(0));
 		}
 		else if(csize > 1) {
-			config = lcm.getMRUConfiguration(configs, group);
+			config = lcm.getMRUConfiguration(configs, group, resource);
 			if(config != null) {
 				return appendLaunched(config);
 			}

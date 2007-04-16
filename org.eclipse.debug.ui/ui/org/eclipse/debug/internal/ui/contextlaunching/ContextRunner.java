@@ -192,7 +192,7 @@ public final class ContextRunner {
 			}
 		}
 		else if(csize > 1){
-			config = getLaunchConfigurationManager().getMRUConfiguration(configs, group);
+			config = getLaunchConfigurationManager().getMRUConfiguration(configs, group, resource);
 			if(config != null) {
 				DebugUITools.launch(config, group.getMode());
 				return true;
