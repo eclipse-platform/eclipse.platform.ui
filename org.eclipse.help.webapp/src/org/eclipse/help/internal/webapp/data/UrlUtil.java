@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation    
+ *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466 
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 import java.io.IOException;

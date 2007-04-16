@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - fix for Bug 182466 
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
