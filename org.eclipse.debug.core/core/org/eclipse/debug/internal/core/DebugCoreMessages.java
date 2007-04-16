@@ -20,10 +20,8 @@ public class DebugCoreMessages extends NLS {
 	public static String BreakpointManager_Missing_model_identifier;
 	public static String DebugEvent_illegal_detail;
 	public static String DebugEvent_illegal_kind;
-	public static String DebugPlugin_Debug_async_queue_1;
 	public static String DebugPlugin_Exception_occurred_executing_command_line__1;
 	public static String DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2;
-	public static String DebugPlugin_0;
 	public static String DebugPlugin_1;
 	public static String EnvironmentVariableResolver_0;
 

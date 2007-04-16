@@ -17,10 +17,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,7 +37,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
@@ -294,29 +291,6 @@ public class DebugPlugin extends Plugin {
 	private boolean fShuttingDown= false;
 	
 	/**
-	 * Whether event dispatch is in progress (if > 0)
-	 * 
-	 * @since 2.1
-	 */
-	private int fDispatching = 0;
-	
-	/**
-	 * Queue of runnables to execute after event dispatch is
-	 * complete.
-	 * 
-	 * @since 2.1
-	 */
-	private Vector fRunnables = null;
-	private final Object fRunnableLock = new Object();
-	
-	/**
-	 * Job that executes runnables
-	 * 
-	 * @since 3.0
-	 */
-	private AsynchJob fAsynchJob = null;
-		
-	/**
 	 * Table of status handlers. Keys are {plug-in identifier, status code}
 	 * pairs, and values are associated <code>IConfigurationElement</code>s.
 	 */
@@ -337,7 +311,9 @@ public class DebugPlugin extends Plugin {
 
 		
 	/**
-	 * Queue of debug events to fire to listeners.
+	 * Queue of debug events to fire to listeners and asynchronous runnables to execute
+	 * in the order received.
+	 * 
 	 * @since 3.1
 	 */
 	private List fEventQueue = new ArrayList();
@@ -349,12 +325,14 @@ public class DebugPlugin extends Plugin {
 	private EventDispatchJob fEventDispatchJob = new EventDispatchJob();
 	
 	/**
-	 * Event dispatch job
+	 * Event dispatch job. Processes event queue of debug events and runnables.
+	 * 
 	 * @since 3.1
 	 */
 	class EventDispatchJob extends Job {
 		
 		EventNotifier fNotifier = new EventNotifier();
+		AsynchRunner fRunner = new AsynchRunner();
 
 	    /**
          * Creates a new event dispatch job.
@@ -370,14 +348,16 @@ public class DebugPlugin extends Plugin {
         protected IStatus run(IProgressMonitor monitor) {
             
             while (!fEventQueue.isEmpty()) {
-                DebugEvent[] events = null;
+                Object next = null;
 	            synchronized (fEventQueue) {
 	                if (!fEventQueue.isEmpty()) {
-	                    events = (DebugEvent[]) fEventQueue.remove(0);
+	                	next = fEventQueue.remove(0);
 	                }
 	            }
-	            if (events != null) {
-	                fNotifier.dispatch(events);
+	            if (next instanceof Runnable) {
+	            	fRunner.async((Runnable) next);
+	            } else if (next != null) {
+	                fNotifier.dispatch((DebugEvent[]) next);
 	            }
             }
             return Status.OK_STATUS;
@@ -480,17 +460,10 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.1
 	 */
 	public void asyncExec(Runnable r) {
-		synchronized(fRunnableLock) {
-			if (fRunnables == null) {
-				// initialize runnables and asynchronous job
-				fRunnables= new Vector(5);
-				fAsynchJob = new AsynchJob();
-			}
-			fRunnables.add(r);
+		synchronized (fEventQueue) {
+			fEventQueue.add(r);
 		}
-		if (!isDispatching()) {
-			fAsynchJob.schedule();
-		} 
+		fEventDispatchJob.schedule();
 	}
 	
 	/**
@@ -594,9 +567,6 @@ public class DebugPlugin extends Plugin {
 		try {
 			setShuttingDown(true);
 			
-			if (fAsynchJob != null) {
-				fAsynchJob.cancel();
-			}
 			if (fLaunchManager != null) {
 				fLaunchManager.shutdown();
 			}
@@ -1033,78 +1003,34 @@ public class DebugPlugin extends Plugin {
 	}
 	
 	/**
-	 * Sets whether debug events are being dispatched 
-	 */
-	private synchronized void setDispatching(boolean dispatching) {
-		if (dispatching) {
-			fDispatching++;
-		} else {
-			fDispatching--;
-		}
-		if (!isDispatching()) {
-			if (fAsynchJob != null) {
-				fAsynchJob.schedule();
-			}
-		}
-	}
-	
-	/**
-	 * Returns whether debug events are being dispatched
-	 */
-	private synchronized boolean isDispatching() {
-		return fDispatching > 0;
-	}	
-	
-	/**
 	 * Executes runnables after event dispatch is complete.
 	 * 
 	 * @since 3.0
 	 */
-	class AsynchJob extends Job {
+	class AsynchRunner implements ISafeRunnable {
 		
-		public AsynchJob() {
-			super(DebugCoreMessages.DebugPlugin_Debug_async_queue_1); 
-			setPriority(Job.INTERACTIVE);
-			setSystem(true);
+		private Runnable fRunnable = null;
+		
+		void async(Runnable runnable) {
+			fRunnable = runnable;
+			SafeRunner.run(this);
+			fRunnable = null;
+			
 		}
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
-		public boolean shouldRun() {
-			return !fShuttingDown && !fRunnables.isEmpty();
+		public void handleException(Throwable exception) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "An exception occurred in asynchronous runnable.", exception);  //$NON-NLS-1$
+			log(status);
 		}
 
 		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
-		public IStatus run(IProgressMonitor monitor) {
-			// Executes runnables and empties the queue
-			Vector v = null;
-			synchronized (fRunnableLock) {
-				v = fRunnables;
-				fRunnables = new Vector(5);
-			}
-			MultiStatus failed = null;
-			monitor.beginTask(DebugCoreMessages.DebugPlugin_Debug_async_queue_1, v.size()); 
-			Iterator iter = v.iterator();
-			while (iter.hasNext() && !fShuttingDown && !monitor.isCanceled()) {
-				Runnable r = (Runnable)iter.next();
-				try {
-					r.run();
-				} catch (Exception e) {
-					if (failed == null) {
-						failed = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, null); 
-					}
-					failed.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, e)); 
-				}
-				monitor.worked(1);
-			}
-			monitor.done();
-			if (failed == null) {
-				return Status.OK_STATUS;
-			}
-			return failed;
+		public void run() throws Exception {
+			fRunnable.run();
 		}
 
 	}
@@ -1156,37 +1082,30 @@ public class DebugPlugin extends Plugin {
 		 * 
 		 * @param events debug events
 		 */
-		public void dispatch(DebugEvent[] events) {
+		void dispatch(DebugEvent[] events) {
 			fEvents = events;
-			try {
-				setDispatching(true);
-				
-				if (hasEventFilters()) {
-					fMode = NOTIFY_FILTERS;
-					Object[] filters = fEventFilters.getListeners();
-					for (int i = 0; i < filters.length; i++) {
-						fFilter = (IDebugEventFilter)filters[i];
-                        SafeRunner.run(this);
-						if (fEvents == null || fEvents.length == 0) {
-							return;
-						}
-					}	
-				}				
-				
-				fMode = NOTIFY_EVENTS;
-				Object[] listeners= getEventListeners();
-				if (DebugOptions.DEBUG_EVENTS) {
-					for (int i = 0; i < fEvents.length; i++) {
-						System.out.println(fEvents[i]);
-					}
-				}
-				for (int i= 0; i < listeners.length; i++) {
-					fListener = (IDebugEventSetListener)listeners[i]; 
+			if (hasEventFilters()) {
+				fMode = NOTIFY_FILTERS;
+				Object[] filters = fEventFilters.getListeners();
+				for (int i = 0; i < filters.length; i++) {
+					fFilter = (IDebugEventFilter)filters[i];
                     SafeRunner.run(this);
+					if (fEvents == null || fEvents.length == 0) {
+						return;
+					}
+				}	
+			}				
+			
+			fMode = NOTIFY_EVENTS;
+			Object[] listeners= getEventListeners();
+			if (DebugOptions.DEBUG_EVENTS) {
+				for (int i = 0; i < fEvents.length; i++) {
+					System.out.println(fEvents[i]);
 				}
-				
-			} finally {
-				setDispatching(false);
+			}
+			for (int i= 0; i < listeners.length; i++) {
+				fListener = (IDebugEventSetListener)listeners[i]; 
+                SafeRunner.run(this);
 			}
 			fEvents = null;
 			fFilter = null;
