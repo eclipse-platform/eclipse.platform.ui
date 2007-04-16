@@ -48,13 +48,15 @@ jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
  */
 jstring getString(JNIEnv *env, jbyteArray source) {
 	static jclass clsConvert = 0;
-	static jmethodID midFromPlatformBytes = 0;
-    if (midFromPlatformBytes == 0) {
+	jmethodID midFromPlatformBytes = 0;
+    if (clsConvert == 0) {
     	clsConvert = (*env)->FindClass(env, "org/eclipse/core/internal/filesystem/local/Convert");
     	if (clsConvert == 0) return NULL;
-    	midFromPlatformBytes = (*env)->GetStaticMethodID(env, clsConvert, "fromPlatformBytes", "([B)Ljava/lang/String;");
-    	if (midFromPlatformBytes == 0) return NULL;
+        // Ensure class isn't garbage collected between calls to this function.
+        clsConvert = (*env)->NewGlobalRef(env, clsConvert);
     }
+   	midFromPlatformBytes = (*env)->GetStaticMethodID(env, clsConvert, "fromPlatformBytes", "([B)Ljava/lang/String;");
+   	if (midFromPlatformBytes == 0) return NULL;
     return (*env)->CallStaticObjectMethod(env, clsConvert, midFromPlatformBytes, source);
 }
 #endif
