@@ -75,24 +75,13 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 		composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
 		setControl(composite);
 		
-		
 		pageBook = new PageBook(composite, SWT.NONE);
 		pageBook.setLayoutData(SWTUtils.createHVFillGridData());
 		
-		input = createCompareInput();
-		input.createPartControl(pageBook);
-		syncPage = input.getControl();
-		getDiffTree().addDiffChangeListener(this);
+		syncPage = createSyncPage(pageBook);
 		
 		noChangesPage = createNoChangesPage(pageBook);
 		noChangesPage.setLayoutData(SWTUtils.createHVFillGridData());
-		
-		SWTUtils.createPlaceholder(composite, 1);
-		
-		fCheckbox= new Button(composite, SWT.CHECK);
-		fCheckbox.setLayoutData(SWTUtils.createHFillGridData());
-		fCheckbox.setText(CVSUIMessages.SharingWizardSyncPage_12); 
-		fCheckbox.setSelection(true);
 		
 		updatePage();
 		
@@ -105,7 +94,21 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 			return null;
 		return getParticipant().getContext().getDiffTree();
 	}
-
+	
+	private Control createSyncPage(PageBook pageBook) {
+		Composite composite = createComposite(pageBook, 1, false);
+		input = createCompareInput();
+		input.createPartControl(composite);
+		getDiffTree().addDiffChangeListener(this);
+		
+		fCheckbox= new Button(composite, SWT.CHECK);
+		fCheckbox.setLayoutData(SWTUtils.createHFillGridData());
+		fCheckbox.setText(CVSUIMessages.SharingWizardSyncPage_12); 
+		fCheckbox.setSelection(true);
+		
+		return composite;
+	}
+	
 	private Control createNoChangesPage(PageBook pageBook) {
 		Composite composite = createComposite(pageBook, 1, false);
 		createWrappingLabel(composite, NLS.bind(CVSUIMessages.SharingWizardSyncPage_3, new String[] { project.getName() }), 0); 
