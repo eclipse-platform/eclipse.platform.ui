@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -33,7 +34,6 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -45,6 +45,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -63,7 +65,6 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
 import com.ibm.icu.text.Collator;
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The ViewsPreferencePage is the page used to set preferences for the 
@@ -157,6 +158,14 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private IPropertyChangeListener overrideListener;
 
 	private boolean restartPosted = false;
+	
+	private Group editorTabGroup;
+	
+	private Group viewTabGroup;
+	
+	private Group perspBarTabGroup;
+	
+	private Text themeDescriptionText;
 
 	/**
 	 * Create a composite that for creating the tab toggle buttons.
@@ -167,17 +176,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private Group createButtonGroup(Composite composite, String title) {
 		Group buttonComposite = new Group(composite, SWT.NONE);
 		buttonComposite.setText(title);
-		buttonComposite.setFont(composite.getFont());
 		FormLayout layout = new FormLayout();
-		layout.marginWidth = 2;
-		layout.marginHeight = 2;
+		layout.marginWidth = 5;  // same as GridData default
+		layout.marginHeight = 5; // same as GridData default
 		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.GRAB_HORIZONTAL);
-		buttonComposite.setLayoutData(data);
-
+		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		return buttonComposite;
-
 	}
 
 	/**
@@ -191,9 +195,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * @return Control the new control
 	 */
 	protected Control createContents(Composite parent) {
-
-		Font font = parent.getFont();
-
+		initializeDialogUnits(parent);
+		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
@@ -208,13 +211,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 				.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		composite.setFont(font);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-		// layout.verticalSpacing = 10;
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		composite.setLayout(layout);
 
 		createPresentationCombo(composite);
@@ -223,42 +225,74 @@ public class ViewsPreferencePage extends PreferencePage implements
 		createViewTabButtonGroup(composite);
 		createPerspBarTabButtonGroup(composite);
 		createShowTextOnPerspectiveBarPref(composite);
-		hookOverrideListener();
-		updateOverride();
-
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(WorkbenchMessages.ViewsPreference_currentTheme);
-		label.setFont(parent.getFont());
-		label.setLayoutData(data);
-
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-
-		themeCombo = new Combo(composite, SWT.READ_ONLY);
-		themeCombo.setLayoutData(data);
-		themeCombo.setFont(parent.getFont());
-		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId());
-
+		createThemeCombo(composite);
+		createThemeDescriptionText(composite);
 		createShowTraditionalStyleTabsPref(composite);
 		createEnableAnimationsPref(composite);
 
+		updateOverride();
+		hookOverrideListener();
+		
+		applyDialogFont(composite);
+		
 		return composite;
 	}
 
+	private void createThemeCombo(Composite composite) {
+		new Label(composite, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentTheme);
+		themeCombo = new Combo(composite, SWT.READ_ONLY);
+		themeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		themeCombo.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				refreshThemeDescriptionText();
+			}
+		});
+		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId());
+	}
+
+	 
+	/**
+	 * Create the text box that will contain the current theme description
+	 * text (if any).
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>.
+	 */
+	private void createThemeDescriptionText(Composite parent) {
+		new Label(parent, SWT.NONE)
+				.setText(WorkbenchMessages.ViewsPreference_currentThemeDescription);
+
+		themeDescriptionText = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL
+				| SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
+		themeDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				true, true));
+
+		refreshThemeDescriptionText();
+	}
+	
+	private void refreshThemeDescriptionText() {
+		String description = null;
+		int idx = themeCombo.getSelectionIndex();
+		// idx == 0 is "Default" which has no description
+		if (idx > 0) {
+			IThemeDescriptor theme = WorkbenchPlugin.getDefault()
+					.getThemeRegistry().getThemes()[idx - 1];
+			description = theme.getDescription();
+		}
+		if (description == null) {
+			description = ""; //$NON-NLS-1$
+		}
+		themeDescriptionText.setText(description);
+	}
+
+	private Button createCheckButton(Composite composite, String text, boolean selection) {
+		Button button = new Button(composite, SWT.CHECK);
+		button.setText(text);
+		button.setSelection(selection);
+		return button;
+	}
+	
 	private void createPresentationOverride(Composite parent) {
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-
-		overridePresButton = new Button(parent, SWT.CHECK);
-		overridePresButton.setText(WorkbenchMessages.ViewsPreferencePage_override);
-		overridePresButton.setFont(parent.getFont());
-		overridePresButton.setLayoutData(data);
-
 		IPreferenceStore store = getPreferenceStore();
 		boolean override = store.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION);
 		
@@ -281,7 +315,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 			}
 		}
 			
-		overridePresButton.setSelection(override);
+		overridePresButton = createCheckButton(parent, WorkbenchMessages.ViewsPreference_override, override);
 		overridePresButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateOverrideState(overridePresButton.getSelection());
@@ -306,22 +340,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void createPresentationCombo(Composite parent) {
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
-
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(WorkbenchMessages.ViewsPreference_currentPresentation);
-		label.setFont(parent.getFont());
-		label.setLayoutData(data);
-
-		data = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 2;
+		new Label(parent, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentPresentation);
 
 		presentationCombo = new Combo(parent, SWT.READ_ONLY);
-		presentationCombo.setFont(parent.getFont());
-		presentationCombo.setLayoutData(data);
-
+		presentationCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		presentationCombo.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -346,14 +368,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 	/**
 	 * Set the two supplied controls to be beside each other.
 	 */
-
 	private void attachControls(Control leftControl, Control rightControl) {
-
 		FormData leftData = new FormData();
 		leftData.left = new FormAttachment(0, 0);
 
 		FormData rightData = new FormData();
-		rightData.left = new FormAttachment(leftControl, 5);
+		rightData.left = new FormAttachment(leftControl, convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING));
 
 		leftControl.setLayoutData(leftData);
 		rightControl.setLayoutData(rightData);
@@ -366,27 +386,21 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * @param composite  Composite
 	 */
 	private void createEditorTabButtonGroup(Composite composite) {
+		editorTabGroup = createButtonGroup(composite, EDITORS_TITLE);
 
-		Font font = composite.getFont();
-
-		Group buttonComposite = createButtonGroup(composite, EDITORS_TITLE);
-
-		this.editorTopButton = new Button(buttonComposite, SWT.RADIO);
-		this.editorTopButton.setText(EDITORS_TOP_TITLE);
-		this.editorTopButton.setSelection(this.editorAlignment == SWT.TOP);
-		this.editorTopButton.setFont(font);
-		this.editorTopButton.getAccessible().addAccessibleListener(
+		editorTopButton = new Button(editorTabGroup, SWT.RADIO);
+		editorTopButton.setText(EDITORS_TOP_TITLE);
+		editorTopButton.setSelection(editorAlignment == SWT.TOP);
+		editorTopButton.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {
 					public void getName(AccessibleEvent e) {
 						e.result = EDITORS_TITLE;
 					}
 				});
 
-		this.editorBottomButton = new Button(buttonComposite, SWT.RADIO);
-		this.editorBottomButton.setText(EDITORS_BOTTOM_TITLE);
-		this.editorBottomButton
-				.setSelection(this.editorAlignment == SWT.BOTTOM);
-		this.editorBottomButton.setFont(font);
+		editorBottomButton = new Button(editorTabGroup, SWT.RADIO);
+		editorBottomButton.setText(EDITORS_BOTTOM_TITLE);
+		editorBottomButton.setSelection(editorAlignment == SWT.BOTTOM);
 
 		SelectionListener sel = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -407,8 +421,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		editorTopButton.addSelectionListener(sel);
 		editorBottomButton.addSelectionListener(sel);
 
-		attachControls(this.editorTopButton, this.editorBottomButton);
-
+		attachControls(editorTopButton, editorBottomButton);
 	}
 
 	/**
@@ -418,21 +431,15 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * @param composite  Composite
 	 */
 	private void createViewTabButtonGroup(Composite composite) {
+		viewTabGroup = createButtonGroup(composite, VIEWS_TITLE);
 
-		Font font = composite.getFont();
+		viewTopButton = new Button(viewTabGroup, SWT.RADIO);
+		viewTopButton.setText(VIEWS_TOP_TITLE);
+		viewTopButton.setSelection(this.viewAlignment == SWT.TOP);
 
-		Group buttonComposite = createButtonGroup(composite, VIEWS_TITLE);
-		buttonComposite.setFont(font);
-
-		this.viewTopButton = new Button(buttonComposite, SWT.RADIO);
-		this.viewTopButton.setText(VIEWS_TOP_TITLE);
-		this.viewTopButton.setSelection(this.viewAlignment == SWT.TOP);
-		this.viewTopButton.setFont(font);
-
-		this.viewBottomButton = new Button(buttonComposite, SWT.RADIO);
-		this.viewBottomButton.setText(VIEWS_BOTTOM_TITLE);
-		this.viewBottomButton.setSelection(this.viewAlignment == SWT.BOTTOM);
-		this.viewBottomButton.setFont(font);
+		viewBottomButton = new Button(viewTabGroup, SWT.RADIO);
+		viewBottomButton.setText(VIEWS_BOTTOM_TITLE);
+		viewBottomButton.setSelection(viewAlignment == SWT.BOTTOM);
 
 		SelectionListener sel = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -453,7 +460,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		viewTopButton.addSelectionListener(sel);
 		viewBottomButton.addSelectionListener(sel);
 
-		attachControls(this.viewTopButton, this.viewBottomButton);
+		attachControls(viewTopButton, viewBottomButton);
 	}
 
 	/**
@@ -463,53 +470,49 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * @param composite Composite
 	 */
 	private void createPerspBarTabButtonGroup(Composite composite) {
-		Font font = composite.getFont();
+		perspBarTabGroup = createButtonGroup(composite, PERSP_TITLE);
 
-		Group buttonComposite = createButtonGroup(composite, PERSP_TITLE);
-		buttonComposite.setFont(font);
-
-		perspLeftButton = new Button(buttonComposite, SWT.RADIO);
+		perspLeftButton = new Button(perspBarTabGroup, SWT.RADIO);
 		perspLeftButton.setText(PERSP_LEFT_TITLE);
 		perspLeftButton.setSelection(IWorkbenchPreferenceConstants.LEFT
 				.equals(perspBarLocation));
-		perspLeftButton.setFont(font);
 		perspLeftButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				perspBarLocation = IWorkbenchPreferenceConstants.LEFT;
 			}
 		});
 
-		perspTopLeftButton = new Button(buttonComposite, SWT.RADIO);
+		perspTopLeftButton = new Button(perspBarTabGroup, SWT.RADIO);
 		perspTopLeftButton.setText(PERSP_TOP_LEFT_TITLE);
 		perspTopLeftButton.setSelection(IWorkbenchPreferenceConstants.TOP_LEFT
 				.equals(perspBarLocation));
-		perspTopLeftButton.setFont(font);
 		perspTopLeftButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				perspBarLocation = IWorkbenchPreferenceConstants.TOP_LEFT;
 			}
 		});
 
-		perspTopRightButton = new Button(buttonComposite, SWT.RADIO);
+		perspTopRightButton = new Button(perspBarTabGroup, SWT.RADIO);
 		perspTopRightButton.setText(PERSP_TOP_RIGHT_TITLE);
 		perspTopRightButton
 				.setSelection(IWorkbenchPreferenceConstants.TOP_RIGHT
 						.equals(perspBarLocation));
-		perspTopRightButton.setFont(font);
 		perspTopRightButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				perspBarLocation = IWorkbenchPreferenceConstants.TOP_RIGHT;
 			}
 		});
 
+		int spacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		
 		FormData leftData = new FormData();
-		leftData.left = new FormAttachment(0, 5);
+		leftData.left = new FormAttachment(0, 0);
 
 		FormData topLeftData = new FormData();
-		topLeftData.left = new FormAttachment(perspLeftButton, 5);
+		topLeftData.left = new FormAttachment(perspLeftButton, spacing);
 
 		FormData topRightData = new FormData();
-		topRightData.left = new FormAttachment(perspTopLeftButton, 0);
+		topRightData.left = new FormAttachment(perspTopLeftButton, spacing);
 
 		perspLeftButton.setLayoutData(leftData);
 		perspTopLeftButton.setLayoutData(topLeftData);
@@ -525,7 +528,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		if (overrideListener != null) {
 			return;
 		}
-		final IPreferenceStore store = getPreferenceStore();
+		IPreferenceStore store = getPreferenceStore();
 		overrideListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(
@@ -551,10 +554,13 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private void updateOverride() {
 		boolean override = getPreferenceStore().getBoolean(
 				IPreferenceConstants.OVERRIDE_PRESENTATION);
+		editorTabGroup.setEnabled(override);
 		editorTopButton.setEnabled(override);
 		editorBottomButton.setEnabled(override);
+		viewTabGroup.setEnabled(override);
 		viewTopButton.setEnabled(override);
 		viewBottomButton.setEnabled(override);
+		perspBarTabGroup.setEnabled(override);
 		perspTopLeftButton.setEnabled(override);
 		perspLeftButton.setEnabled(override);
 		perspTopRightButton.setEnabled(override);
@@ -562,7 +568,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void refreshPresentationCombo() {
-
 		// get the active presentation
 		presentationCombo.removeAll();
 		refreshPresentationFactories();
@@ -580,7 +585,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 						name));
 			}
 		}
-
 	}
 
 	private void setPresentationSelection() {
@@ -656,7 +660,6 @@ public class ViewsPreferencePage extends PreferencePage implements
 				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, id);
 		// a restart is required to update the presentation
 		return true;
-
 	}
 
 	private void setPresentationPrefs(String id) {
@@ -815,7 +818,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		String defaultThemeString = PlatformUI.getWorkbench().getThemeManager()
 				.getTheme(IThemeManager.DEFAULT_THEME).getLabel();
 		if (currentTheme.getId().equals(IThemeManager.DEFAULT_THEME)) {
-			defaultThemeString = MessageFormat.format(
+			defaultThemeString = NLS.bind(
 					WorkbenchMessages.ViewsPreference_currentThemeFormat,
 					new Object[] { defaultThemeString });
 		}
@@ -826,7 +829,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		for (int i = 0; i < descs.length; i++) {
 			themeString = descs[i].getName();
 			if (descs[i].getId().equals(currentTheme.getId())) {
-				themeString = MessageFormat.format(
+				themeString = NLS.bind(
 						WorkbenchMessages.ViewsPreference_currentThemeFormat,
 						new Object[] { themeString });
 			}
@@ -835,25 +838,21 @@ public class ViewsPreferencePage extends PreferencePage implements
 			}
 			themeCombo.add(themeString);
 		}
-
 		themeCombo.select(selection);
 	}
 
 	/**
 	 * Create the button and text that support setting the preference for
-	 * showing text labels on the perspective switching bar
+	 * showing text labels on the perspective switching bar.
 	 */
 	protected void createShowTextOnPerspectiveBarPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		showTextOnPerspectiveBar = new Button(composite, SWT.CHECK);
-		showTextOnPerspectiveBar
-				.setText(WorkbenchMessages.WorkbenchPreference_showTextOnPerspectiveBar);
-		showTextOnPerspectiveBar.setFont(composite.getFont());
-		showTextOnPerspectiveBar
-				.setSelection(apiStore
+		showTextOnPerspectiveBar = createCheckButton(
+				composite,
+				WorkbenchMessages.WorkbenchPreference_showTextOnPerspectiveBar,
+				apiStore
 						.getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
-		setButtonLayoutData(showTextOnPerspectiveBar);
 	}
 
 	/**
@@ -863,26 +862,21 @@ public class ViewsPreferencePage extends PreferencePage implements
 	protected void createShowTraditionalStyleTabsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		showTraditionalStyleTabs = new Button(composite, SWT.CHECK);
-		showTraditionalStyleTabs
-				.setText(WorkbenchMessages.ViewsPreference_traditionalTabs);
-		showTraditionalStyleTabs.setFont(composite.getFont());
-		showTraditionalStyleTabs
-				.setSelection(apiStore
+		showTraditionalStyleTabs = createCheckButton(
+				composite,
+				WorkbenchMessages.ViewsPreference_traditionalTabs,
+				apiStore
 						.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
-		setButtonLayoutData(showTraditionalStyleTabs);
 	}
 
 	protected void createEnableAnimationsPref(Composite composite) {
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		enableAnimations = new Button(composite, SWT.CHECK);
-		enableAnimations
-				.setText(WorkbenchMessages.ViewsPreference_enableAnimations);
-		enableAnimations.setFont(composite.getFont());
-		enableAnimations.setSelection(apiStore
-				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
-		setButtonLayoutData(enableAnimations);
+		enableAnimations = createCheckButton(
+				composite,
+				WorkbenchMessages.ViewsPreference_enableAnimations,
+				apiStore
+						.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 	}
 
 	/**
@@ -903,7 +897,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * 
 	 * @param workbench  the workbench
 	 */
-	public void init(org.eclipse.ui.IWorkbench workbench) {
+	public void init(IWorkbench workbench) {
 		currentPresentationFactoryId = PrefUtil.getAPIPreferenceStore()
 				.getString(
 						IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
@@ -935,6 +929,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 				.getDefaultBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION);
 		overridePresButton.setSelection(overridePrefs);
 
+		updateOverrideState(overridePrefs);
+		
 		setEditorAlignDefault(store);
 		setViewAlignDefault(store);
 
@@ -950,8 +946,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager()
 				.getTheme(IThemeManager.DEFAULT_THEME).getId());
+		refreshThemeDescriptionText();
 		
 		WorkbenchPlugin.getDefault().savePluginPreferences();
+		
 		super.performDefaults();
 	}
 
@@ -1043,7 +1041,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 					.setCurrentTheme(applyTheme.getId());
 			refreshThemeCombo(applyTheme.getId());
 		}
-
+		refreshThemeDescriptionText();
+		
 		apiStore.setValue(
 				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
 				showTraditionalStyleTabs.getSelection());
@@ -1057,7 +1056,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		if (restart && !restartPosted) {
 			if (getContainer() instanceof IWorkbenchPreferenceContainer) {
 				IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
-				UIJob job = new UIJob("Restart Request") { //$NON-NLS-1$
+				UIJob job = new UIJob(WorkbenchMessages.ViewsPreference_restartRequestJobName) {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						// make sure they really want to do this
 						int really = new MessageDialog(

@@ -412,9 +412,12 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_perspectiveBar_left;
 	public static String ViewsPreference_traditionalTabs;
 	public static String ViewsPreference_currentTheme;
+	public static String ViewsPreference_currentThemeDescription;
 	public static String ViewsPreference_currentThemeFormat;
 	public static String ViewsPreference_enableAnimations;
-
+	public static String ViewsPreference_override;
+	public static String ViewsPreference_restartRequestJobName;
+	
 	// --- File Editors ---
 	public static String FileEditorPreference_fileTypes;
 	public static String FileEditorPreference_add;
@@ -996,9 +999,6 @@ public class WorkbenchMessages extends NLS {
     
     // Content assist support
     public static String ContentAssist_Cue_Description_Key;
-
-
-	public static String ViewsPreferencePage_override;
 	
 	//Settings transfer
 	public static String WorkbenchLayoutSettings_Name;
