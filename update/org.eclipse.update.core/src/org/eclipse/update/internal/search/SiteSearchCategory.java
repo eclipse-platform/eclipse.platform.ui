@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     James D Miles (IBM Corp.) - bug 181375, ArrayIndexOutOfBoundsException in SiteSearchCategory$Query
+*******************************************************************************/
 package org.eclipse.update.internal.search;
 
 
@@ -100,32 +101,28 @@ public class SiteSearchCategory extends BaseSearchCategory {
 			monitor.beginTask("", refs.length); //$NON-NLS-1$
 			ThreadGroup featureDownloaders = new ThreadGroup("FeatureDownloader"); //$NON-NLS-1$
 			int numberOfThreads = (refs.length > 5)? 5: refs.length;
-			
+
+			Thread[] featureDownloader = new Thread[numberOfThreads];
 			for( int i = 0; i < numberOfThreads; i++) {
-				Thread featureDownloader = new Thread(featureDownloaders, new FeatureDownloader(siteFeatureReferences, collector, filter, ignores, monitor));
-				featureDownloader.start();
+				featureDownloader[i] = new Thread(featureDownloaders, new FeatureDownloader(siteFeatureReferences, collector, filter, ignores, monitor));
+				featureDownloader[i].start();
 			}
 			
-			
-			while(featureDownloaders.activeCount() != 0) {
-				
+			int i =0;
+			while(i < numberOfThreads){
 				if (monitor.isCanceled()) {
 					synchronized(siteFeatureReferences) { 
 						siteFeatureReferences.clear();
 					}
 				}
-				Thread[] temp = new Thread[featureDownloaders.activeCount()];
-				featureDownloaders.enumerate(temp);
-				if (temp[0] != null) {
-					try	{
-						temp[0].join(250);
-					} catch (InterruptedException ie) {
-						//FIX ME:
-						ie.printStackTrace();
+				try	{
+					featureDownloader[i].join(250);
+					if(!featureDownloader[i].isAlive()){
+						i++;
 					}
+				} catch (InterruptedException ie) {
 				}
 			}
-			
 		}
 
 		/* (non-Javadoc)
