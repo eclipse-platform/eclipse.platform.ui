@@ -29,6 +29,7 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -66,22 +67,21 @@ public class Theme extends EventManager implements ITheme {
         this.descriptor = descriptor;
         IWorkbench workbench = PlatformUI.getWorkbench();
         if (descriptor != null) {
-
-            ColorDefinition[] definitions = this.descriptor.getColors();
-
-            ITheme theme = workbench.getThemeManager().getTheme(
+        	ITheme defaultTheme = workbench.getThemeManager().getTheme(
                     IThemeManager.DEFAULT_THEME);
-            if (definitions.length > 0) {
-                themeColorRegistry = new CascadingColorRegistry(theme
-                        .getColorRegistry());
-                ThemeElementHelper.populateRegistry(this, definitions,
+        	
+            ColorDefinition[] colorDefinitions = this.descriptor.getColors();
+            themeColorRegistry = new CascadingColorRegistry(defaultTheme
+                    .getColorRegistry());
+            if (colorDefinitions.length > 0) {
+                ThemeElementHelper.populateRegistry(this, colorDefinitions,
                 		PrefUtil.getInternalPreferenceStore());
             }
 
             FontDefinition[] fontDefinitions = this.descriptor.getFonts();
+            themeFontRegistry = new CascadingFontRegistry(defaultTheme
+                    .getFontRegistry());
             if (fontDefinitions.length > 0) {
-                themeFontRegistry = new CascadingFontRegistry(theme
-                        .getFontRegistry());
                 ThemeElementHelper.populateRegistry(this, fontDefinitions,
                 		PrefUtil.getInternalPreferenceStore());
             }
@@ -118,47 +118,26 @@ public class Theme extends EventManager implements ITheme {
 						return;
 					}
                     try {
-                        if (themeColorRegistry != null) { // we're using cascading registries
-                            if (getColorRegistry().hasValueFor(key)
-                                    && theme != null && theme.equals(getId())) {
-                                RGB rgb = StringConverter.asRGB((String) event
-                                        .getNewValue());
-                                getColorRegistry().put(key, rgb);
-                                processDefaultsTo(key, rgb);
-                                return;
-                            }
-                        } else {
-                            if (getColorRegistry().hasValueFor(key)
-                                    && theme == null) {
-                                RGB rgb = StringConverter.asRGB((String) event
-                                        .getNewValue());
-                                getColorRegistry().put(key, rgb);
-                                processDefaultsTo(key, rgb);
-                                return;
-                            }
-                        }
-
-                        if (themeFontRegistry != null) {
-                            if (getFontRegistry().hasValueFor(key)
-                                    && theme != null && theme.equals(getId())) {
-                                FontData[] data = PreferenceConverter
-                                        .basicGetFontData((String) event
-                                                .getNewValue());
-                                getFontRegistry().put(key, data);
-                                processDefaultsTo(key, data);
-                                return;
-                            }
-                        } else {
-                            if (getFontRegistry().hasValueFor(key)
-                                    && theme == null) {
-                                FontData[] data = PreferenceConverter
-                                        .basicGetFontData((String) event
-                                                .getNewValue());
-                                getFontRegistry().put(key, data);
-                                processDefaultsTo(key, data);
-                                return;
-                            }
-                        }
+                    	String thisTheme = getId();
+                                          
+                        if (Util.equals(thisTheme, theme)) {
+							if (getFontRegistry().hasValueFor(key)) {
+								FontData[] data = PreferenceConverter
+										.basicGetFontData((String) event
+												.getNewValue());
+								
+								getFontRegistry().put(key, data);
+								processDefaultsTo(key, data);
+								return;
+							}
+							else if (getColorRegistry().hasValueFor(key)) {
+								RGB rgb = StringConverter.asRGB((String) event
+										.getNewValue());
+								getColorRegistry().put(key, rgb);
+								processDefaultsTo(key, rgb);
+								return;
+							}
+						}                        
                     } catch (DataFormatException e) {
                         //no-op
                     }

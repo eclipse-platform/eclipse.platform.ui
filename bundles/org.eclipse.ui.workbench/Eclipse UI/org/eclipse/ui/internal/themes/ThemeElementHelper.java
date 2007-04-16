@@ -300,21 +300,27 @@ public final class ThemeElementHelper {
      * @return
      */
     public static String[] splitPropertyName(Theme theme, String property) {
-        String themeId = theme.getId();
-        if (themeId.equals(IThemeManager.DEFAULT_THEME)) {
-			return new String[] { null, property };
+    	IThemeDescriptor[] descriptors = WorkbenchPlugin.getDefault()
+				.getThemeRegistry().getThemes();
+		for (int i = 0; i < descriptors.length; i++) {
+			IThemeDescriptor themeDescriptor = descriptors[i];
+			String id = themeDescriptor.getId();
+			if (property.startsWith(id + '.')) { // the property starts with
+													// a known theme ID -
+													// extract and return it and
+													// the remaining property
+				return new String[] { property.substring(0, id.length()),
+						property.substring(id.length() + 1) };
+			}
 		}
 
-        if (property.startsWith(themeId + '.')) {
-            return new String[] { property.substring(0, themeId.length()),
-                    property.substring(themeId.length() + 1) };
-        }
-        return new String[] { null, property };
+		// default is simply return the default theme ID and the raw property
+		return new String[] { IThemeManager.DEFAULT_THEME, property };
     }
 
     /**
-     * Not intended to be instantiated.
-     */
+	 * Not intended to be instantiated.
+	 */
     private ThemeElementHelper() {
         // no-op
     }

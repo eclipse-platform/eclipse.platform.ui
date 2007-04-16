@@ -380,20 +380,26 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 emptyImage = null;
             }
 
-            //clear the fonts.  Has a side effect of firing a label property change
+            //clear the fonts.
             clearFontCache();
         }
 
         /**
-         * Clears and disposes all fonts and fires a label changed event.
+         * Clears and disposes all fonts.
          */
         public void clearFontCache() {
             for (Iterator i = fonts.values().iterator(); i.hasNext();) {
                 ((Font) i.next()).dispose();
             }
             fonts.clear();
-
-            fireLabelProviderChanged(new LabelProviderChangedEvent(
+        }
+        
+        /**
+         * Clears and disposes all fonts and fires a label update.
+         */
+        public void clearFontCacheAndUpdate() {
+        	clearFontCache();
+        	fireLabelProviderChanged(new LabelProviderChangedEvent(
                     PresentationLabelProvider.this));
         }
 
@@ -1280,6 +1286,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                         IThemeManager.CHANGE_CURRENT_THEME)) {
                     updateThemeInfo(themeManager);
                     refreshCategory();
+                    tree.getViewer().refresh(); // refresh all the labels in the tree
                 }
             }
         };
@@ -1295,6 +1302,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         if (labelProvider != null) {
 			labelProvider.dispose(); // nuke the old cache
 		}
+
+        currentTheme = manager.getCurrentTheme();
 
         if (colorRegistry != null) {
 			colorRegistry.dispose();
@@ -1837,7 +1846,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         }
 
         //recalculate the fonts for the tree
-        labelProvider.clearFontCache();
+        labelProvider.clearFontCacheAndUpdate();
     }
     
     /**
