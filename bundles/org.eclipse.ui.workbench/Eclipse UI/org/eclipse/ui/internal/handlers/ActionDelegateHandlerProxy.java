@@ -243,11 +243,13 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			final Object applicationContext = event.getApplicationContext();
 			if (applicationContext instanceof IEvaluationContext) {
 				final IEvaluationContext context = (IEvaluationContext) applicationContext;
-				final Object selectionObject = context
-						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+				final Object selectionObject = getCurrentSelection(context);
 				if (selectionObject instanceof ISelection) {
 					currentSelection = (ISelection) selectionObject;
 					delegate.selectionChanged(action, currentSelection);
+				} else {
+					currentSelection = null;
+					delegate.selectionChanged(action, null);
 				}
 
 				final Object activeEditor = context
@@ -286,6 +288,23 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param context
+	 * @return
+	 */
+	private Object getCurrentSelection(final IEvaluationContext context) {
+		Object obj = context
+				.getVariable(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
+		if (obj == null) {
+			obj = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
+			if (obj == null) {
+				obj = context
+						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			}
+		}
+		return obj;
 	}
 
 	/**
