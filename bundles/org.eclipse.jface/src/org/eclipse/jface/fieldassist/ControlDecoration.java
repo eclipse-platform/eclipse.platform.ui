@@ -709,10 +709,16 @@ public class ControlDecoration {
 			if (composite != null && composite == c) {
 				// We just installed on the specified composite, so stop.
 				c = null;
+			} else if (c instanceof Shell) {
+				// We just installed on a shell, so don't go further
+				c = null;
 			} else {
 				c = c.getParent();
 			}
 		}
+		// force a redraw of the decoration area so our paint listener
+		// is notified.
+		update();
 	}
 
 	/*
@@ -731,8 +737,6 @@ public class ControlDecoration {
 			c.addListener(SWT.MouseDown, compositeListener);
 			printAddListener(c, "SWT.MouseDoubleClick"); //$NON-NLS-1$
 			c.addListener(SWT.MouseDoubleClick, compositeListener);
-			// force a redraw of the decoration area.
-			update();
 		}
 	}
 
@@ -1008,7 +1012,7 @@ public class ControlDecoration {
 	 * the hover text if appropriate.
 	 */
 	protected void update() {
-		if (control == null) {
+		if (control == null || control.isDisposed()) {
 			return;
 		}
 		Rectangle rect = getDecorationRectangle(control.getShell());
@@ -1069,7 +1073,12 @@ public class ControlDecoration {
 		while (c != null) {
 			removeCompositeListeners(c);
 			if (composite != null && composite == c) {
-				// We just installed on the specified composite, so stop.
+				// We previously installed listeners only to the specified
+				// composite, so stop.
+				c = null;
+			} else if (c instanceof Shell) {
+				// We previously installed listeners only up to the first Shell
+				// encountered, so stop.
 				c = null;
 			} else {
 				c = c.getParent();
