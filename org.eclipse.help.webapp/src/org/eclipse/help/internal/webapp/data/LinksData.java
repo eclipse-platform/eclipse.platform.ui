@@ -95,8 +95,11 @@ public class LinksData extends RequestData {
 	}
 
 	private void loadLinks() {
-
 		String contextId = request.getParameter("contextId"); //$NON-NLS-1$
+		if (contextId == null) {
+		    links = new IHelpResource[0];
+                    return;
+		}
 		IContext context = HelpSystem.getContext(contextId);
 		if (context == null) {
 			links = new IHelpResource[0];

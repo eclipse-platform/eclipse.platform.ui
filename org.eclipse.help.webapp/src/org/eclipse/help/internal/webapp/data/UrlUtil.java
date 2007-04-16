@@ -458,11 +458,13 @@ public class UrlUtil {
 		} else {
 			// check if locale was passed earlier in this session
 			Cookie[] cookies = request.getCookies();
-			for (int c = 0; cookies != null && c < cookies.length; c++) {
-				if ("lang".equals(cookies[c].getName())) { //$NON-NLS-1$
-					forcedLocale = cookies[c].getValue();
-					break;
-				}
+			if (cookies != null) {
+        			for (int c = 0; c < cookies.length; c++) {
+        				if ("lang".equals(cookies[c].getName())) { //$NON-NLS-1$
+        					forcedLocale = cookies[c].getValue();
+        					break;
+        				}
+        			}
 			}
 		}
 
@@ -618,6 +620,7 @@ public class UrlUtil {
 	}
 
 	public static boolean isAdvanced(String agent) {
+	        if (agent == null) return false;
 		if (isIE(agent) && "5.5".compareTo(getIEVersion(agent)) <= 0) return true; //$NON-NLS-1$
 		if (isMozilla(agent) && isGecko(agent)) return true;
 		if (isSafari(agent) && "120".compareTo(getSafariVersion(agent)) <= 0) return true; //$NON-NLS-1$

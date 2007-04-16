@@ -208,10 +208,12 @@ public class SearchData extends ActivitiesData {
 
 	public boolean isShowCategories() {
 		Cookie[] cookies = request.getCookies();
-		for (int i=0;i<cookies.length;++i) {
-			if ("showCategories".equals(cookies[i].getName())) { //$NON-NLS-1$
-				return String.valueOf(true).equals(cookies[i].getValue());
-			}
+		if (cookies != null) {
+        		for (int i=0;i<cookies.length;++i) {
+        			if ("showCategories".equals(cookies[i].getName())) { //$NON-NLS-1$
+        				return String.valueOf(true).equals(cookies[i].getValue());
+        			}
+        		}
 		}
 		// default off
 		return false;
@@ -219,10 +221,12 @@ public class SearchData extends ActivitiesData {
 
 	public boolean isShowDescriptions() {
 		Cookie[] cookies = request.getCookies();
-		for (int i=0;i<cookies.length;++i) {
-			if ("showDescriptions".equals(cookies[i].getName())) { //$NON-NLS-1$
-				return String.valueOf(true).equals(cookies[i].getValue());
-			}
+		if (cookies != null) {
+        		for (int i=0;i<cookies.length;++i) {
+        			if ("showDescriptions".equals(cookies[i].getName())) { //$NON-NLS-1$
+        				return String.valueOf(true).equals(cookies[i].getValue());
+        			}
+        		}
 		}
 		// default on
 		return true;
@@ -365,7 +369,7 @@ public class SearchData extends ActivitiesData {
 		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
 		boolean fieldSearch = fieldSearchStr != null ? new Boolean(
 				fieldSearchStr).booleanValue() : false;
-		return new SearchQuery(searchWord, fieldSearch, new ArrayList(),
+		return new SearchQuery(searchWord == null ? "" : searchWord, fieldSearch, new ArrayList(), //$NON-NLS-1$
 				getLocale());
 	}
 
