@@ -52,11 +52,18 @@ public class MergeSourceViewer extends SourceViewer
 		private int fOperationCode;
 		
 		TextOperationAction(int operationCode, boolean mutable, boolean selection, boolean content) {
+			this(operationCode, null, mutable, selection, content);
+
+		}
+		
+		public TextOperationAction(int operationCode, String actionDefinitionId, boolean mutable, boolean selection, boolean content) {
 			super(mutable, selection, content);
+			if (actionDefinitionId != null)
+				setActionDefinitionId(actionDefinitionId);
 			fOperationCode= operationCode;
 			update();
 		}
-		
+
 		public void run() {
 			if (isEnabled())
 				doOperation(fOperationCode);
@@ -365,19 +372,19 @@ public class MergeSourceViewer extends SourceViewer
 	
 	protected IAction createAction(String actionId) {
 		if (UNDO_ID.equals(actionId))
-			return new TextOperationAction(UNDO, true, false, true);
+			return new TextOperationAction(UNDO, "org.eclipse.ui.edit.undo", true, false, true); //$NON-NLS-1$
 		if (REDO_ID.equals(actionId))
-			return new TextOperationAction(REDO, true, false, true);
+			return new TextOperationAction(REDO, "org.eclipse.ui.edit.redo", true, false, true); //$NON-NLS-1$
 		if (CUT_ID.equals(actionId))
-			return new TextOperationAction(CUT, true, true, false);
+			return new TextOperationAction(CUT, "org.eclipse.ui.edit.cut", true, true, false); //$NON-NLS-1$
 		if (COPY_ID.equals(actionId))
-			return new TextOperationAction(COPY, false, true, false);
+			return new TextOperationAction(COPY, "org.eclipse.ui.edit.copy", false, true, false); //$NON-NLS-1$
 		if (PASTE_ID.equals(actionId))
-			return new TextOperationAction(PASTE, true, false, false);
+			return new TextOperationAction(PASTE, "org.eclipse.ui.edit.paste", true, false, false); //$NON-NLS-1$
 		if (DELETE_ID.equals(actionId))
-			return new TextOperationAction(DELETE, true, false, false);
+			return new TextOperationAction(DELETE, "org.eclipse.ui.edit.delete", true, false, false); //$NON-NLS-1$
 		if (SELECT_ALL_ID.equals(actionId))
-			return new TextOperationAction(SELECT_ALL, false, false, false);
+			return new TextOperationAction(SELECT_ALL, "org.eclipse.ui.edit.selectAll", false, false, false); //$NON-NLS-1$
 		if (FIND_ID.equals(actionId))
 			return new FindReplaceAction(fResourceBundle, "Editor.FindReplace.", getControl().getShell(), this.getFindReplaceTarget()); //$NON-NLS-1$
 		return null;
@@ -474,7 +481,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 	
 	/**
-	 * specific implemenation to support a vertical ruler
+	 * specific implementation to support a vertical ruler
 	 * @param x
 	 * @param y
 	 * @param width
@@ -505,7 +512,7 @@ public class MergeSourceViewer extends SourceViewer
 	}
 
 	/**
-	 * Hides or shows line number ruler column based of pref setting
+	 * Hides or shows line number ruler column based of preference setting
 	 */
 	private void updateLineNumberRuler() 
 	{
