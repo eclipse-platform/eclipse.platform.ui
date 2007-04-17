@@ -2,9 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.platform; singleton:=true
-Bundle-Version: 3.2.100.qualifier
-Bundle-ClassPath: startup.jar,
- platform.jar
+Bundle-Version: 3.3.0.qualifier
+Bundle-ClassPath: platform.jar
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui.intro;bundle-version="[3.2.0,4.0.0)",
@@ -22,5 +21,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.4,
 Import-Package: javax.xml.parsers,
  org.xml.sax,
  org.xml.sax.helpers
-Export-Package: org.eclipse.core.launcher,
- org.eclipse.platform.internal;x-internal:=true
+Export-Package: org.eclipse.platform.internal;x-internal:=true
