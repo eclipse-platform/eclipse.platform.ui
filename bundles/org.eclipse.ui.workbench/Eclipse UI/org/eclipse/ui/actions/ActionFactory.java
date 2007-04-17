@@ -21,9 +21,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.CloseAllPerspectivesAction;
 import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
-import org.eclipse.ui.internal.CycleEditorAction;
-import org.eclipse.ui.internal.CyclePartAction;
-import org.eclipse.ui.internal.CyclePerspectiveAction;
 import org.eclipse.ui.internal.EditActionSetsAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -744,25 +741,34 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new CycleEditorAction(window, true);
-            action.setId(getId());
-            return action;
-        }
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			IWorkbenchAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.window.nextEditor", //$NON-NLS-1$
+					window);
+
+			action.setText(WorkbenchMessages.CycleEditorAction_next_text); 
+			action.setToolTipText(WorkbenchMessages.CycleEditorAction_next_toolTip); 
+            // @issue missing action ids
+			window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
+            
+			action.setId(getId());
+			return action;
+		}
     };
 
     /**
-     * Workbench action (id "nextPart"): Next part. This action maintains its
-     * enablement state.
-     * <p>
-     * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code> form a cycle
-     * action pair. For a given window, use
-     * {@link ActionFactory#linkCycleActionPair
-     * ActionFactory.linkCycleActionPair</code>} to connect the two.
-     * </p>
-     */
+	 * Workbench action (id "nextPart"): Next part. This action maintains its
+	 * enablement state.
+	 * <p>
+	 * <code>NEXT_PART</code> and <code>PREVIOUS_PART</code> form a cycle
+	 * action pair. For a given window, use
+	 * {@link ActionFactory#linkCycleActionPair
+	 * ActionFactory.linkCycleActionPair</code>} to connect the two.
+	 * </p>
+	 */
     public static final ActionFactory NEXT_PART = new ActionFactory("nextPart") {//$NON-NLS-1$
         
         /* (non-Javadoc)
@@ -772,8 +778,13 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CyclePartAction(window, true);
-            action.setId(getId());
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.nextView",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.CyclePartAction_next_text);
+			action.setToolTipText(WorkbenchMessages.CyclePartAction_next_toolTip);
+			// @issue missing action ids
+			window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.CYCLE_PART_FORWARD_ACTION);
+			action.setId(getId());
             return action;
         }
     };
@@ -798,7 +809,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CyclePerspectiveAction(window, true);
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.nextPerspective",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.CyclePerspectiveAction_next_text);
+            action.setToolTipText(WorkbenchMessages.CyclePerspectiveAction_next_toolTip);
+            // @issue missing action ids
+            window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
             action.setId(getId());
             return action;
         }
@@ -915,7 +931,15 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CycleEditorAction(window, false);
+            IWorkbenchAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.window.previousEditor", //$NON-NLS-1$
+					window);
+            action.setText(WorkbenchMessages.CycleEditorAction_prev_text);
+            action.setToolTipText(WorkbenchMessages.CycleEditorAction_prev_toolTip); 
+            // @issue missing action ids
+            window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
+
             action.setId(getId());
             return action;
         }
@@ -941,8 +965,13 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CyclePartAction(window, false);
-            action.setId(getId());
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.previousView",window); //$NON-NLS-1$
+			action.setText(WorkbenchMessages.CyclePartAction_prev_text);
+			action.setToolTipText(WorkbenchMessages.CyclePartAction_prev_toolTip);
+			// @issue missing action ids
+			window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
+			action.setId(getId());
             return action;
         }
     };
@@ -967,7 +996,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CyclePerspectiveAction(window, false);
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.previousPerspective",window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.CyclePerspectiveAction_prev_text); 
+            action.setToolTipText(WorkbenchMessages.CyclePerspectiveAction_prev_toolTip); 
+            // @issue missing action ids
+            window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
             action.setId(getId());
             return action;
         }
@@ -1585,18 +1619,6 @@ public abstract class ActionFactory {
 	 */
     public static void linkCycleActionPair(IWorkbenchAction next,
             IWorkbenchAction previous) {
-        if (!(next instanceof CyclePartAction)) {
-            throw new IllegalArgumentException();
-        }
-        if (!(previous instanceof CyclePartAction)) {
-            throw new IllegalArgumentException();
-        }
-        CyclePartAction n = (CyclePartAction) next;
-        CyclePartAction p = (CyclePartAction) previous;
-        n.setForwardActionDefinitionId(next.getActionDefinitionId());
-        n.setBackwardActionDefinitionId(previous.getActionDefinitionId());
-        p.setForwardActionDefinitionId(next.getActionDefinitionId());
-        p.setBackwardActionDefinitionId(previous.getActionDefinitionId());
     }
 
     /**

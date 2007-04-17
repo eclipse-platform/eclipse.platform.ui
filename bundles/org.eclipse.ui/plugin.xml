@@ -1487,6 +1487,13 @@
               properties="isActivityEnabled,isCategoryEnabled"
               type="org.eclipse.ui.IWorkbench">
         </propertyTester>
+        <propertyTester
+              class="org.eclipse.ui.internal.OpenPerspectivePropertyTester"
+              id="org.eclipse.ui.openPerspectivePropertyTester"
+              namespace="org.eclipse.ui.workbenchWindow"
+              properties="isPerspectiveOpen"
+              type="org.eclipse.ui.IWorkbenchWindow">
+        </propertyTester>
      </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -1571,6 +1578,78 @@
                <instanceof
                      value="org.eclipse.ui.IWorkbenchWindow">
                </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CycleEditorHandler:true"
+            commandId="org.eclipse.ui.window.nextEditor">
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CycleEditorHandler:false"
+            commandId="org.eclipse.ui.window.previousEditor">
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CycleViewHandler:true"
+            commandId="org.eclipse.ui.window.nextView">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CycleViewHandler:false"
+            commandId="org.eclipse.ui.window.previousView">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>      
+      <handler
+            class="org.eclipse.ui.internal.CyclePerspectiveHandler:true"
+            commandId="org.eclipse.ui.window.nextPerspective">
+         <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <test
+                     property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+               </test>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.CyclePerspectiveHandler:false"
+            commandId="org.eclipse.ui.window.previousPerspective">
+         <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <test
+                     property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+               </test>
             </with>
          </enabledWhen>
       </handler>
