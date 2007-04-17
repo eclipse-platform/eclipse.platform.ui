@@ -2530,6 +2530,11 @@
             class="org.eclipse.ui.tests.datatransfer.TestExportWizard"
             category="org.eclipse.ui.tests.TestImport"
             id="org.eclipse.ui.tests.export.UsingImportCategory">
+      </wizard>
+      <wizard
+            class="org.eclipse.ui.tests.statushandlers.wizards.FaultyExportWizard"
+            id="org.eclipse.ui.tests.wizards.FaultyExportWizard"
+            name="FaultyExportWizard">
       </wizard>  
                              
    	</extension>
@@ -3400,6 +3405,14 @@
    </extension>
    <extension
          point="org.eclipse.ui.statusHandlers">
+      <statusHandler
+            class="org.eclipse.ui.tests.statushandlers.TestStatusHandler"
+            id="org.eclipse.ui.tests.statushandlers.TestStatusHandler">
+      </statusHandler>
+      <statusHandlerProductBinding
+            handlerId="org.eclipse.ui.tests.statushandlers.TestStatusHandler"
+            productId="org.eclipse.sdk.ide">
+      </statusHandlerProductBinding>
    </extension>
 <!-- Sample invalid extension ! (illegal child) --> 
    <extension
