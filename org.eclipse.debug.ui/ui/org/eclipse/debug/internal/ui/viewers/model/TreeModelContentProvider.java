@@ -334,9 +334,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		for (int i = 0; i < items.length; i++) {
 			buildViewerState(EMPTY_TREE_PATH, delta, items[i], set, i);
 		}
-		// add memento for top item
+		// add memento for top item if it is mapped to an element
 		TreeItem topItem = tree.getTopItem();
-		if (topItem != null) {
+		if (topItem != null && topItem.getData() != null) {
 			TreePath path = ((InternalTreeModelViewer)getTreeViewer()).getTreePathFromItem(topItem);
 			ModelDelta parentDelta = delta;
 			for (int i = 0; i < path.getSegmentCount(); i++) {
