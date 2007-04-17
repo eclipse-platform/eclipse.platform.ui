@@ -9,6 +9,7 @@ Bundle-Localization: plugin
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.jface.databinding.swt,
  org.eclipse.jface.databinding.viewers,
+ org.eclipse.jface.databinding.wizard,
  org.eclipse.jface.internal.databinding.internal.swt;x-internal:=true,
  org.eclipse.jface.internal.databinding.internal.viewers;x-internal:=true,
  org.eclipse.jface.internal.databinding.provisional.swt;x-internal:=false,
