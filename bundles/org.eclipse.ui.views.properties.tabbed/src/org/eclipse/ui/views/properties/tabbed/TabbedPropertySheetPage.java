@@ -835,7 +835,7 @@ public class TabbedPropertySheetPage
 			/**
 			 * selection does not implement or adapt ITabbedPropertySheetPageContributor.
 			 */
-			return;
+			newContributor = contributor;
 		}
 		
         String selectionContributorId = newContributor.getContributorId();
