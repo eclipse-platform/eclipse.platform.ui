@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ package org.eclipse.ant.internal.ui.model;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,6 +35,7 @@ import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Main;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.RuntimeConfigurable;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
@@ -68,6 +68,8 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ISynchronizable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class AntModel implements IAntModel {
 
@@ -1552,26 +1554,25 @@ public class AntModel implements IAntModel {
     }
 
     public AntElementNode getReferenceNode(String text) {
-        Object reference= getReferenceObject(text);
+        Object reference = getReferenceObject(text);
         if (reference == null) {
             return null;
         }
         
-        Collection nodes= fTaskToNode.keySet();
-        Iterator iter= nodes.iterator();
+        Collection nodes = fTaskToNode.keySet();
+        Iterator iter = nodes.iterator();
         while (iter.hasNext()) {
             Object original = iter.next();
-            Object object= original;
+            Object object = original;
             if (object instanceof UnknownElement) {
-                UnknownElement element= (UnknownElement) object;
-                object= element.getRealThing();
-                if (object == null) {
-                    continue;
+                UnknownElement element = (UnknownElement) object;
+                RuntimeConfigurable wrapper = element.getWrapper();
+                Map attributes = wrapper.getAttributeMap();
+                String id = (String) attributes.get("id"); //$NON-NLS-1$
+                if (text.equals(id)) {
+                	return (AntElementNode)fTaskToNode.get(original);
                 }
             } 
-            if (object == reference) {
-                return (AntElementNode)fTaskToNode.get(original);
-            }
         }
         return null;
     }
