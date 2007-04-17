@@ -11,8 +11,12 @@
 
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.ICellEditorListener;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,6 +26,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -56,7 +61,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		 *      java.lang.String)
 		 */
 		public boolean canModify(Object element, String property) {
-			return enabled && ((MyModel) element).counter % 2 == 0;
+			return true;
 		}
 
 		/*
@@ -66,7 +71,9 @@ public class Snippet033CellEditorPerRowPre33 {
 		 *      java.lang.String)
 		 */
 		public Object getValue(Object element, String property) {
-			if( element instanceof MyModel2 ) {
+			if( element instanceof MyModel3 ) {
+				return new Boolean(((MyModel3)element).checked);
+			} else if( element instanceof MyModel2 ) {
 				return new Integer(((MyModel) element).counter);
 			} else {
 				return ((MyModel) element).counter + "";
@@ -81,8 +88,14 @@ public class Snippet033CellEditorPerRowPre33 {
 		 */
 		public void modify(Object element, String property, Object value) {
 			TableItem item = (TableItem) element;
-			((MyModel) item.getData()).counter = Integer.parseInt(value
-					.toString());
+			
+			if( item.getData() instanceof MyModel3 ) {
+				((MyModel3) item.getData()).checked=((Boolean)value).booleanValue();
+			} else {
+				((MyModel) item.getData()).counter = Integer.parseInt(value
+						.toString());
+			}
+			
 			viewer.update(item.getData(), null);
 		}
 	}
@@ -142,6 +155,19 @@ public class Snippet033CellEditorPerRowPre33 {
 		}
 	}
 	
+	public class MyModel3 extends MyModel {
+		public boolean checked;
+		
+		public MyModel3(int counter) {
+			super(counter);
+		}
+
+		public String toString() {
+			return "Special Item " + this.counter;
+		}
+	}
+	
+	
 	public class DelegatingEditor extends CellEditor {
 		
 		private StructuredViewer viewer;
@@ -152,10 +178,31 @@ public class Snippet033CellEditorPerRowPre33 {
 		
 		private CellEditor activeEditor;
 		
+		private CellEditor delegatingCheckBoxEditor;
+		
+		private class DelegatingListener implements ICellEditorListener {
+
+			public void applyEditorValue() {
+				fireApplyEditorValue();
+			}
+
+			public void cancelEditor() {
+				fireCancelEditor();
+			}
+
+			public void editorValueChanged(boolean oldValidState,
+					boolean newValidState) {
+				fireEditorValueChanged(oldValidState, newValidState);
+			}
+			
+		}
+		
 		public DelegatingEditor(StructuredViewer viewer, Composite parent) {
 			super(parent);
 			this.viewer = viewer;
+			DelegatingListener l = new DelegatingListener();
 			this.delegatingTextEditor = new TextCellEditor(parent);
+			this.delegatingTextEditor.addListener(l);
 			
 			String[] elements = new String[10];
 			
@@ -164,6 +211,10 @@ public class Snippet033CellEditorPerRowPre33 {
 			}
 			
 			this.delegatingDropDownEditor = new ComboBoxCellEditor(parent,elements);
+			this.delegatingDropDownEditor.addListener(l);
+			
+			this.delegatingCheckBoxEditor = new CheckboxCellEditor(parent);
+			this.delegatingCheckBoxEditor.addListener(l);
 		}
 		
 		protected Control createControl(Composite parent) {
@@ -178,18 +229,31 @@ public class Snippet033CellEditorPerRowPre33 {
 			activeEditor.setFocus();
 		}
 
+		public void activate() {
+			if( activeEditor != null ) {
+				activeEditor.activate();
+			}
+		}
+
 		protected void doSetValue(Object value) {
-			if( ((IStructuredSelection)this.viewer.getSelection()).getFirstElement() instanceof MyModel2 ) {
+			
+			if( ((IStructuredSelection)this.viewer.getSelection()).getFirstElement() instanceof MyModel3 ) {
+				activeEditor = delegatingCheckBoxEditor;
+			} else if( ((IStructuredSelection)this.viewer.getSelection()).getFirstElement() instanceof MyModel2 ) {
 				activeEditor = delegatingDropDownEditor;
 			} else {
 				activeEditor = delegatingTextEditor;
 			}
+			
 			activeEditor.setValue(value);
 		}
 		
 		public void deactivate() {
 			if( activeEditor != null ) {
-				activeEditor.getControl().setVisible(false);
+				Control control = activeEditor.getControl();
+				if (control != null && !control.isDisposed()) {
+					control.setVisible(false);
+				}
 			}
 		}
 		
@@ -212,7 +276,7 @@ public class Snippet033CellEditorPerRowPre33 {
 		TableColumn column = new TableColumn(table, SWT.NONE);
 		column.setWidth(200);
 
-		v.setLabelProvider(new LabelProvider());
+		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.setCellModifier(modifier);
 		v.setColumnProperties(new String[] { "column1" });
@@ -223,15 +287,34 @@ public class Snippet033CellEditorPerRowPre33 {
 		v.getTable().setLinesVisible(true);
 	}
 
+	private class MyLabelProvider extends LabelProvider {
+		public Image getImage(Object element) {
+			if( element instanceof MyModel3 ) {
+				if( ((MyModel3)element).checked ) {
+					return JFaceResources.getImage("IMG_1");
+				} else {
+					return JFaceResources.getImage("IMG_2");
+				}
+				
+			}
+			return super.getImage(element);
+		}
+		
+	}
+	
 	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[20];
+		MyModel[] elements = new MyModel[30];
 
 		for (int i = 0; i < 10; i++) {
-			elements[i] = new MyModel(i);
+			elements[i] = new MyModel3(i);
+		}
+		
+		for (int i = 0; i < 10; i++) {
+			elements[i+10] = new MyModel(i);
 		}
 
 		for (int i = 0; i < 10; i++) {
-			elements[i+10] = new MyModel2(i);
+			elements[i+20] = new MyModel2(i);
 		}
 		
 		return elements;
@@ -242,6 +325,8 @@ public class Snippet033CellEditorPerRowPre33 {
 	 */
 	public static void main(String[] args) {
 		Display display = new Display();
+		JFaceResources.getImageRegistry().put("IMG_1", ImageDescriptor.createFromURL(Snippet033CellEditorPerRowPre33.class.getClassLoader().getResource("org/eclipse/jface/snippets/dialogs/cancel.png")));
+		JFaceResources.getImageRegistry().put("IMG_2", ImageDescriptor.createFromURL(Snippet033CellEditorPerRowPre33.class.getClassLoader().getResource("org/eclipse/jface/snippets/dialogs/filesave.png")));
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		new Snippet033CellEditorPerRowPre33(shell);
