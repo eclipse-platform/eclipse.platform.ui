@@ -11,7 +11,6 @@
 
 package org.eclipse.compare.contentmergeviewer;
 
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import org.eclipse.compare.*;
@@ -29,8 +28,6 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * An abstract compare and merge viewer with two side-by-side content areas
@@ -264,7 +261,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	MergeViewerAction fLeftSaveAction;
 	MergeViewerAction fRightSaveAction;
 	
-	private IHandlerService fHandlerService;
+	private CompareHandlerService fHandlerService;
 
 	// SWT widgets
 	/* package */ Composite fComposite;
@@ -282,8 +279,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 	private Cursor fHSashCursor;
 	private Cursor fVSashCursor;
 	private Cursor fHVSashCursor;
-
-	private java.util.List fActivations = new ArrayList();
 
 	private ILabelProviderListener labelChangeListener = new ILabelProviderListener() {
 		public void labelProviderChanged(LabelProviderChangedEvent event) {
@@ -773,8 +768,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				
 		createControls(fComposite);
 		
-		IServiceLocator locator = getCompareConfiguration().getContainer().getServiceLocator();
-		fHandlerService= locator != null ? (IHandlerService)locator.getService(IHandlerService.class) : null;
+		fHandlerService= CompareHandlerService.createFor(getCompareConfiguration().getContainer(), fComposite.getShell());
 						
 		initializeToolbars(parent);
 	
@@ -802,7 +796,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					};
 				Utilities.initAction(fCopyLeftToRightAction, getResourceBundle(), "action.CopyLeftToRight."); //$NON-NLS-1$
 				tbm.appendToGroup("merge", fCopyLeftToRightAction); //$NON-NLS-1$
-				Utilities.registerAction(fHandlerService, fCopyLeftToRightAction, "org.eclipse.compare.copyAllLeftToRight", fActivations);	//$NON-NLS-1$
+				fHandlerService.registerAction(fCopyLeftToRightAction, "org.eclipse.compare.copyAllLeftToRight"); //$NON-NLS-1$
 			}
 			
 			if (cc.isLeftEditable()) {
@@ -814,7 +808,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					};
 				Utilities.initAction(fCopyRightToLeftAction, getResourceBundle(), "action.CopyRightToLeft."); //$NON-NLS-1$
 				tbm.appendToGroup("merge", fCopyRightToLeftAction); //$NON-NLS-1$
-				Utilities.registerAction(fHandlerService, fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft", fActivations);	//$NON-NLS-1$
+				fHandlerService.registerAction(fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft"); //$NON-NLS-1$
 			}
 			
 			Action a= new ChangePropertyAction(fBundle, getCompareConfiguration(), "action.EnableAncestor.", ICompareUIConstants.PROP_ANCESTOR_VISIBLE); //$NON-NLS-1$
@@ -900,8 +894,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		Utilities.deregisterActions(fHandlerService, fActivations);
-		fHandlerService= null;
+		fHandlerService.dispose();
 		
 		Object input= getInput();	
 		if (input instanceof ICompareInput) {

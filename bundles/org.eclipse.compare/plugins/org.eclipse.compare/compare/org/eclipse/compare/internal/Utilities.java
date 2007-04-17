@@ -24,7 +24,6 @@ import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
@@ -34,8 +33,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.handlers.IHandlerActivation;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -47,23 +44,6 @@ import com.ibm.icu.text.MessageFormat;
 public class Utilities {
 	
 	private static final IPath ICONS_PATH= new Path("$nl$/icons/full/"); //$NON-NLS-1$
-	
-	public static void registerAction(IHandlerService hs, IAction a, String id, List activations) {
-		if (hs != null) {
-			a.setActionDefinitionId(id);
-			IHandlerActivation activation = hs.activateHandler(id, new ActionHandler(a));
-			if (activation != null) {
-				activations .add(activation);
-			}
-		}
-	}
-	
-	public static void deregisterActions(IHandlerService handlerService, List activations) {
-		if (handlerService != null) {
-			handlerService.deactivateHandlers(activations);
-			activations.clear();
-		}
-	}
 	
 	public static IWorkbenchPartSite findSite(Control c) {
 		while (c != null && !c.isDisposed()) {

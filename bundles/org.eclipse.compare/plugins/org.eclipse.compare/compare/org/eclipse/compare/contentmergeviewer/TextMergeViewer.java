@@ -52,9 +52,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.texteditor.*;
 
 import com.ibm.icu.text.MessageFormat;
@@ -240,8 +238,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ActionContributionItem fCopyDiffLeftToRightItem;
 	private ActionContributionItem fCopyDiffRightToLeftItem;
 	
-	private IHandlerService fHandlerService;
-	private List fActivations = new ArrayList();
+	private CompareHandlerService fHandlerService;
 	
 	private boolean fSynchronizedScrolling= true;
 	private boolean fShowMoreInfo= false;
@@ -1709,8 +1706,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		Utilities.deregisterActions(fHandlerService, fActivations);
-		fHandlerService= null;
+		fHandlerService.dispose();
 		
 		Object input= getInput();
 		removeFromDocumentManager(ANCESTOR_CONTRIBUTOR, input);
@@ -3776,8 +3772,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	protected void createToolItems(ToolBarManager tbm) {
 
-		IServiceLocator locator = getCompareConfiguration().getContainer().getServiceLocator();
-		fHandlerService= locator != null ? (IHandlerService)locator.getService(IHandlerService.class) : null;
+		fHandlerService= CompareHandlerService.createFor(getCompareConfiguration().getContainer(), fLeft.getControl().getShell());
 		
 		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
 		Action ignoreAncestorAction= new Action() {
@@ -3834,7 +3829,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		Utilities.initAction(a, getResourceBundle(), "action.NextChange."); //$NON-NLS-1$
 		fNextChange= new ActionContributionItem(a);
 		tbm.appendToGroup("navigation", fNextChange); //$NON-NLS-1$
-		Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.selectNextChange", fActivations);	//$NON-NLS-1$
+		fHandlerService.registerAction(a, "org.eclipse.compare.selectNextChange");	//$NON-NLS-1$
 		
 		a= new Action() {
 			public void run() {
@@ -3846,7 +3841,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		Utilities.initAction(a, getResourceBundle(), "action.PrevChange."); //$NON-NLS-1$
 		fPreviousChange= new ActionContributionItem(a);
 		tbm.appendToGroup("navigation", fPreviousChange); //$NON-NLS-1$
-		Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.selectPreviousChange", fActivations);	//$NON-NLS-1$
+		fHandlerService.registerAction(a, "org.eclipse.compare.selectPreviousChange");	//$NON-NLS-1$
 
 		CompareConfiguration cc= getCompareConfiguration();
 		
@@ -3860,7 +3855,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fCopyDiffLeftToRightItem= new ActionContributionItem(a);
 			fCopyDiffLeftToRightItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffLeftToRightItem); //$NON-NLS-1$
-			Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.copyLeftToRight", fActivations);	//$NON-NLS-1$
+			fHandlerService.registerAction(a, "org.eclipse.compare.copyLeftToRight");	//$NON-NLS-1$
 		}
 		
 		if (cc.isLeftEditable()) {
@@ -3873,18 +3868,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fCopyDiffRightToLeftItem= new ActionContributionItem(a);
 			fCopyDiffRightToLeftItem.setVisible(true);
 			tbm.appendToGroup("merge", fCopyDiffRightToLeftItem); //$NON-NLS-1$
-			Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.copyRightToLeft", fActivations);	//$NON-NLS-1$
+			fHandlerService.registerAction(a, "org.eclipse.compare.copyRightToLeft");	//$NON-NLS-1$
 		}
 		
 		showWhitespaceAction = new ShowWhitespaceAction(new MergeSourceViewer[] {
 				fLeft, fRight, fAncestor
 		});
-		Utilities.registerAction(fHandlerService, showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, fActivations);
+		fHandlerService.registerAction(showWhitespaceAction, ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS);
 		
 		toggleLineNumbersAction = new TextEditorPropertyAction(CompareMessages.TextMergeViewer_16, new MergeSourceViewer[] {
 				fLeft, fRight, fAncestor
 		}, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
-		Utilities.registerAction(fHandlerService, toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE, fActivations);
+		fHandlerService.registerAction(toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
 		
 		IAction findAction = new Action() {
 			public void run() {
@@ -3895,7 +3890,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				}
 			}
 		};
-		Utilities.registerAction(fHandlerService, findAction, IWorkbenchActionDefinitionIds.FIND_REPLACE, fActivations);
+		fHandlerService.registerAction(findAction, IWorkbenchActionDefinitionIds.FIND_REPLACE);
 	}
 	
 	/* (non-Javadoc)
