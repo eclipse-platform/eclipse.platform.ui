@@ -33,6 +33,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	/**
 	 * Build kind constant (value 6) indicating a full build request.  A full
 	 * build discards all previously built state and builds all resources again.
+	 * Resource deltas are not applicable for this kind of build.
 	 * 
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
@@ -63,7 +64,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	/**
 	 * Build kind constant (value 15) indicating a clean build request.  A clean
 	 * build discards any additional state that has  been computed as a result of 
-	 * previous builds, and returns the project to a clean slate.
+	 * previous builds, and returns the project to a clean slate. Resource
+	 * deltas are not applicable for this kind of build.
 	 * 
 	 * @see IProject#build(int, IProgressMonitor)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
@@ -198,7 +200,8 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * Returns the resource delta recording the changes in the given project
 	 * since the last time this builder was run. <code>null</code> is returned
 	 * if no such delta is available. An empty delta is returned if no changes
-	 * have occurred. If <code>null</code> is returned, clients should assume
+	 * have occurred, or if deltas are not applicable for the current build kind.
+	 * If <code>null</code> is returned, clients should assume
 	 * that unspecified changes have occurred and take the appropriate action.
 	 * <p>
 	 * The system reserves the right to trim old state in an effort to conserve
