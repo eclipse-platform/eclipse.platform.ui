@@ -29,8 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.FindReplaceAction;
+import org.eclipse.ui.texteditor.*;
 /**
  * Extends the JFace SourceViewer with some convenience methods.
  */
@@ -385,8 +384,11 @@ public class MergeSourceViewer extends SourceViewer
 			return new TextOperationAction(DELETE, "org.eclipse.ui.edit.delete", true, false, false); //$NON-NLS-1$
 		if (SELECT_ALL_ID.equals(actionId))
 			return new TextOperationAction(SELECT_ALL, "org.eclipse.ui.edit.selectAll", false, false, false); //$NON-NLS-1$
-		if (FIND_ID.equals(actionId))
-			return new FindReplaceAction(fResourceBundle, "Editor.FindReplace.", getControl().getShell(), this.getFindReplaceTarget()); //$NON-NLS-1$
+		if (FIND_ID.equals(actionId)) {
+			FindReplaceAction findReplaceAction = new FindReplaceAction(fResourceBundle, "Editor.FindReplace.", getControl().getShell(), this.getFindReplaceTarget()); //$NON-NLS-1$
+			findReplaceAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+			return findReplaceAction;
+		}
 		return null;
 	}
 	

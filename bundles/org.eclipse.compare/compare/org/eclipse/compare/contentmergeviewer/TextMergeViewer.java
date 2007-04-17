@@ -123,7 +123,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		ActionFactory.PASTE.getId(),
 		ActionFactory.DELETE.getId(),
 		ActionFactory.SELECT_ALL.getId(),
-		ActionFactory.SAVE.getId()
+		ActionFactory.SAVE.getId(),
+		ActionFactory.FIND.getId()
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -133,7 +134,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
-		MergeSourceViewer.SAVE_ID
+		MergeSourceViewer.SAVE_ID,
+		MergeSourceViewer.FIND_ID
 	};
 					
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources"; //$NON-NLS-1$
@@ -3880,17 +3882,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fLeft, fRight, fAncestor
 		}, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
 		fHandlerService.registerAction(toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
-		
-		IAction findAction = new Action() {
-			public void run() {
-				if (fFocusPart != null) {
-					IAction action = fFocusPart.getAction(MergeSourceViewer.FIND_ID);
-					if (action != null)
-						action.run();
-				}
-			}
-		};
-		fHandlerService.registerAction(findAction, IWorkbenchActionDefinitionIds.FIND_REPLACE);
 	}
 	
 	/* (non-Javadoc)
