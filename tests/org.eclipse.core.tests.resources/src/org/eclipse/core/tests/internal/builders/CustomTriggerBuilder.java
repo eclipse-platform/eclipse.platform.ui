@@ -9,8 +9,8 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.Map;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
+import junit.framework.Assert;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -48,6 +48,8 @@ public class CustomTriggerBuilder extends TestBuilder {
 	protected void clean(IProgressMonitor monitor) throws CoreException {
 		super.clean(monitor);
 		triggerForLastBuild = IncrementalProjectBuilder.CLEAN_BUILD;
+		IResourceDelta delta = getDelta(getProject());
+		Assert.assertNull(delta);
 	}
 
 	public void clearBuildTrigger() {

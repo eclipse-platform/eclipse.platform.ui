@@ -138,8 +138,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			// If no tree is available we have to do a full build
 			if (!clean && currentLastBuiltTree == null)
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
-			// Grab a pointer to the current state before computing the delta
-			currentTree = trigger == IncrementalProjectBuilder.FULL_BUILD ? null : workspace.getElementTree();
+			// For incremental builds, grab a pointer to the current state before computing the delta
+			currentTree = ((trigger == IncrementalProjectBuilder.FULL_BUILD) || clean) ? null : workspace.getElementTree();
 			int depth = -1;
 			try {
 				//short-circuit if none of the projects this builder cares about have changed.
