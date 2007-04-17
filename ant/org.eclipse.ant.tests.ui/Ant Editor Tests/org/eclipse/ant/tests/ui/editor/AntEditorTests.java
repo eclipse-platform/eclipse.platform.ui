@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "property".equals(selection.getText()));
+		assertEquals("Selection is not correct", "property", selection.getText());
     }
     
     public void testPatternSetHover() throws PartInitException, BadLocationException {
@@ -124,14 +124,14 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "taskdef".equals(selection.getText()));
+		assertEquals("Selection is not correct", "taskdef", selection.getText());
 		
 		offset = getOffsetWithinLine(editor, 9, 10);
 		editor.selectAndReveal(offset, 3);
 		
 		editor.openReferenceElement();
 		selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "taskdef".equals(selection.getText()));
+		assertEquals("Selection is not correct", "taskdef", selection.getText());
     }
     
     public void testMacroDefOpenDeclaration() throws PartInitException, BadLocationException {
@@ -142,14 +142,14 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "macrodef".equals(selection.getText()));
+		assertEquals("Selection is not correct", "macrodef", selection.getText());
 		
 		offset = getOffsetWithinLine(editor, 14, 9);
 		editor.selectAndReveal(offset, 1);
 		
 		editor.openReferenceElement();
 		selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "macrodef".equals(selection.getText()));
+		assertEquals("Selection is not correct", "macrodef", selection.getText());
     }
     
     /**
@@ -163,7 +163,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "macrodef".equals(selection.getText()));
+		assertEquals("Selection is not correct:", "macrodef", selection.getText());
     }
     
     /**
@@ -177,7 +177,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "macrodef".equals(selection.getText()));
+		assertEquals("Selection is not correct", "macrodef", selection.getText());
     }
     
     public void testMacroDefAttributeOpenDeclaration() throws PartInitException, BadLocationException {
@@ -188,7 +188,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "attribute".equals(selection.getText()));
+		assertEquals("Selection is not correct", "attribute", selection.getText());
     }
     
     public void testRefOpenDeclaration() throws PartInitException, BadLocationException {
@@ -199,7 +199,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "path".equals(selection.getText()));
+		assertEquals("Selection is not correct", "path", selection.getText());
     }
     
     public void testTargetOpenDeclaration() throws PartInitException, BadLocationException {
@@ -210,7 +210,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		
 		editor.openReferenceElement();
 		ITextSelection selection= (ITextSelection) editor.getSelectionProvider().getSelection();
-		assertTrue("Selection is not correct: " + selection.getText(), "target".equals(selection.getText()));
+		assertEquals("Selection is not correct", "target", selection.getText());
     }
     
     public void testHoverRegionWithSpaces() throws PartInitException, BadLocationException {
