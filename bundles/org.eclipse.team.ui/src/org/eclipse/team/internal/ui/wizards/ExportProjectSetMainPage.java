@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Dempsey <pd@bandxi.com> - Bug 177813 Export Team Project Set does not updateEnablement() when switching bewteen Project and Working sets
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
@@ -241,10 +242,12 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 					book.showPage(workingSetPage.getControl());
 					selectedPage = workingSetPage;
 					workingSetPage.refresh();
+					workingSetPage.updateEnablement();
 				}
 				else{
 					book.showPage(projectPage.getControl());
 					selectedPage = projectPage;
+					projectPage.updateEnablement();
 				}
 			}
 		});
@@ -620,9 +623,20 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		}
 		
 		private void updateEnablement() {
-			boolean complete;
+			boolean complete = ((selectedProjects.size() != 0) && (selectedWorkingSet.size() != 0));
 			
-			complete = ((selectedProjects.size() != 0) && (selectedWorkingSet.size() != 0));
+			// check if there is at least one exportable project selected 
+			if (complete) {
+				complete = false;
+				for (Iterator iterator = selectedProjects.iterator(); iterator
+						.hasNext();) {
+					IProject selectedProject = (IProject) iterator.next();
+					if (isProjectExportable(selectedProject)) {
+						complete = true;
+						break;
+					}
+				}
+			}
 			
 			if (complete) {
 				setMessage(null);
