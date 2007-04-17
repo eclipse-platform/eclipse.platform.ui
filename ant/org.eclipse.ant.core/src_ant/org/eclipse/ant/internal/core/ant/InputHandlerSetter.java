@@ -40,5 +40,6 @@ class InputHandlerSetter {
 			}
 		}
 		project.setInputHandler(handler);
+		project.setProjectReference(handler);
 	}
 }
