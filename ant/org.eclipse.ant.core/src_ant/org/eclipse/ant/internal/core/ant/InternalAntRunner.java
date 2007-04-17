@@ -568,7 +568,8 @@ public class InternalAntRunner {
             //needs to occur after processCommandLine(List)
 			if (allowInput && (inputHandlerClassname != null && inputHandlerClassname.length() > 0)) {
 				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
-					getCurrentProject().setDefaultInputStream(originalIn);
+					//https://bugs.eclipse.org/bugs/show_bug.cgi?id=182577
+					//getCurrentProject().setDefaultInputStream(originalIn);
 					System.getProperties().remove("eclipse.ant.noInput");  //$NON-NLS-1$
 				}
 			} else {
