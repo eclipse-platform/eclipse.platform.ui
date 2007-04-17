@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
-
  
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +42,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
-
 
 /**
  * Proxy to a launch shortcut extension
@@ -383,6 +381,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * Returns the perspectives this shortcut is registered for.
 	 * 
 	 * @return list of Strings representing perspective identifiers 
+	 * @deprecated The use of the perspectives element has been deprecated since 3.1.
 	 */
 	public List getPerspectives() {
 		if (fPerspectives == null) {

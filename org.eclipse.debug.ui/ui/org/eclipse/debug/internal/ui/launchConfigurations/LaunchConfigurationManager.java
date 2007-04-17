@@ -814,6 +814,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @param category the category for the shortcut
 	 * @return all launch shortcuts defined for the given perspective,
 	 * empty list if none.
+	 * @deprecated the use of perspectives for launch shortcuts has been 
+	 * deprecated since 3.1, use a contextualLaunch element instead
 	 */
 	public List getLaunchShortcuts(String perpsective, String category) {
 		if (fLaunchShortcutsByPerspective == null) {
