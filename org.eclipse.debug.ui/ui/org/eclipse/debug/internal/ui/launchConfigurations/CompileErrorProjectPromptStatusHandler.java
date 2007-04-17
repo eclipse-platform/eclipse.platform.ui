@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,20 +56,16 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			}
 		}	
 		Shell shell = DebugUIPlugin.getShell();
-		
 		StringBuffer projectMessage = new StringBuffer();
+		//we need to limit this
 		for (int i = 0; i < projects.size(); i++) {
 			if (i > 0) {
 				projectMessage.append(", "); //$NON-NLS-1$
 			}
 			projectMessage.append(((IProject)projects.get(i)).getName());
 		}
-		String plural = ""; //$NON-NLS-1$
-		if(projects.size() > 1) {
-			plural = "s"; //$NON-NLS-1$
-		}
-		String title =  MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0, new String[] {plural}); 
-		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{plural, projectMessage.toString()}); 
+		String title =  LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
+		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage.toString()}); 
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
