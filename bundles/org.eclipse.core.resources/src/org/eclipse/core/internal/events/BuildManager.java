@@ -138,6 +138,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			// If no tree is available we have to do a full build
 			if (!clean && currentLastBuiltTree == null)
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
+			//don't build if this builder doesn't respond to the given trigger
+			if (!builder.getCommand().isBuilding(trigger))
+				return;
 			// For incremental builds, grab a pointer to the current state before computing the delta
 			currentTree = ((trigger == IncrementalProjectBuilder.FULL_BUILD) || clean) ? null : workspace.getElementTree();
 			int depth = -1;
@@ -188,11 +191,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
 				BuildCommand command = (BuildCommand) commands[i];
-				//don't build if this builder doesn't respond to the given trigger
-				if (!command.isBuilding(trigger)) {
-					monitor.worked(1);
-					return;
-				}
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 				IncrementalProjectBuilder builder = getBuilder(project, command, i, status);
 				if (builder != null)
@@ -269,9 +267,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				hookStartBuild(trigger);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 				ICommand command = getCommand(project, builderName, args);
-				//don't build if this builder doesn't respond to the given trigger
-				if (!command.isBuilding(trigger))
-					return Status.OK_STATUS;
 				try {
 					IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
 					if (builder != null)
