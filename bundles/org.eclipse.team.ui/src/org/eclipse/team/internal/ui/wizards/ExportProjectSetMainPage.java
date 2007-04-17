@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
@@ -91,7 +92,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				List projectList = new ArrayList();
 				IProject[] workspaceProjects = root.getProjects();
 				for (int i = 0; i < workspaceProjects.length; i++) {
-					if (RepositoryProvider.getProvider(workspaceProjects[i]) != null) {
+					if (isProjectExportable(workspaceProjects[i])) {
 						projectList.add(workspaceProjects[i]);
 					}
 				}
@@ -138,7 +139,19 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 	
 	};
 	
-	private static IProject[] getProjectsForObject(Object object) {
+	private class ExportProjectSetLabelProvider extends WorkbenchLabelProvider {
+
+		public Color getForeground(Object element) {
+			if (element instanceof IProject
+					&& !isProjectExportable((IProject) element)) {
+				return Display.getCurrent().getSystemColor(
+						SWT.COLOR_WIDGET_NORMAL_SHADOW);
+			}
+			return super.getForeground(element);
+		}
+	}
+	
+	private IProject[] getProjectsForObject(Object object) {
 		ResourceMapping resourceMapping = Utils.getResourceMapping(object);
 		if (resourceMapping != null) {
 			return resourceMapping.getProjects();
@@ -150,7 +163,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		return null;
 	}
 	
-	private static IProject[] getProjectsForAdaptables(IAdaptable[] adaptable) {
+	private IProject[] getProjectsForAdaptables(IAdaptable[] adaptable) {
 		Set projectSet = new HashSet();
 		for (int i = 0; i < adaptable.length; i++) {
 			IProject[] projects = getProjectsForObject(adaptable[i]);
@@ -175,6 +188,10 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		}
 		return false;
 	}
+	
+	private boolean isProjectExportable(IProject project) {
+		return RepositoryProvider.getProvider(project) != null;
+	} 
 	
 	public ExportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
@@ -449,7 +466,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				data.heightHint = 300;
 				table.setLayoutData(data);
 				tableViewer.setContentProvider(new ProjectContentProvider());
-				tableViewer.setLabelProvider(new WorkbenchLabelProvider());
+				tableViewer.setLabelProvider(new ExportProjectSetLabelProvider());
 			}
 		
 		private void addWorkingSetSection(Composite projectComposite) {
@@ -642,12 +659,14 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 					tempSet.addAll(Arrays.asList(projects));
 			}
 			
-			selectedProjects.removeAll(tempSet);
-			for (Iterator iterator = tempSet.iterator(); iterator.hasNext();) {
-				Object element = (Object) iterator.next();
-				referenceCountProjects.remove(element);
+			if (!tempSet.isEmpty()) {
+				selectedProjects.removeAll(tempSet);
+				for (Iterator iterator = tempSet.iterator(); iterator.hasNext();) {
+					Object element = (Object) iterator.next();
+					referenceCountProjects.remove(element);
+				}
+				selectedProjects.addAll(referenceCountProjects);
 			}
-			selectedProjects.addAll(referenceCountProjects);
 		}
 		
 		private void addProjects(IAdaptable[] elements) {
