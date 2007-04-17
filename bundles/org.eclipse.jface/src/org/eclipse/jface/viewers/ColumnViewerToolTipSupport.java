@@ -18,6 +18,7 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
@@ -112,9 +113,16 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 			}
 
 			CellLabelProvider labelProvider = viewPart.getLabelProvider();
-
-			if (labelProvider.useNativeToolTip(element)) {
-				String text = labelProvider.getToolTipText(element);
+			boolean useNative = labelProvider.useNativeToolTip(element);
+			
+			String text = labelProvider.getToolTipText(element);
+			Image img = null;
+			
+			if( ! useNative ) {
+				img = labelProvider.getToolTipImage(element);
+			}
+			
+			if( useNative || (text == null && img == null ) ) {
 				viewer.getControl().setToolTipText(text);
 				rv = false;
 			} else {
@@ -128,10 +136,16 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 				} else {
 					setShift(new Point(shift.x, shift.y));
 				}
+				
 				setData(LABEL_PROVIDER_KEY, labelProvider);
 				setData(ELEMENT_KEY, element);
 
-				updateData();
+				setText(text);
+				setImage(img);
+				setStyle(labelProvider.getToolTipStyle(element));
+				setForegroundColor(labelProvider.getToolTipForegroundColor(element));
+				setBackgroundColor(labelProvider.getToolTipBackgroundColor(element));
+				setFont(labelProvider.getToolTipFont(element));
 				
 				// Check if at least one of the values is set
 				rv = getText(event) != null || getImage(event) != null;
@@ -139,18 +153,6 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 		}
 
 		return rv;
-	}
-
-	private void updateData() {
-		CellLabelProvider labelProvider = (CellLabelProvider) getData(LABEL_PROVIDER_KEY);
-		Object element = getData(ELEMENT_KEY);
-
-		setText(labelProvider.getToolTipText(element));
-		setStyle(labelProvider.getToolTipStyle(element));
-		setForegroundColor(labelProvider.getToolTipForegroundColor(element));
-		setBackgroundColor(labelProvider.getToolTipBackgroundColor(element));
-		setFont(labelProvider.getToolTipFont(element));
-		setImage(labelProvider.getToolTipImage(element));
 	}
 
 	protected void afterHideToolTip(Event event) {

@@ -60,6 +60,9 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	/**
 	 * Get the image displayed in the tool tip for object.
 	 * 
+	 * <p><b>if both methods {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)}
+	 * both return <code>null</code> the control is set back to standard behaviour</b></p>
+	 * 
 	 * @param object
 	 *            the element for which the tool tip is shown
 	 * @return {@link Image} or <code>null</code> if there is not image.
@@ -72,6 +75,9 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	/**
 	 * Returns the tool tip text for the given element and column index, or
 	 * <code>null</code> if a custom tool tip should not be displayed.
+	 * 
+	 * <p><b>if both methods {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)}
+	 * both return <code>null</code> the control is set back to standard behaviour</b></p>
 	 * 
 	 * @param element
 	 *            the element for which the tool tip is shown
@@ -141,8 +147,10 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	 * only the value from {@link #getToolTipText(Object)} is used all other features from
 	 * custom tooltips are not supported.
 	 *  
-	 * <p>To reset the control to native behaviour you should return true from the method
-	 * and <code>null</code> from {@link #getToolTipText(Object)}</p>
+	 * <p>To reset the control to native behaviour you should return <code>true</code> from this method
+	 * and <code>null</code> from {@link #getToolTipText(Object)} or <code>null</code> 
+	 * from {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)} 
+	 * at the same time</p>
 	 * 
 	 * @param object
 	 *            the {@link Object} for which the tool tip is shown
