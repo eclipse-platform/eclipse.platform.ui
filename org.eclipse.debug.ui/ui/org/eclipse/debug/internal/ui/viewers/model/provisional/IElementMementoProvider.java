@@ -14,12 +14,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
  * Used to save and restore viewer selection/expansion state. A memento
  * provider adapter should be available from a viewer input element
  * in order to support viewer state save/restore.
- * <p>
- * Each element in a viewer may provide its own memento provider. The
- * input element's memento provider is used for elements that do not provide
- * their own.
- * </p>
- * 
+ *
  * @since 3.3
  */
 public interface IElementMementoProvider {

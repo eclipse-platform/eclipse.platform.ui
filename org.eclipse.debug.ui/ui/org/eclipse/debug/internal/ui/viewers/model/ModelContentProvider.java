@@ -14,12 +14,10 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -266,7 +264,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								job.schedule();
 							}
 						} catch (IOException e) {
-							// TODO log
+							DebugUIPlugin.log(e);
 						}
 					}
 				}
@@ -320,12 +318,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				Object element = delta.getElement();
 				Object potentialMatch = path.getSegment(depth - 1);
 				if (element instanceof IMemento) {
-					IElementMementoProvider provider = getViewerStateAdapter(element);
-					if (provider == null) {
-						provider = defaultProvider;
-					}
-					if (provider != null) {
-						provider.compareElements(new IElementCompareRequest[]{
+					if (defaultProvider != null) {
+						defaultProvider.compareElements(new IElementCompareRequest[]{
 								new ElementCompareRequest(ModelContentProvider.this,
 										potentialMatch, path, (IMemento) element, (ModelDelta)delta)});
 					}
@@ -371,10 +365,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		final IMementoManager manager = new IMementoManager() {
 		
 			/**
-			 * Maps element memento provider to list of memento requests
+			 * list of memento requests
 			 */
-			private Map requestMap = new HashMap();
-			private Set allRequests = new HashSet();
+			private List requests = new ArrayList();
 			private boolean abort = false; 
 			
 			/* (non-Javadoc)
@@ -383,27 +376,25 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			public synchronized void requestComplete(IElementMementoRequest request) {
 				if (!abort) {
 					if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
-						allRequests.remove(request);
-						if (allRequests.isEmpty()) {
-							requestMap.clear();
+						requests.remove(request);
+						if (requests.isEmpty()) {
 							XMLMemento keyMemento = (XMLMemento) rootDelta.getElement();
 							StringWriter writer = new StringWriter();
 							try {
 								keyMemento.save(writer);
 								fViewerStates.put(writer.toString(), rootDelta);
 							} catch (IOException e) {
-								// TODO log
+								DebugUIPlugin.log(e);
 							}
 						}
 					} else {
 						abort = true;
-						Iterator iterator = allRequests.iterator();
+						Iterator iterator = requests.iterator();
 						while (iterator.hasNext()) {
 							IElementMementoRequest req = (IElementMementoRequest) iterator.next();
 							req.cancel();
 						}
-						requestMap.clear();
-						allRequests.clear();
+						requests.clear();
 					}
 				}
 			}
@@ -411,32 +402,15 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#processReqeusts()
 			 */
-			public void processReqeusts() {
-				Iterator iterator = requestMap.entrySet().iterator();
-				while (iterator.hasNext()) {
-					Entry entry = (Entry) iterator.next();
-					IElementMementoProvider provider = (IElementMementoProvider) entry.getKey();
-					List list = (List) entry.getValue();
-					provider.encodeElements((IElementMementoRequest[]) list.toArray(new IElementMementoRequest[list.size()]));
-				}
+			public synchronized void processReqeusts() {
+				defaultProvider.encodeElements((IElementMementoRequest[]) requests.toArray(new IElementMementoRequest[requests.size()]));
 			}
 		
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#addRequest(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest)
 			 */
 			public synchronized void addRequest(IElementMementoRequest request) {
-				if (allRequests.add(request)) {
-					IElementMementoProvider provider = getViewerStateAdapter(request.getElement());
-					if (provider == null) {
-						provider = defaultProvider;
-					}
-					List list = (List)requestMap.get(provider);
-					if (list == null) {
-						list = new ArrayList();
-						requestMap.put(provider, list);
-					}
-					list.add(request);
-				}
+				requests.add(request);
 			}
 		
 		};
