@@ -239,6 +239,12 @@
    </filesystem>
 </extension>
 <extension
+      point="org.eclipse.core.filesystem.filesystems">
+   <filesystem scheme="broken">
+      <run class="org.eclipse.core.tests.internal.filesystem.broken.BrokenFileSystem"/>
+   </filesystem>
+</extension>
+<extension
       id="modelProvider"
       point="org.eclipse.core.resources.modelProviders">
    <modelProvider

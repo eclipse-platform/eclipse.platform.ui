@@ -12,6 +12,8 @@ package org.eclipse.core.tests.filesystem;
 
 import java.io.File;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -48,6 +50,32 @@ public class FileStoreTest extends LocalStoreTest {
 
 	private IFileStore createDir(String string, boolean clear) throws CoreException {
 		return createDir(EFS.getFileSystem(EFS.SCHEME_FILE).getStore(new Path(string)), clear);
+	}
+	
+	/**
+	 * Tests behaviour of IFileStore#fetchInfo when underlying file system
+	 * throws exceptions.
+	 */
+	public void testBrokenFetchInfo() {
+		IFileStore broken = null;
+		try {
+			broken = EFS.getStore(new URI("broken://a/b/c"));
+		} catch (CoreException e) {
+			fail("0.98", e);
+		} catch (URISyntaxException e) {
+			fail("0.99", e);
+		}
+		//no-arg fetch info should return non-existent file
+		IFileInfo info = broken.fetchInfo();
+		assertTrue("1.0", !info.exists());
+		
+		//two-arg fetchInfo should throw exception
+		try {
+			info = broken.fetchInfo(EFS.NONE, getMonitor());
+			fail("2.0");
+		} catch (CoreException e) {
+			//expected
+		}
 	}
 
 	/**

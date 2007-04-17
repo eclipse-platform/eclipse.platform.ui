@@ -157,11 +157,18 @@ public interface IFileStore extends IAdaptable {
 
 	/**
 	 * Fetches and returns information about this file from the underlying file
-	 * system.
+	 * system.  Returns a file info representing a non-existent file if the underlying
+	 * file system could not be contacted.
 	 * <p>
-	 * This is a convenience method, fully equivalent to 
+	 * This is a convenience method, similar to: 
 	 * <code>fetchInfo(EFS.NONE, null)</code>.
+	 * This method is intended as a convenience when dealing with fast,
+	 * highly available file systems such as the local file system.  Clients that
+	 * require progress reporting and error handling, for example when dealing
+	 * with remote file systems, should use {@link #fetchInfo(int, IProgressMonitor)}
+	 * instead.
 	 * </p>
+	 * 
 	 * @return A structure containing information about this file.
 	 * @see #fetchInfo(int, IProgressMonitor)
 	 */

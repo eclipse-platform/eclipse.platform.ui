@@ -274,7 +274,10 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		try {
 			return fetchInfo(EFS.NONE, null);
 		} catch (CoreException e) {
-			throw new RuntimeException(e);
+			//there was an error contacting the file system, so treat it as non-existent file
+			FileInfo result = new FileInfo(getName());
+			result.setExists(false);
+			return result;
 		}
 	}
 
