@@ -2450,7 +2450,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		    			LayoutPart[] editors = ((EditorSashContainer)kids[i]).getChildren();
 		    			for (int j = 0; j < editors.length && !zoomed; j++) {
 							if (editors[j] instanceof EditorStack) {
-								zoomed = ((EditorStack)kids[i]).getState() == IStackPresentationSite.STATE_MAXIMIZED;
+								zoomed = ((EditorStack)editors[j]).getState() == IStackPresentationSite.STATE_MAXIMIZED;
 							}
 		    			}
 					}
