@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Eugene Kuleshov <eu@md.pp.ru> - Bug 173959 add mechanism for navigating from team annotation to corresponding task
  *******************************************************************************/
-
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
@@ -19,12 +19,17 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.LineRange;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -42,6 +47,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 import com.ibm.icu.text.DateFormat;
@@ -253,6 +259,23 @@ public class ShowAnnotationOperation extends CVSOperation {
 
 		final CommitterColors colors= CommitterColors.getDefault();
 		RevisionInformation info= new RevisionInformation();
+
+    class AnnotationControlCreator implements IInformationControlCreator {
+      private final String statusFieldText;
+
+      public AnnotationControlCreator(String statusFieldText) {
+        this.statusFieldText = statusFieldText;
+      }
+
+      public IInformationControl createInformationControl(Shell parent) {
+        return new SourceViewerInformationControl(parent, SWT.TOOL,
+            SWT.NONE, JFaceResources.DEFAULT_FONT, statusFieldText);
+      }
+    }
+		
+    info.setHoverControlCreator(new AnnotationControlCreator(EditorsUI.getTooltipAffordanceString()));
+    info.setInformationPresenterControlCreator(new AnnotationControlCreator(null));
+		
 		HashMap sets= new HashMap();
 		List annotateBlocks= listener.getCvsAnnotateBlocks();
 		for (Iterator blocks= annotateBlocks.iterator(); blocks.hasNext();) {
@@ -269,8 +292,9 @@ public class ShowAnnotationOperation extends CVSOperation {
 					
 					public Object getHoverInfo() {
 						if (entry != null)
-							return "<b>" + entry.getAuthor() + " " + entry.getRevision() + " " + DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(entry.getDate()) + "</b><p>" + //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-							entry.getComment() + "</p>"; //$NON-NLS-1$
+							return entry.getAuthor() + " " + entry.getRevision() + " " + DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(entry.getDate()) //$NON-NLS-1$ //$NON-NLS-2$
+							  + "\n\n" + entry.getComment(); //$NON-NLS-1$
+							
 						return block.toString().substring(0, block.toString().indexOf(" (")); //$NON-NLS-1$
 					}
 					
