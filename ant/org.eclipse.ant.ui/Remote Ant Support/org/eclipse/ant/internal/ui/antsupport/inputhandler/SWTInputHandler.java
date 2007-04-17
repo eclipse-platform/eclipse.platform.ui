@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,6 +139,24 @@ public class SWTInputHandler extends DefaultInputHandler {
 	        });
         }
 		
+    	String value = null;
+		try {
+			fRequest.getClass().getMethod("getDefaultValue", new Class[0]); //$NON-NLS-1$
+			value = fRequest.getDefaultValue();
+		} catch (SecurityException e) {
+		} catch (NoSuchMethodException e) {
+			//pre Ant 1.7.0
+		}
+		
+		if (value != null) {
+			if (fCombo != null) {
+				fCombo.select(fCombo.indexOf(value));
+			} else {
+				fText.setText(value);
+				fText.selectAll();
+			}
+		}
+		
 		fErrorMessageText = new Text(fDialog, SWT.READ_ONLY);
         fErrorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
         fErrorMessageText.setBackground(display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -203,21 +221,12 @@ public class SWTInputHandler extends DefaultInputHandler {
 		fOkButton.addListener(SWT.Selection, listener);
 		fDialog.setDefaultButton(fOkButton);
 		cancel.addListener(SWT.Selection, listener);
-        //do this here because setting the text will set enablement on the ok
-        // button
+        //do this here because setting the text will set enablement on the ok button
 		if (fRequest instanceof MultipleChoiceInputRequest) {
 			fCombo.setFocus();
 		} else {
 			fText.setFocus();
 		}
-        //TODO default value from the input request which appears to not be currently possible 
-        //with the Ant implementation
-        //http://issues.apache.org/bugzilla/show_bug.cgi?id=28621 
-		//to be addressed via https://bugs.eclipse.org/bugs/show_bug.cgi?id=152067 with Ant1.7
-        //if (value != null) {
-          //  text.setText(value);
-           // text.selectAll();
-        //}
     }
     
     private void setButtonLayoutData(Button button) {

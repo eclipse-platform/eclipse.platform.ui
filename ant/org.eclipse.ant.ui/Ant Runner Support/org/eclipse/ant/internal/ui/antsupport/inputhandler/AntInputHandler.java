@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,15 @@ public class AntInputHandler extends DefaultInputHandler {
 					}
 				};
 		
-				InputDialog dialog= new InputDialog(null, title, prompt, null, validator) {
+				String initialValue = null;
+				try {
+					request.getClass().getMethod("getDefaultValue", new Class[0]); //$NON-NLS-1$
+					initialValue = request.getDefaultValue();
+				} catch (SecurityException e) {
+				} catch (NoSuchMethodException e) {
+					//pre Ant 1.7.0
+				}
+				InputDialog dialog= new InputDialog(null, title, prompt, initialValue, validator) {
                     protected int getShellStyle() {
                         return super.getShellStyle() | SWT.RESIZE;
                     }
