@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											 - Fix for bug 174355
+ *     											 - Fix for bug 174355, 171126
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -227,7 +227,7 @@ public class TreeViewerRow extends ViewerRow {
 				if( sameLevel ) {
 					itemBefore = parentItem.getItem(previousIndex);
 				} else {
-					itemBefore = findLowestLeaf(parentItem.getItem(previousIndex));
+					itemBefore = findLastVisibleItem(parentItem.getItem(previousIndex));
 				}
 			} else {
 				itemBefore = parentItem;
@@ -244,23 +244,13 @@ public class TreeViewerRow extends ViewerRow {
 	private TreeItem findLastVisibleItem(TreeItem parentItem) {
 		TreeItem rv = parentItem;
 		
-		if( rv.getExpanded() && rv.getItemCount() > 0 ) {
-			rv = findLastVisibleItem(rv.getItem(rv.getItemCount()-1));
+		while( rv.getExpanded() && rv.getItemCount() > 0 ) {
+			rv = rv.getItem(rv.getItemCount()-1);
 		}
 		
 		return rv;
 	}
-	
-	private TreeItem findLowestLeaf(TreeItem item) {
-		TreeItem rv = item;
 		
-		if( rv.getExpanded() && rv.getItemCount() > 0 ) {
-			rv = findLowestLeaf(rv.getItem(rv.getItemCount()-1));
-		}
-		
-		return rv;
-	}
-	
 	private TreeItem findNextItem(TreeItem item) {
 		TreeItem rv = null;
 		Tree tree = item.getParent();
