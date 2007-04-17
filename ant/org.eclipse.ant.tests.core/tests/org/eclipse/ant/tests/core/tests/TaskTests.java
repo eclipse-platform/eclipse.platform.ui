@@ -74,7 +74,7 @@ public class TaskTests extends AbstractAntTest {
 		try {
 			run("CustomTask.xml");
 		} catch (CoreException ce) {
-			assertTrue("Exception from undefined task is incorrect", ce.getMessage().endsWith("as this is not an Ant bug."));
+			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place."));
 			return;
 		} finally {
 			restorePreferenceDefaults();	
@@ -133,7 +133,7 @@ public class TaskTests extends AbstractAntTest {
 		try {
 			run("ExtensionPointTask.xml");
 		} catch (CoreException ce) {
-			assertTrue("Exception from undefined task is incorrect", ce.getMessage().endsWith("as this is not an Ant bug."));
+			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place."));
 			return;
 		} finally {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);

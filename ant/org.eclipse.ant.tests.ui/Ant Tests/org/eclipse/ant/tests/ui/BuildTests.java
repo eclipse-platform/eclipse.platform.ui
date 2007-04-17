@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,9 +51,9 @@ public class BuildTests extends AbstractAntUIBuildTest {
    * stack trace. Bug 82833
    */
   public void testVerboseStackTrace() throws CoreException {      
-      launch("failingTarget", "-k -verbose");
-      assertTrue("Incorrect message:"  + ConsoleLineTracker.getMessage(16), "BUILD FAILED".equals(ConsoleLineTracker.getMessage(16)));
-      assertTrue("Incorrect message:"  + ConsoleLineTracker.getMessage(19), ConsoleLineTracker.getMessage(19).startsWith("\tat org.apache.tools.ant.taskdefs.Zip"));
+	  launch("failingTarget", "-k -verbose");
+      assertEquals("Incorrect message", "BUILD FAILED", ConsoleLineTracker.getMessage(17));
+      assertTrue("Incorrect message" + ConsoleLineTracker.getMessage(20), ConsoleLineTracker.getMessage(20).startsWith("\tat org.apache.tools.ant.taskdefs.Zip"));
   }
   
   /**
