@@ -17,7 +17,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 public class ShowWhitespaceAction extends TextEditorPropertyAction {
 
-	private Map painters = new HashMap();
+	private Map fPainters;
 	private boolean isWhitespaceShowing;
 	
 	public ShowWhitespaceAction(MergeSourceViewer[] viewers) {
@@ -32,10 +32,17 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 		}
 	}
 	
+	private synchronized Map getPainters() {
+		if (fPainters == null)
+			fPainters = new HashMap();
+		return fPainters;
+	}
+	
 	private void showWhitespace() {
 		if (isWhitespaceShowing)
 			return;
 		try {
+			Map painters = getPainters();
 			MergeSourceViewer[] viewers = getViewers();
 			for (int i = 0; i < viewers.length; i++) {
 				MergeSourceViewer viewer = viewers[i];
@@ -49,6 +56,7 @@ public class ShowWhitespaceAction extends TextEditorPropertyAction {
 	}
 	
 	private void hideWhitespace() {
+		Map painters = getPainters();
 		for (Iterator iterator = painters.keySet().iterator(); iterator.hasNext();) {
 			MergeSourceViewer viewer = (MergeSourceViewer) iterator.next();
 			WhitespaceCharacterPainter painter = (WhitespaceCharacterPainter)painters.get(viewer);
