@@ -145,8 +145,17 @@ public final class ObservableSetContentProvider implements
 		this.viewer = viewer;
 
 		if (!(viewer instanceof TableViewer || viewer instanceof AbstractListViewer)) {
-			throw new IllegalArgumentException(
-					"This content provider only works with TableViewer or AbstractListViewer"); //$NON-NLS-1$
+			// use reflection to avoid 3.3 dependency:
+			Class abstractTableViewerClass = null;
+			try {
+				abstractTableViewerClass = Class.forName("org.eclipse.jface.viewers.AbstractTableViewer"); //$NON-NLS-1$
+			} catch(Exception ex) {
+				// ignore, we might be running against 3.2
+			}
+			if (abstractTableViewerClass == null || !abstractTableViewerClass.isInstance(viewer)) {
+				throw new IllegalArgumentException(
+					"This content provider only works with (Abstract)TableViewer or AbstractListViewer"); //$NON-NLS-1$
+			}
 		}
 
 		if (newInput != null && !(newInput instanceof IObservableSet)) {
