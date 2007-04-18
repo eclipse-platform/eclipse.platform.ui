@@ -1035,7 +1035,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void registerContextMenu(MenuManager menu, ISelectionProvider selectionProvider) {
-		fContainer.registerContextMenu(menu, selectionProvider);
+		if (fContainer != null)
+			fContainer.registerContextMenu(menu, selectionProvider);
 	}
 	
 	/* (non-Javadoc)
@@ -1051,7 +1052,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					slm.setMessage(message);
 				}
 			}
-		} else {
+		} else if (fContainer != null) {
 			fContainer.setStatusMessage(message);
 		}
 	}
@@ -1084,7 +1085,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @see org.eclipse.compare.ICompareContainer#getWorkbenchPart()
 	 */
 	public IWorkbenchPart getWorkbenchPart() {
-		return fContainer.getWorkbenchPart();
+		if (fContainer != null)
+			return fContainer.getWorkbenchPart();
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -1093,11 +1096,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
-		fContainer.run(fork, cancelable, runnable);
+		if (fContainer != null)
+			fContainer.run(fork, cancelable, runnable);
 	}
 	
 	public void runAsynchronously(IRunnableWithProgress runnable) {
-		fContainer.runAsynchronously(runnable);
+		if (fContainer != null)
+			fContainer.runAsynchronously(runnable);
 	}
 	
 	/**
