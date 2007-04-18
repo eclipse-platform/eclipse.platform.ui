@@ -24,6 +24,12 @@ import org.eclipse.ui.internal.console.IOConsolePartitioner;
  * use <code>IOConsole.newOutputStream()</code>. Clients are not intended
  * to subclass this class.
  * </p>
+ * <p>
+ * Clients should avoid writing large amounts of output to this stream in the UI
+ * thread. The console needs to process the output in the UI thread and if the client
+ * hogs the UI thread writing output to the console, the console will not be able
+ * to process the output.
+ * </p>
  * @since 3.1
  */
 public class IOConsoleOutputStream extends OutputStream {

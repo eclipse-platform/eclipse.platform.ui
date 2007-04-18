@@ -21,6 +21,12 @@ import java.io.IOException;
  * are created via a {@link org.eclipse.ui.console.MessageConsole}.
  * </p>
  * <p>
+ * Clients should avoid writing large amounts of output to this stream in the UI
+ * thread. The console needs to process the output in the UI thread and if the client
+ * hogs the UI thread writing output to the console, the console will not be able
+ * to process the output.
+ * </p>
+ * <p>
  * Since 3.1, this class extends {@link org.eclipse.ui.console.IOConsoleOutputStream}.
  * </p>
  * @since 3.0
