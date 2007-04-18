@@ -22,12 +22,14 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.conversion.DateToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
+import org.eclipse.core.internal.databinding.conversion.StatusToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToBooleanConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToBooleanPrimitiveConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -156,6 +158,10 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 	
 	public void testDefaultConverterForShortPrimitiveToString() throws Exception {
 		assertDefaultConverter(Short.TYPE, String.class, IntegerToStringConverter.class);
+	}
+	
+	public void testDefaultConverterForStatusToString() throws Exception {
+		assertDefaultConverter(IStatus.class, String.class, StatusToStringConverter.class);
 	}
 	
 	private void assertDefaultConverter(Class fromType, Class toType, Class converterType) {

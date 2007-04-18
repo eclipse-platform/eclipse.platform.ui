@@ -70,13 +70,13 @@ public final class AggregateValidationStatus implements IObservableValue {
 	public AggregateValidationStatus(final IObservableCollection bindings,
 			int strategy) {
 		if (strategy == MERGED) {
-			implementation = new ComputedValue() {
+			implementation = new ComputedValue(IStatus.class) {
 				protected Object calculate() {
 					return getStatusMerged(bindings);
 				}
 			};
 		} else {
-			implementation = new ComputedValue() {
+			implementation = new ComputedValue(IStatus.class) {
 				protected Object calculate() {
 					return getStatusMaxSeverity(bindings);
 				}

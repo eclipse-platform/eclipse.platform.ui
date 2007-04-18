@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.tests.databinding.AggregateValidationStatusTest;
 import org.eclipse.core.tests.databinding.DatabindingContextTest;
 import org.eclipse.core.tests.databinding.ListBindingTest;
 import org.eclipse.core.tests.databinding.UpdateStrategyTest;
@@ -52,6 +53,7 @@ import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupp
 import org.eclipse.core.tests.internal.databinding.conversion.IdentityConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IntegerToStringConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.ObjectToPrimitiveValidatorTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StatusToStringConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToBooleanConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToByteConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserByteTest;
@@ -111,6 +113,7 @@ public class BindingTestSuite extends TestSuite {
 
 	public BindingTestSuite() {
 		// org.eclipse.core.tests.databinding
+		addTestSuite(AggregateValidationStatusTest.class);
 		addTestSuite(DatabindingContextTest.class);
 		addTestSuite(ListBindingTest.class);
 		addTestSuite(UpdateStrategyTest.class);
@@ -163,6 +166,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(IdentityConverterTest.class);
 		addTestSuite(IntegerToStringConverterTest.class);
 		addTestSuite(ObjectToPrimitiveValidatorTest.class);
+		addTestSuite(StatusToStringConverterTest.class);
 		addTestSuite(StringToBooleanConverterTest.class);
 		addTestSuite(StringToByteConverterTest.class);
 		addTestSuite(StringToNumberParserByteTest.class);

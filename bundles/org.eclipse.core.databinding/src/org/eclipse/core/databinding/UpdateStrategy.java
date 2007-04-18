@@ -276,6 +276,9 @@ import com.ibm.icu.text.NumberFormat;
 					.put(
 							new Pair(LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$		
 
+			converterMap
+					.put(
+							new Pair("org.eclipse.core.runtime.IStatus", "java.lang.String"), "org.eclipse.core.internal.databinding.conversion.StatusToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		return converterMap;
