@@ -48,6 +48,8 @@ public class CVSMessages extends NLS {
 	public static String Connection_readUnestablishedConnection;
 	public static String Connection_writeUnestablishedConnection;
 	public static String Connection_0;
+	public static String PrepareForReplaceVisitor_DeletedFileWithoutHistoryCannotBeRestoredWhileRevertToBase;
+	public static String PrepareForReplaceVisitor_FileCannotBeReplacedWithBase;
 
 	public static String PServerConnection_invalidChars;
 	public static String PServerConnection_loginRefused;

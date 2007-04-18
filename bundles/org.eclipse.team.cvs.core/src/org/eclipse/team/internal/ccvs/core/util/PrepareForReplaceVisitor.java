@@ -13,11 +13,12 @@ package org.eclipse.team.internal.ccvs.core.util;
 
 import java.util.*;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.ConsoleListeners;
+import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
@@ -34,13 +35,11 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	private int depth;
 	private CVSTag tag; 
 	private Set/*<ICVSFile>*/ deletedFiles;
+	private Session session;
 
-	public PrepareForReplaceVisitor(CVSTag tag){
+	public PrepareForReplaceVisitor(Session session, CVSTag tag){
 		this.tag = tag;
-	}
-	
-	public PrepareForReplaceVisitor(){
-		
+		this.session = session;
 	}
 	
 	/**
@@ -60,9 +59,31 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			file.unmanage(null);
 		} else if (ResourceSyncInfo.isDeletion(syncBytes)) {
 			// If deleted, null the sync info so the file will be refetched.
-			// If we are replacing with the "BASE" tag, the file will not be refetched.
-			// However, it is better to get ride of the outgoing deletion than to leave it.
-			file.unmanage(null);
+			// If we are replacing with the "BASE" tag, the file will not be refetched,
+			// it is necessary to restore it from history (see bug 150158).
+			if (!shouldDeleteModifications()) {
+				IFile res = (IFile) file.getIResource();
+				try {
+					IFileState[] states  = res.getHistory(null);
+					if(states.length > 0){
+						restoreParentDirectory(file);
+						// recreate file using the latest state
+						res.create(states[0].getContents(), true, null);
+					} else {
+						IStatus status = new Status(Status.ERROR, CVSProviderPlugin.ID, 
+								CVSMessages.PrepareForReplaceVisitor_DeletedFileWithoutHistoryCannotBeRestoredWhileRevertToBase);
+						CVSProviderPlugin.log(status);
+						ConsoleListeners.getInstance().errorLineReceived(session, 
+								NLS.bind(CVSMessages.PrepareForReplaceVisitor_FileCannotBeReplacedWithBase,
+										res.getName()), 
+								status);
+					}
+				} catch (CoreException e) {
+					CVSProviderPlugin.log(e);
+				}
+			} else {
+				file.unmanage(null);
+			}
 		} else if (file.isModified(null) && shouldDeleteModifications()) {
 			// If the file is modified, delete and unmanage it and allow the 
 			// replace operation to fetch it again. This is required because "update -C" 
@@ -73,6 +94,18 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			file.unmanage(null);
 		}
 		monitor.worked(1);
+	}
+
+	private void restoreParentDirectory(ICVSFile file) throws CVSException {
+		List parents = new ArrayList();
+		ICVSFolder parent = file.getParent();
+		while(!parent.getIResource().exists()){
+			parents.add(parent);
+			parent = parent.getParent();
+		}
+		for(int i = parents.size() - 1; i > -1; i--){
+			((ICVSFolder)parents.get(i)).mkdir();
+		}
 	}
 
 	/*

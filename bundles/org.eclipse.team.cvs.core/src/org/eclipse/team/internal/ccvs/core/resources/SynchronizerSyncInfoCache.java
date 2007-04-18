@@ -337,7 +337,13 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				return finalResources;
 			}
 		}
-		return folder.members(true);
+		try {
+			return folder.members(true);
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND)
+				return new IResource[0];
+			throw e;
+		}
 	}
 
 	/**
