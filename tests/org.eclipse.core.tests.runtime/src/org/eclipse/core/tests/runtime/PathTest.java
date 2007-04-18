@@ -41,9 +41,9 @@ public class PathTest extends RuntimeTest {
 
 		return new TestSuite(PathTest.class);
 
-		//TestSuite suite= new TestSuite();
-		//suite.addTest(new PathTest("testConstructors"));
-		//return suite;
+//		TestSuite suite= new TestSuite();
+//		suite.addTest(new PathTest("testCanonicalize"));
+//		return suite;
 	}
 
 	public void testAddTrailingSeparator() {
@@ -217,10 +217,10 @@ public class PathTest extends RuntimeTest {
 		assertEquals("3.1", "/", new Path("/a/./b/../..").toString());
 		assertEquals("3.2", "../", new Path("../").toString());
 		// test bug 46043 - IPath collapseParentReferences
-		//	assertEquals("3.3", "../", new Path("./../").toString());
-		//	assertEquals("3.4", "../", new Path(".././").toString());
-		//	assertEquals("3.5", "..", new Path("./..").toString());
-
+		assertEquals("3.3", "../", new Path("./../").toString());
+		assertEquals("3.4", "../", new Path(".././").toString());
+		assertEquals("3.5", "..", new Path("./..").toString());
+		assertEquals("3.6", ".", new Path(".").toString());
 	}
 
 	public void testClone() {
