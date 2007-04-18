@@ -93,6 +93,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new MultiEditorTestSuite());
         addTest(new TestSuite(FilteredTreeTests.class));
         addTest(new ServicesTestSuite());
-        addTest(new TestSuite(StatusHandlingTestSuite.class));
+        addTest(new StatusHandlingTestSuite());
     }
 }
