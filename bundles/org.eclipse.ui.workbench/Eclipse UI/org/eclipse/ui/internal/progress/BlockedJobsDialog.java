@@ -69,13 +69,13 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	private IProgressMonitor blockingMonitor;
 
 	private JobTreeElement blockedElement = new BlockedUIElement();
-	
+
 	/**
 	 * The BlockedUIElement is the JobTreeElement that represents the blocked
 	 * job in the dialog.
 	 */
 	private class BlockedUIElement extends JobTreeElement {
-		
+
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -190,17 +190,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
 
-		if (taskName == null || taskName.length() == 0) {
-			if (singleton.getParentShell() != null) {
-				String shellText = singleton.getParentShell().getText();
-				if (shellText.length() == 0) {
-					shellText = ProgressMessages.BlockedJobsDialog_BlockedTitle;
-				}
-				singleton.setBlockedTaskName(shellText);
-			}
-		} else {
+		if (taskName == null || taskName.length() == 0)
+			singleton
+					.setBlockedTaskName(ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement);
+		else
 			singleton.setBlockedTaskName(taskName);
-		}
 
 		/**
 		 * If there is no parent shell we have not been asked for a parent so we
@@ -330,9 +324,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * @return ProgressTreeContentProvider
 	 */
 	private ProgressViewerContentProvider getContentProvider() {
-		return new ProgressViewerContentProvider(viewer, true,false) {
-			
-			/* (non-Javadoc)
+		return new ProgressViewerContentProvider(viewer, true, false) {
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.internal.progress.ProgressViewerContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
