@@ -29,10 +29,20 @@ import org.eclipse.ui.themes.IColorFactory;
 public class LightColorFactory implements IColorFactory,
 		IExecutableExtension {
 
-	protected static final RGB white = new RGB(255, 255, 255);
+	protected static final RGB white = ColorUtil.getColorValue("COLOR_WHITE"); //$NON-NLS-1$
+	protected static final RGB black = ColorUtil.getColorValue("COLOR_BLACK"); //$NON-NLS-1$
 	
 	String baseColorName;
 	String definitionId; 
+
+	/**
+	 * Return the highlight start (top of tab) color as an RGB
+	 * @return the highlight start RGB
+	 */
+	
+	public static RGB createHighlightStartColor(RGB tabStartColor) {
+		return ColorUtil.blend(white, tabStartColor);
+	}
 
 	/**
 	 * This executable extension requires parameters to be explicitly declared
@@ -89,22 +99,24 @@ public class LightColorFactory implements IColorFactory,
 		//Group 4
 		return ColorUtil.blend(white, sample, 30);
 	}
-	
+
 	/*
 	 * Return the Start (top of tab) color as an RGB
 	 */
-	private RGB createStartColor() {
-		return ColorUtil.blend(white, createEndColor(), 75);
+	private RGB createActiveFocusStartColor() {
+		RGB startColor = ColorUtil.blend(white, createActiveFocusEndColor(), 75);
+		return startColor;
 	}
 
 	/*
 	 * Return the End (top of tab) color as an RGB
 	 */
-	private RGB createEndColor() {
+	private RGB createActiveFocusEndColor() {
 		return getLightenedColor(
 				ColorUtil.getColorValue(baseColorName));
 	}	
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,11 +126,11 @@ public class LightColorFactory implements IColorFactory,
 		//should have base, otherwise error in the xml
 		if (baseColorName == null || definitionId == null) 
 			return white;
-		
+
 		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START")) //$NON-NLS-1$
-			return createStartColor();
+			return createActiveFocusStartColor();
 		if (definitionId.equals("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END")) //$NON-NLS-1$
-			return createEndColor();
+			return createActiveFocusEndColor();
 		
 		//should be one of start or end, otherwise error in the xml
 		return white;

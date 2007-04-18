@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.r33;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.preferences.AbstractPropertyListener;
 import org.eclipse.ui.internal.preferences.IPropertyMap;
+import org.eclipse.ui.internal.preferences.PropertyUtil;
+import org.eclipse.ui.internal.themes.LightColorFactory;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -58,15 +62,49 @@ public class DefaultThemeListener extends AbstractPropertyListener {
         
         return result.booleanValue();
     }
+
+    /*
+     * Update the ACTIVE_TAB_HIGHLIGHT_START color in the color registry.
+     * Return true if we're using highlights on tabs, false otherwise.
+     * The highlight color is computed based on the ACTIVE_TAB_BG_START.
+     * We need to do this here, in the ThemeListener, so that we can catch
+     * the change to the ACTIVE_TAB_BG_START begin color and update the
+     * highlight color appropriately.
+     * @return boolean use highlight color
+     */  
+    private boolean updateHighlightColor() {
+    	if(! useHighlight())
+    		return false;
+    	//get newTabBegin from theme, not from ColorRegistry, which may not have been updated yet
+		RGB newTabBegin = getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START, null).getRGB();
+		RGB newHighlight = LightColorFactory.createHighlightStartColor(newTabBegin);
+		//Registry handles lifecycle of colors so no leakage and if RGB s.equals then no change
+		JFaceResources.getColorRegistry().put(IWorkbenchThemeConstants.ACTIVE_TAB_HIGHLIGHT_START, newHighlight);
+		return true;
+    }
+    
+    private boolean useHighlight() {
+     	return PropertyUtil.get(
+     			this.theme,
+     			IWorkbenchThemeConstants.ACTIVE_TAB_HIGHLIGHT,
+     			false);
+    }
     
     public void update() {
-            
+    	Color[] activeFocusBackgroundColors = updateHighlightColor()
+    		? new Color[] {
+	            getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START, null),
+	            getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END, null),
+	            JFaceResources.getColorRegistry().get(IWorkbenchThemeConstants.ACTIVE_TAB_HIGHLIGHT_START)
+    			}
+            : new Color[] {
+	            getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START, null),
+	            getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END, null)
+	            };
+    	
         folder.setColors(new DefaultTabFolderColors(
                 getColor(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR, null),
-                new Color[] {
-                        getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START, null),
-                        getColor(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END, null) 
-                        },
+                activeFocusBackgroundColors,
                 new int[] {
                         getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT, 0) },
                         getBoolean(IWorkbenchThemeConstants.ACTIVE_TAB_VERTICAL, true)),

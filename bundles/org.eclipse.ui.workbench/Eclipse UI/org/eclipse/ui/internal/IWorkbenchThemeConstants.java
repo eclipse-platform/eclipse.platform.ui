@@ -30,6 +30,10 @@ public interface IWorkbenchThemeConstants {
 
     public static final String ACTIVE_TAB_BG_END = "org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"; //$NON-NLS-1$
 
+    public static final String ACTIVE_TAB_HIGHLIGHT = "org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT"; //$NON-NLS-1$
+
+    public static final String ACTIVE_TAB_HIGHLIGHT_START = "org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT_START"; //$NON-NLS-1$
+
     public static final String ACTIVE_NOFOCUS_TAB_BG_START = "org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START"; //$NON-NLS-1$
 
     public static final String ACTIVE_NOFOCUS_TAB_BG_END = "org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_END"; //$NON-NLS-1$    

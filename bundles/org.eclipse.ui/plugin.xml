@@ -1185,11 +1185,14 @@
             %Color.activeHyperlinkTextDesc
          </description>
       </colorDefinition>
+      <data
+      	name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="true">
+      </data>
 <!-- Active Tab Colors -->
       <colorDefinition
             label="%Color.activeTabText"
             categoryId="org.eclipse.ui.presentation.default"
-            value="COLOR_WIDGET_FOREGROUND"
+            value="COLOR_BLACK"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
          <description>
             %Color.activeTabTextDesc
@@ -1367,6 +1370,19 @@
          <colorOverride
                id="ACTIVE_HYPERLINK_COLOR"
                value="COLOR_LIST_FOREGROUND"/>
+<!-- Override color factory for active tab colors, set to defaults based on title -->               
+		<colorOverride
+				id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"
+				value="COLOR_TITLE_FOREGROUND"/>
+		<colorOverride
+				id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
+				value="COLOR_TITLE_BACKGROUND_GRADIENT"/>
+		<colorOverride
+				id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"
+				value="COLOR_TITLE_BACKGROUND"/>
+		 <data
+      		name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="false">
+		 </data>
       </theme>
       <theme
             id="org.eclipse.ui.r30"
@@ -1398,6 +1414,9 @@
                id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"
                value="COLOR_TITLE_FOREGROUND">
          </colorOverride>
+		 <data
+      		name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="false">
+		 </data>
       </theme>
    </extension>
    <extension
