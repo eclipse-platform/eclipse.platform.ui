@@ -757,20 +757,6 @@ public class ProgressManager extends ProgressProvider implements
 	}
 
 	/**
-	 * Refresh the content providers as a result of an addition of info.
-	 * 
-	 * @param info
-	 */
-	public void addGroup(GroupInfo info) {
-
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				listeners[i].addGroup(info);
-			}
-		}
-	}
-
-	/**
 	 * Return whether or not this job is currently displayable.
 	 * 
 	 * @param job

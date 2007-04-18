@@ -124,7 +124,7 @@ class GroupInfo extends JobTreeElement implements IProgressMonitor {
         synchronized (lock) {
             isActive = true;
         }
-        ProgressManager.getInstance().addGroup(this);
+        ProgressManager.getInstance().refreshGroup(this);
 
     }
 
