@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2007 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,21 +35,28 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	private static final char CARRIAGE_RETURN_SIGN= '\u00a4';
 	private static final char LINE_FEED_SIGN= '\u00b6';
 	
-	/** Indicates whether this painter is active */
+	/** Indicates whether this painter is active. */
 	private boolean fIsActive= false;
-	/** The source viewer this painter is attached to */
+	/** The source viewer this painter is attached to. */
 	private ITextViewer fTextViewer;
-	/** The viewer's widget */
+	/** The viewer's widget. */
 	private StyledText fTextWidget;
+	/** Tells whether the advanced graphics sub system is available. */
+	private boolean fIsAdvancedGraphicsPresent;
 
 	/**
 	 * Creates a new painter for the given text viewer.
+	 * 
 	 * @param textViewer  the text viewer the painter should be attached to
 	 */
 	public WhitespaceCharacterPainter(ITextViewer textViewer) {
 		super();
 		fTextViewer= textViewer;
 		fTextWidget= textViewer.getTextWidget();
+		GC gc= new GC(fTextWidget);
+		gc.setAdvanced(true);
+		fIsAdvancedGraphicsPresent= gc.getAdvanced();
+		gc.dispose();
 	}
 
 	/*
@@ -123,6 +130,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Draw characters in view range.
+	 * 
 	 * @param gc
 	 * @param x
 	 * @param y
@@ -137,16 +145,21 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			int startOffset= fTextWidget.getOffsetAtLine(startLine);
 			int endOffset =
 				endLine < lineCount - 1 ? fTextWidget.getOffsetAtLine(endLine + 1) : fTextWidget.getCharCount();
-			int alpha= gc.getAlpha();
-			gc.setAlpha(100);
-			handleDrawRequest(gc, startOffset, endOffset);
-			gc.setAlpha(alpha);
+
+			if (fIsAdvancedGraphicsPresent) {
+				int alpha= gc.getAlpha();
+				gc.setAlpha(100);
+				handleDrawRequest(gc, startOffset, endOffset);
+				gc.setAlpha(alpha);
+			} else
+				handleDrawRequest(gc, startOffset, endOffset);
 		}
 	}
 
 	/**
 	 * Draw characters of content range.
-	 * @param gc
+	 * 
+	 * @param gc the GC
 	 * @param startOffset inclusive start index
 	 * @param endOffset exclusive end index
 	 */
@@ -216,6 +229,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Check if the given widget line is a folded line.
+	 * 
 	 * @param widgetLine  the widget line number
 	 * @return <code>true</code> if the line is folded
 	 */
@@ -231,6 +245,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Redraw all of the text widgets visible content.
+	 * 
 	 * @param redrawBackground  If true, clean background before painting text.
 	 */
 	private void redrawAll(boolean redrawBackground) {
@@ -254,6 +269,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Draw string at widget offset.
+	 * 
 	 * @param gc
 	 * @param offset the widget offset
 	 * @param s the string to be drawn
@@ -273,6 +289,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Convert a document offset to the corresponding widget offset.
+	 * 
 	 * @param documentOffset
 	 * @return widget offset
 	 */
@@ -291,6 +308,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Convert a widget offset to the corresponding document offset.
+	 * 
 	 * @param widgetOffset
 	 * @return document offset
 	 */
