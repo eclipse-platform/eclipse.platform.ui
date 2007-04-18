@@ -83,6 +83,12 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
             // some types of properties have special characters embedded
             if (key.startsWith(ECLIPSE_PROPERTY_PREFIX)) {
 				printEclipseProperty(writer, value);
+            } else if (key.toUpperCase().indexOf("PASSWORD") != -1) { //$NON-NLS-1$
+            	// We should obscure any property that may be a password
+            	for (int j = 0; j < value.length(); j++) {
+					writer.print('*');
+				}
+            	writer.println();
 			} else {
 				writer.println(value);
 			}
