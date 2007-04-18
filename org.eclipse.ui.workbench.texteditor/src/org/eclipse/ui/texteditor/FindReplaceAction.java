@@ -87,7 +87,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		}
 
 		/**
-		 * Creates a new find/replace dialog accessor either anchored at the given shell.
+		 * Creates a new find/replace dialog accessor anchored at the given shell.
 		 * 
 		 * @param shell the shell if no site is used
 		 * @since 3.3
