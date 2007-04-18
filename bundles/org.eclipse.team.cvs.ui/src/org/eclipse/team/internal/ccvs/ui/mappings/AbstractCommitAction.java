@@ -43,8 +43,8 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 	 */
 	public void execute() {
     	final List resources = new ArrayList();
-    	final IStructuredSelection selection = getActualSelection();
 		try {
+			final IStructuredSelection selection = getActualSelection();
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
@@ -59,6 +59,8 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 			Utils.handleError(getConfiguration().getSite().getShell(), e, null, null);
 		} catch (InterruptedException e) {
 			// Ignore
+		} catch (CVSException e) {
+			Utils.handleError(getConfiguration().getSite().getShell(), e, null, null);
 		}
 		if (!resources.isEmpty() && ((IResource[])resources.get(0)).length > 0) {
 	        Shell shell= getConfiguration().getSite().getShell();
@@ -70,7 +72,7 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 		}
 	}
 	
-	protected IStructuredSelection getActualSelection() {
+	protected IStructuredSelection getActualSelection() throws CVSException {
 		return getStructuredSelection();
 	}
 

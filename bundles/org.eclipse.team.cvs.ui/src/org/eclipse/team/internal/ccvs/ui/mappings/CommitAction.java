@@ -11,11 +11,13 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -62,12 +64,11 @@ public class CommitAction extends AbstractCommitAction implements IPropertyChang
 		return getResourceTraversals(selection, monitor);
 	}
 
-	protected IStructuredSelection getActualSelection() {
+	protected IStructuredSelection getActualSelection() throws CVSException {
 		IStructuredSelection selection = getStructuredSelection();
 		IStructuredSelection actualSelection = internalGetActualSelection();
 		if (!equal(selection, actualSelection)) {
-			CVSUIPlugin.log(IStatus.ERROR, "Commit action selection did not match actual selection", null);
-			return actualSelection;
+			throw new CVSException(CVSUIMessages.CommitAction_3);
 		}
 		return selection;
 	}
