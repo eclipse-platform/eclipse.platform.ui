@@ -35,4 +35,10 @@ public class RetargetWatchpointAction extends RetargetBreakpointAction {
 	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
 		return ((IToggleBreakpointsTarget)target).canToggleWatchpoints(part, selection);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
+	 */
+	protected String getOperationUnavailableMessage() {
+		return Messages.RetargetWatchpointAction_0;
+	}	
 }

@@ -17,6 +17,7 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
@@ -45,7 +46,10 @@ public class RetargetRunToLineAction extends RetargetAction {
 					}
 				}
 			}
-			update();
+			IAction action = getAction();
+			if (action != null) {
+				action.setEnabled(fTargetElement != null && hasTargetAdapter());
+			}
 		}
 
 		public void debugContextChanged(DebugContextEvent event) {
@@ -93,4 +97,22 @@ public class RetargetRunToLineAction extends RetargetAction {
 	protected void performAction(Object target, ISelection selection, IWorkbenchPart part) throws CoreException {
 		((IRunToLineTarget)target).runToLine(part, selection, fTargetElement);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
+	 */
+	protected String getOperationUnavailableMessage() {
+		return ActionMessages.RetargetRunToLineAction_0;
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (fTargetElement == null) {
+			action.setEnabled(false);
+		} else {
+			super.selectionChanged(action, selection);
+		}
+	}	
 }

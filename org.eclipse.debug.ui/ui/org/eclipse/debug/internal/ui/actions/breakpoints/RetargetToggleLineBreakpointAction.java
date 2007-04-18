@@ -35,4 +35,10 @@ public class RetargetToggleLineBreakpointAction extends RetargetBreakpointAction
 	protected boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part) {
 		return ((IToggleBreakpointsTarget)target).canToggleLineBreakpoints(part, selection);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RetargetAction#getOperationUnavailableMessage()
+	 */
+	protected String getOperationUnavailableMessage() {
+		return Messages.RetargetToggleLineBreakpointAction_0;
+	}	
 }

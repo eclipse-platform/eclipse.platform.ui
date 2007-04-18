@@ -14,26 +14,29 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Global retargettable debug action.
  * 
  * @since 3.0
  */
-public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, IPartListener, IUpdate {
+public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, IPartListener, IActionDelegate2 {
 	
 	protected IWorkbenchWindow fWindow = null;
 	private IWorkbenchPart fActivePart = null;
@@ -95,12 +98,27 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	public void run(IAction action) {
 		if (fTargetAdapter != null) {
 			try {
-				performAction(fTargetAdapter, getTargetSelection(), fActivePart);
+				if (isTargetEnabled()) {
+					performAction(fTargetAdapter, getTargetSelection(), fActivePart);
+				} else {
+					String message = getOperationUnavailableMessage();
+					IStatus status = new Status(IStatus.INFO, DebugUIPlugin.getUniqueIdentifier(), message);
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.RetargetAction_1, message, status);
+				}
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(fWindow.getShell(), ActionMessages.RetargetAction_2, ActionMessages.RetargetAction_3, e.getStatus()); // 
 			}
 		}
 	}
+	
+	/**
+	 * Returns a message to display when we find that the operation is not enabled
+	 * when invoked in an editor (we check enabled state before running in this case,
+	 * rather than updating on each selection change - see bug 180441).
+	 * 
+	 * @return information message when unavailable
+	 */
+	protected abstract String getOperationUnavailableMessage();
 	
 	/**
 	 * Performs the specific breakpoint toggling.
@@ -115,7 +133,6 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		this.fAction = action;
 		// if the active part did not provide an adapter, see if the selection does
 		if (fTargetAdapter == null && selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
@@ -126,7 +143,11 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 				}
 			}
 		}
-		update();
+		boolean enabled = fTargetAdapter != null;
+		if (selection instanceof IStructuredSelection) {
+			enabled = isTargetEnabled();
+		}
+		action.setEnabled(enabled);
 	}
 	
 	/* (non-Javadoc)
@@ -144,7 +165,9 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 		if (fTargetAdapter == null) {
 			fTargetAdapter = getAdapter(part);
 		}
-		update();
+		if (fAction != null) {
+			fAction.setEnabled(fTargetAdapter != null);
+		}
 	}
 	
 	protected Object getAdapter(IAdaptable adaptable) {
@@ -200,26 +223,19 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	public void partOpened(IWorkbenchPart part) {		
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+
+	/**
+	 * Returns whether the target adapter is enabled
+	 * 
+	 * @return whether target adapter is enabled
 	 */
-	public void update() {
-		if (fAction == null) {
-			return;
+	protected boolean isTargetEnabled() {
+		if (fTargetAdapter != null) {
+            if (fActivePart != null) {
+                return canPerformAction(fTargetAdapter, getTargetSelection(), fActivePart);
+            }
 		}
-		final Object target = fTargetAdapter;
-		if (target != null) {
-			Runnable r = new Runnable() {
-				public void run() {
-                    if (fActivePart != null) {
-                        fAction.setEnabled(canPerformAction(target, getTargetSelection(), fActivePart));
-                    }
-				}
-			};
-			DebugUIPlugin.getStandardDisplay().asyncExec(r);
-		} else {
-			fAction.setEnabled(false);
-		}
+		return false;
 	}
 	
 	/**
@@ -230,5 +246,38 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * @param part the part the operation has been requested on
 	 * @return whether the operation can be performed
 	 */
-	protected abstract boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part); 
+	protected abstract boolean canPerformAction(Object target, ISelection selection, IWorkbenchPart part);
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 */
+	public void init(IAction action) {
+		fAction = action;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		run(action);
+	}
+
+	/**
+	 * Returns the proxy to this action delegate or <code>null</code>
+	 * 
+	 * @return action proxy or <code>null</code>
+	 */
+	protected IAction getAction() {
+		return fAction;
+	}
+
+	/**
+	 * Returns whether there is currently a target adapter for this action.
+	 * 
+	 * @return whether the action has a target adapter.
+	 */
+	protected boolean hasTargetAdapter() {
+		return fTargetAdapter != null;
+	}
+
 }
