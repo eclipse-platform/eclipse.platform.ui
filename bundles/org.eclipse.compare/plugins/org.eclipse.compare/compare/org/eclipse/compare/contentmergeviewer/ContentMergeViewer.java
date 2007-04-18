@@ -894,7 +894,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		fHandlerService.dispose();
+		if (fHandlerService != null)
+			fHandlerService.dispose();
 		
 		Object input= getInput();	
 		if (input instanceof ICompareInput) {

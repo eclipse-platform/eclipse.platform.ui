@@ -1708,7 +1708,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
-		fHandlerService.dispose();
+		if (fHandlerService != null)
+			fHandlerService.dispose();
 		
 		Object input= getInput();
 		removeFromDocumentManager(ANCESTOR_CONTRIBUTOR, input);

@@ -85,7 +85,7 @@ public class ReplaceOperation extends UpdateOperation {
         ICVSResource[] managedResources = getResourcesToUpdate(resources);
         try {
         	// Purge any unmanaged or added files
-        	PrepareForReplaceVisitor pfrv = new PrepareForReplaceVisitor(getTag());
+        	PrepareForReplaceVisitor pfrv = new PrepareForReplaceVisitor(session, getTag());
         	pfrv.visitResources(
         		provider.getProject(), 
         		resources, 
