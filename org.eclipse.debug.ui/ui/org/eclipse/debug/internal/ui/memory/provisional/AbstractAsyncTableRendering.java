@@ -549,7 +549,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public void resetRendering() throws DebugException {
 		BigInteger baseAddress = fContentDescriptor.getContentBaseAddress();
-		goToAddress(baseAddress);
+		reloadTable(baseAddress);
 		fTableViewer.setSelection(baseAddress);
 		fTableViewer.setTopIndex(baseAddress);
 

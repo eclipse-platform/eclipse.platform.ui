@@ -352,9 +352,12 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					fTableCursor.setSelection(newLocation[0], newLocation[1]);
 					showTableCursor(true);
 					
-					int topIndex = getTable().getTopIndex();
-					Object topKey = getVirtualContentModel().getKey(topIndex);
-					setTopIndexKey(topKey);
+					if (!hasPendingUpdates())
+					{
+						int topIndex = getTable().getTopIndex();
+						Object topKey = getVirtualContentModel().getKey(topIndex);
+						setTopIndexKey(topKey);
+					}
 					
 				} catch (RuntimeException e) {
 					
