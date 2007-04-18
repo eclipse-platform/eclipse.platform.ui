@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  * <p>
  * It can also be used without having an IWorkbenchPart e.g. for
  * dialogs or wizards by just providing a {@link Shell} and an {@link IFindReplaceTarget}.
+ * <em>In this case the dialog won't be shared with the one
+ * used for the active workbench part.</em> 
  * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
@@ -73,6 +75,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 
 		/**
 		 * Creates a new find/replace dialog accessor anchored at the given part site.
+		 * 
 		 * @param site the part site
 		 */
 		public FindReplaceDialogStub(IWorkbenchPartSite site) {
@@ -84,8 +87,7 @@ public class FindReplaceAction extends ResourceAction implements IUpdate {
 		}
 
 		/**
-		 * Creates a new find/replace dialog accessor either anchored at 
-		 * the given part site or on a shell
+		 * Creates a new find/replace dialog accessor either anchored at the given shell.
 		 * 
 		 * @param shell the shell if no site is used
 		 * @since 3.3
