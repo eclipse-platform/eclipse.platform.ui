@@ -53,19 +53,27 @@ class OverlayCache {
 			descriptors = descriptorArray;
 			size = bounds;
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean, org.eclipse.swt.graphics.Device)
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean,
+		 *      org.eclipse.swt.graphics.Device)
 		 */
 		public Image createImage(boolean returnMissingImageOnError,
 				Device device) {
-			Image[] images = new Image[descriptors.length];
+			ImageData[] images = new ImageData[descriptors.length];
 			for (int i = 0; i < images.length; i++) {
-				if(descriptors[i] != null){
-					images[i] = resourceManager.createImage(descriptors[i]);
+				if (descriptors[i] != null) {
+					images[i] = descriptors[i].getImageData();
 				}
 			}
-			return DecorationImageBuilder.compositeImage(base, images);
+			Image result = DecorationImageBuilder.compositeImage(device, base
+					.getImageData(), images);
+			if (result == null && returnMissingImageOnError)
+				return new Image(device, DEFAULT_IMAGE_DATA);
+			return result;
+
 		}
 
 		/*
@@ -76,36 +84,40 @@ class OverlayCache {
 		public ImageData getImageData() {
 			return createImage().getImageData();
 		}
-		
-		 /* (non-Javadoc)
-	     * @see java.lang.Object#equals(java.lang.Object)
-	     */
-	    public boolean equals(Object o) {
-	        if (!(o instanceof CacheEntry)) {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object o) {
+			if (!(o instanceof CacheEntry)) {
 				return false;
 			}
-	        CacheEntry other = (CacheEntry) o;
-	        return base.equals(other.base)
-	                && Arrays.equals(descriptors, other.descriptors);
-	    }
+			CacheEntry other = (CacheEntry) o;
+			return base.equals(other.base)
+					&& Arrays.equals(descriptors, other.descriptors);
+		}
 
-	    /* (non-Javadoc)
-	     * @see java.lang.Object#hashCode()
-	     */
-	    public int hashCode() {
-	        int code = base.hashCode();
-	        for (int i = 0; i < descriptors.length; i++) {
-	            if (descriptors[i] != null) {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			int code = base.hashCode();
+			for (int i = 0; i < descriptors.length; i++) {
+				if (descriptors[i] != null) {
 					code ^= descriptors[i].hashCode();
 				}
-	        }
-	        return code;
-	    }
+			}
+			return code;
+		}
 
 	}
 
 	private Set keys = new HashSet(); // Hold onto the cache entries we
-										// created
+	// created
 	// Use a resource manager to hold onto any images we have to create
 	private LocalResourceManager resourceManager;
 

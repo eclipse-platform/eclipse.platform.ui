@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
 import org.eclipse.swt.graphics.Device;
@@ -7,7 +17,20 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 
-public class DecorationImageBuilder {
+/**
+ * DecorationImageBuilder is a utility class for merging images without data
+ * loss.
+ * 
+ * @since 3.3
+ * 
+ */
+class DecorationImageBuilder {
+
+	private static final int TOP_LEFT = LightweightDecoratorDefinition.TOP_LEFT;
+	private static final int TOP_RIGHT = LightweightDecoratorDefinition.TOP_RIGHT;
+	private static final int BOTTOM_LEFT = LightweightDecoratorDefinition.BOTTOM_LEFT;
+	private static final int BOTTOM_RIGHT = LightweightDecoratorDefinition.BOTTOM_RIGHT;
+	private static final int UNDERLAY = LightweightDecoratorDefinition.UNDERLAY;
 
 	private static final PaletteData ALPHA_PALETTE, BW_PALETTE;
 	static {
@@ -19,12 +42,6 @@ public class DecorationImageBuilder {
 		BW_PALETTE = new PaletteData(new RGB[] { new RGB(0, 0, 0),
 				new RGB(255, 255, 255) });
 	}
-
-	static final int TOP_LEFT = LightweightDecoratorDefinition.TOP_LEFT;
-	static final int TOP_RIGHT = LightweightDecoratorDefinition.TOP_RIGHT;
-	static final int BOTTOM_LEFT = LightweightDecoratorDefinition.BOTTOM_LEFT;
-	static final int BOTTOM_RIGHT = LightweightDecoratorDefinition.BOTTOM_RIGHT;
-	static final int UNDERLAY = LightweightDecoratorDefinition.UNDERLAY;
 
 	private static int getTransparencyDepth(ImageData data) {
 		if (data.maskData != null && data.depth == 32) {
@@ -42,6 +59,8 @@ public class DecorationImageBuilder {
 
 	private static ImageData getTransparency(ImageData data,
 			int transparencyDepth) {
+		if (data == null)
+			return null;
 		if (transparencyDepth == 1)
 			return data.getTransparencyMask();
 		ImageData mask = null;
@@ -115,56 +134,65 @@ public class DecorationImageBuilder {
 		}
 	}
 
-	public static Image compositeImage(Image base, Image[] overlay) {
+	/**
+	 * Create a composite image by underlaying and overlaying the base image.
+	 * @param device
+	 * @param base
+	 * @param overlay
+	 * @return Image
+	 */
+	static Image compositeImage(Device device, ImageData base,
+			ImageData[] overlay) {
 		if (base == null)
 			return null;
-		Device device = base.getDevice();
-		ImageData baseData = base.getImageData();
-		int maskDepth = getTransparencyDepth(baseData), baseMaskDepth = maskDepth;
-		ImageData imageData = new ImageData(baseData.width, baseData.height,
-				24, new PaletteData(0xff, 0xff00, 0xff00000));
-		Image image = new Image(device, imageData);
-		// Image image = new Image(device, baseData.width, baseData.height);
+		Image image = new Image(device, new ImageData(base.width, base.height,
+				24, new PaletteData(0xff, 0xff00, 0xff00000)));
 		GC gc = new GC(image);
-		// gc.setBackground(device.getSystemColor(SWT.COLOR_BLACK));
-		// gc.fillRectangle(0, 0, baseData.width, baseData.height);
-		Image underlay = overlay.length > UNDERLAY ? overlay[UNDERLAY] : null;
-		ImageData underlayData = null;
-		if (underlay != null) {
-			underlayData = underlay.getImageData();
-			maskDepth = Math.max(maskDepth, getTransparencyDepth(underlayData));
-			gc.drawImage(underlay, 0, 0);
+		ImageData src;
+		int maskDepth = 0, baseMaskDepth = 0;
+		ImageData underlay = src = overlay.length > UNDERLAY ? overlay[UNDERLAY]
+				: null;
+		if (src != null) {
+			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
+			Image img = new Image(device, src);
+			gc.drawImage(img, 0, 0);
+			img.dispose();
 		}
-		gc.drawImage(base, 0, 0);
-		ImageData topLeftData = null;
-		if (overlay[TOP_LEFT] != null) {
-			topLeftData = overlay[TOP_LEFT].getImageData();
-			maskDepth = Math.max(maskDepth, getTransparencyDepth(topLeftData));
-			gc.drawImage(overlay[TOP_LEFT], 0, 0);
-		}
-		ImageData topRightData = null;
-		if (overlay[TOP_RIGHT] != null) {
-			topRightData = overlay[TOP_RIGHT].getImageData();
-			maskDepth = Math.max(maskDepth, getTransparencyDepth(topRightData));
-			gc.drawImage(overlay[TOP_RIGHT], baseData.width
-					- topRightData.width, 0);
-		}
-		ImageData bottomLeftData = null;
-		if (overlay[BOTTOM_LEFT] != null) {
-			bottomLeftData = overlay[BOTTOM_LEFT].getImageData();
+		src = base;
+		if (base != null) {
 			maskDepth = Math.max(maskDepth,
-					getTransparencyDepth(bottomLeftData));
-			gc.drawImage(overlay[BOTTOM_LEFT], 0, baseData.height
-					- bottomLeftData.height);
+					baseMaskDepth = getTransparencyDepth(src));
+			Image img = new Image(device, src);
+			gc.drawImage(img, 0, 0);
+			img.dispose();
 		}
-		ImageData bottomRightData = null;
-		if (overlay[BOTTOM_RIGHT] != null) {
-			bottomRightData = overlay[BOTTOM_RIGHT].getImageData();
-			maskDepth = Math.max(maskDepth,
-					getTransparencyDepth(bottomRightData));
-			gc.drawImage(overlay[BOTTOM_RIGHT], baseData.width
-					- bottomRightData.width, baseData.height
-					- bottomRightData.height);
+		ImageData topLeft = src = overlay[TOP_LEFT];
+		if (src != null) {
+			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
+			Image img = new Image(device, src);
+			gc.drawImage(img, 0, 0);
+			img.dispose();
+		}
+		ImageData topRight = src = overlay[TOP_RIGHT];
+		if (src != null) {
+			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
+			Image img = new Image(device, src);
+			gc.drawImage(img, base.width - src.width, 0);
+			img.dispose();
+		}
+		ImageData bottomLeft = src = overlay[BOTTOM_LEFT];
+		if (src != null) {
+			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
+			Image img = new Image(device, src);
+			gc.drawImage(img, 0, base.height - src.height);
+			img.dispose();
+		}
+		ImageData bottomRight = src = overlay[BOTTOM_RIGHT];
+		if (src != null) {
+			maskDepth = Math.max(maskDepth, getTransparencyDepth(src));
+			Image img = new Image(device, src);
+			gc.drawImage(img, base.width - src.width, base.height - src.height);
+			img.dispose();
 		}
 		gc.dispose();
 		if (baseMaskDepth > 0) {
@@ -173,40 +201,34 @@ public class DecorationImageBuilder {
 			ImageData mask = null;
 			switch (maskDepth) {
 			case 1:
-				mask = new ImageData(baseData.width, baseData.height,
-						maskDepth, BW_PALETTE);
+				mask = new ImageData(base.width, base.height, maskDepth,
+						BW_PALETTE);
 				break;
 			case 8:
-				mask = new ImageData(baseData.width, baseData.height,
-						maskDepth, ALPHA_PALETTE, baseData.width,
-						new byte[baseData.width * baseData.height]);
+				mask = new ImageData(base.width, base.height, maskDepth,
+						ALPHA_PALETTE, base.width, new byte[base.width
+								* base.height]);
 				break;
 			}
-			if (underlayData != null) {
-				ImageData src = getTransparency(underlayData, maskDepth);
+			src = getTransparency(underlay, maskDepth);
+			if (src != null)
 				composite(mask, src, 0, 0);
-			}
-			if (baseData != null) {
-				ImageData src = getTransparency(baseData, maskDepth);
+			src = getTransparency(base, maskDepth);
+			if (src != null)
 				composite(mask, src, 0, 0);
-			}
-			if (topLeftData != null) {
-				ImageData src = getTransparency(topLeftData, maskDepth);
+			src = getTransparency(topLeft, maskDepth);
+			if (src != null)
 				composite(mask, src, 0, 0);
-			}
-			if (topRightData != null) {
-				ImageData src = getTransparency(topRightData, maskDepth);
+			src = getTransparency(topRight, maskDepth);
+			if (src != null)
 				composite(mask, src, mask.width - src.width, 0);
-			}
-			if (bottomLeftData != null) {
-				ImageData src = getTransparency(bottomLeftData, maskDepth);
+			src = getTransparency(bottomLeft, maskDepth);
+			if (src != null)
 				composite(mask, src, 0, mask.height - src.height);
-			}
-			if (bottomRightData != null) {
-				ImageData src = getTransparency(bottomRightData, maskDepth);
+			src = getTransparency(bottomRight, maskDepth);
+			if (src != null)
 				composite(mask, src, mask.width - src.width, mask.height
 						- src.height);
-			}
 			switch (maskDepth) {
 			case 1:
 				newData.maskData = mask.data;
@@ -216,11 +238,9 @@ public class DecorationImageBuilder {
 				newData.alphaData = mask.data;
 				break;
 			}
-			image = new Image(base.getDevice(), newData);
+			image = new Image(device, newData);
 		}
 		return image;
 	}
-
-	static final int SPACING = 5;
 
 }
