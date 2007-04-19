@@ -11,19 +11,15 @@
 package org.eclipse.core.tests.internal.filesystem.broken;
 
 import java.net.URI;
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileSystem;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Path;
 
 /**
  * A simple file system implementation that throws exceptions at every available
  * opportunity.
  */
 public class BrokenFileSystem extends FileSystem {
-
-	private static final IFileStore NULL_ROOT = EFS.getNullFileSystem().getStore(Path.ROOT);
 
 	private static final String SCHEME_BROKEN = "broken";
 
