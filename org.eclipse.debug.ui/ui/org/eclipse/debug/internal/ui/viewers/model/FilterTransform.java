@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.TreePath;
  * </p>
  * @since 3.3
  */
-class FilterTransform {
+public class FilterTransform {
 
 	private Node root = new Node();
 	
@@ -301,8 +301,8 @@ class FilterTransform {
 							// middle
 							System.arraycopy(filteredIndexes, 0, next, 0, location);
 							System.arraycopy(filteredElements, 0, filt, 0, location);
-							System.arraycopy(filteredIndexes, location + 1, next, location, filteredIndexes.length - location);
-							System.arraycopy(filteredElements, location + 1, filt, location, filteredElements.length - location);
+							System.arraycopy(filteredIndexes, location + 1, next, location, next.length - location);
+							System.arraycopy(filteredElements, location + 1, filt, location, filt.length - location);
 						}
 						filteredIndexes = next;
 						filteredElements = filt;
@@ -350,7 +350,8 @@ class FilterTransform {
 	}
 	
 	/**
-	 * Clears the given filtered index of the specified parent.
+	 * Clears the given filtered index of the specified parent. I.e.
+	 * the child still exists, but is no longer filtered.
 	 * 
 	 * @param path parent path
 	 * @param index index to clear
