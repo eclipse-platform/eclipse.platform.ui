@@ -285,10 +285,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			} else {
 				delegate.run(action);
 			}
-			if (delegate instanceof IEditorActionDelegate) {
-				((IEditorActionDelegate) delegate).setActiveEditor(action,
-						null);
-			}
 		}
 
 		return null;
