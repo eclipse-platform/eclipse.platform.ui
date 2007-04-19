@@ -1558,9 +1558,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected Object getParentElement(Object elementOrTreePath) {
 		if (elementOrTreePath instanceof TreePath) {
 			TreePath treePath = (TreePath) elementOrTreePath;
-			if (treePath.getSegmentCount() <= 1) {
-				return null;
-			}
 			return (treePath).getParentPath();
 		}
 		IContentProvider cp = getContentProvider();
@@ -1594,7 +1591,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elementOrTreePath instanceof TreePath) {
 			TreePath treePath = (TreePath) elementOrTreePath;
 			if (treePath.getSegmentCount() == 0) {
-				return null;
+				return getControl();
 			}
 			Widget[] candidates = findItems(treePath.getLastSegment());
 			for (int i = 0; i < candidates.length; i++) {

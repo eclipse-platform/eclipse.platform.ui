@@ -217,7 +217,8 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 			List l= (List)value;
 			return (TreePath[])l.toArray(new TreePath[l.size()]);
 		} else {
-			Assert.isTrue(false, "Should not happen"); //$NON-NLS-1$
+			// should not happen:
+			Assert.isTrue(false, "Unhandled case"); //$NON-NLS-1$
 			return null;
 		}
 	}

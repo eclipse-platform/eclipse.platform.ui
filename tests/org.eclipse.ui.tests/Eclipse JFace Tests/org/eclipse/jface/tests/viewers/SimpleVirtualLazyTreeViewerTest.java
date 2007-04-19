@@ -34,6 +34,8 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	private static final int NUM_CHILDREN = 10;
 
 	private boolean callbacksEnabled = true;
+	private boolean printCallbacks = false;
+	private int offset = 0;
 
 	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
 		/**
@@ -44,8 +46,9 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		public void updateElement(Object parent, int index) {
 			updateElementCallCount++;
 			String parentString = (String) parent;
-			Object childElement = parentString + "-" + index;
-			// System.out.println(childElement);
+			Object childElement = parentString + "-" + (index+offset);
+			if (printCallbacks)
+				System.out.println("updateElement called for " + parent + " at " + index);
 			if (callbacksEnabled) {
 				getTreeViewer().replace(parent, index, childElement);
 				getTreeViewer().setChildCount(childElement, NUM_CHILDREN);
@@ -68,6 +71,8 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object, int)
 		 */
 		public void updateChildCount(Object element, int currentChildCount) {
+			if (printCallbacks)
+				System.out.println("updateChildCount called for " + element + " with " + currentChildCount);
 			if (callbacksEnabled) {
 				getTreeViewer().setChildCount(element, element==input?NUM_ROOTS:NUM_CHILDREN);
 			}
@@ -152,20 +157,29 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	/* test TreeViewer.remove(parent, index) */ 
 	public void testRemoveAt() {
 		TreeViewer treeViewer = (TreeViewer) fViewer;
+		// correct what the content provider is answering with
+		treeViewer.getTree().update();
+		offset = 1;
 		treeViewer.remove(treeViewer.getInput(), 3);
 		assertEquals(NUM_ROOTS - 1, treeViewer.getTree().getItemCount());
-		treeViewer.getTree().update();
 		treeViewer.setSelection(new StructuredSelection(new Object[] { "R-0",
 				"R-1" }));
 		assertEquals(2, ((IStructuredSelection) treeViewer.getSelection())
 				.size());
-		assertTrue(updateElementCallCount < NUM_ROOTS / 2);
+		processEvents();
+		assertTrue("expected less than " + (NUM_ROOTS / 2) + " but got "
+				+ updateElementCallCount,
+				updateElementCallCount < NUM_ROOTS / 2);
 		updateElementCallCount = 0;
+//		printCallbacks = true;
+		// correct what the content provider is answering with
+		offset = 2;
 		treeViewer.remove(treeViewer.getInput(), 1);
 		assertEquals(NUM_ROOTS - 2, treeViewer.getTree().getItemCount());
 		processEvents();
 		assertEquals(1, ((IStructuredSelection) treeViewer.getSelection())
 				.size());
 		assertEquals(1, updateElementCallCount);
+//		printCallbacks = false;
 	}
 }

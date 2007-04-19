@@ -13,6 +13,9 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.util.Policy;
@@ -73,6 +76,11 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * The row object reused
 	 */
 	private TreeViewerRow cachedRow;
+
+	/**
+	 * true if we are inside a preservingSelection() call
+	 */
+	private boolean preservingSelection;
 
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
@@ -254,12 +262,7 @@ public class TreeViewer extends AbstractTreeViewer {
 					if (contentProviderIsLazy) {
 						TreeItem item = (TreeItem) event.item;
 						TreeItem parentItem = item.getParentItem();
-						int index;
-						if (parentItem != null) {
-							index = parentItem.indexOf(item);
-						} else {
-							index = getTree().indexOf(item);
-						}
+						int index = event.index;
 						virtualLazyUpdateWidget(
 								parentItem == null ? (Widget) getTree()
 										: parentItem, index);
@@ -362,6 +365,20 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		return super.getRawChildren(parent);
 	}
+	
+	void preservingSelection(Runnable updateCode, boolean reveal) {
+		if (preservingSelection){
+			// avoid preserving the selection if called reentrantly
+			updateCode.run();
+			return;
+		}
+		preservingSelection = true;
+		try {
+			super.preservingSelection(updateCode, reveal);
+		} finally {
+			preservingSelection = false;
+		}
+	}
 
 	/**
 	 * For a TreeViewer with a tree with the VIRTUAL style bit set, set the
@@ -419,16 +436,51 @@ public class TreeViewer extends AbstractTreeViewer {
 			final Object element) {
 		preservingSelection(new Runnable() {
 			public void run() {
+				Widget[] itemsToDisassociate;
+				if (parentElementOrTreePath instanceof TreePath) {
+					TreePath elementPath = ((TreePath)parentElementOrTreePath).createChildPath(element);
+					itemsToDisassociate = internalFindItems(elementPath);
+				} else {
+					itemsToDisassociate = internalFindItems(element);
+				}
 				if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
 					if (index < tree.getItemCount()) {
-						updateItem(tree.getItem(index), element);
+						TreeItem item = tree.getItem(index);
+						// disassociate any differen item that represents the
+						// same element under the same parent (the tree)
+						for (int i = 0; i < itemsToDisassociate.length; i++) {
+							if (itemsToDisassociate[i] instanceof TreeItem) {
+								TreeItem itemToDisassociate = (TreeItem)itemsToDisassociate[i];
+								if (itemToDisassociate != item && itemToDisassociate.getParentItem() == null) {
+									int index = getTree().indexOf(itemToDisassociate);
+									disassociate(itemToDisassociate);
+									getTree().clear(index, true);
+								}
+							}
+						}
+						updateItem(item, element);
+						item.clearAll(true);
 					}
 				} else {
 					Widget[] parentItems = internalFindItems(parentElementOrTreePath);
 					for (int i = 0; i < parentItems.length; i++) {
 						TreeItem parentItem = (TreeItem) parentItems[i];
 						if (index < parentItem.getItemCount()) {
-							updateItem(parentItem.getItem(index), element);
+							TreeItem item = parentItem.getItem(index);
+							// disassociate any differen item that represents the
+							// same element under the same parent (the tree)
+							for (int j = 0; j < itemsToDisassociate.length; j++) {
+								if (itemsToDisassociate[j] instanceof TreeItem) {
+									TreeItem itemToDisassociate = (TreeItem)itemsToDisassociate[j];
+									if (itemToDisassociate != item && itemToDisassociate.getParentItem() == parentItem) {
+										int index = parentItem.indexOf(itemToDisassociate);
+										disassociate(itemToDisassociate);
+										parentItem.clear(index, true);
+									}
+								}
+							}
+							updateItem(item, element);
+							item.clearAll(true);
 						}
 					}
 				}
@@ -546,16 +598,27 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected void internalRefreshStruct(Widget widget, Object element,
 			boolean updateLabels) {
 		if (contentProviderIsLazy) {
-			// first phase: update child counts
-			virtualRefreshChildCounts(widget, element);
-			// second phase: update labels
-			if (updateLabels) {
-				if (widget instanceof Tree) {
-					((Tree) widget).clearAll(true);
-				} else if (widget instanceof TreeItem) {
-					((TreeItem) widget).clearAll(true);
+			// clear all starting with the given widget
+			if (widget instanceof Tree) {
+				((Tree) widget).clearAll(true);
+			} else if (widget instanceof TreeItem) {
+				((TreeItem) widget).clearAll(true);
+			}
+			int index = 0;
+			Widget parent = null;
+			if (widget instanceof TreeItem) {
+				TreeItem treeItem = (TreeItem) widget;
+				parent = treeItem.getParentItem();
+				if (parent == null) {
+					parent = treeItem.getParent();
+				}
+				if (parent instanceof Tree) {
+					index = ((Tree) parent).indexOf(treeItem);
+				} else {
+					index = ((TreeItem) parent).indexOf(treeItem);
 				}
 			}
+			virtualRefreshExpandedItems(parent, widget, element, index);
 			return;
 		}
 		super.internalRefreshStruct(widget, element, updateLabels);
@@ -565,31 +628,30 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * Traverses the visible (expanded) part of the tree and updates child
 	 * counts.
 	 * 
+	 * @param parent the parent of the widget, or <code>null</code> if the widget is the tree
 	 * @param widget
 	 * @param element
+	 * @param index the index of the widget in the children array of its parent, or 0 if the widget is the tree
 	 */
-	private void virtualRefreshChildCounts(Widget widget, Object element) {
-		if (widget instanceof Tree || ((TreeItem) widget).getExpanded()) {
-			// widget shows children - it is safe to call getChildren
-			if (element != null) {
-				virtualLazyUpdateChildCount(widget, getChildren(widget).length);
-			} else {
-				if (widget instanceof Tree) {
-					((Tree) widget).setItemCount(0);
-				} else {
-					((TreeItem) widget).setItemCount(0);
-				}
+	private void virtualRefreshExpandedItems(Widget parent, Widget widget, Object element, int index) {
+		if (widget instanceof Tree) {
+			if (element == null) {
+				((Tree) widget).setItemCount(0);
+				return;
 			}
-			// need to get children again because they might have been updated
-			// through a callback to setChildCount.
-			Item[] items = getChildren(widget);
-			for (int i = 0; i < items.length; i++) {
-				Item item = items[i];
-				Object data = item.getData();
-				if (data != null) {
-					virtualRefreshChildCounts(item, data);
-				}
-			}
+			virtualLazyUpdateChildCount(widget, getChildren(widget).length);
+		} else if (((TreeItem) widget).getExpanded()) {
+			// prevent SetData callback
+			((TreeItem)widget).setText(" "); //$NON-NLS-1$
+			virtualLazyUpdateWidget(parent, index);
+		} else {
+			return;
+		}
+		Item[] items = getChildren(widget);
+		for (int i = 0; i < items.length; i++) {
+			Item item = items[i];
+			Object data = item.getData();
+			virtualRefreshExpandedItems(widget, item, data, i);
 		}
 	}
 
@@ -702,13 +764,17 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void remove(final Object parentOrTreePath, final int index) {
+		final List oldSelection = new LinkedList(Arrays
+				.asList(((TreeSelection) getSelection()).getPaths()));
 		preservingSelection(new Runnable() {
 			public void run() {
+				TreePath removedPath = null;
 				if (internalIsInputOrEmptyPath(parentOrTreePath)) {
 					Tree tree = (Tree) getControl();
 					if (index < tree.getItemCount()) {
 						TreeItem item = tree.getItem(index);
 						if (item.getData() != null) {
+							removedPath = getTreePathFromItem(item);
 							disassociate(item);
 						}
 						item.dispose();
@@ -720,11 +786,31 @@ public class TreeViewer extends AbstractTreeViewer {
 						if (index < parentItem.getItemCount()) {
 							TreeItem item = parentItem.getItem(index);
 							if (item.getData() != null) {
+								removedPath = getTreePathFromItem(item);
 								disassociate(item);
 							}
 							item.dispose();
 						}
 					}
+				}
+				if (removedPath != null) {
+					boolean removed = false;
+					for (Iterator it = oldSelection.iterator(); it
+							.hasNext();) {
+						TreePath path = (TreePath) it.next();
+						if (path.startsWith(removedPath, getComparer())) {
+							it.remove();
+							removed = true;
+						}
+					}
+					if (removed) {
+						setSelection(new TreeSelection(
+								(TreePath[]) oldSelection
+										.toArray(new TreePath[oldSelection
+												.size()]), getComparer()),
+								false);
+					}
+					
 				}
 			}
 		});
@@ -815,8 +901,12 @@ public class TreeViewer extends AbstractTreeViewer {
 			TreePath treePath;
 			if (widget instanceof Item) {
 				if (widget.getData() == null) {
-					// temporary fix to avoid a NPE (the tree will still be screwed up)
+					// we need to materialize the parent first
 					// see bug 167668
+					// however, that would be too risky
+					// see bug 182782 and bug 182598
+					// so we just ignore this call altogether
+					// and don't do this: virtualMaterializeItem((TreeItem) widget);
 					return;
 				}
 				treePath = getTreePathFromItem((Item) widget);

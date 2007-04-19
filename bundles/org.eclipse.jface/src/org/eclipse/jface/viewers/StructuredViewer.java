@@ -1322,30 +1322,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            the code to run
 	 */
 	protected void preservingSelection(Runnable updateCode) {
-
-		ISelection oldSelection = null;
-		try {
-			// preserve selection
-			oldSelection = getSelection();
-			inChange = restoreSelection = true;
-
-			// perform the update
-			updateCode.run();
-
-		} finally {
-			inChange = false;
-
-			// restore selection
-			if (restoreSelection) {
-				setSelectionToWidget(oldSelection, false);
-			}
-
-			// send out notification if old and new differ
-			ISelection newSelection = getSelection();
-			if (!newSelection.equals(oldSelection)) {
-				handleInvalidSelection(oldSelection, newSelection);
-			}
-		}
+		preservingSelection(updateCode, false);
 	}
 
 	/**

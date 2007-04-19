@@ -82,6 +82,9 @@ public class TestElement implements Cloneable {
 
         elements[0].fSomeName = "added1";
         elements[1].fSomeName = "added2";
+        // change the id of the second element, otherwise there will be
+        // two equal elements under the same parent
+        elements[1].fId += "madeUnique";
         addChildren(elements, new TestModelChange(event, this, elements));
         return elements;
     }
