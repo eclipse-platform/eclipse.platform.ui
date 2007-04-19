@@ -20,6 +20,7 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -95,7 +96,10 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 				if (selectionProvider != null)
 					return selectionProvider.getSelection();
 			}
-			return globalSelection;
+			if (globalSelection != null) {
+			    return globalSelection;
+			}
+			return StructuredSelection.EMPTY;
 		}
 
 		/*
