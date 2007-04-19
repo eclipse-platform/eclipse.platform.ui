@@ -135,8 +135,7 @@ class WorkerPool {
 			notify();
 			return;
 		}
-		//create a thread if all threads are busy and we're under the max size
-		//if the job is high priority, we start a thread no matter what
+		//create a thread if all threads are busy
 		if (busyThreads >= numThreads) {
 			Worker worker = new Worker(this);
 			worker.setDaemon(isDaemon);
