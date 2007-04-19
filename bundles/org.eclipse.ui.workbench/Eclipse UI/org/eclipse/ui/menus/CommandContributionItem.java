@@ -50,6 +50,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -202,7 +203,7 @@ public final class CommandContributionItem extends ContributionItem {
 					public void setTooltip(String text) {
 						CommandContributionItem.this.setTooltip(text);
 					}
-					
+
 					public void setDropDownId(String id) {
 						dropDownMenuOverride = id;
 					}
@@ -210,10 +211,24 @@ public final class CommandContributionItem extends ContributionItem {
 				elementRef = commandService.registerElementForCommand(command,
 						callback);
 				command.getCommand().addCommandListener(getCommandListener());
+				setImages(serviceLocator);
 			} catch (NotDefinedException e) {
 				WorkbenchPlugin.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
 						+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+		}
+	}
+	
+	private void setImages(IServiceLocator locator) {
+		if (icon == null) {
+			ICommandImageService service = (ICommandImageService) locator
+					.getService(ICommandImageService.class);
+			icon = service.getImageDescriptor(command.getId(),
+					ICommandImageService.TYPE_DEFAULT);
+			disabledIcon = service.getImageDescriptor(command.getId(),
+					ICommandImageService.TYPE_DISABLED);
+			hoverIcon = service.getImageDescriptor(command.getId(),
+					ICommandImageService.TYPE_HOVER);
 		}
 	}
 
@@ -390,11 +405,12 @@ public final class CommandContributionItem extends ContributionItem {
 				}
 				ExternalActionManager.ICallback callback = ExternalActionManager
 						.getInstance().getCallback();
-				String keyBindingText=null;
+				String keyBindingText = null;
 				if ((callback != null) && (command.getId() != null)) {
-					keyBindingText = callback.getAcceleratorText(command.getId());
+					keyBindingText = callback.getAcceleratorText(command
+							.getId());
 				}
-				if (text != null){
+				if (text != null) {
 					if (keyBindingText == null) {
 						item.setText(text);
 					} else {
@@ -549,7 +565,7 @@ public final class CommandContributionItem extends ContributionItem {
 					menuManager.addMenuListener(new IMenuListener() {
 						public void menuAboutToShow(IMenuManager manager) {
 							String id = getId();
-							if (dropDownMenuOverride!=null) {
+							if (dropDownMenuOverride != null) {
 								id = dropDownMenuOverride;
 							}
 							menuService.populateContributionManager(
@@ -582,26 +598,24 @@ public final class CommandContributionItem extends ContributionItem {
 	}
 
 	private void updateIcons() {
-		disposeOldImages();
-		if (icon != null) {
-			if (widget instanceof MenuItem) {
-				MenuItem item = (MenuItem) widget;
-				LocalResourceManager m = new LocalResourceManager(
-						JFaceResources.getResources());
-				item.setImage(m.createImage(icon));
-				localResourceManager = m;
-			} else if (widget instanceof ToolItem) {
-				ToolItem item = (ToolItem) widget;
-				LocalResourceManager m = new LocalResourceManager(
-						JFaceResources.getResources());
-				item.setDisabledImage(disabledIcon == null ? null : m
-						.createImage(disabledIcon));
-				item.setHotImage(hoverIcon == null ? null : m
-						.createImage(hoverIcon));
-				item.setImage(icon == null ? null : m.createImage(icon));
-				localResourceManager = m;
-			}
-
+		if (widget instanceof MenuItem) {
+			MenuItem item = (MenuItem) widget;
+			LocalResourceManager m = new LocalResourceManager(JFaceResources
+					.getResources());
+			item.setImage(icon == null ? null : m.createImage(icon));
+			disposeOldImages();
+			localResourceManager = m;
+		} else if (widget instanceof ToolItem) {
+			ToolItem item = (ToolItem) widget;
+			LocalResourceManager m = new LocalResourceManager(JFaceResources
+					.getResources());
+			item.setDisabledImage(disabledIcon == null ? null : m
+					.createImage(disabledIcon));
+			item.setHotImage(hoverIcon == null ? null : m
+					.createImage(hoverIcon));
+			item.setImage(icon == null ? null : m.createImage(icon));
+			disposeOldImages();
+			localResourceManager = m;
 		}
 	}
 
