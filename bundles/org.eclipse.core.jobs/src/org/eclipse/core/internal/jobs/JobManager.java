@@ -57,7 +57,6 @@ public class JobManager implements IJobManager {
 	static boolean DEBUG_TIMING = false;
 	static boolean DEBUG_SHUTDOWN = false;
 	private static DateFormat DEBUG_FORMAT;
-	private static final IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 
 	/**
 	 * The singleton job manager instance. It must be a singleton because
@@ -241,7 +240,9 @@ public class JobManager implements IJobManager {
 						monitor = job.getProgressMonitor();
 						break;
 					}
-					//fall through for ABOUT_TO_RUN case
+					//signal that the job should be canceled before it gets a chance to run
+					job.setAboutToRunCanceled(true);
+					return true;
 				default :
 					changeState(job, Job.NONE);
 			}
@@ -538,7 +539,7 @@ public class JobManager implements IJobManager {
 			if (JobManager.DEBUG && notify)
 				JobManager.debug("Ending job: " + job); //$NON-NLS-1$
 			job.setResult(result);
-			job.setProgressMonitor(NULL_MONITOR);
+			job.setProgressMonitor(null);
 			job.setThread(null);
 			rescheduleDelay = job.getStartTime();
 			changeState(job, Job.NONE);
@@ -1125,10 +1126,15 @@ public class JobManager implements IJobManager {
 				synchronized (lock) {
 					if (job.getState() == Job.RUNNING) {
 						InternalJob internal = job;
-						internal.setProgressMonitor(createMonitor(job));
-						//change from ABOUT_TO_RUN to RUNNING
-						internal.internalSetState(Job.RUNNING);
-						break;
+						if (internal.isAboutToRunCanceled()) {
+							internal.setAboutToRunCanceled(false);
+							//fall through and end the job below
+						} else {
+							internal.setProgressMonitor(createMonitor(job));
+							//change from ABOUT_TO_RUN to RUNNING
+							internal.internalSetState(Job.RUNNING);
+							break;
+						}
 					}
 				}
 			}

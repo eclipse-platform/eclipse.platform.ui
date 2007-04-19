@@ -42,6 +42,11 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	private static final int M_STATE = 0xFF;
 	private static final int M_SYSTEM = 0x0100;
 	private static final int M_USER = 0x0200;
+	
+	/*
+	 * flag on a job indicating that it was about to run, but has been canceled
+	 */
+	private static final int M_ABOUT_TO_RUN_CANCELED = 0x0400;
 
 	protected static final JobManager manager = JobManager.getInstance();
 	private static int nextJobNumber = 0;
@@ -268,6 +273,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		flags = (flags & ~M_STATE) | i;
 	}
 
+	/**
+	 * Returns whether this job was canceled when it was about to run
+	 */
+	final boolean isAboutToRunCanceled(){
+		return (flags & M_ABOUT_TO_RUN_CANCELED) != 0;
+	}
+
 	/* (non-Javadoc)
 	 * @see Job#isBlocking()
 	 */
@@ -354,6 +366,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected void schedule(long delay) {
 		if (shouldSchedule())
 			manager.schedule(this, delay, false);
+	}
+	
+	/**
+	 * Sets whether this job was canceled when it was about to run
+	 */
+	final void setAboutToRunCanceled(boolean value) {
+		flags = value ? flags | M_ABOUT_TO_RUN_CANCELED : flags & ~M_ABOUT_TO_RUN_CANCELED;
+		
 	}
 
 	/* (non-Javadoc)
