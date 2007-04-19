@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configurator.*;
 import org.w3c.dom.*;
-
 
 public class Configuration implements IConfigurationConstants {
 	
