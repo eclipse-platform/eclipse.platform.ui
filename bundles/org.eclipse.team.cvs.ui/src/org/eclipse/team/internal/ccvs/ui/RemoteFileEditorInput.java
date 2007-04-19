@@ -96,9 +96,13 @@ public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchA
 			return file;
 		
 		if (adapter == IFileRevision.class)
-			return new CVSResourceVariantFileRevision((IResourceVariant)file);
+			return getFileRevision();
 		
 		return super.getAdapter(adapter);
+	}
+
+	public CVSResourceVariantFileRevision getFileRevision() {
+		return new CVSResourceVariantFileRevision((IResourceVariant)file);
 	}
 	/**
 	 * Returns the children of this object.  When this object

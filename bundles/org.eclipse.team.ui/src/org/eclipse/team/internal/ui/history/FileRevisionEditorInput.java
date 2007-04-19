@@ -162,4 +162,11 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 		return fileRevision.hashCode();
 	}
 
+	public IFileRevision getFileRevision() {
+		if (fileRevision instanceof IFileRevision) {
+			return (IFileRevision) fileRevision;
+		}
+		return null;
+	}
+
 }

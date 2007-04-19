@@ -1961,6 +1961,13 @@
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
          <adapter type="org.eclipse.team.ui.mapping.ITeamStateProvider"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput"
+            class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
+         <adapter
+               type="org.eclipse.team.core.history.IFileRevision">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.team.ui.teamDecorators">

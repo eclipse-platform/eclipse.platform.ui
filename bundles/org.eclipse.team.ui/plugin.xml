@@ -396,6 +396,13 @@
             class="org.eclipse.team.internal.ui.TeamAdapterFactory">
          <adapter type="org.eclipse.team.ui.mapping.ITeamStateProvider"/>
       </factory>
+      <factory
+            adaptableType="org.eclipse.team.internal.ui.history.FileRevisionEditorInput"
+            class="org.eclipse.team.internal.ui.TeamAdapterFactory">
+         <adapter
+               type="org.eclipse.team.core.history.IFileRevision">
+         </adapter>
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">

@@ -12,9 +12,9 @@ package org.eclipse.team.internal.ccvs.ui.model;
 
  
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.ui.CVSHistoryPageSource;
-import org.eclipse.team.internal.ccvs.ui.CVSTeamStateProvider;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetCompareAdapter;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryRoot;
 import org.eclipse.team.ui.history.IHistoryPageSource;
@@ -76,6 +76,10 @@ public class CVSAdapterFactory implements IAdapterFactory {
 			return compareAdapter;
 		}
 		
+		if (IFileRevision.class == adapterType && adaptableObject instanceof RemoteFileEditorInput) {
+			return ((RemoteFileEditorInput)adaptableObject).getFileRevision();
+		}
+		
 		return null;
 	}
 	
@@ -98,7 +102,8 @@ public class CVSAdapterFactory implements IAdapterFactory {
 	public Class[] getAdapterList() {
 		return new Class[] { IWorkbenchAdapter.class, IPropertySource.class,
 				IDeferredWorkbenchAdapter.class, IHistoryPageSource.class,
-				ISynchronizationCompareAdapter.class, ITeamStateProvider.class };
+				ISynchronizationCompareAdapter.class, ITeamStateProvider.class,
+				IFileRevision.class};
 	}
 	
 	/**

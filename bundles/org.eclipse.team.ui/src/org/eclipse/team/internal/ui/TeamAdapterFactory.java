@@ -14,12 +14,14 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.team.core.RepositoryProviderType;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceMappingMerger;
 import org.eclipse.team.core.mapping.ISynchronizationScopeParticipantFactory;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.internal.ui.mapping.*;
 import org.eclipse.team.internal.ui.synchronize.DiffNodeWorkbenchAdapter;
-import org.eclipse.team.ui.mapping.ITeamStateProvider;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
+import org.eclipse.team.ui.mapping.ITeamStateProvider;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class TeamAdapterFactory implements IAdapterFactory {
@@ -53,6 +55,10 @@ public class TeamAdapterFactory implements IAdapterFactory {
 			RepositoryProviderType rpt = (RepositoryProviderType) adaptableObject;
 			return TeamUIPlugin.getPlugin().getDecoratedStateProvider(rpt);
 		}
+		
+		if (IFileRevision.class == adapterType && adaptableObject instanceof FileRevisionEditorInput) {
+			return ((FileRevisionEditorInput)adaptableObject).getFileRevision();
+		}
 		return null;
 	}
 
@@ -65,7 +71,8 @@ public class TeamAdapterFactory implements IAdapterFactory {
 				IResourceMappingMerger.class, 
 				ISynchronizationCompareAdapter.class,
 				ISynchronizationScopeParticipantFactory.class,
-				ITeamStateProvider.class 
+				ITeamStateProvider.class ,
+				IFileRevision.class
 			};
 	}
 }
