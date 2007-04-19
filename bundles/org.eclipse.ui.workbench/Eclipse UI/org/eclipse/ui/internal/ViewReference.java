@@ -370,6 +370,21 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 			// Install the part's tools and menu
 			{
+				//
+				// 3.3 start
+				//
+				IMenuService menuService = (IMenuService) site
+						.getService(IMenuService.class);
+				menuService.populateContributionManager(
+						(ContributionManager) site.getActionBars()
+								.getMenuManager(), "menu:" //$NON-NLS-1$
+								+ site.getId());
+				menuService
+						.populateContributionManager((ContributionManager) site
+								.getActionBars().getToolBarManager(),
+								"toolbar:" + site.getId()); //$NON-NLS-1$
+				// 3.3 end
+
 				ViewActionBuilder builder = new ViewActionBuilder();
 				builder.readActionExtensions(view);
 				ActionDescriptor[] actionDescriptors = builder
@@ -392,20 +407,6 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 					}
 				}
 
-				//
-				// 3.3 start
-				//
-				IMenuService menuService = (IMenuService) site
-						.getService(IMenuService.class);
-				menuService.populateContributionManager(
-						(ContributionManager) site.getActionBars()
-								.getMenuManager(), "menu:" //$NON-NLS-1$
-								+ site.getId());
-				menuService
-						.populateContributionManager((ContributionManager) site
-								.getActionBars().getToolBarManager(),
-								"toolbar:" + site.getId()); //$NON-NLS-1$
-				// 3.3 end
 				site.getActionBars().updateActionBars();
 			}
 

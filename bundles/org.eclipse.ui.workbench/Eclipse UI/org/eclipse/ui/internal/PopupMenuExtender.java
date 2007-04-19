@@ -331,8 +331,8 @@ public class PopupMenuExtender implements IMenuListener2,
             addEditorActions(mgr);
         }
         addObjectActions(mgr);
-        addStaticActions(mgr);
         addMenuContributions(mgr);
+        addStaticActions(mgr);
         cleanUpContributionCache();
     }
     
