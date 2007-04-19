@@ -20,11 +20,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -38,19 +35,10 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	 private static final String SYSTEM_DEFAULT_THEME = "org.eclipse.ui.ide.systemDefault";//$NON-NLS-1$
+	
 	 
 	public void initializeDefaultPreferences() {
-		
-		//Determine the high contrast setting before
-		//any access to preferences
-		final boolean[] highContrast = new boolean[1];
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-			public void runWithException() throws Throwable {
-				highContrast[0] = Display.getCurrent().getHighContrast();
-				
-			}});
 		
 		IScopeContext context = new DefaultScope();
 		IEclipsePreferences node = context.getNode(UIPlugin.getDefault()
@@ -101,15 +89,6 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		// Preference for showing system jobs in the jobs view
 		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS, false);
-
-		// Set the default theme.
-		if (highContrast[0]) {
-			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
-					SYSTEM_DEFAULT_THEME);
-		} else {
-			node.put(IWorkbenchPreferenceConstants.CURRENT_THEME_ID,
-					IThemeManager.DEFAULT_THEME);
-		}
 
 		// The default minimum character width for editor tabs is undefined
 		// (i.e., -1)
