@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -290,6 +291,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				fCompareAsText = new CompareAsText();
 			return fCompareAsText;
 		}
+		if (adapter == IFindReplaceTarget.class) {
+			if (fContentInputPane != null) {
+				Viewer v = fContentInputPane.getViewer();
+				if (v != null) {
+					return Utilities.getAdapter(v, IFindReplaceTarget.class);
+				}
+			}
+		}
+			
 		return null;
 	}
 

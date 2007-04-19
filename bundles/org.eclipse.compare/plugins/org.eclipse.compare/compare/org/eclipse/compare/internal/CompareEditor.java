@@ -22,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -34,6 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -169,16 +171,15 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			}
 		}
 		
-		if (key == OutlineViewerCreator.class) {
+		if (key == IShowInSource.class
+				|| key == OutlineViewerCreator.class
+				|| key == IFindReplaceTarget.class) {
 			Object input = getEditorInput();
 			if (input != null) {
-				return Utilities.getAdapter(input, OutlineViewerCreator.class);
+				return Utilities.getAdapter(input, key);
 			}
 		}
 		
-		if (key.equals(IShowInSource.class)) {
-			return getEditorInput().getAdapter(key);
-		}
 		return super.getAdapter(key);
 	}
 	
@@ -360,7 +361,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		parent.setData(this);
 		fPageBook = new PageBook(parent, SWT.NONE);
 		createCompareControl();
-		getSite().getKeyBindingService().setScopes(new String[] { "org.eclipse.compare.compareEditorScope" }); //$NON-NLS-1$
+		IContextService service = (IContextService)getSite().getService(IContextService.class);
+		if (service != null)
+			service.activateContext("org.eclipse.compare.compareEditorScope"); //$NON-NLS-1$
 	}
 
 	private void createCompareControl() {

@@ -285,6 +285,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ShowWhitespaceAction showWhitespaceAction;
 	private InternalOutlineViewerCreator fOutlineViewerCreator;
 	private TextEditorPropertyAction toggleLineNumbersAction;
+	private IFindReplaceTarget fFindReplaceTarget;
 
 	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
 		public Viewer findStructureViewer(Viewer oldViewer,
@@ -1369,6 +1370,35 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 		
 	}
+	
+	private class FindReplaceTarget implements IFindReplaceTarget {
+
+		public boolean canPerformFind() {
+			return fFocusPart != null;
+		}
+
+		public int findAndSelect(int widgetOffset, String findString,
+				boolean searchForward, boolean caseSensitive, boolean wholeWord) {
+			return fFocusPart.getFindReplaceTarget().findAndSelect(widgetOffset, findString, searchForward, caseSensitive, wholeWord);
+		}
+
+		public Point getSelection() {
+			return fFocusPart.getFindReplaceTarget().getSelection();
+		}
+
+		public String getSelectionText() {
+			return fFocusPart.getFindReplaceTarget().getSelectionText();
+		}
+
+		public boolean isEditable() {
+			return fFocusPart.getFindReplaceTarget().isEditable();
+		}
+
+		public void replaceSelection(String text) {
+			fFocusPart.getFindReplaceTarget().replaceSelection(text);
+		}
+		
+	}
 
 	//---- MergeTextViewer
 	
@@ -2339,28 +2369,46 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (fBackground != null)	// not default
 			te.setBackground(getColor(parent.getDisplay(), fBackground));			
 		
+		// Add the find action to the popup menu of the viewer
+		contributeFindAction(part);
+		
 		configureTextViewer(part);
 		
 		return part;
 	}
+
+	private void contributeFindAction(MergeSourceViewer viewer) {
+		IAction action;
+		IWorkbenchPart wp = getCompareConfiguration().getContainer().getWorkbenchPart();
+		if (wp != null)
+			action = new FindReplaceAction(getResourceBundle(), "Editor.FindReplace.", wp); //$NON-NLS-1$
+		else
+			action = new FindReplaceAction(getResourceBundle(), "Editor.FindReplace.", viewer.getControl().getShell(), getFindReplaceTarget()); //$NON-NLS-1$
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		viewer.addAction(MergeSourceViewer.FIND_ID, action);
+	}
 	
-	private void connectGlobalActions(MergeSourceViewer part) {
-		IActionBars actionBars= getCompareConfiguration().getContainer().getActionBars();
-		if (actionBars != null) {
-			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
-				IAction action= null; 
-				if (part != null) {
-					action= part.getAction(TEXT_ACTIONS[i]);
-					if (action == null && TEXT_ACTIONS[i].equals(MergeSourceViewer.SAVE_ID)) {			
-						if (part == fLeft)
-							action= fLeftSaveAction;
-						else
-							action= fRightSaveAction;
+	private void connectGlobalActions(final MergeSourceViewer part) {
+		if (fHandlerService != null) {
+			if (part != null)
+				part.updateActions();
+			fHandlerService.updatePaneActionHandlers(new Runnable() {
+				public void run() {
+					for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
+						IAction action= null; 
+						if (part != null) {
+							action= part.getAction(TEXT_ACTIONS[i]);
+							if (action == null && TEXT_ACTIONS[i].equals(MergeSourceViewer.SAVE_ID)) {			
+								if (part == fLeft)
+									action= fLeftSaveAction;
+								else
+									action= fRightSaveAction;
+							}
+						}
+						fHandlerService.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
 					}
 				}
-				actionBars.setGlobalActionHandler(GLOBAL_ACTIONS[i], action);
-			}
-			actionBars.updateActionBars();
+			});
 		}
 	}
 
@@ -5316,6 +5364,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return fOutlineViewerCreator;
 
 		}
+		if (adapter == IFindReplaceTarget.class)
+			return getFindReplaceTarget();
 		return null;
 	}
 	
@@ -5410,5 +5460,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 		}
 		return 0; 
+	}
+	
+	private IFindReplaceTarget getFindReplaceTarget() {
+		if (fFindReplaceTarget == null)
+			fFindReplaceTarget= new FindReplaceTarget();
+		return fFindReplaceTarget;
 	}
 }

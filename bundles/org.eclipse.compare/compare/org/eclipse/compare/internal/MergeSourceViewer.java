@@ -29,7 +29,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.FindReplaceAction;
 /**
  * Extends the JFace SourceViewer with some convenience methods.
  */
@@ -357,8 +358,8 @@ public class MergeSourceViewer extends SourceViewer
 					addSelectionChangedListener(this);
 				
 				Utilities.initAction(action, fResourceBundle, "action." + actionId + ".");			 //$NON-NLS-1$ //$NON-NLS-2$
-				fActions.put(actionId, action);
 			}
+			addAction(actionId, action);
 				
 		}
 		if (action instanceof MergeViewerAction) {
@@ -384,29 +385,30 @@ public class MergeSourceViewer extends SourceViewer
 			return new TextOperationAction(DELETE, "org.eclipse.ui.edit.delete", true, false, false); //$NON-NLS-1$
 		if (SELECT_ALL_ID.equals(actionId))
 			return new TextOperationAction(SELECT_ALL, "org.eclipse.ui.edit.selectAll", false, false, false); //$NON-NLS-1$
-		if (FIND_ID.equals(actionId)) {
-			FindReplaceAction findReplaceAction = new FindReplaceAction(fResourceBundle, "Editor.FindReplace.", getControl().getShell(), this.getFindReplaceTarget()); //$NON-NLS-1$
-			findReplaceAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
-			return findReplaceAction;
-		}
 		return null;
 	}
 	
 	public void selectionChanged(SelectionChangedEvent event) {
 		Iterator e= fActions.values().iterator();
 		while (e.hasNext()) {
-			MergeViewerAction action= (MergeViewerAction) e.next();
-			if (action.isSelectionDependent())
-				action.update();
+			Object next = e.next();
+			if (next instanceof MergeViewerAction) {
+				MergeViewerAction action = (MergeViewerAction) next;
+				if (action.isSelectionDependent())
+					action.update();
+			}
 		}
 	}
 					
 	public void textChanged(TextEvent event) {
 		Iterator e= fActions.values().iterator();
 		while (e.hasNext()) {
-			MergeViewerAction action= (MergeViewerAction) e.next();
-			if (action.isContentDependent())
-				action.update();
+			Object next = e.next();
+			if (next instanceof MergeViewerAction) {
+				MergeViewerAction action = (MergeViewerAction) next;
+				if (action.isContentDependent())
+					action.update();
+			}
 		}
 	}
 		
@@ -470,8 +472,14 @@ public class MergeSourceViewer extends SourceViewer
 	public void updateActions() {
 		Iterator e= fActions.values().iterator();
 		while (e.hasNext()) {
-			MergeViewerAction action= (MergeViewerAction) e.next();
-			action.update();
+			Object next = e.next();
+			if (next instanceof MergeViewerAction) {
+				MergeViewerAction action = (MergeViewerAction) next;
+				action.update();
+			} if (next instanceof FindReplaceAction) {
+				FindReplaceAction action = (FindReplaceAction) next;
+				action.update();
+			}
 		}
 	}
 	
@@ -547,5 +555,9 @@ public class MergeSourceViewer extends SourceViewer
 
 	public void addTextAction(TextEditorPropertyAction textEditorPropertyAction) {
 		textActions.add(textEditorPropertyAction);
+	}
+
+	public void addAction(String id, IAction action) {
+		fActions.put(id, action);
 	}
 }
