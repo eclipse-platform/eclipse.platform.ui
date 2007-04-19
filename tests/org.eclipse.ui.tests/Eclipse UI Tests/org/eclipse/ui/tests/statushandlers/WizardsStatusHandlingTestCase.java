@@ -52,6 +52,12 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 					new Object[] { "org.eclipse.ui.tests",
 							"org.eclipse.ui.tests.statushandlers.wizards.FaultyExportWizard" });
 
+	private static String EXCEPTION_MESSAGE2 = NLS
+			.bind(
+					RegistryMessages.plugin_loadClassError,
+					new Object[] { "org.eclipse.ui.tests",
+							"org.eclipse.ui.tests.statushandlers.wizards.FaultyExportWizard" });
+
 	private static String PLUGIN_ID = "org.eclipse.ui.tests";
 
 	private static String FAULTY_WIZARD_NAME = "FaultyExportWizard";
@@ -118,10 +124,19 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 	 */
 	private void assertStatusAdapter(StatusAdapter statusAdapter) {
 		IStatus status = statusAdapter.getStatus();
-		assertEquals(status.getSeverity(), SEVERITY);
-		assertEquals(status.getPlugin(), PLUGIN_ID);
-		assertEquals(status.getMessage(), MESSAGE);
-		assertEquals(status.getException().getClass(), EXCEPTION_CLASS);
-		assertEquals(status.getException().getMessage(), EXCEPTION_MESSAGE);
+		assertEquals(SEVERITY, status.getSeverity());
+		assertEquals(PLUGIN_ID, status.getPlugin());
+		assertEquals(MESSAGE, status.getMessage());
+		assertEquals(EXCEPTION_CLASS, status.getException().getClass());
+		assertTrue(createIncorrectExceptionMessage(status.getException()
+				.getMessage()), EXCEPTION_MESSAGE.equals(status.getException()
+				.getMessage())
+				|| EXCEPTION_MESSAGE2
+						.equals(status.getException().getMessage()));
+	}
+
+	private String createIncorrectExceptionMessage(String exceptionMessage) {
+		return "expected:<" + EXCEPTION_MESSAGE + "> or <" + EXCEPTION_MESSAGE2
+				+ "> but was:<" + exceptionMessage + ">";
 	}
 }
