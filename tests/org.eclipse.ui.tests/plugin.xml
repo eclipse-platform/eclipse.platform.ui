@@ -3054,10 +3054,6 @@
                label="Basic Cmd"
                mnemonic="B">
          </command>
-         <control
-               class="org.eclipse.ui.tests.api.workbenchpart.TextWidget"
-               id="MenuTest.popup.BasicWidgetItem">
-         </control>
          <menu
                icon="icons/binary_co.gif"
                id="MenuTest.popup.BasicMenuItem"
