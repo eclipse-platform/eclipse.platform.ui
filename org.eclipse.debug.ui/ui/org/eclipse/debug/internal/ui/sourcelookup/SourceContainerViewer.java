@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - Bug 173306: When editing source lookup, new source
+ *     					containers should be added at the top of the list
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.sourcelookup;
 
@@ -149,23 +151,17 @@ public class SourceContainerViewer extends TreeViewer {
 	 * @param entries additions
 	 */
 	public void addEntries(ISourceContainer[] entries) {
+        int index = 0;
 		IStructuredSelection sel = (IStructuredSelection)getSelection();
-		if (sel.isEmpty()) {
-			for (int i = 0; i < entries.length; i++) {
-				if (!fEntries.contains(entries[i])) {
-					fEntries.add(entries[i]);
-				}
+		if (!sel.isEmpty()) {
+            index = fEntries.indexOf(sel.getFirstElement());
+        }
+		for (int i = 0; i < entries.length; i++) {
+			if (!fEntries.contains(entries[i])) {
+				fEntries.add(index, entries[i]);
+				index++;
 			}
-		} 
-		else { 
-			int index = fEntries.indexOf(sel.getFirstElement());
-			for (int i = 0; i < entries.length; i++) {
-				if (!fEntries.contains(entries[i])) {
-					fEntries.add(index, entries[i]);
-					index++;
-				}
-			}
-		}		
+		}
 		
 		refresh();
 		if(entries.length > 0)
