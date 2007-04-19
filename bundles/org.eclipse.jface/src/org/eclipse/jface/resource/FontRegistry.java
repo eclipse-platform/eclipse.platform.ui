@@ -490,7 +490,8 @@ public class FontRegistry extends ResourceRegistry {
     }
 
     /**
-     * Calculates the default font and returns the result
+     * Calculates the default font and returns the result.
+     * This method creates a font that must be disposed.
      */
     Font calculateDefaultFont() {
         Display current = Display.getCurrent();
@@ -539,6 +540,7 @@ public class FontRegistry extends ResourceRegistry {
             Font defaultFont = calculateDefaultFont();
             record = createFont(JFaceResources.DEFAULT_FONT, defaultFont
                     .getFontData());
+            defaultFont.dispose();
             stringToFontRecord.put(JFaceResources.DEFAULT_FONT, record);
         }
         return record;
