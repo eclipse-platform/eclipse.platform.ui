@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="base"/>
-	<classpathentry kind="src" path="cheatsheet"/>
-	<classpathentry kind="src" path="intro"/>
-	<classpathentry kind="src" path="help"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry path="base" kind="src"/>
+	<classpathentry path="cheatsheet" kind="src"/>
+	<classpathentry path="intro" kind="src"/>
+	<classpathentry path="help" kind="src"/>
+	<classpathentry path="forms" kind="src"/>
+	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
+	<classpathentry path="org.eclipse.pde.core.requiredPlugins" kind="con"/>
+	<classpathentry path="bin" kind="output"/>
 </classpath>
