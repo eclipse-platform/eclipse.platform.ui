@@ -418,7 +418,7 @@ public class PreviewPatchPage2 extends WizardPage {
 						generateRejects.getSelection());
 			}
 		});
-		generateRejects.setSelection(true);
+		generateRejects.setSelection(false);
 		generateRejects.setLayoutData(gd);
 	}
 	

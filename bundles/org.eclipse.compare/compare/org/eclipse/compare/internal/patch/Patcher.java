@@ -55,7 +55,7 @@ public class Patcher {
 	private Set mergedHunks = new HashSet();
 
 	private final PatchConfiguration configuration;
-	private boolean fGenerateRejectFile = true;
+	private boolean fGenerateRejectFile = false;
 	
 	public Patcher() {
 		configuration = new PatchConfiguration();
