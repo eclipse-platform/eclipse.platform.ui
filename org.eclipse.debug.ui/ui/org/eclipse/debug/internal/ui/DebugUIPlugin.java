@@ -134,11 +134,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
-    /**
-	 * Unique identifier constant (value <code>"org.eclipse.debug.ui"</code>)
-	 * for the Debug UI plug-in.
-	 */
-	private static final String PI_DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
 	
 	/**
 	 * The singleton debug plug-in instance
@@ -277,7 +272,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
-		return PI_DEBUG_UI;
+		return IDebugUIConstants.PLUGIN_ID;
 	}
 
 	/**
