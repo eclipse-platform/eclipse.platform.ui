@@ -857,9 +857,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				int count = 0;
 				while( it.hasNext() ) {
 					modelElement = it.next();
-					for( int i = 0; i < items.length; i++ ) {
+					boolean found = false;
+					for( int i = 0; i < items.length && !found; i++ ) {
 						if( items[i].getData() == modelElement ) {
 							indices[count++] = i;
+							found = true;
 						}
 					}
 				}
