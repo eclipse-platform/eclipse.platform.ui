@@ -440,7 +440,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		FileOutputStream stream = new FileOutputStream(file);
 		stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
 		stream.close();
-		fireLaunchHistoryChanged();
 	}
 	
 	/**

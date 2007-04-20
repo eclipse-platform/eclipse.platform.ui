@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
@@ -61,7 +62,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.3
  */
-public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener, ISelectionListener, ILaunchHistoryChangedListener {
+public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener, ISelectionListener, ILaunchHistoryChangedListener, ILaunchesListener2 {
 	
 	/**
 	 *The set of label update listeners
@@ -82,7 +83,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * The selection has changed and we need to update the labels
 	 */
-	private boolean fUpdateLabel = false;
+	private boolean fUpdateLabel = true;
 	
 	/**
 	 * Set of windows that have been opened and that we have registerd selection listeners with
@@ -287,6 +288,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().addLaunchHistoryListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 
 	/**
@@ -299,6 +301,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().removeLaunchHistoryListener(this);
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		IWorkbenchWindow window = null;
 		ToolBar bar = null;
 		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
@@ -396,6 +399,34 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @see org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener#launchHistoryChanged()
 	 */
 	public void launchHistoryChanged() {
-		fUpdateLabel = !isContextLaunchEnabled();
+		//this always must be set to true, because as the history is loaded these events are fired, and we need to
+		//update on workspace load.
+		fUpdateLabel = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesTerminated(ILaunch[] launches) {
+		fUpdateLabel = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesAdded(ILaunch[] launches) {
+		fUpdateLabel = true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesChanged(ILaunch[] launches) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
+	 */
+	public void launchesRemoved(ILaunch[] launches) {
 	}
 }
