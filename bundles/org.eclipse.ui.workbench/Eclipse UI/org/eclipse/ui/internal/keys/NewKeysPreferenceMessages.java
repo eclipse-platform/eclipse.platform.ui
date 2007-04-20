@@ -48,6 +48,10 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String RestoreDefaultsMessageBoxText;
 	public static String RestoreDefaultsMessageBoxMessage;
 	
+	public static String Undefined_Command;
+	public static String Unavailable_Category;
+	public static String Undefined_Context;
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, NewKeysPreferenceMessages.class);

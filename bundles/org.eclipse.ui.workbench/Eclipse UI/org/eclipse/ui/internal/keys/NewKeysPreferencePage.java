@@ -387,7 +387,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						return binding.getParameterizedCommand().getName();
 						
 					} catch (final NotDefinedException e) {
-						return null;
+						return NewKeysPreferenceMessages.Undefined_Command;
 					}
 				case COLUMN_TRIGGER_SEQUENCE:
 					return binding.getTriggerSequence().format();
@@ -397,7 +397,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 							return binding.getParameterizedCommand().getCommand().getCategory().getName();
 						} catch (NotDefinedException e) {
 							// TODO Auto-generated catch block
-							return null;
+							return NewKeysPreferenceMessages.Unavailable_Category;
 						}
 				default:
 					return null;
@@ -407,7 +407,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					try {
 						return ((Category) value).getName();
 					} catch (final NotDefinedException e) {
-						return null;
+						return NewKeysPreferenceMessages.Unavailable_Category;
 					}
 				}
 
@@ -420,7 +420,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						return contextService.getContext((String) value)
 								.getName();
 					} catch (final NotDefinedException e) {
-						return null;
+						return NewKeysPreferenceMessages.Undefined_Context;
 					}
 				}
 
@@ -430,7 +430,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					try {
 						return ((ParameterizedCommand) value).getName();
 					} catch (final NotDefinedException e) {
-						return null;
+						return NewKeysPreferenceMessages.Undefined_Command;
 					}
 				}
 				if (columnIndex== COLUMN_TRIGGER_SEQUENCE)
@@ -440,7 +440,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						return ((ParameterizedCommand) value).getCommand().getCategory().getName();
 					} catch (NotDefinedException e) {
 						// TODO Auto-generated catch block
-						return null;
+						return NewKeysPreferenceMessages.Unavailable_Category;
 					}
 				}
 				return null;
@@ -602,13 +602,17 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					}
 
 				} else { // (GROUPING_NONE_NAME.equals(selectedText))
+					
 					IBaseLabelProvider baseLabel = filteredTree.getViewer().getLabelProvider();
 					if (baseLabel instanceof ITableLabelProvider) {
 						ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
 						String e1p = tableProvider.getColumnText(a, sortColumn);
 						String e2p = tableProvider.getColumnText(b, sortColumn);
-						int result = getComparator().compare(e1p, e2p);
-						return ascending ?  result : (-1) * result;
+						if (e1p!=null && e2p!=null){
+							int result = getComparator().compare(e1p, e2p);
+							return ascending ?  result : (-1) * result;
+							
+						}
 					}
 					return super.compare(viewer, a, b);
 					
@@ -852,10 +856,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 *            The binding to be added; must not be <code>null</code>.
 	 */
 	private final void bindingAdd(final Binding binding) {
+		if (!(binding.getParameterizedCommand().getCommand().isDefined()))
+			return;
+		
 		// Remember the parameterized command and context.
 		markedParameterizedCommand = binding.getParameterizedCommand();
 		markedContextId = binding.getContextId();
-
+		
 		// Update the preference page.
 		update();
 
