@@ -36,7 +36,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -85,12 +84,16 @@ public class StatusDialog extends ErrorDialog {
 	 * @param displayMask
 	 */
 	public StatusDialog(Shell parentShell, StatusInfo statusInfo,
-			int displayMask) {
+			int displayMask, boolean modal) {
 		super(parentShell, null, statusInfo.getStatus().getStatus()
 				.getMessage(), statusInfo.getStatus().getStatus(), displayMask);
 		setShellStyle(SWT.RESIZE | SWT.MIN | getShellStyle());
 		this.selectedStatus = statusInfo;
 		setBlockOnOpen(false);
+
+		if (!modal) {
+			setShellStyle(~SWT.APPLICATION_MODAL & getShellStyle());
+		}
 
 		String reason = WorkbenchMessages.StatusDialog_checkDetailsMessage;
 		if (statusInfo.getStatus().getStatus().getException() != null) {
@@ -197,6 +200,11 @@ public class StatusDialog extends ErrorDialog {
 			}
 		}
 		super.buttonPressed(id);
+	}
+	
+	public boolean isModal()
+	{
+		return ((getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
 	}
 
 	/*
@@ -553,24 +561,5 @@ public class StatusDialog extends ErrorDialog {
 	 */
 	protected boolean shouldShowDetailsButton() {
 		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.ErrorDialog#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
-	protected void configureShell(Shell shell) {
-		super.configureShell(shell);
-		shell.addDisposeListener(new DisposeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
-			public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
-				StatusNotificationManager.getInstance().dialogClosed();
-			}
-		});
 	}
 }

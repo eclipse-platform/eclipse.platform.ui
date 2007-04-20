@@ -15,18 +15,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
 import com.ibm.icu.text.DateFormat;
@@ -40,10 +38,23 @@ public class StatusNotificationManager {
 	private Collection errors = Collections.synchronizedSet(new HashSet());
 
 	private StatusDialog dialog;
-	
+
 	private boolean dialogOpened = false;
 
 	private static StatusNotificationManager sharedInstance;
+
+	private DisposeListener disposeListener = new DisposeListener() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+		 */
+		public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
+			dialog = null;
+			dialogOpened = false;
+			errors.clear();
+		}
+	};
 
 	/**
 	 * Returns the shared instance.
@@ -58,30 +69,19 @@ public class StatusNotificationManager {
 	}
 
 	/**
-	 * Create a new instance of the receiver.
+	 * Create a new instance of the manager.
 	 */
-	public StatusNotificationManager() {
-
+	private StatusNotificationManager() {
 	}
 
 	/**
-	 * Add a new error to the list for the supplied job.
-	 * 
-	 * @param status
-	 */
-	public void addError(StatusAdapter statusAdapter) {
-		StatusInfo errorInfo = new StatusInfo(statusAdapter);
-		showError(errorInfo);
-	}
-
-	/**
-	 * Show the error in the error dialog. This is done from the UI thread to
-	 * ensure that no errors are dropped.
+	 * Add a new error to the list.
 	 * 
 	 * @param statusInfo
 	 *            the error to be displayed
 	 */
-	private void showError(final StatusInfo statusInfo) {
+	public void addError(StatusAdapter statusAdapter, final boolean modal) {
+		final StatusInfo statusInfo = new StatusInfo(statusAdapter);
 
 		if (!PlatformUI.isWorkbenchRunning()) {
 			// we are shuttting down, so just log
@@ -89,40 +89,32 @@ public class StatusNotificationManager {
 			return;
 		}
 
-		// IWorkbench workbench = PlatformUI.getWorkbench();
-		//
-		// // Abort on shutdown
-		// if (workbench instanceof Workbench
-		// && ((Workbench) workbench).isClosing()) {
-		// return Status.CANCEL_STATUS;
-		// }
-
 		// Add the error in the UI thread to ensure thread safety in the
 		// dialog
-		 if (dialogOpened == true) {
-			statusInfo.getStatus().setProperty(
-					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
-					Boolean.FALSE);
-			WorkbenchJob job = new WorkbenchJob(
-					ProgressMessages.ErrorNotificationManager_OpenErrorDialogJob) {
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					errors.add(statusInfo);
-					dialog.refresh();
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule();
-		} else if (Platform.isRunning()) {
+		if (dialogOpened == true) {
+			if (statusInfo.getStatus().getProperty(
+					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != null) {
+				statusInfo.getStatus().setProperty(
+						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
+						Boolean.FALSE);
+			}
+
+			// Are we in the UI Thread?
+			if (PlatformUI.getWorkbench().getDisplay().getThread() == Thread
+					.currentThread())
+				openStatusDialog(modal, statusInfo);
+			else {
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+						openStatusDialog(modal, statusInfo);
+					}
+				});
+			}
+		} else {
 			errors.add(statusInfo);
 			// Delay prompting if the status adapter property is set
-			Object noPromptProperty = null;
-			if (statusInfo.getStatus().getProperty(
-					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) == Boolean.TRUE) {
-				noPromptProperty = Boolean.TRUE;
-			} else {
-				noPromptProperty = Boolean.FALSE;
-			}
+			Object noPromptProperty = statusInfo.getStatus().getProperty(
+					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
 
 			boolean prompt = true;
 			if (noPromptProperty instanceof Boolean) {
@@ -131,19 +123,16 @@ public class StatusNotificationManager {
 
 			if (prompt) {
 				dialogOpened = true;
-				WorkbenchJob job = new WorkbenchJob(
-						ProgressMessages.ErrorNotificationManager_OpenErrorDialogJob) {
-					public IStatus runInUIThread(IProgressMonitor monitor) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
 						dialog = new StatusDialog(ProgressManagerUtil
 								.getDefaultParent(), statusInfo, IStatus.OK
-								| IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+								| IStatus.INFO | IStatus.WARNING
+								| IStatus.ERROR, modal);
 						dialog.open();
-						dialog.refresh();
-						return Status.OK_STATUS;
+						dialog.getShell().addDisposeListener(disposeListener);
 					}
-				};
-				job.setSystem(true);
-				job.schedule();
+				});
 			}
 		}
 	}
@@ -158,20 +147,23 @@ public class StatusNotificationManager {
 	}
 
 	/**
-	 * Clear all of the errors held onto by the receiver.
+	 * @param modal
+	 * @param statusInfo
 	 */
-	private void clearAllErrors() {
-		errors.clear();
-	}
+	void openStatusDialog(final boolean modal, final StatusInfo statusInfo) {
+		errors.add(statusInfo);
+		if (modal && !dialog.isModal()) {
+			dialog.getShell().removeDisposeListener(disposeListener);
+			dialog.close();
+			dialog = new StatusDialog(ProgressManagerUtil.getDefaultParent(),
+					statusInfo, IStatus.OK | IStatus.INFO | IStatus.WARNING
+							| IStatus.ERROR, modal);
 
-	/**
-	 * The error dialog has been closed. Clear the list of errors and the stored
-	 * dialog.
-	 */
-	public void dialogClosed() {
-		dialog = null;
-		dialogOpened = false;
-		clearAllErrors();
+			dialog.open();
+			dialog.getShell().addDisposeListener(disposeListener);
+		} else {
+			dialog.refresh();
+		}
 	}
 
 	/**
@@ -210,10 +202,12 @@ public class StatusNotificationManager {
 				text = job.getName();
 			}
 
-			return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
-					text,
-					DateFormat.getDateTimeInstance(DateFormat.LONG,
-							DateFormat.LONG).format(new Date(getTimestamp())) }));
+			return NLS.bind(ProgressMessages.JobInfo_Error,
+					(new Object[] {
+							text,
+							DateFormat.getDateTimeInstance(DateFormat.LONG,
+									DateFormat.LONG).format(
+									new Date(getTimestamp())) }));
 		}
 
 		/**
