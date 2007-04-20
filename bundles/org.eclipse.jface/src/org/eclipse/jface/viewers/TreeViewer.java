@@ -458,8 +458,11 @@ public class TreeViewer extends AbstractTreeViewer {
 								}
 							}
 						}
+						Object oldData = item.getData();
 						updateItem(item, element);
-						item.clearAll(true);
+						if (!TreeViewer.this.equals(oldData, element)) {
+							item.clearAll(true);
+						}
 					}
 				} else {
 					Widget[] parentItems = internalFindItems(parentElementOrTreePath);
@@ -479,8 +482,11 @@ public class TreeViewer extends AbstractTreeViewer {
 									}
 								}
 							}
+							Object oldData = item.getData();
 							updateItem(item, element);
-							item.clearAll(true);
+							if (!TreeViewer.this.equals(oldData, element)) {
+								item.clearAll(true);
+							}
 						}
 					}
 				}
