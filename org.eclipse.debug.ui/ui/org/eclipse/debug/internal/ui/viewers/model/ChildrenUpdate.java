@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentPr
 import org.eclipse.jface.viewers.TreePath;
 
 /**
+ * This class is public so the test suite has access - it should be default protection.
+ * 
  * @since 3.3 
  */
-class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
+public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 	
 	private Object[] fElements;
 	private int fIndex;
@@ -92,25 +94,28 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 	}
 
 	/* (non-Javadoc)
+	 * 
+	 * This method is public so the test suite has access - it should be default protection.
+	 * 
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#coalesce(org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor)
 	 */
-	boolean coalesce(ViewerUpdateMonitor request) {
+	public synchronized boolean coalesce(ViewerUpdateMonitor request) {
 		if (request instanceof ChildrenUpdate) {
 			ChildrenUpdate cu = (ChildrenUpdate) request;
-			int end = fIndex + fLength;
-			int otherStart = cu.getOffset();
-			if (otherStart == end) {
-				fLength = fLength + cu.getLength();
-				return true;
-			} else if (otherStart == fIndex) {
-				if (cu.getLength() > getLength()) {
-					fLength = cu.getLength();
-				}
-				return true;
-			} else if ((otherStart > fIndex) && (otherStart < end)) {
+			if (getElement().equals(cu.getElement()) && getElementPath().equals(cu.getElementPath())) { 
+				int end = fIndex + fLength;
+				int otherStart = cu.getOffset();
 				int otherEnd = otherStart + cu.getLength();
-				fLength = otherEnd - fIndex;
-				return true;
+				if ((otherStart >= fIndex && otherStart <= end) || (otherEnd >= fIndex && otherEnd <= end)) {
+					// overlap
+					fIndex = Math.min(fIndex, otherStart);
+					end = Math.max(end, otherEnd);
+					fLength = end - fIndex;
+					if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+						System.out.println("coalesced: " + this.toString()); //$NON-NLS-1$
+					}
+					return true;
+				}
 			}
 		}
 		return false;
