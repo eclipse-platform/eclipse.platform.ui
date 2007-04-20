@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
@@ -39,31 +38,6 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	 * Constructs an uninitialized composite image.
 	 */
 	protected CompositeImageDescriptor() {
-	}
-
-	/**
-	 * Returns the index of a RGB entry in the given map which matches the
-	 * specified RGB color. If no such entry exists, a new RGB is allocated. If
-	 * the given array is full, the value 0 is returned (which maps to the
-	 * transparency value).
-	 */
-	private static int alloc(RGB[] map, int red, int green, int blue) {
-		int i;
-		RGB c;
-
-		// this loops starts at index 1 because index 0 corresponds to the
-		// transparency value
-		for (i = 1; i < map.length && (c = map[i]) != null; i++) {
-			if (c.red == red && c.green == green && c.blue == blue) {
-				return i;
-			}
-		}
-
-		if (i < map.length - 1) {
-			map[i] = new RGB(red, green, blue);
-			return i;
-		}
-		return 0;
 	}
 
 	/**
@@ -97,143 +71,112 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	 *            the y position
 	 */
 	final protected void drawImage(ImageData src, int ox, int oy) {
-
-		RGB[] out = imageData.getRGBs();
-	
-		PaletteData palette = src.palette;
-		if (palette.isDirect) {
-
-			ImageData mask = src.getTransparencyMask();
-
-			for (int y = 0; y < src.height; y++) {
-				for (int x = 0; x < src.width; x++) {
-					if (mask.getPixel(x, y) != 0) {
-						int xx = x + ox;
-						int yy = y + oy;
-						if (xx >= 0 && xx < imageData.width && yy >= 0
-								&& yy < imageData.height) {
-							int pixel = src.getPixel(x, y);
-							int alpha = src.getAlpha(x, y);
-
-							int r = pixel & palette.redMask;
-							/*
-							 * JM: Changed operators from >> to >>> to shift
-							 * sign bit right
-							 */
-							r = (palette.redShift < 0) ? r >>> -palette.redShift
-									: r << palette.redShift;
-							int g = pixel & palette.greenMask;
-							g = (palette.greenShift < 0) ? g >>> -palette.greenShift
-									: g << palette.greenShift;
-							int b = pixel & palette.blueMask;
-							b = (palette.blueShift < 0) ? b >>> -palette.blueShift
-									: b << palette.blueShift;
-
-							pixel = alloc(out, r, g, b);
-
-							updatePixel(xx, yy, pixel, alpha);
+		ImageData dst = imageData;
+		PaletteData srcPalette = src.palette;
+		ImageData srcMask = src.maskData != null ? src.getTransparencyMask() : null;
+		for (int srcY = 0, dstY = srcY + oy; srcY < src.height; srcY++, dstY++) {
+			for (int srcX = 0, dstX = srcX + ox; srcX < src.width; srcX++, dstX++) {
+				if (!(0 <= dstX && dstX < dst.width && 0 <= dstY && dstY < dst.height)) continue;
+				int srcPixel = src.getPixel(srcX, srcY);
+				int srcAlpha = 255;
+				if (src.maskData != null) {
+					if (src.depth == 32) {
+						srcAlpha = srcPixel & 0xFF;
+						if (srcAlpha == 0) {
+							srcAlpha = srcMask.getPixel(srcX, srcY) != 0 ? 255 : 0;
 						}
+					} else {
+						if (srcMask.getPixel(srcX, srcY) == 0) srcAlpha = 0;
 					}
+				} else if (src.transparentPixel != -1) {
+					if (src.transparentPixel == srcPixel) srcAlpha = 0;
+				} else if (src.alpha != -1) {
+					srcAlpha = src.alpha;
+				} else if (src.alphaData != null) {
+					srcAlpha = src.getAlpha(srcX, srcY);
 				}
-			}
-
-			return;
-		}
-
-		// map maps src pixel values to dest pixel values
-		int map[] = new int[256];
-		for (int i = 0; i < map.length; i++) {
-			map[i] = -1;
-		}
-
-		/* JM: added code to test if the image is an icon */
-		if (src.getTransparencyType() == SWT.TRANSPARENCY_MASK) {
-			ImageData mask = src.getTransparencyMask();
-			for (int y = 0; y < src.height; y++) {
-				for (int x = 0; x < src.width; x++) {
-					if (mask.getPixel(x, y) != 0) {
-						int xx = x + ox;
-						int yy = y + oy;
-						if (xx >= 0 && xx < imageData.width && yy >= 0
-								&& yy < imageData.height) {
-							int pixel = src.getPixel(x, y);
-							int alpha = src.getAlpha(x, y);
-							int newPixel = map[pixel];
-							if (newPixel < 0) {
-								RGB c = palette.getRGB(pixel);
-								map[pixel] = newPixel = alloc(out, c.red,
-										c.green, c.blue);
-							}
-
-							updatePixel(xx, yy, pixel, alpha);
-						}
-					}
+				if (srcAlpha == 0) continue;
+				int srcRed, srcGreen, srcBlue;
+				if (srcPalette.isDirect) {
+					srcRed = srcPixel & srcPalette.redMask;
+					srcRed = (srcPalette.redShift < 0) ? srcRed >>> -srcPalette.redShift : srcRed << srcPalette.redShift;
+					srcGreen = srcPixel & srcPalette.greenMask;
+					srcGreen = (srcPalette.greenShift < 0) ? srcGreen >>> -srcPalette.greenShift : srcGreen << srcPalette.greenShift;
+					srcBlue = srcPixel & srcPalette.blueMask;
+					srcBlue = (srcPalette.blueShift < 0) ? srcBlue >>> -srcPalette.blueShift : srcBlue << srcPalette.blueShift;
+				} else {
+					RGB rgb = srcPalette.getRGB(srcPixel);
+					srcRed = rgb.red;
+					srcGreen = rgb.green;
+					srcBlue = rgb.blue;
 				}
-			}
-			return;
-		}
-
-		int maskPixel = src.transparentPixel;
-		for (int y = 0; y < src.height; y++) {
-			for (int x = 0; x < src.width; x++) {
-				int pixel = src.getPixel(x, y);
-				int xx = x + ox;
-				int yy = y + oy;
-				if (maskPixel < 0 || pixel != maskPixel) {
-
-					if (xx >= 0 && xx < imageData.width && yy >= 0
-							&& yy < imageData.height) {
-
-						int newPixel = map[pixel];
-						if (newPixel < 0) {
-							RGB c = palette.getRGB(pixel);
-							map[pixel] = newPixel = alloc(out, c.red, c.green,
-									c.blue);
-						}
-
-						int alpha = src.getAlpha(x, y);
-						updatePixel(xx,yy,newPixel,alpha);
-					}
+				int dstRed, dstGreen, dstBlue, dstAlpha;
+				if (srcAlpha == 255) {
+					dstRed = srcRed;
+					dstGreen = srcGreen;
+					dstBlue= srcBlue;
+					dstAlpha = srcAlpha;
+				} else {
+					int dstPixel = dst.getPixel(dstX, dstY);
+					dstAlpha = dst.getAlpha(dstX, dstY);
+					dstRed = (dstPixel & 0xFF) >>> 0;
+					dstGreen = (dstPixel & 0xFF00) >>> 8;
+					dstBlue = (dstPixel & 0xFF0000) >>> 16;
+					dstRed += (srcRed - dstRed) * srcAlpha / 255;
+					dstGreen += (srcGreen - dstGreen) * srcAlpha / 255;
+					dstBlue += (srcBlue - dstBlue) * srcAlpha / 255;
+					dstAlpha += (srcAlpha - dstAlpha) * srcAlpha / 255;
 				}
+				dst.setPixel(dstX, dstY, ((dstRed & 0xFF) << 0) | ((dstGreen & 0xFF) << 8) | ((dstBlue & 0xFF) << 16));
+				dst.setAlpha(dstX, dstY, dstAlpha);
 			}
 		}
-	}
-
-	private void updatePixel(int xx, int yy, int pixel, int alpha) {
-		imageData.setPixel(xx, yy, pixel);
-		imageData.setAlpha(xx, yy, alpha);
 	}
 
 	/*
 	 * (non-Javadoc) Method declared on ImageDesciptor.
 	 */
 	public ImageData getImageData() {
-
-		Point size = getSize();
-		RGB black = new RGB(0, 0, 0);
-		RGB[] rgbs = new RGB[256];
-		rgbs[0] = black; // transparency
-		rgbs[1] = black; // black
-
-		PaletteData dataPalette = new PaletteData(rgbs);
-		imageData = new ImageData(size.x, size.y, 8, dataPalette);
-		imageData.transparentPixel = getTransparentPixel();
-
+		Point size = getSize();		
+		
+		/* Create a 24 bit image data with alpha channel */
+		imageData = new ImageData(size.x, size.y, 24, new PaletteData(0xFF, 0xFF00, 0xFF0000));
+		imageData.alphaData = new byte[imageData.width * imageData.height];
+		
 		drawCompositeImage(size.x, size.y);
-
-		for (int i = 0; i < rgbs.length; i++) {
-			if (rgbs[i] == null) {
-				rgbs[i] = black;
+		
+		/* Detect minimum transparency */
+		boolean transparency = false;
+		byte[] alphaData = imageData.alphaData;
+		for (int i = 0; i < alphaData.length; i++) {
+			int alpha = alphaData[i] & 0xFF;
+			if (!(alpha == 0 || alpha == 255)) {
+				/* Full alpha channel transparency */
+				return imageData;
 			}
+			if (!transparency && alpha == 0) transparency = true;
 		}
-
+		if (transparency) {
+			/* Reduce to 1-bit alpha channel transparency */
+			PaletteData palette = new PaletteData(new RGB[]{new RGB(0, 0, 0), new RGB(255, 255, 255)});
+			ImageData mask = new ImageData(imageData.width, imageData.height, 1, palette);
+			for (int y = 0; y < mask.height; y++) {
+				for (int x = 0; x < mask.width; x++) {
+					mask.setPixel(x, y, imageData.getAlpha(x, y) == 255 ? 1 : 0);
+				}
+			}
+		} else {
+			/* no transparency */
+			imageData.alphaData = null;
+		}
 		return imageData;
-
 	}
 	
 
 	/**
 	 * Return the transparent pixel for the receiver.
+	 * <strong>NOTE</strong> This value is not currently in use in the 
+	 * default implementation.
 	 * @return int
 	 */
 	protected int getTransparentPixel() {
