@@ -34,6 +34,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
@@ -860,7 +861,12 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				ILaunchConfiguration[] configs = history.getCompleteLaunchHistory();
 				for(int i = 0; i < configs.length; i++) {
 					if(configurations.contains(configs[i])) {
-						candidates.add(configs[i]);
+						if(resource instanceof IContainer) {
+							return configs[i];
+						}
+						else {
+							candidates.add(configs[i]);
+						}
 					}
 				}
 			}

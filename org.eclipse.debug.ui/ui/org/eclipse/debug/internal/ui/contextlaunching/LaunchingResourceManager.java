@@ -428,5 +428,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
+		fUpdateLabel = true;
 	}
 }
