@@ -22,6 +22,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.ILaunchLabelChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -32,11 +33,14 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -57,7 +61,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.3
  */
-public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener {
+public class LaunchingResourceManager implements IPropertyChangeListener, IWindowListener, ISelectionListener, ILaunchHistoryChangedListener {
 	
 	/**
 	 *The set of label update listeners
@@ -74,6 +78,16 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * the map of current labels
 	 */
 	private HashMap fCurrentLabels = new HashMap();
+	
+	/**
+	 * The selection has changed and we need to update the labels
+	 */
+	private boolean fUpdateLabel = false;
+	
+	/**
+	 * Set of windows that have been opened and that we have registerd selection listeners with
+	 */
+	private HashSet fWindows = new HashSet();
 	
 	/**
 	 * Provides a mouse tracker listener for the launching main toolbar 
@@ -122,7 +136,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @return the current resource label;
 	 */
 	public String getLaunchLabel(ILaunchGroup group) {
-		return (String) fCurrentLabels.get(group); 
+		return (String) fCurrentLabels.get(group);
 	}
 	
 	/**
@@ -138,37 +152,40 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * current launch history changed event
 	 */
 	protected void computeLabels() {
-		fCurrentLabels.clear();
-		ILaunchGroup group = null;
-		boolean changed = false;
-		ILaunchConfiguration config = null;
-		String label = null;
-		for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
-			group = ((ILaunchLabelChangedListener) iter.next()).getLaunchGroup();
-			if(group != null) {
-				if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-					label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
-				}
-				else {
-					config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
-					if(config != null) {
-						label = appendLaunched(config);
+		if(fUpdateLabel) {
+			fCurrentLabels.clear();
+			ILaunchGroup group = null;
+			boolean changed = false;
+			ILaunchConfiguration config = null;
+			String label = null;
+			for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
+				group = ((ILaunchLabelChangedListener) iter.next()).getLaunchGroup();
+				if(group != null) {
+					if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+						label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
 					}
 					else {
-						//need to force an update to display the default label.
-						//case: no launch history, switch off context launching, label needs to update
-						label = null;
-						changed |= true;
+						config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
+						if(config != null) {
+							label = appendLaunched(config);
+						}
+						else {
+							//need to force an update to display the default label.
+							//case: no launch history, switch off context launching, label needs to update
+							label = null;
+							changed |= true;
+						}
 					}
+					changed |= fCurrentLabels.put(group, label) != null;
 				}
-				changed |= fCurrentLabels.put(group, label) != null;
 			}
-		}
-		if(changed) {
-			//notify the listeners of a label update
-			for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
-				((ILaunchLabelChangedListener)iter.next()).labelChanged();
+			if(changed) {
+				//notify the listeners of a label update
+				for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
+					((ILaunchLabelChangedListener)iter.next()).labelChanged();
+				}
 			}
+			fUpdateLabel = false;
 		}
 	}
 	
@@ -234,7 +251,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				return appendLaunched(config);
 			}
 			else {
-				//TODO could cause TVT issues
 				return ContextMessages.ContextRunner_14;
 			}
 		}
@@ -248,7 +264,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 						return getResourceLabel(project, group);
 					}
 					else {
-						//TODO could cause TVT issues
 						return ContextMessages.ContextRunner_15;
 					}
 				}
@@ -257,7 +272,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				return resource.getName();
 			}
 			else {
-				//TODO could cause TVT issues
 				return ContextMessages.ContextRunner_14;
 			}
 		}
@@ -272,6 +286,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			workbench.addWindowListener(this);
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		DebugUIPlugin.getDefault().getLaunchConfigurationManager().addLaunchHistoryListener(this);
 	}
 
 	/**
@@ -283,6 +298,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			workbench.removeWindowListener(this);
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		DebugUIPlugin.getDefault().getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 		IWorkbenchWindow window = null;
 		ToolBar bar = null;
 		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
@@ -292,6 +308,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				bar.removeMouseTrackListener(fMouseListener);
 			}
 		}
+		for(Iterator iter = fWindows.iterator(); iter.hasNext();) {
+			((IWorkbenchWindow)iter.next()).getSelectionService().removeSelectionListener(this);
+		}
+		fWindows.clear();
 		fToolbars.clear();
 		fLabelListeners.clear();
 		fCurrentLabels.clear();
@@ -314,6 +334,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		if(bar != null && !bar.isDisposed()) {
 			bar.removeMouseTrackListener(fMouseListener);
 		}
+		if(fWindows.remove(window)) {
+			window.getSelectionService().removeSelectionListener(this);
+		}
 	}
 
 	/**
@@ -324,7 +347,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void windowOpened(IWorkbenchWindow window) {}
+	public void windowOpened(IWorkbenchWindow window) {
+		if(fWindows.add(window)) {
+			window.getSelectionService().addSelectionListener(this);
+		}
+	}
 	
 	/**
 	 * Adds a mouse listener to the launch toolbar 
@@ -354,6 +381,21 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			if(isContextLaunchEnabled()) {
 				windowActivated(DebugUIPlugin.getActiveWorkbenchWindow());
 			}
+			fUpdateLabel = true;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		fUpdateLabel = isContextLaunchEnabled();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener#launchHistoryChanged()
+	 */
+	public void launchHistoryChanged() {
+		fUpdateLabel = !isContextLaunchEnabled();
 	}
 }
