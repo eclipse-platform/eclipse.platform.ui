@@ -25,6 +25,7 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 	private Action configureSchedule;
 	private Action refreshSelectionAction;
 	private org.eclipse.team.internal.ui.mapping.RemoveFromViewAction removeFromViewAction;
+	private org.eclipse.team.internal.ui.mapping.RestoreRemovedItemsAction restoreRemovedItemsAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -61,6 +62,8 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 			}
 		}
 		removeFromViewAction = new org.eclipse.team.internal.ui.mapping.RemoveFromViewAction(configuration);
+		restoreRemovedItemsAction = new org.eclipse.team.internal.ui.mapping.RestoreRemovedItemsAction(configuration);
+		appendToGroup(ISynchronizePageConfiguration.P_VIEW_MENU, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, restoreRemovedItemsAction);
 	}
 
 	/* (non-Javadoc)
@@ -82,6 +85,7 @@ public class RefreshActionContribution extends SynchronizePageActionGroup {
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#setActionBars(org.eclipse.ui.IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
+		super.fillActionBars(actionBars);
 		if(actionBars != null) {
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();

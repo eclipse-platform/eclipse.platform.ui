@@ -99,6 +99,7 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * @param subscriber the subscriber for the handler
 	 * @param manager the scope of the handler
 	 * @param tree the tree to be populated by this handler
+	 * @param filter a filter
 	 */
 	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScopeManager manager, ResourceDiffTree tree, DiffFilter filter) {
 		super(subscriber, manager.getScope());
@@ -136,6 +137,11 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 			state = STATE_COLLECTING_CHANGES;
 			super.reset(traversals, type);
 		}
+	}
+	
+	public void reset(){
+		reset(getScope().getTraversals(),
+				SubscriberEventHandler.SubscriberEvent.INITIALIZE);
 	}
 	
 	protected void prepareScope(IProgressMonitor monitor) {
