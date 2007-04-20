@@ -47,6 +47,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 
 /**
@@ -100,6 +101,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_MONITOR_EXPRESSION));
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".addMemoryMonitorAction_context"); //$NON-NLS-1$		
 		
 		// listen for context changed
 		DebugUITools.getDebugContextManager().getContextService(site.getSite().getWorkbenchWindow()).addDebugContextListener(this);

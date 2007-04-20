@@ -18,8 +18,10 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.jface.action.Action;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Reest MemoryViewTab to the base address of a memory block
@@ -38,6 +40,7 @@ public class ResetToBaseAddressAction extends Action {
         setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_RESET_MEMORY));
         setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_RESET_MEMORY));
         setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_RESET_MEMORY));
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugUIConstants.PLUGIN_ID + ".ResetBaseAddressContextAction_context"); //$NON-NLS-1$
     }
 
     /*
