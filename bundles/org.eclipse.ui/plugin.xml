@@ -1058,6 +1058,15 @@
       <image
             commandId="org.eclipse.ui.edit.redo"
             icon="$nl$/icons/full/etool16/redo_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.file.save"
+            icon="$nl$/icons/full/etool16/save_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.file.saveAll"
+            icon="$nl$/icons/full/etool16/saveall_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.file.saveAs"
+            icon="$nl$/icons/full/etool16/saveas_edit.gif" />
    </extension>
    
    <extension
