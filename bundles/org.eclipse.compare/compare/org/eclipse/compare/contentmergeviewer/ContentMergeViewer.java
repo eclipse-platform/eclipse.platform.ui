@@ -811,11 +811,12 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fHandlerService.registerAction(fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft"); //$NON-NLS-1$
 			}
 			
-			Action a= new ChangePropertyAction(fBundle, getCompareConfiguration(), "action.EnableAncestor.", ICompareUIConstants.PROP_ANCESTOR_VISIBLE); //$NON-NLS-1$
+			final ChangePropertyAction a= new ChangePropertyAction(fBundle, getCompareConfiguration(), "action.EnableAncestor.", ICompareUIConstants.PROP_ANCESTOR_VISIBLE); //$NON-NLS-1$
 			a.setChecked(fAncestorVisible);
 			fAncestorItem= new ActionContributionItem(a);
 			fAncestorItem.setVisible(false);
 			tbm.appendToGroup("modes", fAncestorItem); //$NON-NLS-1$
+			tbm.getControl().addDisposeListener(a);
 			
 			createToolItems(tbm);
 			updateToolItems();

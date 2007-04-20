@@ -286,6 +286,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private InternalOutlineViewerCreator fOutlineViewerCreator;
 	private TextEditorPropertyAction toggleLineNumbersAction;
 	private IFindReplaceTarget fFindReplaceTarget;
+	private ChangePropertyAction fIgnoreWhitespace;
 
 	private final class InternalOutlineViewerCreator extends OutlineViewerCreator implements ISelectionChangedListener {
 		public Viewer findStructureViewer(Viewer oldViewer,
@@ -1791,6 +1792,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (toggleLineNumbersAction != null)
 			toggleLineNumbersAction.dispose();
+		
+		if (fIgnoreWhitespace != null)
+			fIgnoreWhitespace.dispose();
 		
 		super.handleDispose(event);
   	}
@@ -3931,6 +3935,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fLeft, fRight, fAncestor
 		}, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
 		fHandlerService.registerAction(toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
+		
+		fIgnoreWhitespace= ChangePropertyAction.createIgnoreWhiteSpaceAction(getResourceBundle(), getCompareConfiguration());
+		fIgnoreWhitespace.setActionDefinitionId(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE);
+		fLeft.addTextAction(fIgnoreWhitespace);
+		fRight.addTextAction(fIgnoreWhitespace);
+		fAncestor.addTextAction(fIgnoreWhitespace);
+		// Register for key binding if we are not in an editor
+		if (!(getCompareConfiguration().getContainer().getWorkbenchPart() instanceof IEditorPart)) {
+			fHandlerService.registerAction(fIgnoreWhitespace, fIgnoreWhitespace.getActionDefinitionId());
+		}
 	}
 	
 	/* (non-Javadoc)

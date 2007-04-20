@@ -158,6 +158,12 @@
             categoryId="org.eclipse.compare.ui.category.compare"
             id="org.eclipse.compare.selectPreviousChange">
       </command>
+      <command
+            categoryId="org.eclipse.compare.ui.category.compare"
+            description="%Command.ignoreWhiteSpace.description"
+            id="org.eclipse.compare.ignoreWhiteSpace"
+            name="%Command.ignoreWhiteSpace.name">
+      </command>
    </extension>
    
    <extension

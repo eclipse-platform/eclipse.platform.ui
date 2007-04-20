@@ -44,4 +44,6 @@ public interface ICompareUIConstants {
 	public static final String PREF_VALUE_PROMPT = "prompt"; //$NON-NLS-1$
 	public static final String PREF_VALUE_LOOP = "loop"; //$NON-NLS-1$
 	public static final String PREF_VALUE_NEXT = "next"; //$NON-NLS-1$
+
+	public static final String COMMAND_IGNORE_WHITESPACE = PREFIX + "ignoreWhiteSpace"; //$NON-NLS-1$
 }

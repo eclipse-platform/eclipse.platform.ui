@@ -553,7 +553,7 @@ public class MergeSourceViewer extends SourceViewer
 		updateLineNumberRuler();
 	}
 
-	public void addTextAction(TextEditorPropertyAction textEditorPropertyAction) {
+	public void addTextAction(IAction textEditorPropertyAction) {
 		textActions.add(textEditorPropertyAction);
 	}
 

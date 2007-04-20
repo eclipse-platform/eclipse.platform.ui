@@ -27,20 +27,20 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	
 	private IEditorPart fActiveEditorPart= null;
 
-	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
+	private ChangePropertyAction fIgnoreWhitespace;
 	private NavigationAction fNext;
 	private NavigationAction fPrevious;
 	
 	private NavigationAction fToolbarNext;
 	private NavigationAction fToolbarPrevious;
 
-
 	public CompareEditorContributor() {
 		ResourceBundle bundle= CompareUI.getResourceBundle();
 		
 		IWorkbenchHelpSystem helpSystem= PlatformUI.getWorkbench().getHelpSystem();
 		
-		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
+		fIgnoreWhitespace= ChangePropertyAction.createIgnoreWhiteSpaceAction(bundle, null);
+		fIgnoreWhitespace.setActionDefinitionId(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE);
 		helpSystem.setHelp(fIgnoreWhitespace, ICompareContextIds.IGNORE_WHITESPACE_ACTION);
 		
 		fNext= new NavigationAction(bundle, true);
@@ -105,6 +105,8 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, fNext);
 			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, fPrevious);
 			
+			actionBars.setGlobalActionHandler(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE, fIgnoreWhitespace);
+			
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);
 		} else {
@@ -119,5 +121,6 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	public void dispose() {
 		setActiveEditor(null);
 		super.dispose();
+		fIgnoreWhitespace.dispose();
 	}
 }

@@ -153,9 +153,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private boolean fDirty= false;
 	private ArrayList fDirtyViewers= new ArrayList();
 	private IPropertyChangeListener fDirtyStateListener;
-
-	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
-	private ShowPseudoConflicts fShowPseudoConflicts;
 	
 	boolean fStructureCompareOnSingleClick= true;
 
@@ -214,10 +211,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public CompareEditorInput(CompareConfiguration configuration) {
 		fCompareConfiguration= configuration;
 		Assert.isNotNull(configuration);
-
-		ResourceBundle bundle= CompareUI.getResourceBundle();
-		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, configuration);
-		fShowPseudoConflicts= new ShowPseudoConflicts(bundle, configuration);
 
 		fDirtyStateListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent e) {
@@ -429,10 +422,14 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @param toolBarManager the <code>ToolBarManager</code> to which to contribute
 	 */
 	public void contributeToToolBar(ToolBarManager toolBarManager) {
-		
+		ResourceBundle bundle= CompareUI.getResourceBundle();
+		ChangePropertyAction ignoreWhitespace= ChangePropertyAction.createIgnoreWhiteSpaceAction(bundle, getCompareConfiguration());
+		toolBarManager.getControl().addDisposeListener(ignoreWhitespace);
+		ChangePropertyAction showPseudoConflicts= ChangePropertyAction.createShowPseudoConflictsAction(bundle, getCompareConfiguration());
+		toolBarManager.getControl().addDisposeListener(showPseudoConflicts);
 		toolBarManager.add(new Separator());
-		toolBarManager.add(fIgnoreWhitespace);
-		toolBarManager.add(fShowPseudoConflicts);
+		toolBarManager.add(ignoreWhitespace);
+		toolBarManager.add(showPseudoConflicts);
 	}
 	
 	/**
