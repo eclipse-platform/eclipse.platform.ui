@@ -332,10 +332,8 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 			if ((compareMode & ALWAYS) == 0) {
 				compareModeAction = new Action(TeamUIMessages.LocalHistoryPage_CompareModeAction,TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW)) {
 					public void run() {
-						if (compareMode == ON)
-							compareMode = OFF;
-						else
-							compareMode = ON;
+						// switch the mode
+						compareMode = compareMode == ON ? OFF : ON;
 						compareModeAction.setChecked(compareMode == ON);
 					}
 				};
@@ -632,11 +630,9 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 	
 	public void setClickAction(boolean compare) {
-		//toggleCompareAction is going to switch the mode
-		//so make sure that we're in the appropriate mode before
 		compareMode = compare ? ON : OFF;
 		if (compareModeAction != null)
-			compareModeAction.run();
+			compareModeAction.setChecked(compareMode == ON);
 	}
 
 	public ICompareInput getCompareInput(Object object) {
