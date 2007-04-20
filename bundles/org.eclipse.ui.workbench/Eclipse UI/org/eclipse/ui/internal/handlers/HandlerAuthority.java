@@ -332,6 +332,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 				if (currentActivation.getHandler() != bestActivation
 						.getHandler()) {
 					conflict = true;
+					break;
 				}
 
 			} else {

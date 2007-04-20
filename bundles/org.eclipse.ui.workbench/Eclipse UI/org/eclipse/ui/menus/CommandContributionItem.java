@@ -423,8 +423,9 @@ public final class CommandContributionItem extends ContributionItem {
 					item.setSelection(checkedState);
 				}
 
-				if (item.isEnabled() != isEnabled()) {
-					item.setEnabled(isEnabled());
+				boolean shouldBeEnabled = isEnabled();
+				if (item.getEnabled() != shouldBeEnabled) {
+					item.setEnabled(shouldBeEnabled);
 				}
 			} else if (widget instanceof ToolItem) {
 				ToolItem item = (ToolItem) widget;
@@ -458,8 +459,9 @@ public final class CommandContributionItem extends ContributionItem {
 					item.setSelection(checkedState);
 				}
 
-				if (item.isEnabled() != isEnabled()) {
-					item.setEnabled(isEnabled());
+				boolean shouldBeEnabled = isEnabled();
+				if (item.getEnabled() != shouldBeEnabled) {
+					item.setEnabled(shouldBeEnabled);
 				}
 			}
 		}
@@ -526,6 +528,14 @@ public final class CommandContributionItem extends ContributionItem {
 		if (openDropDownMenu(event))
 			return;
 
+		if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
+			if (event.widget instanceof ToolItem) {
+				checkedState = ((ToolItem)event.widget).getSelection();
+			} else if (event.widget instanceof MenuItem) {
+				checkedState = ((MenuItem)event.widget).getSelection();
+			}
+		}
+		
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {

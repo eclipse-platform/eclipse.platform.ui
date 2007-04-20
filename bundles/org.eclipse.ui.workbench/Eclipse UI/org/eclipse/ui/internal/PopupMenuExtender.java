@@ -300,6 +300,8 @@ public class PopupMenuExtender implements IMenuListener2,
      * Notifies the listener that the menu is about to be shown.
      */
     public void menuAboutToShow(IMenuManager mgr) {
+    	IMenuManager originalManager = mgr;
+    	
     	// Add this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
@@ -327,11 +329,11 @@ public class PopupMenuExtender implements IMenuListener2,
             mgr = menuWrapper;
             menuWrapper.removeAll();
         }
+        addMenuContributions(originalManager);
         if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
             addEditorActions(mgr);
         }
         addObjectActions(mgr);
-        addMenuContributions(mgr);
         addStaticActions(mgr);
         cleanUpContributionCache();
     }
