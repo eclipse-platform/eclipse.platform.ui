@@ -99,17 +99,12 @@ public class StatusNotificationManager {
 						Boolean.FALSE);
 			}
 
-			// Are we in the UI Thread?
-			if (PlatformUI.getWorkbench().getDisplay().getThread() == Thread
-					.currentThread())
-				openStatusDialog(modal, statusInfo);
-			else {
-				Display.getDefault().syncExec(new Runnable() {
-					public void run() {
-						openStatusDialog(modal, statusInfo);
-					}
-				});
-			}
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					openStatusDialog(modal, statusInfo);
+				}
+			});
+
 		} else {
 			errors.add(statusInfo);
 			// Delay prompting if the status adapter property is set

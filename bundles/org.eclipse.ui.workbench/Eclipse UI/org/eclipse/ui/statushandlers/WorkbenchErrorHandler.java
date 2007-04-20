@@ -31,9 +31,11 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 *      int)
 	 */
 	public void handle(final StatusAdapter statusAdapter, int style) {
-		if ((style & StatusManager.SHOW) == StatusManager.SHOW) {
-			StatusNotificationManager.getInstance().addError(
-					statusAdapter);
+		if (((style & StatusManager.SHOW) == StatusManager.SHOW)
+				|| ((style & StatusManager.BLOCK) == StatusManager.BLOCK)) {
+			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
+			StatusNotificationManager.getInstance().addError(statusAdapter,
+					modal);
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {

@@ -81,7 +81,8 @@ import org.eclipse.ui.progress.IProgressConstants;
 public class StatusManager {
 	/**
 	 * A style indicating that the status should not be acted on. This is used
-	 * by objects such as log listeners that do not want to report a status twice.
+	 * by objects such as log listeners that do not want to report a status
+	 * twice.
 	 */
 	public static final int NONE = 0;
 
@@ -92,15 +93,15 @@ public class StatusManager {
 
 	/**
 	 * A style indicating that handlers should show a problem to an user without
-	 * blocking the calling method while awaiting user response. This is generally 
-	 * done using a non modal {@link Dialog}.
+	 * blocking the calling method while awaiting user response. This is
+	 * generally done using a non modal {@link Dialog}.
 	 */
 	public static final int SHOW = 0x02;
-	
+
 	/**
-	 * A style indicating that the handling should block the calling method until the
-	 * user has responded. This is generally done using a modal window such as a 
-	 * {@link Dialog}.
+	 * A style indicating that the handling should block the calling method
+	 * until the user has responded. This is generally done using a modal window
+	 * such as a {@link Dialog}.
 	 */
 	public static final int BLOCK = 0x04;
 
@@ -159,7 +160,7 @@ public class StatusManager {
 				}
 				return;
 			}
-			
+
 			// tries to handle the problem with default (product) handler
 			if (StatusHandlerRegistry.getDefault()
 					.getDefaultHandlerDescriptor() != null) {
@@ -167,11 +168,14 @@ public class StatusManager {
 					StatusHandlerRegistry.getDefault()
 							.getDefaultHandlerDescriptor().getStatusHandler()
 							.handle(statusAdapter, style);
-					// if statuses are shown, all finished jobs with error will be removed,
-					// we should remove it from the status manager, when error icon
+					// if statuses are shown, all finished jobs with error will
+					// be removed,
+					// we should remove it from the status manager, when error
+					// icon
 					// will be part of handlers not ProgressAnimationItem
-					if ((style & StatusManager.SHOW) == StatusManager.SHOW && statusAdapter
-							.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
+					if (((style & StatusManager.SHOW) == StatusManager.SHOW || (style & StatusManager.BLOCK) == StatusManager.BLOCK)
+							&& statusAdapter
+									.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
 						FinishedJobs.getInstance().removeErrorJobs();
 					}
 					return;
@@ -182,11 +186,12 @@ public class StatusManager {
 
 			// delegates the problem to workbench handler
 			getWorkbenchHandler().handle(statusAdapter, style);
-			
-			// if statuses are shown, all finished jobs with error will be removed,
+
+			// if statuses are shown, all finished jobs with error will be
+			// removed,
 			// we should remove it from the status manager, when error icon
 			// will be part of handlers not ProgressAnimationItem
-			if ((style & StatusManager.SHOW) == StatusManager.SHOW
+			if (((style & StatusManager.SHOW) == StatusManager.SHOW || (style & StatusManager.BLOCK) == StatusManager.BLOCK)
 					&& statusAdapter
 							.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
 				FinishedJobs.getInstance().removeErrorJobs();
@@ -251,7 +256,7 @@ public class StatusManager {
 		addLoggedStatus(status);
 		WorkbenchPlugin.log(status);
 	}
-	
+
 	private void logError(IStatus status) {
 		addLoggedStatus(status);
 		WorkbenchPlugin.log(status);
