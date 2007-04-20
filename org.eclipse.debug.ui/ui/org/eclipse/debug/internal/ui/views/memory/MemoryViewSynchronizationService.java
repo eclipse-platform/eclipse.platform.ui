@@ -137,6 +137,10 @@ public class MemoryViewSynchronizationService implements
 	 */
 	public void memoryBlocksRemoved(IMemoryBlock[] memoryBlocks) {
 		
+		// Sync info can be null if the service is already shut down
+		if (fSynchronizeInfo == null)
+			return;
+		
 		for (int i=0; i<memoryBlocks.length; i++)
 		{
 			IMemoryBlock memory = memoryBlocks[i];
