@@ -1431,7 +1431,11 @@ public class EditorManager implements IExtensionChangeHandler {
 
 	}
 
-	protected void restoreEditorState(IMemento editorMem,
+	/*
+	 * Made public for Mylar in 3.3 - see bug 138666. Can be made private once
+	 * we have real API for this.
+	 */
+	public void restoreEditorState(IMemento editorMem,
 			ArrayList visibleEditors, IEditorReference[] activeEditor,
 			MultiStatus result) {
 		// String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
