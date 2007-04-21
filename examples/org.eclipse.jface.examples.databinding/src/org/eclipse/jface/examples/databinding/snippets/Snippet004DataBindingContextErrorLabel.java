@@ -62,10 +62,7 @@ public class Snippet004DataBindingContextErrorLabel {
 						value, new UpdateValueStrategy().setAfterConvertValidator(new FiveValidator()), null);
 
 				// Bind the error label to the validation error on the dbc.
-				// Create a new DBC as the status should not be aggregating
-				// status from this new binding.
-				DataBindingContext statusContext = new DataBindingContext();
-				statusContext.bindValue(SWTObservables.observeText(errorLabel),
+				dbc.bindValue(SWTObservables.observeText(errorLabel),
 						new AggregateValidationStatus(dbc.getBindings(),
 								AggregateValidationStatus.MAX_SEVERITY), null,
 						null);

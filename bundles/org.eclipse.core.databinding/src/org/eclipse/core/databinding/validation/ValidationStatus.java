@@ -105,5 +105,53 @@ public class ValidationStatus extends Status {
 	public static IStatus ok() {
 		return Status.OK_STATUS;
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+
+		String message = getMessage();
+		int severity = getSeverity();
+		Throwable throwable = getException();
+
+		result = prime * result + ((message == null) ? 0 : message.hashCode());
+		result = prime * result + severity;
+		result = prime * result
+				+ ((throwable == null) ? 0 : throwable.hashCode());
+		return result;
+	}
+
+	/**
+	 * Equality is based upon instance equality rather than identity.
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final ValidationStatus other = (ValidationStatus) obj;
+
+		if (getSeverity() != other.getSeverity())
+			return false;
+		if (getMessage() == null) {
+			if (other.getMessage() != null)
+				return false;
+		} else if (!getMessage().equals(other.getMessage()))
+			return false;
+		if (getException() == null) {
+			if (other.getException() != null)
+				return false;
+		} else if (!getException().equals(other.getException()))
+			return false;
+		return true;
+	}
 }

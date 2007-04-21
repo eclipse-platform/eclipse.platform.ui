@@ -90,6 +90,28 @@ public class BindingStatusTest extends TestCase {
 		assertEquals(IStatus.INFO, children[1].getSeverity());
 	}
 	
+	public void testEqual() throws Exception {
+		BindingStatus status1 = BindingStatus.ok();
+		BindingStatus status2 = BindingStatus.ok();
+		
+		assertEquals(status1, status2);
+	}
+	
+	public void testNotEqual() throws Exception {
+		BindingStatus status1 = BindingStatus.ok();
+		BindingStatus status2 = BindingStatus.ok();
+		
+		status2.add(ValidationStatus.error(""));
+		assertFalse(status1.equals(status2));
+	}
+	
+	public void testHashCode() throws Exception {
+		BindingStatus status1 = BindingStatus.ok();
+		BindingStatus status2 = BindingStatus.ok();
+		
+		assertEquals(status1.hashCode(), status2.hashCode());
+	}
+	
 	public void testOkInitializesStatus() throws Exception {
 		BindingStatus status = BindingStatus.ok();
 		assertEquals(Policy.JFACE_DATABINDING, status.getPlugin());

@@ -46,6 +46,7 @@ import org.eclipse.core.tests.databinding.observable.value.AbstractObservableVal
 import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.ComputedValueTest;
 import org.eclipse.core.tests.databinding.observable.value.WritableValueTest;
+import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
 import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
 import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
@@ -155,6 +156,9 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
 		addTestSuite(WritableValueTest.class);
+		
+		//org.eclipse.core.tests.databinding.validation
+		addTestSuite(ValidationStatusTest.class);
 		
 		// org.eclipse.core.tests.internal.databinding
 		addTestSuite(BindingMessagesTest.class);

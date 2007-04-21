@@ -16,8 +16,10 @@ package org.eclipse.core.tests.databinding;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -195,6 +197,36 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	public void testStatusIsInstanceOfBindingStatus() throws Exception {
 		Binding binding = dbc.bindValue(target, model, null, null);
 		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
+	}
+	
+	public void testDiffsAreCheckedForEqualityBeforeUpdate() throws Exception {
+		class WritableValueStub extends WritableValue {
+			public WritableValueStub() {
+				super("", String.class);
+			}
+			
+			protected void fireValueChange(ValueDiff diff) {
+				super.fireValueChange(diff);
+			}
+		}
+		
+		WritableValueStub target = new WritableValueStub();
+		WritableValue model = WritableValue.withValueType(String.class);
+		
+		class Strategy extends UpdateValueStrategy {
+			int afterGetCount;
+			public IStatus validateAfterGet(Object value) {
+				afterGetCount++;
+				return super.validateAfterGet(value);
+			}
+		}
+		
+		Strategy strategy = new Strategy();
+		dbc.bindValue(target, model, strategy, null);
+		int count = strategy.afterGetCount;
+		
+		target.fireValueChange(Diffs.createValueDiff("", ""));
+		assertEquals("update does not occur", count, strategy.afterGetCount);
 	}
 	
 	private IValidator warningValidator() {

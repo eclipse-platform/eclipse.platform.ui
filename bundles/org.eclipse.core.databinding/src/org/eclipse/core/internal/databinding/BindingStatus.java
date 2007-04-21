@@ -11,6 +11,8 @@
 
 package org.eclipse.core.internal.databinding;
 
+import java.util.Arrays;
+
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -66,5 +68,37 @@ public class BindingStatus extends MultiStatus {
 	 */
 	public static BindingStatus ok() {
 		return new BindingStatus(Policy.JFACE_DATABINDING, 0, "", null); //$NON-NLS-1$
+	}
+	
+	private static int hashCode(Object[] array) {
+		final int prime = 31;
+		if (array == null)
+			return 0;
+		int result = 1;
+		for (int index = 0; index < array.length; index++) {
+			result = prime * result
+					+ (array[index] == null ? 0 : array[index].hashCode());
+		}
+		return result;
+	}
+	
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + BindingStatus.hashCode(getChildren());
+		return result;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final BindingStatus other = (BindingStatus) obj;
+		if (!Arrays.equals(getChildren(), other.getChildren()))
+			return false;
+		return true;
 	}
 }

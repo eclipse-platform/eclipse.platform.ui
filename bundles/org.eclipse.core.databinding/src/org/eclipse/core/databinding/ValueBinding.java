@@ -17,6 +17,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.BindingStatus;
+import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -26,7 +27,6 @@ import org.eclipse.core.runtime.Status;
  * 
  */
 class ValueBinding extends Binding {
-
 	private final UpdateValueStrategy targetToModel;
 	private final UpdateValueStrategy modelToTarget;
 	private WritableValue validationStatusObservable;
@@ -37,14 +37,14 @@ class ValueBinding extends Binding {
 	private boolean updatingModel;
 	private IValueChangeListener targetChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			if (!updatingTarget) {
+			if (!updatingTarget && !Util.equals(event.diff.getOldValue(), event.diff.getNewValue())) {
 				doUpdate(target, model, targetToModel, false, false);
 			}
 		}
 	};
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			if (!updatingModel) {
+			if (!updatingModel && !Util.equals(event.diff.getOldValue(), event.diff.getNewValue())) {
 				doUpdate(model, target, modelToTarget, false, false);
 			}
 		}
