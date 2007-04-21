@@ -304,41 +304,48 @@ public class InternalTreeModelViewer extends TreeViewer {
 			public void handleEvent(Event event) {
 				// to avoid flash, reset previous label data
 				TreeItem item = (TreeItem) event.item;
-				Object[] labels = (Object[]) item.getData(LabelUpdate.PREV_LABEL_KEY);
-				if (labels != null) {
-					for (int i = 0; i < labels.length; i++) {
-						if (labels[i] != null) {
-							item.setText(i, (String)labels[i]);
-						}
-					}
-				}
-				Object[] images = (Object[]) item.getData(LabelUpdate.PREV_IMAGE_KEY);
-				if (images != null) {
-					for (int i = 0; i < images.length; i++) {
-						item.setImage(i, (Image) images[i]);
-					}
-				}
-				Object[] fonts = (Object[]) item.getData(LabelUpdate.PREV_FONT_KEY);
-				if (fonts != null) {
-					for (int i = 0; i < fonts.length; i++) {
-						item.setFont(i, (Font) fonts[i]);
-					}
-				}
-				Object[] foregrounds = (Object[]) item.getData(LabelUpdate.PREV_FOREGROUND_KEY);
-				if (foregrounds != null) {
-					for (int i = 0; i < foregrounds.length; i++) {
-						item.setForeground(i, (Color) foregrounds[i]);
-					}
-				}
-				Object[] backgrounds = (Object[]) item.getData(LabelUpdate.PREV_BACKGROUND_KEY);
-				if (backgrounds != null) {
-					for (int i = 0; i < backgrounds.length; i++) {
-						item.setBackground(i, (Color) backgrounds[i]);
-					}
-				}
+				preserveItem(item);
 			}
 		});
 		super.hookControl(control);
+	}
+	
+	/**
+	 * @param item
+	 */
+	private void preserveItem(TreeItem item) {
+		Object[] labels = (Object[]) item.getData(LabelUpdate.PREV_LABEL_KEY);
+		if (labels != null) {
+			for (int i = 0; i < labels.length; i++) {
+				if (labels[i] != null) {
+					item.setText(i, (String)labels[i]);
+				}
+			}
+		}
+		Object[] images = (Object[]) item.getData(LabelUpdate.PREV_IMAGE_KEY);
+		if (images != null) {
+			for (int i = 0; i < images.length; i++) {
+				item.setImage(i, (Image) images[i]);
+			}
+		}
+		Object[] fonts = (Object[]) item.getData(LabelUpdate.PREV_FONT_KEY);
+		if (fonts != null) {
+			for (int i = 0; i < fonts.length; i++) {
+				item.setFont(i, (Font) fonts[i]);
+			}
+		}
+		Object[] foregrounds = (Object[]) item.getData(LabelUpdate.PREV_FOREGROUND_KEY);
+		if (foregrounds != null) {
+			for (int i = 0; i < foregrounds.length; i++) {
+				item.setForeground(i, (Color) foregrounds[i]);
+			}
+		}
+		Object[] backgrounds = (Object[]) item.getData(LabelUpdate.PREV_BACKGROUND_KEY);
+		if (backgrounds != null) {
+			for (int i = 0; i < backgrounds.length; i++) {
+				item.setBackground(i, (Color) backgrounds[i]);
+			}
+		}
 	}
 
     /* (non-Javadoc)
@@ -1096,5 +1103,122 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 */
 	protected TreePath getTreePathFromItem(Item item) {
 		return super.getTreePathFromItem(item);
+	}	
+
+//**************************************************************************	
+// These methods were copied from TreeViewer as a workaround for bug 183463:
+// 		Expanded nodes in tree viewer flash on refresh
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * workaround for bug 183463
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalRefreshStruct(org.eclipse.swt.widgets.Widget,
+	 *      java.lang.Object, boolean)
+	 */
+	protected void internalRefreshStruct(Widget widget, Object element,
+			boolean updateLabels) {
+		// clear all starting with the given widget
+		if (widget instanceof Tree) {
+			((Tree) widget).clearAll(true);
+		} else if (widget instanceof TreeItem) {
+			((TreeItem) widget).clearAll(true);
+		}
+		int index = 0;
+		Widget parent = null;
+		if (widget instanceof TreeItem) {
+			TreeItem treeItem = (TreeItem) widget;
+			parent = treeItem.getParentItem();
+			if (parent == null) {
+				parent = treeItem.getParent();
+			}
+			if (parent instanceof Tree) {
+				index = ((Tree) parent).indexOf(treeItem);
+			} else {
+				index = ((TreeItem) parent).indexOf(treeItem);
+			}
+		}
+		virtualRefreshExpandedItems(parent, widget, element, index);
+	}	
+	
+	/**
+	 * Traverses the visible (expanded) part of the tree and updates child
+	 * counts.
+	 * <p>
+	 * workaround for bug 183463
+	 * </p>
+	 * @param parent the parent of the widget, or <code>null</code> if the widget is the tree
+	 * @param widget
+	 * @param element
+	 * @param index the index of the widget in the children array of its parent, or 0 if the widget is the tree
+	 */
+	private void virtualRefreshExpandedItems(Widget parent, Widget widget, Object element, int index) {
+		if (widget instanceof Tree) {
+			if (element == null) {
+				((Tree) widget).setItemCount(0);
+				return;
+			}
+			virtualLazyUpdateChildCount(widget, getChildren(widget).length);
+		} else if (((TreeItem) widget).getExpanded()) {
+			// prevent SetData callback
+			preserveItem((TreeItem)widget);
+			//((TreeItem)widget).setText(" "); //$NON-NLS-1$
+			virtualLazyUpdateWidget(parent, index);
+		} else {
+			return;
+		}
+		Item[] items = getChildren(widget);
+		for (int i = 0; i < items.length; i++) {
+			Item item = items[i];
+			Object data = item.getData();
+			virtualRefreshExpandedItems(widget, item, data, i);
+		}
+	}
+	
+	/**
+	 * workaround for bug 183463
+	 * 
+	 * Update the child count
+	 * @param widget
+	 * @param currentChildCount
+	 */
+	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
+		TreePath treePath;
+		if (widget instanceof Item) {
+			treePath = getTreePathFromItem((Item) widget);
+		} else {
+			treePath = TreePath.EMPTY;
+		}
+		((ILazyTreePathContentProvider) getContentProvider())
+				.updateChildCount(treePath, currentChildCount);
+	}
+	
+	/**
+	 * Update the widget at index.
+	 * <p>
+	 * workaround for bug 183463
+	 * </p>
+	 * @param widget
+	 * @param index
+	 */
+	private void virtualLazyUpdateWidget(Widget widget, int index) {
+		TreePath treePath;
+		if (widget instanceof Item) {
+			if (widget.getData() == null) {
+				// we need to materialize the parent first
+				// see bug 167668
+				// however, that would be too risky
+				// see bug 182782 and bug 182598
+				// so we just ignore this call altogether
+				// and don't do this: virtualMaterializeItem((TreeItem) widget);
+				return;
+			}
+			treePath = getTreePathFromItem((Item) widget);
+		} else {
+			treePath = TreePath.EMPTY;
+		}
+		((ILazyTreePathContentProvider) getContentProvider())
+				.updateElement(treePath, index);
 	}	
 }
