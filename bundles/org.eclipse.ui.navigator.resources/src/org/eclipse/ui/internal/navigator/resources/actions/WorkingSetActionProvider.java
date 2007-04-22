@@ -34,8 +34,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 
 	private static final String TAG_CURRENT_WORKING_SET_NAME = "currentWorkingSetName"; //$NON-NLS-1$
 
-	private boolean contributedToViewMenu = false;
-	private boolean ready = false;
+	private boolean contributedToViewMenu = false; 
 
 	private StructuredViewer viewer;
 
@@ -237,11 +236,13 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 				IWorkingSet lastWorkingSet = workingSetManager.getWorkingSet(lastWorkingSetName);			 
 				viewer.setInput(lastWorkingSet);
 				workingSetActionGroup.setWorkingSet(lastWorkingSet);
-			}
-			ready = true;
-		} 
-
-
+			} 
+		} else {
+			showWorkingSets = false;
+			
+			extensionStateModel.setBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
+			workingSetRootModeActionGroup.setShowTopLevelWorkingSets(showWorkingSets);			 
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -252,8 +253,7 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 		  	
 		if(aMemento != null) {
 			int showWorkingSets = extensionStateModel.getBooleanProperty(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS) ? 1 : 0;		
-			aMemento.putInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets);
-			
+			aMemento.putInteger(WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS, showWorkingSets); 
 			
 			if(viewer != null) {
 				Object input = viewer.getInput();
@@ -271,20 +271,18 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 	 * 
 	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
 	 */
-	public void fillActionBars(IActionBars actionBars) {
-		if(ready) {
-			if (!contributedToViewMenu) {
-				try {
-					super.fillActionBars(actionBars);
-					workingSetActionGroup.fillActionBars(actionBars);
-					if (workingSetRootModeActionGroup != null) {
-						workingSetRootModeActionGroup.fillActionBars(actionBars);
-					}
-				} finally {
-					contributedToViewMenu = true;
+	public void fillActionBars(IActionBars actionBars) { 
+		if (!contributedToViewMenu) {
+			try {
+				super.fillActionBars(actionBars);
+				workingSetActionGroup.fillActionBars(actionBars);
+				if (workingSetRootModeActionGroup != null) {
+					workingSetRootModeActionGroup.fillActionBars(actionBars);
 				}
+			} finally {
+				contributedToViewMenu = true;
 			}
-		}
+		} 
 	}
 
 	/*

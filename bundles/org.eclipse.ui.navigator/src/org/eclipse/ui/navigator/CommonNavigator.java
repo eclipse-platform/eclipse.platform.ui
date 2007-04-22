@@ -187,8 +187,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 		 * the CommonNavigatorManager
 		 */
 		commonManager = createCommonManager();
-		if (memento != null) {
-			commonManager.restoreState(memento);
+		if (memento != null) {			
 			commonViewer.getNavigatorContentService().restoreState(memento);
 		}
 
@@ -467,7 +466,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 *         and ActionBars
 	 */
 	protected CommonNavigatorManager createCommonManager() {
-		return new CommonNavigatorManager(this);
+		return new CommonNavigatorManager(this, memento);
 	}
 
 	/**
@@ -644,4 +643,5 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 			linkService = new LinkHelperService((NavigatorContentService)getCommonViewer().getNavigatorContentService());
 		return linkService;
 	}
+ 
 }

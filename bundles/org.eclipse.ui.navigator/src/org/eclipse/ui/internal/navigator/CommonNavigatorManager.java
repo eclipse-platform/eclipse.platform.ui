@@ -118,6 +118,20 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 *            value.
 	 */
 	public CommonNavigatorManager(CommonNavigator aNavigator) {
+		this(aNavigator, null);
+	}
+	
+	/**
+	 * <p>
+	 * Adds listeners to aNavigator to listen for selection changes and respond
+	 * to mouse events.
+	 * </p>
+	 * 
+	 * @param aNavigator
+	 *            The CommonNavigator managed by this class. Requires a non-null
+	 *            value.
+	 */
+	public CommonNavigatorManager(CommonNavigator aNavigator, IMemento aMemento) {
 		super();
 		commonNavigator = aNavigator;
 		contentService = commonNavigator.getNavigatorContentService();
@@ -127,10 +141,12 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				.createCommonDescriptionProvider();
 		labelProvider = (ILabelProvider) commonNavigator.getCommonViewer()
 				.getLabelProvider();
-		init();
+	
+		init(aMemento);
 	}
 
-	private void init() {
+
+	private void init(IMemento memento) {
 		
 		updateActionBars = new UpdateActionBarsJob(commonNavigator.getTitle());
 		
@@ -157,6 +173,9 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 			}
 		});  
 
+		if(memento != null)
+			restoreState(memento);
+		
 		initContextMenu();
 		initViewMenu();
 
@@ -199,7 +218,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	public void restoreState(IMemento aMemento) {
 		actionService.restoreState(aMemento);
 		
-		updateActionBars.schedule(DELAY);
+//		updateActionBars.schedule(DELAY);
 	}
 
 	/**

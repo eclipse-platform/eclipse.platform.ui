@@ -45,8 +45,8 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 
 	private static final Object[] NO_CHILDREN = new Object[0];
-	private static final int WORKING_SETS = 0;
-	private static final int PROJECTS = 1;
+	/* package */ static final int WORKING_SETS = 0;
+	/* package */ static final int PROJECTS = 1;
 
 	private WorkingSetHelper helper;
 	private int rootMode = WORKING_SETS;
