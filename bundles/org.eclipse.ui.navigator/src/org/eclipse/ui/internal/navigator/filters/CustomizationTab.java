@@ -11,7 +11,12 @@
 
 package org.eclipse.ui.internal.navigator.filters;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +36,18 @@ public class CustomizationTab extends Composite {
 	private final INavigatorContentService contentService;
 
 	private CheckboxTableViewer tableViewer;
+	private final Set checkedItems = new HashSet();
+
+	private ICheckStateListener checkListener = new ICheckStateListener() {
+
+		public void checkStateChanged(CheckStateChangedEvent event) {
+			if(event.getChecked())
+				checkedItems.add(event.getElement());
+			else
+				checkedItems.remove(event.getElement());
+		}
+		
+	};
  
 	protected CustomizationTab(Composite parent,
 			INavigatorContentService aContentService) {
@@ -57,12 +74,23 @@ public class CustomizationTab extends Composite {
 	}
 
 	protected void createTable() {
-  
+		  
 		tableViewer = CheckboxTableViewer.newCheckList(this,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);		
+		tableViewer.addCheckStateListener(checkListener);		
+		
 		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));		
 		tableViewer.getControl().setFont(getFont());
 
 	} 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
+	public void dispose() { 
+		tableViewer.removeCheckStateListener(checkListener);
+		super.dispose();
+		
+	}
 
 	protected void createInstructionsLabel(String labelText) {
 		Label extensionsInstructionLabel = new Label(this, SWT.BOLD | SWT.WRAP);
@@ -83,6 +111,10 @@ public class CustomizationTab extends Composite {
 
 	protected final CheckboxTableViewer getTableViewer() {
 		return tableViewer;
+	}
+
+	protected Set getCheckedItems() {
+		return checkedItems;
 	}
 
 }

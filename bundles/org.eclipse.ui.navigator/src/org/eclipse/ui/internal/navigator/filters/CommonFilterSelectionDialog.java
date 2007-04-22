@@ -15,7 +15,9 @@
 package org.eclipse.ui.internal.navigator.filters;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -203,22 +205,18 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 		String[] filterIdsToActivate = new String[0];
 		if (commonFiltersTab != null) {
-			List checkedFilters = new ArrayList();
-			TableItem[] tableItems = commonFiltersTab.getTable().getItems();
-			ICommonFilterDescriptor descriptor;
-			for (int i = 0; i < tableItems.length; i++) {
-				descriptor = (ICommonFilterDescriptor) tableItems[i].getData();
+			Set checkedFilters = commonFiltersTab.getCheckedItems();
+			
+			filterIdsToActivate = new String[checkedFilters.size()];
+			int indx = 0;
+			for (Iterator iterator = checkedFilters.iterator(); iterator
+					.hasNext();) {
+				ICommonFilterDescriptor descriptor = (ICommonFilterDescriptor) iterator
+						.next();
 
-				if (tableItems[i].getChecked()) {
-					checkedFilters.add(descriptor.getId());
-				}
-			}
+				filterIdsToActivate[indx++] = descriptor.getId();
 
-			if (checkedFilters.size() != 0) {
-				filterIdsToActivate = (String[]) checkedFilters
-						.toArray(new String[checkedFilters.size()]);
-			}
-
+			} 
 		}
 
 		UpdateActiveExtensionsOperation updateExtensions = new UpdateActiveExtensionsOperation(

@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.navigator.filters;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,9 +49,9 @@ import org.eclipse.ui.navigator.INavigatorFilterService;
  * @since 3.2
  * 
  */
-public class CommonFiltersTab extends CustomizationTab {
-
-
+public class CommonFiltersTab extends CustomizationTab { 
+ 
+	private static final String ALL = "*"; //$NON-NLS-1$
 
 	private String initialFilterTextValue = CommonNavigatorMessages.CommonFilterSelectionDialog_enter_name_of_filte_;
 
@@ -65,7 +67,7 @@ public class CommonFiltersTab extends CustomizationTab {
 			INavigatorContentService aContentService) {
 		super(parent, aContentService);
 		createControl();
-	}
+	} 
 
 	private  void createControl() {  
 
@@ -78,11 +80,10 @@ public class CommonFiltersTab extends CustomizationTab {
 		getTableViewer().setContentProvider(filterContentProvider);
 		getTableViewer().setLabelProvider(filterLabelProvider);
 		getTableViewer().setSorter(new CommonFilterSorter());
-		getTableViewer().setInput(getContentService());  
-
+		getTableViewer().setInput(getContentService());
 		
-		getTableViewer().addFilter(patternFilter); 
-
+		getTableViewer().addFilter(patternFilter);
+		
 		updateFiltersCheckState();
 
 	}
@@ -209,7 +210,11 @@ public class CommonFiltersTab extends CustomizationTab {
 	private void textChanged() {
 		patternFilter.setPattern(filterText.getText());
 		getTableViewer().refresh();
-
+		
+		Set checkedItems = getCheckedItems();
+		for (Iterator iterator = checkedItems.iterator(); iterator.hasNext();) {  
+			getTableViewer().setChecked(iterator.next(), true);
+		}
 	} 
 
 	private void updateFiltersCheckState() {
@@ -220,8 +225,12 @@ public class CommonFiltersTab extends CustomizationTab {
 				.getFilterService();
 		for (int i = 0; i < children.length; i++) {
 			filterDescriptor = (ICommonFilterDescriptor) children[i];
-			getTableViewer().setChecked(children[i],
-					filterService.isActive(filterDescriptor.getId()));
+			if(filterService.isActive(filterDescriptor.getId())) {
+				getTableViewer().setChecked(children[i], true);
+				getCheckedItems().add(children[i]);
+			} else {
+				getTableViewer().setChecked(children[i], false);
+			}
 		}
 	}
 
@@ -242,13 +251,13 @@ public class CommonFiltersTab extends CustomizationTab {
 
 		protected void setPattern(String newPattern) {
 			if (newPattern == null || newPattern.trim().length() == 0) {
-				matcher = new StringMatcher("*", true, false); //$NON-NLS-1$
+				matcher = new StringMatcher(ALL, true, false);  
 			} else {
-				String patternString = "*" + newPattern + "*"; //$NON-NLS-1$ //$NON-NLS-2$ 
+				String patternString = ALL + newPattern + ALL; 
 				matcher = new StringMatcher(patternString, true, false);
 			}
 
-		}
+		} 
 
 		/**
 		 * Answers whether the given String matches the pattern.
