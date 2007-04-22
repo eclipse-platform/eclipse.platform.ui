@@ -34,8 +34,48 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * @since 3.3
+ * Customizes a {@link Binding} between two
+ * {@link IObservableValue observable values}. The following behaviors can be
+ * customized via the strategy:
+ * <ul>
+ * <li>Validation</li>
+ * <li>Conversion</li>
+ * <li>Automatic processing</li>
+ * </ul>
+ * <p>
+ * The update phases are:
+ * <ol>
+ * <li>Validate after get - {@link #validateAfterGet(Object)}</li>
+ * <li>Conversion - {@link #convert(Object)}</li>
+ * <li>Validate after conversion - {@link #validateAfterConvert(Object)}</li>
+ * <li>Validate before set - {@link #validateBeforeSet(Object)}</li>
+ * <li>Value set - {@link #doSet(IObservableValue, Object)}</li>
+ * </ol>
+ * </p>
+ * <p>
+ * Validation:<br/> {@link IValidator Validators} validate the value at
+ * multiple phases in the update process. Statuses returned from validators are
+ * aggregated into a <code>MultiStatus</code> until a status of
+ * <code>ERROR</code> or <code>CANCEL</code> is encountered. Either of these
+ * statuses will abort the update process. These statuses are available as the
+ * {@link Binding#getValidationStatus() binding validation status}.
+ * </p>
+ * <p>
+ * Conversion:<br/> A {@link IConverter converter} will convert the value from
+ * the type of the initiating observable into the type of the receiver.
+ * </p>
+ * <p>
+ * Automatic processing:<br/> The processing to perform when the initiating
+ * observable changes. This behavior is configured via policies provided on
+ * construction of the strategy (e.g. {@link #POLICY_NEVER},
+ * {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
+ * </p>
  * 
+ * @see DataBindingContext#bindValue(IObservableValue, IObservableValue, UpdateValueStrategy, UpdateValueStrategy)
+ * @see Binding#getValidationStatus()
+ * @see IValidator
+ * @see IConverter
+ * @since 1.0
  */
 public class UpdateValueStrategy extends UpdateStrategy {
 
