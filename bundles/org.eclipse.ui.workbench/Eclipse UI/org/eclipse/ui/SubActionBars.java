@@ -96,6 +96,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 	private SubToolBarManager toolBarMgr;
 
+	private Map actionIdByCommandId = new HashMap();
+
 	/**
 	 * Construct a new <code>SubActionBars</code> object. The service locator
 	 * will simply be the service locator of the parent.
@@ -510,6 +512,16 @@ public class SubActionBars extends EventManager implements IActionBars {
 								.remove(actionID);
 						if (value instanceof IHandlerActivation) {
 							final IHandlerActivation activation = (IHandlerActivation) value;
+							actionIdByCommandId.remove(activation.getCommandId());
+							service.deactivateHandler(activation);
+							activation.getHandler().dispose();
+						}
+					} else if (commandId != null
+							&& actionIdByCommandId.containsKey(commandId)) {
+						final Object value = activationsByActionId
+								.remove(actionIdByCommandId.remove(commandId));
+						if (value instanceof IHandlerActivation) {
+							final IHandlerActivation activation = (IHandlerActivation) value;
 							service.deactivateHandler(activation);
 							activation.getHandler().dispose();
 						}
@@ -517,6 +529,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 				}
 
 				if (commandId != null) {
+					actionIdByCommandId.put(commandId, actionID);
 					// Register this as a handler with the given definition id.
 					// the expression gives the setGlobalActionHandler() a
 					// priority.
@@ -551,6 +564,7 @@ public class SubActionBars extends EventManager implements IActionBars {
 								.remove(actionID);
 						if (value instanceof IHandlerActivation) {
 							final IHandlerActivation activation = (IHandlerActivation) value;
+							actionIdByCommandId.remove(activation.getCommandId());
 							service.deactivateHandler(activation);
 							activation.getHandler().dispose();
 						}

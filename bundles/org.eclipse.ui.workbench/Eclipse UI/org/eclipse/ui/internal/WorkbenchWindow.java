@@ -524,7 +524,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	void registerGlobalAction(IAction globalAction) {
 		String commandId = globalAction.getActionDefinitionId();
 
-		if (commandId != null && !(globalAction instanceof CommandAction)) {
+		if (commandId != null) {
 			final Object value = globalActionHandlersByCommandId.get(commandId);
 			if (value instanceof ActionHandler) {
 				// This handler is about to get clobbered, so dispose it.
@@ -532,8 +532,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				handler.dispose();
 			}
 
-			globalActionHandlersByCommandId.put(commandId, new ActionHandler(
-					globalAction));
+			if (globalAction instanceof CommandAction) {
+				final String actionId = globalAction.getId();
+				if (actionId != null) {
+					final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
+							.getService(IActionCommandMappingService.class);
+					mappingService.map(actionId, commandId);
+				}
+			} else {
+				globalActionHandlersByCommandId.put(commandId,
+						new ActionHandler(globalAction));
+			}
 		}
 
 		submitGlobalActions();
