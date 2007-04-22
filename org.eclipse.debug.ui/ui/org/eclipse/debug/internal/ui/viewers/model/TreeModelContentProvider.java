@@ -104,6 +104,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleAdd(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleAdd(IModelDelta delta) {
+		if (DEBUG_CONTENT_PROVIDER) {
+			System.out.println("handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		doUpdateChildCount(getViewerTreePath(delta.getParentDelta()));
 	}
 
@@ -184,6 +187,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleRemove(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleRemove(IModelDelta delta) {
+		if (DEBUG_CONTENT_PROVIDER) {
+			System.out.println("handleRemove(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		IModelDelta parentDelta = delta.getParentDelta();
 		InternalTreeModelViewer treeViewer = (InternalTreeModelViewer)getViewer();
 		TreePath parentPath = getViewerTreePath(parentDelta);
@@ -222,6 +228,10 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		}
 		if (modelIndex >= 0) {
 			// found the element
+			if (DEBUG_CONTENT_PROVIDER) {
+				System.out.println(" - (found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			rescheduleUpdates(parentPath, modelIndex);
 			getTreeViewer().remove(parentPath, viewIndex);
 			removeElementFromFilters(parentPath, modelIndex);
 			return;
@@ -229,8 +239,13 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		if (unmappedIndex >= 0) {
 			// did not find the element, but found an unmapped item.
 			// remove the unmapped item in it's place and update filters
+			if (DEBUG_CONTENT_PROVIDER) {
+				System.out.println(" - (not found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+			modelIndex = viewToModelIndex(parentPath, unmappedIndex);
+			rescheduleUpdates(parentPath, modelIndex);
 			getTreeViewer().remove(parentPath, unmappedIndex);
-			removeElementFromFilters(parentPath, viewToModelIndex(parentPath, unmappedIndex));
+			removeElementFromFilters(parentPath, modelIndex);
 			return;
 		}
 		int modelCount = parentDelta.getChildCount();
@@ -242,6 +257,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		}
 		// failing that, refresh the parent to properly update for non-visible/unmapped children
 		// and update filtered indexes
+		if (DEBUG_CONTENT_PROVIDER) {
+			System.out.println(" - (not found) remove/refresh(" + delta.getElement()); //$NON-NLS-1$
+		}
 		getTreeViewer().remove(getViewerTreePath(delta));
 		clearFilters(parentPath);
 		getTreeViewer().refresh(parentDelta.getElement());

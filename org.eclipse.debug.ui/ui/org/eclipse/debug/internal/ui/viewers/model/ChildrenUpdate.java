@@ -167,5 +167,15 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	TreePath getSchedulingPath() {
 		return getElementPath();
 	}		
+	
+	/**
+	 * Sets this request's offset. Used when modifying a waiting request when
+	 * the offset changes due to a removed element.
+	 * 
+	 * @param offset new offset
+	 */
+	void setOffset(int offset) {
+		fIndex = offset;
+	}
 }
 

@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
@@ -868,14 +869,14 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param update
 	 */
-	void updateStarted(IViewerUpdate update) {
+	void updateStarted(ViewerUpdateMonitor update) {
 		boolean begin = false;
 		synchronized (fRequestsInProgress) {
 			begin = fRequestsInProgress.isEmpty();
-			List requests = (List) fRequestsInProgress.get(update.getElementPath());
+			List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
 			if (requests == null) {
 				requests = new ArrayList();
-				fRequestsInProgress.put(update.getElementPath(), requests);
+				fRequestsInProgress.put(update.getSchedulingPath(), requests);
 			}
 			requests.add(update);
 		}
@@ -896,15 +897,15 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param update
 	 */
-	void updateComplete(IViewerUpdate update) {
+	void updateComplete(ViewerUpdateMonitor update) {
 		boolean end = false;
 		synchronized (fRequestsInProgress) {
-			List requests = (List) fRequestsInProgress.get(update.getElementPath());
+			List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
 			if (requests != null) {
 				requests.remove(update);
-				trigger((ViewerUpdateMonitor) update);
+				trigger(update);
 				if (requests.isEmpty()) {
-					fRequestsInProgress.remove(update.getElementPath());
+					fRequestsInProgress.remove(update.getSchedulingPath());
 				}
 			}
 			end = fRequestsInProgress.isEmpty();
@@ -1119,5 +1120,69 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			return path.getLastSegment();
 		}
 		return getViewer().getInput();
+	}
+	
+	/**
+	 * Reschedule any children updates in progress for the given parent
+	 * that have a start index greater than the given index. An element
+	 * has been removed at this index, invalidating updates in progress.
+	 * 
+	 * @param parentPath view tree path to parent element
+	 * @param modelIndex index at which an element was removed
+	 */
+	protected void rescheduleUpdates(TreePath parentPath, int modelIndex) {
+		synchronized (fRequestsInProgress) {
+			List requests = (List)fRequestsInProgress.get(parentPath);
+			List reCreate = null;
+			if (requests != null) {
+				Iterator iterator = requests.iterator();
+				while (iterator.hasNext()) {
+					IViewerUpdate update = (IViewerUpdate) iterator.next();
+					if (update instanceof IChildrenUpdate) {
+						IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
+						if (childrenUpdate.getOffset() > modelIndex) {
+							childrenUpdate.cancel();
+							if (reCreate == null) {
+								reCreate  = new ArrayList();
+							}
+							reCreate.add(childrenUpdate);
+							if (DEBUG_CONTENT_PROVIDER) {
+								System.out.println("canceled update in progress handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
+							}
+						}
+					}
+				}
+			}
+			requests = (List)fWaitingRequests.get(parentPath);
+			if (requests != null) {
+				Iterator iterator = requests.iterator();
+				while (iterator.hasNext()) {
+					IViewerUpdate update = (IViewerUpdate) iterator.next();
+					if (update instanceof IChildrenUpdate) {
+						IChildrenUpdate childrenUpdate = (IChildrenUpdate) update;
+						if (childrenUpdate.getOffset() > modelIndex) {
+							((ChildrenUpdate)childrenUpdate).setOffset(childrenUpdate.getOffset() - 1);
+							if (DEBUG_CONTENT_PROVIDER) {
+								System.out.println("modified waiting update handling REMOVE: " + childrenUpdate); //$NON-NLS-1$
+							}
+						}
+					}
+				}
+			}
+			// re-schedule canceled updates at new position.
+			// have to do this last else the requests would be waiting and
+			// get modified.
+			if (reCreate != null) {
+				Iterator iterator = reCreate.iterator();
+				while (iterator.hasNext()) {
+					IChildrenUpdate childrenUpdate = (IChildrenUpdate) iterator.next();
+					int start = childrenUpdate.getOffset() - 1;
+					int end = start + childrenUpdate.getLength();
+					for (int i = start; i < end; i++) {
+						((TreeModelContentProvider)this).doUpdateElement(parentPath, i);
+					}
+				}
+			}
+		}
 	}
 }
