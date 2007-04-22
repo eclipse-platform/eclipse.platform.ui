@@ -75,7 +75,7 @@ public final class HandlerService implements IHandlerService {
 	 * @param evaluationService
 	 *            The evaluation service to use; must not be <code>null</code>.
 	 */
-	public HandlerService(final ICommandService commandService, 
+	public HandlerService(final ICommandService commandService,
 			final IEvaluationService evaluationService) {
 		if (commandService == null) {
 			throw new NullPointerException(
@@ -83,7 +83,8 @@ public final class HandlerService implements IHandlerService {
 		}
 		this.commandService = commandService;
 		this.handlerAuthority = new HandlerAuthority(commandService);
-		this.handlerPersistence = new HandlerPersistence(this, evaluationService);
+		this.handlerPersistence = new HandlerPersistence(this,
+				evaluationService);
 	}
 
 	public final IHandlerActivation activateHandler(
@@ -225,19 +226,89 @@ public final class HandlerService implements IHandlerService {
 					ISources.ACTIVE_SHELL_NAME, shell);
 		}
 	}
-	
+
 	/**
-	 * Currently this is a kludge.
+	 * Currently this is a an internal method to help locate a handler.
 	 * <p>
 	 * DO NOT CALL THIS METHOD.
 	 * </p>
 	 * 
-	 * @param commandId the command id to check
-	 * @param the context to use for activations
+	 * @param commandId
+	 *            the command id to check
+	 * @param context
+	 *            the context to use for activations
 	 * @since 3.3
 	 */
 	public final IHandler findHandler(String commandId,
 			IEvaluationContext context) {
 		return handlerAuthority.findHandler(commandId, context);
+	}
+
+	/**
+	 * Normally the context returned from getCurrentState() still tracks the
+	 * application state. This method creates a copy and fills it in with the
+	 * variables that we know about. Currently it does not fill in the active
+	 * selection.
+	 * <p>
+	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
+	 * </p>
+	 * 
+	 * @return an evaluation context with no parent.
+	 * @since 3.3
+	 */
+	public final IEvaluationContext getContextSnapshot() {
+		return handlerAuthority.getContextSnapshot();
+	}
+
+	/**
+	 * Execute the command using the provided context. It takes care of finding
+	 * the correct active handler given the context, and executes with that
+	 * handler.
+	 * <p>
+	 * It currently cannot effect the enablement of the handler.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
+	 * </p>
+	 * 
+	 * @param command
+	 *            the parameterized command to execute
+	 * @param trigger
+	 *            the SWT event trigger ... can be null
+	 * @param context
+	 *            the evaluation context to run against.
+	 * @return
+	 * @throws ExecutionException
+	 * @throws NotDefinedException
+	 * @throws NotEnabledException
+	 * @throws NotHandledException
+	 * @since 3.3
+	 * @see #getContextSnapshot()
+	 */
+	public final Object executeCommandInContext(
+			final ParameterizedCommand command, final Event trigger,
+			IEvaluationContext context) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException {
+		IHandler oldHandler = command.getCommand().getHandler();
+
+		IHandler handler = findHandler(command.getId(), context);
+		boolean enabled = true;
+		if (handler instanceof HandlerProxy) {
+			enabled = ((HandlerProxy) handler).getProxyEnabled();
+		}
+
+		try {
+			command.getCommand().setHandler(handler);
+			if (handler instanceof HandlerProxy) {
+				((HandlerProxy) handler).setEnabledFor(context);
+			}
+
+			return command.executeWithChecks(trigger, context);
+		} finally {
+			if (handler instanceof HandlerProxy) {
+				((HandlerProxy) handler).setProxyEnabled(enabled);
+			}
+			command.getCommand().setHandler(oldHandler);
+		}
 	}
 }

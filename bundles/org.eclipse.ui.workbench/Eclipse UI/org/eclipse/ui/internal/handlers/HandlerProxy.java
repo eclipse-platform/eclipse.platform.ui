@@ -19,7 +19,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -158,10 +160,10 @@ public final class HandlerProxy extends AbstractHandler implements
 		this.enabledWhenExpression = enabledWhenExpression;
 		this.evaluationService = evaluationService;
 		if (enabledWhenExpression != null) {
-			proxyEnabled = false;
+			setProxyEnabled(false);
 			registerEnablement();
 		} else {
-			proxyEnabled = true;
+			setProxyEnabled(true);
 		}
 	}
 
@@ -170,7 +172,26 @@ public final class HandlerProxy extends AbstractHandler implements
 	 */
 	private void registerEnablement() {
 		enablementRef = evaluationService.addEvaluationListener(
-				enabledWhenExpression, getEnablementListener(), PROP_ENABLED, null);
+				enabledWhenExpression, getEnablementListener(), PROP_ENABLED,
+				null);
+	}
+
+	void setEnabledFor(IEvaluationContext context) throws ExecutionException {
+		if (enabledWhenExpression != null) {
+			try {
+				setProxyEnabled(enabledWhenExpression.evaluate(context) == EvaluationResult.TRUE);
+			} catch (CoreException e) {
+				throw new ExecutionException(e.getMessage(), e);
+			}
+		}
+	}
+
+	void setProxyEnabled(boolean enabled) {
+		proxyEnabled = enabled;
+	}
+
+	boolean getProxyEnabled() {
+		return proxyEnabled;
 	}
 
 	/**
@@ -181,12 +202,9 @@ public final class HandlerProxy extends AbstractHandler implements
 			enablementListener = new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty() == PROP_ENABLED) {
-						if (event.getNewValue() != null) {
-							proxyEnabled = ((Boolean) event.getNewValue())
-									.booleanValue();
-						} else {
-							proxyEnabled = false;
-						}
+						setProxyEnabled(event.getNewValue() == null ? false
+								: ((Boolean) event.getNewValue())
+										.booleanValue());
 						fireHandlerChanged(new HandlerEvent(HandlerProxy.this,
 								true, false));
 					}
@@ -227,7 +245,7 @@ public final class HandlerProxy extends AbstractHandler implements
 	public final boolean isEnabled() {
 		if (enabledWhenExpression != null) {
 			// proxyEnabled reflects the enabledWhen clause
-			if (!proxyEnabled) {
+			if (!getProxyEnabled()) {
 				return false;
 			}
 			if (isOkToLoad() && loadHandler()) {

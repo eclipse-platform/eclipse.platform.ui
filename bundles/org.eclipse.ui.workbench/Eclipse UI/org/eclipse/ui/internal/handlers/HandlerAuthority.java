@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.handlers;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import java.util.TreeSet;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -517,13 +519,15 @@ final class HandlerAuthority extends ExpressionAuthority {
 	}
 
 	/**
-	 * Currently this is a kludge.
+	 * Currently this is a an internal method to help locate a handler.
 	 * <p>
 	 * DO NOT CALL THIS METHOD.
 	 * </p>
 	 * 
-	 * @param commandId the command id to check
-	 * @param the context to use for activations
+	 * @param commandId
+	 *            the command id to check
+	 * @param context
+	 *            the context to use for activations
 	 * @since 3.3
 	 */
 	public final IHandler findHandler(String commandId,
@@ -532,7 +536,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 		if (o instanceof IHandlerActivation) {
 			IHandlerActivation activation = (IHandlerActivation) o;
 			try {
-				if (activation.getExpression().evaluate(context) == EvaluationResult.TRUE) {
+				if (eval(context, activation)) {
 					return activation.getHandler();
 				}
 			} catch (CoreException e) {
@@ -543,10 +547,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 			IHandlerActivation lastActivation = null;
 			IHandlerActivation currentActivation = null;
 			Iterator i = activations.iterator();
-			while (i.hasNext()) {
+			while (i.hasNext() && lastActivation==null) {
 				IHandlerActivation activation = (IHandlerActivation) i.next();
 				try {
-					if (activation.getExpression().evaluate(context) == EvaluationResult.TRUE) {
+					if (eval(context, activation)) {
 						lastActivation = currentActivation;
 						currentActivation = activation;
 					}
@@ -554,15 +558,88 @@ final class HandlerAuthority extends ExpressionAuthority {
 					// OK, this one is out of the running
 				}
 			}
-			if (currentActivation!=null) {
-				if (lastActivation==null) {
+			if (currentActivation != null) {
+				if (lastActivation == null) {
 					return currentActivation.getHandler();
 				}
-				if (lastActivation.getSourcePriority()!=currentActivation.getSourcePriority()) {
-					return currentActivation.getHandler();
+				if (lastActivation.getSourcePriority() != currentActivation
+						.getSourcePriority()) {
+					return lastActivation.getHandler();
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Evaluate the expression for the handler and bypass the result cache.
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 * 
+	 * @param context
+	 * @param activation
+	 * @return <code>true</code> if the handler expression can evaluate to
+	 *         true.
+	 * @throws CoreException
+	 * @since 3.3
+	 */
+	private boolean eval(IEvaluationContext context,
+			IHandlerActivation activation) throws CoreException {
+		Expression expression = activation.getExpression();
+		if (expression == null) {
+			return true;
+		}
+		return expression.evaluate(context) == EvaluationResult.TRUE;
+	}
+
+	/**
+	 * Normally the context returned from getCurrentState() still tracks the
+	 * application state. This method creates a copy and fills it in with the
+	 * variables that we know about. Currently it does not fill in the active
+	 * selection.
+	 * <p>
+	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
+	 * </p>
+	 * 
+	 * @return an evaluation context with no parent.
+	 * @since 3.3
+	 */
+	public IEvaluationContext getContextSnapshot() {
+		EvaluationContext context = new EvaluationContext(null,
+				Collections.EMPTY_LIST);
+		IEvaluationContext tmpContext = getCurrentState();
+		context.addVariable(ISources.ACTIVE_ACTION_SETS_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_ACTION_SETS_NAME));
+		context.addVariable(ISources.ACTIVE_CONTEXT_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_CONTEXT_NAME));
+		context.addVariable(ISources.ACTIVE_EDITOR_ID_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_EDITOR_ID_NAME));
+		context.addVariable(ISources.ACTIVE_EDITOR_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_EDITOR_NAME));
+		context.addVariable(ISources.ACTIVE_PART_ID_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_PART_ID_NAME));
+		context.addVariable(ISources.ACTIVE_PART_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_PART_NAME));
+		context.addVariable(ISources.ACTIVE_SITE_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_SITE_NAME));
+		context
+				.addVariable(
+						ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
+						tmpContext
+								.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME));
+		context
+				.addVariable(
+						ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+						tmpContext
+								.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME));
+		context.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, tmpContext
+				.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME));
+		context
+				.addVariable(
+						ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
+						tmpContext
+								.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME));
+		return context;
 	}
 }
