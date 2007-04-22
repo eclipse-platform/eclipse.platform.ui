@@ -215,8 +215,9 @@
             >
          <filterExpression>
          	<and>
-	            <instanceof value="org.eclipse.core.resources.IResource"/>
-            	<test property="org.eclipse.core.resources.name" value=".*"/>	            
+	            <adapt type="org.eclipse.core.resources.IResource">
+            		<test property="org.eclipse.core.resources.name" value=".*"/>
+            	</adapt>	            
 	        </and>
          </filterExpression>
       </commonFilter>
