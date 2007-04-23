@@ -701,7 +701,7 @@
             textPreferenceKey="spellingIndication"
             textPreferenceValue="true"
             overviewRulerPreferenceKey="spellingIndicationInOverviewRuler"
-            overviewRulerPreferenceValue="true"
+            overviewRulerPreferenceValue="false"
             verticalRulerPreferenceKey="spellingIndicationInVerticalRuler"
             verticalRulerPreferenceValue="false"
             isGoToPreviousNavigationTargetKey="isSpellingGoToPreviousNavigationTarget"
