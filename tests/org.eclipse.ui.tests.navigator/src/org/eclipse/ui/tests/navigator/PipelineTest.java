@@ -135,11 +135,11 @@ public class PipelineTest extends TestCase {
 		assertEquals("There should be two items.", 2, rootItems.length); //$NON-NLS-1$
 		
 		boolean found = false;
-		for (int i = 0; i < rootItems.length; i++) {
+		for (int i = 0; i < rootItems.length && !found; i++) {
 			if(rootItems[i].getData() instanceof IProject) {
 				IProject newProjectFromTree = (IProject) rootItems[i].getData();
-				assertEquals(newProject, newProjectFromTree);
-				found = true;
+				if(newProject.equals(newProjectFromTree))
+					found = true;
 			}	
 		}
 		assertTrue(found);

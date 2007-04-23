@@ -212,7 +212,8 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 
 		if (items != null) {
 			for (int i = 0; i < items.length; i++) {
-				items[i].setSelection(actions[i].isChecked());
+				if(items[i] != null && actions[i] != null)
+					items[i].setSelection(actions[i].isChecked());
 			}
 		}
 		if (stateModel != null) {
