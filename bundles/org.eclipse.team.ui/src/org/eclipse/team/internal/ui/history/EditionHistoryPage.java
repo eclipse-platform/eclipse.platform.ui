@@ -222,6 +222,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		ITypedElement previousEdition = localEdition;
 		List result = new ArrayList();
 		sortDescending(revisions);
+		editions.clear();
 		for (int i = 0; i < revisions.length; i++) {
 			IFileRevision revision = revisions[i];
 			ITypedElement edition = createEdition(new FileRevisionTypedElement(revision));

@@ -184,4 +184,29 @@ public class LocalFileRevision extends FileRevision {
 	public boolean isCurrentState() {
 		return file != null;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof LocalFileRevision) {
+			LocalFileRevision other = (LocalFileRevision) obj;
+			if (file != null && other.file != null)
+				return file.equals(other.file);
+			if (state != null && other.state != null)
+				return statesEqual(state, other.state);
+		}
+		return false;
+	}
+
+	private boolean statesEqual(IFileState s1, IFileState s2) {
+		return (s1.getFullPath().equals(s2.getFullPath()) && s1.getModificationTime() == s2.getModificationTime());
+	}
+	
+	public int hashCode() {
+		if (file != null)
+			return file.hashCode();
+		if (state != null)
+			return (int)state.getModificationTime();
+		return super.hashCode();
+	}
 }
