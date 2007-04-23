@@ -728,9 +728,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 			if (lastViewTab != newViewTab)
 				setRenderingSelection(newViewTab.getRendering());
 		}	
-		
-
-		
 		//set toolbar actions enabled/disabled
 		updateToolBarActionsEnablement();
 	}
@@ -986,13 +983,19 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		IDebugTarget target = getSelectedDebugTarget();
 		if (target != null)
 		{	
-			IMemoryBlock[] blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(target);
-			
-			if (blocks.length > 0)
-				fRemoveMemoryRenderingAction.setEnabled(true);
+			ISelection selection = fSelectionProvider.getSelection();
+			if (selection != null && !selection.isEmpty() && selection instanceof IStructuredSelection)
+			{
+				Object sel = ((IStructuredSelection)selection).getFirstElement();
+				if (sel instanceof CreateRendering)
+					fRemoveMemoryRenderingAction.setEnabled(false);
+				else
+					fRemoveMemoryRenderingAction.setEnabled(true);						
+			}
 			else
+			{
 				fRemoveMemoryRenderingAction.setEnabled(false);
-
+			}
 		}
 		else
 		{	
