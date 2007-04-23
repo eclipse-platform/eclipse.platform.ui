@@ -2036,6 +2036,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *      at the destination resource or one of its descendents.</li>
 	 * <li> Resource changes are disallowed during certain types of resource change 
 	 *      event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 *  <li> The destination file system location is occupied. When moving a project
+	 *  in the file system, the destination directory must either not exist or be empty.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
