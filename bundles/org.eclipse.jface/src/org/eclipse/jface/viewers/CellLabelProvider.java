@@ -24,7 +24,10 @@ import org.eclipse.swt.graphics.Point;
  * The CellLabelProvider is an abstract implementation of a label provider for
  * structured viewers.
  * 
+ * <p><b>This class is intended to be subclassed</b></p>
+ * 
  * @since 3.3
+ * @see ColumnLabelProvider as a concrete implementation
  */
 public abstract class CellLabelProvider extends BaseLabelProvider {
 
