@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -351,14 +352,21 @@ public class CreateLinkedResourceGroup {
 	public URI getLinkTargetURI() {
 		if (!createLink)
 			return null;
-		//resolve path variable if we have a relative path
+		// resolve path variable if we have a relative path
 		if (!linkTarget.startsWith("/")) { //$NON-NLS-1$
 			IPathVariableManager pathVariableManager = ResourcesPlugin
 					.getWorkspace().getPathVariableManager();
-			IPath path = new Path(linkTarget);
-			IPath resolved = pathVariableManager.resolvePath(path);
-			if (path != resolved) {
-				return URIUtil.toURI(resolved);
+			try {
+				URI path = new URI(linkTarget);
+				URI resolved = pathVariableManager.resolveURI(path);
+				if (path != resolved) {
+					// we know this is a path variable, but return unresolved
+					// path so resource will be created with variable intact
+					return path;
+				}
+			} catch (URISyntaxException e) {
+				// link target is not a valid URI. Fall through to handle this
+				// below
 			}
 		}
 
@@ -366,7 +374,7 @@ public class CreateLinkedResourceGroup {
 		if (configuration == null) {
 			return URIUtil.toURI(linkTarget);
 		}
-		//validate non-local file system location
+		// validate non-local file system location
 		return configuration.getContributor().getURI(linkTarget);
 	}
 
@@ -440,8 +448,9 @@ public class CreateLinkedResourceGroup {
 	}
 
 	/**
-	 * Return the selected configuration or <code>null</code>
-	 * if there is not one selected.
+	 * Return the selected configuration or <code>null</code> if there is not
+	 * one selected.
+	 * 
 	 * @return FileSystemConfiguration or <code>null</code>
 	 */
 	private FileSystemConfiguration getSelectedConfiguration() {
@@ -585,7 +594,7 @@ public class CreateLinkedResourceGroup {
 		FileSystemConfiguration configuration = getSelectedConfiguration();
 		if (configuration == null
 				|| EFS.SCHEME_FILE.equals(configuration.getScheme())) {
-			//Special handling for UNC paths. See bug 90825
+			// Special handling for UNC paths. See bug 90825
 			IPath location = new Path(linkTarget);
 			if (location.isUNC()) {
 				return createStatus(
@@ -601,8 +610,9 @@ public class CreateLinkedResourceGroup {
 		}
 
 		// use the resolved link target name
-		IFileInfo linkTargetFile = IDEResourceInfoUtils
-				.getFileInfo(locationURI);
+		URI resolved = workspace.getPathVariableManager().resolveURI(
+				locationURI);
+		IFileInfo linkTargetFile = IDEResourceInfoUtils.getFileInfo(resolved);
 		if (linkTargetFile != null && linkTargetFile.exists()) {
 			IStatus fileTypeStatus = validateFileType(linkTargetFile);
 			if (!fileTypeStatus.isOK()) {
