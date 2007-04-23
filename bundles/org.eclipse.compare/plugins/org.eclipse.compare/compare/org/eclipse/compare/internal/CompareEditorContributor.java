@@ -40,7 +40,6 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		IWorkbenchHelpSystem helpSystem= PlatformUI.getWorkbench().getHelpSystem();
 		
 		fIgnoreWhitespace= ChangePropertyAction.createIgnoreWhiteSpaceAction(bundle, null);
-		fIgnoreWhitespace.setActionDefinitionId(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE);
 		helpSystem.setHelp(fIgnoreWhitespace, ICompareContextIds.IGNORE_WHITESPACE_ACTION);
 		
 		fNext= new NavigationAction(bundle, true);
@@ -104,8 +103,6 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 
 			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, fNext);
 			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, fPrevious);
-			
-			actionBars.setGlobalActionHandler(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE, fIgnoreWhitespace);
 			
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);

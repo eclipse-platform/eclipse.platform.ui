@@ -3926,6 +3926,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fHandlerService.registerAction(a, "org.eclipse.compare.copyRightToLeft");	//$NON-NLS-1$
 		}
 		
+		fIgnoreWhitespace= ChangePropertyAction.createIgnoreWhiteSpaceAction(getResourceBundle(), getCompareConfiguration());
+		fIgnoreWhitespace.setActionDefinitionId(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE);
+		fLeft.addTextAction(fIgnoreWhitespace);
+		fRight.addTextAction(fIgnoreWhitespace);
+		fAncestor.addTextAction(fIgnoreWhitespace);
+		fHandlerService.registerAction(fIgnoreWhitespace, fIgnoreWhitespace.getActionDefinitionId());
+		
 		showWhitespaceAction = new ShowWhitespaceAction(new MergeSourceViewer[] {
 				fLeft, fRight, fAncestor
 		});
@@ -3935,16 +3942,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fLeft, fRight, fAncestor
 		}, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER);
 		fHandlerService.registerAction(toggleLineNumbersAction, ITextEditorActionDefinitionIds.LINENUMBER_TOGGLE);
-		
-		fIgnoreWhitespace= ChangePropertyAction.createIgnoreWhiteSpaceAction(getResourceBundle(), getCompareConfiguration());
-		fIgnoreWhitespace.setActionDefinitionId(ICompareUIConstants.COMMAND_IGNORE_WHITESPACE);
-		fLeft.addTextAction(fIgnoreWhitespace);
-		fRight.addTextAction(fIgnoreWhitespace);
-		fAncestor.addTextAction(fIgnoreWhitespace);
-		// Register for key binding if we are not in an editor
-		if (!(getCompareConfiguration().getContainer().getWorkbenchPart() instanceof IEditorPart)) {
-			fHandlerService.registerAction(fIgnoreWhitespace, fIgnoreWhitespace.getActionDefinitionId());
-		}
 	}
 	
 	/* (non-Javadoc)
