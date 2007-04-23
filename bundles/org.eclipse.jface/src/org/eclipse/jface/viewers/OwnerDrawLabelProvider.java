@@ -19,7 +19,11 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * OwnerDrawLabelProvider is an abstract implementation of a label provider that
- * handles custom draw. This class is intended to be subclassed by implementors.
+ * handles custom draw.
+ * 
+ * <p>
+ * <b>This class is intended to be subclassed by implementors.</b>
+ * </p>
  * 
  * @since 3.3
  * 
@@ -30,6 +34,7 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	 * Set up the owner draw callbacks for the viewer.
 	 * 
 	 * @param viewer
+	 *            the viewer the owner draw is set up
 	 */
 	public static void setUpOwnerDraw(final ColumnViewer viewer) {
 		viewer.getControl().addListener(SWT.MeasureItem, new Listener() {
@@ -110,7 +115,9 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}
 	 * 
 	 * @param event
+	 *            the erase event
 	 * @param element
+	 *            the model object
 	 * @see SWT#EraseItem
 	 * @see SWT#COLOR_LIST_SELECTION
 	 * @see SWT#COLOR_LIST_SELECTION_TEXT
@@ -142,7 +149,9 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	 * Handle the paint event.
 	 * 
 	 * @param event
+	 *            the paint event
 	 * @param element
+	 *            the model element
 	 * @see SWT#PaintItem
 	 */
 	protected abstract void paint(Event event, Object element);
@@ -151,7 +160,9 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	 * Handle the measure event.
 	 * 
 	 * @param event
+	 *            the measure event
 	 * @param element
+	 *            the model element
 	 * @see SWT#MeasureItem
 	 */
 	protected abstract void measure(Event event, Object element);
