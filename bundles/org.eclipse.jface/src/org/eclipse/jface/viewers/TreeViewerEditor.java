@@ -33,9 +33,13 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * @param viewer
+	 *            the viewer the editor is attached to
 	 * @param focusCellManager
+	 *            the cell focus manager if one used or <code>null</code>
 	 * @param editorActivationStrategy
+	 *            the strategy used to decide about the editor activation
 	 * @param feature
+	 *            the feature mask
 	 */
 	TreeViewerEditor(TreeViewer viewer, SWTFocusCellManager focusCellManager,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
@@ -63,6 +67,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 	 *            <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
 	 *            <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
 	 *            </ul>
+	 * @see #create(TreeViewer, ColumnViewerEditorActivationStrategy, int)
 	 */
 	public static void create(TreeViewer viewer,
 			SWTFocusCellManager focusCellManager,
@@ -71,7 +76,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		TreeViewerEditor editor = new TreeViewerEditor(viewer,
 				focusCellManager, editorActivationStrategy, feature);
 		viewer.setColumnViewerEditor(editor);
-		if( focusCellManager != null ) {
+		if (focusCellManager != null) {
 			focusCellManager.init();
 		}
 	}
@@ -117,18 +122,23 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		return super.getFocusCell();
 	}
 
-	protected void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event) {
-		// Update the focus cell when we activated the editor with these 2 events
-		if( event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC || event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL ) {
+	protected void updateFocusCell(ViewerCell focusCell,
+			ColumnViewerEditorActivationEvent event) {
+		// Update the focus cell when we activated the editor with these 2
+		// events
+		if (event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+				|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL) {
 
 			List l = getViewer().getSelectionFromWidget();
 
-			if( focusCellManager != null ) {
+			if (focusCellManager != null) {
 				focusCellManager.setFocusCell(focusCell);
 			}
 
 			if (!l.contains(focusCell.getElement())) {
-				getViewer().setSelection(new TreeSelection(focusCell.getViewerRow().getTreePath()));
+				getViewer().setSelection(
+						new TreeSelection(focusCell.getViewerRow()
+								.getTreePath()));
 			}
 		}
 	}

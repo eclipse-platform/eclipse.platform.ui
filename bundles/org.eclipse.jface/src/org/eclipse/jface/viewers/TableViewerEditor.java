@@ -31,6 +31,16 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	private SWTFocusCellManager focusCellManager;
 
+	/**
+	 * @param viewer
+	 *            the viewer the editor is attached to
+	 * @param focusCellManager
+	 *            the cell focus manager if one used or <code>null</code>
+	 * @param editorActivationStrategy
+	 *            the strategy used to decide about the editor activation
+	 * @param feature
+	 *            the feature mask
+	 */
 	TableViewerEditor(TableViewer viewer, SWTFocusCellManager focusCellManager,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
 			int feature) {
@@ -57,6 +67,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 	 *            <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
 	 *            <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
 	 *            </ul>
+	 * @see #create(TableViewer, ColumnViewerEditorActivationStrategy, int)
 	 */
 	public static void create(TableViewer viewer,
 			SWTFocusCellManager focusCellManager,
