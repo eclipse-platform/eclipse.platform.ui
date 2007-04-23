@@ -384,6 +384,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		mgr.add(fPageDropDown);
 		mgr.add(fPinAction);
 		IMenuManager menu = bars.getMenuManager();
+		menu.add(fPinAction);
 		menu.add(fRemoveCurrentAction);
 		menu.add(fRemoveAllAction);
 	}
@@ -410,10 +411,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	/**
 	 * Registers the given runnable with the display
 	 * associated with this view's control, if any.
+	 * @param runnable a runnable
 	 */
-	public void asyncExec(Runnable r) {
+	public void asyncExec(Runnable runnable) {
 		if (isAvailable()) {
-			getPageBook().getDisplay().asyncExec(r);
+			getPageBook().getDisplay().asyncExec(runnable);
 		}
 	}
 	
