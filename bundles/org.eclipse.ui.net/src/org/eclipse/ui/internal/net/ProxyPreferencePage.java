@@ -315,6 +315,17 @@ public class ProxyPreferencePage extends PreferencePage implements
 			entryList[index].setUseSameProtocol(useSameProtocol, entryList[0]);
 		}
 	}
+	
+	public void updateErrorMessage() {
+		for (int index = 0; index < entryList.length; index++) {
+			String message = entryList[index].getErrorMessage();
+			if (message != null) {
+				setErrorMessage(message);
+				return;
+			}
+		}
+		setErrorMessage(null);
+	}
 
 	private GridData newGridData(int span, int verticalIndent,
 			boolean horizontal, boolean vertical) {
@@ -344,6 +355,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 		String prevHostname;
 		int prevPort;
 		private final IProxyData proxyData;
+		private String errorMessage;
 
 		public Entry(IProxyData proxyData) {
 			this.proxyData = proxyData;
@@ -359,6 +371,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 					setEnabled(false);
 				}
 			}
+			updateMessage();
 		}
 
 		public void setUseSameProtocol(boolean useSameProtocol, Entry httpEntry) {
@@ -442,11 +455,47 @@ public class ProxyPreferencePage extends PreferencePage implements
 		boolean isHttpProxy() {
 			return getProxy().getType().equals(IProxyData.HTTP_PROXY_TYPE);
 		}
+		
+		boolean isHttpsProxy() {
+			return getProxy().getType().equals(IProxyData.HTTPS_PROXY_TYPE);
+		}
 
 		public IProxyData getProxy() {
 			return proxyData;
 		}
 
+		public boolean updateMessage() {
+			if (hostname.isEnabled()) {
+				if (isSocksProxy() || isHttpProxy()|| !useSameProxyButton.getSelection()) {
+					String hostString = hostname.getText();
+					if (hostString.startsWith(" ") || hostString.endsWith(" ")) { //$NON-NLS-1$ //$NON-NLS-2$
+						setErrorMessage(NetUIMessages.ProxyPreferencePage_41);
+						return false;
+					}
+					String portString = port.getText();
+					if (portString.length() > 0) {
+						try {
+							int port = Integer.valueOf(portString).intValue();
+							if (port < 0) {
+								setErrorMessage(NetUIMessages.ProxyPreferencePage_42);
+								return false;
+							}
+						} catch (NumberFormatException e) {
+							setErrorMessage(NetUIMessages.ProxyPreferencePage_43);
+							return false;
+						}
+					}
+				}
+			}
+			setErrorMessage(null);
+			return true;
+		}
+		
+		private void setErrorMessage(String message) {
+			errorMessage = message;
+			updateErrorMessage();
+		}
+		
 		public void applyValues() {
 			IProxyData proxy = getProxy();
 			boolean enableAuth = enableProxyAuth.getSelection();
@@ -484,6 +533,11 @@ public class ProxyPreferencePage extends PreferencePage implements
 			gridData.widthHint = 120;
 			hostname.setLayoutData(gridData);
 			hostname.setText(getHostName(proxy));
+			hostname.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					Entry.this.updateMessage();
+				}
+			});
 
 			portLabel = new Label(parent, SWT.NONE);
 			portLabel.setText(NetUIMessages.ProxyPreferencePage_22);
@@ -493,6 +547,11 @@ public class ProxyPreferencePage extends PreferencePage implements
 			gridData.widthHint = 50;
 			port.setLayoutData(gridData);
 			port.setText(getPortString(proxy));
+			port.addModifyListener(new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					Entry.this.updateMessage();
+				}
+			});
 		}
 
 		private String getLabel(IProxyData data) {
@@ -539,6 +598,10 @@ public class ProxyPreferencePage extends PreferencePage implements
 			nameLabel.setEnabled(enabled);
 			portLabel.setEnabled(enabled);
 			port.setEnabled(enabled);
+		}
+
+		public String getErrorMessage() {
+			return errorMessage;
 		}
 	}
 }

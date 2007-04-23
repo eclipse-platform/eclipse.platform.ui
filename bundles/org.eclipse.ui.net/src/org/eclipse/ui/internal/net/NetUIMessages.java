@@ -59,6 +59,12 @@ public final class NetUIMessages extends NLS {
 
 	public static String ProxyPreferencePage_40;
 
+	public static String ProxyPreferencePage_41;
+
+	public static String ProxyPreferencePage_42;
+
+	public static String ProxyPreferencePage_43;
+
 	public static String ProxyPreferencePage_5;
 
 	public static String ProxyPreferencePage_6;
