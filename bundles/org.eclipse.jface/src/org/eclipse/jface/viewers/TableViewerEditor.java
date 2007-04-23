@@ -17,9 +17,12 @@ import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
+ * This is an editor-implementation for {@link Table}
+ * 
  * @since 3.3
  * 
  */

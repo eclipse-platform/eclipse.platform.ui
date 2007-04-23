@@ -15,10 +15,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * This class implementation the strategy how the table is navigated
- * using the keyboard.
+ * This class implementation the strategy how the table is navigated using the
+ * keyboard.
  * 
- * <p>Subclasses can implement their custom navigation algorithms</p>
+ * <p>
+ * <b>Subclasses can implement their custom navigation algorithms</b>
+ * </p>
  * 
  * @since 3.3
  * 
@@ -29,7 +31,6 @@ public class CellNavigationStrategy {
 	 * 
 	 * @param viewer
 	 *            the viewer we are working for
-	 * 
 	 * @param event
 	 *            the key event
 	 * @return <code>true</code> if a new cell is searched

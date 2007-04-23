@@ -17,11 +17,13 @@ import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
- * @since 3.3
+ * This is an editor implementation for {@link Tree}
  * 
+ * @since 3.3
  */
 public class TreeViewerEditor extends ColumnViewerEditor {
 	/**

@@ -14,7 +14,6 @@
 
 package org.eclipse.jface.viewers;
 
-
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -25,13 +24,14 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * ViewerRow is the abstract superclass of the part that represents items in a
- * Table or Tree.
+ * Table or Tree. Implementors of {@link ColumnViewer} have to provide a
+ * concrete implementation for the underlying widget
  * 
  * @since 3.3
  * 
  */
 public abstract class ViewerRow implements Cloneable {
-	
+
 	/**
 	 * Constant denoting the row above the current one (value is 1).
 	 * 
@@ -67,7 +67,7 @@ public abstract class ViewerRow implements Cloneable {
 	 * @return {@link Widget}
 	 */
 	public abstract Widget getItem();
-		
+
 	/**
 	 * Return the number of columns for the receiver.
 	 * 
@@ -226,12 +226,13 @@ public abstract class ViewerRow implements Cloneable {
 
 	/**
 	 * The tree path used to identify an element by the unique path
+	 * 
 	 * @return the path
 	 */
 	public abstract TreePath getTreePath();
-	
+
 	public abstract Object clone();
-		
+
 	/**
 	 * @return the model element
 	 */
@@ -240,7 +241,8 @@ public abstract class ViewerRow implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((getItem() == null) ? 0 : getItem().hashCode());
+		result = prime * result
+				+ ((getItem() == null) ? 0 : getItem().hashCode());
 		return result;
 	}
 
@@ -259,6 +261,5 @@ public abstract class ViewerRow implements Cloneable {
 			return false;
 		return true;
 	}
-	
-	
+
 }
