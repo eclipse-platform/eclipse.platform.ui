@@ -636,7 +636,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Returns the widget in this viewer's control which represent the given
-	 * element. This method searchs all the children of the input element.
+	 * element. This method searches all the children of the input element.
 	 * <p>
 	 * This method is internal to the framework; subclassers should not call
 	 * this method.
@@ -652,7 +652,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * element map is updated according to the value of <code>fullMap</code>.
 	 * If <code>fullMap</code> is <code>true</code> then the current mapping
 	 * from element to widgets is removed and the new mapping is added. If
-	 * fullmap is <code>false</code> then only the new map gets installed.
+	 * full map is <code>false</code> then only the new map gets installed.
 	 * Installing only the new map is necessary in cases where only the order of
 	 * elements changes but not the set of elements.
 	 * <p>
@@ -1874,7 +1874,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * Specifying which properties are affected may allow the viewer to optimize
 	 * the update. For example, if the label provider is not affected by changes
 	 * to any of these properties, an update may not actually be required.
-	 * Specifing <code>properties</code> as <code>null</code> forces a full
+	 * Specifying <code>properties</code> as <code>null</code> forces a full
 	 * update of the given elements.
 	 * </p>
 	 * <p>
@@ -1918,7 +1918,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * Specifying which properties are affected may allow the viewer to optimize
 	 * the update. For example, if the label provider is not affected by changes
 	 * to any of these properties, an update may not actually be required.
-	 * Specifing <code>properties</code> as <code>null</code> forces a full
+	 * Specifying <code>properties</code> as <code>null</code> forces a full
 	 * update of the element.
 	 * </p>
 	 * <p>
@@ -1954,7 +1954,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
      * This method was added to support JDT's explorations
      * into grouping by working sets, which requires viewers to support multiple 
      * equal elements.  See bug 76482 for more details.  This support will
-     * likely be removed in Eclipse 3.3 in favour of proper support for
+     * likely be removed in Eclipse 3.3 in favor of proper support for
      * multiple equal elements (which was implemented for AbtractTreeViewer in 3.2). 
      * </p>
      * @param widget
