@@ -1,0 +1,17 @@
+Native Build Info:
+------------------
+
+platform:         sparc-sun-solaris2.5
+built by:         martin.oberhuber@windriver.com
+build date:       19-Apr-2007
+OS Name:          Solaris 5.5
+OS Version:       SunOS mordor 5.5 Generic sun4u sparc SUNW,Ultra-1
+Compiler version: gcc-3.4.4
+Compiler config:  configure --disable-shared
+
+build script:
+-------------
+#!/bin/sh
+setenv PATH $TOOLSRV/gcc/3.4.4/SunOS/5.5/bin:$PATH
+cd org.eclipse.core.filesystem/natives/unix/solaris
+make install JAVA_HOME=$TOOLSRV/jdk/1.5.0_08/SunOS/5.9
