@@ -113,9 +113,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		public void mouseEnter(MouseEvent e) {
 			if(fUpdateLabel) {
 				fUpdateLabel = false;
+				fCurrentLabels.clear();
 				Job job = new Job("Compute launch button tooltip") { //$NON-NLS-1$
 					protected IStatus run(IProgressMonitor monitor) {
-						fCurrentLabels.clear();
 						computeLabels();
 						fConfigCache.clear();
 						fExtCache.clear();
