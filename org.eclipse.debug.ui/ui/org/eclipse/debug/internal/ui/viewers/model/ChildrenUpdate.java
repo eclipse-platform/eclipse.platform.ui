@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -31,8 +32,8 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	 * @param node node to update
 	 * @param model model containing the node
 	 */
-	public ChildrenUpdate(ModelContentProvider provider, TreePath elementPath, Object element, int index, IElementContentProvider elementContentProvider) {
-		super(provider, elementPath, element, elementContentProvider);
+	public ChildrenUpdate(ModelContentProvider provider, TreePath elementPath, Object element, int index, IElementContentProvider elementContentProvider, IPresentationContext context) {
+		super(provider, elementPath, element, elementContentProvider, context);
 		fIndex = index;
 		fLength = 1;
 	}

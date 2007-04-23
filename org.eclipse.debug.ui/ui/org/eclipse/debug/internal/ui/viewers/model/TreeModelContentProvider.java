@@ -61,7 +61,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path, element, contentAdapter);
+			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path, element, contentAdapter, getPresentationContext());
 			schedule(request);
 		}
 	}	
@@ -70,7 +70,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		Object parent = getElement(parentPath);
 		IElementContentProvider contentAdapter = getContentAdapter(parent);
 		if (contentAdapter != null) {
-			ChildrenUpdate request = new ChildrenUpdate(this, parentPath, parent, modelIndex, contentAdapter);
+			ChildrenUpdate request = new ChildrenUpdate(this, parentPath, parent, modelIndex, contentAdapter, getPresentationContext());
 			schedule(request);
 		}			
 	}	
@@ -79,7 +79,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			HasChildrenUpdate request = new HasChildrenUpdate(this, path, element, contentAdapter);
+			HasChildrenUpdate request = new HasChildrenUpdate(this, path, element, contentAdapter, getPresentationContext());
 			schedule(request);
 		}
 	}		

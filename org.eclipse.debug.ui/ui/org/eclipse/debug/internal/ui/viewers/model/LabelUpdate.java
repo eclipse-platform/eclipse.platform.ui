@@ -37,6 +37,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	private TreeModelLabelProvider fProvider;
 	private TreeItem fItem;
 	private int fNumColumns; 
+	private IPresentationContext fContext;
 	
 	/**
 	 * Label data cache keys
@@ -49,11 +50,14 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	static String PREV_BACKGROUND_KEY = "PREV_BACKGROUND_KEY"; //$NON-NLS-1$
 	
 	/**
-	 * @param element element the label is for
+	 * @param elementPath element the label is for
+	 * @param item item the label is for
 	 * @param provider label provider to callback to 
-	 * @param columnId column identifier or <code>null</code>
+	 * @param columnIds column identifiers or <code>null</code>
+	 * @param context presentation context
 	 */
-	public LabelUpdate(TreePath elementPath, TreeItem item, TreeModelLabelProvider provider, String[] columnIds) {
+	public LabelUpdate(TreePath elementPath, TreeItem item, TreeModelLabelProvider provider, String[] columnIds, IPresentationContext context) {
+		fContext = context;
 		fElementPath = elementPath;
 		fProvider = provider;
 		fColumnIds = columnIds;
@@ -143,7 +147,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
 	 */
 	public IPresentationContext getPresentationContext() {
-		return fProvider.getPresentationContext();
+		return fContext;
 	}
 
 	/* (non-Javadoc)

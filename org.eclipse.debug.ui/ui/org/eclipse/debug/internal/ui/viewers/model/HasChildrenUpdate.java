@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -30,8 +31,8 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 	/**
 	 * @param contentProvider
 	 */
-	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider) {
-		super(contentProvider, elementPath, element, elementContentProvider);
+	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+		super(contentProvider, elementPath, element, elementContentProvider, context);
 	}
 
 	/* (non-Javadoc)

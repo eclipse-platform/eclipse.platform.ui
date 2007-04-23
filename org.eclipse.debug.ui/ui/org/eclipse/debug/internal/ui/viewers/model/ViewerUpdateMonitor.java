@@ -54,6 +54,11 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
      */
     private boolean fStarted = false;
     
+    /**
+     * Presentation context
+     */
+    private IPresentationContext fContext;
+    
     protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
             // necessary to check if viewer is disposed
@@ -78,7 +83,8 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
      * @param elementPath path to associated model element - empty for root element
      * @param element associated model element
      */
-    public ViewerUpdateMonitor(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider) {
+    public ViewerUpdateMonitor(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+    	fContext = context;
     	fElementContentProvider = elementContentProvider;
         fContentProvider = contentProvider;
         fElement = element;
@@ -155,7 +161,7 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getPresentationContext()
 	 */
 	public IPresentationContext getPresentationContext() {
-		return fContentProvider.getPresentationContext();
+		return fContext;
 	}
 
 	/* (non-Javadoc)

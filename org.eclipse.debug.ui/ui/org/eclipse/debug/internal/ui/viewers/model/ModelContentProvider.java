@@ -187,6 +187,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 					((IRequest) reqIter.next()).cancel();
 				}
 			}
+			fWaitingRequests.clear();
 		}
 		fModelListeners.clear();
 		fUpdateListeners.clear();
