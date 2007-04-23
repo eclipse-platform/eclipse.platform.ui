@@ -17,6 +17,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -91,11 +95,36 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	private HashSet fWindows = new HashSet();
 	
 	/**
+	 * Cache of IResource -> ILaunchConfiguration[] used during a tooltip update job. 
+	 * The cache is cleared after each tooltip update job is complete.
+	 */
+	private HashMap fConfigCache = new HashMap();
+	
+	/**
+	 * Cache of IResource -> LaunchShortcutExtension used during a tooltip update job.
+	 * The cache is cleared after each tooltip update job is complete.
+	 */
+	private HashMap fExtCache = new HashMap();
+	
+	/**
 	 * Provides a mouse tracker listener for the launching main toolbar 
 	 */
 	private MouseTrackAdapter fMouseListener = new MouseTrackAdapter() {
 		public void mouseEnter(MouseEvent e) {
-			computeLabels();
+			if(fUpdateLabel) {
+				fUpdateLabel = false;
+				Job job = new Job("Compute launch button tooltip") { //$NON-NLS-1$
+					protected IStatus run(IProgressMonitor monitor) {
+						fCurrentLabels.clear();
+						computeLabels();
+						fConfigCache.clear();
+						fExtCache.clear();
+						return Status.OK_STATUS;
+					}
+				};
+				job.setSystem(true);
+				job.schedule();
+			}
 		}
 	};
 	
@@ -153,40 +182,34 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * current launch history changed event
 	 */
 	protected void computeLabels() {
-		if(fUpdateLabel) {
-			fCurrentLabels.clear();
-			ILaunchGroup group = null;
-			boolean changed = false;
-			ILaunchConfiguration config = null;
-			String label = null;
-			for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
-				group = ((ILaunchLabelChangedListener) iter.next()).getLaunchGroup();
-				if(group != null) {
-					if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-						label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
-					}
-					else {
-						config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
-						if(config != null) {
-							label = appendLaunched(config);
-						}
-						else {
-							//need to force an update to display the default label.
-							//case: no launch history, switch off context launching, label needs to update
-							label = null;
-							changed |= true;
-						}
-					}
-					changed |= fCurrentLabels.put(group, label) != null;
+		ILaunchGroup group = null;
+		ILaunchConfiguration config = null;
+		String label = null;
+		for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
+			group = ((ILaunchLabelChangedListener) iter.next()).getLaunchGroup();
+			if(group != null) {
+				if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+					label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
 				}
-			}
-			if(changed) {
-				//notify the listeners of a label update
-				for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
-					((ILaunchLabelChangedListener)iter.next()).labelChanged();
+				else {
+					config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
+					if(config != null) {
+						label = appendLaunched(config);
+					}
 				}
+				fCurrentLabels.put(group, label);
+				label = null;
 			}
-			fUpdateLabel = false;
+		}
+		notifyLabelChanged();
+	}
+	
+	/**
+	 * Notifies all registered listeners that the known labels have changed
+	 */
+	protected void notifyLabelChanged() {
+		for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
+			((ILaunchLabelChangedListener)iter.next()).labelChanged();
 		}
 	}
 	
@@ -241,7 +264,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		if(config != null) {
 			return appendLaunched(config);
 		}
-		List configs = lcm.getApplicableLaunchConfigurations(resource);
+		List configs = (List) fConfigCache.get(resource);
+		if(configs == null) {
+			configs = lcm.getApplicableLaunchConfigurations(resource);
+			fConfigCache.put(resource, configs);
+		}
 		int csize = configs.size();
 		if(csize == 1) {
 			return appendLaunched((ILaunchConfiguration)configs.get(0));
@@ -256,7 +283,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 		}
 		else {
-			List exts = lcm.getLaunchShortcuts(resource);
+			List exts = (List) fExtCache.get(resource);
+			if(exts == null) {
+				exts = lcm.getLaunchShortcuts(resource);
+				fExtCache.put(resource, exts);
+			}
 			int esize = exts.size();
 			if(esize == 0) {
 				IProject project = resource.getProject();
@@ -421,13 +452,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
-	public void launchesChanged(ILaunch[] launches) {
-	}
+	public void launchesChanged(ILaunch[] launches) {}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
-	public void launchesRemoved(ILaunch[] launches) {
-		fUpdateLabel = true;
-	}
+	public void launchesRemoved(ILaunch[] launches) {}
 }
