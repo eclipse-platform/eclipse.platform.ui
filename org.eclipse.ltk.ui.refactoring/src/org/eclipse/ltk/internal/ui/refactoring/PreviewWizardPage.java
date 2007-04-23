@@ -262,6 +262,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fActiveAction.setChecked(false);
 			fActiveAction= action;
 			fActiveAction.setChecked(true);
+			if (fCurrentSelection != null)
+				showPreview(fCurrentSelection);
 		}
 	}
 	
