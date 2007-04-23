@@ -7,15 +7,15 @@
 * 
 * Contributors:
 *     IBM Corporation - initial API and implementation
-* Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
+* Martin Oberhuber (Wind River) - [183137] adapted from Linux for Solaris
 ***********************************************************************/
 
 /* Use this directive when introducing platform-specific code in localfile.c */
-#ifndef LINUX
-#define LINUX
+#ifndef SOLARIS
+#define SOLARIS
 #endif
 
-/* Linux supports reading symbolic links */
+/* Solaris supports reading symbolic links */
 #ifndef EFS_SYMLINK_SUPPORT
 #define EFS_SYMLINK_SUPPORT
 #endif

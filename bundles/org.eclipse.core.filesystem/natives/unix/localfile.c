@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - get/setResourceAttribute code
- *     Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
+ * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
+ * Corey Ashford (IBM) - [177400] fix threading issues on Linux-PPC
+ * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
  *******************************************************************************/
 #include <jni.h>
 #include <sys/types.h>
@@ -18,10 +20,6 @@
 #include <string.h>
 #include "../localfile.h"
 #include <os_custom.h>
-#ifdef LINUX
-#include <limits.h>
-#include <unistd.h>
-#endif
 
 /*
  * Get a null-terminated byte array from a java byte array.
@@ -41,7 +39,7 @@ jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
 	return result;
 }
 
-#ifdef LINUX
+#if defined(EFS_SYMLINK_SUPPORT)
 /*
  * Get a Java String from a java byte array, using the default charset.
  * Uses Convert.fromPlatformBytes([B).
@@ -122,7 +120,7 @@ jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo)
 	return JNI_TRUE;
 }
 
-#ifdef LINUX
+#if defined(EFS_SYMLINK_SUPPORT)
 /*
  * Set symbolic link information in IFileInfo 
  */
@@ -160,7 +158,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
 	/* get stat */
 	name = getByteArray(env, target);
-#ifdef LINUX
+#if defined(EFS_SYMLINK_SUPPORT)
 	//do an lstat first to see if it is a symbolic link
 	code = lstat((const char*)name, &info);
 	if (code == 0 && (info.st_mode & S_IFLNK) == S_IFLNK) {

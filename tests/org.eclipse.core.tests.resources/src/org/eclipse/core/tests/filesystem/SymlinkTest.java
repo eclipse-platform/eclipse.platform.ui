@@ -7,6 +7,8 @@
  * 
  * Contributors:
  * Martin Oberhuber (Wind River) - initial API and implementation
+ * John Arthorne (IBM) - [172346] disable tests with problematic Platform encoding
+ * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
@@ -44,11 +46,11 @@ public class SymlinkTest extends FileSystemTest {
 	public static boolean isTestablePlatform() {
 		// A Platform is testable if it supports the "ln -s" command.
 		String os = Platform.getOS();
-		//currently we only support linux
+		//currently we only support linux and solaris
 		if (os.equals(Platform.OS_LINUX)
+				  ||os.equals(Platform.OS_SOLARIS)
 		//		  ||os.equals(Platform.OS_AIX)
 		//		  ||os.equals(Platform.OS_HPUX)
-		//		  ||os.equals(Platform.OS_SOLARIS)
 		//		  ||isWindowsVista()
 		) {
 			return true;
@@ -314,7 +316,11 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkEnabled() {
-		if (Platform.OS_LINUX.equals(Platform.getOS())) {
+		String os = Platform.getOS();
+		String arch=Platform.getOSArch();
+		if ( (Platform.OS_LINUX.equals(os) && (Platform.ARCH_X86.equals(arch) || Platform.ARCH_PPC.equals(arch)))
+		 ||  (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch))
+		) {
 			assertTrue(haveSymlinks());
 		} else {
 			assertFalse(haveSymlinks());

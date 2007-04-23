@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
+ * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -59,8 +60,7 @@ public class LocalFileSystem extends FileSystem {
 	 * is tolerant of the platform runtime not being present.
 	 */
 	static String getOS() {
-		String os = System.getProperty("osgi.os"); //$NON-NLS-1$
-		return os != null ? os : ""; //$NON-NLS-1$
+		return System.getProperty("osgi.os", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -87,9 +87,12 @@ public class LocalFileSystem extends FileSystem {
 
 		//this must be kept in sync with the actual native implementations.
 		String os = getOS();
+		String arch = System.getProperty("osgi.arch", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (os.equals(Constants.OS_WIN32))
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else if (os.equals(Constants.OS_LINUX))
+		else if ( (os.equals(Constants.OS_LINUX) && (arch.equals(Constants.ARCH_X86) || arch.equals(Constants.ARCH_PPC)))
+			 ||   (os.equals(Constants.OS_SOLARIS) && arch.equals(Constants.ARCH_SPARC))
+		)
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
 		else if (os.equals(Constants.OS_MACOSX) || os.equals(Constants.OS_HPUX) || os.equals(Constants.OS_QNX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
