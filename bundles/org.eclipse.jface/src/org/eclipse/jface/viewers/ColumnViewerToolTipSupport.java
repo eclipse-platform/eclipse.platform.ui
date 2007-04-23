@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * The ColumnViewerTooltipSupport is the class that provides tooltips for ColumnViewers.
+ * The ColumnViewerTooltipSupport is the class that provides tool tips for ColumnViewers.
  * 
  * @since 3.3
  * 
@@ -47,7 +47,7 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 * 
 	 * @param viewer
 	 *            the viewer the support is attached to
-	 * @param style style passed to control tooltip behaviour
+	 * @param style style passed to control tool tip behavior
 	 * 
 	 * @param manualActivation
 	 *            <code>true</code> if the activation is done manually using
@@ -77,7 +77,7 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 * 
 	 * @param viewer
 	 *            the viewer the support is attached to
-	 * @param style style passed to control tooltip behaviour
+	 * @param style style passed to control tool tip behavior
 	 * 
 	 * @see ToolTip#RECREATE
 	 * @see ToolTip#NO_RECREATE

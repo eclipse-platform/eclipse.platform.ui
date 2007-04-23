@@ -50,7 +50,7 @@ public interface ICellEditorListener {
      * notification is normally sent only by text-based editors in response to a
      * keystroke, so that the listener may show an error message reflecting the
      * current valid state. This notification is sent while the value is being
-     * actively edited, before the value is applied or cancelled.  A listener should
+     * actively edited, before the value is applied or canceled.  A listener should
      * <b>not</b> update the model based on this notification; see
      * <code>applyEditorValue</code>.
      * <p>

@@ -99,7 +99,7 @@ public class TextCellEditor extends CellEditor {
     }
 
     /**
-     * Checks to see if the "deleteable" state (can delete/
+     * Checks to see if the "deletable" state (can delete/
      * nothing to delete) has changed and if so fire an
      * enablement changed notification.
      */
@@ -157,7 +157,7 @@ public class TextCellEditor extends CellEditor {
                 if ((getControl() == null) || getControl().isDisposed()) {
 					return;
 				}
-                checkSelection(); // see explaination below
+                checkSelection(); // see explanation below
                 checkDeleteable();
                 checkSelectable();
             }
@@ -172,7 +172,7 @@ public class TextCellEditor extends CellEditor {
         });
         // We really want a selection listener but it is not supported so we
         // use a key listener and a mouse listener to know when selection changes
-        // may have occured
+        // may have occurred
         text.addMouseListener(new MouseAdapter() {
             public void mouseUp(MouseEvent e) {
                 checkSelection();

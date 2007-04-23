@@ -229,7 +229,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     public void drop(DropTargetEvent event) {
         currentLocation = determineLocation(event);
 
-        //perform the drop behaviour
+        //perform the drop behavior
         if (!performDrop(event.data)) {
             event.detail = DND.DROP_NONE;
         }

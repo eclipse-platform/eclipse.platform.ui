@@ -53,8 +53,8 @@ public class DecorationContext implements IDecorationContext {
 	}
 
 	/**
-	 * Set the pgiven roperty to the given value. Setting the value of
-	 * a propert to <code>null</code> removes the property from
+	 * Set the given property to the given value. Setting the value of
+	 * a property to <code>null</code> removes the property from
 	 * the context.
 	 * @param property the property
 	 * @param value the value of the property or <code>null</code>

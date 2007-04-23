@@ -191,7 +191,7 @@ public class ComboBoxCellEditor extends CellEditor {
      * this <code>CellEditor</code> framework method sets the 
      * minimum width of the cell.  The minimum width is 10 characters
      * if <code>comboBox</code> is not <code>null</code> or <code>disposed</code>
-     * eles it is 60 pixels to make sure the arrow button and some text is visible.
+     * else it is 60 pixels to make sure the arrow button and some text is visible.
      * The list of CCombo will be wide enough to show its longest item.
      */
     public LayoutData getLayoutData() {
@@ -238,7 +238,7 @@ public class ComboBoxCellEditor extends CellEditor {
     }
 
     /**
-     * Applies the currently selected value and deactiavates the cell editor
+     * Applies the currently selected value and deactivates the cell editor
      */
     void applyEditorValueAndDeactivate() {
         //	must set the selection before getting value

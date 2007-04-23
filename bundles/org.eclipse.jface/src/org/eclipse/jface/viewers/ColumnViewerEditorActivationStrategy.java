@@ -15,7 +15,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 
 /**
- * This class is responsible to determin if a cell selection event is triggers
+ * This class is responsible to determine if a cell selection event is triggers
  * an editor activation
  * 
  * @since 3.3
@@ -33,8 +33,8 @@ public class ColumnViewerEditorActivationStrategy {
 	}
 	
 	/**
-	 * @param event
-	 * @return bla bl
+	 * @param event the event triggering the action
+	 * @return <code>true</code> if this event should open the editor
 	 */
 	protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 		return event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION

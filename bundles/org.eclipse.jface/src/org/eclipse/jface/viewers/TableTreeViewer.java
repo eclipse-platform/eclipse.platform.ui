@@ -72,8 +72,8 @@ public class TableTreeViewer extends AbstractTreeViewer {
 	private TableTreeEditor tableTreeEditor;
 
 	/**
-	 * Copied from originial TableEditorImpl and moved here since refactoring
-	 * completly wiped out the original impl in 3.3
+	 * Copied from original TableEditorImpl and moved here since refactoring
+	 * completely wiped out the original implementation in 3.3
 	 * 
 	 * @since 3.1
 	 */

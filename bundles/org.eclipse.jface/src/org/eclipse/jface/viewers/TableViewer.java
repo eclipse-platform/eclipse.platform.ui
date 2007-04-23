@@ -65,7 +65,7 @@ public class TableViewer extends AbstractTableViewer {
 	private Table table;
 	
 	/**
-	 * The cached row which is resused all over
+	 * The cached row which is reused all over
 	 */
 	private TableViewerRow cachedRow;
 
@@ -131,13 +131,13 @@ public class TableViewer extends AbstractTableViewer {
 	/**
 	 * <p>
 	 * Sets a new selection for this viewer and optionally makes it visible. The
-	 * TableViewer implmentation of this method is ineffecient for the
+	 * TableViewer implementation of this method is inefficient for the
 	 * ILazyContentProvider as lookup is done by indices rather than elements
 	 * and may require population of the entire table in worse case.
 	 * </p>
 	 * <p>
 	 * Use Table#setSelection(int[] indices) and Table#showSelection() if you
-	 * wish to set selection more effeciently when using a ILazyContentProvider.
+	 * wish to set selection more efficiently when using a ILazyContentProvider.
 	 * </p>
 	 * 
 	 * @param selection

@@ -26,8 +26,7 @@ import org.eclipse.swt.graphics.Point;
  * 
  * @since 3.3
  */
-public abstract class CellLabelProvider extends BaseLabelProvider  {
-
+public abstract class CellLabelProvider extends BaseLabelProvider {
 
 	/**
 	 * Create a new instance of the receiver.
@@ -43,7 +42,7 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	 *            The labelProvider to convert
 	 * @return ViewerLabelProvider
 	 */
-	/* package */ static CellLabelProvider createViewerLabelProvider(
+	/* package */static CellLabelProvider createViewerLabelProvider(
 			IBaseLabelProvider labelProvider) {
 
 		if (labelProvider instanceof ITableLabelProvider
@@ -56,12 +55,14 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 
 	}
 
-	
 	/**
 	 * Get the image displayed in the tool tip for object.
 	 * 
-	 * <p><b>if both methods {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)}
-	 * both return <code>null</code> the control is set back to standard behaviour</b></p>
+	 * <p>
+	 * <b>If {@link #getToolTipText(Object)} and
+	 * {@link #getToolTipImage(Object)} both return <code>null</code> the
+	 * control is set back to standard behavior</b>
+	 * </p>
 	 * 
 	 * @param object
 	 *            the element for which the tool tip is shown
@@ -73,16 +74,18 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	}
 
 	/**
-	 * Returns the tool tip text for the given element and column index, or
-	 * <code>null</code> if a custom tool tip should not be displayed.
+	 * Get the text displayed in the tool tip for object.
 	 * 
-	 * <p><b>if both methods {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)}
-	 * both return <code>null</code> the control is set back to standard behaviour</b></p>
+	 * <p>
+	 * <b>If {@link #getToolTipText(Object)} and
+	 * {@link #getToolTipImage(Object)} both return <code>null</code> the
+	 * control is set back to standard behavior</b>
+	 * </p>
 	 * 
 	 * @param element
 	 *            the element for which the tool tip is shown
-	 * @return the {@link String} to be displayed in the tool tip, or
-	 *         <code>null</code> if a custom tool tip should not be displayed
+	 * @return the {@link String} or <code>null</code> if there is not text to
+	 *         display
 	 */
 	public String getToolTipText(Object element) {
 		return null;
@@ -95,7 +98,8 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	 *            the {@link Object} for which the tool tip is shown
 	 * 
 	 * @return the {@link Color} used or <code>null</code> if you want to use
-	 *         the
+	 *         the default color {@link SWT#COLOR_INFO_BACKGROUND}
+	 * @see SWT#COLOR_INFO_BACKGROUND
 	 */
 	public Color getToolTipBackgroundColor(Object object) {
 		return null;
@@ -135,7 +139,7 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	 * 
 	 * @param object
 	 *            the element for which the tool tip is shown
-	 * @return {@link Point} shift of the tool tip or <code>null</code> if the
+	 * @return {@link Point} to shift of the tool tip or <code>null</code> if the
 	 *         default shift should be used.
 	 */
 	public Point getToolTipShift(Object object) {
@@ -143,14 +147,17 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	}
 
 	/**
-	 * Return whether or not to use the native tool tip. If you switch to native tool tips
-	 * only the value from {@link #getToolTipText(Object)} is used all other features from
-	 * custom tooltips are not supported.
-	 *  
-	 * <p>To reset the control to native behaviour you should return <code>true</code> from this method
-	 * and <code>null</code> from {@link #getToolTipText(Object)} or <code>null</code> 
-	 * from {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)} 
-	 * at the same time</p>
+	 * Return whether or not to use the native tool tip. If you switch to native
+	 * tool tips only the value from {@link #getToolTipText(Object)} is used all
+	 * other features from custom tool tips are not supported.
+	 * 
+	 * <p>
+	 * To reset the control to native behavior you should return
+	 * <code>true</code> from this method and <code>null</code> from
+	 * {@link #getToolTipText(Object)} or <code>null</code> from
+	 * {@link #getToolTipText(Object)} and {@link #getToolTipImage(Object)} at
+	 * the same time
+	 * </p>
 	 * 
 	 * @param object
 	 *            the {@link Object} for which the tool tip is shown
@@ -165,30 +172,30 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	 * 
 	 * @param object
 	 *            the {@link Object} for which the tool tip is shown
-	 * @return <code>int<code>
+	 * @return time in milliseconds the tool tip is shown for
 	 */
 	public int getToolTipTimeDisplayed(Object object) {
 		return 0;
 	}
 
 	/**
-	 * The time in milliseconds until the tool tip is displaued.
+	 * The time in milliseconds until the tool tip is displayed.
 	 * 
 	 * @param object
 	 *            the {@link Object} for which the tool tip is shown
-	 * @return int
+	 * @return time in milliseconds until the tool tip is displayed
 	 */
 	public int getToolTipDisplayDelayTime(Object object) {
 		return 0;
 	}
 
 	/**
-	 * The {@link SWT} style used to create the {@link CLabel} (see there for supported styles). 
-	 * By default {@link SWT#SHADOW_NONE} is used.
+	 * The {@link SWT} style used to create the {@link CLabel} (see there for
+	 * supported styles). By default {@link SWT#SHADOW_NONE} is used.
 	 * 
 	 * @param object
 	 *            the element for which the tool tip is shown
-	 * @return int
+	 * @return the style used to create the label
 	 * @see CLabel
 	 */
 	public int getToolTipStyle(Object object) {
@@ -198,7 +205,8 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	/**
 	 * Update the label for cell.
 	 * 
-	 * @param cell {@link ViewerCell}
+	 * @param cell
+	 *            {@link ViewerCell}
 	 */
 	public abstract void update(ViewerCell cell);
 

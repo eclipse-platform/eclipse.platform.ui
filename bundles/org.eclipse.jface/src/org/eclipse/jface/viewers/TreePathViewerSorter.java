@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * A viewer sorter that is provded extra context in the form of the path of the
+ * A viewer sorter that is provided extra context in the form of the path of the
  * parent element of the elements being sorted.
  * 
  * @since 3.2
@@ -42,7 +42,7 @@ public class TreePathViewerSorter extends ViewerSorter {
 	}
 	
 	/**
-	 * Compare the givcen elements that will have the given parent
+	 * Compare the given elements that will have the given parent
 	 * path when they are added to the viewer. The provided path is
 	 * relative to the viewer input. The parent path will
 	 * be <code>null</code> when the elements are root elements.

@@ -78,7 +78,7 @@ public class StructuredSelection implements IStructuredSelection {
 
     /**
      * Returns whether this structured selection is equal to the given object.
-     * Two structured selections are equal iff they contain the same elements
+     * Two structured selections are equal if they contain the same elements
      * in the same order.
      *
      * @param o the other object

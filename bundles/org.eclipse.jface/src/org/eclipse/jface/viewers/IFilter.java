@@ -21,7 +21,7 @@ public interface IFilter {
 	 * 
 	 * @param toTest object to compare against the filter 
 	 * 
-	 * @return true iff the object is accepted by the filter.
+	 * @return <code>true</code> if the object is accepted by the filter.
 	 */
 	public boolean select(Object toTest);
 }

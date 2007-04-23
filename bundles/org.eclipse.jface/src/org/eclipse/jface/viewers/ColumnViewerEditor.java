@@ -14,7 +14,6 @@
 
 package org.eclipse.jface.viewers;
 
-
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -60,7 +59,7 @@ public abstract class ColumnViewerEditor {
 	private ColumnViewerEditorActivationStrategy editorActivationStrategy;
 
 	/**
-	 * Tabing from cell to cell is turned off
+	 * Tabbing from cell to cell is turned off
 	 */
 	public static final int DEFAULT = 1;
 
@@ -77,12 +76,12 @@ public abstract class ColumnViewerEditor {
 	public static final int TABBING_CYCLE_IN_ROW = 1 << 2;
 
 	/**
-	 * Support tabing to Cell above/below the current cell
+	 * Support tabbing to Cell above/below the current cell
 	 */
 	public static final int TABBING_VERTICAL = 1 << 3;
 
 	/**
-	 * Should tabing from column to column with in one row be supported
+	 * Should tabbing from column to column with in one row be supported
 	 */
 	public static final int TABBING_HORIZONTAL = 1 << 4;
 
@@ -90,7 +89,7 @@ public abstract class ColumnViewerEditor {
 	 * 
 	 */
 	public static final int KEYBOARD_ACTIVATION = 1 << 5;
-	
+
 	private int feature;
 
 	/**
@@ -99,12 +98,14 @@ public abstract class ColumnViewerEditor {
 	 * @param feature
 	 */
 	protected ColumnViewerEditor(ColumnViewer viewer,
-			ColumnViewerEditorActivationStrategy editorActivationStrategy, int feature) {
+			ColumnViewerEditorActivationStrategy editorActivationStrategy,
+			int feature) {
 		this.viewer = viewer;
 		this.editorActivationStrategy = editorActivationStrategy;
-		if( (feature & KEYBOARD_ACTIVATION) == KEYBOARD_ACTIVATION ) {
-			this.editorActivationStrategy.setEnableEditorActivationWithKeyboard(true);
-		} 
+		if ((feature & KEYBOARD_ACTIVATION) == KEYBOARD_ACTIVATION) {
+			this.editorActivationStrategy
+					.setEnableEditorActivationWithKeyboard(true);
+		}
 		this.feature = feature;
 		initCellEditorListener();
 	}
@@ -149,13 +150,13 @@ public abstract class ColumnViewerEditor {
 								.beforeEditorActivated(activationEvent);
 					}
 				}
-				
+
 				updateFocusCell(cell, activationEvent);
-				
-				
+
 				cellEditor.addListener(cellEditorListener);
-				part.getEditingSupport().initializeCellEditorValue(cellEditor, cell);
-				
+				part.getEditingSupport().initializeCellEditorValue(cellEditor,
+						cell);
+
 				// Tricky flow of control here:
 				// activate() can trigger callback to cellEditorListener which
 				// will clear cellEditor
@@ -167,7 +168,7 @@ public abstract class ColumnViewerEditor {
 					return;
 				}
 				setLayoutData(cellEditor.getLayoutData());
-				setEditor(control, (Item)cell.getItem(), cell.getColumnIndex());
+				setEditor(control, (Item) cell.getItem(), cell.getColumnIndex());
 				cellEditor.setFocus();
 				if (focusListener == null) {
 					focusListener = new FocusAdapter() {
@@ -231,7 +232,8 @@ public abstract class ColumnViewerEditor {
 			// in case save results in applyEditorValue being re-entered
 			// see 1GAHI8Z: ITPUI:ALL - How to code event notification when
 			// using cell editor ?
-			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(cell);
+			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
+					cell);
 			if (editorActivationListener != null
 					&& !editorActivationListener.isEmpty()) {
 				Object[] ls = editorActivationListener.getListeners();
@@ -280,16 +282,17 @@ public abstract class ColumnViewerEditor {
 	}
 
 	/**
-	 * Cancle editing
+	 * Cancel editing
 	 */
 	void cancelEditing() {
 		if (cellEditor != null) {
-			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(cell);
+			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
+					cell);
 			if (editorActivationListener != null
 					&& !editorActivationListener.isEmpty()) {
 				Object[] ls = editorActivationListener.getListeners();
 				for (int i = 0; i < ls.length; i++) {
-					
+
 					((ColumnViewerEditorActivationListener) ls[i])
 							.beforeEditorDeactivated(tmp);
 				}
@@ -342,7 +345,7 @@ public abstract class ColumnViewerEditor {
 			}
 
 			this.cell = (ViewerCell) event.getSource();
-			
+
 			activationEvent = event;
 			activationTime = event.time
 					+ Display.getCurrent().getDoubleClickTime();
@@ -404,7 +407,7 @@ public abstract class ColumnViewerEditor {
 	}
 
 	/**
-	 * Process the travers event and opens the next available editor depending
+	 * Process the traverse event and opens the next available editor depending
 	 * of the implemented strategy. The default implementation uses the style
 	 * constants
 	 * <ul>
@@ -422,9 +425,10 @@ public abstract class ColumnViewerEditor {
 	 * @param columnIndex
 	 *            the index of the current column
 	 * @param row
-	 *            the current row - may only be used for the duration of this method call
+	 *            the current row - may only be used for the duration of this
+	 *            method call
 	 * @param event
-	 *            the travers event
+	 *            the traverse event
 	 */
 	protected void processTraverseEvent(int columnIndex, ViewerRow row,
 			TraverseEvent event) {
@@ -478,7 +482,8 @@ public abstract class ColumnViewerEditor {
 
 		if (newRow != null) {
 			ViewerColumn column = viewer.getViewerColumn(columnIndex);
-			if (column != null && column.getEditingSupport() != null
+			if (column != null
+					&& column.getEditingSupport() != null
 					&& column.getEditingSupport().canEdit(
 							newRow.getItem().getData())) {
 				rv = newRow.getCell(columnIndex);
@@ -496,7 +501,8 @@ public abstract class ColumnViewerEditor {
 
 		if (columnIndex - 1 >= 0) {
 			ViewerColumn column = viewer.getViewerColumn(columnIndex - 1);
-			if (column != null && column.getEditingSupport() != null
+			if (column != null
+					&& column.getEditingSupport() != null
 					&& column.getEditingSupport().canEdit(
 							row.getItem().getData())) {
 				rv = row.getCell(columnIndex - 1);
@@ -532,7 +538,8 @@ public abstract class ColumnViewerEditor {
 
 		if (columnIndex + 1 < row.getColumnCount()) {
 			ViewerColumn column = viewer.getViewerColumn(columnIndex + 1);
-			if (column != null && column.getEditingSupport() != null
+			if (column != null
+					&& column.getEditingSupport() != null
 					&& column.getEditingSupport().canEdit(
 							row.getItem().getData())) {
 				rv = row.getCell(columnIndex + 1);
@@ -579,13 +586,18 @@ public abstract class ColumnViewerEditor {
 	protected abstract void setLayoutData(CellEditor.LayoutData layoutData);
 
 	/**
-	 * @param focusCell updates the cell with the current input focus
-	 * @param event the event requesting to update the focusCell
+	 * @param focusCell
+	 *            updates the cell with the current input focus
+	 * @param event
+	 *            the event requesting to update the focusCell
 	 */
-	protected abstract void updateFocusCell(ViewerCell focusCell, ColumnViewerEditorActivationEvent event);
-	
+	protected abstract void updateFocusCell(ViewerCell focusCell,
+			ColumnViewerEditorActivationEvent event);
+
 	/**
-	 * @return the cell currently holding the focus
+	 * @return the cell currently holding the focus if no cell has the focus or
+	 *         the viewer implementation doesn't support <code>null</code> is
+	 *         returned
 	 * 
 	 */
 	public ViewerCell getFocusCell() {

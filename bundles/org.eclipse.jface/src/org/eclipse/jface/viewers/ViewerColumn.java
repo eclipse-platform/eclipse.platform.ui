@@ -104,7 +104,7 @@ public abstract class ViewerColumn {
 	}
 
 	/**
-	 * Return the editing support for the reciever.
+	 * Return the editing support for the receiver.
 	 * 
 	 * @return {@link EditingSupport}
 	 */
@@ -136,7 +136,7 @@ public abstract class ViewerColumn {
 	}
 
 	/**
-	 * Disposes of the label provider (if set), deregisters the listener and
+	 * Disposes of the label provider (if set), unregisters the listener and
 	 * nulls the references to the label provider and editing support. This
 	 * method is called when the underlying widget is disposed. Subclasses may
 	 * extend but must call the super implementation.

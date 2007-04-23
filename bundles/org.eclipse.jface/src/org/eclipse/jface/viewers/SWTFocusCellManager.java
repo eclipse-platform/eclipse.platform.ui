@@ -18,17 +18,21 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
+ * This class is responsible to provide cell management base features for the
+ * SWT-Controls {@link org.eclipse.swt.widgets.Table} and
+ * {@link org.eclipse.swt.widgets.Tree}.
+ * 
  * @since 3.3
  * 
  */
 abstract class SWTFocusCellManager {
-	
+
 	private CellNavigationStrategy navigationStrategy;
 
 	private ColumnViewer viewer;
 
 	private ViewerCell focusCell;
-	
+
 	private FocusCellHighlighter cellHighlighter;
 
 	/**
@@ -44,10 +48,9 @@ abstract class SWTFocusCellManager {
 		this.navigationStrategy = navigationDelegate;
 		hookListener(viewer);
 	}
-	
+
 	/**
-	 * This method is called by the framework to initialize this cell
-	 * manager.
+	 * This method is called by the framework to initialize this cell manager.
 	 */
 	void init() {
 		this.cellHighlighter.init();
@@ -104,13 +107,13 @@ abstract class SWTFocusCellManager {
 	}
 
 	private void handleFocusIn(Event event) {
-		if( focusCell == null ) {
+		if (focusCell == null) {
 			setFocusCell(getInitialFocusCell());
 		}
 	}
-	
+
 	abstract ViewerCell getInitialFocusCell();
-	
+
 	private void hookListener(ColumnViewer viewer) {
 		Listener listener = new Listener() {
 
@@ -137,7 +140,7 @@ abstract class SWTFocusCellManager {
 		viewer.getControl().addListener(SWT.Selection, listener);
 		viewer.getControl().addListener(SWT.FocusIn, listener);
 	}
-	
+
 	/**
 	 * @return the cell with the focus
 	 * 
@@ -145,12 +148,12 @@ abstract class SWTFocusCellManager {
 	public ViewerCell getFocusCell() {
 		return focusCell;
 	}
-	
+
 	void setFocusCell(ViewerCell focusCell) {
 		this.focusCell = focusCell;
 		this.cellHighlighter.focusCellChanged(focusCell);
 	}
-	
+
 	ColumnViewer getViewer() {
 		return viewer;
 	}

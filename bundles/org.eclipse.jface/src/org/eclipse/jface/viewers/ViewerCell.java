@@ -68,7 +68,7 @@ public class ViewerCell {
 	/**
 	 * Get the index of the cell.
 	 * 
-	 * @return int
+	 * @return the index
 	 */
 	public int getColumnIndex() {
 		return columnIndex;

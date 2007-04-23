@@ -193,7 +193,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
 	 * support JDT's explorations into grouping by working sets, which requires
 	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favour of
+	 * details. This support will likely be removed in Eclipse 3.2 in favor of
 	 * proper support for multiple equal elements.
 	 * </p>
 	 * 
@@ -414,8 +414,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            The comparator to use.
 	 * @param lastInsertion
 	 *            the start index to start search for position from this allows
-	 *            optimising search for multiple elements that are sorted
-	 *            themself.
+	 *            optimizing search for multiple elements that are sorted
+	 *            themselves.
 	 * @param element
 	 *            element to find position for.
 	 * @param parentPath
@@ -463,8 +463,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            The sorter to use.
 	 * @param startIndex
 	 *            the start index to start search for position from this allows
-	 *            optimising search for multiple elements that are sorted
-	 *            themself.
+	 *            optimizing search for multiple elements that are sorted
+	 *            themselves.
 	 * @param element
 	 *            element to find position for.
 	 * @param currentSize
@@ -480,7 +480,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            The parent widget the element will be inserted into.
 	 * @param element
 	 *            The element to insert.
-	 * @return int
+	 * @return the index of the element
 	 */
 	protected int indexForElement(Widget parent, Object element) {
 		ViewerComparator comparator = getComparator();
@@ -559,7 +559,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param e1
 	 *            the first element
 	 * @param e2
-	 *            the seocnd element
+	 *            the second element
 	 * @return the result of comparing the two elements
 	 */
 	private int internalCompare(ViewerComparator comparator,
@@ -947,7 +947,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (widget instanceof Item) {
 			Item item = (Item) widget;
 
-			// ensure that backpointer is correct
+			// ensure that back pointer is correct
 			if (fullMap) {
 				associate(element, item);
 			} else {
@@ -1064,7 +1064,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Get the child for the widget at index. Note that the default
-	 * implementation is not very effecient and should be overridden if this
+	 * implementation is not very efficient and should be overridden if this
 	 * class is implemented.
 	 * 
 	 * @param widget
@@ -1725,7 +1725,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
 	 * support JDT's explorations into grouping by working sets, which requires
 	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favour of
+	 * details. This support will likely be removed in Eclipse 3.2 in favor of
 	 * proper support for multiple equal elements.
 	 * </p>
 	 * 
@@ -1802,7 +1802,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
 	 * support JDT's explorations into grouping by working sets, which requires
 	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favour of
+	 * details. This support will likely be removed in Eclipse 3.2 in favor of
 	 * proper support for multiple equal elements.
 	 * </p>
 	 * 
@@ -1934,7 +1934,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Return whether the tree node representing the given element or path can
-	 * be expanded. Clients should query expandablity by path if the viewer's
+	 * be expanded. Clients should query expandability by path if the viewer's
 	 * content provider is an {@link ITreePathContentProvider}.
 	 * <p>
 	 * The default implementation of this framework method calls
@@ -1986,7 +1986,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param item
 	 *            the tree item for the element
 	 * @param parentPath
-	 *            the parent path if it is knwon or <code>null</code> if it
+	 *            the parent path if it is known or <code>null</code> if it
 	 *            needs to be determines
 	 * @param element
 	 *            the element
@@ -2136,7 +2136,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * 
 	 * @param item
 	 *            the item to compute the descendent of
-	 * @return the rightmost visible descendent or the item iself if it has no
+	 * @return the rightmost visible descendent or the item itself if it has no
 	 *         children
 	 */
 	private Item rightMostVisibleDescendent(Item item) {

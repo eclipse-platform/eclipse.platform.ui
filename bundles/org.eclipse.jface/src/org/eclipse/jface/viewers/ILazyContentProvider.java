@@ -13,7 +13,7 @@ package org.eclipse.jface.viewers;
 /**
  * The ILazyContentProvider is the content provider
  * for table viewers created using the SWT.VIRTUAL flag that
- * only wish to return thier contents as they are queried.
+ * only wish to return their contents as they are queried.
  * 
  * <strong>NOTE:</strong> As the ILazyContentProvider does
  * not have API for determining the total item count any
@@ -34,7 +34,7 @@ public interface ILazyContentProvider extends IContentProvider {
 	 * In this situation it is suggested that the selection is asked
 	 * for again after he update.
 	 * 
-	 * @param index The index that is being updateed in the
+	 * @param index The index that is being updated in the
 	 * table.
 	 */
 	public void updateElement(int index);

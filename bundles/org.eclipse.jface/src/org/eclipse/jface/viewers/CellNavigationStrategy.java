@@ -15,6 +15,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 
 /**
+ * This class implementation the strategy how the table is navigated
+ * using the keyboard.
+ * 
+ * <p>Subclasses can implement their custom navigation algorithms</p>
+ * 
  * @since 3.3
  * 
  */
@@ -48,24 +53,28 @@ public class CellNavigationStrategy {
 	/**
 	 * @param viewer
 	 *            the viewer we are working for
-	 * @param cellToCollapse the cell to collapse
+	 * @param cellToCollapse
+	 *            the cell to collapse
 	 * @param event
 	 *            the key event
 	 * @return <code>true</code> if this event triggers collapsing of a node
 	 */
-	public boolean isCollapseEvent(ColumnViewer viewer, ViewerCell cellToCollapse, Event event) {
+	public boolean isCollapseEvent(ColumnViewer viewer,
+			ViewerCell cellToCollapse, Event event) {
 		return false;
 	}
 
 	/**
 	 * @param viewer
 	 *            the viewer we are working for
-	 * @param cellToExpand the cell to expand
+	 * @param cellToExpand
+	 *            the cell to expand
 	 * @param event
 	 *            the key event
 	 * @return <code>true</code> if this event triggers expanding of a node
 	 */
-	public boolean isExpandEvent(ColumnViewer viewer, ViewerCell cellToExpand, Event event) {
+	public boolean isExpandEvent(ColumnViewer viewer, ViewerCell cellToExpand,
+			Event event) {
 		return false;
 	}
 
@@ -75,7 +84,7 @@ public class CellNavigationStrategy {
 	 * @param cellToExpand
 	 *            the cell the user wants to expand
 	 * @param event
-	 *            the event triggering the exansion
+	 *            the event triggering the expansion
 	 */
 	public void expand(ColumnViewer viewer, ViewerCell cellToExpand, Event event) {
 
@@ -87,7 +96,7 @@ public class CellNavigationStrategy {
 	 * @param cellToCollapse
 	 *            the cell the user wants to collapse
 	 * @param event
-	 *            the event triggering the exansion
+	 *            the event triggering the expansion
 	 */
 	public void collapse(ColumnViewer viewer, ViewerCell cellToCollapse,
 			Event event) {
@@ -135,20 +144,20 @@ public class CellNavigationStrategy {
 	}
 
 	/**
-	 * This method is consulted to decide whether an event has to be cancled or
-	 * not. By default events who collapse/expand tree-nodes are cancled
+	 * This method is consulted to decide whether an event has to be canceled or
+	 * not. By default events who collapse/expand tree-nodes are canceled
 	 * 
 	 * @param viewer
 	 *            the viewer working for
 	 * @param event
 	 *            the event
-	 * @return <code>true</code> if the event has to be cancled
+	 * @return <code>true</code> if the event has to be canceled
 	 */
 	public boolean shouldCancelEvent(ColumnViewer viewer, Event event) {
 		return event.keyCode == SWT.ARROW_LEFT
 				|| event.keyCode == SWT.ARROW_RIGHT;
 	}
-	
+
 	/**
 	 * This method is called by the framework to initialize this navigation
 	 * strategy object. Subclasses may extend.

@@ -141,8 +141,8 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      * Gathers the checked and grayed states of the given widget and its
      * descendents.
      *
-     * @param checked a writeable set of elements (element type: <code>Object</code>) 
-     * @param grayed a writeable set of elements (element type: <code>Object</code>) 
+     * @param checked a writable set of elements (element type: <code>Object</code>) 
+     * @param grayed a writable set of elements (element type: <code>Object</code>) 
      * @param widget the widget
      */
     private void gatherState(CustomHashtable checked, CustomHashtable grayed,
@@ -276,7 +276,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      * Gathers the checked states of the given widget and its
      * descendents, following a pre-order traversal of the tree.
      *
-     * @param result a writeable list of elements (element type: <code>Object</code>)
+     * @param result a writable list of elements (element type: <code>Object</code>)
      * @param widget the widget
      */
     private void internalCollectChecked(List result, Widget widget) {
@@ -297,7 +297,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
      * Gathers the grayed states of the given widget and its
      * descendents, following a pre-order traversal of the tree.
      *
-     * @param result a writeable list of elements (element type: <code>Object</code>)
+     * @param result a writable list of elements (element type: <code>Object</code>)
      * @param widget the widget
      */
     private void internalCollectGrayed(List result, Widget widget) {
@@ -577,7 +577,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	}
 
 	/**
-	 * Set the checked state of items and thier children to state.
+	 * Set the checked state of items and their children to state.
 	 * @param state
 	 * @param items
 	 */

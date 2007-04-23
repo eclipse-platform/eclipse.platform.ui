@@ -317,7 +317,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 		/**
 		 * Create a new instance of the receiver with
-		 * no colour and font provider.	
+		 * no color and font provider.	
 		 */
 		public ColorAndFontCollector(){
 			super();

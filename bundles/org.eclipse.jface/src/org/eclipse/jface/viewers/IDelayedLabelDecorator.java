@@ -12,7 +12,7 @@ package org.eclipse.jface.viewers;
 
 /**
  * A delayed label decorator is a label decorator that may not have a
- * decoration available immidiately. This interface defines the methods for
+ * decoration available immediately. This interface defines the methods for
  * requesting the preparation of a decorator for an object and for querying
  * if the decorator is ready. Interested parties should register an
  * ILabelProviderListener with a delayed label decorator in order to be informed

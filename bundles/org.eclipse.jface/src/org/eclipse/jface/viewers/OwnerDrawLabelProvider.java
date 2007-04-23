@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * OwnerDrawLabelProvider is an abstract implementation of a label provider that
- * handles custom draw.
+ * handles custom draw. This class is intended to be subclassed by implementors.
  * 
  * @since 3.3
  * 
@@ -105,8 +105,9 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	}
 
 	/**
-	 * Handle the erase event. The default implementation colours the background of selected areas with 
-	 * {@link SWT#COLOR_LIST_SELECTION} and foregrounds with {@link SWT#COLOR_LIST_SELECTION_TEXT} 
+	 * Handle the erase event. The default implementation colors the background
+	 * of selected areas with {@link SWT#COLOR_LIST_SELECTION} and foregrounds
+	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}
 	 * 
 	 * @param event
 	 * @param element
@@ -122,10 +123,10 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 			Color oldForeground = event.gc.getForeground();
 			Color oldBackground = event.gc.getBackground();
 
-			event.gc.setBackground(event.item.getDisplay()
-					.getSystemColor(SWT.COLOR_LIST_SELECTION));
-			event.gc.setForeground(event.item.getDisplay()
-					.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
+			event.gc.setBackground(event.item.getDisplay().getSystemColor(
+					SWT.COLOR_LIST_SELECTION));
+			event.gc.setForeground(event.item.getDisplay().getSystemColor(
+					SWT.COLOR_LIST_SELECTION_TEXT));
 			event.gc.fillRectangle(bounds);
 			/* restore the old GC colors */
 			event.gc.setForeground(oldForeground);
@@ -175,6 +176,5 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 				cellBounds.height, true);
 
 	}
-
 
 }

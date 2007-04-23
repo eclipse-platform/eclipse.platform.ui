@@ -71,7 +71,7 @@ public abstract class ViewerRow implements Cloneable {
 	/**
 	 * Return the number of columns for the receiver.
 	 * 
-	 * @return int
+	 * @return the number of columns
 	 */
 	public abstract int getColumnCount();
 

@@ -18,8 +18,12 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
+ * This class is responsible to provide the concept of cells for {@link Tree}.
+ * This concept is needed to provide features like editor activation with the
+ * keyboard
+ * 
  * @since 3.3
- *
+ * 
  */
 public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	private static final CellNavigationStrategy TREE_NAVIGATE = new CellNavigationStrategy() {
@@ -58,8 +62,12 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	};
 	
 	/**
+	 * Create a new manager 
+	 * 
 	 * @param viewer
+	 *            the viewer the manager is bound to
 	 * @param focusDrawingDelegate
+	 *            the delegate responsible to highlight selected cell
 	 */
 	public TreeViewerFocusCellManager(TreeViewer viewer,
 			FocusCellHighlighter focusDrawingDelegate) {

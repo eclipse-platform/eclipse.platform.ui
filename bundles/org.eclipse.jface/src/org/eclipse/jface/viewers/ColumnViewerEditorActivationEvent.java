@@ -149,7 +149,7 @@ public class ColumnViewerEditorActivationEvent extends EventObject {
 	}
 
 	/**
-	 * This constructur is used to mark the activation triggered by a traversal
+	 * This constructor is used to mark the activation triggered by a traversal
 	 * 
 	 * @param cell
 	 *            the cell source of the event

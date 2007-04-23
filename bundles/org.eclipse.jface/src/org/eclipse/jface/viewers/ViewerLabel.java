@@ -279,7 +279,7 @@ public class ViewerLabel {
 	/**
 	 * Returns the tooltipText.
 	 * 
-	 * @return {@link String} or <code>null</code> if the tooltip text was
+	 * @return {@link String} or <code>null</code> if the tool tip text was
 	 *         never set.
 	 * 
 	 * @since 3.3
@@ -289,7 +289,7 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * Set the tooltip text.
+	 * Set the tool tip text.
 	 * 
 	 * @param tooltipText
 	 *            The tooltipText {@link String} to set. This value should not
@@ -302,9 +302,9 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * Return whether or not the tooltip text has been set.
+	 * Return whether or not the tool tip text has been set.
 	 * 
-	 * @return <code>boolean</code>. <code>true</code> if the tooltip text
+	 * @return <code>boolean</code>. <code>true</code> if the tool tip text
 	 *         has been set.
 	 * 
 	 * @since 3.3
@@ -314,9 +314,9 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * Return the tooltip background color.
+	 * Return the tool tip background color.
 	 * 
-	 * @return {@link Color} or <code>null</code> if the tooltip background
+	 * @return {@link Color} or <code>null</code> if the tool tip background
 	 *         color has not been set.
 	 * 
 	 * @since 3.3
@@ -326,7 +326,7 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * Set the background {@link Color} for tooltip.
+	 * Set the background {@link Color} for tool tip.
 	 * 
 	 * @param tooltipBackgroundColor
 	 *            The {@link Color} to set. This value should not be
@@ -339,9 +339,9 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * Return whether or not the tooltip background color has been set.
+	 * Return whether or not the tool tip background color has been set.
 	 * 
-	 * @return <code>boolean</code>. <code>true</code> if the tooltip text
+	 * @return <code>boolean</code>. <code>true</code> if the tool tip text
 	 *         has been set.
 	 * 
 	 * @since 3.3
@@ -353,7 +353,7 @@ public class ViewerLabel {
 	/**
 	 * Return the foreground {@link Color}.
 	 * 
-	 * @return Returns {@link Color} or <code>null</code> if the tooltip
+	 * @return Returns {@link Color} or <code>null</code> if the tool tip
 	 *         foreground color has not been set.
 	 * 
 	 * @since 3.3
@@ -363,7 +363,7 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * Set the foreground {@link Color} for tooltip.
+	 * Set the foreground {@link Color} for tool tip.
 	 * 
 	 * @param tooltipForegroundColor
 	 *            The tooltipForegroundColor to set.
@@ -376,9 +376,9 @@ public class ViewerLabel {
 
 	/**
 	 * 
-	 * Return whether or not the tooltip foreground color has been set.
+	 * Return whether or not the tool tip foreground color has been set.
 	 * 
-	 * @return <code>boolean</code>. <code>true</code> if the tooltip foreground
+	 * @return <code>boolean</code>. <code>true</code> if the tool tip foreground
 	 *         has been set.
 	 * 
 	 * @since 3.3
@@ -403,7 +403,7 @@ public class ViewerLabel {
 	}
 
 	/**
-	 * @return Return whether or not the tooltip shift has been set.
+	 * @return Return whether or not the tool tip shift has been set.
 	 */
 	public boolean hasTooltipShift() {
 		return this.tooltipShift != null;

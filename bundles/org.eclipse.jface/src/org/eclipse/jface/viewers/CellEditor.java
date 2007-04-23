@@ -830,7 +830,7 @@ public abstract class CellEditor {
      * The default value is false.
      * Subclasses should call this method on construction.
      *
-     * @param valid <code>true</code> if the current valie is valid,
+     * @param valid <code>true</code> if the current value is valid,
      *  and <code>false</code> if invalid
      *
      * @see #isValueValid
