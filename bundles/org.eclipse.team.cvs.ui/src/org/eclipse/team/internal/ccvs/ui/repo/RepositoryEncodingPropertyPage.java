@@ -14,12 +14,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.FieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -29,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.osgi.service.prefs.BackingStoreException;
@@ -336,7 +338,7 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		GridLayout layout = new GridLayout();
 		composite.setLayout(layout);
 		
-		createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_2, 1); 
+		Label label = createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_2, 1); 
 		
 		encoding = new EncodingFieldEditor(CVSRepositoryLocation.PREF_SERVER_ENCODING, CVSUIMessages.RepositoryEncodingPropertyPage_3, composite); 
 		encoding.setPage(this);
@@ -344,8 +346,27 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		encoding.load();
 		encoding.setPropertyChangeListener(this);
 		
-		createWrappingLabel(composite, CVSUIMessages.RepositoryEncodingPropertyPage_4, 1); 
+		Link pageLink = new Link(composite,  SWT.LEFT | SWT.WRAP);
+		pageLink.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+			
+				PreferenceDialog dialog = PreferencesUtil
+						.createPreferenceDialogOn(
+								getShell(),
+								"org.eclipse.ui.preferencePages.Workspace", null, null); //$NON-NLS-1$
+				dialog.open();
+
+			}
+		});
 		
+		pageLink.setLayoutData(label.getLayoutData());	
+		pageLink.setText(CVSUIMessages.RepositoryEncodingPropertyPage_4);
+
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.REPOSITORY_ENCODING_PROPERTY_PAGE);
 		Dialog.applyDialogFont(parent);
 		return composite;
