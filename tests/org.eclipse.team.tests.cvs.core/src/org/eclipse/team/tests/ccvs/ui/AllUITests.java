@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.tests.ccvs.core.ProjectSetImporterTests;
 
 public class AllUITests extends EclipseTest {
 
@@ -30,6 +31,7 @@ public class AllUITests extends EclipseTest {
 		suite.addTest(CheckoutOperationTests.suite());
 		suite.addTest(CompareOperationTests.suite());
 		suite.addTest(MiscOperationsTests.suite());
+		suite.addTest(ProjectSetImporterTests.suite());
 		return suite;
 	}
 	
