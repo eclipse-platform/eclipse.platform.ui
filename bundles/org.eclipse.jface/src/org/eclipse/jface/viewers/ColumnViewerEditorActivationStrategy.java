@@ -16,31 +16,35 @@ import org.eclipse.swt.events.KeyListener;
 
 /**
  * This class is responsible to determine if a cell selection event is triggers
- * an editor activation
+ * an editor activation. Implementors can extend and overwrite to implement
+ * custom editing behavior
  * 
  * @since 3.3
  */
 public class ColumnViewerEditorActivationStrategy {
 	private ColumnViewer viewer;
-	
+
 	private KeyListener keyboardActivationListener;
-	
+
 	/**
-	 * @param viewer the viewer the editor support is attached to
+	 * @param viewer
+	 *            the viewer the editor support is attached to
 	 */
 	public ColumnViewerEditorActivationStrategy(ColumnViewer viewer) {
 		this.viewer = viewer;
 	}
-	
+
 	/**
-	 * @param event the event triggering the action
+	 * @param event
+	 *            the event triggering the action
 	 * @return <code>true</code> if this event should open the editor
 	 */
-	protected boolean isEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
+	protected boolean isEditorActivationEvent(
+			ColumnViewerEditorActivationEvent event) {
 		return event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
-			|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
-			|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL;
-		}
+				|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
+				|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL;
+	}
 
 	/**
 	 * @return the cell holding the current focus
@@ -48,41 +52,46 @@ public class ColumnViewerEditorActivationStrategy {
 	private ViewerCell getFocusCell() {
 		return viewer.getColumnViewerEditor().getFocusCell();
 	}
-	
+
 	/**
 	 * @return the viewer
 	 */
 	public ColumnViewer getViewer() {
 		return viewer;
 	}
-	
+
 	/**
 	 * Enable activation of cell editors by keyboard
-	 * @param enable <code>true</code> to enable
+	 * 
+	 * @param enable
+	 *            <code>true</code> to enable
 	 */
 	public void setEnableEditorActivationWithKeyboard(boolean enable) {
-		if( enable ) {
-			if( keyboardActivationListener == null ) {
+		if (enable) {
+			if (keyboardActivationListener == null) {
 				keyboardActivationListener = new KeyListener() {
 
 					public void keyPressed(KeyEvent e) {
 						ViewerCell cell = getFocusCell();
-						
-						if( cell != null ) {
-							viewer.triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell,e));
+
+						if (cell != null) {
+							viewer
+									.triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
+											cell, e));
 						}
 					}
 
 					public void keyReleased(KeyEvent e) {
-						
+
 					}
-					
+
 				};
 				viewer.getControl().addKeyListener(keyboardActivationListener);
 			}
 		} else {
-			if( keyboardActivationListener != null ) {
-				viewer.getControl().removeKeyListener(keyboardActivationListener);
+			if (keyboardActivationListener != null) {
+				viewer.getControl().removeKeyListener(
+						keyboardActivationListener);
 				keyboardActivationListener = null;
 			}
 		}

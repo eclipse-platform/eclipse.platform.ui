@@ -20,6 +20,8 @@ import org.eclipse.swt.graphics.Image;
  * that have column support such as {@link TreeViewer} and
  * {@link TableViewer}
  * 
+ * <p><b>This classes is intended to be subclassed</b></p>
+ * 
  * @since 3.3
  *
  */
