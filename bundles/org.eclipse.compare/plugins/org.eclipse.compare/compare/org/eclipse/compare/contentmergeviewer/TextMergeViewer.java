@@ -672,6 +672,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					oldDoc.removeDocumentListener(this);
 				}
 			}
+			// Finally, remove the document from the document manager
+			IDocument doc = DocumentManager.get(fElement);
+			if (doc != null)
+				DocumentManager.remove(doc);
 		}
 		
 		private IDocument internalGetDocument(MergeSourceViewer tp) {
