@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -275,7 +275,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     }
     
     private void marshalMessage(BuildEvent event) {
-        String eventMessage= event.getMessage().trim();
+        String eventMessage= event.getMessage();
         if (eventMessage.length() == 0) {
             return;
         }
@@ -302,7 +302,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
     }
 
     private void marshalTaskMessage(BuildEvent event) throws IOException {
-        String eventMessage= event.getMessage().trim();
+        String eventMessage= event.getMessage();
         if (eventMessage.length() == 0) {
             return;
         }
@@ -336,7 +336,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
             message.append(',');
             message.append(taskName);
             message.append(',');
-            line= line.trim();
             message.append(line.length());
             message.append(',');
             message.append(line);
