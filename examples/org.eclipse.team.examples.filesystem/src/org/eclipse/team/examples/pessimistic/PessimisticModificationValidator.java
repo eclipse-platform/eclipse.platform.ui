@@ -319,6 +319,11 @@ public class PessimisticModificationValidator
 	 * Convenience method to get a shell from an object.
 	 */	
 	private Shell getShell(Object context) {
+		if (context instanceof FileModificationValidationContext) {
+			FileModificationValidationContext fmvc = (FileModificationValidationContext) context;
+			return (Shell)fmvc.getShell();
+		}
+		
 		if (context instanceof Shell) {
 			return (Shell)context;
 		}
