@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
@@ -81,6 +82,11 @@ public class StatusNotificationManager {
 	 *            the error to be displayed
 	 */
 	public void addError(StatusAdapter statusAdapter, final boolean modal) {
+
+		if (ErrorDialog.AUTOMATED_MODE == true) {
+			return;
+		}
+
 		final StatusInfo statusInfo = new StatusInfo(statusAdapter);
 
 		if (!PlatformUI.isWorkbenchRunning()) {
