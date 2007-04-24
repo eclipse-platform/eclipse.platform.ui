@@ -517,13 +517,17 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 */
 	protected void diff() {
 		try {
-			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(CompareMessages.StructureDiffViewer_2, 100);
-					diffTask.run(new SubProgressMonitor(monitor, 100));
-					monitor.done();
-				}
-			});
+			CompareConfiguration compareConfiguration = getCompareConfiguration();
+			// A null compare configuration indicates that the viewer was disposed
+			if (compareConfiguration != null) {
+				compareConfiguration.getContainer().run(true, true, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						monitor.beginTask(CompareMessages.StructureDiffViewer_2, 100);
+						diffTask.run(new SubProgressMonitor(monitor, 100));
+						monitor.done();
+					}
+				});
+			}
 		} catch (InvocationTargetException e) {
 			// Shouldn't happen since the run doesn't throw
 			CompareUIPlugin.log(e.getTargetException());
