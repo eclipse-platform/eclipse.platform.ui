@@ -105,6 +105,8 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	
+	private static final String COPY_LEFT_TO_RIGHT_INDICATOR = ">"; //$NON-NLS-1$
+	private static final String COPY_RIGHT_TO_LEFT_INDICATOR = "<"; //$NON-NLS-1$
 	private static final char ANCESTOR_CONTRIBUTOR = MergeViewerContentProvider.ANCESTOR_CONTRIBUTOR;
 	private static final char RIGHT_CONTRIBUTOR = MergeViewerContentProvider.RIGHT_CONTRIBUTOR;
 	private static final char LEFT_CONTRIBUTOR = MergeViewerContentProvider.LEFT_CONTRIBUTOR;
@@ -2242,7 +2244,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fCenterButton= new Button(canvas, fIsCarbon ? SWT.FLAT : SWT.PUSH);
 				if (fNormalCursor == null) fNormalCursor= new Cursor(canvas.getDisplay(), SWT.CURSOR_ARROW);
 				fCenterButton.setCursor(fNormalCursor);
-				fCenterButton.setText("<");	 //$NON-NLS-1$
+				fCenterButton.setText(COPY_RIGHT_TO_LEFT_INDICATOR);
 				fCenterButton.pack();
 				fCenterButton.setVisible(false);
 				fCenterButton.addSelectionListener(
@@ -2251,7 +2253,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 							fCenterButton.setVisible(false);
 							if (fButtonDiff != null) {
 								setCurrentDiff(fButtonDiff, false);
-								copy(fCurrentDiff, false, fCurrentDiff.fDirection != RangeDifference.CONFLICT);
+								copy(fCurrentDiff, 
+										fCenterButton.getText().equals(COPY_LEFT_TO_RIGHT_INDICATOR), 
+										fCurrentDiff.fDirection != RangeDifference.CONFLICT);
 							}
 						}
 					}
@@ -2274,14 +2278,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			if (diff != null) {
 				if (fLeft.isEditable()) {
 					fButtonDiff= diff;
-					fCenterButton.setText("<");		//$NON-NLS-1$
+					fCenterButton.setText(COPY_RIGHT_TO_LEFT_INDICATOR);
 					String tt= fCopyDiffRightToLeftItem.getAction().getToolTipText();
 					fCenterButton.setToolTipText(tt);
 					fCenterButton.setBounds(r);
 					fCenterButton.setVisible(true);
 				} else if (fRight.isEditable()) {
 					fButtonDiff= diff;
-					fCenterButton.setText(">");		//$NON-NLS-1$
+					fCenterButton.setText(COPY_LEFT_TO_RIGHT_INDICATOR);
 					String tt= fCopyDiffLeftToRightItem.getAction().getToolTipText();
 					fCenterButton.setToolTipText(tt);
 					fCenterButton.setBounds(r);
