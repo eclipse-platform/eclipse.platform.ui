@@ -536,7 +536,7 @@ public final class AntUtil {
 			File relativeFile= null;
 			try {
 				//this call is ok if buildFileParent is null
-				relativeFile= FileUtils.newFileUtils().resolveFile(buildFileParent, path);
+				relativeFile= FileUtils.getFileUtils().resolveFile(buildFileParent, path);
 				filePath= new Path(relativeFile.getAbsolutePath());
 				files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
 				if (files.length > 0) {

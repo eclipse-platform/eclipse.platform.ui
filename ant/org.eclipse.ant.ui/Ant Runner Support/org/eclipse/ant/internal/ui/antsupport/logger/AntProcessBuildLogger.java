@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -199,6 +199,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
                     fFileNameToIFile.put(fileName, file);
                     return new FileLink(file, null, -1, -1, lineNumber);
                 }
+                //maintain backwards compatibility
                 File javaIOFile= FileUtils.newFileUtils().resolveFile(fBuildFileParent, fileName);
                 if (javaIOFile.exists()) {
                     return new ExternalHyperlink(javaIOFile, lineNumber);
