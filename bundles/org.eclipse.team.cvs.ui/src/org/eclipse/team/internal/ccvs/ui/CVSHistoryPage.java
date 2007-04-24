@@ -1625,9 +1625,22 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			IFileRevision selectedFileRevision = (IFileRevision)object;
 			if (fileElement == null)
 				fileElement = SaveableCompareEditorInput.createFileElement((IFile) file.getIResource());
-			FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
+			FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision, getLocalEncoding());
 			DiffNode node = new DiffNode(fileElement, right);
 			return node;
+		}
+		return null;
+	}
+
+	private String getLocalEncoding() {
+		IResource resource = file.getIResource();
+		if (resource instanceof IFile) {
+			IFile file = (IFile) resource;
+			try {
+				return file.getCharset();
+			} catch (CoreException e) {
+				CVSUIPlugin.log(e);
+			}
 		}
 		return null;
 	}

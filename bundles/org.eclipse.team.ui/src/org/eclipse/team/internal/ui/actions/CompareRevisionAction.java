@@ -14,6 +14,7 @@ package org.eclipse.team.internal.ui.actions;
 import org.eclipse.compare.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -21,6 +22,7 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.HistoryPage;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
@@ -88,11 +90,24 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		if (resource != null) {
 			left =  getElementFor(resource);
 		} else {
-			left = new FileRevisionTypedElement(file1);
+			left = new FileRevisionTypedElement(file1, getLocalEncoding());
 		}
-		ITypedElement right = new FileRevisionTypedElement(file2);
+		ITypedElement right = new FileRevisionTypedElement(file2, getLocalEncoding());
 		
 	    openInCompare(left, right);
+	}
+
+	private String getLocalEncoding() {
+		IResource resource = getResource(getCurrentFileRevision());
+		if (resource instanceof IFile) {
+			IFile file = (IFile) resource;
+			try {
+				return file.getCharset();
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		return null;
 	}
 
 	protected ITypedElement getElementFor(IResource resource) {
