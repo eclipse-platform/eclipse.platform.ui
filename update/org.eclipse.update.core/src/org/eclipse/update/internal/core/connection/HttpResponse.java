@@ -180,7 +180,7 @@ public class HttpResponse extends AbstractResponse {
 			// to
 			// just call it now, if the input stream has already been obtained
 			checkOffset();
-			if (in != null) {
+			if (connection != null) {
 				this.lastModified = connection.getLastModified();
 			}
 		}
