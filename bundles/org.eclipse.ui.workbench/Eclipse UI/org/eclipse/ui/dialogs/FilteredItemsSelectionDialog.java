@@ -2259,6 +2259,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		public boolean matchesRawNamePattern(Object item) {
 			String prefix = patternMatcher.getPattern();
 			String text = getElementName(item);
+			
+			if (text == null) return false;
 
 			int textLength = text.length();
 			int prefixLength = prefix.length();
