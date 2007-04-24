@@ -91,7 +91,14 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 		if (fBatchedRequests == null) {
 			getElementContentProvider().update(new IChildrenCountUpdate[]{this});
 		} else {
-			getElementContentProvider().update((IChildrenCountUpdate[]) fBatchedRequests.toArray(new IChildrenCountUpdate[fBatchedRequests.size()]));
+			IChildrenCountUpdate[] updates = (IChildrenCountUpdate[]) fBatchedRequests.toArray(new IChildrenCountUpdate[fBatchedRequests.size()]);
+			// notify that the other updates have also started to ensure correct sequence
+			// of model updates - **** start at index 1 since the first (0) update has
+			// already notified the content provider that it has started.
+			for (int i = 1; i < updates.length; i++) {
+				getContentProvider().updateStarted((ViewerUpdateMonitor) updates[i]);
+			}
+			getElementContentProvider().update(updates);
 		}
 	}
 
