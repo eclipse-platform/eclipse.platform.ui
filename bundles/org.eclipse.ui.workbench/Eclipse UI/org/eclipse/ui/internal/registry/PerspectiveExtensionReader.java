@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.DirtyPerspectiveMarker;
 import org.eclipse.ui.internal.PageLayout;
@@ -278,21 +279,23 @@ public class PerspectiveExtensionReader extends RegistryReader {
 				}
 			}
         }
-        if (closeable != null) {
-            pageLayout.getViewLayout(id).setCloseable(
-                    !VAL_FALSE.equals(closeable));
-        }
-        if (moveable != null) {
-            pageLayout.getViewLayout(id).setMoveable(
-                    !VAL_FALSE.equals(moveable));
-        }
+        IViewLayout viewLayout = pageLayout.getViewLayout(id);
+        // may be null if it's been filtered by activity
+        if (viewLayout != null) {
+			if (closeable != null) {
+				viewLayout.setCloseable(!VAL_FALSE.equals(closeable));
+			}
+			if (moveable != null) {
+				viewLayout.setMoveable(!VAL_FALSE.equals(moveable));
+			}
+		}
 
         return true;
     }
 
     /**
-     * Process a view shortcut
-     */
+	 * Process a view shortcut
+	 */
     private boolean processViewShortcut(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null) {
