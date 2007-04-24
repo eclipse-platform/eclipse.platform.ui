@@ -103,7 +103,7 @@ public class WebappManager {
 		Bundle bundle = Platform.getBundle(symbolicName);
 		if (bundle != null) {
 			if (bundle.getState() == Bundle.RESOLVED) {
-				bundle.start();
+				bundle.start(Bundle.START_TRANSIENT);
 			}
 		}
 	}
