@@ -400,13 +400,11 @@ public final class CommandContributionItem extends ContributionItem {
 						}
 					}
 				}
-				if (mnemonic != null) {
-					// convert label to have mnemonic
-				}
+				text = updateMnemonic(text);
 				ExternalActionManager.ICallback callback = ExternalActionManager
 						.getInstance().getCallback();
 				String keyBindingText = null;
-				if ((callback != null) && (command.getId() != null)) {
+				if ((callback != null) && (command!=null) && (command.getId() != null)) {
 					keyBindingText = callback.getAcceleratorText(command
 							.getId());
 				}
@@ -465,6 +463,18 @@ public final class CommandContributionItem extends ContributionItem {
 				}
 			}
 		}
+	}
+	
+	private String updateMnemonic(String s) {
+		if (mnemonic==null || s==null) {
+			return s;
+		}
+		int idx = s.indexOf(mnemonic);
+		if (idx==-1) {
+			return s;
+		}
+		
+		return s.substring(0, idx) + '&' + s.substring(idx);
 	}
 
 	private void handleWidgetDispose(Event event) {
@@ -631,11 +641,7 @@ public final class CommandContributionItem extends ContributionItem {
 
 	private void setText(String text) {
 		label = text;
-		if (widget instanceof MenuItem) {
-			((MenuItem) widget).setText(text);
-		} else if (widget instanceof ToolItem) {
-			((ToolItem) widget).setText(text);
-		}
+		update(null);
 	}
 
 	private void setChecked(boolean checked) {

@@ -197,7 +197,15 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		if (getLocation().startsWith("toolbar")) //$NON-NLS-1$
 			return null;
 
-		return new MenuManager(getLabel(menuAddition), getId(menuAddition));
+		String text = getLabel(menuAddition);
+		String mnemonic = getMnemonic(menuAddition);
+		if (text!=null && mnemonic!=null) {
+			int idx = text.indexOf(mnemonic);
+			if (idx!=-1) {
+				text = text.substring(0, idx) + '&' + text.substring(idx);
+			}
+		}
+		return new MenuManager(text, getId(menuAddition));
 	}
 
 	/**
@@ -279,7 +287,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				getIconDescriptor(commandAddition),
 				getDisabledIconDescriptor(commandAddition),
 				getHoverIconDescriptor(commandAddition), getLabel(commandAddition),
-				null, getTooltip(commandAddition), getStyle(commandAddition));
+				getMnemonic(commandAddition), getTooltip(commandAddition), getStyle(commandAddition));
 	}
 
 	/*
@@ -303,6 +311,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 	static String getLabel(IConfigurationElement element) {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
+	}
+	
+	static String getMnemonic(IConfigurationElement element) {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_MNEMONIC);
 	}
 
 	static String getTooltip(IConfigurationElement element) {

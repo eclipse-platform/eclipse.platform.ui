@@ -55,11 +55,11 @@ public class MenuBaseTests extends MenuTestCase {
 			org.eclipse.ui.menus.CommandContributionItem.class
 		};
 		String[] expectedMenuItemLabels = {
-			"Basic Cmd",
+			"&Basic Cmd",
 			"Basic Menu",
-			"Inserted Before",
+			"Inserted &Before",
 			"",
-			"Inserted After",
+			"Inserted &After",
 			"Dynamic Item 1",
 			"Dynamic Item 2",
 			"Dynamic Menu"
