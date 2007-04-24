@@ -12,15 +12,14 @@ package org.eclipse.ui.wizards.datatransfer;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceImportPage1;
@@ -59,8 +58,7 @@ public class ZipFileImportWizard extends Wizard implements IImportWizard {
      * a zip file.
      */
     public ZipFileImportWizard() {
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
+        AbstractUIPlugin plugin = WorkbenchPlugin.getDefault();
         IDialogSettings workbenchSettings = plugin.getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("ZipFileImportWizard");//$NON-NLS-1$

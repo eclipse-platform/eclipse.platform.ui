@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Boyle <martingboyle@gmail.com> - Fix for 
+ *     		Bug 183013 [Wizards] Error importing into linked EFS folder - "undefined path variable"
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -515,7 +517,7 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
              setErrorMessage(INACCESSABLE_FOLDER_MESSAGE);
              return false;
         }
-        if (container.getLocation() == null) {
+        if (container.getLocationURI() == null) {
           if (container.isLinked()) {
                setErrorMessage(IDEWorkbenchMessages.WizardImportPage_undefinedPathVariable);
           } else {
