@@ -125,7 +125,7 @@ public class ColorSelector extends EventManager {
     private Point computeImageSize(Control window) {
         GC gc = new GC(window);
         Font f = JFaceResources.getFontRegistry().get(
-                JFaceResources.DEFAULT_FONT);
+                JFaceResources.DIALOG_FONT);
         gc.setFont(f);
         int height = gc.getFontMetrics().getHeight();
         gc.dispose();
