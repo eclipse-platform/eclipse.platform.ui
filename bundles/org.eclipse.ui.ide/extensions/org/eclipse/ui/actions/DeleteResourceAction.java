@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla <b.muskalla@gmx.net>
+ *     - Fix for bug 172574 - [IDE] DeleteProjectDialog inconsequent selection behavior
+
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -27,6 +30,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -132,7 +137,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			radio1.setText(text1);
 			radio1.setFont(parent.getFont());
 			
-			// Add explanatory label that the action cannot be undone
+			// Add explanatory label that the action cannot be undone.
+			// We can't put multi-line formatted text in a radio button,
+			// so we have to create a separate label.
 			Label detailsLabel = new Label(composite, SWT.LEFT);
 			detailsLabel.setText(IDEWorkbenchMessages.DeleteResourceAction_deleteContentsDetails);
 			detailsLabel.setFont(parent.getFont());
@@ -144,6 +151,16 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			GridData data = new GridData();
 			data.horizontalIndent = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.INDENT);
 			detailsLabel.setLayoutData(data);
+			// add a listener so that clicking on the label selects the
+			// corresponding radio button.
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=172574
+			detailsLabel.addMouseListener(new MouseAdapter() {
+				public void mouseUp(MouseEvent e) {
+					deleteContent = true;
+					radio1.setSelection(deleteContent);
+					radio2.setSelection(!deleteContent);
+				}
+			});
 			// Add a spacer label
 			new Label(composite, SWT.LEFT);
 
