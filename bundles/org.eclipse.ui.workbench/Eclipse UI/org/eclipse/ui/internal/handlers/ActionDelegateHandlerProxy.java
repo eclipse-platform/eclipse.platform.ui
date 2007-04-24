@@ -97,6 +97,15 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 * The delegate, if it has been created yet.
 	 */
 	private IActionDelegate delegate;
+	
+	//
+	// instead of casting, which is unreliable, pick
+	// a delegate type based on the IConfigurationElement
+	//
+	private IEditorActionDelegate editorDelegate = null;
+	private IViewActionDelegate viewDelegate = null;
+	private IObjectActionDelegate objectDelegate = null;
+	private IWorkbenchWindowActionDelegate windowDelegate = null;
 
 	/**
 	 * The name of the configuration element attribute which contains the
@@ -237,36 +246,12 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		final IAction action = getAction();
 		if (loadDelegate() && (action != null)) {
 			final Object trigger = event.getTrigger();
-			final IActionDelegate delegate = getDelegate();
 
 			// Attempt to update the selection.
 			final Object applicationContext = event.getApplicationContext();
 			if (applicationContext instanceof IEvaluationContext) {
 				final IEvaluationContext context = (IEvaluationContext) applicationContext;
-				final Object selectionObject = getCurrentSelection(context);
-				if (selectionObject instanceof ISelection) {
-					currentSelection = (ISelection) selectionObject;
-					delegate.selectionChanged(action, currentSelection);
-				} else {
-					currentSelection = null;
-					delegate.selectionChanged(action, null);
-				}
-
-				final Object activeEditor = context
-						.getVariable(ISources.ACTIVE_EDITOR_NAME);
-				if (delegate instanceof IEditorActionDelegate) {
-					((IEditorActionDelegate) delegate).setActiveEditor(action,
-							(IEditorPart) activeEditor);
-				}
-
-				final Object activePart = context
-						.getVariable(ISources.ACTIVE_PART_NAME);
-				if ((delegate instanceof IObjectActionDelegate)
-						&& (activePart != null)) {
-					final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) delegate;
-					objectActionDelegate.setActivePart(action,
-							(IWorkbenchPart) activePart);
-				}
+				updateDelegate(action, context);
 			}
 
 			// Decide what type of delegate we have.
@@ -288,6 +273,42 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param action
+	 * @param context
+	 */
+	private void updateDelegate(final IAction action,
+			final IEvaluationContext context) {
+		if (action==null || delegate==null) {
+			return;
+		}
+		
+		if (editorDelegate != null) {
+			final Object activeEditor = context
+					.getVariable(ISources.ACTIVE_EDITOR_NAME);
+			if (activeEditor != null) {
+				editorDelegate.setActiveEditor(action,
+						(IEditorPart) activeEditor);
+			}
+		} else if (objectDelegate != null) {
+			final Object activePart = context
+					.getVariable(ISources.ACTIVE_PART_NAME);
+			if (activePart != null) {
+				objectDelegate.setActivePart(action,
+						(IWorkbenchPart) activePart);
+			}
+		}
+		
+		final Object selectionObject = getCurrentSelection(context);
+		if (selectionObject instanceof ISelection) {
+			currentSelection = (ISelection) selectionObject;
+			delegate.selectionChanged(action, currentSelection);
+		} else {
+			currentSelection = null;
+			delegate.selectionChanged(action, null);
+		}
 	}
 
 	/**
@@ -369,8 +390,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		final IAction action = getAction();
 
 		// Check to see if the view delegate should be initialized.
-		if ((viewId != null) && (page != null)
-				&& (delegate instanceof IViewActionDelegate)) {
+		if ((viewId != null) && (page != null) && (viewDelegate != null)) {
 			final IViewPart viewPart = page.findView(viewId);
 			if (viewPart == null) {
 				return false;
@@ -391,30 +411,17 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				}
 
 				// Handle IObjectActionDelegates
-				if ((delegate instanceof IObjectActionDelegate)
+				if ((objectDelegate!=null)
 						&& (activePart != null)) {
-					final IObjectActionDelegate objectActionDelegate = (IObjectActionDelegate) delegate;
-					objectActionDelegate.setActivePart(action, activePart);
-				}
-
-				// Handle IEditorActionDelegates
-				if (delegate instanceof IEditorActionDelegate) {
-					final IEditorActionDelegate editorActionDelegate = (IEditorActionDelegate) delegate;
-					editorActionDelegate.setActiveEditor(action, activeEditor);
-				}
-
-				// Handle IViewActionDelegates
-				if ((viewId != null) && (page != null)
-						&& (delegate instanceof IViewActionDelegate)) {
+					objectDelegate.setActivePart(action, activePart);
+				} else if (editorDelegate!=null) {
+					editorDelegate.setActiveEditor(action, activeEditor);
+				} else if ((viewId != null) && (page != null)
+						&& (viewDelegate!=null)) {
 					final IViewPart viewPart = page.findView(viewId);
-					final IViewActionDelegate viewActionDelegate = (IViewActionDelegate) delegate;
-					viewActionDelegate.init(viewPart);
-				}
-
-				// Handle IWorkbenchWindowActionDelegate
-				if (delegate instanceof IWorkbenchWindowActionDelegate) {
-					final IWorkbenchWindowActionDelegate workbenchWindowActionDelegate = (IWorkbenchWindowActionDelegate) delegate;
-					workbenchWindowActionDelegate.init(window);
+					viewDelegate.init(viewPart);
+				} else if (windowDelegate!=null) {
+					windowDelegate.init(window);
 				}
 			}
 		};
@@ -424,13 +431,15 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	public final boolean isEnabled() {
 		final CommandLegacyActionWrapper action = getAction();
+		final IHandlerService service = (IHandlerService) window
+				.getService(IHandlerService.class);
+		IEvaluationContext context = service.getCurrentState();
 		if (enabledWhenExpression != null) {
 			try {
-				final IHandlerService service = (IHandlerService) window
-						.getService(IHandlerService.class);
 				final EvaluationResult result = enabledWhenExpression
-						.evaluate(service.getCurrentState());
+						.evaluate(context);
 				if (result == EvaluationResult.TRUE) {
+					updateDelegate(action, context);
 					return (action == null)
 							|| action.isEnabledDisregardingCommand();
 				}
@@ -452,6 +461,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			return false;
 		}
 
+		updateDelegate(action, context);
 		return (action == null) || action.isEnabledDisregardingCommand();
 	}
 
@@ -504,6 +514,29 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			try {
 				delegate = (IActionDelegate) element
 						.createExecutableExtension(delegateAttributeName);
+				String name = element.getDeclaringExtension()
+						.getExtensionPointUniqueIdentifier();
+				if ("org.eclipse.ui.actionSets".equals(name) //$NON-NLS-1$
+						&& delegate instanceof IWorkbenchWindowActionDelegate) {
+					windowDelegate = (IWorkbenchWindowActionDelegate) delegate;
+				} else if ("org.eclipse.ui.editorActions".equals(name)  //$NON-NLS-1$
+						&& delegate instanceof IEditorActionDelegate) {
+					editorDelegate = (IEditorActionDelegate) delegate;
+				} else if ("org.eclipse.ui.viewActions".equals(name)  //$NON-NLS-1$
+						&& delegate instanceof IViewActionDelegate) {
+					viewDelegate = (IViewActionDelegate) delegate;
+				} else if ("org.eclipse.ui.popupMenus".equals(name)) { //$NON-NLS-1$
+					IConfigurationElement parent = (IConfigurationElement) element
+							.getParent();
+					if ("objectContribution".equals(parent.getName())  //$NON-NLS-1$
+							&& delegate instanceof IObjectActionDelegate) {
+						objectDelegate = (IObjectActionDelegate) delegate;
+					} else if (viewId==null && delegate instanceof IEditorActionDelegate) {
+						editorDelegate = (IEditorActionDelegate) delegate;
+					} else if (viewId!=null && delegate instanceof IViewActionDelegate) {
+						viewDelegate = (IViewActionDelegate) delegate;
+					}
+				}
 				if (initDelegate()) {
 					element = null;
 					delegateAttributeName = null;
@@ -511,6 +544,10 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				}
 
 				delegate = null;
+				objectDelegate =null;
+				viewDelegate = null;
+				editorDelegate = null;
+				windowDelegate = null;
 				return false;
 
 			} catch (final ClassCastException e) {
