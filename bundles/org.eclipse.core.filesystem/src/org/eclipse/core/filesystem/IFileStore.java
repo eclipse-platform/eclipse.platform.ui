@@ -50,7 +50,8 @@ public interface IFileStore extends IAdaptable {
 	 * Returns an {@link IFileInfo} instance for each file and directory contained 
 	 * within this store.
 	 * 
-	 * @param options bit-wise or of option flag constants ().
+	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
+	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return An array of information about the children of this store, or an empty 
@@ -66,7 +67,8 @@ public interface IFileStore extends IAdaptable {
 	/**
 	 * Returns the names of the files and directories contained within this store.
 	 * 
-	 * @param options bit-wise or of option flag constants ().
+	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
+	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return The names of the children of this store, or an empty array if this
@@ -82,7 +84,8 @@ public interface IFileStore extends IAdaptable {
 	 * Returns an {@link IFileStore} instance for each file and directory contained 
 	 * within this store.
 	 * 
-	 * @param options bit-wise or of option flag constants ().
+	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
+	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return The children of this store, or an empty array if this
@@ -144,7 +147,8 @@ public interface IFileStore extends IAdaptable {
 	 * delete the link, rather than the target of the link.
 	 * </p>
 	 * 
-	 * @param options bit-wise or of option flag constants (none currently applicable).
+	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
+	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -184,7 +188,8 @@ public interface IFileStore extends IAdaptable {
 	 * when IFileInfo#exists() is called, but all other information will assume default 
 	 * values.
 	 * 
-	 * @param options bit-wise or of option flag constants (none are currently applicable).
+	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
+	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return A structure containing information about this file.
@@ -347,7 +352,8 @@ public interface IFileStore extends IAdaptable {
 	 * wrapper should be used, or some other form of content buffering.
 	 * </p>
 	 * 
-	 * @param options bit-wise or of option flag constants ().
+	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
+	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
 	 * @return An input stream on the contents of this file.
