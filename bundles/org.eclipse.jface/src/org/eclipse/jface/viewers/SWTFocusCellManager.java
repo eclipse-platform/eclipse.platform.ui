@@ -63,7 +63,6 @@ abstract class SWTFocusCellManager {
 
 			if (!cell.equals(focusCell)) {
 				setFocusCell(cell);
-				viewer.getControl().redraw();
 			}
 		}
 	}
@@ -81,7 +80,6 @@ abstract class SWTFocusCellManager {
 			if (tmp != null) {
 				if (!tmp.equals(focusCell)) {
 					setFocusCell(tmp);
-					viewer.getControl().redraw();
 				}
 			}
 		}
@@ -101,7 +99,6 @@ abstract class SWTFocusCellManager {
 			ViewerCell tmp = row.getCell(focusCell.getColumnIndex());
 			if (!focusCell.equals(tmp)) {
 				setFocusCell(tmp);
-				viewer.getControl().redraw();
 			}
 		}
 	}

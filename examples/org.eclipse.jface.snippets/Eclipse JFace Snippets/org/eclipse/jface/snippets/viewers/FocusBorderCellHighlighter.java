@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 public class FocusBorderCellHighlighter extends FocusCellHighlighter {
+	private ViewerCell oldCell;
 
 	/**
 	 * @param viewer
@@ -43,7 +44,7 @@ public class FocusBorderCellHighlighter extends FocusCellHighlighter {
 	}
 
 	private void removeSelectionInformation(Event event, ViewerCell cell) {
-		
+
 	}
 
 	private void hookListener(final ColumnViewer viewer) {
@@ -91,4 +92,31 @@ public class FocusBorderCellHighlighter extends FocusCellHighlighter {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.FocusCellHighlighter#focusCellChanged(org.eclipse.jface.viewers.ViewerCell)
+	 */
+	protected void focusCellChanged(ViewerCell cell) {
+		super.focusCellChanged(cell);
+
+		// Redraw new area
+		if (cell != null) {
+			Rectangle rect = cell.getBounds();
+			int x = cell.getColumnIndex() == 0 ? 0 : rect.x;
+			int width = cell.getColumnIndex() == 0 ? rect.x + rect.width
+					: rect.width;
+			cell.getControl().redraw(x, rect.y, width, rect.height, true);
+		}
+
+		if (oldCell != null) {
+			Rectangle rect = oldCell.getBounds();
+			int x = oldCell.getColumnIndex() == 0 ? 0 : rect.x;
+			int width = oldCell.getColumnIndex() == 0 ? rect.x + rect.width
+					: rect.width;
+			oldCell.getControl().redraw(x, rect.y, width, rect.height, true);
+		}
+
+		this.oldCell = cell;
+	}
 }

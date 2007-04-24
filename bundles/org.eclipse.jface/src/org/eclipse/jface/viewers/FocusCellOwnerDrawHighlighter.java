@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -23,6 +24,8 @@ import org.eclipse.swt.widgets.Listener;
  * 
  */
 public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
+
+	private ViewerCell oldCell;
 
 	/**
 	 * @param viewer
@@ -115,5 +118,33 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	 */
 	protected Color getSelectedCellForegroundColor(ViewerCell cell) {
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.FocusCellHighlighter#focusCellChanged(org.eclipse.jface.viewers.ViewerCell)
+	 */
+	protected void focusCellChanged(ViewerCell cell) {
+		super.focusCellChanged(cell);
+
+		// Redraw new area
+		if (cell != null) {
+			Rectangle rect = cell.getBounds();
+			int x = cell.getColumnIndex() == 0 ? 0 : rect.x;
+			int width = cell.getColumnIndex() == 0 ? rect.x + rect.width
+					: rect.width;
+			cell.getControl().redraw(x, rect.y, width, rect.height, true);
+		}
+
+		if (oldCell != null) {
+			Rectangle rect = oldCell.getBounds();
+			int x = oldCell.getColumnIndex() == 0 ? 0 : rect.x;
+			int width = oldCell.getColumnIndex() == 0 ? rect.x + rect.width
+					: rect.width;
+			oldCell.getControl().redraw(x, rect.y, width, rect.height, true);
+		}
+
+		this.oldCell = cell;
 	}
 }
