@@ -24,8 +24,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.ui.PlatformUI;
 
 public class ImportProjectSetMainPage extends TeamWizardPage {
@@ -39,6 +38,8 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	private String workingSetName = ""; //$NON-NLS-1$
 	
 	private boolean haveBrowsed;
+	
+	private boolean runInBackground = isRunInBackgroundPreferenceOn();
 	
 	// constants
 	//private static final int SIZING_TEXT_FIELD_WIDTH = 80;
@@ -110,6 +111,16 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		});
 
 		addWorkingSetSection(composite);
+		
+		Button runInBackgroundCheckbox = SWTUtils.createCheckBox(composite, TeamUIMessages.ImportProjectSetMainPage_runInBackground, 3);
+		
+		runInBackgroundCheckbox.setSelection(isRunInBackgroundPreferenceOn());
+		runInBackgroundCheckbox.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				runInBackground = !runInBackground;
+			}
+		});
+		
 		setControl(composite);
 		updateEnablement();
         Dialog.applyDialogFont(parent);
@@ -132,7 +143,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		});
 
 		Composite inner = new Composite(composite, SWT.NULL);
-		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
+		inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 0;
@@ -225,12 +236,21 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			fileCombo.setFocus();
 		}
 	}
-
+	
 	/**
 	 * @return String
 	 */
 	public String getWorkingSetName() {
 		if (!createWorkingSet) return null;
 		return workingSetName;
+	}
+	
+	private static boolean isRunInBackgroundPreferenceOn() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(
+				IPreferenceIds.RUN_IMPORT_IN_BACKGROUND);
+	}
+	
+	public boolean isRunInBackgroundOn() {
+		return runInBackground;
 	}
 }

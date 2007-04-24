@@ -243,10 +243,9 @@ public class TeamUIMessages extends NLS {
     public static String SyncInfoCompareInput_tooltip;
 
 	public static String SyncViewerPreferencePage_43;
-
 	public static String SyncViewerPreferencePage_44;
-
 	public static String SyncViewerPreferencePage_45;
+	public static String SyncViewerPreferencePage_46;
 
 	public static String TeamAction_internal;
 	public static String TextPreferencePage_add;
@@ -279,6 +278,8 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_workingSetNameEmpty;
 	public static String ImportProjectSetMainPage_createWorkingSetLabel;
 	public static String ImportProjectSetMainPage_workingSetLabel;
+	public static String ImportProjectSetMainPage_runInBackground;
+	public static String ImportProjectSetMainPage_jobName;
 
 	public static String ProjectSetContentHandler_Element_provider_must_be_contained_in_element_psf_4;
 	public static String ProjectSetContentHandler_Element_project_must_be_contained_in_element_provider_7;

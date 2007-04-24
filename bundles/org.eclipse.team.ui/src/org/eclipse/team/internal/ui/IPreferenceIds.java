@@ -50,6 +50,11 @@ public interface IPreferenceIds {
 	public static final String REUSE_OPEN_COMPARE_EDITOR= PREFIX + "reuse_open_compare_editors"; //$NON-NLS-1$
 	
 	/*
+	 * Preference to enable the import of a project set to be run in the background 
+	 */
+	public static final String RUN_IMPORT_IN_BACKGROUND= PREFIX + "run_import_in_background_"; //$NON-NLS-1$
+	
+	/*
 	 * Preference to manage the perspective used to synchronize.
 	 */
 	public static final String SYNCVIEW_DEFAULT_PERSPECTIVE = PREFIX + "syncview_default_perspective"; //$NON-NLS-1$
