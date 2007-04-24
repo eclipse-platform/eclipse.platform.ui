@@ -2003,12 +2003,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 
 			// Get the input factory.
-			final IAdaptable [] input = new IAdaptable[] { getDefaultPageInput() };
+			final IAdaptable [] input = new IAdaptable[1];
 			final IMemento inputMem = pageMem.getChild(IWorkbenchConstants.TAG_INPUT);
-			if (inputMem == null) {
-				WorkbenchPlugin.log("Unable to restore page - did not find input element"); //$NON-NLS-1$
-				result.add(unableToRestorePage(pageMem));
-			} else {
+			if (inputMem != null) {
 				final String factoryID = inputMem
 						.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 				if (factoryID == null) {
