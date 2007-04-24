@@ -62,11 +62,12 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 	
 	/*
 	 * Formats a message as HTML text.
+	 * Expects the message to already be properly escaped
 	 */
 	private String formatMessage(String message) {
 		StringBuffer buffer= new StringBuffer();
 		HTMLPrinter.addPageProlog(buffer);
-		HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(message));
+		HTMLPrinter.addParagraph(buffer, message);
 		HTMLPrinter.addPageEpilog(buffer);
 		return buffer.toString();
 	}
@@ -133,12 +134,12 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
                 }
 				value= antModel.getPropertyValue(text);
 				if (value != null) {
-					return formatMessage(value);
+					return formatMessage(HTMLPrinter.convertToHTMLContent(value));
 				}
 			}
 			value= antModel.getTargetDescription(text);
 			if (value != null) {
-				return formatMessage(value);
+				return formatMessage(HTMLPrinter.convertToHTMLContent(value));
 			}
 			Object referencedObject= antModel.getReferenceObject(text);
 			if (referencedObject != null) {
