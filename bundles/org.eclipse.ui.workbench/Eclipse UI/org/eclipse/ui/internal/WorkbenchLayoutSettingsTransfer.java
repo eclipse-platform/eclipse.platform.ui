@@ -12,8 +12,9 @@
 package org.eclipse.ui.internal;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -322,7 +323,8 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 						WorkbenchPlugin.PI_WORKBENCH,
 						WorkbenchMessages.WorkbenchSettings_CouldNotCreateDirectories);
 
-			FileWriter writer = new FileWriter(workspaceFile);
+			FileOutputStream stream = new FileOutputStream(workspaceFile);
+			OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
 			XMLMemento memento = XMLMemento
 					.createWriteRoot(IWorkbenchConstants.TAG_WORKBENCH);
 			IStatus status = saveSettings(memento);
