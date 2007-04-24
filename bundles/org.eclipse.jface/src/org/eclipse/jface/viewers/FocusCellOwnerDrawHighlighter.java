@@ -134,7 +134,8 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 			int x = cell.getColumnIndex() == 0 ? 0 : rect.x;
 			int width = cell.getColumnIndex() == 0 ? rect.x + rect.width
 					: rect.width;
-			cell.getControl().redraw(x, rect.y, width, rect.height, true);
+			// 1 is a fix for Linux-GTK
+			cell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
 		}
 
 		if (oldCell != null) {
@@ -142,7 +143,8 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 			int x = oldCell.getColumnIndex() == 0 ? 0 : rect.x;
 			int width = oldCell.getColumnIndex() == 0 ? rect.x + rect.width
 					: rect.width;
-			oldCell.getControl().redraw(x, rect.y, width, rect.height, true);
+			// 1 is a fix for Linux-GTK
+			oldCell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
 		}
 
 		this.oldCell = cell;
