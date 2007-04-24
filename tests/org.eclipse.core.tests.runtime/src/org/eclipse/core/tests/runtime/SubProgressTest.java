@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,6 +218,7 @@ public class SubProgressTest extends TestCase {
 		SubProgressMonitor fpMonitor = new SubProgressMonitor(top, 1000);
 		fpMonitor.beginTask("", 100);
 		fpMonitor.internalWorked(50.0);
+		fpMonitor.internalWorked(-10.0); // should have no effect
 
 		Assert.assertEquals(500.0, top.getTotalWork(), 0.01d);
 
@@ -575,4 +576,22 @@ public class SubProgressTest extends TestCase {
 			mon.done();
 		}
 	}
+
+	/**
+	 * Test SubProgressMonitor's created with negative a work value.
+	 */
+	public void testNegativeWorkValues() {
+		TestProgressMonitor top = new TestProgressMonitor();
+		top.beginTask("", 10);
+
+		SubProgressMonitor childMonitor = new SubProgressMonitor(top, IProgressMonitor.UNKNOWN); // -1
+		childMonitor.beginTask("", 10);
+		childMonitor.worked(5);
+		Assert.assertEquals(0.0, top.getTotalWork(), 0.01d);
+		childMonitor.done();
+		Assert.assertEquals(0.0, top.getTotalWork(), 0.01d);
+
+		top.done();
+	}
+
 }

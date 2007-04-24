@@ -104,6 +104,8 @@ public class SubMonitorTest extends TestCase {
 
 			mon.setWorkRemaining(i);
 			mon.internalWorked(0.5);
+
+			mon.internalWorked(-0.5); // should not affect progress 
 		}
 
 		monitor.done();
@@ -128,6 +130,9 @@ public class SubMonitorTest extends TestCase {
 		Assert.assertEquals("Ensure that done() reports unconsumed progress, even if beginTask wasn't called", 600.0, top.getTotalWork(), 0.01d);
 
 		SubMonitor child3 = monitor.newChild(100);
+
+		SubMonitor child3andAHalf = monitor.newChild(-10); // should not affect progress
+		child3andAHalf.done();
 
 		monitor.done();
 
