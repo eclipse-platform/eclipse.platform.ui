@@ -36,6 +36,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ConfigurationLogUpdateSection_plugins;
 
 	public static String ErrorClosing;
+	public static String ErrorOnSaveAll;
 
 	public static String ResourceInfoPage_noResource;
 

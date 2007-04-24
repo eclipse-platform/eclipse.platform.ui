@@ -1137,7 +1137,7 @@ public final class IDE {
 		}
 
 		final boolean[] result = new boolean[] { true };
-		SafeRunner.run(new SafeRunnable(IDEWorkbenchMessages.ErrorClosing) {
+		SafeRunner.run(new SafeRunnable(IDEWorkbenchMessages.ErrorOnSaveAll) {
 			public void run() {
 				IWorkbenchWindow w = PlatformUI.getWorkbench()
 						.getActiveWorkbenchWindow();
