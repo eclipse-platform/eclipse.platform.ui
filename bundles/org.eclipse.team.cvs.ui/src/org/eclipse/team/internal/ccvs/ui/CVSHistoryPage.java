@@ -751,7 +751,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	protected TreeViewer createTree(Composite parent) {
 
 		historyTableProvider = new CVSHistoryTableProvider();
-		TreeViewer viewer = historyTableProvider.createTree(parent);
+		TreeViewer viewer = historyTableProvider.createTree(parent, cvsFileHistory == null ? true : cvsFileHistory.isIncludeLocal());
 
 		viewer.setContentProvider(new ITreeContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -1601,16 +1601,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			return file.getIResource().getFullPath();
 		
 		return null; 
-	}
-
-	/*
-	 * Used to reset sorting in CVSHistoryTableProvider for
-	 * changes to local revisions displays. Local revisions don't
-	 * have a revision id so we need to sort by date when they are
-	 * displayed - else we can just sort by revision id.
-	 */
-	public void setSorter(boolean localDisplayed) {
-		historyTableProvider.setLocalRevisionsDisplayed(localDisplayed);
 	}
 
 	public Object getAdapter(Class adapter) {

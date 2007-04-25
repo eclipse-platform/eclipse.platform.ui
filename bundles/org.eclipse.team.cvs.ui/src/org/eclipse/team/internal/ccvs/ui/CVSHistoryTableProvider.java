@@ -448,7 +448,7 @@ public class CVSHistoryTableProvider {
 	 * @param parent
 	 * @return TableViewer
 	 */
-	public TreeViewer createTree(Composite parent) {
+	public TreeViewer createTree(Composite parent, boolean localIsDisplayed) {
 		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
@@ -461,14 +461,10 @@ public class CVSHistoryTableProvider {
 
 		this.viewer = new TreeViewer(tree);
 		createColumns(viewer, layout);
+		
+		// Initialize the sorting
 		ColumnViewerToolTipSupport.enableFor(viewer);
-
-		// By default, reverse sort by revision. 
-		// If local filter is on sort by date
-		HistoryComparator sorter = new HistoryComparator(COL_DATE);
-		/*HistorySorter sorter = new HistorySorter(COL_REVISIONID);
-		sorter.setReversed(true);*/
-		viewer.setComparator(sorter);
+		setLocalRevisionsDisplayed(localIsDisplayed);
 
 		tree.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
