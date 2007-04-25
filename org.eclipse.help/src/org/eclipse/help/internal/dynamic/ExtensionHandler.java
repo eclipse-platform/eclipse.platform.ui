@@ -12,6 +12,7 @@ package org.eclipse.help.internal.dynamic;
 
 import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.UAElement;
+import org.eclipse.help.internal.UAElementFactory;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -60,13 +61,20 @@ public class ExtensionHandler extends ProcessorHandler {
 			// get the nodes to insert/replace with
 			Node[] nodes = resolver.resolveExtension(path + '#' + id, type);
 			if (nodes != null && nodes.length > 0) {
-				Element element = uaElement.element;
-				Element parent = uaElement.getParentElement().element;
+				Element domElement = uaElement.element;
+				UAElement parent = uaElement.getParentElement();
 				for (int i=0;i<nodes.length;++i) {
-					Node node = element.getOwnerDocument().importNode(nodes[i], true);
-					parent.insertBefore(node, element);
+					if (nodes[i].getNodeType() == Node.ELEMENT_NODE) {
+						// ensure elements are typed
+						parent.insertBefore(UAElementFactory.newElement((Element)nodes[i]), uaElement);
+					}
+					else {
+						// text nodes are not typed
+						Node node = domElement.getOwnerDocument().importNode(nodes[i], true);
+						parent.element.insertBefore(node, domElement);
+					}
 				}
-				parent.removeChild(element);
+				parent.removeChild(uaElement);
 				return HANDLED_SKIP;
 			}
 		}
