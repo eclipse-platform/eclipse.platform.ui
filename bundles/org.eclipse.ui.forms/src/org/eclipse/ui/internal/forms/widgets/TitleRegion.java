@@ -356,6 +356,8 @@ public class TitleRegion extends Canvas {
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
 		titleLabel.setForeground(fg);
+		if (menuHyperlink != null)
+			menuHyperlink.setForeground(fg);
 	}
 
 	public void setText(String text) {
@@ -399,9 +401,8 @@ public class TitleRegion extends Canvas {
 	private void createMenuHyperlink() {
 		menuHyperlink = new MenuHyperlink(this, SWT.NULL);
 		menuHyperlink.setBackground(getColor(FormHeading.COLOR_BASE_BG));
-		menuHyperlink.setDecorationColor(getColor(IFormColors.TB_TOGGLE));
-		menuHyperlink
-				.setHoverDecorationColor(getColor(IFormColors.TB_TOGGLE_HOVER));
+		menuHyperlink.setDecorationColor(getForeground());
+		menuHyperlink.setHoverDecorationColor(getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 		HoverListener listener = new HoverListener();
 		menuHyperlink.addMouseTrackListener(listener);
 		menuHyperlink.addMouseMoveListener(listener);
