@@ -129,6 +129,12 @@ DIV.visible, DIV.root {
     margin-top:1px; 
 }
 
+
+DIV.group { 
+	border-width:0; 
+	margin-<%=isRTL?"right":"left"%>:0; 
+}
+
 SPAN.item{
     white-space: nowrap;
 }
