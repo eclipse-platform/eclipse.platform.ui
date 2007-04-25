@@ -134,12 +134,11 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
             if (TableRenderingLine.P_ADDRESS.equals(property))
                 return line.getAddress();
 
-            int offset = Integer.valueOf(property, 16).intValue() * getAddressableSize();
-            
-            MemoryByte[] memory = line.getBytes(offset, fRendering.getBytesPerColumn());
+            int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();            
+            MemoryByte[] memory = line.getBytes(offsetToLineBuffer, fRendering.getBytesPerColumn());
 
-            offset = Integer.valueOf(property, 16).intValue();
-            BigInteger address = line.getAddress().add(BigInteger.valueOf(offset));
+            int offsetFromLineAddress = Integer.valueOf(property, 16).intValue();
+            BigInteger address = line.getAddress().add(BigInteger.valueOf(offsetFromLineAddress));
             
             if (fCustomModifier != null)
             {
@@ -185,21 +184,22 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 		            // calculate offset to update
 					final IMemoryBlock memoryBlk = fRendering.getMemoryBlock();
 
-					int lineOffset = Integer.valueOf(property, 16).intValue();
+					// number of addressable units from the line's start address
+					int offsetFromLineAddress = Integer.valueOf(property, 16).intValue();
 
-					// this offset is number of addressable unit from the line
-					// address
-					final BigInteger offset = getOffset(memoryBlk, line.getAddress(), lineOffset);
+					// this offset is number of addressable unit from memory block's base address
+					final BigInteger offsetFromMBBase = getOffset(memoryBlk, line.getAddress(), offsetFromLineAddress);
 
 					// property is number of addressable unit from line address
 					// to calculate proper offset in the memoryViewLine's array
 					// offset = numberOfAddressableUnit * addressableSize
-					int offsetToLine = Integer.valueOf(property, 16).intValue()	* getAddressableSize();
+					int offsetToLineBuffer = Integer.valueOf(property, 16).intValue() * getAddressableSize();
 
-					MemoryByte[] oldArray = line.getBytes(offsetToLine,	fRendering.getBytesPerColumn());
+					MemoryByte[] oldArray = line.getBytes(offsetToLineBuffer, fRendering.getBytesPerColumn());
 
+					// address is line address + addressable unit into the line
 					BigInteger address = line.getAddress();
-					address = address.add(BigInteger.valueOf(offsetToLine));
+					address = address.add(BigInteger.valueOf(offsetFromLineAddress));
 
 					if (fCustomModifier != null) {
  						MemoryRenderingElement mElement = new MemoryRenderingElement(fRendering, address, oldArray);
@@ -244,9 +244,9 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 		            final byte[] newByteValues = bytes;
 		            
 		            if (memoryBlk instanceof IMemoryBlockExtension)
-		                ((IMemoryBlockExtension) memoryBlk).setValue(offset, newByteValues);
+		                ((IMemoryBlockExtension) memoryBlk).setValue(offsetFromMBBase, newByteValues);
 		            else
-		                memoryBlk.setValue(offset.longValue(), newByteValues);				
+		                memoryBlk.setValue(offsetFromMBBase.longValue(), newByteValues);				
 		        } catch (DebugException e) {
 		            MemoryViewUtil.openError(DebugUIMessages.MemoryViewCellModifier_failure_title, DebugUIMessages.MemoryViewCellModifier_failed, e);
 		        } catch (NumberFormatException e) {
