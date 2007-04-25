@@ -188,8 +188,16 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 								System.out.println("actual set top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
 							fPendingTopIndexKey = null;
 							setTopIndexKey(topIndexKey);
-							getTable().setTopIndex(idx);
-							tableTopIndexSetComplete();
+							getTable().setTopIndex(idx);							
+							tableTopIndexSetComplete();		
+							
+							if (getTable().getTopIndex() != idx)
+							{
+								if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+									System.out.println(">>> FAILED set top index, will retry : " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+
+								fPendingTopIndexKey = topIndexKey;
+							}														
 						}
 						else
 						{

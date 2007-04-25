@@ -549,12 +549,17 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	public void resetRendering() throws DebugException {
 		BigInteger baseAddress = fContentDescriptor.getContentBaseAddress();
-		reloadTable(baseAddress);
-		fTableViewer.setSelection(baseAddress);
-		fTableViewer.setTopIndex(baseAddress);
 
-		updateSyncTopAddress(baseAddress);		
+		fTableViewer.setSelection(baseAddress);
+		reloadTable(baseAddress);
+		fTableViewer.setTopIndex(baseAddress);
+		if (!isDynamicLoad())
+		{						
+			updateSyncPageStartAddress(baseAddress);
+		}
+		
 		updateSyncSelectedAddress(baseAddress);
+		updateSyncTopAddress(baseAddress);		
 	}
 
 	public Control createControl(Composite parent) {
