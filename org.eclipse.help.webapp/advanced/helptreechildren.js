@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,22 +46,36 @@ function updateTree(xml) {
  }
  
 function mergeChildren(treeItem, nodes) {
-    var placeholderDiv = findChild(treeItem, "DIV");
+    var childContainer;
+    if (treeItem.id == "tree_root") {
+        childContainer=treeItem;
+    } else {
+        childContainer = findChild(treeItem, "DIV");
+    }
     var childAdded = false;
-    if (nodes) {      
+    var hasPlaceholder = childContainer != null && childContainer.className == "unopened";
+    if (nodes) {  
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if (node.tagName == "node") {
-                if (placeholderDiv && placeholderDiv.className == "unopened") {
-                    treeItem.removeChild(placeholderDiv);
-                    placeholderDiv = null;
+                if (hasPlaceholder) {
+                    // Remove the loading message
+                    treeItem.removeChild(childContainer);
+                    hasPlaceholder = false;
+                    childContainer = null;
+                }
+                if (childContainer === null) {
+                    childContainer = document.createElement("DIV");
+                    childContainer.className = "group";              
+                    setAccessibilityRole(childContainer, WAI_GROUP);
+                    treeItem.appendChild(childContainer);
                 }
                 var title = node.getAttribute("title");
                 var isLeaf = node.getAttribute("is_leaf");
                 var href = node.getAttribute("href");
                 var image = node.getAttribute("image");
                 var id = node.getAttribute("id");
-                var childItem = mergeChild(treeItem, id, title, href, image, isLeaf);
+                var childItem = mergeChild(childContainer, id, title, href, image, isLeaf);
                 var isSelected = node.getAttribute("is_selected");
                 if (!isLeaf) {
                     mergeChildren(childItem, node.childNodes);
@@ -82,6 +96,7 @@ function mergeChildren(treeItem, nodes) {
             toggleExpandState(treeItem);
         } else {
             changeExpanderImage(treeItem, true); 
+            setWAIExpansionState(treeItem, true);
         }
      }  
 }
@@ -97,7 +112,7 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
         }
     }
         
-    var childItem = document.createElement("div");
+    var childItem = document.createElement("DIV");
     // roots should have a className of "root" to prevent indentation
     if (treeItem.id == "tree_root") {
         childItem.className = "root";
@@ -139,6 +154,7 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
         anchor.href = href;
     }
     anchor.title = name;
+    setAccessibilityRole(anchor, WAI_TREEITEM);
     
     if (topicImage) {
         anchor.appendChild(topicImage);
@@ -149,6 +165,7 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     if (!isLeaf) {
         var innerDiv = document.createElement("DIV");  
         innerDiv.className = "unopened";
+        setWAIExpansionState(anchor, false);
         childItem.appendChild(innerDiv);
     }
     return childItem;

@@ -59,7 +59,9 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 	</tr>
 </table>
 <div id = "indexList">
-<DIV class = "root" id = "tree_root">
+<DIV class = "group" id = "wai_application">
+    <DIV class = "root" id = "tree_root">
+    </DIV>
 </DIV>
 </div>
 <div id="navigation">

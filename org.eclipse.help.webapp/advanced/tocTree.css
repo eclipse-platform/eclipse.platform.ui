@@ -32,6 +32,11 @@ DIV.visible, DIV.unopened {
 	margin-<%=isRTL?"right":"left"%>:1.5em; 
 	font-weight:normal;
 }
+
+DIV.group { 
+	border-width:0; 
+	margin-<%=isRTL?"right":"left"%>:0; 
+}
   
 DIV.hidden {
 	display:none; 

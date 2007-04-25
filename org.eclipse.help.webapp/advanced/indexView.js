@@ -55,6 +55,7 @@ function showIndex() {
 
 function onloadHandler() {
 
+    setRootAccessibility();
 	typein = document.getElementById("typein");
 
 	typein.value = "";

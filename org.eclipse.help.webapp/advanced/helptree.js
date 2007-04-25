@@ -15,6 +15,12 @@
 var oldActive;
 var oldActiveClass;
 
+// WAI Roles
+var WAI_TREEITEM = "wairole:treeitem";
+var WAI_TREE = "wairole:tree";
+var WAI_GROUP = "wairole:group";
+var WAI_APPLICATION = "wairole:application";
+
 /**
  * Returns the currently selected (highlighted) tree node anchor.
  */
@@ -112,7 +118,7 @@ function goRight(treeItem) {
         toggleExpandState(treeItem);
         return;
      }       
-     focusOnItem(findChild(treeItem, "DIV"), false);
+     focusOnItem(findChild(findChild(treeItem, "DIV"), "DIV"), false);
 }
 
 function goUp(treeItem) {
@@ -132,7 +138,7 @@ function goDown(treeItem) {
     // If the node is expanded visit the first child       
     var childClass = getChildClass(treeItem);
     if (childClass == "visible") {
-        focusOnItem(findChild(treeItem, "DIV"), false);
+        focusOnItem(findChild(findChild(treeItem, "DIV"), "DIV"), false);
         return;
     }
     // visit the next sibling at this level, if not found try highter levels
@@ -147,13 +153,16 @@ function goDown(treeItem) {
 }
 
 function focusOnDeepestVisibleChild(treeItem, isHighlighted) { 
-        var childDiv = findLastChild(treeItem, "DIV");
+    var group = findChild(treeItem, "DIV");
+    if (group) {
+        var childDiv = findLastChild(group, "DIV");
         if (childDiv) {  
             if (childDiv.className == "visible" || childDiv.className == "root" ) {        
                 focusOnDeepestVisibleChild(childDiv, isHighlighted);
                 return;
             }
         }
+    }
     focusOnItem(treeItem, isHighlighted);
 }
 
@@ -241,15 +250,18 @@ function getTopAncestor(node) {
 
 function getChildClass(node) {
     var child = findChild(node, "DIV");
-    if (child) { return child.className; }
+    if (child && child.className == "group") {
+        child = findChild(child, "DIV");
+    }
+    if (child) { 
+        return child.className; 
+    }
     return "leaf";
 }
 
 // Get the image node from a DIV representing a tree item
 function getIcon(treeItem) {
-    var anchorContainer = findChild(treeItem, "SPAN");
-    if (!anchorContainer) { anchorContainer = treeItem; }
-    var anchor = findChild(anchorContainer, "A");
+    var anchor = findAnchor(treeItem);
     if (anchor) {
         return findChild(anchor, "IMG");
     }
@@ -258,6 +270,9 @@ function getIcon(treeItem) {
 
 // Return the first child with this tag
 function findChild(node, tag) {
+    if (node === null) {
+        return null;
+    }
     var children = node.childNodes;
     for (var i = 0; i < children.length; i++) {
         if (tag == children[i].tagName ) {
@@ -268,7 +283,10 @@ function findChild(node, tag) {
 }
 
 // Return the last child with this tag
-function findLastChild(node, tag) {
+function findLastChild(node, tag) {  
+    if (node === null) {
+        return null;
+    }
     var children = node.childNodes;
     for (var i = children.length - 1; i >= 0; i--) {
         if (tag == children[i].tagName ) {
@@ -297,7 +315,8 @@ function toggleExpandState(node) {
     var oldChildClass = getChildClass(treeItem);
     var newChildClass;
     
-    if (oldChildClass == "unopened") {
+    if (oldChildClass == "unopened") {      
+        newChildClass = "visible";
         loadChildren(treeItem);
     } else if (oldChildClass == "hidden") {
         newChildClass = "visible";
@@ -308,15 +327,20 @@ function toggleExpandState(node) {
     }
 
     if (oldChildClass != "unopened") {
-        // set the childrens class to the new class
-        var children = treeItem.childNodes;
-        for (var i = 0; i < children.length; i++) {
-            if ("DIV" == children[i].tagName ) {
-                children[i].className = newChildClass;
+        var group = findChild(treeItem, "DIV");
+        if (group && group.className == "group") {
+            // set the childrens class to the new class
+            var children = group.childNodes;
+            for (var i = 0; i < children.length; i++) {
+                if ("DIV" == children[i].tagName ) {
+                    children[i].className = newChildClass;
+                }
             }
         }   
         changeExpanderImage(treeItem, newChildClass == "visible"); 
     }
+    
+    setWAIExpansionState(treeItem, newChildClass == "visible");
     
     if (newChildClass == "visible") {
         scrollUntilVisible(treeItem, SCROLL_HORIZONTAL_AND_VERTICAL); 
@@ -338,3 +362,42 @@ function changeExpanderImage(treeItem, isExpanded) {
     }
 }
 
+// Accessibility
+
+var isNamespaceSupport = typeof document.documentElement.setAttributeNS != 'undefined';
+
+function setAccessibilityRole(node, role) {
+    if (isNamespaceSupport) {
+        node.setAttributeNS("http://www.w3.org/TR/xhtml2", "role", role);
+        node.role = role;
+    }
+}
+
+function setWAIExpanded(node, value) {
+    if (isNamespaceSupport) {
+        var valueAsString = value? "true" : "false";
+        node.setAttributeNS("http://www.w3.org/2005/07/aaa", "expanded", valueAsString);
+    }
+}
+
+function setRootAccessibility() {
+    if (isNamespaceSupport) {
+        var treeItem = document.getElementById("tree_root");
+        if (treeItem) {
+            setAccessibilityRole(treeItem, WAI_TREE);
+        }
+        var applicationItem = document.getElementById("wai_application");
+        if (applicationItem) {
+            setAccessibilityRole(applicationItem, WAI_APPLICATION);
+        }
+    }
+}
+
+function setWAIExpansionState(treeItem, isExpanded) { 
+    if (isNamespaceSupport) {
+        var anchor = findAnchor(treeItem);
+        if (anchor) {
+            setWAIExpanded(anchor, isExpanded);
+        }
+    }
+}

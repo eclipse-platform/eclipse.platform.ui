@@ -67,6 +67,7 @@ var tocId = "";
 	
 function onloadHandler()
 {
+    setRootAccessibility();
 	loadChildren(null);
 <%
     if (request.getParameter("topic") != null) {
@@ -153,7 +154,9 @@ if (requestData.isIE()){
 
 </head>
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
-   <DIV class = "root" id = "tree_root">
-   </DIV>
+  <DIV class = "group" id = "wai_application">
+    <DIV class = "root" id = "tree_root">
+    </DIV>
+  </DIV>
 </body>
 </html>
