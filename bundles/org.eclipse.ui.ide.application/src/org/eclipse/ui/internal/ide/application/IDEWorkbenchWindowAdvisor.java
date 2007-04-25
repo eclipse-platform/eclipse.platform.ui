@@ -28,6 +28,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -192,6 +193,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         configurer.addEditorAreaTransfer(EditorInputTransfer
                 .getInstance());
         configurer.addEditorAreaTransfer(ResourceTransfer.getInstance());
+        configurer.addEditorAreaTransfer(FileTransfer.getInstance());
         configurer.addEditorAreaTransfer(MarkerTransfer.getInstance());
         configurer
                 .configureEditorAreaDropListener(new EditorAreaDropAdapter(

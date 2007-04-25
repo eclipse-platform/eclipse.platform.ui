@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,18 @@
 
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -116,6 +120,21 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
                     IFile file = (IFile) files[i];
                     openNonExternalEditor(page, file);
                 }
+            }
+        }
+
+        /* Open Editor for file from local file system */
+        else if (FileTransfer.getInstance().isSupportedType(
+                event.currentDataType)) {
+            Assert.isTrue(event.data instanceof String[]);
+            String[] paths = (String[]) event.data;
+            for (int i = 0; i < paths.length; i++) {
+            	IFileStore fileStore = EFS.getLocalFileSystem().getStore(new Path(paths[i]));
+            	try {
+					IDE.openEditorOnFileStore(page, fileStore);
+				} catch (PartInitException e) {
+					// silently ignore problems opening the editor
+				}
             }
         }
 
