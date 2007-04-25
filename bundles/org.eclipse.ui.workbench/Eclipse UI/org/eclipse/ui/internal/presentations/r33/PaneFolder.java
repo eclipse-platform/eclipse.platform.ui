@@ -506,18 +506,17 @@ public final class PaneFolder {
 					topCenter.setBounds(localCoords);
 				}
 			} else {
-				if (lastTrimOnTop) {
-					if (topCenter != null) {
-						viewFormTopCenterProxy.setTarget(topCenterCache);
-						viewForm.setTopCenter(viewFormTopCenterProxy
-								.getControl());
-					}
+				// always reset since the toolbar may have changed size...
+				if (topCenter != null) {
+					viewFormTopCenterProxy.setTarget(topCenterCache);
+					viewForm.setTopCenter(viewFormTopCenterProxy
+							.getControl());
+				}
 
-					if (topRight != null) {
-						viewFormTopRightProxy.setTarget(topRightCache);
-						viewForm
-								.setTopRight(viewFormTopRightProxy.getControl());
-					}
+				if (topRight != null) {
+					viewFormTopRightProxy.setTarget(topRightCache);
+					viewForm
+							.setTopRight(viewFormTopRightProxy.getControl());
 				}
 			}
 
