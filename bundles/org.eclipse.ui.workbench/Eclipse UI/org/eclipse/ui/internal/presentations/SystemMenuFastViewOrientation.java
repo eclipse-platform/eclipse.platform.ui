@@ -17,9 +17,11 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.FastViewBar;
+import org.eclipse.ui.internal.FastViewManager;
 import org.eclipse.ui.internal.IChangeListener;
 import org.eclipse.ui.internal.IntModel;
 import org.eclipse.ui.internal.PartPane;
+import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.RadioMenu;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -62,7 +64,21 @@ public class SystemMenuFastViewOrientation extends ContributionItem {
     public void fill(Menu menu, int index) {
         WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPage()
                 .getWorkbenchWindow();
-        
+        // Don't show the orientation menu entry for non-'real' FV's since
+        // a minimized stack's orientation always matches its true stack
+        if (viewPane.getPartReference() instanceof IViewReference) {
+        	IViewReference viewRef = (IViewReference) viewPane.getPartReference(); 
+            // Are we showing a 'real' fast view or a minimized view ?
+            Perspective persp = viewPane.getPage().getActivePerspective();
+            FastViewManager fvm = persp.getFastViewManager();
+            
+            String trimId = null;
+            if (fvm != null)
+            	trimId = fvm.getIdForRef(viewRef);
+            boolean realFV = trimId == null || FastViewBar.FASTVIEWBAR_ID.equals(trimId);
+            if (!realFV)
+            	return;
+        }
         
         FastViewBar bar = workbenchWindow.getFastViewBar();
         if (bar != null && viewPane != null) {
