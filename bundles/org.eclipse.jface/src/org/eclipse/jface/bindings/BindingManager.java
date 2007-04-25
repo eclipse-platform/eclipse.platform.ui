@@ -599,7 +599,7 @@ public final class BindingManager extends HandleObjectManager implements
 							.getParameterizedCommand(), trigger);
 
 				} else if (match instanceof Collection) {
-					bindings.addAll(resolveConflicts((Collection) match));
+					bindings.addAll((Collection)match);
 					bindingsByTrigger.put(trigger, bindings);
 
 					final Iterator matchItr = bindings.iterator();
@@ -1923,78 +1923,6 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		}
 
 		return returnValue;
-	}
-
-	/**
-	 * <p>
-	 * Attempts to resolve the conflicts for the given bindings -- irrespective
-	 * of the currently active contexts. This means that type and scheme will be
-	 * considered.
-	 * </p>
-	 * <p>
-	 * This method completes in <code>O(n)</code>, where <code>n</code> is
-	 * the number of bindings.
-	 * </p>
-	 * 
-	 * @param bindings
-	 *            The bindings which all match the same trigger sequence; must
-	 *            not be <code>null</code>, and should contain at least two
-	 *            items. This collection should only contain instances of
-	 *            <code>Binding</code> (i.e., no <code>null</code> values).
-	 * @return The collection of bindings which match the current scheme.
-	 */
-	private final Collection resolveConflicts(final Collection bindings) {
-		final Collection matches = new ArrayList();
-		final Iterator bindingItr = bindings.iterator();
-		Binding bestMatch = (Binding) bindingItr.next();
-		matches.add(bestMatch);
-
-		/*
-		 * Iterate over each binding and compares it with the best match. If a
-		 * better match is found, then replace the best match and clear the
-		 * collection. If the current binding is equivalent, then simply add it
-		 * to the collection of matches. If the current binding is worse, then
-		 * do nothing.
-		 */
-		while (bindingItr.hasNext()) {
-			final Binding current = (Binding) bindingItr.next();
-
-			/*
-			 * SCHEME: Test whether the current is in a child scheme. Bindings
-			 * defined in a child scheme will take priority over bindings
-			 * defined in a parent scheme -- assuming that consulting their
-			 * contexts led to a conflict.
-			 */
-			final String currentSchemeId = current.getSchemeId();
-			final String bestSchemeId = bestMatch.getSchemeId();
-			final int compareTo = compareSchemes(bestSchemeId, currentSchemeId);
-			if (compareTo > 0) {
-				bestMatch = current;
-				matches.clear();
-				matches.add(current);
-			}
-			if (compareTo != 0) {
-				continue;
-			}
-
-			/*
-			 * TYPE: Test for type superiority.
-			 */
-			if (current.getType() > bestMatch.getType()) {
-				bestMatch = current;
-				matches.clear();
-				matches.add(current);
-				continue;
-			} else if (bestMatch.getType() > current.getType()) {
-				continue;
-			}
-
-			// The bindings are equivalent.
-			matches.add(current);
-		}
-
-		// Return all of the matches.
-		return matches;
 	}
 
 	/**

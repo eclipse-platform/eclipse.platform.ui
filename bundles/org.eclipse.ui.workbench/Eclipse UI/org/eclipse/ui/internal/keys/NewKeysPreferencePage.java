@@ -253,20 +253,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			ITableLabelProvider {
 
 		/**
-		 * The index of the column with the button for adding an item.
-		 */
-		private static final int COLUMN_ADD = 3;
-
-		/**
 		 * The index of the column containing the command name.
 		 */
 		private static final int COLUMN_COMMAND = 0;
 
 		/**
-		 * The index of the column with the button for removing an item.
+		 * The index of the column containing the trigger sequence.
 		 */
-		private static final int COLUMN_REMOVE = 4;
-
+		private static final int COLUMN_TRIGGER_SEQUENCE = 1;
 
 		/**
 		 * The index of the column containing the Category.
@@ -274,14 +268,24 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		private static final int COLUMN_CATEGORY = 2;
 		
 		/**
-		 * The index of the column containing the trigger sequence.
+		 * The index of the column with the button for adding an item.
 		 */
-		private static final int COLUMN_TRIGGER_SEQUENCE = 1;
+		private static final int COLUMN_ADD = 3;
+
+		/**
+		 * The index of the column with the button for removing an item.
+		 */
+		private static final int COLUMN_REMOVE = 4;
+
+		/**
+		 * The index of the column with the image for User binding
+		 */		
+		private static final int COLUMN_USER = 5;
 
 		/**
 		 * The number of columns being displayed.
 		 */
-		private static final int NUMBER_OF_COLUMNS = 5;
+		private static final int NUMBER_OF_COLUMNS = 6;
 
 		/**
 		 * A resource manager for this preference page.
@@ -327,6 +331,11 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 				case COLUMN_REMOVE:
 					return ImageFactory.getImage("minus"); //$NON-NLS-1$
+					
+				case COLUMN_USER:
+					if (((Binding)value).getType()==Binding.USER)
+						return ImageFactory.getImage("change"); //$NON-NLS-1$
+					return ImageFactory.getImage("blank"); //$NON-NLS-1$
 				}
 				
 			} else if (value instanceof ParameterizedCommand) {
@@ -884,12 +893,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final String contextId = binding.getContextId();
 		final String schemeId = binding.getSchemeId();
 		final KeySequence triggerSequence = binding.getKeySequence();
-		localChangeManager.removeBindings(triggerSequence, schemeId, contextId,
-				null, null, null, Binding.USER);
+		if (binding.getType()==Binding.USER) {
+			localChangeManager.removeBinding(binding);
+		} else {
 
 		// TODO This should be the user's personal scheme.
 		localChangeManager.addBinding(new KeyBinding(triggerSequence, null,
 				schemeId, contextId, null, null, null, Binding.USER));
+		}
 		update();
 	}
 
@@ -1232,6 +1243,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				
 		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_ADD);
 		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_REMOVE);
+		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_USER);
+		
 		
 		// Set up the providers for the viewer.
 		final TreeViewer viewer = filteredTree.getViewer();
@@ -1428,13 +1441,29 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					contextId = IContextIds.CONTEXT_ID_WINDOW;
 				}
 				if (object instanceof KeyBinding) {
-					// TODO
+					KeyBinding keyBinding = (KeyBinding) object;
+					if (!keyBinding.getContextId().equals(contextId)
+							|| !keyBinding.getKeySequence().equals(keySequence)) {
+						final KeyBinding binding = new KeyBinding(
+								keySequence,
+								keyBinding.getParameterizedCommand(),
+								IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+								contextId, null, null, null, Binding.USER);
 
+						if (keyBinding.getType()==Binding.USER) {
+							localChangeManager.removeBinding(keyBinding);
+						}
+						localChangeManager.addBinding(binding);
+						update();
+						filteredTree.getViewer().setSelection(
+								new StructuredSelection(new BindingTreeNode(
+										binding)), true);
+					}
 				} else if (object instanceof ParameterizedCommand) {
 					// TODO This should use the user's personal scheme.
 					final KeyBinding binding = new KeyBinding(keySequence,
 							(ParameterizedCommand) object,
-							"org.eclipse.ui.defaultAcceleratorConfiguration", //$NON-NLS-1$
+							IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
 							contextId, null, null, null, Binding.USER);
 					localChangeManager.addBinding(binding);
 					update();
@@ -1710,9 +1739,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					} catch (final NotDefinedException e) {
 						// It's probably okay to just let this one slide.
 					}
-					keySequenceText.setKeySequence(binding.getKeySequence());
 					whenCombo.setSelection(new StructuredSelection(
 							contextService.getContext(binding.getContextId())));
+					keySequenceText.setKeySequence(binding.getKeySequence());
+					
 
 				} else if (object instanceof ParameterizedCommand) {
 					final ParameterizedCommand command = (ParameterizedCommand) object;
@@ -1775,6 +1805,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				if (localChangeManager
 						.getActiveBindingsDisregardingContextFor(command).length > 0) {
 					commandItr.remove();
+					
 				}
 			}
 
@@ -1784,6 +1815,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		// Add the marked parameterized command, if any.
 		if (markedParameterizedCommand != null) {
 			bindings.add(markedParameterizedCommand);
+			markedParameterizedCommand=null;
 		}
 
 		// Check the grouping.
@@ -1916,6 +1948,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		columns[2].setWidth(150);
 		columns[3].setWidth(22);
 		columns[4].setWidth(22);
+		columns[5].setWidth(22);
 	}
 	
   
