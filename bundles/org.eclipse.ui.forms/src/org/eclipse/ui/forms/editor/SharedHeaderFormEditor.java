@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
+import org.eclipse.ui.internal.services.INestable;
 
 /**
  * A variation of {@link FormEditor}, this editor has a stable header that does
@@ -27,6 +34,9 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  */
 public abstract class SharedHeaderFormEditor extends FormEditor {
 	private HeaderForm headerForm;
+	
+	private boolean wasHeaderActive= true;
+	private Listener activationListener= null;
 
 	private static class HeaderForm extends ManagedForm {
 		public HeaderForm(FormEditor editor, ScrolledForm form) {
@@ -85,7 +95,75 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 	public IManagedForm getHeaderForm() {
 		return headerForm;
 	}
-
+	
+	protected void createPages() {
+		super.createPages();
+		
+		// preempt MultiPageEditorPart#createPartControl(Composite)
+		if (getActivePage() == -1) {
+			// create page control and initialize page, keep focus on header by calling super implementation
+			super.setActivePage(0);
+		}
+	}
+	
+	protected void setActivePage(int pageIndex) {
+		// programmatic focus change
+		wasHeaderActive= false;
+		super.setActivePage(pageIndex);
+	}
+	
+	public void setFocus() {
+		installActivationListener();
+		if (wasHeaderActive)
+			((ManagedForm) getHeaderForm()).setFocus();
+		else {
+			int index= getActivePage();
+			if (index == -1)
+				((ManagedForm) getHeaderForm()).setFocus();
+			else
+				super.setFocus();
+		}
+	}
+	
+	private void installActivationListener() {
+		if (activationListener == null) {
+			activationListener = new Listener() {
+				public void handleEvent(Event event) {
+					boolean wasHeaderActive = event.widget != getContainer();
+					
+					// fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=177331
+					int activePage = getActivePage();
+					if (SharedHeaderFormEditor.this.wasHeaderActive != wasHeaderActive && activePage != -1 && pages.get(activePage) instanceof IEditorPart) {
+						IEditorPart activePart = (IEditorPart) pages.get(activePage);
+						IKeyBindingService keyBindingService = getSite().getKeyBindingService();
+						
+						if (wasHeaderActive) {
+							
+							if (activePart.getSite() instanceof INestable)
+								((INestable) activePart.getSite()).deactivate();
+							
+							if (keyBindingService instanceof INestableKeyBindingService)
+								((INestableKeyBindingService) keyBindingService).activateKeyBindingService(null);
+							
+						} else {
+							
+							if (keyBindingService instanceof INestableKeyBindingService)
+								((INestableKeyBindingService) keyBindingService).activateKeyBindingService(activePart.getSite());
+							
+							if (activePart.getSite() instanceof INestable)
+								((INestable) activePart.getSite()).activate();
+							
+						}
+					}
+					
+					SharedHeaderFormEditor.this.wasHeaderActive = wasHeaderActive;
+				}
+			};
+			getContainer().addListener(SWT.Activate, activationListener);
+			getHeaderForm().getForm().getForm().getHead().addListener(SWT.Activate, activationListener);
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
