@@ -40,6 +40,8 @@ public class INavigatorContentServiceTests extends TestCase {
 	public static final String COMMON_NAVIGATOR_INSTANCE_ID = "org.eclipse.ui.tests.navigator.TestView";
 
 	public static final String TEST_EXTENSION_ID = "org.eclipse.ui.tests.navigator.testContent";
+	
+	public static final String ENFORCE_HASCHILDREN_EXTENSION_ID = "org.eclipse.ui.tests.navigator.testHasChildren";
 
 	public static final String TEST_EXTENSION_2_ID = "org.eclipse.ui.tests.navigator.testContent2";
 
@@ -219,12 +221,13 @@ public class INavigatorContentServiceTests extends TestCase {
 	public void testVisibleExtensionIds() {
 		String[] visibleIds = contentService.getVisibleExtensionIds();
 
-		assertEquals("There should be two visible extensions.", 2,
+		assertEquals("There should be three visible extensions.", 3,
 				visibleIds.length);
 
 		for (int i = 0; i < visibleIds.length; i++) {
 			if (!TEST_EXTENSION_ID.equals(visibleIds[i])
-					&& !RESOURCE_EXTENSION_ID.equals(visibleIds[i])) {
+					&& !RESOURCE_EXTENSION_ID.equals(visibleIds[i])
+					&& !ENFORCE_HASCHILDREN_EXTENSION_ID.equals(visibleIds[i])) {
 				assertTrue("The extension id is invalid:" + visibleIds[i],
 						false);
 			}
@@ -236,7 +239,8 @@ public class INavigatorContentServiceTests extends TestCase {
 		for (int i = 0; i < visibleIds.length; i++) {
 			if (!TEST_EXTENSION_ID.equals(visibleDescriptors[i].getId())
 					&& !RESOURCE_EXTENSION_ID.equals(visibleDescriptors[i]
-							.getId())) {
+							.getId())
+						&& !ENFORCE_HASCHILDREN_EXTENSION_ID.equals(visibleDescriptors[i].getId())) {
 				assertTrue("The extension id is invalid:"
 						+ visibleDescriptors[i].getId(), false);
 			}
