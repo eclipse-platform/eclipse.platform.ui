@@ -25,9 +25,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorViewerDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
+import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 import org.eclipse.ui.navigator.IPipelinedTreeContentProvider;
 
 /**
@@ -67,6 +69,8 @@ public class NavigatorContentServiceContentProvider implements
 	private final NavigatorContentService contentService;
 
 	private final boolean isContentServiceSelfManaged;
+	
+	private final boolean enforceHasChildren;
 
 	private Viewer viewer;
 
@@ -84,6 +88,8 @@ public class NavigatorContentServiceContentProvider implements
 	public NavigatorContentServiceContentProvider(String aViewerId) {
 		super();
 		contentService = new NavigatorContentService(aViewerId);
+		INavigatorViewerDescriptor vDesc = contentService.getViewerDescriptor();
+		enforceHasChildren = vDesc.getBooleanConfigProperty(NavigatorViewerDescriptor.PROP_ENFORCE_HAS_CHILDREN);
 		isContentServiceSelfManaged = true;
 	}
 
@@ -101,6 +107,8 @@ public class NavigatorContentServiceContentProvider implements
 		super();
 		contentService = aContentService;
 		isContentServiceSelfManaged = false;
+		INavigatorViewerDescriptor vDesc = contentService.getViewerDescriptor();
+		enforceHasChildren = vDesc.getBooleanConfigProperty(NavigatorViewerDescriptor.PROP_ENFORCE_HAS_CHILDREN);
 	}
 
 	/**
@@ -570,7 +578,7 @@ public class NavigatorContentServiceContentProvider implements
 		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
 			ext = (NavigatorContentExtension) itr.next();
-			if (!ext.isLoaded()) {
+			if (!ext.isLoaded() && !enforceHasChildren) {
 				return true;
 			} else if (ext.internalGetContentProvider().hasChildren(anElement)) {
 				return true;
@@ -646,7 +654,7 @@ public class NavigatorContentServiceContentProvider implements
 		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
 			ext = (NavigatorContentExtension) itr.next();
-			if (!ext.isLoaded())
+			if (!ext.isLoaded() && !enforceHasChildren)
 				return true;
 			ITreeContentProvider cp = ext.internalGetContentProvider();
 			if (cp instanceof ITreePathContentProvider) {

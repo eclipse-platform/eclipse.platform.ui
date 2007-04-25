@@ -32,6 +32,13 @@ import org.eclipse.ui.navigator.NavigatorActionService;
  */
 public final class NavigatorViewerDescriptor implements
 		INavigatorViewerDescriptor {
+	
+
+	/**
+	 * {@value} (boolean): True indicates the ITreeContentProvider.hasChildren() 
+	 * should force plugins to load if necessary <b>false</b>).
+	 */
+	public static final String PROP_ENFORCE_HAS_CHILDREN = "org.eclipse.ui.navigator.enforceHasChildren"; //$NON-NLS-1$
 
 	static final String TAG_INCLUDES = "includes"; //$NON-NLS-1$
 
@@ -59,7 +66,7 @@ public final class NavigatorViewerDescriptor implements
 
 	private final Properties properties = new Properties();
 
-	private Set dragAssistants;
+	private Set dragAssistants; 
 
 	/**
 	 * Creates a new content descriptor from a configuration element.
@@ -189,8 +196,9 @@ public final class NavigatorViewerDescriptor implements
 		}
 		return Boolean.valueOf(propValue).booleanValue();
 	}
+	 
 
-	/* package */void setProperty(String aPropertyName, String aPropertyValue) {
+	/* package */ void setProperty(String aPropertyName, String aPropertyValue) {
 		properties.setProperty(aPropertyName, aPropertyValue);
 	}
 
@@ -210,7 +218,7 @@ public final class NavigatorViewerDescriptor implements
 	 * @param newPopupMenuId
 	 *            The new popup menu id.
 	 */
-	/* package */void setPopupMenuId(String newPopupMenuId) {
+	/* package */ void setPopupMenuId(String newPopupMenuId) {
 
 		if (newPopupMenuId != null) {
 			if (popupMenuId != null) {
@@ -233,7 +241,7 @@ public final class NavigatorViewerDescriptor implements
 	 * @param descriptor
 	 *            A non-null descriptor to add
 	 */
-	void addDragAssistant(CommonDragAssistantDescriptor descriptor) {
+	/* package */ void addDragAssistant(CommonDragAssistantDescriptor descriptor) {
 		getDragAssistants().add(descriptor);
 
 	}
