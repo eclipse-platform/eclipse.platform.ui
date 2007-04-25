@@ -191,12 +191,19 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 							getTable().setTopIndex(idx);							
 							tableTopIndexSetComplete();		
 							
-							if (getTable().getTopIndex() != idx)
+							if (getTable().getTopIndex() != idx  )
 							{
 								if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-									System.out.println(">>> FAILED set top index, will retry : " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+									System.out.println(">>> FAILED set top index : " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
 
-								fPendingTopIndexKey = topIndexKey;
+								// only retry if we have pending updates
+								if (hasPendingUpdates())
+								{
+									if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
+										System.out.println(">>> Retry top index: " + ((BigInteger)topIndexKey).toString(16)); //$NON-NLS-1$
+
+									fPendingTopIndexKey = topIndexKey;
+								}
 							}														
 						}
 						else
