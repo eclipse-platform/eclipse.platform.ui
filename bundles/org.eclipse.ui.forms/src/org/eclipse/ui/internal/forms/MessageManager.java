@@ -171,7 +171,7 @@ public class MessageManager implements IMessageManager {
 		private String prefix;
 
 		ControlDecorator(Control control) {
-			this.decoration = new ControlDecoration(control, decorationPosition);
+			this.decoration = new ControlDecoration(control, decorationPosition, scrolledForm.getBody());
 		}
 
 		public boolean isDisposed() {
@@ -185,7 +185,7 @@ public class MessageManager implements IMessageManager {
 		void updatePosition() {
 			Control control = decoration.getControl();
 			decoration.dispose();
-			this.decoration = new ControlDecoration(control, decorationPosition);
+			this.decoration = new ControlDecoration(control, decorationPosition, scrolledForm.getBody());
 			update();
 		}
 
