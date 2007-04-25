@@ -13,5 +13,5 @@ Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
  CDC-1.0/Foundation-1.0,
  J2SE-1.3
-Export-Package: org.eclipse.ui.internal.net,
- org.eclipse.ui.internal.net.auth
+Export-Package: org.eclipse.ui.internal.net;x-internal:=true,
+ org.eclipse.ui.internal.net.auth;x-internal:=true
