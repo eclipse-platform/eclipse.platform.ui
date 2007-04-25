@@ -15,8 +15,6 @@ import java.util.StringTokenizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -524,14 +522,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		 * but do not want this to impact our performance tests. For this
 		 * reason we disable it when running the UI test application.
 		 */ 
-		boolean isInTestMode= false;
-		String[] commandArgs= Platform.getCommandLineArgs();
-		for (int i= 1; i < commandArgs.length; i= i + 2) {
-			if (commandArgs[i].equals("org.eclipse.pde.junit.runtime.uitestapplication")) { //$NON-NLS-1$
-				isInTestMode= true;
-				break;
-			}
-		}
+		boolean isInTestMode= System.getProperty("eclipse.perf.dbloc") != null; //$NON-NLS-1$
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, !isInTestMode);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
 		
