@@ -316,6 +316,31 @@ If the required action provider is disabled or unbound to the current viewer, th
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="priority" type="string">
+  			<annotation>
+               <documentation>
+                  Indicates the relative priority of this extension to other extensions. Used by the Common Navigator to handle sorting and organization of the contributed content from this extension in relation to content from other extensions. Defaults to &quot;normal&quot;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="lowest">
+                  </enumeration>
+                  <enumeration value="lower">
+                  </enumeration>
+                  <enumeration value="low">
+                  </enumeration>
+                  <enumeration value="normal">
+                  </enumeration>
+                  <enumeration value="high">
+                  </enumeration>
+                  <enumeration value="higher">
+                  </enumeration>
+                  <enumeration value="highest">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

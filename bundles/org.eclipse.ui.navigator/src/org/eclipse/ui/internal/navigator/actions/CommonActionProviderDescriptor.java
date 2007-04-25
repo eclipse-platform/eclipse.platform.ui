@@ -141,6 +141,14 @@ public class CommonActionProviderDescriptor implements
 			dependsOnId = configurationElement.getAttribute(ATT_DEPENDS_ON);
 
 			overridesId = configurationElement.getAttribute(ATT_OVERRIDES);
+			
+			if(priority == null) {
+				String prio = configurationElement.getAttribute(ATT_PRIORITY);
+				if(prio != null)
+					priority = Priority.get(prio);
+				else
+					priority = Priority.NORMAL;
+			}
 
 			IConfigurationElement[] children = configurationElement
 					.getChildren(TAG_ENABLEMENT);

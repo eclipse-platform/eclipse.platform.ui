@@ -138,6 +138,58 @@
             <instanceof value="org.eclipse.ui.navigator.INavigatorContentService"/>
          </filterExpression>
       </commonFilter>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.TestOverrideableActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
+            priority="normal">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+      </actionProvider>
+      <actionProvider
+            class="org.eclipse.ui.tests.navigator.TestOverrideableActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.TestOverridINGActionProvider1"
+            overrides="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
+            priority="high">
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+         </enablement>
+      </actionProvider>
+            <actionProvider
+            class="org.eclipse.ui.tests.navigator.TestOverrideableActionProvider"
+            id="org.eclipse.ui.tests.navigator.extension.TestOverridINGActionProvider2"
+            overrides="org.eclipse.ui.tests.navigator.extension.TestOverrideABLEActionProvider"
+            priority="higher">
+         <enablement>
+         	<and>
+            	<instanceof
+                 	value="org.eclipse.core.resources.IFile" />
+                <test property="org.eclipse.core.resources.extension" value="txt"/>
+            </and> 
+         </enablement>
+      </actionProvider>
+      <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testHasChildren" 
+            name="Dat File Content Extension"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.DatContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProvider"
+            activeByDefault="true"
+            priority="lower">
+         <triggerPoints>
+            <or> 
+            	<and>
+					<instanceof value="org.eclipse.core.resources.IFile" />
+                <test property="org.eclipse.core.resources.extension" value="dat"/>
+				</and>
+			</or> 
+         </triggerPoints> 
+         <possibleChildren> 
+         </possibleChildren> 
+	  </navigatorContent>      
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -163,15 +215,22 @@
             <property
                   name="org.eclipse.ui.navigator.hideCollapseAllAction"
                   value="true"/>  
+            <property
+                  name="org.eclipse.ui.navigator.enforceHasChildren"
+                  value="true"/> 
          </options>
       </viewer>
       <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.TestView">
          <includes>
             <contentExtension pattern="org.eclipse.ui.tests.navigator.testContent"/>
+            <contentExtension pattern="org.eclipse.ui.tests.navigator.testHasChildren"/>            
             <contentExtension pattern="org.eclipse.ui.navigator.resourceContent"/>
             <contentExtension pattern="org.eclipse.ui.tests.navigator.filters.*"/> 
             <!-- pick up the resource filters for free --> 
-            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/> 
+            <contentExtension pattern="org.eclipse.ui.navigator.resources.filters.*"/>
+            <actionExtension
+                  pattern="org.eclipse.ui.tests.navigator.extension.*">
+            </actionExtension> 
          </includes>
       </viewerContentBinding>
       
