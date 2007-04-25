@@ -14,6 +14,7 @@ package org.eclipse.core.internal.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.databinding.BindingException;
@@ -84,6 +85,12 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 			}
 			writeMethod.invoke(object, new Object[] { value });
 			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
+		} catch (InvocationTargetException e) {
+			/*
+			 * InvocationTargetException wraps any exception thrown by the
+			 * invoked method.
+			 */
+			throw new RuntimeException(e.getCause());
 		} catch (Exception e) {
 			if (BeansObservables.DEBUG) {
 				Policy
@@ -111,6 +118,12 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 				readMethod.setAccessible(true);
 			}
 			return readMethod.invoke(object, null);
+		} catch (InvocationTargetException e) {
+			/*
+			 * InvocationTargetException wraps any exception thrown by the
+			 * invoked method.
+			 */
+			throw new RuntimeException(e.getCause());
 		} catch (Exception e) {
 			if (BeansObservables.DEBUG) {
 				Policy
@@ -150,7 +163,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	public PropertyDescriptor getPropertyDescriptor() {
 		return propertyDescriptor;
 	}
-	
+
 	public synchronized void dispose() {
 		unhookListener();
 		super.dispose();

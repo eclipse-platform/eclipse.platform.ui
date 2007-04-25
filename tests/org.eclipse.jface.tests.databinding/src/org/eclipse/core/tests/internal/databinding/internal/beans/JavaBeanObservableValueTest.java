@@ -78,4 +78,64 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
     	bean.setValue(bean.getValue() + bean.getValue());
     	assertEquals(1, listener.count);
 	}
+
+	public void testSetValueThrowsExceptionThrownByBean() throws Exception {
+		ThrowsSetException temp = new ThrowsSetException();
+		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm
+				.getDefault(), temp,
+				new PropertyDescriptor("value", ThrowsSetException.class), ThrowsSetException.class);
+
+		try {
+			observable.setValue("");
+			fail("exception should have been thrown");
+		} catch (RuntimeException e) {	
+			assertEquals(temp.thrownException, e.getCause());
+		}
+	}
+	
+	public void testGetValueThrowsExceptionThrownByBean() throws Exception {
+		ThrowsGetException temp = new ThrowsGetException();
+		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm
+				.getDefault(), temp,
+				new PropertyDescriptor("value", ThrowsGetException.class), ThrowsGetException.class);
+
+		try {
+			observable.getValue();
+			fail("exception should have been thrown");
+		} catch (RuntimeException e) {	
+			assertEquals(temp.thrownException, e.getCause());
+		}
+	}
+	
+	/**
+	 * Throws an exception when the value is set.
+	 * 
+	 * @since 3.2
+	 */
+	/* package */ class ThrowsSetException {
+		private String value;
+		/* package */ NullPointerException thrownException;
+		
+		public void setValue(String value) {
+			throw thrownException = new NullPointerException();
+		}
+		
+		public String getValue() {
+			return value;
+		}
+	}
+	
+	/* package */ class ThrowsGetException {
+		public String value;
+		/* package */ NullPointerException thrownException;
+		
+		public String getValue() {
+			throw thrownException = new NullPointerException();
+		}
+		
+		public void setValue(String value) {
+			this.value = value;
+		}
+		
+	}
 }
