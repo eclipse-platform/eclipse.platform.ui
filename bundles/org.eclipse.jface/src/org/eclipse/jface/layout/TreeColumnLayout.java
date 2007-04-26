@@ -7,7 +7,7 @@
  *
  * Contributors:
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                               - fix for bug 178280
+ *                                               - fix for bug 178280, 183999
  *     IBM Corporation - API refactoring and general maintenance
  *******************************************************************************/
 
