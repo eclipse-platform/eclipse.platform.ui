@@ -28,10 +28,13 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.menus.UIElement;
 
@@ -215,8 +218,8 @@ public final class CommandService implements ICommandService {
 			return;
 		}
 		final IElementUpdater updater = (IElementUpdater) cmd.getHandler();
-		
-		if (commandCallbacks==null) {
+
+		if (commandCallbacks == null) {
 			return;
 		}
 
@@ -226,11 +229,21 @@ public final class CommandService implements ICommandService {
 		}
 
 		for (Iterator i = callbackRefs.iterator(); i.hasNext();) {
-			IElementReference callbackRef = (IElementReference) i.next();
-			Map parms = Collections
-					.unmodifiableMap(callbackRef.getParameters());
+			final IElementReference callbackRef = (IElementReference) i.next();
+			final Map parms = Collections.unmodifiableMap(callbackRef
+					.getParameters());
+			ISafeRunnable run = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					WorkbenchPlugin.log("Failed to update callback: "  //$NON-NLS-1$
+							+ callbackRef.getCommandId(), exception);
+				}
+
+				public void run() throws Exception {
+					updater.updateElement(callbackRef.getElement(), parms);
+				}
+			};
 			if (filter == null) {
-				updater.updateElement(callbackRef.getElement(), parms);
+				SafeRunner.run(run);
 			} else {
 				boolean match = true;
 				for (Iterator j = filter.entrySet().iterator(); j.hasNext()
@@ -242,7 +255,7 @@ public final class CommandService implements ICommandService {
 					}
 				}
 				if (match) {
-					updater.updateElement(callbackRef.getElement(), parms);
+					SafeRunner.run(run);
 				}
 			}
 		}
