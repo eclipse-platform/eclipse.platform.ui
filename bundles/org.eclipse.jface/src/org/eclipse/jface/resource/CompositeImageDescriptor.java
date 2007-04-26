@@ -73,7 +73,15 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 	final protected void drawImage(ImageData src, int ox, int oy) {
 		ImageData dst = imageData;
 		PaletteData srcPalette = src.palette;
-		ImageData srcMask = src.maskData != null ? src.getTransparencyMask() : null;
+		ImageData srcMask = null;
+		int alphaMask = 0, alphaShift = 0;
+		if (src.maskData != null) {
+			srcMask = src.getTransparencyMask ();
+			if (src.depth == 32) {
+				alphaMask = ~(srcPalette.redMask | srcPalette.greenMask | srcPalette.blueMask);
+				while (alphaMask != 0 && ((alphaMask >>> alphaShift) & 1) == 0) alphaShift++;
+			}
+		}
 		for (int srcY = 0, dstY = srcY + oy; srcY < src.height; srcY++, dstY++) {
 			for (int srcX = 0, dstX = srcX + ox; srcX < src.width; srcX++, dstX++) {
 				if (!(0 <= dstX && dstX < dst.width && 0 <= dstY && dstY < dst.height)) continue;
@@ -81,7 +89,7 @@ public abstract class CompositeImageDescriptor extends ImageDescriptor {
 				int srcAlpha = 255;
 				if (src.maskData != null) {
 					if (src.depth == 32) {
-						srcAlpha = srcPixel & 0xFF;
+						srcAlpha = (srcPixel & alphaMask) >>> alphaShift;
 						if (srcAlpha == 0) {
 							srcAlpha = srcMask.getPixel(srcX, srcY) != 0 ? 255 : 0;
 						}
