@@ -422,7 +422,7 @@ public class CommonViewer extends TreeViewer {
 				/* intercept and apply the update */ 
 				for (Iterator iter = update.getRefreshTargets().iterator(); iter
 						.hasNext();) {
-					super.refresh(iter.next(), true);
+					super.update(iter.next(), properties);
 				}
 			} else {
 				super.update(element, properties);
