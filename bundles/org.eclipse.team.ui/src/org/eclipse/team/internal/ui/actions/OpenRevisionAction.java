@@ -11,25 +11,20 @@
 
 package org.eclipse.team.internal.ui.actions;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
-import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.ui.history.HistoryPage;
-import org.eclipse.ui.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.BaseSelectionListenerAction;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.progress.IProgressService;
 
 public class OpenRevisionAction extends BaseSelectionListenerAction {
@@ -58,19 +53,8 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 				} else {
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							IStorage file;
 							try {
-								file = revision.getStorage(monitor);
-								String id = getEditorID(file.getName(), file.getContents());
-								
-								if (file instanceof IFile) {
-									//if this is the current workspace file, open it
-									IDE.openEditor(page.getSite().getPage(), (IFile) file);
-								} else {
-									FileRevisionEditorInput fileRevEditorInput = FileRevisionEditorInput.createEditorInputFor(revision, monitor); 
-									if (!editorAlreadyOpenOnContents(fileRevEditorInput))
-										page.getSite().getPage().openEditor(fileRevEditorInput, id);
-								}
+								Utils.openEditor(page.getSite().getPage(), revision, monitor);
 							} catch (CoreException e) {
 								throw new InvocationTargetException(e);
 							}
@@ -90,32 +74,6 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 			}
 	}
 	
-	/* private */ String getEditorID(String fileName, InputStream contents) {
-		IWorkbench workbench = TeamUIPlugin.getPlugin().getWorkbench();
-		IEditorRegistry registry = workbench.getEditorRegistry();
-		IContentType type = null;
-		if (contents != null) {
-			try {
-				type = Platform.getContentTypeManager().findContentTypeFor(contents, fileName);
-			} catch (IOException e) {
-
-			}
-		}
-		if (type == null) {
-			type = Platform.getContentTypeManager().findContentTypeFor(fileName);
-		}
-		IEditorDescriptor descriptor = registry.getDefaultEditor(fileName, type);
-		String id;
-		if (descriptor == null ||
-			descriptor.isOpenExternal()) {
-			id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
-		} else {
-			id = descriptor.getId();
-		}
-
-		return id;
-	}
-
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
 		return shouldShow();
@@ -144,26 +102,6 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 		}
 		
 		return true;
-	}
-	
-	
-	private boolean editorAlreadyOpenOnContents(FileRevisionEditorInput input) {
-		IEditorReference[] editorRefs = page.getSite().getPage().getEditorReferences();	
-		for (int i = 0; i < editorRefs.length; i++) {
-			IEditorPart part = editorRefs[i].getEditor(false);
-			if(part != null 
-			   && part.getEditorInput() instanceof FileRevisionEditorInput) {
-				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
-				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
-				
-				if (inputRevision.equals(editorRevision)){
-					//make the editor that already contains the revision current
-					page.getSite().getPage().activate(part);
-					return true;
-				}
-			}
-		}
-		return false;
 	}
 
 }

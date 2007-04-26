@@ -72,4 +72,14 @@
             class="org.eclipse.team.tests.ccvs.core.mappings.TestModelProvider"
             name="CVS Test Model"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.team.tests.ccvs.ui.TestEditor"
+            extensions="cvsTest"
+            icon="icons/sample.gif"
+            id="org.eclipse.team.tests.cvs.core.editor1"
+            name="CVS Test Editor">
+      </editor>
+   </extension>
 </plugin>

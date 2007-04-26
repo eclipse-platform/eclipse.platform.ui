@@ -14,19 +14,13 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,6 +33,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -679,49 +674,14 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		return console;
 	}
     
-    public void openEditor(ICVSRemoteFile file, IProgressMonitor monitor) throws InvocationTargetException {
+    public IEditorPart openEditor(ICVSRemoteFile file, IProgressMonitor monitor) throws InvocationTargetException {
         IWorkbench workbench = getWorkbench();
-        IEditorRegistry registry = workbench.getEditorRegistry();
         IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-        String filename = file.getName();
-        InputStream contents = null;
         try {
-            contents = file.getContents(monitor);
-        } catch (TeamException e) {
-            CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind("An error occurred fetching the contents of file {0}", new String[] { file.getRepositoryRelativePath()}, e))); //$NON-NLS-1$
-
-        }
-        IContentType type = null;
-        if (contents != null) {
-            try {
-                type = Platform.getContentTypeManager().findContentTypeFor(contents, filename);
-            } catch (IOException e) {
-                CVSUIPlugin.log(new CVSStatus(IStatus.ERROR, NLS.bind("An error occurred reading the contents of file {0}", new String[] { file.getRepositoryRelativePath()}, e))); //$NON-NLS-1$
-            }
-        }
-        if (type == null) {
-            type = Platform.getContentTypeManager().findContentTypeFor(filename);
-        }
-        IEditorDescriptor descriptor = registry.getDefaultEditor(filename, type);
-        String id;
-        if (descriptor == null) {
-            id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
-        } else {
-            id = descriptor.getId();
-        }
-        try {
-            try {
-                page.openEditor(new RemoteFileEditorInput(file, monitor), id);
-            } catch (PartInitException e) {
-                if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
-                    throw e;
-                } else {
-                    page.openEditor(new RemoteFileEditorInput(file, monitor), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
-                }
-            }
-        } catch (PartInitException e) {
-            throw new InvocationTargetException(e);
-        }
+			return Utils.openEditor(page, (IFileRevision)file.getAdapter(IFileRevision.class), monitor);
+		} catch (CoreException e) {
+			throw new InvocationTargetException(e);
+		}
     }
 
 	/**

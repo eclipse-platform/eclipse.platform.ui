@@ -18,9 +18,10 @@ import java.util.List;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -44,6 +45,7 @@ import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.mapping.CompoundResourceTraversal;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
@@ -51,6 +53,8 @@ import org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IContributorResourceAdapter2;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class Utils {
@@ -65,9 +69,12 @@ public class Utils {
 
 		/**
 		 * Returns true is elementTwo is 'greater than' elementOne This is the
-		 * 'ordering' method of the sort operation. Each subclass overides this
+		 * 'ordering' method of the sort operation. Each subclass overrides this
 		 * method with the particular implementation of the 'greater than'
 		 * concept for the objects being sorted.
+		 * @param elementOne element 1
+		 * @param elementTwo element 2
+		 * @return whether element 2 is greater that element 1
 		 */
 		public abstract boolean compare(Object elementOne, Object elementTwo);
 
@@ -101,6 +108,8 @@ public class Utils {
 		/**
 		 * Return a new sorted collection from this unsorted collection. Sort
 		 * using quick sort.
+		 * @param unSortedCollection the original collection
+		 * @return the sorted collection
 		 */
 		public Object[] sort(Object[] unSortedCollection) {
 			int size = unSortedCollection.length;
@@ -408,6 +417,10 @@ public class Utils {
 
 	/**
 	 * Initialize the given Action from a ResourceBundle.
+	 * @param a the action
+	 * @param prefix the bundle key prefix
+	 * @param bundle the bundle
+	 * @param bindings additional input to the action label
 	 */
 	public static void initAction(IAction a, String prefix, ResourceBundle bundle, String[] bindings) {
 		String labelKey = "label"; //$NON-NLS-1$
@@ -632,6 +645,7 @@ public class Utils {
 	/**
 	 * This method returns all out-of-sync SyncInfos that are in the current
 	 * selection.
+	 * @param selected the selected objects
 	 * 
 	 * @return the list of selected sync infos
 	 */
@@ -948,4 +962,110 @@ public class Utils {
 		}
 		return traversal.asTraversals();
 	}
+
+	public static IEditorPart openEditor(IWorkbenchPage page, IFileRevision revision, IProgressMonitor monitor) throws CoreException {
+		IStorage file = revision.getStorage(monitor);
+		if (file instanceof IFile) {
+			//if this is the current workspace file, open it
+			return IDE.openEditor(page, (IFile) file);
+		} else {
+			FileRevisionEditorInput fileRevEditorInput = FileRevisionEditorInput.createEditorInputFor(revision, monitor);
+			IEditorPart part = findEditor(page, fileRevEditorInput);
+			if (part == null)
+				part = openEditor(page, fileRevEditorInput);
+			return part;
+		}
+	}
+	
+	public static IEditorPart openEditor(IWorkbenchPage page, FileRevisionEditorInput editorInput) throws PartInitException {
+		String id = getEditorId(editorInput);
+		try {
+			IEditorPart part = page.openEditor(editorInput, id);
+			if (part instanceof ErrorEditorPart) {
+				page.closeEditor(part, false);
+				part = null;
+			}
+			if (part == null) {
+				throw new PartInitException(NLS.bind(TeamUIMessages.Utils_17, id));
+			}
+			return part;
+		} catch (PartInitException e) {
+			if (id.equals("org.eclipse.ui.DefaultTextEditor")) { //$NON-NLS-1$
+				throw e;
+			} else {
+				return page.openEditor(editorInput,"org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
+			}
+		}
+	}
+
+	private static String getEditorId(FileRevisionEditorInput editorInput) {
+		String id = getEditorId(editorInput.getFileRevision().getName(), getContentType(editorInput));
+		return id;
+	}
+
+	private static IContentType getContentType(FileRevisionEditorInput editorInput) {
+		IContentType type = null;
+		try {
+			InputStream contents = editorInput.getStorage().getContents();
+			try {
+				type = getContentType(editorInput.getFileRevision().getName(), contents);
+			} finally {
+				try {
+					contents.close();
+				} catch (IOException e) {
+					// ignore
+				}
+			}
+		} catch (CoreException e) {
+			TeamUIPlugin.log(IStatus.ERROR, NLS.bind("An error occurred reading the contents of file {0}", new String[] { editorInput.getName() }), e); //$NON-NLS-1$
+		}
+		return type;
+	}
+	
+	private static IContentType getContentType(String fileName, InputStream contents) {
+		IContentType type = null;
+		if (contents != null) {
+			try {
+				type = Platform.getContentTypeManager().findContentTypeFor(contents, fileName);
+			} catch (IOException e) {
+				TeamUIPlugin.log(IStatus.ERROR, NLS.bind("An error occurred reading the contents of file {0}", fileName), e); //$NON-NLS-1$
+			}
+		}
+		if (type == null) {
+			type = Platform.getContentTypeManager().findContentTypeFor(fileName);
+		}
+		return type;
+	}
+
+	private static String getEditorId(String fileName, IContentType type) {
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+		IEditorDescriptor descriptor = registry.getDefaultEditor(fileName, type);
+		String id;
+		if (descriptor == null || descriptor.isOpenExternal()) {
+			id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+		} else {
+			id = descriptor.getId();
+		}
+		return id;
+	}
+	
+	private static IEditorPart findEditor(IWorkbenchPage page, FileRevisionEditorInput input) {
+		IEditorReference[] editorRefs = page.getEditorReferences();	
+		for (int i = 0; i < editorRefs.length; i++) {
+			IEditorPart part = editorRefs[i].getEditor(false);
+			if(part != null 
+			   && part.getEditorInput() instanceof FileRevisionEditorInput) {
+				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
+				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
+				
+				if (inputRevision.equals(editorRevision)){
+					//make the editor that already contains the revision current
+					page.activate(part);
+					return part;
+				}
+			}
+		}
+		return null;
+	}
+
 }
