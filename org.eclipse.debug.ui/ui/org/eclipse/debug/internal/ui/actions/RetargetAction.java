@@ -52,7 +52,6 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 		public boolean isEmpty() {
 			return true;
 		}
-		
 	}
 	
 	/**
@@ -103,7 +102,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 				} else {
 					String message = getOperationUnavailableMessage();
 					IStatus status = new Status(IStatus.INFO, DebugUIPlugin.getUniqueIdentifier(), message);
-					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.RetargetAction_1, message, status);
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIPlugin.removeAccelerators(action.getText()), message, status);
 				}
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(fWindow.getShell(), ActionMessages.RetargetAction_2, ActionMessages.RetargetAction_3, e.getStatus()); // 
