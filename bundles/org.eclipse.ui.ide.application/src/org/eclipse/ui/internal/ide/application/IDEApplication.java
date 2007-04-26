@@ -68,6 +68,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
     private static final Integer EXIT_RELAUNCH = new Integer(24);
 
     /**
+     * The ID of the application plug-in
+     */
+	public static final String PLUGIN_ID = "org.eclipse.ui.ide.application"; //$NON-NLS-1$
+
+    /**
      * Creates a new IDE application.
      */
     public IDEApplication() {
