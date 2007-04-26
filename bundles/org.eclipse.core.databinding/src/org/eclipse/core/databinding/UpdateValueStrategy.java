@@ -62,16 +62,18 @@ import org.eclipse.core.runtime.Status;
  * </p>
  * <p>
  * Conversion:<br/> A {@link IConverter converter} will convert the value from
- * the type of the initiating observable into the type of the receiver.
+ * the type of the source observable into the type of the destination. The
+ * strategy has the ability to default converters for common scenarios.
  * </p>
  * <p>
- * Automatic processing:<br/> The processing to perform when the initiating
+ * Automatic processing:<br/> The processing to perform when the source
  * observable changes. This behavior is configured via policies provided on
  * construction of the strategy (e.g. {@link #POLICY_NEVER},
  * {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
  * 
- * @see DataBindingContext#bindValue(IObservableValue, IObservableValue, UpdateValueStrategy, UpdateValueStrategy)
+ * @see DataBindingContext#bindValue(IObservableValue, IObservableValue,
+ *      UpdateValueStrategy, UpdateValueStrategy)
  * @see Binding#getValidationStatus()
  * @see IValidator
  * @see IConverter
@@ -182,6 +184,13 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Converts the value from the source type to the destination type.
+	 * <p>
+	 * Default implementation will use the
+	 * {@link #setConverter(IConverter) converter} if one exists. If no
+	 * converter exists no conversion occurs.
+	 * </p>
+	 * 
 	 * @param value
 	 * @return the converted value
 	 */
@@ -308,6 +317,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Sets the validator to be invoked after the source value is converted to
+	 * the type of the destination observable.
+	 * 
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -317,6 +329,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Sets the validator to be invoked after the source value is retrieved at
+	 * the beginning of the synchronization process.
+	 * 
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -326,6 +341,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Sets the validator to be invoked before the value is to be set on the
+	 * destination at the end of the synchronization process.
+	 * 
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -335,6 +353,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Sets the converter to be invoked when converting from the source type to
+	 * the destination type.
+	 * 
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -344,6 +365,13 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Validates the value after it is converted.
+	 * <p>
+	 * Default implementation will use the
+	 * {@link #setAfterConvertValidator(IValidator) validator} if one exists. If
+	 * one does not exist no validation will occur.
+	 * </p>
+	 * 
 	 * @param value
 	 * @return an ok status
 	 */
@@ -353,6 +381,13 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Validates the value after it is retrieved from the source.
+	 * <p>
+	 * Default implementation will use the
+	 * {@link #setAfterGetValidator(IValidator) validator} if one exists. If one
+	 * does not exist no validation will occur.
+	 * </p>
+	 * 
 	 * @param value
 	 * @return an ok status
 	 */
@@ -362,6 +397,13 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Validates the value before it is set on the destination.
+	 * <p>
+	 * Default implementation will use the
+	 * {@link #setBeforeSetValidator(IValidator) validator} if one exists. If
+	 * one does not exist no validation will occur.
+	 * </p>
+	 * 
 	 * @param value
 	 * @return an ok status
 	 */
@@ -376,7 +418,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * 
 	 * @param observableValue
 	 * @param value
-	 * @return TODO
+	 * @return status
 	 */
 	protected IStatus doSet(IObservableValue observableValue, Object value) {
 		try {

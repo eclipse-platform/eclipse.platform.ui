@@ -27,10 +27,28 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * A context for binding observable objects.
+ * A DataBindingContext is the point of contact for the creation and management of
+ * {@link Binding bindings}.
+ * <p>
+ * A DataBindingContext provides the following abilities:
+ * <ul>
+ * <li>Ability to create bindings between
+ * {@link IObservableValue observable values}.</li>
+ * <li>Ability to create bindings between
+ * {@link IObservableList observable lists}.</li>
+ * <li>Access to the bindings created by the instance.</li>
+ * <li>Access to the validation status of its bindings.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Multiple contexts can be used at any point in time. One strategy for the
+ * management of contexts is the aggregation of validation statuses. For example
+ * an <code>IWizardPage</code> could use a single context and the statuses
+ * could be aggregated to set the page status and fulfillment. Each page in the
+ * <code>IWizard</code> would have its own context instance.
+ * </p>
  * 
  * @since 1.0
- * 
  */
 public class DataBindingContext {
 	private WritableList bindings;
@@ -74,11 +92,25 @@ public class DataBindingContext {
 	}
 
 	/**
+	 * Creates a {@link Binding} to synchronize the values of two
+	 * {@link IObservableValue observable values}. During synchronization
+	 * validation and conversion can be employed to customize the process. For
+	 * specifics on the customization of the process see
+	 * {@link UpdateValueStrategy}.
+	 * 
 	 * @param targetObservableValue
+	 *            target value, commonly a UI widget
 	 * @param modelObservableValue
+	 *            model value
 	 * @param targetToModel
+	 *            strategy to employ when the target is the source of the change
+	 *            and the model is the destination
 	 * @param modelToTarget
-	 * @return a binding
+	 *            strategy to employ when the model is the source of the change
+	 *            and the target is the destination
+	 * @return created binding
+	 * 
+	 * @see UpdateValueStrategy
 	 */
 	public final Binding bindValue(IObservableValue targetObservableValue,
 			IObservableValue modelObservableValue,
@@ -123,13 +155,25 @@ public class DataBindingContext {
 	}
 	
 	/**
-	 * Binds two observable lists using the given update list strategies.
+	 * Creates a {@link Binding} to synchronize the values of two
+	 * {@link IObservableList observable lists}. During synchronization
+	 * validation and conversion can be employed to customize the process. For
+	 * specifics on the customization of the process see
+	 * {@link UpdateListStrategy}.
 	 * 
 	 * @param targetObservableList
+	 *            target list, commonly a list representing a list in the UI
 	 * @param modelObservableList
-	 * @param targetToModel 
-	 * @param modelToTarget TODO
-	 * @return a Binding synchronizing the state of the two observables
+	 *            model list
+	 * @param targetToModel
+	 *            strategy to employ when the target is the source of the change
+	 *            and the model is the destination
+	 * @param modelToTarget
+	 *            strategy to employ when the model is the source of the change
+	 *            and the target is the destination
+	 * @return created binding
+	 * 
+	 * @see UpdateListStrategy
 	 */
 	public final Binding bindList(IObservableList targetObservableList,
 			IObservableList modelObservableList,
@@ -185,8 +229,8 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an unmodifiable observable list with elements of type {@link Binding},
-	 * ordered by time of addition.
+	 * Returns an unmodifiable observable list with elements of type
+	 * {@link Binding}, ordered by time of addition.
 	 * 
 	 * @return the observable list containing all bindings
 	 */
