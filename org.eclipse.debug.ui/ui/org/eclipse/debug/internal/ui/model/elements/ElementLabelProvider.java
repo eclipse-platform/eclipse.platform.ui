@@ -28,12 +28,18 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * @since 3.3
+ * Implementation of a context sensitive label provider, which provides
+ * base functionality for subclasses such as label jobs and a basic label updater. 
+ * 
+ * @since 3.3.0.qualifier
  */
 public abstract class ElementLabelProvider implements IElementLabelProvider {
 
 	private Job fLabelJob = null;
 	
+	/**
+	 * Describes a label job
+	 */
 	interface ILabelJob {
 		/**
 		 * Returns whether the updates were queued.
@@ -44,6 +50,10 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		public boolean queue(ILabelUpdate[] updates);
 	}
 	
+	/**
+	 * A <code>Job</code> to update labels. This <code>Job</code> can run
+	 * in a non-UI thread.
+	 */
 	class LabelJob extends Job implements ILabelJob {
 		
 		private LabelUpdater fUpdater = new LabelUpdater();
@@ -77,6 +87,10 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		
 	}
 	
+	/**
+	 * A <code>Job</code> to update labels. This <code>Job</code> runs
+	 * only in the UI thread.
+	 */
 	class UILabelJob extends UIJob implements ILabelJob {
 		
 		private LabelUpdater fUpdater = new LabelUpdater();
@@ -143,6 +157,11 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			}
 		}
 		
+		/**
+		 * Returns the next update to process, if there is one in the 
+		 * queue. If there are no queued items <code>null</code> is returned
+		 * @return the next queued item or <code>null</code> if the queue is empty.
+		 */
 		public synchronized ILabelUpdate getNextUpdate() {
 			if (fQueue == null) {
 				return null;
@@ -188,6 +207,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	}
 
 	/**
+	 * Returns the <code>FontData</code> for the path in the given column with the current presentation
 	 * @param element
 	 * @param presentationContext
 	 * @param columnId
@@ -198,6 +218,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	}
 
 	/**
+	 * Returns the <code>RGB</code> foreground colour for the path in the given column with the current presentation
 	 * @param element
 	 * @param presentationContext
 	 * @param columnId
@@ -208,6 +229,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	}
 
 	/**
+	 * Returns the <code>RGB</code> background colour for the path in the given column with the current presentation
 	 * @param element
 	 * @param presentationContext
 	 * @param columnId
@@ -218,6 +240,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	}
 
 	/**
+	 * Returns the <code>ImageDescriptor</code> for the path in the given column with the current presentation
 	 * @param element
 	 * @param presentationContext
 	 * @param columnId
@@ -228,6 +251,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	}
 
 	/**
+	 * Returns the label for the path in the given column with the current presentation
 	 * @param element
 	 * @param presentationContext
 	 * @param columnId
@@ -250,6 +274,13 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		fLabelJob.schedule();
 	}
     
+    /**
+     * Returns a new <code>Job</code> to update the specified labels. This method
+     * is used to determine if a UI job is needed or not, in the event the request for an update
+     * job has come from a non-UI thread.
+     * @param updates an array of pending label updates
+     * @return a new <code>Job</code> to update labels with.
+     */
     private Job newLabelJob(ILabelUpdate[] updates) {
     	if (requiresUIJob(updates)) {
 			return new UILabelJob();
@@ -260,6 +291,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
     
     /** 
      * Returns whether a UI job should be used for updates versus a non-UI job.
+     * @param updates
+     * @return true if the array of updates requires a UI job to update the labels, false otherwise
      */
     protected boolean requiresUIJob(ILabelUpdate[] updates) {
     	return false;
