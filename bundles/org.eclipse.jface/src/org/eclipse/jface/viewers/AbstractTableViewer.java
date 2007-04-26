@@ -357,11 +357,12 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			if (columnCount == 0)
 				columnCount = 1;// If there are no columns do the first one
 
+			ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
 			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
 				ViewerColumn columnViewer = getViewerColumn(column);
-				columnViewer.refresh(updateCell(getViewerRowFromItem(item),
+				columnViewer.refresh(updateCell(viewerRowFromItem,
 						column, element));
 
 				// As it is possible for user code to run the event
@@ -382,14 +383,16 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
+		int columnCount = doGetColumnCount();
+
 		if (columnIndex < 0
-				|| (columnIndex > 0 && columnIndex >= doGetColumnCount())) {
+				|| (columnIndex > 0 && columnIndex >= columnCount)) {
 			return null;
 		}
 
-		if (doGetColumnCount() == 0)// Hang it off the table if it
+		if (columnCount == 0)// Hang it off the table if it
 			return getControl();
-
+		
 		return doGetColumn(columnIndex);
 	}
 
@@ -676,7 +679,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				// we also need to reset the item (set its text,images etc. to
 				// default values) because the label decorators rely on this
 				disassociate(item);
-				doResetItem(item);
+				doClear(i);
 			}
 		}
 		// dispose of all items beyond the end of the current elements

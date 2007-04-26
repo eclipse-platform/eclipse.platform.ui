@@ -129,7 +129,10 @@ public class TableViewerRow extends ViewerRow {
 	 * @see org.eclipse.jface.viewers.ViewerRow#setImage(int, org.eclipse.swt.graphics.Image)
 	 */
 	public void setImage(int columnIndex, Image image) {
-		item.setImage(columnIndex,image);
+		Image oldImage = item.getImage(columnIndex);
+		if (oldImage != image) {
+			item.setImage(columnIndex,image);
+		}
 	}
 
 	/* (non-Javadoc)

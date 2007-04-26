@@ -35,9 +35,7 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 		Object element = cell.getElement();
 		cell.setText(getText(element));
 		Image image = getImage(element);
-		if (image != cell.getImage()) {
-			cell.setImage(image);
-		}
+		cell.setImage(image);
 		cell.setBackground(getBackground(element));
 		cell.setForeground(getForeground(element));
 		cell.setFont(getFont(element));

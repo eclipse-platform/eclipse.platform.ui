@@ -163,9 +163,7 @@ class WrappedViewerLabelProvider extends ColumnLabelProvider {
 			// inlined super implementation with performance optimizations
 			cell.setText(getText(element));
 			Image image = getImage(element);
-			if (image != cell.getImage()) {
-				cell.setImage(image);
-			}
+			cell.setImage(image);
 			if (colorProvider != null) {
 				cell.setBackground(getBackground(element));
 				cell.setForeground(getForeground(element));
