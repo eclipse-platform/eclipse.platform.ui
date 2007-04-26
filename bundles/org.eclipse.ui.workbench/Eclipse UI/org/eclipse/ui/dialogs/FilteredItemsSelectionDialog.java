@@ -1481,7 +1481,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				List elements = Arrays
 						.asList(contentProvider.getElements(null));
 				for (int i = 0; i < selectionIndices.length; i++) {
-					if (elements.size() > i
+					if (elements.size() > selectionIndices[i]
 							&& element
 									.equals(elements.get(selectionIndices[i]))) {
 						str = selectionDecorator.decorateText(str, element);
