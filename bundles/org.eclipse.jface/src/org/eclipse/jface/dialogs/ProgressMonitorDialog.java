@@ -205,7 +205,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			if (s.length() <= 0) {
 				s = DEFAULT_TASKNAME;
 			}
-			setMessage(s,false);
+			setMessage(s, false);
 			if (!forked) {
 				update();
 			}
@@ -272,7 +272,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * Clear blocked state from the receiver.
 	 */
 	protected void updateForClearBlocked() {
-		setMessage(task,true);
+		setMessage(task, true);
 		imageLabel.setImage(getImage());
 	}
 
@@ -283,7 +283,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 *            IStatus that gives the details
 	 */
 	protected void updateForSetBlocked(IStatus reason) {
-		setMessage(reason.getMessage(),true);
+		setMessage(reason.getMessage(), true);
 		imageLabel.setImage(getImage());
 	}
 
@@ -391,7 +391,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 				// visibility
 				shell.getDisplay().asyncExec(new Runnable() {
 					public void run() {
-						setMessage(message,true);
+						setMessage(message, true);
 					}
 				});
 			}
@@ -427,7 +427,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
-		setMessage(DEFAULT_TASKNAME,false);
+		setMessage(DEFAULT_TASKNAME, false);
 		createMessageArea(parent);
 		// Only set for backwards compatibility
 		taskLabel = messageLabel;
@@ -661,6 +661,12 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 				return OK;
 			}
 		}
-		return super.open();
+		int result = super.open();
+		// update message label just in case beginTask() has been invoked already
+		if (task == null || task.length() == 0)
+			setMessage(DEFAULT_TASKNAME, true);
+		else
+			setMessage(task, true);
+		return result;
 	}
 }
