@@ -68,14 +68,14 @@ public class CommonFiltersTab extends CustomizationTab {
 		super(parent, aContentService);
 		createControl();
 	} 
+	  
+	private void createControl() {  
 
-	private  void createControl() {  
-
+		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_filters_to_apply);
+		
 		createPatternFilterText(this);
 		
 		createTable(); 
-
-		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_filters_to_apply);
 
 		getTableViewer().setContentProvider(filterContentProvider);
 		getTableViewer().setLabelProvider(filterLabelProvider);

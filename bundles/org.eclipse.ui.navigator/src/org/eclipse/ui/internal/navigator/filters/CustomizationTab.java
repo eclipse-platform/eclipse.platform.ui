@@ -93,6 +93,7 @@ public class CustomizationTab extends Composite {
 	}
 
 	protected void createInstructionsLabel(String labelText) {
+		 
 		Label extensionsInstructionLabel = new Label(this, SWT.BOLD | SWT.WRAP);
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL

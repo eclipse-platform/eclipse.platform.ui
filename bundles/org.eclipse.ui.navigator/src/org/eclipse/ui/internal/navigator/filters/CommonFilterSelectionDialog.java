@@ -20,19 +20,25 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -45,8 +51,11 @@ import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
  * 
  */
 public class CommonFilterSelectionDialog extends Dialog {
-  
-	private static final int TAB_WIDTH_IN_DLUS = 200;
+   
+	private static final String FILTER_ICON = "icons/full/elcl16/filter_ps.gif"; //$NON-NLS-1$
+	private static final String CONTENT_ICON = "icons/full/elcl16/content.gif"; //$NON-NLS-1$
+
+	private static final int TAB_WIDTH_IN_DLUS = 300;
 
 	private static final int TAB_HEIGHT_IN_DLUS = 150;
 
@@ -54,7 +63,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private final INavigatorContentService contentService;
 
-	private TabFolder customizationsTabFolder;
+	private CTabFolder customizationsTabFolder;
 
 	private CommonFiltersTab commonFiltersTab;
 
@@ -62,15 +71,15 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private Text descriptionText;
 
-	private ISelectionChangedListener updateDescriptionSelectionListener;
+	private ISelectionChangedListener updateDescriptionSelectionListener; 
 
 	protected CommonFilterSelectionDialog(CommonViewer aCommonViewer) {
 		super(aCommonViewer.getControl().getShell());
 		setShellStyle(SWT.RESIZE | getShellStyle());
 
 		commonViewer = aCommonViewer;
-		contentService = commonViewer.getNavigatorContentService();
-	}
+		contentService = commonViewer.getNavigatorContentService(); 
+	} 
 
 	/*
 	 * (non-Javadoc)
@@ -78,6 +87,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		 
 		getShell()
 				.setText(
 						CommonNavigatorMessages.CommonFilterSelectionDialog_Available_customization_);
@@ -92,7 +102,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 		createTabItem(
 				customizationsTabFolder,
 				CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Filters,
-				commonFiltersTab);
+				commonFiltersTab, FILTER_ICON);
+		
 
 		boolean hideExtensionsTab = contentService.getViewerDescriptor()
 				.getBooleanConfigProperty(
@@ -105,7 +116,8 @@ public class CommonFilterSelectionDialog extends Dialog {
 			createTabItem(
 					customizationsTabFolder,
 					CommonNavigatorMessages.CommonFilterSelectionDialog_Available_Content,
-					contentExtensionsTab);
+					contentExtensionsTab, CONTENT_ICON);
+			
 		}
 
 		createDescriptionText(superComposite);
@@ -118,12 +130,12 @@ public class CommonFilterSelectionDialog extends Dialog {
 			contentExtensionsTab
 					.addSelectionChangedListener(getSelectionListener());
 		}
-
+		
 		return customizationsTabFolder;
 	}
 
 	private void createCustomizationsTabFolder(Composite superComposite) {
-		customizationsTabFolder = new TabFolder(superComposite, SWT.RESIZE);
+		customizationsTabFolder = new CTabFolder (superComposite, SWT.RESIZE);
  
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
@@ -132,7 +144,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 		customizationsTabFolder.setLayout(new GridLayout());
 		customizationsTabFolder.setLayoutData(gd);
 
-		customizationsTabFolder.setFont(superComposite.getFont());
+		customizationsTabFolder.setFont(superComposite.getFont()); 
 
 		customizationsTabFolder.addSelectionListener(new SelectionListener() {
 
@@ -147,13 +159,27 @@ public class CommonFilterSelectionDialog extends Dialog {
 			}
 
 		});
+	  
+		customize();
+
 	}
 
-	private void createTabItem(TabFolder aTabFolder, String label,
-			Composite composite) {
-		TabItem extensionsTabItem = new TabItem(aTabFolder, SWT.NONE);
+	private void customize() {
+		ColorRegistry reg = JFaceResources.getColorRegistry();
+		Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
+		  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
+		customizationsTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
+		customizationsTabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
+		customizationsTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+	}
+
+	private CTabItem createTabItem(CTabFolder aTabFolder, String label,
+			Composite composite, String imageKey) {
+		CTabItem extensionsTabItem = new CTabItem(aTabFolder, SWT.BORDER);
 		extensionsTabItem.setText(label);
- 		extensionsTabItem.setControl(composite);
+ 		extensionsTabItem.setControl(composite); 
+ 		extensionsTabItem.setImage(NavigatorPlugin.getDefault().getImage(imageKey));
+ 		return extensionsTabItem;
 	}
 
 	private void createDescriptionText(Composite composite) {

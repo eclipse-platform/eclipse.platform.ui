@@ -30,10 +30,10 @@ public class ContentExtensionsTab extends CustomizationTab {
 	}
 
 	private void createControl() { 
+				
+		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_available_extensions);
 		
 		createTable();
-
-		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_available_extensions);
 
 		getTableViewer().setContentProvider(new ContentDescriptorContentProvider());
 		getTableViewer().setLabelProvider(new CommonFilterLabelProvider());

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -115,6 +116,24 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
+	} 
+	
+
+	/**
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path.
+	 * 
+	 * @param path
+	 *            the path
+	 * @return the image 
+	 */
+	public Image getImage(String path) {
+		Image image = getImageRegistry().get(path);
+		if(image == null) {
+			ImageDescriptor descriptor = getImageDescriptor(path);
+			getImageRegistry().put(path, image = descriptor.createImage());
+		}
+		return image;
 	} 
 
 	/**
