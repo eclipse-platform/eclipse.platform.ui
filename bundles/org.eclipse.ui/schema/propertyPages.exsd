@@ -24,12 +24,6 @@ If these filtering mechanisms are inadequate a property page may use the filter 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-            
-         
-         </documentation>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
@@ -108,7 +102,7 @@ If these filtering mechanisms are inadequate a property page may use the filter 
                <documentation>
                   a fully qualified name of the class for which the page is registered. This class does not need to implement &lt;tt&gt;IAdaptable&lt;/tt&gt;. Objects that are not an instance of &lt;tt&gt;IAdaptable&lt;/tt&gt; will be wrappered in an &lt;tt&gt;IAdaptable&lt;/tt&gt; before being sent to the property page&apos;s instance (an &lt;tt&gt;org.eclipse.ui.IWorkbenchPropertyPage&lt;/tt&gt;).
 
-&lt;p&gt;Deprecated in Eclipse 3.3. Use the instanceOf or adapt element of the enabledWhen element instead&lt;/p&gt;
+&lt;p&gt;Deprecated in Eclipse 3.3. Use the instanceOf or adapt element of the enabledWhen element instead.  If duplicate page definitions were previously used to register the page for multiple objectClass types, these should be combined into one page definition using multiple instanceOf elements combined inside an or element&lt;/p&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" deprecated="true"/>
@@ -241,10 +235,10 @@ define the target object for a property page.
             class=&quot;com.xyz.ppages.JavaPropertyPage&quot; 
             nameFilter=&quot;*.java&quot;&gt; 
             &lt;enabledWhen&gt;
-            	&lt;instanceof
+             &lt;instanceof
                   value=&quot;org.eclipse.core.resources.IFile&quot;&gt;
-            	&lt;/instanceof&gt;
-         	&lt;/enabledWhen&gt;
+             &lt;/instanceof&gt;
+          &lt;/enabledWhen&gt;
             &lt;filter name=&quot;readOnly&quot; value=&quot;true&quot;/&gt; 
         &lt;/page&gt; 
     &lt;/extension&gt; 
