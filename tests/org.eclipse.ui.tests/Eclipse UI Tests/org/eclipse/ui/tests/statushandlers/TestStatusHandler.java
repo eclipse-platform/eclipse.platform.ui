@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
+import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
@@ -26,6 +27,8 @@ public class TestStatusHandler extends AbstractStatusHandler {
 
 	private static int lastHandledStyle;
 
+	private static AbstractStatusHandler workbenchHandler;
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -35,6 +38,13 @@ public class TestStatusHandler extends AbstractStatusHandler {
 	public void handle(StatusAdapter statusAdapter, int style) {
 		lastHandledStatusAdapter = statusAdapter;
 		lastHandledStyle = style;
+
+		if (workbenchHandler == null) {
+			workbenchHandler = new WorkbenchErrorHandlerProxy();
+		}
+
+		// Forward to the workbench handler
+		workbenchHandler.handle(statusAdapter, style);
 	}
 
 	/**
