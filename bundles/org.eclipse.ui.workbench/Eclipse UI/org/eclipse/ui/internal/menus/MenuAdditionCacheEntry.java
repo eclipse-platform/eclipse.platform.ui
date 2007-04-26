@@ -181,6 +181,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createToolBarAdditionContribution(
 			IConfigurationElement configurationElement) {
+		if (!getLocation().startsWith("toolbar")) { //$NON-NLS-1$
+			return null;
+		}
 		return new ToolBarContributionItem(new ToolBarManager(),
 				getId(configurationElement));
 	}
@@ -194,8 +197,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		// Is this for a menu or a ToolBar ? We can't create
 		// a menu directly under a Toolbar; we have to add an
 		// item of style 'pulldown'
-		if (getLocation().startsWith("toolbar")) //$NON-NLS-1$
+		if (getLocation().startsWith("toolbar")) { //$NON-NLS-1$
 			return null;
+		}
 
 		String text = getLabel(menuAddition);
 		String mnemonic = getMnemonic(menuAddition);
@@ -252,6 +256,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createControlAdditionContribution(
 			final IConfigurationElement widgetAddition) {
+		if (!getLocation().startsWith("toolbar")) { //$NON-NLS-1$
+			return null;
+		}
 		// If we've already tried (and failed) to load the
 		// executable extension then skip this addirion.
 		if (failedLoads.contains(widgetAddition))

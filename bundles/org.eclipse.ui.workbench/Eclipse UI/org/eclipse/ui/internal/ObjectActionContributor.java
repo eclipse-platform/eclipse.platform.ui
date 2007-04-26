@@ -20,6 +20,8 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -100,7 +102,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
     /**
      * Contributes actions applicable for the current selection.
      */
-    public boolean contributeObjectActions(IWorkbenchPart part,
+    public boolean contributeObjectActions(final IWorkbenchPart part,
             IMenuManager menu, ISelectionProvider selProv,
             List actionIdOverrides) {
         if (!configRead) {
@@ -117,19 +119,21 @@ public class ObjectActionContributor extends PluginActionBuilder implements
         if ((sel == null) || !(sel instanceof IStructuredSelection)) {
 			return false;
 		}
-        IStructuredSelection selection = (IStructuredSelection) sel;
+        IStructuredSelection ssel = (IStructuredSelection) sel;
         
         if(canAdapt()) {        	
-           IStructuredSelection newSelection = LegacyResourceSupport.adaptSelection(selection, getObjectClass());     
-           if(newSelection.size() != selection.size()) {
+           IStructuredSelection newSelection = LegacyResourceSupport.adaptSelection(ssel, getObjectClass());     
+           if(newSelection.size() != ssel.size()) {
         	   if (Policy.DEBUG_CONTRIBUTIONS) {
 				WorkbenchPlugin.log("Error adapting selection to " + getObjectClass() +  //$NON-NLS-1$
             			". Contribution " + getID(config) + " is being ignored"); //$NON-NLS-1$ //$NON-NLS-2$            	
 			}
             	return false;
            }
-           selection = newSelection;
+           ssel = newSelection;
         }
+        
+        final IStructuredSelection selection = ssel;
         	
         // Generate menu.
         for (int i = 0; i < currentContribution.actions.size(); i++) {
@@ -139,10 +143,20 @@ public class ObjectActionContributor extends PluginActionBuilder implements
                 currentContribution.contributeMenuAction(ad, menu, true);
                 // Update action for the current selection and part.
                 if (ad.getAction() instanceof ObjectPluginAction) {
-                    ObjectPluginAction action = (ObjectPluginAction) ad
+                    final ObjectPluginAction action = (ObjectPluginAction) ad
                             .getAction();
-                    action.setActivePart(part);
-                    action.selectionChanged(selection);
+                    ISafeRunnable runnable = new ISafeRunnable() {
+						public void handleException(Throwable exception) {
+							WorkbenchPlugin.log("Failed to update action "  //$NON-NLS-1$
+									+ action.getId(), exception);
+						}
+
+						public void run() throws Exception {
+		                    action.setActivePart(part);
+		                    action.selectionChanged(selection);
+						}
+                    };
+                    SafeRunner.run(runnable);
                 }
             }
         }

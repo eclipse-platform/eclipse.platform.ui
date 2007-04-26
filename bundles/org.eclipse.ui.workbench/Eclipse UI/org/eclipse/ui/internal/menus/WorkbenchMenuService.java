@@ -21,6 +21,8 @@ import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
@@ -387,33 +389,47 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 	}
 
-	private boolean processAdditions(IServiceLocator serviceLocatorToUse,
-			Expression restriction, ContributionManager mgr,
-			AbstractContributionFactory cache, Set itemsAdded) {
-		int insertionIndex = getInsertionIndex(mgr, cache.getLocation());
-		if (insertionIndex == -1)
+	private boolean processAdditions(final IServiceLocator serviceLocatorToUse,
+			Expression restriction, final ContributionManager mgr,
+			final AbstractContributionFactory cache, final Set itemsAdded) {
+		final int idx = getInsertionIndex(mgr, cache.getLocation());
+		if (idx == -1)
 			return false; // can't process (yet)
 
 		// Get the additions
-		ContributionRoot ciList = new ContributionRoot(this, restriction, cache
-				.getNamespace());
-		cache.createContributionItems(serviceLocatorToUse, ciList);
+		final ContributionRoot ciList = new ContributionRoot(this, restriction,
+				cache.getNamespace());
 
-		// If we have any then add them at the correct location
-		if (ciList.getItems().size() > 0) {
-			track(mgr, cache, ciList);
-			for (Iterator ciIter = ciList.getItems().iterator(); ciIter
-					.hasNext();) {
-				IContributionItem ici = (IContributionItem) ciIter.next();
-				if (ici.getId() != null) {
-					itemsAdded.add(ici.getId());
-				}
-				final int oldSize = mgr.getSize();
-				mgr.insert(insertionIndex, ici);
-				if (mgr.getSize() > oldSize)
-					insertionIndex++;
+		ISafeRunnable run = new ISafeRunnable() {
+
+			public void handleException(Throwable exception) {
+				// TODO Auto-generated method stub
+
 			}
-		}
+
+			public void run() throws Exception {
+				int insertionIndex = idx;
+				cache.createContributionItems(serviceLocatorToUse, ciList);
+
+				// If we have any then add them at the correct location
+				if (ciList.getItems().size() > 0) {
+					track(mgr, cache, ciList);
+					for (Iterator ciIter = ciList.getItems().iterator(); ciIter
+							.hasNext();) {
+						IContributionItem ici = (IContributionItem) ciIter
+								.next();
+						if (ici.getId() != null) {
+							itemsAdded.add(ici.getId());
+						}
+						final int oldSize = mgr.getSize();
+						mgr.insert(insertionIndex, ici);
+						if (mgr.getSize() > oldSize)
+							insertionIndex++;
+					}
+				}
+			}
+		};
+		SafeRunner.run(run);
 
 		return true;
 	}
