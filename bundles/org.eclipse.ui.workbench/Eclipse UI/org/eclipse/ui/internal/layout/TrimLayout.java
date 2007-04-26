@@ -121,6 +121,8 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	
 	private boolean trimLocked;
 
+	private HashMap preferredLocationMap = new HashMap();
+
 	/**
 	 * Creates a new (initially empty) trim layout.
 	 */
@@ -861,5 +863,64 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 */
 	public TrimArea getTrimArea(int areaId) {
 		return (TrimArea) fTrimArea.get(new Integer(areaId));
+	}
+
+	/**
+	 * Remember the persisted locations for the trim. This allows the code
+	 * to site the trim in its preferred (i.e. cached) location on creation
+	 * 
+	 * @param areaId The id of the trim area being defined
+	 * @param preferredLocations A list of trim ID's
+	 */
+	public void setPreferredLocations(int areaId, List preferredLocations) {
+		preferredLocationMap.put(new Integer(areaId), preferredLocations);
+	}
+	
+	/**
+	 * If the given id has a cached location return its preferred side
+	 * 
+	 * @param trimId The id of the trim to be tested
+	 * @return The areaId of a cached id or -1 if no cache info exists
+	 */
+	public int getPreferredArea(String trimId) {
+		Iterator keyIter = preferredLocationMap.keySet().iterator();
+		while (keyIter.hasNext()) {
+			Integer key = (Integer) keyIter.next();
+			List areaList = (List) preferredLocationMap.get(key);
+			if (areaList.contains(trimId))
+				return key.intValue();
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * If the given id has a cached location return an existing trim
+	 * element that it should be placed before (if any)
+	 * 
+	 * @param trimId The id of the trim to be tested
+	 * @return The trim to be inserted before or <code>null</code>
+	 * if no cached info exists
+	 */
+	public IWindowTrim getPreferredLocation(String trimId) {
+		Iterator keyIter = preferredLocationMap.keySet().iterator();
+		while (keyIter.hasNext()) {
+			Integer key = (Integer) keyIter.next();
+			List areaList = (List) preferredLocationMap.get(key);
+			int index = areaList.indexOf(trimId);
+			if (index != -1) {
+				// OK, find the first 'real' trim after this one
+				// This will be used as the 'beforeMe' parameter
+				// in the 'addTrim' call
+				for (int i = index+1; i < areaList.size(); i++) {
+					String id = (String) areaList.get(i);
+					IWindowTrim trim = getTrim(id);
+					if (trim != null)
+						return trim;
+				}
+			}
+		}
+		
+		return null;
 	}
 }

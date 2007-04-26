@@ -2688,18 +2688,26 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			List[] trimOrder = new List[areas.length];
 			for (int i = 0; i < areas.length; i++) {
 				trimOrder[i] = new ArrayList();
+				List preferredLocations = new ArrayList();
 				IMemento area = areas[i];
 				IMemento[] items = area
 						.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
 				for (int j = 0; j < items.length; j++) {
 					IMemento item = items[j];
-					knownIds.add(item.getID());
+					String id = item.getID();
+					knownIds.add(id);
+					preferredLocations.add(id);
 					
-					IWindowTrim t = defaultLayout.getTrim(item.getID());
+					IWindowTrim t = defaultLayout.getTrim(id);
 					if (t != null) {
 						trimOrder[i].add(t);
 					}
 				}
+				
+				// Inform the TrimLayout of the preferred location for this area
+				String areaIdString = areas[i].getID();
+				int areaId = Integer.parseInt(areaIdString);
+				defaultLayout.setPreferredLocations(areaId, preferredLocations);
 			}
 	
 			// second pass applies all of the window trim

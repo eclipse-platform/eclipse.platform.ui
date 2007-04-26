@@ -30,9 +30,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
-import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.LayoutUtil;
+import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
 import org.eclipse.ui.internal.util.Util;
@@ -52,7 +52,7 @@ public class FastViewManager {
 	private Perspective perspective;
 	private WorkbenchPage page;
 	private WorkbenchWindow wbw;
-	private ITrimManager tbm;
+	private TrimLayout tbm;
 
 	/**
 	 * Maps a String to a list of IViewReferences. The string represents the
@@ -95,7 +95,7 @@ public class FastViewManager {
 
 		// Access the trim manager for this window
 		wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-		tbm = wbw.getTrimManager();
+		tbm = (TrimLayout) wbw.getTrimManager();
 
 		// Listen and respond to perspective changes
 		wbw.addPerspectiveListener(new IPerspectiveListener2() {
@@ -277,9 +277,15 @@ public class FastViewManager {
 		// Do we already have one??
 		ViewStackTrimToolBar trim = (ViewStackTrimToolBar) tbm.getTrim(id);
 		if (trim == null) {
+			int cachedSide = tbm.getPreferredArea(id);
+			if (cachedSide != -1)
+				suggestedSide = cachedSide;
+			
+			IWindowTrim beforeMe = tbm.getPreferredLocation(id);
+			
 			trim = new ViewStackTrimToolBar(id, suggestedSide,
 					paneOrientation, wbw);
-			tbm.addTrim(suggestedSide, trim);
+			tbm.addTrim(suggestedSide, trim, beforeMe);
 			updateTrim(trim.getId());
 		}
 

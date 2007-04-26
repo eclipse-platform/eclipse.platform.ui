@@ -56,6 +56,8 @@ import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
+import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
@@ -1877,10 +1879,17 @@ public class Perspective {
 		// Create if necesary
 		EditorAreaTrimToolBar editorAreaTrim = (EditorAreaTrimToolBar) tbm.getTrim(IPageLayout.ID_EDITOR_AREA);
     	if (editorAreaTrim  == null && createIfNecessary) {
+    		int suggestedSide = SWT.RIGHT;
+			int cachedSide = ((TrimLayout)tbm).getPreferredArea(IPageLayout.ID_EDITOR_AREA);
+			if (cachedSide != -1)
+				suggestedSide = cachedSide;
+			
+			IWindowTrim beforeMe = ((TrimLayout)tbm).getPreferredLocation(IPageLayout.ID_EDITOR_AREA);
+			
     		// Gain access to the trim manager
 			editorAreaTrim = new EditorAreaTrimToolBar(wbw, editorArea);
-			editorAreaTrim.dock(SWT.RIGHT);
-			tbm.addTrim(SWT.RIGHT, editorAreaTrim);
+			editorAreaTrim.dock(suggestedSide);
+			tbm.addTrim(suggestedSide, editorAreaTrim, beforeMe);
     	}
 		
 		return editorAreaTrim;
