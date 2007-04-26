@@ -330,7 +330,7 @@ public class IntroHTMLGenerator {
 				divElement.addContent(link);
 				// Add toggle images
 				HTMLElement toggleImageClosed = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG,
-						indentLevel + 2, false);
+						indentLevel + 2, false, false);
 				toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, toggleClosedId);
 				toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, BundleUtil
 						.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
@@ -340,7 +340,7 @@ public class IntroHTMLGenerator {
 					toggleImageClosed.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE, "display: none"); //$NON-NLS-1$
 				link.addContent(toggleImageClosed);
 				HTMLElement toggleImageOpen = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG,
-						indentLevel + 2, false);
+						indentLevel + 2, false, false);
 				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, toggleOpenId);
 				toggleImageOpen.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, BundleUtil
 						.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
