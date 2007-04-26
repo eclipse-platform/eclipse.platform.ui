@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation (original file org.eclipse.ui.texteditor.templates.ColumnLayout)
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactored to be widget independent (bug 171824)
- *                                               - fix for bug 178280
+ *                                               - fix for bug 178280, bug 184342
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
@@ -53,11 +53,11 @@ abstract class AbstractColumnLayout extends Layout {
 
 	static final boolean IS_GTK = "gtk".equals(SWT.getPlatform());//$NON-NLS-1$
 	
-	private static final String RECALCULATE_LAYOUT = Policy.JFACE + ".RELAYOUT"; //$NON-NLS-1$
-
 	static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
 
 	private boolean inupdateMode = false;
+	
+	private boolean relayout = true;
 	
 	private Listener resizeListener = new Listener() {
 
@@ -88,7 +88,7 @@ abstract class AbstractColumnLayout extends Layout {
 	}
 
 	/**
-	 * Comput the size of the table or tree based on the ColumnLayoutData and
+	 * Compute the size of the table or tree based on the ColumnLayoutData and
 	 * the width and height hint.
 	 * 
 	 * @param scrollable
@@ -97,7 +97,7 @@ abstract class AbstractColumnLayout extends Layout {
 	 *            the width hint
 	 * @param hHint
 	 *            the height hint
-	 * @return Point wher x is the width and y is the height
+	 * @return Point where x is the width and y is the height
 	 */
 	private Point computeTableTreeSize(Scrollable scrollable, int wHint,
 			int hHint) {
@@ -246,9 +246,9 @@ abstract class AbstractColumnLayout extends Layout {
 			layoutTableTree(table, width, area, tableWidth < area.width);
 
 		// For the first time we need to relayout because Scrollbars are not
-		// calculate appropiately
-		if (composite.getData(RECALCULATE_LAYOUT) == null) {
-			composite.setData(RECALCULATE_LAYOUT, Boolean.FALSE);
+		// calculate appropriately
+		if (relayout) {
+			relayout = false;
 			composite.layout();
 		}
 	}
@@ -305,7 +305,7 @@ abstract class AbstractColumnLayout extends Layout {
 	/**
 	 * Get the number of columns for the receiver.
 	 * 
-	 * @return int
+	 * @return the number of columns
 	 */
 	abstract int getColumnCount(Scrollable tableTree);
 
