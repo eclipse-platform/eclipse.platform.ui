@@ -108,7 +108,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         if (workspace == null || workspace.length() == 0) {
 			workspace = launchData.getInitialDefault();
 		}
-        launchData.workspaceSelected(workspace);
+        launchData.workspaceSelected(TextProcessor.deprocess(workspace));
     }
 
     /**
@@ -175,7 +175,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * </p>
      */
     protected void okPressed() {
-        launchData.workspaceSelected(getWorkspaceLocation());
+        launchData.workspaceSelected(TextProcessor.deprocess(getWorkspaceLocation()));
         super.okPressed();
     }
 
