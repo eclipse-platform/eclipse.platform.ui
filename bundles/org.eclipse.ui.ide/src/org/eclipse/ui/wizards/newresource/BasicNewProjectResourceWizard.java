@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -63,9 +62,12 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
+import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Standard workbench wizard that creates a new project resource in the
@@ -170,88 +172,101 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	 *         project was not created
 	 */
 	private IProject createNewProject() {
-        if (newProject != null) {
+		if (newProject != null) {
 			return newProject;
 		}
 
-        // get a project handle
-        final IProject newProjectHandle = mainPage.getProjectHandle();
+		// get a project handle
+		final IProject newProjectHandle = mainPage.getProjectHandle();
 
-        // get a project descriptor
-        URI location = null;
-        if (!mainPage.useDefaults()) {
+		// get a project descriptor
+		URI location = null;
+		if (!mainPage.useDefaults()) {
 			location = mainPage.getLocationURI();
 		}
 
-        IWorkspace workspace = ResourcesPlugin.getWorkspace();
-        final IProjectDescription description = workspace
-                .newProjectDescription(newProjectHandle.getName());
-        description.setLocationURI(location);
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IProjectDescription description = workspace
+				.newProjectDescription(newProjectHandle.getName());
+		description.setLocationURI(location);
 
-        // update the referenced project if provided
-        if (referencePage != null) {
-            IProject[] refProjects = referencePage.getReferencedProjects();
-            if (refProjects.length > 0) {
+		// update the referenced project if provided
+		if (referencePage != null) {
+			IProject[] refProjects = referencePage.getReferencedProjects();
+			if (refProjects.length > 0) {
 				description.setReferencedProjects(refProjects);
 			}
-        }
+		}
 
-        // create the new project operation
-        IRunnableWithProgress op = new IRunnableWithProgress() {
-    		public void run(IProgressMonitor monitor) throws InvocationTargetException {
-    			CreateProjectOperation op = new CreateProjectOperation(
-    					description, ResourceMessages.NewProject_windowTitle);
-    			try {
-    				PlatformUI.getWorkbench().getOperationSupport()
-    						.getOperationHistory().execute(op, monitor, 
-    							WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
-    			} catch (ExecutionException e) {
-    				 Throwable t = e.getCause();
-    			        if (t instanceof CoreException) {
-	    			         if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-	    			                MessageDialog
-	    			                        .openError(
-	    			                                getShell(),
-	    			                                ResourceMessages.NewProject_errorMessage, 
-	    			                                NLS.bind(ResourceMessages.NewProject_caseVariantExistsError, newProjectHandle.getName()) 
-	    			                        );
-	    			         } else {
-	    			             ErrorDialog.openError(getShell(), ResourceMessages.NewProject_errorMessage,
-	    		                            null, // no special message
-	    		                            ((CoreException) t).getStatus());
-	    			         }
-    			         } else {
-    			        	 throw new InvocationTargetException(e);
-    			         }
-    			}
-    		}
-        };
-        
-        // run the new project creation operation
-        try {
-            getContainer().run(true, true, op);
-        } catch (InterruptedException e) {
-            return null;
-        } catch (InvocationTargetException e) {
-            Throwable t = e.getTargetException();        
-            // ExecutionExceptions with underlying CoreExceptions are handled
-            // above, but there could be other unexpected runtime exceptions. 
-            IDEWorkbenchPlugin.getDefault().getLog().log(
-                    new Status(IStatus.ERROR,
-                            IDEWorkbenchPlugin.IDE_WORKBENCH, 0, t
-                                    .toString(), t));
-            MessageDialog.openError(
-                    getShell(),
-                    ResourceMessages.NewProject_errorMessage,
-                    NLS.bind(ResourceMessages.NewProject_internalError, t.getMessage()));
+		// create the new project operation
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException {
+				CreateProjectOperation op = new CreateProjectOperation(
+						description, ResourceMessages.NewProject_windowTitle);
+				try {
+					PlatformUI.getWorkbench().getOperationSupport()
+							.getOperationHistory().execute(
+									op,
+									monitor,
+									WorkspaceUndoUtil
+											.getUIInfoAdapter(getShell()));
+				} catch (ExecutionException e) {
+					Throwable t = e.getCause();
+					if (t instanceof CoreException) {
+						StatusAdapter status;
+						if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+							status = new StatusAdapter(
+									StatusUtil
+											.newStatus(
+													IStatus.WARNING,
+													NLS
+															.bind(
+																	ResourceMessages.NewProject_caseVariantExistsError,
+																	newProjectHandle
+																			.getName()),
+													t));
 
-            return null;
-        }
+						} else {
+							status = new StatusAdapter(StatusUtil.newStatus(
+									IStatus.ERROR, t.getLocalizedMessage(), t));
 
-        newProject = newProjectHandle;
+						}
+						status.setProperty(StatusAdapter.TITLE_PROPERTY,
+								ResourceMessages.NewProject_errorMessage);
+						StatusManager.getManager().handle(status,
+								StatusManager.SHOW);
+					} else {
+						throw new InvocationTargetException(e);
+					}
+				}
+			}
+		};
 
-        return newProject;
-    }
+		// run the new project creation operation
+		try {
+			getContainer().run(true, true, op);
+		} catch (InterruptedException e) {
+			return null;
+		} catch (InvocationTargetException e) {
+			Throwable t = e.getTargetException();
+			// ExecutionExceptions with underlying CoreExceptions are handled
+			// above, but there could be other unexpected runtime exceptions.
+			StatusAdapter status = new StatusAdapter(new Status(
+					IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH, 0, NLS
+							.bind(ResourceMessages.NewProject_internalError, t
+									.getMessage()), t));
+			status.setProperty(StatusAdapter.TITLE_PROPERTY,
+					ResourceMessages.NewProject_errorMessage);
+			StatusManager.getManager().handle(status, StatusManager.LOG
+					| StatusManager.SHOW);
+			return null;
+		}
+
+		newProject = newProjectHandle;
+
+		return newProject;
+	}
 
 	/**
 	 * Returns the newly created project.
