@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006-2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * @author aniefer@ca.ibm.com
- *
- */
 public class SignCommandStep extends CommandStep {
 	private Set exclusions = null;
 
@@ -72,7 +68,7 @@ public class SignCommandStep extends CommandStep {
 		return null;
 	}
 
-	private boolean shouldSign(File input, List containers) {
+	public boolean shouldSign(File input, List containers) {
 		Properties inf = null;
 
 		//1: Are we excluded from signing by our parents?

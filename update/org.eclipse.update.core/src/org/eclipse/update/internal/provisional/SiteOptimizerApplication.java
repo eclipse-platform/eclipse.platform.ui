@@ -50,6 +50,7 @@ import org.eclipse.update.internal.core.ExtendedSiteURLFactory;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.jarprocessor.JarProcessor;
+import org.eclipse.update.internal.jarprocessor.JarProcessorExecutor;
 import org.eclipse.update.internal.jarprocessor.Main;
 import org.xml.sax.SAXException;
 
@@ -183,7 +184,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			return false;
 		}
 
-		Main.runJarProcessor(options);
+		new JarProcessorExecutor().runJarProcessor(options);
 		return true;
 	}
 

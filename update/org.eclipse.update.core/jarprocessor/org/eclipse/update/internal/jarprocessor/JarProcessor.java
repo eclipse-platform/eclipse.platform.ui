@@ -75,33 +75,6 @@ public class JarProcessor {
 		steps.clear();
 	}
 
-	public void process(File input, FileFilter filter) throws FileNotFoundException {
-		if (!input.exists())
-			throw new FileNotFoundException();
-
-		File[] files = null;
-		if (input.isDirectory()) {
-			files = input.listFiles();
-		} else if (filter.accept(input)) {
-			files = new File[] {input};
-		}
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].isDirectory()) {
-				String dir = getWorkingDirectory();
-				setWorkingDirectory(dir + "/" + files[i].getName()); //$NON-NLS-1$
-				process(files[i], filter);
-				setWorkingDirectory(dir);
-			} else if (filter.accept(files[i])) {
-				try {
-					processJar(files[i]);
-				} catch (IOException e) {
-					if(verbose)
-						e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	/**
 	 * Recreate a jar file.  The replacements map specifies entry names to be replaced, the replacements are
 	 * expected to be found in directory.

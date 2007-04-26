@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006-2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.update.internal.jarprocessor;
 
-import java.io.*;
-import java.util.Properties;
-import java.util.zip.ZipException;
+import java.io.File;
 
-/**
- * @author aniefer
- *
- */
 public class Main {
 
 	public static class Options {
@@ -109,79 +103,15 @@ public class Main {
 
 		return options;
 	}
-
-	public static void runJarProcessor(Options options) {
-		if (options.input.isFile() && options.input.getName().endsWith(".zip")) { //$NON-NLS-1$
-			ZipProcessor processor = new ZipProcessor();
-			processor.setWorkingDirectory(options.outputDir);
-			processor.setSignCommand(options.signCommand);
-			processor.setPack(options.pack);
-			processor.setRepack(options.repack || (options.pack && options.signCommand != null));
-			processor.setUnpack(options.unpack);
-			processor.setVerbose(options.verbose);
-			processor.setProcessAll(options.processAll);
-			try {
-				processor.processZip(options.input);
-			} catch (ZipException e) {
-				if (options.verbose)
-					e.printStackTrace();
-			} catch (IOException e) {
-				if (options.verbose)
-					e.printStackTrace();
-			}
-		} else {
-			JarProcessor processor = new JarProcessor();
-			processor.setWorkingDirectory(options.outputDir);
-			processor.setProcessAll(options.processAll);
-			processor.setVerbose(options.verbose);
-
-			//load options file
-			Properties properties = null;
-			if(options.input.isDirectory()){
-				File packProperties  = new File(options.input, "pack.properties");
-				if(packProperties.exists() && packProperties.isFile()){
-					InputStream in = null;
-					try {
-						in = new BufferedInputStream( new FileInputStream(packProperties));
-						properties.load(in);
-					} catch (IOException e) {
-						if(options.verbose)
-							e.printStackTrace();
-					} finally {
-						Utils.close(in);
-					}
-				}
-			}
-			
-			if (options.repack || (options.pack && options.signCommand != null))
-				processor.addProcessStep(new PackUnpackStep(properties, options.verbose));
-
-			if (options.signCommand != null)
-				processor.addProcessStep(new SignCommandStep(properties, options.signCommand, options.verbose));
-
-			if (options.pack)
-				processor.addProcessStep(new PackStep(properties, options.verbose));
-			else if (options.unpack)
-				processor.addProcessStep(new UnpackStep(properties, options.verbose));
-
-			try {
-				processor.process(options.input, options.unpack ? Utils.PACK_GZ_FILTER : Utils.JAR_FILTER);
-			} catch (FileNotFoundException e) {
-				if (options.verbose)
-					e.printStackTrace();
-			}
-		}
-	}
 	
 	/**
 	 * @param args
-	 * @throws FileNotFoundException 
 	 */
 	public static void main(String[] args) {
 		Options options = processArguments(args);
 		if (options == null)
 			return;
-		runJarProcessor(options);
+		new JarProcessorExecutor().runJarProcessor(options);
 	}
 
 }
