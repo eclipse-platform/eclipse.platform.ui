@@ -723,8 +723,8 @@ public class FormColors {
 		// Full Highlight
 		// When *on* the title area (regions 1 and 2)
 		// Rule: If near the title in the 'hot' area, show background highlight
-		// TITLE_BACKGROUND_GRADIENT @ 70%
-		full = blend(titleBg, bg, 70);
+		// TITLE_BACKGROUND_GRADIENT @ 60%
+		full = blend(titleBg, bg, 60);
 		// H_DND_LIGHT
 		// H_DND_FULL
 		createColor(IFormColors.H_HOVER_LIGHT, light);
