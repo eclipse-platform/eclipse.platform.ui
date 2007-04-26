@@ -147,6 +147,8 @@ import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.information.InformationPresenter;
+import org.eclipse.jface.text.link.LinkedModeModel;
+import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -1118,6 +1120,43 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fDoSelect= doSelect;
 		}
 
+		/**
+		 * Computes the offset of the line end position.
+		 * <p>
+		 * XXX: will become protected in 3.4.
+		 * </p>
+		 *
+		 * @param document the document where to compute the line end position
+		 * @param line the line to determine the end position of
+		 * @param length the length of the line
+		 * @param offset the caret position in the document
+		 * @return the offset of the line end
+		 * @since 3.3
+		 */
+		int getLineEndPosition(final IDocument document, final String line, final int length, final int offset) {
+			int index= length - 1;
+			while (index > -1 && Character.isWhitespace(line.charAt(index)))
+				index--;
+			index++;
+			
+			LinkedModeModel model= LinkedModeModel.getModel(document, offset);
+			if (model != null) {
+				LinkedPosition linkedPosition= model.findPosition(new LinkedPosition(document, offset, 0));
+				if (linkedPosition != null) {
+					int linkedPositionEnd= linkedPosition.getOffset() + linkedPosition.getLength();
+					int lineOffset;
+					try {
+						lineOffset= document.getLineInformationOfOffset(offset).getOffset();
+						if (offset != linkedPositionEnd && linkedPositionEnd - lineOffset < index)
+							index= linkedPositionEnd - lineOffset;
+					} catch (BadLocationException e) {
+						//should not happen
+					}
+				}
+			}
+			return index;
+		}
+		
 		/*
 		 * @see org.eclipse.jface.action.IAction#run()
 		 */
@@ -1135,9 +1174,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int lineOffset= st.getOffsetAtLine(lineNumber);
 
 			int lineLength;
+			int caretOffsetInDocument;
+			final IDocument document= fSourceViewer.getDocument();
+
 			try {
-				int caretOffsetInDocument= widgetOffset2ModelOffset(fSourceViewer, caretOffset);
-				lineLength= fSourceViewer.getDocument().getLineInformationOfOffset(caretOffsetInDocument).getLength();
+				caretOffsetInDocument= widgetOffset2ModelOffset(fSourceViewer, caretOffset);
+				lineLength= document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
 			} catch (BadLocationException ex) {
 				return;
 			}
@@ -1152,11 +1194,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			String line= ""; //$NON-NLS-1$
 			if (lineLength > 0)
 				line= st.getText(lineOffset, lineEndOffset - 1);
-			int i= lineLength - 1;
-			while (i > -1 && Character.isWhitespace(line.charAt(i))) {
-				i--;
-			}
-			i++;
+
+			// Compute the line end offset
+			int i= getLineEndPosition(document, line, lineLength, caretOffsetInDocument);
 
 			// Remember current selection
 			Point oldSelection= st.getSelection();
@@ -1226,17 +1266,33 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/**
 		 * Computes the offset of the line start position.
 		 *
-		 * @param document The document where to compute the line start position
-		 * @param line The line to determine the start position of
-		 * @param length The length of the line
-		 * @param offset The caret position in the document
-		 * @return The offset of the line start
+		 * @param document the document where to compute the line start position
+		 * @param line the line to determine the start position of
+		 * @param length the length of the line
+		 * @param offset the caret position in the document
+		 * @return the offset of the line start
 		 * @since 3.0
 		 */
 		protected int getLineStartPosition(final IDocument document, final String line, final int length, final int offset) {
 			int index= 0;
 			while (index < length && Character.isWhitespace(line.charAt(index)))
 				index++;
+			
+			LinkedModeModel model= LinkedModeModel.getModel(document, offset);
+			if (model != null) {
+				LinkedPosition linkedPosition= model.findPosition(new LinkedPosition(document, offset, 0));
+				if (linkedPosition != null) {
+					int linkedPositionOffset= linkedPosition.getOffset();
+					int lineOffset;
+					try {
+						lineOffset= document.getLineInformationOfOffset(offset).getOffset();
+						if (offset != linkedPositionOffset && index < linkedPositionOffset - lineOffset)
+							index= linkedPositionOffset - lineOffset;
+					} catch (BadLocationException e) {
+						//should not happen
+					}
+				}
+			}
 			return index;
 		}
 
