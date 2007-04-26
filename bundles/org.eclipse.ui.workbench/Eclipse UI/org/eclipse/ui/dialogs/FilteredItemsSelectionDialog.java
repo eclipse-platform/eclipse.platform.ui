@@ -617,6 +617,28 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		list.getTable().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
+			
+				if (e.keyCode == SWT.DEL) {
+					
+					List selectedElements = ((StructuredSelection) list
+							.getSelection()).toList();
+					
+					Object item = null;
+					boolean isSelectedHistory = true;
+					
+					for (Iterator it = selectedElements.iterator(); it.hasNext();) {
+						item = it.next();
+						if (item instanceof ItemsListSeparator
+								|| !isHistoryElement(item)) {
+							isSelectedHistory = false;
+							break;
+						}
+					}
+					if (isSelectedHistory)
+						removeSelectedItems(selectedElements);
+				
+				}
+			
 				if (e.keyCode == SWT.ARROW_UP) {
 					StructuredSelection selection = (StructuredSelection) list
 							.getSelection();
