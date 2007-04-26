@@ -69,8 +69,9 @@ import org.eclipse.ui.services.IServiceLocator;
 public final class WorkbenchMenuService extends InternalMenuService {
 
 	/**
-     * A combined property and activity listener that updates the visibility of contribution items in the new menu system.
-     *
+	 * A combined property and activity listener that updates the visibility of
+	 * contribution items in the new menu system.
+	 * 
 	 * @since 3.3
 	 */
 	private final class ContributionItemUpdater implements
@@ -80,16 +81,20 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		private IIdentifier identifier;
 		private boolean lastExpressionResult = true;
 
-		private ContributionItemUpdater(IContributionItem item, IIdentifier identifier) {
+		private ContributionItemUpdater(IContributionItem item,
+				IIdentifier identifier) {
 			this.item = item;
 			if (identifier != null) {
 				this.identifier = identifier;
 				this.identifier.addIdentifierListener(this);
-				updateVisibility(); //force initial visibility to fall in line with activity enablement
+				updateVisibility(); // force initial visibility to fall in line
+				// with activity enablement
 			}
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
@@ -97,14 +102,13 @@ public final class WorkbenchMenuService extends InternalMenuService {
 				if (event.getNewValue() != null) {
 					this.lastExpressionResult = ((Boolean) event.getNewValue())
 							.booleanValue();
-				}
-				else {
+				} else {
 					this.lastExpressionResult = false;
 				}
 				updateVisibility();
 			}
 		}
-		
+
 		private void updateVisibility() {
 			boolean visible = identifier != null ? (identifier.isEnabled() && lastExpressionResult)
 					: lastExpressionResult;
@@ -123,7 +127,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			}
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.activities.IIdentifierListener#identifierChanged(org.eclipse.ui.activities.IdentifierEvent)
 		 */
 		public void identifierChanged(IdentifierEvent identifierEvent) {
@@ -189,11 +195,12 @@ public final class WorkbenchMenuService extends InternalMenuService {
 						ActivityManagerEvent activityManagerEvent) {
 					if (activityManagerEvent.haveEnabledActivityIdsChanged()) {
 						updateManagers(); // called after all identifiers have
-											// been update - now update the
-											// managers
+						// been update - now update the
+						// managers
 					}
-					
-				}};
+
+				}
+			};
 		}
 		return activityManagerListener;
 	}
@@ -231,8 +238,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 					updateTrim((ToolBarManager) mgr);
 				}
 			} else if (mgr instanceof MenuManager) {
-				IContributionManager parent = ((MenuManager)mgr).getParent();
-				if (parent!=null) {
+				IContributionManager parent = ((MenuManager) mgr).getParent();
+				if (parent != null) {
 					parent.update(true);
 				}
 			}
@@ -253,7 +260,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		for (int i = 0; i < windows.length; i++) {
 			WorkbenchWindow window = (WorkbenchWindow) windows[i];
 			ICoolBarManager cb = window.getCoolBarManager2();
-			if (cb!=null) {
+			if (cb != null) {
 				IContributionItem[] items = cb.getItems();
 				for (int j = 0; j < items.length; j++) {
 					if (items[j] instanceof ToolBarContributionItem) {
@@ -307,7 +314,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	private IMenuListener menuTrackerListener;
 
 	private Map evaluationsByItem = new HashMap();
-	
+
 	private Map activityListenersByItem = new HashMap();
 
 	private Set managersAwaitingUpdates = new HashSet();
@@ -381,13 +388,15 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	}
 
 	private boolean processAdditions(IServiceLocator serviceLocatorToUse,
-			Expression restriction, ContributionManager mgr, AbstractContributionFactory cache) {
+			Expression restriction, ContributionManager mgr,
+			AbstractContributionFactory cache, Set itemsAdded) {
 		int insertionIndex = getInsertionIndex(mgr, cache.getLocation());
 		if (insertionIndex == -1)
 			return false; // can't process (yet)
 
 		// Get the additions
-		ContributionRoot ciList = new ContributionRoot(this, restriction, cache.getNamespace());
+		ContributionRoot ciList = new ContributionRoot(this, restriction, cache
+				.getNamespace());
 		cache.createContributionItems(serviceLocatorToUse, ciList);
 
 		// If we have any then add them at the correct location
@@ -396,7 +405,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			for (Iterator ciIter = ciList.getItems().iterator(); ciIter
 					.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
-
+				if (ici.getId() != null) {
+					itemsAdded.add(ici.getId());
+				}
 				final int oldSize = mgr.getSize();
 				mgr.insert(insertionIndex, ici);
 				if (mgr.getSize() > oldSize)
@@ -484,20 +495,22 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
-		populateContributionManager(serviceLocator, null, mgr, uri);
+		populateContributionManager(serviceLocator, null, mgr, uri, true);
 	}
 
 	public void populateContributionManager(
 			IServiceLocator serviceLocatorToUse, Expression restriction,
-			ContributionManager mgr, String uri) {
+			ContributionManager mgr, String uri, boolean recurse) {
 		MenuLocationURI contributionLocation = new MenuLocationURI(uri);
 		List additionCaches = getAdditionsForURI(contributionLocation);
 
 		List retryList = new ArrayList();
+		Set itemsAdded = new HashSet();
 		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
 			AbstractContributionFactory cache = (AbstractContributionFactory) iterator
 					.next();
-			if (!processAdditions(serviceLocatorToUse, restriction, mgr, cache)) {
+			if (!processAdditions(serviceLocatorToUse, restriction, mgr, cache,
+					itemsAdded)) {
 				retryList.add(cache);
 			}
 		}
@@ -517,7 +530,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
 				AbstractContributionFactory cache = (AbstractContributionFactory) iterator
 						.next();
-				if (!processAdditions(serviceLocatorToUse, restriction, mgr, cache))
+				if (!processAdditions(serviceLocatorToUse, restriction, mgr,
+						cache, itemsAdded))
 					retryList.add(cache);
 			}
 
@@ -531,18 +545,21 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		for (int i = 0; i < curItems.length; i++) {
 			if (curItems[i] instanceof ContributionManager) {
 				String id = curItems[i].getId();
-				if (id != null && id.length() > 0) {
-					populateContributionManager(serviceLocatorToUse, restriction,
-							(ContributionManager) curItems[i],
-							contributionLocation.getScheme() + ":" + id); //$NON-NLS-1$
+				if (id != null && id.length() > 0
+						&& (recurse || itemsAdded.contains(id))) {
+					populateContributionManager(serviceLocatorToUse,
+							restriction, (ContributionManager) curItems[i],
+							contributionLocation.getScheme() + ":" + id, true); //$NON-NLS-1$
 				}
 			} else if (curItems[i] instanceof IToolBarContributionItem) {
 				IToolBarContributionItem tbci = (IToolBarContributionItem) curItems[i];
-				if (tbci.getId() != null && tbci.getId().length() > 0) {
-					populateContributionManager(serviceLocatorToUse, restriction,
-							(ContributionManager) tbci.getToolBarManager(),
-							contributionLocation.getScheme()
-									+ ":" + tbci.getId()); //$NON-NLS-1$
+				if (tbci.getId() != null && tbci.getId().length() > 0
+						&& (recurse || itemsAdded.contains(tbci.getId()))) {
+					populateContributionManager(serviceLocatorToUse,
+							restriction, (ContributionManager) tbci
+									.getToolBarManager(), contributionLocation
+									.getScheme()
+									+ ":" + tbci.getId(), true); //$NON-NLS-1$
 				}
 			}
 		}
@@ -596,7 +613,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 *      org.eclipse.core.expressions.Expression)
 	 */
 	public void registerVisibleWhen(final IContributionItem item,
-			final Expression visibleWhen, final Expression restriction, String identifierID) {
+			final Expression visibleWhen, final Expression restriction,
+			String identifierID) {
 		if (item == null) {
 			throw new IllegalArgumentException("item cannot be null"); //$NON-NLS-1$
 		}
@@ -615,7 +633,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			identifier = PlatformUI.getWorkbench().getActivitySupport()
 					.getActivityManager().getIdentifier(identifierID);
 		}
-		ContributionItemUpdater listener = new ContributionItemUpdater(item, identifier);
+		ContributionItemUpdater listener = new ContributionItemUpdater(item,
+				identifier);
 
 		if (visibleWhen != AlwaysEnabledExpression.INSTANCE) {
 			IEvaluationReference ref = evaluationService.addEvaluationListener(

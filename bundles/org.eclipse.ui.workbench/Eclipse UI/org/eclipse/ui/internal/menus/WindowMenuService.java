@@ -58,17 +58,19 @@ public final class WindowMenuService extends InternalMenuService {
 	public WindowMenuService(final IServiceLocator serviceLocator) {
 		IMenuService menuService = (IMenuService) serviceLocator
 				.getService(IMenuService.class);
-		if (menuService == null || !(menuService instanceof WorkbenchMenuService)) {
+		if (menuService == null
+				|| !(menuService instanceof WorkbenchMenuService)) {
 			throw new NullPointerException(
 					"The parent service must not be null"); //$NON-NLS-1$
 		}
-		IWorkbenchWindow window = (IWorkbenchWindow) serviceLocator.getService(IWorkbenchWindow.class);
+		IWorkbenchWindow window = (IWorkbenchWindow) serviceLocator
+				.getService(IWorkbenchWindow.class);
 		if (window == null)
 			throw new NullPointerException("Window cannot be null"); //$NON-NLS-1$
-		
+
 		restrictionExpression = new WorkbenchWindowExpression(window);
-		
-		this.parent = (WorkbenchMenuService)menuService;
+
+		this.parent = (WorkbenchMenuService) menuService;
 		this.serviceLocator = serviceLocator;
 	}
 
@@ -79,7 +81,14 @@ public final class WindowMenuService extends InternalMenuService {
 	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
-		parent.populateContributionManager(serviceLocator, restrictionExpression, mgr, uri);
+		parent.populateContributionManager(serviceLocator,
+				restrictionExpression, mgr, uri, true);
+	}
+
+	public void populateContributionManager(ContributionManager mgr,
+			String uri, boolean recurse) {
+		parent.populateContributionManager(serviceLocator,
+				restrictionExpression, mgr, uri, recurse);
 	}
 
 	/*
@@ -118,36 +127,45 @@ public final class WindowMenuService extends InternalMenuService {
 	public void removeContributionFactory(AbstractContributionFactory factory) {
 		parent.removeContributionFactory(factory);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void addSourceProvider(ISourceProvider provider) {
 		throw new RuntimeException("addSourceProvider"); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void removeSourceProvider(ISourceProvider provider) {
 		throw new RuntimeException("removeSourceProvider"); //$NON-NLS-1$
 	}
-	
+
 	public List getAdditionsForURI(MenuLocationURI uri) {
 		return parent.getAdditionsForURI(uri);
 	}
-	
-	public void registerVisibleWhen(final IContributionItem item, 
-			final Expression visibleWhen, final Expression restriction, String identifierID) {
-		parent.registerVisibleWhen(item, visibleWhen, restriction, identifierID);
+
+	public void registerVisibleWhen(final IContributionItem item,
+			final Expression visibleWhen, final Expression restriction,
+			String identifierID) {
+		parent
+				.registerVisibleWhen(item, visibleWhen, restriction,
+						identifierID);
 	}
-			
+
 	public void unregisterVisibleWhen(IContributionItem item) {
 		parent.unregisterVisibleWhen(item);
 	}

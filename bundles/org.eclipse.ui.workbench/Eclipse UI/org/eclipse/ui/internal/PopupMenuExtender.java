@@ -41,6 +41,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
@@ -353,9 +354,10 @@ public class PopupMenuExtender implements IMenuListener2,
 			menuService
 					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
 			Iterator i = getMenuIds().iterator();
+			WindowMenuService realService = (WindowMenuService) menuService;
 			while (i.hasNext()) {
 				String id = "popup:" + i.next(); //$NON-NLS-1$
-				menuService.populateContributionManager(manager, id);
+				realService.populateContributionManager(manager, id, false);
 			}
 		}
 	}
