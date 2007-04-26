@@ -35,6 +35,7 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String SchemeLabel_Text;
 	public static String ShowAllCheckBox_Text;
 	public static String TriggerSequenceColumn_Text;
+	public static String WhenColumn_Text;
 	public static String WhenLabel_Text;
 	
 	public static String GroupingCombo_Label;
