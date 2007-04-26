@@ -100,7 +100,7 @@ public class RemoveAllBreakpointsAction extends AbstractRemoveAllActionDelegate 
 		if(prompt) {
 			MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllBreakpointsAction_0, 
 					ActionMessages.RemoveAllBreakpointsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
-			if(mdwt.getReturnCode() ==  IDialogConstants.NO_ID){
+			if(mdwt.getReturnCode() !=  IDialogConstants.YES_ID){
 				proceed = false;
 			}
 			else {
