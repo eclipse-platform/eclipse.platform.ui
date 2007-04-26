@@ -20,6 +20,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -83,19 +84,32 @@ public class CtrlEAction extends AbstractHandler {
 		if (window == null) {
 			return null;
 		}
-
+		
 		if (providers == null) {
 			providers = new AbstractProvider[] { new PreviousPicksProvider(),
 					new EditorProvider(), new ViewProvider(),
 					new PerspectiveProvider(), new CommandProvider(),
 					new ActionProvider(), new WizardProvider(),
 					new PreferenceProvider(), new PropertiesProvider() };
-
+			
 			providerMap = new HashMap();
 			for (int i = 0; i < providers.length; i++) {
 				providerMap.put(providers[i].getId(), providers[i]);
 			}
 		}
+		
+		final PopupDialog popupDialog = new QuickAccessDialog(window, providers);
+		window.getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				final Shell shell = popupDialog.getShell();
+				if (shell != null && !shell.isDisposed()) {
+					Point size = shell.getSize();
+					shell.setSize(size.x, size.y + 1);
+				}
+			}
+		});
+		popupDialog.open();
+		if(true) return null;
 
 		FilteringInfoPopup popup = new QuickAccessPopup(ProgressManagerUtil
 				.getDefaultParent(), providers);

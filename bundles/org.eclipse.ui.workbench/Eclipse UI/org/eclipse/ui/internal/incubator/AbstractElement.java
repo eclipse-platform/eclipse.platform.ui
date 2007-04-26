@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.incubator;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -19,8 +23,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public abstract class AbstractElement {
 
+	private static final int[][] EMPTY_INDICES = new int[0][0];
 	private AbstractProvider provider;
-	
+
 	/**
 	 * @param provider
 	 */
@@ -28,7 +33,21 @@ public abstract class AbstractElement {
 		super();
 		this.provider = provider;
 	}
-	
+
+	/**
+	 * @return a string containing the first character of every word for camel
+	 *         case checking.
+	 */
+	private static String getCamelCase(String label) {
+		StringTokenizer tokenizer = new StringTokenizer(label);
+		StringBuffer camelCase = new StringBuffer();
+		while (tokenizer.hasMoreTokens()) {
+			String word = tokenizer.nextToken();
+			camelCase.append(word.charAt(0));
+		}
+		return camelCase.toString().toLowerCase();
+	}
+
 	/**
 	 * Returns the label to be displayed to the user.
 	 * 
@@ -64,11 +83,96 @@ public abstract class AbstractElement {
 	public String getSortLabel() {
 		return getLabel();
 	}
-	
+
 	/**
 	 * @return Returns the provider.
 	 */
 	public AbstractProvider getProvider() {
 		return provider;
-	}	
+	}
+
+	/**
+	 * @param filter
+	 * @return
+	 */
+	public QuickAccessEntry match(String filter, AbstractProvider providerForMatching) {
+		String sortLabel = getSortLabel().toLowerCase();
+		int index = sortLabel.indexOf(filter);
+		if (index != -1) {
+			return new QuickAccessEntry(this, providerForMatching, new int[][] { {
+					index, index + filter.length() - 1 } }, EMPTY_INDICES);
+		}
+		String combinedLabel = (providerForMatching.getName() + " " + getLabel()).toLowerCase(); //$NON-NLS-1$
+		index = combinedLabel.indexOf(filter);
+		if (index != -1) {
+			int lengthOfElementMatch = index + filter.length()
+					- providerForMatching.getName().length();
+			if (lengthOfElementMatch > 0) {
+				return new QuickAccessEntry(this, providerForMatching,
+						new int[][] { { 0, lengthOfElementMatch - 1 } },
+						new int[][] { { index, index + filter.length() - 1 } });
+			}
+			return new QuickAccessEntry(this, providerForMatching, EMPTY_INDICES,
+					new int[][] { { index, index + filter.length() - 1 } });
+		}
+		String camelCase = getCamelCase(sortLabel);
+		index = camelCase.indexOf(filter);
+		if (index != -1) {
+			int[][] indices = getCamelCaseIndices(sortLabel, index, filter
+					.length());
+			return new QuickAccessEntry(this, providerForMatching, indices,
+					EMPTY_INDICES);
+		}
+		String combinedCamelCase = getCamelCase(combinedLabel);
+		index = combinedCamelCase.indexOf(filter);
+		if (index != -1) {
+			String providerCamelCase = getCamelCase(providerForMatching
+					.getName());
+			int lengthOfElementMatch = index + filter.length()
+					- providerCamelCase.length();
+			if (lengthOfElementMatch > 0) {
+				return new QuickAccessEntry(
+						this,
+						providerForMatching,
+						getCamelCaseIndices(sortLabel, 0, lengthOfElementMatch),
+						getCamelCaseIndices(providerForMatching.getName(), index, filter
+								.length()
+								- lengthOfElementMatch));
+			}
+			return new QuickAccessEntry(this, providerForMatching, EMPTY_INDICES,
+					getCamelCaseIndices(providerForMatching.getName(), index, filter
+							.length()));
+		}
+		return null;
+	}
+
+	/**
+	 * @param camelCase
+	 * @param filter
+	 * @param index
+	 * @return
+	 */
+	private int[][] getCamelCaseIndices(String original, int start, int length) {
+		List result = new ArrayList();
+		int index = 0;
+		while (start > 0) {
+			index = original.indexOf(' ', index);
+			while (original.charAt(index) == ' ') {
+				index++;
+			}
+			start--;
+		}
+		while (length > 0) {
+			result.add(new int[] { index, index });
+			index = original.indexOf(' ', index);
+			if (index != -1) {
+				while (index < original.length()
+						&& original.charAt(index) == ' ') {
+					index++;
+				}
+			}
+			length--;
+		}
+		return (int[][]) result.toArray(new int[result.size()][]);
+	}
 }

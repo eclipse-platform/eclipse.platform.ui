@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.incubator;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -18,6 +21,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 
  */
 public abstract class AbstractProvider {
+
+	private AbstractElement[] sortedElements;
 
 	/**
 	 * Returns the unique ID of this provider.
@@ -47,6 +52,20 @@ public abstract class AbstractProvider {
 	 */
 	public abstract AbstractElement[] getElements();
 
+	public AbstractElement[] getElementsSorted() {
+		if (sortedElements == null) {
+			sortedElements = getElements();
+			Arrays.sort(sortedElements, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					AbstractElement e1 = (AbstractElement) o1;
+					AbstractElement e2 = (AbstractElement) o2;
+					return e1.getLabel().compareTo(e2.getLabel());
+				}
+			});
+		}
+		return sortedElements;
+	}
+	
 	/**
 	 * Returns the element for the given ID if available, or null if no matching
 	 * element is available.

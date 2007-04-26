@@ -28,6 +28,7 @@ public class IncubatorMessages extends NLS {
 	public static String CtrlEAction_Preferences;
 	public static String CtrlEAction_Previous;
 	public static String CtrlEAction_Views;
+	public static String CtrlEAction_StartTypingToFindMatches;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, IncubatorMessages.class);
