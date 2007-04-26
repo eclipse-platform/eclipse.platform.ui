@@ -6,6 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * 												 - fix for bug 183850, 182652
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
