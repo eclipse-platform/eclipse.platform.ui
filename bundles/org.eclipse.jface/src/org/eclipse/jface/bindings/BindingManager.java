@@ -267,6 +267,8 @@ public final class BindingManager extends HandleObjectManager implements
 	 * <code>null</code> if there is no existing solution.
 	 */
 	private Map prefixTable = null;
+	
+	private Set triggerConflicts = new HashSet();
 
 	/**
 	 * <p>
@@ -622,6 +624,11 @@ public final class BindingManager extends HandleObjectManager implements
 					final Binding winner = resolveConflicts((Collection) match,
 							activeContextTree);
 					if (winner == null) {
+						// warn once ... so as not to flood the logs
+						if (triggerConflicts.add(trigger)) {
+							Policy.getLog().log(new Status(IStatus.WARNING, "org.eclipse.jface",  //$NON-NLS-1$
+									"A conflict occurred for " + trigger + ": " + match));  //$NON-NLS-1$//$NON-NLS-2$
+						}
 						if (DEBUG) {
 							Tracing.printTrace("BINDINGS", //$NON-NLS-1$
 									"A conflict occurred for " + trigger); //$NON-NLS-1$
