@@ -19,8 +19,29 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * @since 3.3
+ * Customizes a {@link Binding} between two
+ * {@link IObservableList observable lists}. The following behaviors can be
+ * customized via the strategy:
+ * <ul>
+ * <li>Conversion</li>
+ * <li>Automatic processing</li>
+ * </ul>
+ * <p>
+ * Conversion:<br/> When elements are added they can be
+ * {@link #convert(Object) converted} to the destination element type.
+ * </p>
+ * <p>
+ * Automatic processing:<br/> The processing to perform when the source
+ * observable changes. This behavior is configured via policies provided on
+ * construction of the strategy (e.g. {@link #POLICY_NEVER},
+ * {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
+ * </p>
  * 
+ * 
+ * @see DataBindingContext#bindList(IObservableList, IObservableList,
+ *      UpdateListStrategy, UpdateListStrategy)
+ * @see IConverter
+ * @since 1.0
  */
 public class UpdateListStrategy extends UpdateStrategy {
 
@@ -108,6 +129,14 @@ public class UpdateListStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * When an element is added to the destination converts the element from the
+	 * source element type to the destination element type.
+	 * <p>
+	 * Default implementation will use the
+	 * {@link #setConverter(IConverter) converter} if one exists. If no
+	 * converter exists no conversion occurs.
+	 * </p>
+	 * 
 	 * @param element
 	 * @return the converted element
 	 */
@@ -149,6 +178,9 @@ public class UpdateListStrategy extends UpdateStrategy {
 	}
 
 	/**
+	 * Sets the converter to be invoked when converting added elements from the
+	 * source element type to the destination element type.
+	 * 
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
