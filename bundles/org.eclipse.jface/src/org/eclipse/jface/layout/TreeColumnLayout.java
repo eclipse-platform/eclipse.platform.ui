@@ -16,6 +16,9 @@ package org.eclipse.jface.layout;
 
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
@@ -35,7 +38,41 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  */
 public class TreeColumnLayout extends AbstractColumnLayout {
+	private boolean addListener = true;
 	
+	private static class TreeLayoutListener implements TreeListener {
+
+		public void treeCollapsed(TreeEvent e) {
+			update((Tree) e.widget);
+		}
+
+		public void treeExpanded(TreeEvent e) {
+			update((Tree) e.widget);
+		}
+		
+		private void update(final Tree tree) {
+			tree.getDisplay().asyncExec(new Runnable() {
+
+				public void run() {
+					tree.update();
+					tree.getParent().layout();
+				}
+				
+			});
+		}
+		
+	}
+	
+	private static final TreeLayoutListener listener = new TreeLayoutListener();
+	
+	protected void layout(Composite composite, boolean flushCache) {
+		super.layout(composite, flushCache);
+		if( addListener ) {
+			addListener=false;
+			((Tree)getControl(composite)).addTreeListener(listener);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.layout.AbstractColumnLayout#getColumnCount(org.eclipse.swt.widgets.Scrollable)
 	 */
