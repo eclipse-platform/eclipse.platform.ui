@@ -27,6 +27,9 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 
 	private ViewerCell oldCell;
 
+	// Needed to work-around problem in bug 183850
+	private static final boolean WIN_32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
+	
 	/**
 	 * @param viewer
 	 *            the viewer
@@ -40,7 +43,7 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 		Color background = getSelectedCellBackgroundColor(cell);
 		Color foreground = getSelectedCellForegroundColor(cell);
 
-		if (foreground != null || background != null) {
+		if ( WIN_32 || foreground != null || background != null) {
 			GC gc = event.gc;
 
 			if (background == null) {
