@@ -68,13 +68,10 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -87,7 +84,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -268,24 +264,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		private static final int COLUMN_CATEGORY = 2;
 		
 		/**
-		 * The index of the column with the button for adding an item.
-		 */
-		private static final int COLUMN_ADD = 3;
-
-		/**
-		 * The index of the column with the button for removing an item.
-		 */
-		private static final int COLUMN_REMOVE = 4;
-
-		/**
 		 * The index of the column with the image for User binding
 		 */		
-		private static final int COLUMN_USER = 5;
-
-		/**
-		 * The number of columns being displayed.
-		 */
-		private static final int NUMBER_OF_COLUMNS = 6;
+		private static final int COLUMN_USER = 3;
 
 		/**
 		 * A resource manager for this preference page.
@@ -325,12 +306,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						}
 					}
 					return null;
-
-				case COLUMN_ADD:
-					return ImageFactory.getImage("plus"); //$NON-NLS-1$
-
-				case COLUMN_REMOVE:
-					return ImageFactory.getImage("minus"); //$NON-NLS-1$
 					
 				case COLUMN_USER:
 					if (((Binding)value).getType()==Binding.USER)
@@ -1241,8 +1216,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			
 		});
 				
-		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_ADD);
-		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_REMOVE);
 		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_USER);
 		
 		
@@ -1260,11 +1233,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public final void selectionChanged(final SelectionChangedEvent event) {
 				selectTreeRow(event);
-			}
-		});
-		tree.addMouseListener(new MouseAdapter() {
-			public final void mouseDown(final MouseEvent event) {
-				selectTreeColumn(event);
 			}
 		});
 
@@ -1639,55 +1607,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	}
 
 	/**
-	 * Handles a mouse down event on the tree. If the mouse click corresponds
-	 * with one of the button images on the right, then add or remove, as
-	 * appropriate.
-	 * 
-	 * @param event
-	 *            The mouse down event; must not be <code>null</code>.
-	 */
-	private final void selectTreeColumn(final MouseEvent event) {
-		final TreeViewer viewer = filteredTree.getViewer();
-		final Tree tree = viewer.getTree();
-		final Point point = new Point(event.x, event.y);
-		final TreeItem item = tree.getItem(point);
-		if (item == null) {
-			return;
-		}
-		for (int i = 0; i < BindingLabelProvider.NUMBER_OF_COLUMNS; i++) {
-			final Rectangle rectangle = item.getBounds(i);
-			if (rectangle.contains(point)) {
-				// Check to make sure we're clicking a button.
-				if ((i != BindingLabelProvider.COLUMN_ADD)
-						&& (i != BindingLabelProvider.COLUMN_REMOVE)) {
-					return;
-				}
-
-				// Check to make sure we've got a selection.
-				final ISelection selection = viewer.getSelection();
-				if (!(selection instanceof IStructuredSelection)) {
-					return;
-				}
-
-				final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-				final TreeNode treeNode = (TreeNode) structuredSelection
-						.getFirstElement();
-				final Object value = treeNode.getValue();
-				if (value instanceof KeyBinding) {
-					final KeyBinding binding = (KeyBinding) value;
-					if (i == BindingLabelProvider.COLUMN_ADD) {
-						bindingAdd(binding);
-
-					} else if (i == BindingLabelProvider.COLUMN_REMOVE) {
-						bindingRemove(binding);
-
-					}
-				}
-			}
-		}
-	}
-
-	/**
 	 * If the row has changed, then update the data controls.
 	 */
 	private final void selectTreeRow(final SelectionChangedEvent event) {
@@ -1940,15 +1859,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final TreeColumn[] columns = tree.getColumns();
 		if (NewKeysPreferenceMessages.GroupingCombo_Category_Text.equals(grouping)
 				|| NewKeysPreferenceMessages.GroupingCombo_When_Text.equals(grouping)) {
-			columns[0].setWidth(292);
+			columns[BindingLabelProvider.COLUMN_COMMAND].setWidth(292);
 		} else {
-			columns[0].setWidth(292);
+			columns[BindingLabelProvider.COLUMN_COMMAND].setWidth(292);
 		}
-		columns[1].setWidth(150);
-		columns[2].setWidth(150);
-		columns[3].setWidth(22);
-		columns[4].setWidth(22);
-		columns[5].setWidth(22);
+		columns[BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE].setWidth(150);
+		columns[BindingLabelProvider.COLUMN_CATEGORY].setWidth(150);
+		columns[BindingLabelProvider.COLUMN_USER].setWidth(22);
 	}
 	
   
