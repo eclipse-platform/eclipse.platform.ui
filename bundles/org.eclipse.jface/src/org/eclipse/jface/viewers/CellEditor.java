@@ -863,4 +863,14 @@ public abstract class CellEditor {
     public void activate(ColumnViewerEditorActivationEvent activationEvent) {
     	activate();
     }
+    
+    /**
+     * This method is for interal use in {@link ColumnViewerEditor} to not break clients
+     * who don't implement the {@link ICellEditorListener} appropiately
+     * 
+     * @return <code>true</code> to indicate that a focus listener has to be attached
+     */
+    boolean dependsOnExternalFocusListener() {
+    	return true;
+    }
 }

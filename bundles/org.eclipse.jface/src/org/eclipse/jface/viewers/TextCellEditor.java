@@ -474,4 +474,8 @@ public class TextCellEditor extends CellEditor {
         checkSelection();
         checkDeleteable();
     }
+
+	boolean dependsOnExternalFocusListener() {
+		return getClass() != TextCellEditor.class;
+	}
 }

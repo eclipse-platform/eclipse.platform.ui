@@ -181,14 +181,17 @@ public abstract class ColumnViewerEditor {
 				setLayoutData(cellEditor.getLayoutData());
 				setEditor(control, (Item) cell.getItem(), cell.getColumnIndex());
 				cellEditor.setFocus();
-				if (focusListener == null) {
-					focusListener = new FocusAdapter() {
-						public void focusLost(FocusEvent e) {
-							applyEditorValue();
-						}
-					};
+								
+				if( cellEditor.dependsOnExternalFocusListener() ) {
+					if (focusListener == null) {
+						focusListener = new FocusAdapter() {
+							public void focusLost(FocusEvent e) {
+								applyEditorValue();
+							}
+						};
+					}
+					control.addFocusListener(focusListener);
 				}
-				control.addFocusListener(focusListener);
 
 				mouseListener = new MouseAdapter() {
 					public void mouseDown(MouseEvent e) {
