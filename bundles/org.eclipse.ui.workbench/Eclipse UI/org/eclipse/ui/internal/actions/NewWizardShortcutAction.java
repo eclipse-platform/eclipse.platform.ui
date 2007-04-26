@@ -67,6 +67,14 @@ public class NewWizardShortcutAction extends Action implements
         this.window = window;
     }
 
+    /**
+     * Get the wizard descriptor for this action.
+     * 
+     * @return the wizard descriptor 
+     */
+    public IWizardDescriptor getWizardDescriptor() {
+		return wizardElement;
+	}
    
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IAction#run()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.action.ActionContributionItem;
@@ -19,7 +21,10 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
+import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * A <code>NewWizardMenu</code> augments <code>BaseNewWizardMenu</code> with IDE-specific
@@ -27,9 +32,8 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  */
 public class NewWizardMenu extends BaseNewWizardMenu {
 
-    private final IAction newProjectAction;
-
     private final IAction newExampleAction;
+    private final IAction newProjectAction;
 
     private boolean enabled = true;
 
@@ -54,8 +58,8 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      */
     public NewWizardMenu(IWorkbenchWindow window, String id) {
         super(window, id);
-        newProjectAction = new NewProjectAction(window);
         newExampleAction = new NewExampleAction(window);
+        newProjectAction = new NewProjectAction(window);
     }
 
     /**
@@ -121,9 +125,20 @@ public class NewWizardMenu extends BaseNewWizardMenu {
      * @see org.eclipse.ui.actions.BaseNewWizardMenu#addItems(org.eclipse.jface.action.IContributionManager)
      */
     protected void addItems(List list) {
-        list.add(new ActionContributionItem(newProjectAction)); 
+    	ArrayList shortCuts= new ArrayList();
+    	addShortcuts(shortCuts);
+    	
+    	for (Iterator iterator= shortCuts.iterator(); iterator.hasNext();) {
+			Object curr= iterator.next();
+			if (curr instanceof ActionContributionItem && isNewProjectWizardAction(((ActionContributionItem) curr).getAction())) {
+				iterator.remove();
+				list.add(curr);
+			}
+		}
+		list.add(new ActionContributionItem(newProjectAction));
         list.add(new Separator());
-        if (addShortcuts(list)) {
+        if (!shortCuts.isEmpty()) {
+        	list.addAll(shortCuts);
         	list.add(new Separator());
         }
         if (hasExamples()) {
@@ -132,6 +147,19 @@ public class NewWizardMenu extends BaseNewWizardMenu {
         }
         list.add(new ActionContributionItem(getShowDialogAction()));
     }
+
+	private boolean isNewProjectWizardAction(IAction action) {
+		if (action instanceof NewWizardShortcutAction) {
+			IWizardDescriptor wizardDescriptor= ((NewWizardShortcutAction) action).getWizardDescriptor();
+			String [] tags = wizardDescriptor.getTags();
+			for (int i = 0; i < tags.length; i++) {
+				if (WorkbenchWizardElement.TAG_PROJECT.equals(tags[i])) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
     
 	/* (non-Javadoc)
 	 * Method declared on IContributionItem.
