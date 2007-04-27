@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
+ * Martin Oberhuber (Wind River) - [184433] liblocalfile for Linux x86_64
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -90,9 +91,7 @@ public class LocalFileSystem extends FileSystem {
 		String arch = System.getProperty("osgi.arch", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (os.equals(Constants.OS_WIN32))
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else if ( (os.equals(Constants.OS_LINUX) && (arch.equals(Constants.ARCH_X86) || arch.equals(Constants.ARCH_PPC)))
-			 ||   (os.equals(Constants.OS_SOLARIS) && arch.equals(Constants.ARCH_SPARC))
-		)
+		else if (os.equals(Constants.OS_LINUX) || (os.equals(Constants.OS_SOLARIS) && arch.equals(Constants.ARCH_SPARC)))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
 		else if (os.equals(Constants.OS_MACOSX) || os.equals(Constants.OS_HPUX) || os.equals(Constants.OS_QNX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;

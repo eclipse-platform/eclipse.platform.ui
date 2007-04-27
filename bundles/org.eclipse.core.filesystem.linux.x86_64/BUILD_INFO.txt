@@ -1,0 +1,19 @@
+Native Build Info:
+------------------
+
+platform:         x86_64-redhat-linux
+built by:         martin.oberhuber@windriver.com
+build date:       27-Apr-2007
+OS Name:          Red Hat Enterprise Linux Client release 5 (Tikanga)
+OS Version:       Linux szg-qa-lx2-64 2.6.18-8.1.1.el5 #1 SMP x86_64 GNU/Linux (glibc-2.5-12)
+Compiler version: gcc version 4.1.1 20070105 (Red Hat 4.1.1-52)
+
+build script:
+-------------
+#!/bin/sh
+rpm -q glibc
+#ensure system gcc
+export PATH=/usr/bin:$PATH
+cd org.eclipse.core.filesystem/natives/unix/linux
+make JAVA_HOME=$HOME/jdk1.5.0_11_x86-64
+cp liblocalfile_1_0_0.so ../../../../org.eclipse.core.filesystem.linux.x86_64/os/linux/x86_64/
