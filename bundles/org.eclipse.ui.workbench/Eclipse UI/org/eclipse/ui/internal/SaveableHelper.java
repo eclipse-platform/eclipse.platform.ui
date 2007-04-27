@@ -174,7 +174,7 @@ public class SaveableHelper {
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(monitor);
-				monitorWrap.beginTask("", dirtyModels.size()); //$NON-NLS-1$
+				monitorWrap.beginTask(WorkbenchMessages.Save, dirtyModels.size());
 				for (Iterator i = dirtyModels.iterator(); i.hasNext();) {
 					Saveable model = (Saveable) i.next();
 					// handle case where this model got saved as a result of saving another
