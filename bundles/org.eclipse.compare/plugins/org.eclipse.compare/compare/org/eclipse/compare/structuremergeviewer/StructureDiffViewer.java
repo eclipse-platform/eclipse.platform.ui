@@ -22,6 +22,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IDisposable;
 
 
@@ -316,8 +317,16 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		}
 		CompareConfiguration cc = getCompareConfiguration();
 		// The compare configuration is nulled when the viewer is disposed
-		if (cc != null)
-			cc.getContainer().runAsynchronously(inputChangedTask);
+		if (cc != null) {
+			//cc.getContainer().runAsynchronously(inputChangedTask);
+			try {
+				PlatformUI.getWorkbench().getProgressService().run(false, true, inputChangedTask);
+			} catch (InvocationTargetException e) {
+				CompareUIPlugin.log(e.getTargetException());
+			} catch (InterruptedException e) {
+				// Ignore
+			}
+		}
 	}
 
 	/* package */ void compareInputChanged(ICompareInput input, boolean force, IProgressMonitor monitor) {
