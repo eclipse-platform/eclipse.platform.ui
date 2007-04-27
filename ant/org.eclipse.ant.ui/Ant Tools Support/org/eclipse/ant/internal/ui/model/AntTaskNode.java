@@ -110,7 +110,11 @@ public class AntTaskNode extends AntElementNode {
 	public boolean configure(boolean validateFully) {
 		if (getId() != null) {
 			//ensure that references are set...new for Ant 1.7
-			getProjectNode().getProject().getReference(getId());
+			try {
+				getProjectNode().getProject().getReference(getId());
+			} catch (BuildException e) {
+				handleBuildException(e, AntEditorPreferenceConstants.PROBLEM_TASKS);
+			}
 		} 
 		if (!validateFully || (getParentNode() instanceof AntTaskNode)) {
 			return false;
