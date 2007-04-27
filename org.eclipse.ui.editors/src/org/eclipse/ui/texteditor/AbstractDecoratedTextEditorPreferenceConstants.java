@@ -590,10 +590,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
-		if (registry.hasValueFor(key)) {
-			RGB rgb= registry.getRGB(key);
+		RGB rgb= registry.getRGB(key);
+		if (rgb != null)
 			return rgb;
-		}
 		return defaultRGB;
 	}
 

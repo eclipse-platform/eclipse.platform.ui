@@ -77,6 +77,10 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
 	private MarkerAnnotationPreferences fMarkerAnnotationPreferences;
+	/**
+	 * Theme listener.
+	 * @since 3.3
+	 */
 	private IPropertyChangeListener fThemeListener;
 
 	/**
