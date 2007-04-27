@@ -379,11 +379,11 @@ public abstract class Binding {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append("Binding("); //$NON-NLS-1$
 			stringBuffer.append(getTriggerSequence());
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t"); //$NON-NLS-1$
 			stringBuffer.append(command);
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t"); //$NON-NLS-1$
 			stringBuffer.append(schemeId);
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t"); //$NON-NLS-1$
 			stringBuffer.append(contextId);
 			stringBuffer.append(',');
 			stringBuffer.append(locale);

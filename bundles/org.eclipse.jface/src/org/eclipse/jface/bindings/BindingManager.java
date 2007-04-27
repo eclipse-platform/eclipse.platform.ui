@@ -33,6 +33,7 @@ import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
@@ -74,7 +75,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * Returned for optimized lookup.
 	 */
 	private static final TriggerSequence[] EMPTY_TRIGGER_SEQUENCE = new TriggerSequence[0];
-	
+
 	/**
 	 * The separator character used in locales.
 	 */
@@ -198,7 +199,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * The number of bindings in the <code>bindings</code> array.
 	 */
 	private int bindingCount = 0;
-	
+
 	/**
 	 * A cache of context IDs that weren't defined.
 	 */
@@ -267,7 +268,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * <code>null</code> if there is no existing solution.
 	 */
 	private Map prefixTable = null;
-	
+
 	private Set triggerConflicts = new HashSet();
 
 	/**
@@ -330,7 +331,7 @@ public final class BindingManager extends HandleObjectManager implements
 		bindings[bindingCount++] = binding;
 		clearCache();
 	}
-	
+
 	/**
 	 * <p>
 	 * Adds a listener to this binding manager. The listener will be notified
@@ -574,6 +575,9 @@ public final class BindingManager extends HandleObjectManager implements
 			}
 		}
 
+		MultiStatus conflicts = new MultiStatus("org.eclipse.jface", 0, //$NON-NLS-1$
+				"Keybinding conflicts occurred.  They may interfere with normal accelerator operation.", //$NON-NLS-1$
+				null);
 		/*
 		 * THIRD PASS: In this pass, we move any non-conflicting bindings
 		 * directly into the map. In the case of conflicts, we apply some
@@ -601,7 +605,7 @@ public final class BindingManager extends HandleObjectManager implements
 							.getParameterizedCommand(), trigger);
 
 				} else if (match instanceof Collection) {
-					bindings.addAll((Collection)match);
+					bindings.addAll((Collection) match);
 					bindingsByTrigger.put(trigger, bindings);
 
 					final Iterator matchItr = bindings.iterator();
@@ -626,8 +630,16 @@ public final class BindingManager extends HandleObjectManager implements
 					if (winner == null) {
 						// warn once ... so as not to flood the logs
 						if (triggerConflicts.add(trigger)) {
-							Policy.getLog().log(new Status(IStatus.WARNING, "org.eclipse.jface",  //$NON-NLS-1$
-									"A conflict occurred for " + trigger + ": " + match));  //$NON-NLS-1$//$NON-NLS-2$
+							StringBuffer buf = new StringBuffer(
+									"A conflict occurred for " + trigger + ":"); //$NON-NLS-1$ //$NON-NLS-2$
+							Iterator i = ((Collection) match).iterator();
+							while (i.hasNext()) {
+								buf.append('\n');
+								buf.append(i.next());
+							}
+							conflicts.add(new Status(IStatus.WARNING,
+									"org.eclipse.jface", //$NON-NLS-1$
+									buf.toString()));
 						}
 						if (DEBUG) {
 							Tracing.printTrace("BINDINGS", //$NON-NLS-1$
@@ -641,6 +653,9 @@ public final class BindingManager extends HandleObjectManager implements
 					}
 				}
 			}
+		}
+		if (conflicts.getSeverity() != IStatus.OK) {
+			Policy.getLog().log(conflicts);
 		}
 	}
 
@@ -656,7 +671,7 @@ public final class BindingManager extends HandleObjectManager implements
 	public final void contextManagerChanged(
 			final ContextManagerEvent contextManagerEvent) {
 		if (contextManagerEvent.isActiveContextsChanged()) {
-//			clearSolution();
+// clearSolution();
 			recomputeBindings();
 		}
 	}
@@ -824,11 +839,11 @@ public final class BindingManager extends HandleObjectManager implements
 				contextIdItr.remove();
 
 				// This is a logging optimization, only log the error once.
-				if (context==null || !bindingErrors.contains(context.getId())) {
-					if (context!=null) {
+				if (context == null || !bindingErrors.contains(context.getId())) {
+					if (context != null) {
 						bindingErrors.add(context.getId());
 					}
-					
+
 					// now log like you've never logged before!
 					Policy
 							.getLog()
@@ -897,8 +912,8 @@ public final class BindingManager extends HandleObjectManager implements
 
 	/**
 	 * <p>
-	 * Returns the active bindings indexed by command identifier.
-	 * The caller must not modify the returned map.
+	 * Returns the active bindings indexed by command identifier. The caller
+	 * must not modify the returned map.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
@@ -1235,7 +1250,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         command.
 	 * @since 3.2
 	 */
-public final TriggerSequence getBestActiveBindingFor(final String commandId) {
+	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		final Binding[] bindings = getActiveBindingsFor1(commandId);
 		if ((bindings == null) || (bindings.length == 0)) {
 			return null;
@@ -1352,6 +1367,7 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 
 		return null;
 	}
+
 	/**
 	 * <p>
 	 * Returns the set of all bindings managed by this class.
@@ -1465,7 +1481,7 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 
 	/**
 	 * <p>
-	 * Returns the prefix table.  The caller must not modify the returned map.
+	 * Returns the prefix table. The caller must not modify the returned map.
 	 * </p>
 	 * <p>
 	 * This method completes in <code>O(1)</code>. If the active bindings are
@@ -1727,8 +1743,10 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 	}
 
 	/**
-	 * <p>Remove the specific binding by identity. Does nothing if the binding is
-	 * not in the manager.</p>
+	 * <p>
+	 * Remove the specific binding by identity. Does nothing if the binding is
+	 * not in the manager.
+	 * </p>
 	 * <p>
 	 * This method completes in <code>O(n)</code>, where <code>n</code> is
 	 * the number of bindings.
@@ -2157,8 +2175,9 @@ public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		}
 
 		if ((scheme == null) || (!scheme.isDefined())) {
-			throw new NotDefinedException("Cannot activate an undefined scheme. " //$NON-NLS-1$
-					+ scheme.getId());
+			throw new NotDefinedException(
+					"Cannot activate an undefined scheme. " //$NON-NLS-1$
+							+ scheme.getId());
 		}
 
 		if (Util.equals(activeScheme, scheme)) {

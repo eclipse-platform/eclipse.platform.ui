@@ -998,13 +998,13 @@ public final class Command extends NamedHandleObjectWithState implements
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
 			stringBuffer.append(description);
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
 			stringBuffer.append(category);
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
 			stringBuffer.append(handler);
-			stringBuffer.append(',');
+			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
 			stringBuffer.append(parameters);
 			stringBuffer.append(',');
 			stringBuffer.append(returnType);

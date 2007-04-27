@@ -181,9 +181,9 @@ final class HandlerActivation extends EvaluationResultCache implements
 
 		buffer.append("HandlerActivation(commandId="); //$NON-NLS-1$
 		buffer.append(commandId);
-		buffer.append(",handler="); //$NON-NLS-1$
+		buffer.append(",\n\thandler="); //$NON-NLS-1$
 		buffer.append(handler);
-		buffer.append(",expression="); //$NON-NLS-1$
+		buffer.append(",\n\texpression="); //$NON-NLS-1$
 		buffer.append(getExpression());
 		buffer.append(",sourcePriority="); //$NON-NLS-1$
 		buffer.append(getSourcePriority());

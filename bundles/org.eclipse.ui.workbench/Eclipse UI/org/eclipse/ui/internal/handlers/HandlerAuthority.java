@@ -30,6 +30,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
@@ -155,13 +156,16 @@ final class HandlerAuthority extends ExpressionAuthority {
 	final void activateHandler(final IHandlerActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
 		final String commandId = activation.getCommandId();
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0,  //$NON-NLS-1$
+				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
+				null);
 		final Object value = handlerActivationsByCommandId.get(commandId);
 		if (value instanceof SortedSet) {
 			final SortedSet handlerActivations = (SortedSet) value;
 			if (!handlerActivations.contains(activation)) {
 				handlerActivations.add(activation);
 				updateCommand(commandId, resolveConflicts(commandId,
-						handlerActivations));
+						handlerActivations, conflicts));
 			}
 		} else if (value instanceof IHandlerActivation) {
 			if (value != activation) {
@@ -172,11 +176,15 @@ final class HandlerAuthority extends ExpressionAuthority {
 				handlerActivationsByCommandId
 						.put(commandId, handlerActivations);
 				updateCommand(commandId, resolveConflicts(commandId,
-						handlerActivations));
+						handlerActivations, conflicts));
 			}
 		} else {
 			handlerActivationsByCommandId.put(commandId, activation);
 			updateCommand(commandId, (evaluate(activation) ? activation : null));
+		}
+		
+		if (conflicts.getSeverity()!=IStatus.OK) {
+			WorkbenchPlugin.log(conflicts);
 		}
 
 		// Next we update the source priority bucket sort of activations.
@@ -212,6 +220,9 @@ final class HandlerAuthority extends ExpressionAuthority {
 	final void deactivateHandler(final IHandlerActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
 		final String commandId = activation.getCommandId();
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0,  //$NON-NLS-1$
+				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
+				null);
 		final Object value = handlerActivationsByCommandId.get(commandId);
 		if (value instanceof SortedSet) {
 			final SortedSet handlerActivations = (SortedSet) value;
@@ -233,7 +244,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 				} else {
 					updateCommand(commandId, resolveConflicts(commandId,
-							handlerActivations));
+							handlerActivations, conflicts));
 				}
 			}
 		} else if (value instanceof IHandlerActivation) {
@@ -241,6 +252,9 @@ final class HandlerAuthority extends ExpressionAuthority {
 				handlerActivationsByCommandId.remove(commandId);
 				updateCommand(commandId, null);
 			}
+		}
+		if (conflicts.getSeverity()!=IStatus.OK) {
+			WorkbenchPlugin.log(conflicts);
 		}
 
 		// Next we update the source priority bucket sort of activations.
@@ -294,7 +308,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *         <code>null</code>.
 	 */
 	private final IHandlerActivation resolveConflicts(final String commandId,
-			final SortedSet activations) {
+			final SortedSet activations, MultiStatus conflicts) {
 		// If we don't have any, then there is no match.
 		if (activations.isEmpty()) {
 			return null;
@@ -361,14 +375,14 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 		// Return the current best.
 		if (conflict) {
-			String conflictMessage = "Conflict for \'" + commandId + "\': " //$NON-NLS-1$ //$NON-NLS-2$
-					+ bestActivation + ": " //$NON-NLS-1$
+			String conflictMessage = "Conflict for \'" + commandId + "\':\n" //$NON-NLS-1$ //$NON-NLS-2$
+					+ bestActivation + "\n" //$NON-NLS-1$
 					+ currentActivation;
 			if (previousLogs.add(commandId)) {
 				IStatus s = new Status(IStatus.WARNING,
 						"org.eclipse.ui.workbench", //$NON-NLS-1$
 						conflictMessage);
-				WorkbenchPlugin.log(s);
+				conflicts.add(s);
 			}
 			return null;
 		}
@@ -450,6 +464,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 			}
 		}
 
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0,  //$NON-NLS-1$
+				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
+				null);
+		
 		/*
 		 * For every command identifier with a changed activation, we resolve
 		 * conflicts and trigger an update.
@@ -464,11 +482,14 @@ final class HandlerAuthority extends ExpressionAuthority {
 						: null));
 			} else if (value instanceof SortedSet) {
 				final IHandlerActivation activation = resolveConflicts(
-						commandId, (SortedSet) value);
+						commandId, (SortedSet) value, conflicts);
 				updateCommand(commandId, activation);
 			} else {
 				updateCommand(commandId, null);
 			}
+		}
+		if (conflicts.getSeverity()!=IStatus.OK) {
+			WorkbenchPlugin.log(conflicts);
 		}
 
 		// If tracing performance, then print the results.
