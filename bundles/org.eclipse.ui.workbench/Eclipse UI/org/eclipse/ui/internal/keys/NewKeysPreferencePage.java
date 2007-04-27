@@ -918,6 +918,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					filterActionSetContexts = dialog.getFilterActionSet();
 					filterInternalContexts = dialog.getFilterInternal();
 					whenCombo.setInput(getContexts());
+					updateDataControls();
 				}
 			}
 		});
@@ -1272,7 +1273,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		});
 
-		new TreeColumn(tree, SWT.LEFT, BindingLabelProvider.COLUMN_USER);
+		final TreeColumn userMarker = new TreeColumn(tree, SWT.LEFT, 
+				BindingLabelProvider.COLUMN_USER);
+		userMarker.setText(NewKeysPreferenceMessages.UserColumn_Text);
 
 		// Set up the providers for the viewer.
 		final TreeViewer viewer = filteredTree.getViewer();
@@ -1465,6 +1468,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 						if (keyBinding.getType() == Binding.USER) {
 							localChangeManager.removeBinding(keyBinding);
+						} else {
+							localChangeManager
+									.addBinding(new KeyBinding(
+											keyBinding.getKeySequence(),
+											null,
+											keyBinding.getSchemeId(),
+											keyBinding.getContextId(), null, null, null,
+											Binding.USER));
 						}
 						localChangeManager.addBinding(binding);
 						update();
@@ -1914,7 +1925,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		columns[BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE].setWidth(130);
 		columns[BindingLabelProvider.COLUMN_WHEN].setWidth(130);
 		columns[BindingLabelProvider.COLUMN_CATEGORY].setWidth(130);
-		columns[BindingLabelProvider.COLUMN_USER].setWidth(22);
+		columns[BindingLabelProvider.COLUMN_USER].setWidth(50);
 	}
 
 	/**
