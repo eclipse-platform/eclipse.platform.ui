@@ -16,11 +16,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.Category;
@@ -818,6 +816,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	private boolean filterActionSetContexts = true;
 
 	private boolean filterInternalContexts = true;
+	
+	private Set model = new HashSet();
 
 	/**
 	 * The combo box containing the list of possible contexts to choose from.
@@ -863,6 +863,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final String contextId = binding.getContextId();
 		final String schemeId = binding.getSchemeId();
 		final KeySequence triggerSequence = binding.getKeySequence();
+		filteredTree.getViewer().remove(new BindingTreeNode(binding));
 		if (binding.getType() == Binding.USER) {
 			localChangeManager.removeBinding(binding);
 		} else {
@@ -1273,14 +1274,24 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		});
 
-		final TreeColumn userMarker = new TreeColumn(tree, SWT.LEFT, 
+		final TreeColumn userMarker = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_USER);
 		userMarker.setText(NewKeysPreferenceMessages.UserColumn_Text);
 
 		// Set up the providers for the viewer.
 		final TreeViewer viewer = filteredTree.getViewer();
 		viewer.setLabelProvider(new BindingLabelProvider());
-		viewer.setContentProvider(new TreeNodeContentProvider());
+		viewer.setContentProvider(new TreeNodeContentProvider() { 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.TreeNodeContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				if (inputElement instanceof Set) {
+					return ((Set)inputElement).toArray();
+				}
+				return super.getElements(inputElement);
+			}
+		});
 
 		viewer.setComparator(comparator);
 
@@ -1293,6 +1304,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				selectTreeRow(event);
 			}
 		});
+		
+		viewer.setInput(model);
 
 		// Adjust how the filter works.
 		filteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
@@ -1469,13 +1482,11 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						if (keyBinding.getType() == Binding.USER) {
 							localChangeManager.removeBinding(keyBinding);
 						} else {
-							localChangeManager
-									.addBinding(new KeyBinding(
-											keyBinding.getKeySequence(),
-											null,
-											keyBinding.getSchemeId(),
-											keyBinding.getContextId(), null, null, null,
-											Binding.USER));
+							localChangeManager.addBinding(new KeyBinding(
+									keyBinding.getKeySequence(), null,
+									keyBinding.getSchemeId(), keyBinding
+											.getContextId(), null, null, null,
+									Binding.USER));
 						}
 						localChangeManager.addBinding(binding);
 						update();
@@ -1792,136 +1803,21 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			markedParameterizedCommand = null;
 		}
 
-		// Check the grouping.
-		final String grouping = NewKeysPreferenceMessages.GroupingCombo_None_Text;
-		if (NewKeysPreferenceMessages.GroupingCombo_Category_Text
-				.equals(grouping)) {
-			// Group all of the bindings by category.
-			final HashMap bindingsByCategory = new HashMap();
-			final Iterator bindingItr = bindings.iterator();
-			while (bindingItr.hasNext()) {
-				final Object object = bindingItr.next();
-				final ParameterizedCommand command;
-				if (object instanceof Binding) {
-					command = ((Binding) object).getParameterizedCommand();
-				} else {
-					command = (ParameterizedCommand) object;
-				}
-				try {
-					final Category category = command.getCommand()
-							.getCategory();
-					final Object existing = bindingsByCategory.get(category);
-					if (existing instanceof Collection) {
-						final Collection existingBindings = (Collection) existing;
-						existingBindings.add(object);
-					} else {
-						final Collection newCollection = new ArrayList();
-						newCollection.add(object);
-						bindingsByCategory.put(category, newCollection);
-					}
-				} catch (final NotDefinedException e) {
-					// Just skip this one.
-					continue;
-				}
-			}
-
-			// Convert the hash map into nodes.
-			final Iterator entryItr = bindingsByCategory.entrySet().iterator();
-			final TreeNode[] elements = new TreeNode[bindingsByCategory.size()];
-			int i = 0;
-			while (entryItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) entryItr.next();
-				final TreeNode parentNode = new BindingTreeNode(entry.getKey());
-				final Collection childValues = (Collection) entry.getValue();
-				final Iterator childValueItr = childValues.iterator();
-				final TreeNode[] children = new TreeNode[childValues.size()];
-				int j = 0;
-				while (childValueItr.hasNext()) {
-					final TreeNode childNode = new BindingTreeNode(
-							childValueItr.next());
-					childNode.setParent(parentNode);
-					children[j++] = childNode;
-				}
-				parentNode.setChildren(children);
-				elements[i++] = parentNode;
-			}
-
-			// Set the input.
-			viewer.setInput(elements);
-
-		} else if (NewKeysPreferenceMessages.GroupingCombo_When_Text
-				.equals(grouping)) {
-			// Group all of the bindings by context.
-			final HashMap bindingsByContextId = new HashMap();
-			final Iterator bindingItr = bindings.iterator();
-			while (bindingItr.hasNext()) {
-				final Object binding = bindingItr.next();
-				final String contextId;
-				if (binding instanceof ParameterizedCommand) {
-					contextId = IContextIds.CONTEXT_ID_WINDOW;
-				} else {
-					contextId = ((Binding) binding).getContextId();
-				}
-				final Object existing = bindingsByContextId.get(contextId);
-				if (existing instanceof Collection) {
-					final Collection existingBindings = (Collection) existing;
-					existingBindings.add(binding);
-				} else {
-					final Collection newCollection = new ArrayList();
-					newCollection.add(binding);
-					bindingsByContextId.put(contextId, newCollection);
-				}
-			}
-
-			// Convert the hash map into nodes.
-			final Iterator entryItr = bindingsByContextId.entrySet().iterator();
-			final TreeNode[] elements = new TreeNode[bindingsByContextId.size()];
-			int i = 0;
-			while (entryItr.hasNext()) {
-				final Map.Entry entry = (Map.Entry) entryItr.next();
-				final TreeNode parentNode = new BindingTreeNode(entry.getKey());
-				final Collection childValues = (Collection) entry.getValue();
-				final Iterator childValueItr = childValues.iterator();
-				final TreeNode[] children = new TreeNode[childValues.size()];
-				int j = 0;
-				while (childValueItr.hasNext()) {
-					final TreeNode childNode = new BindingTreeNode(
-							childValueItr.next());
-					childNode.setParent(parentNode);
-					children[j++] = childNode;
-				}
-				parentNode.setChildren(children);
-				elements[i++] = parentNode;
-			}
-
-			// Set the input.
-			viewer.setInput(elements);
-
-		} else {
-			// Just a flat list. Convert the flat list into nodes.
-			final Iterator bindingItr = bindings.iterator();
-			final TreeNode[] elements = new BindingTreeNode[bindings.size()];
-			int i = 0;
-			while (bindingItr.hasNext()) {
-				elements[i++] = new BindingTreeNode(bindingItr.next());
-			}
-
-			// Set the input.
-			viewer.setInput(elements);
-
+		// Just a flat list. Convert the flat list into nodes.
+		final Iterator bindingItr = bindings.iterator();
+		model.clear();
+		while (bindingItr.hasNext()) {
+			model.add(new BindingTreeNode(bindingItr.next()));
 		}
+
+		// Set the input.
+		viewer.refresh();
 
 		// Repack all of the columns.
 		final Tree tree = viewer.getTree();
 		final TreeColumn[] columns = tree.getColumns();
-		if (NewKeysPreferenceMessages.GroupingCombo_Category_Text
-				.equals(grouping)
-				|| NewKeysPreferenceMessages.GroupingCombo_When_Text
-						.equals(grouping)) {
-			columns[BindingLabelProvider.COLUMN_COMMAND].setWidth(240);
-		} else {
-			columns[BindingLabelProvider.COLUMN_COMMAND].setWidth(240);
-		}
+
+		columns[BindingLabelProvider.COLUMN_COMMAND].setWidth(240);
 		columns[BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE].setWidth(130);
 		columns[BindingLabelProvider.COLUMN_WHEN].setWidth(130);
 		columns[BindingLabelProvider.COLUMN_CATEGORY].setWidth(130);
