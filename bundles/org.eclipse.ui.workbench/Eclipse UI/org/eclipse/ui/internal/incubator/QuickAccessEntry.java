@@ -181,5 +181,6 @@ class QuickAccessEntry {
 			/* ensure that default selection is not drawn */
 			event.detail &= ~SWT.SELECTED;
 		}
+		event.detail &= ~SWT.FOREGROUND;
 	}
 }

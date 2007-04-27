@@ -17,6 +17,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -82,8 +84,9 @@ public class QuickAccessDialog extends PopupDialog {
 	private LinkedList previousPicksList = new LinkedList();
 
 	protected Map providerMap;
-	private Font italicsFont;
+	// private Font italicsFont;
 	private Color grayColor;
+	private TextLayout textLayout;
 
 	/**
 	 * @param parent
@@ -91,7 +94,8 @@ public class QuickAccessDialog extends PopupDialog {
 	 */
 	QuickAccessDialog(IWorkbenchWindow window, AbstractProvider[] providers) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true,
-				true, true, null, null);
+				true, true, null,
+				IncubatorMessages.CtrlEAction_StartTypingToFindMatches);
 		this.window = window;
 		this.providers = providers;
 		providers[0] = new PreviousPicksProvider();
@@ -121,8 +125,8 @@ public class QuickAccessDialog extends PopupDialog {
 					AbstractElement selectedElement = null;
 					String text = filterText.getText();
 					if (table.getSelectionCount() == 1) {
-						QuickAccessEntry entry = (QuickAccessEntry) table.getSelection()[0]
-								.getData();
+						QuickAccessEntry entry = (QuickAccessEntry) table
+								.getSelection()[0].getData();
 						selectedElement = entry == null ? null : entry.element;
 					}
 					close();
@@ -173,6 +177,33 @@ public class QuickAccessDialog extends PopupDialog {
 		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE),
 				new ColumnWeightData(100, 100));
 
+		new DefaultToolTip(table, ToolTip.NO_RECREATE, false) {
+			private QuickAccessEntry getEntry(Event event) {
+				TableItem item = table.getItem(new Point(event.x, event.y));
+				if (item != null) {
+					return (QuickAccessEntry) item.getData();
+				}
+				return null;
+			}
+
+			protected String getText(Event event) {
+				QuickAccessEntry entry = getEntry(event);
+				if (entry != null) {
+					return entry.element.getLabel();
+				}
+				return null;
+			}
+
+			protected boolean shouldCreateToolTip(Event event) {
+				return getEntry(event) != null
+						&& super.shouldCreateToolTip(event);
+			}
+
+			protected Object getToolTipArea(Event event) {
+				return getEntry(event);
+			}
+		}.activate();
+
 		table.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() == 0) {
@@ -196,8 +227,8 @@ public class QuickAccessDialog extends PopupDialog {
 				AbstractElement selectedElement = null;
 				String text = filterText.getText();
 				if (table.getSelectionCount() == 1) {
-					QuickAccessEntry quickAccessEntry = (QuickAccessEntry) table.getSelection()[0]
-							.getData();
+					QuickAccessEntry quickAccessEntry = (QuickAccessEntry) table
+							.getSelection()[0].getData();
 					selectedElement = quickAccessEntry == null ? null
 							: quickAccessEntry.element;
 				}
@@ -208,17 +239,18 @@ public class QuickAccessDialog extends PopupDialog {
 			}
 		});
 
-		final TextLayout textLayout = new TextLayout(table.getDisplay());
+		textLayout = new TextLayout(table.getDisplay());
 		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(
 				table.getFont()).setStyle(SWT.BOLD));
-		italicsFont = resourceManager.createFont(FontDescriptor.createFrom(
-				table.getFont()).setStyle(SWT.ITALIC));
+		// italicsFont = resourceManager.createFont(FontDescriptor.createFrom(
+		// table.getFont()).setStyle(SWT.ITALIC));
 		grayColor = resourceManager.createColor(ColorUtil.blend(table
 				.getBackground().getRGB(), table.getForeground().getRGB()));
 		final TextStyle boldStyle = new TextStyle(boldFont, null, null);
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
-				QuickAccessEntry entry = (QuickAccessEntry) event.item.getData();
+				QuickAccessEntry entry = (QuickAccessEntry) event.item
+						.getData();
 				if (entry != null) {
 					switch (event.type) {
 					case SWT.MeasureItem:
@@ -285,9 +317,10 @@ public class QuickAccessDialog extends PopupDialog {
 							item = new TableItem(table, SWT.NONE);
 						}
 						item.setData(entry);
-//						Rectangle bounds = item.getBounds();
-//						table.redraw(bounds.x, bounds.y, bounds.width,
-//								bounds.height, false);
+						item.setText(0, provider.getName());
+						item.setText(1, element.getLabel());
+						item.setImage(1, entry.getImage(element,
+								resourceManager));
 						countPerProvider++;
 						countTotal++;
 						continue element_loop;
@@ -302,11 +335,14 @@ public class QuickAccessDialog extends PopupDialog {
 			table.remove(countTotal, items.length - 1);
 		}
 		if (filter.length() == 0) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			item.setText(1,
-					IncubatorMessages.CtrlEAction_StartTypingToFindMatches);
-			item.setFont(1, italicsFont);
-			item.setForeground(1, grayColor);
+			setInfoText(IncubatorMessages.CtrlEAction_StartTypingToFindMatches);
+			// TableItem item = new TableItem(table, SWT.NONE);
+			// item.setText(1,
+			// IncubatorMessages.CtrlEAction_StartTypingToFindMatches);
+			// item.setFont(1, italicsFont);
+			// item.setForeground(1, grayColor);
+		} else {
+			setInfoText(""); //$NON-NLS-1$
 		}
 		if (countTotal > 0) {
 			table.setSelection(0);
@@ -321,6 +357,9 @@ public class QuickAccessDialog extends PopupDialog {
 
 	public boolean close() {
 		storeDialog(getDialogSettings());
+		if (textLayout != null && !textLayout.isDisposed()) {
+			textLayout.dispose();
+		}
 		if (resourceManager != null) {
 			resourceManager.dispose();
 			resourceManager = null;
@@ -330,7 +369,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 	protected Point getInitialSize() {
 		if (!getPersistBounds()) {
-			return new Point(400, 400);
+			return new Point(350, 420);
 		}
 		return super.getInitialSize();
 	}

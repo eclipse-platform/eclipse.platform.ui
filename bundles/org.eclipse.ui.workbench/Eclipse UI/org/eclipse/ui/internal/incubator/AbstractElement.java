@@ -106,7 +106,7 @@ public abstract class AbstractElement {
 		index = combinedLabel.indexOf(filter);
 		if (index != -1) {
 			int lengthOfElementMatch = index + filter.length()
-					- providerForMatching.getName().length();
+					- providerForMatching.getName().length() - 1;
 			if (lengthOfElementMatch > 0) {
 				return new QuickAccessEntry(this, providerForMatching,
 						new int[][] { { 0, lengthOfElementMatch - 1 } },
