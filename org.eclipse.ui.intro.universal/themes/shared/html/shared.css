@@ -91,6 +91,10 @@
 	background-repeat: repeat-y;
 }
 
+body .importance-low {
+	background-color: #ffffff;
+}
+
 body .importance-new {
 	background-image: url("../graphics/contentpage/ov_high.gif");	
 	background-color: #fffacd;
