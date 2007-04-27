@@ -131,6 +131,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction switchToEditorAction;
 
+	private IWorkbenchAction workbookEditorsAction;
+
     private IWorkbenchAction quickAccessAction;
 
     private IWorkbenchAction backwardHistoryAction;
@@ -1122,6 +1124,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 .create(window);
         register(switchToEditorAction);
 
+        workbookEditorsAction = ActionFactory.SHOW_WORKBOOK_EDITORS
+        		.create(window);
+        register(workbookEditorsAction);
+        
         quickAccessAction = ActionFactory.SHOW_QUICK_ACCESS
         	.create(window);
 
