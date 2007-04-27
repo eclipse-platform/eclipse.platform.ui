@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorReference;
@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  * 
  */
-public class EditorElement extends AbstractElement {
+public class EditorElement extends QuickAccessElement {
 
 	private static final String DIRTY_MARK = "*"; //$NON-NLS-1$
 

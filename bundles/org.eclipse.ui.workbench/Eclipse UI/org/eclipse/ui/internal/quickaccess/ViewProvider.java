@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,25 +24,25 @@ import org.eclipse.ui.views.IViewDescriptor;
  * @since 3.3
  * 
  */
-public class ViewProvider extends AbstractProvider {
+public class ViewProvider extends QuickAccessProvider {
 
-	private AbstractElement[] cachedElements;
+	private QuickAccessElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
 	public String getId() {
 		return "org.eclipse.ui.views"; //$NON-NLS-1$
 	}
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (ViewElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
 			IViewDescriptor[] views = PlatformUI.getWorkbench()
 					.getViewRegistry().getViews();
-			cachedElements = new AbstractElement[views.length];
+			cachedElements = new QuickAccessElement[views.length];
 			for (int i = 0; i < views.length; i++) {
 				ViewElement viewElement = new ViewElement(views[i], this);
 				cachedElements[i] = viewElement;
@@ -58,6 +58,6 @@ public class ViewProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Views;
+		return QuickAccessMessages.QuickAccess_Views;
 	}
 }

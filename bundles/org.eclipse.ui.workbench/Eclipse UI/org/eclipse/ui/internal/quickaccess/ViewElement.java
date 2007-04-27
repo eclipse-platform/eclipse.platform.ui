@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -21,7 +21,7 @@ import org.eclipse.ui.views.IViewDescriptor;
  * @since 3.3
  * 
  */
-public class ViewElement extends AbstractElement {
+public class ViewElement extends QuickAccessElement {
 
 	private final IViewDescriptor viewDescriptor;
 

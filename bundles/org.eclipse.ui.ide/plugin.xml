@@ -871,7 +871,7 @@
       </key>
       <key
             commandId="org.eclipse.ui.window.quickAccess"
-            sequence="M1+E"
+            sequence="M1+3"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
    </extension>
 

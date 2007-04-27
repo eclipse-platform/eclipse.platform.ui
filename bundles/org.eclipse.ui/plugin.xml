@@ -221,6 +221,10 @@
             sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.window.openEditorDropDown"
+            sequence="M1+E"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.window.switchToEditor"
             sequence="M1+M2+E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -873,7 +877,7 @@
             id="org.eclipse.ui.window.openEditorDropDown" />
       <command
             categoryId="org.eclipse.ui.category.window"
-            defaultHandler="org.eclipse.ui.internal.incubator.CtrlEAction"
+            defaultHandler="org.eclipse.ui.internal.quickaccess.QuickAccessHandler"
             description="%command.quickAccess.description"
             id="org.eclipse.ui.window.quickAccess"
             name="%command.quickAccess.name"/>

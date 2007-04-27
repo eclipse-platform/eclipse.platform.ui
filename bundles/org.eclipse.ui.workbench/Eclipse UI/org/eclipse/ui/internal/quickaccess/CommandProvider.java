@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import org.eclipse.ui.keys.IBindingService;
  * @since 3.3
  * 
  */
-public class CommandProvider extends AbstractProvider {
+public class CommandProvider extends QuickAccessProvider {
 
 	private Map idToElement = new HashMap();
 
@@ -37,12 +37,12 @@ public class CommandProvider extends AbstractProvider {
 		return "org.eclipse.ui.commands"; //$NON-NLS-1$
 	}
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (CommandElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		idToElement.clear();
 		BindingService bindingService = (BindingService) PlatformUI
 				.getWorkbench().getService(IBindingService.class);
@@ -63,8 +63,8 @@ public class CommandProvider extends AbstractProvider {
 					this);
 			idToElement.put(commandElement.getId(), commandElement);
 		}
-		return (AbstractElement[]) idToElement.values().toArray(
-				new AbstractElement[idToElement.values().size()]);
+		return (QuickAccessElement[]) idToElement.values().toArray(
+				new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	public ImageDescriptor getImageDescriptor() {
@@ -73,6 +73,6 @@ public class CommandProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Commands;
+		return QuickAccessMessages.QuickAccess_Commands;
 	}
 }

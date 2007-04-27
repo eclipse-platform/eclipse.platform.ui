@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -20,7 +20,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  * 
  */
-public class PerspectiveElement extends AbstractElement {
+public class PerspectiveElement extends QuickAccessElement {
 
 	private final IPerspectiveDescriptor descriptor;
 

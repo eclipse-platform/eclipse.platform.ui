@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,16 +25,16 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * @since 3.3
  * 
  */
-public class EditorProvider extends AbstractProvider {
+public class EditorProvider extends QuickAccessProvider {
 
 	private Map idToElement = new HashMap();
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (EditorElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		idToElement.clear();
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
@@ -43,8 +43,8 @@ public class EditorProvider extends AbstractProvider {
 			EditorElement editorElement = new EditorElement(editors[i], this);
 			idToElement.put(editorElement.getId(), editorElement);
 		}
-		return (AbstractElement[]) idToElement.values().toArray(
-				new AbstractElement[idToElement.values().size()]);
+		return (QuickAccessElement[]) idToElement.values().toArray(
+				new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	public String getId() {
@@ -57,6 +57,6 @@ public class EditorProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Editors;
+		return QuickAccessMessages.QuickAccess_Editors;
 	}
 }

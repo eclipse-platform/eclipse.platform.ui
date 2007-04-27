@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -20,9 +20,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.3
  * 
  */
-public abstract class AbstractProvider {
+public abstract class QuickAccessProvider {
 
-	private AbstractElement[] sortedElements;
+	private QuickAccessElement[] sortedElements;
 
 	/**
 	 * Returns the unique ID of this provider.
@@ -50,15 +50,15 @@ public abstract class AbstractProvider {
 	 * 
 	 * @return this provider's elements
 	 */
-	public abstract AbstractElement[] getElements();
+	public abstract QuickAccessElement[] getElements();
 
-	public AbstractElement[] getElementsSorted() {
+	public QuickAccessElement[] getElementsSorted() {
 		if (sortedElements == null) {
 			sortedElements = getElements();
 			Arrays.sort(sortedElements, new Comparator() {
 				public int compare(Object o1, Object o2) {
-					AbstractElement e1 = (AbstractElement) o1;
-					AbstractElement e2 = (AbstractElement) o2;
+					QuickAccessElement e1 = (QuickAccessElement) o1;
+					QuickAccessElement e2 = (QuickAccessElement) o2;
 					return e1.getLabel().compareTo(e2.getLabel());
 				}
 			});
@@ -74,5 +74,5 @@ public abstract class AbstractProvider {
 	 *            the ID of an element
 	 * @return the element with the given ID, or null if not found.
 	 */
-	public abstract AbstractElement getElementForId(String id);
+	public abstract QuickAccessElement getElementForId(String id);
 }

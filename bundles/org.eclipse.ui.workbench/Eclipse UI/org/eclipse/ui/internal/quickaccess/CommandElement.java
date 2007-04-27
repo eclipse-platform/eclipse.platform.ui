@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
@@ -26,7 +26,7 @@ import org.eclipse.ui.handlers.IHandlerService;
  * @since 3.3
  * 
  */
-public class CommandElement extends AbstractElement {
+public class CommandElement extends QuickAccessElement {
 
 	private static final String separator = " - "; //$NON-NLS-1$
 

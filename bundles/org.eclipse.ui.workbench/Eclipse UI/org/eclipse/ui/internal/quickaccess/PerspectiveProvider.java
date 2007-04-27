@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,25 +24,25 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * @since 3.3
  * 
  */
-public class PerspectiveProvider extends AbstractProvider {
+public class PerspectiveProvider extends QuickAccessProvider {
 
-	private AbstractElement[] cachedElements;
+	private QuickAccessElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
 	public String getId() {
 		return "org.eclipse.ui.perspectives"; //$NON-NLS-1$
 	}
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (PerspectiveElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
 			IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench()
 					.getPerspectiveRegistry().getPerspectives();
-			cachedElements = new AbstractElement[perspectives.length];
+			cachedElements = new QuickAccessElement[perspectives.length];
 			for (int i = 0; i < perspectives.length; i++) {
 				PerspectiveElement perspectiveElement = new PerspectiveElement(
 						perspectives[i], this);
@@ -59,6 +59,6 @@ public class PerspectiveProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Perspectives;
+		return QuickAccessMessages.QuickAccess_Perspectives;
 	}
 }

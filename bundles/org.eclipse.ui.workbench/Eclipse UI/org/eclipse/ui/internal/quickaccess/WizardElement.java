@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -21,7 +21,7 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * @since 3.3
  * 
  */
-public class WizardElement extends AbstractElement {
+public class WizardElement extends QuickAccessElement {
 
 	private static final String separator = " - "; //$NON-NLS-1$
 

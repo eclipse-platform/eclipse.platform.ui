@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,16 +31,16 @@ import org.eclipse.ui.internal.dialogs.PropertyPageManager;
  * @since 3.3
  *
  */
-public class PropertiesProvider extends AbstractProvider {
+public class PropertiesProvider extends QuickAccessProvider {
 
 	private Map idToElement = new HashMap();
 	
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (PropertiesElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		idToElement.clear();		
 		IWorkbenchPage activePage = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();
@@ -59,7 +59,7 @@ public class PropertiesProvider extends AbstractProvider {
 				}
 			}
 		}
-		return (AbstractElement[]) idToElement.values().toArray(new AbstractElement[idToElement.values().size()]);
+		return (QuickAccessElement[]) idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	public String getId() {
@@ -72,6 +72,6 @@ public class PropertiesProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Properties;
+		return QuickAccessMessages.QuickAccess_Properties;
 	}
 }

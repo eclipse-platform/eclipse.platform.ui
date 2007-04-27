@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.3
  * 
  */
-public abstract class AbstractElement {
+public abstract class QuickAccessElement {
 
 	private static final int[][] EMPTY_INDICES = new int[0][0];
-	private AbstractProvider provider;
+	private QuickAccessProvider provider;
 
 	/**
 	 * @param provider
 	 */
-	public AbstractElement(AbstractProvider provider) {
+	public QuickAccessElement(QuickAccessProvider provider) {
 		super();
 		this.provider = provider;
 	}
@@ -64,7 +64,7 @@ public abstract class AbstractElement {
 
 	/**
 	 * Returns the id for this element. The id has to be unique within the
-	 * AbstractProvider that provided this element.
+	 * QuickAccessProvider that provided this element.
 	 * 
 	 * @return the id
 	 */
@@ -87,7 +87,7 @@ public abstract class AbstractElement {
 	/**
 	 * @return Returns the provider.
 	 */
-	public AbstractProvider getProvider() {
+	public QuickAccessProvider getProvider() {
 		return provider;
 	}
 
@@ -95,7 +95,7 @@ public abstract class AbstractElement {
 	 * @param filter
 	 * @return
 	 */
-	public QuickAccessEntry match(String filter, AbstractProvider providerForMatching) {
+	public QuickAccessEntry match(String filter, QuickAccessProvider providerForMatching) {
 		String sortLabel = getSortLabel().toLowerCase();
 		int index = sortLabel.indexOf(filter);
 		if (index != -1) {

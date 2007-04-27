@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,17 +28,17 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * @since 3.3
  * 
  */
-public class WizardProvider extends AbstractProvider {
+public class WizardProvider extends QuickAccessProvider {
 
-	private AbstractElement[] cachedElements;
+	private QuickAccessElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (WizardElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
 			IWizardCategory rootCategory = WorkbenchPlugin.getDefault()
 					.getNewWizardRegistry().getRootCategory();
@@ -46,7 +46,7 @@ public class WizardProvider extends AbstractProvider {
 			collectWizards(rootCategory, result);
 			IWizardDescriptor[] wizards = (IWizardDescriptor[]) result
 					.toArray(new IWizardDescriptor[result.size()]);
-			cachedElements = new AbstractElement[wizards.length];
+			cachedElements = new QuickAccessElement[wizards.length];
 			for (int i = 0; i < wizards.length; i++) {
 				WizardElement wizardElement = new WizardElement(wizards[i], this);
 				cachedElements[i] = wizardElement;
@@ -74,6 +74,6 @@ public class WizardProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_New;
+		return QuickAccessMessages.QuickAccess_New;
 	}
 }

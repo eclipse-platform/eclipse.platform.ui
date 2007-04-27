@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.3
  * 
  */
-public class ActionElement extends AbstractElement {
+public class ActionElement extends QuickAccessElement {
 
 	private static final String separator = " - "; //$NON-NLS-1$
 

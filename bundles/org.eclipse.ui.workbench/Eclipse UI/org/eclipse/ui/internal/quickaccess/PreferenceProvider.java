@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,26 +28,26 @@ import org.eclipse.ui.internal.WorkbenchImages;
  * @since 3.3
  * 
  */
-public class PreferenceProvider extends AbstractProvider {
+public class PreferenceProvider extends QuickAccessProvider {
 
-	private AbstractElement[] cachedElements;
+	private QuickAccessElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
 	public String getId() {
 		return "org.eclipse.ui.preferences"; //$NON-NLS-1$
 	}
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (PreferenceElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
 			List list = PlatformUI.getWorkbench().getPreferenceManager().getElements(PreferenceManager.PRE_ORDER);
 			Set uniqueElements = new HashSet(list);
 			IPreferenceNode[] preferences = (IPreferenceNode[]) uniqueElements.toArray(new IPreferenceNode[uniqueElements.size()]);
-			cachedElements = new AbstractElement[preferences.length];
+			cachedElements = new QuickAccessElement[preferences.length];
 			for (int i = 0; i < preferences.length; i++) {
 				PreferenceElement preferenceElement = new PreferenceElement(
 						preferences[i], this);
@@ -64,6 +64,6 @@ public class PreferenceProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Preferences;
+		return QuickAccessMessages.QuickAccess_Preferences;
 	}
 }

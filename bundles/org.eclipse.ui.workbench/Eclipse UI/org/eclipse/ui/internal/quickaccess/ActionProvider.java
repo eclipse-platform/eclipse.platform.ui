@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * @since 3.3
  * 
  */
-public class ActionProvider extends AbstractProvider {
+public class ActionProvider extends QuickAccessProvider {
 
 	private Map idToElement = new HashMap();
 
@@ -38,12 +38,12 @@ public class ActionProvider extends AbstractProvider {
 		return "org.eclipse.ui.actions"; //$NON-NLS-1$
 	}
 
-	public AbstractElement getElementForId(String id) {
+	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (ActionElement) idToElement.get(id);
 	}
 
-	public AbstractElement[] getElements() {
+	public QuickAccessElement[] getElements() {
 		idToElement.clear();
 		WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
@@ -83,6 +83,6 @@ public class ActionProvider extends AbstractProvider {
 	}
 
 	public String getName() {
-		return IncubatorMessages.CtrlEAction_Menus;
+		return QuickAccessMessages.QuickAccess_Menus;
 	}
 }

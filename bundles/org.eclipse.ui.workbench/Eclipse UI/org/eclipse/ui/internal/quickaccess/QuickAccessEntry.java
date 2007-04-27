@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.incubator;
+package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -30,12 +30,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 class QuickAccessEntry {
 	boolean firstInCategory;
 	boolean lastInCategory;
-	AbstractElement element;
-	AbstractProvider provider;
+	QuickAccessElement element;
+	QuickAccessProvider provider;
 	int[][] elementMatchRegions;
 	int[][] providerMatchRegions;
 
-	QuickAccessEntry(AbstractElement element, AbstractProvider provider,
+	QuickAccessEntry(QuickAccessElement element, QuickAccessProvider provider,
 			int[][] elementMatchRegions, int[][] providerMatchRegions) {
 		this.element = element;
 		this.provider = provider;
@@ -43,7 +43,7 @@ class QuickAccessEntry {
 		this.providerMatchRegions = providerMatchRegions;
 	}
 
-	Image getImage(AbstractElement element, ResourceManager resourceManager) {
+	Image getImage(QuickAccessElement element, ResourceManager resourceManager) {
 		Image image = findOrCreateImage(element.getImageDescriptor(),
 				resourceManager);
 		if (image == null) {
