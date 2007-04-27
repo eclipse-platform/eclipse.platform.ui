@@ -3008,7 +3008,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 if (activePerspective == null) {
                     activePerspective = perspList.getNextActive();
                     perspList.setActive(activePerspective);
-                    result.merge(activePerspective.restoreState());
                 }
                 if (activePerspective != null && restoreActivePerspective) {
 					result.merge(activePerspective.restoreState());
