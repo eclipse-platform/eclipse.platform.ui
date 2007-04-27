@@ -75,6 +75,8 @@ class QuickAccessEntry {
 	 */
 	public void measure(Event event, TextLayout textLayout,
 			ResourceManager resourceManager, TextStyle boldStyle) {
+		Table table = ((TableItem) event.item).getParent();
+		textLayout.setFont(table.getFont());
 		switch (event.index) {
 		case 0:
 			if (firstInCategory || providerMatchRegions.length > 0) {
@@ -114,6 +116,7 @@ class QuickAccessEntry {
 		Color oldForeground = event.gc.getForeground();
 		boolean selected = (event.detail & SWT.SELECTED) != 0;
 		final Table table = ((TableItem) event.item).getParent();
+		textLayout.setFont(table.getFont());
 		boolean hasFocus = table.isFocusControl();
 		event.gc.setForeground(hasFocus && selected ? table.getDisplay()
 				.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT) : table
@@ -168,7 +171,8 @@ class QuickAccessEntry {
 		if ((event.detail & SWT.SELECTED) != 0) {
 			Color oldBackground = event.gc.getBackground();
 
-			Color background = table.isFocusControl() ? table.getDisplay()
+			final boolean hasFocus = table.isFocusControl();
+			Color background = hasFocus ? table.getDisplay()
 					.getSystemColor(SWT.COLOR_LIST_SELECTION) : table
 					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			event.gc.setBackground(background);
@@ -180,6 +184,10 @@ class QuickAccessEntry {
 			event.gc.setBackground(oldBackground);
 			/* ensure that default selection is not drawn */
 			event.detail &= ~SWT.SELECTED;
+		}
+		event.detail &= ~SWT.FOREGROUND;
+		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			event.detail &= ~SWT.FOCUSED;
 		}
 		event.detail &= ~SWT.FOREGROUND;
 	}

@@ -139,11 +139,11 @@ public class QuickAccessDialog extends PopupDialog {
 					}
 					return;
 				} else if (e.keyCode == SWT.ARROW_DOWN) {
-					table.setFocus();
 					if (table.getItemCount() > 1
 							&& table.getItem(1).getData() != null) {
 						table.setSelection(1);
 					}
+					table.setFocus();
 				} else if (e.character == 0x1B) // ESC
 					close();
 			}
@@ -323,8 +323,10 @@ public class QuickAccessDialog extends PopupDialog {
 						item.setData(entry);
 						item.setText(0, provider.getName());
 						item.setText(1, element.getLabel());
-						item.setImage(1, entry.getImage(element,
-								resourceManager));
+//						if (SWT.getPlatform().equals("wpf")) { //$NON-NLS-1$
+							item.setImage(1, entry.getImage(element,
+									resourceManager));
+//						}
 						countPerProvider++;
 						countTotal++;
 						continue element_loop;
