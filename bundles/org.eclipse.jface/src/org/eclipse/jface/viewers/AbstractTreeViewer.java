@@ -127,7 +127,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
 		assertElementsNotNull(childElements);
-
+		if (isBusy())
+			return;
 		Widget[] widgets = internalFindItems(parentElementOrTreePath);
 		// If parent hasn't been realized yet, just ignore the add.
 		if (widgets.length == 0) {
@@ -334,7 +335,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int index;
 			if (comparator == null) {
 				if (itemExists(items, element)) {
-					refresh(element);
+					internalRefresh(element);
 					newItem = false;
 				}
 				index = -1;
@@ -355,7 +356,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 						// any)
 						if (items[lastInsertion].getData().equals(element)) {
 							// refresh the element in case it has new children
-							refresh(element);
+							internalRefresh(element);
 							newItem = false;
 						}
 						lastInsertion++;// We had an insertion so increment
@@ -740,46 +741,52 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the widget
 	 */
 	protected void createChildren(final Widget widget) {
-		final Item[] tis = getChildren(widget);
-		if (tis != null && tis.length > 0) {
-			Object data = tis[0].getData();
-			if (data != null) {
-				return; // children already there!
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			final Item[] tis = getChildren(widget);
+			if (tis != null && tis.length > 0) {
+				Object data = tis[0].getData();
+				if (data != null) {
+					return; // children already there!
+				}
 			}
-		}
-
-		BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
-			public void run() {
-				// fix for PR 1FW89L7:
-				// don't complain and remove all "dummies" ...
-				if (tis != null) {
-					for (int i = 0; i < tis.length; i++) {
-						if (tis[i].getData() != null) {
-							disassociate(tis[i]);
-							Assert.isTrue(tis[i].getData() == null,
-									"Second or later child is non -null");//$NON-NLS-1$
-
+	
+			BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
+				public void run() {
+					// fix for PR 1FW89L7:
+					// don't complain and remove all "dummies" ...
+					if (tis != null) {
+						for (int i = 0; i < tis.length; i++) {
+							if (tis[i].getData() != null) {
+								disassociate(tis[i]);
+								Assert.isTrue(tis[i].getData() == null,
+										"Second or later child is non -null");//$NON-NLS-1$
+	
+							}
+							tis[i].dispose();
 						}
-						tis[i].dispose();
+					}
+					Object d = widget.getData();
+					if (d != null) {
+						Object parentElement = d;
+						Object[] children;
+						if (isTreePathContentProvider() && widget instanceof Item) {
+							TreePath path = getTreePathFromItem((Item) widget);
+							children = getSortedChildren(path);
+						} else {
+							children = getSortedChildren(parentElement);
+						}
+						for (int i = 0; i < children.length; i++) {
+							createTreeItem(widget, children[i], -1);
+						}
 					}
 				}
-				Object d = widget.getData();
-				if (d != null) {
-					Object parentElement = d;
-					Object[] children;
-					if (isTreePathContentProvider() && widget instanceof Item) {
-						TreePath path = getTreePathFromItem((Item) widget);
-						children = getSortedChildren(path);
-					} else {
-						children = getSortedChildren(parentElement);
-					}
-					for (int i = 0; i < children.length; i++) {
-						createTreeItem(widget, children[i], -1);
-					}
-				}
-			}
-
-		});
+	
+			});
+		} finally {
+			busy = oldBusy;
+		}
 	}
 
 	/**
@@ -944,23 +951,29 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
-		if (widget instanceof Item) {
-			Item item = (Item) widget;
-
-			// ensure that back pointer is correct
-			if (fullMap) {
-				associate(element, item);
-			} else {
-				Object data = item.getData();
-				if (data != null) {
-					unmapElement(data, item);
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			if (widget instanceof Item) {
+				Item item = (Item) widget;
+				
+				// ensure that back pointer is correct
+				if (fullMap) {
+					associate(element, item);
+				} else {
+					Object data = item.getData();
+					if (data != null) {
+						unmapElement(data, item);
+					}
+					item.setData(element);
+					mapElement(element, item);
 				}
-				item.setData(element);
-				mapElement(element, item);
+				
+				// update icon and label
+				SafeRunnable.run(new UpdateItemSafeRunnable(item, element));
 			}
-
-			// update icon and label
-			SafeRunnable.run(new UpdateItemSafeRunnable(item, element));
+		} finally {
+			busy = oldBusy;
 		}
 	}
 
@@ -995,6 +1008,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level) {
+		if (isBusy())
+			return;
 		Widget w = internalExpand(elementOrTreePath, true);
 		if (w != null) {
 			internalExpandToLevel(w, level);
@@ -1248,46 +1263,52 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected Object[] getRawChildren(Object parentElementOrTreePath) {
-		Object parent;
-		TreePath path;
-		if (parentElementOrTreePath instanceof TreePath) {
-			path = (TreePath) parentElementOrTreePath;
-			parent = path.getLastSegment();
-		} else {
-			parent = parentElementOrTreePath;
-			path = null;
-		}
-		if (parent != null) {
-			if (equals(parent, getRoot())) {
-				return super.getRawChildren(parent);
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			Object parent;
+			TreePath path;
+			if (parentElementOrTreePath instanceof TreePath) {
+				path = (TreePath) parentElementOrTreePath;
+				parent = path.getLastSegment();
+			} else {
+				parent = parentElementOrTreePath;
+				path = null;
 			}
-			IContentProvider cp = getContentProvider();
-			if (cp instanceof ITreePathContentProvider) {
-				ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
-				if (path == null) {
-					// A path was not provided so try and find one
-					Widget w = findItem(parent);
-					if (w instanceof Item) {
-						Item item = (Item) w;
-						path = getTreePathFromItem(item);
-					}
+			if (parent != null) {
+				if (equals(parent, getRoot())) {
+					return super.getRawChildren(parent);
+				}
+				IContentProvider cp = getContentProvider();
+				if (cp instanceof ITreePathContentProvider) {
+					ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
 					if (path == null) {
-						path = new TreePath(new Object[] { parent });
+						// A path was not provided so try and find one
+						Widget w = findItem(parent);
+						if (w instanceof Item) {
+							Item item = (Item) w;
+							path = getTreePathFromItem(item);
+						}
+						if (path == null) {
+							path = new TreePath(new Object[] { parent });
+						}
+					}
+					Object[] result = tpcp.getChildren(path);
+					if (result != null) {
+						return result;
+					}
+				} else if (cp instanceof ITreeContentProvider) {
+					ITreeContentProvider tcp = (ITreeContentProvider) cp;
+					Object[] result = tcp.getChildren(parent);
+					if (result != null) {
+						return result;
 					}
 				}
-				Object[] result = tpcp.getChildren(path);
-				if (result != null) {
-					return result;
-				}
-			} else if (cp instanceof ITreeContentProvider) {
-				ITreeContentProvider tcp = (ITreeContentProvider) cp;
-				Object[] result = tcp.getChildren(parent);
-				if (result != null) {
-					return result;
-				}
 			}
+			return new Object[0];
+		} finally {
+			busy = oldBusy;
 		}
-		return new Object[0];
 	}
 
 	/**
@@ -2045,6 +2066,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elementsOrTreePaths.length == 0) {
 			return;
 		}
+		if (isBusy())
+			return;
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRemove(elementsOrTreePaths);
@@ -2075,6 +2098,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elements.length == 0) {
 			return;
 		}
+		if (isBusy())
+			return;
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRemove(parent, elements);
@@ -2227,6 +2252,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedElements(Object[] elements) {
 		assertElementsNotNull(elements);
+		if (isBusy()) {
+			return;
+		}
 		CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
 		for (int i = 0; i < elements.length; ++i) {
 			Object element = elements[i];
@@ -2261,6 +2289,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedTreePaths(TreePath[] treePaths) {
 		assertElementsNotNull(treePaths);
+		if (isBusy())
+			return;
 		final IElementComparer comparer = getComparer();
 		IElementComparer treePathComparer = new IElementComparer() {
 
@@ -2303,6 +2333,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
 		Assert.isNotNull(elementOrTreePath);
+		if (isBusy())
+			return;
 		Widget item = internalExpand(elementOrTreePath, false);
 		if (item instanceof Item) {
 			if (expanded) {
@@ -2787,7 +2819,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int position) {
 		Assert.isNotNull(parentElementOrTreePath);
 		Assert.isNotNull(element);
-
+		if (isBusy())
+			return;
 		if (getComparator() != null || hasFilters()) {
 			add(parentElementOrTreePath, new Object[] { element });
 			return;

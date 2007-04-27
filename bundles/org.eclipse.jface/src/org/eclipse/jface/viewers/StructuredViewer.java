@@ -1976,7 +1976,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			}
 		}
 		if (needsRefilter) {
-			refresh();
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRefresh(getRoot());
+				}
+			});
 			return;
 		}
 

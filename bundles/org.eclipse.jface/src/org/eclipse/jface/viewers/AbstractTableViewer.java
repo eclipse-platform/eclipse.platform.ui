@@ -240,8 +240,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void add(Object[] elements) {
 		assertElementsNotNull(elements);
+		if (isBusy())
+			return;
 		Object[] filtered = filter(elements);
-
+		
 		for (int i = 0; i < filtered.length; i++) {
 			Object element = filtered[i];
 			int index = indexForElement(element);
@@ -338,42 +340,48 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 *      java.lang.Object, boolean)
 	 */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
-		if (widget instanceof Item) {
-			final Item item = (Item) widget;
-
-			// remember element we are showing
-			if (fullMap) {
-				associate(element, item);
-			} else {
-				Object data = item.getData();
-				if (data != null) {
-					unmapElement(data, item);
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			if (widget instanceof Item) {
+				final Item item = (Item) widget;
+	
+				// remember element we are showing
+				if (fullMap) {
+					associate(element, item);
+				} else {
+					Object data = item.getData();
+					if (data != null) {
+						unmapElement(data, item);
+					}
+					item.setData(element);
+					mapElement(element, item);
 				}
-				item.setData(element);
-				mapElement(element, item);
-			}
-
-			int columnCount = doGetColumnCount();
-			if (columnCount == 0)
-				columnCount = 1;// If there are no columns do the first one
-
-			ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
-			// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
-			// TableViewer with 0 columns does not work
-			for (int column = 0; column < columnCount || column == 0; column++) {
-				ViewerColumn columnViewer = getViewerColumn(column);
-				columnViewer.refresh(updateCell(viewerRowFromItem,
-						column, element));
-
-				// As it is possible for user code to run the event
-				// loop check here.
-				if (item.isDisposed()) {
-					unmapElement(element, item);
-					return;
+	
+				int columnCount = doGetColumnCount();
+				if (columnCount == 0)
+					columnCount = 1;// If there are no columns do the first one
+	
+				ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
+				// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
+				// TableViewer with 0 columns does not work
+				for (int column = 0; column < columnCount || column == 0; column++) {
+					ViewerColumn columnViewer = getViewerColumn(column);
+					columnViewer.refresh(updateCell(viewerRowFromItem,
+							column, element));
+	
+					// As it is possible for user code to run the event
+					// loop check here.
+					if (item.isDisposed()) {
+						unmapElement(element, item);
+						return;
+					}
+	
 				}
-
+	
 			}
-
+		} finally {
+			busy = oldBusy;
 		}
 	}
 
@@ -545,8 +553,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	protected void inputChanged(Object input, Object oldInput) {
 		getControl().setRedraw(false);
 		try {
-			// refresh() attempts to preserve selection, which we want here
-			refresh();
+			preservingSelection(new Runnable() {
+				public void run() {
+					internalRefresh(getRoot());
+				}
+			});
 		} finally {
 			getControl().setRedraw(true);
 		}
@@ -577,7 +588,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (position == -1) {
 			position = doGetItemCount();
 		}
-
+		if (isBusy())
+			return;
 		createItem(element, position);
 	}
 
@@ -722,7 +734,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		Object input = getInput();
 		for (int i = 0; i < elements.length; ++i) {
 			if (equals(elements[i], input)) {
-				setInput(null);
+				boolean oldBusy = busy;
+				busy = false;
+				try {
+					setInput(null);
+				} finally {
+					busy = oldBusy;
+				}
 				return;
 			}
 		}
@@ -772,6 +790,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void remove(final Object[] elements) {
 		assertElementsNotNull(elements);
+		if (isBusy())
+			return;
 		if (elements.length == 0) {
 			return;
 		}
@@ -965,6 +985,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void setItemCount(int count) {
+		if (isBusy())
+			return;
 		int oldCount = doGetItemCount();
 		if (count < oldCount) {
 			// need to disassociate elements that are being disposed
@@ -995,6 +1017,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void replace(Object element, int index) {
+		if (isBusy())
+			return;
 		Item item = doGetItem(index);
 		refreshItem(item, element);
 	}

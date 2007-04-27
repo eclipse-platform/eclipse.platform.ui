@@ -393,6 +393,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void setChildCount(final Object elementOrTreePath, final int count) {
+		if (isBusy())
+			return;
 		preservingSelection(new Runnable() {
 			public void run() {
 				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
@@ -434,6 +436,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void replace(final Object parentElementOrTreePath, final int index,
 			final Object element) {
+		if (isBusy())
+			return;
 		preservingSelection(new Runnable() {
 			public void run() {
 				Widget[] itemsToDisassociate;
@@ -508,19 +512,25 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	protected Object getParentElement(Object element) {
-		if (contentProviderIsLazy && !contentProviderIsTreeBased && !(element instanceof TreePath)) {
-			ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
-			return lazyTreeContentProvider.getParent(element);
-		}
-		if (contentProviderIsLazy && contentProviderIsTreeBased && !(element instanceof TreePath)) {
-			ILazyTreePathContentProvider lazyTreePathContentProvider = (ILazyTreePathContentProvider) getContentProvider();
-			TreePath[] parents = lazyTreePathContentProvider
-					.getParents(element);
-			if (parents != null && parents.length > 0) {
-				return parents[0];
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			if (contentProviderIsLazy && !contentProviderIsTreeBased && !(element instanceof TreePath)) {
+				ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+				return lazyTreeContentProvider.getParent(element);
 			}
+			if (contentProviderIsLazy && contentProviderIsTreeBased && !(element instanceof TreePath)) {
+				ILazyTreePathContentProvider lazyTreePathContentProvider = (ILazyTreePathContentProvider) getContentProvider();
+				TreePath[] parents = lazyTreePathContentProvider
+				.getParents(element);
+				if (parents != null && parents.length > 0) {
+					return parents[0];
+				}
+			}
+			return super.getParentElement(element);
+		} finally {
+			busy = oldBusy;
 		}
-		return super.getParentElement(element);
 	}
 
 	protected void createChildren(Widget widget) {
@@ -770,6 +780,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void remove(final Object parentOrTreePath, final int index) {
+		if (isBusy())
+			return;
 		final List oldSelection = new LinkedList(Arrays
 				.asList(((TreeSelection) getSelection()).getPaths()));
 		preservingSelection(new Runnable() {
@@ -864,6 +876,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
+		if (isBusy())
+			return;
 		preservingSelection(new Runnable() {
 			public void run() {
 				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
@@ -903,27 +917,33 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param index
 	 */
 	private void virtualLazyUpdateWidget(Widget widget, int index) {
-		if (contentProviderIsTreeBased) {
-			TreePath treePath;
-			if (widget instanceof Item) {
-				if (widget.getData() == null) {
-					// we need to materialize the parent first
-					// see bug 167668
-					// however, that would be too risky
-					// see bug 182782 and bug 182598
-					// so we just ignore this call altogether
-					// and don't do this: virtualMaterializeItem((TreeItem) widget);
-					return;
+		boolean oldBusy = busy;
+		busy = false;
+		try {
+			if (contentProviderIsTreeBased) {
+				TreePath treePath;
+				if (widget instanceof Item) {
+					if (widget.getData() == null) {
+						// we need to materialize the parent first
+						// see bug 167668
+						// however, that would be too risky
+						// see bug 182782 and bug 182598
+						// so we just ignore this call altogether
+						// and don't do this: virtualMaterializeItem((TreeItem) widget);
+						return;
+					}
+					treePath = getTreePathFromItem((Item) widget);
+				} else {
+					treePath = TreePath.EMPTY;
 				}
-				treePath = getTreePathFromItem((Item) widget);
+				((ILazyTreePathContentProvider) getContentProvider())
+						.updateElement(treePath, index);
 			} else {
-				treePath = TreePath.EMPTY;
+				((ILazyTreeContentProvider) getContentProvider()).updateElement(
+						widget.getData(), index);
 			}
-			((ILazyTreePathContentProvider) getContentProvider())
-					.updateElement(treePath, index);
-		} else {
-			((ILazyTreeContentProvider) getContentProvider()).updateElement(
-					widget.getData(), index);
+		} finally {
+			busy = oldBusy;
 		}
 	}
 
@@ -933,17 +953,23 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
-		if (contentProviderIsTreeBased) {
-			TreePath treePath;
-			if (widget instanceof Item) {
-				treePath = getTreePathFromItem((Item) widget);
+		boolean oldBusy = busy;
+		busy = false;
+		try {
+			if (contentProviderIsTreeBased) {
+				TreePath treePath;
+				if (widget instanceof Item) {
+					treePath = getTreePathFromItem((Item) widget);
+				} else {
+					treePath = TreePath.EMPTY;
+				}
+				((ILazyTreePathContentProvider) getContentProvider())
+				.updateChildCount(treePath, currentChildCount);
 			} else {
-				treePath = TreePath.EMPTY;
+				((ILazyTreeContentProvider) getContentProvider()).updateChildCount(widget.getData(), currentChildCount);
 			}
-			((ILazyTreePathContentProvider) getContentProvider())
-					.updateChildCount(treePath, currentChildCount);
-		} else {
-			((ILazyTreeContentProvider) getContentProvider()).updateChildCount(widget.getData(), currentChildCount);
+		} finally {
+			busy = oldBusy;
 		}
 	}
 	
@@ -953,19 +979,25 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateHasChildren(Item item, int currentChildCount) {
-		if (contentProviderIsTreeBased) {
-			TreePath treePath;
-			treePath = getTreePathFromItem(item);
-			if (currentChildCount == 0) {
-				// item is not expanded (but may have a plus currently)
-				((ILazyTreePathContentProvider) getContentProvider())
-						.updateHasChildren(treePath);
+		boolean oldBusy = busy;
+		busy = false;
+		try {
+			if (contentProviderIsTreeBased) {
+				TreePath treePath;
+				treePath = getTreePathFromItem(item);
+				if (currentChildCount == 0) {
+					// item is not expanded (but may have a plus currently)
+					((ILazyTreePathContentProvider) getContentProvider())
+					.updateHasChildren(treePath);
+				} else {
+					((ILazyTreePathContentProvider) getContentProvider())
+					.updateChildCount(treePath, currentChildCount);
+				}
 			} else {
-				((ILazyTreePathContentProvider) getContentProvider())
-						.updateChildCount(treePath, currentChildCount);
+				((ILazyTreeContentProvider) getContentProvider()).updateChildCount(item.getData(), currentChildCount);
 			}
-		} else {
-			((ILazyTreeContentProvider) getContentProvider()).updateChildCount(item.getData(), currentChildCount);
+		} finally {
+			busy = oldBusy;
 		}
 	}
 
