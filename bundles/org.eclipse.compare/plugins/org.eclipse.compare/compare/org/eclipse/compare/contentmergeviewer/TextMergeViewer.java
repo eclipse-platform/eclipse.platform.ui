@@ -424,7 +424,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			// Ensure that this method is only called once
 			Assert.isTrue(fSourceViewer == null);
 			fSourceViewer = viewer;
-			internalSetDocument(viewer);
+			try {
+				internalSetDocument(viewer);
+			} catch (RuntimeException e) {
+				// The error may be due to a stale entry in the DocumentManager (see bug 184489)
+				clearCachedDocument();
+				throw e;
+			}
 			viewer.setEditable(isEditable);
 			// Verify changes if the document is editable
 			if (isEditable) {
@@ -674,6 +680,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					oldDoc.removeDocumentListener(this);
 				}
 			}
+			clearCachedDocument();
+		}
+
+		private void clearCachedDocument() {
 			// Finally, remove the document from the document manager
 			IDocument doc = DocumentManager.get(fElement);
 			if (doc != null)
@@ -734,7 +744,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		boolean hasSharedDocument(Object object) {
 			return (fElement == object && 
 					fDocumentProvider != null
-					&& fDocumentProvider.getDocument(getDocumentKey()) == DocumentManager.get(object));
+					&& fDocumentProvider.getDocument(getDocumentKey()) != null);
 		}
 		
 		public boolean flush() throws CoreException {
@@ -785,10 +795,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		private void resetDocument() {
 			// Need to remove the document from the manager before refreshing
 			// or the old document will still be found
-			IDocument doc = DocumentManager.get(fElement);
-			if (doc != null) {
-				DocumentManager.remove(doc);
-			}
+			clearCachedDocument();
 			// TODO: This is fine for now but may need to be revisited if a refresh is performed
 			// higher up as well (e.g. perhaps a refresh request that waits until after all parties
 			// have been notified).
