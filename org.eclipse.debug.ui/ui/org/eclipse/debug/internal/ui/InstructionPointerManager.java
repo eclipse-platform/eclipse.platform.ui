@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
- 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -28,6 +27,11 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -36,7 +40,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * in the current workbench.  There should only ever be one instance of this class, obtained
  * via 'getDefault()'.
  */
-public class InstructionPointerManager {
+public class InstructionPointerManager{
 
 	/**
 	 * The singleton instance of this class.
@@ -44,10 +48,25 @@ public class InstructionPointerManager {
 	private static InstructionPointerManager fgDefault;
 
 	/**
-	 * Mapping of IDebugTarget objects to (mappings of IThread objects to lists of instruction
-	 * pointer contexts).
+	 * Set containing all instruction pointer contexts this class manages
 	 */
-	private Map fDebugTargetMap = new HashMap();
+	private Set fIPCSet = new HashSet();
+	
+	/**
+	 * Maps ITextEditors to the set of instruction pointer contexts that are displayed in the editor
+	 */
+	private Map fEditorMap = new HashMap();
+	
+	/**
+	 * Part listener added to editors that contain annotations.  Allows instruction pointer contexts to
+	 * be removed when the editor they are displayed in is removed.
+	 */
+	private IPartListener2 fPartListener;
+	
+	/**
+	 * Page listener added to the workbench window to remove part listeners when the page is closed.  
+	 */
+	private IPageListener fPageListener;
 	
 	/**
 	 * Clients must not instantiate this class.
@@ -66,7 +85,7 @@ public class InstructionPointerManager {
 	}
 	
 	/**
-	 * Add an instruction pointer annotation in the specified editor for the 
+	 * Adds an instruction pointer annotation in the specified editor for the 
 	 * specified stack frame.
 	 */
 	public void addAnnotation(ITextEditor textEditor, IStackFrame frame, Annotation annotation) {
@@ -113,29 +132,30 @@ public class InstructionPointerManager {
 			return;
 		}
 		
-		synchronized (fDebugTargetMap) {
+		synchronized (fIPCSet) {
+					
 			// Add the annotation at the position to the editor's annotation model.
 			annModel.removeAnnotation(annotation);
-			annModel.addAnnotation(annotation, position);	
+			annModel.addAnnotation(annotation, position);
 			
-			// Retrieve the list of instruction pointer contexts
-			IDebugTarget debugTarget = frame.getDebugTarget();
-			Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
-			if (threadMap == null) {
-				threadMap = new HashMap();	
-				fDebugTargetMap.put(debugTarget, threadMap);		
-			}
-			IThread thread = frame.getThread();
-			List contextList = (List) threadMap.get(thread);
-			if (contextList == null) {
-				contextList = new ArrayList();
-				threadMap.put(thread, contextList);
-			}
+			// Create the instruction pointer context
+			InstructionPointerContext ipc = new InstructionPointerContext(frame.getDebugTarget(), frame.getThread(), textEditor, annotation);
 			
-			// Create a context object & add it to the list
-			InstructionPointerContext context = new InstructionPointerContext(textEditor, annotation);
-			contextList.remove(context);
-			contextList.add(context);
+			// Add the IPC to the set and map
+			Set editorIPCs = (Set)fEditorMap.get(textEditor);
+			if (editorIPCs == null){
+				editorIPCs = new HashSet();
+				fEditorMap.put(textEditor, editorIPCs);
+			} else {
+				editorIPCs.remove(ipc);
+			}
+			editorIPCs.add(ipc);
+			fIPCSet.remove(ipc);
+			fIPCSet.add(ipc);
+			
+			// Add a listener to the editor so we can remove the IPC when the editor is closed
+			textEditor.getSite().getPage().addPartListener(getPartListener());
+			textEditor.getSite().getPage().getWorkbenchWindow().addPageListener(getPageListener());
 		}
 	}
 	
@@ -144,22 +164,16 @@ public class InstructionPointerManager {
 	 * is tracking.
 	 */
 	public void removeAnnotations(IDebugTarget debugTarget) {
-		synchronized (fDebugTargetMap) {
-			// Retrieve the mapping of threads to context lists
-			Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
-			if (threadMap == null) {
-				return;
+		synchronized (fIPCSet) {
+			Iterator ipcIter = fIPCSet.iterator();
+			while (ipcIter.hasNext()) {
+				InstructionPointerContext currentIPC = (InstructionPointerContext) ipcIter.next();
+				if (currentIPC.getDebugTarget().equals(debugTarget)){
+					removeAnnotationFromModel(currentIPC);
+					ipcIter.remove();
+					removeAnnotationFromEditorMapping(currentIPC);
+				}
 			}
-			
-			// Remove annotations for all threads associated with the debug target
-			Object[] threads = threadMap.keySet().toArray();
-			for (int i = 0; i < threads.length; i++) {
-				IThread thread = (IThread) threads[i];
-				removeAnnotations(thread, threadMap);
-			}
-			
-			// Remove the entry for the debug target
-			fDebugTargetMap.remove(debugTarget);
 		}
 	}
 	
@@ -168,63 +182,157 @@ public class InstructionPointerManager {
 	 * is tracking.
 	 */
 	public void removeAnnotations(IThread thread) {
-		synchronized (fDebugTargetMap) {
-			// Retrieve the thread map
-			IDebugTarget debugTarget = thread.getDebugTarget();
-			Map threadMap = (Map) fDebugTargetMap.get(debugTarget);
-			if (threadMap == null) {
-				return;
-			}
-			
-			// Remove all annotations for the thread
-			removeAnnotations(thread, threadMap);
-			if (threadMap.isEmpty()) {
-				fDebugTargetMap.remove(debugTarget);
+		synchronized (fIPCSet) {
+			Iterator ipcIter = fIPCSet.iterator();
+			while (ipcIter.hasNext()) {
+				InstructionPointerContext currentIPC = (InstructionPointerContext) ipcIter.next();
+				if (currentIPC.getThread().equals(thread)){
+					removeAnnotationFromModel(currentIPC);
+					ipcIter.remove();
+					removeAnnotationFromEditorMapping(currentIPC);
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Remove all annotations associated with the specified thread.  
+	 * Remove all annotations associated with the specified editor that this class
+	 * is tracking.
 	 */
-	private void removeAnnotations(IThread thread, Map threadMap) {
-		
-		// Retrieve the context list and remove each corresponding annotation
-		List contextList = (List) threadMap.get(thread);
-		if (contextList != null) {
-			Iterator contextIterator = contextList.iterator();
-			while (contextIterator.hasNext()) {
-				InstructionPointerContext context = (InstructionPointerContext) contextIterator.next();
-				removeAnnotation(context.getTextEditor(), context.getAnnotation());
+	public void removeAnnotations(ITextEditor editor) {
+		synchronized (fIPCSet) {
+			Set editorIPCs = (Set)fEditorMap.get(editor);
+			if (editorIPCs != null){
+				Iterator ipcIter = editorIPCs.iterator();
+				while (ipcIter.hasNext()) {
+					InstructionPointerContext currentIPC = (InstructionPointerContext) ipcIter.next();
+					removeAnnotationFromModel(currentIPC);
+					fIPCSet.remove(currentIPC);
+				}
+				fEditorMap.remove(editor);
+			}
+		}
+	}
+
+	/**
+	 * Remove the given ipc from the mapping of editors.
+	 */
+	private void removeAnnotationFromEditorMapping(InstructionPointerContext ipc) {
+		Set editorIPCs = (Set)fEditorMap.get(ipc.getEditor());
+		if (editorIPCs != null){
+			editorIPCs.remove(ipc);
+			if (editorIPCs.isEmpty()){
+				fEditorMap.remove(ipc.getEditor());
 			}
 		}
 		
-		// Remove the thread map
-		threadMap.remove(thread);						
 	}
 	
 	/**
-	 * Remove the specified annotation from the specified text editor.
+	 * Remove the annotation from the document model.
 	 */
-	private void removeAnnotation(ITextEditor textEditor, Annotation annotation) {
-		IDocumentProvider docProvider = textEditor.getDocumentProvider();
+	private void removeAnnotationFromModel(InstructionPointerContext ipc){
+		IDocumentProvider docProvider = ipc.getEditor().getDocumentProvider();
 		if (docProvider != null) {
-			IAnnotationModel annotationModel = docProvider.getAnnotationModel(textEditor.getEditorInput());
+			IAnnotationModel annotationModel = docProvider.getAnnotationModel(ipc.getEditor().getEditorInput());
 			if (annotationModel != null) {
-				annotationModel.removeAnnotation(annotation);
+				annotationModel.removeAnnotation(ipc.getAnnotation());
 			}
 		}
 	}
 	
 	/**
-	 * Returns the number of targets with cached instruction pointers.
+	 * Returns the number of instruction pointers.
 	 * Used by the test suite.
 	 * 
-	 * @return the number of targets with cached instruction pointers
+	 * @return the number of instruction pointers
 	 * @since 3.2
 	 */
-	public int getCachedTargetCount() {
-		return fDebugTargetMap.size();
+	public int getInstructionPointerCount() {
+		return fIPCSet.size();
+	}
+	
+	/**
+	 * Returns the number of keys in the editor to IPC mapping
+	 * Used by the test suite.
+	 * 
+	 * @return the number of keys in the editor mapping
+	 * @since 3.3
+	 */
+	public int getEditorMappingCount() {
+		return fEditorMap.size();
+	}
+	
+	/**
+	 * @return the page listener to add to workbench window.
+	 */
+	private IPageListener getPageListener(){
+		if (fPageListener == null){
+			fPageListener = new PageListener();
+		}
+		return fPageListener;
+	}
+	
+	/**
+	 * @return the part listener to add to editors.
+	 */
+	private IPartListener2 getPartListener(){
+		if (fPartListener == null){
+			fPartListener = new PartListener();
+		}
+		return fPartListener;
+	}
+
+	/**
+	 * Part listener that is added to editors to track when the editor is no longer is displaying
+	 * the input containing instruction pointer annotations.
+	 */
+	class PartListener implements IPartListener2{
+		public void partActivated(IWorkbenchPartReference partRef) {}
+		public void partDeactivated(IWorkbenchPartReference partRef) {}
+		public void partHidden(IWorkbenchPartReference partRef) {}
+		public void partOpened(IWorkbenchPartReference partRef) {}
+		public void partVisible(IWorkbenchPartReference partRef) {}
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partClosed(IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if (part instanceof ITextEditor){
+				removeAnnotations((ITextEditor)part);
+			}
+			
+		}
+	
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+		 */
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if (part instanceof ITextEditor){
+				removeAnnotations((ITextEditor)part);
+			}
+		}
+	}
+	
+	/**
+	 * Page listener that is added to the workbench to remove the part listener when the page is closed.
+	 */
+	class PageListener implements IPageListener{
+
+		public void pageActivated(IWorkbenchPage page) {}
+		public void pageOpened(IWorkbenchPage page) {}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.IPageListener#pageClosed(org.eclipse.ui.IWorkbenchPage)
+		 */
+		public void pageClosed(IWorkbenchPage page) {
+			page.removePartListener(getPartListener());
+			page.getWorkbenchWindow().removePageListener(getPageListener());
+		}
+		
 	}
 	
 }

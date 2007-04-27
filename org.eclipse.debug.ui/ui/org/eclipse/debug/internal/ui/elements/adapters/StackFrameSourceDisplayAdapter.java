@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,14 +46,23 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener() {
 			public void handleDebugEvents(DebugEvent[] events) {
 				for (int i = 0; i < events.length; i++) {
-					DebugEvent event = events[i];
+					final DebugEvent event = events[i];
 					switch (event.getKind()) {
 						case DebugEvent.TERMINATE:
 							clearCachedModel(event.getSource());
 							// fall through
 						case DebugEvent.RESUME:
 							if (!event.isEvaluation()) {
-								clearSourceSelection(event.getSource());
+								Job uijob = new UIJob("clear source selection"){
+									public IStatus runInUIThread(
+											IProgressMonitor monitor) {
+										clearSourceSelection(event.getSource());
+										return Status.OK_STATUS;
+									}
+									
+								};
+								uijob.schedule();
+								
 							}
 							break;
 						case DebugEvent.CHANGE:

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,33 +10,46 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
- 
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Represents the context for a single instruction pointer.  This is a convenience class
- * used to store the three objects that comprise an instruction pointer 'context' so it
+ * used to store the four objects that comprise an instruction pointer 'context' so it
  * can be stored in collections.
  */
 public class InstructionPointerContext {
 
 	/**
-	 * The text editor for this context.
+	 * The thread this context belongs to.
 	 */
-	private ITextEditor fTextEditor;
+	private IThread fThread;
+	
+	/**
+	 * The debug target this context belongs to.
+	 */
+	private IDebugTarget fDebugTarget;
+	
+	/**
+	 * The editor that the annotation is being displayed in
+	 */
+	private ITextEditor fEditor;
 	
 	/**
 	 * The vertical ruler annotation for this context.
 	 */
 	private Annotation fAnnotation;
 
-	public InstructionPointerContext(ITextEditor textEditor, Annotation annotation) {
-		setTextEditor(textEditor);
-		setAnnotation(annotation);
+	public InstructionPointerContext(IDebugTarget target, IThread thread, ITextEditor editor, Annotation annotation) {
+		fDebugTarget = target;
+		fThread = thread;
+		fEditor = editor;
+		fAnnotation = annotation;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object other) {
@@ -47,26 +60,39 @@ public class InstructionPointerContext {
 		return false;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
 		return getAnnotation().hashCode();
 	}
 
-	private void setTextEditor(ITextEditor textEditor) {
-		fTextEditor = textEditor;
+	/**
+	 * @return the thread
+	 */
+	public IThread getThread() {
+		return fThread;
 	}
 
-	public ITextEditor getTextEditor() {
-		return fTextEditor;
+	/**
+	 * @return the debug target
+	 */
+	public IDebugTarget getDebugTarget() {
+		return fDebugTarget;
 	}
 
-	private void setAnnotation(Annotation annotation) {
-		fAnnotation = annotation;
+	/**
+	 * @return the editor
+	 */
+	public ITextEditor getEditor() {
+		return fEditor;
 	}
-
+	
+	/**
+	 * @return the annotation
+	 */
 	public Annotation getAnnotation() {
 		return fAnnotation;
 	}
+
 }
