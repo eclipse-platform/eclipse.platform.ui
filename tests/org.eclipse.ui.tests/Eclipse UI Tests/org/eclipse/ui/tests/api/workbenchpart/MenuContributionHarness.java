@@ -244,4 +244,14 @@ public class MenuContributionHarness extends ViewPart {
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
+	
+	int callCount = 0;
+	
+	public void updateCount() {
+		callCount++;
+	}
+	
+	public int getCount() {
+		return callCount;
+	}
 }

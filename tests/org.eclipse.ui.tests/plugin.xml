@@ -3577,5 +3577,30 @@
    </extension>
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
    
-   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.tests.category.menuHarness"
+            id="org.eclipse.ui.tests.incMenuHarness"
+            name="Increment Menu Harness">
+      </command>
+      <category
+            id="org.eclipse.ui.tests.category.menuHarness"
+            name="Menu Harness Commands">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution 
+            id="org.eclipse.ui.tests.viewContribution.harness"
+            targetID="org.eclipse.ui.tests.api.MenuTestHarness">
+         <action
+               class="org.eclipse.ui.tests.commands.ViewActionDelegate"
+               definitionId="org.eclipse.ui.tests.incMenuHarness"
+               id="org.eclipse.ui.tests.menuHarness.inc"
+               label="MenuInc"
+               menubarPath="additions">
+         </action>
+      </viewContribution>
+   </extension>
 </plugin>            

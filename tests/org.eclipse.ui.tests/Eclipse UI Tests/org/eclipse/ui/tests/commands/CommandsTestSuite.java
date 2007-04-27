@@ -45,5 +45,6 @@ public final class CommandsTestSuite extends TestSuite {
 		addTest(new TestSuite(CommandCallbackTest.class));
 		addTest(new TestSuite(CommandEnablementTest.class));
 		addTest(new TestSuite(CommandActionTest.class));
+		addTest(new TestSuite(ActionDelegateProxyTest.class));
 	}
 }
