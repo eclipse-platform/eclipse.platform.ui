@@ -17,10 +17,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.jface.text.source.ISharedTextColors;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
@@ -28,6 +32,7 @@ import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
+import org.eclipse.ui.themes.IThemeManager;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -72,6 +77,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	private AnnotationPreferenceLookup fAnnotationPreferenceLookup;
 	private AnnotationTypeHierarchy fAnnotationTypeHierarchy;
 	private MarkerAnnotationPreferences fMarkerAnnotationPreferences;
+	private IPropertyChangeListener fThemeListener;
 
 	/**
 	 * Spelling service.
@@ -173,6 +179,22 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			new MarkerAnnotationPreferences().getAnnotationPreferences(); // force creation of shared preferences
 		return fMarkerAnnotationPreferences;
 	}
+	
+	/*
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
+	 * @since 3.3
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		
+		fThemeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+					new EditorsPluginPreferenceInitializer().initializeDefaultPreferences();
+			}
+		};
+		PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
+	}
 
 	/*
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
@@ -184,6 +206,11 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fSharedTextColors= null;
 		}
 
+		if (fThemeListener != null) {
+			PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+			fThemeListener= null;
+		}
+		
 		fAnnotationTypeLookup= null;
 		fAnnotationPreferenceLookup= null;
 		fAnnotationTypeHierarchy= null;

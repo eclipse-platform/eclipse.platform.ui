@@ -933,4 +933,63 @@
       </hyperlinkDetector>
    </extension>
 
+   <extension
+         point="org.eclipse.ui.themes">
+      <colorDefinition
+          id="org.eclipse.ui.editors.currentLineColor"
+          isEditable="false"
+          label="%dummy"
+          value="232,242,254">
+       </colorDefinition>
+       <colorDefinition
+          id="org.eclipse.ui.editors.lineNumberRulerColor"
+          isEditable="false"
+          label="%dummy"
+          value="120,120,120">
+       </colorDefinition>
+       <colorDefinition
+          id="org.eclipse.ui.editors.hyperlinkColor"
+          isEditable="false"
+          label="%dummy"
+          value="0,0,255">
+      </colorDefinition>
+      <colorDefinition
+          id="org.eclipse.ui.editors.findScope"
+          isEditable="false"
+          label="%dummy"
+          value="185,176,180">
+      </colorDefinition>
+      <colorDefinition
+          id="org.eclipse.ui.editors.printMarginColor"
+          isEditable="false"
+          label="%dummy"
+          value="176,180,185">
+      </colorDefinition>
+
+      <theme
+		  id="org.eclipse.ui.ide.systemDefault">
+         <colorOverride
+            id="org.eclipse.ui.editors.currentLineColor"
+            value="COLOR_WIDGET_LIGHT_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.ui.editors.lineNumberRulerColor"
+            value="COLOR_WIDGET_DARK_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.ui.editors.findScope"
+            value="COLOR_WIDGET_DARK_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.ui.editors.printMarginColor"
+            value="COLOR_WIDGET_NORMAL_SHADOW">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.ui.editors.hyperlinkColor"
+            value="LIST_SELECTION_COLOR">
+         </colorOverride>
+      </theme>
+
+   </extension>
+
 </plugin>
