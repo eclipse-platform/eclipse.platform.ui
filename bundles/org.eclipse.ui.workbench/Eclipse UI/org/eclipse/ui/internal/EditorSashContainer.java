@@ -78,7 +78,8 @@ public class EditorSashContainer extends PartSashContainer {
 	private void updateStackButtons() {
 		 // This is applicable only when the new
 		 // min/max behaviour is being used
-        if (!Perspective.useNewMinMax(getPage().getActivePerspective()))
+		Perspective persp = getPage().getActivePerspective();
+        if (!Perspective.useNewMinMax(persp))
         	return;
 		
 		// Find the upper Right editor stack
@@ -89,9 +90,11 @@ public class EditorSashContainer extends PartSashContainer {
 		for (int i = 0; i < stacks.length; i++) {
 			if (!(stacks[i] instanceof EditorStack))
 				continue;
-			
 			((EditorStack)stacks[i]).showMinMax(stacks[i] == winner);
 		}
+		
+		// Force the stack's presentation state to match its perspective
+		persp.refreshEditorAreaVisibility();
 	}
 
 	/**

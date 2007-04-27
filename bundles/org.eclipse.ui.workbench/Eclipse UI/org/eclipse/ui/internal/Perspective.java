@@ -1915,7 +1915,7 @@ public class Perspective {
     /**
 	 * 
 	 */
-	private void refreshEditorAreaVisibility() {
+	public void refreshEditorAreaVisibility() {
 		// Nothing shows up if the editor area isn't visible at all
 		if (editorHidden) {
 			hideEditorAreaLocal();
