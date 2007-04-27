@@ -217,9 +217,23 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
       	launch("environmentVar");
       	assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
       	String message= ConsoleLineTracker.getMessage(1);
-      	assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, message.endsWith("org.apache.ant") || message.endsWith(PLUGIN_VERSION));
+      	assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message));
       	message= ConsoleLineTracker.getMessage(2);
-		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, message.endsWith("org.apache.ant") || message.endsWith(PLUGIN_VERSION));
+		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message));
 		
     }
+
+	private boolean checkAntHomeMessage(String message) {
+		if (message.endsWith("org.apache.ant")) {
+			return true;
+		}
+		
+		int index = message.lastIndexOf(PLUGIN_VERSION);
+		if (index == -1) {
+			return false;
+		}
+		//org.apache.ant_1.7.0.v200704241635
+		int result = message.length() - (index + PLUGIN_VERSION.length());
+		return  result == 14;
+	}
 }

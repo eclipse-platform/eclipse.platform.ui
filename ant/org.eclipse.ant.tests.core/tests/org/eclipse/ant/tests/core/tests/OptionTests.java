@@ -580,7 +580,21 @@ public class OptionTests extends AbstractAntTest {
 		
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(15);
 		//msg depends on whether self hosting testing or build testing
-		assertTrue("Message incorrect: " + msg, msg.endsWith("org.apache.ant") || msg.endsWith(PLUGIN_VERSION));
+		assertTrue("Message incorrect: " + msg, checkAntHomeMessage(msg));
+	}
+	
+	private boolean checkAntHomeMessage(String message) {
+		if (message.endsWith("org.apache.ant")) {
+			return true;
+		}
+		
+		int index = message.lastIndexOf(PLUGIN_VERSION);
+		if (index == -1) {
+			return false;
+		}
+		//org.apache.ant_1.7.0.v200704241635
+		int result = message.length() - (index + PLUGIN_VERSION.length());
+		return  result == 14;
 	}
 	
 	/**
