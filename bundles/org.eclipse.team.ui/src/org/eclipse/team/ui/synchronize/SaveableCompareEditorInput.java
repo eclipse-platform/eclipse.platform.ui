@@ -36,8 +36,8 @@ import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.EditableSharedDocumentAdapter.ISharedDocumentAdapterListener;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.OpenFileAction;
-import org.eclipse.ui.actions.OpenWithMenu;
+import org.eclipse.ui.actions.*;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -481,18 +481,36 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 					if (workbenchPart != null) {
 						IWorkbenchSite ws = workbenchPart.getSite();
 						
-						MenuManager submenu =
+						MenuManager submenu1 =
+							new MenuManager(getShowInMenuLabel());
+						IContributionItem showInMenu = ContributionItemFactory.VIEWS_SHOW_IN.create(ws.getWorkbenchWindow());
+						submenu1.add(showInMenu);
+						manager.insertAfter("file", submenu1); //$NON-NLS-1$
+						MenuManager submenu2 =
 							new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
-						submenu.add(new OpenWithMenu(ws.getPage(), resource));
-						manager.insertAfter("save", submenu); //$NON-NLS-1$
+						submenu2.add(new OpenWithMenu(ws.getPage(), resource));
+						manager.insertAfter("file", submenu2); //$NON-NLS-1$
 						
 						OpenFileAction openFileAction = new OpenFileAction(ws.getPage());
 						openFileAction.selectionChanged(selection);
-						manager.insertAfter("save", openFileAction); //$NON-NLS-1$
+						manager.insertAfter("file", openFileAction); //$NON-NLS-1$
 					}
 				}
 			}
 		}
+	}
+	
+	private String getShowInMenuLabel() {
+		String keyBinding= null;
+		
+		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService != null)
+			keyBinding= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+		
+		if (keyBinding == null)
+			keyBinding= ""; //$NON-NLS-1$
+		
+		return NLS.bind(TeamUIMessages.SaveableCompareEditorInput_0, keyBinding);
 	}
 
 }

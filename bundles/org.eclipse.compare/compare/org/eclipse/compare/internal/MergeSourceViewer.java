@@ -420,9 +420,10 @@ public class MergeSourceViewer extends SourceViewer
 		menu.add(new Separator("undo")); //$NON-NLS-1$
 		addMenu(menu, UNDO_ID);
 		addMenu(menu, REDO_ID);
-		menu.add(new Separator("save")); //$NON-NLS-1$
+		menu.add(new GroupMarker("save")); //$NON-NLS-1$
 		if (fAddSaveAction)
 			addMenu(menu, SAVE_ID);
+		menu.add(new Separator("file")); //$NON-NLS-1$
 	
 		menu.add(new Separator("ccp")); //$NON-NLS-1$
 		addMenu(menu, CUT_ID);

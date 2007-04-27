@@ -210,6 +210,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String RevisionAnnotationController_0;
 
+	public static String SaveableCompareEditorInput_0;
+
 	public static String ShowLocalHistory_0;
 
 	public static String ShowLocalHistory_2;
