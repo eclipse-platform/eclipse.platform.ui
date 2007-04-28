@@ -7,7 +7,7 @@
  *
  * Contributors:
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                               - fix for bug 178280, 183999
+ *                                               - fix for bug 178280, 183999, 184609
  *     IBM Corporation - API refactoring and general maintenance
  *******************************************************************************/
 
@@ -103,8 +103,8 @@ public class TreeColumnLayout extends AbstractColumnLayout {
 		Tree t = tColumn.getParent();
 		
 		if( ! IS_GTK || t.getColumn(t.getColumnCount()-1) != tColumn ){
-			layout(t.getParent(), true);
 			tColumn.setData(LAYOUT_DATA,new ColumnPixelData(tColumn.getWidth()));
+			layout(t.getParent(), true);
 		}
 	}
 }
