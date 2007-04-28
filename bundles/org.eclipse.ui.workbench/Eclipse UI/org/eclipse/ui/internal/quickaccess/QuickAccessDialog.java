@@ -2,10 +2,16 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -19,7 +25,9 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -48,6 +56,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.ColorUtil;
 
 /**
@@ -55,7 +64,7 @@ import org.eclipse.ui.themes.ColorUtil;
  * 
  */
 public class QuickAccessDialog extends PopupDialog {
-	private static final int MAX_COUNT_PER_PROVIDER = 5;
+	private static final int INITIAL_COUNT_PER_PROVIDER = 5;
 	private static final int MAX_COUNT_TOTAL = 20;
 
 	private Text filterText;
@@ -87,27 +96,39 @@ public class QuickAccessDialog extends PopupDialog {
 	// private Font italicsFont;
 	private Color grayColor;
 	private TextLayout textLayout;
+	private TriggerSequence[] invokingCommandKeySequences;
+	private Command invokingCommand;
+	private KeyAdapter keyAdapter;
+	private boolean showAllMatches = false;
 
 	/**
 	 * @param parent
 	 */
-	QuickAccessDialog(IWorkbenchWindow window) {
+	QuickAccessDialog(IWorkbenchWindow window, Command invokingCommand) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true,
 				true, true, null,
 				QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 
 		this.window = window;
-		this.providers = new QuickAccessProvider[] { new PreviousPicksProvider(),
-				new EditorProvider(), new ViewProvider(),
-				new PerspectiveProvider(), new CommandProvider(),
-				new ActionProvider(), new WizardProvider(),
-				new PreferenceProvider(), new PropertiesProvider() };
+		this.providers = new QuickAccessProvider[] {
+				new PreviousPicksProvider(), new EditorProvider(),
+				new ViewProvider(), new PerspectiveProvider(),
+				new CommandProvider(), new ActionProvider(),
+				new WizardProvider(), new PreferenceProvider(),
+				new PropertiesProvider() };
 		providers[0] = new PreviousPicksProvider();
 		providerMap = new HashMap();
 		for (int i = 0; i < providers.length; i++) {
 			providerMap.put(providers[i].getId(), providers[i]);
 		}
 		restoreDialog();
+		this.invokingCommand = invokingCommand;
+		if (this.invokingCommand != null && !this.invokingCommand.isDefined())
+			this.invokingCommand = null;
+		else
+			// Pre-fetch key sequence - do not change because scope will
+			// change later.
+			getInvokingCommandKeySequences();
 	}
 
 	protected Control createTitleControl(Composite parent) {
@@ -123,6 +144,7 @@ public class QuickAccessDialog extends PopupDialog {
 				Dialog.convertHeightInCharsToPixels(fontMetrics, 1)).applyTo(
 				filterText);
 
+		filterText.addKeyListener(getKeyAdapter());
 		filterText.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 0x0D) {
@@ -155,7 +177,7 @@ public class QuickAccessDialog extends PopupDialog {
 		filterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				String text = ((Text) e.widget).getText();
-				refreshTable(text);
+				refresh(text);
 			}
 		});
 
@@ -208,6 +230,7 @@ public class QuickAccessDialog extends PopupDialog {
 			}
 		}.activate();
 
+		table.addKeyListener(getKeyAdapter());
 		table.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_UP && table.getSelectionIndex() == 0) {
@@ -275,86 +298,202 @@ public class QuickAccessDialog extends PopupDialog {
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
 		table.addListener(SWT.PaintItem, listener);
-		refreshTable(""); //$NON-NLS-1$
+		refresh(""); //$NON-NLS-1$
 		return composite;
 	}
 
 	/**
 	 * 
 	 */
-	private void refreshTable(String filter) {
+	private void refresh(String filter) {
+		// perfect match, to be selected in the table if not null
+		QuickAccessElement perfectMatch = (QuickAccessElement) elementMap
+				.get(filter);
+
+		List[] entries = computeMatchingEntries(filter, perfectMatch);
+
+		int selectionIndex = refreshTable(perfectMatch, entries);
+
+		if (table.getItemCount() > 0) {
+			table.setSelection(selectionIndex);
+		}
+
+		if (filter.length() == 0) {
+			setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
+		} else {
+			TriggerSequence[] sequences = getInvokingCommandKeySequences();
+			if (showAllMatches || sequences == null || sequences.length == 0) {
+				setInfoText(""); //$NON-NLS-1$
+			} else {
+				setInfoText(NLS
+						.bind(
+								QuickAccessMessages.QuickAccess_PressKeyToShowAllMatches,
+								sequences[0].format()));
+			}
+		}
+	}
+
+	final protected TriggerSequence[] getInvokingCommandKeySequences() {
+		if (invokingCommandKeySequences == null) {
+			if (invokingCommand != null) {
+				IBindingService bindingService = (IBindingService) window
+						.getWorkbench().getAdapter(IBindingService.class);
+				invokingCommandKeySequences = bindingService
+						.getActiveBindingsFor(invokingCommand.getId());
+			}
+		}
+		return invokingCommandKeySequences;
+	}
+
+	private KeyAdapter getKeyAdapter() {
+		if (keyAdapter == null) {
+			keyAdapter = new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					int accelerator = SWTKeySupport
+							.convertEventToUnmodifiedAccelerator(e);
+					KeySequence keySequence = KeySequence
+							.getInstance(SWTKeySupport
+									.convertAcceleratorToKeyStroke(accelerator));
+					TriggerSequence[] sequences = getInvokingCommandKeySequences();
+					if (sequences == null)
+						return;
+					for (int i = 0; i < sequences.length; i++) {
+						if (sequences[i].equals(keySequence)) {
+							e.doit = false;
+							toggleShowAllMatches();
+							return;
+						}
+					}
+				}
+			};
+		}
+		return keyAdapter;
+	}
+
+	private void toggleShowAllMatches() {
+		showAllMatches = !showAllMatches;
+		refresh(filterText.getText());
+	}
+
+	private int refreshTable(QuickAccessElement perfectMatch, List[] entries) {
+		if (table.getItemCount() > entries.length
+				&& table.getItemCount() - entries.length > 20) {
+			table.removeAll();
+		}
 		TableItem[] items = table.getItems();
-		int countTotal = 0;
-		QuickAccessEntry lastEntry = null;
-		for (int i = 0; i < providers.length && countTotal < MAX_COUNT_TOTAL; i++) {
-			int countPerProvider = 0;
-			QuickAccessProvider provider = providers[i];
-			if (filter.length() > 0
-					|| provider instanceof PreviousPicksProvider) {
-				QuickAccessElement[] elements = provider.getElementsSorted();
-				element_loop: for (int j = 0; j < elements.length
-						&& countPerProvider < MAX_COUNT_PER_PROVIDER
-						&& countTotal < MAX_COUNT_TOTAL; j++) {
-					QuickAccessElement element = elements[j];
-					QuickAccessEntry entry;
-					if (filter.length() == 0) {
-						if (i == 0) {
-							entry = new QuickAccessEntry(element, provider,
-									new int[0][0], new int[0][0]);
-						} else {
-							entry = null;
-						}
+		int selectionIndex = -1;
+		int index = 0;
+		for (int i = 0; i < providers.length; i++) {
+			if (entries[i] != null) {
+				boolean firstEntry = true;
+				for (Iterator it = entries[i].iterator(); it.hasNext();) {
+					QuickAccessEntry entry = (QuickAccessEntry) it.next();
+					entry.firstInCategory = firstEntry;
+					firstEntry = false;
+					if (!it.hasNext()) {
+						entry.lastInCategory = true;
+					}
+					TableItem item;
+					if (index < items.length) {
+						item = items[index];
+						table.clear(index);
 					} else {
-						entry = element.match(filter, provider);
+						item = new TableItem(table, SWT.NONE);
 					}
-					if (entry != null) {
-						entry.firstInCategory = countPerProvider == 0;
-						if (entry.firstInCategory && lastEntry != null) {
-							lastEntry.lastInCategory = true;
-						}
-						lastEntry = entry;
-						TableItem item;
-						if (countTotal < items.length) {
-							item = items[countTotal];
-							table.clear(countTotal);
-						} else {
-							item = new TableItem(table, SWT.NONE);
-						}
-						item.setData(entry);
-						item.setText(0, provider.getName());
-						item.setText(1, element.getLabel());
-//						if (SWT.getPlatform().equals("wpf")) { //$NON-NLS-1$
-							item.setImage(1, entry.getImage(element,
-									resourceManager));
-//						}
-						countPerProvider++;
-						countTotal++;
-						continue element_loop;
+					if (perfectMatch == entry.element && selectionIndex == -1) {
+						selectionIndex = index;
 					}
+					item.setData(entry);
+					item.setText(0, entry.provider.getName());
+					item.setText(1, entry.element.getLabel());
+// if (SWT.getPlatform().equals("wpf")) { //$NON-NLS-1$
+					item.setImage(1, entry.getImage(entry.element,
+							resourceManager));
+// }
+					index++;
 				}
 			}
 		}
-		if (lastEntry != null) {
-			lastEntry.lastInCategory = true;
+		if (index < items.length) {
+			table.remove(index, items.length - 1);
 		}
-		if (countTotal < items.length) {
-			table.remove(countTotal, items.length - 1);
+		if (selectionIndex == -1) {
+			selectionIndex = 0;
 		}
-		if (filter.length() == 0) {
-			setInfoText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
-			// TableItem item = new TableItem(table, SWT.NONE);
-			// item.setText(1,
-			// QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
-			// item.setFont(1, italicsFont);
-			// item.setForeground(1, grayColor);
-		} else {
-			setInfoText(""); //$NON-NLS-1$
+		return selectionIndex;
+	}
+
+	private List[] computeMatchingEntries(String filter,
+			QuickAccessElement perfectMatch) {
+		// collect matches in an array of lists
+		List[] entries = new ArrayList[providers.length];
+		int[] indexPerProvider = new int[providers.length];
+		int countPerProvider = INITIAL_COUNT_PER_PROVIDER;
+		int countTotal = 0;
+		int maxCount = MAX_COUNT_TOTAL;
+		boolean perfectMatchAdded = true;
+		if (perfectMatch != null) {
+			// reserve one entry for the perfect match
+			maxCount--;
+			perfectMatchAdded = false;
 		}
-		if (countTotal > 0) {
-			table.setSelection(0);
-		} else {
-			table.deselectAll();
+		boolean done;
+		do {
+			// will be set to false if we find a provider with remaining
+			// elements
+			done = true;
+			for (int i = 0; i < providers.length
+					&& (showAllMatches || countTotal < maxCount); i++) {
+				if (entries[i] == null) {
+					entries[i] = new ArrayList();
+					indexPerProvider[i] = 0;
+				}
+				int count = 0;
+				QuickAccessProvider provider = providers[i];
+				if (filter.length() > 0
+						|| provider instanceof PreviousPicksProvider
+						|| showAllMatches) {
+					QuickAccessElement[] elements = provider
+							.getElementsSorted();
+					int j = indexPerProvider[i];
+					while (j < elements.length
+							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))) {
+						QuickAccessElement element = elements[j];
+						QuickAccessEntry entry;
+						if (filter.length() == 0) {
+							if (i == 0 || showAllMatches) {
+								entry = new QuickAccessEntry(element, provider,
+										new int[0][0], new int[0][0]);
+							} else {
+								entry = null;
+							}
+						} else {
+							entry = element.match(filter, provider);
+						}
+						if (entry != null) {
+							entries[i].add(entry);
+							count++;
+							countTotal++;
+							if (i == 0 && entry.element == perfectMatch) {
+								perfectMatchAdded = true;
+								maxCount = MAX_COUNT_TOTAL;
+							}
+						}
+						j++;
+					}
+					indexPerProvider[i] = j;
+					if (j < elements.length) {
+						done = false;
+					}
+				}
+			}
+			// from now on, add one element per provider
+			countPerProvider = 1;
+		} while ((showAllMatches || countTotal < maxCount) && !done);
+		if (!perfectMatchAdded) {
+			entries[0].add(perfectMatch);
 		}
+		return entries;
 	}
 
 	protected Control getFocusControl() {
@@ -454,7 +593,8 @@ public class QuickAccessDialog extends PopupDialog {
 							ArrayList arrayList = new ArrayList();
 							for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
 								arrayList.add(textArray[j]);
-								elementMap.put(textArray[j], quickAccessElement);
+								elementMap
+										.put(textArray[j], quickAccessElement);
 							}
 							textMap.put(quickAccessElement, arrayList);
 							previousPicksList.add(quickAccessElement);

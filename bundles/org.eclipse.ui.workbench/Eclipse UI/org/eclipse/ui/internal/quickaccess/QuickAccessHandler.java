@@ -40,7 +40,7 @@ public class QuickAccessHandler extends AbstractHandler {
 			return null;
 		}
 
-		final PopupDialog popupDialog = new QuickAccessDialog(window);
+		final PopupDialog popupDialog = new QuickAccessDialog(window, executionEvent.getCommand());
 		window.getShell().getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				final Shell shell = popupDialog.getShell();
