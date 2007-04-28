@@ -307,8 +307,6 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	protected void updateWrappedList(List newList) {
-		// TODO this is a naive list diff algorithm, we need a
-		// smarter one
 		List oldList = wrappedList;
 		ListDiff listDiff = Diffs.computeListDiff(oldList, newList);
 		wrappedList = newList;
