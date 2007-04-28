@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Implements a default implementation of ISafeRunnable. The default
@@ -66,25 +67,30 @@ public abstract class SafeRunnable implements ISafeRunnable {
 			if (message == null)
 				message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 
-			IStatus status = new Status(IStatus.ERROR, Policy.JFACE, message,e);
+			final IStatus status = new Status(IStatus.ERROR, Policy.JFACE, message,e);
 
-			if (dialog == null || dialog.getShell().isDisposed()) {
-				dialog = new SafeRunnableDialog(status);
-				dialog.create();
-				dialog.getShell().addDisposeListener(new DisposeListener() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-					 */
-					public void widgetDisposed(DisposeEvent e) {
-						dialog = null;
+			Runnable runnable = new Runnable() {
+				public void run() {
+					if (dialog == null || dialog.getShell().isDisposed()) {
+						dialog = new SafeRunnableDialog(status);
+						dialog.create();
+						dialog.getShell().addDisposeListener(
+								new DisposeListener() {
+									public void widgetDisposed(DisposeEvent e) {
+										dialog = null;
+									}
+								});
+						dialog.open();
+					} else {
+						dialog.addStatus(status);
+						dialog.refresh();
 					}
-				});
-				dialog.open();
+				}
+			};
+			if (Display.getCurrent() != null) {
+				runnable.run();
 			} else {
-				dialog.addStatus(status);
-				dialog.refresh();
+				Display.getDefault().asyncExec(runnable);
 			}
 		}
 	}
