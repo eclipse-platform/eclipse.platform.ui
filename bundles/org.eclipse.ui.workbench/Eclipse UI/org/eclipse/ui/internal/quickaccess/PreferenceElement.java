@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -29,9 +28,12 @@ public class PreferenceElement extends QuickAccessElement {
 
 	private IPreferenceNode preferenceNode;
 
-	/* package */PreferenceElement(IPreferenceNode preferenceNode, PreferenceProvider preferenceProvider) {
+	private String prefix;
+
+	/* package */PreferenceElement(IPreferenceNode preferenceNode, String prefix, PreferenceProvider preferenceProvider) {
 		super(preferenceProvider);
 		this.preferenceNode = preferenceNode;
+		this.prefix = prefix;
 	}
 
 	public void execute() {
@@ -58,11 +60,9 @@ public class PreferenceElement extends QuickAccessElement {
 	}
 
 	public String getLabel() {
-		IPreferencePage page = preferenceNode.getPage();
-		if (page != null && page.getDescription() != null
-				&& page.getDescription().length() != 0) {
+		if (prefix != null && prefix.length() > 0) {
 			return preferenceNode.getLabelText() + separator
-					+ page.getDescription();
+					+ prefix;
 		}
 		return preferenceNode.getLabelText();
 	}

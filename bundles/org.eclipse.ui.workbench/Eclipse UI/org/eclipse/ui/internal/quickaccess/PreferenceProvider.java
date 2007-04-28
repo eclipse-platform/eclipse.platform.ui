@@ -11,14 +11,12 @@
 
 package org.eclipse.ui.internal.quickaccess;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
@@ -44,18 +42,30 @@ public class PreferenceProvider extends QuickAccessProvider {
 
 	public QuickAccessElement[] getElements() {
 		if (cachedElements == null) {
-			List list = PlatformUI.getWorkbench().getPreferenceManager().getElements(PreferenceManager.PRE_ORDER);
-			Set uniqueElements = new HashSet(list);
-			IPreferenceNode[] preferences = (IPreferenceNode[]) uniqueElements.toArray(new IPreferenceNode[uniqueElements.size()]);
-			cachedElements = new QuickAccessElement[preferences.length];
-			for (int i = 0; i < preferences.length; i++) {
-				PreferenceElement preferenceElement = new PreferenceElement(
-						preferences[i], this);
+			List list = new ArrayList(); 
+			collectElements("", PlatformUI.getWorkbench().getPreferenceManager().getRootSubNodes(), list); //$NON-NLS-1$
+			cachedElements = new PreferenceElement[list.size()];
+			for (int i = 0; i < list.size(); i++) {
+				PreferenceElement preferenceElement = (PreferenceElement) list.get(i);
 				cachedElements[i] = preferenceElement;
 				idToElement.put(preferenceElement.getId(), preferenceElement);
 			}
 		}
 		return cachedElements;
+	}
+
+	/**
+	 * @param subNodes
+	 * @return
+	 */
+	private void collectElements(String prefix, IPreferenceNode[] subNodes, List result) {
+		for (int i = 0; i < subNodes.length; i++) {
+			PreferenceElement preferenceElement = new PreferenceElement(
+					subNodes[i], prefix, this);
+			result.add(preferenceElement);
+			String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText() : (prefix + "/" + subNodes[i].getLabelText());  //$NON-NLS-1$
+			collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+		}
 	}
 
 	public ImageDescriptor getImageDescriptor() {
