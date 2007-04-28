@@ -40,18 +40,81 @@ public class Diffs {
 	 */
 	public static ListDiff computeListDiff(List oldList, List newList) {
 		List diffEntries = new ArrayList();
-		for (Iterator it = oldList.iterator(); it.hasNext();) {
-			Object oldElement = it.next();
-			diffEntries.add(createListDiffEntry(0, false, oldElement));
-		}
-		int i = 0;
-		for (Iterator it = newList.iterator(); it.hasNext();) {
-			Object newElement = it.next();
-			diffEntries.add(createListDiffEntry(i++, true, newElement));
-		}
+		createListDiffs(new ArrayList(oldList), newList, diffEntries);
 		ListDiff listDiff = createListDiff((ListDiffEntry[]) diffEntries
 				.toArray(new ListDiffEntry[diffEntries.size()]));
 		return listDiff;
+	}
+	
+	/**
+	 * adapted from EMF's ListDifferenceAnalyzer
+	 */
+	private static void createListDiffs(List oldList, List newList,
+			List listDiffs) {
+		int index = 0;
+		for (Iterator it = newList.iterator(); it.hasNext();) {
+			Object newObject = it.next();
+			if (oldList.size() <= index) {
+				listDiffs.add(createListDiffEntry(index, true, newObject));
+			} else {
+				boolean done;
+				do {
+					done = true;
+					Object targetObject = oldList.get(index);
+					if (targetObject == null ? newObject != null
+							: !targetObject.equals(newObject)) {
+						int position = listIndexOf(oldList, newObject, index);
+						if (position != -1) {
+							int targetIndex = listIndexOf(newList,
+									targetObject, index);
+							if (targetIndex == -1) {
+								listDiffs.add(createListDiffEntry(index, false, targetObject));
+								oldList.remove(index);
+								done = false;
+							} else if (targetIndex > position) {
+								if (oldList.size() <= targetIndex) {
+									targetIndex = oldList.size() - 1;
+								}
+								listDiffs.add(createListDiffEntry(index, false, newObject));
+								oldList.remove(index);
+								listDiffs.add(createListDiffEntry(targetIndex, true, newObject));
+								oldList.add(targetIndex, newObject);
+								done = false;
+							} else {
+								listDiffs.add(createListDiffEntry(position, false, newObject));
+								oldList.remove(position);
+								listDiffs.add(createListDiffEntry(index, true, newObject));
+								oldList.add(index, newObject);
+							}
+						} else {
+							oldList.add(index, newObject);
+							listDiffs.add(createListDiffEntry(index, true, newObject));
+						}
+					}
+				} while (!done);
+			}
+			++index;
+		}
+		for (int i = oldList.size(); i > index;) {
+			listDiffs.add(createListDiffEntry(--i, false, oldList.get(i)));
+		}
+	}
+
+	/**
+	 * @param list
+	 * @param object
+	 * @param index
+	 * @return the index, or -1 if not found
+	 */
+	private static int listIndexOf(List list, Object object, int index) {
+		int size = list.size();
+		for (int i=index; i<size;i++) {
+			Object candidate = list.get(i);
+			if (candidate==null ? object==null : candidate.equals(object)) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	/**

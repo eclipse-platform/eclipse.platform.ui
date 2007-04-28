@@ -15,8 +15,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 
@@ -46,70 +44,7 @@ public class DiffsTest extends TestCase {
 			fail("NPE was thrown.");
 		}
 	}
-	
-	/**
-	 * Asserts that the {@link LinkDiffEntry#toString()} implementation doesn't throw a NPE if any of its properties are <code>null</code>.
-	 */
-	public void test_ListDiffEntry() {
-		ListDiffEntry entry = new ListDiffEntry() {
-			public Object getElement() {
-				return null;
-			}
 
-			public int getPosition() {
-				return 0;
-			}
-
-			public boolean isAddition() {
-				return false;
-			}
-		};
-		
-		try {
-			entry.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
-	}
-	
-	/**
-	 * Asserts that the {@link ListDiff#toString()} implementation doesn't throw a NPE if any of its properties are <code>null</code>.
-	 *
-	 */
-	public void test_ListDiff() {
-		ListDiff diff = new ListDiff() {
-			public ListDiffEntry[] getDifferences() {
-				return null;
-			}
-		};
-		
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
-	}
-	
-	/**
-	 * Asserts that if the {@link ListDiff#toString()} implementation doesn't throw a NEP if the differences contains a <code>null</code> item.
-	 */
-	public void test_ListDiff2() {
-		ListDiff diff = new ListDiff() {
-			public ListDiffEntry[] getDifferences() {
-				return new ListDiffEntry[1];
-			}
-		};
-		
-		try {
-			diff.toString();
-			assertTrue(true);
-		} catch (NullPointerException e) {
-			fail("NPE was thrown.");
-		}
-	}
-	
 	/**
 	 * Asserts that if the {@link ValueDiff#toString()} implementation doesn't throw a NPE if any of its properties are <code>null</code>.
 	 *

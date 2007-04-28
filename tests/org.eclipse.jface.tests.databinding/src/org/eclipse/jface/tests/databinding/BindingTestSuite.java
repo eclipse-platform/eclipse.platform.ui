@@ -29,6 +29,7 @@ import org.eclipse.core.tests.databinding.conversion.NumberToStringConverterTest
 import org.eclipse.core.tests.databinding.conversion.StringToNumberConverterTest;
 import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
 import org.eclipse.core.tests.databinding.observable.DiffsTest;
+import org.eclipse.core.tests.databinding.observable.Diffs_ListDiffTests;
 import org.eclipse.core.tests.databinding.observable.ObservablesTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
@@ -109,7 +110,7 @@ public class BindingTestSuite extends TestSuite {
 	}
 
 	public static Test suite() {
-		return new BindingTestSuite();
+		return new BindingTestSetup(new BindingTestSuite());
 	}
 
 	public BindingTestSuite() {
@@ -130,6 +131,7 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.core.tests.databinding.observable
 		addTestSuite(AbstractObservableTest.class);
+		addTestSuite(Diffs_ListDiffTests.class);
 		addTestSuite(DiffsTest.class);
 		addTestSuite(ObservablesTest.class);
 		addTestSuite(RealmTest.class);
