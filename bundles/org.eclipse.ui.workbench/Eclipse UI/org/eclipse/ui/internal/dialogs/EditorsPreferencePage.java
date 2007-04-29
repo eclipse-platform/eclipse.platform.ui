@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.EditorHistory;
@@ -78,6 +79,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         }
     };
 
+	private Button promptWhenStillOpenEditor;
+
 	protected Control createContents(Composite parent) {
         Composite composite = createComposite(parent);
 
@@ -86,6 +89,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
         createUseIPersistablePref(composite);
+        createPromptWhenStillOpenPref(composite);
 		createEditorReuseGroup(composite);
 		((TabBehaviour)Tweaklets.get(TabBehaviour.class)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
@@ -124,6 +128,15 @@ public class EditorsPreferencePage extends PreferencePage implements
         setButtonLayoutData(useIPersistableEditor);
     }
     
+    protected void createPromptWhenStillOpenPref(Composite composite) {
+    	promptWhenStillOpenEditor = new Button(composite, SWT.CHECK);
+    	promptWhenStillOpenEditor.setText(WorkbenchMessages.WorkbenchPreference_promptWhenStillOpenButton);
+    	promptWhenStillOpenEditor.setFont(composite.getFont());
+    	promptWhenStillOpenEditor.setSelection(getAPIPreferenceStore().getBoolean(
+    			IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN));
+    	setButtonLayoutData(promptWhenStillOpenEditor);
+    }
+    
     protected Composite createComposite(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
         GridLayout layout = new GridLayout();
@@ -148,6 +161,9 @@ public class EditorsPreferencePage extends PreferencePage implements
 		useIPersistableEditor
 				.setSelection(store
 						.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
+		promptWhenStillOpenEditor
+				.setSelection(getAPIPreferenceStore()
+						.getDefaultBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN));
         reuseEditors.setSelection(store
                 .getDefaultBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
         dirtyEditorReuseGroup.setEnabled(reuseEditors.getSelection());
@@ -171,6 +187,8 @@ public class EditorsPreferencePage extends PreferencePage implements
                 showMultipleEditorTabs.getSelection());
         store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS,
                 useIPersistableEditor.getSelection());
+        getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
+        		promptWhenStillOpenEditor.getSelection());
         
         // store the reuse editors setting
         store.setValue(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, reuseEditors
@@ -195,6 +213,10 @@ public class EditorsPreferencePage extends PreferencePage implements
         return WorkbenchPlugin.getDefault().getPreferenceStore();
     }
 
+    protected IPreferenceStore getAPIPreferenceStore() {
+    	return PrefUtil.getAPIPreferenceStore();
+    }
+    
     protected void updateValidState() {
         if (!recentFilesEditor.isValid()) {
             setErrorMessage(recentFilesEditor.getErrorMessage());
