@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM - initial implementation, bug 178888
  *     Karsten Stoeckmann - bug 156982
  *******************************************************************************/
 package org.eclipse.jface.layout;
@@ -87,7 +88,7 @@ public final class GridLayoutFactory {
      * <ul>
      * <li>numColumns(1)</li>
      * <li>margins(5,5)</li>
-     * <li>margins(0,0,0,0)</li>
+     * <li>extendedMargins(0,0,0,0)</li>
      * <li>spacing(5,5)</li>
      * <li>equalWidth(false)</li>
      * </ul>
@@ -111,7 +112,7 @@ public final class GridLayoutFactory {
      * <ul>
      * <li>numColumns(1)</li>
      * <li>margins(0,0)</li>
-     * <li>margins(0,0,0,0)</li>
+     * <li>extendedMargins(0,0,0,0)</li>
      * <li>spacing(LayoutConstants.getSpacing())</li>
      * <li>equalWidth(false)</li>
      * </ul>

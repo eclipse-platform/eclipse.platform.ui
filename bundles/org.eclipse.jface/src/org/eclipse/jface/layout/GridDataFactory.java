@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM - initial implementation, bug 178888
  *******************************************************************************/
 package org.eclipse.jface.layout;
 import org.eclipse.swt.SWT;
@@ -103,12 +104,6 @@ import org.eclipse.swt.widgets.Control;
  *     GridDataFactory.generate(button, 1, 1);
  *          
  * </pre></code>
- * 
- * <strong>IMPORTANT</strong>: 
- * When assigning layout data to a control, be sure to use
- * {@link GridDataFactory#applyTo(Control)} and never
- * {@link Control#setLayoutData(Object)}
- * </p>
  * 
  * @since 3.2
  */
