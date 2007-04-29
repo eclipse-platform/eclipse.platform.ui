@@ -212,6 +212,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		super(""); //$NON-NLS-1$
 		this.site = site;
 		undoContext = context;
+		checkUndoContext();
 		site.getPage().addPartListener(partListener);
 		getHistory().addOperationHistoryListener(historyListener);
 		// An update must be forced in case the undo limit is 0.
@@ -411,6 +412,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			return;
 		}
 		undoContext = context;
+		checkUndoContext();
 		update();
 	}
 
@@ -491,7 +493,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (exceptionMessage == null) {
 			exceptionMessage = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
 		}
-		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, 
+		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
 				exceptionMessage, exception);
 
 		// Log and show the problem
@@ -519,5 +521,19 @@ public abstract class OperationHistoryActionHandler extends Action implements
 					.getUndoContext();
 		}
 		return undoContext;
+	}
+
+	/*
+	 * The undo context has been set. Check whether there is undo or redo
+	 * history available and set the contextActive flag accordingly. We check
+	 * both undo and redo here because we don't ever want the undo/redo action
+	 * handlers to have different values for contextActive.
+	 */
+	private void checkUndoContext() {
+		if (undoContext == null) {
+			return;
+		}
+		contextActive = getHistory().getUndoOperation(undoContext) != null
+				|| getHistory().getRedoOperation(undoContext) != null;
 	}
 }
