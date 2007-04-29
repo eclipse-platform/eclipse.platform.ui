@@ -11,12 +11,21 @@
 
 package org.eclipse.core.tests.databinding;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToDoubleValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToFloatValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToIntegerValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToLongValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToShortValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
 import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
 import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
 import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
@@ -80,6 +89,38 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 
 	public void testDefaultValidatorForStringToDate() throws Exception {
 		assertDefaultValidator(String.class, Date.class, StringToDateValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToByte() throws Exception {
+		assertDefaultValidator(Integer.class, Byte.class, NumberToByteValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToShort() throws Exception {
+		assertDefaultValidator(Integer.class, Short.class, NumberToShortValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToInteger() throws Exception {
+		assertDefaultValidator(Short.class, Integer.class, NumberToIntegerValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToLong() throws Exception {
+		assertDefaultValidator(Short.class, Long.class, NumberToLongValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToFloat() throws Exception {
+		assertDefaultValidator(Short.class, Float.class, NumberToFloatValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToDouble() throws Exception {
+		assertDefaultValidator(Short.class, Double.class, NumberToDoubleValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToBigInteger() throws Exception {
+		assertDefaultValidator(Short.class, BigInteger.class, NumberToUnboundedNumberValidator.class);
+	}
+	
+	public void testDefaultValidatorForNumberToBigDecimal() throws Exception {
+		assertDefaultValidator(Short.class, BigDecimal.class, NumberToUnboundedNumberValidator.class);		
 	}
 	
 	public void testCachesDefaultedValidators() throws Exception {

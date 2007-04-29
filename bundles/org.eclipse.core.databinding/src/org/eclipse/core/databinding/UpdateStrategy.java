@@ -11,6 +11,8 @@
 
 package org.eclipse.core.databinding;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,14 @@ import org.eclipse.core.internal.databinding.ClassLookupSupport;
 import org.eclipse.core.internal.databinding.Pair;
 import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
 import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigDecimalConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToByteConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToDoubleConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToFloatConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
 import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
@@ -89,20 +99,22 @@ import com.ibm.icu.text.NumberFormat;
 			return new DefaultConverter(fromType, toType);
 		}
 		Class toClass = (Class) toType;
+		Class originalToClass = toClass;
 		if (toClass.isPrimitive()) {
 			toClass = autoboxed(toClass);
 		}
 		Class fromClass = (Class) fromType;
+		Class originalFromClass = fromClass;
 		if (fromClass.isPrimitive()) {
 			fromClass = autoboxed(fromClass);
 		}
 		if (!((Class) toType).isPrimitive()
 				&& toClass.isAssignableFrom(fromClass)) {
-			return new IdentityConverter(fromClass, toClass);
+			return new IdentityConverter(originalFromClass, originalToClass);
 		}
 		if (((Class) fromType).isPrimitive() && ((Class) toType).isPrimitive()
 				&& fromType.equals(toType)) {
-			return new IdentityConverter((Class) fromType, (Class) toType);
+			return new IdentityConverter(originalFromClass, originalToClass);
 		}
 		Map converterMap = getConverterMap();
 		Class[] supertypeHierarchyFlattened = ClassLookupSupport
@@ -143,7 +155,7 @@ import com.ibm.icu.text.NumberFormat;
 		// the IdentityConverter will automatically check the actual types at
 		// runtime.
 		if (fromClass.isAssignableFrom(toClass)) {
-			return new IdentityConverter(fromClass, toClass);
+			return new IdentityConverter(originalFromClass, originalToClass);
 		}
 		return new DefaultConverter(fromType, toType);
 	}
@@ -279,11 +291,199 @@ import com.ibm.icu.text.NumberFormat;
 			converterMap
 					.put(
 							new Pair("org.eclipse.core.runtime.IStatus", "java.lang.String"), "org.eclipse.core.internal.databinding.conversion.StatusToStringConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			
+			addNumberToByteConverters(converterMap, integerFormat, integerClasses);
+			addNumberToByteConverters(converterMap, numberFormat, floatClasses);
+			
+			addNumberToShortConverters(converterMap, integerFormat, integerClasses);
+			addNumberToShortConverters(converterMap, numberFormat, floatClasses);
+			
+			addNumberToIntegerConverters(converterMap, integerFormat, integerClasses);
+			addNumberToIntegerConverters(converterMap, numberFormat, floatClasses);
+			
+			addNumberToLongConverters(converterMap, integerFormat, integerClasses);
+			addNumberToLongConverters(converterMap, numberFormat, floatClasses);
+			
+			addNumberToFloatConverters(converterMap, integerFormat, integerClasses);
+			addNumberToFloatConverters(converterMap, numberFormat, floatClasses);
+			
+			addNumberToDoubleConverters(converterMap, integerFormat, integerClasses);
+			addNumberToDoubleConverters(converterMap, numberFormat, floatClasses);
+			
+			addNumberToBigIntegerConverters(converterMap, integerFormat, integerClasses);
+			addNumberToBigIntegerConverters(converterMap, numberFormat, floatClasses);	
+			
+			addNumberToBigDecimalConverters(converterMap, integerFormat, integerClasses);
+			addNumberToBigDecimalConverters(converterMap, numberFormat, floatClasses);
 		}
 
 		return converterMap;
 	}
+	
+	private static final Class[] integerClasses = new Class[]{
+		Byte.TYPE, Byte.class,
+		Short.TYPE, Short.class, 
+		Integer.TYPE, Integer.class,
+		Long.TYPE, Long.class,
+		BigInteger.class};
 
+	private static final Class[] floatClasses = new Class[] {
+		Float.TYPE, Float.class,
+		Double.TYPE, Double.class,
+		BigDecimal.class};
+	
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToByteConverters(Map map,
+			NumberFormat numberFormat, Class[] fromTypes) {
+		
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(Byte.class) && !fromType.equals(Byte.TYPE)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, BYTE_TYPE), new NumberToByteConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Byte.class.getName()), new NumberToByteConverter(numberFormat, fromType, false));
+			}
+		}
+	}
+	
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToShortConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(Short.class) && !fromType.equals(Short.TYPE)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, SHORT_TYPE), new NumberToShortConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Short.class.getName()), new NumberToShortConverter(numberFormat, fromType, false));
+			}
+		}
+	}
+	
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToIntegerConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(Integer.class) && !fromType.equals(Integer.TYPE)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, INTEGER_TYPE), new NumberToIntegerConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Integer.class.getName()), new NumberToIntegerConverter(numberFormat, fromType, false));
+			}
+		}
+	}
+	
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToLongConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(Long.class) && !fromType.equals(Long.TYPE)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, LONG_TYPE), new NumberToLongConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Long.class.getName()), new NumberToLongConverter(numberFormat, fromType, false));
+			}
+		}
+	}
+
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToFloatConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(Float.class) && !fromType.equals(Float.TYPE)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, FLOAT_TYPE), new NumberToFloatConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Float.class.getName()), new NumberToFloatConverter(numberFormat, fromType, false));
+			}
+		}
+	}
+	
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToDoubleConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(Double.class) && !fromType.equals(Double.TYPE)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, DOUBLE_TYPE), new NumberToDoubleConverter(numberFormat, fromType, true));
+				map.put(new Pair(fromName, Double.class.getName()), new NumberToDoubleConverter(numberFormat, fromType, false));
+			}
+		}
+	}
+
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToBigIntegerConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(BigInteger.class)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, BigInteger.class.getName()), new NumberToBigIntegerConverter(numberFormat, fromType));
+			}
+		}
+	}
+	
+	/**
+	 * Registers converters to boxed and unboxed types from a list of from classes.
+	 * 
+	 * @param map
+	 * @param numberFormat
+	 * @param fromTypes
+	 */
+	private static void addNumberToBigDecimalConverters(Map map, NumberFormat numberFormat, Class[] fromTypes) {
+		for (int i = 0; i < fromTypes.length; i++) {
+			Class fromType = fromTypes[i];
+			if (!fromType.equals(BigDecimal.class)) {
+				String fromName = (fromType.isPrimitive()) ? getKeyForClass(fromType, null) : fromType.getName();
+				
+				map.put(new Pair(fromName, BigDecimal.class.getName()), new NumberToBigDecimalConverter(numberFormat, fromType));
+			}
+		}
+	}
+	
 	private static String getKeyForClass(Object originalValue, Class filteredValue) {
 		if (originalValue instanceof Class) {
 			Class originalClass = (Class) originalValue;

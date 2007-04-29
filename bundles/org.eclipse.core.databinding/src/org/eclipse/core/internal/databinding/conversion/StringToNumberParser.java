@@ -124,13 +124,19 @@ public class StringToNumberParser {
 	 * 
 	 * @param minValue
 	 * @param maxValue
-	 * @param numberFormat
+	 * @param numberFormat when accessed method synchronizes on instance
 	 * @return message
 	 */
 	public static String createOutOfRangeMessage(Number minValue,
 			Number maxValue, NumberFormat numberFormat) {
-		String min = numberFormat.format(minValue);
-		String max = numberFormat.format(maxValue);
+		String min = null;
+		String max = null;
+		
+		synchronized (numberFormat) {
+			min = numberFormat.format(minValue);
+			max = numberFormat.format(maxValue);
+		}
+		
 		return BindingMessages.formatString(
 				"Validate_NumberOutOfRangeError", new Object[] { min, max }); //$NON-NLS-1$
 	}

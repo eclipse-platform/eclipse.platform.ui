@@ -68,12 +68,12 @@ public class IdentityConverterTest extends TestCase {
 	}
 	
 	public void testConvert_PrimitiveToBoxed() throws Exception {
-		IdentityConverter p2b = new IdentityConverter(Float.class, Float.TYPE);
+		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.class);
 		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
 	}
 	
 	public void testConvert_BoxedToPrimitive() throws Exception {
-		IdentityConverter p2b = new IdentityConverter(Float.TYPE, Float.class);
+		IdentityConverter p2b = new IdentityConverter(Float.class, Float.TYPE);
 		assertEquals("4.2", new Float(4.2), p2b.convert(new Float(4.2)));
 	}
 	

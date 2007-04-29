@@ -20,8 +20,24 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.internal.databinding.Pair;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigDecimalConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToByteConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToDoubleConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToFloatConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
+import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToDoubleValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToFloatValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToIntegerValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToLongValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToShortValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
 import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
 import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
 import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
@@ -296,6 +312,26 @@ public class UpdateValueStrategy extends UpdateStrategy {
 
 					if (result != null) {
 						validatorsByConverter.put(converter, result);
+					}
+				}
+			} else if (converter instanceof NumberToNumberConverter) {
+				result = (IValidator) validatorsByConverter.get(converter);
+				
+				if (result == null) {
+					if (converter instanceof NumberToByteConverter) {
+						result = new NumberToByteValidator((NumberToByteConverter) converter);
+					} else if (converter instanceof NumberToShortConverter) {
+						result = new NumberToShortValidator((NumberToShortConverter) converter);
+					} else if (converter instanceof NumberToIntegerConverter) {
+						result = new NumberToIntegerValidator((NumberToIntegerConverter) converter);
+					} else if (converter instanceof NumberToLongConverter) {
+						result = new NumberToLongValidator((NumberToLongConverter) converter);
+					} else if (converter instanceof NumberToFloatConverter) {
+						result = new NumberToFloatValidator((NumberToFloatConverter) converter);
+					} else if (converter instanceof NumberToDoubleConverter) {
+						result = new NumberToDoubleValidator((NumberToDoubleConverter) converter);
+					} else if (converter instanceof NumberToBigIntegerConverter || converter instanceof NumberToBigDecimalConverter) {
+						result = new NumberToUnboundedNumberValidator((NumberToNumberConverter) converter);
 					}
 				}
 			}

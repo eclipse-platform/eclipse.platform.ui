@@ -11,6 +11,7 @@
 
 package org.eclipse.core.tests.databinding;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -21,7 +22,16 @@ import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.conversion.DateToStringConverter;
+import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
 import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigDecimalConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToByteConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToDoubleConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToFloatConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
 import org.eclipse.core.internal.databinding.conversion.StatusToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToBooleanConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToBooleanPrimitiveConverter;
@@ -162,6 +172,112 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 	
 	public void testDefaultConverterForStatusToString() throws Exception {
 		assertDefaultConverter(IStatus.class, String.class, StatusToStringConverter.class);
+	}
+	
+
+	public void testDefaultConverterForNumberToByte() throws Exception {
+		assertFromNumberToNumberConverter(Byte.class, Byte.TYPE,
+				NumberToByteConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToShort() throws Exception {
+		assertFromNumberToNumberConverter(Short.class, Short.TYPE,
+				NumberToShortConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToShortPrimitive()
+			throws Exception {
+		assertFromNumberToNumberConverter(Short.TYPE, Short.class,
+				NumberToShortConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToInteger() throws Exception {
+		assertFromNumberToNumberConverter(Integer.class, Integer.TYPE,
+				NumberToIntegerConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToIntegerPrimitive()
+			throws Exception {
+		assertFromNumberToNumberConverter(Integer.TYPE, Integer.class,
+				NumberToIntegerConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToLong() throws Exception {
+		assertFromNumberToNumberConverter(Long.class, Long.TYPE,
+				NumberToLongConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToLongPrimitive() throws Exception {
+		assertFromNumberToNumberConverter(Long.TYPE, Long.class,
+				NumberToLongConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToFloat() throws Exception {
+		assertFromNumberToNumberConverter(Float.class, Float.TYPE,
+				NumberToFloatConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToFloatPrimitive()
+			throws Exception {
+		assertFromNumberToNumberConverter(Float.TYPE, Float.class,
+				NumberToFloatConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToDouble() throws Exception {
+		assertFromNumberToNumberConverter(Double.class, Double.TYPE,
+				NumberToDoubleConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToDoublePrimitive()
+			throws Exception {
+		assertFromNumberToNumberConverter(Double.TYPE, Double.class,
+				NumberToDoubleConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToBigInteger() throws Exception {
+		assertFromNumberToNumberConverter(BigInteger.class, null,
+				NumberToBigIntegerConverter.class);
+	}
+
+	public void testDefaultConverterForNumberToBigDecimal() throws Exception {
+		assertFromNumberToNumberConverter(BigDecimal.class, null,
+				NumberToBigDecimalConverter.class);
+	}
+
+
+	private static Class[] primitiveNumberTypes = new Class[] { Byte.TYPE,
+			Short.TYPE, Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE };
+
+	private static Class[] boxedNumberTypes = new Class[] { Byte.class,
+			Short.class, Integer.class, Long.class, Float.class, Double.class,
+			BigInteger.class, BigDecimal.class };
+
+	private void assertFromNumberToNumberConverter(Class toType,
+			Class toCounterPrimitiveType, Class converterType) {
+
+		for (int i = 0; i < primitiveNumberTypes.length; i++) {
+			Class primitiveType = primitiveNumberTypes[i];
+
+			if (!primitiveType.equals(toType)
+					&& !primitiveType.equals(toCounterPrimitiveType)) {
+				assertDefaultConverter(primitiveType, toType, converterType);
+			} else if (!primitiveType.equals(toType)) {
+				assertDefaultConverter(primitiveType, toType,
+						IdentityConverter.class);
+			}
+		}
+
+		for (int i = 0; i < boxedNumberTypes.length; i++) {
+			Class boxedType = boxedNumberTypes[i];
+
+			if (!boxedType.equals(toType)
+					&& !boxedType.equals(toCounterPrimitiveType)) {
+				assertDefaultConverter(boxedType, toType, converterType);
+			} else if (!boxedType.equals(toType)) {
+				assertDefaultConverter(boxedType, toType,
+						IdentityConverter.class);
+			}
+		}
 	}
 	
 	private void assertDefaultConverter(Class fromType, Class toType, Class converterType) {

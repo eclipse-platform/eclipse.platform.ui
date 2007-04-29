@@ -54,6 +54,14 @@ import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IdentityConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IntegerToStringConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToBigDecimalTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToBigIntegerConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToByteConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToDoubleConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToFloatConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToIntegerConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToLongConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.NumberToShortConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.ObjectToPrimitiveValidatorTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StatusToStringConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToBooleanConverterTest;
@@ -78,6 +86,13 @@ import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObserv
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToByteValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToDoubleValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToFloatValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToIntegerValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToLongValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToShortValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.NumberToUnboundedNumberValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToByteValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToDoubleValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToFloatValidatorTest;
@@ -171,6 +186,14 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DateConversionSupportTest.class);
 		addTestSuite(IdentityConverterTest.class);
 		addTestSuite(IntegerToStringConverterTest.class);
+		addTestSuite(NumberToBigDecimalTest.class);
+		addTestSuite(NumberToBigIntegerConverterTest.class);
+		addTestSuite(NumberToByteConverterTest.class);
+		addTestSuite(NumberToDoubleConverterTest.class);
+		addTestSuite(NumberToFloatConverterTest.class);
+		addTestSuite(NumberToIntegerConverterTest.class);
+		addTestSuite(NumberToLongConverterTest.class);
+		addTestSuite(NumberToShortConverterTest.class);
 		addTestSuite(ObjectToPrimitiveValidatorTest.class);
 		addTestSuite(StatusToStringConverterTest.class);
 		addTestSuite(StringToBooleanConverterTest.class);
@@ -204,6 +227,13 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DetailObservableValueTest.class);
 
 		// org.eclipse.core.tests.internal.databinding.validation
+		addTestSuite(NumberToByteValidatorTest.class);
+		addTestSuite(NumberToDoubleValidatorTest.class);
+		addTestSuite(NumberToFloatValidatorTest.class);
+		addTestSuite(NumberToIntegerValidatorTest.class);
+		addTestSuite(NumberToLongValidatorTest.class);
+		addTestSuite(NumberToShortValidatorTest.class);
+		addTestSuite(NumberToUnboundedNumberValidatorTest.class);
 		addTestSuite(StringToByteValidatorTest.class);
 		addTestSuite(StringToDoubleValidatorTest.class);
 		addTestSuite(StringToFloatValidatorTest.class);
