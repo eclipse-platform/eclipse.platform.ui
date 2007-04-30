@@ -29,6 +29,8 @@ public final class NetUIMessages extends NLS {
 
 	public static String BUTTON_PREFERENCE_REMOVE;
 
+	public static String NonProxyHostsComposite_0;
+
 	public static String ProxyPreferencePage_0;
 
 	public static String ProxyPreferencePage_1;

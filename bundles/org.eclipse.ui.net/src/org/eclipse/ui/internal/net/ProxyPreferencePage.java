@@ -105,7 +105,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 		gridLayout.marginHeight = 0;
 		gridLayout.numColumns = 4;
 		manualProxyConfigurationComposite.setLayout(gridLayout);
-		final GridData gridData_2 = new GridData();
+		final GridData gridData_2 = new GridData(GridData.FILL_BOTH);
 		gridData_2.horizontalIndent = 17;
 		manualProxyConfigurationComposite.setLayoutData(gridData_2);
 
@@ -139,7 +139,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 		nonHostLabel.setLayoutData(newGridData(4, 5, true, false));
 		nonHostComposite = new NonProxyHostsComposite(
 				manualProxyConfigurationComposite, SWT.NONE);
-		nonHostComposite.setLayoutData(newGridData(4, -1, true, false));
+		nonHostComposite.setLayoutData(newGridData(4, -1, true, true));
 
 		Label separator2 = new Label(manualProxyConfigurationComposite,
 				SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -543,7 +543,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 			portLabel.setText(NetUIMessages.ProxyPreferencePage_22);
 
 			port = new Text(parent, SWT.BORDER);
-			gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData = new GridData();
 			gridData.widthHint = 50;
 			port.setLayoutData(gridData);
 			port.setText(getPortString(proxy));
