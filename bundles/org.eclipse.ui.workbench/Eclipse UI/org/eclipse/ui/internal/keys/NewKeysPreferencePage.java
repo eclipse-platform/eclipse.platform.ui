@@ -1043,6 +1043,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		fill();
 		update();
 
+		applyDialogFont(page);
+		
 		if (DEBUG) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;
 			Tracing.printTrace(TRACING_COMPONENT, "Created page in " //$NON-NLS-1$
@@ -1192,9 +1194,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final Composite rightDataArea = new Composite(dataArea, SWT.NONE);
 		layout = new GridLayout(1, false);
 		rightDataArea.setLayout(layout);
-		gridData = new GridData(GridData.FILL_BOTH);
-		gridData.verticalAlignment = SWT.TOP;
-		gridData.horizontalAlignment = SWT.FILL;
+		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		rightDataArea.setLayoutData(gridData);
 
 		// The description label.
@@ -1208,11 +1208,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// The description value.
 		descriptionValueText = new Text(rightDataArea, SWT.BORDER | SWT.MULTI
-				| SWT.H_SCROLL);
-		gridData = new GridData(GridData.FILL_BOTH);
+				| SWT.READ_ONLY  | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
+		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalIndent = 20;
 		descriptionValueText.setLayoutData(gridData);
-		descriptionValueText.setEditable(false);
 		return dataArea;
 	}
 
