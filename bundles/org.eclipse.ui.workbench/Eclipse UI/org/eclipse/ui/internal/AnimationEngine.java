@@ -19,6 +19,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
 
+/**
+ * This job creates an Animation Engine that uses an Animation Feedback to render
+ * the animation. To begin the animation, instantiate this
+ * object then call schedule().
+ * @since 3.3
+ *
+ */
 public class AnimationEngine extends Job {
 	public static final int TICK_TIMER = 1;
 	public static final int unlimitedDuration = -1;
@@ -41,6 +48,13 @@ public class AnimationEngine extends Job {
 		this(animationFeedback, durationIn, 0);
 	}
 
+	/**
+	 * Creates an Animation that will run for the given number of milliseconds.
+	 * 
+	 * @param animationFeedback provides renderStep(), initialize() and jobInit() methods
+	 * @param durationIn number of milliseconds over which the animation will run
+	 * @param sleepAmountIn number of milliseconds to slow/delay the animation
+	 */
 	public AnimationEngine(AnimationFeedbackBase animationFeedback,
 			int durationIn, long sleepAmountIn) {
 		super(WorkbenchMessages.RectangleAnimation_Animating_Rectangle);
@@ -90,7 +104,6 @@ public class AnimationEngine extends Job {
 				updateDisplay();
 				frameCount++;
 			}
-
 			stepCount++;
 		}
 
@@ -171,7 +184,6 @@ public class AnimationEngine extends Job {
 			}
 		}
 
-		//System.out.println("Done: " + (curTime-startTime) + " steps: " + stepCount + " frames:" + frameCount);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 		// We're done, clean up
 		display.syncExec(new Runnable() {
 			public void run() {

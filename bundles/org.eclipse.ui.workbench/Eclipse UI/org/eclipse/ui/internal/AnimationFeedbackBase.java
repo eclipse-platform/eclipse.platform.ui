@@ -13,8 +13,9 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * AnimationFeedBackBase is passed to AnimationEngine which in its run method calls
- * renderStep() to draw the image. Its the base class for all the
+ * AnimationFeedBackBase is an abstract class which provides renderStep(), jobInit() and 
+ * initialize() methods for AnimationEngine. 
+ * Its the base class for all the
  * animationFeedbacks
  * 
  * @since 3.3
@@ -24,6 +25,11 @@ public abstract class AnimationFeedbackBase {
 
 	private Shell animationShell;
 
+	/**
+	 * Creates an AnimationFeedback
+	 * 
+	 * @param parentShell specifies the composite where the animation will be drawn
+	 */
 	public AnimationFeedbackBase(Shell parentShell) {
 		animationShell = parentShell;
 	}

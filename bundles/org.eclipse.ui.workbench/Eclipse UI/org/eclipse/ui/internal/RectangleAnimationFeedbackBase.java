@@ -21,11 +21,24 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.AnimationFeedbackBase;
 
+/**
+ * RectangleAnimationFeedbackBase is an abstract base class for all the 
+ * rectangle animations. 
+ * @since 3.3
+ *
+ */
 public abstract class RectangleAnimationFeedbackBase extends AnimationFeedbackBase {
 
 	private List startRects = new ArrayList();
 	private List endRects = new ArrayList();
 
+	/**
+	 * Creates a Rectangle Animation Feedback
+	 * 
+	 * @param parentShell specifies the composite where the animation will be drawn
+	 * @param start initial rectangle (display coordinates)
+	 * @param end final rectangle (display coordinates)
+	 */
 	public RectangleAnimationFeedbackBase(Shell parentShell, Rectangle start,
 			Rectangle end) {
 		super(parentShell);

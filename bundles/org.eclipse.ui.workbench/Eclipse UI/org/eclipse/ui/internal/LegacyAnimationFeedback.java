@@ -20,6 +20,13 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * Creates an animation feedback that will morph the start rectangle to the end rectangle
+ * for AnimationEngine.
+ * 
+ * @since 3.3
+ *
+ */
 public class LegacyAnimationFeedback extends RectangleAnimationFeedbackBase {
 	private static final int LINE_WIDTH = 1;
 

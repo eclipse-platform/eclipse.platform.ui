@@ -27,6 +27,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.AnimationEngine;
 
+/**
+ * Creates an animation effect where the interpolated rectangles are displayed using Canvas
+ * controls that show an image of the bits that were originally occupied by the various
+ * 'start' rectangles.
+ * 
+ * @since 3.3
+ *
+ */
 public class RectangleAnimationImageFeedback extends
 		RectangleAnimationFeedbackBase {
 	private class ImageCanvas extends Canvas {
@@ -70,11 +78,7 @@ public class RectangleAnimationImageFeedback extends
 	private Display display;
 	private List controls = new ArrayList();
 
-	/**
-	 * Creates an animation effect where the interpolated rectangles are displayed using Canvas
-	 * controls that show an image of the bits that were originally occupied by the various
-	 * 'start' rectangles. 
-	 */
+
 	public RectangleAnimationImageFeedback(Shell parentShell, Rectangle start,
 			Rectangle end) {
 		super(parentShell, start, end);
@@ -103,14 +107,23 @@ public class RectangleAnimationImageFeedback extends
 		GC gc = new GC(display);
 		gc.copyArea(backingStore, psRect.x, psRect.y);
 		gc.dispose();
-		changeCoordinates();
-		captureImages();
+//		changeCoordinates();
+//		captureImages();
 		theShell.setBackgroundImage(backingStore);
 		theShell.setVisible(true);
 		display.update();
 
 	}
-
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.RectangleAnimationFeedbackBase#jobInit(org.eclipse.ui.internal.AnimationEngine)
+	 */
+	public boolean jobInit(AnimationEngine engine) {
+		changeCoordinates();
+		captureImages();
+		return super.jobInit(engine);
+	}
+	
 	public void addStartRect(Rectangle rect) {
 		if (rect == null)
 			return;
