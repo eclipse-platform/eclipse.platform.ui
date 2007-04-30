@@ -833,9 +833,6 @@ public class ActionContributionItem extends ContributionItem {
 							acceleratorText = callback
 									.getAcceleratorText(commandId);
 						}
-					} else {
-						acceleratorText = Action
-								.convertAccelerator(accelerator);
 					}
 
 					IContributionManagerOverrides overrides = null;
@@ -852,6 +849,14 @@ public class ActionContributionItem extends ContributionItem {
 
 					if (text == null) {
 						text = updatedAction.getText();
+					}
+
+					if (text != null && acceleratorText == null) {
+						// use extracted accelerator text in case accelerator cannot be fully represented in one int (e.g. multi-stroke keys) 
+						acceleratorText = LegacyActionTools.extractAcceleratorText(text);
+						if (acceleratorText == null && accelerator != 0) {
+							acceleratorText= Action.convertAccelerator(accelerator);
+						}
 					}
 
 					if (text == null) {
