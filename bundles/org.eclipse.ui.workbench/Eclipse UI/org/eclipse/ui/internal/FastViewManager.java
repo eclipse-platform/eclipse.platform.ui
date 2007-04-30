@@ -35,6 +35,8 @@ import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
+import org.eclipse.ui.internal.tweaklets.Animations;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -895,8 +897,9 @@ public class FastViewManager {
 	 */
 	private void deferAnimations(boolean defer) {
 		if (defer) {
-			batchAnimation = new AnimationEngine(new LegacyAnimationFeedback(
-					wbw.getShell(), null, null), 400);
+			RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
+					.get(Animations.class)).createFeedback(wbw.getShell());
+			batchAnimation = new AnimationEngine(feedback, 400);
 			return;
 		}
 
@@ -914,8 +917,9 @@ public class FastViewManager {
 			return batchAnimation;
 		
 		// Create a 'one-shot' animation
-		oneShotAnimation = new AnimationEngine(new LegacyAnimationFeedback(
-				wbw.getShell(), null, null), 400);
+		RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
+				.get(Animations.class)).createFeedback(wbw.getShell());
+		oneShotAnimation = new AnimationEngine(feedback, 400);
 		return oneShotAnimation;
 	}
 	
