@@ -27,6 +27,8 @@ import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -100,6 +102,7 @@ public class QuickAccessDialog extends PopupDialog {
 	private Command invokingCommand;
 	private KeyAdapter keyAdapter;
 	private boolean showAllMatches = false;
+	protected boolean resized = false;
 
 	/**
 	 * @param parent
@@ -202,12 +205,29 @@ public class QuickAccessDialog extends PopupDialog {
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableComposite);
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
-		table = new Table(tableComposite, SWT.SINGLE | SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.FULL_SELECTION);
+		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE),
 				new ColumnWeightData(0, 120));
 		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE),
 				new ColumnWeightData(100, 100));
+		table.getShell().addControlListener(new ControlAdapter() {
+			public void controlResized(ControlEvent e) {
+				if (!showAllMatches) {
+					if (!resized) {
+						resized = true;
+						e.display.timerExec(100, new Runnable() {
+							public void run() {
+								if (getShell() != null
+										&& !getShell().isDisposed()) {
+									refresh(filterText.getText().toLowerCase());
+								}
+								resized = false;
+							}
+						});
+					}
+				}
+			}
+		});
 
 		new DefaultToolTip(table, ToolTip.NO_RECREATE, false) {
 			private QuickAccessEntry getEntry(Event event) {
@@ -311,12 +331,23 @@ public class QuickAccessDialog extends PopupDialog {
 	/**
 	 * 
 	 */
+	private int computeNumberOfItems() {
+		int height = table.getClientArea().height;
+		int lineWidth = table.getLinesVisible() ? table.getGridLineWidth() : 0;
+		return (height - lineWidth) / (table.getItemHeight() + lineWidth);
+	}
+
+	/**
+	 * 
+	 */
 	private void refresh(String filter) {
+		int numItems = computeNumberOfItems();
+
 		// perfect match, to be selected in the table if not null
 		QuickAccessElement perfectMatch = (QuickAccessElement) elementMap
 				.get(filter);
 
-		List[] entries = computeMatchingEntries(filter, perfectMatch);
+		List[] entries = computeMatchingEntries(filter, perfectMatch, numItems);
 
 		int selectionIndex = refreshTable(perfectMatch, entries);
 
@@ -430,13 +461,13 @@ public class QuickAccessDialog extends PopupDialog {
 	}
 
 	private List[] computeMatchingEntries(String filter,
-			QuickAccessElement perfectMatch) {
+			QuickAccessElement perfectMatch, int maxCount) {
 		// collect matches in an array of lists
 		List[] entries = new ArrayList[providers.length];
 		int[] indexPerProvider = new int[providers.length];
-		int countPerProvider = INITIAL_COUNT_PER_PROVIDER;
+		int countPerProvider = Math.min(maxCount / 4,
+				INITIAL_COUNT_PER_PROVIDER);
 		int countTotal = 0;
-		int maxCount = MAX_COUNT_TOTAL;
 		boolean perfectMatchAdded = true;
 		if (perfectMatch != null) {
 			// reserve one entry for the perfect match
@@ -497,7 +528,14 @@ public class QuickAccessDialog extends PopupDialog {
 			countPerProvider = 1;
 		} while ((showAllMatches || countTotal < maxCount) && !done);
 		if (!perfectMatchAdded) {
-			entries[0].add(perfectMatch);
+			QuickAccessEntry entry = perfectMatch.match(filter, providers[0]);
+			if (entry != null) {
+				if (entries[0] == null) {
+					entries[0] = new ArrayList();
+					indexPerProvider[0] = 0;
+				}
+				entries[0].add(entry);
+			}
 		}
 		return entries;
 	}

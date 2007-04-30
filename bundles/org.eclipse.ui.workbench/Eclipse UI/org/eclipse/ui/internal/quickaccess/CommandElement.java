@@ -12,9 +12,6 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -34,7 +31,8 @@ public class CommandElement extends QuickAccessElement {
 
 	private ParameterizedCommand command;
 
-	/* package */CommandElement(ParameterizedCommand command, CommandProvider commandProvider) {
+	/* package */CommandElement(ParameterizedCommand command,
+			CommandProvider commandProvider) {
 		super(commandProvider);
 		this.command = command;
 	}
@@ -45,20 +43,12 @@ public class CommandElement extends QuickAccessElement {
 		if (window != null) {
 			IHandlerService handlerService = (IHandlerService) window
 					.getWorkbench().getService(IHandlerService.class);
-			Exception ex;
 			try {
 				handlerService.executeCommand(command, null);
-				return;
-			} catch (ExecutionException e) {
-				ex = e;
-			} catch (NotDefinedException e) {
-				ex = e;
-			} catch (NotEnabledException e) {
-				ex = e;
-			} catch (NotHandledException e) {
-				ex = e;
+			} catch (Exception ex) {
+				StatusUtil.handleStatus(ex, StatusManager.SHOW
+						| StatusManager.LOG);
 			}
-			StatusUtil.handleStatus(ex, StatusManager.SHOW);
 		}
 	}
 
