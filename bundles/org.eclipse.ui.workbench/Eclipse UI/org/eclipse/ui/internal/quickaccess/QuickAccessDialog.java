@@ -149,7 +149,7 @@ public class QuickAccessDialog extends PopupDialog {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 0x0D) {
 					QuickAccessElement selectedElement = null;
-					String text = filterText.getText();
+					String text = filterText.getText().toLowerCase();
 					if (table.getSelectionCount() == 1) {
 						QuickAccessEntry entry = (QuickAccessEntry) table
 								.getSelection()[0].getData();
@@ -176,7 +176,7 @@ public class QuickAccessDialog extends PopupDialog {
 		});
 		filterText.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				String text = ((Text) e.widget).getText();
+				String text = ((Text) e.widget).getText().toLowerCase();
 				refresh(text);
 			}
 		});
@@ -252,7 +252,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 			public void widgetDefaultSelected(SelectionEvent e) {
 				QuickAccessElement selectedElement = null;
-				String text = filterText.getText();
+				String text = filterText.getText().toLowerCase();
 				if (table.getSelectionCount() == 1) {
 					QuickAccessEntry quickAccessEntry = (QuickAccessEntry) table
 							.getSelection()[0].getData();
@@ -372,7 +372,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 	private void toggleShowAllMatches() {
 		showAllMatches = !showAllMatches;
-		refresh(filterText.getText());
+		refresh(filterText.getText().toLowerCase());
 	}
 
 	private int refreshTable(QuickAccessElement perfectMatch, List[] entries) {
