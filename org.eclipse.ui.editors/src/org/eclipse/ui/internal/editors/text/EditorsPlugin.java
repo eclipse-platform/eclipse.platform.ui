@@ -27,6 +27,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
@@ -191,13 +192,15 @@ public class EditorsPlugin extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		
-		fThemeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
-					new EditorsPluginPreferenceInitializer().initializeDefaultPreferences();
-			}
-		};
-		PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
+		if (PlatformUI.isWorkbenchRunning()) {
+			fThemeListener= new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+						AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(getPreferenceStore());
+				}
+			};
+			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
+		}
 	}
 
 	/*
@@ -211,7 +214,8 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		}
 
 		if (fThemeListener != null) {
-			PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+			if (PlatformUI.isWorkbenchRunning())
+				PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
 			fThemeListener= null;
 		}
 		

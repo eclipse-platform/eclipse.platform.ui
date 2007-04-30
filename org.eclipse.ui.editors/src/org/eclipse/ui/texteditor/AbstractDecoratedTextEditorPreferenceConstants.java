@@ -456,8 +456,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
   	* @param store the preference store to be initialized
   	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
-		
-		ColorRegistry registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
+		ColorRegistry registry= null;
+		if (PlatformUI.isWorkbenchRunning())
+			registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, false);
@@ -590,6 +591,9 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
+		if (registry == null)
+			return defaultRGB;
+		
 		RGB rgb= registry.getRGB(key);
 		if (rgb != null)
 			return rgb;
