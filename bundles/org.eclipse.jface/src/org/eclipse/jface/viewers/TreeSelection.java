@@ -177,20 +177,22 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 	}
 
 	public boolean equals(Object obj) {
-		if (obj instanceof TreeSelection) {
-			TreeSelection selection = (TreeSelection) obj;
-			int size = getPaths().length;
-			if (selection.getPaths().length == size) {
-				boolean useComparer = getElementComparer() == selection.getElementComparer();
-				if (size > 0) {
-					for (int i = 0; i < paths.length; i++) {
-						if (!elementEquals(paths[i], selection.paths[i], useComparer)) {
-							return false;
-						}
+		if (!(obj instanceof TreeSelection)) {
+			// Fall back to super implementation, see bug 135837.
+			return super.equals(obj);
+		}
+		TreeSelection selection = (TreeSelection) obj;
+		int size = getPaths().length;
+		if (selection.getPaths().length == size) {
+			boolean useComparer = getElementComparer() == selection.getElementComparer();
+			if (size > 0) {
+				for (int i = 0; i < paths.length; i++) {
+					if (!elementEquals(paths[i], selection.paths[i], useComparer)) {
+						return false;
 					}
 				}
-				return true;
 			}
+			return true;
 		}
 		return false;
 	}
