@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,16 @@ import org.eclipse.core.commands.common.NamedHandleObjectComparator;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.databinding.observable.set.UnionSet;
+import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
@@ -40,6 +51,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,6 +62,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -57,12 +70,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.NamedHandleObjectLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeNode;
-import org.eclipse.jface.viewers.TreeNodeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -78,6 +90,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -93,6 +106,7 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
@@ -121,6 +135,209 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public final class NewKeysPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
+
+	private static boolean DEBUG = Policy.DEBUG_KEY_BINDINGS;
+
+	private static final String TRACING_COMPONENT = "NewKeysPref"; //$NON-NLS-1$
+
+	private class ObservableSetContentProvider implements ITreeContentProvider {
+
+		private class KnownElementsSet extends ObservableSet {
+
+			KnownElementsSet(Set wrappedSet) {
+				super(SWTObservables.getRealm(Display.getDefault()),
+						wrappedSet, Object.class);
+			}
+
+			void doFireDiff(Set added, Set removed) {
+				fireSetChange(Diffs.createSetDiff(added, removed));
+			}
+
+			void doFireStale(boolean isStale) {
+				if (isStale) {
+					fireStale();
+				} else {
+					fireChange();
+				}
+			}
+		}
+
+		private IObservableSet readableSet;
+
+		private Viewer viewer;
+
+		/**
+		 * This readableSet returns the same elements as the input readableSet.
+		 * However, it only fires events AFTER the elements have been added or
+		 * removed from the viewer.
+		 */
+		private KnownElementsSet knownElements;
+
+		private ISetChangeListener listener = new ISetChangeListener() {
+
+			public void handleSetChange(SetChangeEvent event) {
+				boolean wasStale = knownElements.isStale();
+				if (isDisposed()) {
+					return;
+				}
+				doDiff(event.diff.getAdditions(), event.diff.getRemovals(),
+						true);
+				if (!wasStale && event.getObservableSet().isStale()) {
+					knownElements.doFireStale(true);
+				}
+			}
+		};
+
+		private IStaleListener staleListener = new IStaleListener() {
+			public void handleStale(StaleEvent event) {
+				knownElements.doFireStale(event.getObservable().isStale());
+			}
+		};
+
+		/**
+		 * 
+		 */
+		public ObservableSetContentProvider() {
+			readableSet = new ObservableSet(SWTObservables.getRealm(Display
+					.getDefault()), Collections.EMPTY_SET, Object.class) {
+			};
+			knownElements = new KnownElementsSet(readableSet);
+		}
+
+		public void dispose() {
+			setInput(null);
+		}
+
+		private void doDiff(Set added, Set removed, boolean updateViewer) {
+			knownElements.doFireDiff(added, Collections.EMPTY_SET);
+
+			if (updateViewer) {
+				Object[] toAdd = added.toArray();
+				if (viewer instanceof TreeViewer) {
+					TreeViewer tv = (TreeViewer) viewer;
+					tv.add(model, toAdd);
+				} else if (viewer instanceof AbstractListViewer) {
+					AbstractListViewer lv = (AbstractListViewer) viewer;
+					lv.add(toAdd);
+				}
+				Object[] toRemove = removed.toArray();
+				if (viewer instanceof TreeViewer) {
+					TreeViewer tv = (TreeViewer) viewer;
+					tv.remove(toRemove);
+				} else if (viewer instanceof AbstractListViewer) {
+					AbstractListViewer lv = (AbstractListViewer) viewer;
+					lv.remove(toRemove);
+				}
+			}
+			knownElements.doFireDiff(Collections.EMPTY_SET, removed);
+		}
+
+		public Object[] getElements(Object inputElement) {
+			return readableSet.toArray();
+		}
+
+		/**
+		 * Returns the readableSet of elements known to this content provider.
+		 * Items are added to this readableSet before being added to the viewer,
+		 * and they are removed after being removed from the viewer. The
+		 * readableSet is always updated after the viewer. This is intended for
+		 * use by label providers, as it will always return the items that need
+		 * labels.
+		 * 
+		 * @return readableSet of items that will need labels
+		 */
+		public IObservableSet getKnownElements() {
+			return knownElements;
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			this.viewer = viewer;
+
+			if (newInput != null && !(newInput instanceof IObservableSet)) {
+				throw new IllegalArgumentException(
+						"This content provider only works with input of type IReadableSet"); //$NON-NLS-1$
+			}
+
+			setInput((IObservableSet) newInput);
+		}
+
+		private boolean isDisposed() {
+			return viewer.getControl() == null
+					|| viewer.getControl().isDisposed();
+		}
+
+		private void setInput(IObservableSet newSet) {
+			boolean updateViewer = true;
+			if (newSet == null) {
+				newSet = new ObservableSet(SWTObservables.getRealm(Display
+						.getDefault()), Collections.EMPTY_SET, Object.class) {
+				};
+				// don't update the viewer - its input is null
+				updateViewer = false;
+			}
+
+			boolean wasStale = false;
+			if (readableSet != null) {
+				wasStale = readableSet.isStale();
+				readableSet.removeSetChangeListener(listener);
+				readableSet.removeStaleListener(staleListener);
+			}
+
+			HashSet additions = new HashSet();
+			HashSet removals = new HashSet();
+
+			additions.addAll(newSet);
+			additions.removeAll(readableSet);
+
+			removals.addAll(readableSet);
+			removals.removeAll(newSet);
+
+			readableSet = newSet;
+
+			doDiff(additions, removals, updateViewer);
+
+			if (readableSet != null) {
+				readableSet.addSetChangeListener(listener);
+				readableSet.addStaleListener(staleListener);
+			}
+
+			boolean isStale = (readableSet != null && readableSet.isStale());
+			if (isStale != wasStale) {
+				knownElements.doFireStale(isStale);
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+		 */
+		public Object getParent(Object element) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+	}
 
 	/**
 	 * A FilteredTree that provides a combo which is used to organize and
@@ -250,7 +467,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		public final Image getColumnImage(final Object element,
 				final int columnIndex) {
-			final Object value = ((TreeNode) element).getValue();
+			final Object value = element;
 			if (value instanceof Binding) {
 				switch (columnIndex) {
 				case COLUMN_COMMAND:
@@ -303,6 +520,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						WorkbenchPlugin.log(message, status);
 					}
 					return null;
+				case COLUMN_USER:
+					return ImageFactory.getImage("blank"); //$NON-NLS-1$
 				}
 
 			} else if ((value instanceof Category) || (value instanceof String)) {
@@ -331,7 +550,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		public final String getColumnText(final Object element,
 				final int columnIndex) {
-			final Object value = ((TreeNode) element).getValue();
+			final Object value = element;
 			if (value instanceof Binding) {
 				final Binding binding = (Binding) value;
 				switch (columnIndex) {
@@ -421,6 +640,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	private final class BindingComparator extends ViewerComparator {
 
 		private int sortColumn = 0;
+
 		private boolean ascending = true;
 
 		public final int category(final Object element) {
@@ -447,146 +667,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		public final int compare(final Viewer viewer, final Object a,
 				final Object b) {
-			final String selectedText = NewKeysPreferenceMessages.GroupingCombo_None_Text;
-			try {
-				if (NewKeysPreferenceMessages.GroupingCombo_Category_Text
-						.equals(selectedText)) {
-					// The tree node values will be Category and Binding
-					// instances.
-					final Object x = ((TreeNode) a).getValue();
-					final Object y = ((TreeNode) b).getValue();
 
-					/*
-					 * Check to see if any of the objects can be converted to
-					 * parameterized commands.
-					 */
-					ParameterizedCommand commandA = null;
-					if (x instanceof ParameterizedCommand) {
-						commandA = (ParameterizedCommand) x;
-					} else if (x instanceof Binding) {
-						commandA = ((Binding) x).getParameterizedCommand();
-					}
-					ParameterizedCommand commandB = null;
-					if (y instanceof ParameterizedCommand) {
-						commandB = (ParameterizedCommand) y;
-					} else if (y instanceof Binding) {
-						commandB = ((Binding) y).getParameterizedCommand();
-					}
-
-					if ((x instanceof Category) && (y instanceof Category)) {
-						return Util.compare(((Category) x).getName(),
-								((Category) y).getName());
-
-					} else if ((commandA != null) && (commandB != null)) {
-						return Util.compare(commandA, commandB);
-
-					} else if ((x instanceof Category) && (commandB != null)) {
-						final int compare = Util.compare(((Category) x)
-								.getName(), commandB.getCommand().getCategory()
-								.getName());
-						return (compare == 0) ? -1 : compare;
-
-					} else if ((y instanceof Category) && (commandA != null)) {
-						final int compare = Util.compare(((Category) y)
-								.getName(), commandA.getCommand().getCategory()
-								.getName());
-						return (compare == 0) ? 1 : compare;
-
-					}
-
-				} else if (NewKeysPreferenceMessages.GroupingCombo_When_Text
-						.equals(selectedText)) {
-					// The tree node values will be String and Binding
-					// instances.
-					final Object x = ((TreeNode) a).getValue();
-					final Object y = ((TreeNode) b).getValue();
-
-					if ((x instanceof String) && (y instanceof String)) {
-						return Util.compare(contextService.getContext(
-								(String) x).getName(), contextService
-								.getContext((String) y).getName());
-
-					} else if ((x instanceof Binding) && (y instanceof Binding)) {
-						return Util.compare(((Binding) x)
-								.getParameterizedCommand(), ((Binding) y)
-								.getParameterizedCommand());
-
-					} else if ((x instanceof ParameterizedCommand)
-							&& (y instanceof ParameterizedCommand)) {
-						return Util.compare((ParameterizedCommand) x,
-								(ParameterizedCommand) y);
-
-					} else if ((x instanceof String) && (y instanceof Binding)) {
-						final int compare = Util
-								.compare(contextService.getContext((String) x)
-										.getName(), contextService.getContext(
-										((Binding) y).getContextId()).getName());
-						return (compare == 0) ? -1 : compare;
-
-					} else if ((y instanceof String) && (x instanceof Binding)) {
-						final int compare = Util.compare(contextService
-								.getContext(((Binding) x).getContextId())
-								.getName(), contextService.getContext(
-								(String) y).getName());
-						return (compare == 0) ? 1 : compare;
-
-					} else if ((x instanceof String)
-							&& (y instanceof ParameterizedCommand)) {
-						final int compare = Util.compare(contextService
-								.getContext((String) x).getName(),
-								contextService.getContext(
-										IContextIds.CONTEXT_ID_WINDOW)
-										.getName());
-						return (compare == 0) ? -1 : compare;
-
-					} else if ((y instanceof String)
-							&& (x instanceof ParameterizedCommand)) {
-						final int compare = Util.compare(contextService
-								.getContext(IContextIds.CONTEXT_ID_WINDOW)
-								.getName(), contextService.getContext(
-								(String) y).getName());
-						return (compare == 0) ? 1 : compare;
-
-					} else if ((x instanceof Binding)
-							&& (y instanceof ParameterizedCommand)) {
-						final ParameterizedCommand commandX = ((Binding) x)
-								.getParameterizedCommand();
-						final ParameterizedCommand commandY = (ParameterizedCommand) y;
-						final int compare = Util.compare(commandX, commandY);
-						return (compare == 0) ? -1 : compare;
-
-					} else if ((y instanceof Binding)
-							&& (x instanceof ParameterizedCommand)) {
-						final ParameterizedCommand commandY = ((Binding) y)
-								.getParameterizedCommand();
-						final ParameterizedCommand commandX = (ParameterizedCommand) x;
-						final int compare = Util.compare(commandX, commandY);
-						return (compare == 0) ? 1 : compare;
-
-					}
-
-				} else { // (GROUPING_NONE_NAME.equals(selectedText))
-
-					IBaseLabelProvider baseLabel = filteredTree.getViewer()
-							.getLabelProvider();
-					if (baseLabel instanceof ITableLabelProvider) {
-						ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
-						String e1p = tableProvider.getColumnText(a, sortColumn);
-						String e2p = tableProvider.getColumnText(b, sortColumn);
-						if (e1p != null && e2p != null) {
-							int result = getComparator().compare(e1p, e2p);
-							return ascending ? result : (-1) * result;
-
-						}
-					}
-					return super.compare(viewer, a, b);
+			IBaseLabelProvider baseLabel = filteredTree.getViewer()
+					.getLabelProvider();
+			if (baseLabel instanceof ITableLabelProvider) {
+				ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+				String e1p = tableProvider.getColumnText(a, sortColumn);
+				String e2p = tableProvider.getColumnText(b, sortColumn);
+				if (e1p != null && e2p != null) {
+					int result = getComparator().compare(e1p, e2p);
+					return ascending ? result : (-1) * result;
 
 				}
-			} catch (final NotDefinedException e) {
-				// This could be made a lot more fine-grained.
 			}
-
-			return 0;
+			return super.compare(viewer, a, b);
 		}
 
 		/**
@@ -617,36 +711,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		 */
 		public void setAscending(boolean ascending) {
 			this.ascending = ascending;
-		}
-	}
-
-	/**
-	 * A tree node that knows what kind of information to return in the
-	 * <code>toString</code> method. This is used for pattern matching.
-	 */
-	private static final class BindingTreeNode extends TreeNode {
-
-		private BindingTreeNode(final Object object) {
-			super(object);
-		}
-
-		public final String toString() {
-			final Object value = getValue();
-			final ParameterizedCommand command;
-			if (value instanceof Binding) {
-				command = ((Binding) value).getParameterizedCommand();
-			} else if (value instanceof ParameterizedCommand) {
-				command = (ParameterizedCommand) value;
-			} else {
-				return null;
-			}
-
-			try {
-				return command.getName()
-						+ command.getCommand().getDescription();
-			} catch (final NotDefinedException e) {
-				return null;
-			}
 		}
 	}
 
@@ -693,6 +757,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	private final String TAG_FIELD = "showAllField"; //$NON-NLS-1$
 
 	private static final String TAG_FILTER_ACTION_SETS = "actionSetFilter"; //$NON-NLS-1$
+
 	private static final String TAG_FILTER_INTERNAL = "internalFilter"; //$NON-NLS-1$
 
 	/**
@@ -816,8 +881,12 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	private boolean filterActionSetContexts = true;
 
 	private boolean filterInternalContexts = true;
-	
-	private Set model = new HashSet();
+
+	private IObservableSet commandModel;
+
+	private IObservableSet bindingModel;
+
+	private UnionSet model;
 
 	/**
 	 * The combo box containing the list of possible contexts to choose from.
@@ -847,8 +916,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// Select the new binding.
 		filteredTree.getViewer().setSelection(
-				new StructuredSelection(new BindingTreeNode(
-						markedParameterizedCommand)), true);
+				new StructuredSelection(binding.getParameterizedCommand()),
+				true);
 		bindingText.setFocus();
 		bindingText.selectAll();
 	}
@@ -863,7 +932,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final String contextId = binding.getContextId();
 		final String schemeId = binding.getSchemeId();
 		final KeySequence triggerSequence = binding.getKeySequence();
-		filteredTree.getViewer().remove(new BindingTreeNode(binding));
 		if (binding.getType() == Binding.USER) {
 			localChangeManager.removeBinding(binding);
 		} else {
@@ -872,6 +940,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			localChangeManager.addBinding(new KeyBinding(triggerSequence, null,
 					schemeId, contextId, null, null, null, Binding.USER));
 		}
+
+		// update the model
+		bindingModel.remove(binding);
+		if (showAllCheckBox.getSelection()) {
+			commandModel.add(binding.getParameterizedCommand());
+		}
+		// end update the model
+
 		update();
 	}
 
@@ -934,6 +1010,11 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	protected final Control createContents(final Composite parent) {
 		GridLayout layout = null;
 
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
+		}
+
 		IDialogSettings settings = getDialogSettings();
 		if (settings.get(TAG_FILTER_ACTION_SETS) != null) {
 			filterActionSetContexts = settings
@@ -957,6 +1038,12 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		fill();
 		update();
+
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT, "Created page in " //$NON-NLS-1$
+					+ elapsedTime + "ms"); //$NON-NLS-1$
+		}
 
 		return page;
 	}
@@ -1281,17 +1368,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		// Set up the providers for the viewer.
 		final TreeViewer viewer = filteredTree.getViewer();
 		viewer.setLabelProvider(new BindingLabelProvider());
-		viewer.setContentProvider(new TreeNodeContentProvider() { 
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.TreeNodeContentProvider#getElements(java.lang.Object)
-			 */
-			public Object[] getElements(Object inputElement) {
-				if (inputElement instanceof Set) {
-					return ((Set)inputElement).toArray();
-				}
-				return super.getElements(inputElement);
-			}
-		});
+
+		viewer.setContentProvider(new ObservableSetContentProvider());
+		// viewer.setContentProvider(new UnorderedTreeContentProvider());
 
 		viewer.setComparator(comparator);
 
@@ -1304,8 +1383,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				selectTreeRow(event);
 			}
 		});
-		
-		viewer.setInput(model);
 
 		// Adjust how the filter works.
 		filteredTree.getPatternFilter().setIncludeLeadingWildcard(true);
@@ -1339,7 +1416,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		showAllCheckBox.setSelection(settings.getBoolean(TAG_FIELD));
 		showAllCheckBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				updateTree();
+				fillInCommands();
 			}
 		});
 
@@ -1415,6 +1492,52 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		// Update the when combo.
 		whenCombo.setInput(getContexts());
 
+		commandModel = new WritableSet();
+		bindingModel = new WritableSet();
+		model = new UnionSet(
+				new IObservableSet[] { bindingModel, commandModel });
+
+		bindingModel.addAll(localChangeManager
+				.getActiveBindingsDisregardingContextFlat());
+		fillInCommands();
+
+		if (DEBUG) {
+			Tracing.printTrace(TRACING_COMPONENT,
+					"fill in size: " + model.size()); //$NON-NLS-1$
+		}
+		
+		filteredTree.getViewer().setInput(model);
+	}
+
+	/**
+	 * 
+	 */
+	private void fillInCommands() {
+		if (showAllCheckBox.getSelection()) {
+			final Collection commandIds = commandService.getDefinedCommandIds();
+			final Collection commands = new HashSet();
+			final Iterator commandIdItr = commandIds.iterator();
+			while (commandIdItr.hasNext()) {
+				final String currentCommandId = (String) commandIdItr.next();
+				final Command currentCommand = commandService
+						.getCommand(currentCommandId);
+				try {
+					commands.addAll(ParameterizedCommand
+							.generateCombinations(currentCommand));
+				} catch (final NotDefinedException e) {
+					// It is safe to just ignore undefined commands.
+				}
+			}
+
+			// Remove duplicates.
+			Iterator i = bindingModel.iterator();
+			while (i.hasNext()) {
+				commands.remove(((Binding)i.next()).getParameterizedCommand());
+			}
+			commandModel.addAll(commands);
+		} else {
+			commandModel.clear();
+		}
 	}
 
 	/*
@@ -1442,6 +1565,11 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * controls.
 	 */
 	private final void keySequenceChanged() {
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
+		}
+
 		final KeySequence keySequence = keySequenceText.getKeySequence();
 		if ((keySequence == null) || (!keySequence.isComplete())
 				|| (keySequence.isEmpty())) {
@@ -1451,10 +1579,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		ISelection selection = filteredTree.getViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			final TreeNode node = (TreeNode) structuredSelection
-					.getFirstElement();
+			final Object node = structuredSelection.getFirstElement();
 			if (node != null) {
-				final Object object = node.getValue();
+				final Object object = node;
 				selection = whenCombo.getSelection();
 				final String contextId;
 				if (selection instanceof IStructuredSelection) {
@@ -1489,10 +1616,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 									Binding.USER));
 						}
 						localChangeManager.addBinding(binding);
+						// update the model
+						bindingModel.remove(keyBinding);
+						bindingModel.add(binding);
+						// end update the model
 						update();
 						filteredTree.getViewer().setSelection(
-								new StructuredSelection(new BindingTreeNode(
-										binding)), true);
+								new StructuredSelection(binding), true);
 					}
 				} else if (object instanceof ParameterizedCommand) {
 					// TODO This should use the user's personal scheme.
@@ -1501,13 +1631,21 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 							IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
 							contextId, null, null, null, Binding.USER);
 					localChangeManager.addBinding(binding);
+					// update the model
+					// end update the model
+					bindingModel.add(binding);
+					commandModel.remove(object);
 					update();
 
 					filteredTree.getViewer().setSelection(
-							new StructuredSelection(
-									new BindingTreeNode(binding)), true);
+							new StructuredSelection(binding), true);
 				}
 			}
+		}
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT, "keySequenceChanged in " //$NON-NLS-1$
+					+ elapsedTime + "ms"); //$NON-NLS-1$
 		}
 	}
 
@@ -1532,6 +1670,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	}
 
 	protected final void performDefaults() {
+
 		// Ask the user to confirm
 		final String title = NewKeysPreferenceMessages.RestoreDefaultsMessageBoxText;
 		final String message = NewKeysPreferenceMessages.RestoreDefaultsMessageBoxMessage;
@@ -1570,10 +1709,28 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			} catch (final IOException e) {
 				logPreferenceStoreException(e);
 			}
+			long startTime = 0L;
+			if (DEBUG) {
+				startTime = System.currentTimeMillis();
+			}
+			bindingModel.clear();
+			commandModel.clear();
+			Collection comeBack = localChangeManager
+					.getActiveBindingsDisregardingContextFlat();
+			bindingModel.addAll(comeBack);
+
+			// showAllCheckBox.setSelection(false);
+			fillInCommands();
+			if (DEBUG) {
+				final long elapsedTime = System.currentTimeMillis() - startTime;
+				Tracing.printTrace(TRACING_COMPONENT,
+						"performDefaults:model in " //$NON-NLS-1$
+								+ elapsedTime + "ms"); //$NON-NLS-1$
+			}
 		}
 
 		setScheme(localChangeManager.getActiveScheme());
-		showAllCheckBox.setSelection(false);
+
 		super.performDefaults();
 	}
 
@@ -1598,6 +1755,11 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 *            Ignored.
 	 */
 	private final void selectAddBindingButton(final SelectionEvent event) {
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
+		}
+
 		// Check to make sure we've got a selection.
 		final TreeViewer viewer = filteredTree.getViewer();
 		final ISelection selection = viewer.getSelection();
@@ -1607,13 +1769,17 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 		final Object firstElement = structuredSelection.getFirstElement();
-		if (firstElement instanceof TreeNode) {
-			final Object value = ((TreeNode) firstElement).getValue();
-			if (value instanceof KeyBinding) {
-				bindingAdd((KeyBinding) value);
-			} else if (value instanceof ParameterizedCommand) {
-				bindingText.setFocus();
-			}
+		final Object value = firstElement;
+		if (value instanceof KeyBinding) {
+			bindingAdd((KeyBinding) value);
+		} else if (value instanceof ParameterizedCommand) {
+			bindingText.setFocus();
+		}
+
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT, "selectAddBindingButton in " //$NON-NLS-1$
+					+ elapsedTime + "ms"); //$NON-NLS-1$
 		}
 	}
 
@@ -1625,6 +1791,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 *            Ignored.
 	 */
 	private final void selectRemoveBindingButton(final SelectionEvent event) {
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
+		}
 		// Check to make sure we've got a selection.
 		final TreeViewer viewer = filteredTree.getViewer();
 		final ISelection selection = viewer.getSelection();
@@ -1634,15 +1804,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 		final Object firstElement = structuredSelection.getFirstElement();
-		if (firstElement instanceof TreeNode) {
-			final Object value = ((TreeNode) firstElement).getValue();
-			if (value instanceof KeyBinding) {
-				bindingRemove((KeyBinding) value);
-			} else if (value == markedParameterizedCommand) {
-				markedParameterizedCommand = null;
-				markedContextId = null;
-				update();
-			}
+		final Object value = firstElement;
+		if (value instanceof KeyBinding) {
+			bindingRemove((KeyBinding) value);
+		} else if (value == markedParameterizedCommand) {
+			commandModel.remove(markedParameterizedCommand);
+			markedParameterizedCommand = null;
+			markedContextId = null;
+			update();
+		}
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT,
+					"selectRemoveBindingButton in " //$NON-NLS-1$
+							+ elapsedTime + "ms"); //$NON-NLS-1$
 		}
 	}
 
@@ -1707,10 +1882,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final ISelection selection = filteredTree.getViewer().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-			final TreeNode node = (TreeNode) structuredSelection
-					.getFirstElement();
+			final Object node = structuredSelection.getFirstElement();
 			if (node != null) {
-				final Object object = node.getValue();
+				final Object object = node;
 				if (object instanceof KeyBinding) {
 					final KeyBinding binding = (KeyBinding) object;
 					try {
@@ -1758,60 +1932,67 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	}
 
 	private final void updateTree() {
-		final TreeViewer viewer = filteredTree.getViewer();
-		final Collection bindings = localChangeManager
-				.getActiveBindingsDisregardingContextFlat();
-
-		/*
-		 * Add all of the parameterized commands (without bindings) if the show
-		 * all check box is selected.
-		 */
-		if (showAllCheckBox.getSelection()) {
-			final Collection commandIds = commandService.getDefinedCommandIds();
-			final Collection commands = new ArrayList();
-			final Iterator commandIdItr = commandIds.iterator();
-			while (commandIdItr.hasNext()) {
-				final String currentCommandId = (String) commandIdItr.next();
-				final Command currentCommand = commandService
-						.getCommand(currentCommandId);
-				try {
-					commands.addAll(ParameterizedCommand
-							.generateCombinations(currentCommand));
-				} catch (final NotDefinedException e) {
-					// It is safe to just ignore undefined commands.
-				}
-			}
-
-			// Remove duplicates.
-			final Iterator commandItr = commands.iterator();
-			while (commandItr.hasNext()) {
-				final ParameterizedCommand command = (ParameterizedCommand) commandItr
-						.next();
-				if (localChangeManager
-						.getActiveBindingsDisregardingContextFor(command).length > 0) {
-					commandItr.remove();
-
-				}
-			}
-
-			bindings.addAll(commands);
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
 		}
+
+		final TreeViewer viewer = filteredTree.getViewer();
+		// final Collection bindings = localChangeManager
+		// .getActiveBindingsDisregardingContextFlat();
+		//
+		// /*
+		// * Add all of the parameterized commands (without bindings) if the
+		// show
+		// * all check box is selected.
+		// */
+		// if (showAllCheckBox.getSelection()) {
+		// final Collection commandIds = commandService.getDefinedCommandIds();
+		// final Collection commands = new ArrayList();
+		// final Iterator commandIdItr = commandIds.iterator();
+		// while (commandIdItr.hasNext()) {
+		// final String currentCommandId = (String) commandIdItr.next();
+		// final Command currentCommand = commandService
+		// .getCommand(currentCommandId);
+		// try {
+		// commands.addAll(ParameterizedCommand
+		// .generateCombinations(currentCommand));
+		// } catch (final NotDefinedException e) {
+		// // It is safe to just ignore undefined commands.
+		// }
+		// }
+		//
+		// // Remove duplicates.
+		// final Iterator commandItr = commands.iterator();
+		// while (commandItr.hasNext()) {
+		// final ParameterizedCommand command = (ParameterizedCommand)
+		// commandItr
+		// .next();
+		// if (localChangeManager
+		// .getActiveBindingsDisregardingContextFor(command).length > 0) {
+		// commandItr.remove();
+		//
+		// }
+		// }
+		//
+		// bindings.addAll(commands);
+		// }
 
 		// Add the marked parameterized command, if any.
 		if (markedParameterizedCommand != null) {
-			bindings.add(markedParameterizedCommand);
+			commandModel.add(markedParameterizedCommand);
 			markedParameterizedCommand = null;
 		}
 
-		// Just a flat list. Convert the flat list into nodes.
-		final Iterator bindingItr = bindings.iterator();
-		model.clear();
-		while (bindingItr.hasNext()) {
-			model.add(new BindingTreeNode(bindingItr.next()));
-		}
+		// // Just a flat list. Convert the flat list into nodes.
+		// final Iterator bindingItr = bindings.iterator();
+		// model.clear();
+		// while (bindingItr.hasNext()) {
+		// model.add(new BindingTreeNode(bindingItr.next()));
+		// }
 
 		// Set the input.
-		viewer.refresh();
+		// viewer.refresh();
 
 		// Repack all of the columns.
 		final Tree tree = viewer.getTree();
@@ -1822,6 +2003,12 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		columns[BindingLabelProvider.COLUMN_WHEN].setWidth(130);
 		columns[BindingLabelProvider.COLUMN_CATEGORY].setWidth(130);
 		columns[BindingLabelProvider.COLUMN_USER].setWidth(50);
+
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT, "Refreshed page in " //$NON-NLS-1$
+					+ elapsedTime + "ms"); //$NON-NLS-1$
+		}
 	}
 
 	/**

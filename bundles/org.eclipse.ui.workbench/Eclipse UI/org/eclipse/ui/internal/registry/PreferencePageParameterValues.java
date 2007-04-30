@@ -15,6 +15,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.core.commands.IParameterValues;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
@@ -39,6 +42,26 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * @since 3.2
  */
 public final class PreferencePageParameterValues implements IParameterValues {
+
+	public PreferencePageParameterValues() {
+		Platform.getExtensionRegistry().addRegistryChangeListener(
+				new IRegistryChangeListener() {
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.core.runtime.IRegistryChangeListener#registryChanged(org.eclipse.core.runtime.IRegistryChangeEvent)
+					 */
+					public void registryChanged(IRegistryChangeEvent event) {
+						if (event.getExtensionDeltas(PlatformUI.PLUGIN_ID,
+								IWorkbenchRegistryConstants.PL_PREFERENCES).length > 0) {
+							preferenceMap = null;
+						}
+					}
+				});
+	}
+
+	private Map preferenceMap;
 
 	/**
 	 * Iterate through the preference page and build the map of preference page
@@ -76,14 +99,16 @@ public final class PreferencePageParameterValues implements IParameterValues {
 	}
 
 	public final Map getParameterValues() {
-		final Map values = new TreeMap();
+		if (preferenceMap == null) {
+			preferenceMap = new TreeMap();
 
-		final PreferenceManager preferenceManager = PlatformUI.getWorkbench()
-				.getPreferenceManager();
-		collectParameterValues(values, preferenceManager.getRootSubNodes(),
-				null);
+			final PreferenceManager preferenceManager = PlatformUI
+					.getWorkbench().getPreferenceManager();
+			collectParameterValues(preferenceMap, preferenceManager
+					.getRootSubNodes(), null);
+		}
 
-		return values;
+		return preferenceMap;
 	}
 
 }
