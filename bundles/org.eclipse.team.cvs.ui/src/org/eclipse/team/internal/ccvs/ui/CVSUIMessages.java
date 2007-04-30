@@ -72,6 +72,8 @@ public class CVSUIMessages extends NLS {
 	public static String CVSPreferencesPage_51;
 	public static String CVSPreferencesPage_52;
 	public static String CVSPreferencesPage_53;
+	public static String CVSPreferencesPage_54;
+	public static String CVSPreferencesPage_55;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
 	public static String DiffOperation_CreatePatchConflictMessage;
 	public static String DiffOperation_CreatePatchConflictTitle;

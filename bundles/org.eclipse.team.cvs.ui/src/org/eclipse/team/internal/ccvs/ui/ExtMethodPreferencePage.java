@@ -66,6 +66,8 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		
 		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_52, CVSUIMessages.CVSPreferencesPage_53);
 		
+		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_54, CVSUIMessages.CVSPreferencesPage_55);
+
 		initializeDefaults();
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EXT_PREFERENCE_PAGE);
 		Dialog.applyDialogFont(parent);
@@ -100,6 +102,7 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		
 		createLabel(composite, CVSUIMessages.CVSPropertiesPage_connectionType, 1); 
 		methodType = createCombo(composite);
+		
 		return composite;
 	}
 	protected Control createExternalArea(Composite parent) {

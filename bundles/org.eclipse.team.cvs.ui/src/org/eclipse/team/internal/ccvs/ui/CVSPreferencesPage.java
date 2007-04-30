@@ -499,6 +499,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 				COMPRESSION_LABELS, COMPRESSION_VALUES);
 		
 		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_52, CVSUIMessages.CVSPreferencesPage_53);
+		
+		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_54, CVSUIMessages.CVSPreferencesPage_55);
 
 		return composite;
 	}

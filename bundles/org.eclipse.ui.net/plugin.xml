@@ -7,16 +7,16 @@
    		point="org.eclipse.ui.keywords">
     <keyword
             label="%PreferenceKeywords.PROXY"
-            id="org.eclipse.net.ui.proxy"/>
+            id="org.eclipse.ui.net.proxy"/>
    </extension>   
    
   <extension point="org.eclipse.ui.preferencePages">
     <page
-      id = "org.eclipse.net.ui.NetPreferences"
+      id = "org.eclipse.ui.net.NetPreferences"
       class = "org.eclipse.ui.internal.net.ProxyPreferencePage"
       category = "org.eclipse.ui.preferencePages.Workbench"
       name = "%PLUGIN_INTERNET_PREFERENCE_TITLE">
-      <keywordReference id="org.eclipse.net.ui.proxy"/>
+      <keywordReference id="org.eclipse.ui.net.proxy"/>
     </page>
   </extension>
   <extension
