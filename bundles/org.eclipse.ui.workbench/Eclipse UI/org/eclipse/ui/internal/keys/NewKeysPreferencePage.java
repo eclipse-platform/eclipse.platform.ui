@@ -212,21 +212,25 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			knownElements.doFireDiff(added, Collections.EMPTY_SET);
 
 			if (updateViewer) {
-				Object[] toAdd = added.toArray();
-				if (viewer instanceof TreeViewer) {
-					TreeViewer tv = (TreeViewer) viewer;
-					tv.add(model, toAdd);
-				} else if (viewer instanceof AbstractListViewer) {
-					AbstractListViewer lv = (AbstractListViewer) viewer;
-					lv.add(toAdd);
-				}
-				Object[] toRemove = removed.toArray();
-				if (viewer instanceof TreeViewer) {
-					TreeViewer tv = (TreeViewer) viewer;
-					tv.remove(toRemove);
-				} else if (viewer instanceof AbstractListViewer) {
-					AbstractListViewer lv = (AbstractListViewer) viewer;
-					lv.remove(toRemove);
+				if (added.size() > 20 || removed.size() > 20) {
+					viewer.refresh();
+				} else {
+					Object[] toAdd = added.toArray();
+					if (viewer instanceof TreeViewer) {
+						TreeViewer tv = (TreeViewer) viewer;
+						tv.add(model, toAdd);
+					} else if (viewer instanceof AbstractListViewer) {
+						AbstractListViewer lv = (AbstractListViewer) viewer;
+						lv.add(toAdd);
+					}
+					Object[] toRemove = removed.toArray();
+					if (viewer instanceof TreeViewer) {
+						TreeViewer tv = (TreeViewer) viewer;
+						tv.remove(toRemove);
+					} else if (viewer instanceof AbstractListViewer) {
+						AbstractListViewer lv = (AbstractListViewer) viewer;
+						lv.remove(toRemove);
+					}
 				}
 			}
 			knownElements.doFireDiff(Collections.EMPTY_SET, removed);
