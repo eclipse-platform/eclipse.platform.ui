@@ -378,10 +378,14 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		if (!EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
 			return null;
 
-		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService()); 
+		SpellingService spellingService= EditorsUI.getSpellingService();
+		if (spellingService.getActiveSpellingEngineDescriptor(fPreferenceStore) == null)
+			return null;
+		
+		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService); 
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setIsIncrementalReconciler(false);
 		reconciler.setProgressMonitor(new NullProgressMonitor());
@@ -394,9 +398,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
-		if (!EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+		if (fPreferenceStore == null || !fPreferenceStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
 			return null;
-		
+
 		IQuickAssistAssistant assistant= new QuickAssistAssistant();
 		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
 		assistant.setInformationControlCreator(getQuickAssistAssistantInformationControlCreator());
