@@ -159,20 +159,32 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 			return null;
 		return element2TreePaths.getComparer();
 	}
+	
+	private boolean elementEquals(Object element1, Object element2, boolean useComparer) {
+		IElementComparer comparer = getElementComparer();
+		if (useComparer && comparer != null) {
+			return comparer.equals(element1, element2);
+		}
+		return element1.equals(element2);
+	}
+	
+	private int elementHashCode(Object element) {
+		IElementComparer comparer = getElementComparer();
+		if (comparer != null) {
+			return comparer.hashCode(element);
+		}
+		return element.hashCode();
+	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof TreeSelection) {
 			TreeSelection selection = (TreeSelection) obj;
 			int size = getPaths().length;
 			if (selection.getPaths().length == size) {
+				boolean useComparer = getElementComparer() == selection.getElementComparer();
 				if (size > 0) {
 					for (int i = 0; i < paths.length; i++) {
-						if (!paths[i].equals(selection.paths[i])) {
+						if (!elementEquals(paths[i], selection.paths[i], useComparer)) {
 							return false;
 						}
 					}
@@ -183,26 +195,16 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	public int hashCode() {
 		int code = getClass().hashCode();
 		if (paths != null) {
 			for (int i = 0; i < paths.length; i++) {
-				code = code * 17 + paths[i].hashCode();
+				code = code * 17 + elementHashCode(paths[i]);
 			}
 		}
 		return code;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeSelection#getPaths()
-	 */
 	public TreePath[] getPaths() {
 		return paths==null ? EMPTY_TREE_PATHS : (TreePath[]) paths.clone();
 	}
