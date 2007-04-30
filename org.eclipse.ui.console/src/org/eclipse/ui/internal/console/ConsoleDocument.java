@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -93,7 +92,7 @@ public class ConsoleDocument extends Document {
 	 */
     protected void completeInitialization() {
         super.completeInitialization();
-        addPositionUpdater(new DefaultPositionUpdater(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY));
+        addPositionUpdater(new HyperlinkUpdater());
     }
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IDocument#addPosition(java.lang.String, org.eclipse.jface.text.Position)
