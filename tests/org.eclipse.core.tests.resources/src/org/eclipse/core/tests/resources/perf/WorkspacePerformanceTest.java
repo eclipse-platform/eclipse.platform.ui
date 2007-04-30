@@ -165,7 +165,6 @@ public class WorkspacePerformanceTest extends ResourceTest {
 				createAndPopulateProject(DEFAULT_TOTAL_RESOURCES);
 			}
 		};
-		runner.setFingerprintName("Create Resources");
 		runner.run(this, REPEATS, 1);
 	}
 
@@ -185,7 +184,6 @@ public class WorkspacePerformanceTest extends ResourceTest {
 				}
 			}
 		};
-		runner.setFingerprintName("Delete Project");
 		runner.run(this, REPEATS, 1);
 	}
 
