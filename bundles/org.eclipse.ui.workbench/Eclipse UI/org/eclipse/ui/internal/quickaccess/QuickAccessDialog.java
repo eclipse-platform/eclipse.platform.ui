@@ -161,9 +161,15 @@ public class QuickAccessDialog extends PopupDialog {
 					}
 					return;
 				} else if (e.keyCode == SWT.ARROW_DOWN) {
-					if (table.getItemCount() > 1
-							&& table.getItem(1).getData() != null) {
-						table.setSelection(1);
+					int index = table.getSelectionIndex();
+					if (index != -1 && table.getItemCount() > index + 1) {
+						table.setSelection(index + 1);
+					}
+					table.setFocus();
+				} else if (e.keyCode == SWT.ARROW_UP) {
+					int index = table.getSelectionIndex();
+					if (index != -1 && index >= 1) {
+						table.setSelection(index - 1);
 					}
 					table.setFocus();
 				} else if (e.character == 0x1B) // ESC

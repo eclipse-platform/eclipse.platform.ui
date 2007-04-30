@@ -21,6 +21,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
@@ -56,8 +58,7 @@ public class CommandElement extends QuickAccessElement {
 			} catch (NotHandledException e) {
 				ex = e;
 			}
-			// TODO need to do something about this
-			ex.printStackTrace();
+			StatusUtil.handleStatus(ex, StatusManager.SHOW);
 		}
 	}
 
