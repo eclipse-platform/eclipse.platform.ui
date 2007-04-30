@@ -325,14 +325,14 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			final Composite composite= SWTUtils.createHFillComposite(parent, SWTUtils.MARGINS_DEFAULT);
 			Dialog.applyDialogFont(composite);
 			
-            SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_36, CVSUIMessages.CVSDecoratorPreferencesPage_37); // 
+            SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_36, CVSUIMessages.CVSDecoratorPreferencesPage_37); 
             
 			fShowDirty= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_16); 
 			SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_17); 
 			
 			fUseFontDecorations= SWTUtils.createCheckBox(composite, CVSUIMessages.CVSDecoratorPreferencesPage_18); 
 
-			SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_19, CVSUIMessages.CVSDecoratorPreferencesPage_20); // 
+			SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSDecoratorPreferencesPage_19, CVSUIMessages.CVSDecoratorPreferencesPage_20); 
 
 			fShowDirty.addSelectionListener(this);
 			fUseFontDecorations.addSelectionListener(this);

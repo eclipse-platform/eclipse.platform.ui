@@ -24,7 +24,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -61,6 +63,8 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		useInternal = createRadioButton(composite, CVSUIMessages.ExtMethodPreferencePage_1, 1); 
 		useInternal.addSelectionListener(selectionListener);
 		internal = createInternalArea(composite);
+		
+		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_52, CVSUIMessages.CVSPreferencesPage_53);
 		
 		initializeDefaults();
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EXT_PREFERENCE_PAGE);
@@ -123,7 +127,6 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		b.setText(CVSUIMessages.ExtMethodPreferencePage_Browse); 
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		data.widthHint = Math.max(widthHint, b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		b.setLayoutData(data);

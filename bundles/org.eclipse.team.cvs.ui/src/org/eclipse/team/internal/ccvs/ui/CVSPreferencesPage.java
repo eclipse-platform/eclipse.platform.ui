@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.QuietOption;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * CVS Preference Page
@@ -496,6 +497,8 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 				CVSUIMessages.CVSPreferencesPage_32,  
 				IHelpContextIds.PREF_COMPRESSION, 
 				COMPRESSION_LABELS, COMPRESSION_VALUES);
+		
+		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_52, CVSUIMessages.CVSPreferencesPage_53);
 
 		return composite;
 	}

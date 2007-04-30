@@ -13,7 +13,7 @@
          point="org.eclipse.ui.preferencePages">
       <page
             class="org.eclipse.jsch.internal.ui.preference.PreferencePage"
-            id="org.eclipse.jsch.ui.preference.PreferencePage"
+            id="org.eclipse.jsch.ui.SSHPreferences"
             name="%ssh2PreferencePage.name"
             category="org.eclipse.net.ui.NetPreferences">
       <keywordReference id="org.eclipse.jsch.ui.ssh2"/>
