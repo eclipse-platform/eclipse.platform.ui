@@ -25,7 +25,9 @@ final class TextEditorMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String AnnotationsConfigurationBlock_DASHED_BOX;
 	public static String EditorsPlugin_internal_error;
+	public static String LinkedModeConfigurationBlock_DASHED_BOX;
 	public static String TextEditorPreferencePage_displayedTabWidth;
 	public static String TextEditorPreferencePage_convertTabsToSpaces;
 	public static String TextEditorPreferencePage_undoHistorySize;

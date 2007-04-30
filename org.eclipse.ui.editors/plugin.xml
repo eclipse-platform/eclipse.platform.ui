@@ -742,7 +742,7 @@
       <!-- linked annotations -->
 	  <specification
             annotationType="org.eclipse.ui.internal.workbench.texteditor.link.master"
-            colorPreferenceValue="70,100,165"
+            colorPreferenceValue="50,70,120"
             colorPreferenceKey="linked.focus.color"
             isGoToPreviousNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="linked.focus.navigation.previous"
@@ -792,7 +792,7 @@
       </specification>      
       <specification
             annotationType="org.eclipse.ui.internal.workbench.texteditor.link.target"
-            colorPreferenceValue="70,100,165"
+            colorPreferenceValue="170,185,220"
             colorPreferenceKey="linked.target.color"
             isGoToPreviousNavigationTarget="false"
             isGoToPreviousNavigationTargetKey="linked.target.navigation.previous"

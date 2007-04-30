@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -25,9 +26,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
 import org.eclipse.jface.text.CursorLinePainter;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -42,6 +40,8 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Support class used by text editors to draw and update decorations on the
@@ -150,7 +150,46 @@ public class SourceViewerDecorationSupport {
 			}
 		}
 	}
+	
+	/**
+	 * Dashed box drawing strategy.
+	 *
+	 * @since 3.3
+	 */
+	private static final class DashedBoxDrawingStrategy implements IDrawingStrategy {
 
+		/*
+		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
+		 */
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (gc != null) {
+
+				Rectangle bounds;
+				if (length > 0)
+					bounds= textWidget.getTextBounds(offset, offset + length - 1);
+				else {
+					Point loc= textWidget.getLocationAtOffset(offset);
+					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
+				}
+				
+				//clean bg:
+				gc.setForeground(textWidget.getBackground());
+				gc.setLineStyle(SWT.LINE_SOLID);
+				gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+				
+				gc.setForeground(color);
+				gc.setLineDash(new int[] { 3 });
+				gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+
+				//RESET (same GC is passed around!):
+				gc.setLineStyle(SWT.LINE_SOLID);
+				
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+	}
+	
 	/**
 	 * Draws an iBeam at the given offset, the length is ignored.
 	 *
@@ -214,6 +253,12 @@ public class SourceViewerDecorationSupport {
 	 * @since 3.0
 	 */
 	private static IDrawingStrategy fgBoxStrategy= new BoxDrawingStrategy();
+	
+	/**
+	 * The dashed box drawing strategy.
+	 * @since 3.3
+	 */
+	private static IDrawingStrategy fgDashedBoxStrategy= new DashedBoxDrawingStrategy();
 
 	/**
 	 * The null drawing strategy.
@@ -882,6 +927,7 @@ public class SourceViewerDecorationSupport {
 		 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=51498
 		 */
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_NONE, fgNullStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);

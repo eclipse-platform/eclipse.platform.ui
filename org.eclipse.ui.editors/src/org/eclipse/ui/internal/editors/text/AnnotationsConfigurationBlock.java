@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -182,6 +182,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_HIGHLIGHT, "not used"}; //$NON-NLS-1$
 	final static String[] UNDERLINE= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE};
 	final static String[] BOX= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX};
+	final static String[] DASHED_BOX= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_DASHED_BOX, AnnotationPreference.STYLE_DASHED_BOX};
 	final static String[] IBEAM= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM};
 	final static String[] SQUIGGLES= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES};
 
@@ -297,7 +298,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
-		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, UNDERLINE, IBEAM});
+		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, IBEAM});
 
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
         fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler);
@@ -678,6 +679,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			if (item.textStyleKey != null) {
 				list.add(UNDERLINE);
 				list.add(BOX);
+				list.add(DASHED_BOX);
 				list.add(IBEAM);
 			}
 

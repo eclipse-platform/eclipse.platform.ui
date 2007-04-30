@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,6 +124,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_HIGHLIGHT, "unused"};  //$NON-NLS-1$
 	final static String[] UNDERLINE= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE}; 
 	final static String[] BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX}; 
+	final static String[] DASHED_BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_DASHED_BOX, AnnotationPreference.STYLE_DASHED_BOX}; 
 	final static String[] IBEAM= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM}; 
 	final static String[] SQUIGGLES= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES}; 
 
@@ -201,11 +202,11 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private List getStyles(Object type) {
 		if (type.equals(MASTER))
-			return Arrays.asList(new String[][] {BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
+			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
 		if (type.equals(SLAVE))
-			return Arrays.asList(new String[][] {BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
+			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
 		if (type.equals(TARGET))
-			return Arrays.asList(new String[][] {BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
+			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
 		if (type.equals(EXIT))
 			return Arrays.asList(new String[][] {IBEAM});
 		return new ArrayList();
@@ -273,7 +274,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
-		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, UNDERLINE, IBEAM});
+		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, IBEAM});
 		
 		label= new Label(optionsComposite, SWT.LEFT);
 		label.setText(TextEditorMessages.LinkedModeConfigurationBlock_color); 

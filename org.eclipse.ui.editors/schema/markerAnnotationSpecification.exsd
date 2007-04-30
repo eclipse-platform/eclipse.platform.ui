@@ -269,6 +269,7 @@ since: 3.0
                <documentation>
                   the default value for the &quot;show in text&quot; decoration style
 since: 3.0
+DASHED_BOX: since 3.3
                </documentation>
             </annotation>
             <simpleType>
@@ -276,6 +277,8 @@ since: 3.0
                   <enumeration value="SQUIGGLES">
                   </enumeration>
                   <enumeration value="BOX">
+                  </enumeration>
+                  <enumeration value="DASHED_BOX">
                   </enumeration>
                   <enumeration value="UNDERLINE">
                   </enumeration>
