@@ -15,6 +15,8 @@ import org.eclipse.test.performance.*;
 
 public class StartupTest extends TestCase {
 
+	static private final String  explanation = "Performance decrease caused by the JAR signing. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=180219 for details.";
+
 	public static Test suite() {
 		return new TestSuite(StartupTest.class);
 	}
@@ -28,7 +30,9 @@ public class StartupTest extends TestCase {
 		try {
 			meter.stop();
 			// tag for showing in the performance fingerprint graph
-			Performance.getDefault().tagAsGlobalSummary(meter, "Core Headless Startup", Dimension.ELAPSED_PROCESS);
+			Performance performance = Performance.getDefault();
+			performance.tagAsGlobalSummary(meter, "Core Headless Startup", Dimension.ELAPSED_PROCESS);
+			performance.setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, explanation);
 			String reportOption = System.getProperty("eclipseTest.ReportResults");
 			boolean bReport = (reportOption == null) ? true : !("false".equalsIgnoreCase(reportOption));
 			if (bReport)
