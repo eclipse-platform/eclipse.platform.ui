@@ -1195,16 +1195,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (lineLength > 0)
 				line= st.getText(lineOffset, lineEndOffset - 1);
 
-			// Compute the line end offset
-			int i= getLineEndPosition(document, line, lineLength, caretOffsetInDocument);
-
 			// Remember current selection
 			Point oldSelection= st.getSelection();
 
-			// Compute new caret position
+			// The new caret position
 			int newCaretOffset= -1;
 
 			if (isSmartHomeEndEnabled) {
+				// Compute the line end offset
+				int i= getLineEndPosition(document, line, lineLength, caretOffsetInDocument);
 
 				if (caretOffset - lineOffset == i)
 					// to end of line
@@ -1331,15 +1330,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				line= st.getText(lineOffset, end);
 			}
 
-			// Compute the line start offset
-			int index= getLineStartPosition(document, line, lineLength, caretOffsetInDocument);
-
 			// Remember current selection
 			Point oldSelection= st.getSelection();
 
-			// Compute new caret position
+			// The new caret position
 			int newCaretOffset= -1;
+			
 			if (isSmartHomeEndEnabled) {
+				
+				// Compute the line start offset
+				int index= getLineStartPosition(document, line, lineLength, caretOffsetInDocument);
 
 				if (caretOffset - lineOffset == index)
 					// to beginning of line
