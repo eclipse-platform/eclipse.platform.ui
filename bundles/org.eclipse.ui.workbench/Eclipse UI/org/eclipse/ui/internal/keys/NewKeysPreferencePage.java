@@ -1505,7 +1505,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			Tracing.printTrace(TRACING_COMPONENT,
 					"fill in size: " + model.size()); //$NON-NLS-1$
 		}
-		
+
 		filteredTree.getViewer().setInput(model);
 	}
 
@@ -1513,6 +1513,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * 
 	 */
 	private void fillInCommands() {
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
+		}
 		if (showAllCheckBox.getSelection()) {
 			final Collection commandIds = commandService.getDefinedCommandIds();
 			final Collection commands = new HashSet();
@@ -1532,11 +1536,17 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			// Remove duplicates.
 			Iterator i = bindingModel.iterator();
 			while (i.hasNext()) {
-				commands.remove(((Binding)i.next()).getParameterizedCommand());
+				commands.remove(((Binding) i.next()).getParameterizedCommand());
 			}
 			commandModel.addAll(commands);
 		} else {
 			commandModel.clear();
+		}
+		
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT, "fillInCommands in " //$NON-NLS-1$
+					+ elapsedTime + "ms"); //$NON-NLS-1$
 		}
 	}
 
@@ -1927,6 +1937,11 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 												.getContext(IContextIds.CONTEXT_ID_WINDOW)));
 					}
 				}
+			} else {
+				commandNameValueLabel.setText(""); //$NON-NLS-1$
+				descriptionValueText.setText(""); //$NON-NLS-1$
+				keySequenceText.clear();
+				whenCombo.setSelection(null);
 			}
 		}
 	}
@@ -1938,61 +1953,12 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 
 		final TreeViewer viewer = filteredTree.getViewer();
-		// final Collection bindings = localChangeManager
-		// .getActiveBindingsDisregardingContextFlat();
-		//
-		// /*
-		// * Add all of the parameterized commands (without bindings) if the
-		// show
-		// * all check box is selected.
-		// */
-		// if (showAllCheckBox.getSelection()) {
-		// final Collection commandIds = commandService.getDefinedCommandIds();
-		// final Collection commands = new ArrayList();
-		// final Iterator commandIdItr = commandIds.iterator();
-		// while (commandIdItr.hasNext()) {
-		// final String currentCommandId = (String) commandIdItr.next();
-		// final Command currentCommand = commandService
-		// .getCommand(currentCommandId);
-		// try {
-		// commands.addAll(ParameterizedCommand
-		// .generateCombinations(currentCommand));
-		// } catch (final NotDefinedException e) {
-		// // It is safe to just ignore undefined commands.
-		// }
-		// }
-		//
-		// // Remove duplicates.
-		// final Iterator commandItr = commands.iterator();
-		// while (commandItr.hasNext()) {
-		// final ParameterizedCommand command = (ParameterizedCommand)
-		// commandItr
-		// .next();
-		// if (localChangeManager
-		// .getActiveBindingsDisregardingContextFor(command).length > 0) {
-		// commandItr.remove();
-		//
-		// }
-		// }
-		//
-		// bindings.addAll(commands);
-		// }
 
 		// Add the marked parameterized command, if any.
 		if (markedParameterizedCommand != null) {
 			commandModel.add(markedParameterizedCommand);
 			markedParameterizedCommand = null;
 		}
-
-		// // Just a flat list. Convert the flat list into nodes.
-		// final Iterator bindingItr = bindings.iterator();
-		// model.clear();
-		// while (bindingItr.hasNext()) {
-		// model.add(new BindingTreeNode(bindingItr.next()));
-		// }
-
-		// Set the input.
-		// viewer.refresh();
 
 		// Repack all of the columns.
 		final Tree tree = viewer.getTree();
