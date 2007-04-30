@@ -118,7 +118,7 @@ public class Position {
 	/**
 	 * Returns the offset of this position.
 	 *
-	 * @return the length of this position
+	 * @return the offset of this position
 	 */
 	public int getOffset() {
 		return offset;
