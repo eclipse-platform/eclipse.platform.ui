@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [105554] handle cyclic symbolic links
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Queue;
@@ -50,6 +53,9 @@ public class UnifiedTree {
 	protected int level;
 	/** our queue */
 	protected Queue queue;
+	
+	/** path prefixes for checking symbolic link cycles */
+	protected PrefixPool pathPrefixHistory, rootPathHistory;
 
 	/** tree's root */
 	protected IResource root;
@@ -136,8 +142,8 @@ public class UnifiedTree {
 			while (workspaceIndex < members.length) {
 				target = members[workspaceIndex];
 				String name = target.getName();
-				String localName = localIndex < list.length ? list[localIndex].getName() : null;
-				int comp = localName != null ? name.compareTo(localName) : -1;
+				IFileInfo localInfo = localIndex < list.length ? list[localIndex] : null;
+				int comp = localInfo != null ? name.compareTo(localInfo.getName()) : -1;
 				//special handling for linked resources
 				if (target.isLinked()) {
 					//child will be null if location is undefined
@@ -147,13 +153,19 @@ public class UnifiedTree {
 					if (comp == 0)
 						localIndex++;
 				} else if (comp == 0) {
-					// resource exists in workspace and file system
-					child = createNode(target, null, list[localIndex], true);
+					// resource exists in workspace and file system --> localInfo is non-null
+					//create workspace-only node for symbolic link that creates a cycle
+					if (localInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK) && localInfo.isDirectory() && isRecursiveLink(node.getStore(), localInfo))
+						child = createNode(target, null, null, true);
+					else
+						child = createNode(target, null, localInfo, true);
 					localIndex++;
 					workspaceIndex++;
 				} else if (comp > 0) {
-					// resource exists only in file system 
-					child = createChildNodeFromFileSystem(node, list[localIndex]);
+					// resource exists only in file system
+					//don't create a node for symbolic links that create a cycle
+					if (!localInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK) || !localInfo.isDirectory() || !isRecursiveLink(node.getStore(), localInfo))
+						child = createChildNodeFromFileSystem(node, localInfo);
 					localIndex++;
 				} else {
 					// resource exists only in the workspace
@@ -184,8 +196,12 @@ public class UnifiedTree {
 	protected void addChildrenFromFileSystem(UnifiedTreeNode node, IFileInfo[] childInfos, int index) {
 		if (childInfos == null)
 			return;
-		for (int i = index; i < childInfos.length; i++)
-			addChildToTree(node, createChildNodeFromFileSystem(node, childInfos[i]));
+		for (int i = index; i < childInfos.length; i++) {
+			IFileInfo info = childInfos[i];
+			//don't create a node for symbolic links that create a cycle
+			if (!info.getAttribute(EFS.ATTRIBUTE_SYMLINK) || !info.isDirectory() || !isRecursiveLink(node.getStore(), info))
+				addChildToTree(node, createChildNodeFromFileSystem(node, info));
+		}
 	}
 
 	protected void addChildrenMarker() {
@@ -333,6 +349,11 @@ public class UnifiedTree {
 			freeNodes = new ArrayList(100);
 		else
 			freeNodes.clear();
+		//clear any known path prefixes for recursive symbolic link checking
+		if (pathPrefixHistory != null) {
+			pathPrefixHistory.clear();
+			rootPathHistory.clear();
+		}
 		addRootToQueue();
 		addElementToQueue(levelMarker);
 	}
@@ -343,6 +364,111 @@ public class UnifiedTree {
 
 	protected boolean isLevelMarker(UnifiedTreeNode node) {
 		return node == levelMarker;
+	}
+
+	private static class PatternHolder {
+		//Initialize-on-demand Holder class to avoid compiling Pattern if never needed
+		//Pattern: A UNIX relative path that just points backward 
+		public static Pattern trivialSymlinkPattern = Pattern.compile("\\.[./]*"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Initialize history stores for symbolic links.
+	 * This may be done when starting a visitor, or later on demand.
+	 */
+	protected void initLinkHistoriesIfNeeded() {
+		if (pathPrefixHistory==null) {
+			pathPrefixHistory = new PrefixPool(20);
+			rootPathHistory = new PrefixPool(20);
+		}
+		if (rootPathHistory.size()==0) {
+			//add current root to history
+			IFileStore rootStore = ((Resource) root).getStore();
+			try {
+				java.io.File rootFile = rootStore.toLocalFile(EFS.NONE, null);
+				if (rootFile!=null) {
+					IPath rootProjPath = root.getProject().getLocation();
+					if (rootProjPath!=null) {
+						try {
+							java.io.File rootProjFile = new java.io.File(rootProjPath.toOSString());
+							rootPathHistory.insertShorter(rootProjFile.getCanonicalPath()+'/');
+						} catch(IOException ioe) {
+							/*ignore here*/
+						}
+					}
+					rootPathHistory.insertShorter(rootFile.getCanonicalPath()+'/');
+				}
+			} catch(CoreException e) {
+				/*ignore*/
+			} catch(IOException e) {
+				/*ignore*/
+			}
+		}
+	}
+	
+	/**
+	 * Check if the given child represents a recursive symbolic link.
+	 * <p>
+	 * On remote EFS stores, this check is not exhaustive and just
+	 * finds trivial recursive symbolic links pointing up in the tree.
+	 * </p><p>
+	 * On local stores, where {@link java.io.File#getCanonicalPath()}
+	 * is available, the test is exhaustive but may also find some
+	 * false positives with transitive symbolic links. This may lead
+	 * to suppressing duplicates of already known resources in the
+	 * tree, but it will never lead to not finding a resource at
+	 * all. See bug 105554 for details.
+	 * </p>
+	 * @param parentStore EFS IFileStore representing the parent folder
+	 * @param localInfo child representing a symbolic link
+	 * @return <code>true</code> if the given child represents a
+	 *     recursive symbolic link.
+	 */
+	private boolean isRecursiveLink(IFileStore parentStore, IFileInfo localInfo) {
+		//Try trivial pattern first - works also on remote EFS stores
+		String linkTarget = localInfo.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET);
+		if (linkTarget!=null && PatternHolder.trivialSymlinkPattern.matcher(linkTarget).matches()) {
+			return true;
+		}
+		//Need canonical paths to check all other possibilities
+		try {
+			java.io.File parentFile = parentStore.toLocalFile(EFS.NONE, null);
+			//If this store cannot be represented as a local file, there is nothing we can do
+			//In the future, we could try to resolve the link target
+			//against the remote file system to do more checks.
+			if (parentFile == null)
+				return false;
+			//get canonical path for both child and parent
+			java.io.File childFile = new java.io.File(parentFile, localInfo.getName());
+			String parentPath = parentFile.getCanonicalPath()+'/';
+			String childPath = childFile.getCanonicalPath()+'/';
+			//get or instantiate the prefix and root path histories.
+			//Might be done earlier - for now, do it on demand.
+			initLinkHistoriesIfNeeded();
+			//insert the parent for checking loops
+			pathPrefixHistory.insertLonger(parentPath);
+			if (pathPrefixHistory.containsAsPrefix(childPath)) {
+				//found a potential loop: is it spanning up a new tree?
+				if (!rootPathHistory.insertShorter(childPath)) {
+					//not spanning up a new tree, so it is a real loop.
+				    return true;
+				}
+			} else if (rootPathHistory.hasPrefixOf(childPath)) {
+				//child points into a different portion of the tree that we visited already before, or will certainly visit.
+				//This does not introduce a loop yet, but introduces duplicate resources.
+				//TODO Ideally, such duplicates should be modelled as linked resources. See bug 105534
+				return false;
+			} else {
+				//child neither introduces a loop nor points to a known tree.
+				//It probably spans up a new tree of potential prefixes.
+				rootPathHistory.insertShorter(childPath);
+			}
+		} catch (IOException e) {
+			//ignore
+		} catch (CoreException e) {
+			//ignore
+		}
+		return false;
 	}
 
 	protected boolean isValidLevel(int currentLevel, int depth) {
