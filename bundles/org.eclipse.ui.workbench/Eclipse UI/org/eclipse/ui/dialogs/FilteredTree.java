@@ -386,7 +386,7 @@ public class FilteredTree extends Composite {
 	        	finally {
 			        // done updating the tree - set redraw back to true
 			        TreeItem[] items = getViewer().getTree().getItems();
-			        if (items.length > 0) {
+			        if (items.length > 0 && getViewer().getTree().getSelectionCount()==0) {
 			        	treeViewer.getTree().setTopItem(items[0]);
 			        }
 			        redrawFalseControl.setRedraw(true);
