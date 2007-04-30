@@ -296,6 +296,8 @@ public final class ParameterizedCommand implements Comparable {
 	 */
 	private final Parameterization[] parameterizations;
 
+	private String name;
+
 	/**
 	 * Constructs a new instance of <code>ParameterizedCommand</code> with
 	 * specific values for zero or more of its parameters.
@@ -455,32 +457,36 @@ public final class ParameterizedCommand implements Comparable {
 	 *             If the underlying command is not defined.
 	 */
 	public final String getName() throws NotDefinedException {
-		final StringBuffer nameBuffer = new StringBuffer();
-		nameBuffer.append(command.getName());
-		if (parameterizations != null) {
-			nameBuffer.append(" ("); //$NON-NLS-1$
-			final int parameterizationCount = parameterizations.length;
-			for (int i = 0; i < parameterizationCount; i++) {
-				final Parameterization parameterization = parameterizations[i];
-				nameBuffer.append(parameterization.getParameter().getName());
-				nameBuffer.append(": "); //$NON-NLS-1$
-				try {
-					nameBuffer.append(parameterization.getValueName());
-				} catch (final ParameterValuesException e) {
-					/*
-					 * Just let it go for now. If someone complains we can add
-					 * more info later.
-					 */
-				}
+		if (name == null) {
+			final StringBuffer nameBuffer = new StringBuffer();
+			nameBuffer.append(command.getName());
+			if (parameterizations != null) {
+				nameBuffer.append(" ("); //$NON-NLS-1$
+				final int parameterizationCount = parameterizations.length;
+				for (int i = 0; i < parameterizationCount; i++) {
+					final Parameterization parameterization = parameterizations[i];
+					nameBuffer
+							.append(parameterization.getParameter().getName());
+					nameBuffer.append(": "); //$NON-NLS-1$
+					try {
+						nameBuffer.append(parameterization.getValueName());
+					} catch (final ParameterValuesException e) {
+						/*
+						 * Just let it go for now. If someone complains we can
+						 * add more info later.
+						 */
+					}
 
-				// If there is another item, append a separator.
-				if (i + 1 < parameterizationCount) {
-					nameBuffer.append(", "); //$NON-NLS-1$
+					// If there is another item, append a separator.
+					if (i + 1 < parameterizationCount) {
+						nameBuffer.append(", "); //$NON-NLS-1$
+					}
 				}
+				nameBuffer.append(')');
 			}
-			nameBuffer.append(')');
+			name = nameBuffer.toString();
 		}
-		return nameBuffer.toString();
+		return name;
 	}
 
 	/**

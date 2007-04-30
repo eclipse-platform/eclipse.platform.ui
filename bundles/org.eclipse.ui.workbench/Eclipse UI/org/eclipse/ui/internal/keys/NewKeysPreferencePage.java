@@ -212,10 +212,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			knownElements.doFireDiff(added, Collections.EMPTY_SET);
 
 			if (updateViewer) {
-				if (added.size() > 20) {
-					// hack: temporarily remove all items from the viewer
-					viewer.setInput(model);
-				} else if (removed.size() > 20) {
+				if (added.size() > 20 || removed.size() > 20) {
 					viewer.refresh();
 				} else {
 					Object[] toAdd = added.toArray();
@@ -258,10 +255,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			if (oldInput == newInput && viewer == this.viewer) {
-				// needed for the hack in doDiff
-				return;
-			}
 			this.viewer = viewer;
 
 			if (newInput != null && !(newInput instanceof IObservableSet)) {
