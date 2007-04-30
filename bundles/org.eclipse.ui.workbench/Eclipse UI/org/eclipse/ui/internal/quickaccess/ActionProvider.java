@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 public class ActionProvider extends QuickAccessProvider {
 
-	private Map idToElement = new HashMap();
+	private Map idToElement;
 
 	public String getId() {
 		return "org.eclipse.ui.actions"; //$NON-NLS-1$
@@ -44,22 +44,25 @@ public class ActionProvider extends QuickAccessProvider {
 	}
 
 	public QuickAccessElement[] getElements() {
-		idToElement.clear();
-		WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
-		if (window != null) {
-			MenuManager menu = window.getMenuManager();
-			Set result = new HashSet();
-			collectContributions(menu, result);
-			ActionContributionItem[] actions = (ActionContributionItem[]) result
-					.toArray(new ActionContributionItem[result.size()]);
-			for (int i = 0; i < actions.length; i++) {
-				ActionElement actionElement = new ActionElement(actions[i],
-						this);
-				idToElement.put(actionElement.getId(), actionElement);
+		if (idToElement == null) {
+			idToElement = new HashMap();
+			WorkbenchWindow window = (WorkbenchWindow) PlatformUI
+					.getWorkbench().getActiveWorkbenchWindow();
+			if (window != null) {
+				MenuManager menu = window.getMenuManager();
+				Set result = new HashSet();
+				collectContributions(menu, result);
+				ActionContributionItem[] actions = (ActionContributionItem[]) result
+						.toArray(new ActionContributionItem[result.size()]);
+				for (int i = 0; i < actions.length; i++) {
+					ActionElement actionElement = new ActionElement(actions[i],
+							this);
+					idToElement.put(actionElement.getId(), actionElement);
+				}
 			}
 		}
-		return (ActionElement[]) idToElement.values().toArray(new ActionElement[idToElement.values().size()]);
+		return (ActionElement[]) idToElement.values().toArray(
+				new ActionElement[idToElement.values().size()]);
 	}
 
 	private void collectContributions(MenuManager menu, Set result) {
@@ -71,7 +74,8 @@ public class ActionProvider extends QuickAccessProvider {
 			}
 			if (item instanceof MenuManager) {
 				collectContributions((MenuManager) item, result);
-			} else if (item instanceof ActionContributionItem && item.isEnabled()) {
+			} else if (item instanceof ActionContributionItem
+					&& item.isEnabled()) {
 				result.add(item);
 			}
 		}

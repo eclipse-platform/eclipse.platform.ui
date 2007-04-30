@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class EditorProvider extends QuickAccessProvider {
 
-	private Map idToElement = new HashMap();
+	private Map idToElement;
 
 	public QuickAccessElement getElementForId(String id) {
 		getElements();
@@ -35,13 +35,16 @@ public class EditorProvider extends QuickAccessProvider {
 	}
 
 	public QuickAccessElement[] getElements() {
-		idToElement.clear();
-		IWorkbenchPage activePage = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-		IEditorReference[] editors = activePage.getEditorReferences();
-		for (int i = 0; i < editors.length; i++) {
-			EditorElement editorElement = new EditorElement(editors[i], this);
-			idToElement.put(editorElement.getId(), editorElement);
+		if (idToElement == null) {
+			idToElement = new HashMap();
+			IWorkbenchPage activePage = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getActivePage();
+			IEditorReference[] editors = activePage.getEditorReferences();
+			for (int i = 0; i < editors.length; i++) {
+				EditorElement editorElement = new EditorElement(editors[i],
+						this);
+				idToElement.put(editorElement.getId(), editorElement);
+			}
 		}
 		return (QuickAccessElement[]) idToElement.values().toArray(
 				new QuickAccessElement[idToElement.values().size()]);

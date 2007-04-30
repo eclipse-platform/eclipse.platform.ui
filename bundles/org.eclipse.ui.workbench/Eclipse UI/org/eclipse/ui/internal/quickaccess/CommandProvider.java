@@ -11,19 +11,20 @@
 
 package org.eclipse.ui.internal.quickaccess;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.jface.bindings.Binding;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.keys.IBindingService;
 
 /**
  * @since 3.3
@@ -31,7 +32,12 @@ import org.eclipse.ui.keys.IBindingService;
  */
 public class CommandProvider extends QuickAccessProvider {
 
-	private Map idToElement = new HashMap();
+	private Map idToElement;
+	
+	public CommandProvider() {
+		// initialize eagerly
+		getElements();
+	}
 
 	public String getId() {
 		return "org.eclipse.ui.commands"; //$NON-NLS-1$
@@ -43,25 +49,34 @@ public class CommandProvider extends QuickAccessProvider {
 	}
 
 	public QuickAccessElement[] getElements() {
-		idToElement.clear();
-		BindingService bindingService = (BindingService) PlatformUI
-				.getWorkbench().getService(IBindingService.class);
-		Binding[] bindings = bindingService.getBindings();
-		SortedSet commandSet = new TreeSet();
-		for (int i = 0; i < bindings.length; i++) {
-			Binding binding = bindings[i];
-			ParameterizedCommand command = binding.getParameterizedCommand();
-			if (command != null && command.getCommand().isHandled()
-					&& command.getCommand().isEnabled()) {
-				commandSet.add(command);
+		if (idToElement == null) {
+			idToElement = new HashMap();
+			ICommandService commandService = (ICommandService) PlatformUI
+					.getWorkbench().getService(ICommandService.class);
+			final Collection commandIds = commandService.getDefinedCommandIds();
+			final Collection commandSet = new HashSet();
+			final Iterator commandIdItr = commandIds.iterator();
+			while (commandIdItr.hasNext()) {
+				final String currentCommandId = (String) commandIdItr.next();
+				final Command command = commandService
+						.getCommand(currentCommandId);
+				if (command != null && command.isHandled()
+						&& command.isEnabled()) {
+					try {
+						commandSet.addAll(ParameterizedCommand
+								.generateCombinations(command));
+					} catch (final NotDefinedException e) {
+						// It is safe to just ignore undefined commands.
+					}
+				}
 			}
-		}
-		ParameterizedCommand[] commands = (ParameterizedCommand[]) commandSet
-				.toArray(new ParameterizedCommand[commandSet.size()]);
-		for (int i = 0; i < commands.length; i++) {
-			CommandElement commandElement = new CommandElement(commands[i],
-					this);
-			idToElement.put(commandElement.getId(), commandElement);
+			ParameterizedCommand[] commands = (ParameterizedCommand[]) commandSet
+					.toArray(new ParameterizedCommand[commandSet.size()]);
+			for (int i = 0; i < commands.length; i++) {
+				CommandElement commandElement = new CommandElement(commands[i],
+						this);
+				idToElement.put(commandElement.getId(), commandElement);
+			}
 		}
 		return (QuickAccessElement[]) idToElement.values().toArray(
 				new QuickAccessElement[idToElement.values().size()]);

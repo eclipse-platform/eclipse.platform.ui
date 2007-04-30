@@ -29,37 +29,46 @@ import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 
 /**
  * @since 3.3
- *
+ * 
  */
 public class PropertiesProvider extends QuickAccessProvider {
 
-	private Map idToElement = new HashMap();
-	
+	private Map idToElement;
+
 	public QuickAccessElement getElementForId(String id) {
 		getElements();
 		return (PropertiesElement) idToElement.get(id);
 	}
 
 	public QuickAccessElement[] getElements() {
-		idToElement.clear();		
-		IWorkbenchPage activePage = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-		if (activePage != null) {
-			PropertyPageManager pageManager = new PropertyPageManager();
-			ISelection selection = activePage.getSelection();
-			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-				Object element = ((IStructuredSelection) selection).getFirstElement();
-				PropertyPageContributorManager.getManager().contribute(pageManager,
-						element);
-				List list = pageManager.getElements(PreferenceManager.PRE_ORDER);
-				IPreferenceNode[] properties = (IPreferenceNode[]) list.toArray(new IPreferenceNode[list.size()]);
-				for(int i = 0; i < properties.length; i++) {
-					PropertiesElement propertiesElement = new PropertiesElement(element, properties[i], this);
-					idToElement.put(propertiesElement.getId(), propertiesElement);
+		if (idToElement == null) {
+			idToElement = new HashMap();
+			IWorkbenchPage activePage = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getActivePage();
+			if (activePage != null) {
+				PropertyPageManager pageManager = new PropertyPageManager();
+				ISelection selection = activePage.getSelection();
+				if (selection instanceof IStructuredSelection
+						&& !selection.isEmpty()) {
+					Object element = ((IStructuredSelection) selection)
+							.getFirstElement();
+					PropertyPageContributorManager.getManager().contribute(
+							pageManager, element);
+					List list = pageManager
+							.getElements(PreferenceManager.PRE_ORDER);
+					IPreferenceNode[] properties = (IPreferenceNode[]) list
+							.toArray(new IPreferenceNode[list.size()]);
+					for (int i = 0; i < properties.length; i++) {
+						PropertiesElement propertiesElement = new PropertiesElement(
+								element, properties[i], this);
+						idToElement.put(propertiesElement.getId(),
+								propertiesElement);
+					}
 				}
 			}
 		}
-		return (QuickAccessElement[]) idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
+		return (QuickAccessElement[]) idToElement.values().toArray(
+				new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	public String getId() {
