@@ -51,6 +51,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 	private IMemento memento;
 
+	private ViewActionBuilder actionBuilder;
+
 	public ViewReference(ViewFactory factory, String id, String secondaryId,
 			IMemento memento) {
 		super();
@@ -111,6 +113,12 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 					.getToolBarManager());
 			// 3.3 end
 			actionBars.dispose();
+			
+			// and now dispose the delegates since the
+			// PluginActionContributionItem
+			// can no longer do that
+			actionBuilder.dispose();
+			actionBuilder = null;
 
 			// Free the site.
 			site.dispose();
@@ -385,9 +393,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 								"toolbar:" + site.getId()); //$NON-NLS-1$
 				// 3.3 end
 
-				ViewActionBuilder builder = new ViewActionBuilder();
-				builder.readActionExtensions(view);
-				ActionDescriptor[] actionDescriptors = builder
+				actionBuilder = new ViewActionBuilder();
+				actionBuilder.readActionExtensions(view);
+				ActionDescriptor[] actionDescriptors = actionBuilder
 						.getExtendedActions();
 				IKeyBindingService keyBindingService = view.getSite()
 						.getKeyBindingService();
