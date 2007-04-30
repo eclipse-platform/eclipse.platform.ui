@@ -1179,6 +1179,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		whenCombo.setLabelProvider(new NamedHandleObjectLabelProvider());
 		whenCombo.setContentProvider(new ArrayContentProvider());
 		whenCombo.setComparator(new ViewerComparator());
+		whenCombo
+				.addPostSelectionChangedListener(new ISelectionChangedListener() {
+
+					public void selectionChanged(SelectionChangedEvent event) {
+						updateWhenCombo();
+					}
+				});
 
 		// RIGHT DATA AREA
 		// Creates the right data area.
@@ -1546,7 +1553,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		} else {
 			commandModel.clear();
 		}
-		
+
 		if (DEBUG) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;
 			Tracing.printTrace(TRACING_COMPONENT, "fillInCommands in " //$NON-NLS-1$
@@ -2050,5 +2057,58 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 
 		return filteredContexts.toArray();
+	}
+
+	private void updateWhenCombo() {
+		ISelection selection = filteredTree.getViewer().getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			Object node = structuredSelection.getFirstElement();
+			if (node != null) {
+				final Object object = node;
+				selection = whenCombo.getSelection();
+				final String contextId;
+				if (selection instanceof IStructuredSelection) {
+					structuredSelection = (IStructuredSelection) selection;
+					final Object firstElement = structuredSelection
+							.getFirstElement();
+					if (firstElement == null) {
+						contextId = IContextIds.CONTEXT_ID_WINDOW;
+					} else {
+						contextId = ((Context) firstElement).getId();
+					}
+				} else {
+					contextId = IContextIds.CONTEXT_ID_WINDOW;
+				}
+				if (object instanceof KeyBinding) {
+					KeyBinding keyBinding = (KeyBinding) object;
+					if (!keyBinding.getContextId().equals(contextId)) {
+						final KeyBinding binding = new KeyBinding(
+								keyBinding.getKeySequence(),
+								keyBinding.getParameterizedCommand(),
+								IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+								contextId, null, null, null, Binding.USER);
+
+						if (keyBinding.getType() == Binding.USER) {
+							localChangeManager.removeBinding(keyBinding);
+						} else {
+							localChangeManager.addBinding(new KeyBinding(
+									keyBinding.getKeySequence(), null,
+									keyBinding.getSchemeId(), keyBinding
+											.getContextId(), null, null, null,
+									Binding.USER));
+						}
+						localChangeManager.addBinding(binding);
+						// update the model
+						bindingModel.remove(keyBinding);
+						bindingModel.add(binding);
+						// end update the model
+						update();
+						filteredTree.getViewer().setSelection(
+								new StructuredSelection(binding), true);
+					}
+				}
+			}
+		}
 	}
 }
