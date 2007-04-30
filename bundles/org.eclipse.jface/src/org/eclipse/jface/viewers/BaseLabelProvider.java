@@ -32,9 +32,11 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
 
     /**
      * The <code>BaseLabelProvider</code> implementation of this 
-     * <code>IBaseLabelProvider</code> method does nothing. Subclasses may extend.
+     * <code>IBaseLabelProvider</code> method clears its internal listener list.
+     * Subclasses may extend but should call the super implementation.
      */
     public void dispose() {
+    	clearListeners();
     }
     
     /**
