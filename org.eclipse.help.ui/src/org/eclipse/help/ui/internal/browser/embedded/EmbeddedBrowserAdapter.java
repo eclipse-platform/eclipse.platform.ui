@@ -87,7 +87,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiDisplayURL(url);
 		} else {
-			getBrowserDisplay().syncExec(new Runnable() {
+			getBrowserDisplay().asyncExec(new Runnable() {
 				public void run() {
 					uiDisplayURL(url);
 				}
@@ -110,7 +110,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiClose();
 		} else {
-			getBrowserDisplay().syncExec(new Runnable() {
+			getBrowserDisplay().asyncExec(new Runnable() {
 				public void run() {
 					uiClose();
 				}
@@ -164,7 +164,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiSetLocation(x, y);
 		} else {
-			getBrowserDisplay().syncExec(new Runnable() {
+			getBrowserDisplay().asyncExec(new Runnable() {
 				public void run() {
 					uiSetLocation(x, y);
 				}
@@ -184,7 +184,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiSetSize(width, height);
 		} else {
-			getBrowserDisplay().syncExec(new Runnable() {
+			getBrowserDisplay().asyncExec(new Runnable() {
 				public void run() {
 					uiSetSize(width, height);
 				}
