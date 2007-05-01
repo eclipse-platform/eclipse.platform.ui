@@ -1017,7 +1017,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						&& platformMatches(b.getPlatform())) {
 					// a system binding for this command
 					addSystemAll.add(b);
-				} else {
+				} else if (b.getType() == Binding.USER) {
 					// a user binding for this command
 					removeUser.add(b);
 					localChangeManager.removeBinding(b);
