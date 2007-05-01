@@ -104,6 +104,7 @@ public final class Messages extends NLS {
 	public static String ScopeSetDialog_remove;
 	public static String ScopeSetDialog_rename;
 	public static String RenameDialog_wtitle;
+	public static String NewDialog_wtitle;
 	public static String RenameDialog_label;
 	public static String RenameDialog_validationError;
 	public static String EngineResultSection_moreResults;

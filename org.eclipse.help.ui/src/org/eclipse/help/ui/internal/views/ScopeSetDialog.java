@@ -13,18 +13,14 @@ package org.eclipse.help.ui.internal.views;
 import java.util.ArrayList;
 
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ListDialog;
 
 /**
@@ -235,7 +231,7 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		ScopeSet newSet = new ScopeSet(set);
-		String name = getNewName(newSet.getName());
+		String name = getNewName(newSet.getName(), false);
 		if (name!=null) {
 			newSet.setName(name);
 			scheduleOperation(new AddOperation(newSet));
@@ -264,7 +260,7 @@ public class ScopeSetDialog extends ListDialog {
 		if (set!=null) {
 			RenameOperation rop = (RenameOperation)findOperation(set, RenameOperation.class);
 			String oldName = rop!=null?rop.newName:set.getName();
-			String newName = getNewName(oldName);
+			String newName = getNewName(oldName, true);
 			if (newName!=null) {
 				if (rop!=null)
 					rop.newName = newName;
@@ -276,14 +272,16 @@ public class ScopeSetDialog extends ListDialog {
 		}
 	}
 
-	private String getNewName(String oldName) {
+	private String getNewName(String oldName, boolean isRename) {
 		RenameDialog dialog = new RenameDialog(getShell(), oldName);
 		for (int i=0; i<sets.size(); i++) {
 			ScopeSet set = (ScopeSet)sets.get(i);
 			dialog.addOldName(set.getName());
 		}
 		dialog.create();
-		dialog.getShell().setText(Messages.RenameDialog_wtitle); 
+		String dialogTitle = isRename ?
+		  Messages.RenameDialog_wtitle : Messages.NewDialog_wtitle;
+	    dialog.getShell().setText(dialogTitle); 
 		if (dialog.open()==RenameDialog.OK) {
 			return dialog.getNewName();
 		}
