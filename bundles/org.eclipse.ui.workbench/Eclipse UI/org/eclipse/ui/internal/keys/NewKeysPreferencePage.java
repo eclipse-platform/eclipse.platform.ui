@@ -628,7 +628,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						return ((ParameterizedCommand) value).getCommand()
 								.getCategory().getName();
 					} catch (NotDefinedException e) {
-						// TODO Auto-generated catch block
 						return NewKeysPreferenceMessages.Unavailable_Category;
 					}
 				}
@@ -636,6 +635,26 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			}
 
 			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			String rc = getColumnText(element, 0);
+			if (rc == null) {
+				super.getText(element);
+			}
+			StringBuffer buf = new StringBuffer(rc);
+			for (int i = 1; i < COLUMN_USER; i++) {
+				String text = getColumnText(element, i);
+				if (text != null) {
+					buf.append(text);
+				}
+			}
+			return buf.toString();
 		}
 	}
 
@@ -962,20 +981,23 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	}
 
 	private String locale = Locale.getDefault().toString();
+
 	private boolean localMatches(String l) {
-		if (l==null) {
+		if (l == null) {
 			return true;
 		}
 		return Util.equals(locale, l);
 	}
+
 	private String platform = SWT.getPlatform();
+
 	private boolean platformMatches(String p) {
-		if (p==null) {
+		if (p == null) {
 			return true;
 		}
 		return Util.equals(platform, p);
 	}
-	
+
 	private final void bindingRestore(final ParameterizedCommand cmd,
 			boolean removeCmd) {
 		Set addSystemAll = new HashSet();
@@ -985,13 +1007,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		for (int i = 0; i < bindings.length; i++) {
 			final Binding b = bindings[i];
 			if (b.getParameterizedCommand() == null
-					&& localMatches(b.getLocale()) 
+					&& localMatches(b.getLocale())
 					&& platformMatches(b.getPlatform())) {
 				// flat out, a delete marker
 				removeBinding.add(b);
 			} else if (cmd.equals(b.getParameterizedCommand())) {
 				if (b.getType() == Binding.SYSTEM
-						&& localMatches(b.getLocale()) 
+						&& localMatches(b.getLocale())
 						&& platformMatches(b.getPlatform())) {
 					// a system binding for this command
 					addSystemAll.add(b);
@@ -1011,7 +1033,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				for (int k = 0; k < sysArray.length; k++) {
 					Binding sys = sysArray[k];
 					if (deletes(del, sys)) {
-						if (del.getType()==Binding.USER) {
+						if (del.getType() == Binding.USER) {
 							removeUser.add(del);
 							localChangeManager.removeBinding(del);
 						} else {
@@ -1026,8 +1048,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		bindingModel.removeAll(removeUser);
 		if (addSystemAll.isEmpty()) {
 			commandModel.add(cmd);
-			filteredTree.getViewer().setSelection(
-					new StructuredSelection(cmd),
+			filteredTree.getViewer().setSelection(new StructuredSelection(cmd),
 					true);
 		} else if (removeCmd) {
 			commandModel.remove(cmd);
