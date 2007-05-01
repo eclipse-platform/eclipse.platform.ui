@@ -150,13 +150,9 @@ class QuickAccessEntry {
 		}
 		if (lastInCategory) {
 			event.gc.setForeground(table.getDisplay().getSystemColor(SWT.COLOR_GRAY));
-			int x = event.x;
-			if (event.index == 0) {
-				x = 0;
-			}
-			event.gc.drawLine(x, event.y + event.height - 1, x
-					+ table.getColumn(event.index).getWidth(), event.y
-					+ event.height - 1);
+			Rectangle bounds = ((TableItem)event.item).getBounds(event.index);
+			event.gc.drawLine(Math.max(0, bounds.x - 1), bounds.y + bounds.height - 1, bounds.x + bounds.width, bounds.y
+					+ bounds.height - 1);
 		}
 		event.gc.setForeground(oldForeground);
 	}
