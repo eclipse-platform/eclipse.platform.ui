@@ -103,6 +103,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		FormToolkit toolkit = helpPart.getForm().getToolkit();
 		FormColors colors = toolkit.getColors();
 		Rectangle carea = container.getClientArea();
+		Image oldImage = bgImage;
 		if (bgImage!=null) {
 			Rectangle ibounds = bgImage.getBounds();
 			if (carea.height==ibounds.height)
@@ -122,6 +123,9 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		gc.drawLine(0, 1, 1, 1);
 		gc.dispose();
 		container.setBackgroundImage(bgImage);
+		if (oldImage != null && !oldImage.isDisposed()) {
+			oldImage.dispose();
+		}
 	}
 	
 	private void updateLinks(String href) {
@@ -223,6 +227,16 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 			markStale();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.AbstractFormPart#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if (bgImage != null && !bgImage.isDisposed()) {
+			bgImage.dispose();
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
