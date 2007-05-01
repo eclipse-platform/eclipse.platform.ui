@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The OverlayCache is a helper class used by the DecoratorManger to manage the
@@ -44,8 +45,9 @@ class OverlayCache {
 	 */
 	public OverlayCache() {
 		super();
+		//As we are not in the UI Thread lookup the Display
 		resourceManager = new LocalResourceManager(JFaceResources
-				.getResources());
+				.getResources(PlatformUI.getWorkbench().getDisplay()));
 	}
 
 	/**
