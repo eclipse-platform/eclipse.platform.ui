@@ -588,6 +588,7 @@ public class FormToolkit {
 		if (value != null)
 			text.setText(value);
 		text.setForeground(colors.getForeground());
+		text.setBackground(colors.getBackground());
 		text.addFocusListener(visibilityHandler);
 		return text;
 	}
