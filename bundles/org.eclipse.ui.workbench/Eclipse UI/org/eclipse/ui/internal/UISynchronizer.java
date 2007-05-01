@@ -33,7 +33,7 @@ public class UISynchronizer extends Synchronizer {
 	protected List pendingStartup = new ArrayList();
 
 	/**
-	 * Setting this variable to the value {@link Boolean.TRUE} will allow a
+	 * Setting this variable to the value {@link Boolean#TRUE} will allow a
 	 * thread to execute code during the startup sequence.
 	 */
 	public static final ThreadLocal startupThread = new ThreadLocal() {
