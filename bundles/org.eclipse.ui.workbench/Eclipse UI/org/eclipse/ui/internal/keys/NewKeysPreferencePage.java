@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.eclipse.core.commands.Category;
@@ -955,6 +956,109 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		update();
 	}
 
+	private final void bindingRestore(final KeyBinding binding) {
+		final ParameterizedCommand cmd = binding.getParameterizedCommand();
+		bindingRestore(cmd, false);
+	}
+
+	private String locale = Locale.getDefault().toString();
+	private boolean localMatches(String l) {
+		if (l==null) {
+			return true;
+		}
+		return Util.equals(locale, l);
+	}
+	private String platform = SWT.getPlatform();
+	private boolean platformMatches(String p) {
+		if (p==null) {
+			return true;
+		}
+		return Util.equals(platform, p);
+	}
+	
+	private final void bindingRestore(final ParameterizedCommand cmd,
+			boolean removeCmd) {
+		Set addSystemAll = new HashSet();
+		ArrayList removeUser = new ArrayList();
+		ArrayList removeBinding = new ArrayList();
+		Binding[] bindings = localChangeManager.getBindings();
+		for (int i = 0; i < bindings.length; i++) {
+			final Binding b = bindings[i];
+			if (b.getParameterizedCommand() == null
+					&& localMatches(b.getLocale()) 
+					&& platformMatches(b.getPlatform())) {
+				// flat out, a delete marker
+				removeBinding.add(b);
+			} else if (cmd.equals(b.getParameterizedCommand())) {
+				if (b.getType() == Binding.SYSTEM
+						&& localMatches(b.getLocale()) 
+						&& platformMatches(b.getPlatform())) {
+					// a system binding for this command
+					addSystemAll.add(b);
+				} else {
+					// a user binding for this command
+					removeUser.add(b);
+					localChangeManager.removeBinding(b);
+				}
+			}
+		}
+
+		if (!addSystemAll.isEmpty()) {
+			Binding[] sysArray = (Binding[]) addSystemAll
+					.toArray(new Binding[addSystemAll.size()]);
+			for (Iterator i = removeBinding.iterator(); i.hasNext();) {
+				Binding del = (Binding) i.next();
+				for (int k = 0; k < sysArray.length; k++) {
+					Binding sys = sysArray[k];
+					if (deletes(del, sys)) {
+						if (del.getType()==Binding.USER) {
+							removeUser.add(del);
+							localChangeManager.removeBinding(del);
+						} else {
+							addSystemAll.remove(sys);
+						}
+					}
+				}
+			}
+		}
+
+		bindingModel.addAll(addSystemAll);
+		bindingModel.removeAll(removeUser);
+		if (addSystemAll.isEmpty()) {
+			commandModel.add(cmd);
+			filteredTree.getViewer().setSelection(
+					new StructuredSelection(cmd),
+					true);
+		} else if (removeCmd) {
+			commandModel.remove(cmd);
+		}
+		if (!addSystemAll.isEmpty()) {
+			// Select the new binding.
+			filteredTree.getViewer().setSelection(
+					new StructuredSelection(addSystemAll.iterator().next()),
+					true);
+		}
+
+		update();
+	}
+
+	final static boolean deletes(final Binding del, final Binding binding) {
+		boolean deletes = true;
+		deletes &= Util.equals(del.getContextId(), binding.getContextId());
+		deletes &= Util.equals(del.getTriggerSequence(), binding
+				.getTriggerSequence());
+		if (del.getLocale() != null) {
+			deletes &= Util.equals(del.getLocale(), binding.getLocale());
+		}
+		if (del.getPlatform() != null) {
+			deletes &= Util.equals(del.getPlatform(), binding.getPlatform());
+		}
+		deletes &= (binding.getType() == Binding.SYSTEM);
+		deletes &= Util.equals(del.getParameterizedCommand(), null);
+
+		return deletes;
+	}
+
 	/**
 	 * Creates the button bar across the bottom of the preference page. This
 	 * button bar contains the "Advanced..." button.
@@ -1044,7 +1148,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		update();
 
 		applyDialogFont(page);
-		
+
 		if (DEBUG) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;
 			Tracing.printTrace(TRACING_COMPONENT, "Created page in " //$NON-NLS-1$
@@ -1208,7 +1312,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// The description value.
 		descriptionValueText = new Text(rightDataArea, SWT.BORDER | SWT.MULTI
-				| SWT.READ_ONLY  | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
+				| SWT.READ_ONLY | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
 		gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalIndent = 20;
 		descriptionValueText.setLayoutData(gridData);
@@ -1406,7 +1510,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// Creates controls related to the tree.
 		final Composite treeControls = new Composite(parent, SWT.NONE);
-		layout = new GridLayout(3, false);
+		layout = new GridLayout(4, false);
 		layout.marginWidth = 0;
 		treeControls.setLayout(layout);
 		gridData = new GridData();
@@ -1457,6 +1561,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		removeBindingButton.addSelectionListener(new SelectionAdapter() {
 			public final void widgetSelected(final SelectionEvent event) {
 				selectRemoveBindingButton(event);
+			}
+		});
+
+		// Create the delete binding button.
+		final Button restore = new Button(treeControls, SWT.PUSH);
+		gridData = new GridData();
+		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		restore.setText(NewKeysPreferenceMessages.RestoreBindingButton_Text);
+		gridData.widthHint = Math.max(widthHint, restore.computeSize(
+				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+		restore.setLayoutData(gridData);
+		restore.addSelectionListener(new SelectionAdapter() {
+			public final void widgetSelected(final SelectionEvent event) {
+				selectRestoreBindingButton(event);
 			}
 		});
 
@@ -1837,6 +1955,34 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			final long elapsedTime = System.currentTimeMillis() - startTime;
 			Tracing.printTrace(TRACING_COMPONENT,
 					"selectRemoveBindingButton in " //$NON-NLS-1$
+							+ elapsedTime + "ms"); //$NON-NLS-1$
+		}
+	}
+
+	private final void selectRestoreBindingButton(final SelectionEvent event) {
+		long startTime = 0L;
+		if (DEBUG) {
+			startTime = System.currentTimeMillis();
+		}
+		// Check to make sure we've got a selection.
+		final TreeViewer viewer = filteredTree.getViewer();
+		final ISelection selection = viewer.getSelection();
+		if (!(selection instanceof IStructuredSelection)) {
+			return;
+		}
+
+		final IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+		final Object firstElement = structuredSelection.getFirstElement();
+		final Object value = firstElement;
+		if (value instanceof KeyBinding) {
+			bindingRestore((KeyBinding) value);
+		} else if (value instanceof ParameterizedCommand) {
+			bindingRestore((ParameterizedCommand) value, true);
+		}
+		if (DEBUG) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			Tracing.printTrace(TRACING_COMPONENT,
+					"selectRestoreBindingButton in " //$NON-NLS-1$
 							+ elapsedTime + "ms"); //$NON-NLS-1$
 		}
 	}

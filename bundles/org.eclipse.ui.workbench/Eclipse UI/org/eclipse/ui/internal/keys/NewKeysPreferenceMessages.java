@@ -33,6 +33,7 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String DeleteSchemeButton_Text;
 	public static String DescriptionLabel_Text;
 	public static String RemoveBindingButton_Text;
+	public static String RestoreBindingButton_Text;
 	public static String SchemeLabel_Text;
 	public static String ShowAllCheckBox_Text;
 	public static String TriggerSequenceColumn_Text;
