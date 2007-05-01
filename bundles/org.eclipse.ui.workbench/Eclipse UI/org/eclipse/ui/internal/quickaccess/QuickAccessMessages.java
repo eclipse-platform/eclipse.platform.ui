@@ -30,6 +30,7 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccess_Views;
 	public static String QuickAccess_PressKeyToShowAllMatches;
 	public static String QuickAccess_StartTypingToFindMatches;
+	public static String QuickAccess_AvailableCategories;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, QuickAccessMessages.class);

@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.quickaccess;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.dialogs.PopupDialog;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -41,15 +39,6 @@ public class QuickAccessHandler extends AbstractHandler {
 		}
 
 		final PopupDialog popupDialog = new QuickAccessDialog(window, executionEvent.getCommand());
-		window.getShell().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				final Shell shell = popupDialog.getShell();
-				if (shell != null && !shell.isDisposed()) {
-					Point size = shell.getSize();
-					shell.setSize(size.x, size.y + 1);
-				}
-			}
-		});
 		popupDialog.open();
 		return null;
 	}

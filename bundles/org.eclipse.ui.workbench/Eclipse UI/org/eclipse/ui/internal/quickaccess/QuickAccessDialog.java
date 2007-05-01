@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -126,12 +127,26 @@ public class QuickAccessDialog extends PopupDialog {
 		}
 		restoreDialog();
 		this.invokingCommand = invokingCommand;
-		if (this.invokingCommand != null && !this.invokingCommand.isDefined())
+		if (this.invokingCommand != null && !this.invokingCommand.isDefined()) {
 			this.invokingCommand = null;
-		else
+		} else {
 			// Pre-fetch key sequence - do not change because scope will
 			// change later.
 			getInvokingCommandKeySequences();
+		}
+		// create early
+		create();
+		// Ugly hack to avoid bug 184045. If this gets fixed, replace the
+		// following code with a call to refresh("").
+		getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				final Shell shell = getShell();
+				if (shell != null && !shell.isDisposed()) {
+					Point size = shell.getSize();
+					shell.setSize(size.x, size.y + 1);
+				}
+			}
+		});
 	}
 
 	protected Control createTitleControl(Composite parent) {
@@ -206,8 +221,23 @@ public class QuickAccessDialog extends PopupDialog {
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
 		tableComposite.setLayout(tableColumnLayout);
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
+		textLayout = new TextLayout(table.getDisplay());
+		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(
+				table.getFont()).setStyle(SWT.BOLD));
+		textLayout.setFont(table.getFont());
+		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
+		int maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
+		textLayout.setFont(boldFont);
+		for (int i = 0; i < providers.length; i++) {
+			QuickAccessProvider provider = providers[i];
+			textLayout.setText(provider.getName());
+			int width = (int) (textLayout.getBounds().width * 1.1);
+			if (width > maxProviderWidth) {
+				maxProviderWidth = width;
+			}
+		}
 		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE),
-				new ColumnWeightData(0, 120));
+				new ColumnWeightData(0, maxProviderWidth));
 		tableColumnLayout.setColumnData(new TableColumn(table, SWT.NONE),
 				new ColumnWeightData(100, 100));
 		table.getShell().addControlListener(new ControlAdapter() {
@@ -247,6 +277,7 @@ public class QuickAccessDialog extends PopupDialog {
 			}
 
 			protected boolean shouldCreateToolTip(Event event) {
+				table.setToolTipText(""); //$NON-NLS-1$
 				return getEntry(event) != null
 						&& super.shouldCreateToolTip(event);
 			}
@@ -292,9 +323,6 @@ public class QuickAccessDialog extends PopupDialog {
 			}
 		});
 
-		textLayout = new TextLayout(table.getDisplay());
-		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(
-				table.getFont()).setStyle(SWT.BOLD));
 		// italicsFont = resourceManager.createFont(FontDescriptor.createFrom(
 		// table.getFont()).setStyle(SWT.ITALIC));
 		grayColor = resourceManager.createColor(ColorUtil.blend(table
@@ -324,7 +352,6 @@ public class QuickAccessDialog extends PopupDialog {
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
 		table.addListener(SWT.PaintItem, listener);
-		refresh(""); //$NON-NLS-1$
 		return composite;
 	}
 
@@ -353,6 +380,19 @@ public class QuickAccessDialog extends PopupDialog {
 
 		if (table.getItemCount() > 0) {
 			table.setSelection(selectionIndex);
+		} else if (filter.length() == 0) {
+			{
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(0,
+						QuickAccessMessages.QuickAccess_AvailableCategories);
+				item.setForeground(0, grayColor);
+			}
+			for (int i = 0; i < providers.length; i++) {
+				QuickAccessProvider provider = providers[i];
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(1, provider.getName());
+				item.setForeground(1, grayColor);
+			}
 		}
 
 		if (filter.length() == 0) {
