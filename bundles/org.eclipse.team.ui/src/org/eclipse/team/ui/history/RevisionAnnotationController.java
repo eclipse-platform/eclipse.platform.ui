@@ -280,10 +280,11 @@ public abstract class RevisionAnnotationController {
 			return null;
 
 		IRevisionRulerColumn column= (IRevisionRulerColumn) editor.getAdapter(IRevisionRulerColumn.class);
-		if (column.getControl().isDisposed())
-			return null;
-		if (column instanceof IRevisionRulerColumnExtension)
+		if (column instanceof IRevisionRulerColumnExtension) {
+			if (column.getControl() != null && column.getControl().isDisposed())
+				return null;
 			return (IRevisionRulerColumnExtension) column;
+		}
 		
 		return null;
 	}
