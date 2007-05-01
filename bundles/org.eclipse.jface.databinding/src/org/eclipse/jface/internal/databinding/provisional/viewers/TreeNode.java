@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.internal.viewers;
+package org.eclipse.jface.internal.databinding.provisional.viewers;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,11 +21,13 @@ import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Control;
 
-/* package */ class UnorderedTreeNode implements ISetChangeListener, IStaleListener {
+/* package */ class TreeNode implements ISetChangeListener, IStaleListener {
     private UnorderedTreeContentProvider contentProvider;
-    private TreePath treePath;
+    private Object element;
     
     // Stores the set of parents (null if there are less than 2)
     private HashSet parents = null;
@@ -47,12 +50,12 @@ import org.eclipse.jface.viewers.TreePath;
      * @param element
      * @param cp
      */
-    public UnorderedTreeNode(TreePath element, UnorderedTreeContentProvider cp) {
-        this.treePath = element;
+    public TreeNode(Object element, UnorderedTreeContentProvider cp) {
+        this.element = element;
         this.contentProvider = cp;
         children = contentProvider.createChildSet(element);
         if (children == null) {
-            children = Observables.emptyObservableSet(contentProvider.getKnownElements().getRealm());
+            children = Observables.emptyObservableSet();
             listeningToChildren = true;
         }
         hasPendingNode = children.isStale();
@@ -101,7 +104,7 @@ import org.eclipse.jface.viewers.TreePath;
      * Returns the set of children for this node. If new children are discovered later, they
      * will be added directly to the viewer.
      *  
-     * @return the set of children
+     * @return TODO
      */
     public Set getChildren() {
         if (!listeningToChildren) {
@@ -121,7 +124,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
     
     /**
-     * @return the observable set of children
+     * @return TODO
      */
     public IObservableSet getChildrenSet() {
         return children;
@@ -137,7 +140,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
     
     /**
-     * @return <code>true</code> if the children of this node will change soon
+     * @return TODO
      */
     public boolean isStale() {
         return isStale;
@@ -147,7 +150,7 @@ import org.eclipse.jface.viewers.TreePath;
      * Returns true if the viewer should show a plus sign for expanding this 
      * node. 
      * 
-     * @return <code>true</code> if this node may have children
+     * @return TODO
      */
     public boolean shouldShowPlus() {
         if (children == null) {
@@ -170,7 +173,7 @@ import org.eclipse.jface.viewers.TreePath;
     public void dispose() {
         if (children != null) {
             if (listeningToChildren) {
-                contentProvider.remove(treePath, children, true);
+                contentProvider.remove(element, children, true);
                 children.removeSetChangeListener(this);
                 children.removeStaleListener(this);
             }
@@ -184,7 +187,7 @@ import org.eclipse.jface.viewers.TreePath;
     }
     
     /**
-     * @return <code>true</code> if this node is disposed
+     * @return TODO
      */
     public boolean isDisposed() {
         return children == null;
@@ -194,32 +197,49 @@ import org.eclipse.jface.viewers.TreePath;
      * Returns one representative parent, or null if this node is unparented. Use
      * getParents() to get the complete set of known parents.
      * 
-     * @return a parent node, or null
+     * @return TODO
      */
     public Object getParent() {
         return parent;
     }
     
     /**
-     * @return the set of known parent nodes
+     * 
+     * @return the set of all known parents for this node
      */
     public Set getParents() {
         if (parents == null) {
             if (parent == null) {
                 return Collections.EMPTY_SET;
+            } else {
+                return Collections.singleton(parent);
             }
-			return Collections.singleton(parent);
+        } else {
+            return parents;
         }
-		return parents;
     }
     
     /**
      * Called when the child set changes. Should not be called directly by the viewer.
      */
     public void handleSetChange(SetChangeEvent event) {
+        SetDiff diff = event.diff;
+        TreeViewer viewer = this.contentProvider.getViewer();
+        if (viewer != null) {
+            Control control = viewer.getControl();
+            if (control != null) {
+                if (control.isDisposed()) {
+                    // If the widgetry was disposed without notifying the content provider, then
+                    // dispose the content provider now and stop processing events.
+                    contentProvider.dispose();
+                    return;
+                }
+            }
+        }
+        
         boolean shouldHavePendingNode = children.isEmpty() && children.isStale();
         
-        Set additions = event.diff.getAdditions();
+        Set additions = diff.getAdditions();
         // Check if we should add the pending node
         if (shouldHavePendingNode && !hasPendingNode) {
             HashSet newAdditions = new HashSet();
@@ -229,7 +249,7 @@ import org.eclipse.jface.viewers.TreePath;
             hasPendingNode = true;
         }
 
-        Set removals = event.diff.getRemovals();
+        Set removals = diff.getRemovals();
         // Check if we should remove the pending node
         if (!shouldHavePendingNode && hasPendingNode) {
             HashSet newRemovals = new HashSet();
@@ -239,50 +259,75 @@ import org.eclipse.jface.viewers.TreePath;
             hasPendingNode = false;
         }
         if (!additions.isEmpty()) {
-            contentProvider.add(treePath, additions);
+            contentProvider.add(element, additions);
         }
         if (!removals.isEmpty()) {
-            contentProvider.remove(treePath, removals, children.isEmpty() && !hasPendingNode);
+            contentProvider.remove(element, removals, children.isEmpty() && !hasPendingNode);
         }
         
         updateStale();
     }
 
-    public void handleStale(StaleEvent event) {
+    public void handleStale(StaleEvent staleEvent) {
+        TreeViewer viewer = this.contentProvider.getViewer();
+        if (viewer != null) {
+            Control control = viewer.getControl();
+            if (control != null) {
+                if (control.isDisposed()) {
+                    // If the widgetry was disposed without notifying the content provider, then
+                    // dispose the content provider now and stop processing events.
+                    contentProvider.dispose();
+                    return;
+                }
+            }
+        }
+        
         boolean shouldHavePendingNode = children.isEmpty() && children.isStale();
         
         // Check if we should add the pending node
         if (shouldHavePendingNode && !hasPendingNode) {
             hasPendingNode = shouldHavePendingNode;
-            contentProvider.add(treePath, Collections.singleton(contentProvider.getPendingNode()));
+            contentProvider.add(element, Collections.singleton(contentProvider.getPendingNode()));
         }
         
         // Check if we should remove the pending node
         if (!shouldHavePendingNode && hasPendingNode) {
             hasPendingNode = shouldHavePendingNode;
-            contentProvider.remove(treePath, Collections.singleton(contentProvider.getPendingNode()), true);
+            contentProvider.remove(element, Collections.singleton(contentProvider.getPendingNode()), true);
         }
         
         updateStale();
     }
 
     /**
-     * @return the element
+     * @return TODO
      */
     public Object getElement() {
-        return treePath;
+        return element;
     }
 
     /**
      * 
      */
     public void prefetch() {
+        TreeViewer viewer = this.contentProvider.getViewer();
+        if (viewer != null) {
+            Control control = viewer.getControl();
+            if (control != null) {
+                if (control.isDisposed()) {
+                    // If the widgetry has been disposed, then avoid sending anything
+                    // to the viewer.
+                    return;
+                }
+            }
+        }
+        
         Set children = getChildren();
         if (!children.isEmpty()) {
-            contentProvider.add(treePath, children);
+            contentProvider.add(element, children);
         } else {
             // We need to remove the + sign, and adding/removing elements won't do the trick
-            contentProvider.getViewer().refresh(treePath);
+            contentProvider.getViewer().refresh(element);
         }
     }
 }

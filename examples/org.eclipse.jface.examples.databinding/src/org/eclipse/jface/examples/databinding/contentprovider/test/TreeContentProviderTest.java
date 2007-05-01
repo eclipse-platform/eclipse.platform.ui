@@ -16,8 +16,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.internal.databinding.observable.tree.IUnorderedTreeProvider;
-import org.eclipse.core.internal.databinding.observable.tree.TreePath;
-import org.eclipse.jface.internal.databinding.internal.viewers.UnorderedTreeContentProvider;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.internal.databinding.provisional.viewers.UnorderedTreeContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -36,40 +36,41 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Tests UpdatableTreeContentProvider and DirtyIndicationLabelProvider.
- * Creates a tree containing three randomly-generated sets of integers,
- * and one node that contains the union of the other sets.
+ * Tests UpdatableTreeContentProvider and DirtyIndicationLabelProvider. Creates
+ * a tree containing three randomly-generated sets of integers, and one node
+ * that contains the union of the other sets.
  * 
  * @since 3.2
  */
 public class TreeContentProviderTest {
-	
+
 	private Shell shell;
 	private TreeViewer tree;
-	
+
 	// Three randomly-generated sets of doubles
 	private AsynchronousTestSet set1;
 	private AsynchronousTestSet set2;
 	private AsynchronousTestSet set3;
-	
+
 	// The union of the above three sets
 	private UnionSet union;
 	private Button randomize;
+
 	public TreeContentProviderTest() {
-		
+
 		// Create the data model
 		set1 = new AsynchronousTestSet();
 		set2 = new AsynchronousTestSet();
 		set3 = new AsynchronousTestSet();
-		
+
 		// A union of the above sets
-		union = new UnionSet(new IObservableSet[] {set1, set2, set3});
-		
+		union = new UnionSet(new IObservableSet[] { set1, set2, set3 });
+
 		// Create shell
 		shell = new Shell(Display.getCurrent());
-		
+
 		createTree();
-		
+
 		Composite buttonBar = new Composite(shell, SWT.NONE);
 		{
 			buttonBar.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -81,14 +82,17 @@ public class TreeContentProviderTest {
 					super.widgetSelected(e);
 				}
 			});
-			
+
 			GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
 		}
-		
-		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins()).generateLayout(shell);
-		
+
+		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins())
+				.generateLayout(shell);
+
 		shell.addDisposeListener(new DisposeListener() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 			 */
 			public void widgetDisposed(DisposeEvent e) {
@@ -108,34 +112,42 @@ public class TreeContentProviderTest {
 	}
 
 	private void createTree() {
-		// Create the tree provider. This provides the structure of the tree. This tree will
-		// have an instance of RootNode as the root (which is really a placeholder), several
-		// SimpleNodes as top-level nodes, and sets of randomly generated Doubles below each
+		// Create the tree provider. This provides the structure of the tree.
+		// This tree will
+		// have an instance of RootNode as the root (which is really a
+		// placeholder), several
+		// SimpleNodes as top-level nodes, and sets of randomly generated
+		// Doubles below each
 		// SimpleNode.
 		IUnorderedTreeProvider treeProvider = new IUnorderedTreeProvider() {
-			public IObservableSet createChildSet(TreePath treePath) {
-				// If the parent is the root node, return the union of some randomly-generated
+			public IObservableSet createChildSet(Object element) {
+				// If the parent is the root node, return the union of some
+				// randomly-generated
 				// nodes and some hardcoded nodes
-				if (treePath.getSegmentCount()==0 || treePath.getLastSegment() == tree.getInput()) {
+				if (element == tree.getInput()) {
 					// Set of hardcoded nodes
 					WritableSet topElements = new WritableSet();
 					topElements.add(new SimpleNode("Random Set 1", set1));
 					topElements.add(new SimpleNode("Random Set 2", set2));
 					topElements.add(new SimpleNode("Random Set 3", set3));
-					topElements.add(new SimpleNode("Union of the other sets", union));
+					topElements.add(new SimpleNode("Union of the other sets",
+							union));
 					return topElements;
 				}
-				
-				// If the parent is a RandomChildrenNode, return a randomly-generated
+
+				// If the parent is a RandomChildrenNode, return a
+				// randomly-generated
 				// set of Doubles for its children
-				Object element = treePath.getLastSegment();
 				if (element instanceof SimpleNode) {
-					// We return a new DelegatingObservableSet in order to prevent the 
+					// We return a new DelegatingObservableSet in order to
+					// prevent the
 					// original from being disposed.
-					return Observables.proxyObservableSet(((SimpleNode)element).getChildren());
+					return Observables
+							.proxyObservableSet(((SimpleNode) element)
+									.getChildren());
 				}
-				
-				// Otherwise the node is a Double, which will have no children  
+
+				// Otherwise the node is a Double, which will have no children
 				return null;
 			}
 
@@ -144,52 +156,58 @@ public class TreeContentProviderTest {
 				return null;
 			}
 		};
-		
+
 		// Label provider for the tree
 		IViewerLabelProvider labelProvider = new ViewerLabelProvider() {
 			public void updateLabel(ViewerLabel label, Object element) {
 				if (element instanceof SimpleNode) {
 					SimpleNode node = (SimpleNode) element;
-					
+
 					label.setText(node.getNodeName());
 				}
-				
+
 				if (element instanceof Integer) {
 					Integer node = (Integer) element;
-					
+
 					label.setText("Integer " + node);
 				}
 			}
 		};
-		
+
 		// Create tree viewer
 		tree = new TreeViewer(shell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		
-		// UpdatableTreeContentProvider converts an ITreeProvider into a standard JFace content provider
-		UnorderedTreeContentProvider contentProvider = new UnorderedTreeContentProvider(treeProvider,
-				"pending...");
-		
+
+		// UpdatableTreeContentProvider converts an ITreeProvider into a
+		// standard JFace content provider
+		UnorderedTreeContentProvider contentProvider = new UnorderedTreeContentProvider(
+				treeProvider, "pending...", false);
+
 		tree.setContentProvider(contentProvider);
 		tree.setLabelProvider(labelProvider);
-		
-		// For the ITreeProvider above, it doesn't matter what we select as the input.
+
+		// For the ITreeProvider above, it doesn't matter what we select as the
+		// input.
 		tree.setInput(new Object());
 	}
-	
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Display display = Display.getDefault();
-		TreeContentProviderTest test = new TreeContentProviderTest();
-		Shell s = test.getShell();
-		s.pack();
-		s.setVisible(true);
+		final Display display = Display.getDefault();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				TreeContentProviderTest test = new TreeContentProviderTest();
+				Shell s = test.getShell();
+				s.pack();
+				s.setVisible(true);
 
-		while (!s.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
+				while (!s.isDisposed()) {
+					if (!display.readAndDispatch())
+						display.sleep();
+				}
+			}
+		});
 		display.dispose();
 	}
 

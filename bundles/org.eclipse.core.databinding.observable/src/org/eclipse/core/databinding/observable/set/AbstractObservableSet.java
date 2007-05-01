@@ -42,7 +42,15 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	protected AbstractObservableSet() {
 		this(Realm.getDefault());
 	}
+	
+	protected void firstListenerAdded() {
+		super.firstListenerAdded();
+	}
 
+	protected void lastListenerRemoved() {
+		super.lastListenerRemoved();
+	}
+	
 	protected AbstractObservableSet(Realm realm) {
 		super(realm);
 		changeSupport = new ChangeSupport(realm){
