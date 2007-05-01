@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
 
-public class NewLocationWizard extends Wizard implements IWorkbenchWizard {
+public class NewLocationWizard extends Wizard implements INewWizard {
 	
 	private ConfigurationWizardMainPage mainPage;
 	private Properties properties = null;
