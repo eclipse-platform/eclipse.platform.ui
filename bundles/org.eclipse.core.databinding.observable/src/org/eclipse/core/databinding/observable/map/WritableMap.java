@@ -56,7 +56,7 @@ public class WritableMap extends ObservableMap {
 		if (result==null) {
 			fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
 		} else {
-			fireMapChange(Diffs.createMapDiffSingleChange(key, value, result));
+			fireMapChange(Diffs.createMapDiffSingleChange(key, result, value));
 		}
 		return result;
 	}

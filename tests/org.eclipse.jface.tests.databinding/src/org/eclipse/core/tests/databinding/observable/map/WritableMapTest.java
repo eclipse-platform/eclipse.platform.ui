@@ -12,12 +12,15 @@
 package org.eclipse.core.tests.databinding.observable.map;
 
 import java.util.Collections;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.jface.tests.databinding.RealmTester;
+import org.eclipse.jface.tests.databinding.EventTrackers.MapChangeEventTracker;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
@@ -73,5 +76,30 @@ public class WritableMapTest extends TestCase {
 				map.putAll(Collections.EMPTY_MAP);
 			}
 		});
+	}
+	
+	public void testPutWithExistingKeyMapChangeEvent() throws Exception {
+		WritableMap map = new WritableMap();
+		String key = "key";
+		String value = "value";
+		map.put(key, value);
+		
+		MapChangeEventTracker listener = new MapChangeEventTracker();
+		map.addMapChangeListener(listener);
+		
+		assertEquals(0, listener.count);
+		
+		String newValue = "new value";
+		map.put(key, newValue);
+		
+		assertEquals(1, listener.count);
+		MapChangeEvent event = listener.event;
+		
+		
+		Set changedKeys = event.diff.getChangedKeys();
+		assertEquals(1, changedKeys.size());
+		assertTrue(changedKeys.contains(key));
+		assertEquals(value, event.diff.getOldValue(key));
+		assertEquals(newValue, event.diff.getNewValue(key));
 	}
 }

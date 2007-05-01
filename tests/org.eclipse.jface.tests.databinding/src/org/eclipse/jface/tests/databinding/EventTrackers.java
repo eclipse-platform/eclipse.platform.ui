@@ -13,6 +13,8 @@ package org.eclipse.jface.tests.databinding;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.map.IMapChangeListener;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 
@@ -41,5 +43,15 @@ public class EventTrackers {
 			count++;
 			this.event = event;
 		}
+	}
+	
+	public static class MapChangeEventTracker implements IMapChangeListener {
+		public int count;
+		public MapChangeEvent event;
+		
+		public void handleMapChange(MapChangeEvent event) {
+			count++;
+			this.event = event;
+		}		
 	}
 }
