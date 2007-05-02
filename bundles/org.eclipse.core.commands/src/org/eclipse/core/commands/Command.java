@@ -1000,31 +1000,31 @@ public final class Command extends NamedHandleObjectWithState implements
 			final StringWriter sw = new StringWriter();
 			final BufferedWriter buffer = new BufferedWriter(sw);
 			try {
-				buffer.append("Command("); //$NON-NLS-1$
-				buffer.append(id);
-				buffer.append(',');
-				buffer.append(name);
-				buffer.append(',');
+				buffer.write("Command("); //$NON-NLS-1$
+				buffer.write(id);
+				buffer.write(',');
+				buffer.write(name);
+				buffer.write(',');
 				buffer.newLine();
-				buffer.append("\t\t"); //$NON-NLS-1$
-				buffer.append(description);
-				buffer.append(',');
+				buffer.write("\t\t"); //$NON-NLS-1$
+				buffer.write(description);
+				buffer.write(',');
 				buffer.newLine();
-				buffer.append("\t\t"); //$NON-NLS-1$
-				buffer.append(category==null?null:category.toString());
-				buffer.append(',');
+				buffer.write("\t\t"); //$NON-NLS-1$
+				buffer.write(category==null?null:category.toString());
+				buffer.write(',');
 				buffer.newLine();
-				buffer.append("\t\t"); //$NON-NLS-1$
-				buffer.append(handler==null?null:handler.toString());
-				buffer.append(',');
+				buffer.write("\t\t"); //$NON-NLS-1$
+				buffer.write(handler==null?null:handler.toString());
+				buffer.write(',');
 				buffer.newLine();
-				buffer.append("\t\t"); //$NON-NLS-1$
-				buffer.append(parameters==null?null:parameters.toString());
-				buffer.append(',');
-				buffer.append(returnType==null?null:returnType.toString());
-				buffer.append(',');
-				buffer.append(""+defined); //$NON-NLS-1$
-				buffer.append(')');
+				buffer.write("\t\t"); //$NON-NLS-1$
+				buffer.write(parameters==null?null:parameters.toString());
+				buffer.write(',');
+				buffer.write(returnType==null?null:returnType.toString());
+				buffer.write(',');
+				buffer.write(""+defined); //$NON-NLS-1$
+				buffer.write(')');
 				buffer.flush();
 			} catch (IOException e) {
 				// should never get this exception

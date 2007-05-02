@@ -185,20 +185,20 @@ final class HandlerActivation extends EvaluationResultCache implements
 		final BufferedWriter buffer = new BufferedWriter(sw);
 		
 		try {
-			buffer.append("HandlerActivation(commandId="); //$NON-NLS-1$
-			buffer.append(commandId);
-			buffer.append(',');
+			buffer.write("HandlerActivation(commandId="); //$NON-NLS-1$
+			buffer.write(commandId);
+			buffer.write(',');
 			buffer.newLine();
-			buffer.append("\thandler="); //$NON-NLS-1$
-			buffer.append(handler==null?null:handler.toString());
-			buffer.append(',');
+			buffer.write("\thandler="); //$NON-NLS-1$
+			buffer.write(handler==null?null:handler.toString());
+			buffer.write(',');
 			buffer.newLine();
-			buffer.append("\texpression="); //$NON-NLS-1$
+			buffer.write("\texpression="); //$NON-NLS-1$
 			Expression exp = getExpression();
-			buffer.append(exp==null?null:exp.toString());
-			buffer.append(",sourcePriority="); //$NON-NLS-1$
-			buffer.append(Integer.toString(getSourcePriority()));
-			buffer.append(')');
+			buffer.write(exp==null?null:exp.toString());
+			buffer.write(",sourcePriority="); //$NON-NLS-1$
+			buffer.write(Integer.toString(getSourcePriority()));
+			buffer.write(')');
 			buffer.flush();
 		} catch (IOException e) {
 			// we're a string buffer, there should be no IO exception

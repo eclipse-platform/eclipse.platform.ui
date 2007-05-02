@@ -636,13 +636,13 @@ public final class BindingManager extends HandleObjectManager implements
 							final StringWriter sw = new StringWriter();
 							final BufferedWriter buffer = new BufferedWriter(sw);
 							try {
-								buffer.append("A conflict occurred for "); //$NON-NLS-1$
-								buffer.append(trigger.toString());
-								buffer.append(':');
+								buffer.write("A conflict occurred for "); //$NON-NLS-1$
+								buffer.write(trigger.toString());
+								buffer.write(':');
 								Iterator i = ((Collection) match).iterator();
 								while (i.hasNext()) {
 									buffer.newLine();
-									buffer.append(i.next().toString());
+									buffer.write(i.next().toString());
 								}
 								buffer.flush();
 							} catch (IOException e) {

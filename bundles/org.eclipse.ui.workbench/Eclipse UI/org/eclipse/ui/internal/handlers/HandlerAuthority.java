@@ -382,13 +382,13 @@ final class HandlerAuthority extends ExpressionAuthority {
 				final StringWriter sw = new StringWriter();
 				final BufferedWriter buffer = new BufferedWriter(sw);
 				try {
-					buffer.append("Conflict for \'"); //$NON-NLS-1$
-					buffer.append(commandId);
-					buffer.append("\':"); //$NON-NLS-1$
+					buffer.write("Conflict for \'"); //$NON-NLS-1$
+					buffer.write(commandId);
+					buffer.write("\':"); //$NON-NLS-1$
 					buffer.newLine();
-					buffer.append(bestActivation.toString());
+					buffer.write(bestActivation.toString());
 					buffer.newLine();
-					buffer.append(currentActivation.toString());
+					buffer.write(currentActivation.toString());
 					buffer.flush();
 				} catch (IOException e) {
 					//should never get this.

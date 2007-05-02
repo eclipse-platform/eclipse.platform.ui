@@ -384,27 +384,27 @@ public abstract class Binding {
 			final StringWriter sw = new StringWriter();
 			final BufferedWriter stringBuffer = new BufferedWriter(sw);
 			try {
-				stringBuffer.append("Binding("); //$NON-NLS-1$
-				stringBuffer.append(getTriggerSequence().toString());
-				stringBuffer.append(',');
+				stringBuffer.write("Binding("); //$NON-NLS-1$
+				stringBuffer.write(getTriggerSequence().toString());
+				stringBuffer.write(',');
 				stringBuffer.newLine();
-				stringBuffer.append('\t');
-				stringBuffer.append(command==null?null:command.toString());
-				stringBuffer.append(',');
+				stringBuffer.write('\t');
+				stringBuffer.write(command==null?null:command.toString());
+				stringBuffer.write(',');
 				stringBuffer.newLine();
-				stringBuffer.append('\t');
-				stringBuffer.append(schemeId);
-				stringBuffer.append(',');
+				stringBuffer.write('\t');
+				stringBuffer.write(schemeId);
+				stringBuffer.write(',');
 				stringBuffer.newLine();
-				stringBuffer.append('\t');
-				stringBuffer.append(contextId);
-				stringBuffer.append(',');
-				stringBuffer.append(locale);
-				stringBuffer.append(',');
-				stringBuffer.append(platform);
-				stringBuffer.append(',');
-				stringBuffer.append((type == SYSTEM) ? "system" : "user"); //$NON-NLS-1$//$NON-NLS-2$
-				stringBuffer.append(')');
+				stringBuffer.write('\t');
+				stringBuffer.write(contextId);
+				stringBuffer.write(',');
+				stringBuffer.write(locale);
+				stringBuffer.write(',');
+				stringBuffer.write(platform);
+				stringBuffer.write(',');
+				stringBuffer.write((type == SYSTEM) ? "system" : "user"); //$NON-NLS-1$//$NON-NLS-2$
+				stringBuffer.write(')');
 				stringBuffer.flush();
 			} catch (IOException e) {
 				// shouldn't get this
