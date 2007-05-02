@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
+import java.util.LinkedHashSet;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
@@ -26,7 +28,12 @@ public class ExpressionContentProvider extends VariableContentProvider {
        if (parent instanceof IErrorReportingExpression) {
             IErrorReportingExpression expression = (IErrorReportingExpression) parent;
             if (expression.hasErrors()) {
-                return expression.getErrorMessages();
+                String[] messages = expression.getErrorMessages();
+                LinkedHashSet set = new LinkedHashSet(messages.length);
+                for (int i = 0; i < messages.length; i++) {
+					set.add(messages[i]);
+				}
+                return set.toArray();
             }
         }
         if (parent instanceof IExpression) {
