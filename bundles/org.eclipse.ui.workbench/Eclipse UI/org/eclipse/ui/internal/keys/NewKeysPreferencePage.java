@@ -42,6 +42,9 @@ import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
@@ -53,9 +56,11 @@ import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -94,6 +99,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -1310,6 +1316,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			}
 		});
 
+		final IObservableValue selection = ViewersObservables
+				.observeSingleSelection(filteredTree.getViewer());
+
 		// The when label.
 		final Label whenLabel = new Label(leftDataArea, SWT.NONE);
 		whenLabel.setText(NewKeysPreferenceMessages.WhenLabel_Text);
@@ -1331,6 +1340,26 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						updateWhenCombo();
 					}
 				});
+
+		whenCombo.getCombo().setVisibleItemCount(20);
+		whenCombo.getCombo().setVisible(false);
+		whenLabel.setVisible(false);
+		selection.addValueChangeListener(new IValueChangeListener() {
+
+			public void handleValueChange(ValueChangeEvent event) {
+				boolean visible = false;
+				if (selection.getValue() instanceof KeyBinding) {
+					visible = true;
+				}
+				Combo combo = whenCombo.getCombo();
+				if (!combo.isDisposed()) {
+					combo.setVisible(visible);
+				}
+				if (!whenLabel.isDisposed()) {
+					whenLabel.setVisible(visible);
+				}
+			}
+		});
 
 		// RIGHT DATA AREA
 		// Creates the right data area.
@@ -1562,6 +1591,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			}
 		});
 
+		final IObservableValue selection = ViewersObservables
+				.observeSingleSelection(filteredTree.getViewer());
+
 		// Create the delete binding button.
 		final Button addBindingButton = new Button(treeControls, SWT.PUSH);
 		gridData = new GridData();
@@ -1576,6 +1608,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				selectAddBindingButton(event);
 			}
 		});
+		new ControlUpdater(addBindingButton) {
+			protected void updateControl() {
+				Object selectedObject = selection.getValue();
+				addBindingButton
+						.setEnabled(selectedObject instanceof KeyBinding);
+			}
+		};
 
 		// Create the delete binding button.
 		final Button removeBindingButton = new Button(treeControls, SWT.PUSH);
@@ -1591,6 +1630,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				selectRemoveBindingButton(event);
 			}
 		});
+		new ControlUpdater(removeBindingButton) {
+			protected void updateControl() {
+				Object selectedObject = selection.getValue();
+				removeBindingButton
+						.setEnabled(selectedObject instanceof KeyBinding);
+			}
+		};
 
 		// Create the delete binding button.
 		final Button restore = new Button(treeControls, SWT.PUSH);
@@ -1608,19 +1654,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		return treeControls;
 	}
-	
+
 	private void updateShowAll() {
-		BusyIndicator.showWhile(filteredTree.getViewer().getTree()
-				.getDisplay(), new Runnable() {
-			public void run() {
-				try {
-					filteredTree.getViewer().getTree().setRedraw(false);
-					fillInCommands();
-				} finally {
-					filteredTree.getViewer().getTree().setRedraw(true);
-				}
-			}
-		});
+		BusyIndicator.showWhile(
+				filteredTree.getViewer().getTree().getDisplay(),
+				new Runnable() {
+					public void run() {
+						try {
+							filteredTree.getViewer().getTree().setRedraw(false);
+							fillInCommands();
+						} finally {
+							filteredTree.getViewer().getTree().setRedraw(true);
+						}
+					}
+				});
 	}
 
 	/**
