@@ -130,6 +130,7 @@ public class NewWizardShortcutAction extends Action implements
         // if the wizard can finish early and doesn't have any pages, just finish it.
         if (wizardElement.canFinishEarly() && !wizardElement.hasPages()) {
 			wizard.performFinish();
+			dialog.close();
 		} else {
 			dialog.open();
 		}
