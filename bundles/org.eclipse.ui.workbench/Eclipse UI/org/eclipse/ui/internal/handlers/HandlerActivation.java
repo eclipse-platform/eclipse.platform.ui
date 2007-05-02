@@ -190,12 +190,12 @@ final class HandlerActivation extends EvaluationResultCache implements
 			buffer.write(',');
 			buffer.newLine();
 			buffer.write("\thandler="); //$NON-NLS-1$
-			buffer.write(handler==null?null:handler.toString());
+			buffer.write(handler==null?"":handler.toString()); //$NON-NLS-1$
 			buffer.write(',');
 			buffer.newLine();
 			buffer.write("\texpression="); //$NON-NLS-1$
 			Expression exp = getExpression();
-			buffer.write(exp==null?null:exp.toString());
+			buffer.write(exp==null?"":exp.toString()); //$NON-NLS-1$
 			buffer.write(",sourcePriority="); //$NON-NLS-1$
 			buffer.write(Integer.toString(getSourcePriority()));
 			buffer.write(')');

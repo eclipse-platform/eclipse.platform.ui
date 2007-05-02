@@ -389,7 +389,7 @@ public abstract class Binding {
 				stringBuffer.write(',');
 				stringBuffer.newLine();
 				stringBuffer.write('\t');
-				stringBuffer.write(command==null?null:command.toString());
+				stringBuffer.write(command==null?"":command.toString()); //$NON-NLS-1$
 				stringBuffer.write(',');
 				stringBuffer.newLine();
 				stringBuffer.write('\t');
@@ -399,9 +399,9 @@ public abstract class Binding {
 				stringBuffer.write('\t');
 				stringBuffer.write(contextId);
 				stringBuffer.write(',');
-				stringBuffer.write(locale);
+				stringBuffer.write(locale==null?"":locale); //$NON-NLS-1$
 				stringBuffer.write(',');
-				stringBuffer.write(platform);
+				stringBuffer.write(platform==null?"":platform); //$NON-NLS-1$
 				stringBuffer.write(',');
 				stringBuffer.write((type == SYSTEM) ? "system" : "user"); //$NON-NLS-1$//$NON-NLS-2$
 				stringBuffer.write(')');

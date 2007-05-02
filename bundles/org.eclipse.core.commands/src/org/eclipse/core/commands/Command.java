@@ -1003,25 +1003,25 @@ public final class Command extends NamedHandleObjectWithState implements
 				buffer.write("Command("); //$NON-NLS-1$
 				buffer.write(id);
 				buffer.write(',');
-				buffer.write(name);
+				buffer.write(name==null?"":name); //$NON-NLS-1$
 				buffer.write(',');
 				buffer.newLine();
 				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(description);
+				buffer.write(description==null?"":description); //$NON-NLS-1$
 				buffer.write(',');
 				buffer.newLine();
 				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(category==null?null:category.toString());
+				buffer.write(category==null?"":category.toString()); //$NON-NLS-1$
 				buffer.write(',');
 				buffer.newLine();
 				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(handler==null?null:handler.toString());
+				buffer.write(handler==null?"":handler.toString()); //$NON-NLS-1$
 				buffer.write(',');
 				buffer.newLine();
 				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(parameters==null?null:parameters.toString());
+				buffer.write(parameters==null?"":parameters.toString()); //$NON-NLS-1$
 				buffer.write(',');
-				buffer.write(returnType==null?null:returnType.toString());
+				buffer.write(returnType==null?"":returnType.toString()); //$NON-NLS-1$
 				buffer.write(',');
 				buffer.write(""+defined); //$NON-NLS-1$
 				buffer.write(')');
