@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cheatsheet title="Dynamic content (under construction)">
+<cheatsheet title="Dynamic content">
    <intro>
       <description>
-         This test was copied from the word doc containing test descriptions. It should be reworked to be more explicit about which XHTML files to use.
+         This test requires org.eclipse.ua.tests to be installed.
       </description>
    </intro>
-   <item title="Find XHTML Docs" dialog="false" skip="false">
+   <item title="Find filtered topics" dialog="false" skip="false">
       <description>
-         Find some XHTML docs in the help system (you’ll have to import plugin in workspace and look for the .xhtml file extension)
+         Open the topic &quot;filter&quot; in the book &quot;tests&quot;.
       </description>
+      <subitem label="Check that there are two subtopics &quot;The plugin org.eclipse.help is installed&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there are two subtopics &quot;This topic should always appear&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there are two subtopics &quot;The product org.eclipse.sdk.ide is running&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there are two subtopics &quot;The activity org.eclipse.javaDevelopment is enabled&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there are two subtopics &quot;The category org.eclipse.categories.developmentCategory is enabled&quot;" skip="false">
+      </subitem>
+      <subitem label="Check there are no subtopics with &quot;invalid&quot; in the title" skip="false">
+      </subitem>
    </item>
-   <item title="Open docs" dialog="false" skip="false">
+   <item title="Check page with filtering" dialog="false" skip="false">
       <description>
-         Open these docs in the help window and help view; make sure they appear correctly
+         Open the help page Tests/Manual/Filter
       </description>
-   </item>
-   <item title="Find markup" dialog="false" skip="false">
-      <description>
-         Open the markup and find the parts that are filtered (e.g. there might be a windows only section)
-      </description>
-   </item>
-   <item title="Confirm filtered sections" dialog="false" skip="false">
-      <description>
-         Confirm the parts are filtered from the non-applicable platforms. E.g. if it’s windows only, should only be visible on windows
-      </description>
+      <subitem label="Check that there is a line &quot;The plugin org.eclipse.help is installed&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there is a line &quot;The product org.eclipse.sdk.ide is running&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there is a line &quot;The activity org.eclipse.javaDevelopment is enabled&quot;" skip="false">
+      </subitem>
+      <subitem label="Check that there a line &quot;The category org.eclipse.categories.developmentCategory is enabled&quot;" skip="false">
+      </subitem>
+      <subitem label="Check there is no line containing the word with &quot;invalid&quot;" skip="false">
+      </subitem>
    </item>
    <item title="Search for word" dialog="false" skip="false">
       <description>
          Search for a word in the XHTML doc. It should show up as a potential hit.
-      </description>
-   </item>
-   <item title="Show actual hits" dialog="false" skip="false">
-      <description>
-         Change preferences (Help preferences page) to show actual hits
-      </description>
-   </item>
-   <item title="Repeat search" dialog="false" skip="true">
-      <description>
-         Repeat the same search. It should only find the result if the word is visible in the doc. E.g. on windows it should find it, on linux it shouldn’t.
       </description>
    </item>
 </cheatsheet>

@@ -2,19 +2,9 @@
 <cheatsheet title="Keyword Index">
    <intro>
       <description>
-         Tests for the index view
+         Tests for the index view. These tests require org.eclispe.ua.tests to be installed.
       </description>
    </intro>
-   <item title="Obtain index" dialog="false" skip="false">
-      <description>
-         Download and extract the test files zip from http://www.eclipse.org/eclipse/platform-ua/testing/test_files.zip
-      </description>
-   </item>
-   <item title="Install plugins" dialog="false" skip="false">
-      <description>
-         Extract the /help/org.eclipse.help.index.test.zip and place the test plugin in your plugins dir; restart workbench
-      </description>
-   </item>
    <item title="Test Index View" dialog="false" skip="false">
       <description>
          Run some tests on the index view in the webapp.
@@ -25,10 +15,29 @@
       </subitem>
       <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
       </subitem>
-      <subitem label="Verify that when you start to type in a word in the index that entry is selected." skip="false">
+   </item>
+   <item title="Index view order" dialog="true" skip="false">
+      <description>
+         Tests for the ordering of keywords in index view
+      </description>
+      <subitem label="Verify that +keyword, -keyword, =keyword and _keyword appear at the front of the index, before any keywords that start with letters." skip="false">
       </subitem>
-      <subitem label="Open a topic by clicking on the link." skip="false">
+      <subitem label="Verify that xaa, Xyx and xyz appear in that order." skip="false">
       </subitem>
+   </item>
+   <item title="Typein" dialog="true" skip="false">
+      <description>
+         Verify that the typein advances the index
+      </description>
+      <subitem label="Type &quot;x&quot; into the typein area. Verify that xaa is at the top of the screen." skip="false">
+      </subitem>
+      <subitem label="Type &quot;y&quot; after the &quot;x&quot; (making xy). Verify that Xyx is at the head of the list." skip="false">
+      </subitem>
+   </item>
+   <item title="Navigate to content" dialog="true" skip="false">
+      <description>
+         Click on &quot;keyword1&quot;, verify that topic1 opens.
+      </description>
    </item>
    <item title="Test Index in Help View" dialog="false" skip="false">
       <description>
@@ -40,11 +49,28 @@
       </subitem>
       <subitem label="Verify that there is a text box with a DISPLAY button to the right and that there is a list of keywords." skip="false">
       </subitem>
-      <subitem label="Verify that when you start to type in a word in the index that entry is selected." skip="false">
+   </item>
+   <item title="Help view order" dialog="true" skip="false">
+      <description>
+         Tests for the ordering of keywords in help view
+      </description>
+      <subitem label="Verify that +keyword, -keyword, =keyword and _keyword appear at the front of the index, before any keywords that start with letters." skip="false">
       </subitem>
-      <subitem label="Open a topic by clicking on the link." skip="false">
+      <subitem label="Verify that xaa, Xyx and xyz appear in that order." skip="false">
       </subitem>
-      <subitem label="Select an index entry. Check that the type in area shows the selected keyword." skip="false">
+   </item>
+   <item title="Help view Typein" dialog="true" skip="false">
+      <description>
+         Verify that the typein selects the correct item
+      </description>
+      <subitem label="Type &quot;x&quot; into the typein area. Verify that xaa is highlighted." skip="false">
       </subitem>
+      <subitem label="Type &quot;y&quot; after the &quot;x&quot; (making xy). Verify that Xyx is highlighted." skip="false">
+      </subitem>
+   </item>
+   <item title="Help view Navigate to content" dialog="true" skip="false">
+      <description>
+         Click on &quot;keyword1&quot;, verify that topic1 opens.
+      </description>
    </item>
 </cheatsheet>

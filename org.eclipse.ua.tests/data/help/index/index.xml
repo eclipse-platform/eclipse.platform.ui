@@ -12,5 +12,29 @@
    </entry>
    <entry keyword="keyword4">
       <topic href="data/help/index/topicDoesntExist.html"/>
+   </entry>  
+   <entry keyword="-keyword1">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="_keyword1">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="+keyword1">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="=keyword1">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="xaa">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="Xyx">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="xyz">
+      <topic href="data/help/index/topic1.html"/>
+   </entry>
+   <entry keyword="yz">
+      <topic href="data/help/index/topic1.html"/>
    </entry>
 </index>
