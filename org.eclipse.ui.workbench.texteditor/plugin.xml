@@ -535,6 +535,7 @@
 	  <key
             platform="carbon"
 	        commandId=""
+	        contextId="org.eclipse.ui.textEditorScope"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M1+M3+J"/>
 	  <key
