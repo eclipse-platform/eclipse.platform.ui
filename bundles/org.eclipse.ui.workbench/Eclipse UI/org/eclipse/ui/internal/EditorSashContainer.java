@@ -28,6 +28,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -75,7 +76,7 @@ public class EditorSashContainer extends PartSashContainer {
 	 * Hides the min/max buttons for all editor stacks
 	 * -except- for the upper/left one.
 	 */
-	private void updateStackButtons() {
+	public void updateStackButtons() {
 		 // This is applicable only when the new
 		 // min/max behaviour is being used
 		Perspective persp = getPage().getActivePerspective();
@@ -282,6 +283,15 @@ public class EditorSashContainer extends PartSashContainer {
 
         // remove the editor workbook if empty
         if (workbook.getItemCount() < 1 /* && editorWorkbooks.size() > 1*/) {
+        	// If the user closes the last editor and the editor area
+        	// is maximized, restore it
+    		Perspective persp = getPage().getActivePerspective();
+            if (Perspective.useNewMinMax(persp)) {
+            	if (persp.getPresentation().getMaximizedStack() instanceof EditorStack)
+            		persp.getPresentation().getMaximizedStack().
+            			setState(IStackPresentationSite.STATE_RESTORED);
+            }
+
             remove(workbook);
             workbook.dispose();
         }
