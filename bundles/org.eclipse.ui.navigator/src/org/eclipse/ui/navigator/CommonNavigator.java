@@ -32,12 +32,14 @@ import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
 import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.part.IShowInTarget;
@@ -106,14 +108,12 @@ import org.eclipse.ui.part.ViewPart;
  * @since 3.2
  */
 public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource, IShowInTarget {
-
  
-	/**
-	 * 
-	 */
 	private static final Class INAVIGATOR_CONTENT_SERVICE = INavigatorContentService.class;
 	private static final Class COMMON_VIEWER_CLASS = CommonViewer.class;
 	private static final Class ISHOW_IN_TARGET_CLASS = IShowInTarget.class;
+	
+	private static final String HELP_CONTEXT =  NavigatorPlugin.PLUGIN_ID + ".common_navigator"; //$NON-NLS-1$
 
 	/**
 	 * <p>
@@ -209,11 +209,13 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 				.getSaveablesService().init(this, getCommonViewer(),
 						saveablesLifecycleListener);
 		
-		getCommonViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+		commonViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				firePropertyChange(PROP_DIRTY);
 			}});
+		
+	      PlatformUI.getWorkbench().getHelpSystem().setHelp(commonViewer.getControl(),  HELP_CONTEXT);
 	}
 
 	/**
