@@ -2744,11 +2744,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 						// The perspective's onActivate manipulates the trim under the
 						// new min/max story so cause it to refresh...
 						Perspective perspective = getActiveWorkbenchPage().getActivePerspective();
-						if (perspective != null && getActiveWorkbenchPage() instanceof WorkbenchPage) {
-							WorkbenchPage page = getActiveWorkbenchPage();
-							page.getEditorPresentation().updateStackButtons();
+						if (perspective != null)
 							perspective.onActivate();
-						}
 					}});
 			}
 		}

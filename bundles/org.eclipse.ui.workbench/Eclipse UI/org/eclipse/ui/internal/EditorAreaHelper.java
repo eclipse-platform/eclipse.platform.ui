@@ -321,7 +321,4 @@ public class EditorAreaHelper {
         return editorArea.getWorkbookFromID(workbookId);
     }
 
-    public void updateStackButtons() {
-    	editorArea.updateStackButtons();
-    }
 }
