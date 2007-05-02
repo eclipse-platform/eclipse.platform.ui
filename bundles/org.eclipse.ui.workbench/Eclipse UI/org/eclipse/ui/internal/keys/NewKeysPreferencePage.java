@@ -81,6 +81,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -1228,6 +1232,24 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.widthHint = 200;
 		bindingText.setLayoutData(gridData);
+		
+		bindingText.addFocusListener(new FocusListener() {
+			public void focusGained(FocusEvent e) {
+				bindingService.setKeyFilterEnabled(false);
+			}
+
+			public void focusLost(FocusEvent e) {
+				bindingService.setKeyFilterEnabled(true);
+			}
+		});
+		bindingText.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (!bindingService.isKeyFilterEnabled()) {
+					bindingService.setKeyFilterEnabled(true);
+				}
+			}
+		});
+		
 		keySequenceText = new KeySequenceText(bindingText);
 		keySequenceText.setKeyStrokeLimit(4);
 		keySequenceText
