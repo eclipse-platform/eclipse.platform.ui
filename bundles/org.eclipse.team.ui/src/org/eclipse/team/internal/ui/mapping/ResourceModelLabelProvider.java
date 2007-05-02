@@ -44,7 +44,7 @@ public class ResourceModelLabelProvider extends
 		}
 	};
 	
-	private ILabelProvider provider = new WorkbenchLabelProvider();
+	private ILabelProvider provider;
 	private ResourceModelContentProvider contentProvider;
 	private ImageManager localImageManager;
 
@@ -61,6 +61,8 @@ public class ResourceModelLabelProvider extends
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		if (localImageManager != null)
 			localImageManager.dispose();
+		if (provider != null)
+			provider.dispose();
 		super.dispose();
 	}
 
@@ -68,6 +70,8 @@ public class ResourceModelLabelProvider extends
 	 * @see org.eclipse.team.internal.ui.mapping.SynchronizationOperationLabelProvider#getBaseLabelProvider()
 	 */
 	protected ILabelProvider getDelegateLabelProvider() {
+		if (provider == null)
+			provider = new WorkbenchLabelProvider();
 		return provider ;
 	}
 	
