@@ -76,6 +76,14 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 
 	private UpdateActionBarsJob updateActionBars;
 	
+	private ISelectionChangedListener statusBarListener = new ISelectionChangedListener() {
+
+		public void selectionChanged(SelectionChangedEvent anEvent) { 
+			updateStatusBar(anEvent.getSelection());
+		}
+		
+	};
+	
 	private class UpdateActionBarsJob extends UIJob {
 		public UpdateActionBarsJob(String label) {
 			super(label);
@@ -151,7 +159,8 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		updateActionBars = new UpdateActionBarsJob(commonNavigator.getTitle());
 		
 		CommonViewer commonViewer = commonNavigator.getCommonViewer();
-		commonViewer.addPostSelectionChangedListener(this);
+		commonViewer.addSelectionChangedListener(this);
+		commonViewer.addPostSelectionChangedListener(statusBarListener);
 		updateStatusBar(commonViewer.getSelection());
 
 		ICommonViewerSite commonViewerSite = CommonViewerSiteFactory
@@ -188,6 +197,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 */
 	public void dispose() {
 		commonNavigator.getCommonViewer().removeSelectionChangedListener(this);
+		commonNavigator.getCommonViewer().removeSelectionChangedListener(statusBarListener);
 		actionService.dispose();
 	}
 
@@ -200,7 +210,6 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent anEvent) {
-		updateStatusBar(anEvent.getSelection());
 		if (anEvent.getSelection() instanceof IStructuredSelection) {
 			IStructuredSelection structuredSelection = (IStructuredSelection) anEvent
 					.getSelection();
@@ -217,8 +226,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 */
 	public void restoreState(IMemento aMemento) {
 		actionService.restoreState(aMemento);
-		
-//		updateActionBars.schedule(DELAY);
+		 
 	}
 
 	/**
