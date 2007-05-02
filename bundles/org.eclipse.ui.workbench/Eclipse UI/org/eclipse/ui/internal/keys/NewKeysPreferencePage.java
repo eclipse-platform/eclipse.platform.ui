@@ -971,12 +971,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// update the model
 		bindingModel.remove(binding);
-		if (showAllCheckBox.getSelection()) {
-			commandModel.add(binding.getParameterizedCommand());
-		}
-		// end update the model
-
-		update();
+		bindingAdd(binding);
 	}
 
 	private final void bindingRestore(final KeyBinding binding) {
@@ -1365,7 +1360,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	private final Control createSchemeControls(final Composite parent) {
 		GridLayout layout;
 		GridData gridData;
-		int widthHint;
 
 		// Create a composite to hold the controls.
 		final Composite schemeControls = new Composite(parent, SWT.NONE);
@@ -1386,7 +1380,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		schemeCombo.setLabelProvider(new NamedHandleObjectLabelProvider());
 		schemeCombo.setContentProvider(new ArrayContentProvider());
 		gridData = new GridData();
-		gridData.grabExcessHorizontalSpace = true;
+		gridData.widthHint = 150;
 		gridData.horizontalAlignment = SWT.FILL;
 		schemeCombo.getCombo().setLayoutData(gridData);
 		schemeCombo
@@ -1396,16 +1390,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						selectSchemeCombo(event);
 					}
 				});
-
-		// Create the delete button.
-		final Button deleteSchemeButton = new Button(schemeControls, SWT.PUSH);
-		gridData = new GridData();
-		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		deleteSchemeButton
-				.setText(NewKeysPreferenceMessages.DeleteSchemeButton_Text);
-		gridData.widthHint = Math.max(widthHint, deleteSchemeButton
-				.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
-		deleteSchemeButton.setLayoutData(gridData);
 
 		return schemeControls;
 	}
