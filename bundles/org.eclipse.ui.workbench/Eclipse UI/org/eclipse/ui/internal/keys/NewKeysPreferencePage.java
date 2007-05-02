@@ -1227,7 +1227,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.widthHint = 200;
 		bindingText.setLayoutData(gridData);
-		
+
 		bindingText.addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
 				bindingService.setKeyFilterEnabled(false);
@@ -1244,7 +1244,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				}
 			}
 		});
-		
+
 		keySequenceText = new KeySequenceText(bindingText);
 		keySequenceText.setKeyStrokeLimit(4);
 		keySequenceText
@@ -1736,8 +1736,19 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 
 		final KeySequence keySequence = keySequenceText.getKeySequence();
-		if ((keySequence == null) || (!keySequence.isComplete())
-				|| (keySequence.isEmpty())) {
+		if (!keySequence.isComplete()) {
+			return;
+		}
+
+		if ((keySequence == null) || (keySequence.isEmpty())) {
+			ISelection selection = filteredTree.getViewer().getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+				final Object node = structuredSelection.getFirstElement();
+				if (node instanceof KeyBinding) {
+					bindingRemove((KeyBinding) node);
+				}
+			}
 			return;
 		}
 
