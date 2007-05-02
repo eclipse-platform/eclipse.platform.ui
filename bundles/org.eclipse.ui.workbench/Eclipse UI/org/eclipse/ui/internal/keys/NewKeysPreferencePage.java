@@ -81,6 +81,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -1557,7 +1558,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		showAllCheckBox.setSelection(settings.getBoolean(TAG_FIELD));
 		showAllCheckBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fillInCommands();
+				updateShowAll();
 			}
 		});
 
@@ -1606,6 +1607,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		});
 
 		return treeControls;
+	}
+	
+	private void updateShowAll() {
+		BusyIndicator.showWhile(filteredTree.getViewer().getTree()
+				.getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					filteredTree.getViewer().getTree().setRedraw(false);
+					fillInCommands();
+				} finally {
+					filteredTree.getViewer().getTree().setRedraw(true);
+				}
+			}
+		});
 	}
 
 	/**
@@ -1693,6 +1708,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			while (i.hasNext()) {
 				commands.remove(((Binding) i.next()).getParameterizedCommand());
 			}
+
 			commandModel.addAll(commands);
 		} else {
 			commandModel.clear();
@@ -1889,14 +1905,25 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			if (DEBUG) {
 				startTime = System.currentTimeMillis();
 			}
-			bindingModel.clear();
-			commandModel.clear();
-			Collection comeBack = localChangeManager
-					.getActiveBindingsDisregardingContextFlat();
-			bindingModel.addAll(comeBack);
+			BusyIndicator.showWhile(filteredTree.getViewer().getTree()
+					.getDisplay(), new Runnable() {
+				public void run() {
+					try {
+						filteredTree.getViewer().getTree().setRedraw(false);
 
-			// showAllCheckBox.setSelection(false);
-			fillInCommands();
+						bindingModel.clear();
+						commandModel.clear();
+						Collection comeBack = localChangeManager
+								.getActiveBindingsDisregardingContextFlat();
+						bindingModel.addAll(comeBack);
+
+						// showAllCheckBox.setSelection(false);
+						fillInCommands();
+					} finally {
+						filteredTree.getViewer().getTree().setRedraw(true);
+					}
+				}
+			});
 			if (DEBUG) {
 				final long elapsedTime = System.currentTimeMillis() - startTime;
 				Tracing.printTrace(TRACING_COMPONENT,
