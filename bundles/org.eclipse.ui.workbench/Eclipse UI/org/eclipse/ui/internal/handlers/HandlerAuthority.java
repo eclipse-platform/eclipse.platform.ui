@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -375,13 +378,25 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 		// Return the current best.
 		if (conflict) {
-			String conflictMessage = "Conflict for \'" + commandId + "\':\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ bestActivation + "\n" //$NON-NLS-1$
-					+ currentActivation;
 			if (previousLogs.add(commandId)) {
+				final StringWriter sw = new StringWriter();
+				final BufferedWriter buffer = new BufferedWriter(sw);
+				try {
+					buffer.append("Conflict for \'"); //$NON-NLS-1$
+					buffer.append(commandId);
+					buffer.append("\':"); //$NON-NLS-1$
+					buffer.newLine();
+					buffer.append(bestActivation.toString());
+					buffer.newLine();
+					buffer.append(currentActivation.toString());
+					buffer.flush();
+				} catch (IOException e) {
+					//should never get this.
+				}
+
 				IStatus s = new Status(IStatus.WARNING,
 						"org.eclipse.ui.workbench", //$NON-NLS-1$
-						conflictMessage);
+						sw.toString());
 				conflicts.add(s);
 			}
 			return null;

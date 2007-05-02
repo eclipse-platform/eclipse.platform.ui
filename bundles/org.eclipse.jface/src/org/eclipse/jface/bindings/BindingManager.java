@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -630,16 +633,24 @@ public final class BindingManager extends HandleObjectManager implements
 					if (winner == null) {
 						// warn once ... so as not to flood the logs
 						if (triggerConflicts.add(trigger)) {
-							StringBuffer buf = new StringBuffer(
-									"A conflict occurred for " + trigger + ":"); //$NON-NLS-1$ //$NON-NLS-2$
-							Iterator i = ((Collection) match).iterator();
-							while (i.hasNext()) {
-								buf.append('\n');
-								buf.append(i.next());
+							final StringWriter sw = new StringWriter();
+							final BufferedWriter buffer = new BufferedWriter(sw);
+							try {
+								buffer.append("A conflict occurred for "); //$NON-NLS-1$
+								buffer.append(trigger.toString());
+								buffer.append(':');
+								Iterator i = ((Collection) match).iterator();
+								while (i.hasNext()) {
+									buffer.newLine();
+									buffer.append(i.next().toString());
+								}
+								buffer.flush();
+							} catch (IOException e) {
+								// we should not get this
 							}
 							conflicts.add(new Status(IStatus.WARNING,
 									"org.eclipse.jface", //$NON-NLS-1$
-									buf.toString()));
+									sw.toString()));
 						}
 						if (DEBUG) {
 							Tracing.printTrace("BINDINGS", //$NON-NLS-1$

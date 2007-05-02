@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.bindings;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.util.Util;
 
@@ -376,23 +380,36 @@ public abstract class Binding {
 	 */
 	public String toString() {
 		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append("Binding("); //$NON-NLS-1$
-			stringBuffer.append(getTriggerSequence());
-			stringBuffer.append(",\n\t"); //$NON-NLS-1$
-			stringBuffer.append(command);
-			stringBuffer.append(",\n\t"); //$NON-NLS-1$
-			stringBuffer.append(schemeId);
-			stringBuffer.append(",\n\t"); //$NON-NLS-1$
-			stringBuffer.append(contextId);
-			stringBuffer.append(',');
-			stringBuffer.append(locale);
-			stringBuffer.append(',');
-			stringBuffer.append(platform);
-			stringBuffer.append(',');
-			stringBuffer.append((type == SYSTEM) ? "system" : "user"); //$NON-NLS-1$//$NON-NLS-2$
-			stringBuffer.append(')');
-			string = stringBuffer.toString();
+			
+			final StringWriter sw = new StringWriter();
+			final BufferedWriter stringBuffer = new BufferedWriter(sw);
+			try {
+				stringBuffer.append("Binding("); //$NON-NLS-1$
+				stringBuffer.append(getTriggerSequence().toString());
+				stringBuffer.append(',');
+				stringBuffer.newLine();
+				stringBuffer.append('\t');
+				stringBuffer.append(command==null?null:command.toString());
+				stringBuffer.append(',');
+				stringBuffer.newLine();
+				stringBuffer.append('\t');
+				stringBuffer.append(schemeId);
+				stringBuffer.append(',');
+				stringBuffer.newLine();
+				stringBuffer.append('\t');
+				stringBuffer.append(contextId);
+				stringBuffer.append(',');
+				stringBuffer.append(locale);
+				stringBuffer.append(',');
+				stringBuffer.append(platform);
+				stringBuffer.append(',');
+				stringBuffer.append((type == SYSTEM) ? "system" : "user"); //$NON-NLS-1$//$NON-NLS-2$
+				stringBuffer.append(')');
+				stringBuffer.flush();
+			} catch (IOException e) {
+				// shouldn't get this
+			}
+			string = sw.toString();
 		}
 
 		return string;

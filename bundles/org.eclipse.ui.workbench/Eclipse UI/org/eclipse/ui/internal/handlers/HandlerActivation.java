@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -177,18 +181,28 @@ final class HandlerActivation extends EvaluationResultCache implements
 	}
 
 	public final String toString() {
-		final StringBuffer buffer = new StringBuffer();
-
-		buffer.append("HandlerActivation(commandId="); //$NON-NLS-1$
-		buffer.append(commandId);
-		buffer.append(",\n\thandler="); //$NON-NLS-1$
-		buffer.append(handler);
-		buffer.append(",\n\texpression="); //$NON-NLS-1$
-		buffer.append(getExpression());
-		buffer.append(",sourcePriority="); //$NON-NLS-1$
-		buffer.append(getSourcePriority());
-		buffer.append(')');
-
-		return buffer.toString();
+		final StringWriter sw = new StringWriter();
+		final BufferedWriter buffer = new BufferedWriter(sw);
+		
+		try {
+			buffer.append("HandlerActivation(commandId="); //$NON-NLS-1$
+			buffer.append(commandId);
+			buffer.append(',');
+			buffer.newLine();
+			buffer.append("\thandler="); //$NON-NLS-1$
+			buffer.append(handler==null?null:handler.toString());
+			buffer.append(',');
+			buffer.newLine();
+			buffer.append("\texpression="); //$NON-NLS-1$
+			Expression exp = getExpression();
+			buffer.append(exp==null?null:exp.toString());
+			buffer.append(",sourcePriority="); //$NON-NLS-1$
+			buffer.append(Integer.toString(getSourcePriority()));
+			buffer.append(')');
+			buffer.flush();
+		} catch (IOException e) {
+			// we're a string buffer, there should be no IO exception
+		}
+		return sw.toString();
 	}
 }

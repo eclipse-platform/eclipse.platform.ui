@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.internal.commands.util.Util;
@@ -993,25 +997,39 @@ public final class Command extends NamedHandleObjectWithState implements
 	 */
 	public final String toString() {
 		if (string == null) {
-			final StringBuffer stringBuffer = new StringBuffer();
-			stringBuffer.append("Command("); //$NON-NLS-1$
-			stringBuffer.append(id);
-			stringBuffer.append(',');
-			stringBuffer.append(name);
-			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
-			stringBuffer.append(description);
-			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
-			stringBuffer.append(category);
-			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
-			stringBuffer.append(handler);
-			stringBuffer.append(",\n\t\t"); //$NON-NLS-1$
-			stringBuffer.append(parameters);
-			stringBuffer.append(',');
-			stringBuffer.append(returnType);
-			stringBuffer.append(',');
-			stringBuffer.append(defined);
-			stringBuffer.append(')');
-			string = stringBuffer.toString();
+			final StringWriter sw = new StringWriter();
+			final BufferedWriter buffer = new BufferedWriter(sw);
+			try {
+				buffer.append("Command("); //$NON-NLS-1$
+				buffer.append(id);
+				buffer.append(',');
+				buffer.append(name);
+				buffer.append(',');
+				buffer.newLine();
+				buffer.append("\t\t"); //$NON-NLS-1$
+				buffer.append(description);
+				buffer.append(',');
+				buffer.newLine();
+				buffer.append("\t\t"); //$NON-NLS-1$
+				buffer.append(category==null?null:category.toString());
+				buffer.append(',');
+				buffer.newLine();
+				buffer.append("\t\t"); //$NON-NLS-1$
+				buffer.append(handler==null?null:handler.toString());
+				buffer.append(',');
+				buffer.newLine();
+				buffer.append("\t\t"); //$NON-NLS-1$
+				buffer.append(parameters==null?null:parameters.toString());
+				buffer.append(',');
+				buffer.append(returnType==null?null:returnType.toString());
+				buffer.append(',');
+				buffer.append(""+defined); //$NON-NLS-1$
+				buffer.append(')');
+				buffer.flush();
+			} catch (IOException e) {
+				// should never get this exception
+			}
+			string = sw.toString();
 		}
 		return string;
 	}
