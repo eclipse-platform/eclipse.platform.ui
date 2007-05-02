@@ -131,7 +131,9 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		Image image = getImageRegistry().get(path);
 		if(image == null) {
 			ImageDescriptor descriptor = getImageDescriptor(path);
-			getImageRegistry().put(path, image = descriptor.createImage());
+			if(descriptor != null) {
+				getImageRegistry().put(path, image = descriptor.createImage());
+			}
 		}
 		return image;
 	} 
