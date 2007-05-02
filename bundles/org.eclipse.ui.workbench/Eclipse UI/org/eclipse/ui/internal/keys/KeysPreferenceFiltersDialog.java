@@ -76,7 +76,6 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite topComposite = (Composite) super.createDialogArea(parent);
-		super.createDialogArea(parent);
 		GridLayout layout = new GridLayout(1, false);
 		topComposite.setLayout(layout);
 		topComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
@@ -89,6 +88,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 
 		actionSetFilterCheckBox.setSelection(filterActionSet);
 		internalFilterCheckBox.setSelection(filterInternal);
+		applyDialogFont(topComposite);
 
 		return topComposite;
 	}
