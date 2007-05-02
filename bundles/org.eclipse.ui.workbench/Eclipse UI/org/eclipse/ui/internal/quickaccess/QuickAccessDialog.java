@@ -34,6 +34,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -166,17 +168,7 @@ public class QuickAccessDialog extends PopupDialog {
 		filterText.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == 0x0D) {
-					QuickAccessElement selectedElement = null;
-					String text = filterText.getText().toLowerCase();
-					if (table.getSelectionCount() == 1) {
-						QuickAccessEntry entry = (QuickAccessEntry) table
-								.getSelection()[0].getData();
-						selectedElement = entry == null ? null : entry.element;
-					}
-					close();
-					if (selectedElement != null) {
-						handleElementSelected(text, selectedElement);
-					}
+					handleSelection();
 					return;
 				} else if (e.keyCode == SWT.ARROW_DOWN) {
 					int index = table.getSelectionIndex();
@@ -188,8 +180,8 @@ public class QuickAccessDialog extends PopupDialog {
 					int index = table.getSelectionIndex();
 					if (index != -1 && index >= 1) {
 						table.setSelection(index - 1);
+						table.setFocus();
 					}
-					table.setFocus();
 				} else if (e.character == 0x1B) // ESC
 					close();
 			}
@@ -215,7 +207,8 @@ public class QuickAccessDialog extends PopupDialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		GridLayoutFactory.fillDefaults().margins(3, 2).applyTo(composite);
+		boolean isWin32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
+		GridLayoutFactory.fillDefaults().extendedMargins(isWin32 ? 0 : 3, 3, 2, 2).applyTo(composite);
 		Composite tableComposite = new Composite(composite, SWT.NONE);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(tableComposite);
 		TableColumnLayout tableColumnLayout = new TableColumnLayout();
@@ -301,6 +294,23 @@ public class QuickAccessDialog extends PopupDialog {
 				// do nothing
 			}
 		});
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseUp(MouseEvent e) {
+
+				if (table.getSelectionCount() < 1)
+					return;
+
+				if (e.button != 1)
+					return;
+
+				if (table.equals(e.getSource())) {
+					Object o= table.getItem(new Point(e.x, e.y));
+					TableItem selection= table.getSelection()[0];
+					if (selection.equals(o))
+						handleSelection();
+				}
+			}
+		});
 
 		table.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -308,18 +318,7 @@ public class QuickAccessDialog extends PopupDialog {
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
-				QuickAccessElement selectedElement = null;
-				String text = filterText.getText().toLowerCase();
-				if (table.getSelectionCount() == 1) {
-					QuickAccessEntry quickAccessEntry = (QuickAccessEntry) table
-							.getSelection()[0].getData();
-					selectedElement = quickAccessEntry == null ? null
-							: quickAccessEntry.element;
-				}
-				close();
-				if (selectedElement != null) {
-					handleElementSelected(text, selectedElement);
-				}
+				handleSelection();
 			}
 		});
 
@@ -483,10 +482,10 @@ public class QuickAccessDialog extends PopupDialog {
 					item.setData(entry);
 					item.setText(0, entry.provider.getName());
 					item.setText(1, entry.element.getLabel());
-// if (SWT.getPlatform().equals("wpf")) { //$NON-NLS-1$
-					item.setImage(1, entry.getImage(entry.element,
+					if (SWT.getPlatform().equals("wpf")) { //$NON-NLS-1$
+						item.setImage(1, entry.getImage(entry.element,
 							resourceManager));
-// }
+					}
 					index++;
 				}
 			}
@@ -755,6 +754,23 @@ public class QuickAccessDialog extends PopupDialog {
 					previousPicksList.remove(replacedElement);
 				}
 			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void handleSelection() {
+		QuickAccessElement selectedElement = null;
+		String text = filterText.getText().toLowerCase();
+		if (table.getSelectionCount() == 1) {
+			QuickAccessEntry entry = (QuickAccessEntry) table
+					.getSelection()[0].getData();
+			selectedElement = entry == null ? null : entry.element;
+		}
+		close();
+		if (selectedElement != null) {
+			handleElementSelected(text, selectedElement);
 		}
 	}
 

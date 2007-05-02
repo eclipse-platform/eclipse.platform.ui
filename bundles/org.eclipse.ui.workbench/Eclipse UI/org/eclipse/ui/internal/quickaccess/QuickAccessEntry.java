@@ -101,7 +101,7 @@ class QuickAccessEntry {
 			break;
 		}
 		Rectangle rect = textLayout.getBounds();
-		event.width += rect.width;
+		event.width += rect.width + 2;
 		event.height = Math.max(event.height, rect.height + 2);
 	}
 
@@ -133,7 +133,10 @@ class QuickAccessEntry {
 				if (providerMatchRegions.length > 0 && !firstInCategory) {
 					event.gc.setForeground(grayColor);
 				}
-				textLayout.draw(event.gc, event.x + 1, event.y + 1);
+				Rectangle availableBounds = ((TableItem) event.item).getTextBounds(event.index);
+				Rectangle requiredBounds = textLayout.getBounds();
+				textLayout.draw(event.gc, availableBounds.x + 1, availableBounds.y
+						+ (availableBounds.height - requiredBounds.height) / 2);
 			}
 			break;
 		case 1:
@@ -144,8 +147,12 @@ class QuickAccessEntry {
 				int[] matchRegion = elementMatchRegions[i];
 				textLayout.setStyle(boldStyle, matchRegion[0], matchRegion[1]);
 			}
-			textLayout.draw(event.gc, event.x + 3 + image.getBounds().width,
-					event.y + 2);
+			Rectangle availableBounds = ((TableItem) event.item).getTextBounds(event.index);
+			Rectangle requiredBounds = textLayout.getBounds();
+			textLayout.draw(event.gc, availableBounds.x + 1 + image.getBounds().width, availableBounds.y
+					+ (availableBounds.height - requiredBounds.height) / 2);
+//			textLayout.draw(event.gc, event.x + 3 + image.getBounds().width,
+//					event.y + 2);
 			break;
 		}
 		if (lastInCategory) {
@@ -161,29 +168,8 @@ class QuickAccessEntry {
 	 * @param event
 	 */
 	public void erase(Event event) {
-		Rectangle bounds = event.getBounds();
-		Color oldForeground = event.gc.getForeground();
-		final Table table = ((TableItem) event.item).getParent();
-		if ((event.detail & SWT.SELECTED) != 0) {
-			Color oldBackground = event.gc.getBackground();
-
-			final boolean hasFocus = table.isFocusControl();
-			Color background = hasFocus ? table.getDisplay()
-					.getSystemColor(SWT.COLOR_LIST_SELECTION) : table
-					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			event.gc.setBackground(background);
-			event.gc.setForeground(event.item.getDisplay().getSystemColor(
-					SWT.COLOR_LIST_SELECTION_TEXT));
-			event.gc.fillRectangle(bounds);
-			/* restore the old GC colors */
-			event.gc.setForeground(oldForeground);
-			event.gc.setBackground(oldBackground);
-			/* ensure that default selection is not drawn */
-			event.detail &= ~SWT.SELECTED;
-		}
-		event.detail &= ~SWT.FOREGROUND;
 		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			event.detail &= ~SWT.FOCUSED;
+			//event.detail &= ~SWT.FOCUSED;
 		}
 		event.detail &= ~SWT.FOREGROUND;
 	}
