@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -71,7 +72,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 *The set of label update listeners
 	 */
-	private HashSet fLabelListeners = new HashSet(); 
+	private ListenerList fLabelListeners = new ListenerList(); 
 	
 	/**
 	 * The map of ToolBars that have mouse tracker listeners associated with them:
@@ -90,7 +91,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	private boolean fUpdateLabel = true;
 	
 	/**
-	 * Set of windows that have been opened and that we have registerd selection listeners with
+	 * Set of windows that have been opened and that we have registered selection listeners with
 	 */
 	private HashSet fWindows = new HashSet();
 	
@@ -143,8 +144,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @param group the launch group
 	 * @return true if the <code>AbstractLaunchHistoryAction</code> was added as a listener, false otherwise
 	 */
-	public boolean addLaunchLabelUpdateListener(ILaunchLabelChangedListener listener) {
-		return fLabelListeners.add(listener);
+	public void addLaunchLabelUpdateListener(ILaunchLabelChangedListener listener) {
+		fLabelListeners.add(listener);
 	}
 	
 	/**
@@ -155,8 +156,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @return true if the action was removed from the listing of <code>AbstractLaunchHistoryAction</code> listeners,
 	 * false otherwise
 	 */
-	public boolean removeLaunchLabelChangedListener(ILaunchLabelChangedListener listener) {
-		return fLabelListeners.remove(listener);
+	public void removeLaunchLabelChangedListener(ILaunchLabelChangedListener listener) {
+		fLabelListeners.remove(listener);
 	}
 	
 	/**
@@ -185,8 +186,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		ILaunchGroup group = null;
 		ILaunchConfiguration config = null;
 		String label = null;
-		for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
-			group = ((ILaunchLabelChangedListener) iter.next()).getLaunchGroup();
+		Object[] listeners = fLabelListeners.getListeners();
+		for(int i = 0; i < listeners.length; i++) {
+			group = ((ILaunchLabelChangedListener)listeners[i]).getLaunchGroup();
 			if(group != null) {
 				if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
 					label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
@@ -208,8 +210,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * Notifies all registered listeners that the known labels have changed
 	 */
 	protected void notifyLabelChanged() {
-		for(Iterator iter = fLabelListeners.iterator(); iter.hasNext();) {
-			((ILaunchLabelChangedListener)iter.next()).labelChanged();
+		Object[] listeners = fLabelListeners.getListeners();
+		for(int i = 0; i < listeners.length; i++) {
+			((ILaunchLabelChangedListener)listeners[i]).labelChanged();
 		}
 	}
 	
