@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IFolderLayout;
@@ -221,8 +220,6 @@ public class PageLayout implements IPageLayout {
 	 * @since 3.0
 	 */
     ViewLayoutRec getViewLayoutRec(String id, boolean create) {
-        Assert.isTrue(getRefPart(id) != null || isFastViewId(id));
-
         ViewLayoutRec rec = (ViewLayoutRec) mapIDtoViewLayoutRec.get(id);
         if (rec == null && create) {
             rec = new ViewLayoutRec();

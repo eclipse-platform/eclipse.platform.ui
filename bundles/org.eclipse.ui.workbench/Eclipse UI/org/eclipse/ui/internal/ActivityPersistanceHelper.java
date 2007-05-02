@@ -234,12 +234,12 @@ final class ActivityPersistanceHelper {
             String preferenceKey = createPreferenceKey(activityId);
 			try {
                 IActivity activity = activityManager.getActivity(activityId);
-				if (store.isDefault(preferenceKey)
-						&& !store.contains(preferenceKey)) {
-					store
-							.setDefault(preferenceKey, activity
-									.isDefaultEnabled());
-				}
+                if ("".equals(store.getDefaultString(preferenceKey))) { //$NON-NLS-1$ // no override has been provided in the customization file
+                	store // the default should be whatever the XML specifies
+					.setDefault(preferenceKey, activity
+							.isDefaultEnabled());
+                	
+                }				
 
             } catch (NotDefinedException e) {
                 // can't happen - we're iterating over defined activities
