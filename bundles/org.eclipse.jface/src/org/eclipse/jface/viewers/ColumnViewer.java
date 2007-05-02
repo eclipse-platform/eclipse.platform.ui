@@ -53,6 +53,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	private ColumnViewerEditor viewerEditor;
 	
 	/* package */ boolean busy;
+	/* package */ boolean logWhenBusy = true; // initially true, set to false after logging for the first time
 
 	/**
 	 * Create a new instance of the receiver.
@@ -63,11 +64,20 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	/* package */ boolean isBusy() {
 		if (busy) {
-			Policy.getLog().log(
-				new Status(
-					IStatus.WARNING,
-					Policy.JFACE,
-					"Ignoring reentrant call while viewer is busy", new RuntimeException())); //$NON-NLS-1$
+			if (logWhenBusy) {
+				String message = "Ignored reentrant call while viewer is busy."; //$NON-NLS-1$
+				if (!Policy.DEBUG_LOG_REENTRANT_VIEWER_CALLS) {
+					// stop logging after the first
+					logWhenBusy = false;
+					message += " This is only logged once per viewer instance," + //$NON-NLS-1$
+							" but similar calls will still be ignored."; //$NON-NLS-1$
+				}
+				Policy.getLog().log(
+					new Status(
+						IStatus.WARNING,
+						Policy.JFACE,
+						message, new RuntimeException()));
+			}
 			return true;
 		}
 		return false;
