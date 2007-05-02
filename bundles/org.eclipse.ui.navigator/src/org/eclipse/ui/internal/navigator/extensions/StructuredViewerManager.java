@@ -85,6 +85,7 @@ public class StructuredViewerManager {
 	public StructuredViewerManager(Viewer aViewer) {
 		super();
 		viewer = aViewer;
+		refreshJob.setSystem(true);
 	}
 
 	/**
