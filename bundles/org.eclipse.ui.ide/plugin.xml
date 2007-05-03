@@ -276,7 +276,7 @@
   		<action
           class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:false"
           definitionId="org.eclipse.ui.navigate.removeFromWorkingSet"
-          icon="icons/full/elcl16/removefromworkset.gif"
+          icon="$nl$/icons/full/elcl16/removefromworkset.gif"
           id="removeFromWorkingSet"
           label="%RemoveFromWorkingSetAction.label"
           menubarPath="edit/additions"
@@ -292,7 +292,7 @@
 		<action
         class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:true"
         definitionId="org.eclipse.ui.navigate.addToWorkingSet"
-        icon="icons/full/elcl16/addtoworkset.gif"
+        icon="$nl$/icons/full/elcl16/addtoworkset.gif"
         id="addToWorkingSet"
         label="%AddToWorkingSetAction.label"
         menubarPath="edit/additions"
