@@ -22,7 +22,7 @@ public class SyncTests extends BenchmarkTest {
 	private static final int FILE_SIZE_VARIANCE = 0;
 	private static final int PROB_BINARY = 0;
 	
-	/* package */ static final String ADDED_GROUP_SUFFIX = "The CVS Tests Are Unreliable - Please Ignore";
+	private static final String ADDED_GROUP_SUFFIX = "AddedFiles";
 	private static final String REMOVED_GROUP_SUFFIX = "RemovedFiles";
 	private static final String MODIFIED_GROUP_SUFFIX = "ModifiedFiles";
     private static final String[] PERFORMANCE_GROUPS = new String[] {ADDED_GROUP_SUFFIX, MODIFIED_GROUP_SUFFIX, REMOVED_GROUP_SUFFIX};

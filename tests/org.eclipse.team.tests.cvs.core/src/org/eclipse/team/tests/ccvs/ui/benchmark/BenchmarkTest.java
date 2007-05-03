@@ -99,9 +99,9 @@ public abstract class BenchmarkTest extends EclipseTest {
 				meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this) + suffix);
                 Performance.getDefault().setComment(meter, Performance.EXPLAINS_DEGRADATION_COMMENT, "The current setup for the CVS test does not provide reliable timings. Only consistent test failures over time can be considered significant.");
 				groups.put(suffix, meter);
-				if (globalName != null && suffix.equals(SyncTests.ADDED_GROUP_SUFFIX)) {
-					perf.tagAsSummary(meter, suffix, Dimension.ELAPSED_PROCESS);
-				}
+//				if (globalName != null) {
+//					perf.tagAsSummary(meter, suffix, Dimension.ELAPSED_PROCESS);
+//				}
 			}
 		}
     }
