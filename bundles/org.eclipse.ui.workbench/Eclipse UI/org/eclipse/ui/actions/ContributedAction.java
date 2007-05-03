@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -199,9 +200,17 @@ public final class ContributedAction extends CommandAction {
 	}
 
 	private IPartListener getPartListener() {
-		final IWorkbenchPart currentPart = (IWorkbenchPart) appContext
-				.getVariable(ISources.ACTIVE_PART_NAME);
 		if (partListener == null) {
+			final IWorkbenchPartSite site = (IWorkbenchPartSite) appContext
+					.getVariable(ISources.ACTIVE_SITE_NAME);
+
+			final IWorkbenchPart currentPart;
+			if (site instanceof MultiPageEditorSite) {
+				currentPart = ((MultiPageEditorSite) site).getMultiPageEditor();
+			} else {
+				currentPart = site.getPart();
+			}
+
 			partListener = new IPartListener() {
 				public void partActivated(IWorkbenchPart part) {
 				}
