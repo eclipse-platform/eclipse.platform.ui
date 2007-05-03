@@ -48,14 +48,6 @@ public class Policy {
 	public static boolean DEBUG_DIALOG_NO_PARENT = DEFAULT;
 
 	/**
-	 * A flag to indicate whether reentrant viewer calls should always be
-	 * logged. If false, only the first reentrant call will cause a log entry.
-	 * 
-	 * @since 3.3
-	 */
-	public static boolean DEBUG_LOG_REENTRANT_VIEWER_CALLS = DEFAULT;
-	
-	/**
 	 * A flag to indicate whether actions are being traced.
 	 */
 	public static boolean TRACE_ACTIONS = DEFAULT;

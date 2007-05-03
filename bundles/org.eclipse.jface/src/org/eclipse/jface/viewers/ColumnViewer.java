@@ -18,6 +18,7 @@ package org.eclipse.jface.viewers;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -66,7 +67,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		if (busy) {
 			if (logWhenBusy) {
 				String message = "Ignored reentrant call while viewer is busy."; //$NON-NLS-1$
-				if (!Policy.DEBUG_LOG_REENTRANT_VIEWER_CALLS) {
+				if (!InternalPolicy.DEBUG_LOG_REENTRANT_VIEWER_CALLS) {
 					// stop logging after the first
 					logWhenBusy = false;
 					message += " This is only logged once per viewer instance," + //$NON-NLS-1$
