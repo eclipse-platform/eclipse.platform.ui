@@ -152,6 +152,45 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 	private static final String TRACING_COMPONENT = "NewKeysPref"; //$NON-NLS-1$
 
+	/**
+	 * @since 3.3
+	 * 
+	 */
+	private final class ResortColumn extends SelectionAdapter {
+		private final BindingComparator comparator;
+		private final TreeColumn treeColumn;
+		private final Tree tree;
+		private final int column;
+
+		/**
+		 * @param comparator
+		 * @param commandNameColumn
+		 * @param tree
+		 */
+		private ResortColumn(BindingComparator comparator,
+				TreeColumn treeColumn, Tree tree, int column) {
+			this.comparator = comparator;
+			this.treeColumn = treeColumn;
+			this.tree = tree;
+			this.column = column;
+		}
+
+		public void widgetSelected(SelectionEvent e) {
+			if (comparator.getSortColumn() == column) {
+				comparator.setAscending(!comparator.isAscending());
+			}
+			tree.setSortColumn(treeColumn);
+			tree.setSortDirection(comparator.isAscending() ? SWT.UP : SWT.DOWN);
+			comparator.setSortColumn(column);
+			try {
+				filteredTree.getViewer().getTree().setRedraw(false);
+				filteredTree.getViewer().refresh();
+			} finally {
+				filteredTree.getViewer().getTree().setRedraw(true);
+			}
+		}
+	}
+
 	private class ObservableSetContentProvider implements ITreeContentProvider {
 
 		private class KnownElementsSet extends ObservableSet {
@@ -1462,75 +1501,27 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				.setText(NewKeysPreferenceMessages.CommandNameColumn_Text);
 		tree.setSortColumn(commandNameColumn);
 		tree.setSortDirection(comparator.isAscending() ? SWT.UP : SWT.DOWN);
-		commandNameColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (comparator.getSortColumn() == BindingLabelProvider.COLUMN_COMMAND) {
-					comparator.setAscending(!comparator.isAscending());
-				}
-				tree.setSortColumn(commandNameColumn);
-				tree.setSortDirection(comparator.isAscending() ? SWT.UP
-						: SWT.DOWN);
-				comparator.setSortColumn(BindingLabelProvider.COLUMN_COMMAND);
-				filteredTree.getViewer().refresh();
+		commandNameColumn.addSelectionListener(new ResortColumn(comparator,
+				commandNameColumn, tree, BindingLabelProvider.COLUMN_COMMAND));
 
-			}
-
-		});
 		final TreeColumn triggerSequenceColumn = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE);
 		triggerSequenceColumn
 				.setText(NewKeysPreferenceMessages.TriggerSequenceColumn_Text);
-		triggerSequenceColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (comparator.getSortColumn() == BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE) {
-					comparator.setAscending(!comparator.isAscending());
-				}
-				tree.setSortColumn(triggerSequenceColumn);
-				tree.setSortDirection(comparator.isAscending() ? SWT.UP
-						: SWT.DOWN);
-				comparator
-						.setSortColumn(BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE);
-				filteredTree.getViewer().refresh();
-
-			}
-
-		});
+		triggerSequenceColumn.addSelectionListener(new ResortColumn(comparator,
+				triggerSequenceColumn, tree, BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE));
 
 		final TreeColumn whenColumn = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_WHEN);
 		whenColumn.setText(NewKeysPreferenceMessages.WhenColumn_Text);
-		whenColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (comparator.getSortColumn() == BindingLabelProvider.COLUMN_WHEN) {
-					comparator.setAscending(!comparator.isAscending());
-				}
-				tree.setSortColumn(whenColumn);
-				tree.setSortDirection(comparator.isAscending() ? SWT.UP
-						: SWT.DOWN);
-				comparator.setSortColumn(BindingLabelProvider.COLUMN_WHEN);
-				filteredTree.getViewer().refresh();
-
-			}
-
-		});
+		whenColumn.addSelectionListener(new ResortColumn(comparator,
+				whenColumn, tree, BindingLabelProvider.COLUMN_WHEN));
 
 		final TreeColumn categoryColumn = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_CATEGORY);
 		categoryColumn.setText(NewKeysPreferenceMessages.CategoryColumn_Text);
-		categoryColumn.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (comparator.getSortColumn() == BindingLabelProvider.COLUMN_CATEGORY) {
-					comparator.setAscending(!comparator.isAscending());
-				}
-				tree.setSortColumn(categoryColumn);
-				tree.setSortDirection(comparator.isAscending() ? SWT.UP
-						: SWT.DOWN);
-				comparator.setSortColumn(BindingLabelProvider.COLUMN_CATEGORY);
-				filteredTree.getViewer().refresh();
-
-			}
-
-		});
+		categoryColumn.addSelectionListener(new ResortColumn(comparator,
+				categoryColumn, tree, BindingLabelProvider.COLUMN_CATEGORY));
 
 		final TreeColumn userMarker = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_USER);
@@ -1541,7 +1532,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		viewer.setLabelProvider(new BindingLabelProvider());
 
 		viewer.setContentProvider(new ObservableSetContentProvider());
-		// viewer.setContentProvider(new UnorderedTreeContentProvider());
 
 		viewer.setComparator(comparator);
 
