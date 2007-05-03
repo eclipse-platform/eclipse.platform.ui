@@ -31,7 +31,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.HandlerService;
@@ -111,15 +110,15 @@ public final class ContributedAction extends CommandAction {
 
 		init(locator, commandId, null);
 
-		if (locator instanceof PartSite) {
-			updateSiteAssociations((PartSite) locator, commandId, actionId,
+		if (locator instanceof IWorkbenchPartSite) {
+			updateSiteAssociations((IWorkbenchPartSite) locator, commandId, actionId,
 					element);
 		}
 
 		setId(actionId);
 	}
 
-	private void updateSiteAssociations(PartSite site, String commandId,
+	private void updateSiteAssociations(IWorkbenchPartSite site, String commandId,
 			String actionId, IConfigurationElement element) {
 		IWorkbench workbench = (IWorkbench) site.getService(IWorkbench.class);
 		IWorkbenchWindow window = (IWorkbenchWindow) site
