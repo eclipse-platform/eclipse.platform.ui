@@ -132,9 +132,10 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 				if (delta != null && fIsInstalled) {
 					SafeFileChange fileChange= null;
 
+					final int flags= delta.getFlags();
 					switch (delta.getKind()) {
 						case IResourceDelta.CHANGED:
-							if ((IResourceDelta.ENCODING & delta.getFlags()) != 0) {
+							if ((IResourceDelta.ENCODING & flags) != 0) {
 								if (!isDisconnected() && !fCanBeSaved && isSynchronized()) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
@@ -143,8 +144,8 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 									};
 								}
 							}
-							if (fileChange == null && (IResourceDelta.CONTENT & delta.getFlags()) != 0) {
-								if (!isDisconnected() && !fCanBeSaved && !isSynchronized()) {
+							if (fileChange == null && (IResourceDelta.CONTENT & flags) != 0) {
+								if (!isDisconnected() && !fCanBeSaved && (!isSynchronized() || (IResourceDelta.REPLACED & flags) != 0)) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
 											handleFileContentChanged(false);
@@ -154,7 +155,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 							}
 							break;
 						case IResourceDelta.REMOVED:
-							if ((IResourceDelta.MOVED_TO & delta.getFlags()) != 0) {
+							if ((IResourceDelta.MOVED_TO & flags) != 0) {
 								final IPath path= delta.getMovedToPath();
 								fileChange= new SafeFileChange() {
 									protected void execute() throws Exception {
