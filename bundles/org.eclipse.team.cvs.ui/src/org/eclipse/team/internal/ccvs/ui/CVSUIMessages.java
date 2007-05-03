@@ -347,8 +347,6 @@ public class CVSUIMessages extends NLS {
 	public static String CommitSyncAction_releasePart;
 	public static String CommitSyncAction_cancelRelease;
 	public static String CompareWithRevisionAction_compare;
-	public static String CompareWithRevisionAction_noRevisions;
-	public static String CompareWithRevisionAction_noRevisionsLong;
 	public static String CompareWithRevisionAction_fetching;
 
 	public static String CompareWithTagAction_message;
