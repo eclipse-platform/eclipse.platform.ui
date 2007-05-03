@@ -63,7 +63,7 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		boolean reuseEditor = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
+				| ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).alwaysShowPinAction();
         return reuseEditor;
     }
 

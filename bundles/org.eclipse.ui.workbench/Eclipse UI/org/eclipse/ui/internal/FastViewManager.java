@@ -898,7 +898,7 @@ public class FastViewManager {
 	private void deferAnimations(boolean defer) {
 		if (defer) {
 			RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
-					.get(Animations.class)).createFeedback(wbw.getShell());
+					.get(Animations.KEY)).createFeedback(wbw.getShell());
 			batchAnimation = new AnimationEngine(feedback, 400);
 			return;
 		}
@@ -918,7 +918,7 @@ public class FastViewManager {
 		
 		// Create a 'one-shot' animation
 		RectangleAnimationFeedbackBase feedback = ((Animations) Tweaklets
-				.get(Animations.class)).createFeedback(wbw.getShell());
+				.get(Animations.KEY)).createFeedback(wbw.getShell());
 		oneShotAnimation = new AnimationEngine(feedback, 400);
 		return oneShotAnimation;
 	}

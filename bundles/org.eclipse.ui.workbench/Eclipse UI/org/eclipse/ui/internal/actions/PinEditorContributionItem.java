@@ -41,7 +41,7 @@ public class PinEditorContributionItem extends ActionContributionItem {
                             .getPreferenceStore();
 					reuseEditors = store
 							.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-							|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
+							|| ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).alwaysShowPinAction();
                     setVisible(reuseEditors);
                     getParent().markDirty();
                     if (window.getShell() != null
@@ -73,7 +73,7 @@ public class PinEditorContributionItem extends ActionContributionItem {
         IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		reuseEditors = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
+				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).alwaysShowPinAction();
         setVisible(reuseEditors);
         WorkbenchPlugin.getDefault().getPreferenceStore()
                 .addPropertyChangeListener(prefListener);

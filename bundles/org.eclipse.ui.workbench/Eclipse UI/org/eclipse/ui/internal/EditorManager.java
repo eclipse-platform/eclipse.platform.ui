@@ -221,7 +221,7 @@ public class EditorManager implements IExtensionChangeHandler {
 					IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 					if (store
 							.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-							|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction()) {
+							|| ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).alwaysShowPinAction()) {
 
 						IWorkbenchPartReference ref = editorPresentation
 								.getVisibleEditor();
@@ -601,7 +601,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * should be opened.
 	 */
 	private IEditorReference findReusableEditor(EditorDescriptor desc) {
-		return ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).findReusableEditor(page);
+		return ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).findReusableEditor(page);
 	}
 
 	/**
@@ -828,7 +828,7 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		IEditorReference reusableEditorRef = findReusableEditor(desc);
 		if (reusableEditorRef != null) {
-			return ((TabBehaviour) Tweaklets.get(TabBehaviour.class))
+			return ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
 					.reuseInternalEditor(page, this, editorPresentation, desc,
 							input, reusableEditorRef);
 		}

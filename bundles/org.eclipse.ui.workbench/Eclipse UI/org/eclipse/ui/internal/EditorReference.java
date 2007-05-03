@@ -389,7 +389,7 @@ public class EditorReference extends WorkbenchPartReference implements
                 .getPreferenceStore();
         boolean bUsePin = prefStore
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).alwaysShowPinAction();
+				|| ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).alwaysShowPinAction();
 
         if (!bUsePin) {
 			return descriptor;

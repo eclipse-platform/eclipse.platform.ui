@@ -169,7 +169,7 @@ public class NavigationHistory implements INavigationHistory {
     }
     
     private boolean isPerTabHistoryEnabled() {
-    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).isPerTabHistoryEnabled();
+    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).isPerTabHistoryEnabled();
     }
 
     /*

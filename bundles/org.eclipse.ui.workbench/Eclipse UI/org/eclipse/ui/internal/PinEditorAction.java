@@ -28,7 +28,7 @@ public class PinEditorAction extends ActiveEditorAction {
                 WorkbenchPartReference ref = (WorkbenchPartReference)source;
                 setChecked(ref.isPinned());
             } else if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
-        		if (((TabBehaviour)Tweaklets.get(TabBehaviour.class)).autoPinOnDirty()) {
+        		if (((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).autoPinOnDirty()) {
 					WorkbenchPartReference ref = (WorkbenchPartReference) source;
 					if (ref.isDirty()) {
 						ref.setPinned(true);

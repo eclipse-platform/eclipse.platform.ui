@@ -91,7 +91,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         createUseIPersistablePref(composite);
         createPromptWhenStillOpenPref(composite);
 		createEditorReuseGroup(composite);
-		((TabBehaviour)Tweaklets.get(TabBehaviour.class)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
+		((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).setPreferenceVisibility(editorReuseGroup, showMultipleEditorTabs);
 
         updateValidState();
 

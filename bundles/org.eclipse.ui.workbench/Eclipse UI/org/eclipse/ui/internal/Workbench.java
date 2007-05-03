@@ -1323,7 +1323,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				((GrabFocus) Tweaklets.get(GrabFocus.class))
+				((GrabFocus) Tweaklets.get(GrabFocus.KEY))
 						.init(getDisplay());
 			}
 		});
@@ -2690,7 +2690,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
 
-		((GrabFocus) Tweaklets.get(GrabFocus.class)).dispose();
+		((GrabFocus) Tweaklets.get(GrabFocus.KEY)).dispose();
 		
 		// Bring down all of the services.
 		serviceLocator.dispose();

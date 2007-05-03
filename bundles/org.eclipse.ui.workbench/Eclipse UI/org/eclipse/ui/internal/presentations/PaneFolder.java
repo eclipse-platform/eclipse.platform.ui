@@ -227,7 +227,7 @@ public final class PaneFolder {
         {
             tabFolder = new CTabFolder(parent, flags);
             
-			tabFolder.setMRUVisible(((TabBehaviour)Tweaklets.get(TabBehaviour.class)).enableMRUTabVisibility());
+			tabFolder.setMRUVisible(((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).enableMRUTabVisibility());
 
             // Create a proxy control to measure the title area of the tab folder
             titleAreaProxy = new Composite(tabFolder, SWT.NO_BACKGROUND);

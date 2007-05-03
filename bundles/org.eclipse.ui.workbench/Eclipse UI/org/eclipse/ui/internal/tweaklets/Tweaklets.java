@@ -27,15 +27,56 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  */
 public class Tweaklets {
+	
+	public static class TweakKey {
+		Class tweakClass;
+
+		/**
+		 * @param tweakClass
+		 */
+		public TweakKey(Class tweakClass) {
+			this.tweakClass = tweakClass;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#hashCode()
+		 */
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result
+					+ ((tweakClass == null) ? 0 : tweakClass.hashCode());
+			return result;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			final TweakKey other = (TweakKey) obj;
+			if (tweakClass == null) {
+				if (other.tweakClass != null)
+					return false;
+			} else if (!tweakClass.equals(other.tweakClass))
+				return false;
+			return true;
+		}
+	}
 
 	private static Map defaults = new HashMap();
 	private static Map tweaklets = new HashMap();
 
-	public static void setDefault(Class definition, Object implementation) {
+	public static void setDefault(TweakKey definition, Object implementation) {
 		defaults.put(definition, implementation);
 	}
 	
-	public static Object get(Class definition) {
+	public static Object get(TweakKey definition) {
 		Object result = tweaklets.get(definition);
 		if (result == null) {
 			result = createTweaklet(definition);
@@ -52,7 +93,7 @@ public class Tweaklets {
 	 * @param definition
 	 * @return
 	 */
-	private static Object getDefault(Class definition) {
+	private static Object getDefault(TweakKey definition) {
 		return defaults.get(definition);
 	}
 
@@ -60,12 +101,12 @@ public class Tweaklets {
 	 * @param definition
 	 * @return
 	 */
-	private static Object createTweaklet(Class definition) {
+	private static Object createTweaklet(TweakKey definition) {
 		IConfigurationElement[] elements = Platform
 				.getExtensionRegistry()
 				.getConfigurationElementsFor("org.eclipse.ui.internalTweaklets"); //$NON-NLS-1$
 		for (int i = 0; i < elements.length; i++) {
-			if (definition.getName().equals(
+			if (definition.tweakClass.getName().equals(
 					elements[i].getAttribute("definition"))) { //$NON-NLS-1$
 				try {
 					Object tweaklet = elements[i].createExecutableExtension("implementation"); //$NON-NLS-1$

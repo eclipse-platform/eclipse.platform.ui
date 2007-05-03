@@ -584,7 +584,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
         if (composite!=null && composite.isVisible()
-        		&& !((GrabFocus)Tweaklets.get(GrabFocus.class)).grabFocusAllowed(part)) {
+        		&& !((GrabFocus)Tweaklets.get(GrabFocus.KEY)).grabFocusAllowed(part)) {
         	return;
         }
         
@@ -807,7 +807,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return;
 		}
         
-        if (!((GrabFocus)Tweaklets.get(GrabFocus.class)).grabFocusAllowed(part)) {
+        if (!((GrabFocus)Tweaklets.get(GrabFocus.KEY)).grabFocusAllowed(part)) {
         	return;
         }
 
@@ -1034,7 +1034,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Performs showing of the view in the given mode.
      */
     private void busyShowView(IViewPart part, int mode) {
-        if (!((GrabFocus)Tweaklets.get(GrabFocus.class)).grabFocusAllowed(part)) {
+        if (!((GrabFocus)Tweaklets.get(GrabFocus.KEY)).grabFocusAllowed(part)) {
         	return;
         }
         if (mode == VIEW_ACTIVATE) {
@@ -2607,7 +2607,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // If an editor already exists for the input, use it.
 		IEditorPart editor = null;
 		// Reuse an existing open editor, unless we are in "new editor tab management" mode
-		editor = getEditorManager().findEditor(editorID, input, ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).getReuseEditorMatchFlags(matchFlags));
+		editor = getEditorManager().findEditor(editorID, input, ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).getReuseEditorMatchFlags(matchFlags));
         if (editor != null) {
             if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorID)) {
                 if (editor.isDirty()) {
@@ -3799,7 +3799,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * 
      */
     public int getEditorReuseThreshold() {
-    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.class)).getEditorReuseThreshold();
+    	return ((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).getEditorReuseThreshold();
     }
 
     /**

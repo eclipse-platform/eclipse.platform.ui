@@ -22,6 +22,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.tweaklets.Tweaklets.TweakKey;
 
 /**
  * @since 3.3
@@ -29,8 +30,10 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
  */
 public abstract class TabBehaviour {
 
+	public static TweakKey KEY = new Tweaklets.TweakKey(TabBehaviour.class);
+
 	static {
-		Tweaklets.setDefault(TabBehaviour.class, new TabBehaviourMRU());
+		Tweaklets.setDefault(TabBehaviour.KEY, new TabBehaviourMRU());
 	}
 
 	/**
