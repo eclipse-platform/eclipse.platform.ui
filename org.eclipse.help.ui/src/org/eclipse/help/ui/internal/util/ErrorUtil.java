@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Utiliy class for common error displaying tasks.
+ * Utility class for common error displaying tasks.
  */
 public class ErrorUtil implements IErrorUtil {
 
@@ -40,7 +40,7 @@ public class ErrorUtil implements IErrorUtil {
 	}
 
 	/**
-	 * Immidiately displays error dialog with a given string
+	 * Immediately displays error dialog with a given string
 	 * 
 	 * @param msg
 	 *            error message to display and log.
@@ -58,7 +58,7 @@ public class ErrorUtil implements IErrorUtil {
 	}
 
 	/**
-	 * Immidiately displays an Information dialog with a given string
+	 * Immediately displays an Information dialog with a given string
 	 * 
 	 * @param msg
 	 *            error message to display.
@@ -76,7 +76,7 @@ public class ErrorUtil implements IErrorUtil {
 	}
 
 	/**
-	 * Immidiately displays a Question dialog with a given string (question).
+	 * Immediately displays a Question dialog with a given string (question).
 	 * 
 	 * @return which button(Yes/No) was pressed by user
 	 */
