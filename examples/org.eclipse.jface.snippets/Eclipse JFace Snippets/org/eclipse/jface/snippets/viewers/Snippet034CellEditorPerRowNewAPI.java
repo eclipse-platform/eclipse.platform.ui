@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Tom Schindl - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
+ *     Wayne Beaton - bug 185540
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -16,16 +17,12 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -135,66 +132,6 @@ public class Snippet034CellEditorPerRowNewAPI {
 
 		public String toString() {
 			return "Special Item " + this.counter;
-		}
-	}
-	
-	public class DelegatingEditor extends CellEditor {
-		
-		private StructuredViewer viewer;
-		
-		private CellEditor delegatingTextEditor;
-		
-		private CellEditor delegatingDropDownEditor;
-		
-		private CellEditor activeEditor;
-		
-		public DelegatingEditor(StructuredViewer viewer, Composite parent) {
-			super(parent);
-			this.viewer = viewer;
-			this.delegatingTextEditor = new TextCellEditor(parent);
-			
-			String[] elements = new String[10];
-			
-			for (int i = 0; i < 10; i++) {
-				elements[i] = i+"";
-			}
-			
-			this.delegatingDropDownEditor = new ComboBoxCellEditor(parent,elements);
-		}
-		
-		protected Control createControl(Composite parent) {
-			return null;
-		}
-
-		protected Object doGetValue() {
-			return activeEditor.getValue();
-		}
-
-		protected void doSetFocus() {
-			activeEditor.setFocus();
-		}
-
-		protected void doSetValue(Object value) {
-			if( ((IStructuredSelection)this.viewer.getSelection()).getFirstElement() instanceof MyModel2 ) {
-				activeEditor = delegatingDropDownEditor;
-			} else {
-				activeEditor = delegatingTextEditor;
-			}
-			activeEditor.setValue(value);
-		}
-		
-		public void deactivate() {
-			if( activeEditor != null ) {
-				activeEditor.getControl().setVisible(false);
-			}
-		}
-		
-		public void dispose() {
-			
-		}
-		
-		public Control getControl() {
-			return activeEditor.getControl();
 		}
 	}
 	
