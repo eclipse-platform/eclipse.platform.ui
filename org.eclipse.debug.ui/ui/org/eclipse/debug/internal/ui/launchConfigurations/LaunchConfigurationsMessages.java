@@ -55,7 +55,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationEditDialog_1;
 	public static String LaunchConfigurationTabGroupViewer_0;
 	public static String LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8;
-	public static String LaunchConfigurationDialog_Dele_te_14;
 	public static String LaunchConfigurationDialog_Discard_changes__38;
 	public static String LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37;
 	public static String LaunchConfigurationDialog_Error_19;
@@ -65,7 +64,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog_Launch_Configuration_Error_46;
 	public static String LaunchConfigurationDialog_Launch_Configurations_18;
 	public static String LaunchConfigurationDialog_Name_required_for_launch_configuration_11;
-	public static String LaunchConfigurationDialog_Ne_w_13;
 	public static String LaunchConfigurationDialog_No_33;
 	public static String LaunchConfigurationDialog_Ready_to_launch_2;
 	public static String LaunchConfigurationDialog_Save_changes__31;

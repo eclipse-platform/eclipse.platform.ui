@@ -81,11 +81,4 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_5;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#getText()
-	 */
-	public String getText() {
-		return LaunchConfigurationsMessages.DuplicateLaunchConfigurationAction__Duplicate_1;
-	}
-
 }

@@ -111,10 +111,4 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_1;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#getText()
-	 */
-	public String getText() {
-		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Dele_te_14;
-	}
 }

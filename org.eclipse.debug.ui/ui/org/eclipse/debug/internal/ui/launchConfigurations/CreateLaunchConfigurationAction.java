@@ -112,10 +112,4 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 		return LaunchConfigurationsMessages.LaunchConfigurationsDialog_0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#getText()
-	 */
-	public String getText() {
-		return LaunchConfigurationsMessages.LaunchConfigurationDialog_Ne_w_13;
-	}
 }
