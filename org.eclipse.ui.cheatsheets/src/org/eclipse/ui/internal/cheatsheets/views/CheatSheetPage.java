@@ -60,8 +60,6 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 		CheatSheetStopWatch.startStopWatch("CheatSheetPage.createPart()"); //$NON-NLS-1$		
 		super.createPart(parent);
 		HyperlinkGroup hyperlinkGroup = toolkit.getHyperlinkGroup();
-		hyperlinkGroup.setActiveBackground(null);
-		hyperlinkGroup.setBackground(null);
 		hyperlinkGroup.setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
 		
 		CheatSheetStopWatch
