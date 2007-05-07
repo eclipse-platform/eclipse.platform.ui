@@ -180,6 +180,10 @@ A.active{
 	background:DarkBlue;
 }
 
+A.nolink {
+	color:#808080;
+}
+
 <% 
 } else {
 %>
@@ -188,16 +192,17 @@ A.active{
 	background:Highlight;
 }
 
+A.nolink {
+	color:GrayText;
+}
+
 <%
 }
 %>
 
 A.nolink {
 	text-decoration:none; 
-}
-
-A.nolink:link, A.nolink:visited {
-	color:WindowText;
+	font-weight:bold;
 }
 
 A.nolink:hover {
