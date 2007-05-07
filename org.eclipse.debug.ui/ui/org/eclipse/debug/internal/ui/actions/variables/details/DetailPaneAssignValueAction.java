@@ -47,7 +47,44 @@ public class DetailPaneAssignValueAction extends Action{
 	private IViewSite fViewSite;
 	private ITextViewer fTextViewer;
 	private IStructuredSelection fCurrentSelection;
-
+	
+	/**
+	 * Attempts to evaluate the given string expression and assign the resulting value to the
+	 * specified variable.  Displays error dialogs to the user if a problem is encountered.
+	 * 
+	 * @see DetailPaneAssignValueAction
+	 * @see org.eclipse.debug.internal.ui.elements.adapters.DefaultVariableCellModifier
+	 * 
+	 * @param shell the shell to use to open dialogs
+	 * @param variable the variable that is getting a new value
+	 * @param newValueExpression the expression to evaluate and set as the new value
+	 * @since 3.3.0 
+	 */
+	public static void assignValue(Shell shell, IVariable variable, String newValueExpression){
+		String modelIdentifier = variable.getModelIdentifier();
+		IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(modelIdentifier);
+		if (editor != null) {
+		    if (editor.saveVariable(variable, newValueExpression, shell)) {
+		        // If we successfully delegate to an editor which performs the save,
+		        // don't do any more work.
+		        return;
+		    }
+		}
+		
+		try {
+		    // If we failed to delegate to anyone, perform the default assignment.
+			if (variable.verifyValue(newValueExpression)) {
+				variable.setValue(newValueExpression);
+			} else {
+			    if (shell != null) {
+			        DebugUIPlugin.errorDialog(shell, ActionMessages.DetailPaneAssignValueAction_2, MessageFormat.format(ActionMessages.DetailPaneAssignValueAction_3, new String[] {newValueExpression, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.DetailPaneAssignValueAction_4));  //  
+			    }
+			}
+		} catch (DebugException e) {
+            MessageDialog.openError(shell, ActionMessages.DetailPaneAssignValueAction_0, e.getStatus().getMessage());
+		}
+	}
+	
 	public DetailPaneAssignValueAction(ITextViewer textViewer, IViewSite viewSite) {
 		super(ActionMessages.DetailPaneAssignValueAction_1);
 		
@@ -101,29 +138,7 @@ public class DetailPaneAssignValueAction extends Action{
 			activeShell= window.getShell();
 		}
 		
-		String modelIdentifier = variable.getModelIdentifier();
-		IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(modelIdentifier);
-		if (editor != null) {
-		    if (editor.saveVariable(variable, value, activeShell)) {
-		        // If we successfully delegate to an editor which performs the save,
-		        // don't do any more work.
-		        return;
-		    }
-		}
-		
-		try {
-		    // If we failed to delegate to anyone, perform the default assignment.
-			if (variable.verifyValue(value)) {
-				variable.setValue(value);
-			} else {
-			    if (activeShell != null) {
-			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.DetailPaneAssignValueAction_2, MessageFormat.format(ActionMessages.DetailPaneAssignValueAction_3, new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.DetailPaneAssignValueAction_4));  //  
-			    }
-			}
-		} catch (DebugException e) {
-            MessageDialog.openError(activeShell, ActionMessages.DetailPaneAssignValueAction_0, e.getStatus().getMessage());
-		}
-		
+		assignValue(activeShell, variable, value);
 	}
 	
 	/* (non-Javadoc)

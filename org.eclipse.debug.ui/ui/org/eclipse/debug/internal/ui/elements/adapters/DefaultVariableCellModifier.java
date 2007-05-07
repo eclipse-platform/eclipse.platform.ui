@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
-import org.eclipse.debug.internal.ui.VariableValueEditorManager;
-import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneAssignValueAction;
 import org.eclipse.jface.viewers.ICellModifier;
 
 /**
@@ -61,20 +60,11 @@ public class DefaultVariableCellModifier implements ICellModifier {
         if (!value.equals(oldValue)) {
         	if (VariableColumnPresentation.COLUMN_VARIABLE_VALUE.equals(property)) {
 				if (element instanceof IVariable) {
-					IVariable variable = (IVariable) element;
-					IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(variable.getModelIdentifier());
 					if (value instanceof String) {
-						value = DefaultLabelProvider.encodeEsacpedChars((String)value);
-					}
-					if (editor != null) {
-						if  (editor.saveVariable(variable, (String) value, DebugUIPlugin.getShell())) {
-							return;
-						}
-					}
-					try {
-						variable.setValue((String) value);
-					} catch (DebugException e) {
-						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), Messages.VariableColumnPresentation_4, Messages.VariableColumnPresentation_5, e.getStatus());
+						// The value column displays special characters escaped, so encode the string with any special characters escaped properly
+						String valueExpression = DefaultLabelProvider.encodeEsacpedChars((String)value);
+						IVariable variable = (IVariable) element;
+						DetailPaneAssignValueAction.assignValue(DebugUIPlugin.getShell(), variable, valueExpression);						
 					}
 				}
 	        }
