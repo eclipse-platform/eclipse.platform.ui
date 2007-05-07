@@ -21,9 +21,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationSelectionDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutSelectionDialog;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
@@ -32,11 +32,9 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.dialogs.ListDialog;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -211,11 +209,7 @@ public final class ContextRunner {
 	 * @return true if something was launched, false otherwise
 	 */
 	protected boolean showConfigurationSelectionDialog(List configurations, String mode) {
-		ListDialog lsd = new ListDialog(DebugUIPlugin.getShell());
-		lsd.setContentProvider(new ArrayContentProvider());
-		lsd.setLabelProvider(new DefaultLabelProvider());
-		lsd.setMessage(ContextMessages.ContextRunner_8);
-		lsd.setTitle(ContextMessages.ContextRunner_9);
+		LaunchConfigurationSelectionDialog lsd = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell());
 		lsd.setInput(configurations);
 		if(lsd.open() == IDialogConstants.OK_ID) {
 			ILaunchConfiguration config = (ILaunchConfiguration) lsd.getResult()[0];

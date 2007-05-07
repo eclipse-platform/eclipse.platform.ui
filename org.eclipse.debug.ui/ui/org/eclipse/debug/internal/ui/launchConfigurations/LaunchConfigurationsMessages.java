@@ -80,6 +80,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_Error_1;
 	public static String LaunchConfigurationsDialog_Warning_2;
 	public static String LaunchConfigurationsDialog_Information_3;
+	public static String LaunchConfigurationSelectionDialog_0;
+	public static String LaunchConfigurationSelectionDialog_1;
 	public static String LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3;
 
 	public static String LaunchConfigurationTabGroupViewer_14;
