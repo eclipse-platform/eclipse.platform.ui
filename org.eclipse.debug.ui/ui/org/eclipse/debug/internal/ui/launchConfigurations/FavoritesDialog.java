@@ -154,7 +154,7 @@ public class FavoritesDialog extends TrayDialog {
 		public Object[] getElements(Object inputElement) {
 			ILaunchConfiguration[] all = null;
 			try {
-				all = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
+				all = LaunchConfigurationManager.filterConfigs(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations());
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
 				return new ILaunchConfiguration[0];
