@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 178874 Test failure against CVS 1.11.22
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
@@ -181,7 +182,10 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 		}
 		
 		// Determine if we need to send the contents.
-		boolean sendContents = mFile.exists() && mFile.isModified(monitor);
+		// If the file is unmodified since a conflict, we need to not send the
+		// contents so that the server rejects the file (bug 178874).
+		boolean sendContents = mFile.exists() && mFile.isModified(monitor)
+			&& !mFile.getSyncInfo().isNeedsMerge(mFile.getTimeStamp());
 		if (ResourceSyncInfo.isDeletion(syncBytes)) {
 		    sendEntryLineToServer(mFile, syncBytes);
 		} else if (sendContents) {
