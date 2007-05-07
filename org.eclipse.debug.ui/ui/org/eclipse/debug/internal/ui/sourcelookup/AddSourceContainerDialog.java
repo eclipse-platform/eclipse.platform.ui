@@ -149,7 +149,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
             ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
             if (browser != null) {
                 ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
-                if (results != null) {
+                if (results != null && results.length > 0) {
                     fSourceContainerViewer.addEntries(results);
                 }
             }

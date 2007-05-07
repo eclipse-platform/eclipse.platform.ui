@@ -113,6 +113,7 @@ public interface IDebugHelpContextIds {
 	public static final String SELECT_LAUNCHERS_DIALOG = PREFIX + "select_launchers_dialog"; //$NON-NLS-1$
 	public static final String SELECT_RESOURCES_TO_SAVE_DIALOG = PREFIX + "select_resources_to_save_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCH_METHOD_DIALOG = PREFIX + "select_launch_method_dialog"; //$NON-NLS-1$
+	public static final String SELECT_DIRECTORY_SOURCE_CONTAINER_DIALOG = PREFIX + "select_directory_source_container_dialog"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$

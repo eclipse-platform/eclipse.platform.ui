@@ -15,6 +15,7 @@ import java.io.File;
 
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * The dialog for selecting the external folder for which a source container will be created.
@@ -70,7 +72,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	 * Creates a dialog to edit file system folder.
 	 *  
 	 * @param shell shell
-	 * @param directory directory to edit or empyy string
+	 * @param directory directory to edit or empty string
 	 * @param searchSubfolders whether the search subfolders button should be checked
 	 * @param newContainer 
 	 */
@@ -186,6 +188,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		fDirText.setText(fDirectory);
 		fSubfoldersButton.setSelection(fSearchSubfolders);
 		validate();
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(c, IDebugHelpContextIds.SELECT_DIRECTORY_SOURCE_CONTAINER_DIALOG);
 		return c;
 	}
 
