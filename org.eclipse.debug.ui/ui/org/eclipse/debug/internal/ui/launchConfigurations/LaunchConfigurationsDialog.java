@@ -1269,13 +1269,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			fProgressMonitorPart.getParent().setVisible(true);
 			fProgressMonitorCancelButton.setFocus();
 			fActiveRunningOperations++;
+			
+		//do work here collecting enabled states, otherwise to get these states we would need to 
+		//perform the validation of the dialog again, which is expensive and would cause flashing of widgets.
+			Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
+			boolean[] prev = new boolean[children.length+2];
+			prev[0] = getTabViewer().getApplyButton().isEnabled();
+			prev[1] = getTabViewer().getRevertButton().isEnabled();
+			for(int i = 0; i < children.length; i++) {
+				prev[i+2] = children[i].isEnabled();
+			}
 			try {
-				updateRunnnableControls(false);
+				updateRunnnableControls(false, prev);
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
 			} 
 			finally {
 				fActiveRunningOperations--;
-				updateRunnnableControls(true);
+				updateRunnnableControls(true, prev);
 				if (getShell() != null) {
 					fProgressMonitorPart.getParent().setVisible(false);
 					fProgressMonitorPart.removeFromCancelComponent(fProgressMonitorCancelButton);
@@ -1293,17 +1303,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	/**
 	 * Updates the enablement of the runnable controls to appear disabled as a job is running
 	 * @param enabled the desired enable status of the dialog area, revert//apply buttons, and
+	 * @param prev the previous settings for the apply and revert buttons to be reset to, only takes effect if enable is set to true
 	 * any children of the button bar
-	 * @since 3.3
+	 * @since 3.3.0
 	 */
-	private void updateRunnnableControls(boolean enabled) {
+	private void updateRunnnableControls(boolean enabled, boolean[] prev) {
+		getTabViewer().getApplyButton().setEnabled(enabled ? prev[0] : enabled);
+		getTabViewer().getRevertButton().setEnabled(enabled ? prev[1] : enabled);
 		//the arrangement never differs: button comp has one child that holds all the buttons
 		Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
 		for(int i = 0; i < children.length; i++) {
-			children[i].setEnabled(enabled);
+			children[i].setEnabled(enabled ? prev[i+2] : enabled);
 		}
-		getTabViewer().getApplyButton().setEnabled(enabled);
-		getTabViewer().getRevertButton().setEnabled(enabled);
 		getDialogArea().setEnabled(enabled);
 	}
 	
