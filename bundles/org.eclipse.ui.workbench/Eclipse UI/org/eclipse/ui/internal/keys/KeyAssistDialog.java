@@ -162,15 +162,18 @@ final class KeyAssistDialog extends PopupDialog {
 	KeyAssistDialog(final IWorkbench workbench,
 			final WorkbenchKeyboard associatedKeyboard,
 			final KeyBindingState associatedState) {
-		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false, false, false, null, null);
+		super((Shell) null, PopupDialog.INFOPOPUP_SHELLSTYLE, true, false,
+				false, false, null, null);
 
 		this.activityManager = workbench.getActivitySupport()
 				.getActivityManager();
-		this.bindingService = (IBindingService) workbench.getService(IBindingService.class);
-		this.commandService = (ICommandService) workbench.getService(ICommandService.class);
+		this.bindingService = (IBindingService) workbench
+				.getService(IBindingService.class);
+		this.commandService = (ICommandService) workbench
+				.getService(ICommandService.class);
 		this.keyBindingState = associatedState;
 		this.workbenchKeyboard = associatedKeyboard;
-		
+
 		this.setInfoText(getKeySequenceString());
 	}
 
@@ -339,7 +342,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 * Returns a string representing the key sequence used to open this dialog.
 	 * 
 	 * @return the string describing the key sequence, or <code>null</code> if
-	 * it cannot be determined.
+	 *         it cannot be determined.
 	 */
 	private String getKeySequenceString() {
 		final Command command = commandService
@@ -394,9 +397,9 @@ final class KeyAssistDialog extends PopupDialog {
 	}
 
 	/**
-	 * Creates the content area for the key assistant. This creates a table
-	 * and places it inside the composite. The composite will contain a list of
-	 * all the key bindings.
+	 * Creates the content area for the key assistant. This creates a table and
+	 * places it inside the composite. The composite will contain a list of all
+	 * the key bindings.
 	 * 
 	 * @param parent
 	 *            The parent composite to contain the dialog area; must not be
@@ -405,7 +408,7 @@ final class KeyAssistDialog extends PopupDialog {
 	protected final Control createDialogArea(final Composite parent) {
 		// First, register the shell type with the context support
 		registerShellType();
-		
+
 		// Create a composite for the dialog area.
 		final Composite composite = new Composite(parent, SWT.NONE);
 		final GridLayout compositeLayout = new GridLayout();
@@ -459,7 +462,7 @@ final class KeyAssistDialog extends PopupDialog {
 	private final void createTableDialogArea(final Composite parent,
 			final SortedMap partialMatches) {
 		// Layout the table.
-		completionsTable = new Table(parent, SWT.FULL_SELECTION	| SWT.SINGLE);
+		completionsTable = new Table(parent, SWT.FULL_SELECTION | SWT.SINGLE);
 		final GridData gridData = new GridData(GridData.FILL_BOTH);
 		completionsTable.setLayoutData(gridData);
 		completionsTable.setBackground(parent.getBackground());
@@ -512,10 +515,9 @@ final class KeyAssistDialog extends PopupDialog {
 	 */
 	private final void editKeyBinding() {
 		// Create a preference dialog on the keys preference page.
-		final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
-		final PreferenceDialog dialog = 
-			PreferencesUtil.createPreferenceDialogOn(
-					getShell(),keysPageId, null ,binding);
+		final String keysPageId = "org.eclipse.ui.preferencePages.NewKeys"; //$NON-NLS-1$
+		final PreferenceDialog dialog = PreferencesUtil
+				.createPreferenceDialogOn(getShell(), keysPageId, null, binding);
 
 		/*
 		 * Forget the remembered state (so we don't get stuck editing
@@ -540,7 +542,7 @@ final class KeyAssistDialog extends PopupDialog {
 				workbenchKeyboard.executeCommand(binding, trigger);
 			} catch (final CommandException e) {
 				workbenchKeyboard.logException(e, binding
-                        .getParameterizedCommand());
+						.getParameterizedCommand());
 			}
 		}
 	}
@@ -639,7 +641,6 @@ final class KeyAssistDialog extends PopupDialog {
 		return super.open();
 	}
 
-
 	/**
 	 * Registers the shell as the same type as its parent with the context
 	 * support. This ensures that it does not modify the current state of the
@@ -648,7 +649,8 @@ final class KeyAssistDialog extends PopupDialog {
 	private final void registerShellType() {
 		final Shell shell = getShell();
 		final IContextService contextService = (IContextService) keyBindingState
-				.getAssociatedWindow().getWorkbench().getService(IContextService.class);
+				.getAssociatedWindow().getWorkbench().getService(
+						IContextService.class);
 		contextService.registerShell(shell, contextService
 				.getShellType((Shell) shell.getParent()));
 	}
