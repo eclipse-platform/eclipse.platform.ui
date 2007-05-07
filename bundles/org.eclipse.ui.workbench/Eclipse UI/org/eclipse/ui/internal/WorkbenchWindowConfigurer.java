@@ -323,7 +323,7 @@ public final class WorkbenchWindowConfigurer implements
         windowTitle = title;
         Shell shell = window.getShell();
         if (shell != null && !shell.isDisposed()) {
-            shell.setText(TextProcessor.process(title, "-"));	 //$NON-NLS-1$
+            shell.setText(TextProcessor.process(title, WorkbenchWindow.TEXT_DELIMITERS));
         }
     }
 

@@ -53,6 +53,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CBanner;
@@ -242,6 +243,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private ListenerList genericPropertyListeners = new ListenerList();
 
 	private ShellPool detachedWindowShells;
+	
+	static final String TEXT_DELIMITERS = TextProcessor.getDefaultDelimiters() + "-"; //$NON-NLS-1$
 
 	// constants for shortcut bar group ids
 	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
@@ -909,7 +912,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		String title = getWindowConfigurer().basicGetTitle();
 		if (title != null) {
-			shell.setText(title);
+			shell.setText(TextProcessor.process(title, TEXT_DELIMITERS)); 
 		}
 
 		final IWorkbench workbench = getWorkbench();
