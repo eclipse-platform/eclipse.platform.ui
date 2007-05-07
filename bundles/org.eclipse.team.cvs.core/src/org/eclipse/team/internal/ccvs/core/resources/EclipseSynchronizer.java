@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 181546 [Sync Info] Eclipse writes Entries-less metadata in recreated pruned dir
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
@@ -1872,15 +1873,20 @@ public class EclipseSynchronizer implements IFlushOperation {
 				setFolderSync(folder, folderInfo);
 				// purge the dirty cache so any old persisted dirty state is purged
 				sessionPropertyCache.purgeDirtyCache(folder);
-				// if there are managed members, indicate that 1 is changed so the Entries file is written
+				// Indicate that a member has changed so the entries file gets written (see bug 181546)
 				IResource[] members = members(folder);
+				IResource changedResource = null;
 				for (int i = 0; i < members.length; i++) {
 					IResource resource = members[i];
 					if (getSyncBytes(resource) != null) {
-						resourceChanged(resource);
+						changedResource = resource;
 						break;
 					}
 				}
+				if (changedResource == null) {
+					changedResource = folder.getFile("dummy"); //$NON-NLS-1$
+				}
+				resourceChanged(changedResource);
 			}
 		} finally {
 			try {
