@@ -112,6 +112,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 							editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
 							final IWorkbenchPage page= getPart().getSite().getPage();
 							showHistoryView(page, editor);
+							page.activate(editor);
 						}
 					} catch (PartInitException e) {
 						CVSException.wrapException(e);
