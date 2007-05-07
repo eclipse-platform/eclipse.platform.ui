@@ -225,10 +225,14 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	private String appendLaunched(ILaunchConfiguration config) {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		boolean launched = false;
+		ILaunchConfiguration tmp = null;
 		for(int i = 0; i < launches.length; i++) {
-			if(!launches[i].isTerminated() && launches[i].getLaunchConfiguration().equals(config)) {
-				launched = true;
-				break;
+			tmp = launches[i].getLaunchConfiguration();
+			if(tmp != null) {
+				if(!launches[i].isTerminated() && tmp.equals(config)) {
+					launched = true;
+					break;
+				}
 			}
 		}
 		if(launched) {
