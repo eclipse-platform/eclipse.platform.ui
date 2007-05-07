@@ -12,10 +12,16 @@
 package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
@@ -70,4 +76,31 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 			}});
 	}
 
+	static class MyViewerSorter extends ViewerSorter {
+		boolean inverted = false;
+
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (inverted) {
+				return super.compare(viewer, e2, e1);
+			}
+			return super.compare(viewer, e1, e2);
+		}
+	}
+
+	public void testBug184441() {
+		MyViewerSorter sorter = new MyViewerSorter();
+		treeViewer.setSorter(sorter);
+		ITreeContentProvider contentProvider = (ITreeContentProvider) treeViewer
+				.getContentProvider();
+		Object firstRoot = contentProvider.getElements(treeViewer.getInput())[0];
+		Object childOfFirstRoot = contentProvider.getChildren(firstRoot)[0];
+		treeViewer.setSelection(new StructuredSelection(childOfFirstRoot), true);
+		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				fail();
+			}
+		});
+		sorter.inverted = true;
+		treeViewer.refresh();
+	}
 }

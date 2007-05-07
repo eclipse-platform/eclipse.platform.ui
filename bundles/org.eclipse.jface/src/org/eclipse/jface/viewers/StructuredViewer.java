@@ -1161,7 +1161,12 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		OpenStrategy handler = new OpenStrategy(control);
 		handler.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				handleSelect(e);
+				// On Windows, selection events may happen during a refresh.
+				// Ignore these events if we are currently in preservingSelection().
+				// See bug 184441.
+				if (!inChange) {
+					handleSelect(e);
+				}
 			}
 
 			public void widgetDefaultSelected(SelectionEvent e) {
