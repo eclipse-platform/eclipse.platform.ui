@@ -735,7 +735,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 							try {
 								ILaunchConfigurationType type = launchConfiguration.getType();
 								// check if this perspective is enabled for the launch type
-								if (fContextService.getActiveContextIds().contains(type.getIdentifier() + "." + getActivePerspective().getId())) { //$NON-NLS-1$
+								// Include the word '.internal.' so the context is filtered from the key binding pref page (Bug 144019) also see PerspectiveManager.handleBreakpointHit()
+								if (fContextService.getActiveContextIds().contains(type.getIdentifier() + ".internal." + getActivePerspective().getId())) { //$NON-NLS-1$
 									// get the leaf contexts to be activated
 									List workbenchContexts = DebugModelContextBindingManager.getDefault().getWorkbenchContextsForDebugContext(target);
 									// TODO: do we need to check if contexts are actually enabled in workbench first?

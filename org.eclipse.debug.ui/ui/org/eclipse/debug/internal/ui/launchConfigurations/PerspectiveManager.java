@@ -422,12 +422,14 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			public void run() {
 				IWorkbenchWindow window = null;
 				try{
-				if (targetId != null) {
+					if (targetId != null) {
+						// get the window to open the perspective in
 						window = getWindowForPerspective(targetId);
 						if (window == null) {
 							return;
 						}
 						
+						// switch the perspective if user preference is set
 						if (shouldSwitchPerspective(window, targetId, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND)) {
 							switchToPerspective(window, targetId);
 							window = getWindowForPerspective(targetId);
@@ -435,6 +437,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 								return;
 							}
 						}
+						
+						// make sure the shell is active
 						Shell shell= window.getShell();
 						if (shell != null) {
 							if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
@@ -444,8 +448,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 								shell.forceActive();
 							}
 						}
-					}
-					if (targetId != null) {
+	
+						// Activate a context for the launch
 						Object ca = fLaunchToContextActivations.get(launch);
 						if (ca == null) {
 							ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
@@ -458,7 +462,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 										String[] ids = service.getEnabledPerspectives();
 										IContextActivation[] activations = new IContextActivation[ids.length];
 										for (int i = 0; i < ids.length; i++) {
-											Context context = contextServce.getContext(type + "." + ids[i]); //$NON-NLS-1$
+											// Include the word '.internal.' so the context is filtered from the key binding pref page (Bug 144019) also see ViewContextService.contextActivated()
+											Context context = contextServce.getContext(type + ".internal." + ids[i]); //$NON-NLS-1$
 											if (!context.isDefined()) {
 												context.define(context.getId(), null, null);
 											}
