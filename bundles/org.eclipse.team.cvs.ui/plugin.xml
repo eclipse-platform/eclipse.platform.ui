@@ -800,17 +800,32 @@
             label="%PreferenceKeywords.CVS"
             id="org.eclipse.team.cvs.ui.cvs"/>
     <keyword
-            label="%PreferenceKeywords.EXT"
-            id="org.eclipse.team.cvs.ui.cvs.ext"/>
+          id="org.eclipse.team.cvs.ui.cvs.annotate"
+          label="%PreferenceKeywords.Annotate"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.comment"
+          label="%PreferenceKeywords.Comment"/>
     <keyword
             label="%PreferenceKeywords.Console"
             id="org.eclipse.team.cvs.ui.cvs.console"/>
     <keyword
-          id="org.eclipse.team.cvs.ui.cvs.annotate"
-          label="%PreferenceKeywords.Annotate"/>
+            label="%PreferenceKeywords.EXT"
+            id="org.eclipse.team.cvs.ui.cvs.ext"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.decorator"
+          label="%PreferenceKeywords.Decorator"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.password"
+          label="%PreferenceKeywords.Password"/>
     <keyword
           id="org.eclipse.team.cvs.ui.cvs.compare"
           label="%PreferenceKeywords.Compare"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.update"
+          label="%PreferenceKeywords.Update"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.watch"
+          label="%PreferenceKeywords.Watch"/>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -839,7 +854,7 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.CommentTemplatesPreferencePage"
             id="org.eclipse.team.cvs.ui.CommentTemplatesPreferences">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.comment"/>
       </page>
    </extension>
    <extension
@@ -859,7 +874,7 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.CVSDecoratorPreferencesPage"
             id="org.eclipse.team.cvs.ui.CVSDecoratorPreferences">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.decorator"/>
       </page>
    </extension>
    <extension
@@ -879,17 +894,17 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.WatchEditPreferencePage"
             id="org.eclipse.team.cvs.ui.WatchEditPreferencePage">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.watch"/>
       </page>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="%PasswordManagement"
+            name="%PasswordManagementPreferencePage.name"
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.PasswordManagementPreferencePage"
             id="org.eclipse.team.cvs.ui.PasswordManagementPreferencePage">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs.ext"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.password"/>
       </page>
    </extension>
       <extension
@@ -899,7 +914,7 @@
             class="org.eclipse.team.internal.ccvs.ui.UpdateMergePreferencePage"
             id="org.eclipse.team.cvs.ui.UpdateMergePreferences"
             name="%UpdateMergePreferencePage.name">
-         <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+         <keywordReference id="org.eclipse.team.cvs.ui.cvs.update"/>
       </page>
    </extension>
    
