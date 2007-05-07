@@ -23,7 +23,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -155,7 +155,8 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 		resolutionsLabel.setLayoutData(new FormData());
 
-		resolutionsList = new ListViewer(control, SWT.BORDER | SWT.SINGLE);
+		resolutionsList = new ListViewer(control, SWT.BORDER | SWT.SINGLE
+				| SWT.V_SCROLL);
 		resolutionsList.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
 				return resolutions;
@@ -252,10 +253,41 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 		Dialog.applyDialogFont(control);
 
-		setMessage(NLS.bind(MarkerMessages.MarkerResolutionDialog_Description,
-				Util.getProperty(IMarker.MESSAGE, originalMarker)));
+		String message = NLS.bind(
+				MarkerMessages.MarkerResolutionDialog_Description, Util
+						.getProperty(IMarker.MESSAGE, originalMarker));
+		if (message.length() > 50) {
+			// Add a carriage return in the middle if we can
+			int insertionIndex = chooseWhitespace(message);
+			if (insertionIndex > 0) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(message.substring(0, insertionIndex));
+				buffer.append("\n"); //$NON-NLS-1$
+				buffer.append(message.substring(insertionIndex, message
+						.length()));
+				message = buffer.toString();
+			}
+		}
+
+		setMessage(message);
 		return mainArea;
 
+	}
+
+	/**
+	 * Choose a good whitespace position for a page break. Start in the middle
+	 * of the message.
+	 * 
+	 * @param message
+	 * @return int -1 if there is no whitespace to choose.
+	 */
+	private int chooseWhitespace(String message) {
+
+		for (int i = message.length() / 2; i < message.length(); i++) {
+			if (Character.isWhitespace(message.charAt(i)))
+				return i;
+		}
+		return -1;
 	}
 
 	/**
@@ -606,19 +638,17 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 */
 	private void createTableColumns() {
 		TableLayout layout = new TableLayout();
-		int width = convertWidthInCharsToPixels(20);
-		
 
 		Table table = markersTable.getTable();
 		table.setLayout(layout);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		layout.addColumnData(new ColumnPixelData(width, true, true));
+		layout.addColumnData(new ColumnWeightData(70, true));
 		TableColumn tc = new TableColumn(table, SWT.NONE, 0);
 		tc
 				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Location);
-		layout.addColumnData(new ColumnPixelData(width, true, true));
+		layout.addColumnData(new ColumnWeightData(30, true));
 		tc = new TableColumn(table, SWT.NONE, 0);
 		tc
 				.setText(MarkerMessages.MarkerResolutionDialog_Problems_List_Resource);
