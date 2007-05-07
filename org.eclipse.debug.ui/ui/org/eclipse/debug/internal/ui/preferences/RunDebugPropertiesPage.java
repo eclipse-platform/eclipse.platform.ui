@@ -66,7 +66,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * CONTEXTLAUNCHING
  * 
- * @since 3.3
+ * @since 3.3.0
  */
 public class RunDebugPropertiesPage extends PropertyPage {
 	/**
@@ -314,6 +314,12 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	protected void performDefaults() {
 		setErrorMessage(null);
 		setValid(true);
+		fOriginalCandidates.clear();
+		fOriginalCandidates = null;
+		getViewer().setInput(collectConfigCandidates(getResource()));
+		fChangedConfigurations.clear();
+		fDeletedConfigurations.clear();
+		fViewer.refresh(true, true);
 		super.performDefaults();
 	}
 	
