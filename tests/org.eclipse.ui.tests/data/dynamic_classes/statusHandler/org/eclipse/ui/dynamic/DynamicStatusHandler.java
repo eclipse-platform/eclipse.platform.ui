@@ -21,8 +21,9 @@ public class DynamicStatusHandler extends AbstractStatusHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter)
+	 * @see org.eclipse.ui.statushandlers.AbstractStatusHandler#handle(org.eclipse.ui.statushandlers.StatusAdapter,
+	 *      int)
 	 */
-	public void handle(final StatusAdapter statusAdapter) {
+	public void handle(StatusAdapter statusAdapter, int style) {
 	}
 }

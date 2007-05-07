@@ -16,9 +16,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerDescriptor;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.leaks.LeakTests;
 
 /**
@@ -32,6 +36,8 @@ public class StatusHandlerTests extends DynamicTestCase {
 	private static final String STATUS_HANDLER_ID2 = "org.eclipse.newStatusHandler1.newStatusHandler2";
 
 	private static final String PLUGIN_PREFIX = "";
+
+	private static final String PLUGIN_PREFIX2 = "plugin";
 
 	/**
 	 * @param testName
@@ -53,6 +59,9 @@ public class StatusHandlerTests extends DynamicTestCase {
 		AbstractStatusHandler statusHandler1 = statusHandlerDescriptor1
 				.getStatusHandler();
 		assertNotNull(statusHandler1);
+
+		statusHandler1.handle(new StatusAdapter(new Status(IStatus.ERROR,
+				PLUGIN_PREFIX2, "")), StatusManager.NONE);
 
 		ReferenceQueue queue = new ReferenceQueue();
 		ReferenceQueue queue2 = new ReferenceQueue();
@@ -105,6 +114,9 @@ public class StatusHandlerTests extends DynamicTestCase {
 				.getStatusHandler();
 		assertNotNull(statusHandler1);
 
+		statusHandler1.handle(new StatusAdapter(new Status(IStatus.ERROR,
+				PLUGIN_PREFIX2, "")), StatusManager.NONE);
+
 		WeakReference ref = new WeakReference(statusHandlerDescriptor1, queue);
 		WeakReference ref2 = new WeakReference(statusHandler1, queue2);
 
@@ -141,6 +153,9 @@ public class StatusHandlerTests extends DynamicTestCase {
 		AbstractStatusHandler productStatusHandler = productStatusHandlerDescriptor
 				.getStatusHandler();
 		assertNotNull(productStatusHandler);
+
+		productStatusHandler.handle(new StatusAdapter(new Status(IStatus.ERROR,
+				PLUGIN_PREFIX2, "")), StatusManager.NONE);
 
 		WeakReference ref = new WeakReference(productStatusHandlerDescriptor,
 				queue);
