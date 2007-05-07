@@ -100,7 +100,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.DEFAULT_LAUNCHCONFIGURATION_PROPERTY_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugHelpContextIds.RUN_DEBUG_RESOURCE_PROPERTY_PAGE);
 		collectConfigCandidates(getResource());
 		Composite topComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		
