@@ -12,6 +12,7 @@ package org.eclipse.update.internal.configurator;
 
 import java.io.*;
 import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 
 /**
  * Internal class.
@@ -27,10 +28,16 @@ public class Locker_JavaNio implements Locker {
 
 	public synchronized boolean lock() throws IOException {
 		raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
-		fileLock = raf.getChannel().lock();
-		
-		if (fileLock != null)
-			return true;
+		try{
+			fileLock = raf.getChannel().tryLock();
+		} catch(OverlappingFileLockException e) {
+			fileLock = null;
+		} finally {
+			if (fileLock != null)
+				return true;
+			raf.close();
+			raf = null;
+		}
 		return false;
 	}
 
