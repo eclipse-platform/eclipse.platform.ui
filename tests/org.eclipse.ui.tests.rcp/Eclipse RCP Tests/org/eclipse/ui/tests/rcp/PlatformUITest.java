@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.rcp.util.RCPTestWorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 
 public class PlatformUITest extends TestCase {
@@ -76,6 +77,17 @@ public class PlatformUITest extends TestCase {
         display.dispose();
         assertTrue(display.isDisposed());
     }
+    
+    public void testStartupThreading() {
+		assertNotNull(
+				"No display during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				RCPTestWorkbenchAdvisor.asyncDuringStartup);
+
+		assertEquals(
+				"Async run during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
+				Boolean.FALSE,
+				RCPTestWorkbenchAdvisor.asyncDuringStartup);
+	}
 }
 
 class CheckForWorkbench extends WorkbenchAdvisorObserver {
