@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 185708 Provide link to open SSH/SSH2/proxy preferences from Connection wizard
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
@@ -18,6 +19,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * Wizard page for entering information about a CVS repository location.
@@ -284,6 +287,25 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		gc.dispose();
 		data.heightHint= Dialog.convertHeightInCharsToPixels(fontMetrics, 3);
 		warningText.setLayoutData(data);
+		
+		Link extPrefLink = new Link(composite, SWT.NONE);
+		extPrefLink.setText(CVSUIMessages.ConfigurationWizardMainPage_7);
+		extPrefLink.addSelectionListener(new SelectionAdapter() {
+		
+			public void widgetSelected(SelectionEvent e) {
+				PreferenceDialog prefDialog = PreferencesUtil.createPreferenceDialogOn(getShell(), 
+						"org.eclipse.team.cvs.ui.ExtMethodPreferencePage",  //$NON-NLS-1$
+						new String[] {
+							"org.eclipse.team.cvs.ui.cvs",  //$NON-NLS-1$
+							"org.eclipse.team.cvs.ui.ExtMethodPreferencePage",  //$NON-NLS-1$
+							"org.eclipse.jsch.ui.SSHPreferences",  //$NON-NLS-1$
+							"org.eclipse.ui.net.NetPreferences"},  //$NON-NLS-1$
+						null);
+				prefDialog.open();
+			}
+		
+		});
+		
 		
 		initializeValues();
 		updateWidgetEnablements();

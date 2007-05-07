@@ -52,6 +52,7 @@ public class CVSUIMessages extends NLS {
 	public static String CommitWizard_8;
 	public static String CommitWizard_9;
 	public static String ComparePreferencePage_8;
+	public static String ConfigurationWizardMainPage_7;
 	public static String CreatePatchAction_0;
 	public static String CreatePatchAction_1;
 	public static String CVSHistoryPage_CollapseAllAction;
