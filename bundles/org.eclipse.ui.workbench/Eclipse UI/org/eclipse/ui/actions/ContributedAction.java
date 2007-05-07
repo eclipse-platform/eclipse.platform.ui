@@ -55,7 +55,7 @@ public final class ContributedAction extends CommandAction {
 	private IEvaluationContext appContext;
 
 	private IHandler partHandler;
-	
+
 	private boolean localHandler = false;
 
 	private IPartListener partListener;
@@ -112,15 +112,15 @@ public final class ContributedAction extends CommandAction {
 		init(locator, commandId, null);
 
 		if (locator instanceof IWorkbenchPartSite) {
-			updateSiteAssociations((IWorkbenchPartSite) locator, commandId, actionId,
-					element);
+			updateSiteAssociations((IWorkbenchPartSite) locator, commandId,
+					actionId, element);
 		}
 
 		setId(actionId);
 	}
 
-	private void updateSiteAssociations(IWorkbenchPartSite site, String commandId,
-			String actionId, IConfigurationElement element) {
+	private void updateSiteAssociations(IWorkbenchPartSite site,
+			String commandId, String actionId, IConfigurationElement element) {
 		IWorkbench workbench = (IWorkbench) site.getService(IWorkbench.class);
 		IWorkbenchWindow window = (IWorkbenchWindow) site
 				.getService(IWorkbenchWindow.class);
@@ -156,6 +156,10 @@ public final class ContributedAction extends CommandAction {
 					null, null);
 		}
 
+		if (getParameterizedCommand() != null) {
+			getParameterizedCommand().getCommand().removeCommandListener(
+					getCommandListener());
+		}
 		site.getPage().addPartListener(getPartListener());
 	}
 
@@ -194,9 +198,13 @@ public final class ContributedAction extends CommandAction {
 	 */
 	public boolean isEnabled() {
 		if (partHandler != null) {
+			if (partHandler instanceof ActionDelegateHandlerProxy) {
+				return ((ActionDelegateHandlerProxy) partHandler)
+						.isEnabled(appContext);
+			}
 			return partHandler.isEnabled();
 		}
-		return super.isEnabled();
+		return false;
 	}
 
 	private IPartListener getPartListener() {

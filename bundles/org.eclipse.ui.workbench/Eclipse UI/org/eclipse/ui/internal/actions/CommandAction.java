@@ -89,7 +89,7 @@ public class CommandAction extends Action {
 		init(serviceLocator, commandIdIn, parameterMap);
 	}
 
-	private ICommandListener getCommandListener() {
+	protected ICommandListener getCommandListener() {
 		if (commandListener == null) {
 			commandListener = new ICommandListener() {
 				public void commandChanged(CommandEvent commandEvent) {
