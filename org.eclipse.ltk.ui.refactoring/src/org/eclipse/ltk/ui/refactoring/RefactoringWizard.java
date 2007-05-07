@@ -22,6 +22,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -227,7 +228,9 @@ public abstract class RefactoringWizard extends Wizard {
 	 */
 	public final void setForcePreviewReview(boolean forcePreviewReview) {
 		fForcePreviewReview= forcePreviewReview;
-		getContainer().updateButtons();	
+		IWizardContainer container= getContainer();
+		if (container != null)
+			container.updateButtons();	
 	}
 	
 	/**
