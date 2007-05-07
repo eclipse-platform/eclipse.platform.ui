@@ -55,7 +55,9 @@ public class InstructionPointerContext {
 	public boolean equals(Object other) {
 		if (other instanceof InstructionPointerContext) {
 			InstructionPointerContext otherContext = (InstructionPointerContext) other;
-			return getAnnotation().equals(otherContext.getAnnotation());
+			if (getAnnotation().equals(otherContext.getAnnotation())){
+				return getEditor().equals(otherContext.getEditor());
+			}
 		}
 		return false;
 	}
@@ -64,7 +66,7 @@ public class InstructionPointerContext {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return getAnnotation().hashCode();
+		return getAnnotation().hashCode() + getEditor().hashCode();
 	}
 
 	/**
