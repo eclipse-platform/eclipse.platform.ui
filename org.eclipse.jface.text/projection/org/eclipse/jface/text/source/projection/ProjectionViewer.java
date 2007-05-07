@@ -1441,6 +1441,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 				if (redraws()) {
 					selection= getSelectedRange();
+					if (exposeModelRange(new Region(selection.x, selection.y)))
+						return;
+					
 					if (selection.y == 0)
 						copyMarkedRegion(true);
 					else
