@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -21,8 +18,8 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.SWT;
@@ -43,13 +40,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * A preference page for configuring launching preferences.
  */
-public class LaunchingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-	
-	/**
-	 * a list of the field editors
-	 * @since 3.2
-	 */
-	private List fFieldEditors;
+public class LaunchingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	private Button fUseContextLaunching;
 	private Button fUseOldLaunching;
@@ -75,7 +66,6 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		fFieldEditors = new ArrayList();
 		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_HORIZONTAL);
 		//save dirty editors
 		FieldEditor edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_2, 3,  
@@ -84,7 +74,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				 {DebugPreferencesMessages.LaunchingPreferencePage_5, MessageDialogWithToggle.PROMPT}}, 
 				 comp,
 				 true);	
-		fFieldEditors.add(edit);
+		addField(edit);
 		
 		//wait for build
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, 
@@ -94,7 +84,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				 {DebugPreferencesMessages.LaunchingPreferencePage_9, MessageDialogWithToggle.PROMPT}}, 
 				 comp,
 				 true);
-		fFieldEditors.add(edit);
+		addField(edit);
 		
 		//re-launch in debug mode
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_RELAUNCH_IN_DEBUG_MODE,
@@ -104,7 +94,7 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				 {DebugPreferencesMessages.LaunchingPreferencePage_18, MessageDialogWithToggle.PROMPT}}, 
 				 comp,
 				 true);
-		fFieldEditors.add(edit);
+		addField(edit);
 		
 		//continue with compile errors
 		edit = new RadioGroupFieldEditor(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR,
@@ -113,22 +103,22 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 				 {DebugPreferencesMessages.LaunchingPreferencePage_23, MessageDialogWithToggle.PROMPT}},  
 				 comp,
 				 true);
-		fFieldEditors.add(edit);
+		addField(edit);
 		
 		//filtering options
 		Group group = SWTFactory.createGroup(comp, DebugPreferencesMessages.LaunchingPreferencePage_36, 1, 1, GridData.FILL_HORIZONTAL);
 		Composite spacer = SWTFactory.createComposite(group, 1, 1, GridData.FILL_HORIZONTAL);
 		edit = new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugPreferencesMessages.LaunchingPreferencePage_1, SWT.NONE, spacer);
 		edit.fillIntoGrid(spacer, 2);
-		fFieldEditors.add(edit);
+		addField(edit);
 		edit = new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugPreferencesMessages.LaunchingPreferencePage_10, SWT.NONE, spacer);
 		edit.fillIntoGrid(spacer, 2);
-		fFieldEditors.add(edit);
+		addField(edit);
 		
 		//history list size preference
-		final IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, spacer);
+		IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, spacer);
 		editor.fillIntoGrid(spacer, 2);
-		fFieldEditors.add(editor);
+		addField(editor);
 		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
 		editor.setTextLimit(Integer.toString(historyMax).length());
 		editor.setErrorMessage(MessageFormat.format(DebugPreferencesMessages.DebugPreferencePage_11, new Object[] { new Integer(1), new Integer(historyMax)})); 
@@ -138,9 +128,8 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		
 		//CONTEXTLAUNCHING
 		createContextLaunchingControls(comp);
-		
-		//init the field editors
-		initFieldEditors();
+		initialize();
+		checkState();
 		return comp;
 	}
 
@@ -168,25 +157,8 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 		GridLayout layout = (GridLayout) space.getLayout();
 		layout.marginHeight = 0;
 		fCheckParent = SWTFactory.createCheckButton(space, DebugPreferencesMessages.LaunchingPreferencePage_39, null, false, 1);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {}
-	
-	/**
-	 * Initializes the field editors to their values
-	 * @since 3.2
-	 */
-	private void initFieldEditors() {
-		FieldEditor editor;
-		for(int i = 0; i < fFieldEditors.size(); i++) {
-			editor = (FieldEditor)fFieldEditors.get(i);
-			editor.setPreferenceStore(getPreferenceStore());
-			editor.setPage(this);
-			editor.load();
-		}
+		
+		//initialize the buttons
 		boolean value = getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 		fUseOldLaunching.setSelection(!value);
 		fUseContextLaunching.setSelection(value);
@@ -195,28 +167,35 @@ public class LaunchingPreferencePage extends PreferencePage implements IWorkbenc
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	public void init(IWorkbench workbench) {}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		for(int i = 0; i < fFieldEditors.size(); i++) {
-			((FieldEditor)fFieldEditors.get(i)).loadDefault();
-		}
 		boolean value = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 		fUseOldLaunching.setSelection(!value);
 		fUseContextLaunching.setSelection(value);
 		fCheckParent.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT));
 		fCheckParent.setEnabled(value);
+		super.performDefaults();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		for(int i = 0; i < fFieldEditors.size(); i++) {
-			((FieldEditor)fFieldEditors.get(i)).store();
-		}
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, fUseContextLaunching.getSelection());
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, fCheckParent.getSelection());
 		return super.performOk();
+	}
+
+	/**
+	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
+	 */
+	protected void createFieldEditors() {
+		//do nothing we overload the create contents method
 	}
 }

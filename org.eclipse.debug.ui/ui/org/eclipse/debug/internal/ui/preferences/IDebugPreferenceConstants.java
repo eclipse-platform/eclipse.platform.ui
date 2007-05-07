@@ -104,7 +104,7 @@ public interface IDebugPreferenceConstants {
 	/**
 	 * The maximum size of the launch history list
 	 */
-	public static int MAX_LAUNCH_HISTORY_SIZE= 20;
+	public static int MAX_LAUNCH_HISTORY_SIZE= 40;
 
 	/**
 	 * Boolean preference controlling whether the text in the detail panes is
