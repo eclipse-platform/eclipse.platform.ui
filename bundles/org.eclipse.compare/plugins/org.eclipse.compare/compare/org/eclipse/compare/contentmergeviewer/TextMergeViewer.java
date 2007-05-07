@@ -3081,7 +3081,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	private void doDiff() {
 						
-		fAllDiffs= new ArrayList();
+		ArrayList newAllDiffs = new ArrayList();
 		fChangeDiffs= new ArrayList();
 		fCurrentDiff= null;
 		
@@ -3146,7 +3146,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					aDoc, aRegion, 0, astart,
 					lDoc, lRegion, 0, lRegion.getOffset(),
 					rDoc, rRegion, 0, rRegion.getOffset());
-				fAllDiffs.add(diff);
+				newAllDiffs.add(diff);
 			}
 		}
 		
@@ -3192,7 +3192,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				lDoc, lRegion, 0, lDoc.getLength(),
 				rDoc, rRegion, 0, rDoc.getLength());	
 				
-			fAllDiffs.add(diff);
+			newAllDiffs.add(diff);
 		} else {
 			for (int i= 0; i < e.length; i++) {
 				String a= null, s= null, d= null;
@@ -3225,7 +3225,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					lDoc, lRegion, leftStart, leftEnd,
 					rDoc, rRegion, rightStart, rightEnd);	
 				
-				fAllDiffs.add(diff);	// remember all range diffs for scrolling
+				newAllDiffs.add(diff);	// remember all range diffs for scrolling
 		
 				if (ignoreWhiteSpace && !isPatchHunk()) {
 					if (sancestor != null)
@@ -3276,8 +3276,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				aDoc, aRegion, aEnd, aLen,
 				lDoc, lRegion, lRegion.getOffset()+lRegion.getLength(), lDoc.getLength(),
 				rDoc, rRegion, rRegion.getOffset()+rRegion.getLength(), rDoc.getLength());
-			fAllDiffs.add(diff);
+			newAllDiffs.add(diff);
 		}
+		fAllDiffs = newAllDiffs;
 		invalidateTextPresentation();
 	}
 	
@@ -5392,6 +5393,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 		if (adapter == IFindReplaceTarget.class)
 			return getFindReplaceTarget();
+		if (adapter == CompareHandlerService.class)
+			return fHandlerService;
 		return null;
 	}
 	

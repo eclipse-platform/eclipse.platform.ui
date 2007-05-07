@@ -50,6 +50,13 @@ public class ViewerDescriptor implements IViewerDescriptor {
 		}
 
 		if (fViewerCreator != null) {
+			// If we are going to return a new viewer, we want to preemptively deregister
+			// any handlers to avoid the logging of conflict warnings
+			if (currentViewer != null) {
+				CompareHandlerService compareHandlerService = (CompareHandlerService)Utilities.getAdapter(currentViewer, CompareHandlerService.class);
+				if (compareHandlerService != null)
+					compareHandlerService.dispose();
+			}
 			Viewer viewer= fViewerCreator.createViewer(parent, mp);
 			if (viewer != null)
 				fViewerClass= viewer.getClass();
