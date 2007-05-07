@@ -18,12 +18,12 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -40,31 +40,9 @@ import org.eclipse.ui.model.AdaptableList;
  * Dialog to allow the selection of working sets without all of the overhead of the
  * platform UI working set dialog
  * 
- * @since 3.3
+ * @since 3.3.0
  */
 public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
-	
-	/**
-	 * Provides the content to the working set viewer
-	 */
-	class WorkingsetContent implements IStructuredContentProvider {
-
-		public Object[] getElements(Object inputElement) {
-			IWorkingSet[] ws = PlatformUI.getWorkbench().getWorkingSetManager().getAllWorkingSets();
-			ArrayList list = new ArrayList();
-			for(int i = 0; i < ws.length; i++) {
-				if(IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(ws[i].getId())) {
-					list.add(ws[i]);
-				}
-			}
-			return list.toArray();
-		}
-
-		public void dispose() {}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
-		
-	}
 	
 	private static final String SETTINGS_ID = DebugUIPlugin.getUniqueIdentifier() + ".DELETE_ASSOCIATED_CONFIGS_DIALOG"; //$NON-NLS-1$
 	private Object fInitialSelection = null;
@@ -75,7 +53,7 @@ public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
 	 * Constructor
 	 * @param parentShell the parent to open this dialog on
 	 * @param selection the initial selection
-	 * @param multi if the dialog should allow multi selection or not
+	 * @param multi if the dialog should allow multi-selection or not
 	 */
 	protected SelectBreakpointWorkingsetDialog(Shell parentShell, Object selection) {
 		super(parentShell);
@@ -83,6 +61,21 @@ public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
 		fInitialSelection = selection;
 	}
 
+	/**
+	 * Returns the current listing of breakpoint <code>IWorkingSet</code>s
+	 * @return an array of the current breakpoint <code>IWorkingSet</code>s
+	 */
+	private IWorkingSet[] getBreakpointWorkingSets() {
+		IWorkingSet[] ws = PlatformUI.getWorkbench().getWorkingSetManager().getAllWorkingSets();
+		ArrayList list = new ArrayList();
+		for(int i = 0; i < ws.length; i++) {
+			if(IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(ws[i].getId())) {
+				list.add(ws[i]);
+			}
+		}
+		return (IWorkingSet[]) list.toArray(new IWorkingSet[list.size()]);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -95,25 +88,30 @@ public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		table.setLayoutData(gd);
-		fViewer.setContentProvider(new WorkingsetContent());
-		fViewer.setInput(new AdaptableList(PlatformUI.getWorkbench().getWorkingSetManager().getAllWorkingSets()));
+		fViewer.setContentProvider(new ArrayContentProvider());
+		fViewer.setInput(new AdaptableList(getBreakpointWorkingSets()).getChildren());
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		if(fInitialSelection != null) {
 			fViewer.setChecked(fInitialSelection, true);
 		}
 		fViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				Object o = event.getElement();
-				fViewer.setAllChecked(false);
-				if(o != null) {
-					fViewer.setChecked(o, true);
-				}
+				fViewer.setCheckedElements(new Object[] {event.getElement()});
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
-			
 		});
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_DEFAULT_WORKINGSET_DIALOG);
 		return comp;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createButtonBar(Composite parent) {
+		Control control = super.createButtonBar(parent);
+		getButton(IDialogConstants.OK_ID).setEnabled(fViewer.getCheckedElements().length > 0);
+		return control;
 	}
 	
 	/* (non-Javadoc)
