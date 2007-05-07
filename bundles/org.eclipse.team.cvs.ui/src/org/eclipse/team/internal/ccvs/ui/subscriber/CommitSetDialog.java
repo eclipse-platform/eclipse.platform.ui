@@ -167,6 +167,7 @@ public class CommitSetDialog extends TitleAreaDialog {
         String initialText = set.getTitle();
         if (initialText == null) initialText = ""; //$NON-NLS-1$
         nameText.setText(initialText);
+        nameText.setSelection(0, initialText.length());
         
         if (useTitleButton != null) {
             useTitleButton.setSelection(!set.hasComment());

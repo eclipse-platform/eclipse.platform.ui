@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006-2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 128429 [Change Sets] Change Sets with / in name do not get persited
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
@@ -338,7 +339,11 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];
 			if (set instanceof ActiveChangeSet && !set.isEmpty()) {
-			    Preferences child = prefs.node(((ActiveChangeSet)set).getTitle());
+			    // Since the change set title is stored explicitly, the name of
+			    // the child preference node doesn't matter as long as it
+			    // doesn't contain / and no two change sets get the same name.
+			    String childPrefName = escapePrefName(((ActiveChangeSet)set).getTitle());
+			    Preferences child = prefs.node(childPrefName);
 			    ((ActiveChangeSet)set).save(child);
 			}
 		}
@@ -352,9 +357,38 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
         }
     }
     
+    /**
+	 * Escape the given string for safe use as a preference node name by
+	 * translating / to \s (so it's a single path component) and \ to \\ (to
+	 * preserve uniqueness).
+	 * 
+	 * @param string
+	 *            Input string
+	 * @return Escaped output string
+	 */
+	private static String escapePrefName(String string) {
+		StringBuffer out = new StringBuffer();
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			switch (c) {
+			case '/':
+				out.append("\\s"); //$NON-NLS-1$
+				break;
+			case '\\':
+				out.append("\\\\"); //$NON-NLS-1$
+				break;
+			default:
+				out.append(c);
+			}
+		}
+		return out.toString();
+	}
+    
 	/**
 	 * Load the manager's state from the given preferences node.
-	 * @param prefs a preferences node
+	 * 
+	 * @param prefs
+	 *            a preferences node
 	 */
 	protected void load(Preferences prefs) {
 		String defaultSetTitle = prefs.get(CTX_DEFAULT_SET, null);
@@ -363,7 +397,7 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
 			for (int i = 0; i < childNames.length; i++) {
 			    String string = childNames[i];
 			    Preferences childPrefs = prefs.node(string);
-			    ActiveChangeSet set = createSet(string, childPrefs);
+			    ActiveChangeSet set = createSet(childPrefs);
 			    if (!set.isEmpty()) {
 			    	if (getDefaultSet() == null && defaultSetTitle != null && set.getTitle().equals(defaultSetTitle)) {
 			    	    makeDefault(set);
@@ -388,8 +422,10 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
      * @param childPrefs the previously saved preferences
      * @return the created change set
      */
-    protected ActiveChangeSet createSet(String title, Preferences childPrefs) {
-        ActiveChangeSet changeSet = doCreateSet(title);
+    protected ActiveChangeSet createSet(Preferences childPrefs) {
+        // Don't specify a title when creating the change set; instead, let the
+        // change set read its title from the preferences.
+        ActiveChangeSet changeSet = doCreateSet(null);
         changeSet.init(childPrefs);
         return changeSet;
     }
