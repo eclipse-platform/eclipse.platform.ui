@@ -56,16 +56,23 @@ public class CompileErrorProjectPromptStatusHandler implements IStatusHandler {
 			}
 		}	
 		Shell shell = DebugUIPlugin.getShell();
-		StringBuffer projectMessage = new StringBuffer();
+		StringBuffer projectList = new StringBuffer();
 		//we need to limit this
-		for (int i = 0; i < projects.size(); i++) {
+		int size = Math.min(20, projects.size());
+		for (int i = 0; i < size; i++) {
 			if (i > 0) {
-				projectMessage.append(", "); //$NON-NLS-1$
+				projectList.append(", "); //$NON-NLS-1$
 			}
-			projectMessage.append(((IProject)projects.get(i)).getName());
+			projectList.append(((IProject)projects.get(i)).getName());
+		}
+		String projectMessage = null;
+		if(projects.size() > 20) {
+			projectMessage = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorProjectPromptStatusHandler_0, new Object[]{projectList.toString()});
+		} else{
+			projectMessage = projectList.toString();
 		}
 		String title =  LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_0; 
-		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage.toString()}); 
+		String message = MessageFormat.format(LaunchConfigurationsMessages.CompileErrorPromptStatusHandler_2, new String[]{projectMessage}); 
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore(); 
 		
 		String pref = store.getString(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR);
