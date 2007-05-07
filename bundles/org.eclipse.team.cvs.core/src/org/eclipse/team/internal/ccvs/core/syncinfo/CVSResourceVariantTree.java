@@ -210,7 +210,15 @@ public class CVSResourceVariantTree extends ResourceVariantTree {
 			// Manage the folder locally since folders exist in all versions, etc
 			// Use the info from the remote except get the tag from the local parent
 			CVSTag tag = CVSWorkspaceRoot.getCVSFolderFor(local.getParent()).getFolderSyncInfo().getTag();
-			FolderSyncInfo info = FolderSyncInfo.getFolderSyncInfo(remote.asBytes());
+			FolderSyncInfo info = null;
+			try{
+				info = FolderSyncInfo.getFolderSyncInfo(remote.asBytes());
+			} catch (CVSException e){
+				Status status = new Status(Status.ERROR, CVSProviderPlugin.ID, 
+						NLS.bind(CVSMessages.CVSResourceVariantTree_GettingSyncInfoError, local.getProjectRelativePath().toString()), 
+						e);
+				throw new CVSException(status);
+			}
             MutableFolderSyncInfo newInfo = info.cloneMutable();
             newInfo.setTag(tag);
 			ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IFolder)local);

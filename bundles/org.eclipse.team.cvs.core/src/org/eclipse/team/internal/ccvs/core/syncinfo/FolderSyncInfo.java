@@ -13,8 +13,8 @@ package org.eclipse.team.internal.ccvs.core.syncinfo;
  
 import java.io.*;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSEntryLineTag;
@@ -286,6 +286,7 @@ public class FolderSyncInfo {
 	 * into a FolderSyncInfo
 	 */
 	public static FolderSyncInfo getFolderSyncInfo(byte[] bytes) throws CVSException {
+		Assert.isNotNull(bytes, "getFolderSyncInfo cannot be called with null parameter"); //$NON-NLS-1$
 		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 		DataInputStream dis = new DataInputStream(in);
 		String root;
@@ -303,7 +304,9 @@ public class FolderSyncInfo {
 			}
 			isStatic = dis.readBoolean();
 		} catch (IOException e) {
-			throw CVSException.wrapException(e);
+			Status status = new Status(Status.ERROR, CVSProviderPlugin.ID, NLS.bind(CVSMessages.FolderSyncInfo_InvalidSyncInfoBytes, new String(bytes)), e);
+			CVSException ex = new CVSException(status);
+			throw ex;
 		}
 		return new FolderSyncInfo(repository, root, tag, isStatic);
 	}
