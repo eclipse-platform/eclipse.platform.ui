@@ -501,20 +501,27 @@ public final class MutableActivityManager extends AbstractActivityManager
         enabledActivityIds = requiredActivityIds;
         boolean activityManagerChanged = false;
         Map activityEventsByActivityId = null;
-
+        Set deltaActivityIds = null;
         Set previouslyEnabledActivityIds = null;
         if (!this.enabledActivityIds.equals(enabledActivityIds)) {
             previouslyEnabledActivityIds = this.enabledActivityIds;
             this.enabledActivityIds = enabledActivityIds;
             activityManagerChanged = true;
-            activityEventsByActivityId = updateActivities(activitiesById
-                    .keySet());
+            
+            // compute delta of activity changes
+            deltaActivityIds = new HashSet(previouslyEnabledActivityIds);
+            deltaActivityIds.removeAll(enabledActivityIds);
+            Set temp = new HashSet(enabledActivityIds);
+            temp.removeAll(previouslyEnabledActivityIds);
+            deltaActivityIds.addAll(temp);
+            
+            activityEventsByActivityId = updateActivities(deltaActivityIds);
         }
 
         //don't update identifiers if the enabled activity set has not changed
         if (activityManagerChanged) {
             Map identifierEventsByIdentifierId = updateIdentifiers(identifiersById
-                    .keySet());
+                    .keySet(), deltaActivityIds);
             if (identifierEventsByIdentifierId != null) {
 				notifyIdentifiers(identifierEventsByIdentifierId);
 			}
@@ -632,6 +639,10 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     private IdentifierEvent updateIdentifier(Identifier identifier) {
+        return updateIdentifier(identifier, definedActivityIds);
+    }
+    
+    private IdentifierEvent updateIdentifier(Identifier identifier, Set changedActivityIds) {
         String id = identifier.getId();
         Set activityIds = new HashSet();
         
@@ -658,7 +669,11 @@ public final class MutableActivityManager extends AbstractActivityManager
         else {
             boolean matchesAtLeastOneEnabled = false;
             boolean matchesAtLeastOneDisabled = false;
-            for (Iterator iterator = definedActivityIds.iterator(); iterator
+            Set activityIdsToUpdate = new HashSet(changedActivityIds);
+            if (identifier.getActivityIds() != null) {
+                activityIdsToUpdate.addAll(identifier.getActivityIds());
+            }
+            for (Iterator iterator = activityIdsToUpdate.iterator(); iterator
                     .hasNext();) {
                 String activityId = (String) iterator.next();
                 Activity activity = (Activity) getActivity(activityId);
@@ -687,6 +702,10 @@ public final class MutableActivityManager extends AbstractActivityManager
     }
 
     private Map updateIdentifiers(Collection identifierIds) {
+        return updateIdentifiers(identifierIds, definedActivityIds);
+    }
+    
+    private Map updateIdentifiers(Collection identifierIds, Set changedActivityIds) {
         Map identifierEventsByIdentifierId = new TreeMap();
 
         for (Iterator iterator = identifierIds.iterator(); iterator.hasNext();) {
@@ -695,7 +714,7 @@ public final class MutableActivityManager extends AbstractActivityManager
                     .get(identifierId);
 
             if (identifier != null) {
-                IdentifierEvent identifierEvent = updateIdentifier(identifier);
+                IdentifierEvent identifierEvent = updateIdentifier(identifier, changedActivityIds);
 
                 if (identifierEvent != null) {
 					identifierEventsByIdentifierId.put(identifierId,
