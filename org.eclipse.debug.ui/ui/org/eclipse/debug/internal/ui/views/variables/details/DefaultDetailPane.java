@@ -177,6 +177,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		protected IStatus run(IProgressMonitor monitor) {
 			fMonitor = monitor;
 			Iterator iterator = fElements.iterator();
+			String message = null;
 			while (iterator.hasNext()) {
 				if (monitor.isCanceled()) {
 					break;
@@ -192,10 +193,13 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 				} else if (element instanceof IExpression) {
 					val = ((IExpression)element).getValue();
 				}
+				// When selecting a index partition, clear the pane
 				if (val instanceof IndexedValuePartition) {
-					// Clear the detail pane
 					detailComputed(null, ""); //$NON-NLS-1$
 					val = null;
+				}
+				if (element instanceof String) {
+					message = (String) element;
 				}
 				if (val != null && !monitor.isCanceled()) {
 					fModel.computeDetail(val, this);
@@ -211,6 +215,15 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 						}
 					}
 				}				
+			}
+			// If no details were computed for the selected variable, clear the pane
+			// or use the message, if the variable was a java.lang.String
+			if (!fComputed){
+				if (message == null) {
+					detailComputed(null,""); //$NON-NLS-1$
+				} else {
+					detailComputed(null, message);
+				}
 			}
 			return Status.OK_STATUS;
 		}
