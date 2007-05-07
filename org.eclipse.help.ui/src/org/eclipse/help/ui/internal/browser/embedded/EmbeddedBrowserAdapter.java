@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 /**
  * Web browser.
@@ -61,8 +62,10 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 	public EmbeddedBrowserAdapter() {
 	}
 	public Display getBrowserDisplay() {
-		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH
-				&& Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())) {
+		boolean useUIThread2 = BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH
+				&& Constants.OS_WIN32.equalsIgnoreCase(Platform.getOS())
+		        && !Constants.WS_WPF.equalsIgnoreCase(SWT.getPlatform()) ;
+		if (useUIThread2) {
 			if (secondThread == null) {
 				secondThread = new UIThread2();
 				secondThread.start();
