@@ -38,6 +38,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -92,7 +93,8 @@ public abstract class WizardExportResourcesPage extends WizardDataTransferPage {
      * selected for export.
      *
      * @param pageName the name of the page
-     * @param selection the current resource selection
+     * @param selection {@link IStructuredSelection} of {@link IResource}
+     * @see IDE#computeSelectedResources(IStructuredSelection)
      */
     protected WizardExportResourcesPage(String pageName,
             IStructuredSelection selection) {
