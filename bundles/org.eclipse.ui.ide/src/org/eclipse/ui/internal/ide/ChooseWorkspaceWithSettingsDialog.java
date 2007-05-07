@@ -29,6 +29,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
@@ -110,7 +112,13 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	 * @param workArea
 	 */
 	private void createSettingsControls(Composite workArea) {
-		FormToolkit toolkit = new FormToolkit(workArea.getDisplay());
+		final FormToolkit toolkit = new FormToolkit(workArea.getDisplay());
+		workArea.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				toolkit.dispose();
+				
+			}});
 		final ScrolledForm form = toolkit.createScrolledForm(workArea);
 		form.setBackground(workArea.getBackground());
 		form.getBody().setLayout(new GridLayout());
