@@ -1509,7 +1509,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		triggerSequenceColumn
 				.setText(NewKeysPreferenceMessages.TriggerSequenceColumn_Text);
 		triggerSequenceColumn.addSelectionListener(new ResortColumn(comparator,
-				triggerSequenceColumn, tree, BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE));
+				triggerSequenceColumn, tree,
+				BindingLabelProvider.COLUMN_TRIGGER_SEQUENCE));
 
 		final TreeColumn whenColumn = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_WHEN);
@@ -2356,6 +2357,18 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					}
 				}
 			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.PreferencePage#applyData(java.lang.Object)
+	 */
+	public void applyData(Object data) {
+		if (data instanceof Binding && filteredTree != null) {
+			filteredTree.getViewer().setSelection(
+					new StructuredSelection(data), true);
 		}
 	}
 }
