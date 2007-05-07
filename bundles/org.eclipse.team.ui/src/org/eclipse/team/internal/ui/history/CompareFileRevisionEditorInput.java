@@ -69,6 +69,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		super(new CompareConfiguration(), page);
 		this.left = left;
 		this.right = right;
+		setTitle(NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { left.getName() }));
 	}
 
 	/* (non-Javadoc)

@@ -81,6 +81,7 @@ public final class SyncInfoCompareInput extends SaveableCompareEditorInput imple
 		this.description = description;
 		this.resource = sync.getLocal();
 		this.node = new MyDiffNode(null, sync);
+		setTitle(NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { sync.getLocal().getName() }));
 	}
 	
 	/**

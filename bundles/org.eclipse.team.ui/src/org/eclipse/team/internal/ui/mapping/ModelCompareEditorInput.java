@@ -56,6 +56,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 			}
 		};
 		getCompareConfiguration().addPropertyChangeListener(this);
+		setTitle(NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { input.getName() }));
 	}
 
 	private static CompareConfiguration createCompareConfiguration(ISynchronizePageConfiguration pageConfiguration) {
