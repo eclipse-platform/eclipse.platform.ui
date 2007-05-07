@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.ui" id="detaiPaneFactories" name="Detail Pane Factories Extension"/>
+         <meta.schema plugin="org.eclipse.debug.ui" id="detailPaneFactories" name="Detail Pane Factories Extension"/>
       </appInfo>
       <documentation>
          This extension point allows clients to contribute custom renderings for the detail pane in the variables, registers and expression views. To contribute a custom detail pane, an implementation of &lt;code&gt;IDetailPaneFactory&lt;/code&gt; is registered using this extension point.  A detail pane factory creates an &lt;code&gt;IDetailPane&lt;/code&gt; for each custom rendering.
