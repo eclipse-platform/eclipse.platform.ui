@@ -15,6 +15,7 @@ package org.eclipse.compare.internal;
 import java.util.*;
 
 import org.eclipse.compare.ICompareContainer;
+import org.eclipse.core.commands.operations.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
@@ -28,6 +29,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.FindReplaceAction;
@@ -35,7 +37,7 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
  * Extends the JFace SourceViewer with some convenience methods.
  */
 public class MergeSourceViewer extends SourceViewer
-						implements ISelectionChangedListener, ITextListener, IMenuListener {
+						implements ISelectionChangedListener, ITextListener, IMenuListener, IOperationHistoryListener {
 								
 	public static final String UNDO_ID= "undo"; //$NON-NLS-1$
 	public static final String REDO_ID= "redo"; //$NON-NLS-1$
@@ -116,6 +118,10 @@ public class MergeSourceViewer extends SourceViewer
 		if(fShowLineNumber){
 			updateLineNumberRuler();
 		}
+		
+		IOperationHistory history = getHistory();
+		if (history != null) 
+			history.addOperationHistoryListener(this);
 	}
 	
 	public void rememberDocument(IDocument doc) {
@@ -401,6 +407,10 @@ public class MergeSourceViewer extends SourceViewer
 	}
 					
 	public void textChanged(TextEvent event) {
+		updateContentDependantActions();
+	}
+
+	void updateContentDependantActions() {
 		Iterator e= fActions.values().iterator();
 		while (e.hasNext()) {
 			Object next = e.next();
@@ -462,6 +472,10 @@ public class MergeSourceViewer extends SourceViewer
 		removeTextListener(this);
 		removeSelectionChangedListener(this);
 		EditorsUI.getPreferenceStore().removePropertyChangeListener(fPreferenceChangeListener);
+		
+		IOperationHistory history = getHistory();
+		if (history != null) 
+			history.removeOperationHistoryListener(this);
 		
 		super.handleDispose();
 	}
@@ -560,5 +574,33 @@ public class MergeSourceViewer extends SourceViewer
 
 	public void addAction(String id, IAction action) {
 		fActions.put(id, action);
+	}
+	
+	private IOperationHistory getHistory() {
+		if (PlatformUI.getWorkbench() == null) {
+			return null;
+		}
+		return PlatformUI.getWorkbench().getOperationSupport()
+				.getOperationHistory();
+	}
+
+	public void historyNotification(OperationHistoryEvent event) {
+		// This method updates the enablement of all content operations
+		// when the undo history changes. It could be localized to UNDO and REDO.
+		IUndoContext context = getUndoContext();
+		if (context != null && event.getOperation().hasContext(context)) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					updateContentDependantActions();
+				}
+			});
+		}
+	}
+
+	private IUndoContext getUndoContext() {
+		IUndoManager undoManager = getUndoManager();
+		if (undoManager instanceof IUndoManagerExtension)
+			return ((IUndoManagerExtension)undoManager).getUndoContext();
+		return null;
 	}
 }
