@@ -13,10 +13,13 @@
 package org.eclipse.compare.internal;
 
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.compare.ICompareContainer;
 import org.eclipse.core.commands.operations.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -26,8 +29,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
@@ -143,12 +145,18 @@ public class MergeSourceViewer extends SourceViewer
 		StyledText te= getTextWidget();
 		if (te != null)
 			te.setFont(font);
+		if (fLineNumberColumn != null) {
+			fLineNumberColumn.setFont(font);
+			layoutViewer();
+		}
 	}
 	
 	public void setBackgroundColor(Color color) {
 		StyledText te= getTextWidget();
 		if (te != null)
 			te.setBackground(color);
+		if (fLineNumberColumn != null)
+			fLineNumberColumn.setBackground(color);
 	}
 	
 	public void setEnabled(boolean enabled) {
@@ -533,6 +541,8 @@ public class MergeSourceViewer extends SourceViewer
 			if (b != fShowLineNumber){
 				toggleLineNumberRuler();	
 			}
+		} else if (key.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR)) {
+			updateLineNumberColumnPresentation(true);
 		}
 	}
 
@@ -552,10 +562,45 @@ public class MergeSourceViewer extends SourceViewer
 			} else {
 				if(fLineNumberColumn==null){
 					fLineNumberColumn = new LineNumberRulerColumn();
+					updateLineNumberColumnPresentation(false);
 				}
 				c.addDecorator(0, fLineNumberColumn);
 			}
 		}
+	}
+
+	private void updateLineNumberColumnPresentation(boolean refresh) {
+		if (fLineNumberColumn == null)
+			return;
+		RGB rgb=  getColorFromStore(EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR);
+		if (rgb == null)
+			rgb= new RGB(0, 0, 0);
+		ISharedTextColors sharedColors= getSharedColors();
+		fLineNumberColumn.setForeground(sharedColors.getColor(rgb));
+		if (refresh) {
+			fLineNumberColumn.redraw();
+		}
+	}
+	
+	private void layoutViewer() {
+		Control parent= getControl();
+		if (parent instanceof Composite && !parent.isDisposed())
+			((Composite) parent).layout(true);
+	}
+	
+	private ISharedTextColors getSharedColors() {
+		return EditorsUI.getSharedTextColors();
+	}
+	
+	private RGB getColorFromStore(IPreferenceStore store, String key) {
+		RGB rgb= null;
+		if (store.contains(key)) {
+			if (store.isDefault(key))
+				rgb= PreferenceConverter.getDefaultColor(store, key);
+			else
+				rgb= PreferenceConverter.getColor(store, key);
+		}
+		return rgb;
 	}
 
 	/**
