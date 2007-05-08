@@ -965,6 +965,16 @@
           label="%dummy"
           value="176,180,185">
       </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.editors.backgroundColor"
+            label="%dummy"
+            value="255,255,255">
+      </colorDefinition>
+      <colorDefinition
+            id="org.eclipse.ui.editors.foregroundColor"
+            label="%dummy"
+            value="0,0,0">
+      </colorDefinition>
 
       <theme
 		  id="org.eclipse.ui.ide.systemDefault">
@@ -987,6 +997,14 @@
          <colorOverride
             id="org.eclipse.ui.editors.hyperlinkColor"
             value="LIST_SELECTION_COLOR">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.ui.editors.backgroundColor"
+            value="COLOR_LIST_BACKGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.ui.editors.foregroundColor"
+            value="COLOR_LIST_FOREGROUND">
          </colorOverride>
       </theme>
 

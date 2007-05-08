@@ -49,4 +49,16 @@ public interface ITextEditorThemeConstants {
 	 */
 	public final static String PRINT_MARGIN_COLOR= "org.eclipse.ui.editors.printMarginColor"; //$NON-NLS-1$
 
+	/**
+	 * Theme constant for the color used to render the editor background color
+	 * (value <code>"org.eclipse.ui.editors.backgroundColor"</code>).
+	 */
+	public static final String PREFERENCE_COLOR_BACKGROUND= "org.eclipse.ui.editors.backgroundColor"; //$NON-NLS-1$
+
+	/**
+	 * Theme constant for the color used to render the editor foreground color
+	 * (value <code>"org.eclipse.ui.editors.foregroundColor"</code>).
+	 */
+	public static final String PREFERENCE_COLOR_FOREGROUND= "org.eclipse.ui.editors.foregroundColor"; //$NON-NLS-1$
+
 }

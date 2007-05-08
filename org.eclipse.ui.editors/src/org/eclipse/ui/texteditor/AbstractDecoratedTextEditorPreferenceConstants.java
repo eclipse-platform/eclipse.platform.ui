@@ -503,13 +503,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
 
-		PreferenceConverter.setDefault(store,AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,new RGB(255, 255, 255));
-		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
-		PreferenceConverter.setDefault(store,AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,new RGB(0, 0, 0));
+		setDefaultAndFireEvent(store,
+				AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
+				findRGB(registry, ITextEditorThemeConstants.PREFERENCE_COLOR_BACKGROUND, new RGB(255, 255, 255)));
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, true);
-
+		setDefaultAndFireEvent(store,
+				AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
+				findRGB(registry, ITextEditorThemeConstants.PREFERENCE_COLOR_FOREGROUND, new RGB(0,0,0)));
+		
 		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on MAC; SWT.CONTROL elsewhere
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
