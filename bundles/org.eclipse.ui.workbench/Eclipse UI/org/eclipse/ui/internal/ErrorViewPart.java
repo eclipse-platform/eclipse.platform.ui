@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.part.StatusPart;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -20,10 +22,19 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class ErrorViewPart extends ViewPart {
 
+	private IStatus error;
+
 	/**
 	 * Creates instance of the class
 	 */
 	public ErrorViewPart() {
+	}
+
+	/**
+	 * Creates instance of the class
+	 */
+	public ErrorViewPart(IStatus error) {
+		this.error = error;
 	}
 
 	/*
@@ -32,6 +43,9 @@ public class ErrorViewPart extends ViewPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
+		if (error != null) {
+			new StatusPart(parent, error);
+		}
 	}
 
 	/*
@@ -49,7 +63,6 @@ public class ErrorViewPart extends ViewPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-
 	}
 
 }

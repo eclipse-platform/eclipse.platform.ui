@@ -233,28 +233,27 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 		// and pass the error to the status handling facility
 		if (exception != null) {
 			IStatus partStatus = exception.getStatus();
-			IStatus displayStatus = StatusUtil.newStatus(partStatus, NLS.bind(
-					WorkbenchMessages.ViewFactory_initException, partStatus
-							.getMessage()));
+			IStatus displayStatus = StatusUtil.newStatus(partStatus,
+					WorkbenchMessages.ViewFactory_initException);
 			IStatus logStatus = StatusUtil
 					.newStatus(
 							partStatus,
 							NLS
 									.bind(
 											"Unable to create view ID {0}: {1}", getId(), partStatus.getMessage())); //$NON-NLS-1$
-			
+
 			// Pass the error to the status handling facility
 			StatusManager.getManager().handle(logStatus);
-			StatusManager.getManager().handle(displayStatus,
-						StatusManager.SHOW);
-						
+			StatusManager.getManager()
+					.handle(displayStatus, StatusManager.SHOW);
+
 			IViewDescriptor desc = factory.viewReg.find(getId());
 			String label = getId();
 			if (desc != null) {
 				label = desc.getLabel();
 			}
 
-			ErrorViewPart part = new ErrorViewPart();
+			ErrorViewPart part = new ErrorViewPart(displayStatus);
 
 			PartPane pane = getPane();
 			ViewSite site = new ViewSite(this, part, factory.page, getId(),

@@ -438,15 +438,14 @@ public class EditorReference extends WorkbenchPartReference implements
                     NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
                             getId(), originalStatus.getMessage()));
             IStatus displayStatus = StatusUtil.newStatus(originalStatus,
-                    NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
-                            originalStatus.getMessage()));
+					WorkbenchMessages.EditorManager_unableToCreateEditor);
 
 			// Pass the error to the status handling facility         
             StatusManager.getManager().handle(logStatus);       
             StatusManager.getManager().handle(displayStatus,
 						StatusManager.SHOW);
             
-            ErrorEditorPart part = new ErrorEditorPart();
+            ErrorEditorPart part = new ErrorEditorPart(displayStatus);
             
             IEditorInput input;
             try {
@@ -464,13 +463,8 @@ public class EditorReference extends WorkbenchPartReference implements
             EditorSite site = new EditorSite(this, part, manager.page, descr);
             
             site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
-            try {
-				part.init(site, input);
-			} catch (PartInitException e) {
-				StatusUtil.handleStatus(e, StatusManager.SHOW
-						| StatusManager.LOG);
-				return null;
-			}
+            
+			part.init(site, input);
 
             Composite parent = (Composite)pane.getControl();
             Composite content = new Composite(parent, SWT.NONE);
@@ -758,13 +752,8 @@ public class EditorReference extends WorkbenchPartReference implements
         EditorSite site = new EditorSite(this, part, manager.page, descr);
         
         site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
-        try {
-			part.init(site, input);
-		} catch (PartInitException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
-			return null;
-		}
+
+		part.init(site, input);
 
         Composite parent = (Composite)pane.getControl();
         Composite content = new Composite(parent, SWT.NONE);
