@@ -38,6 +38,7 @@ import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * A perspective presentation is a collection of parts with a layout. Each part
@@ -59,6 +60,16 @@ public class PerspectiveHelper {
     private ViewSashContainer mainLayout;
     
 	private PartStack maximizedStack;
+
+	/**
+	 * If there is a ViewStack maximized on shutdown the id is
+	 * cached and restored into this field on 'restoreState'.
+	 * This is then used to bash the ViewStack's presentation state
+	 * into the correct value on activation (the startup life-cycle
+	 * is such that we have to use this 'latch' because the window
+	 * state isn't valid until the activate happens.
+	 */
+	private String maximizedStackId;
 
     private ArrayList detachedWindowList = new ArrayList(1);
 
@@ -267,6 +278,21 @@ public class PerspectiveHelper {
 
         enableAllDrag();
 
+        // Ensure that the maximized stack's presentation state is correct
+        if (maximizedStackId != null) {
+        	LayoutPart part = findPart(maximizedStackId);
+        	if (part instanceof PartStack) {
+        		maximizedStack = (PartStack) part;
+            	maximizedStackId = null;
+        	}
+        }
+        
+        // NOTE: we only handle ViewStacks here; Editor Stacks are handled by the
+        // perspective
+        if (maximizedStack instanceof ViewStack) {
+        	maximizedStack.setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);            	
+        }
+        
         active = true;
     }
 
@@ -1336,8 +1362,11 @@ public class PerspectiveHelper {
                 detachedPlaceHolderList.add(holder);
             }
         }
+        
+        // Get the cached id of the currently maximized stack
+        maximizedStackId = childMem.getString(IWorkbenchConstants.TAG_MAXIMIZED);
+        
         return r;
-
     }
 
     /**
@@ -1366,6 +1395,18 @@ public class PerspectiveHelper {
                 holder.saveState(childMem);
             }
         }
+        
+        // Write out the id of the maximized (View) stack (if any)
+        // NOTE: we only write this out if it's a ViewStack since the
+        // Editor Area is handled by the perspective
+        if (maximizedStack instanceof ViewStack) {
+        	childMem.putString(IWorkbenchConstants.TAG_MAXIMIZED, maximizedStack.getID());
+        }
+        else if (maximizedStackId != null) {
+        	// Maintain the cache if the perspective has never been activated
+        	childMem.putString(IWorkbenchConstants.TAG_MAXIMIZED, maximizedStackId);        	
+        }
+        
         return r;
     }
 
