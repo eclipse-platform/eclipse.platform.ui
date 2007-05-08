@@ -715,6 +715,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		private int sortColumn = 0;
 
+		private int lastSortColumn = 0;
+
 		private boolean ascending = true;
 
 		public final int category(final Object element) {
@@ -750,11 +752,26 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				String e2p = tableProvider.getColumnText(b, sortColumn);
 				if (e1p != null && e2p != null) {
 					int result = getComparator().compare(e1p, e2p);
+					if (result == 0 && sortColumn != lastSortColumn) {
+						result = secondaryCompare(tableProvider, a, b);
+					}
 					return ascending ? result : (-1) * result;
 
 				}
 			}
 			return super.compare(viewer, a, b);
+		}
+
+		private final int secondaryCompare(
+				final ITableLabelProvider tableProvider, final Object a,
+				final Object b) {
+			int result = 0;
+			String e1p = tableProvider.getColumnText(a, lastSortColumn);
+			String e2p = tableProvider.getColumnText(b, lastSortColumn);
+			if (e1p != null && e2p != null) {
+				result = getComparator().compare(e1p, e2p);
+			}
+			return result;
 		}
 
 		/**
@@ -769,6 +786,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		 *            The sortColumn to set.
 		 */
 		public void setSortColumn(int sortColumn) {
+			lastSortColumn = this.sortColumn;
+			if (lastSortColumn != sortColumn) {
+				ascending = true;
+			}
 			this.sortColumn = sortColumn;
 		}
 
