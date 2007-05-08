@@ -1660,18 +1660,30 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.debug.ui.commands.DebugLast"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-      		platform="carbon"
-            sequence="M1+F11"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.debug.ui.commands.DebugLast"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <key
             sequence="M1+F11"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.commands.RunLast"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-      		platform="carbon"
+            platform="carbon"
+            sequence="F11"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <!-- This should not be necessary, since it is overwritten in the
+           next <key> declaration, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=185689 : -->
+      <key
+            platform="carbon"
+            sequence="M1+F11"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M1+F11"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.commands.DebugLast"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
             sequence="M1+M2+F11"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.commands.RunLast"
