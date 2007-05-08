@@ -945,6 +945,22 @@ public class Perspective {
 				layout = null;
 			}
     	}
+		
+    	// If we are -not- using the new min/max then ensure that there
+    	// are no stacks in the trim. This can happen when a user switches
+    	// back to the 3.0 presentation... 
+		if (!Perspective.useNewMinMax(this)) {
+			boolean stacksWereRestored = fastViewManager.restoreAllTrimStacks();
+			setEditorAreaTrimVisibility(false);
+			
+			// Restore any 'maximized' view stack since we've restored
+			// the minimized stacks
+			if (stacksWereRestored && presentation.getMaximizedStack() instanceof ViewStack) {
+				ViewStack vs = (ViewStack) presentation.getMaximizedStack();
+				vs.setPresentationState(IStackPresentationSite.STATE_RESTORED);
+				presentation.setMaximizedStack(null);
+			}
+		}
 
 		if (shouldHideEditorsOnActivate || (editorHidden && editorHolder == null)) {
 			// We do this here to ensure that createPartControl is called on the

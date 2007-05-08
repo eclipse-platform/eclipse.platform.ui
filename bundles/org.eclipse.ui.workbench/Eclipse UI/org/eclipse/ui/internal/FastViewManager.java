@@ -664,6 +664,44 @@ public class FastViewManager {
 	}
 
 	/**
+	 * Restore any trim stacks. This method is used when the presentation
+	 * is switched back to 3.0; if we aren't using the new min/max story
+	 * then we shouldn't -have- any trim stacks.
+	 */
+	public boolean restoreAllTrimStacks() {
+		boolean stacksWereRestored = false;
+		
+		Iterator mapIter = idToFastViewsMap.keySet().iterator();
+		while (mapIter.hasNext()) {
+			String id = (String) mapIter.next();
+			
+			// Skip the legacy FstViewBar
+			if (id.equals(FastViewBar.FASTVIEWBAR_ID))
+				continue;
+			
+			// Restore the views
+			List fvs = getFastViews(id);
+			for (Iterator fvIter = fvs.iterator(); fvIter.hasNext();) {
+				IViewReference ref = (IViewReference) fvIter.next();
+				removeViewReference(ref, true, !fvIter.hasNext());
+			}
+
+			// Blow the trim away
+			IWindowTrim trim = tbm.getTrim(id);
+			if (trim != null && trim instanceof ViewStackTrimToolBar) {
+				tbm.removeTrim(trim);
+				trim.getControl().dispose();
+				
+				stacksWereRestored = true;
+			}
+		}
+		
+		tbm.forceLayout();
+		
+		return stacksWereRestored;
+	}
+
+	/**
 	 * Show all non-empty trim stacks. Create the stack if necessary
 	 */
 	private void setTrimStackVisibility(boolean visible) {
