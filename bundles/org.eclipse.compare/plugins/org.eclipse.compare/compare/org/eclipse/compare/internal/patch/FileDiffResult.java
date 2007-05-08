@@ -217,7 +217,7 @@ public class FileDiffResult implements IFilePatchResult {
 		}
 		int shift= 0;
 		int fuzz1 = 0;
-		String name= getTargetPath().lastSegment();
+		String name = getTargetPath() != null ? getTargetPath().lastSegment() : ""; //$NON-NLS-1$
 		Hunk[] hunks = fDiff.getHunks();
 		for (int j = 0; j < hunks.length; j++) {
 			Hunk h = hunks[j];
