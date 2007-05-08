@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006-2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Matt McCutchen <hashproduct+eclipse@gmail.com> - Bug 94808 [Change Sets] "&" not showing up in dropdown menu
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
@@ -82,12 +83,36 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		}
 	}
 	
+	/**
+	 * Escape a string so it can be used as an action text without '&'
+	 * being interpreted as a mnemonic. Specifically, turn each '&' into '&&'.
+	 */
+	private static String escapeActionText(String x) {
+		// Loosely based on org.eclipse.jface.action.LegacyActionTools#removeMnemonics
+		int ampersandIndex = x.indexOf('&');
+		if (ampersandIndex == -1)
+			return x;
+		
+		int len = x.length();
+		StringBuffer sb = new StringBuffer(2 * len + 1);
+		int doneIndex = 0;
+		while (ampersandIndex != -1) {
+			sb.append(x.substring(doneIndex, ampersandIndex));
+			sb.append("&&"); //$NON-NLS-1$
+			doneIndex = ampersandIndex + 1;
+			ampersandIndex = x.indexOf('&', doneIndex);
+		}
+		if (doneIndex < len)
+			sb.append(x.substring(doneIndex, len));
+		return sb.toString();
+	}
+
 	private class AddToChangeSetAction extends ModelParticipantAction {
 		 
         private final ActiveChangeSet set;
 	    
         public AddToChangeSetAction(ISynchronizePageConfiguration configuration, ActiveChangeSet set, ISelection selection) {
-            super(set == null ? TeamUIMessages.ChangeSetActionGroup_2 : set.getTitle(), configuration); 
+            super(set == null ? TeamUIMessages.ChangeSetActionGroup_2 : escapeActionText(set.getTitle()), configuration); 
             this.set = set;
             selectionChanged(selection);
         }
