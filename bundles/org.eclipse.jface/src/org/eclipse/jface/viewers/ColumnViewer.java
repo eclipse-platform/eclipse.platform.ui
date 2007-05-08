@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
- *												   fix in bug 163317
- *												   fix in bug 151295, bug 167323, bug 167858
+ *												   fix in bug 163317, 151295, 167323, 167858, 184346
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -104,6 +103,13 @@ public abstract class ColumnViewer extends StructuredViewer {
 		if (viewerEditor != null) {
 			control.addMouseListener(new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
+					// Workaround for bug 185817
+					if( e.count != 2 ) {
+						handleMouseDown(e);
+					}
+				}
+
+				public void mouseDoubleClick(MouseEvent e) {
 					handleMouseDown(e);
 				}
 			});
