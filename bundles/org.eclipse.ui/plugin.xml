@@ -1205,7 +1205,6 @@
       <colorDefinition
             label="%Color.activeTabText"
             categoryId="org.eclipse.ui.presentation.default"
-            value="COLOR_BLACK"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
          <description>
             %Color.activeTabTextDesc
@@ -1214,6 +1213,16 @@
                ws="motif"
                value="COLOR_TITLE_INACTIVE_FOREGROUND">
          </colorValue>
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.LightColorFactory"
+               plugin="org.eclipse.ui">
+          <parameter
+                  name="base" value="COLOR_TITLE_FOREGROUND">
+          </parameter>
+          <parameter
+                  name="definitionId" value="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR">
+          </parameter>
+         </colorFactory>
       </colorDefinition>
       <colorDefinition
             categoryId="org.eclipse.ui.presentation.default"
@@ -1272,7 +1281,7 @@
       <colorDefinition
             label="%Color.activeNofocusTabBGEnd"
             categoryId="org.eclipse.ui.presentation.default"
-            value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT"
+            value="COLOR_TITLE_INACTIVE_BACKGROUND"
             id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_END">
          <description>
             %Color.activeNofocusTabBGEndDesc
@@ -1280,13 +1289,21 @@
       </colorDefinition>
       <colorDefinition
             label="%Color.activeNofocusTabBGStart"
-            value="COLOR_TITLE_INACTIVE_BACKGROUND"
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START">
          <description>
             %Color.activeNofocusTabBGStartDesc
          </description>
-      </colorDefinition>      
+         <colorFactory
+               class="org.eclipse.ui.internal.themes.LightColorFactory"
+               plugin="org.eclipse.ui">
+          <parameter
+                  name="base" value="COLOR_TITLE_INACTIVE_BACKGROUND">
+          </parameter>
+          <parameter
+                  name="definitionId" value="org.eclipse.ui.workbench.ACTIVE_NOFOCUS_TAB_BG_START">
+          </parameter>
+         </colorFactory>      </colorDefinition>      
 <!-- Inactive Tab Colors -->
       <colorDefinition
             label="%Color.inactiveTabText"
