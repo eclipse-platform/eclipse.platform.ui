@@ -165,14 +165,48 @@ public class FastViewPane {
         }
 
         public void addSystemActions(IMenuManager menuManager) {
-            appendToGroupIfPossible(menuManager,
-                    "misc", new SystemMenuFastViewOrientation(currentPane.getPane())); //$NON-NLS-1$
-            appendToGroupIfPossible(menuManager,
-                    "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
+        	// Only add the 'Fast View' and 'Orientation' menu entries if the
+        	// pane is showing a 'legacy' fast view
+        	if (isShowingTrueFastView()) {
+	            appendToGroupIfPossible(menuManager,
+	                    "misc", new SystemMenuFastViewOrientation(currentPane.getPane())); //$NON-NLS-1$
+	            appendToGroupIfPossible(menuManager,
+	                    "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
+        	}
+        	
             appendToGroupIfPossible(menuManager,
                     "size", new SystemMenuSizeFastView(FastViewPane.this)); //$NON-NLS-1$
         }
 
+        /**
+         * Determines whether or not he view that is currently being
+         * displayed represents a 'legacy' FV or not. This is used to
+         * tweak the UI (i.e. by removing menu entries that are not
+         * appropriate for 'minimized' views...
+         * 
+         * @return <code>true</code> iff the view currently being shown
+         * is a 'legacy' fast view
+         */
+        private boolean isShowingTrueFastView() {
+        	if (currentPane == null || currentPane.getPane() == null)
+        		return true;
+        	
+        	PartPane pane = currentPane.getPane();
+        	if (pane instanceof ViewPane) {
+        		ViewPane vp = (ViewPane) pane;
+                Perspective persp = vp.getPage().getActivePerspective();
+                IViewReference viewRef = vp.getViewReference();
+                FastViewManager fvm = persp.getFastViewManager();
+                
+                String trimId = null;
+                if (fvm != null)
+                	trimId = fvm.getIdForRef(viewRef);
+                return trimId == null || FastViewBar.FASTVIEWBAR_ID.equals(trimId);
+        	}
+        	
+        	return true;
+        }
+        
         public boolean isPartMoveable(IPresentablePart toMove) {
             return isPartMoveable();
         }
