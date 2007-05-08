@@ -996,7 +996,7 @@
          </colorOverride>
          <colorOverride
             id="org.eclipse.ui.editors.hyperlinkColor"
-            value="LIST_SELECTION_COLOR">
+            value="COLOR_LIST_SELECTION">
          </colorOverride>
          <colorOverride
             id="org.eclipse.ui.editors.backgroundColor"
