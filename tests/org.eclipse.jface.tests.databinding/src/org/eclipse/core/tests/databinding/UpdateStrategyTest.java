@@ -291,7 +291,9 @@ public class UpdateStrategyTest extends AbstractDefaultRealmTestCase {
 		assertNotNull("converter not null", converter);
 		assertEquals("fromType [" + fromType + "]" , fromType, converter.getFromType());
 		assertEquals("toType [" + toType + "]", toType, converter.getToType());
-		assertTrue("converter instanceof " + converterType, converterType.isInstance(converter));
+		assertTrue("converter should be instanceof " + converterType
+				+ " but was instanceof " + converter.getClass(), converterType
+				.isInstance(converter));
 	}
 	
 	class UpdateStrategyStub extends UpdateValueStrategy {
