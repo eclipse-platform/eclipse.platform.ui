@@ -30,6 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugListSelectionDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationComparator;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -51,8 +52,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.dialogs.SelectionDialog;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -414,13 +415,42 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * Create a new configuration
 	 */
 	private void handleNew() {
-		ListDialog dialog = new ListDialog(getShell());
+		
+		final List typeCandidates = collectTypeCandidates();
+		
+		SelectionDialog dialog = new AbstractDebugListSelectionDialog(getShell()){
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
+			 */
+			protected String getDialogSettingsId() {
+				return DebugUIPlugin.getUniqueIdentifier() + ".SELECT_CONFIGURATION_TYPE_DIALOG"; //$NON-NLS-1$
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+			 */
+			protected Object getViewerInput() {
+				return typeCandidates;
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getMessage()
+			 */
+			protected String getMessage() {
+				return DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_12;
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
+			 */
+			protected String getHelpContextId() {
+				return IDebugHelpContextIds.SELECT_CONFIGURATION_TYPE_DIALOG;
+			}
+				
+		};
 		dialog.setTitle(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_11);
-		dialog.setContentProvider(new ArrayContentProvider());
-		dialog.setLabelProvider(new DefaultLabelProvider());
-		dialog.setAddCancelButton(true);
-		dialog.setMessage(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_12);
-		dialog.setInput(collectTypeCandidates());
+
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			if (result.length == 1) {

@@ -14,34 +14,31 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.swt.SWT;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
- * This class provides a general selection dialog class to be specialized for 
- * selections using a checkbox table viewer
+ * This class provides the framework for general selection dialog class.
+ * 
+ * TODO Use this abstract class hierarchy instead of the SelectionDialog for dialogs in the debug plugin
+ * 
+ * @see AbstractDebugListSelectionDialog
+ * @see AbstractDebugCheckboxSelectionDialog
  * 
  * @since 3.3
  */
 public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 
-	protected Table fTable = null;
-	protected CheckboxTableViewer fTableViewer = null;
+	protected StructuredViewer fViewer = null;
 	
 	/**
 	 * Constructor
@@ -64,6 +61,14 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	protected abstract Object getViewerInput();
 	
 	/**
+	 * Create and return a viewer to use in this dialog.
+	 * 
+	 * @param parent the composite the viewer should be created in
+	 * @return the viewer to use in the dialog
+	 */
+	protected abstract StructuredViewer createViewer(Composite parent);
+	
+	/**
 	 * Returns the content provider for the viewer
 	 * @return the content provider for the viewer
 	 */
@@ -81,21 +86,26 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	}
 	
 	/**
-	 * Returns the message for the viewer: i.e. Select Foo:
-	 * @return the message for the viewer
-	 */
-	protected String getTableViewerMessage() {
-		//do nothing by default
-		return null;
-	}
-	
-	/**
 	 * Returns the help context id for this dialog
 	 * @return the help context id for this dialog
 	 */
 	protected String getHelpContextId() {
 		//do nothing by default
 		return null;
+	}
+	
+	/**
+	 * This method allows listeners to be added to the viewer after it
+	 * is created.
+	 */
+	/**
+	 * This method allows listeners to be added to the viewer.  Called
+	 * after the viewer has been created and its input set.
+	 * 
+	 * @param viewer the viewer returned by createViewer()
+	 */
+	protected void addViewerListeners(StructuredViewer viewer){
+		//do nothing by default
 	}
 	
 	/**
@@ -122,29 +132,22 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		//do nothing by default
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite comp = (Composite) super.createDialogArea(parent);
 		addCustomHeaderControls(comp);
-		String label = getTableViewerMessage();
+		String label = getMessage();
 		if(label != null) {
-			SWTFactory.createLabel(comp, label, 1);
+			SWTFactory.createWrapLabel(comp, label, 1);
 		}
-		fTable = new Table(comp, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
-		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTableViewer = new CheckboxTableViewer(fTable);
-		fTableViewer.setLabelProvider(getLabelProvider());
-		fTableViewer.setContentProvider(getContentProvider());
-		fTableViewer.setInput(getViewerInput());
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				fTableViewer.setCheckedElements(new Object[] {event.getElement()});
-				getButton(IDialogConstants.OK_ID).setEnabled(true);
-			}
-		});
+		fViewer = createViewer(comp);
+		fViewer.setLabelProvider(getLabelProvider());
+		fViewer.setContentProvider(getContentProvider());
+		fViewer.setInput(getViewerInput());
+		addViewerListeners(fViewer);
 		addCustomFooterControls(comp);
 		initializeControls();
 		Dialog.applyDialogFont(comp);
@@ -181,10 +184,10 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 				}
 			}
 			catch (NumberFormatException nfe) {
-				return new Point(450, 500);
+				return new Point(300, 350);
 			}
 		}
-		return new Point(450, 500);
+		return new Point(300, 350);
 	}
-
+	
 }

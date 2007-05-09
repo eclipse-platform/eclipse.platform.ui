@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -20,13 +19,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -37,7 +34,7 @@ import org.eclipse.swt.widgets.Shell;
  * 
  *  @since 3.3
  */
-public class SelectLaunchModesDialog extends AbstractDebugSelectionDialog {
+public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 
 	/**
 	 * Builds labels for list control
@@ -67,7 +64,6 @@ public class SelectLaunchModesDialog extends AbstractDebugSelectionDialog {
 	 */
 	public SelectLaunchModesDialog(Shell parentShell, String mode, ILaunchConfiguration configuration) throws CoreException {
 		super(parentShell);
-		super.setMessage(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_2);
 		super.setTitle(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_3);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fValidModes = new ArrayList();
@@ -81,25 +77,6 @@ public class SelectLaunchModesDialog extends AbstractDebugSelectionDialog {
 		}
 	}
 	
-	/**
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
-		getButton(IDialogConstants.OK_ID).setEnabled(false);
-	}
-
-	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	protected void okPressed() {
-		Object[] o =  fTableViewer.getCheckedElements();
-		if(o.length > 0) {
-			setResult(Arrays.asList(o));
-		}
-		super.okPressed();
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
@@ -115,12 +92,12 @@ public class SelectLaunchModesDialog extends AbstractDebugSelectionDialog {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getTableViewerMessage()
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#getMessage()
 	 */
-	protected String getTableViewerMessage() {
+	protected String getMessage() {
 		return LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */

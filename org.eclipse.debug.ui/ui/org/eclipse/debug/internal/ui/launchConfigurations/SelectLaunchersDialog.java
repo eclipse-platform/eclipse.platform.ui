@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -48,7 +49,7 @@ import org.eclipse.swt.widgets.Text;
  * 
  *  @since 3.3
  */
-public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
+public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog {
 
 	/**
 	 * Builds labels for table control
@@ -137,6 +138,15 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 	 */
 	protected Object getViewerInput() {
 		return fDelegates;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		// Even if a user does not change anything, they can still press ok
+		getButton(IDialogConstants.OK_ID).setEnabled(true);
 	}
 	
 	/* (non-Javadoc)
