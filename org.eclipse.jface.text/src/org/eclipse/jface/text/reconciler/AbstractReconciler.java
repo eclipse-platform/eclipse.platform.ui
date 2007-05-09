@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -233,19 +233,21 @@ abstract public class AbstractReconciler implements IReconciler {
 		 */
 		public void documentChanged(DocumentEvent e) {
 
-			if (!fThread.isDirty()&& fThread.isAlive()) {
+			if (!fThread.isDirty() && fThread.isAlive()) {
 				if (!fIsAllowedToModifyDocument && Thread.currentThread() == fThread)
 					throw new UnsupportedOperationException("The reconciler thread is not allowed to modify the document"); //$NON-NLS-1$
 				aboutToBeReconciled();
-					
 			}
 
-			if (fProgressMonitor != null && fThread.isActive())
+			/*
+			 * The second OR condition handles the case when the document
+			 * gets changed while still inside initialProcess().
+			 */ 
+			if (fProgressMonitor != null && (fThread.isActive() || fThread.isDirty() && fThread.isAlive()))
 				fProgressMonitor.setCanceled(true);
 
 			if (fIsIncrementalReconciler)
 				createDirtyRegion(e);
-
 
 			fThread.reset();
 
