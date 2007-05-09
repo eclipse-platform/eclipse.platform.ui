@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * 
  * <p>
  * This class is intended to be subclassed by clients. A default behavior is
- * provided for each of the methods above, that clients can ovveride if they
+ * provided for each of the methods above, that clients can override if they
  * wish.
  * </p>
  * 
@@ -163,7 +163,7 @@ public class SearchPattern {
 	 * Matches text with pattern. matching is determine by matchKind.
 	 * 
 	 * @param text
-	 * @return true if search pattern was mached with text false in other way
+	 * @return true if search pattern was matched with text false in other way
 	 */
 	public boolean matches(String text) {
 		switch (matchRule) {
@@ -195,10 +195,8 @@ public class SearchPattern {
 			matchRule = RULE_PATTERN_MATCH;
 			switch (last) {
 			case END_SYMBOL:
-				stringPattern = pattern.substring(0, length - 1);
-				break;
 			case BLANK:
-				stringPattern = pattern.trim();
+				stringPattern = pattern.substring(0, length - 1);
 				break;
 			case ANY_STRING:
 				stringPattern = pattern;
@@ -209,21 +207,15 @@ public class SearchPattern {
 			return;
 		}
 
-		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
-			matchRule = RULE_CAMELCASE_MATCH;
-			stringPattern = pattern;
-			return;
-		}
-		
-		if (last == END_SYMBOL) {
+		if (last == END_SYMBOL || last == BLANK) {
 			matchRule = RULE_EXACT_MATCH;
 			stringPattern = pattern.substring(0, length - 1);
 			return;
 		}
 
-		if (last == BLANK) {
-			matchRule = RULE_EXACT_MATCH;
-			stringPattern = pattern.trim();
+		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
+			matchRule = RULE_CAMELCASE_MATCH;
+			stringPattern = pattern;
 			return;
 		}
 
@@ -445,12 +437,6 @@ public class SearchPattern {
 			return false;
 		}
 
-		int patternLength = patternEnd;
-		
-		if (pattern.charAt(patternEnd - 1) == END_SYMBOL || pattern.charAt(patternEnd - 1) == BLANK )
-			patternLength = patternEnd - 1;
-
-
 		char patternChar, nameChar;
 		int iPattern = patternStart;
 		int iName = nameStart;
@@ -467,8 +453,6 @@ public class SearchPattern {
 			}
 
 			if (iName == nameEnd) {
-				if (iPattern == patternLength) 
-					return true;
 				// We have exhausted name (and not pattern), so it's not a match
 				return false;
 			}
@@ -488,20 +472,12 @@ public class SearchPattern {
 			// name
 			while (true) {
 				if (iName == nameEnd) {
-					if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK))
-						return true;
+					// We have exhausted name (and not pattern), so it's not a
+					// match
 					return false;
 				}
 
 				nameChar = name.charAt(iName);
-
-				if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK)) {
-					if (isNameCharAllowed(nameChar)) {
-						return false;
-					}
-					iName++;
-					continue;
-				}
 
 				if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase
@@ -529,8 +505,7 @@ public class SearchPattern {
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {
-		return Character.isUpperCase(patternChar) || patternChar == END_SYMBOL
-				|| patternChar == BLANK;
+		return Character.isUpperCase(patternChar);
 	}
 
 	/**
@@ -538,7 +513,7 @@ public class SearchPattern {
 	 * be override if you want change logic of camelCaseMatch methods.
 	 * 
 	 * @param nameChar -
-	 *            name of searched lement
+	 *            name of searched element
 	 * @return if nameChar is in set of allowed characters for name of element
 	 */
 	protected boolean isNameCharAllowed(char nameChar) {
@@ -640,11 +615,11 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Check if charater is valid camelCase character
+	 * Check if character is valid camelCase character
 	 * 
 	 * @param ch
 	 *            character to be validated
-	 * @return true if cahracter is valid
+	 * @return true if character is valid
 	 */
 	protected boolean isValidCamelCaseChar(char ch) {
 		return true;

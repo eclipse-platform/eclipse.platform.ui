@@ -52,7 +52,7 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Genarates strings data for match test cases.
+	 * Generates strings data for match test cases.
 	 * 
 	 * @param startChar
 	 * @param endChar
@@ -79,12 +79,12 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests exact match funtionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
-	 * Result for "abcd " pattern should be similar to regexp pattern "abcd" with case insensitive.
+	 * Tests exact match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
+	 * Result for "aBcD " pattern should be similar to regexp pattern "abcd" with case insensitive.
 	 */
 	public void testExactMatch1() {
-		String patternText = "abcd ";
-		Pattern pattern = Pattern.compile("abcd", Pattern.CASE_INSENSITIVE);
+		String patternText = "aBcD ";
+		Pattern pattern = Pattern.compile("aBcD", Pattern.CASE_INSENSITIVE);
 		SearchPattern patternMatcher = new SearchPattern();
 		patternMatcher.setPattern(patternText);
 		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_EXACT_MATCH);
@@ -95,12 +95,12 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests exact match funtionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
-	 * Result for "abcd " pattern should be similar to regexp pattern "abcd" with case insensitive.
+	 * Tests exact match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
+	 * Result for "AbCdEfGh<" pattern should be similar to regexp pattern "AbCdEfGh" with case insensitive.
 	 */
 	public void testExactMatch2() {
-		String patternText = "abcdefgh<";
-		Pattern pattern = Pattern.compile("abcdefgh", Pattern.CASE_INSENSITIVE);
+		String patternText = "AbCdEfGh<";
+		Pattern pattern = Pattern.compile("AbCdEfGh", Pattern.CASE_INSENSITIVE);
 		SearchPattern patternMatcher = new SearchPattern();
 		patternMatcher.setPattern(patternText);
 		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_EXACT_MATCH);
@@ -111,7 +111,7 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests prefix match funtionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
+	 * Tests prefix match functionality. If we camelCase rule is enable, Pattern should starts with lowerCase character.
 	 * Result for "ab" pattern should be similar to regexp pattern "ab.*" with case insensitive.
 	 */
 	public void testPrefixMatch() {
@@ -127,7 +127,7 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests pattern match funtionality. It's similar to regexp patterns.
+	 * Tests pattern match functionality. It's similar to regexp patterns.
 	 * Result for "**cDe" pattern should be similar to regexp pattern ".*cde.*" with case insensitive.
 	 */
 	public void testPatternMatch1() {
@@ -143,7 +143,7 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests pattern match funtionality. It's similar to regexp patterns.
+	 * Tests pattern match functionality. It's similar to regexp patterns.
 	 * Result for "**c*e*i" pattern should be similar to regexp pattern ".*c.*e.*i.*" with case insensitive.
 	 */
 	public void testPatternMatch2() {
@@ -159,12 +159,12 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests camelCase match funtionality.
-	 * Every string starts with upperCase characters should be racognize as camelCase pattern match rule.
+	 * Tests camelCase match functionality.
+	 * Every string starts with upperCase characters should be recognize as camelCase pattern match rule.
 	 * Result for "CD" SearchPattern should be similar to regexp pattern "C[^A-Z]*D.*" or "CD.*"
 	 * If pattern contains only upperCase characters result contains all prefix match elements.
 	 */
-	public void testCamelCaseMatch1() {
+	public void testCamelCaseMatch() {
 		String patternText = "CD";
 		Pattern pattern = Pattern.compile("C[^A-Z]*D.*");
 		Pattern pattern2 = Pattern.compile("CD.*", Pattern.CASE_INSENSITIVE);
@@ -180,42 +180,8 @@ public class SearchPatternAuto extends TestCase {
 	}
 	
 	/**
-	 * Tests camelCase match funtionality.
-	 * Every string starts with upperCase characters should be racognize as camelCase pattern match rule.
-	 * Result for "AbCd " SearchPattern should be similar to regexp pattern "C[^A-Z]*D.*" or "CD.*"
-	 */
-	public void testCamelCaseMatch2() {
-		String patternText = "AbCd ";
-		Pattern pattern = Pattern.compile("Ab[^A-Z]*Cd[^A-Z]*");
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_CAMELCASE_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
-	}
-	
-	/**
-	 * Tests camelCase match funtionality.
-	 * Every string starts with upperCase characters should be racognize as camelCase pattern match rule.
-	 * Result for "AbCdE<" SearchPattern should be similar to regexp pattern "Ab[^A-Z]*Cd[^A-Z]*E[^A-Z]*"
-	 */
-	public void testCamelCaseMatch3() {
-		String patternText = "AbCdE<";
-		Pattern pattern = Pattern.compile("Ab[^A-Z]*Cd[^A-Z]*E[^A-Z]*");
-		SearchPattern patternMatcher = new SearchPattern();
-		patternMatcher.setPattern(patternText);
-		assertEquals(patternMatcher.getMatchRule(), SearchPattern.RULE_CAMELCASE_MATCH);
-		for (Iterator iter = resources.iterator(); iter.hasNext();) {
-			String res = (String) iter.next();
-			assertEquals(patternMatcher.matches(res), pattern.matcher(res).matches());
-		}
-	}
-	
-	/**
-	 * Tests blank match funtionality. 
-	 * Blank string should be racognize as blank pattern match rule.
+	 * Tests blank match functionality. 
+	 * Blank string should be recognize as blank pattern match rule.
 	 * It should match with all resources.
 	 * Result for SearchPattern should be similar to regexp pattern ".*"
 	 */
