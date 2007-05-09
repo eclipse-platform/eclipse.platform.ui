@@ -113,14 +113,8 @@ class QuickAccessEntry {
 	 */
 	public void paint(Event event, TextLayout textLayout,
 			ResourceManager resourceManager, TextStyle boldStyle, Color grayColor) {
-		Color oldForeground = event.gc.getForeground();
-		boolean selected = (event.detail & SWT.SELECTED) != 0;
 		final Table table = ((TableItem) event.item).getParent();
 		textLayout.setFont(table.getFont());
-		boolean hasFocus = table.isFocusControl();
-		event.gc.setForeground(hasFocus && selected ? table.getDisplay()
-				.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT) : table
-				.getForeground());
 		switch (event.index) {
 		case 0:
 			if (firstInCategory || providerMatchRegions.length > 0) {
@@ -151,8 +145,6 @@ class QuickAccessEntry {
 			Rectangle requiredBounds = textLayout.getBounds();
 			textLayout.draw(event.gc, availableBounds.x + 1 + image.getBounds().width, availableBounds.y
 					+ (availableBounds.height - requiredBounds.height) / 2);
-//			textLayout.draw(event.gc, event.x + 3 + image.getBounds().width,
-//					event.y + 2);
 			break;
 		}
 		if (lastInCategory) {
@@ -161,16 +153,13 @@ class QuickAccessEntry {
 			event.gc.drawLine(Math.max(0, bounds.x - 1), bounds.y + bounds.height - 1, bounds.x + bounds.width, bounds.y
 					+ bounds.height - 1);
 		}
-		event.gc.setForeground(oldForeground);
 	}
 
 	/**
 	 * @param event
 	 */
 	public void erase(Event event) {
-		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			//event.detail &= ~SWT.FOCUSED;
-		}
+		// We are only custom drawing the foreground.
 		event.detail &= ~SWT.FOREGROUND;
 	}
 }
