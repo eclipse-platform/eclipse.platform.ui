@@ -50,6 +50,7 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Standard action for deleting the currently selected resources.
@@ -496,9 +497,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		// periodic updates
 		Job deleteJob = new Job(
 				IDEWorkbenchMessages.DeleteResourceAction_jobName) {
-			public IStatus run(IProgressMonitor monitor) {
+			public IStatus run(final IProgressMonitor monitor) {
 				try {
-					DeleteResourcesOperation op = 
+					final DeleteResourcesOperation op = 
 						new DeleteResourcesOperation(resourcesToDelete, IDEWorkbenchMessages.DeleteResourceAction_operationLabel, deleteContent);
 					op.setModelProviderIds(getModelProviderIds());
 					// If we are deleting projects and their content, do not
@@ -506,7 +507,32 @@ public class DeleteResourceAction extends SelectionListenerAction {
 					// properly restored.  Just execute it directly so it won't be
 					// added to the undo history.
 					if (deleteContent && containsOnlyProjects(resourcesToDelete)) {
-						return op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shell));
+						// We must compute the execution status first so that any user prompting
+						// or validation checking occurs.  Do it in a syncExec because
+						// we are calling this from a Job.
+						WorkbenchJob statusJob = new WorkbenchJob("Status checking"){ //$NON-NLS-1$
+							/* (non-Javadoc)
+							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+							 */
+							public IStatus runInUIThread(
+									IProgressMonitor monitor) {
+								return op.computeExecutionStatus(monitor);
+							}
+							
+						};
+						
+						statusJob.setSystem(true);
+						statusJob.schedule();
+						try {//block until the status is ready
+							statusJob.join();
+						} catch (InterruptedException e) {
+							//Do nothing as status will be a cancel
+						}
+						
+						if (statusJob.getResult().isOK()) {
+							return op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shell));
+						} 
+						return statusJob.getResult();
 					}
 					return PlatformUI.getWorkbench().getOperationSupport()
 							.getOperationHistory().execute(op, monitor, 

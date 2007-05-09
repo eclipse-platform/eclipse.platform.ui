@@ -199,6 +199,14 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			markInvalid();
 			return getErrorStatus(UndoMessages.AbstractResourcesOperation_ResourcesDoNotExist);
 		}
+		return checkReadOnlyResources(resources);
+	}
+	
+	/**
+	 * Check the specified resources for read only state, and return a
+	 * status indicating whether the resources can be deleted.  
+	 */
+	IStatus checkReadOnlyResources(IResource[] resourcesToCheck) {
 		// Check read only status if we are permitted
 		// to consult the user.
 		if (!quietCompute) {
@@ -208,7 +216,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 					IDEWorkbenchMessages.DeleteResourceAction_readOnlyQuestion);
 			checker.setIgnoreLinkedResources(true);
 			IResource[] approvedResources = checker
-					.checkReadOnlyResources(resources);
+					.checkReadOnlyResources(resourcesToCheck);
 			if (approvedResources.length == 0) {
 				// Consider this a cancelled redo.
 				return Status.CANCEL_STATUS;
@@ -295,24 +303,24 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#setTargetResources(org.eclipse.core.resources.IResource[])
 	 */
-	protected void setTargetResources(IResource[] resources) {
+	protected void setTargetResources(IResource[] targetResources) {
 		// Remove any descendants if the parent has also
 		// been specified.
 		List subResources = new ArrayList();
-		for (int i = 0; i < resources.length; i++) {
-			IResource subResource = resources[i];
-			for (int j = 0; j < resources.length; j++) {
-				IResource superResource = resources[j];
+		for (int i = 0; i < targetResources.length; i++) {
+			IResource subResource = targetResources[i];
+			for (int j = 0; j < targetResources.length; j++) {
+				IResource superResource = targetResources[j];
 				if (isDescendantOf(subResource, superResource))
 					subResources.add(subResource);
 			}
 		}
-		IResource[] nestedResourcesRemoved = new IResource[resources.length
+		IResource[] nestedResourcesRemoved = new IResource[targetResources.length
 				- subResources.size()];
 		int j = 0;
-		for (int i = 0; i < resources.length; i++) {
-			if (!subResources.contains(resources[i])) {
-				nestedResourcesRemoved[j] = resources[i];
+		for (int i = 0; i < targetResources.length; i++) {
+			if (!subResources.contains(targetResources[i])) {
+				nestedResourcesRemoved[j] = targetResources[i];
 				j++;
 			}
 		}
