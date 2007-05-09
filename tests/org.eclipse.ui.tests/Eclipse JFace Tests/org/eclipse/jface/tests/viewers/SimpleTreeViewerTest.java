@@ -95,12 +95,14 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		Object firstRoot = contentProvider.getElements(treeViewer.getInput())[0];
 		Object childOfFirstRoot = contentProvider.getChildren(firstRoot)[0];
 		treeViewer.setSelection(new StructuredSelection(childOfFirstRoot), true);
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		final ISelectionChangedListener listener = new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				fail();
 			}
-		});
+		};
+		treeViewer.addSelectionChangedListener(listener);
 		sorter.inverted = true;
 		treeViewer.refresh();
+		treeViewer.removeSelectionChangedListener(listener);
 	}
 }
