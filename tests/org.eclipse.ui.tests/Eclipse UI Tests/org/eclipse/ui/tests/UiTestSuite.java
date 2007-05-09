@@ -40,6 +40,7 @@ import org.eclipse.ui.tests.operations.OperationsTestSuite;
 import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
 import org.eclipse.ui.tests.presentations.PresentationsTestSuite;
 import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
+import org.eclipse.ui.tests.quickaccess.QuickAccessTestSuite;
 import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingTestSuite;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
@@ -67,6 +68,7 @@ public class UiTestSuite extends TestSuite {
         addTest(new UIAutomatedSuite());
         addTest(new ApiTestSuite());
         addTest(new PropertySheetTestSuite());
+        addTest(new QuickAccessTestSuite());
         addTest(new InternalTestSuite());
         addTest(new NavigatorTestSuite());
         addTest(new DecoratorsTestSuite());
