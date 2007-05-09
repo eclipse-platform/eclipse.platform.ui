@@ -42,6 +42,11 @@ import org.osgi.framework.Bundle;
 public class IntroSearchParticipant extends LuceneSearchParticipant {
 
 	private IntroModelRoot model;
+	
+	private class TitleAndSummary {
+		String title;
+		String summary;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -167,38 +172,58 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		AbstractIntroElement[] children = page.getChildren();
 		if (children.length > 0) {
 			StringBuffer buf = new StringBuffer();
-			addChildren(children, buf, doc);
-			doc.add(new Field("contents", new StringReader(buf.toString()))); //$NON-NLS-1$
-			doc.add(new Field("exact_contents", new StringReader(buf.toString()))); //$NON-NLS-1$
+			TitleAndSummary titleSummary = new TitleAndSummary();
+			addChildren(children, buf, doc, titleSummary);
+			String contents = buf.toString();
+            if (titleSummary.title != null) {
+			     addTitle(titleSummary.title, doc);
+            }
+            if (titleSummary.summary != null) {
+            	doc.add(new Field("summary", titleSummary.summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$				
+            }
+			doc.add(new Field("contents", new StringReader(contents))); //$NON-NLS-1$
+			doc.add(new Field("exact_contents", new StringReader(contents))); //$NON-NLS-1$
 			return Status.OK_STATUS;
 		}
 		// delegate to the help system
 		return index.addDocument(pluginId, name, url, page.getId(), doc);
 	}
 
-	private void addChildren(AbstractIntroElement[] children, StringBuffer buf, Document doc) {
+	private void addChildren(AbstractIntroElement[] children, StringBuffer buf, Document doc, TitleAndSummary titleSummary) {
 		for (int i = 0; i < children.length; i++) {
 			AbstractIntroElement child = children[i];
-			if (child instanceof AbstractTextElement) {
-				String text = ((AbstractTextElement) child).getText();
+			if (child instanceof IntroLink) {
+				String text = ((IntroLink)child).getLabel();
 				appendNewText(buf, text);
 			} else if (child instanceof IntroText) {
-				appendNewText(buf, ((IntroText) child).getText());
-				if (child instanceof IntroPageTitle) {
-					String title = ((IntroPageTitle) child).getTitle();
-					if (title != null) {
-						addTitle(title, doc);
-					}				
+				IntroText childIntroText = (IntroText) child;
+				appendNewText(buf, childIntroText.getText());
+				String childId = childIntroText.getId();
+				String title = null;
+				if ("page-title".equals(childId)) { //$NON-NLS-1$
+					title = childIntroText.getText();
+				} else if (child instanceof IntroPageTitle) {
+					title = ((IntroPageTitle) child).getTitle();
 				}
-			} else if (child instanceof AbstractIntroContainer) {
+				if (title != null) {
+					titleSummary.title = title;
+				}				
+				if  ("page-description".equals(childId)) { //$NON-NLS-1$
+					titleSummary.summary = childIntroText.getText(); 
+				}
+			} 
+            if (child instanceof AbstractIntroContainer) {
 				AbstractIntroContainer container = (AbstractIntroContainer) child;
-				AbstractIntroElement[] cc = container.getChildren();
-				addChildren(cc, buf, doc);
+				if (!"navigation-links".equals(container.getId())) { //$NON-NLS-1$
+				    AbstractIntroElement[] cc = container.getChildren();
+				    addChildren(cc, buf, doc, titleSummary);
+                }
 			}
 		}
 	}
 
 	private void appendNewText(StringBuffer buf, String text) {
+		if (text == null) return;
 		if (buf.length() > 0)
 			buf.append(" "); //$NON-NLS-1$
 		buf.append(text);
