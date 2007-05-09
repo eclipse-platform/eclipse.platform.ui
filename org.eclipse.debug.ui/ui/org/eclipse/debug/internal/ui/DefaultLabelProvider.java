@@ -482,9 +482,6 @@ public class DefaultLabelProvider implements ILabelProvider {
 				case '\t':
 					escaped.append("\\t"); //$NON-NLS-1$
 					break;
-				case '\'':
-					escaped.append("\\\'"); //$NON-NLS-1$
-					break;
 				case '\\':
 					escaped.append("\\\\"); //$NON-NLS-1$
 					break;					
