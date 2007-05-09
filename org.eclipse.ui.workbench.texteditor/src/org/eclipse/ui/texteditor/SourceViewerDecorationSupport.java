@@ -121,7 +121,7 @@ public class SourceViewerDecorationSupport {
 	 *
 	 * @since 3.0
 	 */
-	private static final class BoxDrawingStrategy implements IDrawingStrategy {
+	private static class BoxDrawingStrategy implements IDrawingStrategy {
 		/*
 		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
 		 */
@@ -142,12 +142,16 @@ public class SourceViewerDecorationSupport {
 					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
 				}
 
-				gc.setForeground(color);
-				gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
+				drawBox(gc, textWidget, color, bounds);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);
 			}
+		}
+
+		protected void drawBox(GC gc, StyledText textWidget, Color color, Rectangle bounds) {
+			gc.setForeground(color);
+			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
 		}
 	}
 	
@@ -156,37 +160,31 @@ public class SourceViewerDecorationSupport {
 	 *
 	 * @since 3.3
 	 */
-	private static final class DashedBoxDrawingStrategy implements IDrawingStrategy {
-
+	private static final class DashedBoxDrawingStrategy extends BoxDrawingStrategy {
 		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
+		 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport.BoxDrawingStrategy#drawBox(org.eclipse.swt.graphics.GC, org.eclipse.swt.graphics.Color, org.eclipse.swt.graphics.Rectangle)
 		 */
-		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
-			if (gc != null) {
+		protected void drawBox(GC gc, StyledText textWidget, Color color, Rectangle bounds) {
+			//clean bg:
+			gc.setForeground(textWidget.getBackground());
+			gc.setLineStyle(SWT.LINE_SOLID);
+			int x= bounds.x;
+			int y= bounds.y;
+			int w= bounds.width - 1;
+			int h= bounds.height - 1;
+			gc.drawRectangle(x, y, w, h);
+			
+			gc.setForeground(color);
+			gc.setLineDash(new int[] { 3 });
+			
+			// gc.drawRectangle(x, y, w, h) is platform-dependent and can look "animated"
+			gc.drawLine(x, y, x + w, y);
+			gc.drawLine(x, y + h, x + w, y + h);
+			gc.drawLine(x, y, x, y + h);
+			gc.drawLine(x + w, y, x + w, y + h);
 
-				Rectangle bounds;
-				if (length > 0)
-					bounds= textWidget.getTextBounds(offset, offset + length - 1);
-				else {
-					Point loc= textWidget.getLocationAtOffset(offset);
-					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
-				}
-				
-				//clean bg:
-				gc.setForeground(textWidget.getBackground());
-				gc.setLineStyle(SWT.LINE_SOLID);
-				gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
-				
-				gc.setForeground(color);
-				gc.setLineDash(new int[] { 3 });
-				gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
-
-				//RESET (same GC is passed around!):
-				gc.setLineStyle(SWT.LINE_SOLID);
-				
-			} else {
-				textWidget.redrawRange(offset, length, true);
-			}
+			//RESET (same GC is passed around!):
+			gc.setLineStyle(SWT.LINE_SOLID);
 		}
 	}
 	
