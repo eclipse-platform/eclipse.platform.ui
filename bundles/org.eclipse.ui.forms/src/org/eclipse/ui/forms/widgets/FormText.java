@@ -1183,6 +1183,12 @@ public class FormText extends Canvas {
 				}
 				e.childID = childID;
 			}
+			
+			public void getDefaultAction (AccessibleControlEvent e) {
+				if (model.getHyperlinkCount() > 0) {
+				    e.result = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
+				} 
+			}
 
 			public void getChildCount(AccessibleControlEvent e) {
 				e.detail = model.getHyperlinkCount();
@@ -1192,8 +1198,12 @@ public class FormText extends Canvas {
 				int role = 0;
 				int childID = e.childID;
 				int linkCount = model.getHyperlinkCount();
-				if (childID == ACC.CHILDID_SELF) {
-					role = ACC.ROLE_TEXT;
+				if (childID == ACC.CHILDID_SELF) { 
+					if (linkCount > 0) {
+					    role = ACC.ROLE_LINK;
+					} else {
+						role = ACC.ROLE_TEXT;
+					}
 				} else if (childID >= 0 && childID < linkCount) {
 					role = ACC.ROLE_LINK;
 				}

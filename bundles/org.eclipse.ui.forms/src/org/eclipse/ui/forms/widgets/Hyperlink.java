@@ -87,6 +87,10 @@ public class Hyperlink extends AbstractHyperlink {
 			public void getRole(AccessibleControlEvent e) {
 				e.detail = ACC.ROLE_LINK;
 			}
+						
+			public void getDefaultAction (AccessibleControlEvent e) {
+				e.result = SWT.getMessage ("SWT_Press"); //$NON-NLS-1$
+			}
 
 			public void getState(AccessibleControlEvent e) {
 				int state = ACC.STATE_NORMAL;
