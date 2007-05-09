@@ -14,10 +14,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -101,6 +103,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * Pending viewer state to be restored
 	 */
 	private ModelDelta fPendingState = null;
+	
+	/**
+	 * Set of IMementoManager's that are currently saving state
+	 */
+	private Set fPendingStateSaves = new HashSet();
+	
+	/**
+	 * Used to queue a viewer input for state restore
+	 */
+	private Object fQueuedRestore = null;
 	
 	/**
 	 * Used to determine when restoration delta has been processed
@@ -221,11 +233,25 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	}
 
 	/**
-	 * Restores viewer state for the new input
-	 * 
-	 * @param newInput
+	 * Restores the viewer state unless a save is taking place.  If a save is
+	 * taking place, the restore is queued.
+	 * @param input viewer input
 	 */
 	protected synchronized void restoreViewerState(final Object input) {
+		fPendingState = null;
+		if (isSavingState()) {
+			fQueuedRestore = input;
+		} else {
+			startRestoreViewerState(input);
+		}
+	}
+	
+	/**
+	 * Restores viewer state for the given input
+	 * 
+	 * @param input viewer input
+	 */
+	private  synchronized void startRestoreViewerState(final Object input) {
 		fPendingState = null;
 		final IElementMementoProvider defaultProvider = getViewerStateAdapter(input);
 		if (defaultProvider != null) {
@@ -388,6 +414,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 							} catch (IOException e) {
 								DebugUIPlugin.log(e);
 							}
+							stateSaveComplete(this);
 						}
 					} else {
 						abort = true;
@@ -397,6 +424,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 							req.cancel();
 						}
 						requests.clear();
+						stateSaveComplete(this);
 					}
 				}
 			}
@@ -431,7 +459,40 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			}
 		};
 		rootDelta.accept(visitor);
+		stateSaveStarted(manager);
 		manager.processReqeusts();
+	}
+	
+	/**
+	 * Called when a state save is starting.
+	 * 
+	 * @param manager
+	 */
+	private synchronized void stateSaveStarted(IMementoManager manager) {
+		fPendingStateSaves.add(manager);
+	}
+	
+	/**
+	 * Called when a state save is complete.
+	 * 
+	 * @param manager
+	 */
+	private synchronized void stateSaveComplete(IMementoManager manager) {
+		fPendingStateSaves.remove(manager);
+		if (fQueuedRestore != null) {
+			Object temp = fQueuedRestore;
+			fQueuedRestore = null;
+			restoreViewerState(temp);
+		}
+	}
+	
+	/**
+	 * Returns whether any state saving is in progress.
+	 * 
+	 * @return whether any state saving is in progress
+	 */
+	private synchronized boolean isSavingState() {
+		return !fPendingStateSaves.isEmpty();
 	}
 
 	/**
