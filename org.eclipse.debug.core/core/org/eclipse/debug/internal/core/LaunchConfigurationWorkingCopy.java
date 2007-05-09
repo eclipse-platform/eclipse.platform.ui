@@ -175,48 +175,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see ILaunchConfigurationWorkingCopy#doSave()
 	 */
 	public synchronized ILaunchConfiguration doSave() throws CoreException {
-		if (getParent() != null) {
-			// save to parent working copy
-			LaunchConfigurationWorkingCopy wc = (LaunchConfigurationWorkingCopy) getParent();
-			if(fRenamed) {
-				wc.rename(getName());
-			}
-			else {
-				wc.setName(getName());
-			}
-			wc.setAttributes(getInfo().getAttributes());
-			return wc;
-		}
-		else {
-			boolean useRunnable= true;
-			if (isLocal()) {
-				if (isMoved()) {
-					// If this config was moved from a shared location, saving
-					// it will delete the original from the workspace. Use runnable.
-					useRunnable= !isNew() && !getOriginal().isLocal();
-				} else {
-					useRunnable= false;
-				}
-			}
-			if (useRunnable) {
-				IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-					public void run(IProgressMonitor pm) throws CoreException {
-						doSave0(pm);
-					}
-				};
-				ResourcesPlugin.getWorkspace().run(wr, null, 0, new NullProgressMonitor());
-			} else {
-				//file is persisted in the metadata not the workspace
-				doSave0(new NullProgressMonitor());
-			}
-			getLaunchManager().setMovedFromTo(null, null);
-		}
-		return new LaunchConfiguration(getLocation());
+		return doSave(new NullProgressMonitor());
 	}
 
 	/**
-	 * This method is analagous to ILaunchConfigurationWorkingCopy#doSave(), except that it accepts 
-	 * a proress monitor to report back to
+	 * Saves with progress.
+	 * 
 	 * @param monitor
 	 * @return the saved <code>ILaunchConfiguration</code>
 	 * @throws CoreException
@@ -227,11 +191,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (getParent() != null) {
 			// save to parent working copy
 			LaunchConfigurationWorkingCopy wc = (LaunchConfigurationWorkingCopy) getParent();
-			if(fRenamed) {
+			if(isMoved()) {
 				wc.rename(getName());
-			}
-			else {
-				wc.setName(getName());
+				wc.setContainer(getContainer());
 			}
 			wc.setAttributes(getInfo().getAttributes());
 			return wc;
