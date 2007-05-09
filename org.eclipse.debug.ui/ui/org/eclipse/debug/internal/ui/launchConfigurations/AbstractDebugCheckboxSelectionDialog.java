@@ -29,9 +29,6 @@ import org.eclipse.swt.widgets.Table;
  * @since 3.3
  */
 public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebugSelectionDialog {
-
-	protected CheckboxTableViewer fTableViewer;
-	protected Table fTable;
 	
 	/**
 	 * Constructor
@@ -43,6 +40,14 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 	}
 	
 	/**
+	 * Returns the viewer cast to the correct instance
+	 * @return
+	 */
+	protected CheckboxTableViewer getCheckBoxTableViewer() {
+		return (CheckboxTableViewer) fViewer;
+	}
+	
+	/**
 	 * Create and return a viewer to use in this dialog.
 	 * 
 	 * @param parent the composite the viewer should be created in
@@ -50,17 +55,16 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 	 */
 	protected StructuredViewer createViewer(Composite parent){
 		//by default return a checkbox table viewer
-		fTable = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
-		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTableViewer = new CheckboxTableViewer(fTable);
-		return fTableViewer;
+		Table table = new Table(parent, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
+		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		return new CheckboxTableViewer(table);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
 	protected void addViewerListeners(StructuredViewer viewer) {
-		fTableViewer.addCheckStateListener(new DefaultCheckboxListener());
+		getCheckBoxTableViewer().addCheckStateListener(new DefaultCheckboxListener());
 	}
 	
 	/**
@@ -70,8 +74,7 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 	 */
 	private class DefaultCheckboxListener implements ICheckStateListener{
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			fTableViewer.setCheckedElements(new Object[] {event.getElement()});
-			getButton(IDialogConstants.OK_ID).setEnabled(true);		
+			getButton(IDialogConstants.OK_ID).setEnabled(getCheckBoxTableViewer().getCheckedElements().length > 0);		
 		}
 	}
 
@@ -87,7 +90,7 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		Object[] elements =  fTableViewer.getCheckedElements();
+		Object[] elements =  getCheckBoxTableViewer().getCheckedElements();
 		setResult(Arrays.asList(elements));
 		super.okPressed();
 	}

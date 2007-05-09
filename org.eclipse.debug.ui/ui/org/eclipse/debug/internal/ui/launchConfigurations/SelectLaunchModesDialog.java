@@ -90,13 +90,6 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 	protected IBaseLabelProvider getLabelProvider() {
 		return new OptionsLabelProvider();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#getMessage()
-	 */
-	protected String getMessage() {
-		return LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
@@ -112,4 +105,10 @@ public class SelectLaunchModesDialog extends AbstractDebugListSelectionDialog{
 		return IDebugHelpContextIds.SELECT_LAUNCH_MODES_DIALOG;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+	 */
+	protected String getViewerLabel() {
+		return LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4;
+	}
 }

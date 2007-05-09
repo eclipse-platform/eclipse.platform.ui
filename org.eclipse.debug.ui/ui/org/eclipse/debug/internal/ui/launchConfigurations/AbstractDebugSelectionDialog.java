@@ -89,10 +89,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 * Returns the help context id for this dialog
 	 * @return the help context id for this dialog
 	 */
-	protected String getHelpContextId() {
-		//do nothing by default
-		return null;
-	}
+	abstract protected String getHelpContextId();
 	
 	/**
 	 * This method allows listeners to be added to the viewer after it
@@ -140,8 +137,12 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		addCustomHeaderControls(comp);
 		String label = getMessage();
-		if(label != null) {
+		if(label != null && !"".equals(label)) { //$NON-NLS-1$
 			SWTFactory.createWrapLabel(comp, label, 1);
+		}
+		label = getViewerLabel();
+		if(label != null && !"".equals(label)) { //$NON-NLS-1$
+			SWTFactory.createLabel(comp, label, 1);
 		}
 		fViewer = createViewer(comp);
 		fViewer.setLabelProvider(getLabelProvider());
@@ -157,6 +158,13 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		}
 		return comp;
 	}
+	
+	/**
+	 * This method returns the label describing what to do with the viewer. Typically this label
+	 * will include the key accelerator to get to the viewer via the keyboard
+	 * @return the label for the viewer
+	 */
+	abstract protected String getViewerLabel();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()

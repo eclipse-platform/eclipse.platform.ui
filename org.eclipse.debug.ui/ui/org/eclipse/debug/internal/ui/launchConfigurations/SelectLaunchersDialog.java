@@ -23,7 +23,10 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -171,7 +174,7 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
 				boolean checked = ((Button)e.widget).getSelection();
-				fTable.setEnabled(checked);
+				getCheckBoxTableViewer().getTable().setEnabled(checked);
 				resetDelegate();
 			}
 		});
@@ -182,7 +185,7 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 	 * @return the currently selected launch delegate or <code>null</code> if none are checked
 	 */
 	protected ILaunchDelegate getSelectedDelegate() {
-		Object[] checked = fTableViewer.getCheckedElements();
+		Object[] checked = getCheckBoxTableViewer().getCheckedElements();
 		if(checked.length > 0) {
 			return (ILaunchDelegate) checked[0];
 		}
@@ -220,13 +223,14 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 		if(!fUseSystemLauncher.getSelection()) {
 			try {
 				ILaunchDelegate preferred = fConfiguration.getType().getPreferredDelegate(getCurrentModeSet());
+				CheckboxTableViewer viewer = getCheckBoxTableViewer();
 				if(preferred != null) {
-					fTableViewer.setSelection(new StructuredSelection(preferred));
-					fTableViewer.setCheckedElements(new Object[] {preferred});
+					viewer.setSelection(new StructuredSelection(preferred));
+					viewer.setCheckedElements(new Object[] {preferred});
 				}
 				else {
-					fTableViewer.setSelection(new StructuredSelection());
-					fTableViewer.setAllChecked(false);
+					viewer.setSelection(new StructuredSelection());
+					viewer.setAllChecked(false);
 				}
 			}
 			catch (CoreException ce) {DebugUIPlugin.log(ce);}
@@ -259,7 +263,13 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#initializeControls()
 	 */
 	protected void initializeControls() {
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		final CheckboxTableViewer viewer = getCheckBoxTableViewer();
+		viewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				viewer.setCheckedElements(new Object[]{event.getElement()});
+			}
+		});
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
 				if(ss != null && !ss.isEmpty()) {
@@ -275,14 +285,21 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 			boolean custom = delegate != null;
 			fUseSystemLauncher.setSelection(custom);
 			if(custom) {
-				fTableViewer.setSelection(new StructuredSelection(delegate));
-				fTableViewer.setCheckedElements(new Object[] {delegate});
+				viewer.setSelection(new StructuredSelection(delegate));
+				viewer.setCheckedElements(new Object[] {delegate});
 			}
 			else {
 				resetDelegate();
-				fTable.setEnabled(false);
+				getCheckBoxTableViewer().getTable().setEnabled(false);
 			}
 		}
 		catch (CoreException ce) {DebugUIPlugin.log(ce);}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+	 */
+	protected String getViewerLabel() {
+		return null;
 	}
 }

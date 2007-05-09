@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -35,7 +34,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -50,8 +48,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -142,37 +138,6 @@ public class FavoritesDialog extends TrayDialog {
 		}
 
 	}
-
-	/**
-	 * Content provider for recent table
-	 */	
-	protected class LaunchConfigurationContentProvider extends FavoritesContentProvider {
-		
-		/**
-		 * @see IStructuredContentProvider#getElements(Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-			ILaunchConfiguration[] all = null;
-			try {
-				all = LaunchConfigurationManager.filterConfigs(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations());
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-				return new ILaunchConfiguration[0];
-			}
-			List list = new ArrayList(all.length);
-			ViewerFilter filter = new LaunchGroupFilter(getLaunchHistory().getLaunchGroup());
-			for (int i = 0; i < all.length; i++) {
-				if (filter.select(null, null, all[i])) {
-					list.add(all[i]);
-				}
-			}
-			list.removeAll(getFavorites());
-			Object[] objs = list.toArray();
-			new WorkbenchViewerComparator().sort(getFavoritesTable(), objs);
-			return objs;
-		}
-
-	}	
 	
 	/**
 	 * Constructs a favorites dialog.
@@ -190,13 +155,9 @@ public class FavoritesDialog extends TrayDialog {
 	 * The 'add config' button has been pressed
 	 */
 	protected void handleAddConfigButtonSelected() {
-		
-		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
-			getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
-			LaunchConfigurationsMessages.FavoritesDialog_7); 
-		dialog.setTitle(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_0, new String[]{getModeLabel()})); 
-		dialog.open();
-		Object[] selection = dialog.getResult();
+		SelectFavoritesDialog sfd = new SelectFavoritesDialog(fFavoritesTable.getControl().getShell(), getLaunchHistory(), getFavorites());
+		sfd.open();
+		Object[] selection = sfd.getResult();
 		if (selection != null) {
 			for (int i = 0; i < selection.length; i++) {
 				getFavorites().add(selection[i]);

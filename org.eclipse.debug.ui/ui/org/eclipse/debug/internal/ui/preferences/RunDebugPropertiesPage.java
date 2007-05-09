@@ -433,19 +433,19 @@ public class RunDebugPropertiesPage extends PropertyPage {
 			protected Object getViewerInput() {
 				return typeCandidates;
 			}
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getMessage()
-			 */
-			protected String getMessage() {
-				return DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_12;
-			}
 			
 			/* (non-Javadoc)
 			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
 			 */
 			protected String getHelpContextId() {
 				return IDebugHelpContextIds.SELECT_CONFIGURATION_TYPE_DIALOG;
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+			 */
+			protected String getViewerLabel() {
+				return DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_12;
 			}
 				
 		};
