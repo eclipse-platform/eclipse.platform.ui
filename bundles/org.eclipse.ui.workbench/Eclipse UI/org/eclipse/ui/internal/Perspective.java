@@ -949,7 +949,7 @@ public class Perspective {
     	// If we are -not- using the new min/max then ensure that there
     	// are no stacks in the trim. This can happen when a user switches
     	// back to the 3.0 presentation... 
-		if (!Perspective.useNewMinMax(this)) {
+		if (!Perspective.useNewMinMax(this) && fastViewManager != null) {
 			boolean stacksWereRestored = fastViewManager.restoreAllTrimStacks();
 			setEditorAreaTrimVisibility(false);
 			
