@@ -21,6 +21,8 @@ public class TeamUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
 	
+	public static String TextPreferencePage_ExtensionNotCompleted;
+	
     public static String CompareInputChangeNotifier_0;
 
 	public static String CompareInputChangeNotifier_1;

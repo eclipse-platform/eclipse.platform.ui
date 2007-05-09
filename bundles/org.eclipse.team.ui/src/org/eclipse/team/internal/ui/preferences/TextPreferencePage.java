@@ -41,6 +41,9 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		public String isValid(String newText) {
 			if (newText.trim().length() == 0)
 				return ""; //$NON-NLS-1$
+			if (!isComplete(newText)){
+				return TeamUIMessages.TextPreferencePage_ExtensionNotCompleted;
+			}
 			newText = strip(newText);
 			if (newText.indexOf('*') >= 0)
 				return TeamUIMessages.TextPreferencePage_2; 
@@ -60,6 +63,17 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			if (newText.startsWith(".")) //$NON-NLS-1$
 				newText= newText.substring(1);
 			return newText;
+		}
+		
+		public boolean isComplete(String text){
+			//Allowed formats of extension are:
+			// extension
+			// .extension
+			// *.extension
+			if (text.equals("*") || text.equals("*.") || text.equals(".")){  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				return false;
+			}
+			return true;
 		}
 	}
 	
