@@ -2,11 +2,11 @@ Native Build Info:
 ------------------
 
 platform:         x86_64-redhat-linux
-built by:         martin.oberhuber@windriver.com
-build date:       27-Apr-2007
-OS Name:          Red Hat Enterprise Linux Client release 5 (Tikanga)
-OS Version:       Linux szg-qa-lx2-64 2.6.18-8.1.1.el5 #1 SMP x86_64 GNU/Linux (glibc-2.5-12)
-Compiler version: gcc version 4.1.1 20070105 (Red Hat 4.1.1-52)
+built by:         john_arthorne@ca.ibm.com
+build date:       10-May-2007
+OS Name:          Red Hat Enterprise Linux Client release 4
+OS Version:       Linux 2.6.9-42.EL x86_64 (glibc-2.3.4-2.25)
+Compiler version: gcc version 3.4.6-3
 
 build script:
 -------------
