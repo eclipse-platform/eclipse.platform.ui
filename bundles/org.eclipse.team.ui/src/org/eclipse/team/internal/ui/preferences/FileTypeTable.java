@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.graphics.Image;
@@ -219,7 +220,9 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
         final Item item= (Item) element;
         
         if (columnIndex == 0) { 
-            return (item instanceof Extension ? "*." : "") + item.name; //$NON-NLS-1$ //$NON-NLS-2$
+            String label = (item instanceof Extension ? "*." : "") + item.name; //$NON-NLS-1$ //$NON-NLS-2$
+            label = TextProcessor.process(label, ".*"); //$NON-NLS-1$
+			return label; 
         }
         
         if (columnIndex == 1) {
