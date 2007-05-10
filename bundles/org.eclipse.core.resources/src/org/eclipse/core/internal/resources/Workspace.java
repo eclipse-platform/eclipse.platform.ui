@@ -1839,7 +1839,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void setCrashed(boolean value) {
 		crashed = value;
 		if (crashed) {
-			String msg = "A workspace crash was detected. The previous session did not exit normally."; //$NON-NLS-1$
+			String msg = "The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes."; //$NON-NLS-1$
 			Policy.log(new ResourceStatus(ICoreConstants.CRASH_DETECTED, msg));
 			if (Policy.DEBUG)
 				System.out.println(msg);
