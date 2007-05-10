@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +22,8 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.internal.misc.StringMatcher;
+
+import com.ibm.icu.text.BreakIterator;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>.  In order to 
@@ -55,13 +56,18 @@ public class PatternFilter extends ViewerFilter {
 	 */
     private StringMatcher matcher;
     
+    private boolean useFilterOptimization = true;
+    
     private static Object[] EMPTY = new Object[0];
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object[])
      */
     public final Object[] filter(Viewer viewer, Object parent, Object[] elements) {
-        if (matcher == null) {
+    	// we don't want to optimize if we've extended the filter ... this
+    	// needs to be addressed in 3.4
+    	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=186404
+        if (matcher == null && useFilterOptimization) {
 			return elements;
 		}
 
@@ -134,6 +140,15 @@ public class PatternFilter extends ViewerFilter {
      * @param patternString
      */
     public void setPattern(String patternString) {
+    	// these 2 strings allow the PatternFilter to be extended in
+    	// 3.3 - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186404
+    	if ("org.eclipse.ui.keys.optimization.true".equals(patternString)) { //$NON-NLS-1$
+    		useFilterOptimization = true;
+    		return;
+    	} else if ("org.eclipse.ui.keys.optimization.false".equals(patternString)) { //$NON-NLS-1$
+    		useFilterOptimization = false;
+    		return;
+    	}
         cache.clear();
         foundAnyCache.clear();
         if (patternString == null || patternString.equals("")) { //$NON-NLS-1$

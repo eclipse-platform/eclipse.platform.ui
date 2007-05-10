@@ -115,7 +115,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.FilteredTree;
-import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -399,80 +398,30 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * display elements in the tree according to the selected criteria.
 	 * 
 	 */
-	protected class GroupedFilteredTree extends FilteredTree {
+	protected class CategoryFilterTree extends FilteredTree {
+
+		private CategoryPatternFilter filter;
 
 		/**
-		 * Constructor for GroupedFilteredTree.
+		 * Constructor for PatternFilteredTree.
 		 * 
 		 * @param parent
 		 * @param treeStyle
 		 * @param filter
 		 */
-		protected GroupedFilteredTree(Composite parent, int treeStyle,
-				PatternFilter filter) {
+		protected CategoryFilterTree(Composite parent, int treeStyle,
+				CategoryPatternFilter filter) {
 			super(parent, treeStyle, filter);
+			this.filter = filter;
 		}
 
-		protected void createControl(final Composite parent, final int treeStyle) {
-			GridData gridData;
-			GridLayout layout;
-
-			layout = new GridLayout();
-			// Why doesn't this seem to be working??
-			layout.marginHeight = 0;
-			layout.marginWidth = 0;
-			setLayout(layout);
-			setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-			setFont(parent.getFont());
-
-			// Create the filter controls
-			filterComposite = new Composite(this, SWT.NONE);
-			GridLayout filterLayout = new GridLayout(2, false);
-			filterLayout.marginHeight = 0;
-			filterLayout.marginWidth = 0;
-			filterComposite.setLayout(filterLayout);
-			filterComposite.setFont(parent.getFont());
-
-			createFilterControls(filterComposite);
-			filterComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-					true, false));
-
-			// Create a table tree viewer.
-			final Control treeControl = createTreeControl(this, treeStyle);
-			gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
-			gridData.horizontalSpan = 3;
-			treeControl.setLayoutData(gridData);
+		public void filterCategories(boolean b) {
+			filter.filterCategories(b);
+			textChanged();
 		}
 
-		/**
-		 * <p>
-		 * Creates the grouping controls that will appear in the top-right in
-		 * the default layout. The default grouping controls are a label and a
-		 * combo box.
-		 * </p>
-		 * <p>
-		 * Subclasses may extend or override this method. Before this method
-		 * completes, <code>groupingCombo</code> should be initialized.
-		 * Subclasses must create a combo box which contains the possible
-		 * groupings.
-		 * </p>
-		 * 
-		 * @param parent
-		 *            The composite in which the grouping control should be
-		 *            placed; must not be <code>null</code>.
-		 * @return The composite containing the grouping controls, or the
-		 *         grouping control itself (if there is only one control).
-		 */
-		protected Control createGroupingControl(final Composite parent) {
-			// Create the composite that will contain the grouping controls.
-			Composite groupingControl = new Composite(parent, SWT.NONE);
-			GridLayout layout = new GridLayout(2, false);
-			layout.marginWidth = 0;
-			layout.marginHeight = 0;
-			groupingControl.setLayout(layout);
-			groupingControl.setFont(parent.getFont());
-
-			return groupingControl;
+		public boolean isFilteringCategories() {
+			return filter.isFilteringCategories();
 		}
 	}
 
@@ -876,6 +825,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 	private static final String TAG_FILTER_INTERNAL = "internalFilter"; //$NON-NLS-1$
 
+	private static final String TAG_FILTER_UNCAT = "uncategorizedFilter"; //$NON-NLS-1$
+
 	/**
 	 * Sorts the given array of <code>NamedHandleObject</code> instances based
 	 * on their name. This is generally useful if they will be displayed to an
@@ -938,7 +889,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	/**
 	 * The filtered tree containing the list of commands and bindings to edit.
 	 */
-	private GroupedFilteredTree filteredTree;
+	private CategoryFilterTree filteredTree;
+	
+	private CategoryPatternFilter patternFilter;
 
 	/**
 	 * The grouping for the bindings tree. Either there should be no group
@@ -1236,9 +1189,12 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						getShell());
 				dialog.setFilterActionSet(filterActionSetContexts);
 				dialog.setFilterInternal(filterInternalContexts);
+				dialog.setFilterUncategorized(filteredTree.isFilteringCategories());
 				if (dialog.open() == Window.OK) {
 					filterActionSetContexts = dialog.getFilterActionSet();
 					filterInternalContexts = dialog.getFilterInternal();
+					filteredTree.filterCategories(dialog
+							.getFilterUncategorized());
 					whenCombo.setInput(getContexts());
 					updateDataControls();
 				}
@@ -1267,6 +1223,12 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 		if (settings.get(TAG_FILTER_INTERNAL) != null) {
 			filterInternalContexts = settings.getBoolean(TAG_FILTER_INTERNAL);
+		}
+		patternFilter = new CategoryPatternFilter(
+				true, commandService.getCategory(null));
+		if (settings.get(TAG_FILTER_UNCAT) != null) {
+			patternFilter.filterCategories(settings
+					.getBoolean(TAG_FILTER_UNCAT));
 		}
 
 		// Creates a composite to hold all of the page contents.
@@ -1545,9 +1507,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	private final Control createTree(final Composite parent) {
 		GridData gridData;
 
-		filteredTree = new GroupedFilteredTree(parent, SWT.SINGLE
-				| SWT.FULL_SELECTION | SWT.BORDER, new PatternFilter());
-		final GridLayout layout = new GridLayout(2, false);
+		filteredTree = new CategoryFilterTree(parent, SWT.SINGLE
+				| SWT.FULL_SELECTION | SWT.BORDER, patternFilter);
+		final GridLayout layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
 		filteredTree.setLayout(layout);
 		gridData = new GridData();
@@ -2330,6 +2292,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		dialogSettings.put(TAG_FIELD, showAllCheckBox.getSelection());
 		dialogSettings.put(TAG_FILTER_ACTION_SETS, filterActionSetContexts);
 		dialogSettings.put(TAG_FILTER_INTERNAL, filterInternalContexts);
+		dialogSettings.put(TAG_FILTER_UNCAT, filteredTree.isFilteringCategories());
 	}
 
 	protected IDialogSettings getDialogSettings() {

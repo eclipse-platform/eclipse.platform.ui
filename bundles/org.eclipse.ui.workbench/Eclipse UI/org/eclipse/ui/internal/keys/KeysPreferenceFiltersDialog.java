@@ -31,9 +31,11 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 
 	private Button actionSetFilterCheckBox;
 	private Button internalFilterCheckBox;
+	private Button uncategorizedFilterCheckBox;
 
 	private boolean filterActionSet;
 	private boolean filterInternal;
+	private boolean filterUncategorized;
 
 	void setFilterActionSet(boolean b) {
 		filterActionSet = b;
@@ -42,6 +44,10 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	void setFilterInternal(boolean b) {
 		filterInternal = b;
 	}
+	
+	void setFilterUncategorized(boolean b) {
+		filterUncategorized = b;
+	}
 
 	boolean getFilterActionSet() {
 		return filterActionSet;
@@ -49,6 +55,10 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 
 	boolean getFilterInternal() {
 		return filterInternal;
+	}
+	
+	boolean getFilterUncategorized() {
+		return filterUncategorized;
 	}
 
 	/**
@@ -66,6 +76,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	protected void performDefaults() {
 		actionSetFilterCheckBox.setSelection(true);
 		internalFilterCheckBox.setSelection(true);
+		uncategorizedFilterCheckBox.setSelection(true);
 		super.performDefaults();
 	}
 
@@ -85,9 +96,13 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		internalFilterCheckBox = new Button(topComposite, SWT.CHECK);
 		internalFilterCheckBox
 				.setText(NewKeysPreferenceMessages.InternalFilterCheckBox_Text);
+		uncategorizedFilterCheckBox = new Button(topComposite, SWT.CHECK);
+		uncategorizedFilterCheckBox
+				.setText(NewKeysPreferenceMessages.UncategorizedFilterCheckBox_Text);
 
 		actionSetFilterCheckBox.setSelection(filterActionSet);
 		internalFilterCheckBox.setSelection(filterInternal);
+		uncategorizedFilterCheckBox.setSelection(filterUncategorized);
 		applyDialogFont(topComposite);
 
 		return topComposite;
@@ -101,6 +116,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	protected void okPressed() {
 		filterActionSet = actionSetFilterCheckBox.getSelection();
 		filterInternal = internalFilterCheckBox.getSelection();
+		filterUncategorized = uncategorizedFilterCheckBox.getSelection();
 		super.okPressed();
 	}
 

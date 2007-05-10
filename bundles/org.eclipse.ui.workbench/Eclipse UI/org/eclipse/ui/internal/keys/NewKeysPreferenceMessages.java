@@ -59,6 +59,7 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String KeysPreferenceFilterDialog_Title;
 	public static String ActionSetFilterCheckBox_Text;
 	public static String InternalFilterCheckBox_Text;
+	public static String UncategorizedFilterCheckBox_Text;
 	
 	static {
 		// load message values from bundle file
