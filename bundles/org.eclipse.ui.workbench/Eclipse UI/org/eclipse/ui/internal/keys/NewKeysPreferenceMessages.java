@@ -39,6 +39,7 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String TriggerSequenceColumn_Text;
 	public static String WhenColumn_Text;
 	public static String WhenLabel_Text;
+	public static String Asterisk_Text;
 	
 	public static String GroupingCombo_Label;
 	public static String GroupingCombo_Category_Text;

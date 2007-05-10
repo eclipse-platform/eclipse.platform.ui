@@ -133,14 +133,14 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * </p>
  * <p>
  * This preference page has four general types of methods. Create methods are
- * called when the page is first made visisble. They are responsible for
- * creating all of the widgets, and laying them out within the preference page.
- * Fill methods populate the contents of the widgets that contain collections of
- * data from which items can be selected. The select methods respond to
- * selection events from the user, such as a button press or a table selection.
- * The update methods update the contents of various widgets based on the
- * current state of the user interface. For example, the command name label will
- * always try to match the current select in the binding table.
+ * called when the page is first made visible. They are responsible for creating
+ * all of the widgets, and laying them out within the preference page. Fill
+ * methods populate the contents of the widgets that contain collections of data
+ * from which items can be selected. The select methods respond to selection
+ * events from the user, such as a button press or a table selection. The update
+ * methods update the contents of various widgets based on the current state of
+ * the user interface. For example, the command name label will always try to
+ * match the current select in the binding table.
  * </p>
  * 
  * @since 3.2
@@ -603,6 +603,23 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			return null;
 		}
 
+		private boolean checkConflict(Binding binding) {
+			Collection matches = (Collection) localChangeManager
+					.getActiveBindingsDisregardingContext().get(
+							binding.getTriggerSequence());
+			if (matches != null) {
+				Iterator i = matches.iterator();
+				while (i.hasNext()) {
+					Binding b = (Binding) i.next();
+					if (binding != b
+							&& b.getContextId().equals(binding.getContextId())) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
 		public final String getColumnText(final Object element,
 				final int columnIndex) {
 			final Object value = element;
@@ -617,6 +634,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						return NewKeysPreferenceMessages.Undefined_Command;
 					}
 				case COLUMN_TRIGGER_SEQUENCE:
+					if (checkConflict(binding)) {
+						return "*" + binding.getTriggerSequence().format(); //$NON-NLS-1$
+					}
 					return binding.getTriggerSequence().format();
 
 				case COLUMN_WHEN:
@@ -701,6 +721,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			for (int i = 1; i < COLUMN_USER; i++) {
 				String text = getColumnText(element, i);
 				if (text != null) {
+					buf.append(' ');
 					buf.append(text);
 				}
 			}
@@ -1038,7 +1059,34 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// update the model
 		bindingModel.remove(binding);
+		updateConflicts(binding);
 		bindingAdd(binding);
+	}
+	
+	private final void updateConflicts(final Collection bindings) {
+		Iterator i = bindings.iterator();
+		while (i.hasNext()) {
+			final Binding b = (Binding) i.next();
+			if (b.getParameterizedCommand()!=null) {
+				updateConflicts(b);
+			}
+		}
+	}
+
+	private final void updateConflicts(final Binding binding) {
+		Collection matches = (Collection) localChangeManager
+				.getActiveBindingsDisregardingContext().get(
+						binding.getTriggerSequence());
+		if (matches != null) {
+			Iterator i = matches.iterator();
+			while (i.hasNext()) {
+				Binding b = (Binding) i.next();
+				if (binding != b
+						&& b.getContextId().equals(binding.getContextId())) {
+					filteredTree.getViewer().update(b, null);
+				}
+			}
+		}
 	}
 
 	private final void bindingRestore(final KeyBinding binding) {
@@ -1112,6 +1160,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		bindingModel.addAll(addSystemAll);
 		bindingModel.removeAll(removeUser);
+		updateConflicts(addSystemAll);
+		updateConflicts(removeUser);
 		if (addSystemAll.isEmpty()) {
 			commandModel.add(cmd);
 			filteredTree.getViewer().setSelection(new StructuredSelection(cmd),
@@ -1420,6 +1470,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				}
 			}
 		});
+		
+		final Label asterisk = new Label(leftDataArea, SWT.NONE);
+		asterisk.setText(NewKeysPreferenceMessages.Asterisk_Text);
+		gridData = new GridData();
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalSpan = 2;
+		gridData.horizontalAlignment = SWT.FILL;
+		asterisk.setLayoutData(gridData);
 
 		// RIGHT DATA AREA
 		// Creates the right data area.
@@ -1870,6 +1928,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						// update the model
 						bindingModel.remove(keyBinding);
 						bindingModel.add(binding);
+						updateConflicts(keyBinding);
+						updateConflicts(binding);
 						// end update the model
 						update();
 						filteredTree.getViewer().setSelection(
@@ -1886,6 +1946,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					// end update the model
 					bindingModel.add(binding);
 					commandModel.remove(object);
+					updateConflicts(binding);
 					update();
 
 					filteredTree.getViewer().setSelection(
@@ -2371,6 +2432,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						// update the model
 						bindingModel.remove(keyBinding);
 						bindingModel.add(binding);
+						updateConflicts(keyBinding);
+						updateConflicts(binding);
 						// end update the model
 						update();
 						filteredTree.getViewer().setSelection(
