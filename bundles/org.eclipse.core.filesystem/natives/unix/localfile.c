@@ -11,6 +11,7 @@
  * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  * Corey Ashford (IBM) - [177400] fix threading issues on Linux-PPC
  * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
+ * Martin Oberhuber (Wind River) - [184534] get attributes from native lib
  *******************************************************************************/
 #include <jni.h>
 #include <sys/types.h>
@@ -58,6 +59,21 @@ jstring getString(JNIEnv *env, jbyteArray source) {
     return (*env)->CallStaticObjectMethod(env, clsConvert, midFromPlatformBytes, source);
 }
 #endif
+
+/*
+ * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
+ * Method:    nativeAttributes
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_LocalFileNatives_nativeAttributes
+  (JNIEnv *env, jclass clazz) {
+#if defined(EFS_SYMLINK_SUPPORT)
+    return ATTRIBUTE_READ_ONLY | ATTRIBUTE_EXECUTABLE | ATTRIBUTE_SYMLINK | ATTRIBUTE_LINK_TARGET;
+#else
+    return ATTRIBUTE_READ_ONLY | ATTRIBUTE_EXECUTABLE;
+#endif
+}
+
 
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives

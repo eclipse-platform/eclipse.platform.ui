@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [184534] get attributes from native lib
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
 import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.filesystem.Messages;
 import org.eclipse.core.internal.filesystem.Policy;
@@ -35,6 +37,43 @@ abstract class LocalFileNatives {
 		}
 	}
 
+	/**
+	 * Return the bit-mask of EFS attributes that this native
+	 * file system implementation supports.
+	 * <p>
+	 * This is an optional method: if it has not been compiled
+	 * into the native library, the client must catch the 
+	 * resulting UnsatisfiedLinkError and handle attributes
+	 * as known by older version libraries.
+	 * </p>
+	 * @see IFileSystem#attributes()
+	 * @return an integer bit mask of attributes.
+	 */
+	private static final native int nativeAttributes();
+
+	/**
+	 * Return the value that the native library thinks
+	 * {@link IFileSystem#attributes()} should return.
+	 * 
+	 * Returns -1 when the native library has not been
+	 * loaded, or is a version that does not support
+	 * this investigation method yet.
+	 * 
+	 * @return an positive value that is a bit-mask
+	 *    suitable for use in {@link IFileSystem#attributes},
+	 *    or -1 if native attributes are not available. 
+	 */
+	public static int attributes() {
+		try {
+			return nativeAttributes();
+		} catch (UnsatisfiedLinkError e) {
+			//older native implementations did not support this
+			//call, so we cannot return supported attribute
+			//information for them.
+			return -1;
+		}
+	}
+	
 	/**
 	 * Copies file attributes from source to destination. The copyLastModified attribute
 	 * indicates whether the lastModified attribute should be copied.

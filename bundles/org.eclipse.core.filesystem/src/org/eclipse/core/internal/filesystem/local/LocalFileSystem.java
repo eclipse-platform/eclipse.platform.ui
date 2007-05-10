@@ -10,6 +10,7 @@
  * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  * Martin Oberhuber (Wind River) - [183137] liblocalfile for solaris-sparc
  * Martin Oberhuber (Wind River) - [184433] liblocalfile for Linux x86_64
+ * Martin Oberhuber (Wind River) - [184534] get attributes from native lib
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -82,7 +83,15 @@ public class LocalFileSystem extends FileSystem {
 		attributes = 0;
 		if (!LocalFileNatives.usingNatives())
 			return attributes;
+		
+		//try to query supported attributes from native lib impl
+		int nativeAttributes = LocalFileNatives.attributes();
+		if (nativeAttributes >= 0) {
+			attributes = nativeAttributes;
+			return attributes;
+		}
 
+		//fallback for older lib: compute attributes as known before
 		//all known platforms with native implementation support the read only flag
 		attributes |= EFS.ATTRIBUTE_READ_ONLY;
 
