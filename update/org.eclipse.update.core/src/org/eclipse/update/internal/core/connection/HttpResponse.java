@@ -30,12 +30,10 @@ public class HttpResponse extends AbstractResponse {
 	 *
 	 */
 	private class MonitoringInputStream extends FilterInputStream {
-		InputStream in;
 		private URLConnection connection;
 
 		public MonitoringInputStream(InputStream in, URLConnection connection) {
 			super(in);
-			this.in = in;
 			this.connection = connection;
 		}
 
