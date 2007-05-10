@@ -50,6 +50,16 @@ jbyte* getByteArray(JNIEnv *env, jbyteArray target) {
 
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
+ * Method:    nativeAttributes
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_LocalFileNatives_nativeAttributes
+  (JNIEnv *env, jclass clazz) {
+    return ATTRIBUTE_READ_ONLY | ATTRIBUTE_ARCHIVE | ATTRIBUTE_HIDDEN;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
  * Method:    internalIsUnicode
  * Signature: ()Z
  */
@@ -247,6 +257,7 @@ jboolean fillEmptyDirectory(JNIEnv *env, jobject fileInfo) {
     jmethodID mid;
 
     cls = (*env)->GetObjectClass(env, fileInfo);
+    if (cls == 0) return JNI_FALSE;
     mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
     if (mid == 0) return JNI_FALSE;
     (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_DIRECTORY, JNI_TRUE);
@@ -272,10 +283,10 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	size = (*env)->GetArrayLength(env, target);
 	// FindFirstFile does not work at the root level. However, we 
 	// don't need it because the root will never change timestamp
-	if (size == 3 && name[1] == ':' && name[2] == '\\') {
+	// The pattern \\?\c:\ represents a root path  
+	if (size == 7 && name[2] == '?' && name[5] == ':' && name[6] == '\\') {
 		free(name);
-		fillEmptyDirectory(env, fileInfo);
-	    return JNI_TRUE;
+		return fillEmptyDirectory(env, fileInfo);
 	}
 	handle = FindFirstFile(name, &info);
 	free(name);
@@ -301,10 +312,10 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	size = (*env)->GetArrayLength(env, target);
 	// FindFirstFile does not work at the root level. However, we 
 	// don't need it because the root will never change timestamp
-	if (size == 3 && name[1] == ':' && name[2] == '\\') {
+	// The pattern \\?\c:\ represents a root path  
+	if (size == 7 && name[2] == '?' && name[5] == ':' && name[6] == '\\') {
 		free(name);
-		fillEmptyDirectory(env, fileInfo);
-	    return JNI_TRUE;
+		return fillEmptyDirectory(env, fileInfo);
 	}
 	handle = FindFirstFileW(name, &info);
 	free(name);
