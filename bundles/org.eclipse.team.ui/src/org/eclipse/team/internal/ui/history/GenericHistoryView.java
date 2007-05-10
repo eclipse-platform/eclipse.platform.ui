@@ -154,6 +154,17 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				next = size() - 1;
 			return getEntry(next);
 		}
+		
+		public void updateName(IHistoryPage historyPage,
+				IHistoryPageSource pageSource) {
+			NavigationHistoryEntry[] historyEntries = getEntries();
+			for (int i = 0; i < historyEntries.length; i++) {
+				NavigationHistoryEntry historyEntry = historyEntries[i];
+				if (historyEntry.matches(historyPage, pageSource))
+					historyEntry.name = historyPage.getName();
+			}
+			navigateAction.update();
+		}
 	}
 	
 	static class NavigationHistoryEntry {
@@ -171,6 +182,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				return other.object.equals(this.object) && sameSource(source, other.source);
 			}
 			return false;
+		}
+		public boolean matches(IHistoryPage historyPage,
+				IHistoryPageSource pageSource) {
+			return object.equals(historyPage.getInput())
+					&& sameSource(source, pageSource);
 		}
 		public int hashCode() {
 			return object.hashCode();
@@ -911,7 +927,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			if (event.getProperty().equals(IHistoryPage.P_NAME)) {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						setContentDescription(((IHistoryPage)currentPageContainer.getPage()).getName());
+						IHistoryPage historyPage = (IHistoryPage) currentPageContainer.getPage();
+						setContentDescription(historyPage.getName());
+						navigationHistory.updateName(historyPage, currentPageContainer.getSource());
 					}
 				});
 			} else if (event.getProperty().equals(IHistoryPage.P_DESCRIPTION)) {
