@@ -11,6 +11,15 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            This extension point which was based on internal classes is deprecated and should not be used. It is likely to be removed in a future release. Use the HTTP service implementation provided by Equinox that is based on Jetty, see http://www.eclipse.org/equinox/server.
+
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="server"/>
@@ -43,6 +52,14 @@
    </element>
 
    <element name="server">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            This extension point which was based on internal classes is deprecated and should not be used. It is likely to be removed in a future release. Use the HTTP service implementation provided by Equinox that is based on Jetty, see http://www.eclipse.org/equinox/server.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>

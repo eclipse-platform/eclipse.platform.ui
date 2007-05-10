@@ -20,6 +20,11 @@ import org.eclipse.core.runtime.*;
  * custom class loader.
  * 
  * @since 2.1
+ * @deprecated This internal interface is no longer used by the Eclipse Help 
+ * system and should not be used by anyone else. It is likely to be removed 
+ * in a future release. 
+ * Use the HTTP service implementation provided by Equinox that is based 
+ * on Jetty, see http://www.eclipse.org/equinox/server.
  */
 public interface IWebappServer {
 	/**

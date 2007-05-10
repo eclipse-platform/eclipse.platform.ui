@@ -20,7 +20,12 @@ import org.osgi.framework.*;
 /**
  * Singleton class to be called by clients to run a webapp.
  * 
- * @since 2.1
+ * @since 2.1 
+ * @deprecated This internal interface is no longer used by the Eclipse Help 
+ * system and should not be used by anyone else. It is likely to be removed 
+ * in a future release. 
+ * Use the HTTP service implementation provided by Equinox that is based 
+ * on Jetty, see http://www.eclipse.org/equinox/server.
  */
 public class WebappManager {
 	private static boolean applicationsStarted = false;
