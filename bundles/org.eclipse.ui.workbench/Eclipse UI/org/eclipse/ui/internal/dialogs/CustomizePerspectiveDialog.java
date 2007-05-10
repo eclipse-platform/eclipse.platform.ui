@@ -50,12 +50,11 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -63,17 +62,14 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
@@ -122,6 +118,12 @@ import org.eclipse.ui.wizards.IWizardCategory;
  */
 // @issue need to break this not to show menu specific page
 public class CustomizePerspectiveDialog extends TrayDialog {
+	private DefaultToolTip actionSetMenuViewerTooltip;
+	
+	private DefaultToolTip actionSetToolbarViewerTooltip;
+	
+	private DefaultToolTip actionSetsViewerTooltip;
+	
     private Perspective perspective;
 
     WorkbenchWindow window;
@@ -145,8 +147,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
     private static int lastSelectedMenuIndex = 0;
 
     private static String lastSelectedActionSetId = null;
-
-    private static int cursorSize = 15;
 
     private final static int TAB_WIDTH_IN_DLUS = 490;
 
@@ -1098,6 +1098,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         actionSetsViewer.setLabelProvider(new WorkbenchLabelProvider());
         actionSetsViewer.setContentProvider(new ArrayContentProvider());
         actionSetsViewer.setComparator(new ActionSetComparator());
+        actionSetsViewerTooltip = new DefaultToolTip(actionSetsViewer.getControl(),ToolTip.RECREATE,true){
+
+			public Point getLocation(Point tipSize, Event event) {
+				return getShell().getDisplay().getCursorLocation();
+			}
+        	
+        };
 
         // Menu and toolbar composite
         Composite actionGroup = new Composite(sashComposite, SWT.NONE);
@@ -1126,6 +1133,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         actionSetMenuViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         actionSetMenuViewer.setLabelProvider(new ActionSetLabelProvider());
         actionSetMenuViewer.setContentProvider(new TreeContentProvider());
+        actionSetMenuViewerTooltip = new DefaultToolTip(actionSetMenuViewer.getControl(),ToolTip.RECREATE, true) {
+
+			public Point getLocation(Point tipSize, Event event) {
+				return getShell().getDisplay().getCursorLocation();
+			}
+        	
+        };
 
         Composite toolbarGroup = new Composite(actionGroup, SWT.NONE);
         layout = new GridLayout();
@@ -1144,6 +1158,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         actionSetToolbarViewer
                 .setLabelProvider(new ActionSetLabelProvider());
         actionSetToolbarViewer.setContentProvider(new TreeContentProvider());
+        actionSetToolbarViewerTooltip = new DefaultToolTip(actionSetToolbarViewer.getControl(),ToolTip.RECREATE,true){
+
+			public Point getLocation(Point tipSize, Event event) {
+				return getShell().getDisplay().getCursorLocation();
+			}
+        	
+        };
 
         sashComposite.setWeights(new int[] { 30, 70 });
 
@@ -1303,7 +1324,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
                 if (desc == null || desc.equals("")) { //$NON-NLS-1$
                     desc = WorkbenchMessages.ActionSetSelection_noDesc;
                 }
-                popUp(desc);
+                actionSetMenuViewerTooltip.setText(desc);
+                // Passing 0,0 because tooltip is always opened on current cursor position
+                actionSetMenuViewerTooltip.show(new Point(0,0));
             }
         }
     }
@@ -1385,7 +1408,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
                 if (desc == null || desc.equals("")) { //$NON-NLS-1$
                     desc = WorkbenchMessages.ActionSetSelection_noDesc; 
                 }
-                popUp(desc);
+                actionSetToolbarViewerTooltip.setText(desc);
+                // Passing 0,0 because tooltip is always opened on current cursor position
+                actionSetToolbarViewerTooltip.show(new Point(0,0));
             }
         }
     }
@@ -1402,7 +1427,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
                 if (desc == null || desc.equals("")) { //$NON-NLS-1$
                     desc = WorkbenchMessages.ActionSetSelection_noDesc; 
                 }
-                popUp(desc);
+                actionSetsViewerTooltip.setText(desc);
+                // Passing 0,0 because tooltip is always opened on current cursor position
+                actionSetsViewerTooltip.show(new Point(0,0));
             }
         }
     }
@@ -1666,106 +1693,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
         super.okPressed();
     }
-
-    private void popUp(String description) {
-        Display display = getShell().getDisplay();
-        final Shell descShell = new Shell(getShell(), SWT.ON_TOP | SWT.NO_TRIM);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 1;
-        layout.marginWidth = 1;
-        descShell.setLayout(layout);
-        descShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-
-        Composite insetComposite = new Composite(descShell, SWT.NULL);
-        insetComposite.setBackground(display
-                .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        layout = new GridLayout();
-        layout.marginHeight = 2;
-        layout.marginWidth = 2;
-        insetComposite.setLayout(layout);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        insetComposite.setLayoutData(data);
-        insetComposite.addFocusListener(new FocusListener() {
-            public void focusLost(FocusEvent e) {
-                descShell.dispose();
-            }
-
-            public void focusGained(FocusEvent e) {
-            }
-        });
-        insetComposite.addKeyListener(new KeyListener() {
-            public void keyPressed(KeyEvent e) {
-                descShell.dispose();
-            }
-
-            public void keyReleased(KeyEvent e) {
-            }
-        });
-
-        StyledText descText = new StyledText(insetComposite, SWT.MULTI
-                | SWT.READ_ONLY | SWT.WRAP);
-        descText.setForeground(display
-                .getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-        descText.setBackground(display
-                .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-        data = new GridData(GridData.FILL_BOTH);
-        data.widthHint = 200;
-        descText.setLayoutData(data);
-        descText.setText(description);
-        descText.setEnabled(false);
-
-        descShell.pack();
-        Rectangle displayBounds = display.getClientArea();
-        Rectangle bounds = descShell.getBounds();
-        Point point = display.getCursorLocation();
-        Point location = new Point(point.x + cursorSize, point.y + cursorSize);
-        if (location.x + bounds.width > displayBounds.x + displayBounds.width) {
-            location.x = displayBounds.x + displayBounds.width - bounds.width;
-        }
-        if (location.y + bounds.height > displayBounds.x + displayBounds.height) {
-            location.y = displayBounds.y + displayBounds.height - bounds.height;
-        }
-        descShell.setLocation(location);
-        descShell.open();
-        descShell.addShellListener(new ShellListener() {
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
-             */
-            public void shellActivated(ShellEvent e) {
-                // Do nothing
-
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.ShellListener#shellClosed(org.eclipse.swt.events.ShellEvent)
-             */
-            public void shellClosed(ShellEvent e) {
-                // Do nothing.
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
-             */
-            public void shellDeactivated(ShellEvent e) {
-                descShell.dispose();
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.ShellListener#shellDeiconified(org.eclipse.swt.events.ShellEvent)
-             */
-            public void shellDeiconified(ShellEvent e) {
-                // Do nothing
-            }
-
-            /* (non-Javadoc)
-             * @see org.eclipse.swt.events.ShellListener#shellIconified(org.eclipse.swt.events.ShellEvent)
-             */
-            public void shellIconified(ShellEvent e) {
-                descShell.dispose();
-            }
-        });
-    }
-
+    
     String removeShortcut(String label) {
         if (label == null) {
 			return label;
