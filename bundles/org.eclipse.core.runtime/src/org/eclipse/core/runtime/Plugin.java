@@ -98,6 +98,10 @@ import org.osgi.framework.*;
  * If the plugin.xml of your plug-in does <b>not</b> indicate &lt;?eclipse version="3.0"?&gt; it is therefore
  * not a 3.0 plug-in. Consequently the {@link #Plugin(IPluginDescriptor)} is used and {@link #startup()} and 
  * {@link #shutdown()} are called as life cycle methods.
+ * </p><p>
+ * Since Eclipse 3.0 APIs of the Plugin class can be called only when the Plugin is in an active state, i.e.,
+ * after it was started up and before it is shutdown. In particular, it means that Plugin APIs should not
+ * be called from overrides of {@link #Plugin()}. 
  * </p>
  */
 public abstract class Plugin implements BundleActivator {
