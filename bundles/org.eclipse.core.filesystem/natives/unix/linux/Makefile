@@ -21,10 +21,12 @@ JAVA_HOME = ~/vm/sun142
 
 JDK_INCLUDE = -I ${JAVA_HOME}/include -I ${JAVA_HOME}/include/${OS_TYPE}
 COMMON_INCLUDE = -I include
+#OPT_FLAGS=-g
+OPT_FLAGS=-O -s
 
 core :
-	gcc -fPIC -g -c $(JDK_INCLUDE) $(COMMON_INCLUDE) -o $(CORE.O) $(CORE.C)
-	gcc -g -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(CORE.O) -lc
+	gcc $(OPT_FLAGS) -fPIC -c $(JDK_INCLUDE) $(COMMON_INCLUDE) -o $(CORE.O) $(CORE.C)
+	gcc $(OPT_FLAGS) -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(CORE.O) -lc
 
 clean :
 	rm *.o

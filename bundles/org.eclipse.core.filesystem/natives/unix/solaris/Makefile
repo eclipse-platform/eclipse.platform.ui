@@ -25,12 +25,18 @@ JAVA_HOME = ~/vm/sun142
 
 JDK_INCLUDE = -I ${JAVA_HOME}/include -I ${JAVA_HOME}/include/${OS_TYPE}
 COMMON_INCLUDE = -I include
-OPT_FLAGS=-g -O
-#OPT_FLAGS=-O
+#Solaris native cc uses -K PIC, gcc uses -fPIC
+#To build native, use:     make
+#To build with debug, use: make OPT_FLAGS=-g
+#To build with gcc, use:   make CC=gcc PICFLAG=-fPIC
+PICFLAG=-K PIC
+#PICFLAG=-fPIC
+OPT_FLAGS=-O -s
+#OPT_FLAGS=-g
 
 $(LIB_NAME_FULL) : $(CORE.C)
-	gcc $(OPT_FLAGS) -fPIC -c $(JDK_INCLUDE) $(COMMON_INCLUDE) -o $(CORE.O) $(CORE.C)
-	gcc $(OPT_FLAGS) -shared -o $(LIB_NAME_FULL) $(CORE.O) -lc
+	$(CC) $(OPT_FLAGS) $(PICFLAG) -c $(JDK_INCLUDE) $(COMMON_INCLUDE) -o $(CORE.O) $(CORE.C)
+	$(CC) $(OPT_FLAGS) -G -o $(LIB_NAME_FULL) $(CORE.O) -lc
 
 core : $(LIB_NAME_FULL)
 
