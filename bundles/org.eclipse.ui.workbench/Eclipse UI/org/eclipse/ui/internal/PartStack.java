@@ -1100,9 +1100,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         while (iter.hasNext()) {
             LayoutPart next = (LayoutPart) iter.next();
 
-            IMemento childMem = memento
-                    .createChild(IWorkbenchConstants.TAG_PAGE);
-
             PartPane part = null;
             if (next instanceof PartPane) {
             	// Have we already written it out?
@@ -1111,6 +1108,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             	
                 part = (PartPane)next;
             }
+
+            IMemento childMem = memento
+                    .createChild(IWorkbenchConstants.TAG_PAGE);
 
             String tabText = "LabelNotFound"; //$NON-NLS-1$ 
             if (part != null) {
