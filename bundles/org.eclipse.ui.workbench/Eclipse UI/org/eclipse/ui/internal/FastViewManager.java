@@ -85,6 +85,31 @@ public class FastViewManager {
 	private AnimationEngine oneShotAnimation = null;
 	//private RectangleAnimation oneShotAnimation = null;
 	
+	private IPerspectiveListener2 perspListener = new IPerspectiveListener2() {
+		public void perspectiveActivated(IWorkbenchPage page,
+				IPerspectiveDescriptor perspective) {
+			// Only listen for changes in -this- perspective
+			if (FastViewManager.this.perspective.getDesc() == perspective)
+				handlePerspectiveActivation(page, perspective);
+		}
+
+		public void perspectiveChanged(IWorkbenchPage changedPage,
+				IPerspectiveDescriptor perspective,
+				IWorkbenchPartReference partRef, String changeId) {
+			// Only listen for changes in -this- perspective
+			if (FastViewManager.this.perspective.getDesc() == perspective)
+				handlePerspectiveChange(changedPage, perspective, partRef,
+					changeId);
+		}
+
+		public void perspectiveChanged(IWorkbenchPage changedPage,
+				IPerspectiveDescriptor perspective, String changeId) {
+			// Only listen for changes in -this- perspective
+			if (FastViewManager.this.perspective.getDesc() == perspective)
+				handlePerspectiveChange(changedPage, perspective, changeId);
+		}
+	};
+	
 	/**
 	 * Creates a new manager for a particular perspective
 	 * 
@@ -98,32 +123,6 @@ public class FastViewManager {
 		// Access the trim manager for this window
 		wbw = (WorkbenchWindow) page.getWorkbenchWindow();
 		tbm = (TrimLayout) wbw.getTrimManager();
-
-		// Listen and respond to perspective changes
-		wbw.addPerspectiveListener(new IPerspectiveListener2() {
-			public void perspectiveActivated(IWorkbenchPage page,
-					IPerspectiveDescriptor perspective) {
-				// Only listen for changes in -this- perspective
-				if (FastViewManager.this.perspective.getDesc() == perspective)
-					handlePerspectiveActivation(page, perspective);
-			}
-
-			public void perspectiveChanged(IWorkbenchPage changedPage,
-					IPerspectiveDescriptor perspective,
-					IWorkbenchPartReference partRef, String changeId) {
-				// Only listen for changes in -this- perspective
-				if (FastViewManager.this.perspective.getDesc() == perspective)
-					handlePerspectiveChange(changedPage, perspective, partRef,
-						changeId);
-			}
-
-			public void perspectiveChanged(IWorkbenchPage changedPage,
-					IPerspectiveDescriptor perspective, String changeId) {
-				// Only listen for changes in -this- perspective
-				if (FastViewManager.this.perspective.getDesc() == perspective)
-					handlePerspectiveChange(changedPage, perspective, changeId);
-			}
-		});
 	}
 
 	protected void handlePerspectiveActivation(IWorkbenchPage activatingPage,
@@ -658,6 +657,7 @@ public class FastViewManager {
 	 * Activate the manager. Called from the Perspecive's 'onActivate'
 	 */
 	public void activate() {
+		wbw.addPerspectiveListener(perspListener);
 		setTrimStackVisibility(true);
 	}
 
@@ -665,6 +665,7 @@ public class FastViewManager {
 	 * Activate the manager. Called from the Perspecive's 'onActivate'
 	 */
 	public void deActivate() {
+		wbw.removePerspectiveListener(perspListener);
 		setTrimStackVisibility(false);
 	}
 
