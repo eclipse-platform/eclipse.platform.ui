@@ -131,11 +131,6 @@ public class FileModificationManager implements IResourceChangeListener {
 			if(cvsResource.getName().equals(".cvsignore") && cvsResource.isIgnored()){ //$NON-NLS-1$
 				EclipseSynchronizer.getInstance().setModified((EclipseFile) cvsResource, ICVSFile.CLEAN);
 				modifiedResources.add(resource);
-				IResource parent = resource.getParent();
-				while(parent != null & parent.getType() != IResource.ROOT){
-					modifiedResources.add(resource);
-					parent = parent.getParent();
-				}
 			}
 		} catch (CVSException e) {
 			// Log the exception and continue
