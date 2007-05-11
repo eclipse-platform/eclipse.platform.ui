@@ -159,9 +159,15 @@ public class CVSDecoration {
 
 	private void initialize(Preferences preferences, String fileFormater, String folderFormatter, String projectFormatter) {
 		this.preferences = preferences;
-		this.fileFormatter = fileFormater;
-		this.folderFormatter = folderFormatter;
-		this.projectFormatter = projectFormatter;
+		this.fileFormatter = updateOldDirtyFlag(fileFormater);
+		this.folderFormatter = updateOldDirtyFlag(fileFormater);
+		this.projectFormatter = updateOldDirtyFlag(fileFormater);
+	}
+
+	//see bug 110022
+	public static String updateOldDirtyFlag(String param){
+		return param.replaceAll(CVSDecoratorConfiguration.OLD_DIRTY_FLAG, 
+				CVSDecoratorConfiguration.NEW_DIRTY_FLAG);
 	}
 
 	public void addPrefix(String prefix) {
@@ -246,7 +252,7 @@ public class CVSDecoration {
 			return;
 		Map bindings = new HashMap();
 		if (isDirty()) {
-			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, preferences.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
+			bindings.put(CVSDecoratorConfiguration.NEW_DIRTY_FLAG, preferences.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
 		}
 		if (isAdded()) {
 			bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, preferences.getString(ICVSUIConstants.PREF_ADDED_FLAG));

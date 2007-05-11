@@ -32,7 +32,9 @@ public class CVSDecoratorConfiguration {
 	public static final String REMOTELOCATION_LABEL = "label"; //$NON-NLS-1$
 	
 	// bindings for resource states
-	public static final String DIRTY_FLAG = "dirty_flag"; //$NON-NLS-1$
+	// see bug 110022
+	public static final String NEW_DIRTY_FLAG = "outgoing_change_flag"; //$NON-NLS-1$
+	public static final String OLD_DIRTY_FLAG = "dirty_flag"; //$NON-NLS-1$
 	public static final String ADDED_FLAG = "added_flag"; //$NON-NLS-1$
 	public static final String DEFAULT_DIRTY_FLAG = CVSUIMessages.CVSDecoratorConfiguration_0;
 	public static final String DEFAULT_ADDED_FLAG = CVSUIMessages.CVSDecoratorConfiguration_1;

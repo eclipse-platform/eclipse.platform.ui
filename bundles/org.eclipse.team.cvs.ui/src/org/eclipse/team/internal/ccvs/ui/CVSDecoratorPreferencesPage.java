@@ -146,7 +146,8 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		}
 
 		public void initializeValue(IPreferenceStore store) {
-			fText.setText(store.getString(fKey));
+			fText.setText(
+					CVSDecoration.updateOldDirtyFlag(store.getString(fKey)));
 		}
 	}
 	
@@ -524,7 +525,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		BINDINGS.put(CVSDecoratorConfiguration.RESOURCE_TAG, CVSUIMessages.CVSDecoratorPreferencesPage_23);  
 		BINDINGS.put(CVSDecoratorConfiguration.FILE_KEYWORD, CVSUIMessages.CVSDecoratorPreferencesPage_24);  
 		BINDINGS.put(CVSDecoratorConfiguration.FILE_REVISION, CVSUIMessages.CVSDecoratorPreferencesPage_25);  
-		BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_26);  
+		BINDINGS.put(CVSDecoratorConfiguration.NEW_DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_26);  
 		BINDINGS.put(CVSDecoratorConfiguration.ADDED_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_27); 
 		
 		FOLDER_BINDINGS= new HashMap();
@@ -536,7 +537,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, CVSUIMessages.CVSDecoratorPreferencesPage_33);  
 		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, CVSUIMessages.CVSDecoratorPreferencesPage_34);  
         FOLDER_BINDINGS.put(CVSDecoratorConfiguration.REMOTELOCATION_LABEL, CVSUIMessages.CVSDecoratorPreferencesPage_38);  
-		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_35); 
+		FOLDER_BINDINGS.put(CVSDecoratorConfiguration.NEW_DIRTY_FLAG, CVSUIMessages.CVSDecoratorPreferencesPage_35); 
 		
 		final PreviewFile project= new PreviewFile("Project", IResource.PROJECT, false, false, false, false, true, null, "v1_0"); //$NON-NLS-1$ //$NON-NLS-2$
 		final ArrayList children= new ArrayList();
