@@ -160,22 +160,6 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 		return element2TreePaths.getComparer();
 	}
 	
-	private boolean elementEquals(Object element1, Object element2, boolean useComparer) {
-		IElementComparer comparer = getElementComparer();
-		if (useComparer && comparer != null) {
-			return comparer.equals(element1, element2);
-		}
-		return element1.equals(element2);
-	}
-	
-	private int elementHashCode(Object element) {
-		IElementComparer comparer = getElementComparer();
-		if (comparer != null) {
-			return comparer.hashCode(element);
-		}
-		return element.hashCode();
-	}
-
 	public boolean equals(Object obj) {
 		if (!(obj instanceof TreeSelection)) {
 			// Fall back to super implementation, see bug 135837.
@@ -184,10 +168,11 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 		TreeSelection selection = (TreeSelection) obj;
 		int size = getPaths().length;
 		if (selection.getPaths().length == size) {
-			boolean useComparer = getElementComparer() == selection.getElementComparer();
+			IElementComparer comparerOrNull = (getElementComparer() == selection
+					.getElementComparer()) ? getElementComparer() : null;
 			if (size > 0) {
 				for (int i = 0; i < paths.length; i++) {
-					if (!elementEquals(paths[i], selection.paths[i], useComparer)) {
+					if (!paths[i].equals(selection.paths[i], comparerOrNull)) {
 						return false;
 					}
 				}
@@ -201,7 +186,7 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 		int code = getClass().hashCode();
 		if (paths != null) {
 			for (int i = 0; i < paths.length; i++) {
-				code = code * 17 + elementHashCode(paths[i]);
+				code = code * 17 + paths[i].hashCode(getElementComparer());
 			}
 		}
 		return code;
