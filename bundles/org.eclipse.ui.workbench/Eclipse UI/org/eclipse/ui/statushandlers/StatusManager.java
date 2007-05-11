@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -29,54 +30,46 @@ import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * <p>
- * Status manager is responsible for handling statuses.
+ * StatusManager is the entry point for all statuses to be reported in the 
+ * user interface.
  * </p>
  * 
  * <p>
  * Handlers shoudn't be used directly but through the StatusManager singleton
- * which keeps the status handling policy and chooses handlers due to it.
+ * which keeps the status handling policy and chooses handlers.
  * <code>StatusManager.getManager().handle(IStatus)</code> and
- * <code>handle(IStatus status, int style)</code> methods are used for passing
- * all problems to the facility.
+ * <code>handle(IStatus status, int style)</code> are the methods are the
+ * primary access points to the StatusManager.
  * </p>
  * 
  * <p>
- * Styles
+ * Acceptable styles (can be combined with logical OR)
  * <ul>
- * <li>NONE - nothing should be done with the status</li>
- * <li>LOG - the status should be logged</li>
- * <li>SHOW - the status should be shown to an user</li>
- * <li>BLOCK - the status handling should block until is finished</li>
+ * <li>NONE - a style indicating that the status should not be acted on. This
+ * is used by objects such as log listeners that do not want to report a status
+ * twice</li>
+ * <li>LOG - a style indicating that the status should be logged only</li>
+ * <li>SHOW - a style indicating that handlers should show a problem to an user
+ * without blocking the calling method while awaiting user response. This is
+ * generally done using a non modal {@link Dialog}</li>
+ * <li>BLOCK - a style indicating that the handling should block the calling
+ * method until the user has responded. This is generally done using a modal
+ * window such as a {@link Dialog}</li>
  * </ul>
  * </p>
  * 
  * <p>
- * Default policy (steps):
- * <ul>
- * <li>manager tries to handle the status with a default handler</li>
- * <li>manager tries to find a right handler for the status</li>
- * <li>manager delegates the status to workbench handler</li>
- * </ul>
- * </p>
- * 
- * <p>
- * Each status handler defined in "statusHandlers" extension can have package
- * prefix assigned to it. During step 2 status manager is looking for the most
- * specific handler for given status checking status pluginId against these
- * prefixes. The default handler is not used in this step.
- * </p>
- * 
- * <p>
- * The default handler can be set for product using
- * "statusHandlerProductBinding" element in "statusHandlers" extension.
- * </p>
- * 
- * <p>
- * Workbench handler passes handling to handler assigned to the workbench
- * advisor. This handler doesn't have to be added as "statusHandlers" extension.
+ * Handlers are intended to be accessed via the status manager. The StatusManager chooses
+ * which handler should be used for a particular error. There are two ways for adding
+ * handlers to the handling flow. First using extension point
+ * <code>org.eclipse.ui.statusHandlers</code>, second by the workbench
+ * advisor and its method {@link WorkbenchAdvisor#getWorkbenchErrorHandler()}.
+ * If a handler is associated with a product, it is used instead of this defined
+ * in advisor.
  * </p>
  * 
  * @since 3.3
+ * @see AbstractStatusHandler
  */
 public class StatusManager {
 	/**

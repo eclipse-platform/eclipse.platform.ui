@@ -16,9 +16,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.statushandlers.StatusNotificationManager;
 
 /**
- * This is a default workbench error handler. The instance of this handler is
- * returned from {@link WorkbenchAdvisor#getWorkbenchErrorHandler()}. All
- * handled statuses are logged using logging facility.
+ * This is a default workbench error handler.
+ * 
+ * @see WorkbenchAdvisor#getWorkbenchErrorHandler()
  * 
  * @since 3.3
  */
