@@ -262,6 +262,8 @@ public class FastViewManager {
 
 		fvList.add(index, ref);
 
+		// Note that the update call will create and show the ViewStackTrimToolbar
+		// if necessary
 		if (update)
 			updateTrim(id);
 	}
@@ -296,7 +298,10 @@ public class FastViewManager {
 
 	/**
 	 * Causes the trim element associated with the id to synch itself with the
-	 * current list of views.
+	 * current list of views. This method will create a new ViewStackTrimToolbar
+	 * if necessary (i.e. on the first call after views have been added to the map)
+	 * and will also hide the trim element when the number of views in the mapped
+	 * list goes to zero.
 	 * 
 	 * @param id
 	 *            The id of the {@link IWindowTrim} to update
@@ -883,7 +888,11 @@ public class FastViewManager {
 	}
 
 	/**
-	 * @param id
+	 * Returns the trim element for the given id if it exists. This
+	 * will not be <code>null</code> if there are entries in the
+	 * 'idToFastViewsMap' for this id.
+	 * 
+	 * @param id The id of the view stack to get the trim toolbar for.
 	 */
 	public ViewStackTrimToolBar getViewStackTrimToolbar(String id) {
 		return (ViewStackTrimToolBar) tbm.getTrim(id);
@@ -970,5 +979,39 @@ public class FastViewManager {
 		if (oneShotAnimation != null)
 			oneShotAnimation.schedule();
 		oneShotAnimation = null;
+	}
+
+	/**
+	 * Returns the 'bottom/right' trim stack. This is used to
+	 * match the old behavior when opening a new view that has no placeholder
+	 * in the case where there WB is maximized.
+	 * 
+	 * @return The 'bottom/right' trim stack or null if there are no
+	 * defined trim stacks
+	 */
+	public ViewStackTrimToolBar getBottomRightTrimStack() {
+		ViewStackTrimToolBar blTrimStack = null;
+		Point blPt = new Point(0,0);
+		
+		Iterator mapIter = idToFastViewsMap.keySet().iterator();
+		while (mapIter.hasNext()) {
+			String id = (String) mapIter.next();
+			
+			// Skip the legacy FstViewBar
+			if (id.equals(FastViewBar.FASTVIEWBAR_ID))
+				continue;
+
+			if (getFastViews(id).size() > 0) {
+				// if we have views in the model then 'vstt' will not be null
+				ViewStackTrimToolBar vstt = getViewStackTrimToolbar(id);
+				Point loc = vstt.getControl().getLocation();
+				if (loc.y > blPt.y || (loc.y == blPt.y && loc.x > blPt.x)) {
+					blPt = loc;
+					blTrimStack = vstt;
+				}
+			}
+		}
+
+		return blTrimStack;
 	}
 }

@@ -364,18 +364,9 @@ public class PerspectiveHelper {
 						part.getContainer().add(otherChildren[i]);
 					}
                 } else {
-                    // reconsistute parent if necessary
+                    // show parent if necessary
                     if (container instanceof ContainerPlaceholder) {
-                        ContainerPlaceholder containerPlaceholder = (ContainerPlaceholder) container;
-                    	
-                        // Is this container placeholder being shown in the trim?
-//                        FastViewManager fvm = perspective.getFastViewManager();
-//                        String id = containerPlaceholder.getID();
-//                        if (fvm.getFastViews(id).size() > 0 && ref != null) {
-//                        	fvm.addViewReference(id, -1, ref, true);
-//                        	return;
-//                        }
-                        
+                        ContainerPlaceholder containerPlaceholder = (ContainerPlaceholder) container;                        
                         ILayoutContainer parentContainer = containerPlaceholder
                                 .getContainer();
                         container = (ILayoutContainer) containerPlaceholder

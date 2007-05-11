@@ -2043,7 +2043,78 @@ public class Perspective {
                 && presentation.canDetach()) {
             presentation.addDetachedPart(pane);
         } else {
-        	presentation.addPart(pane);
+        	if (useNewMinMax(this)) {
+            	// Is this view going to show in the trim?
+            	LayoutPart vPart = presentation.findPart(viewId, secondaryId);
+
+            	// Determine if there is a trim stack that should get the view
+            	String trimId = null;
+            	
+            	// If we can locate the correct trim stack then do so
+            	if (vPart != null && vPart.getContainer() instanceof ContainerPlaceholder) {
+            		ContainerPlaceholder cph = (ContainerPlaceholder) vPart.getContainer();
+                    String id = cph.getID();
+                    if (fastViewManager.getFastViews(id).size() > 0) {
+                    	trimId = id;
+                    }
+            	}
+            	
+            	// No explicit trim found; If we're maximized then we either have to find an
+            	// arbitrary stack...
+            	if (trimId == null && presentation.getMaximizedStack() != null) {
+            		if (vPart == null) {
+            			ViewStackTrimToolBar blTrimStack = fastViewManager.getBottomRightTrimStack();
+            			if (blTrimStack != null) {
+            				// OK, we've found a trim stack to add it to...
+            				trimId = blTrimStack.getId();
+            				
+            				// Since there was no placeholder we have to add one
+            				LayoutPart blPart = presentation.findPart(trimId, null);
+            				if (blPart instanceof ContainerPlaceholder) {
+            					ContainerPlaceholder cph = (ContainerPlaceholder) blPart;
+            					if (cph.getRealContainer() instanceof ViewStack) {
+            						ViewStack vs = (ViewStack) cph.getRealContainer();
+            						
+            						// Create a 'compound' id if this is a multi-instance part
+            						String compoundId = ref.getId();
+            						if (ref.getSecondaryId() != null)
+            							compoundId = compoundId + ':' + ref.getSecondaryId();
+
+            						// Add the new placeholder
+            						vs.add(new PartPlaceholder(compoundId));
+            					}
+            				}
+            			}
+            		}
+            	}
+            	
+            	// If we have a trim stack located then add the view to it
+            	if (trimId != null) {
+                	fastViewManager.addViewReference(trimId, -1, ref, true);
+            	}
+            	else {
+            		boolean inMaximizedStack = vPart != null && vPart.getContainer() == presentation.getMaximizedStack();
+
+            		// Do the default behavior
+            		presentation.addPart(pane);
+            		
+            		// Now, if we're maximized then we have to minimize the new stack
+            		if (presentation.getMaximizedStack() != null && !inMaximizedStack) {
+            			vPart = presentation.findPart(viewId, secondaryId);
+            			if (vPart != null && vPart.getContainer() instanceof ViewStack) {
+            				ViewStack vs = (ViewStack)vPart.getContainer();
+            				vs.setState(IStackPresentationSite.STATE_MINIMIZED);
+            				
+            				// setting the state to minimized will create the trim toolbar
+            				// so we don't need a null pointer check here...
+            				fastViewManager.getViewStackTrimToolbar(vs.getID()).setRestoreOnUnzoom(true);
+            			}
+            		}
+            	}
+        	}
+        	else {
+        		presentation.addPart(pane);
+        	}
         }
         return part;
     }
