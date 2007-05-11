@@ -102,27 +102,29 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param prepend whether the configuration should be added to the beginning of
 	 * the history list
 	 */
-	protected synchronized void addHistory(ILaunchConfiguration configuration, boolean prepend) {
-		if(configuration.isWorkingCopy()) {
-			return;
-		}
-		checkFavorites(configuration);
-		int index = fCompleteHistory.indexOf(configuration);
-		if(index == 0) {
-			return;
-		}
-		if(index < 0) {
-			if(prepend) {
-				fCompleteHistory.add(0, configuration);
+	protected void addHistory(ILaunchConfiguration configuration, boolean prepend) {
+		synchronized (this) {
+			if(configuration.isWorkingCopy()) {
+				return;
+			}
+			checkFavorites(configuration);
+			int index = fCompleteHistory.indexOf(configuration);
+			if(index == 0) {
+				return;
+			}
+			if(index < 0) {
+				if(prepend) {
+					fCompleteHistory.add(0, configuration);
+				}
+				else {
+					fCompleteHistory.add(configuration);
+				}
 			}
 			else {
-				fCompleteHistory.add(configuration);
+				fCompleteHistory.add(0, fCompleteHistory.remove(index));
 			}
+			resizeHistory();
 		}
-		else {
-			fCompleteHistory.add(0, fCompleteHistory.remove(index));
-		}
-		resizeHistory();
 		fireLaunchHistoryChanged();
 	}
 
@@ -375,25 +377,27 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public synchronized void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		ILaunchConfiguration newConfig = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
-		if (newConfig == null) {
-			//deleted
-			fCompleteHistory.remove(configuration);
-			fFavorites.remove(configuration);
-		} else {
-			// moved/renamed
-			int index = fCompleteHistory.indexOf(configuration);
-			if (index >= 0) {
-				fCompleteHistory.remove(index);
-				fCompleteHistory.add(index, newConfig);
-			} 
-			index = fFavorites.indexOf(configuration);
-			if (index >= 0) {
-				fFavorites.remove(index);
-				fFavorites.add(index, newConfig);
+	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
+		synchronized (this) {	
+			ILaunchConfiguration newConfig = DebugPlugin.getDefault().getLaunchManager().getMovedTo(configuration);
+			if (newConfig == null) {
+				//deleted
+				fCompleteHistory.remove(configuration);
+				fFavorites.remove(configuration);
+			} else {
+				// moved/renamed
+				int index = fCompleteHistory.indexOf(configuration);
+				if (index >= 0) {
+					fCompleteHistory.remove(index);
+					fCompleteHistory.add(index, newConfig);
+				} 
+				index = fFavorites.indexOf(configuration);
+				if (index >= 0) {
+					fFavorites.remove(index);
+					fFavorites.add(index, newConfig);
+				}
+				checkFavorites(newConfig);
 			}
-			checkFavorites(newConfig);
 		}
 		fireLaunchHistoryChanged();
 	}
