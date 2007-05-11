@@ -129,7 +129,7 @@ public class TreeViewerRow extends ViewerRow {
 	 * @see org.eclipse.jface.viewers.ViewerRow#setImage(int, org.eclipse.swt.graphics.Image)
 	 */
 	public void setImage(int columnIndex, Image image) {
-		Image oldImage = item.getImage();
+		Image oldImage = item.getImage(columnIndex);
 		if (image != oldImage) {
 			item.setImage(columnIndex, image);
 		}
