@@ -14,6 +14,7 @@ package org.eclipse.ui.internal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1078,9 +1079,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 		}
 
         // Write out the presentable parts (in order)
-        Iterator iter = getPresentableParts().iterator();
-        while (iter.hasNext()) {
-            PresentablePart presPart = (PresentablePart) iter.next();
+        Set cachedIds = new HashSet();
+        Iterator ppIter = getPresentableParts().iterator();
+        while (ppIter.hasNext()) {
+            PresentablePart presPart = (PresentablePart) ppIter.next();
 
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_PAGE);
@@ -1089,19 +1091,31 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
             childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
             childMem.putString(IWorkbenchConstants.TAG_CONTENT, presPart.getPane().getPlaceHolderId());
+            
+            // Cache the id so we don't write it out later
+            cachedIds.add(presPart.getPane().getPlaceHolderId());
         }
 
-        // Write out the placeholders
-        Iterator layoutIiter = children.iterator();
-        while (layoutIiter.hasNext()) {
-            LayoutPart next = (LayoutPart) layoutIiter.next();
-            if (next instanceof PartPane)
-            	continue;
-            
+        Iterator iter = children.iterator();
+        while (iter.hasNext()) {
+            LayoutPart next = (LayoutPart) iter.next();
+
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_PAGE);
 
+            PartPane part = null;
+            if (next instanceof PartPane) {
+            	// Have we already written it out?
+            	if (cachedIds.contains(((PartPane)next).getPlaceHolderId()))
+            		continue;
+            	
+                part = (PartPane)next;
+            }
+
             String tabText = "LabelNotFound"; //$NON-NLS-1$ 
+            if (part != null) {
+                tabText = part.getPartReference().getPartName();
+            }
             childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
             childMem.putString(IWorkbenchConstants.TAG_CONTENT, next
                     .getCompoundId());
