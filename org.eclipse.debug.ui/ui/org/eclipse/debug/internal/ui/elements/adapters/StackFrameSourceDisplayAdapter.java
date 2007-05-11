@@ -53,7 +53,7 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 							// fall through
 						case DebugEvent.RESUME:
 							if (!event.isEvaluation()) {
-								Job uijob = new UIJob("clear source selection"){
+								Job uijob = new UIJob("clear source selection"){ //$NON-NLS-1$
 									public IStatus runInUIThread(
 											IProgressMonitor monitor) {
 										clearSourceSelection(event.getSource());
@@ -61,8 +61,8 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 									}
 									
 								};
+								uijob.setSystem(true);
 								uijob.schedule();
-								
 							}
 							break;
 						case DebugEvent.CHANGE:
