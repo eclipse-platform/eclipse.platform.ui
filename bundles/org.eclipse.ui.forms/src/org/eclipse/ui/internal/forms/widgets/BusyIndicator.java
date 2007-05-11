@@ -12,7 +12,11 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -25,6 +29,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.Bundle;
 
 public class BusyIndicator extends Canvas {
 	private static final int MARGIN = 0;
@@ -62,8 +67,17 @@ public class BusyIndicator extends Canvas {
 	}
 
 	private void loadProgressImage() {
-		InputStream is = BusyIndicator.class
-				.getResourceAsStream("progress.gif"); //$NON-NLS-1$
+		InputStream is = null;
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
+	    URL url = FileLocator.find(bundle, new Path("icons/progress/ani/progress.gif"),null); //$NON-NLS-1$
+		if (url != null) {
+			try {
+				url = FileLocator.resolve(url);
+				is = url.openStream();
+			} catch (IOException e) {
+			    is = null;
+			}
+		}
 		if (is != null) {
 			loader = new ImageLoader();
 			try {
