@@ -551,7 +551,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			antObject.setPluginLabel(contributor.getName());
 			Bundle bundle = Platform.getBundle(contributor.getName());
 			URL url = FileLocator.toFileURL(bundle.getEntry(library));
-			if (new File(url.getPath()).exists()) {
+			File urlFile = new File(url.getPath());
+			if (urlFile.exists()) {
+				url = new URL("file:" +  urlFile.getAbsolutePath()); //$NON-NLS-1$
 				addURLToExtraClasspathEntries(url, element);
 				result.add(antObject);
 				addPluginClassLoader(bundle);
@@ -589,8 +591,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			Bundle bundle = Platform.getBundle(element.getContributor().getName());
 			try {
 				URL url = FileLocator.toFileURL(bundle.getEntry(library));
-				
-				if (new File(url.getPath()).exists()) {
+				File urlFile = new File(url.getPath());
+				if (urlFile.exists()) {
+					url = new URL("file:" +  urlFile.getAbsolutePath()); //$NON-NLS-1$
 					addURLToExtraClasspathEntries(url, element);  
 					addPluginClassLoader(bundle);
 				} else {
@@ -829,7 +832,9 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		for (int i = 0; i < libraries.length; i++) {
 			try {
 				URL url = FileLocator.toFileURL(source.getEntry(libraries[i].getValue()));
-				destination.add(new AntClasspathEntry(FileLocator.toFileURL(url)));
+				File urlFile = new File(url.getPath());
+				url = new URL("file:" +  urlFile.getAbsolutePath()); //$NON-NLS-1$
+				destination.add(new AntClasspathEntry(url));
 			} catch (Exception e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
