@@ -73,7 +73,6 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
 /**
@@ -1111,9 +1110,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			ArrayList fileSystemObjects = new ArrayList();
-			getFilesForProject(fileSystemObjects, record.provider,
-					record.parent);
+			List fileSystemObjects = record.provider.getChildren(record.parent);
 			record.provider.setStrip(record.level);
 			ImportOperation operation = new ImportOperation(project
 					.getFullPath(), record.provider.getRoot(), record.provider,
@@ -1162,9 +1159,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		// import operation to import project files if copy checkbox is selected
 		if (copyFiles && importSource != null) {
-			List filesToImport = new ArrayList();
-			FileSystemStructureProvider provider = FileSystemStructureProvider.INSTANCE;
-			getFilesForProject(filesToImport, provider, importSource);
+			List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
 			ImportOperation operation = new ImportOperation(project
 					.getFullPath(), importSource,
 					FileSystemStructureProvider.INSTANCE, this, filesToImport);
@@ -1179,33 +1174,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		return true;
 	}
 
-	/**
-	 * Return a list of all files in the project
-	 * 
-	 * @param provider
-	 *            The provider for the parent file
-	 * @param entry
-	 *            The root directory of the project
-	 * @return A list of all files in the project
-	 */
-	protected boolean getFilesForProject(Collection files,
-			IImportStructureProvider provider, Object entry) {
-		List children = provider.getChildren(entry);
-		Iterator childrenEnum = children.iterator();
-
-		while (childrenEnum.hasNext()) {
-			Object child = childrenEnum.next();
-			// Add the child, this way we get every files except the project
-			// folder itself which we don't want
-			files.add(child);
-			// We don't have isDirectory for tar so must check for children
-			// instead
-			if (provider.isFolder(child)) {
-				getFilesForProject(files, provider, child);
-			}
-		}
-		return true;
-	}
 
 	/**
 	 * The <code>WizardDataTransfer</code> implementation of this
