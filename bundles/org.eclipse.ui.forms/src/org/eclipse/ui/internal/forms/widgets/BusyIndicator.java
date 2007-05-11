@@ -69,7 +69,7 @@ public class BusyIndicator extends Canvas {
 	private void loadProgressImage() {
 		InputStream is = null;
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
-	    URL url = FileLocator.find(bundle, new Path("icons/progress/ani/progress.gif"),null); //$NON-NLS-1$
+	    URL url = FileLocator.find(bundle, new Path("$nl$/icons/progress/ani/progress.gif"),null); //$NON-NLS-1$
 		if (url != null) {
 			try {
 				url = FileLocator.resolve(url);
