@@ -357,8 +357,18 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		Runnable notifier = new Runnable() {
 			public void run() {
 				for (int i = 0; i < listeners.length; i++) {
-					((IPropertyChangeListener) listeners[i])
-							.propertyChange(event);
+					final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+					ISafeRunnable safetyWrapper = new ISafeRunnable() {
+
+						public void run() throws Exception {
+							listener.propertyChange(event);
+						}
+
+						public void handleException(Throwable exception) {
+							// logged by the runner
+						}
+					};
+					SafeRunner.run(safetyWrapper);
 				}
 			}
 		};
