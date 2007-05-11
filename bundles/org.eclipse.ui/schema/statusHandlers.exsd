@@ -7,36 +7,16 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-Status handlers are part of status handling facility with &lt;code&gt;StatusManager&lt;/code&gt; which controls handling.
-&lt;code&gt;StatusManager&lt;/code&gt; object is a singleton, keeps information about &quot;status handling policy&quot;.
-Each problem is handled by status manager which uses handlers due to the policy.
+This extension point is used to register implementations of status handlers in the workbench. A handler can be associated with a product and this association is also contributed via this extension point.
 &lt;/p&gt;
 
 &lt;p&gt;
-There is one default policy and it can&apos;t be overriden.
+Status handlers are part of the status handling facility. The facility is responsible for handling errors and other important issues in Eclipse based applications. The handlers are responsible for presenting this errors by logging or showing error dialogs.
 &lt;/p&gt;
 
 &lt;p&gt;
- Default policy (steps):
- &lt;ul&gt;
- &lt;li&gt;manager tries to handle the problem with default handler&lt;/li&gt;
- &lt;li&gt;manager tries to find a right handler for status plugin &lt;/li&gt;
- &lt;li&gt;manager delegates the problem to workbench handler&lt;/li&gt;
- &lt;/ul&gt;
- &lt;/p&gt;
- 
- &lt;p&gt;
- Default handler can be set for product using &quot;statusHandlerProductBinding&quot; element in extension for &quot;statusHandlers&quot; ext. point.
- &lt;/p&gt;
- 
- &lt;p&gt;
- Each status handler defined in &quot;statusHandlers&quot; extension can have package prefix assigned to it. During step 2 status manager looks for the most specific handler for given status checking status pluginId against these prefixes. If handler is the default one it is not used in this step. 
- &lt;/p&gt;
- 
- &lt;p&gt;
- Workbench handler is the &lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt; object
- which passes handling to handler assigned to the workbench advisor. This handler doesn&apos;t have to be added in &quot;statusHandlers&quot; extension.
- &lt;/p&gt;
+If there is no status handler associated with a product, the status handling facility uses the application handler defined in a workbench advisor.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -247,35 +227,14 @@ The handler can be defined in other plugin.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;
-All status handlers are &lt;code&gt;AbstractStatusHandler&lt;/code&gt; subclasses.
-Each handler has to have &lt;code&gt;handle(StatusHandlingState status)&lt;/code&gt; implemented. 
-This method handles the status due to handling hint. The hint indicates
-how status handler should handle a status but this is only a suggestion.
+         &lt;/p&gt;
+The value of the &lt;code&gt;class&lt;/code&gt; attribute in &lt;code&gt;statusHandler&lt;/code&gt; element must be the fully qualified name of a class that extends &lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
 &lt;/p&gt;
-
 &lt;p&gt;
- Handling hints
- &lt;ul&gt;
-    &lt;li&gt;IGNORE - status should be ignored&lt;/li&gt;
-    &lt;li&gt;LOG - the status should be logged&lt;/li&gt;
-    &lt;li&gt;SHOW - the status should be shown to an user&lt;/li&gt;
-    &lt;li&gt;SHOWANDLOG - the status should be logged and shown to an user&lt;/li&gt;
- &lt;/ul&gt;
+The &lt;code&gt;parameter&lt;/code&gt; elements in &lt;code&gt;statusHandler&lt;/code&gt; element adds parameters which can be used during handling in the status handler defined in &lt;code&gt;class&lt;/code&gt; attribute.
 &lt;/p&gt;
-  
 &lt;p&gt;
-Handlers shoudn&apos;t be used directly but through the &lt;code&gt;StatusManager&lt;/code&gt; singleton
-which keeps the status handling policy and chooses handlers due to it.
-&lt;/p&gt;
-
-&lt;p&gt;
-One point of entry for all problems to report is &lt;code&gt;StatusManager.getManager().handle(IStatus)&lt;/code&gt;
-method or &lt;code&gt;StatusManager.getManager().handle(IStatus, HandlingMode)&lt;/code&gt; if we want to suggest handling mode for the status.
-&lt;/p&gt;
-
-&lt;p&gt;
-In the default policy new error handlers are put into status handling flow using &quot;statusHandlers&quot; extension.
+The value of the &lt;code&gt;productId&lt;/code&gt; attribute in &lt;code&gt;statusHandlerProductBinding&lt;/code&gt; is full name of the product to which the handler with id defined in &lt;code&gt;handlerId&lt;/code&gt; attribute in &lt;code&gt;statusHandlerProductBinding&lt;/code&gt; will be associated.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -286,25 +245,8 @@ In the default policy new error handlers are put into status handling flow using
       </appInfo>
       <documentation>
          &lt;p&gt;
-The platform supplies basic implementations of 
-&lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;
-&lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt; handler is 
-a proxy which passes all handling calls to handler assigned to current application workbench advisor.
-&lt;/p&gt;
-
-&lt;p&gt;
-There are two other implementation of handlers  &lt;code&gt;org.eclipse.ui.statushandlers.WorkbenchErrorHandler&lt;/code&gt; which is assigned to &lt;code&gt;WorkbenchAdvisor&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler&lt;/code&gt; assigned to
-&lt;code&gt;IDEWorkbenchAdvisor&lt;/code&gt;. Due to advisor which is actually used 
-&lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt; handler 
-delegates handling to one of them. 
-&lt;/p&gt;
-
-&lt;p&gt;
-In the default policy &lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt;
-handler doesn&apos;t have to be defined as extension point. It is used by default.
+The platform supplies basic implementation of &lt;code&gt;org.eclipse.ui.statushandlers.AbstractStatusHandler&lt;/code&gt;.
+It is &lt;code&gt;org.eclipse.ui.statushandlers.WorkbenchErrorHandler&lt;/code&gt; which is the default workbench status handler.
 &lt;/p&gt;
       </documentation>
    </annotation>
