@@ -118,7 +118,7 @@ public class Snippet002UpdateComboRetainSelection {
         public void setText(String text) {
             String oldValue = this.text;
             this.text = text;
-            firePropertyChange("test", oldValue, text);
+            firePropertyChange("text", oldValue, text);
         }
     }
 
