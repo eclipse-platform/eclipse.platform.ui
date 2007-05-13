@@ -20,9 +20,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
@@ -38,6 +42,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -51,6 +56,8 @@ import com.ibm.icu.text.Collator;
  * Perspective Customize dialog.
  */
 public class ShowViewMenu extends ContributionItem {
+	private static final String SHOW_VIEW_ID = "org.eclipse.ui.views.showView"; //$NON-NLS-1$
+	private static final String PARAMETER_MAKE_FAST = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
 
 	private IWorkbenchWindow window;
 
@@ -111,11 +118,15 @@ public class ShowViewMenu extends ContributionItem {
 		this.window = window;
 		final IHandlerService handlerService = (IHandlerService) window
 				.getService(IHandlerService.class);
+		final ICommandService commandService = (ICommandService) window
+				.getService(ICommandService.class);
+		final ParameterizedCommand cmd = getCommand(commandService, makeFast);
+		
         showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
             public void run() {
 				try {
 					handlerService.executeCommand(
-							"org.eclipse.ui.views.showView", null); //$NON-NLS-1$
+							cmd, null);
 				} catch (final ExecutionException e) {
 					// Do nothing.
 				} catch (NotDefinedException e) {
@@ -134,7 +145,7 @@ public class ShowViewMenu extends ContributionItem {
 		((WorkbenchWindow) window)
 				.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
         
-		showDlgAction.setActionDefinitionId("org.eclipse.ui.views.showView"); //$NON-NLS-1$
+		showDlgAction.setActionDefinitionId(SHOW_VIEW_ID);
         this.makeFast = makeFast;
 	}
 
@@ -273,4 +284,25 @@ public class ShowViewMenu extends ContributionItem {
 		actions.remove(viewId);
 	}
 
+
+	/**
+	 * @param commandService 
+	 * @param makeFast
+	 */
+	private ParameterizedCommand getCommand(ICommandService commandService,
+			final boolean makeFast) {
+		Command c = commandService.getCommand(SHOW_VIEW_ID);
+		Parameterization[] parms = null;
+		if (makeFast) {
+			try {
+				IParameter parmDef = c.getParameter(PARAMETER_MAKE_FAST);
+				parms = new Parameterization[] { 
+						new Parameterization(parmDef, "true") //$NON-NLS-1$
+				};
+			} catch (NotDefinedException e) {
+				// this should never happen
+			}
+		}
+		return new ParameterizedCommand(c, parms);
+	}
 }

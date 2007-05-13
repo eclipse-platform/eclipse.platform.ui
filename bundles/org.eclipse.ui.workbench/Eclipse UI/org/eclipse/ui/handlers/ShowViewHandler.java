@@ -42,6 +42,7 @@ public final class ShowViewHandler extends AbstractHandler {
 	 */
 	private static final String PARAMETER_NAME_VIEW_ID = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
     private boolean makeFast = false;
+	private static final String PARAMETER_MAKE_FAST = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
   
     /**
      * Creates a new ShowViewHandler that will open the view in its default location.
@@ -68,6 +69,8 @@ public final class ShowViewHandler extends AbstractHandler {
 		// Get the view identifier, if any.
 		final Map parameters = event.getParameters();
 		final Object value = parameters.get(PARAMETER_NAME_VIEW_ID);
+		makeFast = "true".equals(parameters.get(PARAMETER_MAKE_FAST)); //$NON-NLS-1$
+		
 		if (value == null) {
 			openOther(window);
 		} else {

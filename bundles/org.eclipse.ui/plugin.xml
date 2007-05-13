@@ -1015,6 +1015,11 @@
       			id="org.eclipse.ui.views.showView.viewId"
       			name="%command.showView.viewIdParameter"
       			values="org.eclipse.ui.internal.registry.ViewParameterValues" />
+        <commandParameter
+              id="org.eclipse.ui.views.showView.makeFast"
+              name="%command.showView.makeFastParameter"
+              optional="true">
+        </commandParameter>
       </command>
       <command
             defaultHandler="org.eclipse.ui.internal.handlers.DisplayHelpHandler"

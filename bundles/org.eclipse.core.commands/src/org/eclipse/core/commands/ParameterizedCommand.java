@@ -195,6 +195,9 @@ public final class ParameterizedCommand implements Comparable {
 
 		// Make recursive call
 		final Collection suffixes = expandParameters(nextIndex, parameters);
+		while (suffixes.remove(null)) {
+			// just keep deleting the darn things.
+		}
 		if (suffixes.isEmpty()) {
 			// This is it, so just return the current parameterizations.
 			for (int i = 0; i < parameterizationCount; i++) {
