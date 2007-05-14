@@ -3598,7 +3598,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
         return actionPresentation;
     }
     
-    /*package*/ IActionBarPresentationFactory getActionBarPresentationFactory() {
+    /**
+     * Return the action bar presentation used for creating toolbars.  This
+     * is for internal use only, used for consistency with the window.
+     * 
+     * @return the presentation used.
+     */
+    public IActionBarPresentationFactory getActionBarPresentationFactory() {
     	// allow replacement of the actionbar presentation
     	IActionBarPresentationFactory actionBarPresentation;        	
     	AbstractPresentationFactory presentationFactory = 
