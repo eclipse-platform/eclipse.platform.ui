@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 
 /**
@@ -52,7 +51,7 @@ public class RefactoringWizardDialog extends WizardDialog {
 	 */
 	public RefactoringWizardDialog(Shell parent, RefactoringWizard wizard) {
 		super(parent, wizard);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		IDialogSettings settings= wizard.getDialogSettings();
 		if (settings == null) {
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();

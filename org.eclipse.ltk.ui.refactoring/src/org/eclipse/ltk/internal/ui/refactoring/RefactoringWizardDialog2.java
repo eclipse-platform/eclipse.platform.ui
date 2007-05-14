@@ -162,7 +162,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	public RefactoringWizardDialog2(Shell shell, RefactoringWizard wizard) {
 		super(shell);
 		Assert.isNotNull(wizard);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		IDialogSettings settings= wizard.getDialogSettings();
 		if (settings == null) {
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
