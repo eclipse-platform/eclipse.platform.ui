@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,10 @@ public abstract class CommandStep implements IProcessStep {
 		Process proc = null;
 		try {
 			proc = runtime.exec(cmd);
+			StreamProcessor errorStreamProcessor = new StreamProcessor(proc.getErrorStream(), StreamProcessor.STDERR, verbose); //$NON-NLS-1$
+			StreamProcessor outputStreamProcessor = new StreamProcessor(proc.getInputStream(), StreamProcessor.STDOUT, verbose); //$NON-NLS-1$
+			errorStreamProcessor.start();
+			outputStreamProcessor.start();
 		} catch (Exception e) {
 			if(verbose) {
 				System.out.println("Error executing command " + Utils.concat(cmd)); //$NON-NLS-1$
