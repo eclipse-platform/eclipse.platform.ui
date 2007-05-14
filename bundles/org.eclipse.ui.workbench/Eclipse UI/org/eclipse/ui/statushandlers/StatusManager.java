@@ -190,7 +190,9 @@ public class StatusManager {
 				FinishedJobs.getInstance().removeErrorJobs();
 			}
 		} catch (Throwable ex) {
-			logError("Errors during status handling", ex); //$NON-NLS-1$
+			// The used status handler failed
+			logError(statusAdapter.getStatus());
+			logError("Error occurred during status handling", ex); //$NON-NLS-1$
 		}
 	}
 
