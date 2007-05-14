@@ -25,6 +25,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.w3c.dom.Document;
@@ -166,6 +167,9 @@ public class UAElement implements IUAElement {
 	}
 	
 	public boolean isEnabled(IEvaluationContext context) {
+		if (HelpSystem.isShared()) {
+			return true;
+		}
 		if (src != null) {
 			return src.isEnabled(context);
 		}
