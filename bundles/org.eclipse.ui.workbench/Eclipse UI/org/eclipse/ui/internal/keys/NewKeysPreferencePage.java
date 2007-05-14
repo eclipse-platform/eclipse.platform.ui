@@ -890,7 +890,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * The filtered tree containing the list of commands and bindings to edit.
 	 */
 	private CategoryFilterTree filteredTree;
-	
+
 	private CategoryPatternFilter patternFilter;
 
 	/**
@@ -998,24 +998,50 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 *            The binding to be removed; must not be <code>null</code>.
 	 */
 	private final void bindingRemove(final KeyBinding binding) {
+		ArrayList extraSystemDeletes = new ArrayList();
 		final String contextId = binding.getContextId();
 		final String schemeId = binding.getSchemeId();
 		final KeySequence triggerSequence = binding.getKeySequence();
 		if (binding.getType() == Binding.USER) {
 			localChangeManager.removeBinding(binding);
 		} else {
-
 			// TODO This should be the user's personal scheme.
-			localChangeManager.addBinding(new KeyBinding(triggerSequence, null,
-					schemeId, contextId, null, null, null, Binding.USER));
+			Collection previousConflictMatches = (Collection) localChangeManager
+					.getActiveBindingsDisregardingContext().get(
+							binding.getTriggerSequence());
+			KeyBinding deleteBinding = new KeyBinding(triggerSequence, null,
+					schemeId, contextId, null, null, null, Binding.USER);
+			localChangeManager.addBinding(deleteBinding);
+			if (previousConflictMatches != null) {
+				Iterator i = previousConflictMatches.iterator();
+				while (i.hasNext()) {
+					Binding b = (Binding) i.next();
+					if (b != binding && deletes(deleteBinding, b)) {
+						extraSystemDeletes.add(b);
+					}
+				}
+			}
 		}
 
 		// update the model
 		bindingModel.remove(binding);
-		updateConflicts(binding);
 		bindingAdd(binding);
+		if (!extraSystemDeletes.isEmpty()) {
+			Iterator i = extraSystemDeletes.iterator();
+			while (i.hasNext()) {
+				KeyBinding b = (KeyBinding) i.next();
+				KeyBinding newBinding = new KeyBinding(b.getKeySequence(), b
+						.getParameterizedCommand(), b.getSchemeId(), b
+						.getContextId(), null, null, null, Binding.USER);
+				localChangeManager.addBinding(newBinding);
+
+				bindingModel.remove(b);
+				bindingModel.add(newBinding);
+			}
+		}
+		updateConflicts(binding);
 	}
-	
+
 	private final void updateConflicts(final Collection bindings) {
 		Iterator i = bindings.iterator();
 		while (i.hasNext()) {
@@ -1877,19 +1903,47 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 								IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
 								contextId, null, null, null, Binding.USER);
 
+						ArrayList extraSystemDeletes = new ArrayList();
 						if (keyBinding.getType() == Binding.USER) {
 							localChangeManager.removeBinding(keyBinding);
-						} else {
-							localChangeManager.addBinding(new KeyBinding(
+						} else {							
+							// TODO This should be the user's personal scheme.
+							Collection previousConflictMatches = (Collection) localChangeManager
+									.getActiveBindingsDisregardingContext().get(
+											keyBinding.getTriggerSequence());
+							KeyBinding deleteBinding = new KeyBinding(
 									keyBinding.getKeySequence(), null,
 									keyBinding.getSchemeId(), keyBinding
 											.getContextId(), null, null, null,
-									Binding.USER));
+									Binding.USER);
+							localChangeManager.addBinding(deleteBinding);
+							if (previousConflictMatches != null) {
+								Iterator i = previousConflictMatches.iterator();
+								while (i.hasNext()) {
+									Binding b = (Binding) i.next();
+									if (b != keyBinding && deletes(deleteBinding, b)) {
+										extraSystemDeletes.add(b);
+									}
+								}
+							}
 						}
 						localChangeManager.addBinding(binding);
 						// update the model
 						bindingModel.remove(keyBinding);
 						bindingModel.add(binding);
+						if (!extraSystemDeletes.isEmpty()) {
+							Iterator i = extraSystemDeletes.iterator();
+							while (i.hasNext()) {
+								KeyBinding b = (KeyBinding) i.next();
+								KeyBinding newBinding = new KeyBinding(b.getKeySequence(), b
+										.getParameterizedCommand(), b.getSchemeId(), b
+										.getContextId(), null, null, null, Binding.USER);
+								localChangeManager.addBinding(newBinding);
+
+								bindingModel.remove(b);
+								bindingModel.add(newBinding);
+							}
+						}
 						updateConflicts(keyBinding);
 						updateConflicts(binding);
 						// end update the model
