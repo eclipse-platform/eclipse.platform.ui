@@ -263,7 +263,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * The resource's contents are supplied by the data in the given stream.
 	 * This method closes the stream whether it succeeds or fails.
 	 * If the stream is <code>null</code> then a file is not created in the local
-	 * file system and the created file is marked as being non-local.
+	 * file system and the created file resource is marked as being non-local.
 	 * <p>
 	 * The {@link IResource#FORCE} update flag controls how this method deals with
 	 * cases where the workspace is not completely in sync with the local file 
