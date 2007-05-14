@@ -15,8 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -229,5 +228,56 @@ public class SyncAction extends WorkspaceTraversalAction {
 	
 	public String getId() {
 		return ICVSUIConstants.CMD_SYNCHRONIZE;
+	}
+
+	
+	public boolean isEnabled() {
+		if(super.isEnabled()){
+			return true;
+		}
+		IWorkingSet[] sets = getSelectedWorkingSets();
+		// empty selection will not be considered
+		if(sets == null || sets.length == 0){
+			return false;
+		}
+		
+		Set projects = getProjects(sets);
+		
+		boolean existsProjectToSynchronize = false;
+		for (Iterator it = projects.iterator(); it.hasNext();) {
+			IProject project = (IProject) it.next();
+			RepositoryProvider provider = RepositoryProvider.getProvider(project);
+			if(provider != null){
+				existsProjectToSynchronize = true;
+				//we handle only CVS repositories
+				if(!CVSProviderPlugin.getTypeId().equals(provider.getID())){
+					return false;
+				}
+			}
+		}
+		
+		return existsProjectToSynchronize;
+	}
+
+	private Set getProjects(IWorkingSet[] sets) {
+		Set projects = new HashSet();
+		
+		if(sets == null) 
+			return projects;
+		
+		for (int i = 0; i < sets.length; i++) {
+			IAdaptable ad[] = sets[i].getElements();
+			if (ad != null) {
+				for (int j = 0; j < ad.length; j++) {
+					IResource resource = (IResource) ad[j]
+							.getAdapter(IResource.class);
+					if (resource != null) {
+						projects.add(resource.getProject());
+					}
+				}
+			}
+		}
+		
+		return projects;
 	}
 }
