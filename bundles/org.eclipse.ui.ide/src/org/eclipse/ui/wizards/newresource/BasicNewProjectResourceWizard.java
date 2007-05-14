@@ -212,33 +212,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 									WorkspaceUndoUtil
 											.getUIInfoAdapter(getShell()));
 				} catch (ExecutionException e) {
-					Throwable t = e.getCause();
-					if (t instanceof CoreException) {
-						StatusAdapter status;
-						if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-							status = new StatusAdapter(
-									StatusUtil
-											.newStatus(
-													IStatus.WARNING,
-													NLS
-															.bind(
-																	ResourceMessages.NewProject_caseVariantExistsError,
-																	newProjectHandle
-																			.getName()),
-													t));
-
-						} else {
-							status = new StatusAdapter(StatusUtil.newStatus(
-									IStatus.ERROR, t.getLocalizedMessage(), t));
-
-						}
-						status.setProperty(StatusAdapter.TITLE_PROPERTY,
-								ResourceMessages.NewProject_errorMessage);
-						StatusManager.getManager().handle(status,
-								StatusManager.SHOW);
-					} else {
-						throw new InvocationTargetException(e);
-					}
+					throw new InvocationTargetException(e);
 				}
 			}
 		};
@@ -250,16 +224,39 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 			return null;
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getTargetException();
-			// ExecutionExceptions with underlying CoreExceptions are handled
-			// above, but there could be other unexpected runtime exceptions.
-			StatusAdapter status = new StatusAdapter(new Status(
-					IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH, 0, NLS
-							.bind(ResourceMessages.NewProject_internalError, t
-									.getMessage()), t));
-			status.setProperty(StatusAdapter.TITLE_PROPERTY,
-					ResourceMessages.NewProject_errorMessage);
-			StatusManager.getManager().handle(status, StatusManager.LOG
-					| StatusManager.SHOW);
+			if (t instanceof ExecutionException
+					&& t.getCause() instanceof CoreException) {
+				CoreException cause = (CoreException) t.getCause();
+				StatusAdapter status;
+				if (cause.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
+					status = new StatusAdapter(
+							StatusUtil
+									.newStatus(
+											IStatus.WARNING,
+											NLS
+													.bind(
+															ResourceMessages.NewProject_caseVariantExistsError,
+															newProjectHandle
+																	.getName()),
+											cause));
+				} else {
+					status = new StatusAdapter(StatusUtil.newStatus(cause
+							.getStatus().getSeverity(),
+							ResourceMessages.NewProject_errorMessage, cause));
+				}
+				status.setProperty(StatusAdapter.TITLE_PROPERTY,
+						ResourceMessages.NewProject_errorMessage);
+				StatusManager.getManager().handle(status, StatusManager.BLOCK);
+			} else {
+				StatusAdapter status = new StatusAdapter(new Status(
+						IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH, 0,
+						NLS.bind(ResourceMessages.NewProject_internalError, t
+								.getMessage()), t));
+				status.setProperty(StatusAdapter.TITLE_PROPERTY,
+						ResourceMessages.NewProject_errorMessage);
+				StatusManager.getManager().handle(status,
+						StatusManager.LOG | StatusManager.BLOCK);
+			}
 			return null;
 		}
 
