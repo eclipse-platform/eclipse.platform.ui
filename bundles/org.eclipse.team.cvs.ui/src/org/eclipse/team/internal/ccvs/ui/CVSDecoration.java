@@ -160,8 +160,8 @@ public class CVSDecoration {
 	private void initialize(Preferences preferences, String fileFormater, String folderFormatter, String projectFormatter) {
 		this.preferences = preferences;
 		this.fileFormatter = updateOldDirtyFlag(fileFormater);
-		this.folderFormatter = updateOldDirtyFlag(fileFormater);
-		this.projectFormatter = updateOldDirtyFlag(fileFormater);
+		this.folderFormatter = updateOldDirtyFlag(folderFormatter);
+		this.projectFormatter = updateOldDirtyFlag(projectFormatter);
 	}
 
 	//see bug 110022
