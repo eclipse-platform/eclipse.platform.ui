@@ -966,21 +966,23 @@
           value="176,180,185">
       </colorDefinition>
       <colorDefinition
-            id="org.eclipse.ui.editors.backgroundColor"
-            label="%dummy"
-            value="255,255,255">
+          id="org.eclipse.ui.editors.backgroundColor"
+          isEditable="false"
+          label="%dummy"
+          value="255,255,255">
       </colorDefinition>
       <colorDefinition
-            id="org.eclipse.ui.editors.foregroundColor"
-            label="%dummy"
-            value="0,0,0">
+          id="org.eclipse.ui.editors.foregroundColor"
+          isEditable="false"
+          label="%dummy"
+          value="0,0,0">
       </colorDefinition>
 
       <theme
 		  id="org.eclipse.ui.ide.systemDefault">
          <colorOverride
             id="org.eclipse.ui.editors.currentLineColor"
-            value="COLOR_WIDGET_LIGHT_SHADOW">
+            value="COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT">
          </colorOverride>
          <colorOverride
             id="org.eclipse.ui.editors.lineNumberRulerColor"
