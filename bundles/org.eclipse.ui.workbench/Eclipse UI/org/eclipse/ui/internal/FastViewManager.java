@@ -489,7 +489,10 @@ public class FastViewManager {
 			// KLUDGE!! uses a 'testing only' API to get the parts in their 'visible' order
 			parts = tsp.getPartList();
 		}
-		else {
+
+		// If we didn't get the parts from the tab list then try the presentable part API
+		// ViewStack's declared 'no title' fail the call above, returning an empty array
+		if (parts == null || parts.length == 0){
 			// We'll have to process the parts in the order given...
 			// This is certain to fail on drag re-ordering of the
 			// icons in the trim since we have no API to inform the
