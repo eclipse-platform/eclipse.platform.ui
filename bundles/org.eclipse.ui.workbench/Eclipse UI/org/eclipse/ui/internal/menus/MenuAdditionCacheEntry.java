@@ -21,6 +21,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -240,9 +241,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createSeparatorAdditionContribution(
 			final IConfigurationElement sepAddition) {
-		Separator sep = new Separator(getName(sepAddition));
-		sep.setVisible(isSeparatorVisible(sepAddition));
-		return sep;
+		if (isSeparatorVisible(sepAddition)) {
+			return new Separator(getName(sepAddition));
+		}
+		return new GroupMarker(getName(sepAddition));
 	}
 
 	/**
