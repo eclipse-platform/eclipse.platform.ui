@@ -23,6 +23,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
@@ -751,16 +753,16 @@ public abstract class ContentMergeViewer extends ContentViewer
 		fComposite.setLayout(new ContentMergeViewerLayout());
 		
 		int style= SWT.SHADOW_OUT;
-		fAncestorLabel= new CLabel(fComposite, style);
+		fAncestorLabel= new CLabel(fComposite, style | Window.getDefaultOrientation());
 		
-		fLeftLabel= new CLabel(fComposite, style);
+		fLeftLabel= new CLabel(fComposite, style | Window.getDefaultOrientation());
 		new Resizer(fLeftLabel, VERTICAL);
 		
 		fDirectionLabel= new CLabel(fComposite, style);
 		fDirectionLabel.setAlignment(SWT.CENTER);
 		new Resizer(fDirectionLabel, HORIZONTAL | VERTICAL);
 		
-		fRightLabel= new CLabel(fComposite, style);
+		fRightLabel= new CLabel(fComposite, style | Window.getDefaultOrientation());
 		new Resizer(fRightLabel, VERTICAL);
 		
 		if (fCenter == null || fCenter.isDisposed())
@@ -1008,7 +1010,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fAncestorLabel.setImage(ancestorImage);
 			String ancestorLabel = content.getAncestorLabel(input);
 			if (ancestorLabel != null)
-				fAncestorLabel.setText(ancestorLabel);
+				fAncestorLabel.setText(TextProcessor.process(ancestorLabel));
 		}
 		if (fLeftLabel != null) {
 			Image leftImage = content.getLeftImage(input);
@@ -1016,7 +1018,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fLeftLabel.setImage(leftImage);
 			String leftLabel = content.getLeftLabel(input);
 			if (leftLabel != null)
-				fLeftLabel.setText(leftLabel);
+				fLeftLabel.setText(TextProcessor.process(leftLabel));
 		}
 		if (fRightLabel != null) {
 			Image rightImage = content.getRightImage(input);
@@ -1024,7 +1026,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fRightLabel.setImage(rightImage);
 			String rightLabel = content.getRightLabel(input);
 			if (rightLabel != null)
-				fRightLabel.setText(rightLabel);
+				fRightLabel.setText(TextProcessor.process(rightLabel));
 		}
 	}
 		
