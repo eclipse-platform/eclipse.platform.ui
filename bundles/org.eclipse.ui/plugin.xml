@@ -235,6 +235,7 @@
       <key
             commandId="org.eclipse.ui.window.showViewMenu"
             sequence="M1+F10"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.activateEditor"
