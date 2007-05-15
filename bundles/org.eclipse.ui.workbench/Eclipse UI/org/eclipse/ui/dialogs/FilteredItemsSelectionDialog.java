@@ -527,7 +527,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 				if (selectedElements.size() > 0) {
 					removeHistoryItemAction
-								.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
+							.setText(WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
 
 					manager.add(removeHistoryActionContributionItem);
 
@@ -617,16 +617,17 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		list.getTable().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-			
+
 				if (e.keyCode == SWT.DEL) {
-					
+
 					List selectedElements = ((StructuredSelection) list
 							.getSelection()).toList();
-					
+
 					Object item = null;
 					boolean isSelectedHistory = true;
-					
-					for (Iterator it = selectedElements.iterator(); it.hasNext();) {
+
+					for (Iterator it = selectedElements.iterator(); it
+							.hasNext();) {
 						item = it.next();
 						if (item instanceof ItemsListSeparator
 								|| !isHistoryElement(item)) {
@@ -636,9 +637,9 @@ public abstract class FilteredItemsSelectionDialog extends
 					}
 					if (isSelectedHistory)
 						removeSelectedItems(selectedElements);
-				
+
 				}
-			
+
 				if (e.keyCode == SWT.ARROW_UP) {
 					StructuredSelection selection = (StructuredSelection) list
 							.getSelection();
@@ -716,20 +717,24 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * items list.
 	 */
 	private void refreshDetails() {
-		StructuredSelection selection = (StructuredSelection) list
-				.getSelection();
+		StructuredSelection selection = getSelectedItems();
 
-		if (selection.size() == 1) {
-			Object element = selection.getFirstElement();
-
-			if (element instanceof ItemsListSeparator) {
-				details.setInput(null);
-			} else {
-				details.setInput(element);
-			}
-		} else {
+		switch (selection.size()) {
+		case 0:
 			details.setInput(null);
+			break;
+		case 1:
+			details.setInput(selection.getFirstElement());
+			break;
+		default:
+			details
+					.setInput(NLS
+							.bind(
+									WorkbenchMessages.FilteredItemsSelectionDialog_nItemsSelected,
+									new Integer(selection.size())));
+			break;
 		}
+
 	}
 
 	/**
@@ -981,7 +986,28 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @return the current selection
 	 */
 	protected StructuredSelection getSelectedItems() {
-		return (StructuredSelection) list.getSelection();
+
+		StructuredSelection selection = (StructuredSelection) list
+				.getSelection();
+
+		List selectedItems = selection.toList();
+		Object itemToRemove = null;
+
+		for (Iterator it = selection.iterator(); it.hasNext();) {
+			Object item = it.next();
+			if (item instanceof ItemsListSeparator) {
+				itemToRemove = item;
+				break;
+			}
+		}
+
+		if (itemToRemove == null)
+			return new StructuredSelection(selectedItems);
+		// Create a new selection without the collision
+		List newItems = new ArrayList(selectedItems);
+		newItems.remove(itemToRemove);
+		return new StructuredSelection(newItems);
+
 	}
 
 	/**
@@ -2281,8 +2307,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		public boolean matchesRawNamePattern(Object item) {
 			String prefix = patternMatcher.getPattern();
 			String text = getElementName(item);
-			
-			if (text == null) return false;
+
+			if (text == null)
+				return false;
 
 			int textLength = text.length();
 			int prefixLength = prefix.length();
@@ -3041,12 +3068,13 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.Viewer#refresh()
 		 */
 		public void refresh() {
-			if (getInput() != null) {
+			Object input = this.getInput();
+			if (input != null) {
 				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-				doRefresh(labelProvider.getText(getInput()), labelProvider
-						.getImage(this.getInput()));
+				doRefresh(labelProvider.getText(input), labelProvider
+						.getImage(input));
 			} else {
-				doRefresh("", null);//$NON-NLS-1$
+				doRefresh(null, null);
 			}
 		}
 
@@ -3054,7 +3082,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Sets the given text and image to the label.
 		 * 
 		 * @param text
-		 *            the new text
+		 *            the new text or null
 		 * @param image
 		 *            the new image
 		 */

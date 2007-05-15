@@ -980,6 +980,7 @@ public class WorkbenchMessages extends NLS {
 	public static String FilteredItemsSelectionDialog_separatorLabel;
     public static String FilteredItemsSelectionDialog_storeError;
     public static String FilteredItemsSelectionDialog_restoreError;
+    public static String FilteredItemsSelectionDialog_nItemsSelected;
 	
     // AbstractSearcher
     public static String FilteredItemsSelectionDialog_jobLabel; 
