@@ -189,6 +189,10 @@ public class FastViewDnDHandler implements IDragOverListener {
 	 */
 	public IDropTarget drag(Control currentControl, Object draggedObject,
 			Point position, Rectangle dragRectangle) {
+		// If we're trying to drop onto a 'standalone' stack, don't...
+		if (isStandaloneStack())
+			return null;
+		
         ToolItem targetItem = getToolItem(position);
         if (draggedObject instanceof ViewPane) {
             ViewPane pane = (ViewPane) draggedObject;
@@ -224,7 +228,25 @@ public class FastViewDnDHandler implements IDragOverListener {
 
         return null;
 	}
-    private IDropTarget createDropTarget(List viewList, ToolItem targetItem) {
+    /**
+     * Tests the view references associated with the stack and
+     * returns <code>true</code> if any view is a stand-alone view
+     * 
+	 * @return <code>true</code> is any view is stand-alone
+	 */
+	private boolean isStandaloneStack() {
+		Perspective persp = wbw.getActiveWorkbenchPage().getActivePerspective();
+		List fvs = persp.getFastViewManager().getFastViews(id);
+		for (Iterator iterator = fvs.iterator(); iterator.hasNext();) {
+			IViewReference ref = (IViewReference) iterator.next();
+			if (persp.isStandaloneView(ref))
+				return true;
+		}
+		
+		return false;
+	}
+
+	private IDropTarget createDropTarget(List viewList, ToolItem targetItem) {
         if (dropTarget == null) {
             dropTarget = new ViewDropTarget(viewList, targetItem);
         } else {
@@ -297,6 +319,13 @@ public class FastViewDnDHandler implements IDragOverListener {
         WorkbenchPage page = wbw.getActiveWorkbenchPage();
         Perspective persp = page.getActivePerspective();
 
+        // Prevent dragging non-movable refs out of a minimized stack  
+        if (toDrag instanceof ViewPane) {
+        	ViewPane pane = (ViewPane) toDrag;
+        	if (!persp.isMoveable(pane.getViewReference()))
+        		return;
+        }
+        
         IViewReference oldFastView = null;
         if (persp != null) {
             oldFastView = persp.getActiveFastView();
