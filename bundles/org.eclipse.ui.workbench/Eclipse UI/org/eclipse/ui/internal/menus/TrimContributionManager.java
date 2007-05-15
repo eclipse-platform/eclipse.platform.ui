@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -217,7 +218,7 @@ public class TrimContributionManager extends ContributionManager {
 			List contribs = menuService.getAdditionsForURI(new MenuLocationURI(trimAreaURIs[i]));
 			
 			for (Iterator cacheIter = contribs.iterator(); cacheIter.hasNext();) {
-				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) cacheIter.next();
+				AbstractContributionFactory cache = (AbstractContributionFactory) cacheIter.next();
 				ContributionRoot ciList = new ContributionRoot(menuService,
 						restrictionExpression, cache.getNamespace());
 				cache.createContributionItems(wbWindow, ciList);
