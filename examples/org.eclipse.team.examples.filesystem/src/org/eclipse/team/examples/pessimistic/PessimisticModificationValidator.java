@@ -10,17 +10,28 @@
  *******************************************************************************/
 package org.eclipse.team.examples.pessimistic;
  
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.team.FileModificationValidationContext;
 import org.eclipse.core.resources.team.FileModificationValidator;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
@@ -117,7 +128,7 @@ public class PessimisticModificationValidator
 	    }
 	
 	    if (checkoutFailCount == files.length) {
-	        return new Status( IStatus.ERROR, getUid(), IStatus.ERROR, "NOTOK", null);
+	        return new Status( IStatus.ERROR, getUid(), IStatus.ERROR, "No files were checked out.", null);
 	    }
 	
 	    IStatus children[] = new Status[ files.length ];
@@ -130,10 +141,10 @@ public class PessimisticModificationValidator
 	 		if ((result & mask) != 0) {
 		    	children[i] = new Status( IStatus.OK, getUid(), IStatus.OK, "OK", null);
 	        } else {
-	            children[i] = new Status( IStatus.ERROR, getUid(), IStatus.ERROR, "NOTOK", null);
+	            children[i] = new Status( IStatus.ERROR, getUid(), IStatus.ERROR, "File " + files[i].getName() + " could not be checked out.", null);
 	        }
 	    }
-	    return new MultiStatus( getUid(), IStatus.OK, children, "MULTISTATUS", null); 
+	    return new MultiStatus( getUid(), IStatus.OK, children, "Some files were not successfully checked out", null); 
 	}
 
 	/**
