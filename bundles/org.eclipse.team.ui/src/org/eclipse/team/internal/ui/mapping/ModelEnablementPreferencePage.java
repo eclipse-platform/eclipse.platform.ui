@@ -27,8 +27,7 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
 
 public class ModelEnablementPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
@@ -130,6 +129,10 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 		tableViewer.setInput(TeamUI.getTeamContentProviderManager());
 		updateChecks();
 		applyDialogFont(composite);
+		
+		//F1
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.MODEL_PREFERENCE_PAGE);
+		
 		return composite;
 	}
 

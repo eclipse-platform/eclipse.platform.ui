@@ -19,6 +19,7 @@ public interface IHelpContextIds {
     
 	// Preference Pages
 	public static final String IGNORE_PREFERENCE_PAGE = PREFIX + "ignore_preference_page_context"; //$NON-NLS-1$
+	public static final String MODEL_PREFERENCE_PAGE = PREFIX + "model_preference_page_context"; //$NON-NLS-1$
 	public static final String FILE_TYPE_PREFERENCE_PAGE = PREFIX + "file_type_preference_page_context"; //$NON-NLS-1$
     public static final String SYNC_PREFERENCE_PAGE = PREFIX + "sync_preference_page_context"; //$NON-NLS-1$
 
