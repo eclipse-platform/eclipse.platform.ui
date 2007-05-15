@@ -1047,7 +1047,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * 
 	 * @return all launch configuration handles
 	 */
-	private List getAllLaunchConfigurations() {
+	private synchronized List getAllLaunchConfigurations() {
 		if (fLaunchConfigurationIndex == null) {
 			try {			
 				fLaunchConfigurationIndex = new ArrayList(20);
@@ -1328,7 +1328,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * @see ILaunchManager#getLaunchConfigurations()
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations() {
+	public synchronized ILaunchConfiguration[] getLaunchConfigurations() {
 		List allConfigs = getAllLaunchConfigurations();
 		return (ILaunchConfiguration[])allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
 	}	
@@ -1336,7 +1336,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * @see ILaunchManager#getLaunchConfigurations(ILaunchConfigurationType)
 	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
+	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
 		Iterator iter = getAllLaunchConfigurations().iterator();
 		List configs = new ArrayList();
 		ILaunchConfiguration config = null;
@@ -1357,7 +1357,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return collection of launch configurations that are stored as resources
 	 *  in the given project
 	 */
-	protected List getLaunchConfigurations(IProject project) {
+	protected synchronized List getLaunchConfigurations(IProject project) {
 		Iterator iter = getAllLaunchConfigurations().iterator();
 		List configs = new ArrayList();
 		ILaunchConfiguration config = null;
@@ -1581,7 +1581,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * 
 	 * @return collection of launch configurations stored locally
 	 */
-	protected List getLocalLaunchConfigurations() {
+	protected synchronized List getLocalLaunchConfigurations() {
 		Iterator iter = getAllLaunchConfigurations().iterator();
 		List configs = new ArrayList();
 		ILaunchConfiguration config = null;
@@ -1985,10 +1985,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (config.isWorkingCopy()) {
 			return;
 		}
-		if (isValid(config)) {
-			List allConfigs = getAllLaunchConfigurations();
-			if (!allConfigs.contains(config)) {
-				allConfigs.add(config);
+		if (isValid(config)) {		
+			boolean added = false;
+			synchronized (this) {
+				List allConfigs = getAllLaunchConfigurations();
+				if (!allConfigs.contains(config)) {
+					allConfigs.add(config);
+					added = true;
+				}				
+			}
+			if (added) {
 				getConfigurationNotifier().notify(config, ADDED);
 				clearConfigNameCache();
 			}
@@ -2029,8 +2035,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param config the launch configuration that was deleted
 	 */
 	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
-		fLaunchConfigurations.remove(config);
-		getAllLaunchConfigurations().remove(config);
+		synchronized (this) {
+			fLaunchConfigurations.remove(config);
+			getAllLaunchConfigurations().remove(config);			
+		}
 		getConfigurationNotifier().notify(config, REMOVED);
 		clearConfigNameCache();			
 	}
@@ -2325,10 +2333,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 
 	/**
 	 * Verify basic integrity of launch configurations in the given list,
-	 * adding valid configs to the collection of all launch configurations.
-	 * Exceptions are logged for invalid configs.
+	 * adding valid configurations to the collection of all launch configurations.
+	 * Exceptions are logged for invalid configurations.
 	 * 
-	 * @param verify the list of configs to verify
+	 * @param verify the list of configurations to verify
 	 * @param valid the list to place valid configurations in
 	 */
 	protected void verifyConfigurations(List verify, List valid) {
