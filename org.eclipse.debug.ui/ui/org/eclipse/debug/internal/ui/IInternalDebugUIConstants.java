@@ -206,16 +206,25 @@ public interface IInternalDebugUIConstants {
      * Boolean preference indicating if contextual launch options should be visible
      * to the user rather than the "run as" menu.
      * 
-     * @since 3.3
+     * @since 3.3.0
      * CONTEXTLAUNCHING
      */ 
     public static final String PREF_USE_CONTEXTUAL_LAUNCH = IDebugUIConstants.PLUGIN_ID + ".UseContextualLaunch"; //$NON-NLS-1$
     
     /**
+     * Boolean preference indicating that if the selected resource is not launchable, then we should
+     * launch the last configuration that was launched.
+     * 
+     * @since 3.3.0
+     * CONTEXTLAUNCHING
+     */
+    public static final String PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE = IDebugUIConstants.PLUGIN_ID + ".LaunchLastIfNotLaunchable"; //$NON-NLS-1$
+    
+    /**
      * Boolean preference indicating if we should always consider the parent project when
      * a selected context is not runnable
      * 
-     *  @since 3.3
+     *  @since 3.3.0
      *  CONTEXTLAUNCHING
      */
     public static final String PREF_LAUNCH_PARENT_PROJECT = IDebugUIConstants.PLUGIN_ID + ".LaunchParentProject"; //$NON-NLS-1$

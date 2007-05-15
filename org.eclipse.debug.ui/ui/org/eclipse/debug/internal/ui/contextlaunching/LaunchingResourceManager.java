@@ -108,6 +108,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	private HashMap fExtCache = new HashMap();
 	
 	/**
+	 * Constant denoting the empty string;
+	 */
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	/**
 	 * Provides a mouse tracker listener for the launching main toolbar 
 	 */
 	private MouseTrackAdapter fMouseListener = new MouseTrackAdapter() {
@@ -179,6 +184,14 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	}
 	
 	/**
+	 * Returns if the the last launch configuration should be launched if the selected resource is not launchable and context launching is enabled
+	 * @return true if the last launched should be launched, false otherwise
+	 */
+	protected boolean shouldLaunchLast() {
+		return DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE);
+	}
+	
+	/**
 	 * Computes the current listing of labels for the given <code>IResource</code> context change or the 
 	 * current launch history changed event
 	 */
@@ -242,6 +255,20 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	}
 	
 	/**
+	 * Returns the label for the last launched configuration or and empty string if there was no last launch.
+	 * @param group
+	 * @return the name of the last launched configuration, altered with '(running)' if needed, or the empty
+	 * string if there is no last launch.
+	 */
+	protected String getlastLaunchedLabel(ILaunchGroup group) {
+		ILaunchConfiguration config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
+		if(config != null) {
+			return appendLaunched(config);
+		}
+		return EMPTY_STRING;
+	}
+	
+	/**
 	 * Returns the label for the specified resource or the empty string, never <code>null</code>
 	 * @param resource
 	 * @param group
@@ -251,9 +278,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		if(resource == null) {
 			//no resource try last launch like the runner does
 			if(group != null) {
-				ILaunchConfiguration config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
-				if(config != null) {
-					return appendLaunched(config);
+				String label = getlastLaunchedLabel(group);
+				if(!EMPTY_STRING.equals(label)) {
+					return label;
 				}
 			}
 			//otherwise try to determine if there is a way to launch it
@@ -262,7 +289,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				return ContextMessages.ContextRunner_14;
 			}
 			else {
-				return ""; //$NON-NLS-1$
+				return EMPTY_STRING;
 			}
 		}
 		LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
@@ -297,14 +324,17 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			}
 			int esize = exts.size();
 			if(esize == 0) {
-				IProject project = resource.getProject();
-				if(project != null && !project.equals(resource)) {
-					if(shouldCheckParent()) {
+				if(shouldCheckParent()) {
+					IProject project = resource.getProject();
+					if(project != null && !project.equals(resource)) {
 						return getResourceLabel(project, group);
 					}
-					else {
-						return ContextMessages.ContextRunner_15;
-					}
+				}
+				else if(shouldLaunchLast()) {
+					return getlastLaunchedLabel(group);
+				}
+				else {
+					return ContextMessages.ContextRunner_15;
 				}
 			}
 			if(esize == 1) {
@@ -418,7 +448,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
+		if(event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH) ||
+				event.getProperty().equals(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE)) {
 			if(isContextLaunchEnabled()) {
 				windowActivated(DebugUIPlugin.getActiveWorkbenchWindow());
 			}

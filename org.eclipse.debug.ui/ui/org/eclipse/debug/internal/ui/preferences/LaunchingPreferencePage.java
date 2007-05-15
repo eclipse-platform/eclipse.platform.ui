@@ -39,11 +39,14 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * A preference page for configuring launching preferences.
+ * 
+ * @since 3.0.0
  */
 public class LaunchingPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	private Button fUseContextLaunching;
 	private Button fUseOldLaunching;
+	private Button fLaunchLastIfNotLaunchable;
 	private Button fCheckParent;
 	
 	/**
@@ -138,7 +141,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	 * a nested check box
 	 * @param parent the parent to add this control to
 	 * 
-	 * @since 3.3
+	 * @since 3.3.0
 	 * CONTEXTLAUNCHING
 	 */
 	private void createContextLaunchingControls(Composite parent) {
@@ -148,7 +151,9 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		fUseContextLaunching.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
-				fCheckParent.setEnabled(((Button)e.widget).getSelection());
+				boolean enabled = ((Button)e.widget).getSelection();
+				fCheckParent.setEnabled(enabled);
+				fLaunchLastIfNotLaunchable.setEnabled(enabled);
 			}
 		});
 		Composite space = SWTFactory.createComposite(group, 1, 1, GridData.FILL_HORIZONTAL);
@@ -156,14 +161,18 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		gd.horizontalIndent = 10;
 		GridLayout layout = (GridLayout) space.getLayout();
 		layout.marginHeight = 0;
-		fCheckParent = SWTFactory.createCheckButton(space, DebugPreferencesMessages.LaunchingPreferencePage_39, null, false, 1);
+		fCheckParent = SWTFactory.createRadioButton(space, DebugPreferencesMessages.LaunchingPreferencePage_39);
+		fLaunchLastIfNotLaunchable = SWTFactory.createRadioButton(space, DebugPreferencesMessages.LaunchingPreferencePage_41);
 		
 		//initialize the buttons
 		boolean value = getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 		fUseOldLaunching.setSelection(!value);
 		fUseContextLaunching.setSelection(value);
-		fCheckParent.setSelection(getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT));
+		boolean enable = getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT);
+		fCheckParent.setSelection(enable);
 		fCheckParent.setEnabled(value);
+		fLaunchLastIfNotLaunchable.setSelection(!enable);
+		fLaunchLastIfNotLaunchable.setEnabled(value);
 	}
 	
 	/* (non-Javadoc)
@@ -178,9 +187,11 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		boolean value = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH);
 		fUseOldLaunching.setSelection(!value);
 		fUseContextLaunching.setSelection(value);
-		fCheckParent.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT));
+		boolean parent = getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT);
+		fCheckParent.setSelection(parent);
 		fCheckParent.setEnabled(value);
-		super.performDefaults();
+		fLaunchLastIfNotLaunchable.setSelection(!parent);
+		fLaunchLastIfNotLaunchable.setEnabled(value);
 	}
 	
 	/* (non-Javadoc)
@@ -189,6 +200,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 	public boolean performOk() {
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, fUseContextLaunching.getSelection());
 		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, fCheckParent.getSelection());
+		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE, fLaunchLastIfNotLaunchable.getSelection());
 		return super.performOk();
 	}
 

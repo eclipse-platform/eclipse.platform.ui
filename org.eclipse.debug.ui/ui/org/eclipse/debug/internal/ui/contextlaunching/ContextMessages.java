@@ -20,9 +20,6 @@ import org.eclipse.osgi.util.NLS;
 public class ContextMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.contextlaunching.ContextMessages"; //$NON-NLS-1$
 	public static String ContextRunner_0;
-	public static String ContextRunner_10;
-	public static String ContextRunner_11;
-	public static String ContextRunner_12;
 	public static String ContextRunner_13;
 	public static String ContextRunner_14;
 	public static String ContextRunner_15;

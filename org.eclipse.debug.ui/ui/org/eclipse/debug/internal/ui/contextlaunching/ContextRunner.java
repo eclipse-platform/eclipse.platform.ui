@@ -31,7 +31,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -80,22 +79,33 @@ public final class ContextRunner {
 			return;
 		}
 		//2. launch last if no resource
+		if(!launchLast(group)) {
+			//3. might be empty workspace try to get shortcuts
+			List shortcuts = getLaunchShortcutsForEmptySelection();
+			if(!shortcuts.isEmpty()) {
+				showShortcutSelectionDialog(resource, shortcuts, group.getMode());
+			}
+			else {
+				MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+			}
+		}
+	}
+	
+	/**
+	 * This method launches the last configuration that was launched, if any.
+	 * @param group the launch group to launch with
+	 * @return true if there was a last launch and it was launched, false otherwise
+	 */
+	protected boolean launchLast(ILaunchGroup group) {
 		ILaunchConfiguration config = null;
 		if(group != null) {
 			config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
 		}
 		if(config != null) {
 			DebugUITools.launch(config, group.getMode());
-			return;
+			return true;
 		}
-		//3. might be empty workspace try to get shortcuts
-		List shortcuts = getLaunchShortcutsForEmptySelection();
-		if(!shortcuts.isEmpty()) {
-			showShortcutSelectionDialog(resource, shortcuts, group.getMode());
-		}
-		else {
-			MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
-		}
+		return false;
 	}
 	
 	/**
@@ -158,27 +168,18 @@ public final class ContextRunner {
 				return showShortcutSelectionDialog(resource, null, group.getMode());
 			}
 			if(esize < 1) {
-				IProject project = resource.getProject();
-				if(project != null && !project.equals(resource)) {
-					if(!DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT)) {
-						String msg = MessageFormat.format(ContextMessages.ContextRunner_10, new String[] {resource.getName(), project.getName()});
-						MessageDialogWithToggle mdwt = new MessageDialogWithToggle(DebugUIPlugin.getShell(), 
-								ContextMessages.ContextRunner_11, 
-								null, 
-								msg,
-								MessageDialog.QUESTION, 
-								new String[] {IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL},
-								0, 
-								ContextMessages.ContextRunner_12,
-								false);
-						if(mdwt.open() == IDialogConstants.YES_ID) {
-							DebugUIPlugin.getDefault().getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_LAUNCH_PARENT_PROJECT, mdwt.getToggleState());
-							selectAndLaunch(project, group);
-						}
+				if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE)) {
+					if(launchLast(group)) {
+						return true;
 					}
 					else {
-						selectAndLaunch(project, group);
+						MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+						return false;
 					}
+				}
+				IProject project = resource.getProject();
+				if(project != null && !project.equals(resource)) {
+					selectAndLaunch(project, group);
 				}
 				else {
 					String msg = ContextMessages.ContextRunner_7;
@@ -210,7 +211,9 @@ public final class ContextRunner {
 	 */
 	protected boolean showConfigurationSelectionDialog(List configurations, String mode) {
 		LaunchConfigurationSelectionDialog lsd = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell());
-		lsd.setInput(configurations);
+		if(configurations != null) {
+			lsd.setInput(configurations);
+		}
 		if(lsd.open() == IDialogConstants.OK_ID) {
 			ILaunchConfiguration config = (ILaunchConfiguration) lsd.getResult()[0];
 			DebugUITools.launch(config, mode);
