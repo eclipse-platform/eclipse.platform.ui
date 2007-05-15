@@ -36,9 +36,6 @@ public class WebappManager {
 		// set the base URL
 		d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		// prevent Jetty from also starting on port 80
-		System.setProperty("org.eclipse.equinox.http.jetty.autostart", "false"); //$NON-NLS-1$ //$NON-NLS-2$
-		
 		// suppress Jetty INFO/DEBUG messages to stderr
 		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$
 		
@@ -62,7 +59,7 @@ public class WebappManager {
 
 	public static int getPort() {
 		if (port == -1) {
-			String portCommandLineOverride = System.getProperty("server_port"); //$NON-NLS-1$
+			String portCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("org.eclipse.help.server_port"); //$NON-NLS-1$
 			if (portCommandLineOverride != null && portCommandLineOverride.trim().length() > 0) {
 				try {
 					port = Integer.parseInt(portCommandLineOverride);
@@ -81,7 +78,7 @@ public class WebappManager {
 
 	public static String getHost() {
 		if (host == null) {
-			String hostCommandLineOverride = System.getProperty("server_host"); //$NON-NLS-1$
+			String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("org.eclipse.help.server_host"); //$NON-NLS-1$
 			if (hostCommandLineOverride != null && hostCommandLineOverride.trim().length() > 0) {
 				host = hostCommandLineOverride;
 			}

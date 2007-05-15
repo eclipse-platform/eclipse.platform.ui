@@ -28,6 +28,7 @@ public class HelpBasePlugin extends Plugin {
 	public final static String PLUGIN_ID = "org.eclipse.help.base"; //$NON-NLS-1$
 	private static HelpBasePlugin plugin;
 	private File configurationDirectory;
+	private BundleContext context;
 
 	private IHelpActivitySupport helpActivitySupport = new IHelpActivitySupport() {
 		public boolean isEnabled(String href) {
@@ -82,6 +83,7 @@ public class HelpBasePlugin extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin.savePluginPreferences();
 		BaseHelpSystem.shutdown();
+		this.context = null;
 		plugin = null;
 		super.stop(context);
 	}
@@ -89,6 +91,7 @@ public class HelpBasePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		this.context = context;
 
 		// determine configuration location for this plug-in
 		Location location = Platform.getConfigurationLocation();
@@ -114,5 +117,9 @@ public class HelpBasePlugin extends Plugin {
 
 	public static void setActivitySupport(IHelpActivitySupport activitySupport) {
 		getDefault().helpActivitySupport = activitySupport;
+	}
+	
+	public static BundleContext getBundleContext() {
+		return getDefault().context;
 	}
 }
