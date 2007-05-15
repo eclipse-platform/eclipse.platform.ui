@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,6 +30,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
@@ -463,7 +465,8 @@ public final class WorkbenchKeyboard {
 		}
 
 		try {
-			final IHandlerService handlerService = (IHandlerService) workbench.getService(IHandlerService.class);
+			final IHandlerService handlerService = (IHandlerService) workbench
+					.getService(IHandlerService.class);
 			handlerService.executeCommand(parameterizedCommand, trigger);
 		} catch (final NotDefinedException e) {
 			// The command is not defined. Forwarded to the IExecutionListener.
@@ -590,11 +593,12 @@ public final class WorkbenchKeyboard {
 	 */
 	private Binding getPerfectMatch(KeySequence keySequence) {
 		if (bindingService == null) {
-			bindingService = (IBindingService) workbench.getService(IBindingService.class);
+			bindingService = (IBindingService) workbench
+					.getService(IBindingService.class);
 		}
 		return bindingService.getPerfectMatch(keySequence);
 	}
-	
+
 	final KeySequence getBuffer() {
 		return state.getCurrentSequence();
 	}
@@ -643,7 +647,8 @@ public final class WorkbenchKeyboard {
 	 */
 	private boolean isPartialMatch(KeySequence keySequence) {
 		if (bindingService == null) {
-			bindingService = (IBindingService) workbench.getService(IBindingService.class);
+			bindingService = (IBindingService) workbench
+					.getService(IBindingService.class);
 		}
 		return bindingService.isPartialMatch(keySequence);
 	}
@@ -660,7 +665,8 @@ public final class WorkbenchKeyboard {
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
 		if (bindingService == null) {
-			bindingService = (IBindingService) workbench.getService(IBindingService.class);
+			bindingService = (IBindingService) workbench
+					.getService(IBindingService.class);
 		}
 		return bindingService.isPerfectMatch(keySequence);
 	}
@@ -722,6 +728,25 @@ public final class WorkbenchKeyboard {
 	}
 
 	/**
+	 * Opens the key assist dialog to offer the user the choice of a binding to
+	 * pick from the collection of bindings.
+	 * 
+	 * @param bindings
+	 *            a collection of Binding objects
+	 * @since 3.3
+	 */
+	public final void openKeyAssistShell(final Collection bindings) {
+		if (keyAssistDialog == null) {
+			keyAssistDialog = new KeyAssistDialog(workbench,
+					WorkbenchKeyboard.this, state);
+		}
+		if (keyAssistDialog.getShell() == null) {
+			keyAssistDialog.setParentShell(Util.getShellToParentOn());
+		}
+		keyAssistDialog.open(bindings);
+	}
+
+	/**
 	 * Processes a key press with respect to the key binding architecture. This
 	 * updates the mode of the command manager, and runs the current handler for
 	 * the command that matches the key sequence, if any.
@@ -758,7 +783,8 @@ public final class WorkbenchKeyboard {
 			final Widget widget = event.widget;
 
 			// Update the contexts.
-			final ContextService contextService = (ContextService) workbench.getService(IContextService.class);
+			final ContextService contextService = (ContextService) workbench
+					.getService(IContextService.class);
 			if ((widget instanceof Control) && (!widget.isDisposed())) {
 				final Shell shell = ((Control) widget).getShell();
 				contextService.updateShellKludge(shell);
@@ -767,7 +793,8 @@ public final class WorkbenchKeyboard {
 			}
 
 			// Update the handlers.
-			final HandlerService handlerService = (HandlerService) workbench.getService(IHandlerService.class);
+			final HandlerService handlerService = (HandlerService) workbench
+					.getService(IHandlerService.class);
 			if ((widget instanceof Control) && (!widget.isDisposed())) {
 				final Shell shell = ((Control) widget).getShell();
 				handlerService.updateShellKludge(shell);
@@ -775,6 +802,9 @@ public final class WorkbenchKeyboard {
 				handlerService.updateShellKludge();
 			}
 		}
+
+		KeySequence errorSequence = null;
+		Collection errorMatch = null;
 
 		KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
@@ -806,10 +836,21 @@ public final class WorkbenchKeyboard {
 				// We don't want to swallow keyboard navigation keys.
 				return false;
 
+			} else {
+				Collection match = (InternalPolicy.currentConflicts == null ? null
+						: (Collection) InternalPolicy.currentConflicts
+								.get(sequenceAfterKeyStroke));
+				if (match != null) {
+					errorSequence = sequenceAfterKeyStroke;
+					errorMatch = match;
+				}
 			}
 		}
 
 		resetState(true);
+		if (sequenceBeforeKeyStroke.isEmpty() && errorSequence != null) {
+			openKeyAssistShell(errorMatch);
+		}
 		return !sequenceBeforeKeyStroke.isEmpty();
 	}
 

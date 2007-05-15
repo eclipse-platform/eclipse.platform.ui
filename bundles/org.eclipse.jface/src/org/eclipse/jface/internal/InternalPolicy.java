@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.jface.internal;
 
+import java.util.Map;
+
 /**
  * Internal class used for non-API debug flags.
  * 
@@ -25,4 +27,9 @@ public class InternalPolicy {
 	 */
 	public static boolean DEBUG_LOG_REENTRANT_VIEWER_CALLS = false;
 
+	/**
+	 * (NON-API) Instead of logging current conflicts they can be
+	 * held here.  If there is a problem, they can be reported then.
+	 */
+	public static Map currentConflicts = null;
 }

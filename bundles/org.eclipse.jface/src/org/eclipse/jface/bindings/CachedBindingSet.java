@@ -63,6 +63,14 @@ final class CachedBindingSet {
 	private Map bindingsByTrigger = null;
 
 	/**
+	 * A map of triggers to collections of bindings. If this binding set
+	 * contains conflicts, they are logged here.
+	 * 
+	 * @since 3.3
+	 */
+	private Map conflictsByTrigger = null;
+
+	/**
 	 * The hash code for this object. This value is computed lazily, and marked
 	 * as invalid when one of the values on which it is based changes.
 	 */
@@ -206,7 +214,7 @@ final class CachedBindingSet {
 		}
 
 		final CachedBindingSet other = (CachedBindingSet) object;
-		
+
 		if (!Util.equals(activeContextTree, other.activeContextTree)) {
 			return false;
 		}
@@ -228,6 +236,17 @@ final class CachedBindingSet {
 	 */
 	final Map getBindingsByTrigger() {
 		return bindingsByTrigger;
+	}
+
+	/**
+	 * Returns a map of conflicts for this set of contexts.
+	 * 
+	 * @return A map of trigger to a collection of Bindings. May be
+	 *         <code>null</code>.
+	 * @since 3.3
+	 */
+	final Map getConflictsByTrigger() {
+		return conflictsByTrigger;
 	}
 
 	/**
@@ -293,6 +312,21 @@ final class CachedBindingSet {
 		}
 
 		this.bindingsByTrigger = commandIdsByTrigger;
+	}
+
+	/**
+	 * Sets the map of conflicting bindings by trigger.
+	 * 
+	 * @param conflicts
+	 *            The map to set; must not be <code>null</code>.
+	 * @since 3.3
+	 */
+	final void setConflictsByTrigger(final Map conflicts) {
+		if (conflicts == null) {
+			throw new NullPointerException(
+					"Cannot set a null binding conflicts"); //$NON-NLS-1$
+		}
+		conflictsByTrigger = conflicts;
 	}
 
 	/**

@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.keys;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -54,6 +54,8 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * <p>
@@ -141,6 +143,13 @@ final class KeyAssistDialog extends PopupDialog {
 	 * The key binding listener for the associated workbench.
 	 */
 	private final WorkbenchKeyboard workbenchKeyboard;
+
+	/**
+	 * A sorted map of conflicts to be used when the dialog pops up.
+	 * 
+	 * @since 3.3
+	 */
+	private SortedMap conflictMatches;
 
 	/**
 	 * Constructs a new instance of <code>KeyAssistDialog</code>. When the
@@ -419,7 +428,14 @@ final class KeyAssistDialog extends PopupDialog {
 		composite.setBackground(parent.getBackground());
 
 		// Layout the partial matches.
-		final SortedMap partialMatches = getPartialMatches();
+		final SortedMap partialMatches;
+		if (conflictMatches != null) {
+			partialMatches = conflictMatches;
+			conflictMatches = null;
+		} else {
+			partialMatches = getPartialMatches();
+		}
+
 		if (partialMatches.isEmpty()) {
 			createEmptyDialogArea(composite);
 		} else {
@@ -624,6 +640,50 @@ final class KeyAssistDialog extends PopupDialog {
 			editKeyBinding();
 			clearRememberedState();
 			return Window.OK;
+		}
+
+		// If the dialog is already open, dispose the shell and recreate it.
+		final Shell shell = getShell();
+		if (shell != null) {
+			close(false, false);
+		}
+		create();
+
+		// Configure the size and location.
+		final Point size = configureSize();
+		configureLocation(size);
+
+		// Call the super method.
+		return super.open();
+	}
+
+	/**
+	 * Opens this dialog with the list of bindings for the user to select from.
+	 * 
+	 * @return The return code from this dialog.
+	 * @since 3.3
+	 */
+	public final int open(Collection bindings) {
+		conflictMatches = new TreeMap(new Comparator() {
+			public final int compare(final Object a, final Object b) {
+				final Binding bindingA = (Binding) a;
+				final Binding bindingB = (Binding) b;
+				final ParameterizedCommand commandA = bindingA
+						.getParameterizedCommand();
+				final ParameterizedCommand commandB = bindingB
+						.getParameterizedCommand();
+				try {
+					return commandA.getName().compareTo(commandB.getName());
+				} catch (final NotDefinedException e) {
+					// should not happen
+					return 0;
+				}
+			}
+		});
+		Iterator i = bindings.iterator();
+		while (i.hasNext()) {
+			Binding b = (Binding) i.next();
+			conflictMatches.put(b, b.getTriggerSequence());
 		}
 
 		// If the dialog is already open, dispose the shell and recreate it.

@@ -42,6 +42,7 @@ import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
+import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
@@ -181,6 +182,8 @@ public final class BindingManager extends HandleObjectManager implements
 	 * Otherwise, this value may be empty.
 	 */
 	private Map activeBindingsByParameterizedCommand = null;
+	
+	private Set triggerConflicts = new HashSet();
 
 	/**
 	 * The scheme that is currently active. An active scheme is the one that is
@@ -271,8 +274,6 @@ public final class BindingManager extends HandleObjectManager implements
 	 * <code>null</code> if there is no existing solution.
 	 */
 	private Map prefixTable = null;
-
-	private Set triggerConflicts = new HashSet();
 
 	/**
 	 * <p>
@@ -438,7 +439,7 @@ public final class BindingManager extends HandleObjectManager implements
 	 * This method completes in <code>O(1)</code>.
 	 */
 	private final void clearSolution() {
-		setActiveBindings(null, null, null);
+		setActiveBindings(null, null, null, null);
 	}
 
 	/**
@@ -511,7 +512,8 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            computed).
 	 */
 	private final void computeBindings(final Map activeContextTree,
-			final Map bindingsByTrigger, final Map triggersByCommandId) {
+			final Map bindingsByTrigger, final Map triggersByCommandId, 
+			final Map conflictsByTrigger) {
 		/*
 		 * FIRST PASS: Remove all of the bindings that are marking deletions.
 		 */
@@ -632,6 +634,7 @@ public final class BindingManager extends HandleObjectManager implements
 							activeContextTree);
 					if (winner == null) {
 						// warn once ... so as not to flood the logs
+						conflictsByTrigger.put(trigger, match);
 						if (triggerConflicts.add(trigger)) {
 							final StringWriter sw = new StringWriter();
 							final BufferedWriter buffer = new BufferedWriter(sw);
@@ -997,10 +1000,12 @@ public final class BindingManager extends HandleObjectManager implements
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
 		final Map triggersByParameterizedCommand = new HashMap();
+		final Map conflictsByTrigger = new HashMap();
 		computeBindings(null, commandIdsByTrigger,
-				triggersByParameterizedCommand);
+				triggersByParameterizedCommand, conflictsByTrigger);
 		existingCache.setBindingsByTrigger(commandIdsByTrigger);
 		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
+		existingCache.setConflictsByTrigger(conflictsByTrigger);
 		return Collections.unmodifiableMap(commandIdsByTrigger);
 	}
 
@@ -1057,11 +1062,13 @@ public final class BindingManager extends HandleObjectManager implements
 
 		// Compute the active bindings.
 		final Map commandIdsByTrigger = new HashMap();
+		final Map conflictsByTrigger = new HashMap();
 		triggersByParameterizedCommand = new HashMap();
 		computeBindings(null, commandIdsByTrigger,
-				triggersByParameterizedCommand);
+				triggersByParameterizedCommand, conflictsByTrigger);
 		existingCache.setBindingsByTrigger(commandIdsByTrigger);
 		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
+		existingCache.setConflictsByTrigger(conflictsByTrigger);
 
 		return Collections.unmodifiableMap(triggersByParameterizedCommand);
 	}
@@ -1703,7 +1710,7 @@ public final class BindingManager extends HandleObjectManager implements
 		if (bindings == null) {
 			// Not yet initialized. This is happening too early. Do nothing.
 			setActiveBindings(Collections.EMPTY_MAP, Collections.EMPTY_MAP,
-					Collections.EMPTY_MAP);
+					Collections.EMPTY_MAP, Collections.EMPTY_MAP);
 			return;
 		}
 
@@ -1732,7 +1739,8 @@ public final class BindingManager extends HandleObjectManager implements
 				Tracing.printTrace("BINDINGS", "Cache hit"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			setActiveBindings(commandIdsByTrigger, existingCache
-					.getTriggersByCommandId(), existingCache.getPrefixTable());
+					.getTriggersByCommandId(), existingCache.getPrefixTable(),
+					existingCache.getConflictsByTrigger());
 			return;
 		}
 
@@ -1744,12 +1752,15 @@ public final class BindingManager extends HandleObjectManager implements
 		// Compute the active bindings.
 		commandIdsByTrigger = new HashMap();
 		final Map triggersByParameterizedCommand = new HashMap();
+		final Map conflictsByTrigger = new HashMap();
 		computeBindings(activeContextTree, commandIdsByTrigger,
-				triggersByParameterizedCommand);
+				triggersByParameterizedCommand, conflictsByTrigger);
 		existingCache.setBindingsByTrigger(commandIdsByTrigger);
 		existingCache.setTriggersByCommandId(triggersByParameterizedCommand);
+		existingCache.setConflictsByTrigger(conflictsByTrigger);
 		setActiveBindings(commandIdsByTrigger, triggersByParameterizedCommand,
-				buildPrefixTable(commandIdsByTrigger));
+				buildPrefixTable(commandIdsByTrigger),
+				conflictsByTrigger);
 		existingCache.setPrefixTable(prefixTable);
 	}
 
@@ -2153,11 +2164,13 @@ public final class BindingManager extends HandleObjectManager implements
 	 *            solution.
 	 */
 	private final void setActiveBindings(final Map activeBindings,
-			final Map activeBindingsByCommandId, final Map prefixTable) {
+			final Map activeBindingsByCommandId, final Map prefixTable,
+			final Map conflicts) {
 		this.activeBindings = activeBindings;
 		final Map previousBindingsByParameterizedCommand = this.activeBindingsByParameterizedCommand;
 		this.activeBindingsByParameterizedCommand = activeBindingsByCommandId;
 		this.prefixTable = prefixTable;
+		InternalPolicy.currentConflicts = conflicts;
 
 		fireBindingManagerChanged(new BindingManagerEvent(this, true,
 				previousBindingsByParameterizedCommand, false, null, false,
