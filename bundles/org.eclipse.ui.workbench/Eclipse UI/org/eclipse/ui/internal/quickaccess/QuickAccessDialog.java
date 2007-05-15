@@ -27,6 +27,7 @@ import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -110,34 +111,39 @@ public class QuickAccessDialog extends PopupDialog {
 	/**
 	 * @param parent
 	 */
-	QuickAccessDialog(IWorkbenchWindow window, Command invokingCommand) {
+	QuickAccessDialog(IWorkbenchWindow window, final Command invokingCommand) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true,
 				true, true, null,
 				QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 
 		this.window = window;
-		this.providers = new QuickAccessProvider[] {
-				new PreviousPicksProvider(), new EditorProvider(),
-				new ViewProvider(), new PerspectiveProvider(),
-				new CommandProvider(), new ActionProvider(),
-				new WizardProvider(), new PreferenceProvider(),
-				new PropertiesProvider() };
-		providers[0] = new PreviousPicksProvider();
-		providerMap = new HashMap();
-		for (int i = 0; i < providers.length; i++) {
-			providerMap.put(providers[i].getId(), providers[i]);
-		}
-		restoreDialog();
-		this.invokingCommand = invokingCommand;
-		if (this.invokingCommand != null && !this.invokingCommand.isDefined()) {
-			this.invokingCommand = null;
-		} else {
-			// Pre-fetch key sequence - do not change because scope will
-			// change later.
-			getInvokingCommandKeySequences();
-		}
-		// create early
-		create();
+		BusyIndicator.showWhile(window.getShell() == null ? null : window
+				.getShell().getDisplay(), new Runnable() {
+			public void run() {
+				QuickAccessDialog.this.providers = new QuickAccessProvider[] {
+						new PreviousPicksProvider(), new EditorProvider(),
+						new ViewProvider(), new PerspectiveProvider(),
+						new CommandProvider(), new ActionProvider(),
+						new WizardProvider(), new PreferenceProvider(),
+						new PropertiesProvider() };
+				providerMap = new HashMap();
+				for (int i = 0; i < providers.length; i++) {
+					providerMap.put(providers[i].getId(), providers[i]);
+				}
+				restoreDialog();
+				QuickAccessDialog.this.invokingCommand = invokingCommand;
+				if (QuickAccessDialog.this.invokingCommand != null
+						&& !QuickAccessDialog.this.invokingCommand.isDefined()) {
+					QuickAccessDialog.this.invokingCommand = null;
+				} else {
+					// Pre-fetch key sequence - do not change because scope will
+					// change later.
+					getInvokingCommandKeySequences();
+				}
+				// create early
+				create();
+			}
+		});
 		// Ugly hack to avoid bug 184045. If this gets fixed, replace the
 		// following code with a call to refresh("").
 		getShell().getDisplay().asyncExec(new Runnable() {
