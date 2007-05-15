@@ -41,7 +41,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
-import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 
 /**
  * The working set type page is used in the new working set 
@@ -59,15 +58,25 @@ public class WorkingSetTypePage extends WizardPage {
 
     private Map icons;
 
+	private WorkingSetDescriptor[] descriptors;
+
     /**
      * Creates a new instance of the receiver
      */
     public WorkingSetTypePage() {
-        super(
+        this(WorkbenchPlugin.getDefault().getWorkingSetRegistry().getNewPageWorkingSetDescriptors());
+    }
+
+    /**
+	 * @param descriptors a set of working set descriptors which can be selected on the page
+	 */
+	public WorkingSetTypePage(WorkingSetDescriptor[] descriptors) {
+		super(
                 "workingSetTypeSelectionPage", WorkbenchMessages.Select, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$
         setDescription(WorkbenchMessages.WorkingSetTypePage_description); 			
         icons = new Hashtable();
-    }
+        this.descriptors= descriptors;
+	}
 
     /** 
      * Overrides method in WizardPage
@@ -82,11 +91,7 @@ public class WorkingSetTypePage extends WizardPage {
      * Populates the working set types list.
      */
     private void createContent() {
-        WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
-                .getWorkingSetRegistry();
-        WorkingSetDescriptor[] descriptors = registry
-                .getNewPageWorkingSetDescriptors();
-        Table table = (Table) typesListViewer.getControl();
+		Table table = (Table) typesListViewer.getControl();
 
         for (int i = 0; i < descriptors.length; i++) {
             TableItem tableItem = new TableItem(table, SWT.NULL);

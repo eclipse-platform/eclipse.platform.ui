@@ -66,7 +66,7 @@ public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard 
         WorkingSetRegistry registry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
         
         if (descriptors.length > 1) {
-            page = workingSetTypePage = new WorkingSetTypePage();
+            page = workingSetTypePage = new WorkingSetTypePage(this.descriptors);
         } else {
             editPageId = descriptors[0].getId();
             page = workingSetEditPage = registry.getWorkingSetPage(editPageId);
