@@ -174,7 +174,10 @@ public class PerspectiveExtensionReader extends RegistryReader {
         String moveable = element.getAttribute(IWorkbenchRegistryConstants.ATT_MOVEABLE);
         String standalone = element.getAttribute(IWorkbenchRegistryConstants.ATT_STANDALONE);
         String showTitle = element.getAttribute(IWorkbenchRegistryConstants.ATT_SHOW_TITLE);
-        boolean minimized = !VAL_FALSE.equals(element.getAttribute(IWorkbenchRegistryConstants.ATT_MINIMIZED));
+        
+        // Default to 'false'
+        String minVal = element.getAttribute(IWorkbenchRegistryConstants.ATT_MINIMIZED);
+        boolean minimized = minVal != null && VAL_TRUE.equals(minVal);
 
         float ratio;
 
