@@ -96,9 +96,9 @@ public final class RevisionPainter {
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text.source/debug/RevisionRulerColumn")); //$NON-NLS-1$//$NON-NLS-2$
 
-	
+	// RGBs provided by UI Designer
 	private static final RGB BY_DATE_START_COLOR= new RGB(199, 134, 57);
-	private static final RGB BY_DATE_END_COLOR= Colors.blend(BY_DATE_START_COLOR, new RGB(255, 255, 255), 0.7f);
+	private static final RGB BY_DATE_END_COLOR= new RGB(241, 225, 206);
 
 	
 	/**
