@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Andreas Voss <av@tonbeller.com> - Bug 181141 [Examples] Team: filesystem provider example can not handle deletions     
  *******************************************************************************/
 package org.eclipse.team.examples.filesystem;
 
@@ -261,6 +262,7 @@ public class FileSystemOperations {
 			try {
 				localFile.delete(false, true, progress);
 				synchronizer.flush(localFile, IResource.DEPTH_ZERO);
+				return;
 			} catch (CoreException e) {
 				throw TeamException.asTeamException(e);
 			}
@@ -271,6 +273,7 @@ public class FileSystemOperations {
 				&& comparator.compare(base, remote)) {
 			// The base and remote are the same and there's no local changes
 			// so nothing needs to be done
+			return;
 		}
 		try {
 			//Copy from the local file to the remote file:
@@ -316,7 +319,7 @@ public class FileSystemOperations {
 	/**
 	 * Put the file if the sync state allows it.
 	 * @param localFile the local file
-	 * @param overrideIncoming whether incoming changs shoudl be overwritten
+	 * @param overrideIncoming whether incoming changes should be overwritten
 	 * @param progress a progress monitor
 	 * @return whether the put succeeded (i.e. the local matches the remote)
 	 * @throws TeamException
