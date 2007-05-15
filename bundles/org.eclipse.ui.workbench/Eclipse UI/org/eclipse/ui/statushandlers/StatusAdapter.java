@@ -60,7 +60,7 @@ public class StatusAdapter implements IAdaptable {
 	 * Creates an instance of this class.
 	 * 
 	 * @param status
-	 *            the wrapped status
+	 *            the status to wrap. May not be <code>null</code>.
 	 */
 	public StatusAdapter(IStatus status) {
 		this.status = status;
@@ -98,7 +98,8 @@ public class StatusAdapter implements IAdaptable {
 	/**
 	 * Returns the wrapped status.
 	 * 
-	 * @return the status.
+	 * @return the wrapped status set in the constructor or in
+	 *         <code>setStatus(IStatus)</code>. Will not be <code>null</code>.
 	 */
 	public IStatus getStatus() {
 		return status;
@@ -108,7 +109,7 @@ public class StatusAdapter implements IAdaptable {
 	 * Sets a new status for this adapter.
 	 * 
 	 * @param status
-	 *            the status to set.
+	 *            the status to set. May not be <code>null</code>.
 	 */
 	public void setStatus(IStatus status) {
 		this.status = status;

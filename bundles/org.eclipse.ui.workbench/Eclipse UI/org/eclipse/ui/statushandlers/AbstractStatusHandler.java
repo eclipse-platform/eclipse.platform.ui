@@ -64,10 +64,11 @@ public abstract class AbstractStatusHandler {
 	 * Handles {@link StatusAdapter} objects based on the set style. 
 	 * 
 	 * @param statusAdapter
-	 *            the status adapter
+	 *            the status adapter. May not be <code>null</code>.
 	 * @param style
-	 *            style constant. Values are defined in {@link StatusManager} and can be
-	 *            combined with logical OR
+	 *            style constant. Acceptable values are defined in
+	 *            {@link StatusManager} and can be combined with logical OR.
+	 * 
 	 * @see StatusManager#BLOCK
 	 * @see StatusManager#NONE
 	 * @see StatusManager#SHOW

@@ -107,7 +107,7 @@ public class StatusManager {
 	/**
 	 * Returns StatusManager singleton instance.
 	 * 
-	 * @return StatusManager instance
+	 * @return the manager instance
 	 */
 	public static StatusManager getManager() {
 		if (MANAGER == null) {
@@ -138,9 +138,12 @@ public class StatusManager {
 	 * the style is NONE, the manager will do nothing.
 	 * 
 	 * @param statusAdapter
+	 *            the status adapter. Both the status adapter and the wrapped
+	 *            status may not be <code>null</code>.
 	 * @param style
-	 *            style, values are defined in {@link StatusManager} and can be
-	 *            combined with logical OR
+	 *            the style.Value can be combined with logical OR.  One of
+	 *           {@link #NONE}, {@link #LOG}, {@link #SHOW} and {@link #BLOCK}.
+	 *         
 	 */
 	public void handle(StatusAdapter statusAdapter, int style) {
 		try {
@@ -201,6 +204,8 @@ public class StatusManager {
 	 * is called.
 	 * 
 	 * @param statusAdapter
+	 *            the status adapter. Both the status adapter and the wrapped
+	 *            status may not be <code>null</code>.
 	 */
 	public void handle(StatusAdapter statusAdapter) {
 		handle(statusAdapter, StatusManager.LOG);
@@ -213,10 +218,10 @@ public class StatusManager {
 	 * the style is NONE, the manager will do nothing.
 	 * 
 	 * @param status
-	 *            status to handle
+	 *            the status to handle. May not be <code>null</code>.
 	 * @param style
-	 *            style, values are defined in {@link StatusManager} and can be
-	 *            combined with logical OR
+	 *            the style. Acceptable values are defined in
+	 *            {@link StatusManager} and can be combined with logical OR.
 	 */
 	public void handle(IStatus status, int style) {
 		StatusAdapter statusAdapter = new StatusAdapter(status);
@@ -228,7 +233,7 @@ public class StatusManager {
 	 * called.
 	 * 
 	 * @param status
-	 *            status to handle
+	 *            the status to handle. May not be <code>null</code>.
 	 */
 	public void handle(IStatus status) {
 		handle(status, StatusManager.LOG);
