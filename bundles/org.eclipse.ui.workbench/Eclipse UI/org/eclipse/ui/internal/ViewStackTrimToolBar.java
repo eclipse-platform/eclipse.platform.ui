@@ -118,7 +118,8 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
             	}
             	
             	// Only show the 'close' item if we've clicked on a view
-            	closeContrib.setVisible(selectedView != null);
+        		Perspective persp = wbw.getActiveWorkbenchPage().getActivePerspective();
+            	closeContrib.setVisible(selectedView != null && persp.isCloseable(selectedView));
             	manager.update(true);
 			}
 		});
