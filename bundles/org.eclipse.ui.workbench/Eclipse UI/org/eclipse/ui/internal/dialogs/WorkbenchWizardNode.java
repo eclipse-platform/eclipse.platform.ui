@@ -113,7 +113,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
        	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
 				IPluginContribution.class);
 		if (contribution != null) {
-			return contribution.getLocalId();
+			return contribution.getPluginId();
 		}
 		return null;
     }
