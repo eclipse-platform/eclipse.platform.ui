@@ -702,7 +702,7 @@
                state="false"
                style="toggle"
                toolbarPath="additions"
-               tooltip="%PinMemoryBlockAction.label"/>
+               tooltip="%PinMemoryBlockAction.tooltip"/>
          <action
                class="org.eclipse.debug.internal.ui.views.memory.NewMemoryViewAction"
                helpContextId="NewMemoryViewAction_context"
@@ -711,13 +711,13 @@
                label="%NewMemoryViewAction.label"
                style="push"
                toolbarPath="additions"
-               tooltip="%NewMemoryViewAction.label"/>
+               tooltip="%NewMemoryViewAction.tooltip"/>
          <action
                disabledIcon="$nl$/icons/full/dlcl16/var_cntnt_prvdr.gif"
                hoverIcon="$nl$/icons/full/elcl16/var_cntnt_prvdr.gif"
                toolbarPath="MemoryMonitorsGroup"
                label="%ToggleMemoryMonitorsPaneAction.name"
-               tooltip="%ToggleMemoryMonitorsPaneAction.name"
+               tooltip="%ToggleMemoryMonitorsPaneAction.tooltip"
                class="org.eclipse.debug.internal.ui.views.memory.ToggleMemoryMonitorsAction"
                icon="$nl$/icons/full/elcl16/var_cntnt_prvdr.gif"
                style="toggle"
@@ -727,7 +727,7 @@
                hoverIcon="$nl$/icons/full/elcl16/synced.gif"
                toolbarPath="RenderingPanesGroup"
                label="%LinkRenderingPanesAction.name"
-               tooltip="%LinkRenderingPanesAction.name"
+               tooltip="%LinkRenderingPanesAction.tooltip"
                icon="$nl$/icons/full/elcl16/synced.gif"
                class="org.eclipse.debug.internal.ui.views.memory.LinkRenderingPanesAction"
                style="toggle"
@@ -745,7 +745,7 @@
                hoverIcon="$nl$/icons/full/elcl16/det_pane_right.gif"
                toolbarPath="RenderingPanesGroup"
                label="%ToggleSplitPaneAction.name"
-               tooltip="%ToggleSplitPaneAction.name"
+               tooltip="%ToggleSplitPaneAction.tooltip"
                icon="$nl$/icons/full/elcl16/toggledetailpane_co.gif"
                class="org.eclipse.debug.internal.ui.views.memory.ToggleSplitPaneAction"
                style="toggle"
@@ -759,7 +759,7 @@
                id="org.eclipse.debug.ui.switchMemoryBlock"
                label="%switchMemoryBlock.label"
                toolbarPath="switchMonitorGroup"
-               tooltip="%switchMemoryBlock.label"/>
+               tooltip="%switchMemoryBlock.tooltip"/>
          <action
                class="org.eclipse.debug.internal.ui.views.memory.MemoryViewPrefAction"
                helpContextId="MemoryViewPreferences_context"
