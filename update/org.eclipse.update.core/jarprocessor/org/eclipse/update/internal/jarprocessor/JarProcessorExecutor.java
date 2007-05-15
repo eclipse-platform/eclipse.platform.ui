@@ -45,7 +45,7 @@ public class JarProcessorExecutor {
 			processor.setVerbose(options.verbose);
 
 			//load options file
-			Properties properties = null;
+			Properties properties = new Properties();
 			if (options.input.isDirectory()) {
 				File packProperties = new File(options.input, "pack.properties");
 				if (packProperties.exists() && packProperties.isFile()) {
