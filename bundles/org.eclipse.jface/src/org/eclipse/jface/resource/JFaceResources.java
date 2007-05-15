@@ -409,7 +409,12 @@ public class JFaceResources {
 	 */
 	private static void initializeDefaultImages() {
 
-		Bundle bundle = JFaceActivator.getBundle();
+		Object bundle = null;
+		try {
+			bundle = JFaceActivator.getBundle();
+		} catch (NoClassDefFoundError exception) {
+			// Test to see if OSGI is present
+		}
 		declareImage(bundle, Wizard.DEFAULT_IMAGE, ICONS_PATH + "page.gif", //$NON-NLS-1$
 				Wizard.class, "images/page.gif"); //$NON-NLS-1$
 
@@ -438,7 +443,8 @@ public class JFaceResources {
 	 * and passes it to the main <code>declareImage</code> method.
 	 * 
 	 * @param bundle
-	 *            the {@link Bundle}
+	 *            the {@link Bundle} or <code>null</code> of the Bundle cannot
+	 *            be found
 	 * @param key
 	 *            the symbolic name of the image
 	 * @param path
@@ -451,13 +457,14 @@ public class JFaceResources {
 	 *            the path relative to the fallback {@link Class}
 	 * 
 	 */
-	private static final void declareImage(Bundle bundle, String key,
+	private static final void declareImage(Object bundle, String key,
 			String path, Class fallback, String fallbackPath) {
+		
 
 		ImageDescriptor descriptor = null;
 
 		if (bundle != null) {
-			URL url = FileLocator.find(bundle, new Path(path), null);
+			URL url = FileLocator.find((Bundle) bundle, new Path(path), null);
 			if (url != null)
 				descriptor = ImageDescriptor.createFromURL(url);
 		}
