@@ -13,8 +13,7 @@ package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
-import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.TableSingleSelectionObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -27,7 +26,7 @@ public class TableObservableValueTest extends TestCase {
     public void testSetValue() throws Exception {
         Shell shell = new Shell();
         Table table = new Table(shell, SWT.NONE);
-        TableObservableValue observableValue = new TableObservableValue(table, SWTProperties.SELECTION);
+        TableSingleSelectionObservableValue observableValue = new TableSingleSelectionObservableValue(table);
         new TableItem(table, SWT.NONE);
         
         assertEquals(-1, table.getSelectionIndex());

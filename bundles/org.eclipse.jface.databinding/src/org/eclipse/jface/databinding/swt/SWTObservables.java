@@ -20,17 +20,20 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.CComboSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.CLabelObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.ComboSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ControlObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.ListSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
-import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.TableSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.swt.custom.CCombo;
@@ -278,6 +281,9 @@ public class SWTObservables {
 	 * the provided <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Table</li>
+	 * <li>org.eclipse.swt.widgets.Combo</li>
+	 * <li>org.eclipse.swt.custom.CCombo</li>
+	 * <li>org.eclipse.swt.widgets.List</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -288,8 +294,13 @@ public class SWTObservables {
 	public static ISWTObservableValue observeSingleSelectionIndex(
 			Control control) {
 		if (control instanceof Table) {
-			return new TableObservableValue((Table) control,
-					SWTProperties.SELECTION);
+			return new TableSingleSelectionObservableValue((Table) control);
+		} else if (control instanceof Combo) {
+			return new ComboSingleSelectionObservableValue((Combo) control);
+		} else if (control instanceof CCombo) {
+			return new CComboSingleSelectionObservableValue((CCombo) control);
+		} else if (control instanceof List) {
+			return new ListSingleSelectionObservableValue((List) control);
 		}
 
 		throw new IllegalArgumentException(

@@ -26,7 +26,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
-import org.eclipse.jface.internal.databinding.internal.swt.TableObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.TableSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 
 /**
  * @since 1.1
@@ -244,17 +245,14 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		ISWTObservableValue value = SWTObservables
 				.observeSingleSelectionIndex(table);
 		assertNotNull(value);
-		assertTrue(value instanceof TableObservableValue);
-
-		TableObservableValue tableObservable = (TableObservableValue) value;
-		assertEquals(SWTProperties.SELECTION, tableObservable.getAttribute());
+		assertTrue(value instanceof TableSingleSelectionObservableValue);
 	}
 
 	public void testObserveSingleSelectionIndexOfUnsupportedControl()
 			throws Exception {
-		List list = new List(shell, SWT.NONE);
+		Tree tree = new Tree(shell, SWT.NONE);
 		try {
-			SWTObservables.observeSingleSelectionIndex(list);
+			SWTObservables.observeSingleSelectionIndex(tree);
 			fail("Exception should have been thrown");
 		} catch (IllegalArgumentException e) {
 
