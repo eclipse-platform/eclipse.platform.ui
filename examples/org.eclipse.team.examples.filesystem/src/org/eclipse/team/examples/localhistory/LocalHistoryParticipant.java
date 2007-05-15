@@ -10,16 +10,27 @@
  *******************************************************************************/
 package org.eclipse.team.examples.localhistory;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
+import org.eclipse.team.ui.synchronize.SynchronizeModelOperation;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 public class LocalHistoryParticipant extends SubscriberParticipant {
 	
@@ -83,5 +94,27 @@ public class LocalHistoryParticipant extends SubscriberParticipant {
 				CONTEXT_MENU_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new LocalHistoryActionContribution());
 		configuration.addLabelDecorator(new LocalHistoryDecorator());	
+	}
+	
+	protected static SyncInfo getSyncInfo(ISynchronizeModelElement element) {
+	    if (element instanceof IAdaptable) {
+		    return (SyncInfo)((IAdaptable)element).getAdapter(SyncInfo.class);
+	    }
+	    return null;
+	}
+	
+	public void prepareCompareInput(ISynchronizeModelElement element,
+			CompareConfiguration config, IProgressMonitor monitor)
+			throws TeamException {
+		super.prepareCompareInput(element, config, monitor);
+
+		SyncInfo sync = getSyncInfo(element);
+		final IResourceVariant remote = sync.getRemote();
+		if (remote != null) {
+			config.setRightLabel(NLS.bind("Local History ({0})",
+					new String[] { remote.getContentIdentifier() }));
+		} else {
+			config.setRightLabel("Local History");
+		}
 	}
 }
