@@ -162,44 +162,28 @@ public final class Colors {
 	}
 
 	/**
-	 * Returns an array of colors in a smooth palette from <code>start</code> to <code>end</code>,
-	 * clockwisely following the hue wheel defined by the <a
-	 * href="http://en.wikipedia.org/wiki/HSV_color_space">HSB color space</a>. The returned array
-	 * has size <code>steps</code>, and the color at index 0 is <code>start</code>, the color
+	 * Returns an array of colors in a smooth palette from <code>start</code> to <code>end</code>.
+	 * <p>
+	 * The returned array has size <code>steps</code>, and the color at index 0 is <code>start</code>, the color
 	 * at index <code>steps&nbsp;-&nbsp;1</code> is <code>end</code>.
 	 * 
 	 * @param start the start color of the palette
 	 * @param end the end color of the palette
-	 * @param steps the requested size, must be &gt;= 2
-	 * @return an array of <code>steps</code> colors in the palette from <code>start</code> to
-	 *         <code>end</code>
-	 * @see RGB#getHSB()
+	 * @param steps the requested size, must be &gt; 0
+	 * @return an array of <code>steps</code> colors in the palette from <code>start</code> to <code>end</code>
 	 */
 	public static RGB[] palette(RGB start, RGB end, int steps) {
 		Assert.isLegal(start != null);
 		Assert.isLegal(end != null);
-		Assert.isLegal(steps >= 2);
+		Assert.isLegal(steps > 0);
+		
+		if (steps == 1)
+			return new RGB[] { start };
 
-		float[] startHSB= start.getHSB();
-		float[] endHSB= end.getHSB();
-
-		final float full= 360f;
-		float hueRange= endHSB[0] - startHSB[0];
-		if (hueRange < 0)
-			hueRange= full - hueRange;
-		float hueInc= hueRange / (steps - 1);
-		float saturationInc= (endHSB[1] - startHSB[1]) / (steps - 1);
-		float brightnessInc= (endHSB[2] - startHSB[2]) / (steps - 1);
-
+		float step= 1.0f / (steps - 1);
 		RGB[] gradient= new RGB[steps];
-		for (int i= 0; i < steps; i++) {
-			float hue= startHSB[0] + i * hueInc;
-			if (hue > full)
-				hue-= full;
-			float saturation= startHSB[1] + i * saturationInc;
-			float brightness= startHSB[2] + i * brightnessInc;
-			gradient[i]= new RGB(hue, saturation, brightness);
-		}
+		for (int i= 0; i < steps; i++)
+			gradient[i]= blend(start, end, step * i); 
 
 		return gradient;
 	}
@@ -279,4 +263,5 @@ public final class Colors {
 	private Colors() {
 		// not instantiatable
 	}
+
 }

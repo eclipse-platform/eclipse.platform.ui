@@ -96,6 +96,11 @@ public final class RevisionPainter {
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text.source/debug/RevisionRulerColumn")); //$NON-NLS-1$//$NON-NLS-2$
 
+	
+	private static final RGB BY_DATE_START_COLOR= new RGB(199, 134, 57);
+	private static final RGB BY_DATE_END_COLOR= Colors.blend(BY_DATE_START_COLOR, new RGB(255, 255, 255), 0.7f);
+
+	
 	/**
 	 * The annotations created to show a revision in the overview ruler.
 	 */
@@ -129,6 +134,7 @@ public final class RevisionPainter {
 		 * The shade for the focus boxes.
 		 */
 		private static final float FOCUS_COLOR_SHADING= 1f;
+
 
 		/**
 		 * A list of {@link Long}, storing the age of each revision in a sorted list.
@@ -169,11 +175,11 @@ public final class RevisionPainter {
 			float scale;
 			if (fRenderingMode == IRevisionRulerColumnExtension.AGE) {
 				int index= computeAgeIndex(revision);
-				if (index == -1 || fRevisions.size() < 2) {
+				if (index == -1 || fRevisions.size() == 0) {
 					rgb= getBackground().getRGB();
 				} else {
 					// gradient from intense red for most recent to faint yellow for oldest
-					RGB[] gradient= Colors.palette(new RGB(0f, 1f, 1f), new RGB(60f, 0.3f, 1f), fRevisions.size());
+					RGB[] gradient= Colors.palette(BY_DATE_START_COLOR, BY_DATE_END_COLOR, fRevisions.size());
 					rgb= gradient[gradient.length - index - 1];
 				}
 				scale= 0.99f;
