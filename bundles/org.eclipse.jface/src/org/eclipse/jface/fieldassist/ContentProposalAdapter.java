@@ -1207,6 +1207,12 @@ public class ContentProposalAdapter {
 	 * need to remember it.
 	 */
 	private int insertionPos = -1;
+	
+	/*
+	 * A flag that indicates that a pending modify event was caused by
+	 * the adapter rather than the user.
+	 */
+	private boolean modifyingControlContent = false;
 
 	/**
 	 * Construct a content proposal adapter that can assist the user with
@@ -1720,8 +1726,12 @@ public class ContentProposalAdapter {
 				// should reopen. But when autoactivation should occur on all
 				// content changes, we check it here after keys have been
 				// processed.
+			    // See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
+				// We should not autoactivate if the content change was caused
+				// by the popup itself.
 				case SWT.Modify:
-					if (triggerKeyStroke == null && autoActivateString == null) {
+					if (triggerKeyStroke == null && autoActivateString == null 
+							&& !modifyingControlContent) {
 						if (DEBUG) {
 							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
 						}
@@ -1861,8 +1871,13 @@ public class ContentProposalAdapter {
 	 */
 	private void setControlContent(String text, int cursorPosition) {
 		if (isValid()) {
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
+			modifyingControlContent = true;
+
 			controlContentAdapter.setControlContents(control, text,
 					cursorPosition);
+			
+			modifyingControlContent = false;
 		}
 	}
 
@@ -1872,6 +1887,8 @@ public class ContentProposalAdapter {
 	 */
 	private void insertControlContent(String text, int cursorPosition) {
 		if (isValid()) {
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
+			modifyingControlContent = true;
 			// Not all controls preserve their selection index when they lose
 			// focus, so we must set it explicitly here to what it was before
 			// the popup opened.
@@ -1881,6 +1898,7 @@ public class ContentProposalAdapter {
 			}
 			controlContentAdapter.insertControlContents(control, text,
 					cursorPosition);
+			modifyingControlContent = false;
 		}
 	}
 
