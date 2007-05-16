@@ -46,6 +46,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CompileErrorPromptStatusHandler_2;
 	public static String EnvironmentTab_22;
 
+	public static String EnvironmentTab_7;
+
 	public static String LaunchConfigurationDialog__Apply_17;
 	public static String LaunchConfigurationDialog__Name__16;
 	public static String LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20;

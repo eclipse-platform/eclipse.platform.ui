@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 Keith Seitz and others.
+ * Copyright (c) 2000, 2007 Keith Seitz and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -442,7 +442,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 			public String getText(Object element) {
 				EnvironmentVariable var = (EnvironmentVariable) element;
-				return var.getName() + " [" + var.getValue() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+				return MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_7, new String[] {var.getName(), var.getValue()}); 
 			}
 			public void addListener(ILabelProviderListener listener) {
 			}
@@ -471,7 +471,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 							String s2 = (String)o2;
 							return s1.compareTo(s2);
 						}
-					
 					};
 					TreeMap envVars = new TreeMap(comparator);
 					envVars.putAll((Map)inputElement);
@@ -644,7 +643,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
-		// do nothing when deactivated
+		// do nothing when de-activated
 	}
 	
 	private class NativeEnvironmentDialog extends ListSelectionDialog {
