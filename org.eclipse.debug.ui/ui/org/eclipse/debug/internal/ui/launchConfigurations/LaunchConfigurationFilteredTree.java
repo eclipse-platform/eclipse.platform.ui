@@ -103,14 +103,13 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	 * Handle help events locally rather than deferring to WorkbenchHelp.  This
 	 * allows help specific to the selected config type to be presented.
 	 * 
-	 * @since 2.1
 	 */
 	protected void handleHelpRequest(HelpEvent evt) {
 		if (getViewer().getTree() != evt.getSource()) {
 			return;
 		}
 		String id = computeContextId();
-		if (id!=null)
+		if (id != null)
 			PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
 	}
 	
