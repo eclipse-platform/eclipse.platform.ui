@@ -10,6 +10,8 @@
  *     Red Hat, Inc - extensive changes to allow importing of Archive Files
  *     Philippe Ombredanne (pombredanne@nexb.com)
  *     		- Bug 101180 [Import/Export] Import Existing Project into Workspace default widget is back button , should be text field
+ *     Martin Oberhuber (martin.oberhuber@windriver.com)
+ *     		- Bug 187318[Wizards] "Import Existing Project" loops forever with cyclic symbolic links
  *******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
@@ -20,8 +22,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -72,6 +76,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -786,7 +792,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 					else if (dirSelected && directory.isDirectory()) {
 
 						if (!collectProjectFilesFromDirectory(files, directory,
-								monitor)) {
+								null, monitor)) {
 							return;
 						}
 						Iterator filesIterator = files.iterator();
@@ -883,12 +889,14 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * 
 	 * @param files
 	 * @param directory
+	 * @param directoriesVisited
+	 *            Set of canonical paths of directories, used as recursion guard
 	 * @param monitor
 	 *            The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	private boolean collectProjectFilesFromDirectory(Collection files,
-			File directory, IProgressMonitor monitor) {
+			File directory, Set directoriesVisited, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
 			return false;
@@ -897,9 +905,21 @@ public class WizardProjectsImportPage extends WizardPage implements
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				directory.getPath()));
 		File[] contents = directory.listFiles();
-		if(contents == null)
+		if (contents == null)
 			return false;
-		
+
+		// Initialize recursion guard for recursive symbolic links
+		if (directoriesVisited == null) {
+			directoriesVisited = new HashSet();
+			try {
+				directoriesVisited.add(directory.getCanonicalPath());
+			} catch (IOException exception) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(IStatus.ERROR, exception
+								.getLocalizedMessage(), exception));
+			}
+		}
+
 		// first look for project description files
 		final String dotProject = IProjectDescription.DESCRIPTION_FILE_NAME;
 		for (int i = 0; i < contents.length; i++) {
@@ -915,8 +935,20 @@ public class WizardProjectsImportPage extends WizardPage implements
 		for (int i = 0; i < contents.length; i++) {
 			if (contents[i].isDirectory()) {
 				if (!contents[i].getName().equals(METADATA_FOLDER)) {
+					try {
+						String canonicalPath = contents[i].getCanonicalPath();
+						if (!directoriesVisited.add(canonicalPath)) {
+							// already been here --> do not recurse
+							continue;
+						}
+					} catch (IOException exception) {
+						StatusManager.getManager().handle(
+								StatusUtil.newStatus(IStatus.ERROR, exception
+										.getLocalizedMessage(), exception));
+
+					}
 					collectProjectFilesFromDirectory(files, contents[i],
-							monitor);
+							directoriesVisited, monitor);
 				}
 			}
 		}
@@ -1162,21 +1194,21 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		// import operation to import project files if copy checkbox is selected
 		if (copyFiles && importSource != null) {
-			List filesToImport = FileSystemStructureProvider.INSTANCE.getChildren(importSource);
+			List filesToImport = FileSystemStructureProvider.INSTANCE
+					.getChildren(importSource);
 			ImportOperation operation = new ImportOperation(project
 					.getFullPath(), importSource,
 					FileSystemStructureProvider.INSTANCE, this, filesToImport);
 			operation.setContext(getShell());
 			operation.setOverwriteResources(true); // need to overwrite
-													// .project, .classpath
-													// files
+			// .project, .classpath
+			// files
 			operation.setCreateContainerStructure(false);
 			operation.run(monitor);
 		}
 
 		return true;
 	}
-
 
 	/**
 	 * The <code>WizardDataTransfer</code> implementation of this
