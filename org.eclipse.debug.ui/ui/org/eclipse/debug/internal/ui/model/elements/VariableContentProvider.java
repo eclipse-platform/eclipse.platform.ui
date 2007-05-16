@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IIndexedValue;
@@ -24,6 +26,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
+import org.eclipse.debug.internal.ui.views.variables.LogicalStructureCache;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -32,6 +35,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  */
 public class VariableContentProvider extends ElementContentProvider {
 
+	/**
+	 * Cache of logical structures to avoid computing structures for different
+	 * subranges.
+	 */
+	private static LogicalStructureCache fgLogicalCache;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
@@ -46,6 +55,27 @@ public class VariableContentProvider extends ElementContentProvider {
 		return getElements(getAllChildren(parent, context), index, length);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
+	 */
+	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
+		return ((IVariable)element).getValue().hasVariables();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
+	 */
+	protected boolean supportsContextId(String id) {
+		 return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW) || id.equals(IDebugUIConstants.ID_VARIABLE_VIEW) || id.equals(IDebugUIConstants.ID_REGISTER_VIEW);
+	}
+	
+	/**
+	 * Gets all the children variables for the parent
+	 * @param parent the parent IVariable
+	 * @param context the context the children will be presented in
+	 * @return an array of all children or an empty array if none
+	 * @throws CoreException
+	 */
 	protected Object[] getAllChildren(Object parent, IPresentationContext context) throws CoreException {
         IVariable variable = (IVariable) parent;
         IValue value = variable.getValue();
@@ -55,13 +85,6 @@ public class VariableContentProvider extends ElementContentProvider {
         return EMPTY;		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
-	 */
-	protected boolean supportsContextId(String id) {
-		 return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW) || id.equals(IDebugUIConstants.ID_VARIABLE_VIEW) || id.equals(IDebugUIConstants.ID_REGISTER_VIEW);
-	}
-	
     /**
      * Return whether to show compute a logical structure or a raw structure
      * in the specified context
@@ -91,9 +114,9 @@ public class VariableContentProvider extends ElementContentProvider {
      * 
      * @param value
      * @param context
-     * @return
+     * @return logical value for the raw value
      */
-    protected IValue getLogicalValue(IValue value, IPresentationContext context) {
+    protected IValue getLogicalValue(IValue value, IPresentationContext context) throws CoreException {
         return getLogicalValue(value, new ArrayList(), context);
     }
     
@@ -151,7 +174,7 @@ public class VariableContentProvider extends ElementContentProvider {
      * 
      * @param value
      *            indexed value
-     * @return size of paritions the value should be subdivided into
+     * @return size of partitions the value should be subdivided into
      */
     protected int computeParitionSize(IIndexedValue value) {
         int partitionSize = 1;
@@ -182,35 +205,57 @@ public class VariableContentProvider extends ElementContentProvider {
      * over the returned value until the same structure is encountered again (to
      * avoid infinite recursion).
      * 
-     * @param value
+     * @param value raw value to possibly be replaced by a logical value
      * @param previousStructureIds
      *            the list of logical structures that have already been applied
      *            to the returned value during the recursion of this method.
      *            Callers should always pass in a new, empty list.
-     * @return
+     * @return logical value if one is calculated, otherwise the raw value is returned
      */
-    protected IValue getLogicalValue(IValue value, List previousStructureIds, IPresentationContext context) {
+    protected IValue getLogicalValue(IValue value, List previousStructureIds, IPresentationContext context) throws CoreException {
         if (isShowLogicalStructure(context)) {
             ILogicalStructureType[] types = DebugPlugin.getLogicalStructureTypes(value);
             if (types.length > 0) {
                 ILogicalStructureType type = DebugPlugin.getDefaultStructureType(types);
                 if (type != null && !previousStructureIds.contains(type.getId())) {
-                    try {
-                        value = type.getLogicalStructure(value);
-                        previousStructureIds.add(type.getId());
-                        return getLogicalValue(value, previousStructureIds, context);
-                    } catch (CoreException e) {
-                        // unable to display logical structure
-                    }
+                	IValue logicalValue = getLogicalStructureCache().getLogicalStructure(type, value);
+                	previousStructureIds.add(type.getId());
+                	return getLogicalValue(logicalValue, previousStructureIds, context);
                 }
             }
         }
         return value;
     }
-
-	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
-		return ((IVariable)element).getValue().hasVariables();
-	}
     
-    
+    /**
+     * Returns the logical structure cache to use to store calculated structures.  If the cache does not
+     * exist yet, one is created and a debug event listener is added to clear the cache on RESUME and
+     * TERMINATE events.
+     * 
+     * @return the logical structure cache to use
+     */
+    protected synchronized LogicalStructureCache getLogicalStructureCache(){
+    	if (fgLogicalCache == null){
+    		fgLogicalCache = new LogicalStructureCache();
+    		// Add a listener to clear the cache when resuming or terminating
+    		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener(){
+				public void handleDebugEvents(DebugEvent[] events) {
+					for (int i = 0; i < events.length; i++) {
+						if (events[i].getKind() == DebugEvent.TERMINATE){
+							fgLogicalCache.clear();
+							break;
+						} else if (events[i].getKind() == DebugEvent.RESUME && !events[i].isEvaluation()){
+							fgLogicalCache.clear();
+							break;
+						} else if (events[i].getKind() == DebugEvent.CHANGE && events[i].getDetail() == DebugEvent.CONTENT){
+							fgLogicalCache.clear();
+							break;
+						}
+					}
+				}
+    		});
+    	}
+    	return fgLogicalCache;
+    }
+	
 }
