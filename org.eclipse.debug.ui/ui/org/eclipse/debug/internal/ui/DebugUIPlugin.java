@@ -1165,6 +1165,36 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
         }
         return title;
     }
+    
+	/**
+	 * Returns the label with any DBCS accelerator moved to the end of the string.
+	 * See bug 186921.
+	 * 
+	 * @return label with moved accelerator
+	 */
+    public static String adjustDBCSAccelerator(String label) {
+        String title = label;
+        if (title != null) {
+            // strip out any '&' (accelerators)
+            int index = title.indexOf('&');
+            if (index > 0) {
+                //DBCS languages use "(&X)" format
+                if (title.charAt(index - 1) == '(' && title.length() >= index + 3 && title.charAt(index + 2) == ')') {
+                    String first = title.substring(0, index - 1);
+                    String accel = title.substring(index - 1, index + 3);
+                    String last = title.substring(index + 3);
+                    title = first + last;
+                    if (title.endsWith("...")) { //$NON-NLS-1$
+                    	title = title.substring(0, title.length() - 3);
+                    	title = title + accel + "..."; //$NON-NLS-1$
+                    } else {
+                    	title = title + accel;
+                    }
+                }
+            }
+        }
+        return title;
+    }    
 
     /**
      * Returns the image descriptor registry used for this plug-in.
