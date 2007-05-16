@@ -48,7 +48,8 @@ public class HttpResponse extends AbstractResponse {
 
 		public void close() throws IOException {
 			try {
-				super.close();
+				if (in!=null)
+					super.close();
 				if (connection instanceof HttpURLConnection) {
 					((HttpURLConnection)connection).disconnect();
 				}
