@@ -897,6 +897,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				directory.getPath()));
 		File[] contents = directory.listFiles();
+		if(contents == null)
+			return false;
+		
 		// first look for project description files
 		final String dotProject = IProjectDescription.DESCRIPTION_FILE_NAME;
 		for (int i = 0; i < contents.length; i++) {
