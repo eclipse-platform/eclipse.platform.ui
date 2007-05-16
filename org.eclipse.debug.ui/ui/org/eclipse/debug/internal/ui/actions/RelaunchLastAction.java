@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
@@ -30,6 +31,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -127,6 +130,14 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 			fAction.setEnabled(existsConfigTypesForMode());
 			fAction.setText(getText());
 			fAction.setToolTipText(getTooltipText());
+			String commandId = getCommandId();
+			ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+			if (service != null) {
+				Command command = service.getCommand(commandId);
+				command.undefine();
+				command = service.getCommand(commandId);
+				command.define(DebugUIPlugin.removeAccelerators(getText()), getDescription(), service.getCategory("org.eclipse.debug.ui.category.run")); //$NON-NLS-1$
+			}
 		}
 	}
 	
@@ -198,5 +209,20 @@ public abstract class RelaunchLastAction implements IWorkbenchWindowActionDelega
 	 */
 	protected abstract String getTooltipText();
 	
+	/**
+	 * Returns the command id this action is associated with.
+	 * 
+	 * @return command id
+	 * @since 3.3
+	 */
+	protected abstract String getCommandId();
+	
+	/**
+	 * Returns a description for this action (to associate with command).
+	 * 
+	 * @return command description
+	 * @since 3.3
+	 */
+	protected abstract String getDescription();	
 }
 

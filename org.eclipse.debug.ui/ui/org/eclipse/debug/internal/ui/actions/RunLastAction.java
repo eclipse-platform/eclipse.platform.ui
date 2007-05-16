@@ -57,5 +57,24 @@ public class RunLastAction extends RelaunchLastAction {
 	 */
 	protected String getTooltipText() {
 		return ""; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getCommandId()
+	 */
+	protected String getCommandId() {
+		return "org.eclipse.debug.ui.commands.RunLast"; //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getDescription()
+	 */
+	protected String getDescription() {
+		if(LaunchingResourceManager.isContextLaunchEnabled()) {
+			return ActionMessages.RunLastAction_2;
+		}
+		else {
+			return ActionMessages.RunLastAction_3;
+		}
 	}	
 }

@@ -47,6 +47,8 @@ public class ActionMessages extends NLS {
 	public static String DebugLastAction_0;
 
 	public static String DebugLastAction_1;
+	public static String DebugLastAction_2;
+	public static String DebugLastAction_3;
 
 	public static String DetailPaneAssignValueAction_0;
 	public static String DetailPaneAssignValueAction_1;
@@ -74,6 +76,8 @@ public class ActionMessages extends NLS {
 	public static String ProfileLastAction_0;
 
 	public static String ProfileLastAction_1;
+	public static String ProfileLastAction_2;
+	public static String ProfileLastAction_3;
 
     public static String RelaunchActionDelegate_An_exception_occurred_while_launching_2;
     public static String RelaunchActionDelegate_Launch_Failed_1;
@@ -101,6 +105,8 @@ public class ActionMessages extends NLS {
 	public static String RunLastAction_0;
 
 	public static String RunLastAction_1;
+	public static String RunLastAction_2;
+	public static String RunLastAction_3;
 
     public static String ShowSupportedBreakpointsAction_Show_For_Selected;
     public static String ShowSupportedBreakpointsAction_tooltip;
