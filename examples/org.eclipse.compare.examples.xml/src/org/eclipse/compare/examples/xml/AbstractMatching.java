@@ -136,7 +136,8 @@ public abstract class AbstractMatching {
 				}
 				
 				//unordered compare of subtrees
-				int distance= dist((XMLNode)other.getXML_elements()[otherIndex] , (XMLNode)fXML_elements[thisIndex]);
+				// TODO The dist method is order dependent but should not be
+				int distance= dist(thisNode, otherNode);
 				return sameId || distance == 0;
 			}
 			return false;
