@@ -86,10 +86,11 @@ public class FileDiffResult implements IFilePatchResult {
 		}
 
 		if (fDiffProblem) {
-			// We couldn't find the target file but we need to 
-			// initialize the hunk results for display
-			fBeforeLines = new ArrayList();
-			fAfterLines = new ArrayList();
+			// We couldn't find the target file or the patch is trying to add a
+			// file that already exists but we need to initialize the hunk
+			// results for display
+			fBeforeLines = new ArrayList(getLines(storage, false));
+			fAfterLines = fMatches ? new ArrayList() : fBeforeLines;
 			Hunk[] hunks = fDiff.getHunks();
 			for (int i = 0; i < hunks.length; i++) {
 				Hunk hunk = hunks[i];

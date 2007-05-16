@@ -30,6 +30,7 @@ public class AllTests {
 		suite.addTestSuite(PatchTest.class);
 		suite.addTestSuite(AsyncExecTests.class);
 		suite.addTestSuite(DiffTest.class);
+		suite.addTestSuite(FileDiffResultTest.class);
 		//$JUnit-END$
 		return suite;
 	}

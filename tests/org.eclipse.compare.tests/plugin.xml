@@ -23,6 +23,8 @@
       <import plugin="org.eclipse.test.performance"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.tests.resources"/>
+      <import plugin="org.eclipse.core.tests.harness"/>
    </requires>
 
 </plugin>
