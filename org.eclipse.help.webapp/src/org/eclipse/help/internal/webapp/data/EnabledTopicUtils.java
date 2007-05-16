@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 
 /**
@@ -32,10 +31,7 @@ public class EnabledTopicUtils {
 	 * @return
 	 */
 	public static boolean isEnabled(ITopic topic) {
-		if (UAContentFilter.isFiltered(topic, HelpEvaluationContext.getContext())) {
-			return false;
-		}
-		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
+		return topic.isEnabled(HelpEvaluationContext.getContext());
 	}
 	
 	/**

@@ -22,15 +22,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.UAContentFilter;
-import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.webapp.WebappResources;
+import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
  * Creates xml representing selected parts of one or more TOCs  depending on the parameters
- * With no paramters the head of each toc is included
+ * With no parameters the head of each toc is included
  * With parameter "href" the node and all its ancestors and siblings is included, corresponds to show in toc 
  * With parameter "toc" and optionally "path" the node, its ancestors and children are included
  */
@@ -169,7 +168,7 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append("</node>\n"); //$NON-NLS-1$
 			
 		}
-
+		
 		private ITopic[] getTopicPathFromRootPath(IToc toc) {
 			ITopic[] topicPath;
 			// Determine the topicPath from the path passed in as a parameter
@@ -179,21 +178,21 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			int pathLength = rootPath.length;
 			topicPath = new ITopic[pathLength];
-			ITopic[] children = toc.getTopics();
+			ITopic[] children = EnabledTopicUtils.getEnabled(toc.getTopics());
 			for (int i = 0; i < pathLength; i++) {
 				int index = rootPath[i];
 				if (index < children.length) {
 					topicPath[i] = children[index];
-					children = children[index].getSubtopics();
+					children = EnabledTopicUtils.getEnabled(topicPath[i].getSubtopics());
 				} else {
-					return null;  // Mismatch between expexted and actual children
+					return null;  // Mismatch between expected and actual children
 				}
 			}
 			return topicPath;
 		}
 	
 		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {
-		    ITopic[] subtopics = topic.getSubtopics();
+		    ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
 		    buf.append("<node"); //$NON-NLS-1$
 			if (topic.getLabel() != null) { 
 				buf.append('\n'	+ "      title=\"" + XMLGenerator.xmlEscape(topic.getLabel()) + '"'); //$NON-NLS-1$
@@ -233,23 +232,19 @@ public class TocFragmentServlet extends HttpServlet {
 			if (parentIsSelected && requestKind == REQUEST_SHOW_CHILDREN) {
 				// Show the children of this node
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
-					if (!UAContentFilter.isFiltered(childTopics[subtopic], HelpEvaluationContext.getContext())) {
-						serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
-					}
+				    serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
 				}
 			} else if (topicPath != null) {
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
-					if (!UAContentFilter.isFiltered(childTopics[subtopic], HelpEvaluationContext.getContext())) {
-						if (topicPath[0].getLabel().equals(childTopics[subtopic].getLabel())) {
-							ITopic[] newPath = null;
-							if (topicPath.length > 1) {
-								newPath = new ITopic[topicPath.length - 1];
-								System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
-							}
-					        serializeTopic(childTopics[subtopic], newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
-						} else {
-							serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
+					if (topicPath[0].getLabel().equals(childTopics[subtopic].getLabel())) {
+						ITopic[] newPath = null;
+						if (topicPath.length > 1) {
+							newPath = new ITopic[topicPath.length - 1];
+							System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
 						}
+				        serializeTopic(childTopics[subtopic], newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
+					} else {
+						serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
 					}
 				}
 			} 
