@@ -979,15 +979,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		} 
 		String newName = baseName;
-			StringBuffer buffer = null;
-			while (isExistingLaunchConfigurationName(newName)) {
-				buffer = new StringBuffer(baseName);
-				buffer.append(" ("); //$NON-NLS-1$
-				buffer.append(String.valueOf(index));
-				index++;
-				buffer.append(')');
-				newName = buffer.toString();
-			}		
+		while (isExistingLaunchConfigurationName(newName)) {
+			newName = MessageFormat.format(DebugCoreMessages.LaunchManager_31, new String[] {baseName, Integer.toString(index)});
+			index++;
+		}		
 			
 		return newName;
 	}
@@ -1507,7 +1502,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * This method is used to initialize a simple listing of all preferred delegates, which is then used by each
 	 * <code>ILaunchConfigurationType</code> to find if they have preferred delegates. Once an <code>ILaunchConfigurationType</code>
-	 * has used this listing to initialize its preferred delegates ti will maintain changes to its preferred delegate, which are 
+	 * has used this listing to initialize its preferred delegates it will maintain changes to its preferred delegate, which are 
 	 * then written back to the preference store only when the launch manager shuts down.
 	 * <p>
 	 * This cache is not synchronized with the runtime preferred delegates stored in launch configuration types.

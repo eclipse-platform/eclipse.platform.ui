@@ -55,6 +55,8 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchDelegate_2;
 	
 	public static String LaunchManager_29;
+
+	public static String LaunchManager_31;
 	public static String SystemPropertyResolver_0;	
 	public static String InputStreamMonitor_label;
 	public static String Launch_terminate_failed;
