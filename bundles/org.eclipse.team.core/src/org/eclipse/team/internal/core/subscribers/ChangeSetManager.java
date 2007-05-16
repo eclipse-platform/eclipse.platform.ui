@@ -168,6 +168,24 @@ public abstract class ChangeSetManager {
     }
 
     /**
+     * Return the sorted list of active commit sets.
+     * @return the sorted list of active commit sets
+     */
+    public ChangeSet[] getSortedSets() {
+        Set sets = internalGetSets();
+        ChangeSet[] array = (ChangeSet[]) sets.toArray(new ChangeSet[sets.size()]);
+        List list = Arrays.asList(array);
+		Collections.sort(list, new Comparator(){
+			public int compare(Object a, Object b) {
+				ChangeSet ca = (ChangeSet) a;
+				ChangeSet cb = (ChangeSet) b;
+				return ca.getName().compareTo(cb.getName());
+			}
+		});
+		return (ChangeSet[]) list.toArray(new ChangeSet[]{}); 
+    }
+    
+    /**
      * Return the list of active commit sets.
      * @return the list of active commit sets
      */

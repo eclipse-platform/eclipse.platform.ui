@@ -283,7 +283,7 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 
     private String getProposedComment(IResource[] resourcesToCommit) {
     	StringBuffer comment = new StringBuffer();
-        ChangeSet[] sets = CVSUIPlugin.getPlugin().getChangeSetManager().getSets();
+        ChangeSet[] sets = CVSUIPlugin.getPlugin().getChangeSetManager().getSortedSets();
         int numMatchedSets = 0;
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];

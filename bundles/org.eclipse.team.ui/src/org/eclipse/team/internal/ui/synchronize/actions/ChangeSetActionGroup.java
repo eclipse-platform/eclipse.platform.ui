@@ -352,7 +352,7 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
     }
     
     protected void addChangeSets(IMenuManager manager) {
-        ChangeSet[] sets = getActiveChangeSetManager().getSets();
+        ChangeSet[] sets = getActiveChangeSetManager().getSortedSets();
         ISelection selection = getContext().getSelection();
         createChangeSet.selectionChanged(selection);
 		addToChangeSet.add(createChangeSet);
