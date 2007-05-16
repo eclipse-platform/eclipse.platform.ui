@@ -23,12 +23,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ObservableList;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * @since 1.0
@@ -87,6 +87,7 @@ public class JavaBeanObservableList extends ObservableList implements
 	}
 
 	private Object primGetValues() {
+		Exception ex = null;
 		try {
 			Method readMethod = descriptor.getReadMethod();
 			if (!readMethod.isAccessible()) {
@@ -94,11 +95,13 @@ public class JavaBeanObservableList extends ObservableList implements
 			}
 			return readMethod.invoke(object, new Object[0]);
 		} catch (IllegalArgumentException e) {
+			ex = e;
 		} catch (IllegalAccessException e) {
+			ex = e;
 		} catch (InvocationTargetException e) {
+			ex = e;
 		}
-		Assert.isTrue(false, "Could not read collection values"); //$NON-NLS-1$
-		return null;
+		throw new BindingException("Could not read collection values", ex); //$NON-NLS-1$
 	}
 
 	private Object[] getValues() {
@@ -142,17 +145,22 @@ public class JavaBeanObservableList extends ObservableList implements
 	}
 
 	private void primSetValues(Object newValue) {
+		Exception ex = null;
 		try {
 			Method writeMethod = descriptor.getWriteMethod();
 			if (!writeMethod.isAccessible()) {
 				writeMethod.setAccessible(true);
 			}
 			writeMethod.invoke(object, new Object[] { newValue });
+			return;
 		} catch (IllegalArgumentException e) {
+			ex = e;
 		} catch (IllegalAccessException e) {
+			ex = e;
 		} catch (InvocationTargetException e) {
+			ex = e;
 		}
-		Assert.isTrue(false, "Could not write collection values"); //$NON-NLS-1$
+		throw new BindingException("Could not write collection values", ex); //$NON-NLS-1$
 	}
 
 	public Object set(int index, Object element) {
@@ -223,7 +231,7 @@ public class JavaBeanObservableList extends ObservableList implements
 			int i = 0;
 			for (Iterator it = c.iterator(); it.hasNext();) {
 				Object o = it.next();
-				entries[i] = Diffs.createListDiffEntry(index++, true, o);
+				entries[i++] = Diffs.createListDiffEntry(index++, true, o);
 			}
 			fireListChange(Diffs.createListDiff(entries));
 			return result;
@@ -244,7 +252,7 @@ public class JavaBeanObservableList extends ObservableList implements
 			int i = 0;
 			for (Iterator it = c.iterator(); it.hasNext();) {
 				Object o = it.next();
-				entries[i] = Diffs.createListDiffEntry(index++, true, o);
+				entries[i++] = Diffs.createListDiffEntry(index++, true, o);
 			}
 			fireListChange(Diffs.createListDiff(entries));
 			return result;

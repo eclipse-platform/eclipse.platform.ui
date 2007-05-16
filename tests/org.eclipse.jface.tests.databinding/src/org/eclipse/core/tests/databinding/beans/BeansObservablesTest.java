@@ -46,8 +46,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 
 	public void testObserveListArrayInferredElementType() throws Exception {
 		IObservableList list = BeansObservables.observeList(Realm.getDefault(),
-				model, "listArray", null);
-		assertEquals("element type", elementType, list.getElementType());
+				model, "list", null);
+		assertEquals("element type", Object.class, list.getElementType());
 	}
 
 	public void testObserveListNonInferredElementType() throws Exception {

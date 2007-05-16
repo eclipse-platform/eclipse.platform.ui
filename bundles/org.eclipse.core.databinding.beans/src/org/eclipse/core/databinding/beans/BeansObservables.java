@@ -35,9 +35,8 @@ import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSe
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 
 /**
- * A factory for creating observable objects of Java
- * objects that conform to the <a
- * href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
+ * A factory for creating observable objects of Java objects that conform to the
+ * <a href="http://java.sun.com/products/javabeans/docs/spec.html">JavaBean
  * specification</a> for bound properties.
  * 
  * @since 1.1
@@ -150,7 +149,8 @@ final public class BeansObservables {
 
 	/**
 	 * Returns an observable list in the given realm tracking the
-	 * collection-typed named property of the given bean object
+	 * collection-typed named property of the given bean object. The returned
+	 * list is mutable.
 	 * 
 	 * @param realm
 	 *            the realm
@@ -160,7 +160,7 @@ final public class BeansObservables {
 	 *            the name of the collection-typed property
 	 * @return an observable list tracking the collection-typed named property
 	 *         of the given bean object
-	 * 
+	 * @see #observeList(Realm, Object, String, Class)
 	 */
 	public static IObservableList observeList(Realm realm, Object bean,
 			String propertyName) {
@@ -169,7 +169,12 @@ final public class BeansObservables {
 
 	/**
 	 * Returns an observable list in the given realm tracking the
-	 * collection-typed named property of the given bean object
+	 * collection-typed named property of the given bean object. The returned
+	 * list is mutable. When an item is added or removed the setter is invoked
+	 * for the list on the parent bean to provide notification to other
+	 * listeners via <code>PropertyChangeEvents</code>. This is done to
+	 * provide the same behavior as is expected from arrays as specified in the
+	 * bean spec in section 7.2.
 	 * 
 	 * @param realm
 	 *            the realm

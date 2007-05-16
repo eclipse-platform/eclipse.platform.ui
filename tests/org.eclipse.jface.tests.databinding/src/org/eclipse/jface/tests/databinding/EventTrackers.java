@@ -13,6 +13,8 @@ package org.eclipse.jface.tests.databinding;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -53,5 +55,15 @@ public class EventTrackers {
 			count++;
 			this.event = event;
 		}		
+	}
+	
+	public static class ListChangeEventTracker implements IListChangeListener {
+		public int count;
+		public ListChangeEvent event;
+		
+		public void handleListChange(ListChangeEvent event) {
+			count++;
+			this.event = event;
+		}	
 	}
 }

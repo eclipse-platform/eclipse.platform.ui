@@ -77,6 +77,7 @@ import org.eclipse.core.tests.internal.databinding.conversion.StringToShortConve
 import org.eclipse.core.tests.internal.databinding.internal.beans.BeanObservableListDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.BeanObservableValueDecoratorTest;
+import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableArrayBasedListTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableListTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
@@ -212,6 +213,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
 		addTestSuite(BeanObservableListDecoratorTest.class);
+		addTestSuite(JavaBeanObservableArrayBasedListTest.class);
 		addTestSuite(JavaBeanObservableListTest.class);
 		addTestSuite(JavaBeanObservableMapTest.class);
 		addTestSuite(JavaBeanObservableSetTest.class);

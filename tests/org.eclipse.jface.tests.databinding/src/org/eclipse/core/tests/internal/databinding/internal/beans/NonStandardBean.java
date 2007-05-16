@@ -13,32 +13,33 @@ package org.eclipse.core.tests.internal.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 /**
- * Simple Java Bean for testing.
+ * Simple non-standard (java.util.List-based property) Java Bean for testing.
  * 
  * @since 3.3
  */
-public class Bean {
+public class NonStandardBean {
 	/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 	private String value;
-	private Object[] list = new Object[0];
+	private List list = new ArrayList();
 	private Set set;
 
-	public Bean() {
+	public NonStandardBean() {
 	}
 
-	public Bean(String value) {
+	public NonStandardBean(String value) {
 		this.value = value;
 	}
 
-	public Bean(List list) {
-		this.list = (Bean[]) list.toArray(new Bean[list.size()]);
+	public NonStandardBean(List list) {
+		this.list = list;
 	}
 
-	public Bean(Set set) {
+	public NonStandardBean(Set set) {
 		this.set = set;
 	}
 
@@ -58,12 +59,12 @@ public class Bean {
 		changeSupport.firePropertyChange("value", this.value, this.value = value);
 	}
 
-	public Object[] getList() {
+	public List getList() {
 		return list;
 	}
 
-	public void setList(Object[] elements) {
-		changeSupport.firePropertyChange("list", this.list, this.list = elements);
+	public void setList(List list) {
+		changeSupport.firePropertyChange("list", this.list, this.list = list);
 	}
 
 	public Set getSet() {

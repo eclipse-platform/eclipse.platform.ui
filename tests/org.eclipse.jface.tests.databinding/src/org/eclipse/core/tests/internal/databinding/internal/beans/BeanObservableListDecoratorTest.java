@@ -38,7 +38,7 @@ public class BeanObservableListDecoratorTest extends TestCase {
 		
 		Bean bean = new Bean();
 		propertyDescriptor = new PropertyDescriptor(
-				"list", Bean.class);
+				"list", Bean.class,"getList","setList");
 		observableList = new JavaBeanObservableList(
 				SWTObservables.getRealm(Display.getDefault()), bean,
 				propertyDescriptor, Bean.class);

@@ -30,12 +30,12 @@ import org.eclipse.swt.widgets.Display;
 /**
  * @since 1.1
  */
-public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
+public class JavaBeanObservableArrayBasedListTest extends AbstractDefaultRealmTestCase {
 	private JavaBeanObservableList list;
 
 	private PropertyDescriptor propertyDescriptor;
 
-	private NonStandardBean bean;
+	private Bean bean;
 
 	private String propertyName;
 
@@ -48,11 +48,11 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		super.setUp();
 
 		propertyName = "list";
-		propertyDescriptor = new PropertyDescriptor(propertyName, NonStandardBean.class);
-		bean = new NonStandardBean(new ArrayList());
+		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
+		bean = new Bean(new ArrayList());
 
 		list = new JavaBeanObservableList(SWTObservables.getRealm(Display
-				.getDefault()), bean, propertyDescriptor, NonStandardBean.class);
+				.getDefault()), bean, propertyDescriptor, Bean.class);
 	}
 
 	public void testGetObserved() throws Exception {
@@ -85,7 +85,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		list.addListChangeListener(listener);
 
 		assertEquals(0, listener.count);
-		bean.setList(Arrays.asList(new String[] { "value" }));
+		bean.setList(new Bean[] { new Bean() });
 		assertEquals(1, listener.count);
 	}
 
@@ -96,7 +96,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, count);
 		list.add(element);
 		assertEquals(count + 1, list.size());
-		assertEquals(element, bean.getList().get(count));
+		assertEquals(element, bean.getList()[count]);
 	}
 
 	public void testAddListChangeEvent() throws Exception {
@@ -128,7 +128,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, list.size());
 
 		list.add(0, element);
-		assertEquals(element, bean.getList().get(0));
+		assertEquals(element, bean.getList()[0]);
 	}
 
 	public void testAddAtIndexListChangeEvent() throws Exception {
@@ -156,9 +156,9 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		String element = "1";
 		list.add(element);
 
-		assertEquals(1, bean.getList().size());
+		assertEquals(1, bean.getList().length);
 		list.remove(element);
-		assertEquals(0, bean.getList().size());
+		assertEquals(0, bean.getList().length);
 	}
 
 	public void testRemoveListChangeEvent() throws Exception {
@@ -191,10 +191,10 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		String element = "1";
 		list.add(element);
 
-		assertEquals(element, bean.getList().get(0));
+		assertEquals(element, bean.getList()[0]);
 
 		list.remove(0);
-		assertEquals(0, bean.getList().size());
+		assertEquals(0, bean.getList().length);
 	}
 
 	public void testRemoveAtIndexListChangeEvent() throws Exception {
@@ -228,7 +228,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 
 		list.addAll(elements);
 
-		assertEquals(2, bean.getList().size());
+		assertEquals(2, bean.getList().length);
 	}
 
 	public void testAddAllListChangEvent() throws Exception {
@@ -265,9 +265,9 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 
 		list.addAll(2, elements);
 
-		assertEquals(4, bean.getList().size());
-		assertEquals(elements.get(0), bean.getList().get(0));
-		assertEquals(elements.get(1), bean.getList().get(1));
+		assertEquals(4, bean.getList().length);
+		assertEquals(elements.get(0), bean.getList()[0]);
+		assertEquals(elements.get(1), bean.getList()[1]);
 	}
 
 	public void testAddAllAtIndexListChangeEvent() throws Exception {
@@ -301,12 +301,12 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		list.addAll(elements);
 		list.addAll(elements);
 
-		assertEquals(4, bean.getList().size());
+		assertEquals(4, bean.getList().length);
 		list.removeAll(elements);
 
-		assertEquals(2, bean.getList().size());
-		assertEquals(elements.get(0), bean.getList().get(0));
-		assertEquals(elements.get(1), bean.getList().get(1));
+		assertEquals(2, bean.getList().length);
+		assertEquals(elements.get(0), bean.getList()[0]);
+		assertEquals(elements.get(1), bean.getList()[1]);
 	}
 
 	public void testRemoveAllListChangeEvent() throws Exception {
@@ -339,13 +339,13 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		List elements = Arrays.asList(new String[] { "0", "1", "2", "3" });
 		list.addAll(elements);
 
-		assertEquals(4, bean.getList().size());
+		assertEquals(4, bean.getList().length);
 
 		list.retainAll(elements.subList(0, 2));
-		assertEquals(2, bean.getList().size());
+		assertEquals(2, bean.getList().length);
 
-		assertEquals(elements.get(0), bean.getList().get(0));
-		assertEquals(elements.get(1), bean.getList().get(1));
+		assertEquals(elements.get(0), bean.getList()[0]);
+		assertEquals(elements.get(1), bean.getList()[1]);
 	}
 
 	public void testRetainAllListChangeEvent() throws Exception {
@@ -380,10 +380,10 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		String newElement = "new";
 		list.add(oldElement);
 
-		assertEquals(oldElement, bean.getList().get(0));
+		assertEquals(oldElement, bean.getList()[0]);
 
 		list.set(0, newElement);
-		assertEquals(newElement, bean.getList().get(0));
+		assertEquals(newElement, bean.getList()[0]);
 	}
 
 	public void testSetListChangeEvent() throws Exception {
@@ -414,7 +414,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testListChangeEventFiresWhenNewListIsSet() throws Exception {
-		List elements = Arrays.asList(new String[] { "1", "2" });
+		Bean[] elements = new Bean[] { new Bean(), new Bean() };
 
 		ListChangeEventTracker listener = new ListChangeEventTracker();
 		list.addListChangeListener(listener);
@@ -431,11 +431,11 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals("element", element, entry.getElement());
 	}
 
-	private static void assertPropertyChangeEvent(NonStandardBean bean, Runnable runnable) {
+	private static void assertPropertyChangeEvent(Bean bean, Runnable runnable) {
 		PropertyChangeTracker listener = new PropertyChangeTracker();
 		bean.addPropertyChangeListener(listener);
 		
-		List old = bean.getList();
+		Object[] old = bean.getList();
 		assertEquals(0, listener.count);
 		
 		runnable.run();
