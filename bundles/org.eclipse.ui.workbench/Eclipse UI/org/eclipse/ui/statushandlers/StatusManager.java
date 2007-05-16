@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.WorkbenchErrorHandlerProxy;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.progress.FinishedJobs;
+import org.eclipse.ui.internal.progress.StatusAdapterHelper;
 import org.eclipse.ui.internal.statushandlers.StatusHandlerRegistry;
 import org.eclipse.ui.progress.IProgressConstants;
 
@@ -173,6 +174,7 @@ public class StatusManager {
 							&& statusAdapter
 									.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != Boolean.TRUE) {
 						FinishedJobs.getInstance().removeErrorJobs();
+						StatusAdapterHelper.getInstance().clear();
 					}
 					return;
 				} catch (CoreException ex) {

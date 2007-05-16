@@ -172,6 +172,17 @@ public class StatusNotificationManager {
 	 */
 	protected static class StatusInfo implements Comparable {
 
+		public boolean equals(Object obj) {
+			if (obj instanceof StatusInfo) {
+				return statusAdapter.equals(((StatusInfo) obj).getStatus());
+			}
+			return super.equals(obj);
+		}
+
+		public int hashCode() {
+			return statusAdapter.hashCode();
+		}
+
 		private final StatusAdapter statusAdapter;
 
 		/**

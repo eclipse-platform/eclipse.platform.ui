@@ -84,7 +84,7 @@ public class ProgressManager extends ProgressProvider implements
 	private static final String ERROR_JOB = "errorstate.gif"; //$NON-NLS-1$
 
 	static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
-	
+
 	private static ProgressManager singleton;
 
 	final private Map jobs = Collections.synchronizedMap(new HashMap());
@@ -124,8 +124,7 @@ public class ProgressManager extends ProgressProvider implements
 	 * The key for the locked job icon.
 	 */
 	public static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
-	
-	
+
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 
 	final Object monitorKey = new Object();
@@ -363,14 +362,14 @@ public class ProgressManager extends ProgressProvider implements
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
-			
+
 			// Let the error manager set up its own icons
 			setUpImages(iconsRoot);
 		} catch (MalformedURLException e) {
 			ProgressManagerUtil.logException(e);
 		}
 	}
-	
+
 	/**
 	 * Set up any images the error management needs.
 	 * 
@@ -441,6 +440,8 @@ public class ProgressManager extends ProgressProvider implements
 								.setProperty(
 										IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
 										Boolean.TRUE);
+						StatusAdapterHelper.getInstance().putStatusAdapter(
+								info, statusAdapter);
 					}
 
 					StatusManager.getManager().handle(statusAdapter,
@@ -633,8 +634,9 @@ public class ProgressManager extends ProgressProvider implements
 	}
 
 	/**
-	 * Return an existing job info for the given Job or 
-	 * <code>null</code> if there isn't one.
+	 * Return an existing job info for the given Job or <code>null</code> if
+	 * there isn't one.
+	 * 
 	 * @param job
 	 * @return JobInfo
 	 */
@@ -781,7 +783,7 @@ public class ProgressManager extends ProgressProvider implements
 	 * @return boolean <code>true</code> if it is never displayed.
 	 */
 	private boolean isNeverDisplayedJob(Job job) {
-		if(Policy.DEBUG_SHOW_ALL_JOBS)
+		if (Policy.DEBUG_SHOW_ALL_JOBS)
 			return false;
 		return job.getProperty(ProgressManagerUtil.INFRASTRUCTURE_PROPERTY) != null;
 	}

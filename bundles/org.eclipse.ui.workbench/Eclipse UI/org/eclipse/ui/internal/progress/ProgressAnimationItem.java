@@ -97,20 +97,20 @@ public class ProgressAnimationItem extends AnimationItem implements
                 if (job != null) {
 
                     IStatus status = job.getResult();
-                    if (status != null && status.getSeverity() == IStatus.ERROR) {                    
-	                    StatusAdapter statusAdapter = new StatusAdapter(job
-								.getResult());
-						statusAdapter.addAdapter(Job.class, job);
+                    if (status != null && status.getSeverity() == IStatus.ERROR) {
+						StatusAdapter statusAdapter = StatusAdapterHelper
+								.getInstance().getStatusAdapter(ji);
+
 						StatusManager.getManager().handle(statusAdapter,
 								StatusManager.SHOW);
-	                    
+
 						JobTreeElement topElement = (JobTreeElement) ji
 								.getParent();
 						if (topElement == null) {
 							topElement = ji;
 						}
 						FinishedJobs.getInstance().remove(topElement);
-                    }
+					}
 
                     IAction action = null;
                     Object property = job
