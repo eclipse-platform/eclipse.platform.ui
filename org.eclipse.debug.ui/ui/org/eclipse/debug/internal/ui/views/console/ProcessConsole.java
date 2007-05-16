@@ -317,7 +317,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         } else if (property.equals(IDebugUIConstants.PREF_CONSOLE_FONT)) {
             setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR)) {
-        	setBackgrond(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
+        	setBackground(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
         }
     }
 
@@ -421,7 +421,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
                 setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
-                setBackgrond(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
+                setBackground(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
             }
         });
     }

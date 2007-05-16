@@ -248,8 +248,20 @@ public abstract class TextConsole extends AbstractConsole {
 	 * 
 	 * @param background background color or <code>null</code> for default
 	 * @since 3.3
+	 * @deprecated use setBackground(Color) instead
 	 */
     public void setBackgrond(Color background) {
+    	setBackground(background);
+    }  
+    
+	/**
+	 * Sets the background color used by this console. Specify <code>null</code> to use
+	 * the default background color.
+	 * 
+	 * @param background background color or <code>null</code> for default
+	 * @since 3.3
+	 */
+    public void setBackground(Color background) {
     	if (fBackground == null) {
     		if (background == null) {
     			return;
