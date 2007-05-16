@@ -39,7 +39,7 @@ import com.jcraft.jsch.*;
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     implements IWorkbenchPreferencePage{
 
-  private static final String SSH2_PREFERENCE_PAGE_CONTEXT="org.eclipse.jsch.ui.preference.ssh2_preference_page_context"; //$NON-NLS-1$
+  private static final String SSH2_PREFERENCE_PAGE_CONTEXT="org.eclipse.jsch.ui.ssh2_preference_page_context"; //$NON-NLS-1$
 
   private Label ssh2HomeLabel;
   private Label privateKeyLabel;

@@ -23,16 +23,27 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
 public class ProxyPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
+	private static final String PROXY_PREFERENCE_PAGE_CONTEXT_ID 
+		= "org.eclipse.ui.net.proxy_preference_page_context"; //$NON-NLS-1$
+	
 	Entry[] entryList;
 	Button directConnectionToButton;
 	private Button manualProxyConfigurationButton;
@@ -191,6 +202,10 @@ public class ProxyPreferencePage extends PreferencePage implements
 
 		initializeValues(proxyService.isProxiesEnabled());
 		applyDialogFont(composite);
+		
+		// F1
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(
+				getControl(), PROXY_PREFERENCE_PAGE_CONTEXT_ID);
 
 		return composite;
 	}
