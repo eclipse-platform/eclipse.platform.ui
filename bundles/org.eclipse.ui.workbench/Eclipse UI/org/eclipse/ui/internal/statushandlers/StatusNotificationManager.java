@@ -90,7 +90,7 @@ public class StatusNotificationManager {
 		final StatusInfo statusInfo = new StatusInfo(statusAdapter);
 
 		if (!PlatformUI.isWorkbenchRunning()) {
-			// we are shuttting down, so just log
+			// we are shutting down, so just log
 			WorkbenchPlugin.log(statusInfo.getStatus().getStatus());
 			return;
 		}
@@ -127,9 +127,8 @@ public class StatusNotificationManager {
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
 						dialog = new StatusDialog(ProgressManagerUtil
-								.getDefaultParent(), statusInfo, IStatus.OK
-								| IStatus.INFO | IStatus.WARNING
-								| IStatus.ERROR, modal);
+								.getDefaultParent(), statusInfo, IStatus.INFO
+								| IStatus.WARNING | IStatus.ERROR, modal);
 						dialog.open();
 						dialog.getShell().addDisposeListener(disposeListener);
 					}
@@ -157,8 +156,8 @@ public class StatusNotificationManager {
 			dialog.getShell().removeDisposeListener(disposeListener);
 			dialog.close();
 			dialog = new StatusDialog(ProgressManagerUtil.getDefaultParent(),
-					statusInfo, IStatus.OK | IStatus.INFO | IStatus.WARNING
-							| IStatus.ERROR, modal);
+					statusInfo, IStatus.INFO | IStatus.WARNING | IStatus.ERROR,
+					modal);
 
 			dialog.open();
 			dialog.getShell().addDisposeListener(disposeListener);

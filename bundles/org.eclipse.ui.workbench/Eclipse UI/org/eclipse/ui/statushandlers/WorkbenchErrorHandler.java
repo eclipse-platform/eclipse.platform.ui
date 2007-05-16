@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.statushandlers;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.statushandlers.StatusNotificationManager;
@@ -33,6 +35,17 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	public void handle(final StatusAdapter statusAdapter, int style) {
 		if (((style & StatusManager.SHOW) == StatusManager.SHOW)
 				|| ((style & StatusManager.BLOCK) == StatusManager.BLOCK)) {
+
+			// INFO status is set in the adapter when the passed adapter has OK
+			// or CANCEL status
+			if (statusAdapter.getStatus().getSeverity() == IStatus.OK
+					|| statusAdapter.getStatus().getSeverity() == IStatus.CANCEL) {
+				IStatus status = statusAdapter.getStatus();
+				statusAdapter.setStatus(new Status(IStatus.INFO, status
+						.getPlugin(), status.getMessage(), status
+						.getException()));
+			}
+
 			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
 			StatusNotificationManager.getInstance().addError(statusAdapter,
 					modal);
