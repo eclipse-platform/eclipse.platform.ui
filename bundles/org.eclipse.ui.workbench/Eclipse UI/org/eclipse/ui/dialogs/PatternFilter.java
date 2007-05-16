@@ -45,6 +45,8 @@ public class PatternFilter extends ViewerFilter {
      */
     private Map foundAnyCache = new HashMap();
     
+    private boolean useCache = false;
+    
 	/**
 	 * Whether to include a leading wildcard for all provided patterns.  A
 	 * trailing wildcard is always included.
@@ -56,7 +58,7 @@ public class PatternFilter extends ViewerFilter {
 	 */
     private StringMatcher matcher;
     
-    private boolean useFilterOptimization = true;
+    private boolean useEarlyReturnIfMatcherIsNull = true;
     
     private static Object[] EMPTY = new Object[0];
 
@@ -67,10 +69,14 @@ public class PatternFilter extends ViewerFilter {
     	// we don't want to optimize if we've extended the filter ... this
     	// needs to be addressed in 3.4
     	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=186404
-        if (matcher == null && useFilterOptimization) {
+        if (matcher == null && useEarlyReturnIfMatcherIsNull) {
 			return elements;
 		}
 
+        if (!useCache) {
+        	return super.filter(viewer, parent, elements);
+        }
+        
         Object[] filtered = (Object[]) cache.get(parent);
         if (filtered == null) {
         	Boolean foundAny = (Boolean) foundAnyCache.get(parent);
@@ -85,7 +91,10 @@ public class PatternFilter extends ViewerFilter {
     }
 
     /**
-     * Returns true if any of the elements makes it through the filter. 
+     * Returns true if any of the elements makes it through the filter.
+     * This method uses caching if enabled; the computation is done in
+     * computeAnyVisible.
+     *  
      * @param viewer
      * @param parent
      * @param elements the elements (must not be an empty array)
@@ -96,22 +105,36 @@ public class PatternFilter extends ViewerFilter {
     		return true;
     	}
     	
+    	if (!useCache) {
+    		return computeAnyVisible(viewer, elements);
+    	}
+    	
     	Object[] filtered = (Object[]) cache.get(parent);
     	if (filtered != null) {
     		return filtered.length > 0;
     	}
     	Boolean foundAny = (Boolean) foundAnyCache.get(parent);
     	if (foundAny == null) {
-    		boolean elementFound = false;
-    		for (int i = 0; i < elements.length && !elementFound; i++) {
-				Object element = elements[i];
-	    		elementFound = isElementVisible(viewer, element);
-			}
-    		foundAny = elementFound ? Boolean.TRUE : Boolean.FALSE;
+    		foundAny = computeAnyVisible(viewer, elements) ? Boolean.TRUE : Boolean.FALSE;
     		foundAnyCache.put(parent, foundAny);
     	}
     	return foundAny.booleanValue();
     }
+
+	/**
+	 * Returns true if any of the elements makes it through the filter.
+	 * @param viewer
+	 * @param elements
+	 * @return
+	 */
+	private boolean computeAnyVisible(Viewer viewer, Object[] elements) {
+		boolean elementFound = false;
+		for (int i = 0; i < elements.length && !elementFound; i++) {
+			Object element = elements[i];
+			elementFound = isElementVisible(viewer, element);
+		}
+		return elementFound;
+	}
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -143,14 +166,13 @@ public class PatternFilter extends ViewerFilter {
     	// these 2 strings allow the PatternFilter to be extended in
     	// 3.3 - https://bugs.eclipse.org/bugs/show_bug.cgi?id=186404
     	if ("org.eclipse.ui.keys.optimization.true".equals(patternString)) { //$NON-NLS-1$
-    		useFilterOptimization = true;
+    		useEarlyReturnIfMatcherIsNull = true;
     		return;
     	} else if ("org.eclipse.ui.keys.optimization.false".equals(patternString)) { //$NON-NLS-1$
-    		useFilterOptimization = false;
+    		useEarlyReturnIfMatcherIsNull = false;
     		return;
     	}
-        cache.clear();
-        foundAnyCache.clear();
+        clearCaches();
         if (patternString == null || patternString.equals("")) { //$NON-NLS-1$
 			matcher = null;
 		} else {
@@ -161,6 +183,15 @@ public class PatternFilter extends ViewerFilter {
 			matcher = new StringMatcher(pattern, true, false);
 		}
     }
+
+	/**
+	 * Clears the caches used for optimizing this filter. Needs to be called whenever
+	 * the tree content changes.
+	 */
+	/* package */ void clearCaches() {
+		cache.clear();
+        foundAnyCache.clear();
+	}
 
     /**
      * Answers whether the given String matches the pattern.
@@ -311,5 +342,14 @@ public class PatternFilter extends ViewerFilter {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Can be called by the filtered tree to turn on caching.
+	 * 
+	 * @param useCache The useCache to set.
+	 */
+	void setUseCache(boolean useCache) {
+		this.useCache = useCache;
 	}    
 }
