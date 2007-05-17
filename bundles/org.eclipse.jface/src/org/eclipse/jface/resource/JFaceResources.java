@@ -426,6 +426,8 @@ public class JFaceResources {
 				"images/message_warning.gif"); //$NON-NLS-1$
 		declareImage(bundle, Dialog.DLG_IMG_MESSAGE_ERROR, ICONS_PATH
 				+ "message_error.gif", Dialog.class, "images/message_error.gif");//$NON-NLS-1$ //$NON-NLS-2$
+		declareImage(bundle, Dialog.DLG_IMG_HELP, ICONS_PATH
+				+ "help.gif", Dialog.class, "images/help.gif");//$NON-NLS-1$ //$NON-NLS-2$
 		declareImage(
 				bundle,
 				TitleAreaDialog.DLG_IMG_TITLE_BANNER,

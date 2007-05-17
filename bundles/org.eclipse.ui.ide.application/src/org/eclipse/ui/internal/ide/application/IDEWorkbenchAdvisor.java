@@ -199,14 +199,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		// show Help button in JFace dialogs
 		TrayDialog.setDialogHelpAvailable(true);
 
-		// use this image for the help button in dialogs
-		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg
-				.put(
-						Dialog.DLG_IMG_HELP,
-						IDEInternalWorkbenchImages
-								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP));
-
 		Policy.setComparator(Collator.getInstance());
 	}
 
@@ -704,10 +696,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY,
 				PATH_ETOOL + "problem_category.gif", true); //$NON-NLS-1$
-		declareWorkbenchImage(ideBundle,
-				IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP, PATH_ELOCALTOOL
-						+ "linkto_help.gif", false); //$NON-NLS-1$
-
+	
 		// synchronization indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT,
 		// PATH_OVERLAY+"wbet_stat.gif");
