@@ -7,12 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                               - bug fix for bug 187189
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -34,6 +38,14 @@ abstract class SWTFocusCellManager {
 	private ViewerCell focusCell;
 
 	private FocusCellHighlighter cellHighlighter;
+	
+	private DisposeListener itemDeletionListener = new DisposeListener() {
+
+		public void widgetDisposed(DisposeEvent e) {
+			setFocusCell(null);
+		}
+		
+	};
 
 	/**
 	 * @param viewer
@@ -135,6 +147,15 @@ abstract class SWTFocusCellManager {
 		viewer.getControl().addListener(SWT.MouseDown, listener);
 		viewer.getControl().addListener(SWT.KeyDown, listener);
 		viewer.getControl().addListener(SWT.Selection, listener);
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				if( event.selection.isEmpty() ) {
+					setFocusCell(null);
+				}
+			}
+			
+		});
 		viewer.getControl().addListener(SWT.FocusIn, listener);
 	}
 
@@ -147,7 +168,16 @@ abstract class SWTFocusCellManager {
 	}
 
 	void setFocusCell(ViewerCell focusCell) {
+		if( this.focusCell != null && ! this.focusCell.getItem().isDisposed() ) {
+			this.focusCell.getItem().removeDisposeListener(itemDeletionListener);
+		}
+		
 		this.focusCell = focusCell;
+		
+		if( this.focusCell != null && ! this.focusCell.getItem().isDisposed() ) {
+			this.focusCell.getItem().addDisposeListener(itemDeletionListener);
+		}
+		
 		this.cellHighlighter.focusCellChanged(focusCell);
 	}
 
