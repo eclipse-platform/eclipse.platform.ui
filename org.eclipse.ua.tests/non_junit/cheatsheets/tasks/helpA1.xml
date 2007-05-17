@@ -9,13 +9,13 @@
       <description>
          Test default browser preferences
       </description>
-      <subitem label="Launch &quot;Window&quot;-&gt;&quot;Preferences&quot;.  Preferences dialog will open." skip="false">
+      <subitem label="Launch &quot;Window&quot;-&gt;&quot;Preferences&quot; (&quot;Eclipse&quot;-&gt;&quot;Preferences&quot; on Mac).  Preferences dialog will open." skip="false">
          <command serialization="org.eclipse.ui.window.preferences" confirm="false">
          </command>
       </subitem>
       <subitem label="Choose &quot;Help&quot; on the left.  This should show help preference page on the right" skip="false">
       </subitem>
-      <subitem label="On Windows and Linux help uses embedded browser, and the preference should contain a checkbox to use external browser. Leave this unchecked." skip="false">
+      <subitem label="On Windows and Linux help uses an embedded browser by default, and the preference should contain a checkbox to use an external browser. Leave this unchecked. On Mac ensure that this option is omitted since an external browser is always used." skip="false">
       </subitem>
       <subitem label="Hit OK to close the preferences dialog." skip="false">
       </subitem>
@@ -26,11 +26,11 @@
       <description>
          Test external browsers
       </description>
-      <subitem label="Launch Window-&gt;Preferences" skip="false">
+      <subitem label="Launch &quot;Window&quot;-&gt;&quot;Preferences&quot; (&quot;Eclipse&quot;-&gt;&quot;Preferences&quot; on Mac)." skip="false">
          <command serialization="org.eclipse.ui.window.preferences" confirm="false">
          </command>
       </subitem>
-      <subitem label="Select &quot;Use external browser&quot;.  Follow hyperlink to Workbench Browsers preference page.  Choose a browser to use, Click &quot;OK&quot;." skip="false">
+      <subitem label="Select &quot;Use external browser&quot; if on a platform other than Mac.  Follow hyperlink to Workbench Browsers preference page.  Choose a browser to use, Click &quot;OK&quot;." skip="false">
       </subitem>
       <subitem label="Choose &quot;Help&quot;-&gt;&quot;Help Contents&quot; from the workbench menu, ensure a browser selected opens and displays Help" skip="false">
       </subitem>

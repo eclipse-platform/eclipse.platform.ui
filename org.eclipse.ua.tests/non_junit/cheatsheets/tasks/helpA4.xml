@@ -20,4 +20,14 @@
          Choose a result.  The document should open with occurrences of the words &quot;open&quot; and &quot;project&quot; highlighted.
       </description>
    </item>
+   <item title="Toggle Highlighting" dialog="true" skip="false">
+      <description>
+         Click the &quot;Highlight search items&quot; button in the help view toolbar to toggle highlighting off. Ensure that &quot;open&quot; and &quot;project&quot; are no longer highlighted. Toggle it on and off again and ensure highlighting toggle appropriately.
+      </description>
+   </item>
+   <item title="Default Highlighting" dialog="true" skip="false">
+      <description>
+         With highlighing turned off, click the &quot;Search&quot; link to return to the search results and select one. Ensure that highlighting is now turned off by default.
+      </description>
+   </item>
 </cheatsheet>

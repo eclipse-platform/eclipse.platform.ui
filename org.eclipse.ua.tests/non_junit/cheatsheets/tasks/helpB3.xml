@@ -56,7 +56,7 @@
    </item>
    <item title="Select an item" dialog="false" skip="false">
       <description>
-         Select the &quot;Crash recovery&quot; hit, and click on &quot;Refresh/Show All Topics&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Crash recovery&quot; topic.
+         Select the &quot;Minimizing data loss from crashes&quot; hit, and click on &quot;Refresh/Show All Topics&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Minimizing data loss from crashes&quot; topic.
       </description>
    </item>
    <item title="Redisplay search results" dialog="false" skip="false">

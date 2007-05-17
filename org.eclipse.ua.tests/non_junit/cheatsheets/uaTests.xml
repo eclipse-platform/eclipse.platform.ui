@@ -71,16 +71,6 @@
                <param name="path" value="tasks/helpA7.xml">
                </param>
             </task>
-            <task kind="cheatsheet" name="A8:  Appserver preferences" skip="true">
-               <intro>
-                  Test appserver preferences
-               </intro>
-               <onCompletion>
-                  Conclusion
-               </onCompletion>
-               <param name="path" value="tasks/helpA8.xml">
-               </param>
-            </task>
             <task kind="cheatsheet" name="A9:  Workbench Capabilities in Help" skip="true">
                <intro>
                   Test what happens when capabilities are enabled or disabled.
@@ -178,9 +168,9 @@ Performing simple searching.
       </taskGroup>
       <taskGroup name="Cheat Sheet Tests" skip="false">
          <intro>
-            &lt;p&gt;This composite cheat sheet contains the UI tests for cheat sheets.&lt;/p&gt;
-         &lt;p&gt;To begin testing right click on this task in the explorer and restart all tasks. 
-         Then use the links and task descriptions to direct you through each task.&lt;/p&gt;
+            <p>This composite cheat sheet contains the UI tests for cheat sheets.</p>
+         <p>To begin testing right click on this task in the explorer and restart all tasks. 
+         Then use the links and task descriptions to direct you through each task.</p>
          </intro>
          <task kind="cheatsheet" name="Tray Dialog" skip="false">
             <intro>
@@ -198,11 +188,11 @@ Performing simple searching.
          </task>
          <taskGroup kind="sequence" name="Task sequence" skip="false">
             <intro>
-               &lt;p&gt;This is a sequence of tasks. Verify that the following statements are true:&lt;/p&gt;
-                 &lt;li&gt; If S1 has not been started and you click on task S2 in the explorer it shows that S2 cannot be started until S1 has been completed.&lt;/li&gt;
-                 &lt;li&gt; Task S2 can be started after S1 has been completed. &lt;/li&gt;
-                 &lt;li&gt; If S1 and S2 are both completed this task group is complete. &lt;/li&gt;
-                 &lt;li&gt; If S1 is reset from the context menu in the explorer S2 will also be reset. &lt;/li&gt;
+               <p>This is a sequence of tasks. Verify that the following statements are true:</p>
+                 <li> If S1 has not been started and you click on task S2 in the explorer it shows that S2 cannot be started until S1 has been completed.</li>
+                 <li> Task S2 can be started after S1 has been completed. </li>
+                 <li> If S1 and S2 are both completed this task group is complete. </li>
+                 <li> If S1 is reset from the context menu in the explorer S2 will also be reset. </li>
             </intro>
             <task id="S1" kind="cheatsheet" name="S1" skip="true">
                <intro>
@@ -226,11 +216,11 @@ Performing simple searching.
          </taskGroup>
          <taskGroup kind="choice" name="Task choice" skip="false">
             <intro>
-               &lt;p&gt;This is a sequence of tasks. Verify that the following statements are true:&lt;/p&gt;
-                 &lt;li&gt; When this task group is not started two links are shown: &quot;Go to C1&quot; and &quot;Go to C2&quot; &lt;/li&gt;
-                 &lt;li&gt; If task C1 is completed this task group is complete &lt;/li&gt;
-                 &lt;li&gt; Task C2 cannot be started if C1 has been completed and it&apos;s icon
-                 is grayed in the explorer. &lt;/li&gt;
+               <p>This is a sequence of tasks. Verify that the following statements are true:</p>
+                 <li> When this task group is not started two links are shown: &quot;Go to C1&quot; and &quot;Go to C2&quot; </li>
+                 <li> If task C1 is completed this task group is complete </li>
+                 <li> Task C2 cannot be started if C1 has been completed and it&apos;s icon
+                 is grayed in the explorer. </li>
             </intro>
             <task id="C1" kind="cheatsheet" name="C1" skip="true">
                <intro>
