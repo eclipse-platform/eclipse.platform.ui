@@ -258,7 +258,7 @@ public class WorkbenchWindowConfigurerTest extends TestCase {
 								ensureThread();
 								return super.saveState(memento);
 							}};
-						return super.createActionBarAdvisor(configurer);
+						return advisor;
 					}
 
 					public Control createEmptyWindowContents(Composite parent) {
