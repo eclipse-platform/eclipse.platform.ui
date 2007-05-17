@@ -63,12 +63,6 @@
 &lt;p&gt;
 An example of a &apos;human readable name&apos; would be something like (in the case of the default java application delegate): Eclipse JDT Java Tooling
 &lt;/p&gt;
-&lt;p&gt;
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
-part of a work in progress. There is no guarantee that this API will
-remain unchanged during the 3.3 release cycle. Please do not use this API
-without consulting with the Platform/Debug team.
-&lt;/p&gt;
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -82,7 +76,7 @@ without consulting with the Platform/Debug team.
 Launch configuration instances of this delegate&apos;s type will delegate to instances of this class to perform launching in the modes this launch delegate supports - see the &lt;code&gt;modes&lt;/code&gt; attribute and the &lt;code&gt;modeCombination&lt;/code&gt; element.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
                </appInfo>
             </annotation>
          </attribute>

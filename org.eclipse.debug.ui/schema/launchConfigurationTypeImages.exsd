@@ -26,11 +26,6 @@
    </element>
 
    <element name="launchConfigurationTypeImage">
-      <annotation>
-         <documentation>
-            &lt;p&gt;Since 3.3, a launch configuration type image can be specified by a launch configuration type extension.&lt;/p&gt;
-         </documentation>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
