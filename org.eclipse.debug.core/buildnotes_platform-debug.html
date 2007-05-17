@@ -244,6 +244,76 @@ The launch framework has been enhanced to support the following:
 for the popup to appear when an otherwise valid anchor point is not available.</li>
 </ul>
 
+<h2>Changes required when adopting 3.3 mechanisms and APIs</h2>
+<h3>Launching Selected Resource vs. Launch Last</h3>
+<p>By default, running and debugging applications has been simplified to run or 
+  debug the selected file or active editor. When the selected resource (or active 
+  editor) is not executable, users can opt to launch the associated project or 
+  re-launch the previous launch. These settings are managed on the <strong>Run/Debug 
+  &gt; Launching</strong> preference page. Users can also revert to the 3.2 behavior 
+  of always launching the previous application.</p>
+<p>Pressing the <strong>Run</strong> or <strong>Debug</strong> toolbar button 
+  will launch the selected resource (as will the <strong>Run</strong> or <strong>Debug</strong> 
+  action in the top level Run menu). When no launch configuration exists for a 
+  file and there is only one way to launch it, the file will simply be launched 
+  in the mode selected. When there is more than one way to launch a file, the 
+  user will be prompted to select how to run or debug the application. For example, 
+  when running a JUnit test it can be run as a Java application or JUnit test. 
+  A launch configuration will be created and an entry will be added to the launch 
+  history for the application. When the same resource is launched again, it will 
+  use the most recent configuration in the launch history associated with that 
+  resource.</p>
+<p>The underlying infrastructure for selection based launching relies on the launch 
+  shortcuts applicable to a resource (or editor) and the resource mappings associated 
+  with existing launch configurations. As well, API (a new extension element) 
+  has been added to the <code>launchShortcuts</code> extension to associate a 
+  launch shortcut with one or more types of launch configurations. For example, 
+  this tells the platform that the &quot;Java Application&quot; launch shortcut 
+  is associated with &quot;Java Application&quot; launch configurations.</p>
+<p>The contextual launch support uses the following approach to determine how 
+  a selection or active editor should be launched.</p>
+<ol>
+  <li>An <code>IResource</code> adapter is retrieved from the selection or active 
+    editor (which can be <code>null</code>).</li>
+  <li>A set of applicable launch configuration types are computed from the set 
+    of launch shortcuts applicable to the selection/editor (using the new launch 
+    configuration type elements defined by launch shortcuts).</li>
+  <li>A set of applicable launch configurations is computed based on the launch 
+    configuration types applicable to the selection/editor and the existing launch 
+    configurations in the workspace.</li>
+  <li>The set of applicable launch configurations is reduced to those that have 
+    a resource mapping equal to or contained by the retrieved resource adapter</li>
+  <li>The set of applicable launch configurations is compared to the launch history 
+    and the most recently launched configuration in the set is selected for launching.</li>
+  <li>When there are applicable launch configurations, but none are in the recent 
+    launch history, the user is prompted to select one of the applicable configurations 
+    to launch.</li>
+  <li>When there are applicable launch shortcuts and no applicable launch configurations, 
+    the user is prompted on how they want to launch the selection (i.e. which 
+    shortcut they want to use).</li>
+</ol>
+<p>When there are no applicable launch configurations or launch shortcuts, the 
+  platform either attempts to launch the associated project or launches last, 
+  based on user preference settings. When the user has chosen to launch the associated 
+  project, the same steps as above are followed, except the resource used is the 
+  project.</p>
+<p>For selection based launching to work well, plug-in providers should ensure 
+  the following.</p>
+<ol>
+  <li>Resource mappings for launch configurations should be scoped to the appropriate 
+    resource. For example, to support projects with multiple Java executables, 
+    Java application launch configurations are associated with the the .java file 
+    containing the main class.</li>
+  <li>Launch shortcut extensions should be updated with <code>configurationType</code> 
+    elements so the platform can infer which launch configuration types to consider 
+    when resolving launch configurations applicable to a selection/editor.</li>
+  <li>Launch configuration migration delegates should be updated to create appropriate 
+    resource mappings for existing launch configurations. For example, if launch 
+    your launch configuration resource mappings in 3.2 were always associated 
+    with a project, but now you want to associated them with specific files in 
+    a project to better support context launching, your migration delegate should 
+    be updated to update resource mappings.</li>
+</ol>
 <h2>3.3 RC1 - May 18, 2007</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=186527">186527</a>: F11 (Debug Last Launched) behaves wrong in 3.3m7<br>
