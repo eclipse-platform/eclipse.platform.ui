@@ -229,7 +229,20 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		
 		if (packedRef == null) {
 			//no pack.gz on server, get normal jar
-			return asLocalReference(reference, monitor);
+			ContentReference contentReference = null;
+			try {
+				contentReference = asLocalReference(reference, monitor);
+			}
+			catch (FileNotFoundException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			catch (IOException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			catch (CoreException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			return contentReference;
 		}
 
 		boolean success = false;
@@ -253,7 +266,11 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 						monitor.showCopyDetails(false);
 					}
 					//unpacking the jar will strip the ".pack.gz" and leave us back with the original filename
-					processor.processJar(packedFile);
+					try {
+						processor.processJar(packedFile);
+					} catch (Throwable e) {
+						//something is wrong unpacking
+					}
 	
 					if(tempFile.exists() && tempFile.length() > 0){
 						success = true;
@@ -271,7 +288,20 @@ public class FeaturePackagedContentProvider extends FeatureContentProvider {
 		}
 		if(!success){
 			//Something went wrong with the unpack, get the normal jar.
-			return asLocalReference(reference, monitor);
+			ContentReference contentReference = null;
+			try {
+				contentReference = asLocalReference(reference, monitor);
+			}
+			catch (FileNotFoundException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			catch (IOException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			catch (CoreException e) {
+				contentReference = continueOnErrorOrRethrow(reference.getIdentifier(), e);
+			}
+			return contentReference;
 		}
 		return packedRef;
 	}
