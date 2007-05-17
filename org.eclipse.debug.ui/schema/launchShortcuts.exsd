@@ -125,7 +125,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  Provides a human readable description of what the shortcut does (or will do) if the user selects it. A Description provided in this field will apply as the default description for all of the modes listed in the modes attribute. Since 3.3.
+                  Provides a human readable description of what the shortcut does (or will do) if the user selects it. A Description provided in this field will apply as the default description for all of the modes listed in the modes attribute. This attribute was added in the 3.3 release.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -206,14 +206,14 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
    <element name="configurationType">
       <annotation>
          <documentation>
-            This element allows more that one associated launch configuration type to be specified for this launch shortcut. Since 3.3M5
+            This element allows more that one associated launch configuration type to be specified for this launch shortcut. This element was added in the 3.3 release.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  This attribute is the identifier of an existing launch configuration type that is to be associated with this launch shortcut. This association is then used to determine what launch shortcuts apply to what types for context sensitive launching. Since 3.3M5
+                  This attribute is the identifier of an existing launch configuration type that is to be associated with this launch shortcut. This association is then used to determine what launch shortcuts apply to what types for context sensitive launching.
                </documentation>
             </annotation>
          </attribute>
@@ -223,7 +223,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
    <element name="description">
       <annotation>
          <documentation>
-            Provdies a mode specific desciption for this launch shortcut. Since 3.3.
+            Provdies a mode specific desciption for this launch shortcut. This element was added in the 3.3. release.
          </documentation>
       </annotation>
       <complexType>
@@ -353,7 +353,7 @@ Example:
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
-Since 3.3M5, launch shortcuts can provdie a human readable description. This is used to aid novice users during the context launching process when they are presented with a listing of launch shortcuts to choose from.&lt;br&gt;
+Since 3.3, launch shortcuts can provdie a human readable description. This is used to aid novice users during the context launching process when they are presented with a listing of launch shortcuts to choose from.&lt;br&gt;
 Descriptions can be provided in one of two ways:
 &lt;ol&gt;
 &lt;li&gt;A general description can be provided for the shortcut, which will apply to all modes that the shortcut supports&lt;/li&gt;
