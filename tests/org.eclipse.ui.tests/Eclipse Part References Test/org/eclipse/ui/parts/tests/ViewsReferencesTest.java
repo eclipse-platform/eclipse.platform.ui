@@ -51,8 +51,12 @@ public class ViewsReferencesTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        display = PlatformUI.createDisplay();
+        createDisplay();
     }
+
+	private void createDisplay() {
+		display = PlatformUI.createDisplay();
+	}
 
     /*
      * (non-Javadoc)
@@ -60,9 +64,14 @@ public class ViewsReferencesTest extends TestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     protected void tearDown() throws Exception {
-        display.dispose();
+        disposeDisplay();
         super.tearDown();
     }
+
+	private void disposeDisplay() {
+		display.dispose();
+		display = null;
+	}
 
     /**
      * Test that only view0's part has been created (ideally).
@@ -70,9 +79,17 @@ public class ViewsReferencesTest extends TestCase {
      */
     public void testActivePartView0() {
         openViews(0);
+        newDisplay();
         checkViewsParts(0);
-
     }
+
+    /**
+     * Dispose of the old display and create a new one.
+     */
+	private void newDisplay() {
+		disposeDisplay();
+        createDisplay();
+	}
 
     /**
      * Test that only view1's part has been created (ideally).
@@ -80,6 +97,7 @@ public class ViewsReferencesTest extends TestCase {
      */
     public void testActivePartView1() {
         openViews(1);
+        newDisplay();
         checkViewsParts(1);
 
     }
@@ -90,6 +108,7 @@ public class ViewsReferencesTest extends TestCase {
      */
     public void testActivePartView2() {
         openViews(2);
+        newDisplay();
         checkViewsParts(2);
     }
 
@@ -106,6 +125,7 @@ public class ViewsReferencesTest extends TestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
         
         openViews(0);
+        newDisplay();
         zoomView(0);
         
         // Restore the previous state (just in case)
@@ -125,6 +145,7 @@ public class ViewsReferencesTest extends TestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
         
         openViews(1);
+        newDisplay();
         zoomView(1);
         
         // Restore the previous state (just in case)
@@ -144,6 +165,7 @@ public class ViewsReferencesTest extends TestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
         
         openViews(2);
+        newDisplay();
         zoomView(2);
         
         // Restore the previous state (just in case)
