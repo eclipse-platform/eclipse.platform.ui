@@ -123,7 +123,7 @@ This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/c
          <attribute name="delegateDescription" type="string">
             <annotation>
                <documentation>
-                  This attribute provides a description of this launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release. EXPERIMENTAL.
+                  This attribute provides a description of this launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release.
                </documentation>
             </annotation>
          </attribute>
@@ -133,14 +133,14 @@ This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/c
    <element name="modeCombination">
       <annotation>
          <documentation>
-            This element specifies a launch mode combination this delegate supports. Each &lt;code&gt;modeCombination&lt;/code&gt; element specifies a comma seperated list of modes specifying a supported mixed launch mode. For example, a delegate that supports debugging, profiling and code coverage at the same time would specify a &lt;code&gt;modes&lt;/code&gt; element of consisting of &apos;debug, profile, coverage&apos;. This element can also be used to specify single launch modes that are supported - for example a &lt;code&gt;modes&lt;/code&gt; attribute of &apos;debug&apos;. This element was added in the 3.3 release. EXPERIMENTAL.
+            This element specifies a launch mode combination this delegate supports. Each &lt;code&gt;modeCombination&lt;/code&gt; element specifies a comma seperated list of modes specifying a supported mixed launch mode. For example, a delegate that supports debugging, profiling and code coverage at the same time would specify a &lt;code&gt;modes&lt;/code&gt; element of consisting of &apos;debug, profile, coverage&apos;. This element can also be used to specify single launch modes that are supported - for example a &lt;code&gt;modes&lt;/code&gt; attribute of &apos;debug&apos;. This element was added in the 3.3 release.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="modes" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma seperated list specifying a combination of modes the associated delegate supportes. This attribute was added in the 3.3 release. EXPERIMENTAL.
+                  a comma seperated list specifying a combination of modes the associated delegate supportes.
 
 &lt;p&gt;
 Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; element definition, this comma seperated list represents a mixed launch mode rather than the single supported launch modes. For example: a &lt;code&gt;modeCombination&lt;/code&gt; element specifying &lt;code&gt;modes&lt;/code&gt; of &apos;profile,debug&apos; indicates the delegate can debug and profile at the same time. In contrast, if &apos;profile,debug&apos; was specified by the &lt;code&gt;modes&lt;/code&gt; attribute of the &lt;code&gt;launchDelegate&lt;/code&gt; element, it would indicate the delegate could debug or profile, but not at the same time.
@@ -151,7 +151,7 @@ Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; elemen
          <attribute name="perspective" type="string">
             <annotation>
                <documentation>
-                  a string representing the id of a persepctive to switch to when launching. This attribute was added in the 3.3 release. EXPERIMENTAL.
+                  a string representing the id of a persepctive to switch to when launching.
                </documentation>
             </annotation>
          </attribute>
@@ -178,15 +178,15 @@ Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; elemen
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.debug.core.launchDelegates&quot;&gt;
   &lt;launchDelegate
-   	id=&quot;com.example.ExampleProfileDelegate&quot;
-   	delegate=&quot;com.example.ExampleProfileDelegate&quot;
-   	type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
-   	name=&quot;Eclipse JDT Java Profile Tooling&quot;&gt;
-  	&lt;modeCombination 
-  		modes=&quot;run, profile&quot;&gt;
-  		perspective=&quot;com.example.Perspective&quot;&gt;
-  	&lt;/modeCombination&gt;
-  	&lt;modeCombination modes=&quot;debug, profile, coverage&quot;&gt;&lt;/modeCombination&gt;
+    id=&quot;com.example.ExampleProfileDelegate&quot;
+    delegate=&quot;com.example.ExampleProfileDelegate&quot;
+    type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
+    name=&quot;Eclipse JDT Java Profile Tooling&quot;&gt;
+   &lt;modeCombination 
+    modes=&quot;run, profile&quot;&gt;
+    perspective=&quot;com.example.Perspective&quot;&gt;
+   &lt;/modeCombination&gt;
+   &lt;modeCombination modes=&quot;debug, profile, coverage&quot;&gt;&lt;/modeCombination&gt;
   &lt;/launchDelegate&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
