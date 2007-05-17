@@ -21,8 +21,11 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.StartupThreading;
+import org.eclipse.ui.internal.UISynchronizer;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.application.CompatibilityWorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
@@ -748,16 +751,57 @@ public abstract class WorkbenchAdvisor {
 	 *         <code>false</code> to exit
 	 */
 	public boolean openWindows() {
-		IStatus status = getWorkbenchConfigurer().restoreState();
-		if (!status.isOK()) {
-			if (status.getCode() == IWorkbenchConfigurer.RESTORE_CODE_EXIT) {
-				return false;
+		final Display display = PlatformUI.getWorkbench().getDisplay();
+		final boolean result [] = new boolean[1];
+		
+		// spawn another init thread.  For API compatibility We guarantee this method is called from 
+		// the UI thread but it could take enough time to disrupt progress reporting.
+		// spawn a new thread to do the grunt work of this initialization and spin the event loop 
+		// ourselves just like it's done in Workbench.
+		final boolean[] initDone = new boolean[]{false};
+		Thread initThread = new Thread() {
+			/* (non-Javadoc)
+			 * @see java.lang.Thread#run()
+			 */
+			public void run() {
+				try {
+					//declare us to be a startup thread so that our syncs will be executed 
+					UISynchronizer.startupThread.set(Boolean.TRUE);
+					final IWorkbenchConfigurer [] myConfigurer = new IWorkbenchConfigurer[1];
+					StartupThreading.runWithoutExceptions(new StartupRunnable() {
+	
+						public void runWithException() throws Throwable {
+							myConfigurer[0] = getWorkbenchConfigurer();
+							
+						}});
+					
+					IStatus status = myConfigurer[0].restoreState();
+					if (!status.isOK()) {
+						if (status.getCode() == IWorkbenchConfigurer.RESTORE_CODE_EXIT) {
+							result[0] = false;
+							return;
+						}
+						if (status.getCode() == IWorkbenchConfigurer.RESTORE_CODE_RESET) {
+							myConfigurer[0].openFirstTimeWindow();
+						}
+					}
+					result[0] = true;
+				} finally {
+					initDone[0] = true;
+					display.wake();
+				}
+			}};
+			initThread.start();
+
+			while (true) {
+				if (!display.readAndDispatch()) {
+					if (initDone[0])
+						break;
+					display.sleep();
+				}
+				
 			}
-			if (status.getCode() == IWorkbenchConfigurer.RESTORE_CODE_RESET) {
-				getWorkbenchConfigurer().openFirstTimeWindow();
-			}
-		}
-		return true;
+			return result[0];
 	}
 
 	/**

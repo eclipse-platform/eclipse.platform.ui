@@ -1333,11 +1333,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 		try {
 			UIStats.start(UIStats.RESTORE_WORKBENCH, "Workbench"); //$NON-NLS-1$
 
-			advisor.preStartup();
+			final boolean bail [] = new boolean[1]; 
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
-			if (!advisor.openWindows()) {
+				public void runWithException() throws Throwable {
+					advisor.preStartup();
+					
+					if (!advisor.openWindows()) {
+						bail[0] = true;
+					}
+				}});
+			
+			if (bail[0])
 				return false;
-			}
 
 		} finally {
 			UIStats.end(UIStats.RESTORE_WORKBENCH, this, "Workbench"); //$NON-NLS-1$
@@ -1825,8 +1833,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 
 	private void doOpenFirstTimeWindow() {
 		try {
+			final IAdaptable input [] = new IAdaptable[1];
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					input[0] = getDefaultPageInput();
+				}});
+			
 			busyOpenWorkbenchWindow(getPerspectiveRegistry()
-					.getDefaultPerspective(), getDefaultPageInput());
+					.getDefaultPerspective(), input[0]);
 		} catch (final WorkbenchException e) {
 			// Don't use the window's shell as the dialog parent,
 			// as the window is not open yet (bug 76724).
@@ -2274,20 +2289,29 @@ public final class Workbench extends EventManager implements IWorkbench {
 			
 			if (getSplash() != null) {
 				
+				final boolean[] initDone = new boolean[]{false};
 				Thread initThread = new Thread() {
 				/* (non-Javadoc)
 				 * @see java.lang.Thread#run()
 				 */
 				public void run() {
-					//declare us to be a startup thread so that our syncs will be executed 
-					UISynchronizer.startupThread.set(Boolean.TRUE);
-					initOK[0] = Workbench.this.init();
+					try {
+						//declare us to be a startup thread so that our syncs will be executed 
+						UISynchronizer.startupThread.set(Boolean.TRUE);
+						initOK[0] = Workbench.this.init();
+					} finally {
+						initDone[0] = true;
+						display.wake();
+					}
 				}};
 				initThread.start();
 				while (true) {
-					if (!display.readAndDispatch())
-						if (!initThread.isAlive())
+					if (!display.readAndDispatch()) {
+						if (initDone[0])
 							break;
+						display.sleep();
+					}
+					
 				}
 			}
 			else {
