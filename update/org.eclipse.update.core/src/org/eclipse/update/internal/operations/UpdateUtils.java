@@ -393,9 +393,13 @@ public class UpdateUtils {
 //	}
 	
 	public static UpdateSearchRequest createNewUpdatesRequest(IFeature [] features) {
+		return createNewUpdatesRequest(features, true);
+	}
+	
+	public static UpdateSearchRequest createNewUpdatesRequest(IFeature [] features, boolean automatic) {
 		UpdateSearchScope scope = new UpdateSearchScope();
 		scope.setUpdateMapURL(UpdateUtils.getUpdateMapURL());
-		UpdatesSearchCategory category = new UpdatesSearchCategory();
+		UpdatesSearchCategory category = new UpdatesSearchCategory(automatic);
 		if (features!=null)
 			category.setFeatures(features);
 		UpdateSearchRequest searchRequest = new UpdateSearchRequest(category, scope);

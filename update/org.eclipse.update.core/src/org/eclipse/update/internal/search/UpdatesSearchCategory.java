@@ -43,6 +43,7 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 	private static final String CATEGORY_ID =
 		"org.eclipse.update.core.new-updates"; //$NON-NLS-1$
 	private IFeature [] features;
+	private boolean automatic;
 
 	class Candidate {
 		ArrayList children;
@@ -316,7 +317,12 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 	private ArrayList candidates;
 
 	public UpdatesSearchCategory() {
+		this(true);
+	}
+	
+	public UpdatesSearchCategory(boolean automatic) {
 		super(CATEGORY_ID);
+		this.automatic = automatic;
 	}
 
 	private void collectValidHits(
@@ -335,12 +341,18 @@ public class UpdatesSearchCategory extends BaseSearchCategory {
 				UpdateCore.log(job.getFeature().getVersionedIdentifier() + ": " + Messages.DefaultFeatureParser_NoLicenseText, null);  //$NON-NLS-1$
 				continue;
 			}
-			IStatus status;
-			if( hit.getPatchedJob()==null){
-				status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
-			}else{
-				status = OperationsManager.getValidator().validatePendingChanges(new IInstallFeatureOperation[]{hit.getPatchedJob(), job});
-						
+			IStatus status = null;
+			
+			// Fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=132450
+			// Only validate for automatic updates because
+			// non-automatic once will arrive in the review wizard
+			// where additional validation will be performed
+			if (automatic) {
+				if( hit.getPatchedJob()==null){
+					status = OperationsManager.getValidator().validatePendingInstall(job.getOldFeature(), job.getFeature());
+				}else{
+					status = OperationsManager.getValidator().validatePendingChanges(new IInstallFeatureOperation[]{hit.getPatchedJob(), job});
+				}
 			}
 			if (status == null || status.getCode() == IStatus.WARNING) {
 				if (hit.isPatch()) {

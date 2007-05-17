@@ -115,7 +115,7 @@ public class UpdateJob extends Job {
 		this.isAutomatic = isAutomatic;
 		this.download = download;
 		updates = new ArrayList();
-		searchRequest = UpdateUtils.createNewUpdatesRequest(features);
+		searchRequest = UpdateUtils.createNewUpdatesRequest(features, isAutomatic);
 		setPriority(Job.DECORATE);
 		mirrorIndex = 0;
 	}

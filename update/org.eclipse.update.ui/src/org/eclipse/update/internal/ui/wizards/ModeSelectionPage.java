@@ -59,7 +59,7 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 
 	private void initializeSearch() {
 		if (searchRequest!=null) return;
-		searchRequest = UpdateUtils.createNewUpdatesRequest(null);
+		searchRequest = UpdateUtils.createNewUpdatesRequest(null, false);
 	}
 
 	/* (non-Javadoc)
