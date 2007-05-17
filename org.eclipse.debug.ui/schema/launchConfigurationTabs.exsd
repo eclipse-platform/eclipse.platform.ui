@@ -7,12 +7,6 @@
       </appInfo>
       <documentation>
          This extension point is to contribute launch configuration tabs (one or more) to an existing launch configuration tab group.
-
-
-&lt;p&gt;&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This extension point has been added as
-part of a work in progress. There is no guarantee that this API will
-remain unchanged during the 3.3 release cycle. Please do not use this API
-without consulting with the Platform/Debug team.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -103,7 +97,7 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
          <attribute name="delegate" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the &lt;code&gt;launchDelegate&lt;/code&gt; that this tab is associated with. The association allows the tab to be filtered based on the modesets supported by the delegates. since 3.3 EXPERIMENTAL
+                  The id of the &lt;code&gt;launchDelegate&lt;/code&gt; that this tab is associated with. The association allows the tab to be filtered based on the modesets supported by the delegates.
                </documentation>
             </annotation>
          </attribute>
