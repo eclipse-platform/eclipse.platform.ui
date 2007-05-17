@@ -13,6 +13,9 @@ package org.eclipse.core.databinding.conversion;
 /**
  * A one-way converter.
  * 
+ * This interface is not intended to be implemented by clients; clients should
+ * subclass {@link Converter}.
+ * 
  * @since 1.0
  * 
  */
