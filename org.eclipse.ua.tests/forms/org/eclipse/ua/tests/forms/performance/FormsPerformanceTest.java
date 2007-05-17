@@ -48,6 +48,9 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 		// Warm up.
 
 		Display display = PlatformUI.getWorkbench().getDisplay();
+
+		FormToolkit toolkit;
+		toolkit = new FormToolkit(display);
 		for(int samples = 0; samples < 2; samples++) {
 			Shell shell = new Shell(display);
 			shell.setSize(400, 300);
@@ -57,7 +60,7 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 			for (int i = 0; i < 5; i++) {
 				Composite c = new Composite(shell, SWT.H_SCROLL + SWT.V_SCROLL);
 				c.setLayout(new FillLayout());
-                createPartControl(c);
+                createPartControl(c, toolkit);
                 shell.layout(true); 
                 while(display.readAndDispatch()){/*empty*/}
 				c.dispose();
@@ -75,7 +78,7 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 			for (int i = 0; i < 3; i++) {
 				Composite c = new Composite(shell, SWT.H_SCROLL + SWT.V_SCROLL);
 				c.setLayout(new FillLayout());
-                createPartControl(c);
+                createPartControl(c, toolkit);
                 shell.layout(true);
                 while(display.readAndDispatch()){/*empty*/}
 				c.dispose();
@@ -84,16 +87,15 @@ public class FormsPerformanceTest extends PerformanceTestCase {
 			shell.dispose();
 			while(display.readAndDispatch()){/*empty*/}
 		}	
+		toolkit.dispose();
 		commitMeasurements();
 		assertPerformance();
 	}
 	
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent, FormToolkit toolkit) {
 		//Label l = new Label(parent, SWT.NULL);
 		//l.setText ("a label");
-		FormToolkit toolkit;
 		ScrolledForm form;
-		toolkit = new FormToolkit(parent.getDisplay());
 		form = toolkit.createScrolledForm(parent);
 		form.setText("Hello, Eclipse Forms");
 		TableWrapLayout layout = new TableWrapLayout();
