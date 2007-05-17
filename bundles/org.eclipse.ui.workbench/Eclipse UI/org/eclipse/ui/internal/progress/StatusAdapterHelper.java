@@ -69,6 +69,8 @@ public class StatusAdapterHelper {
 	}
 
 	public void clear() {
-		map.clear();
+		if (map != null) {
+			map.clear();
+		}
 	}
 }
