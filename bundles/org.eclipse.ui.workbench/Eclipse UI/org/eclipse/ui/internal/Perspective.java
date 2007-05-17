@@ -1953,10 +1953,6 @@ public class Perspective {
 		if (editorStack == null)
 			return;
 		
-//		if (editorStack.getState() == IStackPresentationSite.STATE_MINIMIZED &&
-//			editorAreaState != IStackPresentationSite.STATE_MINIMIZED)
-//			editorStack.setState(editorAreaState);
-		
 		// Whatever we're doing, make the current editor stack match it
 		editorStack.setStateLocal(editorAreaState);
 		
