@@ -915,21 +915,11 @@ public class Perspective {
 		// Set the visibility of all fast view pins
 		setAllPinsVisible(true);
 
-		// Trim Stack Support
-        boolean useNewMinMax = Perspective.useNewMinMax(this);
-		
-        // We have to set the editor area's stack state -before-
-        // activating the presentation since it's used there to determine
-        // size of the resulting stack
-        if (useNewMinMax) {
-			EditorStack editorStack = ((EditorSashContainer) editorArea).getUpperRightEditorStack(null);
-			if (editorStack != null)
-				editorStack.setPresentationState(editorAreaState);
-		}
-
 		// Show the layout
 		presentation.activate(getClientComposite());
 
+		// Trim Stack Support
+        boolean useNewMinMax = Perspective.useNewMinMax(this);
     	if (useNewMinMax) {
     		fastViewManager.activate();
 
