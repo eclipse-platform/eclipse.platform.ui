@@ -4,7 +4,7 @@
 <meta NAME="since" content="">
 </head><body><h2>Editing Files</h2>
 <p>Since: <br>
-Last Modified: $Date: 2004/06/10 21:32:44 $</p>
+Last Modified: $Date: 2004/06/14 20:44:55 $</p>
 <p>
 These tests are to sanity check editors behavior relating to calling validateEdit. The tests will
 try to cover all cases where files are changed by the validateEdit handler and changes are made
@@ -48,11 +48,11 @@ These tests should be run against the following combinations of tools:
 <li>The user saves the file, and then can continue editing without validateEdit being called.
 </ol>
 <!-- ------------------------------------------------------------------------------ -->
-<h3>S2b: Validate edit cancelled</h3>
+<h3>S2b: Validate edit canceled</h3>
 <ol>
 <li>Open a file that has been checked out as read-only from a repository provider.
 <li>Start editing the file, validateEdit should be called.
-<li>validateEdit is cancelled, the users edit is not accepted and the file cannot be edited.
+<li>validateEdit is canceled, the users edit is not accepted and the file cannot be edited.
 <li>The user should still be able to browse the contents of the file and trying to edit it again
 </ol>
 <!-- ------------------------------------------------------------------------------ -->
@@ -60,7 +60,7 @@ These tests should be run against the following combinations of tools:
 <ol>
 <li>Open a file that has been checked out as read-only from a repository provider.
 <li>Start editing the file, validateEdit should be called.
-<li>validateEdit is cancelled, the users edit is not accepted and the file cannot be edited. User should
+<li>validateEdit is canceled, the users edit is not accepted and the file cannot be edited. User should
 be shown the error returned from the validateEdit provider.
 <li>The user should still be able to browse the contents of the file and trying to edit it again
 </ol>
@@ -83,7 +83,7 @@ be shown the error returned from the validateEdit provider.
 <li>validateEdit returns OK, the user's edit is accepted and the file can be edited normally.
 <li>The user saves the file, and then can continue editing without validateEdit being called.
 <li>The user saves the file and keeps the editor opened.
-<li>The user then un-checks out the file and new file contents are retreived from the server.
+<li>The user then un-checks out the file and new file contents are retrieved from the server.
 <li>The new file contents are loaded into the editor and validateEdit is not called.
 <li>
 </ol>

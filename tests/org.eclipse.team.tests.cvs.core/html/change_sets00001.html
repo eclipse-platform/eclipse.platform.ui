@@ -4,12 +4,12 @@
 <meta NAME="since" content="">
 </head><body><h2>Change Sets Layout</h2>
 <p>Since: 3.1 M2<br>
-Last Modified: $Date: 2005/05/10 16:16:42 $</p>
+Last Modified: $Date$</p>
 
 <h3>Change Sets for incoming changes</h3>
 
 To perform these scenarios you will need to get one or more projects 
-in your workspace that have many incoming changes. Perferably
+in your workspace that have many incoming changes. Preferably
 all the changes will have commit comments and some files will share
 a comment. Once you have this setup, you can perform the following sub-scenarios.
 
@@ -26,9 +26,9 @@ disable Change Sets. The same nodes should remain expanded and selected.
 The expansion should remain. There may be more expanded if the same
 expanded project or folder appears in multiple change sets. The selection
 will remain unless there are two entries for the same resource (i.e. if a project
-was selected and it apears in multiple sets, it will no longer be expanded).
+was selected and it appears in multiple sets, it will no longer be expanded).
 </ol>
-You should also confirm that markers and conflicts are properly propogated to
+You should also confirm that markers and conflicts are properly propagated to
 parent nodes.
 <h4>Change Set Layouts</h4>
 Now try the various sub-layouts (Flat, Tree and Compressed) and ensure that switching
@@ -37,8 +37,8 @@ is performant and that the resulting tree nodes are correct.
 <h4>Change Set Modes</h4>
 <ol>
 <li>Switch between the various modes and ensure that the displayed nodes are correct.
-Also ensure that expansion and seleciton is maintained.
-<li>Only Incomign and Outgoing mode shw change sets.
+Also ensure that expansion and selection is maintained.
+<li>Only Incoming and Outgoing mode show change sets.
 </ol>
 
 <h4>Updating</h4>
@@ -49,10 +49,10 @@ other expanded nodes remain expanded.
 
 <h3>Outgoing  Sets</h3>
 
-The following aspects of outgoing change sets should be tested.
+The following aspects of outgoing change sets should be tested:
 <ol>
 <li>Modified files can be added to a new or existing change set. Ensure that
-when they are added, he file remains visible in the Sync view.
+when they are added, the file remains visible in the Sync view.
 <li>Files in a change set can be transfered to another change set
 <li>If there is a default change set, any modified file that is not already
 part of a change set is placed in the default set. Files that are already
@@ -60,9 +60,9 @@ in a set should stay in that set if more changes are made to the files.
 <li>The title and comment of a  change set can be changed.
 <li>Layout and modes changes work properly for outgoing change sets in the
 Synchronize view.
-<li>ing one or more files in a change set will result in a commit 
+<li>Committing one or more files in a change set will result in a commit 
 dialog that is primed with the comment from the set.
-<li>change sets (including which is the default), are preserved accross restarts.
+<li>change sets (including which is the default), are preserved across restarts.
 </ol>
 
 </body></html>
