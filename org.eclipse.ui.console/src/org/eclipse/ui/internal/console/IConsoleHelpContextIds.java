@@ -33,6 +33,9 @@ public interface IConsoleHelpContextIds {
 	public static final String CONSOLE_PASTE_ACTION = PREFIX + "console_paste_action_context"; //$NON-NLS-1$
 	public static final String CONSOLE_FIND_REPLACE_ACTION = PREFIX + "console_find_replace_action_context"; //$NON-NLS-1$
 	public static final String CONSOLE_OPEN_LINK_ACTION = PREFIX + "console_open_link_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_OPEN_CONSOLE_ACTION = PREFIX + "console_open_console_action_context"; //$NON-NLS-1$
+	public static final String CONSOLE_DISPLAY_CONSOLE_ACTION = PREFIX + "console_display_console_action"; //$NON-NLS-1$
+	public static final String CONSOLE_PIN_CONSOLE_ACITON = PREFIX + "console_pin_console_action"; //$NON-NLS-1$
 	
 	// Views
 	public static final String CONSOLE_VIEW = PREFIX + "console_view_context"; //$NON-NLS-1$
