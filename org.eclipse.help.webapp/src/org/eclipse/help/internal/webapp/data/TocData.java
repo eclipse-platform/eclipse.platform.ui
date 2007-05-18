@@ -300,12 +300,23 @@ public class TocData extends ActivitiesData {
 			}
 		} else {
 			// try obtaining the TOC from the topic
-			selectedToc = findTocContainingTopic(topicHref);
 
-			ITopic topic = findTopic();
-			if (topic != null && selectedToc >= 0) {
-				topicPath = getTopicPathInToc(topic, tocs[selectedToc]);
-			}
+			int index = -1;
+			do {
+				selectedToc = findTocContainingTopic(topicHref);
+				
+				ITopic topic = findTopic();
+				if (topic != null && selectedToc >= 0) {
+					topicPath = getTopicPathInToc(topic, tocs[selectedToc]);
+				}
+				// if no match has been found, check if there is an anchor
+				if (topicPath == null && topicHref != null) {
+					index = topicHref.indexOf('#');
+					if (index != -1)
+						topicHref = topicHref.substring(0, index);
+				}
+				// if there was an anchor, search again without it
+			} while (topicPath == null && index != -1);
 		}
 	}
 
@@ -363,7 +374,6 @@ public class TocData extends ActivitiesData {
 			if (!isEnabled(i))
 				if (tocs[i].getTopic(topic) != null)
 					return i;
-
 		// nothing found
 		return -1;
 	}
