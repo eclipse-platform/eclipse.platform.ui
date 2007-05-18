@@ -5,7 +5,11 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
+import org.eclipse.compare.internal.patch.FileDiff;
+import org.eclipse.compare.internal.patch.FileDiffResult;
+import org.eclipse.compare.internal.patch.Hunk;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
@@ -170,7 +174,30 @@ public class FileDiffResultTest extends WorkspaceTest {
 
 	}
 
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185379
+	public void testFileDiffResultWithNullPath() {
+		MyFileDiff myFileDiff = new MyFileDiff();
+		FileDiffResult fileDiffResult = new FileDiffResult(myFileDiff,
+				patchConfiguration);
+		try {
+			fileDiffResult.calculateFuzz(new ArrayList(), nullProgressMonitor);
+		} catch (NullPointerException e) {
+			fail();
+		}
+	}
+
 	// utility methods
+
+	/**
+	 * A mock FileDiff class.
+	 */
+	private class MyFileDiff extends FileDiff {
+		protected MyFileDiff() {
+			super(null, 0, null, 0);
+			add(new Hunk(this, new int[] { 0, 0 }, new int[] { 0, 0 },
+					new ArrayList(), false, false, false));
+		}
+	}
 
 	/**
 	 * @param project
