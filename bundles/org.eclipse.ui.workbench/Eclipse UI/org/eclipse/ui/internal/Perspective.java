@@ -915,11 +915,20 @@ public class Perspective {
 		// Set the visibility of all fast view pins
 		setAllPinsVisible(true);
 
+		// Trim Stack Support
+        boolean useNewMinMax = Perspective.useNewMinMax(this);
+		boolean hideEditorArea = shouldHideEditorsOnActivate || (editorHidden && editorHolder == null);
+		
+        // We have to set the editor area's stack state -before-
+        // activating the presentation since it's used there to determine
+        // size of the resulting stack
+        if (useNewMinMax && !hideEditorArea) {
+			refreshEditorAreaVisibility();
+        }
+
 		// Show the layout
 		presentation.activate(getClientComposite());
 
-		// Trim Stack Support
-        boolean useNewMinMax = Perspective.useNewMinMax(this);
     	if (useNewMinMax) {
     		fastViewManager.activate();
 
@@ -962,7 +971,8 @@ public class Perspective {
 			}
 		}
 
-		if (shouldHideEditorsOnActivate || (editorHidden && editorHolder == null)) {
+		// We hide the editor area -after- the presentation activates
+		if (hideEditorArea) {
 			// We do this here to ensure that createPartControl is called on the
 			// top editor
 			// before it is hidden. See bug 20166.
@@ -972,10 +982,6 @@ public class Perspective {
 			// this is an override so it should handle both states
 			if (useNewMinMax)
 				setEditorAreaTrimVisibility(editorAreaState == IStackPresentationSite.STATE_MINIMIZED);
-		}
-		else {
-			if (useNewMinMax)
-				refreshEditorAreaVisibility();
 		}
 	}
 
