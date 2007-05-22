@@ -127,6 +127,8 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @see org.eclipse.ui.internal.registry.IThemeDescriptor#getName()
      */
     public String getName() {
+    	if (name == null)
+    		return getId();
         return name;
     }
 
