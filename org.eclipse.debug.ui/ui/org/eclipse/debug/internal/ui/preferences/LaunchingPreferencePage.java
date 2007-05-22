@@ -192,6 +192,7 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		fCheckParent.setEnabled(value);
 		fLaunchLastIfNotLaunchable.setSelection(!parent);
 		fLaunchLastIfNotLaunchable.setEnabled(value);
+		super.performDefaults();
 	}
 	
 	/* (non-Javadoc)
