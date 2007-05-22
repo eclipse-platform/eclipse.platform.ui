@@ -145,21 +145,24 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private DisposeListener disposeListener = new DisposeListener() {
 
 		public void widgetDisposed(DisposeEvent e) {
-			synchronized (this) {
-				if (saveablesProviders != null) {
-					for (int i = 0; i < saveablesProviders.length; i++) {
-						saveablesProviders[i].dispose();
+			// synchronize in the same order as in the init method.
+			synchronized (instances) {
+				synchronized (NavigatorSaveablesService.this) {
+					if (saveablesProviders != null) {
+						for (int i = 0; i < saveablesProviders.length; i++) {
+							saveablesProviders[i].dispose();
+						}
 					}
+					removeInstance(NavigatorSaveablesService.this);
+					contentService = null;
+					currentSaveables = null;
+					outsideListener = null;
+					saveablesLifecycleListener = null;
+					saveablesSource = null;
+					viewer = null;
+					saveablesProviders = null;
+					disposeListener = null;
 				}
-				removeInstance(NavigatorSaveablesService.this);
-				contentService = null;
-				currentSaveables = null;
-				outsideListener = null;
-				saveablesLifecycleListener = null;
-				saveablesSource = null;
-				viewer = null;
-				saveablesProviders = null;
-				disposeListener = null;
 			}
 		}
 	};
@@ -497,6 +500,11 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		if (addedSaveables.size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
+					// We might be disposed at this point.
+					// One indication of this is that saveablesSource is null.
+					if (saveablesSource == null) {
+						return;
+					}
 					outsideListener.handleLifecycleEvent(new SaveablesLifecycleEvent(
 							saveablesSource, SaveablesLifecycleEvent.POST_OPEN,
 							(Saveable[]) addedSaveables
@@ -511,6 +519,11 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 		if (removedSaveables.size() > 0) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
+					// we might be disposed at this point
+					// One indication of this is that saveablesSource is null.
+					if (saveablesSource == null) {
+						return;
+					}
 					outsideListener
 							.handleLifecycleEvent(new SaveablesLifecycleEvent(
 									saveablesSource,
