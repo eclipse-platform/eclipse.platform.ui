@@ -26,7 +26,7 @@ import org.eclipse.update.internal.core.UpdateCore;
 public class HttpResponse extends AbstractResponse {
 	/**
 	 * Monitored InputStream.  Upon IOException, discards
-	 * connection so it is not resused.
+	 * connection so it is not reused.
 	 *
 	 */
 	private class MonitoringInputStream extends FilterInputStream {
@@ -39,7 +39,7 @@ public class HttpResponse extends AbstractResponse {
 
 		public int available() throws IOException {
 			try {
-				return super.available();
+				return in!=null?super.available():0;
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -61,7 +61,7 @@ public class HttpResponse extends AbstractResponse {
 
 		public int read() throws IOException {
 			try {
-				return super.read();
+				return in!=null?super.read():-1;
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -70,7 +70,8 @@ public class HttpResponse extends AbstractResponse {
 
 		public synchronized void reset() throws IOException {
 			try {
-				super.reset();
+				if (in!=null)
+					super.reset();
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -79,7 +80,7 @@ public class HttpResponse extends AbstractResponse {
 
 		public int read(byte[] b) throws IOException {
 			try {
-				return super.read(b);
+				return in!=null?super.read(b):-1;
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -88,7 +89,7 @@ public class HttpResponse extends AbstractResponse {
 
 		public int read(byte[] b, int off, int len) throws IOException {
 			try {
-				return super.read(b, off, len);
+				return in!=null?super.read(b, off, len):-1;
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;
@@ -97,7 +98,7 @@ public class HttpResponse extends AbstractResponse {
 
 		public long skip(long n) throws IOException {
 			try {
-				return super.skip(n);
+				return in!=null?super.skip(n):0;
 			} catch (IOException ioe) {
 				connection = null;
 				throw ioe;

@@ -342,6 +342,8 @@ public final class Messages extends NLS {
 	
 	public static String SiteOptimizer_inputNotSpecified;
 	public static String SiteOptimizer_inputFileNotFound;
+	public static String SiteCategory_other_label;
+	public static String SiteCategory_other_description;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

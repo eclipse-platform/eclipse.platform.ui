@@ -13,7 +13,8 @@ package org.eclipse.update.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.update.internal.core.*;
+import org.eclipse.update.internal.core.Messages;
+import org.eclipse.update.internal.core.UpdateCore;
 
 /**
  * Convenience implementation of a feature reference.
@@ -73,6 +74,13 @@ public class SiteFeatureReference extends SiteFeatureReferenceModel implements I
 			}
 		}
 
+		if (categories.size() == 0) {
+			//there was no category defined
+			//so we add the default "Other" category
+			ICategory category = new Category(Messages.SiteCategory_other_label, Messages.SiteCategory_other_description);
+			categories.add(category);
+		}
+		
 		ICategory[] result = new ICategory[0];
 
 		if (!(categories == null || categories.isEmpty())) {

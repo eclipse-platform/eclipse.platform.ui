@@ -48,8 +48,6 @@ public final class UpdateUIMessages extends NLS {
 	public static String FeatureAdapter_failure;
 	public static String SiteBookmark_connecting;
 	public static String SiteBookmark_downloading;
-	public static String SiteCategory_other_label;
-	public static String SiteCategory_other_description;
 	public static String MainPreferencePage_checkSignature;
 	public static String MainPreferencePage_automaticallyChooseMirror;
 	public static String MainPreferencePage_historySize;

@@ -22,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.IURLEntry;
+import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.ui.UpdateUIMessages;
 
 public class SiteCategory extends UIModelObject {
@@ -39,7 +40,7 @@ public class SiteCategory extends UIModelObject {
 		public OtherCategory() {
 			entry = new IURLEntry() {
 				public String getAnnotation() {
-					return UpdateUIMessages.SiteCategory_other_description; 
+					return Messages.SiteCategory_other_description; 
 				}
 				public URL getURL() {
 					return null;
@@ -69,7 +70,7 @@ public class SiteCategory extends UIModelObject {
 	public SiteCategory(SiteBookmark bookmark, String name, ICategory category) {
 		this.bookmark = bookmark;
 		if (category == null) {
-			this.name = UpdateUIMessages.SiteCategory_other_label; 
+			this.name = Messages.SiteCategory_other_label; 
 			this.category = new OtherCategory();
 		} else {
 			this.name = name;
