@@ -571,8 +571,12 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 	public final void dispose() {
 		super.dispose();
-		clearBindings();
+		clear();
+	}
+
+	private void clear() {
 		clearActivations();
+		clearBindings();
 		clearImages();
 		clearMenus();
 	}
@@ -600,7 +604,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * </p>
 	 */
 	public final void read() {
-		super.read();
+		clear();
+		LegacyActionPersistence.super.read();
 
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -662,9 +667,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 		}
 
-		clearMenus();
-		clearBindings();
-		clearImages();
 		readActionSets(indexedConfigurationElements[INDEX_ACTION_SETS],
 				actionSetCount);
 		readEditorContributions(
@@ -679,6 +681,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		readViewerContributions(
 				indexedConfigurationElements[INDEX_VIEWER_CONTRIBUTIONS],
 				viewerContributionCount);
+		
 	}
 
 	/**

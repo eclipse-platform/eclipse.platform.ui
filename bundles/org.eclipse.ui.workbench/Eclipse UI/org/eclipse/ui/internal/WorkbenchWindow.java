@@ -103,6 +103,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
+import org.eclipse.ui.internal.contexts.ContextAuthority;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -505,16 +506,22 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			Perspective[] perspectives = getActiveWorkbenchPage()
 					.getOpenInternalPerspectives();
 			boolean updateNeeded = true;
-			for (int i = 0; i < perspectives.length; i++) {
-
-				for (int j = 0; j < objects.length; j++) {
-					if (objects[j] instanceof IActionSetDescriptor) {
-						perspectives[i]
-								.removeActionSet((IActionSetDescriptor) objects[j]);
-						getActionPresentation()
-								.removeActionSet((IActionSetDescriptor) objects[j]);
+			IContextService contextService = (IContextService) getService(IContextService.class);
+			try {
+				contextService.activateContext(ContextAuthority.DEFER_EVENTS);
+				
+				for (int i = 0; i < perspectives.length; i++) {
+					for (int j = 0; j < objects.length; j++) {
+						if (objects[j] instanceof IActionSetDescriptor) {
+							perspectives[i]
+									.removeActionSet((IActionSetDescriptor) objects[j]);
+							getActionPresentation().removeActionSet(
+									(IActionSetDescriptor) objects[j]);
+						}
 					}
 				}
+			} finally {
+				contextService.activateContext(ContextAuthority.SEND_EVENTS);
 			}
 
 			if (updateNeeded) {
