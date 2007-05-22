@@ -520,8 +520,12 @@ public final class ParameterizedCommand implements Comparable {
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
-			hashCode = hashCode * HASH_FACTOR
-					+ Util.hashCode(parameterizations);
+			hashCode = hashCode * HASH_FACTOR;
+			if (parameterizations!=null) {
+				for (int i = 0; i < parameterizations.length; i++) {
+					hashCode += Util.hashCode(parameterizations[i]);
+				}
+			}
 			if (hashCode == HASH_CODE_NOT_COMPUTED) {
 				hashCode++;
 			}
