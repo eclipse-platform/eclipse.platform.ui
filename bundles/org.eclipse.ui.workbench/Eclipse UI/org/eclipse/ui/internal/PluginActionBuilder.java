@@ -268,8 +268,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (path != null) {
                 parent = mng.findMenuUsingPath(path);
                 if (parent == null) {
-					WorkbenchPlugin
-							.log("Plugin \'" //$NON-NLS-1$
+					ideLog("Plugin \'" //$NON-NLS-1$
 									+ menuElement.getContributor().getName()
 									+ "\' invalid Menu Extension (Path \'"  //$NON-NLS-1$
 									+ path + "\' is invalid): " + id); //$NON-NLS-1$
@@ -348,8 +347,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
             if (mpath != null) {
                 parent = parent.findMenuUsingPath(mpath);
                 if (parent == null) {
-                    WorkbenchPlugin
-                            .log("Plug-in '" + ad.getPluginId() + "' contributed an invalid Menu Extension (Path: '" + mpath + "' is invalid): " + ad.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    ideLog("Plug-in '" + ad.getPluginId() + "' contributed an invalid Menu Extension (Path: '" + mpath + "' is invalid): " + ad.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     return;
                 }
             }
@@ -510,5 +508,32 @@ public abstract class PluginActionBuilder extends RegistryReader {
 				actions = null;
             }
 		}
+    }
+    
+    private static boolean allowIdeLogging = false;
+    
+    /**
+	 * If set to <code>false</code>, some of the logs that can be caused by
+	 * use IDE plugins from an RCP app will be ignored.
+	 * 
+	 * @param b
+	 *            Log the errors or not.
+	 * @since 3.3
+	 */
+    public static void setAllowIdeLogging(boolean b) {
+    	allowIdeLogging = b;
+    }
+    
+    /**
+	 * These are log messages that should be ignored by RCP apps when using the
+	 * IDE plugins.
+	 * 
+	 * @param msg
+	 * @since 3.3
+	 */
+    private static void ideLog(String msg) {
+    	if (allowIdeLogging) {
+    		WorkbenchPlugin.log(msg);
+    	}
     }
 }

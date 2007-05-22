@@ -54,6 +54,7 @@ import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ISelectionConversionService;
+import org.eclipse.ui.internal.PluginActionBuilder;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -155,6 +156,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
 
+		PluginActionBuilder.setAllowIdeLogging(true);
+		
 		// make sure we always save and restore workspace state
 		configurer.setSaveAndRestore(true);
 
