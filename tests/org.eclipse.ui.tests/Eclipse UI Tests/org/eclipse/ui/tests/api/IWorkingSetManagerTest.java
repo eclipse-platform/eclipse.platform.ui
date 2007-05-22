@@ -281,4 +281,40 @@ public class IWorkingSetManagerTest extends UITestCase {
         assertTrue(ArrayUtil.equals(new IWorkingSet[] { workingSet2 },
                 fWorkingSetManager.getWorkingSets()));
     }
+    
+    /**
+     * Tests to ensure that a misbehaving listener does not bring down the manager.
+     * 
+     * @throws Throwable
+     */
+    public void testListenerSafety() throws Throwable {
+		final boolean[] result = new boolean[1];
+		// add a bogus listener that dies unexpectedly
+		IPropertyChangeListener badListener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				throw new RuntimeException();
+
+			}
+		};
+		IPropertyChangeListener goodListener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				result[0] = true;
+
+			}
+		};
+		fWorkingSetManager.addPropertyChangeListener(badListener);
+		fWorkingSetManager.addPropertyChangeListener(goodListener);
+		try {
+			IWorkingSet set = fWorkingSetManager.createWorkingSet("foo",
+					new IAdaptable[0]);
+			fWorkingSetManager.addWorkingSet(set);
+
+			assertTrue("Good listener wasn't invoked", result[0]);
+		} finally {
+			fWorkingSetManager.removePropertyChangeListener(badListener);
+			fWorkingSetManager.removePropertyChangeListener(goodListener);
+		}
+	}
 }
