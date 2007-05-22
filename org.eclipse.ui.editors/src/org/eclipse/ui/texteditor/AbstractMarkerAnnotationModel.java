@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -474,6 +474,11 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 	 * assumed to carry the correct positional information. If it is detected
 	 * that the marker is invalid and should thus be deleted, this method
 	 * returns <code>false</code>.
+	 * <p>
+	 * <strong>Note:</strong> This implementation queries the registered
+	 * {@linkplain IMarkerUpdater}s. If any of these updaters returns
+	 * <code>false</code> this method also returns <code>false</code>. 
+	 * </p>
 	 *
 	 * @param marker the marker to be updated
 	 * @param document the document into which the given position points
