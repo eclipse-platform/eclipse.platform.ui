@@ -94,8 +94,13 @@ public final class TabbedStackPresentation extends StackPresentation {
              		break;
              	}
              	case TabFolderEvent.EVENT_PANE_MENU: {
-             	    TabbedStackPresentation.this.showPaneMenu(folder.getPartForTab(e.tab), new Point(e.x, e.y)); 	    
-             	    break;
+                    IPresentablePart part = getSite().getSelectedPart();
+             		if (part != null) {
+             		    part.setFocus();
+             		}
+             		TabbedStackPresentation.this.showPaneMenu(folder
+             				.getPartForTab(e.tab), new Point(e.x, e.y));
+             		break;
              	}
              	case TabFolderEvent.EVENT_DRAG_START: {
              	    AbstractTabItem beingDragged = e.tab;
