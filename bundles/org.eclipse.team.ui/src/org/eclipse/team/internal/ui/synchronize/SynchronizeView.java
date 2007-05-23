@@ -447,6 +447,8 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		if(progress != null) {
 			progress.showBusyForFamily(ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION);
 		}
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.SYNC_VIEW);
 	}
 	
 	/**
