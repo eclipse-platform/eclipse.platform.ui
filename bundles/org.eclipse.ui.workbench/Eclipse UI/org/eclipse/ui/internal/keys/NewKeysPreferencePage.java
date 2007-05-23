@@ -561,7 +561,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				while (i.hasNext()) {
 					Binding b = (Binding) i.next();
 					if (binding != b
-							&& b.getContextId().equals(binding.getContextId())) {
+							&& b.getContextId().equals(binding.getContextId())
+							&& b.getSchemeId().equals(binding.getSchemeId())) {
 						return true;
 					}
 				}
