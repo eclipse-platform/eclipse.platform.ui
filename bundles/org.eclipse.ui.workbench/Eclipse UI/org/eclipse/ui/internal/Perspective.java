@@ -1008,6 +1008,9 @@ public class Perspective {
 			
 			fastViewManager.deActivate();
 		}
+		
+		// Ensure that the editor area trim is hidden as well
+		setEditorAreaTrimVisibility(false);
 	}
 
     /**
