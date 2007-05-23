@@ -99,7 +99,8 @@ function goToEnd() {
     if (treeRoot === null) { 
         return; 
     }
-    focusOnDeepestVisibleChild(treeRoot, false);
+
+    focusOnDeepestVisibleChild(treeRoot.parentNode, false);
 }
 
 // Handle a left arrow key event
