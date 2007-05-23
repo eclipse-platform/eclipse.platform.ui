@@ -179,8 +179,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				comparator.setAscending(!comparator.isAscending());
 			}
 			tree.setSortColumn(treeColumn);
-			tree.setSortDirection(comparator.isAscending() ? SWT.UP : SWT.DOWN);
 			comparator.setSortColumn(column);
+			tree.setSortDirection(comparator.isAscending() ? SWT.UP : SWT.DOWN);
 			try {
 				filteredTree.getViewer().getTree().setRedraw(false);
 				filteredTree.getViewer().refresh();
@@ -714,33 +714,34 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		public final int compare(final Viewer viewer, final Object a,
 				final Object b) {
 
-			IBaseLabelProvider baseLabel = filteredTree.getViewer()
-					.getLabelProvider();
+			int result = compareColumn(viewer, a, b, sortColumn);
+			if (result == 0 && sortColumn != lastSortColumn) {
+				result = compareColumn(viewer, a, b, lastSortColumn);
+			}
+			return ascending ? result : (-1) * result;
+		}
+		
+		private int compareColumn(final Viewer viewer, final Object a, final Object b,
+				final int columnNumber) {
+			if (columnNumber == BindingLabelProvider.COLUMN_USER) {
+				return sortUser(viewer, a, b);
+			}
+			IBaseLabelProvider baseLabel = ((TreeViewer)viewer).getLabelProvider();
 			if (baseLabel instanceof ITableLabelProvider) {
 				ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
-				String e1p = tableProvider.getColumnText(a, sortColumn);
-				String e2p = tableProvider.getColumnText(b, sortColumn);
+				String e1p = tableProvider.getColumnText(a, columnNumber);
+				String e2p = tableProvider.getColumnText(b, columnNumber);
 				if (e1p != null && e2p != null) {
-					int result = getComparator().compare(e1p, e2p);
-					if (result == 0 && sortColumn != lastSortColumn) {
-						result = secondaryCompare(tableProvider, a, b);
-					}
-					return ascending ? result : (-1) * result;
-
+					return getComparator().compare(e1p, e2p);
 				}
 			}
-			return super.compare(viewer, a, b);
+			return 0;
 		}
-
-		private final int secondaryCompare(
-				final ITableLabelProvider tableProvider, final Object a,
-				final Object b) {
-			int result = 0;
-			String e1p = tableProvider.getColumnText(a, lastSortColumn);
-			String e2p = tableProvider.getColumnText(b, lastSortColumn);
-			if (e1p != null && e2p != null) {
-				result = getComparator().compare(e1p, e2p);
-			}
+		
+		private int sortUser(final Viewer viewer, final Object a, final Object b) {
+			int typeA = (a instanceof Binding?((Binding)a).getType():Binding.SYSTEM);
+			int typeB = (b instanceof Binding?((Binding)b).getType():Binding.SYSTEM);
+			int result = typeA - typeB;
 			return result;
 		}
 
@@ -1594,6 +1595,8 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final TreeColumn userMarker = new TreeColumn(tree, SWT.LEFT,
 				BindingLabelProvider.COLUMN_USER);
 		userMarker.setText(NewKeysPreferenceMessages.UserColumn_Text);
+		userMarker.addSelectionListener(new ResortColumn(comparator,
+				userMarker, tree, BindingLabelProvider.COLUMN_USER));
 
 		// Set up the providers for the viewer.
 		final TreeViewer viewer = filteredTree.getViewer();
