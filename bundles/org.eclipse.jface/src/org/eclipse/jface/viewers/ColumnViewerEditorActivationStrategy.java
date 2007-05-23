@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     											 - fix for bug 187817
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -41,9 +43,10 @@ public class ColumnViewerEditorActivationStrategy {
 	 */
 	protected boolean isEditorActivationEvent(
 			ColumnViewerEditorActivationEvent event) {
-		return event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
+		boolean singleSelect = ((IStructuredSelection)viewer.getSelection()).size() == 1;
+		return singleSelect && (event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
 				|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
-				|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL;
+				|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
 	}
 
 	/**
