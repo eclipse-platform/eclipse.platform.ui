@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -136,6 +136,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				// disposed the control while the UI was posted.
 				return Status.OK_STATUS;
 			}
+			runBatchedClear();
 			runBatchedUpdates();
 			if (hasMoreUpdates() || isQueryRunning()) {
 				schedule(500);
@@ -210,6 +211,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private boolean fIsBusyShown;
 	private ISearchResultViewPart fViewPart;
 	private Set fBatchedUpdates;
+	private boolean fBatchedClearAll;
+	
 	private ISearchResultListener fListener;
 	private IQueryListener fQueryListener;
 	private MenuManager fMenu;
@@ -266,6 +269,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fSelectAllAction= new SelectAllAction();
 		createLayoutActions();
 		fBatchedUpdates = new HashSet();
+		fBatchedClearAll= false;
+		
 		fListener = new ISearchResultListener() {
 			public void searchResultChanged(SearchResultEvent e) {
 				handleSearchResultChanged(e);
@@ -1166,15 +1171,13 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private synchronized void postClear() {
-		asyncExec(new Runnable() {
-			public void run() {
-				runClear();
-			}
-		});
+		fBatchedClearAll= true;
+		fBatchedUpdates.clear();
+		scheduleUIUpdate();
 	}
 
 	private synchronized boolean hasMoreUpdates() {
-		return fBatchedUpdates.size() > 0;
+		return fBatchedClearAll || fBatchedUpdates.size() > 0;
 	}
 
 	private boolean isQueryRunning() {
@@ -1185,9 +1188,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		return false;
 	}
 
-	private void runClear() {
-		synchronized (this) {
-			fBatchedUpdates.clear();
+	private void runBatchedClear() {
+		synchronized(this) {
+			if (!fBatchedClearAll) {
+				return;
+			}
+			fBatchedClearAll= false;
 			updateBusyLabel();
 		}
 		getViewPart().updateLabel();
