@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
  *                                                 fix for 159597, refactoring (bug 153993), 
- *                                                 widget-independency (bug 154329)
+ *                                                 widget-independency (bug 154329), fix for 187826
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -314,6 +314,11 @@ public class TableViewer extends AbstractTableViewer {
 			boolean reveal) {
 		if (isBusy())
 			return;
+		
+		if( isCellEditorActive() ) {
+			cancelEditing();
+		}
+		
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRefresh(element, updateLabels);

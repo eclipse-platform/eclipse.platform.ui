@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
- *												   fix in bug 163317, 151295, 167323, 167858, 184346
+ *												   fix in bug 163317, 151295, 167323, 167858, 184346, 187826
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -495,12 +495,22 @@ public abstract class ColumnViewer extends StructuredViewer {
 	public void refresh(Object element) {
 		if (isBusy())
 			return;
+		
+		if( isCellEditorActive() ) {
+			cancelEditing();
+		}
+		
 		super.refresh(element);
 	}
 	
 	public void refresh(Object element, boolean updateLabels) {
 		if (isBusy())
 			return;
+		
+		if( isCellEditorActive() ) {
+			cancelEditing();
+		}
+		
 		super.refresh(element, updateLabels);
 	}
 	
