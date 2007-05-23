@@ -1451,10 +1451,8 @@ public class Perspective {
             viewID = ViewFactory.extractPrimaryId(viewID);
         }
 
-        IViewReference viewRef = viewFactory.getView(viewID,
-                secondaryId);
-        WorkbenchPartReference ref = (WorkbenchPartReference) viewRef;
-        if (ref == null) {
+        IViewReference viewRef = getViewReference(viewID, secondaryId);
+        if (viewRef == null) {
             String key = ViewFactory.getKey(viewID, secondaryId);
             WorkbenchPlugin
                     .log("Could not create view: '" + key + "'."); //$NON-NLS-1$ //$NON-NLS-2$
