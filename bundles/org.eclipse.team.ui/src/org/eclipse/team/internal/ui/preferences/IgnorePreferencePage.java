@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -134,7 +135,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		for (int i = 0; i < ignore.length; i++) {
 			IIgnoreInfo info = ignore[i];
 			TableItem item = new TableItem(ignoreTable, SWT.NONE);
-			item.setText(info.getPattern());
+			item.setText(TextProcessor.process(info.getPattern(), ".*")); //$NON-NLS-1$
 			item.setChecked(info.getEnabled());
 		}		
 	}
@@ -154,7 +155,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 			}
 		}
 		TableItem item = new TableItem(ignoreTable, SWT.NONE);
-		item.setText(pattern);
+		item.setText(TextProcessor.process(pattern, ".*")); //$NON-NLS-1$
 		item.setChecked(true);
 	}
 	
