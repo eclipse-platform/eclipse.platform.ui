@@ -14,8 +14,7 @@ package org.eclipse.compare.internal.patch;
 
 import java.io.*;
 
-import org.eclipse.compare.internal.ICompareContextIds;
-import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -235,10 +234,8 @@ import com.ibm.icu.text.MessageFormat;
 					//report back to the patch wizard that the patch has been read in
 					fPatchWizard.patchReadIn();
 					fPatchRead=true;
-				} catch (IOException ex) {
-					MessageDialog.openError(null,
-						PatchMessages.InputPatchPage_PatchErrorDialog_title, 
-						PatchMessages.InputPatchPage_ParseError_message); 
+				} catch (Exception ex) {
+					// Ignore. User will be informed of error since patcher contains no diffs
 				}
 			}
 		} finally {
@@ -750,7 +747,7 @@ import com.ibm.icu.text.MessageFormat;
 
 		try {
 			patcher.parse(new BufferedReader(reader));
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			return false;
 		}
 
