@@ -59,7 +59,7 @@ public class WebappManager {
 
 	public static int getPort() {
 		if (port == -1) {
-			String portCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("org.eclipse.help.server_port"); //$NON-NLS-1$
+			String portCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_port"); //$NON-NLS-1$
 			if (portCommandLineOverride != null && portCommandLineOverride.trim().length() > 0) {
 				try {
 					port = Integer.parseInt(portCommandLineOverride);
@@ -78,7 +78,7 @@ public class WebappManager {
 
 	public static String getHost() {
 		if (host == null) {
-			String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("org.eclipse.help.server_host"); //$NON-NLS-1$
+			String hostCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_host"); //$NON-NLS-1$
 			if (hostCommandLineOverride != null && hostCommandLineOverride.trim().length() > 0) {
 				host = hostCommandLineOverride;
 			}
