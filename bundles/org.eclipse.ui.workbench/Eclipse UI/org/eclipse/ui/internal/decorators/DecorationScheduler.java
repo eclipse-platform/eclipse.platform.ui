@@ -72,7 +72,10 @@ public class DecorationScheduler {
 	private Job clearJob;
 
 	// Static used for the updates to indicate an update is required
-	static int NEEDS_INIT = -1;
+	static final int NEEDS_INIT = -1;
+
+	/** Amount of time to delay the update notification when max reached. */
+	static final int UPDATE_DELAY = 100;
 
 	/**
 	 * Return a new instance of the receiver configured for the supplied
@@ -234,7 +237,7 @@ public class DecorationScheduler {
 	/**
 	 * Execute a label update using the pending decorations.
 	 */
-	void decorated() {
+	synchronized void decorated() {
 
 		// Don't bother if we are shutdown now
 		if (shutdown) {
@@ -244,17 +247,16 @@ public class DecorationScheduler {
 		// Lazy initialize the job
 		if (updateJob == null) {
 			updateJob = getUpdateJob();
-			updateJob.setPriority(Job.DECORATE);
 		}
 
-		// Give it a big of a lag for other updates to occur
-		updateJob.schedule(100);
+		// Give it a bit of a lag for other updates to occur
+		updateJob.schedule(UPDATE_DELAY);
 	}
 
 	/**
 	 * Shutdown the decoration.
 	 */
-	void shutdown() {
+	synchronized void shutdown() {
 		shutdown = true;
 	}
 
@@ -286,8 +288,10 @@ public class DecorationScheduler {
 			 */
 			public IStatus run(IProgressMonitor monitor) {
 
-				if (shutdown) {
-					return Status.CANCEL_STATUS;
+				synchronized (DecorationScheduler.this) {
+					if (shutdown) {
+						return Status.CANCEL_STATUS;
+					}
 				}
 
 				while (updatesPending()) {
@@ -327,8 +331,10 @@ public class DecorationScheduler {
 
 					// Only notify listeners when we have exhausted the
 					// queue of decoration requests.
-					if (awaitingDecoration.isEmpty()) {
-						decorated();
+					synchronized (DecorationScheduler.this) {
+						if (awaitingDecoration.isEmpty()) {
+							decorated();
+						}
 					}
 				}
 				monitor.worked(100 - workCount);
@@ -484,8 +490,10 @@ public class DecorationScheduler {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
-				if (shutdown) {
-					return Status.CANCEL_STATUS;
+				synchronized (DecorationScheduler.this) {
+					if (shutdown) {
+						return Status.CANCEL_STATUS;
+					}
 				}
 
 				// If this is the first one check again in case
@@ -500,30 +508,39 @@ public class DecorationScheduler {
 					setUpUpdates();
 				}
 
-				monitor.beginTask(
-						WorkbenchMessages.DecorationScheduler_UpdatingTask, 10);
-
-				monitor.worked(5);
-
 				if (listeners.length == 0) {
 					return Status.OK_STATUS;
 				}
 
-				// If it was removed in the meantime then leave.
-				ILabelProviderListener listener = listeners[currentIndex];
-				currentIndex++;
+				monitor.beginTask(
+						WorkbenchMessages.DecorationScheduler_UpdatingTask,
+						IProgressMonitor.UNKNOWN);
 
-				if (!removedListeners.contains(listener)) {
-					decoratorManager.fireListener(labelProviderChangedEvent,
-							listener);
+				long startTime = System.currentTimeMillis();
+				while (currentIndex < listeners.length) {
+					ILabelProviderListener listener = listeners[currentIndex];
+					currentIndex++;
+
+					// If it was removed in the meantime then skip it.
+					if (!removedListeners.contains(listener)) {
+						decoratorManager.fireListener(
+								labelProviderChangedEvent, listener);
+					}
+
+					// If it is taking long enough for the user to notice then
+					// cancel the
+					// updates.
+					if ((System.currentTimeMillis() - startTime) >= UPDATE_DELAY / 2) {
+						break;
+					}
 				}
 
 				monitor.done();
 
 				if (currentIndex >= listeners.length) {
-					// Other decoration requests may have occured due to
-					// updates. Only clear the results if there are none
-					// pending.
+					// Other decoration requests may have occurred due to
+					// updates or we may have timed out updating listeners.
+					// Only clear the results if there are none pending.
 					if (awaitingDecoration.isEmpty()) {
 						resultCache.clear();
 					}
@@ -536,7 +553,7 @@ public class DecorationScheduler {
 					removedListeners.clear();
 					listeners = EMPTY_LISTENER_LIST;
 				} else {
-					schedule();// Reschedule if we are not done
+					schedule(UPDATE_DELAY);// Reschedule if we are not done
 				}
 				return Status.OK_STATUS;
 			}
