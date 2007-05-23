@@ -81,6 +81,13 @@ public abstract class CompoundContributionItem extends ContributionItem {
         dirty = false;
     }
     
+    /**
+	 * Return a list of contributions items that will replace this item in the
+	 * parent manager. The list must contain new contribution items every call
+	 * since the old ones will be disposed.
+	 * 
+	 * @return an array list of items to display. Must not be <code>null</code>.
+	 */
     protected abstract IContributionItem[] getContributionItems();
     
     private IContributionItem[] getContributionItemsToFill() {
