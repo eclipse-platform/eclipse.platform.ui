@@ -29,13 +29,13 @@ import org.eclipse.ui.model.PerspectiveLabelProvider;
  * @since 3.3
  */
 public class CyclePerspectiveHandler extends CycleBaseHandler {
-
+	private PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
+            false);
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#addItems(org.eclipse.swt.widgets.Table, org.eclipse.ui.internal.WorkbenchPage)
 	 */
 	protected void addItems(Table table, WorkbenchPage page) {
-		PerspectiveLabelProvider labelProvider = new PerspectiveLabelProvider(
-	            false);
 		IPerspectiveDescriptor perspectives[] = page.getSortedPerspectives();
         for (int i = perspectives.length - 1; i >= 0; i--) {
             TableItem item = new TableItem(table, SWT.NONE);
@@ -55,7 +55,6 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getBackwardCommand()
 	 */
 	protected ParameterizedCommand getBackwardCommand() {
-		// TODO Auto-generated method stub
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand("org.eclipse.ui.window.previousPerspective"); //$NON-NLS-1$
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
@@ -66,7 +65,6 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getForwardCommand()
 	 */
 	protected ParameterizedCommand getForwardCommand() {
-		// TODO Auto-generated method stub
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
@@ -77,8 +75,17 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getTableHeader()
 	 */
 	protected String getTableHeader() {
-		// TODO Auto-generated method stub
 		return WorkbenchMessages.CyclePerspectiveAction_header;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.AbstractHandler#dispose()
+	 */
+	public void dispose() {
+		if (labelProvider!=null) {
+			labelProvider.dispose();
+			labelProvider = null;
+		}
+		super.dispose();
+	}
 }
