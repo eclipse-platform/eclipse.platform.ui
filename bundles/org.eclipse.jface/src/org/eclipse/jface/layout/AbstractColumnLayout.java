@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation (original file org.eclipse.ui.texteditor.templates.ColumnLayout)
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactored to be widget independent (bug 171824)
- *                                               - fix for bug 178280, bug 184342
+ *                                               - fix for bug 178280, 184342, 184045
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Widget;
 
@@ -263,8 +262,6 @@ abstract class AbstractColumnLayout extends Layout {
 	 */
 	private int computeTrim(Rectangle area, Scrollable scrollable,
 			int currentWidth) {
-		Point preferredSize = computeTableTreeSize(scrollable, area.width,
-				area.height);
 		int trim;
 
 		if (currentWidth > 1) {
@@ -274,18 +271,6 @@ abstract class AbstractColumnLayout extends Layout {
 			// border with
 			// plus some padding as educated guess
 			trim = 2 * scrollable.getBorderWidth() + 1;
-		}
-
-		if (preferredSize.y > area.height) {
-			// Subtract the scrollbar width from the total column width
-			// if a vertical scrollbar will be required, but is not currently
-			// showing
-			// (in which case it is already subtracted above)
-			ScrollBar vBar = scrollable.getVerticalBar();
-			if (!vBar.isVisible()) {
-				Point vBarSize = vBar.getSize();
-				trim += vBarSize.x;
-			}
 		}
 
 		return trim;
