@@ -386,11 +386,11 @@ public/*final*/class WorkbenchImages {
         
         // signed jar images
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT
-				+ "signed_yes.gif", true); //$NON-NLS-1$
+				+ "signed_yes_tbl.gif", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO, PATH_OBJECT
-				+ "signed_no.gif", true); //$NON-NLS-1$
+				+ "signed_no_tbl.gif", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN,
-				PATH_OBJECT + "signed_unknown.gif", true); //$NON-NLS-1$
+				PATH_OBJECT + "signed_unkn_tbl.gif", true); //$NON-NLS-1$
         
         // Manually create the view menu
         
