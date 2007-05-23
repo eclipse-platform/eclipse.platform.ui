@@ -21,6 +21,8 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.FastViewBar;
+import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -133,6 +135,20 @@ public final class ShowViewHandler extends AbstractHandler {
 
         if (makeFast) {
             WorkbenchPage wp = (WorkbenchPage) activePage;
+        	Perspective persp = wp.getActivePerspective();
+
+            // If we're making a fast view then use the new mechanism directly
+            boolean useNewMinMax = Perspective.useNewMinMax(persp);
+            if (useNewMinMax) {
+            	IViewReference ref = persp.getViewReference(viewId, null);
+            	if (ref == null)
+            		return;
+
+            	persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
+        		wp.activate(ref.getPart(true));
+        		
+        		return;
+            }
             
             IViewReference ref = wp.findViewReference(viewId);
             

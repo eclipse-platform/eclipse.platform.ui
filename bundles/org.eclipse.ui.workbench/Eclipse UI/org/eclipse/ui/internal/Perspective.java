@@ -69,6 +69,7 @@ import org.eclipse.ui.internal.registry.StickyViewDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -2026,6 +2027,35 @@ public class Perspective {
         }
     }
 
+    /**
+     * Resolves a view's id into its reference, creating the
+     * view if necessary.
+     * 
+     * @param viewId The primary id of the view (must not be
+     * <code>null</code>
+     * @param secondaryId The secondary id of a multiple-instance view
+     * (may be <code>null</code>).
+     * 
+     * @return The reference to the specified view. This may be null if the
+     * view fails to create (i.e. thrown a PartInitException)
+     */
+    public IViewReference getViewReference(String viewId, String secondaryId) {
+    	IViewReference ref = page.findViewReference(viewId, secondaryId);
+    	if (ref == null) {
+            ViewFactory factory = getViewFactory();
+            try {
+				ref = factory.createView(viewId, secondaryId);
+			} catch (PartInitException e) {
+				IStatus status = StatusUtil.newStatus(IStatus.ERROR,
+                        e.getMessage() == null ? "" : e.getMessage(), //$NON-NLS-1$
+                        e);
+	            StatusUtil.handleStatus(status, "Failed to create view: id=" + viewId, //$NON-NLS-1$
+	            		StatusManager.LOG);
+			}
+    	}
+    	return ref;
+    }
+    
     /**
      * Shows the view with the given id and secondary id.
      */

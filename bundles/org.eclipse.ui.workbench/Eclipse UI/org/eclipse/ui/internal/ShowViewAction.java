@@ -60,6 +60,20 @@ public class ShowViewAction extends Action implements IPluginContribution {
             try {
                 if (makeFast) {
                     WorkbenchPage wp = (WorkbenchPage) page;
+                	Perspective persp = wp.getActivePerspective();
+
+                    // If we're making a fast view then use the new mechanism directly
+                    boolean useNewMinMax = Perspective.useNewMinMax(persp);
+                    if (useNewMinMax) {
+                    	IViewReference ref = persp.getViewReference(desc.getId(), null);
+                    	if (ref == null)
+                    		return;
+
+                    	persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
+                		wp.activate(ref.getPart(true));
+                		
+                		return;
+                    }
                     
                     IViewReference ref = wp.findViewReference(desc.getId());
                     
@@ -68,13 +82,8 @@ public class ShowViewAction extends Action implements IPluginContribution {
                         ref = (IViewReference)wp.getReference(part); 
                     }
                     
-                    if (!wp.isFastView(ref)) {
-                        if (!wp.isFastView(ref)) {
-                        	Perspective persp = wp.getActivePerspective();
-                        	if (persp != null) {
-                        		persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
-                        	}
-                        }
+                    if (!wp.isFastView(ref) && persp != null) {
+                   		persp.getFastViewManager().addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
                     }
                     wp.activate(ref.getPart(true));
                 } else {
