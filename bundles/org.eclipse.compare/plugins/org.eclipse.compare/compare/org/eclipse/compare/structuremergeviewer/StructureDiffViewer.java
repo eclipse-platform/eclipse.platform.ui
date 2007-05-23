@@ -20,9 +20,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IDisposable;
 
 
@@ -318,14 +318,17 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		CompareConfiguration cc = getCompareConfiguration();
 		// The compare configuration is nulled when the viewer is disposed
 		if (cc != null) {
-			//cc.getContainer().runAsynchronously(inputChangedTask);
-			try {
-				PlatformUI.getWorkbench().getProgressService().run(false, true, inputChangedTask);
-			} catch (InvocationTargetException e) {
-				CompareUIPlugin.log(e.getTargetException());
-			} catch (InterruptedException e) {
-				// Ignore
-			}
+			BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+				public void run() {
+					try {
+						inputChangedTask.run(new NullProgressMonitor());
+					} catch (InvocationTargetException e) {
+						CompareUIPlugin.log(e.getTargetException());
+					} catch (InterruptedException e) {
+						// Ignore
+					}
+				}
+			});
 		}
 	}
 
