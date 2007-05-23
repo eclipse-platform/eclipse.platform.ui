@@ -410,6 +410,12 @@ public class PerspectiveHelper {
     public void attachPart(IViewReference ref) {
 		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();	
 		
+		// Restore any maximized part before re-attaching.
+		// Note that 'getMaximizedStack != null' implies 'useNewMinMax'
+		if (getMaximizedStack() != null) {
+			getMaximizedStack().setState(IStackPresentationSite.STATE_RESTORED);
+		}
+		
 		derefPart(pane);
 		addPart(pane);
 		bringPartToTop(pane);
