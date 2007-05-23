@@ -179,6 +179,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private ContentProvider contentProvider;
 
+	private FilterHistoryJob filterHistoryJob;
+
 	private FilterJob filterJob;
 
 	private ItemsFilter filter;
@@ -208,6 +210,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
+		filterHistoryJob = new FilterHistoryJob(); 
 		filterJob = new FilterJob();
 		contentProvider = new ContentProvider();
 		refreshCacheJob = new RefreshCacheJob();
@@ -1049,12 +1052,13 @@ public abstract class FilteredItemsSelectionDialog extends
 			return;
 		}
 
+		filterHistoryJob.cancel();
 		filterJob.cancel();
 
 		this.filter = newFilter;
 
 		if (this.filter != null) {
-			filterJob.schedule();
+			filterHistoryJob.schedule();
 		}
 	}
 
@@ -1854,7 +1858,46 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 	}
+	
+	/**
+	 * Filters items history and schedule filter job.
+	 * 
+	 */
+	private class FilterHistoryJob extends Job {
+		
+		/**
+		 * Filter used during the filtering process.
+		 */
+		private ItemsFilter itemsFilter;
+		
+		/**
+		 * @param name
+		 */
+		public FilterHistoryJob() {
+			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
+			setSystem(true);
+		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			
+			this.itemsFilter = filter;
+
+			contentProvider.reset();
+			
+			contentProvider.addHistoryItems(itemsFilter);
+			
+			contentProvider.refresh();
+			
+			filterJob.schedule();
+			
+			return Status.OK_STATUS;
+		}
+
+	}	
+		
 	/**
 	 * Filters items in indicated set and history. During filtering, it
 	 * refreshes the dialog (progress monitor and elements list).
@@ -1930,10 +1973,10 @@ public abstract class FilteredItemsSelectionDialog extends
 					return;
 
 				this.itemsFilter = filter;
-
-				contentProvider.reset();
-
-				filterContent(monitor);
+				
+				if (filter.getPattern().length() != 0) {
+					filterContent(monitor);
+				}
 
 				if (monitor.isCanceled())
 					return;
@@ -1954,11 +1997,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		protected void filterContent(GranualProgressMonitor monitor)
 				throws CoreException {
 
-			if (filter.getPattern().length() == 0) {
-
-				contentProvider.addHistoryItems(itemsFilter);
-
-			} else if (lastCompletedFilter != null
+			if (lastCompletedFilter != null
 					&& lastCompletedFilter.isSubFilter(filter)) {
 
 				int length = lastCompletedResult.size() / 500;
@@ -1983,8 +2022,6 @@ public abstract class FilteredItemsSelectionDialog extends
 
 				lastCompletedFilter = null;
 				lastCompletedResult = null;
-
-				contentProvider.addHistoryItems(itemsFilter);
 
 				SubProgressMonitor subMonitor = null;
 				if (monitor != null) {
@@ -2452,8 +2489,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		public ContentProvider() {
 			this.items = Collections.synchronizedSet(new HashSet(2048));
 			this.duplicates = Collections.synchronizedSet(new HashSet(256));
-			this.lastFilteredItems = Collections
-					.synchronizedList(new ArrayList(2048));
+			this.lastFilteredItems = new ArrayList();
 			this.lastSortedItems = Collections.synchronizedList(new ArrayList(
 					2048));
 		}
@@ -2483,7 +2519,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.items.clear();
 			this.duplicates.clear();
 			this.lastSortedItems.clear();
-			this.lastFilteredItems.clear();
 			this.progressMessage = ""; //$NON-NLS-1$
 		}
 
@@ -2718,8 +2753,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			if (lastFilteredItems.size() != items.size())
-				reloadCache(false, null);
 			return lastFilteredItems.toArray();
 		}
 
@@ -2747,8 +2780,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void updateElement(int index) {
 
-			if (lastFilteredItems.size() != items.size())
-				reloadCache(false, null);
 			FilteredItemsSelectionDialog.this.list.replace((lastFilteredItems
 					.size() > index) ? lastFilteredItems.get(index) : null,
 					index);
@@ -2784,11 +2815,10 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			// the TableViewer's root (the input) is treated as parent
-			lastFilteredItems.clear();
 
-			lastFilteredItems.addAll(Arrays.asList(getFilteredItems(list
+			lastFilteredItems = Arrays.asList(getFilteredItems(list
 					.getInput(), monitor != null ? new SubProgressMonitor(
-					monitor, 100) : null)));
+					monitor, 100) : null));
 
 			if (reset || (monitor != null && monitor.isCanceled())) {
 				if (monitor != null)
