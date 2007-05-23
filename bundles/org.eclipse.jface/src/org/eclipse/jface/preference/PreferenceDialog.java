@@ -517,6 +517,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		
 		GridData outerData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL);
+		outerData.horizontalIndent = IDialogConstants.HORIZONTAL_MARGIN;
 				
 		outer.setLayout(new GridLayout());
 		outer.setLayoutData(outerData);
