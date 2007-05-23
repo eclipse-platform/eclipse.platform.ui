@@ -25,10 +25,10 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.ExternalActionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -51,6 +51,7 @@ import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -97,6 +98,8 @@ public final class CommandContributionItem extends ContributionItem {
 	private ICommandService commandService;
 
 	private IHandlerService handlerService;
+	
+	private IBindingService bindingService;
 
 	private ParameterizedCommand command;
 
@@ -174,6 +177,8 @@ public final class CommandContributionItem extends ContributionItem {
 				.getService(ICommandService.class);
 		handlerService = (IHandlerService) serviceLocator
 				.getService(IHandlerService.class);
+		bindingService = (IBindingService) serviceLocator
+				.getService(IBindingService.class);
 		createCommand(commandId, parameters);
 
 		if (command != null) {
@@ -401,12 +406,14 @@ public final class CommandContributionItem extends ContributionItem {
 					}
 				}
 				text = updateMnemonic(text);
-				ExternalActionManager.ICallback callback = ExternalActionManager
-						.getInstance().getCallback();
+
 				String keyBindingText = null;
-				if ((callback != null) && (command!=null) && (command.getId() != null)) {
-					keyBindingText = callback.getAcceleratorText(command
-							.getId());
+				if (command != null) {
+					TriggerSequence[] bindings = bindingService
+							.getActiveBindingsFor(command);
+					if (bindings.length > 0) {
+						keyBindingText = bindings[0].format();
+					}
 				}
 				if (text != null) {
 					if (keyBindingText == null) {
