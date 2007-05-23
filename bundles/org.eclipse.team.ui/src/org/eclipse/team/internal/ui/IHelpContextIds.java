@@ -40,6 +40,7 @@ public interface IHelpContextIds {
 	// Views
 	public static final String SITE_EXPLORER_VIEW = PREFIX + "site_explorer_view_context"; //$NON-NLS-1$
 	public static final String SYNC_VIEW = PREFIX + "sync_view_context"; //$NON-NLS-1$
+	public static final String LOCAL_HISTORY_PAGE = PREFIX + "local_history_context"; //$NON-NLS-1$
 
 	// Site Explorer View Actions
 	public static final String ADD_SITE_ACTION = PREFIX + "add_site_action_context"; //$NON-NLS-1$

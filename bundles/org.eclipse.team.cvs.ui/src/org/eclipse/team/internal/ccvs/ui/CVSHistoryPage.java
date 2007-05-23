@@ -200,6 +200,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		resourceListener = new HistoryResourceListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
 	}
 
 	private TextViewer createText(SashForm parent) {

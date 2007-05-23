@@ -298,6 +298,8 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		
 		resourceListener = new HistoryResourceListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceListener, IResourceChangeEvent.POST_CHANGE);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(localComposite, IHelpContextIds.LOCAL_HISTORY_PAGE);
 	}
 
 	private void contributeActions() {
