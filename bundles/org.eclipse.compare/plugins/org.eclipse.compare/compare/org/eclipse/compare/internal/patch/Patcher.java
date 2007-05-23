@@ -571,14 +571,17 @@ public class Patcher {
 			FileDiff file = hunk.getParent();
 			disabledElements.remove(file);
 			DiffProject project = file.getProject();
-			disabledElements.remove(project);
+			if (project != null)
+				disabledElements.remove(project);
 		} else {
 			disabledElements.add(hunk);
 			FileDiff file = hunk.getParent();
 			if (disabledElements.containsAll(Arrays.asList(file.getHunks()))) {
 				disabledElements.add(file);
 				DiffProject project = file.getProject();
-				if (disabledElements.containsAll(Arrays.asList(project.getFileDiffs())))
+				if (project != null
+						&& disabledElements.containsAll(Arrays.asList(project
+								.getFileDiffs())))
 					disabledElements.add(project);
 			}
 		}
