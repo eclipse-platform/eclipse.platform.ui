@@ -42,42 +42,40 @@ public class WorkingSetsFilter extends ViewerFilter {
 		}
 		if(element instanceof ILaunchConfiguration) {
 			ILaunchConfiguration config = (ILaunchConfiguration)element;
-			if(config.exists()) {
-				try {
-					IResource[] resources = config.getMappedResources();
-					if(resources == null) {
+			try {
+				IResource[] resources = config.getMappedResources();
+				if(resources == null) {
+					return true;
+				}
+				IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+				if(window == null) {
+					return true;
+				}
+				IWorkbenchPage page = window.getActivePage();
+				if(page == null) {
+					return true;
+				}
+				IWorkingSet[] wsets = page.getWorkingSets();
+				if(wsets.length < 1) {
+					return true;
+				}
+				//remove breakpoint workingsets
+				ArrayList ws = new ArrayList();
+				for (int i = 0; i < wsets.length; i++) {
+					if(!wsets[i].getId().equals(IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET)) {
+						ws.add(wsets[i]);
+					}
+				}
+				if(ws.isEmpty()) {
+					return true;
+				}
+				for (int i = 0; i < resources.length; i++) {
+					if(workingSetContains((IWorkingSet[]) ws.toArray(new IWorkingSet[ws.size()]), resources[i])) {
 						return true;
 					}
-					IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-					if(window == null) {
-						return true;
-					}
-					IWorkbenchPage page = window.getActivePage();
-					if(page == null) {
-						return true;
-					}
-					IWorkingSet[] wsets = page.getWorkingSets();
-					if(wsets.length < 1) {
-						return true;
-					}
-					//remove breakpoint workingsets
-					ArrayList ws = new ArrayList();
-					for (int i = 0; i < wsets.length; i++) {
-						if(!wsets[i].getId().equals(IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET)) {
-							ws.add(wsets[i]);
-						}
-					}
-					if(ws.isEmpty()) {
-						return true;
-					}
-					for (int i = 0; i < resources.length; i++) {
-						if(workingSetContains((IWorkingSet[]) ws.toArray(new IWorkingSet[ws.size()]), resources[i])) {
-							return true;
-						}
-					}
-				} 
-				catch (CoreException e) {DebugUIPlugin.log(e);}
-			}
+				}
+			} 
+			catch (CoreException e) {}
 		}
 		return false;
 	}

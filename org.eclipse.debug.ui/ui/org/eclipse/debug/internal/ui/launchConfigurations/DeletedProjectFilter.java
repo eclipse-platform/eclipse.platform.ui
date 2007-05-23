@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -47,22 +46,18 @@ public class DeletedProjectFilter extends ViewerFilter {
 		if(element instanceof ILaunchConfiguration) {
 			try {
 				ILaunchConfiguration config = (ILaunchConfiguration)element;
-				if(config.exists()) {
-					IResource[] resources = config.getMappedResources();
-					if(resources == null) {
+				IResource[] resources = config.getMappedResources();
+				if(resources == null) {
+					return true;
+				}
+				for(int i = 0; i < resources.length; i++) {
+					IProject project= resources[i].getProject();
+					if(project != null && project.exists()) {
 						return true;
-					}
-					for(int i = 0; i < resources.length; i++) {
-						IProject project= resources[i].getProject();
-						if(project != null && project.exists()) {
-							return true;
-						}
 					}
 				}
 			}
-			catch(CoreException e) {
-			    DebugUIPlugin.log(e);
-            }
+			catch(CoreException e) {}
 		}
 		return false;
 	}

@@ -166,19 +166,46 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * Updates this action's tool-tip to correspond to the most recent launch.
+	 * Updates this action's tool-tip. The tooltip is based on user preference settings
+	 * for launching - either the previous launch, or based on the selection and which
+	 * configuration will be launched.
+	 * <p>
+	 * Subclasses may override as required.
+	 * </p>
 	 */
 	protected void updateTooltip() {
-		getAction().setToolTipText(getToolTip(getLastLaunch()));
+		getAction().setToolTipText(getToolTip());
 	}
 	
 	/**
-	 * Returns the tool-tip specific to a configuration.
+	 * Returns the tooltip specific to a configuration.
 	 * 
 	 * @param configuration a <code>ILauncConfiguration</code>
 	 * @return the string for the tool tip
 	 */
 	protected String getToolTip(ILaunchConfiguration configuration) {
+		String launchName= configuration.getName();
+		String mode= getMode();
+		String label;
+		if (mode.equals(ILaunchManager.RUN_MODE)) {
+			label= ActionMessages.AbstractLaunchHistoryAction_1; 
+		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
+			label= ActionMessages.AbstractLaunchHistoryAction_2; 
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
+			label= ActionMessages.AbstractLaunchHistoryAction_3; 
+		} else {
+			label= ActionMessages.AbstractLaunchHistoryAction_4; 
+		}
+		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName}); 
+	}
+	
+	/**
+	 * Returns this action's tooltip. The tooltip is retrieved from the launch resource manager
+	 * which builds tool tips asynchronously for context launching support.
+	 * 
+	 * @return the string for the tool tip
+	 */
+	private String getToolTip() {
 		String launchName = getLaunchingResourceManager().getLaunchLabel(fLaunchGroup);
 		if(launchName == null) {
 			return DebugUIPlugin.removeAccelerators(internalGetHistory().getLaunchGroup().getLabel());
@@ -201,7 +228,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName});
 		}
 	}
-	
+
 	/**
 	 * @see ILaunchHistoryChangedListener#launchHistoryChanged()
 	 */
@@ -342,7 +369,9 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		getLaunchingResourceManager().addLaunchLabelUpdateListener(fLabelListener);
+		if (this instanceof AbstractLaunchToolbarAction) {
+			getLaunchingResourceManager().addLaunchLabelUpdateListener(fLabelListener);
+		}
 	}
 	
 	/**

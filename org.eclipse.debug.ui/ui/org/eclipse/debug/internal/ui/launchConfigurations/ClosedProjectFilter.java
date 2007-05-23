@@ -47,18 +47,16 @@ public class ClosedProjectFilter extends ViewerFilter {
 		if(element instanceof ILaunchConfiguration) {
 			try {
 				ILaunchConfiguration config = (ILaunchConfiguration)element;
-				if(config.exists()) {
-					IResource[] resources = config.getMappedResources();
-					//if it has no mapping, it might not have migration delegate, so let it pass
-					if(resources == null) {
+				IResource[] resources = config.getMappedResources();
+				//if it has no mapping, it might not have migration delegate, so let it pass
+				if(resources == null) {
+					return true;
+				}
+				for(int i = 0; i < resources.length; i++) {
+					IProject project= resources[i].getProject();
+					//we don't want overlap with the deleted projects filter, so we need to allow projects that don't exist through
+					if(project != null && (project.isOpen() || !project.exists())) {
 						return true;
-					}
-					for(int i = 0; i < resources.length; i++) {
-						IProject project= resources[i].getProject();
-						//we don't want overlap with the deleted projects filter, so we need to allow projects that don't exist through
-						if(project != null && (project.isOpen() || !project.exists())) {
-							return true;
-						}
 					}
 				}
 			} 
