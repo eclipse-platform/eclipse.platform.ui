@@ -12,9 +12,9 @@
             </topic>
         </topic>
         <topic label="Sharing" href="html/00026.html">
-            <topic label="Sharing as a subfolder" href="html/00027.html">
-            </topic>
             <topic label="Basics" href="html/sharingbasics00001.html">
+            </topic>
+            <topic label="Sharing as a subfolder" href="html/00027.html">
             </topic>
             <topic label="Reconnecting an existing project" href="html/00028.html">
             </topic>
@@ -165,12 +165,6 @@
         </topic>
         <topic label="Misc" href="html/misc00001.html">
             <topic label="CVS Console" href="html/00042.html">
-            </topic>
-            <topic label="Encoding Support" href="html/encoding00001.html">
-            </topic>
-            <topic label="Password Management" href="html/passwords00001.html">
-            </topic>
-            <topic label="EXT" href="html/ext_connection_method00001.html">
             </topic>
             <topic label="Key Bindings" href="html/keys00001.html">
             </topic>

@@ -4,7 +4,7 @@
 <meta NAME="since" content="">
 </head><body><h2>Reconnecting an existing project</h2>
 <p>Since: 3.0 M6<br>
-Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+Last Modified: $Date: 2007/05/18 13:54:38 $</p>
 <p>
 The following scenario represents how a user would reconnect a project that does
 not contain CVS meta-data to it's remote counterpart. It is assumed that the local project 
@@ -14,15 +14,15 @@ the remote may have been modified since then.
 <h3>Scenario 1: Existing location using project name</h3>
 <p>Perform the following steps:</p>
 <ol>
-  <li>Load an existing project (using Checkout or you could import a plug-in project from the target area)</li>
-  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
-  <li>Modify some local resources</li>
-  <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
+  <li>Load an existing project (using Checkout or you could import a plug-in project from the target area).</li>
+  <li>Disconnect the project and indicate that CVS meta-data is to be deleted.</li>
+  <li>Modify some local resources.</li>
+  <li>Optionally, modify the remote contents of some resources using a separate checkout.</li>
   <li>Perform a Team>Share Project and select CVS (if there is more than one 
   repository provider available).</li>
   <li>Select the repository the project was loaded from and click Next.</li>
   <li>Use the project name as the module name. Click Next.</li>
-  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
+  <li>In the tag page, select HEAD as the branch to share with and click Next.</li>
   <li>In the sharing page, only the files that do not have the same contents
   as the server should appear. Perform a Mark as Merged or Commit on these 
   files.
@@ -32,17 +32,17 @@ the remote may have been modified since then.
 <h3>Scenario 1: New location using custom module name</h3>
 <p>Perform the following steps:</p>
 <ol>
-  <li>Load an existing project using Checkout As and a different name</li>
-  <li>Disconnect the project and indicate that CVS meta-data is to be deleted</li>
-  <li>Discard the repository location<li>
-  <li>Modify some local resources</li>
+  <li>Load an existing project using Checkout As and a different name.</li>
+  <li>Disconnect the project and indicate that CVS meta-data is to be deleted.</li>
+  <li>Discard the repository location.</li>
+  <li>Modify some local resources.</li>
   <li>Optionally, modify the remote contents of some resources using a separate checkout</li>
   <li>Perform a Team>Share Project and select CVS (if there is more than one 
   repository provider available).</li>
-  <li>Select to create a new repository and click Next</li>
-  <li>Enter the repository information for the repository and click Next</li>
+  <li>Select to create a new repository and click Next.</li>
+  <li>Enter the repository information for the repository and click Next.</li>
   <li>Enter the name of the module that the project was loaded from. Click Next.</li>
-  <li>In the tag page, select HEAD as the branch to share with and click Next</li>
+  <li>In the tag page, select HEAD as the branch to share with and click Next.</li>
   <li>In the sharing page, only the files that do not have the same contents
   as the server should appear. Perform a Mark as Merged or Commit on these 
   files.
