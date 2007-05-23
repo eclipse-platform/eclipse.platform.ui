@@ -15,13 +15,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.zip.GZIPOutputStream;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 /**
  * Exports resources to a .tar.gz file.
@@ -71,16 +72,14 @@ public class TarFileExporter implements IFileExporter {
      *  @exception org.eclipse.core.runtime.CoreException
      */
     private void write(TarEntry entry, IFile contents) throws IOException, CoreException {
-		IPath location = contents.getLocation();
+		final URI location = contents.getLocationURI();
 		if (location == null) {
 			throw new FileNotFoundException(contents.getFullPath().toOSString());
 		}
-		java.io.File localFile = location.toFile();
     	
-    	entry.setSize(localFile.length());
-    	
-    	outputStream.putNextEntry(entry);
     	InputStream contentStream = contents.getContents(false);
+    	entry.setSize(EFS.getStore(location).fetchInfo().getLength());
+    	outputStream.putNextEntry(entry);
         try {
             int n;
             byte[] readBuffer = new byte[4096];
