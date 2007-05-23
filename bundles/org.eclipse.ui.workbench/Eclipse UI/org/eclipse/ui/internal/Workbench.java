@@ -2973,7 +2973,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			// Update the action sets.
 			final Shell windowShell = activeWorkbenchWindow.getShell();
 			final Shell activeShell = getDisplay().getActiveShell();
-			if (Util.equals(windowShell, activeShell)) {
+			final IContextService service = (IContextService) getService(IContextService.class);
+			if (Util.equals(windowShell, activeShell)
+					|| service.getShellType(activeShell) == IContextService.TYPE_WINDOW) {
 				activeWorkbenchWindow
 						.addActionSetsListener(actionSetSourceProvider);
 				final WorkbenchPage page = activeWorkbenchWindow
