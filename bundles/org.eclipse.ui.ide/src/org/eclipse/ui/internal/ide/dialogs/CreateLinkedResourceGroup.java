@@ -357,7 +357,8 @@ public class CreateLinkedResourceGroup {
 			IPathVariableManager pathVariableManager = ResourcesPlugin
 					.getWorkspace().getPathVariableManager();
 			try {
-				URI path = new URI(linkTarget);
+				
+				URI path = new URI(linkTarget.replace(java.io.File.separatorChar, '/'));
 				URI resolved = pathVariableManager.resolveURI(path);
 				if (path != resolved) {
 					// we know this is a path variable, but return unresolved
