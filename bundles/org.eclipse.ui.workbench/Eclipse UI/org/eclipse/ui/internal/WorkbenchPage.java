@@ -3937,7 +3937,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
 	/*package*/Perspective getFirstPerspectiveWithView(IViewPart part) {
 		Perspective [] perspectives = perspList.getSortedPerspectives();
-		for (int i=0; i<perspectives.length; i++) {
+		for (int i=perspectives.length - 1; i >= 0; i--) {
 			if (perspectives[i].containsView(part)) {
 				return perspectives[i];
 			}
@@ -4306,9 +4306,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
 		/**
-         * Return all perspectives in the order they were activated.
-         * @return an array of perspectives sorted by activation order
-         */
+		 * Return all perspectives in the order they were activated.
+		 * 
+		 * @return an array of perspectives sorted by activation order, least
+		 *         recently activated perspective last.
+		 */
         public Perspective[] getSortedPerspectives() {
             Perspective[] result = new Perspective[usedList.size()];
             return (Perspective[]) usedList.toArray(result);
