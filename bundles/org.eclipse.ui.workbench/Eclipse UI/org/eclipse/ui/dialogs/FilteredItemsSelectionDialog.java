@@ -860,16 +860,16 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 		}
 
-		updateProgressLabel();
+		scheduleProgressMessageRefresh();
 	}
 
 	/**
-	 * Updates the progress label - should be called in UI thread.
+	 * Updates the progress label.
+	 * 
+	 * @deprecated
 	 */
 	public void updateProgressLabel() {
-		if (!progressLabel.isDisposed()) {
-			progressLabel.setText(contentProvider.getProgressMessage());
-		}
+		scheduleProgressMessageRefresh();
 	}
 
 	/**
@@ -906,8 +906,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Schedules progress message refresh.
 	 */
 	public void scheduleProgressMessageRefresh() {
-		if (refreshProgressMessageJob.cancel())
-			refreshProgressMessageJob.schedule();
+		if (filterJob.getState() != Job.RUNNING && refreshProgressMessageJob.getState() != Job.RUNNING)
+			refreshProgressMessageJob.scheduleProgressRefresh(null);
 	}
 
 	/*
@@ -1288,15 +1288,17 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Refreshes the progress message.
-	 * 
+	 * Refreshes the progress message cyclically with 500 milliseconds delay.
+	 * <code>RefreshProgressMessageJob</code> is strictly connected with
+	 * <code>GranualProgressMonitor</code> and use it to to get progress
+	 * message and to decide about break of cyclical refresh.
 	 */
 	private class RefreshProgressMessageJob extends UIJob {
 
-		private boolean cancelling = false;
+		private GranualProgressMonitor progressMonitor;
 
 		/**
-		 * Creates a new instance of the class
+		 * Creates a new instance of the class.
 		 */
 		public RefreshProgressMessageJob() {
 			super(
@@ -1306,30 +1308,38 @@ public abstract class FilteredItemsSelectionDialog extends
 			setSystem(true);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
-			cancelling = false;
+			if (!progressLabel.isDisposed())
+				progressLabel.setText(progressMonitor != null ? progressMonitor
+						.getMessage() : EMPTY_STRING);
 
-			if (FilteredItemsSelectionDialog.this != null) {
-				FilteredItemsSelectionDialog.this.updateProgressLabel();
-			}
+			if (progressMonitor == null || progressMonitor.isDone()) {
+				return new Status(IStatus.CANCEL, PlatformUI.PLUGIN_ID,
+						IStatus.CANCEL, EMPTY_STRING, null); }
 
-			if (cancelling)
-				refreshProgressMessageJob.schedule();
+			// schedule cyclical with 500 milliseconds delay
+			schedule(500);
 
 			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
 					EMPTY_STRING, null);
 		}
 
-		/*
-		 * (non-Javadoc)
+		/**
+		 * Schedule progress refresh job.
 		 * 
-		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
+		 * @param progressMonitor
+		 *            used during refresh progress label
 		 */
-		protected void canceling() {
-			super.canceling();
-			this.cancelling = true;
+		public void scheduleProgressRefresh(
+				GranualProgressMonitor progressMonitor) {
+			this.progressMonitor = progressMonitor;
+			schedule(200);
 		}
+		
 	}
 
 	/**
@@ -1373,7 +1383,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			if (FilteredItemsSelectionDialog.this != null) {
 				GranualProgressMonitor wrappedMonitor = new GranualProgressMonitor(
-						monitor, contentProvider, true);
+						monitor);
 				FilteredItemsSelectionDialog.this.reloadCache(true,
 						wrappedMonitor);
 			}
@@ -1704,20 +1714,13 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * GranualProgressMonitor is used for monitoring progress of filtering
-	 * process. It updates progress message and refreshes dialog after concrete
-	 * part of work. State of this monitor illustrates state of filtering or
-	 * cache refreshing process.
-	 * 
-	 * The <code>GranualProgressMonitor</code> progress monitor changes amount
-	 * of work to be done before next update is to be scheduled (increases
-	 * granuality). For 0-10% updates are scheduled for all whole numbers {1, 2,
-	 * 3, . . ., 10 } surpassed. For 10-100% updates are done every 10%.
+	 * process. It is used by <code>RefreshProgressMessageJob</code> to
+	 * refresh progress message. State of this monitor illustrates state of
+	 * filtering or cache refreshing process.
 	 * 
 	 * @see GranualProgressMonitor#internalWorked(double)
 	 */
-	private static class GranualProgressMonitor extends ProgressMonitorWrapper {
-
-		private ContentProvider contentProvider;
+	private class GranualProgressMonitor extends ProgressMonitorWrapper {
 
 		private String name;
 
@@ -1729,26 +1732,23 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private boolean done;
 
-		private boolean isFiltering;
-
 		/**
 		 * Creates instance of <code>GranualProgressMonitor</code>.
 		 * 
 		 * @param monitor
 		 *            progress to be wrapped
-		 * @param contentProvider
-		 * @param isFiltering
-		 *            if this progress monitor is attached to a filtering job.
-		 *            If <code>false</code> the job ought to be a cache/UI
-		 *            refresh job. Filtering jobs have higher priority - if
-		 *            there's a running filtering job progress updates triggered
-		 *            from a non-filtering job will not be displayed on UI.
 		 */
-		public GranualProgressMonitor(IProgressMonitor monitor,
-				ContentProvider contentProvider, boolean isFiltering) {
+		public GranualProgressMonitor(IProgressMonitor monitor) {
 			super(monitor);
-			this.contentProvider = contentProvider;
-			this.isFiltering = isFiltering;
+		}
+
+		/**
+		 * Checks if filtering has been done
+		 * 
+		 * @return true if filtering work has been done false in other way
+		 */
+		public boolean isDone() {
+			return done;
 		}
 
 		/*
@@ -1760,7 +1760,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			super.setTaskName(name);
 			this.name = name;
 			this.subName = null;
-			updateProgressMessage();
 		}
 
 		/*
@@ -1771,7 +1770,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		public void subTask(String name) {
 			super.subTask(name);
 			this.subName = name;
-			updateProgressMessage();
 		}
 
 		/*
@@ -1785,7 +1783,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (this.name == null)
 				this.name = name;
 			this.totalWork = totalWork;
-			updateProgressMessage();
+			refreshProgressMessageJob.scheduleProgressRefresh(this);
 		}
 
 		/*
@@ -1805,7 +1803,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void done() {
 			done = true;
-			contentProvider.setProgressMessage("", isFiltering); //$NON-NLS-1$
 			super.done();
 		}
 
@@ -1815,7 +1812,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#setCanceled(boolean)
 		 */
 		public void setCanceled(boolean b) {
-			done = true;
+			done = b;
 			super.setCanceled(b);
 		}
 
@@ -1826,14 +1823,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void internalWorked(double work) {
 			worked = worked + work;
-			if ((((int) (((worked - work) * 10) / totalWork)) < ((int) ((worked * 10) / totalWork)))
-					|| (((int) ((worked * 10) / totalWork)) == 0))
-				if (!isCanceled())
-					updateProgressMessage();
-		}
-
-		private void updateProgressMessage() {
-			contentProvider.setProgressMessage(getMessage(), isFiltering);
 		}
 
 		private String getMessage() {
@@ -1868,7 +1857,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	
 	/**
 	 * Filters items history and schedule filter job.
-	 * 
 	 */
 	private class FilterHistoryJob extends Job {
 		
@@ -1878,14 +1866,16 @@ public abstract class FilteredItemsSelectionDialog extends
 		private ItemsFilter itemsFilter;
 		
 		/**
-		 * Create a new instance of the receiver.
+		 * Creates new instance of reciever.
 		 */
 		public FilterHistoryJob() {
 			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
 			setSystem(true);
 		}
 
-		/* (non-Javadoc)
+		/* 
+		 * (non-Javadoc)
+		 *
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected IStatus run(IProgressMonitor monitor) {
@@ -1926,7 +1916,6 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		/**
 		 * Creates new instance of FilterJob
-		 * 
 		 */
 		public FilterJob() {
 			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
@@ -1939,8 +1928,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected final IStatus run(IProgressMonitor parent) {
-			GranualProgressMonitor monitor = new GranualProgressMonitor(parent,
-					contentProvider, true);
+			GranualProgressMonitor monitor = new GranualProgressMonitor(parent);
 			return doRun(monitor);
 		}
 
@@ -2005,7 +1993,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				throws CoreException {
 
 			if (lastCompletedFilter != null
-					&& lastCompletedFilter.isSubFilter(filter)) {
+					&& lastCompletedFilter.isSubFilter(this.itemsFilter)) {
 
 				int length = lastCompletedResult.size() / 500;
 				monitor
@@ -2035,17 +2023,17 @@ public abstract class FilteredItemsSelectionDialog extends
 					monitor
 							.beginTask(
 									WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
-									1000);
-					subMonitor = new SubProgressMonitor(monitor, 500);
+									100);
+					subMonitor = new SubProgressMonitor(monitor, 95);
 
 				}
 
 				fillContentProvider(contentProvider, itemsFilter, subMonitor);
 
 				if (monitor != null && !monitor.isCanceled()) {
-					monitor.worked(100);
+					monitor.worked(2);
 					contentProvider.rememberResult(itemsFilter);
-					monitor.worked(400);
+					monitor.worked(3);
 				}
 			}
 
@@ -2445,9 +2433,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Items that are duplicates.
 		 */
 		private Set duplicates;
-
-		private String progressMessage = ""; //$NON-NLS-1$
-
+		
 		/**
 		 * List of <code>ViewerFilter</code>s to be used during filtering
 		 */
@@ -2526,7 +2512,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.items.clear();
 			this.duplicates.clear();
 			this.lastSortedItems.clear();
-			this.progressMessage = ""; //$NON-NLS-1$
 		}
 
 		/**
@@ -2584,33 +2569,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void refresh() {
 			scheduleRefresh();
-		}
-
-		/**
-		 * Sets progress message.
-		 * 
-		 * @param progressMessage
-		 * @param isFiltering
-		 *            if this progress update was triggered by a filtering job
-		 *            or a refresh job; if it was triggered by a refresh job and
-		 *            a filtering job is running, the progress won't be
-		 *            displayed
-		 */
-		public void setProgressMessage(String progressMessage,
-				boolean isFiltering) {
-			if (!isFiltering && filterJob.getState() == Job.RUNNING)
-				return;
-			this.progressMessage = progressMessage;
-			scheduleProgressMessageRefresh();
-		}
-
-		/**
-		 * Gets progress message.
-		 * 
-		 * @return progress message
-		 */
-		public String getProgressMessage() {
-			return progressMessage;
 		}
 
 		/**
@@ -2740,16 +2698,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param itemsFilter
 		 */
 		public void rememberResult(ItemsFilter itemsFilter) {
-			if (itemsFilter == filter && lastCompletedFilter == null) {
-				lastCompletedResult = Collections.synchronizedList(Arrays
-						.asList(getItems(false)));
-				// synchronization
-				if (lastCompletedResult.size() == 0 && itemsFilter != filter) {
-					lastCompletedFilter = null;
-					lastCompletedResult = null;
-				} else {
-					lastCompletedFilter = itemsFilter;
-				}
+			List itemsList = Collections.synchronizedList(Arrays
+					.asList(getItems(false)));
+			// synchronization
+			if (itemsFilter == filter) {
+				lastCompletedFilter = itemsFilter;
+				lastCompletedResult = itemsList;
 			}
 
 		}
@@ -2823,9 +2777,9 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			// the TableViewer's root (the input) is treated as parent
 
-			lastFilteredItems = Arrays.asList(getFilteredItems(list
-					.getInput(), monitor != null ? new SubProgressMonitor(
-					monitor, 100) : null));
+			lastFilteredItems = Arrays.asList(getFilteredItems(list.getInput(),
+					monitor != null ? new SubProgressMonitor(monitor, 100)
+							: null));
 
 			if (reset || (monitor != null && monitor.isCanceled())) {
 				if (monitor != null)
@@ -2920,7 +2874,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				}
 			}
 
-			if (filteredElements == null) {
+			if (filteredElements == null || monitor.isCanceled()) {
 				if (monitor != null)
 					monitor.done();
 				return new Object[0];
