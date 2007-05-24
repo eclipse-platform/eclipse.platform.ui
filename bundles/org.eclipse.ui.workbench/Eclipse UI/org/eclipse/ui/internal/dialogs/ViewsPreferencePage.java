@@ -803,6 +803,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		// fast view bar on the left (hidden pref, set it directly)
 		fastViewLoc = IWorkbenchPreferenceConstants.LEFT;
+
+		// Turn -off- the new min/max behaviour
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 	}
 
 	/**
