@@ -24,7 +24,9 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.mapping.SynchronizationContentProvider;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 
@@ -398,22 +400,40 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 
 	private void handleChange(IDiffChangeEvent event) {
-		Set existingProjects = getVisibleProjects();
-		IProject[] changedProjects = getChangedProjects(event);
-		List refreshes = new ArrayList(changedProjects.length);
-		List additions = new ArrayList(changedProjects.length);
-		List removals = new ArrayList(changedProjects.length);
-		for (int i = 0; i < changedProjects.length; i++) {
-			IProject project = changedProjects[i];
-			if (hasVisibleChanges(event.getTree(), project)) {
-				if (existingProjects.contains(project)) {
-					refreshes.add(project);
-				} else {
-					additions.add(project);
+		List refreshes = new ArrayList();
+		List additions = new ArrayList();
+		List removals = new ArrayList();
+		if (isFlatPresentation()) {
+			Set existingResources = getVisibleResources();
+			IResource[] changedResources = getChangedResources(event, existingResources);
+			for (int i = 0; i < changedResources.length; i++) {
+				IResource resource = changedResources[i];
+				if (event.getTree().getDiff(resource.getFullPath()) != null) {
+					if (existingResources.contains(resource)) {
+						refreshes.add(resource);
+					} else {
+						additions.add(resource);
+					}
+				} else if (existingResources.contains(resource)) {
+					removals.add(resource);
+					
 				}
-			} else if (existingProjects.contains(project)) {
-				removals.add(project);
-				
+			}
+		} else {
+			IProject[] changedProjects = getChangedProjects(event);
+			Set existingProjects = getVisibleProjects();
+			for (int i = 0; i < changedProjects.length; i++) {
+				IProject project = changedProjects[i];
+				if (hasVisibleChanges(event.getTree(), project)) {
+					if (existingProjects.contains(project)) {
+						refreshes.add(project);
+					} else {
+						additions.add(project);
+					}
+				} else if (existingProjects.contains(project)) {
+					removals.add(project);
+					
+				}
 			}
 		}
 		if (!removals.isEmpty() || !additions.isEmpty() || !refreshes.isEmpty()) {
@@ -437,8 +457,17 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 		}
 	}
 
-	private boolean hasVisibleChanges(IDiffTree tree, IProject project) {
-		return tree.hasMatchingDiffs(project.getFullPath(), new FastDiffFilter() {
+	private boolean isFlatPresentation() {
+		ISynchronizePageConfiguration configuration = getConfiguration();
+		if (configuration != null) {
+			String p = (String)configuration.getProperty(ITeamContentProviderManager.PROP_PAGE_LAYOUT);
+			return p != null && p.equals(ITeamContentProviderManager.FLAT_LAYOUT);
+		}
+		return false;
+	}
+
+	private boolean hasVisibleChanges(IDiffTree tree, IResource resource) {
+		return tree.hasMatchingDiffs(resource.getFullPath(), new FastDiffFilter() {
 			public boolean select(IDiff diff) {
 				return isVisible(diff);
 			}
@@ -488,5 +517,62 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 			}
 		}
 		return result;
+	}
+	
+	private Set getVisibleResources() {
+		TreeViewer viewer = (TreeViewer)getViewer();
+		Tree tree = viewer.getTree();
+		TreeItem[] children = tree.getItems();
+		Set result = new HashSet();
+		for (int i = 0; i < children.length; i++) {
+			TreeItem control = children[i];
+			Object data = control.getData();
+			IResource resource = Utils.getResource(data);
+			if (resource != null) {
+				result.add(resource);
+			}
+		}
+		return result;
+	}
+	
+	private IResource[] getChangedResources(IDiffChangeEvent event, Set existingResources) {
+		Set result = new HashSet();
+		IDiff[] changes = event.getChanges();
+		for (int i = 0; i < changes.length; i++) {
+			IDiff diff = changes[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null) {
+				result.add(resource);
+			}
+		}
+		IDiff[] additions = event.getAdditions();
+		for (int i = 0; i < additions.length; i++) {
+			IDiff diff = additions[i];
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource != null) {
+				result.add(resource);
+			}
+		}
+		IPath[] removals = event.getRemovals();
+		for (int i = 0; i < removals.length; i++) {
+			IPath path = removals[i];
+			if (path.segmentCount() > 0) {
+				IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (resource != null) {
+					result.add(resource);
+				} else {
+					// We need to check the list of displayed resources to see if one matches the given path
+					for (Iterator iterator = existingResources.iterator(); iterator
+							.hasNext();) {
+						resource = (IResource) iterator.next();
+						if (resource.getFullPath().equals(path)) {
+							result.add(resource);
+							break;
+						}
+					}
+				}
+			}
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
 	}
 }
