@@ -21,7 +21,14 @@ var defaultHighlight;
 var currentHighlight;
 var startTime;
 var MAX_DURATION=3000;
-onload=highlight;
+// w3c standard
+if (window.addEventListener) {
+    window.addEventListener("load", highlight, false);
+}
+// IE
+else {
+    window.attachEvent("onload", highlight);
+}
 
 function highlight(){
 	if(highlighted){
