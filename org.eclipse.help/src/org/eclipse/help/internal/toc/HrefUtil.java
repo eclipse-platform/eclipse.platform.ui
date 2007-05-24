@@ -44,15 +44,15 @@ public class HrefUtil {
 	public final static String normalizeHref(String pluginID, String href) {
 		if (href == null)
 			return null;
-		href = normalizeDirectoryPath(href);
-		if (href.startsWith("/")) //$NON-NLS-1$
-			// already normalized
-			return href;
 		if (href.startsWith("http:") //$NON-NLS-1$
 				|| href.startsWith("https:") //$NON-NLS-1$
 				|| href.startsWith("file:") //$NON-NLS-1$
 				|| href.startsWith("jar:")) //$NON-NLS-1$
 			// external doc
+			return href;
+		href = normalizeDirectoryPath(href);
+		if (href.startsWith("/")) //$NON-NLS-1$
+			// already normalized
 			return href;
 		if (href.startsWith("../")) { //$NON-NLS-1$
 			return href.substring(2);
