@@ -1904,7 +1904,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						final KeyBinding binding = new KeyBinding(
 								keySequence,
 								keyBinding.getParameterizedCommand(),
-								IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+								getSchemeId(),
 								contextId, null, null, null, Binding.USER);
 
 						ArrayList extraSystemDeletes = new ArrayList();
@@ -1959,7 +1959,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					// TODO This should use the user's personal scheme.
 					final KeyBinding binding = new KeyBinding(keySequence,
 							(ParameterizedCommand) object,
-							IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+							getSchemeId(),
 							contextId, null, null, null, Binding.USER);
 					localChangeManager.addBinding(binding);
 					// update the model
@@ -2045,25 +2045,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			if (DEBUG) {
 				startTime = System.currentTimeMillis();
 			}
-			BusyIndicator.showWhile(filteredTree.getViewer().getTree()
-					.getDisplay(), new Runnable() {
-				public void run() {
-					try {
-						filteredTree.getViewer().getTree().setRedraw(false);
-
-						bindingModel.clear();
-						commandModel.clear();
-						Collection comeBack = localChangeManager
-								.getActiveBindingsDisregardingContextFlat();
-						bindingModel.addAll(comeBack);
-
-						// showAllCheckBox.setSelection(false);
-						fillInCommands();
-					} finally {
-						filteredTree.getViewer().getTree().setRedraw(true);
-					}
-				}
-			});
+			busyRefillTree();
 			if (DEBUG) {
 				final long elapsedTime = System.currentTimeMillis() - startTime;
 				Tracing.printTrace(TRACING_COMPONENT,
@@ -2075,6 +2057,37 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		setScheme(localChangeManager.getActiveScheme());
 
 		super.performDefaults();
+	}
+
+	/**
+	 * We're re-filling the  entire tree, both bindings and commands.  It's
+	 * loud.
+	 */
+	private void busyRefillTree() {
+		if (bindingModel==null) {
+			// we haven't really been created yet.
+			return;
+		}
+		BusyIndicator.showWhile(filteredTree.getViewer().getTree()
+				.getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					filteredTree.getViewer().getTree().setRedraw(false);
+
+					bindingModel.clear();
+					commandModel.clear();
+					Collection comeBack = localChangeManager
+							.getActiveBindingsDisregardingContextFlat();
+					bindingModel.addAll(comeBack);
+
+					// showAllCheckBox.setSelection(false);
+					fillInCommands();
+				} finally {
+					filteredTree.getViewer().getTree().setRedraw(true);
+				}
+			}
+		});
+		updateDataControls();
 	}
 
 	public final boolean performOk() {
@@ -2210,7 +2223,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 				if (newScheme != localChangeManager.getActiveScheme()) {
 					try {
 						localChangeManager.setActiveScheme(newScheme);
-						update();
+						busyRefillTree();
 					} catch (final NotDefinedException e) {
 						// TODO The scheme wasn't valid.
 					}
@@ -2437,7 +2450,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						final KeyBinding binding = new KeyBinding(
 								keyBinding.getKeySequence(),
 								keyBinding.getParameterizedCommand(),
-								IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID,
+								getSchemeId(),
 								contextId, null, null, null, Binding.USER);
 
 						if (keyBinding.getType() == Binding.USER) {
@@ -2475,5 +2488,16 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			filteredTree.getViewer().setSelection(
 					new StructuredSelection(data), true);
 		}
+	}
+	
+	public String getSchemeId() {
+		ISelection sel = schemeCombo.getSelection();
+		if (sel instanceof IStructuredSelection) {
+			Object o = ((IStructuredSelection)sel).getFirstElement();
+			if (o instanceof Scheme) {
+				return ((Scheme)o).getId();
+			}
+		}
+		return IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID;
 	}
 }
