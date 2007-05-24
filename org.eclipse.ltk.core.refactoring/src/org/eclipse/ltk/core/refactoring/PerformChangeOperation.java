@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -206,6 +207,12 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 				pm.beginTask("", 4); //$NON-NLS-1$
 				pm.subTask(""); //$NON-NLS-1$
 				fCreateChangeOperation.run(new SubProgressMonitor(pm, 3));
+				// Check for cancellation before executing the change, since canceling
+				// during change execution is not supported
+				// (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=187265 ):
+				if (pm.isCanceled())
+					throw new OperationCanceledException();
+				
 				fChange= fCreateChangeOperation.getChange();
 				if (fChange != null) {
 					executeChange(new SubProgressMonitor(pm, 1));
