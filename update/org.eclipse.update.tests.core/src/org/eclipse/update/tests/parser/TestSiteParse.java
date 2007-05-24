@@ -221,7 +221,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		FeatureReferenceModel[] featureRef = remoteSite.getFeatureReferenceModels();
 		ICategory[] categories = ((SiteFeatureReference) featureRef[0]).getCategories();
-		assertTrue(categories.length == 0);
+		assertTrue(categories.length == 1 && "Other".equals(categories[0].getName()));
 	}
 
 	public void testParseValid7() throws Exception {
