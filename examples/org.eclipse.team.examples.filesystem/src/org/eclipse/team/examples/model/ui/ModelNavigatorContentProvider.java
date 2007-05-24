@@ -13,7 +13,7 @@ package org.eclipse.team.examples.model.ui;
 import java.util.*;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
@@ -32,13 +32,14 @@ import org.eclipse.ui.navigator.*;
  * replace the corresponding resource project in the Project Explorer.
  */
 public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
-		implements ICommonContentProvider, IResourceChangeListener, IPipelinedTreeContentProvider, ITeamStateChangeListener {
+		implements ICommonContentProvider, IResourceChangeListener, IPipelinedTreeContentProvider, ITeamStateChangeListener, IAdaptable {
 
 	private ICommonContentExtensionSite extensionSite;
 	private boolean isWorkspaceRoot;
 	private Viewer viewer;
 	private final boolean updateViewer;
 	private SynchronizationStateTester syncStateTester;
+	private Object saveablesProvider = new ModelSaveablesProvider();
 
 	public ModelNavigatorContentProvider() {
 		super();
@@ -317,6 +318,13 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 	public boolean interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
 		// No need to intercept the update
 		return false;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter == SaveablesProvider.class) {
+			return saveablesProvider;
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 }

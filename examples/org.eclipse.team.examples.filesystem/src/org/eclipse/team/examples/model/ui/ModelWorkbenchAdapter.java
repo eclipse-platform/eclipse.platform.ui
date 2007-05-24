@@ -24,7 +24,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class ModelWorkbenchAdapter implements IWorkbenchAdapter {
 
 	// image path
-	private final String ICON_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
+	private static final String ICON_PATH = "$nl$/icons/full/"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
@@ -88,7 +88,7 @@ public class ModelWorkbenchAdapter implements IWorkbenchAdapter {
 	/**
 	 * Creates an image descriptor.
 	 */
-	private ImageDescriptor createImageDescriptor(String id) {
+	public static ImageDescriptor createImageDescriptor(String id) {
 		URL url = FileLocator.find(FileSystemPlugin.getPlugin().getBundle(), new Path(ICON_PATH + id), null);
 		return ImageDescriptor.createFromURL(url);
 	}

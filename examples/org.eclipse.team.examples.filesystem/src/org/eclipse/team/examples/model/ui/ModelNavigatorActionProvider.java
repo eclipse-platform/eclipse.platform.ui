@@ -21,11 +21,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.examples.model.*;
-import org.eclipse.ui.navigator.CommonActionProvider;
-import org.eclipse.ui.navigator.ICommonActionExtensionSite;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.navigator.*;
 
 /**
  * Model action provider for use with the Common Navigator framework. The
@@ -39,6 +40,7 @@ public class ModelNavigatorActionProvider extends CommonActionProvider {
 	private Action newFolderAction;
 	private Action newMoeAction;
 	private Action deleteAction;
+	private Action makeDirty;
 
 	public ModelNavigatorActionProvider() {
 		super();
@@ -147,6 +149,24 @@ public class ModelNavigatorActionProvider extends CommonActionProvider {
 				return null;
 			}
 		};
+		makeDirty = new Action("Make Dirty") {
+			public void run() {
+				IStructuredSelection selection = (IStructuredSelection)getContext().getSelection();
+				for (Iterator iter = selection.iterator(); iter.hasNext();) {
+					Object element = iter.next();
+					if (element instanceof ModelObjectDefinitionFile) {
+						ModelObjectDefinitionFile mo = (ModelObjectDefinitionFile) element;
+						ModelSaveablesProvider provider = getSaveablesProvider();
+						provider.makeDirty(mo);
+					}
+				}
+			}
+
+			private ModelSaveablesProvider getSaveablesProvider() {
+				ITreeContentProvider provider = getActionSite().getContentService().getContentExtensionById("org.eclipse.team.examples.model.navigator").getContentProvider();
+				return (ModelSaveablesProvider)Utils.getAdapter(provider, SaveablesProvider.class);
+			}
+		};
 	}
 	
 	protected Shell getShell() {
@@ -164,6 +184,7 @@ public class ModelNavigatorActionProvider extends CommonActionProvider {
 		ModelObjectDefinitionFile modFile = getSelectedModFile();
 		if (modFile != null) {
 			menu.add(newMoeAction);
+			menu.add(makeDirty);
 		}
 	}
 

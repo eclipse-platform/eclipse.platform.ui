@@ -430,7 +430,8 @@
             icon="$nl$/icons/full/obj/root_obj.gif"
             id="org.eclipse.team.examples.model.navigator"
             labelProvider="org.eclipse.team.examples.model.ui.ModelNavigatorLabelProvider"
-            name="Example Model">
+            name="Example Model"
+            providesSaveables="true">
          <triggerPoints>
             <or>
                <instanceof value="org.eclipse.team.examples.model.ModelObject"/>
