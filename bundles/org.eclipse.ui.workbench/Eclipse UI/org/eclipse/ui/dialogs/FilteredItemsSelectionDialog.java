@@ -1343,7 +1343,7 @@ public abstract class FilteredItemsSelectionDialog extends
 						IStatus.CANCEL, EMPTY_STRING, null);
 			}
 
-			// schedule cyclical with 500 milliseconds delay
+			//Schedule cyclical with 500 milliseconds delay
 			schedule(500);
 
 			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
@@ -1359,6 +1359,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		public void scheduleProgressRefresh(
 				GranualProgressMonitor progressMonitor) {
 			this.progressMonitor = progressMonitor;
+			//Schedule with initial delay to avoid flickering when the user types quickly
 			schedule(200);
 		}
 
@@ -1888,7 +1889,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		private ItemsFilter itemsFilter;
 
 		/**
-		 * Creates new instance of reciever.
+		 * Creates new instance of receiver.
 		 */
 		public FilterHistoryJob() {
 			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
