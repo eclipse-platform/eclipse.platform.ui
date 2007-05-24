@@ -44,7 +44,7 @@
          id="org.eclipse.ui.browser.editor"
          name="%viewWebBrowserTitle"/>
       <editor
-         extensions="htm,html,shtml,xhtml"
+         extensions="htm,html,shtml"
          icon="$nl$/icons/obj16/internal_browser.gif"
          id="org.eclipse.ui.browser.editorSupport"
          launcher="org.eclipse.ui.internal.browser.BrowserLauncher"
