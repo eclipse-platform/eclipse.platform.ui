@@ -363,12 +363,27 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					columnCount = 1;// If there are no columns do the first one
 	
 				ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
+
+				boolean isVirtual = (getControl().getStyle() & SWT.VIRTUAL) != 0;
+
+				// If the control is virtual, we cannot use the cached viewer row object. See bug 188663.
+				if (isVirtual) {
+					viewerRowFromItem = (ViewerRow) viewerRowFromItem.clone();
+				}
+				
 				// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 				// TableViewer with 0 columns does not work
 				for (int column = 0; column < columnCount || column == 0; column++) {
 					ViewerColumn columnViewer = getViewerColumn(column);
-					columnViewer.refresh(updateCell(viewerRowFromItem,
-							column, element));
+					ViewerCell cellToUpdate = updateCell(viewerRowFromItem,
+							column, element);
+					
+					// If the control is virtual, we cannot use the cached cell object. See bug 188663.
+					if (isVirtual) {
+						cellToUpdate = new ViewerCell(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
+					}
+
+					columnViewer.refresh(cellToUpdate);
 	
 					// As it is possible for user code to run the event
 					// loop check here.
