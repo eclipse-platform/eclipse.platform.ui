@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -2578,6 +2579,39 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         return result[0];
     }
 
+    
+    /*
+     * Added to fix Bug 178235 [EditorMgmt] DBCS 3.3 - Cannot open file with external program.
+     * Opens a new editor using the given input and descriptor. (Normally, editors are opened using
+     * an editor ID and an input.)
+     */
+    public IEditorPart openEditorFromDescriptor(final IEditorInput input,
+    		final IEditorDescriptor editorDescriptor, final boolean activate,
+    		final IMemento editorState)
+    throws PartInitException {
+    	if (input == null || !(editorDescriptor instanceof EditorDescriptor)) {
+    		throw new IllegalArgumentException();
+    	}
+    	
+    	final IEditorPart result[] = new IEditorPart[1];
+    	final PartInitException ex[] = new PartInitException[1];
+    	BusyIndicator.showWhile(window.getWorkbench().getDisplay(),
+    			new Runnable() {
+    		public void run() {
+    			try {
+    				result[0] = busyOpenEditorFromDescriptor(input, (EditorDescriptor)editorDescriptor,
+    						activate, editorState);
+    			} catch (PartInitException e) {
+    				ex[0] = e;
+    			}
+    		}
+    	});
+    	if (ex[0] != null) {
+    		throw ex[0];
+    	}
+    	return result[0];
+    }
+    
     /**
      * @see #openEditor(IEditorInput, String, boolean, int)
 	 */
@@ -2596,6 +2630,25 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
+    /*
+     * Added to fix Bug 178235 [EditorMgmt] DBCS 3.3 - Cannot open file with external program.
+     * See openEditorFromDescriptor().
+     */
+    private IEditorPart busyOpenEditorFromDescriptor(IEditorInput input, EditorDescriptor editorDescriptor,
+    		boolean activate, IMemento editorState) throws PartInitException {
+    	
+    	final Workbench workbench = (Workbench) getWorkbenchWindow()
+    	.getWorkbench();
+    	workbench.largeUpdateStart();
+    	
+    	try {
+    		return busyOpenEditorFromDescriptorBatched(input, editorDescriptor, activate, editorState);
+    		
+    	} finally {
+    		workbench.largeUpdateEnd();
+    	}
+    }
+    
     /**
      * Do not call this method.  Use <code>busyOpenEditor</code>.
      * 
@@ -2658,6 +2711,42 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         IEditorReference ref = null;
         ref = getEditorManager().openEditor(editorID, input, true, editorState);
         if (ref != null) {
+            editor = ref.getEditor(true);
+        }
+
+        if (editor != null) {
+            setEditorAreaVisible(true);
+            if (activate) {
+                if (editor instanceof MultiEditor) {
+					activate(((MultiEditor) editor).getActiveEditor());
+				} else {
+					activate(editor);
+				}
+            } else {
+                bringToTop(editor);
+            }
+            window.firePerspectiveChanged(this, getPerspective(), ref,
+                    CHANGE_EDITOR_OPEN);
+            window.firePerspectiveChanged(this, getPerspective(),
+                    CHANGE_EDITOR_OPEN);
+        }
+
+        return editor;
+    }
+    
+    /*
+     * Added to fix Bug 178235 [EditorMgmt] DBCS 3.3 - Cannot open file with external program.
+     * See openEditorFromDescriptor().
+     */
+    private IEditorPart busyOpenEditorFromDescriptorBatched(IEditorInput input,
+            EditorDescriptor editorDescriptor, boolean activate, IMemento editorState) throws PartInitException {
+
+    	IEditorPart editor = null;
+        // Create a new one. This may cause the new editor to
+        // become the visible (i.e top) editor.
+        IEditorReference ref = null;
+        ref = getEditorManager().openEditorFromDescriptor(editorDescriptor, input, editorState);
+		if (ref != null) {
             editor = ref.getEditor(true);
         }
 

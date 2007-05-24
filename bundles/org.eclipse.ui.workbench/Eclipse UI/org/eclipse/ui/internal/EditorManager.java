@@ -638,7 +638,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	/*
 	 * Open a new editor
 	 */
-	private IEditorReference openEditorFromDescriptor(EditorDescriptor desc,
+	public IEditorReference openEditorFromDescriptor(EditorDescriptor desc,
 			IEditorInput input, IMemento editorState) throws PartInitException {
 		IEditorReference result = null;
 		if (desc.isInternal()) {
