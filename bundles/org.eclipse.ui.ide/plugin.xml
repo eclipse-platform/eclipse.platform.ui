@@ -480,6 +480,13 @@
          <keywordReference id="org.eclipse.ui.ide.linked"/>
       </page>
       <page
+            name="%PreferencePages.Keys"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.ExtensionFactory:keysPreferencePage"
+            id="org.eclipse.ui.preferencePages.Keys">
+         <keywordReference id="org.eclipse.ui.ide.keys"/>
+      </page>
+      <page
             name="%PreferencePages.NewKeys"
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.ExtensionFactory:newKeysPreferencePage"
