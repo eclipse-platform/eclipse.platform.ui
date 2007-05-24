@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * 
  * <p>
  * This class is intended to be subclassed by clients. A default behavior is
- * provided for each of the methods above, that clients can override if they
+ * provided for each of the methods above, that clients can ovveride if they
  * wish.
  * </p>
  * 
@@ -207,15 +207,15 @@ public class SearchPattern {
 			return;
 		}
 
-		if (last == END_SYMBOL || last == BLANK) {
-			matchRule = RULE_EXACT_MATCH;
-			stringPattern = pattern.substring(0, length - 1);
-			return;
-		}
-
 		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
 			matchRule = RULE_CAMELCASE_MATCH;
 			stringPattern = pattern;
+			return;
+		}
+		
+		if (last == END_SYMBOL || last == BLANK) {
+			matchRule = RULE_EXACT_MATCH;
+			stringPattern = pattern.substring(0, length - 1);
 			return;
 		}
 
@@ -437,6 +437,12 @@ public class SearchPattern {
 			return false;
 		}
 
+		int patternLength = patternEnd;
+		
+		if (pattern.charAt(patternEnd - 1) == END_SYMBOL || pattern.charAt(patternEnd - 1) == BLANK )
+			patternLength = patternEnd - 1;
+
+
 		char patternChar, nameChar;
 		int iPattern = patternStart;
 		int iName = nameStart;
@@ -453,6 +459,8 @@ public class SearchPattern {
 			}
 
 			if (iName == nameEnd) {
+				if (iPattern == patternLength) 
+					return true;
 				// We have exhausted name (and not pattern), so it's not a match
 				return false;
 			}
@@ -472,12 +480,20 @@ public class SearchPattern {
 			// name
 			while (true) {
 				if (iName == nameEnd) {
-					// We have exhausted name (and not pattern), so it's not a
-					// match
+					if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK))
+						return true;
 					return false;
 				}
 
 				nameChar = name.charAt(iName);
+
+				if ((iPattern == patternLength) && (patternChar == END_SYMBOL || patternChar == BLANK)) {
+					if (isNameCharAllowed(nameChar)) {
+						return false;
+					}
+					iName++;
+					continue;
+				}
 
 				if (!isNameCharAllowed(nameChar)) {
 					// nameChar is lowercase
@@ -505,7 +521,8 @@ public class SearchPattern {
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {
-		return Character.isUpperCase(patternChar);
+		return Character.isUpperCase(patternChar) || patternChar == END_SYMBOL
+				|| patternChar == BLANK;
 	}
 
 	/**
