@@ -292,7 +292,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * for multiple selection a {@link String} with amount of selected items is the
 	 * element.
 	 * 
-	 * @see {@link FilteredItemsSelectionDialog#getSelectedItems()} can be used to
+	 * @see #getSelectedItems() getSelectedItems() can be used to
 	 * retrieve selected items and get the items count.
 	 * 
 	 * @param detailsLabelProvider
@@ -1878,7 +1878,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		private ItemsFilter itemsFilter;
 		
 		/**
-		 * @param name
+		 * Create a new instance of the receiver.
 		 */
 		public FilterHistoryJob() {
 			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
@@ -2964,7 +2964,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * filters look at the project <code>org.eclipse.ui.ide</code>, class
 		 * <code>org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog.CustomWorkingSetFilter</code>.
 		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog.CustomWorkingSetFilter
 		 * 
 		 * @param filter
 		 *            the filter to be added
