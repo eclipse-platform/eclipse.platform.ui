@@ -150,7 +150,7 @@ public class TrimFrame {
                 innerSize.y += 4;
                 
                 Control child = children[0];
-                if (child instanceof ToolBar && (((ToolBar)child).getStyle() & SWT.VERTICAL) != 0)
+                if (child instanceof CoolBar && (((CoolBar)child).getStyle() & SWT.VERTICAL) != 0)
                     innerSize.y += 3;
                 else
                     innerSize.x += 3;
