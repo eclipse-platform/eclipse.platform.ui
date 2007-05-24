@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
@@ -46,7 +47,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			}
 		};
 		job.setSystem(true);
-		// TODO: rule
+		job.setRule(getRule(updates));
 		job.schedule();
 	}
 
@@ -67,7 +68,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			}
 		};
 		job.setSystem(true);
-		// TODO: rule
+		job.setRule(getRule(updates));
 		job.schedule();
 	}
 	    
@@ -187,6 +188,9 @@ public abstract class ElementContentProvider implements IElementContentProvider 
     	return null;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
+	 */
 	public void update(final IHasChildrenUpdate[] updates) {
 		Job job = new Job("has children update") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
@@ -201,7 +205,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			}
 		};
 		job.setSystem(true);
-		// TODO: rule
+		job.setRule(getRule(updates));
 		job.schedule();	
 	}
 
@@ -243,5 +247,38 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getChildCount(element, context, monitor) > 0;
 	}
+	
+	/**
+	 * Returns a scheduling rule to use when performing the given updates or
+	 * <code>null</code> if none.
+	 * 
+	 * @param updates
+	 * @return scheduling rule or <code>null</code> if none
+	 */
+	protected ISchedulingRule getRule(IChildrenCountUpdate[] updates) {
+		return null;
+	}
+	
+	/**
+	 * Returns a scheduling rule to use when performing the given updates or
+	 * <code>null</code> if none.
+	 * 
+	 * @param updates
+	 * @return scheduling rule or <code>null</code> if none
+	 */
+	protected ISchedulingRule getRule(IChildrenUpdate[] updates) {
+		return null;
+	}	
+	
+	/**
+	 * Returns a scheduling rule to use when performing the given updates or
+	 * <code>null</code> if none.
+	 * 
+	 * @param updates
+	 * @return scheduling rule or <code>null</code> if none
+	 */
+	protected ISchedulingRule getRule(IHasChildrenUpdate[] updates) {
+		return null;
+	}	
     
 }
