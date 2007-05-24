@@ -923,4 +923,55 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		
 		return null;
 	}
+
+	/**
+	 * Disables the controls associated with visible trim elements. This
+	 * is only used during long-running WorkbenchWindow operations to prevent users
+	 * from changing the environment while the operation (i.e. a long-running editor
+	 * 'save') is in progress.
+	 * 
+	 * The expected life-cycle is to first call this this method to disable any visible
+	 * trim (and caching the elements that had to be disabled) followed by a call to
+	 * 'enableTrim' passing in the list returned from this method.
+	 * 
+	 * @param ignoreMe Since the current UI has a disable button in the StatusLine
+	 * we allow the caller to designate one piece of trim to ignore
+	 * 
+	 * @return The list of trim controls that were disabled during this call
+	 */
+	public List disableTrim(IWindowTrim ignoreMe) {
+		List disabledControls = new ArrayList();
+
+		// Disable all the trim -except- for 'ignoreMe'
+		List allTrim = getAllTrim();
+		for (Iterator trimIter = allTrim.iterator(); trimIter.hasNext();) {
+			IWindowTrim trim = (IWindowTrim) trimIter.next();
+			if (ignoreMe == trim)
+				continue;
+			
+			Control ctrl = trim.getControl();
+			if (ctrl == null || ctrl.isDisposed() || !ctrl.isVisible() || !ctrl.isEnabled())
+				continue;
+			
+			ctrl.setEnabled(false);
+			disabledControls.add(ctrl);
+		}
+		
+		return disabledControls;
+	}
+	
+	/**
+	 * Enables the controls in the list. This list is expected to be a non-modified
+	 * List as returned from a call to 'disableTrim'.
+	 * @param disabledControls The list of controls to enable
+	 */
+	public void enableTrim(List disabledControls) {
+		// Simply re-enable any controls in the list
+		for (Iterator dcIter = disabledControls.iterator(); dcIter.hasNext();) {
+			Control ctrl = (Control) dcIter.next();
+			
+			if (!ctrl.isDisposed() && !ctrl.isEnabled())
+				ctrl.setEnabled(true);
+		}
+	}
 }

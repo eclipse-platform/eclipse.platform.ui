@@ -2427,6 +2427,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		boolean perspectiveBarWasEnabled = perspectiveBarControl == null ? false
 				: perspectiveBarControl.getEnabled();
 
+		// Cache for any diabled trim controls
+		List disabledControls = null;
+		
 		try {
 			if (fastViewBarControl != null && !fastViewBarControl.isDisposed()) {
 				fastViewBarControl.setEnabled(false);
@@ -2440,6 +2443,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			if (keyFilterEnabled) {
 				contextSupport.setKeyFilterEnabled(false);
 			}
+
+			// Disable all trim -except- the StatusLine
+			if (defaultLayout != null)
+				disabledControls = defaultLayout.disableTrim(getStatusLineTrim());
 
 			super.run(fork, cancelable, runnable);
 		} finally {
@@ -2455,6 +2462,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			if (keyFilterEnabled) {
 				contextSupport.setKeyFilterEnabled(true);
 			}
+			
+			// Re-enable any disabled trim
+			if (defaultLayout != null && disabledControls != null)
+				defaultLayout.enableTrim(disabledControls);
 		}
 	}
 
