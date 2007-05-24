@@ -285,7 +285,15 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Sets label provider for the details label.
+	 * Sets label provider for the details field.
+	 * 
+	 * For a single selection, the element sent to {@link ILabelProvider#getImage(Object)}
+	 * and {@link ILabelProvider#getText(Object)} is the selected object, 
+	 * for multiple selection a {@link String} with amount of selected items is the
+	 * element.
+	 * 
+	 * @see {@link FilteredItemsSelectionDialog#getSelectedItems()} can be used to
+	 * retrieve selected items and get the items count.
 	 * 
 	 * @param detailsLabelProvider
 	 *            the label provider for the details field
@@ -745,9 +753,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * This method is a hook for subclasses to override default dialog behavior.
-	 * It handles selection in the list, updates labels of selected and
-	 * unselected items.
+	 * Handle selection in the items list by updating labels of selected and
+	 * unselected items and refresh the details field using the selection.
 	 * 
 	 * @param selection
 	 *            the new selection
