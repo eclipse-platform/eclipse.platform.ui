@@ -232,6 +232,7 @@ public class QuickAccessDialog extends PopupDialog {
 		tableComposite.setLayout(tableColumnLayout);
 		table = new Table(tableComposite, SWT.SINGLE | SWT.FULL_SELECTION);
 		textLayout = new TextLayout(table.getDisplay());
+		textLayout.setOrientation(getDefaultOrientation());
 		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(
 				table.getFont()).setStyle(SWT.BOLD));
 		textLayout.setFont(table.getFont());
