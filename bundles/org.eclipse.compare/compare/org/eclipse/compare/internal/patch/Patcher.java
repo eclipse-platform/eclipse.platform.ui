@@ -280,7 +280,7 @@ public class Patcher {
 	 */
 	public static List load(IStorage file, boolean create) {
 		List lines= null;
-		if (!create && file != null) {
+		if (!create && file != null && exists(file)) {
 			// read current contents
 			String charset = Utilities.getCharset(file);
 			InputStream is= null;
@@ -313,6 +313,13 @@ public class Patcher {
 		if (lines == null)
 			lines= new ArrayList();
 		return lines;
+	}
+
+	private static boolean exists(IStorage file) {
+		if (file instanceof IFile) {
+			return ((IFile) file).exists();
+		}
+		return true;
 	}
 
 	private static List readLines(BufferedReader reader) {
