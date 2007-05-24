@@ -2436,30 +2436,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
      */
     public boolean isPageZoomed() {
-    	if (Perspective.useNewMinMax(getActivePerspective())) {
-    		boolean zoomed = false;
-    		
-    		// Can we find a presentation container whose state is maximized ?
-    		Perspective persp = getActivePerspective();
-    		if (persp != null) {
-    			LayoutPart[] kids = persp.getPresentation().getLayout().getChildren();
-    			for (int i = 0; i < kids.length && !zoomed; i++) {
-					if (kids[i] instanceof ViewStack) {
-						zoomed = ((ViewStack)kids[i]).getState() == IStackPresentationSite.STATE_MAXIMIZED;
-					}
-					else if (kids[i] instanceof EditorSashContainer) {
-		    			LayoutPart[] editors = ((EditorSashContainer)kids[i]).getChildren();
-		    			for (int j = 0; j < editors.length && !zoomed; j++) {
-							if (editors[j] instanceof EditorStack) {
-								zoomed = ((EditorStack)editors[j]).getState() == IStackPresentationSite.STATE_MAXIMIZED;
-							}
-		    			}
-					}
-				}
-    		}
-    		return zoomed;
-    	}
-    	
     	return isZoomed();
     }
     

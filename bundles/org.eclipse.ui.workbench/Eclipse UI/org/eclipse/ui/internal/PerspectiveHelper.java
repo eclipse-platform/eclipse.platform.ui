@@ -894,16 +894,6 @@ public class PerspectiveHelper {
 		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
     	if (canDetach() && pane != null) {
     		Rectangle bounds = pane.getParentBounds();
-//    		When new style placeholders get implemented this can be used to store the
-//    		last position of the window. Until then this breaks on restore state because
-//    		the view gets put in the placeholder rather than in the detached window. 
-//    		Leaving the user with an empty detachedwindow shell.
-//
-//    	    if (presentationHelper.hasPlaceholder(ref.getId(), ref.getSecondaryId()) ||
-//    	    	pane.getContainer() != null)
-//    	    	presentationHelper.removePart(pane);
-//    	    		
-//    	    addDetachedPart(pane, bounds);
     	    detach(pane, bounds.x ,bounds.y);
     	}
     }
@@ -918,9 +908,6 @@ public class PerspectiveHelper {
         bounds.y = bounds.y + (bounds.height - 300) / 2;
         
         addDetachedPart(part, bounds);
-
-        // enable direct manipulation
-        //enableDrop(part);
     }
     
     public void addDetachedPart(LayoutPart part, Rectangle bounds) {
@@ -1163,12 +1150,9 @@ public class PerspectiveHelper {
      */
     public boolean isZoomed() {
     	// New 3.3 behavior
-//		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-//		boolean useNewMinMax = preferenceStore
-//				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-//		if (useNewMinMax) {
-//			return maximizedStack != null;
-//		}
+		if (Perspective.useNewMinMax(perspective)) {
+			return getMaximizedStack() != null;
+		}
 		
         return mainLayout.getZoomedPart() != null;
     }
@@ -1427,12 +1411,11 @@ public class PerspectiveHelper {
      */
     public void zoomOut() {
     	// New 3.3 behavior
-//		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-//		boolean useNewMinMax = preferenceStore
-//				.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-//		if (useNewMinMax && maximizedStack != null) {
-//			maximizedStack.setState(IStackPresentationSite.STATE_RESTORED);
-//		}
+		if (Perspective.useNewMinMax(perspective)) {
+			 if (maximizedStack != null)
+				 maximizedStack.setState(IStackPresentationSite.STATE_RESTORED);
+			 return;
+		}
 		
         LayoutPart zoomPart = mainLayout.getZoomedPart();
         if (zoomPart != null) {
