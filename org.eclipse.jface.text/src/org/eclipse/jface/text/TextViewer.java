@@ -2665,9 +2665,10 @@ public class TextViewer extends Viewer implements
 	 * @param newInput the new input document
 	 */
 	protected void fireInputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-		if (fTextInputListeners != null) {
-			for (int i= 0; i < fTextInputListeners.size(); i++) {
-				ITextInputListener l= (ITextInputListener) fTextInputListeners.get(i);
+		List listener= fTextInputListeners;
+		if (listener != null) {
+			for (int i= 0; i < listener.size(); i++) {
+				ITextInputListener l= (ITextInputListener) listener.get(i);
 				l.inputDocumentAboutToBeChanged(oldInput, newInput);
 			}
 		}
@@ -2681,9 +2682,10 @@ public class TextViewer extends Viewer implements
 	 * @param newInput the new input document
 	 */
 	protected void fireInputDocumentChanged(IDocument oldInput, IDocument newInput) {
-		if (fTextInputListeners != null) {
-			for (int i= 0; i < fTextInputListeners.size(); i++) {
-				ITextInputListener l= (ITextInputListener) fTextInputListeners.get(i);
+		List listener= fTextInputListeners;
+		if (listener != null) {
+			for (int i= 0; i < listener.size(); i++) {
+				ITextInputListener l= (ITextInputListener) listener.get(i);
 				l.inputDocumentChanged(oldInput, newInput);
 			}
 		}
