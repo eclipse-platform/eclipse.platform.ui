@@ -356,7 +356,7 @@
                label="Add to control"
                class="org.eclipse.team.examples.pessimistic.ui.AddToControlAction"
                menubarPath="team.main/group2"
-               id="org.eclipse.team.examples.pessimistic.addToControl">
+               id="org.eclipse.team.examples.pessimistic.addFileToControl">
          </action>
          <action
                label="Remove from control"
@@ -377,7 +377,7 @@
                label="Add to control"
                class="org.eclipse.team.examples.pessimistic.ui.AddToControlAction"
                menubarPath="team.main/group2"
-               id="org.eclipse.team.examples.pessimistic.addToControl">
+               id="org.eclipse.team.examples.pessimistic.addFolderToControl">
          </action>
          <action
                label="Remove from control"
