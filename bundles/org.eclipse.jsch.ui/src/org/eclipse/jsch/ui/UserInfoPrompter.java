@@ -13,7 +13,7 @@ package org.eclipse.jsch.ui;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jsch.internal.core.JSchProvider;
+import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.jsch.internal.ui.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -27,8 +27,8 @@ import com.jcraft.jsch.*;
  * Clients may instantiate or subclass this class.
  * 
  * @since 1.0
- * @see JSchProvider#createSession(String, int, String)
- * @see JSchProvider#connect(Session, int,
+ * @see IJSchService#createSession(String, int, String)
+ * @see IJSchService#connect(Session, int,
  *      org.eclipse.core.runtime.IProgressMonitor)
  */
 public class UserInfoPrompter implements UserInfo, UIKeyboardInteractive{
