@@ -531,7 +531,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 */
 	private final void editKeyBinding() {
 		// Create a preference dialog on the keys preference page.
-		final String keysPageId = "org.eclipse.ui.preferencePages.NewKeys"; //$NON-NLS-1$
+		final String keysPageId = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 		final PreferenceDialog dialog = PreferencesUtil
 				.createPreferenceDialogOn(getShell(), keysPageId, null, binding);
 
