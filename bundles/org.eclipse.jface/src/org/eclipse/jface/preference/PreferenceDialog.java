@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Teddy Walker <teddy.walker@googlemail.com> 
+ *     	- Bug 188056 [Preferences] PreferencePages have to less indent in PreferenceDialog
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
