@@ -189,7 +189,7 @@
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
-            targetID="org.eclipse.ui.views.ResourceNavigator"
+            targetID="org.eclipse.ui.navigator.ProjectExplorer"
             id="org.eclipse.ui.examples.readmetool.vc1">
          <action
                id="org.eclipse.ui.examples.readmetool.va1"
