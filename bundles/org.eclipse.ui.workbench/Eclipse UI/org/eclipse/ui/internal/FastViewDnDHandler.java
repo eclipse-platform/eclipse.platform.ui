@@ -335,7 +335,7 @@ public class FastViewDnDHandler implements IDragOverListener {
             }
         }
 
-        if (page.isZoomed()) {
+        if (page.isPageZoomed()) {
             page.zoomOut();
         }
 

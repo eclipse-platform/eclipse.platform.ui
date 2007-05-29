@@ -1147,13 +1147,12 @@ public class PerspectiveHelper {
 
     /**
      * Returns whether the presentation is zoomed.
+     * 
+     * <strong>NOTE:</strong> As of 3.3 this method should always return 'false'
+     * when using the new min/max behavior. It is only used for
+     * legacy 'zoom' handling.
      */
     public boolean isZoomed() {
-    	// New 3.3 behavior
-		if (Perspective.useNewMinMax(perspective)) {
-			return getMaximizedStack() != null;
-		}
-		
         return mainLayout.getZoomedPart() != null;
     }
 

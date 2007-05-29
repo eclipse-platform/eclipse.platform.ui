@@ -2436,6 +2436,18 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
      */
     public boolean isPageZoomed() {
+        Perspective persp = getActivePerspective();
+        if (persp == null) {
+			return false;
+		}
+        if (persp.getPresentation() == null) {
+			return false;
+		}
+        
+        if (Perspective.useNewMinMax(persp))
+        	return persp.getPresentation().getMaximizedStack() != null;
+        
+        // Default to the legacy code
     	return isZoomed();
     }
     
