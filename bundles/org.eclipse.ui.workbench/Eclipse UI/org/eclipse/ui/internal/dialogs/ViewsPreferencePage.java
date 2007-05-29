@@ -336,7 +336,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 		}
 		// as we are no longer overriding the prefs should match the selected
 		// presentation
-		setPresentationPrefs(getSelectedPresentationID());
+		if (!override)
+			setPresentationPrefs(getSelectedPresentationID());
 	}
 
 	private void createPresentationCombo(Composite parent) {
