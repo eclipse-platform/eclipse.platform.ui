@@ -201,9 +201,12 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 					ChangeSet set = addedSets[i];
 					handleSetAddition(set);
 				}
-				for (int i = 0; i < removedSets.length; i++) {
-					ChangeSet set = removedSets[i];
-					handleSetRemoval(set);
+				if (removedSets.length > 0) {
+					// If sets were removed, we reset the unassigned set.
+					// We need to do this because it is possible that diffs were 
+					// removed from the set before the set itself was removed.
+					// See bug 173138
+					addAllUnassignedToUnassignedSet();
 				}
 				for (int i = 0; i < changedSets.length; i++) {
 					ChangeSet set = changedSets[i];
@@ -350,18 +353,22 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		if (unassignedDiffs == null) {
 			unassignedDiffs = new UnassignedDiffChangeSet(CVSUIMessages.ChangeSetContentProvider_0);
 			unassignedDiffs.getDiffTree().addDiffChangeListener(diffTreeListener);
-			IResourceDiffTree allChanges = getContext().getDiffTree();
-			final List diffs = new ArrayList();
-			allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
-				public boolean visit(IDiff diff) {
-					if (!isContainedInSet(diff))
-						diffs.add(diff);
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE);
-			unassignedDiffs.add((IDiff[]) diffs.toArray(new IDiff[diffs.size()]));
+			addAllUnassignedToUnassignedSet();
 		}
 		return unassignedDiffs;
+	}
+
+	private void addAllUnassignedToUnassignedSet() {
+		IResourceDiffTree allChanges = getContext().getDiffTree();
+		final List diffs = new ArrayList();
+		allChanges.accept(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new IDiffVisitor() {
+			public boolean visit(IDiff diff) {
+				if (!isContainedInSet(diff))
+					diffs.add(diff);
+				return true;
+			}
+		}, IResource.DEPTH_INFINITE);
+		unassignedDiffs.add((IDiff[]) diffs.toArray(new IDiff[diffs.size()]));
 	}
 	
 	private ResourceDiffTree getTheRest() {
