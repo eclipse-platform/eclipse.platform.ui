@@ -1549,7 +1549,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResource#setResourceAttributes(org.eclipse.core.resources.IResourceAttributes)
+	 * @see org.eclipse.core.resources.IResource#setResourceAttributes(org.eclipse.core.resources.ResourceAttributes)
 	 */
 	public void setResourceAttributes(ResourceAttributes attributes) throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);

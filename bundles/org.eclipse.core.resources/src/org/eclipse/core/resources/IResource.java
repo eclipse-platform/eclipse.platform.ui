@@ -1458,7 +1458,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <code>
 	 *  IResource resource; <br> 
 	 *  ... <br>
-	 *  IResourceAttributes attributes = resource.getResourceAttributes(); <br>
+	 *  ResourceAttributes attributes = resource.getResourceAttributes(); <br>
 	 *  if (attributes != null) {
 	 *     attributes.setExecutable(true); <br>
 	 *     resource.setResourceAttributes(attributes); <br>
