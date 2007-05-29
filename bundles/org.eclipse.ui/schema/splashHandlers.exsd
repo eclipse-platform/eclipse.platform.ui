@@ -6,8 +6,8 @@
          <meta.schema plugin="org.eclipse.ui" id="splashHandlers" name="Splash Handlers"/>
       </appInfo>
       <documentation>
-         &lt;p&gt;This extension point allows for the contribution of splash handlers.  These splash handlers may contribute custom behavior to the splash screen that appears during the start-up proceedure that may include (but is not limited to) custom graphics and animation, custom progress reporting, and interactive behaviors.&lt;/p&gt;  
-&lt;p&gt;It is possibly to have only one splash handler active at a given time and the decision of which handler to choose from comes down to a product binding.&lt;/p&gt;
+         &lt;p&gt;This extension point allows for the contribution of splash handlers.  These splash handlers may contribute custom behavior to the splash screen that appears during the start-up procedure that may include (but is not limited to) custom graphics and animation, custom progress reporting, and interactive behaviors.&lt;/p&gt;  
+&lt;p&gt;It is possible to have only one splash handler active at a given time and the decision of which handler to choose from comes down to a product binding.&lt;/p&gt;
 &lt;p&gt;The splash life cycle is as follows:
 &lt;ul&gt;
 &lt;li&gt;Eclipse process is launched&lt;/li&gt;
@@ -144,7 +144,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         In the absense of a product-bound handler described by an extension of this type the default Eclipse splash is used.  This splash is driven by product constants defined in &lt;samp&gt;org.eclipse.ui.branding.IProductConstants&lt;/samp&gt; and will display a progress bar and message area at specified locations in specified colors.
+         In the absence of a product-bound handler described by an extension of this type the default Eclipse splash is used.  This splash is driven by product constants defined in &lt;samp&gt;org.eclipse.ui.branding.IProductConstants&lt;/samp&gt; and will display a progress bar and message area at specified locations in specified colors.
       </documentation>
    </annotation>
 

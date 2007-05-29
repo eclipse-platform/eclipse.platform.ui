@@ -77,7 +77,7 @@ public abstract class AbstractSplashHandler {
 	 * <p>
 	 * Please note that progress will only be shown if the
 	 * "org.eclipse.ui/SHOW_PROGRESS_ON_STARTUP" property has been set to
-	 * <code>true</code>. Because property defaults to <code>false</code>
+	 * <code>true</code>. Because this property defaults to <code>false</code>
 	 * RCP developers must set this property via a
 	 * <code>plugin_customization.ini</code> file or by setting the preference
 	 * on the Platform UI perference store in the
@@ -96,11 +96,17 @@ public abstract class AbstractSplashHandler {
 	}
 
 	/**
-	 * Get the {@link Shell} associated with this splash screen. If this method returns
-	 * a non-<code>null</code> value prior to the {@link #init(Shell)} being invoked then
-	 * this shell will be used for the splash shell and it will subsequently be
-	 * passed to the {@link #init(Shell)} method. In this way a splash handler
-	 * may participate in splash processes prior to the workbench startup.
+	 * Get the {@link Shell} associated with this splash screen. If this method
+	 * returns a non-<code>null</code> value prior to the
+	 * {@link #init(Shell)} being invoked then this shell will be used for the
+	 * splash shell and it will subsequently be passed to the
+	 * {@link #init(Shell)} method. In this way a splash handler may participate
+	 * in splash processes prior to the workbench startup.
+	 * 
+	 * <p>
+	 * Calls to this method may be made from any thread. Implementors must take
+	 * care to ensure proper synchronization with the UI thread if necessary.
+	 * </p>
 	 * 
 	 * @return the splash shell
 	 */
