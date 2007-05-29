@@ -2455,6 +2455,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * Returns whether the page is zoomed.
      * @return <code>true</code> if the page is zoomed.
      * 
+     * <strong>NOTE:</strong> As of 3.3 this method should always return 'false'
+     * when using the new min/max behavior. It is only used for
+     * legacy 'zoom' handling.
+     * 
      */
    public boolean isZoomed() {
         Perspective persp = getActivePerspective();
