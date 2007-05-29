@@ -68,7 +68,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -369,14 +368,7 @@ public class QuickAccessDialog extends PopupDialog {
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
 		table.addListener(SWT.PaintItem, listener);
-		
-		Shell shell = getShell();
-		if (shell != null) {
-			IContextService service = (IContextService) window
-					.getService(IContextService.class);
-			service.registerShell(shell, IContextService.TYPE_WINDOW);
-		}
-		
+				
 		return composite;
 	}
 

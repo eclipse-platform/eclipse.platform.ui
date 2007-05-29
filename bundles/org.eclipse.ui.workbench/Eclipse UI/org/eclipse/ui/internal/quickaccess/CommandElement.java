@@ -38,6 +38,22 @@ public class CommandElement extends QuickAccessElement {
 	}
 
 	public void execute() {
+		Object o = getProvider();
+		if (o instanceof CommandProvider) {
+			CommandProvider provider = (CommandProvider) o;
+			if (provider.getRealHandlerService()!=null) {
+				try {
+					provider.getRealHandlerService().executeCommandInContext(
+							command, null, provider.getContextSnapshot());
+				} catch (Exception ex) {
+					StatusUtil.handleStatus(ex, StatusManager.SHOW
+							| StatusManager.LOG);
+				}
+				return;
+			}
+		}
+		
+		// let's try the old fashioned way
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
 		if (window != null) {

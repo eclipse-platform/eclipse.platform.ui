@@ -20,11 +20,14 @@ import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.handlers.HandlerService;
 
 /**
  * @since 3.3
@@ -33,9 +36,12 @@ import org.eclipse.ui.internal.WorkbenchImages;
 public class CommandProvider extends QuickAccessProvider {
 
 	private Map idToElement;
+	private IEvaluationContext contextSnapshot;
+	private HandlerService realHandlerService;
 	
 	public CommandProvider() {
 		// initialize eagerly
+		saveApplicationContext();
 		getElements();
 	}
 
@@ -89,5 +95,18 @@ public class CommandProvider extends QuickAccessProvider {
 
 	public String getName() {
 		return QuickAccessMessages.QuickAccess_Commands;
+	}
+	
+	private void saveApplicationContext() {
+		realHandlerService = (HandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		contextSnapshot = realHandlerService.getContextSnapshot();
+	}
+	
+	HandlerService getRealHandlerService() {
+		return realHandlerService;
+	}
+	
+	IEvaluationContext getContextSnapshot() {
+		return contextSnapshot;
 	}
 }
