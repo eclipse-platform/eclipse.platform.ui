@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -55,14 +54,13 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -101,8 +99,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private boolean fPinMBDisplay = false;	// pin memory block display, on by default
 	private static int fViewCnt = 0;
 
-	private IContextActivation fContext;
-	
 	private AbstractHandler fAddHandler;
 	private AbstractHandler fToggleMonitorsHandler;
 	private AbstractHandler fNextMemoryBlockHandler;
@@ -211,8 +207,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
 		public void partActivated(IWorkbenchPartReference ref) {
-			if (ref.getPart(false) == fView)
-				activated();
 		}
 
 		/* (non-Javadoc)
@@ -231,8 +225,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 		 */
 		public void partDeactivated(IWorkbenchPartReference ref) {
-			if (ref.getPart(false) == fView)
-				deactivated();
 		}
 
 		/* (non-Javadoc)
@@ -337,27 +329,22 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		
 		fPartListener = new MemoryViewPartListener(this);
 		getSite().getPage().addPartListener(fPartListener);
-		
+		activateHandlers();
 		// restore view pane after finishing creating all the view panes
 		restoreView();
 	}
 
 	
-    public void activated() {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
-		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
+    public void activateHandlers() {
+		ICommandService commandSupport = (ICommandService)getSite().getService(ICommandService.class);		
+		IHandlerService handlerService = (IHandlerService)getSite().getService(IHandlerService.class);
+		IContextService contextSupport = (IContextService)getSite().getService(IContextService.class);
 		
-		if (commandSupport != null && contextSupport != null)
+		if (commandSupport != null && handlerService != null && contextSupport != null)
 		{
-			fContext = contextSupport.activateContext(ID_MEMORY_VIEW_CONTEXT);
-			Command addCommand = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
-			
-			// dynamically change handler on Add Memory Monitor command based
-			// on which Memory View is active
-			if (fAddHandler == null)
-			{
-				fAddHandler = new AbstractHandler() {
+			contextSupport.activateContext(ID_MEMORY_VIEW_CONTEXT);
+				
+			fAddHandler = new AbstractHandler() {
 					public Object execute(ExecutionEvent event) throws ExecutionException {
 						IAdaptable context = DebugUITools.getDebugContext();
 						if (context != null && MemoryViewUtil.isValidSelection(new StructuredSelection(context)))
@@ -368,13 +355,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 						}
 						return null;
 					}};
-			}
-			addCommand.setHandler(fAddHandler);
+			handlerService.activateHandler(ID_ADD_MEMORY_BLOCK_COMMAND, fAddHandler);
 			
-			Command toggleCommand = commandSupport.getCommand(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND);
-			if (fToggleMonitorsHandler == null)
-			{
-				fToggleMonitorsHandler = new AbstractHandler() {
+			fToggleMonitorsHandler = new AbstractHandler() {
 					public Object execute(ExecutionEvent event) throws ExecutionException {
 						ToggleMemoryMonitorsAction action = new ToggleMemoryMonitorsAction();
 						action.init(MemoryView.this);
@@ -383,47 +366,21 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 						return null;
 					}
 				};
-			}
-			toggleCommand.setHandler(fToggleMonitorsHandler);
 			
-			Command nextMemoryBlockCommand = commandSupport.getCommand(ID_NEXT_MEMORY_BLOCK_COMMAND);
-			if (nextMemoryBlockCommand != null) {
-				fNextMemoryBlockHandler = new AbstractHandler() {
+			handlerService.activateHandler(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND, fToggleMonitorsHandler);
+			
+			fNextMemoryBlockHandler = new AbstractHandler() {
 
-					public Object execute(ExecutionEvent event)
-							throws ExecutionException {
-						SwitchMemoryBlockAction action = new SwitchMemoryBlockAction();
-						action.init(MemoryView.this);
-						action.run();
-						action.dispose();
-						return null;
-					}
-				};
-				nextMemoryBlockCommand.setHandler(fNextMemoryBlockHandler);
-			}
-		}
-    }
-    
-    public void deactivated()
-    {
-    	IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService)workbench.getAdapter(ICommandService.class);
-		IContextService contextSupport = (IContextService)workbench.getAdapter(IContextService.class);
-		
-		if (commandSupport != null && contextSupport != null)
-		{
-			// 	remove handler
-			Command command = commandSupport.getCommand(ID_ADD_MEMORY_BLOCK_COMMAND);
-			command.setHandler(null);
-			
-			Command toggleCommand = commandSupport.getCommand(ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND);
-			toggleCommand.setHandler(null);
-			
-			Command nextMemoryBlockCommand = commandSupport.getCommand(ID_NEXT_MEMORY_BLOCK_COMMAND);
-			nextMemoryBlockCommand.setHandler(null);
-			
-			if (fContext != null)
-				contextSupport.deactivateContext(fContext);
+				public Object execute(ExecutionEvent event)
+						throws ExecutionException {
+					SwitchMemoryBlockAction action = new SwitchMemoryBlockAction();
+					action.init(MemoryView.this);
+					action.run();
+					action.dispose();
+					return null;
+				}
+			};
+			handlerService.activateHandler(ID_NEXT_MEMORY_BLOCK_COMMAND, fNextMemoryBlockHandler);
 		}
     }
 	
