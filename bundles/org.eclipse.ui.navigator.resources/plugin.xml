@@ -76,7 +76,7 @@
       <navigatorContent
             name="%resource.extension.name"
             priority="low"
-            icon="icons/full/eview16/resource_persp.gif"
+            icon="$nl$/icons/full/eview16/resource_persp.gif"
             activeByDefault="true"
 			            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
             			labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"			
@@ -262,7 +262,7 @@
       <navigatorContent
             activeByDefault="true"
             contentProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider"
-            icon="icons/full/obj16/workingsets.gif"
+            icon="$nl$/icons/full/obj16/workingsets.gif"
             id="org.eclipse.ui.navigator.resources.workingSets"
             labelProvider="org.eclipse.ui.internal.navigator.workingsets.WorkingSetsLabelProvider"
             name="%workingsets.extension.name"

@@ -6,7 +6,6 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Eclipse-LazyStart: true
 Export-Package: org.eclipse.jface.databinding.swt,
  org.eclipse.jface.databinding.viewers,
  org.eclipse.jface.databinding.wizard,
