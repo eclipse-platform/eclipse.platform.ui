@@ -709,7 +709,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
             }
             boolean menuBarWasEnabled = false;
             if (menuBar != null) {
-				menuBarWasEnabled = menuBar.isEnabled();
+				menuBarWasEnabled = menuBar.getEnabled();
 			}
 
             Control toolbarControl = getToolBarControl();
