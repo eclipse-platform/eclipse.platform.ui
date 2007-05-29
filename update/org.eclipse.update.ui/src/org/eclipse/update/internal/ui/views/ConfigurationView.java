@@ -223,7 +223,7 @@ public class ConfigurationView
 					if (feature instanceof MissingFeature) {
 						return NLS.bind(UpdateUIMessages.ConfigurationView_missingFeature, feature.getLabel());
 					}
-					String version = getPrintableVersion(feature);
+					String version = feature.getVersionedIdentifier().getVersion().toString();
 					String pending = ""; //$NON-NLS-1$
 					if (OperationsManager.findPendingOperation(feature)
 						!= null)
@@ -234,13 +234,6 @@ public class ConfigurationView
 				}
 			}
 			return super.getText(obj);
-		}
-		
-		private String getPrintableVersion(IFeature feature) {
-			PluginVersionIdentifier version = feature
-					.getVersionedIdentifier()
-					.getVersion();
-			return version.getMajorComponent()+"."+version.getMinorComponent()+"."+version.getServiceComponent();
 		}
 
 		public Image getImage(Object obj) {
