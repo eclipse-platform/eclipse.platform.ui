@@ -21,12 +21,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -228,6 +230,11 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
         } else if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             adapter = (IElementLabelProvider) adaptable.getAdapter(IElementLabelProvider.class);
+	        if (adapter == null && !(element instanceof PlatformObject)) {
+    	    	// for objects that don't properly subclass PlatformObject to inherit default
+	        	// adapters, just delegate to the adapter factory
+    	    	adapter = (IElementLabelProvider) new DebugElementAdapterFactory().getAdapter(element, IElementLabelProvider.class);
+        	}            
         }
         return adapter;
     }		

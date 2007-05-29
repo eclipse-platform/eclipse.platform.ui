@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -47,6 +48,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
@@ -578,6 +580,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		} else if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
 			adapter = (IModelProxyFactory) adaptable.getAdapter(IModelProxyFactory.class);
+			if (adapter == null && !(element instanceof PlatformObject)) {
+    	    	// for objects that don't properly subclass PlatformObject to inherit default
+        		// adapters, just delegate to the adapter factory
+	        	adapter = (IModelProxyFactory) new DebugElementAdapterFactory().getAdapter(element, IModelProxyFactory.class);
+	        }
 		}
 		return adapter;
 	}
@@ -687,6 +694,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         } else if (element instanceof IAdaptable) {
             IAdaptable adaptable = (IAdaptable) element;
             adapter = (IElementContentProvider) adaptable.getAdapter(IElementContentProvider.class);
+            if (adapter == null && !(element instanceof PlatformObject)) {
+                // for objects that don't properly subclass PlatformObject to inherit default
+        		// adapters, just delegate to the adapter factory
+	        	adapter = (IElementContentProvider) new DebugElementAdapterFactory().getAdapter(element, IElementContentProvider.class);
+    	    }
         }
         return adapter;
     }		

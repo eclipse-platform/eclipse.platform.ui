@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -25,6 +26,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPo
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -934,6 +936,11 @@ public class InternalTreeModelViewer extends TreeViewer {
 			if (element instanceof IAdaptable) {
 				IAdaptable adaptable = (IAdaptable) element;
 				IModelSelectionPolicyFactory factory =  (IModelSelectionPolicyFactory) adaptable.getAdapter(IModelSelectionPolicyFactory.class);
+				if (factory == null && !(element instanceof PlatformObject)) {
+					// for objects that don't properly subclass PlatformObject to inherit default
+    	    		// adapters, just delegate to the adapter factory
+					factory = (IModelSelectionPolicyFactory) new DebugElementAdapterFactory().getAdapter(element, IModelSelectionPolicyFactory.class);
+				}
 				if (factory != null) {
 					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
 				}

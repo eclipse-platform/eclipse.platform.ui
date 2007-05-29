@@ -11,6 +11,8 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -76,6 +78,11 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
 			ISourceDisplay adapter = (ISourceDisplay) adaptable.getAdapter(ISourceDisplay.class);
+			if (adapter == null && !(context instanceof PlatformObject)) {
+	        	// for objects that don't properly subclass PlatformObject to inherit default
+	        	// adapters, just delegate to the adapter factory
+	        	adapter = (ISourceDisplay) new DebugElementAdapterFactory().getAdapter(context, ISourceDisplay.class);
+	        }
 			if (adapter != null) {						
 				adapter.displaySource(context, page, forceSourceLookup);
 			}

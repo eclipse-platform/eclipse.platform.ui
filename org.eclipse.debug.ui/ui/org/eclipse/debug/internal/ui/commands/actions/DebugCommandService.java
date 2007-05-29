@@ -18,7 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
+import org.eclipse.debug.internal.core.commands.CommandAdapterFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -277,6 +279,11 @@ public class DebugCommandService implements IDebugContextListener {
 			handler = (IDebugCommandHandler)element;
 		} else if (element instanceof IAdaptable) {
 			handler = (IDebugCommandHandler)((IAdaptable)element).getAdapter(handlerType);
+			if (handler == null && !(element instanceof PlatformObject)) {
+        		// for objects that don't properly subclass PlatformObject to inherit default
+	        	// adapters, just delegate to the adapter factory
+    	    	handler = (IDebugCommandHandler) new CommandAdapterFactory().getAdapter(element, handlerType);
+        	}
 		}
 		return handler;
 	}
