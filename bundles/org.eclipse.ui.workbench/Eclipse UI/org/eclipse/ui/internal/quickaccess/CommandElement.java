@@ -31,9 +31,12 @@ public class CommandElement extends QuickAccessElement {
 
 	private ParameterizedCommand command;
 
-	/* package */CommandElement(ParameterizedCommand command,
+	private String id;
+
+	/* package */CommandElement(ParameterizedCommand command, String id,
 			CommandProvider commandProvider) {
 		super(commandProvider);
+		this.id = id;
 		this.command = command;
 	}
 
@@ -69,7 +72,7 @@ public class CommandElement extends QuickAccessElement {
 	}
 
 	public String getId() {
-		return command.getId();
+		return id;
 	}
 
 	public ImageDescriptor getImageDescriptor() {

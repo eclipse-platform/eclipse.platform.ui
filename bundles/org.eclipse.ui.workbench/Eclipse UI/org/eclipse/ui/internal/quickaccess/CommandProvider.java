@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -60,7 +59,6 @@ public class CommandProvider extends QuickAccessProvider {
 			ICommandService commandService = (ICommandService) PlatformUI
 					.getWorkbench().getService(ICommandService.class);
 			final Collection commandIds = commandService.getDefinedCommandIds();
-			final Collection commandSet = new HashSet();
 			final Iterator commandIdItr = commandIds.iterator();
 			while (commandIdItr.hasNext()) {
 				final String currentCommandId = (String) commandIdItr.next();
@@ -69,19 +67,19 @@ public class CommandProvider extends QuickAccessProvider {
 				if (command != null && command.isHandled()
 						&& command.isEnabled()) {
 					try {
-						commandSet.addAll(ParameterizedCommand
-								.generateCombinations(command));
+						Collection combinations = ParameterizedCommand
+								.generateCombinations(command);
+						for (Iterator it = combinations.iterator(); it
+								.hasNext();) {
+							ParameterizedCommand pc = (ParameterizedCommand) it.next();
+							String id = pc.serialize();
+							idToElement.put(id,
+									new CommandElement(pc, id, this));
+						}
 					} catch (final NotDefinedException e) {
 						// It is safe to just ignore undefined commands.
 					}
 				}
-			}
-			ParameterizedCommand[] commands = (ParameterizedCommand[]) commandSet
-					.toArray(new ParameterizedCommand[commandSet.size()]);
-			for (int i = 0; i < commands.length; i++) {
-				CommandElement commandElement = new CommandElement(commands[i],
-						this);
-				idToElement.put(commandElement.getId(), commandElement);
 			}
 		}
 		return (QuickAccessElement[]) idToElement.values().toArray(
