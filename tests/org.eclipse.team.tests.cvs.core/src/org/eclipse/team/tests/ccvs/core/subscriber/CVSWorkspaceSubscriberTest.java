@@ -61,6 +61,11 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		}
 	}
 	
+	
+	protected boolean isFailOnSyncInfoMismatch() {
+		return CVSTestSetup.FAIL_ON_BAD_DIFF ;
+	}
+	
 	protected CVSSyncTreeSubscriber getSubscriber() throws TeamException {
 		return (CVSSyncTreeSubscriber)getWorkspaceSubscriber();
 	}
