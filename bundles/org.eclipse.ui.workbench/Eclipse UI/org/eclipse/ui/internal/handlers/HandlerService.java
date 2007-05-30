@@ -259,6 +259,21 @@ public final class HandlerService implements IHandlerService {
 	public final IEvaluationContext getContextSnapshot() {
 		return handlerAuthority.getContextSnapshot();
 	}
+	
+	/**
+	 * Normally the context returned from getCurrentState() still tracks the
+	 * application state. This method creates a copy and fills it in with all the
+	 * variables that we know about.
+	 * <p>
+	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
+	 * </p>
+	 * 
+	 * @return an evaluation context with no parent.
+	 * @since 3.3
+	 */
+	public final IEvaluationContext getFullContextSnapshot() {
+		return handlerAuthority.getFullContextSnapshot();
+	}	
 
 	/**
 	 * Execute the command using the provided context. It takes care of finding

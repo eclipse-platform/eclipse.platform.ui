@@ -642,40 +642,64 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 * @since 3.3
 	 */
 	public IEvaluationContext getContextSnapshot() {
-		EvaluationContext context = new EvaluationContext(null,
-				Collections.EMPTY_LIST);
+		return fillInContext(false);
+	}
+	
+	/**
+	 * Normally the context returned from getCurrentState() still tracks the
+	 * application state. This method creates a copy and fills it in with all the
+	 * variables that we know about.
+	 * <p>
+	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
+	 * </p>
+	 * 
+	 * @return an evaluation context with no parent.
+	 * @since 3.3
+	 */
+	public IEvaluationContext getFullContextSnapshot() {
+		return fillInContext(true);
+	}
+	
+	private IEvaluationContext fillInContext(boolean fullContext) {
 		IEvaluationContext tmpContext = getCurrentState();
-		context.addVariable(ISources.ACTIVE_ACTION_SETS_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_ACTION_SETS_NAME));
-		context.addVariable(ISources.ACTIVE_CONTEXT_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_CONTEXT_NAME));
-		context.addVariable(ISources.ACTIVE_EDITOR_ID_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_EDITOR_ID_NAME));
-		context.addVariable(ISources.ACTIVE_EDITOR_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_EDITOR_NAME));
-		context.addVariable(ISources.ACTIVE_PART_ID_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_PART_ID_NAME));
-		context.addVariable(ISources.ACTIVE_PART_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_PART_NAME));
-		context.addVariable(ISources.ACTIVE_SITE_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_SITE_NAME));
-		context
-				.addVariable(
-						ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
-						tmpContext
-								.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME));
-		context
-				.addVariable(
-						ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
-						tmpContext
-								.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME));
-		context.addVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME, tmpContext
-				.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME));
-		context
-				.addVariable(
-						ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
-						tmpContext
-								.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME));
+
+		EvaluationContext context = null;
+		if (fullContext) {
+			context = new EvaluationContext(null, tmpContext.getDefaultVariable());
+			copyVariable(context, tmpContext, ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			copyVariable(context, tmpContext, ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
+			copyVariable(context, tmpContext, ISources.ACTIVE_FOCUS_CONTROL_NAME);
+			copyVariable(context, tmpContext, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
+			copyVariable(context, tmpContext, ISources.ACTIVE_MENU_NAME);
+			copyVariable(context, tmpContext, ISources.ACTIVE_MENU_SELECTION_NAME);
+		} else {
+			context = new EvaluationContext(null, Collections.EMPTY_LIST);
+		}
+
+		copyVariable(context, tmpContext, ISources.ACTIVE_ACTION_SETS_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_CONTEXT_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_EDITOR_ID_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_EDITOR_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_PART_ID_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_PART_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_SITE_NAME);
+		copyVariable(context, tmpContext,
+				ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME);
+		copyVariable(context, tmpContext,
+				ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
+		copyVariable(context, tmpContext,
+				ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
+		copyVariable(context, tmpContext, ISources.ACTIVE_SHELL_NAME);
+
 		return context;
+	}
+	
+	private void copyVariable(IEvaluationContext context,
+			IEvaluationContext tmpContext, String var) {
+		Object o = tmpContext.getVariable(var);
+		if (o != null) {
+			context.addVariable(var, o);
+		}
 	}
 }

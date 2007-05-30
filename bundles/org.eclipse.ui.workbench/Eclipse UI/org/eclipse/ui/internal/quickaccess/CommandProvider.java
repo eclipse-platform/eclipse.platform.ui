@@ -97,7 +97,7 @@ public class CommandProvider extends QuickAccessProvider {
 	
 	private void saveApplicationContext() {
 		realHandlerService = (HandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-		contextSnapshot = realHandlerService.getContextSnapshot();
+		contextSnapshot = realHandlerService.getFullContextSnapshot();
 	}
 	
 	HandlerService getRealHandlerService() {
