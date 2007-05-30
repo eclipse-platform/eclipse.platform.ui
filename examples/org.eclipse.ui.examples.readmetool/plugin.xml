@@ -413,10 +413,40 @@
    </extension>
    <extension
          point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.examples.readmetool.category"
+            name="%Readme.commands.category">
+      </category>
       <command
+            categoryId="org.eclipse.ui.examples.readmetool.category"
             id="org.eclipse.ui.examples.readmetool.item2"
             name="%CmdLabel">
       </command>
+      <command
+            categoryId="org.eclipse.ui.examples.readmetool.category"
+            defaultHandler="org.eclipse.ui.examples.readmetool.ViewHandler"
+            id="org.eclipse.ui.examples.readmetool.viewCmd"
+            name="%Readme.viewCmd.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.navigator.ProjectExplorer?after=additions">
+         <command
+               commandId="org.eclipse.ui.examples.readmetool.viewCmd"
+               icon="$nl$/icons/view16/sections.gif"
+               mnemonic="%Readme.viewCmd.mnemonic">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.navigator.ProjectExplorer?after=additions">
+         <command
+               commandId="org.eclipse.ui.examples.readmetool.viewCmd"
+               icon="$nl$/icons/view16/sections.gif"
+               tooltip="%Readme.viewCmd.tooltip">
+         </command>
+      </menuContribution>
    </extension>
 
 
