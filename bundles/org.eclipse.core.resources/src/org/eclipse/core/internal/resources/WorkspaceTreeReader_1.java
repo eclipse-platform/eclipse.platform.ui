@@ -69,8 +69,13 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 				SavedState state = (SavedState) states.get(i);
 				// If the tree is too old (depends on the policy), the plug-in should not
 				// get it back as a delta. It is expensive to maintain this information too long.
-				if (!workspace.getSaveManager().isOldPluginTree(state.pluginId))
+				final SaveManager saveManager = workspace.getSaveManager();
+				if (!saveManager.isOldPluginTree(state.pluginId)) {
 					state.oldTree = trees[i];
+				} else {
+					//clear information for this plugin from master table
+					saveManager.clearDeltaExpiration(state.pluginId);
+				}
 			}
 		} finally {
 			monitor.done();

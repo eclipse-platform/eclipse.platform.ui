@@ -39,6 +39,7 @@ public class SavedState implements ISavedState {
 	void forgetTrees() {
 		newTree = null;
 		oldTree = null;
+		workspace.saveManager.clearDeltaExpiration(pluginId);
 	}
 
 	public int getSaveNumber() {

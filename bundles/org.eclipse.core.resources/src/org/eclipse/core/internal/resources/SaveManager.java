@@ -168,6 +168,14 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 	}
 
+	/**
+	 * Remove the delta expiration timestamp from the master table, either
+	 * because the saved state has been processed, or the delta has expired.
+	 */
+	protected void clearDeltaExpiration(String pluginId) {
+		masterTable.remove(DELTA_EXPIRATION_PREFIX + pluginId);
+	}
+
 	protected void cleanMasterTable() {
 		//remove tree file entries for everything except closed projects
 		for (Iterator it = masterTable.keySet().iterator(); it.hasNext();) {
@@ -464,6 +472,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// first, check if this plug-ins was marked not to receive a delta
 		if (isDeltaCleared(pluginId))
 			return false;
+		//see if the plugin is still installed
+		if (Platform.getBundle(pluginId) == null)
+			return true;
+
+		//finally see if the delta has past its expiry date
 		long deltaAge = System.currentTimeMillis() - getDeltaExpiration(pluginId);
 		return deltaAge > workspace.internalGetDescription().getDeltaExpiration();
 	}
@@ -1142,13 +1155,6 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	/**
-	 * Used in the policy for cleaning up tree's of plug-ins that are not often activated.
-	 */
-	protected void setDeltaExpiration(String pluginId, long timestamp) {
-		masterTable.setProperty(DELTA_EXPIRATION_PREFIX + pluginId, new Long(timestamp).toString());
-	}
-
-	/**
 	 * Should only be used for read purposes.
 	 */
 	void setPluginsSavedState(HashMap savedStates) {
@@ -1314,6 +1320,20 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		java.io.File table = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES).toFile();
 		if (!table.exists())
 			table.getParentFile().mkdirs();
+	}
+
+	/**
+	 * Update the expiration time for the given plug-in's tree.  If the tree was never
+	 * loaded, use the current value in the master table. If the tree has been loaded,
+	 * use the provided new timestamp.
+	 * 
+	 * The timestamp is used in the policy for cleaning up tree's of plug-ins that are 
+	 * not often activated.
+	 */
+	protected void updateDeltaExpiration(String pluginId) {
+		String key = DELTA_EXPIRATION_PREFIX + pluginId;
+		if (!masterTable.containsKey(key))
+			masterTable.setProperty(key, Long.toString(System.currentTimeMillis()));
 	}
 
 	/**
@@ -1604,14 +1624,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				writeWorkspaceFields(output, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
 				// save plugin info
-				long lastTreeTimestamp = System.currentTimeMillis();
 				output.writeInt(statesToSave.size()); // write the number of plugins we are saving
 				for (Iterator i = statesToSave.entrySet().iterator(); i.hasNext();) {
 					Map.Entry entry = (Map.Entry) i.next();
 					String pluginId = (String) entry.getKey();
 					output.writeUTF(pluginId);
 					trees.add(entry.getValue()); // tree
-					setDeltaExpiration(pluginId, lastTreeTimestamp);
+					updateDeltaExpiration(pluginId);
 				}
 				monitor.worked(Policy.totalWork * 10 / 100);
 
