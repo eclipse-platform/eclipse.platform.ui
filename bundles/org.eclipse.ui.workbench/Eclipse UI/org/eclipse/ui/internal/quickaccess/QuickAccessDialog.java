@@ -693,9 +693,12 @@ public class QuickAccessDialog extends PopupDialog {
 						if (quickAccessElement != null) {
 							ArrayList arrayList = new ArrayList();
 							for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
-								arrayList.add(textArray[j]);
-								elementMap
-										.put(textArray[j], quickAccessElement);
+								String text = textArray[j];
+								// text length can be zero for old workspaces, see bug 190006
+								if (text.length() > 0) {
+									arrayList.add(text);
+									elementMap.put(text, quickAccessElement);
+								}
 							}
 							textMap.put(quickAccessElement, arrayList);
 							previousPicksList.add(quickAccessElement);
@@ -751,25 +754,29 @@ public class QuickAccessDialog extends PopupDialog {
 			textList = new ArrayList();
 			textMap.put(element, textList);
 		}
+		
 		textList.remove(text);
 		if (textList.size() == MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT) {
 			Object removedText = textList.remove(0);
 			elementMap.remove(removedText);
 		}
-		textList.add(text);
 
-		// elementMap:
-		// Put rememberedText->element in elementMap
-		// If it replaced a different element update textMap and
-		// PreviousPicksList
-		Object replacedElement = elementMap.put(text, element);
-		if (replacedElement != null && !replacedElement.equals(element)) {
-			textList = (ArrayList) textMap.get(replacedElement);
-			if (textList != null) {
-				textList.remove(text);
-				if (textList.isEmpty()) {
-					textMap.remove(replacedElement);
-					previousPicksList.remove(replacedElement);
+		if (text.length() > 0) {
+			textList.add(text);
+			
+			// elementMap:
+			// Put rememberedText->element in elementMap
+			// If it replaced a different element update textMap and
+			// PreviousPicksList
+			Object replacedElement = elementMap.put(text, element);
+			if (replacedElement != null && !replacedElement.equals(element)) {
+				textList = (ArrayList) textMap.get(replacedElement);
+				if (textList != null) {
+					textList.remove(text);
+					if (textList.isEmpty()) {
+						textMap.remove(replacedElement);
+						previousPicksList.remove(replacedElement);
+					}
 				}
 			}
 		}
