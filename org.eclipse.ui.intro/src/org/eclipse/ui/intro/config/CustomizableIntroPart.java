@@ -51,18 +51,18 @@ import org.eclipse.ui.part.IntroPart;
  * can be static or dynamic. Static is html files, dynamic is markup in content
  * files. Again, both of which can be specified using the above extension point.
  * <p>
- * Memento Support: This intro part tries to restore its presvious state when
+ * Memento Support: This intro part tries to restore its previous state when
  * possible. The state of the intro page is remembered, along with which standby
  * content content part was opened. IStandbyContent parts are passed the Intro's
  * memento shortly after construction, and are expected to restore there own
- * state based on the momento. The customizable intro part handles there initial
+ * state based on the memento. The customizable intro part handles there initial
  * creation on load, and leaves restoring state to content part. Same with
- * saving state. The memento is paased shortlt before shutdown to enable storing
+ * saving state. The memento is passed shortly before shutdown to enable storing
  * of part specific data.
  * 
  * Note: This class was made public for re-use, as-is, as a valid class for the
  * <code>org.eclipse.ui.intro</code> extension point. It is not intended to be
- * subclassed or used otheriwse.
+ * subclassed or used otherwise.
  * </p>
  * 
  * @since 3.0
