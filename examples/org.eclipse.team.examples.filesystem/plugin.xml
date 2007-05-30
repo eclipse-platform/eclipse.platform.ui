@@ -362,7 +362,7 @@
                label="Remove from control"
                class="org.eclipse.team.examples.pessimistic.ui.RemoveFromControlAction"
                menubarPath="team.main/group2"
-               id="org.eclipse.team.examples.pessimistic.removeFromControl">
+               id="org.eclipse.team.examples.pessimistic.removeFileFromControl">
          </action>
       </objectContribution>              
       <objectContribution
@@ -383,7 +383,7 @@
                label="Remove from control"
                class="org.eclipse.team.examples.pessimistic.ui.RemoveFromControlAction"
                menubarPath="team.main/group2"
-               id="org.eclipse.team.examples.pessimistic.removeFromControl">
+               id="org.eclipse.team.examples.pessimistic.removeFolderFromControl">
          </action>
       </objectContribution>              
       <objectContribution
