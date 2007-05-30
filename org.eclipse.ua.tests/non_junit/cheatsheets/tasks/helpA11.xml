@@ -2,13 +2,36 @@
 <cheatsheet title="Dynamic content">
    <intro>
       <description>
-         This test requires org.eclipse.ua.tests to be installed.
+         This test requires org.eclipse.ua.tests to be installed (installation steps have been provided).
       </description>
    </intro>
+   <item title="Install org.eclipse.ua.tests." dialog="true" skip="false">
+      <description>
+         Skip this step if org.eclipse.ua.tests is installed.
+      </description>
+      <subitem label="Go to the CVS Repository and check out the projects &quot;org.eclipse.ua.tests&quot; and &quot;org.eclipse.test.performance&quot;." skip="true">
+      </subitem>
+      <subitem label="Select File -&gt; Export..." skip="true">
+      </subitem>
+      <subitem label="In the Export Wizard, select &apos;Plug-in Development -&gt; Deployable Plug-ins and Fragments&apos; and click Next." skip="true">
+      </subitem>
+      <subitem label="Check the boxes next to &quot;org.eclipse.ua.tests&quot; and &quot;org.eclipse.test.performance&quot;." skip="true">
+      </subitem>
+      <subitem label="In the Destination tab, specify a folder with a copy of Eclipse in it. Click Finish." skip="true">
+      </subitem>
+      <subitem label="Restart the Eclipse workbench." skip="true">
+      </subitem>
+      <subitem label="To ensure a successful installation, go to Help -&gt; About Eclipse SDK and click on &quot;Plug-in Details&quot;. In the list that comes up, you should be able to find the &quot;org.eclipse.ua.tests&quot; plug-in." skip="true">
+      </subitem>
+   </item>
    <item title="Find filtered topics" dialog="false" skip="false">
       <description>
-         Open the topic &quot;filter&quot; in the book &quot;tests&quot;.
+         Test that topics and subtopics can be filtered.
       </description>
+      <subitem label="Launch Help by selecting Help-&gt;Help Contents from the menu. You should see a book called &quot;tests&quot; in the bookshelf." skip="false">
+      </subitem>
+      <subitem label="Open the topic &quot;filter&quot; in the book &quot;tests&quot;." skip="false">
+      </subitem>
       <subitem label="Check that there are two subtopics &quot;The plugin org.eclipse.help is installed&quot;" skip="false">
       </subitem>
       <subitem label="Check that there are two subtopics &quot;This topic should always appear&quot;" skip="false">

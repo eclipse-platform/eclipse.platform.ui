@@ -7,7 +7,7 @@
    </intro>
    <item title="Simple search" dialog="false" skip="false">
       <description>
-         In the Search entry field enter the word &quot;participation&quot; without the double quotes. The navigation frame should turn to the Search Results view, and if this was the first time you search the docs, you should see the indexing progress monitor in that page. When indexing is finished (or right away if other searches were performed before) you should get the results. In my case, I got 14 hits, starting with &quot;Synchronize View Integration&quot;.
+         In the Search entry field enter the word &quot;participation&quot; without the double quotes. The navigation frame should turn to the Search Results view, and if this was the first time you search the docs, you should see the indexing progress monitor in that page. When indexing is finished (or right away if other searches were performed before) you should get the results.
       </description>
    </item>
    <item title="Select result" dialog="false" skip="false">
@@ -51,12 +51,12 @@
    </item>
    <item title="Search again" dialog="false" skip="false">
       <description>
-         Search again for the same word, &quot;Workspace save participation&quot;. You should see fewer results (I see 1 hit only).
+         Search again for the same word, &quot;Workspace save participation&quot;. You should see fewer results.
       </description>
    </item>
    <item title="Select an item" dialog="false" skip="false">
       <description>
-         Select the &quot;Minimizing data loss from crashes&quot; hit, and click on &quot;Refresh/Show All Topics&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Minimizing data loss from crashes&quot; topic.
+         Select the &quot;Minimizing data loss from crashes&quot; hit, and click on the &quot;Refresh&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Minimizing data loss from crashes&quot; topic.
       </description>
    </item>
    <item title="Redisplay search results" dialog="false" skip="false">

@@ -42,27 +42,32 @@
    </item>
    <item title="Verify Bookmark" dialog="false" skip="false">
       <description>
-         Turn to the Bookmarks tabs and verify the bookmark is added there
+         Turn to the Bookmarks tabs and verify the bookmark has been added there.
       </description>
    </item>
    <item title="Select another topic" dialog="false" skip="false">
       <description>
-         Turn to the Contents tab and select another topic
+         Turn to the Contents tab and select another topic.
       </description>
    </item>
-   <item title="Remove bookmark" dialog="false" skip="false">
+   <item title="Open from bookmark" dialog="false" skip="false">
       <description>
-         Turn to the Bookmarks tab and click on the bookmarked topic (Features). This should load that topic in the main content area.
+         Turn to the Bookmarks tab and click on the bookmarked topic. This should load that topic in the main content area.
+      </description>
+   </item>
+   <item title="Remove the bookmark" dialog="true" skip="false">
+      <description>
+         With the bookmark selected, click on the &apos;Remove&apos; icon in the toolbar.
+      </description>
+   </item>
+   <item title="Remove the bookmark with &apos;Delete&apos;" dialog="true" skip="false">
+      <description>
+         Create another bookmark. Select it in the Bookmarks tab and press the &apos;Delete&apos; button on your keyboard.
       </description>
    </item>
    <item title="Add and delete bookmarks" dialog="false" skip="false">
       <description>
          Add more bookmarks, delete them all using &quot;Remove all bookmarks&quot; button or action on the pop-up menu.
-      </description>
-   </item>
-   <item title="Open from bookmark" dialog="false" skip="false">
-      <description>
-         Click on the bookmarks tab and clcik on the bookmark. The page you bookmarked should open
       </description>
    </item>
 </cheatsheet>
