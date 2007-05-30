@@ -40,8 +40,6 @@ public class StatusNotificationManager {
 
 	private StatusDialog dialog;
 
-	private boolean dialogOpened = false;
-
 	private static StatusNotificationManager sharedInstance;
 
 	private DisposeListener disposeListener = new DisposeListener() {
@@ -52,7 +50,6 @@ public class StatusNotificationManager {
 		 */
 		public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
 			dialog = null;
-			dialogOpened = false;
 			errors.clear();
 		}
 	};
@@ -97,7 +94,36 @@ public class StatusNotificationManager {
 
 		// Add the error in the UI thread to ensure thread safety in the
 		// dialog
-		if (dialogOpened == true) {
+		if (dialog == null || dialog.getShell().isDisposed()) {
+
+			errors.add(statusInfo);
+			// Delay prompting if the status adapter property is set
+			Object noPromptProperty = statusInfo.getStatus().getProperty(
+					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
+
+			boolean prompt = true;
+			if (noPromptProperty instanceof Boolean) {
+				prompt = !((Boolean) noPromptProperty).booleanValue();
+			}
+
+			if (prompt) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if (dialog == null) {
+							dialog = new StatusDialog(ProgressManagerUtil
+									.getDefaultParent(), statusInfo,
+									IStatus.INFO | IStatus.WARNING
+											| IStatus.ERROR, modal);
+							dialog.open();
+							dialog.getShell().addDisposeListener(
+									disposeListener);
+						}
+					}
+				});
+			}
+
+		} else {
+
 			if (statusInfo.getStatus().getProperty(
 					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != null) {
 				statusInfo.getStatus().setProperty(
@@ -110,30 +136,6 @@ public class StatusNotificationManager {
 					openStatusDialog(modal, statusInfo);
 				}
 			});
-
-		} else {
-			errors.add(statusInfo);
-			// Delay prompting if the status adapter property is set
-			Object noPromptProperty = statusInfo.getStatus().getProperty(
-					IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
-
-			boolean prompt = true;
-			if (noPromptProperty instanceof Boolean) {
-				prompt = !((Boolean) noPromptProperty).booleanValue();
-			}
-
-			if (prompt) {
-				dialogOpened = true;
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						dialog = new StatusDialog(ProgressManagerUtil
-								.getDefaultParent(), statusInfo, IStatus.INFO
-								| IStatus.WARNING | IStatus.ERROR, modal);
-						dialog.open();
-						dialog.getShell().addDisposeListener(disposeListener);
-					}
-				});
-			}
 		}
 	}
 
