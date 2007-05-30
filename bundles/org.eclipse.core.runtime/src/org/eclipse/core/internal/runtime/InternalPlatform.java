@@ -87,7 +87,7 @@ public final class InternalPlatform {
 
 	private static final InternalPlatform singleton = new InternalPlatform();
 
-	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
+	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32, Platform.WS_WPF};
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker configurationLocation = null;
 	private BundleContext context;

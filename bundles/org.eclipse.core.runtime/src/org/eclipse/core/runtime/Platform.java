@@ -403,6 +403,13 @@ public final class Platform {
 	public static final String WS_CARBON = "carbon";//$NON-NLS-1$
 
 	/**
+	 * Constant string (value "wpf") indicating the platform is running on a
+	 * machine using the WPF windowing system.
+	 * @since 3.3
+	 */
+	public static final String WS_WPF = "wpf";//$NON-NLS-1$
+
+	/**
 	 * Constant string (value "unknown") indicating the platform is running on a
 	 * machine running an unknown windowing system.
 	 * <p>
