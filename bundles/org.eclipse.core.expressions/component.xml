@@ -13,6 +13,8 @@
    <type name= "ExpressionTagNames" subclass="false"/>
    <type name= "IEvaluationContext" implement="false"/>
    <type name= "IPropertyTester" implement="false"/>
+   <type name= "IIterable"/>
+   <type name= "ICountable"/>
  </package>
  
  <component-depends unrestricted="true"/>
