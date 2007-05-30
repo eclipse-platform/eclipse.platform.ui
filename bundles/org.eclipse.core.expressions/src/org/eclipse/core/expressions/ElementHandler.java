@@ -113,6 +113,8 @@ public abstract class ElementHandler {
 	 *  of the conversion
 	 * 
 	 * @throws CoreException if the conversion failed
+	 * 
+	 * @since 3.3
 	 */
 	protected void processChildren(ExpressionConverter converter, Element element, CompositeExpression expression) throws CoreException {
 		converter.processChildren(element, expression);
