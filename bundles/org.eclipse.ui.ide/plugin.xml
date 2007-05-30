@@ -262,6 +262,44 @@
             label="%WorkingSetsActionSet.label"
             description="%WorkingSetsActionSet.description"
             visible="false"
+            id="org.eclipse.ui.WorkingSetModificationActionSet">
+            <action
+          		class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:false"
+	            definitionId="org.eclipse.ui.navigate.removeFromWorkingSet"
+      		    icon="$nl$/icons/full/elcl16/removefromworkset.gif"
+	            id="removeFromWorkingSet"
+	            label="%RemoveFromWorkingSetAction.label"
+          		menubarPath="edit/additions"
+          		style="pulldown"
+          		toolbarPath="workingSets"
+          		tooltip="%RemoveFromWorkingSetAction.tooltip">
+     			<enablement>
+        			<objectClass
+           	   			name="org.eclipse.core.runtime.IAdaptable">
+        			</objectClass>
+     			</enablement>
+  			</action>
+			<action
+        		class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:true"
+        		definitionId="org.eclipse.ui.navigate.addToWorkingSet"
+        		icon="$nl$/icons/full/elcl16/addtoworkset.gif"
+        		id="addToWorkingSet"
+        		label="%AddToWorkingSetAction.label"
+        		menubarPath="edit/additions"
+        		style="pulldown"
+ 		        toolbarPath="workingSets"
+        		tooltip="%AddToWorkingSetAction.tooltip">
+     			<enablement>
+        			<objectClass
+           	   			name="org.eclipse.core.runtime.IAdaptable">
+        			</objectClass>
+     			</enablement>
+  			</action>
+      </actionSet>
+      <actionSet
+            label="%WindowWorkingSetsActionSet.label"
+            description="%WindowWorkingSetsActionSet.description"
+            visible="false"
             id="org.eclipse.ui.WorkingSetActionSet">
          <action
                class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
@@ -272,39 +310,7 @@
                menubarPath="window/additions"
                style="pulldown"
                toolbarPath="workingSets"
-               tooltip="%SelectWorkingSetsAction.tooltip"/>    
-  		<action
-          class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:false"
-          definitionId="org.eclipse.ui.navigate.removeFromWorkingSet"
-          icon="$nl$/icons/full/elcl16/removefromworkset.gif"
-          id="removeFromWorkingSet"
-          label="%RemoveFromWorkingSetAction.label"
-          menubarPath="edit/additions"
-          style="pulldown"
-          toolbarPath="workingSets"
-          tooltip="%RemoveFromWorkingSetAction.tooltip">
-     		<enablement>
-        		<objectClass
-           	   		name="org.eclipse.core.runtime.IAdaptable">
-        		</objectClass>
-     		</enablement>
-  		</action>
-		<action
-        class="org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate:true"
-        definitionId="org.eclipse.ui.navigate.addToWorkingSet"
-        icon="$nl$/icons/full/elcl16/addtoworkset.gif"
-        id="addToWorkingSet"
-        label="%AddToWorkingSetAction.label"
-        menubarPath="edit/additions"
-        style="pulldown"
-        toolbarPath="workingSets"
-        tooltip="%AddToWorkingSetAction.tooltip">
-     		<enablement>
-        		<objectClass
-           	   		name="org.eclipse.core.runtime.IAdaptable">
-        		</objectClass>
-     		</enablement>
-  		</action>                 
+               tooltip="%SelectWorkingSetsAction.tooltip"/>                     
       </actionSet>
         <actionSet
             label="%openFilesActionSet.label"
