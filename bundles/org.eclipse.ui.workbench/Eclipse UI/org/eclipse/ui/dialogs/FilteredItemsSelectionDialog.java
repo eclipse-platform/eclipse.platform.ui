@@ -196,9 +196,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	private ItemsListSeparator itemsListSeparator;
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
-	private boolean refreshWithLastSelection = false ;
-	
+
+	private boolean refreshWithLastSelection = false;
 
 	/**
 	 * Creates a new instance of the class.
@@ -852,7 +851,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
-			
+
 			List lastRefreshSelection = ((StructuredSelection) list
 					.getSelection()).toList();
 
@@ -1343,7 +1342,7 @@ public abstract class FilteredItemsSelectionDialog extends
 						IStatus.CANCEL, EMPTY_STRING, null);
 			}
 
-			//Schedule cyclical with 500 milliseconds delay
+			// Schedule cyclical with 500 milliseconds delay
 			schedule(500);
 
 			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK,
@@ -1359,7 +1358,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		public void scheduleProgressRefresh(
 				GranualProgressMonitor progressMonitor) {
 			this.progressMonitor = progressMonitor;
-			//Schedule with initial delay to avoid flickering when the user types quickly
+			// Schedule with initial delay to avoid flickering when the user
+			// types quickly
 			schedule(200);
 		}
 
@@ -1906,12 +1906,15 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.itemsFilter = filter;
 
 			contentProvider.reset();
-			
+
 			refreshWithLastSelection = false;
 
 			contentProvider.addHistoryItems(itemsFilter);
 
-			contentProvider.refresh();
+			if (contentProvider.hasItems()
+					&& !(lastCompletedFilter != null && lastCompletedFilter
+							.isSubFilter(this.itemsFilter)))
+				contentProvider.refresh();
 
 			filterJob.schedule();
 
@@ -2513,6 +2516,15 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
+		 * Return whether or not there are any items.
+		 * 
+		 * @return
+		 */
+		public boolean hasItems() {
+			return !items.isEmpty();
+		}
+
+		/**
 		 * Sets selection history.
 		 * 
 		 * @param selectionHistory
@@ -2701,12 +2713,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Gets filtered items.
+		 * Gets sorted items.
 		 * 
-		 * @return filtered items
+		 * @return sorted items
 		 */
-		private Object[] getItems(boolean sort) {
-			if (sort || lastSortedItems.size() != items.size()) {
+		private Object[] getSortedItems() {
+			if (lastSortedItems.size() != items.size()) {
 				synchronized (lastSortedItems) {
 					lastSortedItems.clear();
 					lastSortedItems.addAll(items);
@@ -2723,7 +2735,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void rememberResult(ItemsFilter itemsFilter) {
 			List itemsList = Collections.synchronizedList(Arrays
-					.asList(getItems(false)));
+					.asList(getSortedItems()));
 			// synchronization
 			if (itemsFilter == filter) {
 				lastCompletedFilter = itemsFilter;
@@ -2882,7 +2894,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			// get already sorted array
-			Object[] filteredElements = getItems(false);
+			Object[] filteredElements = getSortedItems();
 
 			if (monitor != null) {
 				monitor.worked(ticks);
