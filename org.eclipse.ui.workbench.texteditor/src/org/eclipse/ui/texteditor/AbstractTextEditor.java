@@ -875,11 +875,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 		 */
 		public void partActivated(IWorkbenchPart part) {
-			// Restore the saved state if any
-			if (part == AbstractTextEditor.this && fMementoToRestore != null && containsSavedState(fMementoToRestore))
-				doRestoreState(fMementoToRestore);
-			fMementoToRestore= null;
-			
 			fActivePart= part;
 			handleActivation();
 		}
@@ -907,6 +902,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 		 */
 		public void partOpened(IWorkbenchPart part) {
+			// Restore the saved state if any
+			if (part == AbstractTextEditor.this && fMementoToRestore != null && containsSavedState(fMementoToRestore))
+				doRestoreState(fMementoToRestore);
+			fMementoToRestore= null;
 		}
 
 		/**
