@@ -214,7 +214,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public void initialize() {
 		// First see if there is an http proxy to migrate
-		migrateUpdateHttpProxy(new InstanceScope().getNode("")); //$NON-NLS-1$
+		migrateUpdateHttpProxy(new InstanceScope().getNode(""), true); //$NON-NLS-1$
 		((IEclipsePreferences)Activator.getInstance().getInstancePreferences()).addPreferenceChangeListener(this);
 		// Now initialize each proxy type
 		for (int i = 0; i < proxies.length; i++) {
@@ -305,31 +305,14 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		}
 	}
 	
-	void migrateUpdateHttpProxy(Preferences node) {
+	void migrateUpdateHttpProxy(Preferences node, boolean checkSystemProperties) {
 		Preferences netPrefs = node.node(Activator.ID);
 		if (!netPrefs.getBoolean(PREF_HAS_MIGRATED, false)) {
 			netPrefs.putBoolean(PREF_HAS_MIGRATED, true);
 			Preferences updatePrefs = node.node("org.eclipse.update.core"); //$NON-NLS-1$
-			String httpProxyHost = updatePrefs.get(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
-			if ("".equals(httpProxyHost)) //$NON-NLS-1$
-				httpProxyHost = null;
-			updatePrefs.remove(HTTP_PROXY_HOST);
-			
-			String httpProxyPort = updatePrefs.get(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
-			if ("".equals(httpProxyPort)) //$NON-NLS-1$
-				httpProxyPort = null;
-			int port = -1;
-			if (httpProxyPort != null)
-				try {
-					port = Integer.parseInt(httpProxyPort);
-				} catch (NumberFormatException e) {
-					// Ignore
-				}
-			updatePrefs.remove(HTTP_PROXY_PORT);
-			
-			boolean httpProxyEnable = updatePrefs.getBoolean(HTTP_PROXY_ENABLE, false);
-			updatePrefs.remove(HTTP_PROXY_ENABLE);
-			
+			String httpProxyHost = getHostToMigrate(updatePrefs, checkSystemProperties);
+			int port = getPortToMigrate(updatePrefs, checkSystemProperties);
+			boolean httpProxyEnable = getEnablementToMigrate(updatePrefs, checkSystemProperties);
 			if (httpProxyHost != null) {
 				ProxyData proxyData = new ProxyData(IProxyData.HTTP_PROXY_TYPE, httpProxyHost, port, false);
 				ProxyType type = getType(proxyData);
@@ -339,6 +322,44 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 				}
 			}
 		}
+	}
+
+	private boolean getEnablementToMigrate(Preferences updatePrefs, boolean checkSystemProperties) {
+		boolean httpProxyEnable = false;
+		if (checkSystemProperties && updatePrefs.get(HTTP_PROXY_ENABLE, null) == null) {
+			httpProxyEnable = Boolean.getBoolean("http.proxySet"); //$NON-NLS-1$
+		} else {
+			httpProxyEnable = updatePrefs.getBoolean(HTTP_PROXY_ENABLE, false);
+			updatePrefs.remove(HTTP_PROXY_ENABLE);
+		}
+		return httpProxyEnable;
+	}
+
+	private int getPortToMigrate(Preferences updatePrefs, boolean checkSystemProperties) {
+		String httpProxyPort = updatePrefs.get(HTTP_PROXY_PORT, ""); //$NON-NLS-1$
+		if (checkSystemProperties && "".equals(httpProxyPort)) { //$NON-NLS-1$
+			httpProxyPort = System.getProperty("http.proxyPort", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		updatePrefs.remove(HTTP_PROXY_PORT);
+		int port = -1;
+		if (httpProxyPort != null && !"".equals(httpProxyPort)) //$NON-NLS-1$
+			try {
+				port = Integer.parseInt(httpProxyPort);
+			} catch (NumberFormatException e) {
+				// Ignore
+			}
+		return port;
+	}
+
+	private String getHostToMigrate(Preferences updatePrefs, boolean checkSystemProperties) {
+		String httpProxyHost = updatePrefs.get(HTTP_PROXY_HOST, ""); //$NON-NLS-1$
+		if (checkSystemProperties && "".equals(httpProxyHost)) { //$NON-NLS-1$
+			httpProxyHost = System.getProperty("http.proxyHost", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if ("".equals(httpProxyHost)) //$NON-NLS-1$
+			httpProxyHost = null;
+		updatePrefs.remove(HTTP_PROXY_HOST);
+		return httpProxyHost;
 	}
 
 	public void preferenceChange(PreferenceChangeEvent event) {

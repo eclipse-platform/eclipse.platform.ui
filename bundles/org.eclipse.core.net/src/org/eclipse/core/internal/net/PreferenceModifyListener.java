@@ -20,7 +20,7 @@ public class PreferenceModifyListener extends
 	}
 	
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
-		((ProxyManager)ProxyManager.getProxyManager()).migrateUpdateHttpProxy(node.node("instance")); //$NON-NLS-1$
+		((ProxyManager)ProxyManager.getProxyManager()).migrateUpdateHttpProxy(node.node("instance"), false); //$NON-NLS-1$
 		return super.preApply(node);
 	}
 
