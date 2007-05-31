@@ -13,13 +13,17 @@ package org.eclipse.debug.internal.ui.contextlaunching;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
@@ -102,7 +106,7 @@ public final class ContextRunner {
 			config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
 		}
 		if(config != null) {
-			DebugUITools.launch(config, group.getMode());
+			launch(config, group.getMode());
 			return true;
 		}
 		return false;
@@ -136,114 +140,165 @@ public final class ContextRunner {
 	
 	/**
 	 * Prompts the user to select a way of launching the current resource, where a 'way'
-	 * is defined as a launch shortcut, and returns if a launch took place
+	 * is defined as a launch shortcut.
+	 * 
 	 * @param resource
 	 * @param group
-	 * @return if the context was launched in the given mode or not
 	 */
-	protected boolean selectAndLaunch(IResource resource, ILaunchGroup group) {
+	protected void selectAndLaunch(IResource resource, ILaunchGroup group) {
 		if(group == null) {
-			return false;
+			return;
 		}
 		ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(resource);
 		if(config != null) {
-			DebugUITools.launch(config, group.getMode());
-			return true;
+			launch(config, group.getMode());
+			return;
 		}
-		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource); 
+		List configs = getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+		configs = getConfigsApplicableToMode(configs, group.getMode());
 		int csize = configs.size();
 		if(csize == 1) {
-			DebugUITools.launch((ILaunchConfiguration) configs.get(0), group.getMode());
-			return true;
+			launch((ILaunchConfiguration) configs.get(0), group.getMode());
+			return;
 		}
 		if(csize < 1) {
 			List exts = getLaunchConfigurationManager().getLaunchShortcuts(resource);
-			int esize = exts.size();
+			List modeSpecificExts = getLaunchConfigurationManager().getShortcutsSupportingMode(exts, group.getMode());
+			int esize = modeSpecificExts.size();
 			if(esize == 1) {
-				LaunchShortcutExtension ext = (LaunchShortcutExtension) exts.get(0);
+				LaunchShortcutExtension ext = (LaunchShortcutExtension) modeSpecificExts.get(0);
 				ext.launch(new StructuredSelection(resource), group.getMode());
-				return true;
+				return;
 			}
 			if(esize > 1) {
-				return showShortcutSelectionDialog(resource, null, group.getMode());
+				showShortcutSelectionDialog(resource, modeSpecificExts, group.getMode());
+				return;
 			}
 			if(esize < 1) {
 				if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_LAUNCH_LAST_IF_NOT_LAUNCHABLE)) {
-					if(launchLast(group)) {
-						return true;
+					if(!launchLast(group)) {
+						MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+					}
+					return;
+				}
+				if (exts.size() > 0) {
+					// there are shortcuts, but not applicable to the selected mode
+					ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(group.getMode());
+					if (launchMode == null) {
+						DebugUIPlugin.logErrorMessage("Unsupported launch mode: " + group.getMode()); //$NON-NLS-1$
+					} else {
+						String label = launchMode.getLabel();
+						String modeLabel = DebugUIPlugin.removeAccelerators(label);
+						MessageDialog.openInformation(DebugUIPlugin.getShell(), MessageFormat.format(ContextMessages.ContextRunner_1, new String[]{modeLabel}),
+								MessageFormat.format(ContextMessages.ContextRunner_2, new String[]{modeLabel.toLowerCase()}));
+					}
+				} else {
+					IProject project = resource.getProject();
+					if(project != null && !project.equals(resource)) {
+						selectAndLaunch(project, group);
 					}
 					else {
-						MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
-						return false;
+						String msg = ContextMessages.ContextRunner_7;
+						if(!resource.isAccessible()) {
+							msg = MessageFormat.format(ContextMessages.ContextRunner_13, new String[] {resource.getName()});
+						}
+						MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, msg);
 					}
-				}
-				IProject project = resource.getProject();
-				if(project != null && !project.equals(resource)) {
-					selectAndLaunch(project, group);
-				}
-				else {
-					String msg = ContextMessages.ContextRunner_7;
-					if(!resource.isAccessible()) {
-						msg = MessageFormat.format(ContextMessages.ContextRunner_13, new String[] {resource.getName()});
-					}
-					MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, msg);
 				}
 			}
 		}
 		else if(csize > 1){
 			config = getLaunchConfigurationManager().getMRUConfiguration(configs, group, resource);
 			if(config != null) {
-				DebugUITools.launch(config, group.getMode());
-				return true;
-			}
-			else {
-				return showConfigurationSelectionDialog(configs, group.getMode());
+				launch(config, group.getMode());
+			} else {
+				showConfigurationSelectionDialog(configs, group.getMode());
 			}
 		}
-		return false;
+	}
+	
+	/**
+	 * Validates the given launch mode and launches.
+	 * 
+	 * @param configuration configuration to launch
+	 * @param mode launch mode identifier
+	 */
+	private void launch(ILaunchConfiguration configuration, String mode) {
+		if (validateMode(configuration, mode)) {
+			DebugUITools.launch(configuration, mode);
+		}
+	}
+	
+	/**
+	 * Validates the given launch mode is supported, and returns whether to continue with
+	 * the launch.
+	 * 
+	 * @param configuration launch configuration
+	 * @param mode launch mode
+	 * @return whether the mode is supported
+	 */
+	private boolean validateMode(ILaunchConfiguration configuration, String mode) {
+		try {
+			// if this is a multi-mode launch, allow the launch dialog to be opened
+			// to resolve a valid mode, if needed.
+			if (configuration.getModes().isEmpty()) {
+				if (!configuration.supportsMode(mode)) {
+					ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(mode);
+					if (launchMode == null) {
+						DebugUIPlugin.logErrorMessage("Unsupported launch mode: " + mode); //$NON-NLS-1$
+					} else {
+						String label = launchMode.getLabel();
+						String modeLabel = DebugUIPlugin.removeAccelerators(label);
+						MessageDialog.openInformation(DebugUIPlugin.getShell(), MessageFormat.format(ContextMessages.ContextRunner_1, new String[]{modeLabel}),
+								MessageFormat.format(ContextMessages.ContextRunner_3, new String[]{configuration.getName(), modeLabel.toLowerCase()}));
+					}
+					return false;
+				}
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e.getStatus());
+			return false;
+		}
+		return true;
 	}
 	
 	/**
 	 * Presents the user with a dialog to pick the launch configuration to launch
+	 * and launches that configuration.
+	 * 
 	 * @param configurations the listing of applicable configurations to present
 	 * @param mode the mode
-	 * @return true if something was launched, false otherwise
 	 */
-	protected boolean showConfigurationSelectionDialog(List configurations, String mode) {
+	protected void showConfigurationSelectionDialog(List configurations, String mode) {
 		LaunchConfigurationSelectionDialog lsd = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell());
 		if(configurations != null) {
 			lsd.setInput(configurations);
 		}
 		if(lsd.open() == IDialogConstants.OK_ID) {
 			ILaunchConfiguration config = (ILaunchConfiguration) lsd.getResult()[0];
-			DebugUITools.launch(config, mode);
-			return true;
+			launch(config, mode);
 		}
-		return false;
 	}
 	
 	/**
-	 * Presents a selection dialog to the user to pick a launch shortcut
+	 * Presents a selection dialog to the user to pick a launch shortcut and
+	 * launch using that shortcut.
+	 * 
 	 * @param resource the resource context
 	 * @param mode the mode
-	 * @return true if something was launched, false otherwise
 	 */
-	protected boolean showShortcutSelectionDialog(IResource resource, List shortcuts, String mode) {
+	protected void showShortcutSelectionDialog(IResource resource, List shortcuts, String mode) {
 		LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(resource, mode);
-		if(shortcuts != null) {
-			dialog.setInput(shortcuts);
-		}
+		dialog.setInput(shortcuts);
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			if(result.length > 0) {
 				LaunchShortcutExtension method = (LaunchShortcutExtension) result[0];
 				if(method != null) {
 					method.launch((resource == null ? new StructuredSelection() : new StructuredSelection(resource)), mode);
-					return true;
 				}
 			}
 		}
-		return false;
 	}
 	
 	/**
@@ -252,5 +307,22 @@ public final class ContextRunner {
 	 */
 	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+	}
+	
+	private List getConfigsApplicableToMode(List configs, String mode) {
+		ArrayList applicable = new ArrayList(configs);
+		ListIterator iterator = applicable.listIterator();
+		while (iterator.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
+			try {
+				Set modes = config.getModes();
+				modes.add(mode);
+				if (!config.getType().supportsModeCombination(modes)) {
+					iterator.remove();
+				}
+			} catch (CoreException e) {
+			}
+		}
+		return applicable;
 	}
 }

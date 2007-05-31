@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchMode;
@@ -146,10 +143,6 @@ public class LaunchShortcutSelectionDialog extends ListDialog {
 	 */
 	protected Control createDialogArea(Composite container) {
 		Composite comp = (Composite) super.createDialogArea(container);
-		if(fResource != null) {
-			List input = new ArrayList(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts(fResource));
-			getTableViewer().setInput(input);
-		}
 		Group group = SWTFactory.createGroup(comp, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 1, GridData.FILL_BOTH);
 		GridData gd = (GridData) group.getLayoutData();
 		gd.heightHint = 175;

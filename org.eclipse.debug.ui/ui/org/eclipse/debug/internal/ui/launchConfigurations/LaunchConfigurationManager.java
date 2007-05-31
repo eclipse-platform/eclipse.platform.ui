@@ -669,6 +669,27 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
+	 * Returns a list of launch shortcuts based on the given shortcuts that support
+	 * the given launch mode.
+	 * 
+	 * @param shortctus launch shortcuts
+	 * @param mode launch mode id
+	 * @return shortcuts supporting the given mode, possible an empty list
+	 * @since 3.3
+	 */
+	public List getShortcutsSupportingMode(List shortctus, String mode) {
+		ArrayList supporting = new ArrayList(shortctus);
+		Iterator iterator = supporting.listIterator();
+		while (iterator.hasNext()) {
+			LaunchShortcutExtension ext = (LaunchShortcutExtension) iterator.next();
+			if (!ext.getModes().contains(mode)) {
+				iterator.remove();
+			}
+		}
+		return supporting;
+	}
+	
+	/**
 	 * Returns a listing of all of the <code>ILaunchConfigurationType</code>s that apply to the currently
 	 * specified <code>IResource</code>.
 	 * 
