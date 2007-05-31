@@ -107,7 +107,7 @@ Launch configuration instances of this type will delegate to instances of this c
                <documentation>
                   The unique identifier of a sourcePathComputer extension that is used to compute a default source lookup path for launch configurations of this type. This atttribute was added in the 3.0 release.
 
-With new API changes for 3.3M3 the sourcePathComputer id should be contributed via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point
+Since 3.3, the &lt;code&gt;sourcePathComputerId&lt;/code&gt; can also be specified via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point.
                </documentation>
             </annotation>
          </attribute>
@@ -116,7 +116,7 @@ With new API changes for 3.3M3 the sourcePathComputer id should be contributed v
                <documentation>
                   The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. This atttribute was added in the 3.0 release.
 
-With new API changes for 3.3M3 the sourceLocatorId id should be contributed via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point
+Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point.
                </documentation>
             </annotation>
          </attribute>
