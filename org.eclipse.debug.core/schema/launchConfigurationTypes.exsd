@@ -137,12 +137,6 @@ With new API changes for 3.3M3 the sourceLocatorId id should be contributed via 
 &lt;p&gt;
 An example of a &apos;human readable name&apos; would be something like (in the case of the default java application delegate): Eclipse JDT Java Tooling
 &lt;/p&gt;
-&lt;p&gt;
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
-part of a work in progress. There is no guarantee that this API will
-remain unchanged during the 3.3 release cycle. Please do not use this API
-without consulting with the Platform/Debug team.
-&lt;/p&gt;
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -152,7 +146,7 @@ without consulting with the Platform/Debug team.
          <attribute name="delegateDescription" type="string">
             <annotation>
                <documentation>
-                  This attribute provides a description of the associated launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release. EXPERIMENTAL.
+                  This attribute provides a description of the associated launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
