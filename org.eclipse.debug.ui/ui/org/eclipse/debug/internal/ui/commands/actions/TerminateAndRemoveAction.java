@@ -66,7 +66,7 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     }
 
     public String getHelpContextId() {
-        return "terminate_and_remove_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.terminate_and_remove_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

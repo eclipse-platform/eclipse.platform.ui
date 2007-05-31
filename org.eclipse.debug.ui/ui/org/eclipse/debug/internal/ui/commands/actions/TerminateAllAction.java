@@ -61,7 +61,7 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 	}
 
 	public String getHelpContextId() {
-		return "terminate_all_action_context"; //$NON-NLS-1$
+		return "org.eclipse.debug.ui.terminate_all_action_context"; //$NON-NLS-1$
 	}
 
 	public String getId() {

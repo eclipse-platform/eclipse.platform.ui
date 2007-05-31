@@ -28,7 +28,7 @@ public class DisconnectCommandAction extends DebugCommandAction{
     }
 
     public String getHelpContextId() {
-        return "disconnect_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.disconnect_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

@@ -32,7 +32,7 @@ public class StepIntoCommandAction extends DebugCommandAction {
     }
 
     public String getHelpContextId() {
-        return "step_into_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.step_into_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

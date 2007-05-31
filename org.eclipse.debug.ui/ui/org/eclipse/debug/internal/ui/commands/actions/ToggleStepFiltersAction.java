@@ -43,7 +43,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getHelpContextId()
 	 */
 	public String getHelpContextId() {
-		return "step_with_filters_action_context"; //$NON-NLS-1$
+		return "org.eclipse.debug.ui.step_with_filters_action_context"; //$NON-NLS-1$
 	}
 
 	/**

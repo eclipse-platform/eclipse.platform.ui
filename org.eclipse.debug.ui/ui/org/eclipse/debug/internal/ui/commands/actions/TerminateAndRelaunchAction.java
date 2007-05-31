@@ -96,7 +96,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
     }
 
     public String getHelpContextId() {
-        return "terminate_and_relaunch_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.terminate_and_relaunch_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

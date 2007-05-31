@@ -46,6 +46,7 @@ public class ToggleDetailPaneAction extends Action {
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_UNDER));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_UNDER));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_UNDER));
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.VERTICAL_DETAIL_PANE_LAYOUT_ACTION);
 		} else if (orientation == IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT) {
 			setText(ActionMessages.ToggleDetailPaneAction_4);  
 			setToolTipText(ActionMessages.ToggleDetailPaneAction_5);  
@@ -53,6 +54,7 @@ public class ToggleDetailPaneAction extends Action {
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_RIGHT));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_RIGHT));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_RIGHT));
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION);
 		} else {
 			setText(hiddenLabel);
 			setToolTipText(ActionMessages.ToggleDetailPaneAction_8);  
@@ -60,8 +62,8 @@ public class ToggleDetailPaneAction extends Action {
 			setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE_HIDE));
 			setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_DETAIL_PANE_HIDE));
 			setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_DETAIL_PANE_HIDE));
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.DETAIL_PANE_HIDDEN_LAYOUT_ACTION);
 		} 		
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SHOW_DETAIL_PANE_ACTION);
 	}
 
 	/* (non-Javadoc)

@@ -30,8 +30,9 @@ public interface IDebugHelpContextIds {
 	public static final String CHANGE_VALUE_ACTION = PREFIX + "change_value_action_context"; //$NON-NLS-1$	
 	public static final String OPEN_BREAKPOINT_ACTION = PREFIX + "open_breakpoint_action_context"; //$NON-NLS-1$
 	public static final String RELAUNCH_HISTORY_ACTION = PREFIX + "relaunch_history_action_context"; //$NON-NLS-1$	
-	public static final String SHOW_DETAIL_PANE_ACTION = PREFIX + "show_detail_pane_action_context"; //$NON-NLS-1$
 	public static final String SHOW_BREAKPOINTS_FOR_MODEL_ACTION = PREFIX + "show_breakpoints_for_model_action_context"; //$NON-NLS-1$
+	public static final String COPY_BREAKPOINTS_ACTION = PREFIX + "copy_breakpoints_action_context"; //$NON-NLS-1$
+	public static final String PASTE_BREAKPOINTS_ACTION = PREFIX + "paste_breakpoints_action_context"; //$NON-NLS-1$
 	public static final String SHOW_TYPES_ACTION = PREFIX + "show_types_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_CONTENT_PROVIDERS_ACTION = PREFIX + "variables_content_providers_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_SELECT_LOGICAL_STRUCTURE = PREFIX + "variables_select_logical_structure"; //$NON-NLS-1$
@@ -65,6 +66,9 @@ public interface IDebugHelpContextIds {
     public static final String MEMORY_VIEW_PANE_ORIENTATION_ACTION = PREFIX + "memory_view_pane_orientation_action_context"; //$NON-NLS-1$
     public static final String SHOW_WHEN_STDOUT_CHANGES_ACTION = PREFIX + "show_stdout_action_context"; //$NON-NLS-1$
     public static final String SHOW_WHEN_STDERR_CHANGES_ACTION = PREFIX + "show_stderr_action_context"; //$NON-NLS-1$
+    public static final String HORIZONTAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "horizontal_detail_pane_layout_action_context"; //$NON-NLS-1$
+    public static final String VERTICAL_DETAIL_PANE_LAYOUT_ACTION = PREFIX + "vertical_detail_pane_layout_action_context"; //$NON-NLS-1$
+    public static final String DETAIL_PANE_HIDDEN_LAYOUT_ACTION = PREFIX + "detail_pane_hidden_layout_action_context"; //$NON-NLS-1$
     
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$

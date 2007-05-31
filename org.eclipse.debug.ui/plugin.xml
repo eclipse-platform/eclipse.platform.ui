@@ -625,12 +625,13 @@
                tooltip="%ExpandAll.tooltip">
          </action>
          <action
-               label="%workingSets.label"
-               tooltip="%workingSets.tooltip"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.WorkingSetsAction"
-               style="push"
+               helpContextId="breakpoint_working_sets_action_context"
+               id="org.eclipse.debug.ui.breakpointsView.toolbar.workingSets"
+               label="%workingSets.label"
                menubarPath="defaultBreakpointGroup"
-               id="org.eclipse.debug.ui.breakpointsView.toolbar.workingSets"/>
+               style="push"
+               tooltip="%workingSets.tooltip"/>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.clearDefaultBreakpointGroup"
                menubarPath="defaultBreakpointGroup"
@@ -1095,17 +1096,19 @@
             </objectClass>
          </visibility>
          <action
-               label="%editGroup.label"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.EditBreakpointGroupAction"
-               menubarPath="breakpointGroupGroup"
                enablesFor="1"
-               id="org.eclipse.debug.ui.actions.editBreakpointGroup">
+               helpContextId="edit_breakpoint_working_set_action_context"
+               id="org.eclipse.debug.ui.actions.editBreakpointGroup"
+               label="%editGroup.label"
+               menubarPath="breakpointGroupGroup">
          </action>
          <action
-               label="%ToggleDefault.label"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.ToggleDefaultGroupAction"
-               menubarPath="breakpointGroupGroup"
-               id="org.eclipse.debug.ui.actions.toggleDefaultGroup"/>
+               helpContextId="set_as_default_breakpoint_working_set_action_context"
+               id="org.eclipse.debug.ui.actions.toggleDefaultGroup"
+               label="%ToggleDefault.label"
+               menubarPath="breakpointGroupGroup"/>
       </viewerContribution>
       <viewerContribution
             targetID="org.eclipse.debug.ui.BreakpointView"
@@ -1155,6 +1158,7 @@
         </action>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
+              helpContextId="import_breakpoints_action_context"
               icon="$nl$/icons/full/elcl16/import_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
               label="%importBreakpoints.label"
@@ -1162,6 +1166,7 @@
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
               enablesFor="+"
+              helpContextId="export_breakpoints_action_context"
               icon="$nl$/icons/full/elcl16/export_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
               label="%exportBreakpoints.label"
@@ -1250,7 +1255,7 @@
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                label="%CopyRegistersToClipboardAction.label"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard"
-               helpContextId="copy_variables_to_clipboard_action_context">
+               helpContextId="copy_to_clipboard_action_context">
             <selection
                   class="org.eclipse.debug.core.model.IDebugElement">
             </selection>
@@ -1451,10 +1456,11 @@ M4 = Platform-specific fourth key
             id="org.eclipse.debug.ui.commands.Resume">
       </command>
       <command
-            name="%ActionDefinition.terminate.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.terminate.description"
-            id="org.eclipse.debug.ui.commands.Terminate">
+            helpContextId="terminate_action_context"
+            id="org.eclipse.debug.ui.commands.Terminate"
+            name="%ActionDefinition.terminate.name">
       </command>
       <command
             name="%ActionDefinition.terminateAndRelaunch.name"

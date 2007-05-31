@@ -29,7 +29,7 @@ public class SuspendCommandAction extends DebugCommandAction {
     }
 
     public String getHelpContextId() {
-        return "suspend_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.suspend_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

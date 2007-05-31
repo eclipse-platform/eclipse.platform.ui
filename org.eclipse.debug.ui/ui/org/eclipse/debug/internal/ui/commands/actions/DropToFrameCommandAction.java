@@ -28,7 +28,7 @@ public class DropToFrameCommandAction extends DebugCommandAction {
     }
 
     public String getHelpContextId() {
-        return "drop_to_frame_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.drop_to_frame_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

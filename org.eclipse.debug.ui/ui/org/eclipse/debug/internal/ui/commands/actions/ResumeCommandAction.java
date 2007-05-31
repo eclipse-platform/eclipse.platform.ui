@@ -32,7 +32,7 @@ public class ResumeCommandAction extends DebugCommandAction{
     }
 
     public String getHelpContextId() {
-        return "resume_action_context"; //$NON-NLS-1$
+        return "org.eclipse.debug.ui.resume_action_context"; //$NON-NLS-1$
     }
 
     public String getId() {

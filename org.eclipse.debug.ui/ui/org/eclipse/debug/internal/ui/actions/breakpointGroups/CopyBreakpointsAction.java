@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -25,6 +26,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
@@ -52,7 +54,8 @@ public class CopyBreakpointsAction extends BreakpointSelectionAction {
         super(BreakpointGroupMessages.CopyBreakpointsAction_0, view); 
         Assert.isNotNull(clipboard);
         this.clipboard = clipboard;
-        setToolTipText(BreakpointGroupMessages.CopyBreakpointsAction_1); 
+        setToolTipText(BreakpointGroupMessages.CopyBreakpointsAction_1);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.COPY_BREAKPOINTS_ACTION);
     }
 
     /**

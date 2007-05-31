@@ -11,10 +11,13 @@
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.List;
+
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
@@ -34,7 +37,8 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
      */
     public PasteBreakpointsAction(BreakpointsView view) {
         super(BreakpointGroupMessages.PasteBreakpointsAction_0, view); 
-        setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1); 
+        setToolTipText(BreakpointGroupMessages.PasteBreakpointsAction_1);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.PASTE_BREAKPOINTS_ACTION);
     }
 
     /**
