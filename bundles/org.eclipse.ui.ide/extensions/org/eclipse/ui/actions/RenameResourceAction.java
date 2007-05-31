@@ -207,26 +207,11 @@ public class RenameResourceAction extends WorkspaceAction {
 	}
 
 	/**
-	 * On Mac the text widget already provides a border when it has focus, so
-	 * there is no need to draw another one. The value of returned by this
-	 * method is usd to control the inset we apply to the text field bound's in
-	 * order to get space for drawing a border. A value of 1 means a one-pixel
-	 * wide border around the text field. A negative value supresses the border.
-	 * However, in M9 the system property
-	 * "org.eclipse.swt.internal.carbon.noFocusRing" has been introduced as a
-	 * temporary workaround for bug #28842. The existence of the property turns
-	 * the native focus ring off if the widget is contained in a main window
-	 * (not dialog). The check for the property should be removed after a final
-	 * fix for #28842 has been provided.
+	 * Get the inset used for cell editors
+	 * @param c the Control
+	 * @return int
 	 */
 	private static int getCellEditorInset(Control c) {
-		// special case for MacOS X
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			if (System
-					.getProperty("org.eclipse.swt.internal.carbon.noFocusRing") == null || c.getShell().getParent() != null) { //$NON-NLS-1$
-				return -2; // native border
-			}
-		}
 		return 1; // one pixel wide black border
 	}
 
