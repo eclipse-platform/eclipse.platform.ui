@@ -2075,7 +2075,7 @@ public class Perspective {
         if (openViewMode == IPreferenceConstants.OVM_FAST &&
         	fastViewManager != null) {
         	fastViewManager.addViewReference(FastViewBar.FASTVIEWBAR_ID, -1, ref, true);
-            showFastView(ref);
+            setActiveFastView(ref);
         } else if (openViewMode == IPreferenceConstants.OVM_FLOAT
                 && presentation.canDetach()) {
             presentation.addDetachedPart(pane);
