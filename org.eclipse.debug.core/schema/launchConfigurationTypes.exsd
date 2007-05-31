@@ -133,10 +133,8 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
          <attribute name="delegateName" type="string">
             <annotation>
                <documentation>
-                  A human readable name for the associated launch delegate. This attribute was added in the 3.3. release.
-&lt;p&gt;
-An example of a &apos;human readable name&apos; would be something like (in the case of the default java application delegate): Eclipse JDT Java Tooling
-&lt;/p&gt;
+                  A human readable name for the associated launch delegate - for example, &quot;Eclipse JDT Launcher&quot;. This name is presented to the user when more than one launcher is available for a launch configuration and the user must choose a preferred launcher. This attribute was added in the 3.3 release.
+
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -146,7 +144,7 @@ An example of a &apos;human readable name&apos; would be something like (in the 
          <attribute name="delegateDescription" type="string">
             <annotation>
                <documentation>
-                  This attribute provides a description of the associated launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release.
+                  A description of this type&apos;s launch delegate - for example &quot;The Eclipse JDT Java Application Launcher supports running and debugging local Java applications&quot;.  This description is presented to the user when more than one launcher is available for a launch configuration and the user must choose a preferred launcher. This attribute was added in the 3.3 release.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
