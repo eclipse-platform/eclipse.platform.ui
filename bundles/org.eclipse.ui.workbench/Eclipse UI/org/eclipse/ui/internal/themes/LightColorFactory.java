@@ -91,7 +91,7 @@ public class LightColorFactory implements IColorFactory,
 		
 		//Group 2
 		if(valuesInRange(sample, 100, 179) >= 2)
-			return ColorUtil.blend(white, sample, 30);
+			return ColorUtil.blend(white, sample, 40);
 		
 		//Group 3
 		if(valuesInRange(sample, 0, 99) >= 2)
