@@ -626,7 +626,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fToggleDetailPaneActions = new ToggleDetailPaneAction[3];
 		fToggleDetailPaneActions[0] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH, null);
 		fToggleDetailPaneActions[1] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_RIGHT, null);
-		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, VariablesViewMessages.VariablesView_41);
+		fToggleDetailPaneActions[2] = new ToggleDetailPaneAction(this, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_HIDDEN, getToggleActionLabel());
 		viewMenu.add(new Separator());
 		final MenuManager layoutSubMenu = new MenuManager(VariablesViewMessages.VariablesView_40);
 		layoutSubMenu.setRemoveAllWhenShown(true);
@@ -655,6 +655,16 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Returns the label to use for the action that toggles the view layout to be the tree viewer only (detail pane is hidden).
+	 * Should be of the style '[view name] View Only'.
+	 * 
+	 * @return action label for toggling the view layout to tree viewer only
+	 */
+	protected String getToggleActionLabel(){
+		return VariablesViewMessages.VariablesView_41;
 	}
 	
 	/**
