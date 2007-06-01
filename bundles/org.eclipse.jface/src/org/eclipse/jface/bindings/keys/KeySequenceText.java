@@ -397,6 +397,8 @@ public final class KeySequenceText {
 	private class TraversalFilterManager implements FocusListener {
 		/** The managed filter. We only need one instance. */
 		private TraversalFilter filter = new TraversalFilter();
+		
+		private boolean filtering = false;
 
 		/**
 		 * Attaches the global traversal filter.
@@ -406,6 +408,7 @@ public final class KeySequenceText {
 		 */
 		public void focusGained(FocusEvent event) {
 			Display.getCurrent().addFilter(SWT.Traverse, filter);
+			filtering = true;
 		}
 
 		/**
@@ -416,6 +419,16 @@ public final class KeySequenceText {
 		 */
 		public void focusLost(FocusEvent event) {
 			Display.getCurrent().removeFilter(SWT.Traverse, filter);
+			filtering = false;
+		}
+		
+		/**
+		 * Remove the traverse filter if we close without focusOut.
+		 */
+		public void dispose() {
+			if (filtering) {
+				Display.getCurrent().removeFilter(SWT.Traverse, filter);
+			}
 		}
 	}
 
@@ -543,8 +556,13 @@ public final class KeySequenceText {
 		text.addListener(SWT.KeyUp, keyFilter);
 		text.addListener(SWT.KeyDown, keyFilter);
 
-		// Add the focus listener that attaches the global traversal filter.
-		text.addFocusListener(new TraversalFilterManager());
+		final TraversalFilterManager traversalFilterManager = new TraversalFilterManager();
+		text.addFocusListener(traversalFilterManager);
+		text.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				traversalFilterManager.dispose();
+			} 
+		});
 
 		// Add an internal modify listener.
 		text.addModifyListener(updateSequenceListener);
