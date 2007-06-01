@@ -15,7 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -254,7 +257,14 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 	}
 
 	public void setJobs(IInstallFeatureOperation[] jobs) {
-		this.jobs = jobs;
+		//we need only unique features
+		//using Set here allows us to get rid of a duplicate elements
+		Set jobsSet = new HashSet();
+		for (int i = 0; i < jobs.length; i++) {
+			jobsSet.add(jobs[i]);
+		}
+		
+		this.jobs = (IInstallFeatureOperation[]) jobsSet.toArray(new IInstallFeatureOperation[jobsSet.size()]);
 	}
 
 	public void dispose() {
