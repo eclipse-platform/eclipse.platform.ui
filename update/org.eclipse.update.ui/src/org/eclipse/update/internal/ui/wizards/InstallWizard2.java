@@ -437,7 +437,7 @@ public class InstallWizard2
 						if ( !monitor.isCanceled()) {
 							Display.getDefault().syncExec( new Runnable () {
 								public void run() {
-									IStatus status = new Status( IStatus.ERROR, UpdateUI.getPluginId(), IStatus.OK, UpdateUIMessages.InstallWizard2_updateOperationHasFailed, null);
+									IStatus status = new Status( IStatus.ERROR, UpdateUI.getPluginId(), IStatus.OK, UpdateUIMessages.InstallWizard2_updateOperationHasFailed, e);
 									ErrorDialog.openError(null, null, null, status);
 								
 								}							
