@@ -19,7 +19,7 @@
     </description>
     <command
         serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.team.cvs.ui.cvsPerspective)"
-        confirm="true">
+        confirm="true" translate="" >
     </command>
   </item>
 
