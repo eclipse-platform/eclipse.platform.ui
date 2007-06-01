@@ -435,6 +435,24 @@
             class="org.eclipse.ui.tests.manual.ExplicitlyBusyView"
             id="org.eclipse.ui.tests.ExplicitlyBusyView"
             name="ExplicitlyBusyView"/>
+      <category
+            name="Saveables Testing"
+            id="org.eclipse.ui.tests.saveablesview">
+      </category>
+       <view
+            name="All Saveables"
+            icon="icons/view.gif"
+            category="org.eclipse.ui.tests.saveablesview"
+            class="org.eclipse.ui.tests.manual.SaveablesView"
+            id="org.eclipse.ui.tests.manual.SaveablesView">
+      </view>
+      <view
+            category="org.eclipse.ui.tests.saveablesview"
+            class="org.eclipse.ui.tests.manual.ViewWithSaveables"
+            icon="icons/view.gif"
+            id="org.eclipse.ui.tests.manual.ViewWithSaveables"
+            name="View Owning Saveables">
+      </view>
 
    </extension>
    <extension
