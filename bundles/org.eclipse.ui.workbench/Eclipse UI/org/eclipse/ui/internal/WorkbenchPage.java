@@ -1633,6 +1633,21 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         
         // Close and dispose the editors.
         closeAllEditors(false);
+        
+        // Need to make sure model data is cleaned up when the page is
+		// disposed. Collect all the views on the page and notify the
+		// saveable list of a pre/post close. This will free model data.
+		IWorkbenchPartReference[] partsToClose = getOpenParts();
+		List dirtyParts = new ArrayList(partsToClose.length);
+		for (int i = 0; i < partsToClose.length; i++) {
+			IWorkbenchPart part = partsToClose[i].getPart(false);
+			if (part != null && part instanceof IViewPart) {
+				dirtyParts.add(part);
+			}
+		}
+		SaveablesList saveablesList = (SaveablesList) getWorkbenchWindow().getWorkbench().getService(ISaveablesLifecycleListener.class);
+		Object postCloseInfo = saveablesList.preCloseParts(dirtyParts, false,getWorkbenchWindow());
+		saveablesList.postClose(postCloseInfo);
 
         // Get rid of perspectives. This will close the views.
         Iterator itr = perspList.iterator();
