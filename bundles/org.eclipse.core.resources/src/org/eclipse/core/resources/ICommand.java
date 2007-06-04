@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * A builder command names a builder and supplies a table of
  * name-value argument pairs.
  * <p>
+ * Changes to a command will only take effect if the modified command is installed
+ * into a project description via {@link IProjectDescription#setBuildSpec(ICommand[])}.
+ * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  *
@@ -84,7 +87,7 @@ public interface ICommand {
 	 * being used in a running builder may affect the run of that builder
 	 * but will not affect any subsequent runs.  To change a command
 	 * permanently you must install the command into the relevant project
-	 * build spec using <code>IProjectDescription.setBuildSpec</code>.
+	 * build spec using {@link IProjectDescription#setBuildSpec(ICommand[])}.
 	 * </p>
 	 *
 	 * @param args a table of command arguments (keys and values must
