@@ -1439,6 +1439,7 @@ class FindReplaceDialog extends Dialog {
 	 * Adds enough space in the control's layout data margin for the content assist
 	 * decoration.
 	 * @param control the control that needs a margin
+	 * @since 3.3
 	 */
 	private void addDecorationMargin(Control control) {
 		Object layoutData= control.getLayoutData();
