@@ -739,6 +739,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		 * @param rectangle
 		 *            rectangle to find (display coordinates)
 		 * @return the montor closest to the given point
+		 * @since 3.3
 		 */
 		private Monitor getClosestMonitor(Display toSearch, Rectangle rectangle) {
 			int closest = Integer.MAX_VALUE;
