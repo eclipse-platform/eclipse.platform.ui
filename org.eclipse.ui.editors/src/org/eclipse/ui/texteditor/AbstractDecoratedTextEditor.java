@@ -261,6 +261,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	/*
 	 * Workaround for IllegalAccessError thrown because we are accessing
 	 * a protected method in a different bundle from an inner class.
+	 * @since 3.3
 	 */
 	private IVerticalRuler internalGetVerticalRuler() {
 		return getVerticalRuler();

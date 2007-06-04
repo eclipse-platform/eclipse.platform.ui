@@ -608,6 +608,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 *
 	 * @param modifiers a string containing modifiers
 	 * @return the state mask
+	 * @since 3.3
 	 */
 	private static final int computeStateMask(String modifiers) {
 		if (modifiers == null)
@@ -633,6 +634,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 *
 	 * @param modifierName the modifier name
 	 * @return the SWT modifier bit, or <code>0</code> if no match was found
+	 * @since 3.3
 	 */
 	private static final int findLocalizedModifier(String modifierName) {
 		if (modifierName == null)
