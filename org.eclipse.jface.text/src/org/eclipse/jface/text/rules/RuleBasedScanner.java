@@ -112,7 +112,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 * @param offset the offset of the document range to scan
 	 * @param length the length of the document range to scan
 	 * @param documentLength the document's length 
-	 * @since 3.2
+	 * @since 3.3
 	 */
 	private void checkRange(int offset, int length, int documentLength) {
 		Assert.isLegal(offset > -1);
