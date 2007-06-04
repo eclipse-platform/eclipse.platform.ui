@@ -20,11 +20,11 @@ import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.internal.core.*;
 
 /**
- * Track changes to plugin projects so that changes to any of the manifest files
- * will be grouped together for the purposes of committing.
+ * Supports the tracking of related changes for the purpose of grouping then using an {@link IChangeGroupingRequestor}.
  * <p>
  * Clients may subclass this class.
  * </p>
+ * @see IChangeGroupingRequestor
  * @since 3.3
  */
 public abstract class ChangeTracker {
