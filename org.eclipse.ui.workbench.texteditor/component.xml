@@ -31,6 +31,12 @@
    <type name="QuickDiff" subclass="false"/>
  </package>
 
+ <package name="org.eclipse.ui.texteditor.rulers">
+   <type name="IColumnSupport" implement="false"/>
+   <type name="RulerColumnDescriptor" instantiate="false" subclass="false"/>
+   <type name="RulerColumnRegistry" instantiate="false" subclass="false"/>
+ </package>
+ 
  <package name="org.eclipse.ui.texteditor.spelling">
    <type name="SpellingContext" subclass="false"/>
    <type name="SpellingEngineDescriptor" subclass="false"/>
@@ -38,10 +44,6 @@
  </package>
 
  <package name="org.eclipse.ui.texteditor.templates">
- </package>
- 
- <package name="org.eclipse.ui.texteditor.rulers">
-   <type name="IColumnSupport" implement="false"/>
  </package>
 
  <component-depends unrestricted="true"/>
