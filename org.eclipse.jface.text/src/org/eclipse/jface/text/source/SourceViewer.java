@@ -997,6 +997,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * Tells whether the vertical ruler only acts as annotation ruler.
 	 * 
 	 * @return <code>true</code> if the vertical ruler only show annotations
+	 * @since 3.3
 	 */
 	private boolean isVerticalRulerOnlyShowingAnnotations() {
 		if (fVerticalRuler instanceof VerticalRuler)

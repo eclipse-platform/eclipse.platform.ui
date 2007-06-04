@@ -665,7 +665,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param drawRangeStart	the start of the range
 	 * @param drawRangeEnd		the end of the range
 	 * @param isWorldChange		tells whether the range belongs to a annotation model event reporting a world change
-	 * @since 3.0
+	 * @since 3.3
 	 */
 	private void updateDrawRanges(int drawRangeStart, int drawRangeEnd, boolean isWorldChange) {
 		if (drawRangeStart != Integer.MAX_VALUE) {
