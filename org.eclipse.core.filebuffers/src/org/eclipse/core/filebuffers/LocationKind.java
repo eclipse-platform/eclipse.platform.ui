@@ -13,7 +13,6 @@ package org.eclipse.core.filebuffers;
 import org.eclipse.core.runtime.IPath;
 
 
-
 /**
  * Type-safe enum of the available location kinds.
  * 
