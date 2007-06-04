@@ -22,7 +22,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * Interface that has to be implemented by contributions to the
  * <code>org.eclipse.ui.texteditor.rulerColumns</code> extension point.
  * <p>
- * Subclasses must have a zero-argument constructor so that they can be created
+ * Implementors must have a zero-argument constructor so that they can be created
  * by {@link IConfigurationElement#createExecutableExtension(String)}.</p>
  * 
  * @since 3.3
