@@ -18,6 +18,7 @@
    <type name="DefaultUndoManager" subclass="false"/>
    <type name="IEditingSupportRegistry" implement="false"/>
    <type name="IMarkSelection" implement="false"/>
+   <type name="JFaceTextUtil" instantiate="false" subclass="false"/>
    <type name="MarginPainter" subclass="false"/>
    <type name="TextViewer" subclass="false"/>
    <type name="TextViewerUndoManager" subclass="false"/>
@@ -57,6 +58,7 @@
 
  <package name="org.eclipse.jface.text.revisions">
    <type name="RevisionEvent" instantiate="false"/>
+   <type name="RevisionRange" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.source.projection">
