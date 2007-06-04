@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <!-- A command with a default handler, effectively global but it can -->
+   <!-- be overriden by part contributions -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="%contributions.commands.category.name"
+            id="org.eclipse.ui.examples.contributions.commands.category">
+      </category>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            defaultHandler="org.eclipse.ui.examples.contributions.handlers.GlobalMenuHandler"
+            id="org.eclipse.ui.examples.contributions.commands.globalCommand"
+            name="%contributions.commands.globalCommand.name">
+      </command>
+   </extension>
+   
+   <!-- Binding CTRL+6 to the global command -->
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.examples.contributions.commands.globalCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   
+   <!-- placing the global command in the main menu and main toolbar with a -->
+   <!-- condition.  You can do it without a condition but that's extremely  -->
+   <!-- uncommon. You can treat an actionSet like a context within the --> 
+   <!-- condition. -->
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.ui.examples.contributions.globalActionSet"
+            label="%contributions.globalActionSet.label"
+            visible="true">
+      </actionSet>
+   </extension>
+   
+   <!-- You can reuse expressions for conditions by defining them once -->
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.ui.examples.contributions.inGlobalActionSet">
+         <with
+               variable="activeContexts">
+            <iterate
+                  operator="or">
+               <equals
+                     value="org.eclipse.ui.examples.contributions.globalActionSet">
+               </equals>
+            </iterate>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="%contributions.menus.globalMenu.label"
+               mnemonic="%contributions.menus.globalMenu.label"
+               id="org.eclipse.ui.examples.contributions.menus.globalMenu">
+            <command
+                  commandId="org.eclipse.ui.examples.contributions.commands.globalCommand"
+                  mnemonic="%contributions.menus.globalCommand.mnemonic"
+                  id="org.eclipse.ui.examples.contributions.menus.globalCommand">
+               <visibleWhen>
+                  <reference
+                        definitionId="org.eclipse.ui.examples.contributions.inGlobalActionSet">
+                  </reference>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.eclipse.ui.examples.contributions.toolbars.sampleToolbar">
+            <command
+                  commandId="org.eclipse.ui.examples.contributions.commands.globalCommand"
+                  icon="icons/sample.gif"
+                  tooltip="%contributions.toolbars.globalCommand.tooltip"
+                  id="org.eclipse.ui.examples.contributions.toolbars.globalCommand">
+               <visibleWhen>
+                  <reference
+                        definitionId="org.eclipse.ui.examples.contributions.inGlobalActionSet">
+                  </reference>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   
+   <!-- Create a view and some view commands -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.eclipse.ui.examples.contributions.viewCategory"
+            name="%contributions.viewCategory.name">
+      </category>
+      <view
+            category="org.eclipse.ui.examples.contributions.viewCategory"
+            class="org.eclipse.ui.examples.contributions.view.InfoView"
+            id="org.eclipse.ui.examples.contributions.view"
+            name="%contributions.view.name">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            id="org.eclipse.ui.examples.contributions.view.count"
+            name="%contributions.view.count.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.examples.contributions.view?after=additions">
+         <command
+               commandId="org.eclipse.ui.examples.contributions.view.count"
+               mnemonic="%contributions.view.count.mnemonic">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
