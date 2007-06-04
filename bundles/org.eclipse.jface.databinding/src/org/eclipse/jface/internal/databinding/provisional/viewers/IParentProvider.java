@@ -12,9 +12,9 @@
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
 /**
- * Returns the parent of elements in a tree.
+ * NON-API - Returns the parent of elements in a tree.
  * 
- * @since 3.3
+ * @since 1.1
  */
 public interface IParentProvider {
 	

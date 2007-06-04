@@ -102,6 +102,7 @@ public class FilteredTree extends Composite {
     
     /**
      * The parent composite of the filtered tree.
+     * @since 3.3
      */
     protected Composite parent;
 
@@ -115,6 +116,9 @@ public class FilteredTree extends Composite {
      */
     protected boolean showFilterControls;
 
+	/**
+	 * @since 3.3
+	 */
 	protected Composite treeComposite;
     
     /**

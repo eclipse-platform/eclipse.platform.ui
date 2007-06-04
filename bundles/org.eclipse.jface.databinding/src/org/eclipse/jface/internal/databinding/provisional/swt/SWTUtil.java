@@ -18,7 +18,9 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @since 1.0
+ * NON-API - Utility methods, mainly having to do with posting runnables to the UI thread
+ * in a particular way.
+ * @since 1.1
  */
 public class SWTUtil {
     /**

@@ -20,7 +20,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * @since 3.2
+ * NON-API - Helper class to manage a queue of runnables to be posted to the UI thread in a way
+ * that they are only run once.
+ * @since 1.1
  *
  */
 public class WorkQueue {

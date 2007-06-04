@@ -1469,6 +1469,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * 
 	 * @param listener
 	 *            a page changing listener
+	 * @since 3.3
 	 */
 	public void addPageChangingListener(IPageChangingListener listener) {
 		pageChangingListeners.add(listener);
@@ -1480,6 +1481,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * 
 	 * @param listener
 	 *            a page changing listener
+	 * @since 3.3
 	 */
 	public void removePageChangingListener(IPageChangingListener listener) {
 		pageChangingListeners.remove(listener);
@@ -1494,6 +1496,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 *            a selection changing event
 	 * 
 	 * @see IPageChangingListener#handlePageChanging(PageChangingEvent)
+	 * @since 3.3
 	 */
 	protected void firePageChanging(final PageChangingEvent event) {
 		Object[] listeners = pageChangingListeners.getListeners();

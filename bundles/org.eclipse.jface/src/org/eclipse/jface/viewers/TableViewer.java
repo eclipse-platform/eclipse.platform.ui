@@ -167,6 +167,7 @@ public class TableViewer extends AbstractTableViewer {
 	 * @param style
 	 * @param rowIndex
 	 * @return ViewerRow
+	 * @since 3.3
 	 */
 	protected ViewerRow internalCreateNewRowPart(int style, int rowIndex) {
 		TableItem item;

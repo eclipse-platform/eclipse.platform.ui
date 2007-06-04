@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @since 3.3
+ * @since 1.1
  * 
  */
 public class ObservableMapLabelProvider extends LabelProvider

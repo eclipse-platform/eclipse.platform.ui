@@ -60,6 +60,7 @@ public abstract class AbstractWorkbenchTrimWidget extends AbstractTrimWidget imp
 	
 	/**
 	 * @return The preferred size of this item
+	 * @since 3.3
 	 */
 	public Point getPreferredSize() {
 		return null;

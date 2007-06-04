@@ -19,11 +19,11 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * An abstract superclass for observable values that gurantees that the 
+ * NON-API - An abstract superclass for observable values that gurantees that the 
  * observable will be disposed when the control to which it is attached is
  * disposed.
  * 
- * @since 3.3
+ * @since 1.1
  */
 public abstract class AbstractSWTObservableValue extends AbstractObservableValue implements ISWTObservableValue {
 

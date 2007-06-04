@@ -1450,7 +1450,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * @param tree
+	 * Initializes the tree with root items, expanding to the appropriate
+	 * level if necessary.
+	 *
+	 * @param tree the tree control
+	 * @since 3.3
 	 */
 	protected void internalInitializeTree(Control tree) {
 		createChildren(tree);

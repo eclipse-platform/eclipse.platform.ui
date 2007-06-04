@@ -486,6 +486,9 @@ public abstract class WorkbenchPart extends EventManager implements
     	partChangeListeners.remove(listener);
     }
     
+    /**
+	 * @since 3.3
+	 */
     protected void firePartPropertyChanged(String key, String oldValue, String newValue) {
     	final PropertyChangeEvent event = new PropertyChangeEvent(this, key, oldValue, newValue);
     	Object[] l = partChangeListeners.getListeners();

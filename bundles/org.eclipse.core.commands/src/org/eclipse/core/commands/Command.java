@@ -691,7 +691,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	 * </p>
 	 * 
 	 * @return The current handler for this command; may be <code>null</code>.
-	 * @since 3.2
+	 * @since 3.3
 	 */
 	public final IHandler getHandler() {
 		return handler;

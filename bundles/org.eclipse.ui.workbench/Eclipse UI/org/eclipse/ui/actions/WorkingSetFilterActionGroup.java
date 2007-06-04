@@ -258,6 +258,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * 
 	 * @param memento
 	 *            the memento
+	 * @since 3.3
 	 */
 	public void saveState(IMemento memento) {
 		String workingSetName = ""; //$NON-NLS-1$
@@ -281,6 +282,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * </p>
 	 * 
 	 * @param memento
+	 * @since 3.3
 	 */
 	public void restoreState(IMemento memento) {
 		boolean isWindowWorkingSet;

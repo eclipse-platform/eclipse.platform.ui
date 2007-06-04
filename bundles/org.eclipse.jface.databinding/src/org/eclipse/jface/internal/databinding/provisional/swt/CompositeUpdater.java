@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
 /**
+ * NON-API - This class can be used to update a composite with automatic dependency tracking.
  * @since 1.1
  * 
  */

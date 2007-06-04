@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @since 3.3
+ * @since 1.1
  * 
  */
 public class ViewersObservables {

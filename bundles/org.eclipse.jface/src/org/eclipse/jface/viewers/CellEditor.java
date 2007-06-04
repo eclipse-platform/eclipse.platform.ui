@@ -859,6 +859,7 @@ public abstract class CellEditor {
      * <b>The default implementation simply calls {@link #activate()}</b>
      * 
      * @param activationEvent the editor activation event
+     * @since 3.3
      */
     public void activate(ColumnViewerEditorActivationEvent activationEvent) {
     	activate();

@@ -23,7 +23,8 @@ import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @since 1.0
+ * NON-API - Generic viewer label provider.
+ * @since 1.1
  *
  */
 public class ViewerLabelProvider implements IViewerLabelProvider,

@@ -21,7 +21,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * A ControlUpdater updates an SWT control in response to changes in the model.
+ * NON-API - A ControlUpdater updates an SWT control in response to changes in the model.
  * By wrapping a block of code in a ControlUpdater, clients can rely on the fact
  * that the block of code will be re-executed whenever anything changes in the
  * model that might affect its behavior.
@@ -68,7 +68,7 @@ import org.eclipse.swt.widgets.Control;
  * // be updated whenever someValue changes and the label is visible
  * </code>
  * 
- * @since 1.0
+ * @since 1.1
  */
 public abstract class ControlUpdater {
 	

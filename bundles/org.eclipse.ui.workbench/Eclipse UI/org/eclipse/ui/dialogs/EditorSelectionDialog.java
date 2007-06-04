@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 /**
  * This class is used to allow the user to select a dialog from the set of
  * internal and external editors.
+ * @since 3.3
  * 
  */
 

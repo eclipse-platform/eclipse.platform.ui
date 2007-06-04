@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
+ * NON-API - This class can be used to update a table with automatic dependency tracking.
  * @since 1.1
  * 
  */

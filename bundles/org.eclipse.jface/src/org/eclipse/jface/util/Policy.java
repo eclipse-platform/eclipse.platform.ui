@@ -182,6 +182,7 @@ public class Policy {
 	 * Set the error support provider for error dialogs.
 	 * 
 	 * @param provider
+	 * @since 3.3
 	 */
 	public static void setErrorSupportProvider(ErrorSupportProvider provider) {
 		errorSupportProvider = provider;
@@ -191,6 +192,7 @@ public class Policy {
 	 * Return the ErrorSupportProvider for the receiver.
 	 * 
 	 * @return ErrorSupportProvider or <code>null</code> if this has not been set
+	 * @since 3.3
 	 */
 	public static ErrorSupportProvider getErrorSupportProvider() {
 		return errorSupportProvider;

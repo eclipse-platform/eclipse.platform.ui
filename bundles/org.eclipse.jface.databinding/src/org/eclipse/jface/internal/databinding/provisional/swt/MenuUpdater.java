@@ -21,7 +21,7 @@ import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Menu;
 
 /**
- * A MenuUpdater updates an SWT menu in response to changes in the model. By
+ * NON-API - A MenuUpdater updates an SWT menu in response to changes in the model. By
  * wrapping a block of code in a MenuUpdater, clients can rely on the fact that
  * the block of code will be re-executed whenever anything changes in the model
  * that might affect its behavior.

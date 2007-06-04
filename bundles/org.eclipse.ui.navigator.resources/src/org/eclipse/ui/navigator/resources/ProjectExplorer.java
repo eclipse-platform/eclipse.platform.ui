@@ -22,10 +22,9 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * Provides constant for the view identifier for the standard instance of the
  * Common Navigator.
  * 
- * @since 3.3
- * 
  * @see CommonNavigator
  * @see INavigatorContentService
+ * @since 3.2
  * 
  */
 public final class ProjectExplorer {

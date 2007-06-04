@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @since 1.0
+ * @since 1.1
  * 
  */
 public class ObservableListContentProvider implements

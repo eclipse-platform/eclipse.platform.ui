@@ -389,6 +389,7 @@ public class ViewerLabel {
 
 	/**
 	 * @return Returns the tooltipShift.
+	 * @since 3.3
 	 */
 	public Point getTooltipShift() {
 		return tooltipShift;
@@ -397,6 +398,7 @@ public class ViewerLabel {
 	/**
 	 * @param tooltipShift
 	 *            The tooltipShift to set.
+	 * @since 3.3
 	 */
 	public void setTooltipShift(Point tooltipShift) {
 		this.tooltipShift = tooltipShift;
@@ -404,6 +406,7 @@ public class ViewerLabel {
 
 	/**
 	 * @return Return whether or not the tool tip shift has been set.
+	 * @since 3.3
 	 */
 	public boolean hasTooltipShift() {
 		return this.tooltipShift != null;

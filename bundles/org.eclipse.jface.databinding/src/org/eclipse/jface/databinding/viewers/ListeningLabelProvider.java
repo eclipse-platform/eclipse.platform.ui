@@ -19,7 +19,7 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 
 /**
- * @since 1.0
+ * @since 1.1
  * 
  */
 public abstract class ListeningLabelProvider extends ViewerLabelProvider {

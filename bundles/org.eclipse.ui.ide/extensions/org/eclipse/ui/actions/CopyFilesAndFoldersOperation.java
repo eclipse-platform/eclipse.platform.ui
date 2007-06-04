@@ -1710,6 +1710,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @param destinationPath
 	 *            the destination path to which the resources should be moved
 	 * @return the operation that should be used to perform the move or cop
+	 * @since 3.3
 	 */
 	protected AbstractWorkspaceOperation getUndoableCopyOrMoveOperation(
 			IResource[] resources, IPath destinationPath) {

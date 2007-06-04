@@ -400,6 +400,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
      * Default implementation returns -1.
      * </p>
      * @return index, -1 for none
+     * @since 3.3
      */
     protected int listGetTopIndex(){
     	return -1;
@@ -411,6 +412,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
      * Default implementation does nothing.
      * </p>
      * @param index the given index. -1 for none.  index will always refer to a valid index.
+     * @since 3.3
      */
     protected void listSetTopIndex(int index) {
     }

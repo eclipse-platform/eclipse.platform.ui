@@ -34,8 +34,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * TODO: comment
- * @since 3.3
+ * NON-API - Generic tree content provider to be used with an AbstractTreeViewer based on a IUnorderedTreeProvider.
+ * @since 1.1
  *
  */
 public class UnorderedTreeContentProvider implements ITreeContentProvider, ITreePathContentProvider {
