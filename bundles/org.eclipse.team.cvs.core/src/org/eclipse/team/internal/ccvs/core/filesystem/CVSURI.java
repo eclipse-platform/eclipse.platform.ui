@@ -35,7 +35,7 @@ public class CVSURI {
 	 * original opaque format and a newer hierarchical format.
 	 * <ul>
 	 * <li>cvs://[:]method:user[:password]@host:[port]/root/path#project/path[,tagName]</li>
-	 * <li>cvs://:method:user[:password]@host:[port]!root!path/project/path[?<version,branch,date,revision>=tagName]</li>
+	 * <li>cvs://_method_user[_password]~host_[port]!root!path/project/path[?<version,branch,date,revision>=tagName]</li>
 	 * </ul>
 	 * @param uri the URI
 	 * @return a CVS URI
