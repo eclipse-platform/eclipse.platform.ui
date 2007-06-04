@@ -309,6 +309,12 @@ public final class ContextRunner {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
 	
+	/**
+	 * Filters the given list of launch configurations that apply to the specified mode
+	 * @param configs the list of configs to filter
+	 * @param mode the mode we want to filter against
+	 * @return the listing of launch configurations that support the specified mode
+	 */
 	private List getConfigsApplicableToMode(List configs, String mode) {
 		ArrayList applicable = new ArrayList(configs);
 		ListIterator iterator = applicable.listIterator();
@@ -320,8 +326,8 @@ public final class ContextRunner {
 				if (!config.getType().supportsModeCombination(modes)) {
 					iterator.remove();
 				}
-			} catch (CoreException e) {
-			}
+			} 
+			catch (CoreException e) {}
 		}
 		return applicable;
 	}
