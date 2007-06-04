@@ -12,6 +12,7 @@
    <type name="IFileBufferManager" implement="false"/>
    <type name="IFileBufferStatusCodes" implement="false"/>
    <type name="ITextFileBuffer" implement="false"/>
+   <type name="LocationKind" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.core.filebuffers.manipulation">
