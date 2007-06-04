@@ -222,11 +222,19 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		fHyperlinkDetectors= null;
 	}
 
+	/**
+	 * Deactivates the currently shown hyperlinks.
+	 */
 	protected void deactivate() {
 		fHyperlinkPresenter.hideHyperlinks();
 		fActive= false;
 	}
 
+	/**
+	 * Finds hyperlinks at the current offset.
+	 * 
+	 * @return the hyperlinks or <code>null</code> if none.
+	 */
 	protected IHyperlink[] findHyperlinks() {
 		int offset= getCurrentTextOffset();
 		if (offset == -1)
@@ -285,6 +293,13 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	}
 
+	/**
+	 * Computes the length of the longest detected
+	 * hyperlink.
+	 * 
+	 * @param hyperlinks
+	 * @return the length of the longest detected
+	 */
 	protected int computeLongestHyperlinkLength(List hyperlinks) {
 		Assert.isLegal(hyperlinks != null && !hyperlinks.isEmpty());
 		Iterator iter= hyperlinks.iterator();
@@ -298,6 +313,11 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		return length;
 	}
 
+	/**
+	 * Returns the current text offset.
+	 * 
+	 * @return the current text offset
+	 */
 	protected int getCurrentTextOffset() {
 
 		try {
@@ -445,6 +465,13 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 
 	}
 	
+	/**
+	 * Checks whether the given state mask is registered.
+	 * 
+	 * @param stateMask
+	 * @return <code>true</code> if a detector is registered for the given state mask
+	 * @since 3.3
+	 */
 	private boolean isRegisteredStateMask(int stateMask) {
 		if (stateMask == fHyperlinkStateMask)
 			return true;
