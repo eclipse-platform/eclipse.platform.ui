@@ -18,6 +18,10 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -25,6 +29,9 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
@@ -88,6 +95,22 @@ public class InfoView extends ViewPart {
 		viewer.setLabelProvider(new LabelProvider());
 		viewer.setInput(Activator.getModel());
 		getSite().setSelectionProvider(viewer);
+
+		MenuManager contextMenu = new MenuManager();
+		contextMenu.setRemoveAllWhenShown(true);
+
+		// this is to work around complaints about missing standard groups.
+		contextMenu.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				manager.add(new GroupMarker(
+						IWorkbenchActionConstants.MB_ADDITIONS));
+			}
+		});
+		
+		getSite().registerContextMenu(contextMenu, viewer);
+		Control control = viewer.getControl();
+		Menu menu = contextMenu.createContextMenu(control);
+		control.setMenu(menu);
 
 		activateContext();
 		createHandlers();

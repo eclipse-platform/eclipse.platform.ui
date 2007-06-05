@@ -146,11 +146,6 @@
       </command>
       <command
             categoryId="org.eclipse.ui.examples.contributions.commands.category"
-            id="org.eclipse.ui.examples.contributions.view.refresh"
-            name="%contributions.view.refresh.name">
-      </command>
-      <command
-            categoryId="org.eclipse.ui.examples.contributions.commands.category"
             id="org.eclipse.ui.examples.contributions.view.edit"
             name="%contributions.view.edit.name">
       </command>
@@ -168,7 +163,7 @@
                mnemonic="%contributions.view.edit.mnemonic">
          </command>
          <command
-               commandId="org.eclipse.ui.examples.contributions.view.refresh"
+               commandId="org.eclipse.ui.file.refresh"
                mnemonic="%contributions.view.refresh.mnemonic">
          </command>
       </menuContribution>
@@ -180,12 +175,19 @@
                tooltip="%contributions.view.swap.tooltip">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.examples.contributions.view?after=additions">
+         <command
+               commandId="org.eclipse.ui.file.refresh"
+               mnemonic="%contributions.view.refresh.mnemonic">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.eclipse.ui.examples.contributions.view.RefreshInfoHandler"
-            commandId="org.eclipse.ui.examples.contributions.view.refresh">
+            commandId="org.eclipse.ui.file.refresh">
          <activeWhen>
             <reference
                   definitionId="org.eclipse.ui.examples.contributions.view.inView">
