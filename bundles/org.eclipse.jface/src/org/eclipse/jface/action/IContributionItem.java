@@ -41,7 +41,10 @@ public interface IContributionItem {
     /**
      * Disposes of this contribution item. Called by the parent
      * contribution manager when the manager is being disposed.
-     * Clients should not call this method directly.
+     * Clients should not call this method directly, unless they
+     * have removed this contribution item from the containing
+     * IContributionManager before the contribution lifecycle
+     * has ended.
      * 
      * @since 2.1
      */
