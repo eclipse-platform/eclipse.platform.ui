@@ -262,20 +262,21 @@ public class ShowAnnotationOperation extends CVSOperation {
 		RevisionInformation info= new RevisionInformation();
 
     class AnnotationControlCreator implements IInformationControlCreator {
-      private final String statusFieldText;
+      private final boolean showTooltipAffordance;
 
-      public AnnotationControlCreator(String statusFieldText) {
-        this.statusFieldText = statusFieldText;
+      public AnnotationControlCreator(boolean showTooltipAffordance) {
+        this.showTooltipAffordance = showTooltipAffordance;
       }
 
       public IInformationControl createInformationControl(Shell parent) {
+        String statusFieldText = showTooltipAffordance ? EditorsUI.getTooltipAffordanceString() : null;
         return new SourceViewerInformationControl(parent, SWT.TOOL,
             SWT.NONE, JFaceResources.DEFAULT_FONT, statusFieldText);
       }
     }
 		
-    info.setHoverControlCreator(new AnnotationControlCreator(EditorsUI.getTooltipAffordanceString()));
-    info.setInformationPresenterControlCreator(new AnnotationControlCreator(null));
+    info.setHoverControlCreator(new AnnotationControlCreator(true));
+    info.setInformationPresenterControlCreator(new AnnotationControlCreator(false));
 		
 		HashMap sets= new HashMap();
 		List annotateBlocks= listener.getCvsAnnotateBlocks();
