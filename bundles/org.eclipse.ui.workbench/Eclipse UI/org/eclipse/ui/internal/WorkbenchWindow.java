@@ -2761,14 +2761,20 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				StartupThreading.runWithoutExceptions(new StartupRunnable() {
 					public void runWithException() throws Throwable {
 						trimContributionMgr.updateLocations(knownIds);
-						
-						// The perspective's onActivate manipulates the trim under the
-						// new min/max story so cause it to refresh...
-						Perspective perspective = getActiveWorkbenchPage().getActivePerspective();
-						if (perspective != null && getActiveWorkbenchPage() instanceof WorkbenchPage) {
-							WorkbenchPage page = getActiveWorkbenchPage();
-							page.getEditorPresentation().updateStackButtons();
-							perspective.onActivate();
+
+						// Update the GUI with the new locations
+						WorkbenchPage page = getActiveWorkbenchPage();
+						if (page != null) {
+							Perspective perspective = page.getActivePerspective();
+							if (perspective != null) {
+								// Ensure that only the upper/right editor stack has
+								// min/max buttons
+								page.getEditorPresentation().updateStackButtons();
+								
+								// The perspective's onActivate manipulates the trim under the
+								// new min/max story so cause it to refresh...
+								perspective.onActivate();
+							}
 						}
 					}});
 			}
