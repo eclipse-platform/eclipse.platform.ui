@@ -38,7 +38,7 @@
       <actionSet
             id="org.eclipse.ui.examples.contributions.globalActionSet"
             label="%contributions.globalActionSet.label"
-            visible="true">
+            visible="false">
       </actionSet>
    </extension>
    
@@ -57,7 +57,19 @@
             </iterate>
          </with>
       </definition>
+      <definition
+            id="org.eclipse.ui.examples.contributions.view.inView">
+         <with
+               variable="activePartId">
+            <equals
+                  value="org.eclipse.ui.examples.contributions.view">
+            </equals>
+         </with>
+      </definition>
    </extension>
+   
+   <!-- menus are defined hierarchically from a root, and separate from -->
+   <!-- toolbars. -->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -118,6 +130,16 @@
             id="org.eclipse.ui.examples.contributions.view.count"
             name="%contributions.view.count.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            id="org.eclipse.ui.examples.contributions.view.swap"
+            name="%contributions.view.swap.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            id="org.eclipse.ui.examples.contributions.view.edit"
+            name="%contributions.view.edit.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -127,7 +149,76 @@
                commandId="org.eclipse.ui.examples.contributions.view.count"
                mnemonic="%contributions.view.count.mnemonic">
          </command>
+         <command
+               commandId="org.eclipse.ui.examples.contributions.view.edit"
+               mnemonic="%contributions.view.edit.mnemonic">
+         </command>
       </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.examples.contributions.view?after=additions">
+         <command
+               commandId="org.eclipse.ui.examples.contributions.view.swap"
+               label="%contributions.view.swap.name"
+               tooltip="%contributions.view.swap.tooltip">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.examples.contributions.view.SwapInfoHandler"
+            commandId="org.eclipse.ui.examples.contributions.view.swap">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.ui.examples.contributions.view.inView">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <count
+                  value="2">
+            </count>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.examples.contributions.view.EditInfoHandler"
+            commandId="org.eclipse.ui.examples.contributions.view.edit">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.ui.examples.contributions.view.inView">
+            </reference>
+         </activeWhen>
+         <enabledWhen>
+            <count
+                  value="1">
+            </count>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            id="org.eclipse.ui.examples.contributions.view.context"
+            name="%contributions.view.context.name"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.ui.examples.contributions.view.edit"
+            contextId="org.eclipse.ui.examples.contributions.view.context"
+            sequence="M1+O"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.ui.examples.contributions.editor.InfoEditor"
+            icon="icons/editor.gif"
+            id="org.eclipse.ui.examples.contributions.editor"
+            name="%contributions.editor.name">
+      </editor>
    </extension>
 
 </plugin>

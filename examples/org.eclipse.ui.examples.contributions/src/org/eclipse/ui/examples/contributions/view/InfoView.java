@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.examples.contributions.view;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -24,8 +25,10 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
+import org.eclipse.ui.examples.contributions.model.Person;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
@@ -36,10 +39,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 public class InfoView extends ViewPart {
 
-	/**
-	 * 
-	 */
 	private static final String VIEW_COUNT_ID = "org.eclipse.ui.examples.contributions.view.count"; //$NON-NLS-1$
+	private static final String VIEW_CONTEXT_ID = "org.eclipse.ui.examples.contributions.view.context"; //$NON-NLS-1$
 	private ListViewer viewer;
 	private IHandler countHandler;
 
@@ -88,6 +89,7 @@ public class InfoView extends ViewPart {
 		viewer.setInput(Activator.getModel());
 		getSite().setSelectionProvider(viewer);
 
+		activateContext();
 		createHandlers();
 	}
 
@@ -100,8 +102,14 @@ public class InfoView extends ViewPart {
 		viewer.getControl().setFocus();
 	}
 
-	public void refresh() {
-		viewer.refresh();
+	/**
+	 * Activate a context that this view uses. It will be tied to this view
+	 * activation events and will be removed when the view is disposed.
+	 */
+	private void activateContext() {
+		IContextService contextService = (IContextService) getSite()
+				.getService(IContextService.class);
+		contextService.activateContext(VIEW_CONTEXT_ID);
 	}
 
 	/**
@@ -137,5 +145,19 @@ public class InfoView extends ViewPart {
 			countHandler = null;
 		}
 		super.dispose();
+	}
+
+	/**
+	 * Swap the 2 given elements from the model.
+	 * 
+	 * @param p1
+	 * @param p2
+	 */
+	public void swap(Person p1, Person p2) {
+		List elements = Activator.getModel();
+		int i1 = elements.indexOf(p1);
+		int i2 = elements.indexOf(p2);
+		Collections.swap(elements, i1, i2);
+		viewer.refresh();
 	}
 }
