@@ -25,6 +25,9 @@ public class ContributionMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, ContributionMessages.class);
 	}
+	public static String DeltaInfoHandler_found;
+	public static String DeltaInfoHandler_notFound;
+	public static String DeltaInfoHandler_shellTitle;
 	public static String EditInfoHandler_failed_to_open;
 	public static String InfoEditor_givenname;
 	public static String InfoEditor_surname;

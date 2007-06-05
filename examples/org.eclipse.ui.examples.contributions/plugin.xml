@@ -66,6 +66,15 @@
             </equals>
          </with>
       </definition>
+      <definition
+            id="org.eclipse.ui.examples.contributions.view.activeEditor">
+         <with
+               variable="activeEditorId">
+            <equals
+                  value="org.eclipse.ui.examples.contributions.editor">
+            </equals>
+         </with>
+      </definition>
    </extension>
    
    <!-- menus are defined hierarchically from a root, and separate from -->
@@ -229,6 +238,8 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
    </extension>
+   
+   <!-- Add an editor for the Person model and some commands -->
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -237,6 +248,103 @@
             id="org.eclipse.ui.examples.contributions.editor"
             name="%contributions.editor.name">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            id="org.eclipse.ui.examples.contributions.editor.reset"
+            name="%contributions.editor.reset.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            id="org.eclipse.ui.examples.contributions.editor.delta"
+            name="%contributions.editor.delta.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="org.eclipse.ui.examples.contributions.editor.menu"
+               label="%contributions.editor.menu.label"
+               mnemonic="%contributions.editor.menu.mnemonic">
+            <command
+                  commandId="org.eclipse.ui.examples.contributions.editor.reset"
+                  mnemonic="%contributions.editor.reset.mnemonic">
+               <visibleWhen>
+                  <reference
+                        definitionId="org.eclipse.ui.examples.contributions.view.activeEditor">
+                  </reference>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="org.eclipse.ui.examples.contributions.editor.toolbar">
+            <command
+                  commandId="org.eclipse.ui.examples.contributions.editor.delta"
+                  icon="icons/change_obj.gif"
+                  tooltip="%contributions.editor.delta.tooltip">
+               <visibleWhen>
+                  <reference
+                        definitionId="org.eclipse.ui.examples.contributions.view.activeEditor">
+                  </reference>
+               </visibleWhen>
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.examples.contributions.editor.DeltaInfoHandler"
+            commandId="org.eclipse.ui.examples.contributions.editor.delta">
+         <activeWhen>
+            <reference
+                  definitionId="org.eclipse.ui.examples.contributions.view.activeEditor">
+            </reference>
+         </activeWhen>
+      </handler>
+   </extension>
+   
+   <!-- adding a control and commands to the trim -->
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.trim.status">
+         <toolbar
+               id="org.eclipse.ui.examples.contributions.verticalTrim">
+            <command
+                  commandId="org.eclipse.ui.examples.contributions.item2"
+                  icon="icons/editor.gif"
+                  id="contributions.trimItem"
+                  label="%Trim.item"
+                  tooltip="%TrimItem.toolTip">
+            </command>
+            <control
+                  class="org.eclipse.ui.examples.contributions.ExampleControlContribution"
+                  id="contributions.controlContrib1">
+            </control>
+            <command
+                  commandId="org.eclipse.ui.examples.contributions.item2"
+                  icon="icons/editor.gif"
+                  id="contributions.trimItem2"
+                  label="%Trim2.item"
+                  tooltip="%TrimItem2.toolTip">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.ui.examples.contributions.item2"
+            name="%CmdLabel">
+      </command>
    </extension>
 
 </plugin>

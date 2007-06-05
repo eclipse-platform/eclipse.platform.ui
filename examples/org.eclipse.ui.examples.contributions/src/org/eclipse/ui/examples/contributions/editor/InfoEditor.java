@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.examples.contributions.editor;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -28,6 +32,7 @@ import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
 import org.eclipse.ui.examples.contributions.model.Person;
 import org.eclipse.ui.examples.contributions.model.PersonInput;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.EditorPart;
 
 /**
@@ -36,11 +41,13 @@ import org.eclipse.ui.part.EditorPart;
  * @since 3.3
  */
 public class InfoEditor extends EditorPart {
+	private static final String EDITOR_RESET_ID = "org.eclipse.ui.examples.contributions.editor.reset"; //$NON-NLS-1$
 
 	private Person person;
 	private Text surnameText;
 	private Text givennameText;
 	private boolean dirty = false;
+	private IHandler resetHandler;
 
 	/*
 	 * (non-Javadoc)
@@ -115,7 +122,9 @@ public class InfoEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 		KeyListener keyListener = new KeyListener() {
 			public void keyPressed(KeyEvent e) {
-				setDirty(true);
+				if ((e.keyCode & SWT.MODIFIER_MASK) == 0) {
+					setDirty(true);
+				}
 			}
 
 			public void keyReleased(KeyEvent e) {
@@ -131,7 +140,6 @@ public class InfoEditor extends EditorPart {
 		l.setText(ContributionMessages.InfoEditor_surname);
 		l.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		surnameText = new Text(composite, SWT.SINGLE);
-		surnameText.setText(person.getSurname());
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		surnameText.setLayoutData(gridData);
 		surnameText.addKeyListener(keyListener);
@@ -140,10 +148,38 @@ public class InfoEditor extends EditorPart {
 		l.setText(ContributionMessages.InfoEditor_givenname);
 		l.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		givennameText = new Text(composite, SWT.SINGLE);
-		givennameText.setText(person.getGivenname());
 		gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		givennameText.setLayoutData(gridData);
 		givennameText.addKeyListener(keyListener);
+
+		updateText();
+
+		createHandlers();
+	}
+
+	/**
+	 * Set our text field to the person text.
+	 */
+	private void updateText() {
+		surnameText.setText(person.getSurname());
+		givennameText.setText(person.getGivenname());
+	}
+
+	/**
+	 * Instantiate any handlers specific to this view and activate them.
+	 */
+	private void createHandlers() {
+		IHandlerService handlerService = (IHandlerService) getSite()
+				.getService(IHandlerService.class);
+		resetHandler = new AbstractHandler() {
+			public Object execute(ExecutionEvent event)
+					throws ExecutionException {
+				updateText();
+				setDirty(false);
+				return null;
+			}
+		};
+		handlerService.activateHandler(EDITOR_RESET_ID, resetHandler);
 	}
 
 	/*
@@ -153,5 +189,23 @@ public class InfoEditor extends EditorPart {
 	 */
 	public void setFocus() {
 		surnameText.setFocus();
+	}
+
+	/**
+	 * A copy of the model object.
+	 * 
+	 * @return a person
+	 */
+	public Person getModelPerson() {
+		return new Person(person.getSurname(), person.getGivenname());
+	}
+
+	/**
+	 * A copy of the local data.
+	 * 
+	 * @return a person
+	 */
+	public Person getLocalPerson() {
+		return new Person(surnameText.getText(), givennameText.getText());
 	}
 }
