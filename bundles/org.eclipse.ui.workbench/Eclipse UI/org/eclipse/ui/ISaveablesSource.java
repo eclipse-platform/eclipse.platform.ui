@@ -57,8 +57,9 @@ public interface ISaveablesSource {
 
 	/**
 	 * Returns the saveables presented by the workbench part. If the return
-	 * value of this method changes during the lifetime of this part, the part
-	 * must notify an implicit listener using
+	 * value of this method changes during the lifetime of
+	 * this part (i.e. after initialization and control creation but before disposal)
+	 * the part must notify an implicit listener using
 	 * {@link ISaveablesLifecycleListener#handleLifecycleEvent(SaveablesLifecycleEvent)}.
 	 * <p>
 	 * Additions of saveables to the list of saveables of this part are
@@ -77,10 +78,10 @@ public interface ISaveablesSource {
 	 * <code>partSite.getService(ISaveablesLifecycleListener.class)</code>.
 	 * </p>
 	 * <p>
-	 * The part must not notify from its initialization method, or from its
-	 * dispose method. Parts that implement {@link IReusableEditor} must notify
-	 * when their input is changed by calling
-	 * {@link IReusableEditor#setInput(IEditorInput)}.
+	 * The part must not notify from its initialization methods (e.g. <code>init</code>
+	 * or <code>createPartControl</code>), or from its dispose method. Parts that
+	 * implement {@link IReusableEditor} must notify when their input is changed
+	 * through {@link IReusableEditor#setInput(IEditorInput)}.
 	 * </p>
 	 * 
 	 * @return the saveables presented by the workbench part
