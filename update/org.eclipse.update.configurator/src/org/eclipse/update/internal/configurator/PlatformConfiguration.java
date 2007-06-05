@@ -541,8 +541,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		// on next access
 		ISiteEntry[] sites = getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
-			// reset site entry
-			 ((SiteEntry) sites[i]).refresh();
+			if (sites[i].isUpdateable()) {
+				// reset site entry
+				((SiteEntry) sites[i]).refresh();
+			}
 		}
 	}
 
@@ -1227,10 +1229,12 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	private void reconcile() throws CoreException {
 		long lastChange = config.getDate().getTime();
 		SiteEntry[] sites = config.getSites();
-		for (int s=0; s<sites.length; s++) {
-			long siteTimestamp = sites[s].getChangeStamp();
-			if (siteTimestamp > lastChange)
-				sites[s].loadFromDisk(lastChange);
+		for (int s = 0; s < sites.length; s++) {
+			if (sites[s].isUpdateable()) {
+				long siteTimestamp = sites[s].getChangeStamp();
+				if (siteTimestamp > lastChange)
+					sites[s].loadFromDisk(lastChange);
+			}
 		}
 		config.setDirty(true);
 	}
