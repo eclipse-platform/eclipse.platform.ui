@@ -26,6 +26,7 @@ public class ContributionMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, ContributionMessages.class);
 	}
 	public static String EditInfoHandler_failed_to_open;
+	public static String InfoEditor_givenname;
 	public static String InfoEditor_surname;
 	public static String InfoView_countElements;
 	public static String SampleHandler_hello_msg;

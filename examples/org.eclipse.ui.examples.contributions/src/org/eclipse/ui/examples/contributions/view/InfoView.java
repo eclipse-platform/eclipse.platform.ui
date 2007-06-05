@@ -160,4 +160,11 @@ public class InfoView extends ViewPart {
 		Collections.swap(elements, i1, i2);
 		viewer.refresh();
 	}
+
+	/**
+	 * Refresh the viewer from the model.
+	 */
+	public void refresh() {
+		viewer.refresh();
+	}
 }

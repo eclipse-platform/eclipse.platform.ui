@@ -13,12 +13,16 @@ package org.eclipse.ui.examples.contributions.editor;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
@@ -27,13 +31,16 @@ import org.eclipse.ui.examples.contributions.model.PersonInput;
 import org.eclipse.ui.part.EditorPart;
 
 /**
- * @since 3.3
+ * Edit a person.
  * 
+ * @since 3.3
  */
 public class InfoEditor extends EditorPart {
 
 	private Person person;
 	private Text surnameText;
+	private Text givennameText;
+	private boolean dirty = false;
 
 	/*
 	 * (non-Javadoc)
@@ -41,8 +48,13 @@ public class InfoEditor extends EditorPart {
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
-
+		monitor.beginTask(getPartName(), 2);
+		person.setSurname(surnameText.getText());
+		monitor.worked(1);
+		person.setGivenname(givennameText.getText());
+		monitor.worked(1);
+		monitor.done();
+		setDirty(false);
 	}
 
 	/*
@@ -69,7 +81,7 @@ public class InfoEditor extends EditorPart {
 		}
 		PersonInput pinput = (PersonInput) input;
 		person = (Person) Activator.getModel().get(pinput.getIndex());
-		setPartName(person.getSurname());
+		setPartName("Person - " + pinput.getIndex()); //$NON-NLS-1$
 	}
 
 	/*
@@ -78,7 +90,12 @@ public class InfoEditor extends EditorPart {
 	 * @see org.eclipse.ui.part.EditorPart#isDirty()
 	 */
 	public boolean isDirty() {
-		return false;
+		return dirty;
+	}
+
+	private void setDirty(boolean d) {
+		dirty = d;
+		firePropertyChange(ISaveablePart.PROP_DIRTY);
 	}
 
 	/*
@@ -96,13 +113,37 @@ public class InfoEditor extends EditorPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(2, false));
+		KeyListener keyListener = new KeyListener() {
+			public void keyPressed(KeyEvent e) {
+				setDirty(true);
+			}
 
-		Label l = new Label(composite, SWT.NONE);
+			public void keyReleased(KeyEvent e) {
+				// nothing
+			}
+		};
+
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout gridLayout = new GridLayout(2, false);
+		composite.setLayout(gridLayout);
+
+		Label l = new Label(composite, SWT.RIGHT);
 		l.setText(ContributionMessages.InfoEditor_surname);
+		l.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
 		surnameText = new Text(composite, SWT.SINGLE);
 		surnameText.setText(person.getSurname());
+		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		surnameText.setLayoutData(gridData);
+		surnameText.addKeyListener(keyListener);
+
+		l = new Label(composite, SWT.RIGHT);
+		l.setText(ContributionMessages.InfoEditor_givenname);
+		l.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false));
+		givennameText = new Text(composite, SWT.SINGLE);
+		givennameText.setText(person.getGivenname());
+		gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		givennameText.setLayoutData(gridData);
+		givennameText.addKeyListener(keyListener);
 	}
 
 	/*
