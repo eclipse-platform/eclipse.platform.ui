@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.data.ServletResources;
@@ -56,6 +57,19 @@ public class EclipseConnector {
 			String url = getURL(req);
 			if (url == null)
 				return;
+			// Redirect if the request includes PLUGINS_ROOT and is not a content request
+			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
+			if (index!= -1 && url.indexOf("content/" + HelpURLConnection.PLUGINS_ROOT) == -1) {  //$NON-NLS-1$
+				StringBuffer redirectURL = new StringBuffer();
+				
+				redirectURL.append(req.getContextPath());
+				redirectURL.append(req.getServletPath());
+				redirectURL.append("/"); //$NON-NLS-1$
+				redirectURL.append(url.substring(index+HelpURLConnection.PLUGINS_ROOT.length()));
+				
+				resp.sendRedirect(redirectURL.toString());
+				return;
+			}
 			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:") //$NON-NLS-1$
 					|| url.toLowerCase(Locale.ENGLISH).startsWith("jar:") //$NON-NLS-1$
 					|| url.toLowerCase(Locale.ENGLISH).startsWith("platform:")) { //$NON-NLS-1$
@@ -172,6 +186,7 @@ public class EclipseConnector {
 	private URLConnection openConnection(String url,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
+		
 		URLConnection con = null;
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
@@ -206,6 +221,7 @@ public class EclipseConnector {
 				|| "jar".equals(protocol))) { //$NON-NLS-1$
 			throw new IOException();
 		}
+
 		con = helpURL.openConnection();
 
 		con.setAllowUserInteraction(false);
