@@ -100,7 +100,7 @@ public abstract class FeatureContentProvider
 			// check same file extension if extension exists (a.txt/*.txt)
 			// or same file name (a.txt,a.*)
 			String extension = filterPath.getFileExtension();
-			if (!extension.equals("*")) { //$NON-NLS-1$
+			if (extension != null && !extension.equals("*")) { //$NON-NLS-1$
 				if (!extension.equalsIgnoreCase(namePath.getFileExtension()))
 					return false;
 			} else {
