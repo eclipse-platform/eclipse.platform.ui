@@ -92,17 +92,27 @@ public class BatchInstallOperation
 				installCount++;
 			}
 			return SiteManager.getLocalSite().save();
-		} catch (InstallAbortedException e) {
-			// saves the current configuration
-			if (installCount > 0)
-				SiteManager.getLocalSite().save();
-			throw new InvocationTargetException(e);
-		} catch (CoreException e) {
-			// saves the current configuration
-			if (installCount > 0)
-				SiteManager.getLocalSite().save();
-			throw new InvocationTargetException(e);
-		} finally {
+        } catch (InstallAbortedException e) {
+            // saves the current configuration
+            if (installCount > 0) {
+                try {
+                    SiteManager.getLocalSite().save();
+                } catch (CoreException ce) {
+                    UpdateUtils.logException(ce);
+                }
+            }
+            throw new InvocationTargetException(e);
+        } catch (CoreException e) {
+            // saves the current configuration
+            if (installCount > 0) {
+                try {
+                    SiteManager.getLocalSite().save();
+                } catch (CoreException ce) {
+                    UpdateUtils.logException(ce);
+                }
+            }
+            throw new InvocationTargetException(e);
+        } finally {
 			OperationsManager.setInProgress(false);
 			monitor.done();
 		}

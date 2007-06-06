@@ -28,7 +28,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configuration.IActivity;
 import org.eclipse.update.configuration.IConfiguredSite;
@@ -497,6 +499,24 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		if (featurePlugin != null)
 			pluginVersion = featurePlugin.getVersionedIdentifier().getVersion().toString();
 
+        // Find the site
+        SiteEntry siteEntry = null;
+        try {
+            URL featureUrl = new URL(cSite.getPlatformURLString());
+            siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(featureUrl);
+        } catch (MalformedURLException e) {
+            throw Utilities.newCoreException(NLS.bind(Messages.InstallConfiguration_UnableToCreateURL, (new String[] { cSite.getPlatformURLString() })), e);
+        } catch (ClassCastException e) {
+            throw Utilities.newCoreException(Messages.InstallConfiguration_UnableToCast, e);    
+        }
+
+        // if the URL doesn't exist throw a CoreException
+        if (siteEntry == null) {
+            throw new CoreException(
+                    new Status(IStatus.ERROR, UpdateCore.getPlugin().getBundle().getSymbolicName(),
+                            NLS.bind(Messages.InstallConfiguration_unableToFindSite, (new String[] { cSite.getSite().getURL().toExternalForm(), runtimeConfiguration.getConfigurationLocation().toExternalForm() }))));
+        }
+
 		// write the primary features
 		if (feature.isPrimary()) {
 			// get any fragments for the feature plugin
@@ -515,7 +535,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			String application = feature.getApplication();
 			FeatureEntry featureEntry = (FeatureEntry)runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, true, application, roots);
 			featureEntry.setURL(getFeatureRelativeURL(feature));
-			SiteEntry siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(cSite.getSite().getURL());
 			siteEntry.addFeatureEntry(featureEntry);
 		} else {
 			// write non-primary feature entries
@@ -523,7 +542,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			String pluginIdentifier = feature.getPrimaryPluginID();
 			FeatureEntry featureEntry = (FeatureEntry)runtimeConfiguration.createFeatureEntry(id, version, pluginIdentifier, pluginVersion, false, null, null);
 			featureEntry.setURL(getFeatureRelativeURL(feature));
-			SiteEntry siteEntry = (SiteEntry)runtimeConfiguration.findConfiguredSite(cSite.getSite().getURL());
 			siteEntry.addFeatureEntry(featureEntry);
 		}
 
