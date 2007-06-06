@@ -22,7 +22,7 @@ package org.eclipse.core.filesystem;
  * </p>
  * 
  * @see IFileSystem#fetchFileTree(IFileStore, org.eclipse.core.runtime.IProgressMonitor)
- * @since 3.2
+ * @since org.eclipse.core.filesystem 1.0
  */
 public interface IFileTree {
 	/***
