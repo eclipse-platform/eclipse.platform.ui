@@ -172,6 +172,18 @@
                id="org.eclipse.core.tools.search.FindUnusedMembersAction">
          </action>
       </objectContribution>
+      <objectContribution
+            adaptable="true"
+            id="org.eclipse.core.tools.contribution3"
+            objectClass="org.eclipse.core.resources.IResource">
+         <action
+               label="Find Unreferenced Files"
+               class="org.eclipse.core.tools.search.FindUnreferencedFilesAction"
+               menubarPath="additions"
+               enablesFor="*"
+               id="org.eclipse.core.tools.search.FindUnreferencedFiles">
+         </action>
+      </objectContribution>
    </extension>
    <extension
     	id="UnusedMembersResultPage"
