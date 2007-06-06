@@ -8,6 +8,7 @@
          point="org.eclipse.ui.commands">
       <category
             name="%contributions.commands.category.name"
+            description="%contributions.commands.category.desc"
             id="org.eclipse.ui.examples.contributions.commands.category">
       </category>
       <command
@@ -137,6 +138,7 @@
       <command
             categoryId="org.eclipse.ui.examples.contributions.commands.category"
             id="org.eclipse.ui.examples.contributions.view.count"
+            description="%contributions.view.count.desc"
             name="%contributions.view.count.name">
       </command>
       <command
