@@ -13,6 +13,7 @@ package org.eclipse.ui.examples.rcp.browser;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -59,7 +60,15 @@ public class BrowserApp implements IApplication {
 	 * @see org.eclipse.equinox.app.IApplication#stop()
 	 */
 	public void stop() {
-		// TODO Auto-generated method stub
-		
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench == null)
+			return;
+		final Display display = workbench.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				if (!display.isDisposed())
+					workbench.close();
+			}
+		});
 	}
 }
