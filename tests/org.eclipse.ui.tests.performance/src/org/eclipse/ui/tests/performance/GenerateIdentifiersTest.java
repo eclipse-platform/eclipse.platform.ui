@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.tests.performance;
 
-import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.activities.IActivityManager;
 
 /**
@@ -23,14 +22,13 @@ public class GenerateIdentifiersTest extends BasicPerformanceTest {
     private int count;
 
     public GenerateIdentifiersTest(int numberOfIdentifiers) {
-        super("Generate " + numberOfIdentifiers + " identifiers", BasicPerformanceTest.LOCAL);
+        super("Generate " + numberOfIdentifiers + " identifiers");
         this.count = numberOfIdentifiers;
     }
     
     protected void runTest() throws Throwable {       
         final IActivityManager activityManager = fWorkbench.getActivitySupport().getActivityManager();
         
-        tagIfNecessary("UI - Generate Identifiers", Dimension.CPU_TIME);
         exercise(new TestRunnable() {
             public void run() throws Exception {
                 // construct the Identifiers to test
