@@ -24,8 +24,6 @@ import org.eclipse.osgi.service.environment.Constants;
 /**
  * File system provider for the "file" scheme.  This file system provides access to
  * the local file system that is available via java.io.File.
- * 
- * @since 3.2
  */
 public class LocalFileSystem extends FileSystem {
 	/**

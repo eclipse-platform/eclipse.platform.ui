@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.*;
 
 /**
  * Grab bag of utility methods for the file system plugin
- * @since 3.2
  */
 public class Policy {
 

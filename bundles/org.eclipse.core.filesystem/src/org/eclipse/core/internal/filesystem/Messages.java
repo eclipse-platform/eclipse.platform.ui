@@ -14,7 +14,6 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Provides translatable messages for the file system bundle
- * @since 3.2
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.core.internal.filesystem.messages"; //$NON-NLS-1$
