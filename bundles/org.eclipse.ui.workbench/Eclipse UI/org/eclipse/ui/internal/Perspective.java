@@ -955,6 +955,19 @@ public class Perspective {
 				layout = null;
 			}
     	}
+    	else {
+    		// Update the FVB only if not using the new min/max
+    		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+    		if (wbw != null) {
+    			ITrimManager tbm = wbw.getTrimManager();
+    			if (tbm != null) {
+    				IWindowTrim fvb = tbm.getTrim(FastViewBar.FASTVIEWBAR_ID);
+    				if (fvb instanceof FastViewBar) {
+    					((FastViewBar)fvb).update(true);
+    				}
+    			}
+    		}
+    	}
 		
     	// If we are -not- using the new min/max then ensure that there
     	// are no stacks in the trim. This can happen when a user switches
