@@ -24,6 +24,8 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  * extension point. A team content provider defines a mapping between
  * a {@link ModelProvider} and a content extension registered with
  * the <code>org.eclipse.ui.navigator.navigatorContent</code> extension point.
+ * <p>
+ * This interface is not intended to be implemented by clients.
  * 
  * @see TeamUI#getTeamContentProviderManager()
  * @see ModelProvider

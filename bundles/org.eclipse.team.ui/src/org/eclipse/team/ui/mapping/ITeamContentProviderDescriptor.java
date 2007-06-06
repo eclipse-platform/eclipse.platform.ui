@@ -18,6 +18,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * A description of a single extension registered with the 
  * <code>org.eclipse.team.ui.teamContentProviders</code>
  * extension point.
+ * 
+ *  * <p>
+ * This interface is not intended to be implemented by clients.
  * @since 3.2
  */
 public interface ITeamContentProviderDescriptor {
