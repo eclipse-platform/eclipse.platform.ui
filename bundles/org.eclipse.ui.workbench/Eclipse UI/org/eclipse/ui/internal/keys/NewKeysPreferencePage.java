@@ -115,6 +115,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.FilteredTree;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -1237,6 +1238,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected final Control createContents(final Composite parent) {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
+				IWorkbenchHelpContextIds.KEYS_PREFERENCE_PAGE);
+		
 		GridLayout layout = null;
 
 		long startTime = 0L;
