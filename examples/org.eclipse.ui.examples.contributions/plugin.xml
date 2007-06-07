@@ -98,6 +98,10 @@
                   </reference>
                </visibleWhen>
             </command>
+            <separator
+                  name="additions"
+                  visible="false">
+            </separator>
          </menu>
       </menuContribution>
       <menuContribution
@@ -115,6 +119,10 @@
                   </reference>
                </visibleWhen>
             </command>
+            <separator
+                  name="additions"
+                  visible="false">
+            </separator>
          </toolbar>
       </menuContribution>
    </extension>
