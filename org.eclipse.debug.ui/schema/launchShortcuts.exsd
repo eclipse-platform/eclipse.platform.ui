@@ -155,7 +155,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
    <element name="contextualLaunch">
       <annotation>
          <documentation>
-            Holds all descriptions for adding shortcuts to the selection sensitive Run/Debug/Profile cascade menus.
+            Holds all descriptions for adding shortcuts to the selection sensitive Run/Debug/Profile cascade menus. Only objects that provide an &lt;code&gt;org.eclipse.debug.ui.actions.ILaunchable&lt;/code&gt; adapter are considered for the cascade menus. The &lt;code&gt;org.eclipse.debug.ui.actions.ILaunchable&lt;/code&gt; interface is simply used to tag objects that support contextual launching.
          </documentation>
       </annotation>
       <complexType>
@@ -298,7 +298,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
 &lt;/p&gt;
 &lt;p&gt;
 In the above example, a launch shortcut will be shown in the run and debug cascade menus with the label
-&quot;Java Application&quot;. Furthermore, the shortcut will only appear if the selected item has a main method in it, or it is a Java project.
+&quot;Java Application&quot;. Furthermore, the shortcut will only appear if the selected item contains a main method or is a Java project, and has an &lt;code&gt;org.eclipse.debug.ui.actions.ILaunchable&lt;/code&gt; adapter.
 &lt;/p&gt;
 &lt;p&gt;
 For more information on property testers see &lt;code&gt;org.eclipse.core.expressions.PropertyTester&lt;/code&gt;
