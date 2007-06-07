@@ -519,9 +519,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		} else {
 			//don't overwrite the old elements
 			IAdaptable[] tempElements = oldSet.getElements();
-			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + projects.length];
-			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
 			IAdaptable[] adaptedProjects = oldSet.adaptElements(projects);
+			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + adaptedProjects.length];
+			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
 			System.arraycopy(adaptedProjects, 0,finalElementList, tempElements.length, adaptedProjects.length);
 			oldSet.setElements(finalElementList);
 		}	
