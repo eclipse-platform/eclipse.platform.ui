@@ -12,6 +12,7 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -44,7 +45,8 @@ public class NavServlet extends HttpServlet {
 		new FramesetFilter(), new InjectionFilter(), new BreadcrumbsFilter() };
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Locale locale = req.getLocale();
+		Locale locale = getLocale(req, resp);
+
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("text/html; charset=UTF-8"); //$NON-NLS-1$
 		
@@ -55,10 +57,27 @@ public class NavServlet extends HttpServlet {
 		for (int i = 0; i < filters.length; i++) {
 			out = filters[i].filter(req, out);
 		}
-		
-		PrintWriter writer = new PrintWriter(out);
+
+		PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8")); //$NON-NLS-1$
 		writeContent(topic, path, locale, writer);
 		writer.close();
+	}
+	
+	private Locale getLocale (HttpServletRequest req, HttpServletResponse resp) {
+		Locale locale;
+		String nl = UrlUtil.getLocale(req, resp);
+		// break the string into tokens to get the Locale object
+		StringTokenizer locales = new StringTokenizer(nl, "_"); //$NON-NLS-1$
+		if (locales.countTokens() == 1)
+			locale = new Locale(locales.nextToken(), ""); //$NON-NLS-1$
+		else if (locales.countTokens() == 2)
+			locale = new Locale(locales.nextToken(), locales.nextToken());
+		else if (locales.countTokens() == 3)
+			locale = new Locale(locales.nextToken(), locales.nextToken(), locales
+					.nextToken());
+		else
+			locale = Locale.getDefault();
+		return locale;
 	}
 	
 	private ITopic getTopic(String topicPath, Locale locale) {
