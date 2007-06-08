@@ -42,7 +42,12 @@ public class EditInfoHandler extends AbstractHandler {
 		if (window == null) {
 			return null;
 		}
-		ISelection sel = HandlerUtil.getCurrentSelectionChecked(event);
+		// this is written to check a context menu selection, and if not take
+		// the standard application context selection.
+		ISelection sel = HandlerUtil.getActiveMenuSelection(event);
+		if (sel == null) {
+			sel = HandlerUtil.getCurrentSelection(event);
+		}
 		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
 			IStructuredSelection selection = (IStructuredSelection) sel;
 			int personIndex = Activator.getModel().indexOf(
