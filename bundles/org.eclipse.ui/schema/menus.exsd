@@ -13,7 +13,7 @@ This extension point allows the plug-in developer to add (contribute) a variety 
   &lt;li&gt;Main Toolbars&lt;/li&gt;
   &lt;li&gt;View Menus/Toolbars:
   &lt;ul&gt;
-    &lt;li&gt;Chevron Menu&lt;/li&gt;
+    &lt;li&gt;View Dropdown Menu&lt;/li&gt;
     &lt;li&gt;View Toolbar&lt;/li&gt;
     &lt;li&gt;Context Menu(s)&lt;/li&gt;
   &lt;/ul&gt;
@@ -31,16 +31,17 @@ It provides a common implementation for and acts as a replacement of the followi
 &lt;/ul&gt;
 &lt;/p&gt;
 &lt;p&gt;
-The general strategy for this mechanism is to separate the &apos;location&apos; where the contributions should be inserted from the visibility and enablement state of the element. Each conribution first defines it&apos;s insertion location through a Menu &apos;URI&apos;, a string (loosely) formatted according to the jave.net.URI format:
+The general strategy for this mechanism is to separate the &apos;location&apos; where the contributions should be inserted from the visibility and enablement state of the element. Each conribution first defines its insertion location through a Menu &apos;URI&apos;, a string (loosely) formatted according to the jave.net.URI format:
 &lt;/p&gt;&lt;p&gt;
-&lt;b&gt;&quot;[Scheme]:[Path]?[ArgList]&quot;&lt;/b&gt;
+&lt;b&gt;&quot;[Scheme]:[ID]?[ArgList]&quot;&lt;/b&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;b&gt;Scheme&lt;/b&gt; - The &apos;type&apos; of the UI component into which the contributions will be added. It may be either &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar&quot;. While &apos;popup&apos; is indeed a form of menu it is provided to allow a distinction between a view&apos;s &apos;chevron&apos; menu (for which we use the &quot;menu&quot; scheme) and its default context menu which, by convention, should be registered using the &quot;popup&quot; scheme.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;Path&lt;/b&gt; - This is the id of menu or toolbar into which the contributions should be added. By convention views should use their view id as the id of the root of their chevron and default popup menu. Note that there is no explicit distinction between contributions supporting editors and &apos;normal&apos; contributions into the Menu Menu or Toolbar; both would use the &quot;org.eclipse.ui.main.menu&quot; path (with the Scheme identifying whether the addition is to the main menu or the main toolbar). A special id, &quot;popup:org.eclipse.ui.any.popup&quot;, is reserved to handle contributions which are candidates to appear on any (top level) context menu. Note that these contributions are expected to implement a &apos;visibleWhen&apos; expression sufficient to limit their visibility to appropriate menus&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;ID&lt;/b&gt; - This is the id of menu or toolbar into which the contributions should be added. By convention views should use their view id as the id of the root of their chevron and default popup menu. Note that there is no explicit distinction between contributions supporting editors and &apos;normal&apos; contributions into the Menu Menu or Toolbar; both global contributions and editor contributions would use the &quot;org.eclipse.ui.main.menu&quot; id or &quot;org.eclipse.ui.main.toolbar&quot;. A special id used with popup:, &quot;org.eclipse.ui.any.popup&quot;, is reserved to handle contributions which are candidates to appear on any (top level) context menu. Note that these contributions are expected to implement a &apos;visibleWhen&apos; expression sufficient to limit their visibility to appropriate menus&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;Query&lt;/b&gt; - This field allows fine-grained definition of the specific location &lt;i&gt;within&lt;/i&gt; a given menu. It has the form &quot;[placement]=[id]&quot; where placement is one of &quot;before&quot; or &quot;after&quot; and the id is expected to be the id of some IContributionItem in the menu.&lt;/li&gt;
 &lt;/ul&gt; 
 &lt;p&gt;
-This will define the location at which the contributions will appear in the eclipse UI. Once the insertion point has been defined the rest of the contributions describe the UI elements that will be added at that location. Each element supports a &apos;visibleWhen&apos; expression that determines at build time whether a particular item should appear in the menu based on the system&apos;s current state (selection, active view/editor, context...).
+This will define the location at which the contributions will appear in the eclipse UI. Once the insertion point has been defined the rest of the contributions describe the UI elements that will be added at that location. Each element supports a &apos;visibleWhen&apos; expression that determines at run time whether a particular item should appear in the menu based on the system&apos;s current state (selection, active view/editor, context...).  See &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt; for a list of currently
+supported variables.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -898,7 +899,7 @@ A basic extension looks like this.
    &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;p&gt;
-This is the simplest example; adding a command contribution into an existing menu&apos;s additions area.
+This is the simplest example; adding a command contribution after an existing menu&apos;s additions group.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -908,7 +909,14 @@ This is the simplest example; adding a command contribution into an existing men
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         To register a context menu, use the &lt;code&gt;IWorkbenchPartSite.registerContextMenu&lt;/code&gt; methods.
+         &lt;p&gt;
+It is preferred that menu contributions be added in the &lt;code&gt;plugin.xml&lt;/code&gt;.  Plugins can
+programmatically add their own menu contributions using &lt;code&gt;org.eclipse.ui.menus.IMenuService&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.menus.AbstractContributionFactory&lt;/code&gt;, but should be sure to remove them if the plugin is unloaded.  The &lt;code&gt;IMenuService&lt;/code&gt; can be retrieved through any of the &lt;code&gt;IServiceLocators&lt;/code&gt;, the workbench, the workbench window, or the part site.
+&lt;/p&gt;
+&lt;p&gt;
+See &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; to define a command and &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; to define an implementation for the command.
+&lt;/p&gt;
+&lt;p&gt;To register a context menu, use the &lt;code&gt;IWorkbenchPartSite.registerContextMenu&lt;/code&gt; methods.&lt;/p&gt;
       </documentation>
    </annotation>
 

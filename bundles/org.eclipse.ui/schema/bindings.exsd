@@ -232,13 +232,18 @@ If no command identifier is specified, this is a deletion marker.  This means th
  point=&quot;org.eclipse.ui.bindings&quot;&gt;
  &lt;key
   sequence=&quot;M2+F5&quot;
-  commandId=&quot;commandId&quot;
-  schemeId=&quot;default&quot;
-  contextId=&quot;windows&quot; /&gt;
+  commandId=&quot;example.commandId&quot;
+  schemeId=&quot;org.eclipse.ui.defaultAcceleratorConfiguration&quot;
+  contextId=&quot;org.eclipse.ui.contexts.dialog&quot; /&gt;
+ &lt;key
+  sequence=&quot;M2+F7&quot;
+  commandId=&quot;other.commandId&quot;
+  schemeId=&quot;default.id&quot;
+  contextId=&quot;org.eclipse.ui.contexts.dialog&quot; /&gt;
  &lt;scheme
   name=&quot;Default&quot;
   description=&quot;Default shortcuts for Eclipse&quot;
-  id=&quot;default&quot; /&gt;
+  id=&quot;default.id&quot; /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
@@ -253,7 +258,7 @@ If no command identifier is specified, this is a deletion marker.  This means th
 There is no public API for defining bindings.  To try to achieve stability for the user, bindings are only defined through the extension points.  If you are an RCP application, you should be able to override this behaviour in the &lt;code&gt;WorkbenchAdvisor&lt;/code&gt;.
 &lt;/p&gt;
 &lt;p&gt;
-For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;command&lt;/a&gt;.  For the binding to work, the command must have an active &lt;a href=&quot;org_eclipse_ui_bindings.html&quot;&gt;handler&lt;/a&gt;.  Handlers can be registered programmatically; please see the &lt;a href=&quot;org_eclipse_ui_bindings.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; extension point.
+For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;command&lt;/a&gt;.  For the binding to work, the command must have an active &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;handler&lt;/a&gt;.  Handlers can be registered programmatically; please see the &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; extension point.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -272,7 +277,7 @@ For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_co
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

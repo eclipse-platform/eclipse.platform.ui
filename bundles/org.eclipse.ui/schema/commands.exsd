@@ -68,7 +68,7 @@ This element is used to define commands. A command represents an request from th
          <attribute name="category" type="string">
             <annotation>
                <documentation>
-                  The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.  Please use &lt;code&gt;categoryId&lt;/code&gt; instead.
+                  Please use &lt;code&gt;categoryId&lt;/code&gt; instead.
                </documentation>
                <appInfo>
                   <meta.attribute deprecated="true"/>
@@ -106,7 +106,7 @@ This element is used to define commands. A command represents an request from th
             <annotation>
                <documentation>
                   &lt;p&gt;
-The unique id of the category for this command. If this command does not specify a category, it will still appear in all UI, alongside other specifically categorized commands.
+The unique id of the category for this command. If this command does not specify a category it will be placed in an global &quot;Uncategorized&quot; category.
 &lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Since: 3.0&lt;/em&gt;&lt;/p&gt;
                </documentation>
@@ -116,7 +116,7 @@ The unique id of the category for this command. If this command does not specify
             <annotation>
                <documentation>
                   &lt;p&gt;
-The default handler for this command (see the &lt;a href=&quot;org_eclipse_ui_bindings.html&quot;&gt;org.eclipse.ui.bindings&lt;/a&gt; extension point).  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; element instead.
+The default handler for this command (see the &lt;a href=&quot;org_eclipse_ui_handlers.html&quot;&gt;org.eclipse.ui.handlers&lt;/a&gt; extension point).  If no other handler is active, this handler will be active.  This handler will conflict with other handler definitions that specify no &lt;code&gt;activeWhen&lt;/code&gt; conditions.  If you are creating an &lt;code&gt;IExecutableExtension&lt;/code&gt;, you can use the &lt;code&gt;defaultHandler&lt;/code&gt; element instead.
 &lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Since: 3.1&lt;/em&gt;&lt;/p&gt;
                </documentation>
@@ -382,7 +382,7 @@ The default handler for this command.  If no other handler is active, this handl
          </appInfo>
          <documentation>
             &lt;p&gt;
-State information shared between all handlers, and potentially persisted between sessions.  This is typically something like a check box state or the label of a handler.  The state is simply a class that is loaded to look after the state.  See the API Information for more details.
+State information shared between all handlers, and potentially persisted between sessions.The state is simply a class that is loaded to look after the state.  See the API Information for more details.  This is not used for UI attributes like a menu contribution check box state or label.
 &lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Since: 3.2&lt;/em&gt;&lt;/p&gt;
          </documentation>
@@ -822,6 +822,7 @@ Handlers can be registered with commands using the &lt;code&gt;org.eclipse.ui.ha
 &lt;/p&gt;
 &lt;p&gt;
 In general, it is preferrably to declare all commands statically (in &lt;code&gt;plugin.xml&lt;/code&gt;).  This is so that users can attach key bindings to the commands.  However, it is possible to declare commands at run-time.  To do this, retrieve the &lt;code&gt;org.eclipse.ui.commands.ICommandService&lt;/code&gt; from a workbench component, call &lt;code&gt;getCommand(yourCommandID)&lt;/code&gt; and then call &lt;code&gt;Command.define(...)&lt;/code&gt;.
+Commands defined programmatically must be cleaned up by the plugin if it is unloaded.
 &lt;/p&gt;
 &lt;p&gt;
 There are a few default implementations of handler states that may be useful to users of this extension point:
@@ -850,7 +851,7 @@ There are a few default implementations of handler states that may be useful to 
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

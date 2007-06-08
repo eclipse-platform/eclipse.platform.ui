@@ -16,13 +16,13 @@ The handlers extension point allows a plug-in developer to specify a handler tha
 The workbench provides some variables that these expressions can rely on.  Variables that are valid in activeWhen and enabledWhen expressions can be found in &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt;.  The types of the variables are determined by the &lt;code&gt;org.eclipse.ui.ISourceProvider&lt;/code&gt; that provides them.
 &lt;/p&gt;
 &lt;p&gt;
-A handler that specifies no conditions is a default handler.  A default handler is only active if no other handler has all of its conditions satisfied.  If two handlers still have conditions that are satisfied, then the conditions are compared.  The idea is to select a handler whose condition is more specific or more local.  To do this, the variables referred to by the condition are looked at.  The condition that refers to the most specific variable &quot;wins&quot;.  The order of specificity (from least specific to most specific) is defined in &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt;.
+A handler that specifies no conditions is a default handler.  A default handler is only active if no other handler has all of its conditions satisfied.  If two handlers still have conditions that are satisfied, then the conditions are compared.  The idea is to select a handler whose condition is more specific or more local.  To do this, the variables referred to by the condition are looked at.  The condition that refers to the most specific variable &quot;wins&quot;.  The order of specificity (from least specific to most specific) is suggested in &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt;.
 &lt;/p&gt;
 &lt;p&gt;
 If this still doesn&apos;t resolve the conflict, then no handler is active.  If a particular tracing option is turned on, then this leads to a message in the log.  A conflict can also occur if there are two default handlers.  It is the responsibility of the plug-in developers and integration testers to ensure that this does not happen.
 &lt;/p&gt;
 &lt;p&gt;
-These conditions are used to avoid unnecessary plug-in loading.  These handler definitions are wrapped in a proxy.  For a proxy to load its underlying handler, two things must happen: the conditions for the proxy must be met so that it becomes active, and the command must be asked to do something which it must delegate (e.g., execute()).
+These conditions are used to avoid unnecessary plug-in loading.  These handler definitions are wrapped in a proxy.  For a proxy to load its underlying handler, two things must happen: the conditions for the proxy must be met so that it becomes active, and the command must be asked to do something which it must delegate (e.g., execute(), isEnabled()).
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -59,6 +59,11 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
    </element>
 
    <element name="handler">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Associated a command with a handler implementation.&lt;/p&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="activeWhen" minOccurs="0" maxOccurs="1"/>
@@ -68,14 +73,14 @@ These conditions are used to avoid unnecessary plug-in loading.  These handler d
          <attribute name="commandId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  &lt;p&gt;The id of the command to associate with this handler implementation.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  
+                  &lt;p&gt;The handler class that imlements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt; or extends &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt;.&lt;/p&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
@@ -96,6 +101,11 @@ The identifier of the help context that relates to this specific handler.  While
    </element>
 
    <element name="activeWhen">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Contains a core expression used by the &lt;code&gt;IHandlerService&lt;/code&gt; to determine when this handler is active.&lt;/p&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="not"/>
@@ -116,6 +126,11 @@ The identifier of the help context that relates to this specific handler.  While
    </element>
 
    <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Contains a core expression used by the workbench handler proxy to determine when this handler is enabled without loading it.&lt;/p&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <choice>
             <element ref="not"/>
@@ -136,6 +151,11 @@ The identifier of the help context that relates to this specific handler.  While
    </element>
 
    <element name="class">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Used when creating an &lt;code&gt;IExecutableExtension&lt;/code&gt; with a named parameter, or more than one.&lt;/p&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
@@ -143,7 +163,7 @@ The identifier of the help context that relates to this specific handler.  While
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  
+                  &lt;p&gt;The handler class that imlements &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt; or extends &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt;.&lt;/p&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.commands.IHandler"/>
@@ -154,18 +174,23 @@ The identifier of the help context that relates to this specific handler.  While
    </element>
 
    <element name="parameter">
+      <annotation>
+         <documentation>
+            &lt;p&gt;A parameter for an &lt;code&gt;IExecutableExtension&lt;/code&gt;.&lt;/p&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  &lt;p&gt;The parameter name.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  &lt;p&gt;The parameter value.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -199,7 +224,7 @@ Variables that are valid in activeWhen and enabledWhen expressions can be found 
    &lt;with variable=&quot;selection&quot;&gt;
     &lt;count value=&quot;1&quot; /&gt;
     &lt;iterate operator=&quot;and&quot;&gt;
-     &lt;adapt type=&quot;IResource&quot; /&gt;
+     &lt;adapt type=&quot;org.eclipse.core.resources.IResource&quot; /&gt;
     &lt;/iterate&gt;
    &lt;/with&gt;
   &lt;/activeWhen&gt;
@@ -243,10 +268,10 @@ To further avoid plug-in loading, it is possible to specify when the handler is 
       </appInfo>
       <documentation>
          &lt;p&gt;
-All handlers implement &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt;.  Within the workbench, it is possible to activate and deactivate handlers using the &lt;code&gt;org.eclipse.ui.handlers.IHandlerService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself.  To retrieve the service, you would make a call like &lt;code&gt;IWorkbench.getAdapter(IHandlerService.class)&lt;/code&gt;.
+All handlers implement &lt;code&gt;org.eclipse.core.commands.IHandler&lt;/code&gt;, and can use &lt;code&gt;org.eclipse.core.commands.AbstractHandler&lt;/code&gt; as a base class.  Within the workbench, it is possible to activate and deactivate handlers using the &lt;code&gt;org.eclipse.ui.handlers.IHandlerService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself, a workbench window, or a part site.  To retrieve the service, you would make a call like &lt;code&gt;IWorkbench.getService(IHandlerService.class)&lt;/code&gt;.
 &lt;/p&gt;
 &lt;p&gt;
-It is also possible to activate and deactive handlers using legacy code in the workbench.  This can be done through the legacy mechanism shown below.  This mechanism is useful to clients who are using actions to contribute to menus or toolbars.
+It is also possible to activate and deactive handlers using legacy code in the workbench.  This can be done through the legacy mechanism shown below.  This mechanism is useful to clients who are using actions to contribute to menus or toolbars.  This is deprecated and not recommended.
 &lt;/p&gt;
 &lt;pre&gt;
  IWorkbenchPartSite mySite;
@@ -273,7 +298,7 @@ It is also possible to activate and deactive handlers using legacy code in the w
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

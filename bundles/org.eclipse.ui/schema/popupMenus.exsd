@@ -8,6 +8,9 @@
       <documentation>
          This extension point is used to add new actions to context menus owned by other plug-ins.  Action contributions may be made against a specific object type (&lt;samp&gt;objectContribution&lt;/samp&gt;) or against a specific context menu of a view or editor part (&lt;samp&gt;viewerContribution&lt;/samp&gt;). When using &lt;samp&gt;objectContribution&lt;/samp&gt;, the contribution will appear in all view or editor part context menus where objects of the specified type are selected. In contrast, using &lt;samp&gt;viewerContribution&lt;/samp&gt;, the contribution will only appear in the specified view or editor part context menu, regardless of the selection.
 &lt;p&gt;
+You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; to place commands editor or view contexts menus as well.
+&lt;/p&gt;
+&lt;p&gt;
 When the selection is heterogeneous, the contribution will be applied if registered against a common type of the selection, if possible. If a direct match is not possible, matching against superclasses and superinterfaces will be attempted. 
 &lt;p&gt;
 Selection can be further constrained through the use of a name filter. If used, all the objects in the selection must match the filter in order to apply the contribution. 

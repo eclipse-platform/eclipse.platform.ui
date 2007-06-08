@@ -7,7 +7,10 @@
       </appInfo>
       <documentation>
          This extension point is used to add actions to the menu 
-and toolbar for editors registered by other plug-ins. 
+and toolbar for editors registered by other plug-ins.
+&lt;p&gt;
+You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; to place commands in menus and toolbars as well.
+&lt;/p&gt;
 &lt;p&gt;
 The initial contribution set for an editor is defined 
 by another extension point (org.eclipse.ui.editors). 
