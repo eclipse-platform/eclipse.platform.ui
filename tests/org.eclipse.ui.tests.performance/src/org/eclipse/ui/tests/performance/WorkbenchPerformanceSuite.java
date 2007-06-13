@@ -126,7 +126,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
      */
     private void addPerspectiveSwitchScenarios() {
         for (int i = 0; i < PERSPECTIVE_SWITCH_PAIRS.length; i++) {
-            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], i == 0 ? BasicPerformanceTest.GLOBAL : BasicPerformanceTest.NONE));            
+            addTest(new PerspectiveSwitchTest(PERSPECTIVE_SWITCH_PAIRS[i], BasicPerformanceTest.NONE));            
         }   
     }
     

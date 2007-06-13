@@ -40,6 +40,7 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         this.id1 = ids[0];
         this.id2 = ids[1];
         this.activeEditor = ids[2];
+        setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=179581>See Bug 179581</a>");
     }
 	
     /**
