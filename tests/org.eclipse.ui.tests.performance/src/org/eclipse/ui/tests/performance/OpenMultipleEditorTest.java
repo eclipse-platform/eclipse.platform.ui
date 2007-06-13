@@ -33,6 +33,7 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
         super ("testOpenMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"), tagging);
         this.extension = extension;        
         this.closeAll = closeAll;
+        setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=179578>See Bug 179578</a>");
     }
     
     protected void runTest() throws Throwable {

@@ -63,7 +63,7 @@ public class EditorPerformanceSuite extends TestSuite {
      */
     private void addOpenMultipleScenarios(boolean closeAll) {
         for (int i = 0; i < EDITOR_FILE_EXTENSIONS.length; i++) {
-            addTest(new OpenMultipleEditorTest(EDITOR_FILE_EXTENSIONS[i], closeAll, (closeAll && i == 0) ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));            
+            addTest(new OpenMultipleEditorTest(EDITOR_FILE_EXTENSIONS[i], closeAll, BasicPerformanceTest.NONE));            
         }
     }
 
