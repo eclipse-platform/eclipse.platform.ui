@@ -34,7 +34,7 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
     	
     	tagIfNecessary("UI - Open/Close Window", Dimension.ELAPSED_PROCESS);
         
-    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=143842>See Bug 143842</a> ");
+    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=179725>See Bug 179725</a> ");
 
     	exercise(new TestRunnable() {
             public void run() throws Exception {
