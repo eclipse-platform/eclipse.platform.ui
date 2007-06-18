@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * TableViewer: Highlight cell and support editing which requires SWT.FULL_SELECTION
+ * TableViewer: Hide full selection
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
@@ -82,7 +82,7 @@ public class Snippet007FullSelection {
 		v.setCellModifier(new ICellModifier() {
 
 			public boolean canModify(Object element, String property) {
-				return ((MyModel)element).counter % 2 == 0;
+				return true;
 			}
 
 			public Object getValue(Object element, String property) {
@@ -97,7 +97,7 @@ public class Snippet007FullSelection {
 			
 		});
 		v.setColumnProperties(new String[] { "column1", "column2" });
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()),null });
+		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()),new TextCellEditor(v.getTable()) });
 		
 		TableColumn column = new TableColumn(v.getTable(),SWT.NONE);
 		column.setWidth(100);
@@ -112,52 +112,13 @@ public class Snippet007FullSelection {
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
 		
-		final Rectangle[] selectionBounds = new Rectangle[1];
-		
-		v.getTable().addListener(SWT.MouseDown, new Listener() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				TableItem item = v.getTable().getItem(new Point(event.x,event.y));
-				if( item != null ) {
-					int count = v.getTable().getColumnCount();
-					
-					if( count == 0 ) {
-						selectionBounds[0] = item.getBounds();
-					}
-					
-					for( int i = 0; i < count; i++ ) {
-						if( item.getBounds(i).contains(event.x,event.y) ) {
-							selectionBounds[0] = item.getBounds(i);
-							return;
-						}
-					}
-				}
-			}
-			
-		});
-		
 		v.getTable().addListener(SWT.EraseItem, new Listener() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 			 */
 			public void handleEvent(Event event) {
-				if((event.detail & SWT.SELECTED) != 0) {
-					if( selectionBounds[0] != null ) {
-						GC gc = event.gc;
-
-						Color background = gc.getBackground();
-						gc.setBackground(v.getTable().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-						gc.fillRectangle(selectionBounds[0].x,selectionBounds[0].y,selectionBounds[0].width,selectionBounds[0].height);
-						gc.setBackground(background);
-						
-					}
-					
-					event.detail &= ~SWT.SELECTED;
-				}
+				event.detail &= ~SWT.SELECTED;
 			}
 		});
 		
