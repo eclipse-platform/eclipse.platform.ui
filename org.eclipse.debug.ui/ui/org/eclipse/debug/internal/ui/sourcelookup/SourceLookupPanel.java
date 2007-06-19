@@ -24,23 +24,17 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.sourcelookup.WorkingSetSourceContainer;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 
@@ -72,54 +66,18 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 */
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
-		
-		Composite comp = new Composite(parent, SWT.NONE);
-		GridLayout topLayout = new GridLayout();
-		topLayout.numColumns = 2;
-		comp.setLayout(topLayout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		comp.setLayoutData(gd);
-		
-		Label viewerLabel = new Label(comp, SWT.LEFT);
-		viewerLabel.setText(
-				SourceLookupUIMessages.sourceTab_lookupLabel); 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan = 2;
-		viewerLabel.setLayoutData(gd);
-		viewerLabel.setFont(font);
+		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		SWTFactory.createLabel(comp, SourceLookupUIMessages.sourceTab_lookupLabel, 2);
 		
 		fPathViewer = new SourceContainerViewer(comp, this);
-		
-		gd = new GridData(GridData.FILL_BOTH);
-		fPathViewer.getControl().setLayoutData(gd);
+		fPathViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		fPathViewer.getControl().setFont(font);
 		
-		IWorkingSetManager workingSetMgr =DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
-		//listen to changes user made to the working sets, if a working set is being removed
-		//check current list to validate working sets  
-		workingSetMgr.addPropertyChangeListener(this);
+		Composite pathButtonComp = SWTFactory.createComposite(comp, comp.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL, 0, 0);
 		
-		Composite pathButtonComp = new Composite(comp, SWT.NONE);
-		GridLayout pathButtonLayout = new GridLayout();
-		pathButtonLayout.marginHeight = 0;
-		pathButtonLayout.marginWidth = 0;
-		pathButtonComp.setLayout(pathButtonLayout);
-		gd =
-			new GridData(
-					GridData.VERTICAL_ALIGN_BEGINNING
-					| GridData.HORIZONTAL_ALIGN_FILL);
-		pathButtonComp.setLayoutData(gd);
-		pathButtonComp.setFont(font);
+		SWTFactory.createVerticalSpacer(comp, 2);
 		
-		createVerticalSpacer(comp, 2);
-		
-		fDuplicatesButton = new Button(comp, SWT.CHECK);
-		fDuplicatesButton.setText(
-				SourceLookupUIMessages.sourceTab_searchDuplicateLabel); 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		fDuplicatesButton.setLayoutData(gd);
-		fDuplicatesButton.setFont(font);
+		fDuplicatesButton = SWTFactory.createCheckButton(comp, SourceLookupUIMessages.sourceTab_searchDuplicateLabel, null, false, 2);
 		fDuplicatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				setDirty(true);
@@ -127,89 +85,45 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			}
 		});
 		
-		GC gc = new GC(parent);
-		gc.setFont(parent.getFont());
-		FontMetrics fontMetrics = gc.getFontMetrics();
-		gc.dispose();
-		
 		fAddAction = new AddContainerAction();
-		Button button =
-			createPushButton(pathButtonComp, fAddAction.getText(), fontMetrics);
+		Button button = SWTFactory.createPushButton(pathButtonComp, fAddAction.getText(), null);
 		fAddAction.setButton(button);
 		addAction(fAddAction);
 		
 		fEditAction = new EditContainerAction();
-		button =
-			createPushButton(pathButtonComp, fEditAction.getText(), fontMetrics);
+		button = SWTFactory.createPushButton(pathButtonComp, fEditAction.getText(), null);
 		fEditAction.setButton(button);
 		addAction(fEditAction);
 		
 		SourceContainerAction action = new RemoveAction();
-		button =
-			createPushButton(pathButtonComp, action.getText(), fontMetrics);
+		button = SWTFactory.createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);
 		
 		action = new UpAction();
-		button =
-			createPushButton(pathButtonComp, action.getText(), fontMetrics);
+		button = SWTFactory.createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);
 		
 		action = new DownAction();
-		button =
-			createPushButton(pathButtonComp, action.getText(), fontMetrics);
+		button = SWTFactory.createPushButton(pathButtonComp, action.getText(), null);
 		action.setButton(button);
 		addAction(action);		
 		
 		fRestoreDefaultAction = new RestoreDefaultAction();
-		button = createPushButton(pathButtonComp, fRestoreDefaultAction.getText(), fontMetrics);
+		button = SWTFactory.createPushButton(pathButtonComp, fRestoreDefaultAction.getText(), null);
 		fRestoreDefaultAction.setButton(button);
 		addAction(fRestoreDefaultAction);
 		
 		retargetActions(fPathViewer);
 		
-		Dialog.applyDialogFont(comp);
+		//listen to changes user made to the working sets, if a working set is being removed
+		//check current list to validate working sets  
+		IWorkingSetManager workingSetMgr = DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
+		workingSetMgr.addPropertyChangeListener(this);
+		/*Dialog.applyDialogFont(comp);*/
 		setControl(comp);
 	}	
-	
-	/**
-	 * Creates and returns a button 
-	 * 
-	 * @param parent parent widget
-	 * @param label label
-	 * @return Button
-	 */
-	protected Button createPushButton(
-			Composite parent,
-			String label,
-			FontMetrics fontMetrics) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.setFont(parent.getFont());
-		button.setText(label);
-		GridData gd = getButtonGridData(button, fontMetrics);
-		button.setLayoutData(gd);
-		return button;
-	}
-	
-	private GridData getButtonGridData(
-			Button button,
-			FontMetrics fontMetrics) {
-		GridData gd =
-			new GridData(
-					GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
-		
-		int widthHint =
-			Dialog.convertHorizontalDLUsToPixels(
-					fontMetrics,
-					IDialogConstants.BUTTON_WIDTH);
-		gd.widthHint =
-			Math.max(
-					widthHint,
-					button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-		
-		return gd;
-	}
 	
 	/**
 	 * Adds the given action to the action collection in this tab
@@ -367,7 +281,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	}
 	
 	/**
-	 * determines of the current source lokoup path is the default path
+	 * determines of the current source lookup path is the default path
 	 * @param configuration
 	 * @return
 	 */
@@ -382,8 +296,9 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	public ISourceContainer[] getEntries() {
 		return fPathViewer.getEntries();
 	}
-	/**
-	 * Marks the panel as dirty.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
 	 */
 	public void setDirty(boolean dirty) {
 		super.setDirty(dirty);
@@ -400,9 +315,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		
-	}
+	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#updateLaunchConfigurationDialog()
@@ -421,16 +334,11 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 */
 	private void validateWorkingSetSourceContainers(IWorkingSet affectedWorkingSet) {
 		List sourceContainers = (List) fPathViewer.getInput();
-		
 		if (sourceContainers != null) {
 			for (int i = 0; i < sourceContainers.size(); i++) {
-				if (sourceContainers.get(i)
-						instanceof WorkingSetSourceContainer) {
-					WorkingSetSourceContainer wsSrcContainer =
-						(WorkingSetSourceContainer) sourceContainers.get(i);
-					if (wsSrcContainer
-							.getName()
-							.equals(affectedWorkingSet.getName())) {
+				if (sourceContainers.get(i) instanceof WorkingSetSourceContainer) {
+					WorkingSetSourceContainer wsSrcContainer = (WorkingSetSourceContainer) sourceContainers.get(i);
+					if (wsSrcContainer.getName().equals(affectedWorkingSet.getName())) {
 						sourceContainers.remove(i);
 					}
 				}
@@ -445,12 +353,11 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	public void propertyChange(PropertyChangeEvent event) {
 		//if the PropertyChangeEvent has changeId CHANGE_WORKING_SET_REMOVE, 
 		//validate the list to make sure all working sets are valid 
-		if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE))
-			validateWorkingSetSourceContainers((IWorkingSet) event.getOldValue());
-		
 		//if the PropertyChangeEvent has changeId CHANGE_WORKING_SET_NAME_CHANGE,
 		//do nothing because the event only has newValue, since oldValue is not provided
-		//there is no way to identify which working set does the newValue corresponds to									
+		//there is no way to identify which working set does the newValue corresponds to		
+		if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE))
+			validateWorkingSetSourceContainers((IWorkingSet) event.getOldValue());							
 	}
 	
 	
@@ -477,9 +384,9 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 */
 	public void dispose() {
 		super.dispose();
-		IWorkingSetManager workingSetMgr =DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
 		//listen to changes user made to the working sets, if a working set is being removed
 		//check current list to validate working sets  
+		IWorkingSetManager workingSetMgr = DebugUIPlugin.getDefault().getWorkbench().getWorkingSetManager();
 		workingSetMgr.removePropertyChangeListener(this);
 	}
 }
