@@ -305,7 +305,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		
 		SWTFactory.createVerticalSpacer(parent, 1);
 		SWTFactory.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_5, 2, 300);
-		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
 		createTreeViewer(comp);
 		fPerspectivesPanel = new PerspectivesPanel(comp, DebugPreferencesMessages.PerspectivePreferencePage_2);
 		initializeControls();
@@ -319,7 +319,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 * @param parent the parent to add these components to
 	 */
 	protected void createTreeViewer(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		Composite comp = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_VERTICAL);
 		SWTFactory.createWrapLabel(comp, DebugPreferencesMessages.PerspectivePreferencePage_1, 1);
 		fTree = new Tree(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.MULTI);
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
@@ -357,15 +357,13 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fPerspectivesPanel.setMessage(""); //$NON-NLS-1$
 		List fmodes = null;
 		Combo combo = null;
-		Label label = null;
 		Set smodes = null;
 		for(Iterator iter = modes.iterator(); iter.hasNext();) {
 			smodes = (Set) iter.next();
 			fmodes = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(smodes);
 			if(!fmodes.isEmpty()) {
 				//add the modeset and create a combo
-				label = SWTFactory.createLabel(parent, fmodes.toString()+":", 1); //$NON-NLS-1$
-				((GridData)label.getLayoutData()).grabExcessHorizontalSpace = true;
+				SWTFactory.createLabel(parent, fmodes.toString()+":", 1); //$NON-NLS-1$
 				combo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 1, fgPerspectiveLabels);
 				String text = getComboSelection(smodes);
 				if(text != null) {
@@ -374,9 +372,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				combo.setData(smodes);
 				combo.addSelectionListener(fSelectionListener);
 				GridData gd = (GridData)combo.getLayoutData();
-				gd.widthHint = 140;
-				gd.horizontalAlignment = SWT.END;
-				gd.grabExcessHorizontalSpace = false;
+				gd.grabExcessHorizontalSpace = true;
 			}
 		}
 	}
