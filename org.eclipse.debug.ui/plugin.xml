@@ -690,6 +690,16 @@
                   class="org.eclipse.debug.core.model.IVariable">
             </selection>
          </action>
+         <action
+               label="%addWatchExpressionAction.label"
+               toolbarPath="expressionGroup"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
+               hoverIcon="$nl$/icons/full/etool16/watch_exp.gif"
+               helpContextId="add_watch_expression_context"
+               class="org.eclipse.debug.internal.ui.actions.expressions.AddWatchExpressionAction"
+               tooltip="%addWatchExpressionAction.tooltip"
+               id="org.eclipse.debug.ui.expresssionsView.toolbar.AddWatchExpression">
+         </action>
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.MemoryView"
