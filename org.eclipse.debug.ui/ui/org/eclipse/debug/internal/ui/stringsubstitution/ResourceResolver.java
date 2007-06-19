@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
-import com.ibm.icu.text.MessageFormat;
+import java.net.URI;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -23,6 +24,8 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Common function of variable resolvers.
@@ -79,7 +82,7 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	 * 
 	 * @param variable referenced variable
 	 * @param argument referenced argument or <code>null</code>
-	 * @return vraiable reference expression
+	 * @return variable reference expression
 	 */
 	protected String getReferenceExpression(IDynamicVariable variable, String argument) {
 		StringBuffer reference = new StringBuffer();
@@ -129,10 +132,21 @@ public class ResourceResolver implements IDynamicVariableResolver {
 	 */
 	protected String translateToValue(IResource resource, IDynamicVariable variable) throws CoreException {
 		String name = variable.getName();
+		IPath path = null;
+		URI uri = null;
 		if (name.endsWith("_loc")) { //$NON-NLS-1$
-			return resource.getLocation().toOSString();
+			uri = resource.getLocationURI();
+			if(uri != null) {
+				path = new Path(uri.getPath());
+				if(path != null) {
+					return path.toOSString();
+				}
+			}
 		} else if (name.endsWith("_path")) { //$NON-NLS-1$
-			return resource.getFullPath().toOSString();
+			path = resource.getFullPath();
+			if(path != null) {
+				return path.toOSString();
+			}
 		} else if (name.endsWith("_name")) { //$NON-NLS-1$
 			return resource.getName();
 		}
