@@ -43,7 +43,7 @@ package org.eclipse.ui;
 public interface IMemento {
     /**
      * Special reserved key used to store the memento id 
-     * (value <code>"org.eclipse.ui.id"</code>).
+     * (value <code>"IMemento.internal.id"</code>).
      *
      * @see #getID()
      */
