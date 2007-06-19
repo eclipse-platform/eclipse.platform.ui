@@ -374,7 +374,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		ToolBar bar = null;
 		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
 			window = (IWorkbenchWindow) iter.next();
-			bar = (ToolBar) fToolbars.remove(window);
+			bar = (ToolBar) fToolbars.get(window);
 			if(bar != null && !bar.isDisposed()) {
 				bar.removeMouseTrackListener(fMouseListener);
 			}
