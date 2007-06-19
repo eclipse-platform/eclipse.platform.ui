@@ -30,7 +30,6 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -372,7 +371,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @throws TransformerException
 	 * @throws IOException
 	 */
-	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException, TransformerException, IOException {
+	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException {
 		Document doc = DebugUIPlugin.getDocument();
 		Element historyRootElement = doc.createElement(IConfigurationElementConstants.LAUNCH_HISTORY); 
 		doc.appendChild(historyRootElement);
@@ -392,7 +391,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			createEntry(doc, favs, history.getFavorites());
 		}
 		
-		return DebugUIPlugin.serializeDocument(doc);
+		return DebugPlugin.serializeDocument(doc);
 	}
 
 	/**
@@ -426,7 +425,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
 	 */
-	protected void persistLaunchHistory() throws IOException, CoreException, TransformerException, ParserConfigurationException {
+	protected void persistLaunchHistory() throws IOException, CoreException, ParserConfigurationException {
 		synchronized (this) {
 			if (fLaunchHistories == null || fRestoring) {
 				return;
@@ -1151,11 +1150,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	public void saving(ISaveContext context) throws CoreException {
 		try {
 			persistLaunchHistory();
+		}  catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Internal error saving launch history", e)); //$NON-NLS-1$
+		} catch (ParserConfigurationException e) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Internal error saving launch history", e)); //$NON-NLS-1$
 		} 
-		catch (CoreException e) {DebugUIPlugin.log(e);} 
-		catch (IOException e) {DebugUIPlugin.log(e);} 
-		catch (ParserConfigurationException e) {DebugUIPlugin.log(e);} 
-		catch (TransformerException e) {DebugUIPlugin.log(e);}
 	}
 	
 	/**

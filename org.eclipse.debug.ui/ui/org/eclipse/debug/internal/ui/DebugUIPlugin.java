@@ -12,8 +12,6 @@
 package org.eclipse.debug.internal.ui;
 
  
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.HashSet;
@@ -23,12 +21,6 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
@@ -786,31 +778,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fProcessConsoleManager = new ProcessConsoleManager();
 		}
 		return fProcessConsoleManager;
-	}
-	
-	/**
-	 * Serializes a XML document into a string - encoded in UTF8 format,
-	 * with platform line separators.
-	 * 
-	 * @param doc document to serialize
-	 * @return the document as a string
-	 * @throws TransformerException if an unrecoverable error occurs during the serialization
-	 * @throws IOException if the encoding attempted to be used is not supported
-	 */
-	public static String serializeDocument(Document doc) throws TransformerException, IOException {
-		ByteArrayOutputStream s= new ByteArrayOutputStream();
-		
-		TransformerFactory factory= TransformerFactory.newInstance();
-		
-		Transformer transformer= factory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
-		
-		DOMSource source= new DOMSource(doc);
-		StreamResult outputTarget= new StreamResult(s);
-		transformer.transform(source, outputTarget);
-		
-		return s.toString("UTF8"); //$NON-NLS-1$			
 	}
 	
 	/**

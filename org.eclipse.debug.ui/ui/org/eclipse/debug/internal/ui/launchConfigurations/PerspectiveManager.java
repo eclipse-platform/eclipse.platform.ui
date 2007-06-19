@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.resources.ISaveContext;
@@ -833,7 +831,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
      * @exception TransformerException if unable to generate the XML
      * @exception ParserConfigurationException if unable to generate the XML
 	 */
-	private String generatePerspectiveXML() throws ParserConfigurationException, TransformerException, IOException {
+	private String generatePerspectiveXML() throws ParserConfigurationException, CoreException {
 		Document doc = DebugUIPlugin.getDocument();
 		Element root = doc.createElement(IConfigurationElementConstants.LAUNCH_PERSPECTIVES);
 		doc.appendChild(root);
@@ -863,7 +861,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			}
 			
 		}
-		return DebugUIPlugin.serializeDocument(doc);		
+		return DebugPlugin.serializeDocument(doc);		
 	}
 
 	/**
@@ -1052,9 +1050,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	public void saving(ISaveContext context) throws CoreException {
 		try {
 			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, generatePerspectiveXML());			
+		}   catch (ParserConfigurationException e) {
+			throw new CoreException(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e)); //$NON-NLS-1$
 		} 
-		catch (IOException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$ 
-		catch (ParserConfigurationException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
-		catch (TransformerException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
 	}
 }
