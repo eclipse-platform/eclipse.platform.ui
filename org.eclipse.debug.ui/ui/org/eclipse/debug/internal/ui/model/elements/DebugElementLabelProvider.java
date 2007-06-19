@@ -11,9 +11,11 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.FontData;
@@ -70,6 +72,22 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getImageDescriptor(element);
 	}
 	
-
+	/**
+	 * Returns the model presentation for the specified model, or <code>null</code> if none.
+	 * 
+	 * @param context presentation context
+	 * @param modelId debug model identifier
+	 * @return debug model presentation or <code>null</code> 
+	 */
+	protected IDebugModelPresentation getModelPresentation(IPresentationContext context, String modelId) {
+		if (context instanceof DebugModelPresentationContext) {
+			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) context;
+			IDebugModelPresentation presentation = debugContext.getModelPresentation();
+			if (presentation instanceof DelegatingModelPresentation) {
+				return ((DelegatingModelPresentation)presentation).getPresentation(modelId);
+			}
+		}
+		return null;
+	}
 
 }
