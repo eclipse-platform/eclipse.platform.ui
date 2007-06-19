@@ -226,7 +226,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	 * Finds the index of the specified object in the given array of tree items
 	 * @param items the items to search for the specified object
 	 * @param object the object to find the index of
-	 * @return the index of the specified object inthe listing of tree items, or -1 if not found
+	 * @return the index of the specified object in the listing of tree items, or -1 if not found
 	 */
 	private int indexOf(TreeItem[] items, Object object) {
 		if(object != null) {
