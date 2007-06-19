@@ -88,9 +88,9 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.internal.ui.SelectAllAction;
 
-import org.eclipse.search2.internal.ui.MatchFilterSelectionAction;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.MatchFilterAction;
+import org.eclipse.search2.internal.ui.MatchFilterSelectionAction;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.search2.internal.ui.basic.views.CollapseAllAction;
@@ -1068,8 +1068,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private void initActionDefinitionIDs(IWorkbenchWindow window) {
 		fCopyToClipboardAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		fRemoveSelectedMatches.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
-		fShowNextAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_NEXT);
-		fShowPreviousAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_PREVIOUS);
+		//using manifest strings to work around https://bugs.eclipse.org/bugs/show_bug.cgi?id=54581 :
+		fShowNextAction.setActionDefinitionId("org.eclipse.ui.navigate.next");  //$NON-NLS-1$
+		fShowPreviousAction.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
 		fSelectAllAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 	}
 
