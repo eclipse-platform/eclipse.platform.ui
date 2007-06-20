@@ -1121,18 +1121,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/**
 		 * Computes the offset of the line end position.
-		 * <p>
-		 * XXX: will become protected in 3.4.
-		 * </p>
 		 *
 		 * @param document the document where to compute the line end position
 		 * @param line the line to determine the end position of
 		 * @param length the length of the line
 		 * @param offset the caret position in the document
 		 * @return the offset of the line end
-		 * @since 3.3
+		 * @since 3.3, protected since 3.4
 		 */
-		int getLineEndPosition(final IDocument document, final String line, final int length, final int offset) {
+		protected int getLineEndPosition(final IDocument document, final String line, final int length, final int offset) {
 			int index= length - 1;
 			while (index > -1 && Character.isWhitespace(line.charAt(index)))
 				index--;
