@@ -25,6 +25,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
@@ -33,6 +34,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A hyperlink that opens a file in a text editor and selects a range of text.
+ * This hyperlink action will un-zoom the workbench as needed to show the editor
+ * for the associated link.
  * <p>
  * This class is not intended to be subclassed; clients may instantiate this
  * class.
@@ -76,6 +79,12 @@ public class FileLink implements IConsoleHyperlink {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
+					if(page.isPageZoomed()) {
+						IWorkbenchPartReference ref = page.getActivePartReference();
+						if(ref != null) {
+							page.toggleZoom(ref);
+						}
+					}
 					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), getEditorId() , false);
 					if (fFileLineNumber > 0) {
 						ITextEditor textEditor = null;
