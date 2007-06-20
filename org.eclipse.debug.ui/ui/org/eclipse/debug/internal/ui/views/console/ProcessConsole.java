@@ -82,11 +82,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * A console for a system process
- * <p>
- * Clients may instantiate this class. This class is not intended for
- * sub-classing.
- * </p>
+ * A console for a system process with standard I/O streams.
  * 
  * @since 3.0
  */
