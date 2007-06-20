@@ -348,13 +348,16 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		return (IBreakpoint)fMarkersToBreakpoints.get(marker);
 	}
 
-	/**
-	 * @see IBreakpointManager#getBreakpoints()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#getBreakpoints()
 	 */
 	public IBreakpoint[] getBreakpoints() {
-		Vector breakpoints= getBreakpoints0();
-		IBreakpoint[] temp= new IBreakpoint[breakpoints.size()];
-		breakpoints.copyInto(temp);
+		IBreakpoint[] temp = new IBreakpoint[0];
+		Vector breakpoints = getBreakpoints0();
+		synchronized (breakpoints) {
+			temp = new IBreakpoint[breakpoints.size()];
+			breakpoints.copyInto(temp);
+		}
 		return temp;
 	}
 	
@@ -369,14 +372,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 		return fBreakpoints;
 	}	
-	
-	/**
-	 * @see IBreakpointManager#getBreakpoints(String)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IBreakpointManager#getBreakpoints(java.lang.String)
 	 */
 	public IBreakpoint[] getBreakpoints(String modelIdentifier) {
 		Vector allBreakpoints= getBreakpoints0();
 		synchronized (allBreakpoints) {
-			ArrayList temp= new ArrayList(allBreakpoints.size());
+			ArrayList temp = new ArrayList(allBreakpoints.size());
 			Iterator breakpoints= allBreakpoints.iterator();
 			while (breakpoints.hasNext()) {
 				IBreakpoint breakpoint= (IBreakpoint) breakpoints.next();
