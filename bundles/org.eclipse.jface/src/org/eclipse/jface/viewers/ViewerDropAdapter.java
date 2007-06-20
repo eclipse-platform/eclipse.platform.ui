@@ -101,10 +101,16 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 
     /**
      * A flag that allows adapter users to turn auto scrolling
-     * and expanding on or off. Default is <code>true</code>.
+     * on or off. Default is <code>true</code>.
      */
-    private boolean scrollExpandEnabled = true;
+    private boolean scrollEnabled = true;
 
+    /**
+     * A flag that allows adapter users to turn auto
+     * expanding on or off. Default is <code>true</code>.
+     */
+    private boolean expandEnabled = true;
+    
     /**
      * A flag that allows adapter users to turn selection feedback
      *  on or off. Default is <code>true</code>.
@@ -393,8 +399,11 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 			event.feedback &= ~DND.FEEDBACK_SELECT;
 		}
 
-		if (scrollExpandEnabled) {
-			event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
+		if (expandEnabled) {
+			event.feedback |= DND.FEEDBACK_EXPAND;
+		}
+		if (scrollEnabled) {
+			event.feedback |= DND.FEEDBACK_SCROLL;
 		}
     }
 
@@ -433,7 +442,30 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
      * @since 2.0
      */
     public void setScrollExpandEnabled(boolean value) {
-        scrollExpandEnabled = value;
+    	expandEnabled = value;
+    	scrollEnabled = value;
+    }
+
+    /**
+     * Sets whether auto expanding should be provided during dragging.
+     *
+     * @param value <code>true</code> if expanding is desired, and
+     *   <code>false</code> if not
+     * @since 3.4
+     */
+    public void setExpandEnabled(boolean value) {
+        expandEnabled = value;
+    }
+    
+    /**
+     * Sets whether auto scrolling should be provided during dragging.
+     *
+     * @param value <code>true</code> if scrolling is desired, and
+     *   <code>false</code> if not
+     * @since 3.4
+     */
+    public void setScrollEnabled(boolean value) {
+        scrollEnabled = value;
     }
 
     /**
