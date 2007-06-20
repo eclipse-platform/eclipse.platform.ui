@@ -353,8 +353,9 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < workingSets.length; i++) {
 			IWorkingSet set = workingSets[i];
-			if(i != 0) buffer.append(" ,"); //$NON-NLS-1$
-			buffer.append(set.getName());
+			if (i != 0)
+				buffer.append(", "); //$NON-NLS-1$
+			buffer.append(set.getLabel());
 		}
 		return buffer.toString();
 	}
