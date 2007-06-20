@@ -196,7 +196,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 			} else {
 				Color[] foregrounds = new Color[fForegrounds.length];
 				for (int i = 0; i< foregrounds.length; i++) {
-					foregrounds[i] = fProvider.getColor(fForegrounds[0]);
+					foregrounds[i] = fProvider.getColor(fForegrounds[i]);
 				}
 				if (fColumnIds == null) {
 					fItem.setForeground(0,foregrounds[0]);
@@ -216,7 +216,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 			} else {
 				Color[] backgrounds = new Color[fBackgrounds.length];
 				for (int i = 0; i< backgrounds.length; i++) {
-					backgrounds[i] = fProvider.getColor(fBackgrounds[0]);
+					backgrounds[i] = fProvider.getColor(fBackgrounds[i]);
 				}
 				if (fColumnIds == null) {
 					fItem.setBackground(0,backgrounds[0]);
