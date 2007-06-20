@@ -297,9 +297,24 @@
   			</action>
       </actionSet>
       <actionSet
-            label="%WindowWorkingSetsActionSet.label"
-            description="%WindowWorkingSetsActionSet.description"
+            label="%WindowWorkingSetsActionSet.toolbar.label"
+            description="%WindowWorkingSetsActionSet.toolbar.description"
             visible="false"
+            id="org.eclipse.ui.WorkingSetActionSet.toolbar">
+         <action
+               class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
+               definitionId="org.eclipse.ui.navigate.selectWorkingSets"
+               icon="$nl$/icons/full/elcl16/workingsets.gif"
+               id="selectWorkingSets"
+               label="%SelectWorkingSetsAction.label"
+               style="pulldown"
+               toolbarPath="workingSets"
+               tooltip="%SelectWorkingSetsAction.tooltip"/>                     
+      </actionSet>
+      <actionSet
+            label="%WindowWorkingSetsActionSet.menu.label"
+            description="%WindowWorkingSetsActionSet.menu.description"
+            visible="true"
             id="org.eclipse.ui.WorkingSetActionSet">
          <action
                class="org.eclipse.ui.internal.actions.SelectWorkingSetsAction"
@@ -309,7 +324,6 @@
                label="%SelectWorkingSetsAction.label"
                menubarPath="window/additions"
                style="pulldown"
-               toolbarPath="workingSets"
                tooltip="%SelectWorkingSetsAction.tooltip"/>                     
       </actionSet>
         <actionSet
