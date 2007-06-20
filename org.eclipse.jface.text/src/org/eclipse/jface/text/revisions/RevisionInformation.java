@@ -151,6 +151,10 @@ public final class RevisionInformation implements ITextHoverExtension, IInformat
 	
 	/**
 	 * Sets the hover control creator.
+	 * <p>
+	 * <strong>Note:</strong> The created information control must be able to display the object
+	 * returned by the concrete implementation of {@link Revision#getHoverInfo()}.
+	 * </p>
 	 * 
 	 * @param creator the control creator 
 	 * @since 3.3

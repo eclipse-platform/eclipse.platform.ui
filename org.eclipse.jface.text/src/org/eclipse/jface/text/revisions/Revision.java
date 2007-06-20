@@ -18,10 +18,11 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.jface.text.source.ILineRange;
-
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
 import org.eclipse.jface.internal.text.revisions.Hunk;
+
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.source.ILineRange;
 
 /**
  * Describes a revision of a document. A revision consists of one ore more {@link ILineRange}s.
@@ -103,8 +104,14 @@ public abstract class Revision {
 	/**
 	 * Returns the hover information that will be shown when the user hovers over the a change
 	 * region of this revision.
+	 * <p>
+	 * <strong>Note:</strong> The hover information control which is used to display the information
+	 * must be able process the given object. If the default information control creator is used
+	 * the supported format is simple text, full HTML or an HTML fragment.
+	 * </p>
 	 * 
 	 * @return the hover information for this revision or <code>null</code> for no hover
+	 * @see RevisionInformation#setHoverControlCreator(IInformationControlCreator)
 	 */
 	public abstract Object getHoverInfo();
 
