@@ -116,11 +116,13 @@ public abstract class Revision {
 	public abstract Object getHoverInfo();
 
 	/**
-	 * Returns the color definition to be used for this revision. The color may be used to visually
-	 * distinguish one revision from another, for example as background color. The colors of any two
-	 * revisions should be as distinct as possible.
+	 * Returns the author color for this revision. This color can be used to visually distinguish
+	 * one revision from another, for example as background color.
+	 * <p>
+	 * Revisions from the same author must return the same color and revisions from different authors
+	 * must return distinct colors.</p>
 	 * 
-	 * @return the RGB color description for this revision
+	 * @return the RGB color for this revision's author
 	 */
 	public abstract RGB getColor();
 
