@@ -185,8 +185,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public int fCount;
 		public ITextFileBuffer fTextFileBuffer;
 		
-		// private due to 3.3 API freeze, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=182086
-		private LocationKind fTextFileBufferLocationKind;
+		public LocationKind fTextFileBufferLocationKind;
 		
 		public IAnnotationModel fModel;
 		public boolean fCachedReadOnlyState;
