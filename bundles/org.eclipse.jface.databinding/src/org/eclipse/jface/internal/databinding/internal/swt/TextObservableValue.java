@@ -64,7 +64,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 * Valid types for the {@link #updateEventType}.
 	 */
 	private static final int[] validUpdateEventTypes = new int[] { SWT.Modify,
-			SWT.FocusOut, SWT.NONE };
+			SWT.FocusOut, SWT.None };
 
 	/**
 	 * Previous value of the Text.
@@ -95,7 +95,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 * @param updateEventType
 	 *            SWT event constant as to what SWT event to update the model in
 	 *            response to. Appropriate values are: <code>SWT.Modify</code>,
-	 *            <code>SWT.FocusOut</code>, <code>SWT.NONE</code>.
+	 *            <code>SWT.FocusOut</code>, <code>SWT.None</code>.
 	 * @throws IllegalArgumentException
 	 *             if <code>updateEventType</code> is an incorrect type.
 	 */
