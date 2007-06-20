@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,14 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * Value: <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
 	 */
 	public static final String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context"; //$NON-NLS-1$
+	
+	/**
+	 * Help context id for the Spelling preference page.
+	 * Value: <code>"org.eclipse.ui.spelling_preference_page_context"</code>.
+	 * @since 3.4
+	 */
+	public static final String SPELLING_PREFERENCE_PAGE= PREFIX + "spelling_preference_page_context"; //$NON-NLS-1$
+
 
 	/**
 	 * Id for the text editor.

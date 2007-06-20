@@ -12,7 +12,8 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
 
 
@@ -53,8 +54,7 @@ public class SpellingPreferencePage extends AbstractConfigurationBlockPreference
 	 * @see org.eclipse.ui.internal.editors.text.AbstractConfigureationBlockPreferencePage#getHelpId()
 	 */
 	protected String getHelpId() {
-		// XXX: To be made public after 3.3, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=188281
-		return IAbstractTextEditorHelpContextIds.PREFIX + "spelling_preference_page_context"; //$NON-NLS-1$
+		return ITextEditorHelpContextIds.SPELLING_PREFERENCE_PAGE;
 	}
 
 	/*
