@@ -780,7 +780,7 @@ public class TextViewer extends Viewer implements
 				} catch (BadLocationException x) {
 				}
 			}
-			return null;
+			return ""; //$NON-NLS-1$
 		}
 
 		/*
@@ -821,7 +821,8 @@ public class TextViewer extends Viewer implements
 		 */
 		public Point getSelection() {
 			Point modelSelection= TextViewer.this.getSelectedRange();
-			return modelSelection2WidgetSelection(modelSelection);
+			Point widgetSelection= modelSelection2WidgetSelection(modelSelection);
+			return widgetSelection != null ? widgetSelection : new Point(-1, -1);
 		}
 
 		/*

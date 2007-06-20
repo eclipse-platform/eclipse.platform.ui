@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -367,11 +367,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			return;
 
 		IDialogSettings s= getDialogSettings();
-
-		String selection= fTarget.getSelectionText();
-		if (selection == null)
-			selection= ""; //$NON-NLS-1$
-		s.put("selection", selection); //$NON-NLS-1$
+		s.put("selection", fTarget.getSelectionText()); //$NON-NLS-1$
 
 		if (!fFindHistory.isEmpty() && fFindString.equals(fFindHistory.get(0)))
 			return;
@@ -400,7 +396,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		 * Now uses TextUtilities rather than focusing on '\n'
 		 */
 		String selection= fTarget.getSelectionText();
-		if (selection != null && selection.length() > 0) {
+		if (selection.length() > 0) {
 			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);

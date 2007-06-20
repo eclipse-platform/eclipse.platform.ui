@@ -923,7 +923,7 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private String getSelectionString() {
 		String selection= fTarget.getSelectionText();
-		if (selection != null && selection.length() > 0) {
+		if (selection.length() > 0) {
 			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
 				return selection.substring(0, info[0]);
@@ -977,12 +977,9 @@ class FindReplaceDialog extends Dialog {
 	private void writeSelection() {
 		if (fTarget == null)
 			return;
-		String selection= fTarget.getSelectionText();
-		if (selection == null)
-			selection= ""; //$NON-NLS-1$
-
+		
 		IDialogSettings s= getDialogSettings();
-		s.put("selection", selection); //$NON-NLS-1$
+		s.put("selection", fTarget.getSelectionText()); //$NON-NLS-1$
 	}
 
 	/**
@@ -1372,7 +1369,7 @@ class FindReplaceDialog extends Dialog {
 		if (wrapSearch) { // search the whole text
 			findReplacePosition= 0;
 			forwardSearch= true;
-		} else if (fTarget.getSelectionText() != null) {
+		} else {
 			// the cursor is set to the end or beginning of the selected text
 			Point selection= fTarget.getSelection();
 			findReplacePosition= selection.x;
@@ -1467,10 +1464,9 @@ class FindReplaceDialog extends Dialog {
 		if (okToUse(getShell()) && okToUse(fFindNextButton)) {
 
 			boolean selection= false;
-			if (fTarget != null) {
-				String selectedText= fTarget.getSelectionText();
-				selection= (selectedText != null && selectedText.length() > 0);
-			}
+			if (fTarget != null)
+				selection= fTarget.getSelectionText().length() > 0;
+
 			boolean enable= fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
 			String str= getFindString();
 			boolean findString= str != null && str.length() > 0;
