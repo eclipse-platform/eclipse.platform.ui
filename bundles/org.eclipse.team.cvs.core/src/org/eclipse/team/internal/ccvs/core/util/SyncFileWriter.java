@@ -269,7 +269,26 @@ public class SyncFileWriter {
 	public static String[] readCVSIgnoreEntries(IContainer folder) throws CVSException {
 		IFile ignoreFile = folder.getFile(new Path(IGNORE_FILE));
 		if (ignoreFile != null) {
-			return readLines(ignoreFile);
+			String[] lines = readLines(ignoreFile);
+			if (lines == null)
+				return null;
+			// Split each line on spaces and tabs.
+			ArrayList/*<String>*/ entries = new ArrayList/*<String>*/();
+			for (int ln = 0; ln < lines.length; ln++) {
+				String line = lines[ln];
+				int pos = 0;
+				while (pos < line.length()) {
+					if (line.charAt(pos) == ' ' || line.charAt(pos) == '\t')
+						pos++;
+					else {
+						int start = pos;
+						while (pos < line.length() && line.charAt(pos) != ' ' && line.charAt(pos) != '\t')
+							pos++;
+						entries.add(line.substring(start, pos));
+					}
+				}
+			}
+			return (String[]) entries.toArray(new String[entries.size()]);
 		}
 		return null;
 	}
