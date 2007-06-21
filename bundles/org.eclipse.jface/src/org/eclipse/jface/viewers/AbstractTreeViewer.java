@@ -1041,13 +1041,19 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void fireTreeCollapsed(final TreeExpansionEvent event) {
 		Object[] listeners = treeListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
-			SafeRunnable.run(new SafeRunnable() {
-				public void run() {
-					l.treeCollapsed(event);
-				}
-			});
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			for (int i = 0; i < listeners.length; ++i) {
+				final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
+				SafeRunnable.run(new SafeRunnable() {
+					public void run() {
+						l.treeCollapsed(event);
+					}
+				});
+			}
+		} finally {
+			busy = oldBusy;
 		}
 	}
 
@@ -1061,15 +1067,20 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void fireTreeExpanded(final TreeExpansionEvent event) {
 		Object[] listeners = treeListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
-			SafeRunnable.run(new SafeRunnable() {
-				public void run() {
-					l.treeExpanded(event);
-				}
-			});
+		boolean oldBusy = busy;
+		busy = true;
+		try {
+			for (int i = 0; i < listeners.length; ++i) {
+				final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
+				SafeRunnable.run(new SafeRunnable() {
+					public void run() {
+						l.treeExpanded(event);
+					}
+				});
+			}
+		} finally {
+			busy = oldBusy;
 		}
-
 	}
 
 	/**
