@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 
-import com.ibm.icu.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
@@ -44,6 +38,8 @@ import org.eclipse.team.ui.mapping.SynchronizationStateTester;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
 import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class CVSLightweightDecorator extends LabelProvider implements ILightweightLabelDecorator, IResourceStateChangeListener, IPropertyChangeListener {
 
@@ -361,7 +357,10 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 		FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
 		if (folderInfo != null) {
 			cvsDecoration.setLocation(KnownRepositories.getInstance().getRepository(folderInfo.getRoot()));
-			cvsDecoration.setRepository(folderInfo.getRepository());
+			
+			// Ignore the relative 'repository' path if it is the same locally 
+			if (!resource.getFullPath().toString().startsWith(folderInfo.getRepository(), 1))
+				cvsDecoration.setRepository(folderInfo.getRepository());
 			cvsDecoration.setVirtualFolder(folderInfo.isVirtualDirectory());
 		}
 	}
