@@ -11,10 +11,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -397,6 +394,12 @@ public abstract class Command extends Request {
 			resources = sendLocalResourceState(session, globalOptions, localOptions,
 					resources, Policy.infiniteSubMonitorFor(monitor, 48));
 			Policy.checkCanceled(monitor);
+			// escape file names, see bug 149683
+			for(int i = 0; i < arguments.length; i++){
+				if(arguments[i].startsWith("-")){ //$NON-NLS-1$
+					arguments[i] = "./" + arguments[i]; //$NON-NLS-1$
+				}
+			}
 			// send arguments
 			sendArguments(session, arguments);
 			// send local working directory path

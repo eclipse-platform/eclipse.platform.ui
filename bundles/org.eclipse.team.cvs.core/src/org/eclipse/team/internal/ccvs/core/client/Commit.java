@@ -14,8 +14,7 @@ package org.eclipse.team.internal.ccvs.core.client;
 import java.util.Collection;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -53,7 +52,12 @@ public class Commit extends Command {
 		// Send the changed files as arguments (because this is what other cvs clients do)
 		ICVSFile[] changedFiles = visitor.getModifiedFiles();
 		for (int i = 0; i < changedFiles.length; i++) {
-			session.sendArgument(changedFiles[i].getRelativePath(session.getLocalRoot()));
+			// escape file names, see bug 149683
+			String fileName = changedFiles[i].getRelativePath(session.getLocalRoot());
+			if(fileName.startsWith("-")){ //$NON-NLS-1$
+				fileName = "./" + fileName; //$NON-NLS-1$
+			}
+			session.sendArgument(fileName);
 		}
 		return changedFiles;
 	}
