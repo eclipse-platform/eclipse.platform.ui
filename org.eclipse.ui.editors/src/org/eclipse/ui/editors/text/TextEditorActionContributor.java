@@ -18,7 +18,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -98,8 +97,8 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, action);
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.PREVIOUS, action);
 
-		action= getAction(textEditor, ActionFactory.REFRESH.getId());
-		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), action);
+		action= getAction(textEditor, ITextEditorActionConstants.REFRESH);
+		actionBars.setGlobalActionHandler(ITextEditorActionConstants.REFRESH, action);
 
 		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
 		

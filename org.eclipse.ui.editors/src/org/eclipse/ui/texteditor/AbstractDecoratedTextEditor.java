@@ -108,7 +108,6 @@ import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.dialogs.SaveAsDialog;
@@ -1144,8 +1143,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction)
 			((ShowWhitespaceCharactersAction)showWhitespaceCharactersAction).setPreferenceStore(EditorsUI.getPreferenceStore());
 		
-		setAction(ActionFactory.REFRESH.getId(), new RefreshEditorAction(this));
-		markAsPropertyDependentAction(ActionFactory.REFRESH.getId(), true);
+		setAction(ITextEditorActionConstants.REFRESH, new RefreshEditorAction(this));
+		markAsPropertyDependentAction(ITextEditorActionConstants.REFRESH, true);
 	}
 
 	public Object getAdapter(Class adapter) {

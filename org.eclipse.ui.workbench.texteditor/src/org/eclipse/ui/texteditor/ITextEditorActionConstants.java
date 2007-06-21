@@ -10,9 +10,7 @@
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import org.eclipse.jface.text.information.IInformationProvider;
 
@@ -460,7 +458,15 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @see org.eclipse.ui.actions.ActionFactory#PREVIOUS
 	 */
 	String PREVIOUS= ActionFactory.PREVIOUS.getId();
-
+	
+	/**
+	 * Name of standard Refresh global action in the File menu.
+	 * Value <code>"refresh"</code>
+	 * @since 3.4
+	 * @see org.eclipse.ui.actions.ActionFactory#REFRESH
+	 */
+	String REFRESH= ActionFactory.REFRESH.getId();
+	
 	/**
 	 * Name of the action for re-establishing the state after the
 	 * most recent save operation.
