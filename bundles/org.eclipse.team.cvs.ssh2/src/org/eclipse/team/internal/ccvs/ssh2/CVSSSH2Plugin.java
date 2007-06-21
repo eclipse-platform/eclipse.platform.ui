@@ -11,32 +11,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
 
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.jsch.core.IJSchService;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 
-public class CVSSSH2Plugin extends AbstractUIPlugin {
+public class CVSSSH2Plugin extends Plugin {
 
 	public static String ID = "org.eclipse.team.cvs.ssh2"; //$NON-NLS-1$
 	private static CVSSSH2Plugin plugin;
-
-	static String SSH_HOME_DEFAULT = null;
-	static {
-		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
-		
-		// Windows doesn't like files or directories starting with a dot.
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			ssh_dir_name = "ssh"; //$NON-NLS-1$
-		}
-		SSH_HOME_DEFAULT = System.getProperty("user.home"); //$NON-NLS-1$
-		if (SSH_HOME_DEFAULT != null) {
-		    SSH_HOME_DEFAULT = SSH_HOME_DEFAULT + java.io.File.separator + ssh_dir_name;
-		} else {
-			
-		}
-	}
 
 	private ServiceTracker tracker;
 	
