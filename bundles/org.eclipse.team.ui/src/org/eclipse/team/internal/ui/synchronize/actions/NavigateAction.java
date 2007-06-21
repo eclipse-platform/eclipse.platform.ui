@@ -14,7 +14,7 @@ import org.eclipse.compare.ICompareNavigator;
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 
@@ -35,10 +35,12 @@ public class NavigateAction extends Action {
 		IActionBars bars = configuration.getSite().getActionBars();
 		if (next) {
 			Utils.initAction(this, "action.navigateNext."); //$NON-NLS-1$
+			setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
 			if (bars != null)
 				bars.setGlobalActionHandler(ActionFactory.NEXT.getId(), this);
 		} else {
 			Utils.initAction(this, "action.navigatePrevious."); //$NON-NLS-1$
+			setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
 			if (bars != null)
 				bars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);
 		}
