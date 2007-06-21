@@ -284,7 +284,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 		byte[] syncBytes = getSyncBytes();
 		if(syncBytes != null && !ResourceSyncInfo.isAddition(syncBytes)) {
 			ICVSRemoteResource remoteFile = CVSWorkspaceRoot.getRemoteResourceFor(resource);
-			return ((ICVSRemoteFile)remoteFile).getLogEntries(monitor);
+			if (remoteFile != null)
+				return ((ICVSRemoteFile)remoteFile).getLogEntries(monitor);
 		}
 		return new ILogEntry[0];
 	}
