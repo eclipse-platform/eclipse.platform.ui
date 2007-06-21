@@ -52,7 +52,7 @@ public abstract class SpellingProblem {
 	 * a way to access the annotation model.</em>
 	 * </p>
 	 * 
-	 * @param editor the text editor, if <code>null</code> this method is does nothing
+	 * @param editor the text editor, if <code>null</code> this method does nothing
 	 * @param word the word for which to remove the problems or <code>null</code> to remove all
 	 * @since 3.3
 	 */
