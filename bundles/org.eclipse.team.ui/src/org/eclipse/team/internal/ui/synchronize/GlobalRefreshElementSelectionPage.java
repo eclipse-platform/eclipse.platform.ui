@@ -316,9 +316,9 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 	private void updateWorkingSetScope() {
 		if(workingSets != null) {
 			scopeCheckingElement = true;
-			checkWorkingSetElements();
+			boolean hasElements = checkWorkingSetElements();
 			scopeCheckingElement = false;
-			setPageComplete(true);
+			setPageComplete(hasElements);
 		} else {
 			scopeCheckingElement = true;
 			fViewer.setCheckedElements(new Object[0]);
@@ -327,7 +327,7 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 		}
 	}
 
-	protected abstract void checkWorkingSetElements();
+	protected abstract boolean checkWorkingSetElements();
 	
 	private void collectCheckedItems(TreeItem item, List checked) {
 		if(item.getChecked() && !item.getGrayed()) {
@@ -342,7 +342,7 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 	}
 	
 	private void updateWorkingSetLabel() {
-		if (workingSets == null) {
+		if (workingSets == null || workingSets.length == 0) {
 			workingSetLabel.setText(TeamUIMessages.StatisticsPanel_noWorkingSet); 
 		} else {
 			workingSetLabel.setText(makeWorkingSetLabel());

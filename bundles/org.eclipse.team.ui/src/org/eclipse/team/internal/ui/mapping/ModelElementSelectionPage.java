@@ -152,7 +152,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		getViewer().setCheckedElements(manager.getScope().getModelProviders());
 	}
 
-	protected void checkWorkingSetElements() {
+	protected boolean checkWorkingSetElements() {
 		List allWorkingSetElements = new ArrayList();
 		IWorkingSet[] workingSets = getWorkingSets();
 		for (int i = 0; i < workingSets.length; i++) {
@@ -160,6 +160,7 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 			allWorkingSetElements.addAll(computeSelectedResources(new StructuredSelection(set.getElements())));
 		}
 		getViewer().setCheckedElements(allWorkingSetElements.toArray());
+		return !allWorkingSetElements.isEmpty();
 	}
 
 	private Collection computeSelectedResources(StructuredSelection selection) {
