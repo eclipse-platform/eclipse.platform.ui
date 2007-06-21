@@ -33,11 +33,21 @@ public class AddAction extends WorkspaceTraversalAction {
 	 */
 	public void execute(IAction action) throws InterruptedException, InvocationTargetException {
         if (!promptForAddOfIgnored()) return;
+        if (!promptForAdd()) return;
         AddOperation op = new AddOperation(getTargetPart(), getCVSResourceMappings());
         AddWizard.run(getShell(), op);
 	}
 
-    /*
+	/*
+	 * Prompt the user to avoid accidental adding a resource to version control
+	 */
+    private boolean promptForAdd() {
+		return MessageDialog.openQuestion(getShell(), 
+				CVSUIMessages.AddAction_confirmAddingResourcesTitle,
+				CVSUIMessages.AddAction_confirmAddingResourcesMessage);
+	}
+
+	/*
 	 * Prompt whether explicitly selected ignored resources should be added
 	 */
 	private boolean promptForAddOfIgnored() {
