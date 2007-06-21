@@ -54,6 +54,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     
 	private ParticipantPagePane fPagePane;
     private PageBook bottomChild;
+
+	private boolean fHasConflicts;
+
+	private boolean fIsEmpty;
     
     public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
         
@@ -229,21 +233,19 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 	
 	public void updateEnablements() {
         if (fConfiguration != null) {
+        	fHasConflicts = false;
+        	fIsEmpty = false;
+        	
     		SyncInfoSet set = fConfiguration.getSyncInfoSet();
     		if (set.hasConflicts()) {
-    			setErrorMessage(CVSUIMessages.CommitWizardCommitPage_4); 
-    			setPageComplete(false);
-    			return;
+    			fHasConflicts = true;
     		}
     		if (set.isEmpty()) {
-    			// No need for a message as it should be obvious that there are no resources to commit
-    			setErrorMessage(null);
-    			setPageComplete(false);
-    			return;
+    			fIsEmpty = true;
     		}
         }
-		setErrorMessage(null);
-		setPageComplete(true);
+        
+		validatePage(false);
 	}
 
 	boolean validatePage(boolean setMessage) {
@@ -257,6 +259,19 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
                 return false;
             }
         }
+        
+        if (fHasConflicts) {
+			setErrorMessage(CVSUIMessages.CommitWizardCommitPage_4); 
+			setPageComplete(false);
+			return false;
+		}
+		if (fIsEmpty) {
+			// No need for a message as it should be obvious that there are no resources to commit
+			setErrorMessage(null);
+			setPageComplete(false);
+			return false;
+		}
+        
         setPageComplete(true);
         setErrorMessage(null);
         return true;
