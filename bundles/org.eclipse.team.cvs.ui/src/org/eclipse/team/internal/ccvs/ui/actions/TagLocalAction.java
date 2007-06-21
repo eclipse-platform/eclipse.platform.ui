@@ -37,7 +37,7 @@ public class TagLocalAction extends TagAction {
 							OutgoingChangesDialog dialog = new OutgoingChangesDialog(getShell(), tagOperation.getScopeManager(), 
 									CVSUIMessages.TagLocalAction_2, 
 									CVSUIMessages.TagLocalAction_0, 
-									CVSUIMessages.TagLocalAction_1);
+									""); //$NON-NLS-1$
 							dialog.setHelpContextId(IHelpContextIds.TAG_OUTGOING_CHANGES_DIALOG);
 							int result = dialog.open();
 							keepGoing[0] = result == Window.OK;

@@ -589,7 +589,6 @@ public class CVSUIMessages extends NLS {
 	public static String TagAction_moveTag;
 	public static String TagRootElement_0;
 	public static String TagLocalAction_0;
-	public static String TagLocalAction_1;
 	public static String TagLocalAction_2;
 	public static String TagAction_moveTagConfirmTitle;
 	public static String TagAction_moveTagConfirmMessage;
