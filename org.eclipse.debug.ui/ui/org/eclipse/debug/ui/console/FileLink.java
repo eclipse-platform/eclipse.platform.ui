@@ -25,7 +25,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.FileEditorInput;
@@ -79,13 +78,7 @@ public class FileLink implements IConsoleHyperlink {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
-					if(page.isPageZoomed()) {
-						IWorkbenchPartReference ref = page.getActivePartReference();
-						if(ref != null) {
-							page.toggleZoom(ref);
-						}
-					}
-					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), getEditorId() , false);
+					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), getEditorId() , true);
 					if (fFileLineNumber > 0) {
 						ITextEditor textEditor = null;
 						if (editorPart instanceof ITextEditor) {
