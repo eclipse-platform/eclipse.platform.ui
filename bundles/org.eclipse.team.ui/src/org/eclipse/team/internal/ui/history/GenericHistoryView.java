@@ -737,6 +737,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		if (resource == null) {
 			return (IHistoryPageSource) Utils.getAdapter(object, IHistoryPageSource.class);
 		} else {
+			if (resource.getProject() == null)
+				return null;
 			//check to see if resource is managed
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
 			if (teamProvider == null){
