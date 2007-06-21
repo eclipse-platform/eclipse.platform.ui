@@ -334,7 +334,7 @@ public interface IWorkbenchWindowConfigurer {
      * Creates the menu bar for the window's shell.
      * <p>
      * This should only be called if the advisor is defining custom window contents
-     * in <code>createWindowContents</code>.
+     * in <code>createWindowContents</code>, and may only be called once.
      * The caller must set it in the shell using <code>Shell.setMenuBar(Menu)</code>
      * but must not make add, remove or change items in the result.
      * The menu bar is populated by the window's menu manager.  
@@ -350,7 +350,7 @@ public interface IWorkbenchWindowConfigurer {
      * Creates the cool bar control. 
      * <p>
      * This should only be called if the advisor is defining custom window contents
-     * in <code>createWindowContents</code>.
+     * in <code>createWindowContents</code>, and may only be called once.
      * The caller must lay out the cool bar appropriately within the parent,
      * but must not add, remove or change items in the result (hence the
      * return type of <code>Control</code>).
@@ -368,7 +368,7 @@ public interface IWorkbenchWindowConfigurer {
      * Creates the status line control. 
      * <p>
      * This should only be called if the advisor is defining custom window contents
-     * in <code>createWindowContents</code>.
+     * in <code>createWindowContents</code>, and may only be called once.
      * The caller must lay out the status line appropriately within the parent,
      * but must not add, remove or change items in the result (hence the
      * return type of <code>Control</code>).
@@ -387,7 +387,7 @@ public interface IWorkbenchWindowConfigurer {
      * views and editors, appear.
      * <p>
      * This should only be called if the advisor is defining custom window contents
-     * in <code>createWindowContents</code>.
+     * in <code>createWindowContents</code>, and may only be called once.
      * The caller must lay out the page composite appropriately within the parent,
      * but must not add, remove or change items in the result (hence the
      * return type of <code>Control</code>).
