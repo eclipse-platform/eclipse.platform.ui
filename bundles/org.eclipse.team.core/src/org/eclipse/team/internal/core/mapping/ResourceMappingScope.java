@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.mapping;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,7 +31,7 @@ import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 public class ResourceMappingScope extends AbstractResourceMappingScope {
 	
 	private ResourceMapping[] inputMappings;
-	private final Map mappingsToTraversals = new HashMap();
+	private final Map mappingsToTraversals = Collections.synchronizedMap(new HashMap());
 	private boolean hasAdditionalMappings;
 	private boolean hasAdditionalResources;
 	private final CompoundResourceTraversal compoundTraversal = new CompoundResourceTraversal();
