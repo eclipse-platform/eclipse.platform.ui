@@ -283,18 +283,21 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 			IModelDelta parentDelta = delta.getParentDelta();
 			TreePath parentPath = getViewerTreePath(parentDelta);
 			int viewIndex = modelToViewIndex(parentPath, modelIndex);
-			int modelCount = parentDelta.getChildCount();
-			if (modelCount > 0) {
-				int viewCount = modelToViewChildCount(parentPath, modelCount);
-				if (DEBUG_CONTENT_PROVIDER) {
-					System.out.println("[select] setChildCount(" + parentDelta.getElement() + ", (model) " + parentDelta.getChildCount() + " (view) " + viewCount ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (viewIndex >= 0) {
+				// when viewIndex < 0, the element has been filtered - so we should not try to replace
+				int modelCount = parentDelta.getChildCount();
+				if (modelCount > 0) {
+					int viewCount = modelToViewChildCount(parentPath, modelCount);
+					if (DEBUG_CONTENT_PROVIDER) {
+						System.out.println("[select] setChildCount(" + parentDelta.getElement() + ", (model) " + parentDelta.getChildCount() + " (view) " + viewCount ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					}
+					treeViewer.setChildCount(parentPath, viewCount);
 				}
-				treeViewer.setChildCount(parentPath, viewCount);
+				if (DEBUG_CONTENT_PROVIDER) {
+					System.out.println("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				}
+				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			}
-			if (DEBUG_CONTENT_PROVIDER) {
-				System.out.println("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			}
-			treeViewer.replace(parentPath, viewIndex, delta.getElement());
 		}
 		treeViewer.setSelection(new TreeSelection(getViewerTreePath(delta)));
 	}
