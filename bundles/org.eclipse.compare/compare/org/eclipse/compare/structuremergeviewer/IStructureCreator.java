@@ -83,7 +83,6 @@ public interface IStructureCreator {
 	 * @param input the object from which to create the <code>IStructureComparator</code>
 	 * @return the single node specified by <code>path</code> or <code>null</code>
 	 *
-	 * @see org.eclipse.compare.EditionSelectionDialog#selectEdition
 	 */
 	IStructureComparator locate(Object path, Object input);
 
