@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.preferences;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -55,8 +55,10 @@ public class WorkingCopyManager implements IWorkingCopyManager{
 	 * @see org.eclipse.ui.preferences.IWorkingCopyManager#applyChanges()
 	 */
 	public void applyChanges() throws BackingStoreException {
-		for (Iterator i = workingCopies.values().iterator(); i.hasNext();) {
-			WorkingCopyPreferences prefs = (WorkingCopyPreferences) i.next();
+		Collection values = workingCopies.values();
+		WorkingCopyPreferences[] valuesArray = (WorkingCopyPreferences[]) values.toArray(new WorkingCopyPreferences[values.size()]);
+		for (int i = 0; i < valuesArray.length; i++) {
+			WorkingCopyPreferences prefs = valuesArray[i];
 			if (prefs.nodeExists(EMPTY_STRING)) 
 				prefs.flush();
 		}
