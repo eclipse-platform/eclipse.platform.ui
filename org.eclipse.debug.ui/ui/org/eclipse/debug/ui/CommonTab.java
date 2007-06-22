@@ -49,6 +49,8 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -206,6 +208,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		fSharedLocationText = SWTFactory.createSingleText(comp, 1);
+		fSharedLocationText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result =  LaunchConfigurationsMessages.CommonTab_S_hared_4;
+			}
+		});
 		fSharedLocationText.addModifyListener(fBasicModifyListener);
 		fSharedLocationButton = createPushButton(comp, LaunchConfigurationsMessages.CommonTab__Browse_6, null);	 
 		fSharedLocationButton.addSelectionListener(new SelectionAdapter() {
@@ -247,6 +254,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
             }
         });
         fFileText = SWTFactory.createSingleText(comp, 4);
+        fFileText.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+        	public void getName(AccessibleEvent e) {
+        		e.result = LaunchConfigurationsMessages.CommonTab_6;
+        	}
+        });
         fFileText.addModifyListener(fBasicModifyListener);
         
         Composite bcomp = SWTFactory.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
@@ -341,6 +353,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         if (encodingArray.length > 0) {
             fEncodingCombo.select(0); 
         }
+        fEncodingCombo.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+        	public void getName(AccessibleEvent e) {
+        		e.result = LaunchConfigurationsMessages.CommonTab_3;
+        	}
+        });
 	    SelectionListener listener = new SelectionAdapter() {
 	        public void widgetSelected(SelectionEvent e) {
 	            updateLaunchConfigurationDialog();
