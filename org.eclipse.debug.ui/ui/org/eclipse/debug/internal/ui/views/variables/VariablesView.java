@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
+ *     Wind River - Pawel Piech - Drag/Drop to Expressions View (Bug 184057)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
@@ -75,6 +76,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -95,6 +98,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -332,9 +336,22 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		variablesViewer.addModelChangedListener(this);
 		variablesViewer.addViewerUpdateListener(this);
 		
+        initDragAndDrop(variablesViewer);
+
 		return variablesViewer;
 	}
-	
+
+    /**
+     * Initializes the drag and/or drop adapters for this view.  Called from createViewer().
+     * 
+     * @param viewer the viewer to add drag/drop support to.
+     * @since 3.4
+     */
+    protected void initDragAndDrop(TreeModelViewer viewer) {
+        // Drag only
+        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getInstance()}, new VariablesDragAdapter(viewer));
+    }    
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
 	 */
