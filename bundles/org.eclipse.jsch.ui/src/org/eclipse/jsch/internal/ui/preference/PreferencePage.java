@@ -242,7 +242,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     gd.horizontalSpan=columnSpan;
     publicKeylabel.setLayoutData(gd);
 
-    publicKeyText=new Text(group, SWT.MULTI|SWT.BORDER|SWT.V_SCROLL|SWT.WRAP);
+    publicKeyText=new Text(group, SWT.MULTI|SWT.BORDER|SWT.V_SCROLL|SWT.WRAP|SWT.LEFT_TO_RIGHT);
     publicKeyText.setText(""); //$NON-NLS-1$
     publicKeyText.setEditable(false);
     gd=new GridData();
@@ -255,7 +255,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
     keyFingerPrintLabel=new Label(group, SWT.NONE);
     keyFingerPrintLabel.setText(Messages.CVSSSH2PreferencePage_41);
-    keyFingerPrintText=new Text(group, SWT.SINGLE|SWT.BORDER);
+    keyFingerPrintText=new Text(group, SWT.SINGLE|SWT.BORDER|SWT.LEFT_TO_RIGHT);
     keyFingerPrintText.setFont(group.getFont());
     keyFingerPrintText.setEditable(false);
     gd=new GridData(GridData.FILL_HORIZONTAL);
