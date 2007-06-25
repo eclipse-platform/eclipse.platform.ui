@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * SafeRunnableDialog is a dialog that can show the results of multiple safe
- * runnable errorsé
+ * runnable errors.
  * 
  */
 class SafeRunnableDialog extends ErrorDialog {
