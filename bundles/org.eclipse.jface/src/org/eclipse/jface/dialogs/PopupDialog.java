@@ -22,7 +22,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -35,7 +34,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -75,7 +73,8 @@ public class PopupDialog extends Window {
 	/**
 	 * 
 	 */
-	private static final GridDataFactory LAYOUTDATA_GRAB_BOTH = GridDataFactory.fillDefaults().grab(true,true);
+	private static final GridDataFactory LAYOUTDATA_GRAB_BOTH = GridDataFactory
+			.fillDefaults().grab(true, true);
 
 	/**
 	 * The dialog settings key name for stored dialog x location.
@@ -194,7 +193,7 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Vertical spacing (in pixels) between cells in the layouts inside popup
-	 * dialogs (value is 1).  
+	 * dialogs (value is 1).
 	 */
 	public final static int POPUP_VERTICALSPACING = 1;
 
@@ -205,12 +204,26 @@ public class PopupDialog extends Window {
 	public final static int POPUP_HORIZONTALSPACING = 1;
 
 	/**
+	 * Image registry key for menu image.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String POPUP_IMG_MENU = "popup_menu_image"; //$NON-NLS-1$
+
+	/**
+	 * Image registry key for disabled menu image.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String POPUP_IMG_MENU_DISABLED = "popup_menu_image_diabled"; //$NON-NLS-1$
+
+	/**
 	 * 
 	 */
 	private static final GridLayoutFactory POPUP_LAYOUT_FACTORY = GridLayoutFactory
 			.fillDefaults().margins(POPUP_MARGINWIDTH, POPUP_MARGINHEIGHT)
 			.spacing(POPUP_HORIZONTALSPACING, POPUP_VERTICALSPACING);
-	
+
 	/**
 	 * Border thickness in pixels.
 	 */
@@ -243,16 +256,11 @@ public class PopupDialog extends Window {
 	private Control titleSeparator, infoSeparator;
 
 	/**
-	 * The images for the dialog menu.
-	 */
-	private Image menuImage, disabledMenuImage = null;
-
-	/**
 	 * Font to be used for the info area text. Computed based on the dialog's
 	 * font.
 	 */
 	private Font infoFont;
-	
+
 	/**
 	 * Font to be used for the title area text. Computed based on the dialog's
 	 * font.
@@ -267,8 +275,8 @@ public class PopupDialog extends Window {
 	private boolean listenToDeactivate;
 
 	private boolean listenToParentDeactivate;
-	
-	private Listener parentDeactivateListener;	
+
+	private Listener parentDeactivateListener;
 
 	/**
 	 * Flag indicating whether focus should be taken when the dialog is opened.
@@ -365,7 +373,8 @@ public class PopupDialog extends Window {
 
 		int border = ((getShellStyle() & SWT.NO_TRIM) == 0) ? 0
 				: BORDER_THICKNESS;
-		GridLayoutFactory.fillDefaults().margins(border, border).spacing(5,5).applyTo(shell);
+		GridLayoutFactory.fillDefaults().margins(border, border).spacing(5, 5)
+				.applyTo(shell);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
@@ -380,9 +389,11 @@ public class PopupDialog extends Window {
 						&& getShell().getShells().length == 0) {
 					close();
 				} else {
-					/* We typically ignore deactivates to work around platform-specific
-					 * event ordering.  Now that we've ignored whatever we were supposed to,
-					 * start listening to deactivates.  Example issues can be found in
+					/*
+					 * We typically ignore deactivates to work around
+					 * platform-specific event ordering. Now that we've ignored
+					 * whatever we were supposed to, start listening to
+					 * deactivates. Example issues can be found in
 					 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123392
 					 */
 					listenToDeactivate = true;
@@ -407,7 +418,7 @@ public class PopupDialog extends Window {
 		});
 
 		if ((getShellStyle() & SWT.ON_TOP) != 0 && shell.getParent() != null) {
-			parentDeactivateListener= new Listener() {
+			parentDeactivateListener = new Listener() {
 				public void handleEvent(Event event) {
 					if (listenToParentDeactivate) {
 						close();
@@ -417,9 +428,10 @@ public class PopupDialog extends Window {
 					}
 				}
 			};
-			shell.getParent().addListener(SWT.Deactivate, parentDeactivateListener);
+			shell.getParent().addListener(SWT.Deactivate,
+					parentDeactivateListener);
 		}
-		
+
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				handleDispose();
@@ -460,7 +472,7 @@ public class PopupDialog extends Window {
 		if (dialogArea.getLayoutData() == null) {
 			LAYOUTDATA_GRAB_BOTH.applyTo(dialogArea);
 		}
-		
+
 		// Info field
 		if (hasInfoArea()) {
 			infoSeparator = createHorizontalSeparator(composite);
@@ -572,9 +584,8 @@ public class PopupDialog extends Window {
 
 		Composite titleAreaComposite = new Composite(parent, SWT.NONE);
 		POPUP_LAYOUT_FACTORY.copy().numColumns(2).applyTo(titleAreaComposite);
-		GridDataFactory.fillDefaults()
-			.align(SWT.FILL, SWT.CENTER).grab(true, false)
-			.applyTo(titleAreaComposite);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
+				false).applyTo(titleAreaComposite);
 
 		createTitleControl(titleAreaComposite);
 
@@ -602,12 +613,9 @@ public class PopupDialog extends Window {
 	protected Control createTitleControl(Composite parent) {
 		titleLabel = new Label(parent, SWT.NONE);
 
-		GridDataFactory.fillDefaults()
-			.align(SWT.FILL, SWT.CENTER)
-			.grab(true, false)
-			.span(showDialogMenu ? 1 : 2, 1)
-			.applyTo(titleLabel);	
-		
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
+				false).span(showDialogMenu ? 1 : 2, 1).applyTo(titleLabel);
+
 		Font font = titleLabel.getFont();
 		FontData[] fontDatas = font.getFontData();
 		for (int i = 0; i < fontDatas.length; i++) {
@@ -615,7 +623,7 @@ public class PopupDialog extends Window {
 		}
 		titleFont = new Font(titleLabel.getDisplay(), fontDatas);
 		titleLabel.setFont(titleFont);
-		
+
 		if (titleText != null) {
 			titleLabel.setText(titleText);
 		}
@@ -651,8 +659,8 @@ public class PopupDialog extends Window {
 		}
 		infoFont = new Font(infoLabel.getDisplay(), fontDatas);
 		infoLabel.setFont(infoFont);
-		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL, SWT.BEGINNING)
-			.applyTo(infoLabel);
+		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL,
+				SWT.BEGINNING).applyTo(infoLabel);
 		infoLabel.setForeground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_DARK_SHADOW));
 		return infoLabel;
@@ -668,7 +676,8 @@ public class PopupDialog extends Window {
 	private Control createHorizontalSeparator(Composite parent) {
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL
 				| SWT.LINE_DOT);
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(separator);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
+				false).applyTo(separator);
 		return separator;
 	}
 
@@ -683,27 +692,15 @@ public class PopupDialog extends Window {
 		toolBar = new ToolBar(parent, SWT.FLAT);
 		ToolItem viewMenuButton = new ToolItem(toolBar, SWT.PUSH, 0);
 
-		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(toolBar);
-
-		menuImage = ImageDescriptor.createFromFile(PopupDialog.class,
-				"images/popup_menu.gif").createImage();//$NON-NLS-1$
-		disabledMenuImage = ImageDescriptor.createFromFile(PopupDialog.class,
-				"images/popup_menu_disabled.gif").createImage();//$NON-NLS-1$
-		viewMenuButton.setImage(menuImage);
-		viewMenuButton.setDisabledImage(disabledMenuImage);
+		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(
+				toolBar);
+		viewMenuButton.setImage(JFaceResources.getImage(POPUP_IMG_MENU));
+		viewMenuButton.setDisabledImage(JFaceResources.getImage(POPUP_IMG_MENU_DISABLED));
 		viewMenuButton.setToolTipText(JFaceResources
 				.getString("PopupDialog.menuTooltip")); //$NON-NLS-1$
 		viewMenuButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showDialogMenu();
-			}
-		});
-		viewMenuButton.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				menuImage.dispose();
-				menuImage = null;
-				disabledMenuImage.dispose();
-				disabledMenuImage = null;
 			}
 		});
 		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=177183
@@ -900,16 +897,17 @@ public class PopupDialog extends Window {
 		if (getShell() == null || getShell().isDisposed()) {
 			return true;
 		}
-		
+
 		saveDialogBounds(getShell());
 		// Widgets are about to be disposed, so null out any state
 		// related to them that was not handled in dispose listeners.
 		// We do this before disposal so that any received activate or
 		// deactivate events are duly ignored.
 		initializeWidgetState();
-		
+
 		if (parentDeactivateListener != null) {
-			getShell().getParent().removeListener(SWT.Deactivate, parentDeactivateListener);
+			getShell().getParent().removeListener(SWT.Deactivate,
+					parentDeactivateListener);
 			parentDeactivateListener = null;
 		}
 
@@ -1211,10 +1209,10 @@ public class PopupDialog extends Window {
 		}
 
 	}
-	
+
 	/**
-	 * The dialog is being disposed.  Dispose of any resources allocated.
-	 *
+	 * The dialog is being disposed. Dispose of any resources allocated.
+	 * 
 	 */
 	private void handleDispose() {
 		if (infoFont != null && !infoFont.isDisposed()) {

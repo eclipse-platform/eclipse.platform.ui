@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.internal.JFaceActivator;
 import org.eclipse.jface.preference.PreferenceDialog;
@@ -436,7 +437,10 @@ public class JFaceResources {
 				bundle,
 				PreferenceDialog.PREF_DLG_TITLE_IMG,
 				ICONS_PATH + "pref_dialog_title.gif", PreferenceDialog.class, "images/pref_dialog_title.gif");//$NON-NLS-1$ //$NON-NLS-2$
-
+		declareImage(bundle, PopupDialog.POPUP_IMG_MENU, ICONS_PATH
+				+ "popup_menu.gif", PopupDialog.class, "images/popup_menu.gif");//$NON-NLS-1$ //$NON-NLS-2$
+		declareImage(bundle, PopupDialog.POPUP_IMG_MENU_DISABLED, ICONS_PATH
+				+ "popup_menu_disabled.gif", PopupDialog.class, "images/popup_menu_disabled.gif");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
