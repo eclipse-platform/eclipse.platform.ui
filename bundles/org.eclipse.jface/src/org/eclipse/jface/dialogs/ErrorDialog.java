@@ -223,6 +223,11 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * and lays out a composite. Subclasses that require a different dialog area
 	 * may either override this method, or call the <code>super</code>
 	 * implementation and add controls to the created composite.
+	 * 
+	 * Note:  Since 3.4, the created composite no longer grabs excess vertical space.
+	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=72489.
+	 * If the old behavior is desired by subclasses, get the returned composite's
+	 * layout data and set grabExcessVerticalSpace to true.
 	 */
 	protected Control createDialogArea(Composite parent) {
 		createMessageArea(parent);
@@ -238,6 +243,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		composite.setLayout(layout);
 		GridData childData = new GridData(GridData.FILL_BOTH);
 		childData.horizontalSpan = 2;
+		childData.grabExcessVerticalSpace = false;
 		composite.setLayoutData(childData);
 		composite.setFont(parent.getFont());
 
