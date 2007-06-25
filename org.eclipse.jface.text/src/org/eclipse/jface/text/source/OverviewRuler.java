@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.source.projection.AnnotationBag;
-
 
 
 /**
@@ -269,18 +267,18 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 
 		public void paintControl(PaintEvent e) {
+			if (fIndicatorColor == null)
+				return;
 
 			Point s= fHeader.getSize();
 
-			if (fIndicatorColor != null) {
-				e.gc.setBackground(fIndicatorColor);
-				Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
-				e.gc.fillRectangle(r);
-				Display d= fHeader.getDisplay();
-				if (d != null)
+			e.gc.setBackground(fIndicatorColor);
+			Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+			e.gc.fillRectangle(r);
+			Display d= fHeader.getDisplay();
+			if (d != null)
 //				drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 				drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, null, null);
-			}
 
 			e.gc.setForeground(fSeparatorColor);
 			e.gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
