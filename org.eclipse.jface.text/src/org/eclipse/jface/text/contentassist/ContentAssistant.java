@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Guy Gurfinkel, guy.g@zend.com - [content assist][api] provide better access to ContentAssistant - https://bugs.eclipse.org/bugs/show_bug.cgi?id=169954 
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -222,7 +223,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * characters specified by the content assist processor, and if detected, will wait the
 	 * indicated delay interval before activating the content assistant.
 	 */
-	class AutoAssistListener extends KeyAdapter implements KeyListener, Runnable, VerifyKeyListener {
+	protected class AutoAssistListener extends KeyAdapter implements KeyListener, Runnable, VerifyKeyListener {
 
 		private Thread fThread;
 		private boolean fIsReset= false;
@@ -305,11 +306,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 			activation= fContentAssistSubjectControlAdapter.getCompletionProposalAutoActivationCharacters(ContentAssistant.this, pos);
 
-			if (contains(activation, e.character) && !fProposalPopup.isActive())
+			if (contains(activation, e.character) && !isProposalPopupActive())
 				showStyle= SHOW_PROPOSALS;
 			else {
 				activation= fContentAssistSubjectControlAdapter.getContextInformationAutoActivationCharacters(ContentAssistant.this, pos);
-				if (contains(activation, e.character) && fContextInfoPopup != null && !fContextInfoPopup.isActive())
+				if (contains(activation, e.character) && !isContextInfoPopupActive())
 					showStyle= SHOW_CONTEXT_INFO;
 				else {
 					stop();
@@ -342,7 +343,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			try {
 				d.syncExec(new Runnable() {
 					public void run() {
-						if (fProposalPopup.isActive())
+						if (isProposalPopupActive())
 							return;
 						
 						if (control.isDisposed() || !control.isFocusControl())
@@ -1080,7 +1081,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (start) {
 
 			if ((fContentAssistSubjectControlAdapter != null) && fAutoAssistListener == null) {
-				fAutoAssistListener= new AutoAssistListener();
+				fAutoAssistListener= createAutoAssistListener();
 				// For details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=49212
 				if (fContentAssistSubjectControlAdapter.supportsVerifyKeyListener())
 					fContentAssistSubjectControlAdapter.appendVerifyKeyListener(fAutoAssistListener);
@@ -1099,6 +1100,16 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
+	 * This method allows subclasses to provide their own {@link AutoAssistListener}.
+	 * 
+	 * @return a new auto assist listener
+	 * @since 3.4
+	 */
+	protected AutoAssistListener createAutoAssistListener() {
+		return new AutoAssistListener();
+	}
+
+	/**
 	 * Sets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
 	 *
@@ -1106,6 +1117,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 */
 	public void setAutoActivationDelay(int delay) {
 		fAutoActivationDelay= delay;
+	}
+
+	/**
+	 * Gets the delay after which the content assistant is automatically invoked if the cursor is
+	 * behind an auto activation character.
+	 * 
+	 * @return the auto activation delay
+	 * @since 3.4
+	 */
+	public int getAutoActivationDelay() {
+		return fAutoActivationDelay;
 	}
 
 	/**
@@ -1319,7 +1341,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
 			fCASCSTraverseListener= new TraverseListener() {
 				public void keyTraversed(TraverseEvent e) {
-					if (e.detail == SWT.TRAVERSE_ESCAPE && fProposalPopup != null && fProposalPopup.isActive())
+					if (e.detail == SWT.TRAVERSE_ESCAPE && isProposalPopupActive())
 						e.doit= false;
 				}
 			};
@@ -2131,7 +2153,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	void fireSessionBeginEvent() {
-		if (fContentAssistSubjectControlAdapter != null && (fProposalPopup == null || !fProposalPopup.isActive())) {
+		if (fContentAssistSubjectControlAdapter != null && !isProposalPopupActive()) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
 			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
@@ -2281,4 +2303,25 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	KeySequence getTriggerSequence() {
 		return fTriggerSequence;
 	}
+	
+	/**
+	 * Returns whether proposal popup is active.
+	 *  
+	 * @return <code>true</code> if the proposal popup is active, <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	protected boolean isProposalPopupActive(){
+		return fProposalPopup != null && fProposalPopup.isActive();
+	}
+
+	/**
+	 * Returns whether the context information popup is active.
+	 * 
+	 * @return <code>true</code> if the context information popup is active, <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	protected boolean isContextInfoPopupActive(){
+		return fContextInfoPopup != null && fContextInfoPopup.isActive();
+	}
+	
 }
