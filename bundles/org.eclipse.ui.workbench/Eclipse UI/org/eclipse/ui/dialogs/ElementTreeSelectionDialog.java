@@ -9,6 +9,9 @@
  *   IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *     font should be activated and used by other components.
+ *   Carsten Pfeiffer <carsten.pfeiffer@gebit.de> - Fix for bug 182354 - 
+ *     [Dialogs] API - make ElementTreeSelectionDialog usable with a 
+ *     FilteredTree
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -281,15 +284,16 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     }
 
     /**
-     * Creates the tree viewer.
-     * 
+     * Creates and initializes the tree viewer.
+     *
      * @param parent the parent composite
      * @return the tree viewer
+     * @see #doCreateTreeViewer(Composite, int)
      */
     protected TreeViewer createTreeViewer(Composite parent) {
         int style = SWT.BORDER | (fAllowMultiple ? SWT.MULTI : SWT.SINGLE);
 
-        fViewer = new TreeViewer(new Tree(parent, style));
+        fViewer = doCreateTreeViewer(parent, style);
         fViewer.setContentProvider(fContentProvider);
         fViewer.setLabelProvider(fLabelProvider);
         fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -345,8 +349,20 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     }
 
     /**
+     * Creates the tree viewer.
+     *
+     * @param parent the parent composite
+     * @param style the {@link SWT} style bits
+     * @return the tree viewer
+     * @since 3.4
+	 */
+	protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
+		return new TreeViewer(new Tree(parent, style));
+	}
+
+	/**
      * Returns the tree viewer.
-     * 
+     *
      * @return the tree viewer
      */
     protected TreeViewer getTreeViewer() {
