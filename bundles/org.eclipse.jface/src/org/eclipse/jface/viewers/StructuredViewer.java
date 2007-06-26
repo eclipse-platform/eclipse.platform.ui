@@ -1317,9 +1317,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * <code>setSelectionToWidget</code></li>
 	 * <li>rediscovers the resulting selection (via <code>getSelection</code>)
 	 * </li>
-	 * <li>calls <code>handleInvalidSelection</code> if the selection did not
-	 * take</li>
-	 * <li>calls <code>postUpdateHook</code></li>
+	 * <li>calls <code>handleInvalidSelection</code> if the resulting selection is different from the old selection</li>
 	 * </ul>
 	 * </p>
 	 * 
