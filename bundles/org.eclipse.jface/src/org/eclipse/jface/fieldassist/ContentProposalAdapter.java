@@ -87,10 +87,7 @@ public class ContentProposalAdapter {
 					e.display.asyncExec(new Runnable() {
 						public void run() {
 							if (isValid()) {
-								if (scrollbarClicked
-										|| hasFocus()
-										|| (infoPopup != null && infoPopup
-												.hasFocus())) {
+								if (scrollbarClicked || hasFocus()) {
 									return;
 								}
 								// Workaround a problem on X and Mac, whereby at
@@ -804,14 +801,20 @@ public class ContentProposalAdapter {
 		}
 
 		/*
-		 * Return whether the receiver has focus.
+		 * Return whether the receiver has focus. Since 3.4, this includes a
+		 * check for whether the info popup has focus.
 		 */
 		private boolean hasFocus() {
 			if (!isValid()) {
 				return false;
 			}
-			return getShell().isFocusControl()
-					|| proposalTable.isFocusControl();
+			if (getShell().isFocusControl() || proposalTable.isFocusControl()) {
+				return true;
+			}
+			if (infoPopup != null && infoPopup.hasFocus()) {
+				return true;
+			}
+			return false;
 		}
 
 		/*
@@ -1207,10 +1210,10 @@ public class ContentProposalAdapter {
 	 * need to remember it.
 	 */
 	private int insertionPos = -1;
-	
+
 	/*
-	 * A flag that indicates that a pending modify event was caused by
-	 * the adapter rather than the user.
+	 * A flag that indicates that a pending modify event was caused by the
+	 * adapter rather than the user.
 	 */
 	private boolean modifyingControlContent = false;
 
@@ -1726,11 +1729,11 @@ public class ContentProposalAdapter {
 				// should reopen. But when autoactivation should occur on all
 				// content changes, we check it here after keys have been
 				// processed.
-			    // See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
+				// See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
 				// We should not autoactivate if the content change was caused
 				// by the popup itself.
 				case SWT.Modify:
-					if (triggerKeyStroke == null && autoActivateString == null 
+					if (triggerKeyStroke == null && autoActivateString == null
 							&& !modifyingControlContent) {
 						if (DEBUG) {
 							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
@@ -1876,7 +1879,7 @@ public class ContentProposalAdapter {
 
 			controlContentAdapter.setControlContents(control, text,
 					cursorPosition);
-			
+
 			modifyingControlContent = false;
 		}
 	}
@@ -2026,5 +2029,17 @@ public class ContentProposalAdapter {
 			((IContentProposalListener2) listenerArray[i])
 					.proposalPopupClosed(this);
 		}
+	}
+
+	/**
+	 * Returns whether the content proposal popup has the focus. This includes
+	 * both the primary popup and any secondary info popup that may have focus.
+	 * 
+	 * @return <code>true</code> if the proposal popup or its secondary info
+	 *         popup has the focus
+	 * @since 3.4
+	 */
+	public boolean hasProposalPopupFocus() {
+		return popup != null && popup.hasFocus();
 	}
 }
