@@ -246,11 +246,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
         }
     }
 
-    /* (non-Javadoc)
-     * Method declared on Viewer.
-     */
-    public abstract Control getControl();
-
     /**
      * Returns the element with the given index from this list viewer.
      * Returns <code>null</code> if the index is out of range.
