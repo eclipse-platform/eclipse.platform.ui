@@ -366,23 +366,27 @@ public abstract class AbstractListViewer extends StructuredViewer {
             	topIndex = listGetTopIndex();
             }
             
+            Object[] children = null;
             list.setRedraw(false);
-			listRemoveAll();
-            
-            Object[] children = getSortedChildren(getRoot());
-			String[] items = new String[children.length];
-			
-			ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
-			
-			for (int i = 0; i < items.length; i++) {
-                Object el = children[i];
-                items[i] = getLabelProviderText(labelProvider, el);
-                listMap.add(el);
-                mapElement(el, list); // must map it, since findItem only looks in map, if enabled
+            try {
+				listRemoveAll();
+	            
+	            children = getSortedChildren(getRoot());
+				String[] items = new String[children.length];
+				
+				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+				
+				for (int i = 0; i < items.length; i++) {
+	                Object el = children[i];
+	                items[i] = getLabelProviderText(labelProvider, el);
+	                listMap.add(el);
+	                mapElement(el, list); // must map it, since findItem only looks in map, if enabled
+	            }
+				
+				listSetItems(items);
+            } finally {
+            	list.setRedraw(true);
             }
-			
-			listSetItems(items);
-            list.setRedraw(true);
             
             if (topIndex == -1) {
             	setSelectionToWidget(selection, false);
