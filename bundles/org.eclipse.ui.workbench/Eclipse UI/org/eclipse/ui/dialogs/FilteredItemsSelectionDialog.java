@@ -24,6 +24,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -90,10 +93,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -198,6 +204,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	private boolean refreshWithLastSelection = false;
+
+	private IHandlerActivation showViewHandler;
 
 	/**
 	 * Creates a new instance of the class.
@@ -373,6 +381,13 @@ public abstract class FilteredItemsSelectionDialog extends
 		this.filterJob.cancel();
 		this.refreshCacheJob.cancel();
 		this.refreshProgressMessageJob.cancel();
+		if (showViewHandler != null) {
+			IHandlerService service = (IHandlerService) PlatformUI
+					.getWorkbench().getService(IHandlerService.class);
+			service.deactivateHandler(showViewHandler);
+			showViewHandler.getHandler().dispose();
+			showViewHandler = null;
+		}
 		storeDialog(getDialogSettings());
 		return super.close();
 	}
@@ -493,6 +508,21 @@ public abstract class FilteredItemsSelectionDialog extends
 		menuManager = new MenuManager();
 
 		fillViewMenu(menuManager);
+		
+		IHandlerService service = (IHandlerService) PlatformUI.getWorkbench()
+				.getService(IHandlerService.class);
+		IHandler handler = new AbstractHandler() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+			 */
+			public Object execute(ExecutionEvent event) {
+				showViewMenu();
+				return null;
+			}
+		};
+		showViewHandler = service.activateHandler(
+				"org.eclipse.ui.window.showViewMenu", handler, //$NON-NLS-1$
+				new ActiveShellExpression(getShell()));
 	}
 
 	/**
