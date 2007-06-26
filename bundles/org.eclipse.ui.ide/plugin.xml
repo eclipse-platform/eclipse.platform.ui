@@ -769,7 +769,8 @@
       <key
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
             sequence="M1+1"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow" />
       <key
             commandId="org.eclipse.ui.navigate.openResource"
             sequence="M1+M2+R"
