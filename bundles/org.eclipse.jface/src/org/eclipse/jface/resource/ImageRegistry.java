@@ -284,9 +284,10 @@ public class ImageRegistry {
                     "ImageRegistry key already in use: " + key); //$NON-NLS-1$            
         }
         
-        // Should be checking for a null image here.
-        // Current behavior is that a null image won't be caught until dispose.
+        // Check for a null image here, otherwise the problem won't appear
+        // until dispose.
         // See https://bugs.eclipse.org/bugs/show_bug.cgi?id=130315
+        Assert.isNotNull(image, "Cannot register a null image."); //$NON-NLS-1$
         entry.image = image;
         entry.descriptor = new OriginalImageDescriptor(image, manager.getDevice());
         
