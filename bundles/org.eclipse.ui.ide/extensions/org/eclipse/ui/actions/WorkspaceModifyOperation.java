@@ -29,8 +29,11 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * modification should be performed using this operation. The primary 
  * consequence of using this operation is that events which typically occur as a
  * result of workspace changes (such as the firing of resource deltas, 
- * performance of autobuilds, etc.) are deferred until the outermost operation
- * has successfully completed.
+ * performance of autobuilds, etc.) are generally deferred until the outermost operation
+ * has successfully completed.  The platform may still decide to broadcast
+ * periodic resource change notifications during the scope of the operation
+ * if the operation runs for a long time or another thread modifies the workspace
+ * concurrently.
  * <p>
  * If a scheduling rule is provided, the operation will obtain that scheduling
  * rule for the duration of its <code>execute</code> method.  If no scheduling
