@@ -614,8 +614,8 @@ public class RenameResourceAction extends WorkspaceAction {
 	protected IRunnableWithProgress createOperation(final IStatus[] errorStatus) {
 		return new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				IResource[] resources = (IResource[]) getSelectedResources()
-						.toArray(new IResource[getSelectedResources().size()]);
+				IResource[] resources = (IResource[]) getActionResources()
+						.toArray(new IResource[getActionResources().size()]);
 				// Rename is only valid for a single resource. This has already
 				// been validated.
 				if (resources.length == 1) {
