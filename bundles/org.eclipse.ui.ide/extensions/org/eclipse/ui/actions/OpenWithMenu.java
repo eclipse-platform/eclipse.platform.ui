@@ -92,16 +92,12 @@ public class OpenWithMenu extends ContributionItem {
     };
 
     /**
-     * Constructs a new instance of <code>OpenWithMenu</code>. 
-     * <p>
-     * If this method is used be sure to set the selected file by invoking
-     * <code>setFile</code>.  The file input is required when the user
-     * selects an item in the menu.  At that point the menu will attempt to
-     * open an editor with the file as its input.
-     * </p>
+     * Constructs a new instance of <code>OpenWithMenu</code>.
      *
      * @param page the page where the editor is opened if an item within
      *		the menu is selected
+     * @deprecated As there is no way to set the file with this constructor use a
+     * different constructor.
      */
     public OpenWithMenu(IWorkbenchPage page) {
         this(page, null);
