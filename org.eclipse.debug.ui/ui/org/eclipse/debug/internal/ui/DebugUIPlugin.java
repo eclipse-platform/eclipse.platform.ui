@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -42,27 +41,13 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.IRegister;
-import org.eclipse.debug.core.model.IRegisterGroup;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
-import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationEditDialog;
@@ -75,11 +60,8 @@ import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
-import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
-import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -497,30 +479,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
         
         // start the breakpoint organizer manager
         BreakpointOrganizerManager.getDefault();
-		
-		IAdapterManager manager= Platform.getAdapterManager();
-		DebugElementAdapterFactory propertiesFactory = new DebugElementAdapterFactory();
-		manager.registerAdapters(propertiesFactory, ILaunchManager.class);
-		manager.registerAdapters(propertiesFactory, ILaunch.class);
-		manager.registerAdapters(propertiesFactory, IDebugTarget.class);
-		manager.registerAdapters(propertiesFactory, IProcess.class);
-		manager.registerAdapters(propertiesFactory, IThread.class);
-		manager.registerAdapters(propertiesFactory, IStackFrame.class);
-		manager.registerAdapters(propertiesFactory, IRegisterGroup.class);
-		manager.registerAdapters(propertiesFactory, IVariable.class);
-		manager.registerAdapters(propertiesFactory, IRegister.class);
-		manager.registerAdapters(propertiesFactory, IExpression.class);
-		manager.registerAdapters(propertiesFactory, IExpressionManager.class);
-        manager.registerAdapters(propertiesFactory, OtherBreakpointCategory.class);
-        manager.registerAdapters(propertiesFactory, IDebugElement.class);
-        manager.registerAdapters(propertiesFactory, IMemoryBlockRetrieval.class);
-        manager.registerAdapters(propertiesFactory, MemorySegment.class);
-		DebugUIAdapterFactory uiFactory = new DebugUIAdapterFactory();
-		manager.registerAdapters(uiFactory, ILaunchConfiguration.class);
-		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
-		SuspendTriggerAdapterFactory factory = new SuspendTriggerAdapterFactory();
-		manager.registerAdapters(factory, ILaunch.class);
-		
+				
 		getStandardDisplay().asyncExec(
 			new Runnable() {
 				public void run() {
