@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids - bug 128526
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -395,4 +396,14 @@ public class ShowViewDialog extends Dialog implements
         viewDescs = new IViewDescriptor[descs.size()];
         descs.toArray(viewDescs);
     }
+
+    
+	/* (non-Javadoc)
+     * @see org.eclipse.jface.window.Dialog#getDialogBoundsSettings()
+     * 
+     * @since 3.4
+     */
+	protected IDialogSettings getDialogBoundsSettings() {
+        return getDialogSettings();
+	}
 }
