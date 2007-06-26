@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.text.NumberFormat;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,6 +72,7 @@ public class IDEResourceInfoUtils {
 
 	/**
 	 * Return whether or not the file called pathName exists.
+	 * 
 	 * @param pathName
 	 * @return boolean <code>true</code> if the file exists.
 	 * @see IFileInfo#exists()
@@ -105,7 +108,7 @@ public class IDEResourceInfoUtils {
 			return NOT_LOCAL_TEXT;
 		}
 
-		//don't access the file system for closed projects (bug 151089)
+		// don't access the file system for closed projects (bug 151089)
 		if (!isProjectAccessible(resource)) {
 			return UNKNOWN_LABEL;
 		}
@@ -178,9 +181,10 @@ public class IDEResourceInfoUtils {
 
 	/**
 	 * Get the file store for the string.
+	 * 
 	 * @param string
 	 * @return IFileStore or <code>null</code> if there is a
-	 * {@link CoreException}.
+	 *         {@link CoreException}.
 	 */
 	public static IFileStore getFileStore(String string) {
 		return getFileStore(new Path(string).toFile().toURI());
@@ -188,9 +192,10 @@ public class IDEResourceInfoUtils {
 
 	/**
 	 * Get the file store for the URI.
+	 * 
 	 * @param uri
 	 * @return IFileStore or <code>null</code> if there is a
-	 * {@link CoreException}.
+	 *         {@link CoreException}.
 	 */
 	public static IFileStore getFileStore(URI uri) {
 		try {
@@ -222,7 +227,7 @@ public class IDEResourceInfoUtils {
 		}
 
 		IFileStore store = getFileStore(location);
-		//don't access the file system for closed projects (bug 151089)
+		// don't access the file system for closed projects (bug 151089)
 		if (isProjectAccessible(resource) && resolvedLocation != null
 				&& !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
@@ -266,7 +271,7 @@ public class IDEResourceInfoUtils {
 			return UNKNOWN_LABEL;
 		}
 
-		//don't access the file system for closed projects (bug 151089)
+		// don't access the file system for closed projects (bug 151089)
 		if (isProjectAccessible(resource) && !store.fetchInfo().exists()) {
 			return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 		}
@@ -305,7 +310,8 @@ public class IDEResourceInfoUtils {
 		}
 
 		if (info.exists()) {
-			return NLS.bind(BYTES_LABEL, Long.toString(info.getLength()));
+			return NLS.bind(BYTES_LABEL, NumberFormat.getInstance().format(
+					new Long(info.getLength())));
 		}
 
 		return NOT_EXIST_TEXT;
@@ -390,8 +396,8 @@ public class IDEResourceInfoUtils {
 	}
 
 	/**
-	 * Return the file stores that are a child of store that the filter 
-	 * accepts.
+	 * Return the file stores that are a child of store that the filter accepts.
+	 * 
 	 * @param store
 	 * @param fileFilter
 	 * @param monitor
