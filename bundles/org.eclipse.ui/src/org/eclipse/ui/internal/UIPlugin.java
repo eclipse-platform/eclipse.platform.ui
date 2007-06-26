@@ -74,16 +74,7 @@ public final class UIPlugin extends AbstractUIPlugin {
         return inst;
     }
 
-    /** 
-     * Set default preference values.
-     * This method must be called whenever the preference store is initially loaded
-     * because the default values are not stored in the preference store.
-     */
-    protected void initializeDefaultPreferences(IPreferenceStore store) {
-        // Do nothing.  This should not be called.
-        // Prefs are initialized in UIPreferenceInitializer.
-    }
-
+ 
     /* (non-Javadoc)
      * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
      */
