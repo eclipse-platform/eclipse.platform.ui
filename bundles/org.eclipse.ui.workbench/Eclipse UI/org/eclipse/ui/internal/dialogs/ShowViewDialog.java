@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sebastian Davids - bug 128526
+ *     Sebastian Davids - bug 128526, bug 128529
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -17,23 +17,32 @@ import java.util.Iterator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -154,11 +163,18 @@ public class ShowViewDialog extends Dialog implements
         createFilteredTreeViewer(composite);
 
         layoutTopControl(filteredTree);
+        
+        // Use F2... label
+        Label label = new Label(composite, SWT.WRAP);
+        label.setText(WorkbenchMessages.ShowView_selectViewHelp);
+        label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 
         // Restore the last state
         restoreWidgetValues();
 
-        // Return results.
+		applyDialogFont(composite);
+
+		// Return results.
         return composite;
     }
 
@@ -216,6 +232,11 @@ public class ShowViewDialog extends Dialog implements
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.addDoubleClickListener(this);
 		treeViewer.addFilter(new CapabilityFilter());
+		treeViewer.getControl().addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                handleTreeViewerKeyPressed(e);
+            }
+        });
 
 		// if the tree has only one or zero views, disable the filter text control
 		if (hasAtMostOneView(filteredTree.getViewer())) {
@@ -224,8 +245,6 @@ public class ShowViewDialog extends Dialog implements
 				filterText.setEnabled(false);
 			}
 		}
-
-		applyDialogFont(filteredTree);
 	}
 
 	/**
@@ -406,4 +425,54 @@ public class ShowViewDialog extends Dialog implements
 	protected IDialogSettings getDialogBoundsSettings() {
         return getDialogSettings();
 	}
+    void handleTreeViewerKeyPressed(KeyEvent event) {
+		// popup the description for the selected view
+		if (event.keyCode == SWT.F2 && event.stateMask == 0) {
+			ITreeSelection selection = (ITreeSelection) filteredTree
+					.getViewer().getSelection();
+			// only show description if one view is selected
+			if (selection.size() == 1) {
+				Object o = selection.getFirstElement();
+				if (o instanceof IViewDescriptor) {
+					String description = ((IViewDescriptor) o).getDescription();
+					if (description.length() == 0)
+						description = WorkbenchMessages.ShowView_noDesc;
+					popUp(description);
+				}
+			}
+		}
+	}
+
+	private void popUp(final String description) {
+		new PopupDialog(filteredTree.getShell(), PopupDialog.HOVER_SHELLSTYLE,
+				true, false, false, false, null, null) {
+			private static final int CURSOR_SIZE = 15;
+
+			protected Point getInitialLocation(Point initialSize) {
+				//show popup relative to cursor
+				Display display = getShell().getDisplay();
+				Point location = display.getCursorLocation();
+				location.x += CURSOR_SIZE;
+				location.y += CURSOR_SIZE;
+				return location;
+			}
+
+			protected Control createDialogArea(Composite parent) {
+				Label label = new Label(parent, SWT.WRAP);
+				label.setText(description);
+				label.addFocusListener(new FocusAdapter() {
+					public void focusLost(FocusEvent event) {
+						close();
+					}
+				});
+				// Use the compact margins employed by PopupDialog.
+				GridData gd = new GridData(GridData.BEGINNING
+						| GridData.FILL_BOTH);
+				gd.horizontalIndent = PopupDialog.POPUP_HORIZONTALSPACING;
+				gd.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
+				label.setLayoutData(gd);
+				return label;
+			}
+		}.open();
+	}  
 }
