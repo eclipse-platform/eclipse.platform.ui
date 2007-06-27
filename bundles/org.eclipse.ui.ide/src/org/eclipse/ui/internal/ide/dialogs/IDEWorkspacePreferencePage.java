@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,6 +107,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 		
 		Composite lower = new Composite(composite,SWT.NONE);
 		GridLayout lowerLayout = new GridLayout();
+		lowerLayout.marginWidth = 0;
+		lowerLayout.marginHeight = 0;
 		lowerLayout.numColumns = 2;
 		lowerLayout.makeColumnsEqualWidth = true;
 		lower.setLayout(lowerLayout);
@@ -256,7 +258,11 @@ public class IDEWorkspacePreferencePage extends PreferencePage
      */
     private void createLineSeparatorEditorControls(Composite parent){
     	Composite lineComposite = new Composite(parent,SWT.NONE);
-		lineComposite.setLayout(new GridLayout());
+		final GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		lineComposite.setLayout(gridLayout);
+
 		lineComposite.setLayoutData(new GridData(
                 GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 		
