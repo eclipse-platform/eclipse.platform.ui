@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.wizards.ImportProjectSetOperation;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -41,8 +42,13 @@ public class ImportProjectSetAction extends ActionDelegate implements IObjectAct
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					Iterator iterator= fSelection.iterator();
 					while (iterator.hasNext()) {
-						IFile file= (IFile) iterator.next();
-						ProjectSetImporter.importProjectSet(file.getLocation().toString(), shell, monitor);
+						IFile file = (IFile) iterator.next();
+						if (isRunInBackgroundPreferenceOn()) {
+							ImportProjectSetOperation op = new ImportProjectSetOperation(null, file.getLocation().toString(), null);
+							op.run();
+						} else { 
+							ProjectSetImporter.importProjectSet(file.getLocation().toString(), shell, monitor);
+						}
 					}
 				}
 			});
@@ -61,4 +67,9 @@ public class ImportProjectSetAction extends ActionDelegate implements IObjectAct
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
+	private static boolean isRunInBackgroundPreferenceOn() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(
+				IPreferenceIds.RUN_IMPORT_IN_BACKGROUND);
+	}
+	
 }
