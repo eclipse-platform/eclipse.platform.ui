@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -19,6 +20,8 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -97,6 +100,14 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setMessage(SourceLookupUIMessages.folderSelection_label); 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,  IDebugHelpContextIds.ADD_FOLDER_CONTAINER_DIALOG);
 		setSearchSubfolders(DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
+		addFilter(new ViewerFilter() {
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				if(element instanceof IProject) {
+					return ((IProject)element).isAccessible();
+				}
+				return true;
+			}
+		});
 	}
 	
 	/**
