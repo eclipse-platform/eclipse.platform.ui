@@ -62,7 +62,7 @@ public class FieldSeverityAndMessage extends FieldMessage {
 		try {
 			return JFaceResources
 					.getResources()
-					.createImage(
+					.createImageWithDefault(
 							IDEInternalWorkbenchImages
 									.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY));
 		} catch (DeviceResourceException e) {
