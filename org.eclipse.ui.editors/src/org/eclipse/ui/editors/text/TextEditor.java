@@ -205,7 +205,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			viewer.configure(getSourceViewerConfiguration());
 			
 			if (Boolean.FALSE.equals(event.getNewValue()))
-				SpellingProblem.removeAllInActiveEditor(this, null);
+				SpellingProblem.removeAll(getSourceViewer(), null);
 			
 			IAction quickAssistAction= getAction(ITextEditorActionConstants.QUICK_ASSIST);
 			if (quickAssistAction instanceof IUpdate)
