@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
@@ -32,8 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -56,8 +55,6 @@ public class WorkingSetTypePage extends WizardPage {
 
     private TableViewer typesListViewer;
 
-    private Map icons;
-
 	private WorkingSetDescriptor[] descriptors;
 
     /**
@@ -73,8 +70,7 @@ public class WorkingSetTypePage extends WizardPage {
 	public WorkingSetTypePage(WorkingSetDescriptor[] descriptors) {
 		super(
                 "workingSetTypeSelectionPage", WorkbenchMessages.Select, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$
-        setDescription(WorkbenchMessages.WorkingSetTypePage_description); 			
-        icons = new Hashtable();
+        setDescription(WorkbenchMessages.WorkingSetTypePage_description); 
         this.descriptors= descriptors;
 	}
 
@@ -85,29 +81,6 @@ public class WorkingSetTypePage extends WizardPage {
      */
     public boolean canFlipToNextPage() {
         return isPageComplete();
-    }
-
-    /**
-     * Populates the working set types list.
-     */
-    private void createContent() {
-		Table table = (Table) typesListViewer.getControl();
-
-        for (int i = 0; i < descriptors.length; i++) {
-            TableItem tableItem = new TableItem(table, SWT.NULL);
-            ImageDescriptor imageDescriptor = descriptors[i].getIcon();
-
-            if (imageDescriptor != null) {
-                Image icon = (Image) icons.get(imageDescriptor);
-                if (icon == null) {
-                    icon = imageDescriptor.createImage();
-                    icons.put(imageDescriptor, icon);
-                }
-                tableItem.setImage(icon);
-            }
-            tableItem.setText(descriptors[i].getName());
-            tableItem.setData(descriptors[i]);
-        }
     }
 
     /** 
@@ -147,7 +120,40 @@ public class WorkingSetTypePage extends WizardPage {
                 handleDoubleClick();
             }
         });
-        createContent();
+        typesListViewer.setContentProvider(new ArrayContentProvider());
+        typesListViewer.setLabelProvider(new LabelProvider() {
+        	private ResourceManager images = new LocalResourceManager(
+					JFaceResources.getResources());
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+			 */
+			public String getText(Object element) {
+				return ((WorkingSetDescriptor)element).getName();
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.BaseLabelProvider#dispose()
+			 */
+			public void dispose() {
+				images.dispose();
+				super.dispose();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+			 */
+			public Image getImage(Object element) {
+				ImageDescriptor imageDescriptor = ((WorkingSetDescriptor) element)
+						.getIcon();
+				return imageDescriptor == null ? null : (Image) images
+						.get(imageDescriptor);
+			}
+		});
+        typesListViewer.setInput(descriptors);
         setPageComplete(false);
     }
 
@@ -157,12 +163,6 @@ public class WorkingSetTypePage extends WizardPage {
      * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
      */
     public void dispose() {
-        Iterator iterator = icons.values().iterator();
-
-        while (iterator.hasNext()) {
-            Image icon = (Image) iterator.next();
-            icon.dispose();
-        }
         super.dispose();
     }
 

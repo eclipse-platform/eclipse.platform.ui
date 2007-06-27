@@ -11,33 +11,28 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetLabelProvider extends LabelProvider {
-    private Map icons;
+    private ResourceManager images;
 
     /**
      * Create a new instance of the receiver.
      */
     public WorkingSetLabelProvider() {
-        icons = new Hashtable();
+        images = new LocalResourceManager(JFaceResources.getResources());
     }
 
     public void dispose() {
-        Iterator iterator = icons.values().iterator();
+        images.dispose();
 
-        while (iterator.hasNext()) {
-            Image icon = (Image) iterator.next();
-            icon.dispose();
-        }
         super.dispose();
     }
 
@@ -50,11 +45,7 @@ public class WorkingSetLabelProvider extends LabelProvider {
 			return null;
 		}
 
-        Image icon = (Image) icons.get(imageDescriptor);
-        if (icon == null) {
-            icon = imageDescriptor.createImage();
-            icons.put(imageDescriptor, icon);
-        }
+        Image icon = (Image) images.get(imageDescriptor);
         return icon;
     }
 
