@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Fix for Bug 123169 [Progress] NPE from JobInfo
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -283,10 +284,11 @@ class JobInfo extends JobTreeElement {
 			blockedStatus.getMessage() }));
 		}
         if (getJob().getState() == Job.RUNNING) {
-            if (taskInfo == null) {
+        	TaskInfo info = getTaskInfo();
+            if (info == null) {
 				return getJob().getName();
 			}
-            return taskInfo.getDisplayString(showProgress);
+            return info.getDisplayString(showProgress);
         }
         if (getJob().getState() == Job.SLEEPING) {
 			return NLS.bind(ProgressMessages.JobInfo_Sleeping, (new Object[] { getJob().getName() }));
