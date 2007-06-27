@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ class ThreadJob extends Job {
 	 * when another job completes that is releasing a scheduling rule.
 	 */
 	static final Object notifier = new Object();
-	
+
 	private final JobManager manager;
 	/**
 	 * Set to true if this thread job is running in a thread that did
@@ -144,7 +144,7 @@ class ThreadJob extends Job {
 	synchronized boolean isRunning() {
 		return isRunning;
 	}
-	
+
 	/**
 	 * Schedule the job and block the calling thread until the job starts running.
 	 * Returns the ThreadJob instance that was started.
@@ -175,7 +175,7 @@ class ThreadJob extends Job {
 					blocker = blockingJob == null ? null : blockingJob.getThread();
 					if (blocker == currentThread && blockingJob instanceof ThreadJob) {
 						//now we are just the nested acquire case
-						result = (ThreadJob)blockingJob;
+						result = (ThreadJob) blockingJob;
 						result.push(getRule());
 						result.isBlocked = this.isBlocked;
 						return result;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	private static final int M_STATE = 0xFF;
 	private static final int M_SYSTEM = 0x0100;
 	private static final int M_USER = 0x0200;
-	
+
 	/*
 	 * flag on a job indicating that it was about to run, but has been canceled
 	 */
@@ -276,7 +276,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	/**
 	 * Returns whether this job was canceled when it was about to run
 	 */
-	final boolean isAboutToRunCanceled(){
+	final boolean isAboutToRunCanceled() {
 		return (flags & M_ABOUT_TO_RUN_CANCELED) != 0;
 	}
 
@@ -367,13 +367,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 		if (shouldSchedule())
 			manager.schedule(this, delay, false);
 	}
-	
+
 	/**
 	 * Sets whether this job was canceled when it was about to run
 	 */
 	final void setAboutToRunCanceled(boolean value) {
 		flags = value ? flags | M_ABOUT_TO_RUN_CANCELED : flags & ~M_ABOUT_TO_RUN_CANCELED;
-		
+
 	}
 
 	/* (non-Javadoc)
