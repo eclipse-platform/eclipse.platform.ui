@@ -9,7 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Chris Gross (schtoo@schtoo.com) - support for ILogger added
  *       (bug 49497 [RCP] JFace dependency on org.eclipse.core.runtime enlarges standalone JFace applications)
- *       Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 164653
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bug 194587
  *******************************************************************************/
 package org.eclipse.core.databinding.util;
 
@@ -41,7 +42,10 @@ public class Policy {
 	private static ILogger getDummyLog() {
 		return new ILogger() {
 			public void log(IStatus status) {
-				System.err.println(status.getMessage());
+				System.err.println(status.getPlugin() + " - " + status.getCode() + " - " + status.getMessage());  //$NON-NLS-1$//$NON-NLS-2$
+				if( status.getException() != null ) {
+					status.getException().printStackTrace(System.err);
+				}
 			}
 		};
 	}
