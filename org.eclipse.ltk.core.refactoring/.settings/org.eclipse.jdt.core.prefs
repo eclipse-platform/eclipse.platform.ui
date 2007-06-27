@@ -1,4 +1,4 @@
-#Tue Jun 26 10:21:33 CEST 2007
+#Wed Jun 27 10:04:47 CEST 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -120,7 +120,7 @@ org.eclipse.jdt.core.formatter.comment.indent_root_tags=true
 org.eclipse.jdt.core.formatter.comment.insert_new_line_before_root_tags=insert
 org.eclipse.jdt.core.formatter.comment.insert_new_line_for_parameter=insert
 org.eclipse.jdt.core.formatter.comment.line_length=999
-org.eclipse.jdt.core.formatter.compact_else_if=false
+org.eclipse.jdt.core.formatter.compact_else_if=true
 org.eclipse.jdt.core.formatter.continuation_indentation=2
 org.eclipse.jdt.core.formatter.continuation_indentation_for_array_initializer=2
 org.eclipse.jdt.core.formatter.format_guardian_clause_on_one_line=false
