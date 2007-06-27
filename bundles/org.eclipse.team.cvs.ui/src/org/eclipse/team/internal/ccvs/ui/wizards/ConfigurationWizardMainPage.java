@@ -19,6 +19,7 @@ import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.fieldassist.*;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -191,6 +192,14 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		// Host name
 		createLabel(g, CVSUIMessages.ConfigurationWizardMainPage_host); 
 		hostCombo = createEditableCombo(g);
+		ControlDecoration decoration = new ControlDecoration(hostCombo, SWT.TOP | SWT.LEFT);
+		FieldDecoration infoDecoration = FieldDecorationRegistry.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION);
+		decoration.setImage(infoDecoration.getImage());
+		decoration.setDescriptionText(CVSUIMessages.ConfigurationWizardMainPage_8);
+		decoration.setShowOnlyOnFocus(true);
+		
+		((GridLayout)g.getLayout()).horizontalSpacing = decoration.getMarginWidth() + infoDecoration.getImage().getBounds().width;
+			
 		hostCombo.addListener(SWT.Selection, listener);
 		hostCombo.addListener(SWT.Modify, listener);
 		
