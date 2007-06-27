@@ -490,7 +490,7 @@
             contentTypeId="org.eclipse.core.runtime.text"
             storageMergerId="org.eclipse.team.ui.textStorageMerger"/>
    </extension>
-
+   
    <!-- *************** Activity Support **************** -->
     <extension
           point="org.eclipse.ui.activitySupport">
@@ -499,6 +499,23 @@
                id="interactive"
                value="true"/>
       </triggerPoint>
-    </extension>
+    </extension> 
     
+   <!-- ******* Export/Import ignored resources ******** -->
+   <extension
+         point="org.eclipse.ui.preferenceTransfer">
+      <transfer
+            id="org.eclipse.team.transfer.ignores"
+            name="Team Ignored Resources Transfer ">
+         <mapping
+               scope="instance">
+            <entry
+                  node="org.eclipse.team.core">
+               <key
+                     name="ignore_files">
+               </key>
+            </entry>
+         </mapping>
+      </transfer>
+   </extension>
 </plugin>
