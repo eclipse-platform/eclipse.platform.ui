@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
@@ -63,9 +64,14 @@ public class CommitCommentArea extends DialogArea {
             cc.setLayoutData(new GridData(GridData.FILL_BOTH));
             
             SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-            sourceViewer.getTextWidget().setIndent(2);
+            fTextField = sourceViewer.getTextWidget();
+            
+            fTextField.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
+            fTextField.setIndent(2);
             
             final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
+            support.setMarginPainterPreferenceKeys(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
+            
     		Iterator e= new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
     		while (e.hasNext())
     			support.setAnnotationPreference((AnnotationPreference) e.next());
@@ -86,7 +92,6 @@ public class CommitCommentArea extends DialogArea {
             // Hyperlink coloring to work. (Presenter needs document object up front)
             sourceViewer.configure(new TextSourceViewerConfiguration(EditorsUI.getPreferenceStore()));
             sourceViewer.setDocument(document, annotationModel);
-            fTextField = sourceViewer.getTextWidget();
             
             fTextField.addTraverseListener(this);
             fTextField.addModifyListener(this);
