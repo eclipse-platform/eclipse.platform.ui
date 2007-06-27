@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Neil Rickards <neil.rickards@arm.com> - fix for Bug 161026
+ *     		[Wizards] ProjectContentsLocationArea uses wrong file separator
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide.dialogs;
@@ -215,7 +217,7 @@ public class ProjectContentsLocationArea {
 				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
 			} else {
 				locationPathField.setText(TextProcessor.process(existingProject
-						.getLocation().toString()));
+						.getLocation().toOSString()));
 			}
 		}
 
@@ -264,7 +266,7 @@ public class ProjectContentsLocationArea {
 
 		// Handle files specially. Assume a file if there is no project to query
 		if (defaultURI == null || defaultURI.getScheme().equals(FILE_SCHEME)) {
-			return Platform.getLocation().append(projectName).toString();
+			return Platform.getLocation().append(projectName).toOSString();
 		}
 		return defaultURI.toString();
 
@@ -465,7 +467,7 @@ public class ProjectContentsLocationArea {
 	 */
 	public String getProjectLocation() {
 		if (isDefault()) {
-			return Platform.getLocation().toString();
+			return Platform.getLocation().toOSString();
 		}
 		return locationPathField.getText();
 	}
