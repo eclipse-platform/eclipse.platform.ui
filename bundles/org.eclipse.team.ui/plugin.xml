@@ -506,6 +506,7 @@
          point="org.eclipse.ui.preferenceTransfer">
       <transfer
             id="org.eclipse.team.transfer.ignores"
+            icon="$nl$/icons/full/obj/ignoreprefs.gif"
             name="Team Ignored Resources Transfer ">
          <mapping
                scope="instance">
