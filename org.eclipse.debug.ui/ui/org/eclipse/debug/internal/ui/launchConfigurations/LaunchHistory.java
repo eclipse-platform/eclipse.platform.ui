@@ -50,6 +50,12 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	private Vector fFavorites = new Vector();
 	
 	/**
+	 * A new saved flag to prevent save participants from serializing unchanged launch histories.
+	 * @since 3.3.1
+	 */
+	private boolean fSaved = true;
+	
+	/**
 	 * List of instances of this launch history 
 	 */
 	private static List fgLaunchHistoryInstances = new ArrayList();
@@ -87,7 +93,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	
 	/**
 	 * Returns if the current history contains the specified <code>ILaunchConfiguration</code>
-	 * @param config the config to look for
+	 * @param config the configuration to look for
 	 * @return true if the current history contains the specified configuration, false otherwise
 	 * @since 3.3
 	 */
@@ -135,6 +141,27 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	private void fireLaunchHistoryChanged() {
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().fireLaunchHistoryChanged();
+		setSaved(false);
+	}
+	
+	/**
+	 * Returns if the launch history requires saving or not
+	 * @return true if the history needs to be saved, false otherwise
+	 * @since 3.3.1
+	 */
+	public boolean needsSaving() {
+		return !fSaved;
+	}
+	
+	/**
+	 * Allows the dirty flag for this launch history to be set.
+	 * It is the clients of this class that must set the saved flag to true
+	 * if they have persisted the launch history
+	 * @param saved
+	 * @since 3.3.1
+	 */
+	public void setSaved(boolean saved) {
+		fSaved = saved;
 	}
 	
 	/**
@@ -230,6 +257,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	public synchronized void setFavorites(ILaunchConfiguration[] favorites) {
 		fFavorites = new Vector(Arrays.asList(favorites));
+		setSaved(false);
 	}	
 	
 	/**
@@ -240,6 +268,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public synchronized void addFavorite(ILaunchConfiguration configuration) {
 		if (!fFavorites.contains(configuration)) {
 			fFavorites.add(configuration);
+			setSaved(false);
 		}
 	}
 	
@@ -365,6 +394,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 */
 	protected synchronized void removeFavorite(ILaunchConfiguration configuration) {
 		fFavorites.remove(configuration);
+		setSaved(false);
 	}
 
 	/**
