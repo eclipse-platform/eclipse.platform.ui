@@ -102,8 +102,11 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setSearchSubfolders(DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
 		addFilter(new ViewerFilter() {
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if(element instanceof IProject) {
-					return ((IProject)element).isAccessible();
+				if(!(element instanceof IFolder)) {
+					if(element instanceof IProject) {
+						return ((IProject)element).isAccessible();
+					}
+					return false;
 				}
 				return true;
 			}
