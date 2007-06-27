@@ -63,8 +63,9 @@ public class StringFieldEditor extends FieldEditor {
 
     /**
      * Old text value.
+     * @since 3.4 this field is protected.
      */
-    private String oldValue;
+    protected String oldValue;
 
     /**
      * The text field, or <code>null</code> if none.

@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     <sgandon@nds.com> - Fix for bug 109389 - IntegerFieldEditor
+ *     does not fire property change all the time
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -111,6 +113,7 @@ public class IntegerFieldEditor extends StringFieldEditor {
         if (text != null) {
             int value = getPreferenceStore().getInt(getPreferenceName());
             text.setText("" + value);//$NON-NLS-1$
+            oldValue = "" + value; //$NON-NLS-1$
         }
 
     }
