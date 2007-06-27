@@ -56,7 +56,7 @@ public class FileInfo implements IFileInfo {
 	/**
 	 * The target file name if this is a symbolic link
 	 */
-	private String linkTarget = null; 
+	private String linkTarget = null;
 
 	/**
 	 * Creates a new file information object with default values.

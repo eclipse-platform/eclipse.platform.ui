@@ -81,7 +81,7 @@ public class LocalFileSystem extends FileSystem {
 		attributes = 0;
 		if (!LocalFileNatives.usingNatives())
 			return attributes;
-		
+
 		//try to query supported attributes from native lib impl
 		int nativeAttributes = LocalFileNatives.attributes();
 		if (nativeAttributes >= 0) {

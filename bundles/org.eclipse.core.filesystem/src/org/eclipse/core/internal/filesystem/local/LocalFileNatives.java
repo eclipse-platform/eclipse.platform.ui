@@ -73,7 +73,7 @@ abstract class LocalFileNatives {
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Copies file attributes from source to destination. The copyLastModified attribute
 	 * indicates whether the lastModified attribute should be copied.
