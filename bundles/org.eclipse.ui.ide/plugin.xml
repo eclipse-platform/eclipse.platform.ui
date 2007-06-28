@@ -395,6 +395,10 @@
       <keyword
             id="org.eclipse.ui.ide.linked"
             label="%PreferenceKeywords.LinkedResources"/>
+      <keyword
+            id="org.eclipse.ui.ide.animations"
+            label="%PreferenceKeywords.Animations">
+      </keyword>
    </extension>      
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -441,6 +445,9 @@
          <keywordReference id="org.eclipse.ui.ide.themes"/>
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
          <keywordReference id="org.eclipse.ui.ide.apearancepage"/>
+         <keywordReference
+               id="org.eclipse.ui.ide.animations">
+         </keywordReference>
       </page>
       <page
             name="%PreferencePages.ColorsAndFonts"
