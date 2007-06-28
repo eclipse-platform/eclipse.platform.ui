@@ -107,8 +107,7 @@ public abstract class CompositeUpdater {
 				if (listDiffEntry.isAddition()) {
 					createChild(listDiffEntry.getElement(), listDiffEntry.getPosition());
 				} else {
-					theComposite.getChildren()[listDiffEntry.getPosition()]
-							.dispose();
+					disposeWidget(listDiffEntry.getPosition());
 				}
 			}
 			theComposite.layout();
@@ -147,6 +146,13 @@ public abstract class CompositeUpdater {
 				}
 			}
 		});
+	}
+
+	/**
+	 * @param position
+	 */
+	protected void disposeWidget(int position) {
+		theComposite.getChildren()[position].dispose();
 	}
 
 	/**
