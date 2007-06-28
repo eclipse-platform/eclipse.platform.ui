@@ -17,6 +17,8 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -34,10 +36,12 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.editors.text.*;
+import org.eclipse.ui.handlers.*;
 import org.eclipse.ui.texteditor.*;
+
 
 /**
  * This area provides the widgets for providing the CVS commit comment
@@ -78,10 +82,14 @@ public class CommitCommentArea extends DialogArea {
     		
             support.install(EditorsUI.getPreferenceStore());
             
+            final IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
+            final IHandlerActivation handlerActivation= installQuickFixActionHandler(handlerService, sourceViewer);
+            
             sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
 			
 				public void widgetDisposed(DisposeEvent e) {
 					support.uninstall();
+					handlerService.deactivateHandler(handlerActivation);
 				}
 			
 			});
@@ -96,6 +104,42 @@ public class CommitCommentArea extends DialogArea {
             fTextField.addTraverseListener(this);
             fTextField.addModifyListener(this);
             fTextField.addFocusListener(this);
+            
+        }
+        
+        /**
+         * Installs the quick fix action handler
+         * and returns the handler activation.
+         * 
+         * @param handlerService the handler service
+         * @param sourceViewer the source viewer
+         * @return the handler activation
+         * @since 3.4
+         */
+		private IHandlerActivation installQuickFixActionHandler(IHandlerService handlerService, SourceViewer sourceViewer) {
+            return handlerService.activateHandler(
+            			ITextEditorActionDefinitionIds.QUICK_ASSIST,
+            			createQuickFixActionHandler(sourceViewer),
+            			new ActiveShellExpression(sourceViewer.getTextWidget().getShell()));
+		}
+        
+        /**
+         * Creates and returns a quick fix action handler.
+         * 
+         * @param textOperationTarget the target for text operations
+         * @since 3.4
+         */
+        private ActionHandler createQuickFixActionHandler(final ITextOperationTarget textOperationTarget) {
+            Action quickFixAction= new Action() {
+            	/* (non-Javadoc)
+            	 * @see org.eclipse.jface.action.Action#run()
+            	 */
+            	public void run() {
+            		textOperationTarget.doOperation(ISourceViewer.QUICK_ASSIST);
+            	}
+            };
+    		quickFixAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
+    		return new ActionHandler(quickFixAction);    		
         }
 
         public void modifyText(ModifyEvent e) {
