@@ -1073,7 +1073,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 	private void selectionChanged1() {
 		updateViewerInput();
-
 		updateButtons();
 	}
 
@@ -1332,11 +1331,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		while (elements.hasNext()) {
 			TemplatePersistenceData data= (TemplatePersistenceData) elements.next();
 			data.revert();
+			fTableViewer.setChecked(data, data.isEnabled());
 		}
 
-		fTableViewer.refresh();
 		selectionChanged1();
-		fTableViewer.setChecked(getEnabledTemplates(), true);
+		fTableViewer.refresh();
 	}
 
 	/*
