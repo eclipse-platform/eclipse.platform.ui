@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,23 @@ package org.eclipse.core.tests.harness;
 
 import java.util.LinkedList;
 import java.util.List;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IExtensionDelta;
+import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.Platform;
 
 /**
- * Allows test cases to wait for event notification so they can make assertions on the event.  
+ * Allows test cases to wait for event notification.  
  */
 public class TestRegistryChangeListener implements IRegistryChangeListener {
+
+	/**
+	 * Indicates that no matching even has been received 
+	 */
+	public static final int NO_EVENT = -1;
+
 	private List events = new LinkedList();
+	private List simpleEvents = new LinkedList();
 	private String xpNamespace;
 	private String xpId;
 	private String extNamespace;
@@ -45,24 +55,37 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 * @see IRegistryChangeListener#registryChanged
 	 */
 	public synchronized void registryChanged(IRegistryChangeEvent newEvent) {
+		IExtensionDelta delta = null;
 		if (xpId != null) {
 			if (extId != null) {
-				if (newEvent.getExtensionDelta(xpNamespace, xpId, extNamespace + '.' + extId) == null)
-					return;
-			} else if (newEvent.getExtensionDeltas(xpNamespace, xpId).length == 0)
-				return;
+				delta = newEvent.getExtensionDelta(xpNamespace, xpId, extNamespace + '.' + extId);
+			} else {
+				IExtensionDelta[] deltas = newEvent.getExtensionDeltas(xpNamespace, xpId);
+				if (deltas.length != 0)
+					delta = deltas[0];
+			}
 		}
-		this.events.add(newEvent);
+		if (delta == null)
+			return; // this is not the event we are interested in
+		events.add(newEvent);
+		simpleEvents.add(new Integer(delta.getKind()));
 		notify();
 	}
 
 	/**
 	 * Returns the first event that is received, blocking for at most <code>timeout</code> milliseconds.
 	 * Returns <code>null</code> if a event was not received for the time allowed.
+	 * <p>
+	 * Note: registry elements referred to by the event returned from this method might be
+	 * invalid. Method is preserved for backward compatibility, but users are strongly encouraged
+	 * to switch to {@link #eventTypeReceived(long)}.
+	 * </p>
 	 * 
 	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
 	 * block until an event is received 
 	 * @return the first event received, or <code>null</code> if none was received
+	 * 
+	 * @deprecated use {@link #eventTypeReceived(long)} instead
 	 */
 	public synchronized IRegistryChangeEvent getEvent(long timeout) {
 		if (!events.isEmpty())
@@ -75,6 +98,50 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 		return events.isEmpty() ? null : (IRegistryChangeEvent) events.remove(0);
 	}
 
+	/**
+	 * Wait for a registry event that fits IDs specified in the constructor, blocking for 
+	 * at most <code>timeout</code> milliseconds.
+	 * <p>
+	 * Note: do NOT mix calls to {@link #getEvent(long)} with calls to this method in the same 
+	 * instance of this class.
+	 * </p>
+	 * 
+	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
+	 * block until an event is received 
+	 * @return event type
+	 * 
+	 * @since 3.4
+	 */
+	public synchronized int eventTypeReceived(long timeout) {
+		if (!simpleEvents.isEmpty())
+			return ((Integer) simpleEvents.remove(0)).intValue();
+		try {
+			wait(timeout);
+		} catch (InterruptedException e) {
+			// who cares?
+		}
+		return simpleEvents.isEmpty() ? NO_EVENT : ((Integer) simpleEvents.remove(0)).intValue();
+	}
+	
+	/**
+	 * Wait for a registry event that fits IDs specified in the constructor, blocking for 
+	 * at most <code>timeout</code> milliseconds.
+	 * <p>
+	 * Note: do NOT mix calls to {@link #getEvent(long)} with calls to this method in the same 
+	 * instance of this class.
+	 * </p>
+	 * 
+	 * @param timeout the maximum time to wait in milliseconds. If zero, this method will 
+	 * block until an event is received 
+	 * @return <code>true</code> if event was received; <code>false</code> otherwise
+	 * 
+	 * @since 3.4
+	 */
+	public synchronized boolean eventReceived(long timeout) {
+		int notified = eventTypeReceived(timeout);
+		return notified != TestRegistryChangeListener.NO_EVENT;
+	}
+
 	public void register() {
 		Platform.getExtensionRegistry().addRegistryChangeListener(this, xpNamespace);
 	}
@@ -82,8 +149,10 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	public void unregister() {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(this);
 	}
-	
+
 	public synchronized void reset() {
 		events.clear();
+		simpleEvents.clear();
 	}
+
 }

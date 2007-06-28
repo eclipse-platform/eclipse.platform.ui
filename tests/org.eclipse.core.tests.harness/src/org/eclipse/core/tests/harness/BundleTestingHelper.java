@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,9 +14,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import junit.framework.Assert;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkEvent;
+import org.osgi.framework.FrameworkListener;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class BundleTestingHelper {
@@ -122,9 +126,8 @@ public class BundleTestingHelper {
 				listener.reset();
 			BundleTestingHelper.resolveBundles(context, installed);
 			if (listener != null) {
-				IRegistryChangeEvent event = listener.getEvent(installed.length * 10000);
 				// ensure the contributions were properly added
-				Assert.assertNotNull(tag + ".setup.4", event);
+				Assert.assertTrue(tag + ".setup.4", listener.eventReceived(installed.length * 10000));
 			}
 			try {
 				runnable.run();
@@ -140,9 +143,8 @@ public class BundleTestingHelper {
 					}
 				BundleTestingHelper.resolveBundles(context, installed);
 				if (listener != null) {
-					IRegistryChangeEvent event = listener.getEvent(installed.length * 10000);
 					// ensure the contributions were properly added
-					Assert.assertNotNull(tag + ".tearDown.2", event);
+					Assert.assertTrue(tag + ".tearDown.2", listener.eventReceived(installed.length * 10000));
 				}
 			}
 		} finally {

@@ -2,11 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Core Tests Runtime
 Bundle-SymbolicName: org.eclipse.core.tests.runtime; singleton:=true
-Bundle-Version: 3.2.100.qualifier
+Bundle-Version: 3.3.0.qualifier
 Bundle-ClassPath: runtimetests.jar
 Bundle-Activator: org.eclipse.core.tests.runtime.RuntimeTestsPlugin
 Bundle-Vendor: Eclipse.org
-Bundle-Localization: plugin
 Export-Package: org.eclipse.core.tests.internal.preferences,
  org.eclipse.core.tests.internal.registry,
  org.eclipse.core.tests.internal.runtime,
@@ -17,7 +16,7 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
  org.eclipse.core.tests.runtime.model,
  org.eclipse.core.tests.runtime.perf,
  org.eclipse.core.tests.runtime.session
-Require-Bundle: org.eclipse.core.tests.harness,
+Require-Bundle: org.eclipse.core.tests.harness;bundle-version="3.4.0",
  org.junit,
  org.eclipse.test.performance;resolution:=optional,
  org.eclipse.core.runtime.compatibility.auth,

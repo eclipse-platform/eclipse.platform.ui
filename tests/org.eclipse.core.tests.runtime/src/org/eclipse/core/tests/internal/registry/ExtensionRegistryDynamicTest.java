@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,7 @@ package org.eclipse.core.tests.internal.registry;
 
 import java.io.IOException;
 import junit.framework.*;
-import org.eclipse.core.runtime.IExtensionDelta;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
@@ -34,16 +33,19 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 		Bundle bundle01 = null;
 		Bundle bundle02 = null;
 		TestRegistryChangeListener listener = new TestRegistryChangeListener("bundle01", "xp1", "bundle02", "ext1");
+		listener.register();
 		try {
 			bundle01 = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle01");
 			bundle02 = BundleTestingHelper.installBundle("0.2", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle02");
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01, bundle02});
-			IRegistryChangeEvent event = listener.getEvent(5000);
-			assertNotNull("1.0", event);
-			IExtensionDelta change = event.getExtensionDelta("bundle01", "xp1", "bundle02.ext1");
-			assertNotNull("1.1", change);
-			assertEquals("1.2", IExtensionDelta.ADDED, change.getKind());
+			IExtensionRegistry registry = RegistryFactory.getRegistry();
+			IExtensionPoint extPoint = registry.getExtensionPoint("bundle01.xp1");
+			IExtension[] extensions = extPoint.getExtensions();
+			assertEquals("0.9", extensions.length, 1);
+
+			assertEquals("1.2", IExtensionDelta.ADDED, listener.eventTypeReceived(20000));
 		} finally {
+			listener.unregister();
 			if (bundle01 != null)
 				bundle01.uninstall();
 			if (bundle02 != null)
@@ -58,22 +60,15 @@ public class ExtensionRegistryDynamicTest extends TestCase {
 		Bundle bundle01 = null;
 		Bundle bundle02 = null;
 		TestRegistryChangeListener listener = new TestRegistryChangeListener("bundle01", "xp1", "bundle02", "ext1");
+		listener.register();
 		try {
 			bundle01 = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle01");
 			bundle02 = BundleTestingHelper.installBundle("0.2", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registryEvents/bundle02");
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01, bundle02});
-			listener.register();
+			assertEquals("0.5", IExtensionDelta.ADDED, listener.eventTypeReceived(20000));
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
-			IRegistryChangeEvent event = listener.getEvent(5000);
-			assertNotNull("1.0", event);
-			IExtensionDelta change = event.getExtensionDelta("bundle01", "xp1", "bundle02.ext1");
-			assertNotNull("1.1", change);
-			assertEquals("1.2", IExtensionDelta.REMOVED, change.getKind());
-			event = listener.getEvent(5000);
-			assertNotNull("2.0", event);
-			change = event.getExtensionDelta("bundle01", "xp1", "bundle02.ext1");
-			assertNotNull("2.1", change);
-			assertEquals("2.2", IExtensionDelta.ADDED, change.getKind());
+			assertEquals("1.2", IExtensionDelta.REMOVED, listener.eventTypeReceived(10000));
+			assertEquals("2.2", IExtensionDelta.ADDED, listener.eventTypeReceived(10000));
 		} finally {
 			listener.unregister();
 			if (bundle01 != null)
