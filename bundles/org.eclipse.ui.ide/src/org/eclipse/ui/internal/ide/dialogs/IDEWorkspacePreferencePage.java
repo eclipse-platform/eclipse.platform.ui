@@ -108,7 +108,6 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 		Composite lower = new Composite(composite,SWT.NONE);
 		GridLayout lowerLayout = new GridLayout();
 		lowerLayout.marginWidth = 0;
-		lowerLayout.marginHeight = 0;
 		lowerLayout.numColumns = 2;
 		lowerLayout.makeColumnsEqualWidth = true;
 		lower.setLayout(lowerLayout);
