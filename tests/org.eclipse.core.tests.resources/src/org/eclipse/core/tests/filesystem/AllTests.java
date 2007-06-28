@@ -35,6 +35,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(OpenOutputStreamTest.class);
 		suite.addTestSuite(PutInfoTest.class);
 		suite.addTestSuite(SymlinkTest.class);
+		suite.addTestSuite(URIUtilTest.class);
 		return suite;
 	}
 }
