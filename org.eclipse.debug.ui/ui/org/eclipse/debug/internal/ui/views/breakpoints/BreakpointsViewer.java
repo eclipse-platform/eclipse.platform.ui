@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -254,7 +254,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * <li>Breakpoints can be dropped into breakpoints, provided there is a droppable parent of the target breakpoint</li>
      * </ul>
      * </p>
-     * @param target the target foor the drop
+     * @param target the target for the drop
      * @param element the element we want to drop
      * @return true if the specified element can be dropped into the specified target, false otherwise
      * @since 3.3
@@ -264,7 +264,8 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     		return false;
     	}
     	for(Iterator iter = selection.iterator(); iter.hasNext();) {
-    		if(!checkAddableParentContainers(target, (IBreakpoint) iter.next())) {
+    		Object currentObject = iter.next();
+    		if (!(currentObject instanceof IBreakpoint) || !checkAddableParentContainers(target, (IBreakpoint)currentObject)){
     			return false;
     		}
     	}
