@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Listener;
 /**
  * A standard implementation of an IProgressMonitor. It consists
  * of a label displaying the task and subtask name, and a
- * progress indicator to show progress. In contrast to 
+ * progress indicator to show progress. In contrast to
  * <code>ProgressMonitorDialog</code> this class only implements
  * <code>IProgressMonitor</code>.
  */
@@ -54,13 +54,13 @@ public class ProgressMonitorPart extends Composite implements
     /** the cancel component */
     protected Control fCancelComponent;
 
-    /** true if cancled */
+    /** true if canceled */
     protected boolean fIsCanceled;
 
     /** current blocked status */
     protected IStatus blockedStatus;
 
-    /** the cancle lister attached to the cancle component */
+    /** the cancel lister attached to the cancel component */
     protected Listener fCancelListener = new Listener() {
         public void handleEvent(Event e) {
             setCanceled(true);
@@ -97,7 +97,7 @@ public class ProgressMonitorPart extends Composite implements
 
     /**
      * Attaches the progress monitor part to the given cancel
-     * component. 
+     * component.
      * @param cancelComponent the control whose selection will
      * trigger a cancel
      */
@@ -157,9 +157,9 @@ public class ProgressMonitorPart extends Composite implements
 
     /**
      * Creates the progress monitor's UI parts and layouts them
-     * according to the given layout. If the layou is <code>null</code>
+     * according to the given layout. If the layout is <code>null</code>
      * the part's default layout is used.
-     * @param layout The layoutfor the receiver.
+     * @param layout The layout for the receiver.
      * @param progressIndicatorHeight The suggested height of the indicator
      */
     protected void initialize(Layout layout, int progressIndicatorHeight) {
@@ -273,12 +273,21 @@ public class ProgressMonitorPart extends Composite implements
      * @return String
      */
     private String taskLabel() {
-        String text = fSubTaskName == null ? "" : fSubTaskName; //$NON-NLS-1$
-        if (fTaskName != null && fTaskName.length() > 0) {
-            text = JFaceResources.format(
-                    "Set_SubTask", new Object[] { fTaskName, text });//$NON-NLS-1$
-        }
-        return escapeMetaCharacters(text);
+    	boolean hasTask= fTaskName != null && fTaskName.length() > 0;
+    	boolean hasSubtask= fSubTaskName != null && fSubTaskName.length() > 0;
+    	
+		if (hasTask) {
+			if (hasSubtask)
+				return escapeMetaCharacters(JFaceResources.format(
+    					"Set_SubTask", new Object[] { fTaskName, fSubTaskName }));//$NON-NLS-1$
+   			return escapeMetaCharacters(fTaskName);
+   			
+    	} else if (hasSubtask) {
+    		return escapeMetaCharacters(fSubTaskName);
+    	
+    	} else {
+    		return ""; //$NON-NLS-1$
+    	}
     }
 
     /**
