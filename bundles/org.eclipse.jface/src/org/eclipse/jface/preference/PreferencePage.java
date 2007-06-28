@@ -15,6 +15,7 @@ package org.eclipse.jface.preference;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogPage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -208,6 +209,7 @@ public abstract class PreferencePage extends DialogPage implements
      * If a subclass that overrides this method creates a <code>Composite</code>
      * that has a layout with default margins (for example, a <code>GridLayout</code>)
      * it is expected to set the margins of this <code>Layout</code> to 0 pixels.
+     * @see IDialogPage#createControl(Composite)
      */
     public void createControl(Composite parent){
 
@@ -389,6 +391,7 @@ public abstract class PreferencePage extends DialogPage implements
      * method returns whether this preference page is valid. Preference
      * pages are considered valid by default; call <code>setValid(false)</code>
      * to make a page invalid.
+     * @see IPreferencePage#isValid()
      */
     public boolean isValid() {
         return isValid;
@@ -398,7 +401,7 @@ public abstract class PreferencePage extends DialogPage implements
      * Suppresses creation of the standard Default and Apply buttons
      * for this page.
      * <p>
-     * Subclasses wishing a preference page wihthout these buttons
+     * Subclasses wishing a preference page without these buttons
      * should call this framework method before the page's control
      * has been created.
      * </p>
@@ -411,6 +414,7 @@ public abstract class PreferencePage extends DialogPage implements
      * The <code>PreferencePage</code> implementation of this 
      * <code>IPreferencePage</code> method returns <code>true</code>
      * if the page is valid.
+     * @see IPreferencePage#okToLeave()
      */
     public boolean okToLeave() {
         return isValid();
@@ -436,9 +440,10 @@ public abstract class PreferencePage extends DialogPage implements
      * method performs special processing when this page's Cancel button has
      * been pressed.
      * <p>
-     * This is a framework hook method for sublcasses to do special things when
+     * This is a framework hook method for subclasses to do special things when
      * the Cancel button has been pressed. The default implementation of this
      * framework method does nothing and returns <code>true</code>.
+     * @see IPreferencePage#performCancel()
      */
     public boolean performCancel() {
         return true;
@@ -456,16 +461,17 @@ public abstract class PreferencePage extends DialogPage implements
         updateApplyButton();
     }
 
-    /** 
-     * Method declared on IPreferencePage.
-     * Subclasses should override
+   
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
         return true;
     }
 
-    /** (non-Javadoc)
-     * Method declared on IPreferencePage.
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.preference.IPreferencePage#setContainer(org.eclipse.jface.preference.IPreferencePageContainer)
      */
     public void setContainer(IPreferencePageContainer container) {
         this.container = container;
@@ -485,8 +491,9 @@ public abstract class PreferencePage extends DialogPage implements
         preferenceStore = store;
     }
 
+   
     /* (non-Javadoc)
-     * Method declared on IPreferencePage.
+     * @see org.eclipse.jface.preference.IPreferencePage#setSize(org.eclipse.swt.graphics.Point)
      */
     public void setSize(Point uiSize) {
         Control control = getControl();
@@ -500,6 +507,7 @@ public abstract class PreferencePage extends DialogPage implements
      * The <code>PreferencePage</code> implementation of this <code>IDialogPage</code>
      * method extends the <code>DialogPage</code> implementation to update
      * the preference page container title. Subclasses may extend.
+     * @see IDialogPage#setTitle(String)
      */
     public void setTitle(String title) {
         super.setTitle(title);
@@ -530,8 +538,9 @@ public abstract class PreferencePage extends DialogPage implements
         }
     }
 
-    /**
-     * Returns a string suitable for debugging purpose only.
+   
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
      */
     public String toString() {
         return getTitle();
