@@ -57,9 +57,9 @@ public class LogListener extends CommandOutputListener {
     private String fileState;
     private String revision;
     private String author;
-    private String creationDate;
+    private Date creationDate;
     private List versions = new ArrayList();
-    
+    private Map internedStrings = new HashMap();
     private final ILogEntryListener listener;
     
     /**
@@ -123,7 +123,7 @@ public class LogListener extends CommandOutputListener {
     			} else  if (line.startsWith("symbolic names:")) { //$NON-NLS-1$
     				state = SYMBOLIC_NAMES;
     			} else if (line.startsWith("revision ")) { //$NON-NLS-1$
-    				revision = line.substring(9);
+    				revision = internString(line.substring(9));
     				state = REVISION;
     			} else if (line.startsWith("total revisions:")){ //$NON-NLS-1$
     				//if there are no current revision selected and this is a branch then we are in the 
@@ -145,8 +145,8 @@ public class LogListener extends CommandOutputListener {
     				state = BEGIN;
     			} else {
     				int firstColon = line.indexOf(':');
-    				String tagName = line.substring(1, firstColon);
-    				String tagRevision = line.substring(firstColon + 2);
+    				String tagName = new String(line.substring(1, firstColon));
+    				String tagRevision = internString(line.substring(firstColon + 2));
     				versions.add(new VersionInfo(tagRevision, tagName));
     			}
     			break;
@@ -154,14 +154,14 @@ public class LogListener extends CommandOutputListener {
     			// date: 2000/06/19 04:56:21;  author: somebody;  state: Exp;  lines: +114 -45
     			// get the creation date
     			int endOfDateIndex = line.indexOf(';', 6);
-    			creationDate = line.substring(6, endOfDateIndex) + " GMT"; //$NON-NLS-1$
+    			creationDate = convertFromLogTime(line.substring(6, endOfDateIndex) + " GMT"); //$NON-NLS-1$
     
     			// get the author name
     			int endOfAuthorIndex = line.indexOf(';', endOfDateIndex + 1);
-    			author = line.substring(endOfDateIndex + 11, endOfAuthorIndex);
+    			author = internString(line.substring(endOfDateIndex + 11, endOfAuthorIndex));
     
     			// get the file state (because this revision might be "dead")
-    			fileState = line.substring(endOfAuthorIndex + 10, line.indexOf(';', endOfAuthorIndex + 1));
+    			fileState = internString(line.substring(endOfAuthorIndex + 10, line.indexOf(';', endOfAuthorIndex + 1)));
     			comment = new StringBuffer();
     			state = COMMENT;
     			break;
@@ -201,12 +201,9 @@ public class LogListener extends CommandOutputListener {
     				}
     			}
     		}
-    		Date date = null;
-    		if (creationDate != null)
-    			date = convertFromLogTime(creationDate);
     		
     		if (currentFile != null) {
-    			LogEntry entry = new LogEntry(currentFile, revision, author, date,
+    			LogEntry entry = new LogEntry(currentFile, revision, author, creationDate,
     				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[thisRevisionTags.size()]), (String[]) revisionVersions.toArray(new String[revisionVersions.size()]));
     			addEntry(entry);
     		}
@@ -244,6 +241,15 @@ public class LogListener extends CommandOutputListener {
             // fallback is to return null
             return null;
         }
+    }
+    
+    private String internString(String string) {
+    	String internedString = (String) internedStrings.get(string);
+    	if (internedString == null) {
+    		internedString = new String(string);
+    		internedStrings.put(internedString, internedString);
+    	}
+    	return internedString;
     }
     
     private static class VersionInfo {
