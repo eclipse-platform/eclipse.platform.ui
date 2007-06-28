@@ -117,6 +117,31 @@ public class ObservableTracker {
 
 		return result;
 	}
+	
+	/**
+	 * Runs the given runnable without tracking dependencies.
+	 * @param runnable
+	 */
+	public static void runAndIgnore(Runnable runnable) {
+		// Remember the previous value in the listener stack
+		Set lastObservableSet = (Set) currentObservableSet.get();
+		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
+				.get();
+		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
+				.get();
+		currentObservableSet.set(null);
+		currentChangeListener.set(null);
+		currentStaleListener.set(null);
+		try {
+			runnable.run();
+		} finally {
+			// Pop the new listener off the top of the stack (by restoring the
+			// previous listener)
+			currentObservableSet.set(lastObservableSet);
+			currentChangeListener.set(lastChangeListener);
+			currentStaleListener.set(lastStaleListener);
+		}
+	}
 
 	/**
 	 * Notifies the ObservableTracker that an observable was read from. The
@@ -131,6 +156,9 @@ public class ObservableTracker {
 	public static void getterCalled(IObservable observable) {
 		Assert.isTrue(observable.getRealm().isCurrent());
 		Set lastObservableSet = (Set) currentObservableSet.get();
+		if (lastObservableSet == null) {
+			return;
+		}
 		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
 				.get();
 		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener

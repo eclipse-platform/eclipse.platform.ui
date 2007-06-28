@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
+import java.util.Iterator;
+
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -103,11 +105,7 @@ public abstract class CompositeUpdater {
 			for (int i = 0; i < diffs.length; i++) {
 				ListDiffEntry listDiffEntry = diffs[i];
 				if (listDiffEntry.isAddition()) {
-					Widget newChild = createWidget(listDiffEntry.getPosition());
-					final UpdateRunnable updateRunnable = new UpdateRunnable(newChild, listDiffEntry
-							.getElement());
-					newChild.setData(updateRunnable);
-					updateRunnable.updateIfNecessary();
+					createChild(listDiffEntry.getElement(), listDiffEntry.getPosition());
 				} else {
 					theComposite.getChildren()[listDiffEntry.getPosition()]
 							.dispose();
@@ -140,6 +138,15 @@ public abstract class CompositeUpdater {
 
 		model.addListChangeListener(privateInterface);
 		theComposite.addDisposeListener(privateInterface);
+		ObservableTracker.runAndIgnore(new Runnable(){
+			public void run() {
+				int index = 0;
+				for (Iterator it = CompositeUpdater.this.model.iterator(); it.hasNext();) {
+					Object element = it.next();
+					createChild(element, index++);
+				}
+			}
+		});
 	}
 
 	/**
@@ -186,5 +193,12 @@ public abstract class CompositeUpdater {
 	 *            the element associated with the widget
 	 */
 	protected abstract void updateWidget(Widget widget, Object element);
+
+	void createChild(Object element, int index) {
+		Widget newChild = createWidget(index);
+		final UpdateRunnable updateRunnable = new UpdateRunnable(newChild, element);
+		newChild.setData(updateRunnable);
+		updateRunnable.updateIfNecessary();
+	}
 
 }
