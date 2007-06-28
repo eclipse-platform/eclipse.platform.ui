@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
- 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +56,7 @@ import com.ibm.icu.text.MessageFormat;
 public class ExpressionManager extends PlatformObject implements IExpressionManager {
 	
 	/**
-	 * Collection of registered expressions.
+	 * Ordered collection of registered expressions.
 	 */
 	private Vector fExpressions = null;
 	
@@ -77,10 +76,12 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 */
 	private Map fWatchExpressionDelegates= new HashMap();	
 	
-	// Constants for add/remove/change notification
+	// Constants for add/remove/change/insert/move notification
 	private static final int ADDED = 1;
 	private static final int CHANGED = 2;
 	private static final int REMOVED = 3;
+	private static final int INSERTED = 4;
+	private static final int MOVED = 5;
 
 	// Preference for persisted watch expressions
 	private static final String PREF_WATCH_EXPRESSIONS= "prefWatchExpressions"; //$NON-NLS-1$
@@ -200,8 +201,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return new WatchExpression(expressionText, enabled);
 	}
 
-	/**
-	 * @see IExpressionManager#newWatchExpression(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#newWatchExpression(java.lang.String)
 	 */
 	public IWatchExpression newWatchExpression(String expressionText) {
 		return new WatchExpression(expressionText);
@@ -253,15 +254,15 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return LaunchManager.serializeDocument(document);
 	}
 
-	/**
-	 * @see IExpressionManager#addExpression(IExpression)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#addExpression(org.eclipse.debug.core.model.IExpression)
 	 */
 	public void addExpression(IExpression expression) {
 		addExpressions(new IExpression[]{expression});
 	}
 	
-	/**
-	 * @see IExpressionManager#addExpressions(IExpression[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#addExpressions(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void addExpressions(IExpression[] expressions) {
 		if (fExpressions == null) {
@@ -285,10 +286,10 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		if (addedWatchExpression) {
 			storeWatchExpressions();
 		}
-	}	
+	}
 
-	/**
-	 * @see IExpressionManager#getExpressions()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#getExpressions()
 	 */
 	public IExpression[] getExpressions() {
 		if (fExpressions == null) {
@@ -299,8 +300,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		return temp;
 	}
 
-	/**
-	 * @see IExpressionManager#getExpressions(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#getExpressions(java.lang.String)
 	 */
 	public IExpression[] getExpressions(String modelIdentifier) {
 		if (fExpressions == null) {
@@ -317,16 +318,111 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 		return (IExpression[]) temp.toArray(new IExpression[temp.size()]);
 	}
-
+	
 	/**
-	 * @see IExpressionManager#removeExpression(IExpression)
+	 * Adds the given expressions to the collection of registered expressions
+	 * in the workspace and notifies all registered listeners. The expressions
+	 * are inserted in the same order as the passed array at the index of the
+	 * specified expressions (before or after it depending on the boolean argument).
+	 * If no valid insertion location could be found, the expressions are added
+	 * to the end of the collection. Has no effect on expressions already registered.
+	 *
+	 * @param expressions expressions to insert into the collection
+	 * @param insertionLocation the expression at the location where expressions will be inserted
+	 * @param insertBefore whether to insert the epressions before or after the given insertion location
+	 * @since 3.4
+	 */
+	public void insertExpressions(IExpression[] expressions, IExpression insertionLocation, boolean insertBefore){
+		if (fExpressions == null) {
+			addExpressions(expressions);
+			return;
+		}
+		
+		int insertionIndex = fExpressions.indexOf(insertionLocation);
+		if (insertionIndex < 0){
+			addExpressions(expressions);
+			return;
+		}
+		if (!insertBefore){
+			insertionIndex++;
+		}
+		boolean addedWatchExpression = false;
+		List added = new ArrayList(expressions.length);
+		for (int i = 0; i < expressions.length; i++) {
+			IExpression expression = expressions[i];
+			if (fExpressions.indexOf(expression) == -1) {
+				//Insert in the same order as the array is passed
+				fExpressions.add(insertionIndex+added.size(), expression);
+				added.add(expression);
+				if (expression instanceof IWatchExpression) {
+					addedWatchExpression= true;
+				}
+			}				
+		}
+		
+		if (!added.isEmpty()) {
+			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), INSERTED, insertionIndex);
+		}
+		if (addedWatchExpression) {
+			storeWatchExpressions();
+		}
+	}
+	
+	/**
+	 * Moves the given expressions from their location in the collection
+	 * of registered expressions in the workspace to the specified insertion
+	 * location.  Notifies all registered listeners.  This method has no effect
+	 * if an expression does not exist in the collection or if no valid insertion 
+	 * location could be determined.
+	 *   
+	 * @param expressions expressions to move
+	 * @param insertionLocation the expression at the location to insert the moved expressions
+	 * @param insertBefore whether to insert the moved expressions before or after the given insertion location
+	 * @since 3.4
+	 */
+	public void moveExpressions(IExpression[] expressions, IExpression insertionLocation, boolean insertBefore){
+		if (fExpressions == null){
+			return;
+		}
+		int insertionIndex = fExpressions.indexOf(insertionLocation);
+		if (insertionIndex < 0){
+			return;
+		}
+		if (!insertBefore){
+			insertionIndex++;
+		}
+		
+		List movedExpressions = new ArrayList(expressions.length);
+		for (int i = 0; i < expressions.length; i++) {
+			int removeIndex = fExpressions.indexOf(expressions[i]);
+			if (removeIndex >= 0){
+				movedExpressions.add(expressions[i]);
+				if (removeIndex < insertionIndex){
+					insertionIndex--;
+				}
+				fExpressions.remove(removeIndex);
+			}
+		}
+		IExpression[] movedExpressionsArray = (IExpression[])movedExpressions.toArray(new IExpression[movedExpressions.size()]);
+		for (int i = 0; i < movedExpressionsArray.length; i++) {
+			// Insert the expressions in the same order as the passed array
+			fExpressions.add(insertionIndex+i,movedExpressionsArray[i]);
+		}
+				
+		if (!movedExpressions.isEmpty()) {
+			fireUpdate(movedExpressionsArray, MOVED, insertionIndex);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#removeExpression(org.eclipse.debug.core.model.IExpression)
 	 */
 	public void removeExpression(IExpression expression) {
 		removeExpressions(new IExpression[] {expression});
 	}
 
-	/**
-	 * @see IExpressionManager#removeExpressions(IExpression[])
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressions(org.eclipse.debug.core.model.IExpression[])
 	 */
 	public void removeExpressions(IExpression[] expressions) {
 		if (fExpressions == null) {
@@ -346,8 +442,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}	
 	
-	/**
-	 * @see IExpressionManager#addExpressionListener(IExpressionListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#addExpressionListener(org.eclipse.debug.core.IExpressionListener)
 	 */
 	public void addExpressionListener(IExpressionListener listener) {
 		if (fListeners == null) {
@@ -356,8 +452,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		fListeners.add(listener);
 	}
 
-	/**
-	 * @see IExpressionManager#removeExpressionListener(IExpressionListener)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressionListener(org.eclipse.debug.core.IExpressionListener)
 	 */
 	public void removeExpressionListener(IExpressionListener listener) {
 		if (fListeners == null) {
@@ -385,26 +481,36 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	/**
 	 * Notifies listeners of the adds/removes/changes
 	 * 
-	 * @param breakpoints associated breakpoints
-	 * @param deltas or <code>null</code>
-	 * @param update type of change
+	 * @param expressions expressions that were modified
+	 * @param update update flags
 	 */
-	private void fireUpdate(IExpression[] expressions, int update) {
+	private void fireUpdate(IExpression[] expressions, int update){
+		fireUpdate(expressions, update, -1);
+	}
+	
+	/**
+	 * Notifies listeners of the adds/removes/changes/insertions/moves
+	 * 
+	 * @param expressions expressions that were modified
+	 * @param update update flags
+	 * @param index index where expressions were inserted/moved to or <code>-1</code>
+	 */
+	private void fireUpdate(IExpression[] expressions, int update, int index){
 		// single listeners
 		getExpressionNotifier().notify(expressions, update);
 		
 		// multi listeners
-		getExpressionsNotifier().notify(expressions, update);
+		getExpressionsNotifier().notify(expressions, update, index);
 	}	
 
-	/**
-	 * @see IExpressionManager#hasExpressions()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionManager#hasExpressions()
 	 */
 	public boolean hasExpressions() {
 		return fExpressions != null && !fExpressions.isEmpty();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionManager#addExpressionListener(org.eclipse.debug.core.IExpressionsListener)
 	 */
 	public void addExpressionListener(IExpressionsListener listener) {
@@ -414,7 +520,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		fExpressionsListeners.add(listener);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.IExpressionManager#removeExpressionListener(org.eclipse.debug.core.IExpressionsListener)
 	 */
 	public void removeExpressionListener(IExpressionsListener listener) {
@@ -437,8 +543,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		private IExpressionListener fListener;
 		private int fType;
 		private IExpression fExpression;
-		
-		/**
+
+		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
@@ -446,7 +552,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			DebugPlugin.log(status);
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
@@ -498,9 +604,10 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		
 		private IExpressionsListener fListener;
 		private int fType;
+		private int fIndex;
 		private IExpression[] fNotifierExpressions;
 		
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
@@ -508,11 +615,25 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			DebugPlugin.log(status);
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
 			switch (fType) {
+				case MOVED:
+					// If the listener doesn't know about moves or the insertion location is unknown, do nothing.
+					if (fIndex >= 0 && fListener instanceof IExpressionsListener2){
+						((IExpressionsListener2)fListener).expressionsMoved(fNotifierExpressions, fIndex);
+					}
+					break;
+				case INSERTED:
+					// If the listener doesn't know about insertions or the insertion location is unknown, notify of an ADD
+					if (fIndex >= 0 && fListener instanceof IExpressionsListener2){
+						((IExpressionsListener2)fListener).expressionsInserted(fNotifierExpressions, fIndex);
+					} else {
+						fListener.expressionsAdded(fNotifierExpressions);
+					}
+					break;
 				case ADDED:
 					fListener.expressionsAdded(fNotifierExpressions);
 					break;
@@ -531,10 +652,11 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		 * @param expressions the expressions that changed
 		 * @param update the type of change
 		 */
-		public void notify(IExpression[] expressions, int update) {
-			if (fExpressionsListeners != null) { 
+		public void notify(IExpression[] expressions, int update, int index) {
+			if (fExpressionsListeners != null) {
 				fNotifierExpressions = expressions;
 				fType = update;
+				fIndex = index;
 				Object[] copiedListeners = fExpressionsListeners.getListeners();
 				for (int i= 0; i < copiedListeners.length; i++) {
 					fListener = (IExpressionsListener)copiedListeners[i];

@@ -21,13 +21,13 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
 
 /**
- * Drag adapter for the variables view.  Allows variables to be dragged to other views.
- * Currently only the expressions view supports dropping of variables.
+ * Drag adapter for the variables view and expressions view.  Allows selected variables and
+ * expressions to be dragged.
  * 
  * @see org.eclipse.debug.internal.ui.views.expression.ExpressionDropAdapter
  * @since 3.4
  */
-public class VariablesDragAdapter extends DragSourceAdapter implements TransferDragSourceListener {
+public class SelectionDragAdapter extends DragSourceAdapter implements TransferDragSourceListener {
     
     /**
      * The associated viewer for the adapter
@@ -38,7 +38,7 @@ public class VariablesDragAdapter extends DragSourceAdapter implements TransferD
      * Constructor, takes the viewer that contains the selection provider 
      * @param view the associated view, <b>must</b> implement <code>ISelectionProvider</code>
      */
-    public VariablesDragAdapter(TreeModelViewer viewer) {
+    public SelectionDragAdapter(TreeModelViewer viewer) {
         Assert.isNotNull(viewer);
         fViewer = viewer;
     }

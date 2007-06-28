@@ -17,7 +17,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
- * 
+ * Default content provider for the expression manager.
  */
 public class ExpressionManagerContentProvider extends ElementContentProvider {
 
@@ -42,10 +42,11 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 		return id.equals(IDebugUIConstants.ID_EXPRESSION_VIEW);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate)
+	 */
 	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return ((IExpressionManager)element).hasExpressions();
 	}
 	
-	
-
 }

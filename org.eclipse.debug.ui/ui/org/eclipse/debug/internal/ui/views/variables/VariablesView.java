@@ -349,7 +349,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
      */
     protected void initDragAndDrop(TreeModelViewer viewer) {
         // Drag only
-        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getInstance()}, new VariablesDragAdapter(viewer));
+        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getInstance()}, new SelectionDragAdapter(viewer));
     }    
 
 	/* (non-Javadoc)

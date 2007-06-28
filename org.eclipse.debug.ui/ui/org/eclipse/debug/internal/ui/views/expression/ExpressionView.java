@@ -17,6 +17,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
+import org.eclipse.debug.internal.ui.views.variables.SelectionDragAdapter;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
@@ -137,7 +138,7 @@ public class ExpressionView extends VariablesView {
      * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#initDragAndDrop(org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer)
      */
     protected void initDragAndDrop(TreeModelViewer viewer) {
-        // Drop only
-        viewer.addDropSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(viewer));
+        viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
+        viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(viewer));
     }    	
 }
