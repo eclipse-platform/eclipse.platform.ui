@@ -180,6 +180,8 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 			//if no local file is available, obtain a cached file
 			if (localFile == null)
 				localFile = store.toLocalFile(EFS.CACHE, null);
+			if (localFile == null)
+				return null;
 			return Path.fromOSString(localFile.getAbsolutePath());
 		} catch (CoreException e) {
 			//this can only happen if the file system is not available for this scheme
