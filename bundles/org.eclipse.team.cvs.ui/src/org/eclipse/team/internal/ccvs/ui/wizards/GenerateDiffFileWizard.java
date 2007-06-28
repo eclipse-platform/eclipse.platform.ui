@@ -16,7 +16,7 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.resources.*;
@@ -1028,12 +1028,11 @@ public class GenerateDiffFileWizard extends Wizard {
     	private Button unified_selectionRelativeOption; //use path of whatever is selected
         private Button contextDiffOption;
         private Button regularDiffOption;
+        private final RadioButtonGroup diffTypeRadioGroup = new RadioButtonGroup();
+        private final RadioButtonGroup unifiedRadioGroup = new RadioButtonGroup();
 
         private boolean patchHasCommonRoot=true;
         protected IPath patchRoot=ResourcesPlugin.getWorkspace().getRoot().getFullPath();
-        
-        protected int selectedFormat;
-        protected int selectedRoot;
         
         private final DefaultValuesStore store;
         
@@ -1075,6 +1074,10 @@ public class GenerateDiffFileWizard extends Wizard {
             regularDiffOption = new Button(diffTypeGroup, SWT.RADIO);
             regularDiffOption.setText(CVSUIMessages.Standard_15); 
             
+            diffTypeRadioGroup.add(FORMAT_UNIFIED, unifiedDiffOption);
+			diffTypeRadioGroup.add(FORMAT_CONTEXT, contextDiffOption);
+			diffTypeRadioGroup.add(FORMAT_STANDARD, regularDiffOption);
+            
             //Unified Format Options
             Group unifiedGroup = new Group(composite, SWT.None);
             layout = new GridLayout();
@@ -1092,7 +1095,11 @@ public class GenerateDiffFileWizard extends Wizard {
             
             unified_selectionRelativeOption = new Button(unifiedGroup, SWT.RADIO);
             unified_selectionRelativeOption.setText(CVSUIMessages.GenerateDiffFileWizard_8);
-              
+            
+            unifiedRadioGroup.add(ROOT_WORKSPACE, unified_workspaceRelativeOption);
+            unifiedRadioGroup.add(ROOT_PROJECT, unified_projectRelativeOption);
+            unifiedRadioGroup.add(ROOT_SELECTION, unified_selectionRelativeOption);
+            
             Dialog.applyDialogFont(parent);
             
             initializeDefaultValues();
@@ -1102,7 +1109,7 @@ public class GenerateDiffFileWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					setEnableUnifiedGroup(true);
 					updateEnablements();
-					selectedFormat = FORMAT_UNIFIED;
+					diffTypeRadioGroup.setSelection(FORMAT_UNIFIED, false);
 				}
 			});
             
@@ -1110,7 +1117,7 @@ public class GenerateDiffFileWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					setEnableUnifiedGroup(false);
 					updateEnablements();
-					selectedFormat = FORMAT_CONTEXT;
+					diffTypeRadioGroup.setSelection(FORMAT_CONTEXT, false);
 				}
 			});
             
@@ -1118,86 +1125,71 @@ public class GenerateDiffFileWizard extends Wizard {
 				public void widgetSelected(SelectionEvent e) {
 					setEnableUnifiedGroup(false);
 					updateEnablements();
-					selectedFormat = FORMAT_STANDARD;
+					diffTypeRadioGroup.setSelection(FORMAT_STANDARD, false);
 				}
 			});
             
             unified_workspaceRelativeOption
 					.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							selectedRoot = ROOT_WORKSPACE;
+							unifiedRadioGroup.setSelection(ROOT_WORKSPACE, false);
 						}
 					});
 
 			unified_projectRelativeOption
 					.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							selectedRoot = ROOT_PROJECT;
+							unifiedRadioGroup.setSelection(ROOT_PROJECT, false);
 						}
 					});
 
 			unified_selectionRelativeOption
 					.addSelectionListener(new SelectionAdapter() {
 						public void widgetSelected(SelectionEvent e) {
-							selectedRoot = ROOT_SELECTION;
+							unifiedRadioGroup.setSelection(ROOT_SELECTION, false);
 						}
 					});    
             	
            calculatePatchRoot();
            updateEnablements();
+			
+			// update selection 
+			diffTypeRadioGroup.selectEnabledOnly();
+			unifiedRadioGroup.selectEnabledOnly();
         }
         
         public int getFormatSelection() {
-			return selectedFormat;
+			return diffTypeRadioGroup.getSelected();
 		}
 
 		public int getRootSelection() {
-			return selectedRoot;
+			return unifiedRadioGroup.getSelected();
 		}
 
 		private void initializeDefaultValues() {
-			selectedFormat = store.getFormatSelection();
-			selectedRoot = store.getRootSelection();
-
-			updateRadioButtons();
-		}
-
-		private void updateRadioButtons() {
-			/**
-			 * Radio buttons for format
-			 */
-			unifiedDiffOption.setSelection(selectedFormat == FORMAT_UNIFIED);
-			contextDiffOption.setSelection(selectedFormat == FORMAT_CONTEXT);
-			regularDiffOption.setSelection(selectedFormat == FORMAT_STANDARD);
-
-			if (selectedFormat != FORMAT_UNIFIED) {
+			// Radio buttons for format
+			diffTypeRadioGroup.setSelection(store.getFormatSelection(), true);
+			// Radio buttons for patch root
+			unifiedRadioGroup.setSelection(store.getRootSelection(), true);
+			
+			if (store.getFormatSelection() != FORMAT_UNIFIED) {
 				setEnableUnifiedGroup(false);
 			}
-
-			/**
-			 * Radio buttons for patch root
-			 */
-			unified_workspaceRelativeOption
-					.setSelection(selectedRoot == ROOT_WORKSPACE);
-			unified_projectRelativeOption
-					.setSelection(selectedRoot == ROOT_PROJECT);
-			unified_selectionRelativeOption
-					.setSelection(selectedRoot == ROOT_SELECTION);
 		}
 
         
         protected void updateEnablements() {
 			if (!patchHasCommonRoot){
-				unified_selectionRelativeOption.setEnabled(false);
-				unified_projectRelativeOption.setEnabled(false);
-				contextDiffOption.setEnabled(false);
-				regularDiffOption.setEnabled(false);
+				diffTypeRadioGroup.setEnablement(false, new int[] {
+						FORMAT_CONTEXT, FORMAT_STANDARD }, FORMAT_UNIFIED);
+				unifiedRadioGroup.setEnablement(false, new int[] {
+						ROOT_PROJECT, ROOT_SELECTION }, ROOT_WORKSPACE);
 			}
 			
 			// temporary until we figure out best way to fix synchronize view
 			// selection
 			if (!unifiedSelectionEnabled)
-        		unified_selectionRelativeOption.setEnabled(false);
+				unifiedRadioGroup.setEnablement(false, new int[] {ROOT_SELECTION});
 		}
 
         private void calculatePatchRoot(){
@@ -1285,13 +1277,12 @@ public class GenerateDiffFileWizard extends Wizard {
             return (LocalOption[]) options.toArray(new LocalOption[options.size()]);
         }
         protected void setEnableUnifiedGroup(boolean enabled){
-        	unified_workspaceRelativeOption.setEnabled(enabled);
-        	unified_projectRelativeOption.setEnabled(enabled);
-        	unified_selectionRelativeOption.setEnabled(enabled);
+        	unifiedRadioGroup.setEnablement(enabled, new int[] {
+					ROOT_WORKSPACE, ROOT_PROJECT, ROOT_SELECTION });
         	
         	//temporary until we figure out best way to fix synchronize view selection
         	if (!unifiedSelectionEnabled)
-        		unified_selectionRelativeOption.setEnabled(false);
+        		unifiedRadioGroup.setEnablement(false, new int[] {ROOT_SELECTION});
         }
     }
  
@@ -1614,4 +1605,155 @@ public class GenerateDiffFileWizard extends Wizard {
 		return locationPage;
 	}
 	
+	/**
+	 * The class maintain proper selection of radio button within the group:
+	 * <ul>
+	 * <li>Only one button can be selected at the time.</li>
+	 * <li>Disabled button can't be selected unless all buttons in the group
+	 * are disabled.</li>
+	 * </ul>
+	 */
+	/*private*/ class RadioButtonGroup {
+
+		/**
+		 * List of buttons in the group. Both radio groups contain 3 elements.
+		 */
+		private List buttons = new ArrayList(3);
+
+		/**
+		 * Index of the selected button.
+		 */
+		private int selected = 0;
+
+		/**
+		 * Add a button to the group. While adding a new button the method
+		 * checks if there is only one button selected in the group.
+		 * 
+		 * @param buttonCode
+		 *            A button's code (eg. <code>ROOT_WORKSPACE</code>). To get
+		 *            an index we need to subtract 1 from it.
+		 * @param button
+		 *            A button to add.
+		 */
+		public void add(int buttonCode, Button button) {
+			if (button != null && (button.getStyle() & SWT.RADIO) != 0) {
+				if (button.getSelection() && !buttons.isEmpty()) {
+					deselectAll();
+					selected = buttonCode - 1;
+				}
+				buttons.add(buttonCode - 1, button);
+			}
+		}
+
+		/**
+		 * Returns selected button's code.
+		 * 
+		 * @return Selected button's code.
+		 */
+		public int getSelected() {
+			return selected + 1;
+		}
+
+		/**
+		 * Set selection to the given button. When
+		 * <code>selectEnabledOnly</code> flag is true the returned value can
+		 * differ from the parameter when a button we want to set selection to
+		 * is disabled and there are other buttons which are enabled.
+		 * 
+		 * @param buttonCode
+		 *            A button's code (eg. <code>ROOT_WORKSPACE</code>). To get
+		 *            an index we need to subtract 1 from it.
+		 * @return Code of the button to which selection was finally set.
+		 */
+		public int setSelection(int buttonCode, boolean selectEnabledOnly) {
+			deselectAll();
+
+			((Button) buttons.get(buttonCode - 1)).setSelection(true);
+			selected = buttonCode - 1;
+			if (selectEnabledOnly)
+				selected = selectEnabledOnly() - 1;
+			return getSelected();
+		}
+
+		/**
+		 * Make sure that only an enabled radio button is selected.
+		 * 
+		 * @return A code of the selected button.
+		 */
+		public int selectEnabledOnly() {
+			deselectAll();
+
+			Button selectedButton = (Button) buttons.get(selected);
+			if (!selectedButton.isEnabled()) {
+				// if the button is disabled, set selection to an enabled one
+				for (Iterator iterator = buttons.iterator(); iterator.hasNext();) {
+					Button b = (Button) iterator.next();
+					if (b.isEnabled()) {
+						b.setSelection(true);
+						selected = buttons.indexOf(b);
+						return selected + 1;
+					}
+				}
+				// if none found, reset the initial selection
+				selectedButton.setSelection(true);
+			} else {
+				// because selection has been cleared, set it again
+				selectedButton.setSelection(true);
+			}
+			// return selected button's code so the value can be stored
+			return getSelected();
+		}
+
+		/**
+		 * Enable or disable given buttons.
+		 * 
+		 * @param enabled
+		 *            Indicates whether to enable or disable the buttons.
+		 * @param buttonsToChange
+		 *            Buttons to enable/disable.
+		 * @param defaultSelection
+		 *            The button to select if the currently selected button
+		 *            becomes disabled.
+		 */
+		public void setEnablement(boolean enabled, int[] buttonsToChange,
+				int defaultSelection) {
+
+			// enable (or disable) given buttons
+			for (int i = 0; i < buttonsToChange.length; i++) {
+				((Button) this.buttons.get(buttonsToChange[i] - 1))
+						.setEnabled(enabled);
+			}
+			// check whether the selected button is enabled
+			if (!((Button) this.buttons.get(selected)).isEnabled()) {
+				if (defaultSelection != -1)
+					// set the default selection and check if it's enabled
+					setSelection(defaultSelection, true);
+				else
+					// no default selection is given, select any enabled button
+					selectEnabledOnly();
+			}
+		}
+
+		/**
+		 * Enable or disable given buttons with no default selection. The selection
+		 * will be set to an enabled button using the <code>selectEnabledOnly</code> method.
+		 * 
+		 * @param enabled Indicates whether to enable or disable the buttons.
+		 * @param buttonsToChange Buttons to enable/disable.
+		 */
+		public void setEnablement(boolean enabled, int[] buttonsToChange) {
+			// -1 means that no default selection is given
+			setEnablement(enabled, buttonsToChange, -1);
+		}
+
+		/**
+		 * Deselect all buttons in the group.
+		 */
+		private void deselectAll() {
+			// clear all selections
+			for (Iterator iterator = buttons.iterator(); iterator.hasNext();)
+				((Button) iterator.next()).setSelection(false);
+		}
+	}
+		
 }

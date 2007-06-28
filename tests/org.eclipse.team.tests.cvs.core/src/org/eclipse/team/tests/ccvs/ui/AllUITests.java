@@ -33,6 +33,7 @@ public class AllUITests extends EclipseTest {
 		suite.addTest(MiscOperationsTests.suite());
 		suite.addTest(ProjectSetImporterTests.suite());
 		suite.addTest(EditorTests.suite());
+		suite.addTest(PatchWizardRadioButtonGroupTests.suite());
 		return suite;
 	}
 	
