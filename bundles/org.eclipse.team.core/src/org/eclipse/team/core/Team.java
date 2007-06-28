@@ -88,12 +88,12 @@ public final class Team {
 	}
 
 	/**
-	 * Returns whether the given file should be ignored.
+	 * Returns whether the given file or folder with its content should be ignored.
 	 * 
 	 * This method answers true if the file matches one of the global ignore
 	 * patterns, or if the file is marked as derived.
 	 * 
-	 * @param resource  the file
+	 * @param resource the file or folder
 	 * @return whether the file should be ignored
 	 */
 	public static boolean isIgnoredHint(IResource resource) {
@@ -113,7 +113,11 @@ public final class Team {
 	private static boolean matchesEnabledIgnore(IResource resource) {
 		StringMatcher[] matchers = getStringMatchers();
 		for (int i = 0; i < matchers.length; i++) {
-			if (matchers[i].match(resource.getName())) return true;
+			String resourceName = resource.getName();
+			if(matchers[i].isPathPattern()) {
+				resourceName = resource.getFullPath().toString();
+			}
+			if (matchers[i].match(resourceName)) return true;
 		}
 		return false;
 	}

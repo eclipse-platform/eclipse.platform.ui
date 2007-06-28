@@ -29,6 +29,7 @@ public class StringMatcher {
 
 	/* boundary value beyond which we don't need to search in the text */
 	protected int fBound = 0;
+	private boolean pathPattern;
 	
 
 	protected static final char fSingleWildCard = '\u0000';
@@ -126,6 +127,8 @@ public class StringMatcher {
 		fIgnoreWildCards = ignoreWildCards;
 		fLength = aPattern.length();
 
+		pathPattern = aPattern.indexOf('/') != -1;
+		
 		/* convert case */
 		if (fIgnoreCase) {
 			fPattern = aPattern.toUpperCase();
@@ -224,6 +227,15 @@ public class StringMatcher {
 	public boolean  match(String text) {
 		return match(text, 0, text.length());
 	}
+	
+	/**
+	 * check existence of '/' in the pattern. 
+	 * @return <b>true</b> if pattern contains '/' 
+	 */
+	public boolean isPathPattern() {
+		return pathPattern;
+	}
+	
 	/**
 	 * This method parses the given pattern into segments seperated by wildcard '*' characters.
 	 * Since wildcards are not being used in this case, the pattern consists of a single segment.
