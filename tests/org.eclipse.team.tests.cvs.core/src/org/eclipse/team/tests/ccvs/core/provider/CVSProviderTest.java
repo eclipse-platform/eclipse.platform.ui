@@ -240,6 +240,26 @@ public class CVSProviderTest extends EclipseTest {
 		updateProject(branchCopy, null, false);
 		assertEquals(branchCopy, project, false, true);
 	}
+	
+	public void testDuplicatedBranch() throws TeamException, CoreException {
+		// Create a test project
+		IProject project = createProject("testDuplicatedBranch", new String[] {
+				"file1.txt", "file2.txt", "file3.txt", "folder1/",
+				"folder1/a.txt", "folder1/b.txt" });
+
+		// Create a branch
+		CVSTag version = new CVSTag("v1", CVSTag.BRANCH);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		makeBranch(new IResource[] { project }, version, branch, false);
+
+		// Create the second branch using the same names
+		try {
+			makeBranch(new IResource[] { project }, version, branch, false);
+			fail();
+		} catch (CVSException e) {
+
+		}
+	}
 
 	public void testPruning() throws TeamException, CoreException, IOException {
 		// Create a project with empty folders

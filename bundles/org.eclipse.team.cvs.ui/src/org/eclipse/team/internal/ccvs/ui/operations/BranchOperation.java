@@ -337,4 +337,9 @@ public class BranchOperation extends RepositoryProviderOperation {
 		}
 		return versionName;
 	}
+	
+	protected boolean isReportableError(IStatus status) {
+		return super.isReportableError(status)
+				|| status.getCode() == CVSStatus.TAG_ALREADY_EXISTS;
+	}
 }
