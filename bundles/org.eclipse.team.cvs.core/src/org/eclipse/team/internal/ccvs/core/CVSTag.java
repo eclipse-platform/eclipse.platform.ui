@@ -41,7 +41,7 @@ public class CVSTag implements ITag {
 		tagNameFormat.setTimeZone(TimeZone.getTimeZone("GMT"));//$NON-NLS-1$
 		return tagNameFormat.format(date); 
 	}
-	protected static Date tagNameToDate(String name){
+	protected synchronized static Date tagNameToDate(String name){
 		if (name == null) return null;		
 		try {
 			return tagNameFormat.parse(name);
