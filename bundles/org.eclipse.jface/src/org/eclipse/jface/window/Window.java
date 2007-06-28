@@ -302,6 +302,11 @@ public abstract class Window implements IShellProvider {
 	 * This framework method may be extended (<code>super.close</code> must
 	 * be called).
 	 * </p>
+	 * <p>
+	 *  Note that in order to prevent recursive calls to this method 
+	 *  it does not call <code>Shell#close()</code>. As a result <code>ShellListener</code>s 
+	 *  will not receive a <code>shellClosed</code> event.
+	 *  </p>
 	 * 
 	 * @return <code>true</code> if the window is (or was already) closed, and
 	 *         <code>false</code> if it is still open
