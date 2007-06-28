@@ -399,6 +399,14 @@
             id="org.eclipse.ui.ide.animations"
             label="%PreferenceKeywords.Animations">
       </keyword>
+      <keyword
+            id="org.eclipse.ui.ide.state"
+            label="%PreferenceKeywords.State">
+      </keyword>
+      <keyword
+            id="org.eclipse.ui.ide.restore"
+            label="%PreferenceKeywords.Restore">
+      </keyword>
    </extension>      
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -419,6 +427,12 @@
          <keywordReference id="org.eclipse.ui.ide.pin"/>
          <keywordReference id="org.eclipse.ui.ide.dirty"/>
          <keywordReference id="org.eclipse.ui.ide.close"/>
+         <keywordReference
+               id="org.eclipse.ui.ide.restore">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.ui.ide.state">
+         </keywordReference>
       </page>
       <page
             name="%PreferencePages.Perspectives"
