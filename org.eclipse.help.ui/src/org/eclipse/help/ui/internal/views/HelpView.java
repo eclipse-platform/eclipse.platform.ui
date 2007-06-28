@@ -165,7 +165,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		if (provider instanceof IPostSelectionProvider)
 			((IPostSelectionProvider) provider)
 					.removePostSelectionChangedListener(this);
-		else
+		else if (provider != null)
 			provider.removeSelectionChangedListener(this);
 		monitoredPart = null;
 	}
