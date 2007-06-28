@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -96,7 +97,19 @@ public class MarkerViewPreferenceDialog extends ViewSettingsDialog {
 		editArea.setLayoutData(editData);
 
 		limitEditor = new IntegerFieldEditor(
-				"limit", MarkerMessages.MarkerPreferences_VisibleItems, editArea);//$NON-NLS-1$
+				"limit", MarkerMessages.MarkerPreferences_VisibleItems, editArea){ //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.preference.IntegerFieldEditor#checkState()
+			 */
+			protected boolean checkState() {
+				boolean state = super.checkState();
+				Button okButton = getButton(IDialogConstants.OK_ID);
+				if (okButton != null){
+					okButton.setEnabled(state);
+				}
+				return state;
+			}
+		};
 		limitEditor.setPreferenceStore(IDEWorkbenchPlugin.getDefault()
 				.getPreferenceStore());
 		limitEditor.setPreferenceName(limitKey);
