@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,14 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 
 	/**
 	 * Constructor for DetailsDialogWithProjects.
-	 * @param parentShell
-	 * @param dialogTitle
+	 * 
+	 * @param parentShell the parent shell
+	 * @param dialogTitle the dialog title
+	 * @param dialogMessage the dialog message
+	 * @param detailsTitle the details title
+	 * @param projects the <code>IProject</code>s
+	 * @param includeCancelButton <code>true</code> if the 'Cancel' button should be shown
+	 * @param imageKey the image key (one of the image constants on Dialog)
 	 */
 	public DetailsDialogWithProjects(Shell parentShell, String dialogTitle, String dialogMessage, String detailsTitle, IProject[] projects, boolean includeCancelButton, String imageKey) {
 		super(parentShell, dialogTitle);
@@ -49,11 +55,7 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 	protected void createMainDialogArea(Composite composite) {
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(message); 
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
+		GridData data = new GridData(SWT.FILL, SWT.FILL | SWT.CENTER, true, false);
 		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label.setLayoutData(data);
 		updateEnablements();
@@ -73,16 +75,17 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		if (detailsTitle != null) {
+			Label title = new Label(composite, SWT.WRAP);
+			title.setText(detailsTitle);
+			title.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		}
+		
 		detailsList = new org.eclipse.swt.widgets.List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);	 
-		GridData data = new GridData ();		
-		data.heightHint = 75;
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
+		GridData data = new GridData (SWT.FILL, SWT.FILL, true, true);		
+		data.heightHint = convertHeightInCharsToPixels(5);
 		detailsList.setLayoutData(data);
 		
-		if (detailsTitle != null) {
-			detailsList.add(detailsTitle);
-		}
 		
 		for (int i = 0; i < projects.length; i++) {
 			detailsList.add(projects[i].getName()); 
@@ -103,5 +106,13 @@ public class DetailsDialogWithProjects extends DetailsDialog {
 	protected boolean includeCancelButton() {
 		return includeCancelButton;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#isMainGrabVertical()
+     * @since 3.4
+     */
+    protected boolean isMainGrabVertical() {
+        return false;
+    }
 
 }
