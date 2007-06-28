@@ -82,8 +82,6 @@ public interface IDebugHelpContextIds {
 	// Preference pages
 	public static final String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context"; //$NON-NLS-1$
 	public static final String CONSOLE_PREFERENCE_PAGE = PREFIX + "console_preference_page_context"; //$NON-NLS-1$
-	public static final String DEBUG_ACTION_GROUPS_PREFERENCE_PAGE = PREFIX + "debug_action_groups_views_preference_page_context"; //$NON-NLS-1$
-	public static final String LAUNCH_HISTORY_PREFERENCE_PAGE = PREFIX + "launch_history_preference_page_context"; //$NON-NLS-1$
 	public static final String SIMPLE_VARIABLE_PREFERENCE_PAGE = PREFIX + "simple_variable_preference_page_context"; //$NON-NLS-1$
 	public static final String PERSPECTIVE_PREFERENCE_PAGE = PREFIX + "perspective_preference_page_context"; //$NON-NLS-1$
 	public static final String LAUNCHING_PREFERENCE_PAGE = PREFIX + "launching_preference_page_context"; //$NON-NLS-1$
@@ -103,8 +101,6 @@ public interface IDebugHelpContextIds {
 	public static final String ADD_FOLDER_CONTAINER_DIALOG = PREFIX + "folder_source_container_dialog";//$NON-NLS-1$
 	public static final String ADD_ARCHIVE_CONTAINER_DIALOG = PREFIX + "archive_source_container_dialog";//$NON-NLS-1$
 	public static final String MULTIPLE_SOURCE_DIALOG = PREFIX + "multiple_source_selection_dialog";//$NON-NLS-1$
-	public static final String FIND_EXPRESSION_DIALOG = PREFIX + "find_expressions_dialog_context"; //$NON-NLS-1$
-	public static final String FIND_VARIABLES_DIALOG = PREFIX + "find_variables_dialog_context"; //$NON-NLS-1$
 	public static final String ADD_WATCH_EXPRESSION_DIALOG= PREFIX + "add_watch_expression_dialog_context"; //$NON-NLS-1$
 	public static final String EDIT_WATCH_EXPRESSION_DIALOG = PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
 	public static final String FIND_ELEMENT_DIALOG = PREFIX + "find_element_dialog_context"; //$NON-NLS-1$
