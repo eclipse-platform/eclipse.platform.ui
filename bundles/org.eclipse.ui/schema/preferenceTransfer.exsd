@@ -158,7 +158,7 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
    <element name="settingsTransfer">
       <annotation>
          <documentation>
-            A settings transfer is the definition of a transfer of internal state from one workbench to another.
+            A settings transfer is the definition of a transfer of internal state from one workbench to another. Added in 3.3.
          </documentation>
       </annotation>
       <complexType>

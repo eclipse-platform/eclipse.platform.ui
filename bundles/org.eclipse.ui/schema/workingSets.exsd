@@ -104,7 +104,7 @@ The resource navigator uses a working set to filter elements from the navigator 
          <attribute name="elementAdapterClass" type="string">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetElementAdapter&lt;/samp&gt;.  Use of this attribute will not cause eager plug-in activation.  This class will only be instantiated when the declaring bundle is otherwise activated.
+                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetElementAdapter&lt;/samp&gt;.  Use of this attribute will not cause eager plug-in activation.  This class will only be instantiated when the declaring bundle is otherwise activated. Added in 3.3.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkingSetElementAdapter"/>
