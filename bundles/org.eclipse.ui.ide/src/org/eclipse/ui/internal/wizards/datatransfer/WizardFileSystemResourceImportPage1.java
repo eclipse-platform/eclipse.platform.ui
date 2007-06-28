@@ -406,7 +406,6 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		}
 
         setErrorMessage(DataTransferMessages.FileImport_invalidSource);
-        sourceNameField.setFocus();
         return false;
     }
 
