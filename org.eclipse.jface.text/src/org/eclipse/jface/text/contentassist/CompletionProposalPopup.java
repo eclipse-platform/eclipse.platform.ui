@@ -1098,6 +1098,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (key == 0) {
 			int newSelection= fProposalTable.getSelectionIndex();
 			int visibleRows= (fProposalTable.getSize().y / fProposalTable.getItemHeight()) - 1;
+			int itemCount= fProposalTable.getItemCount();
 			boolean smartToggle= false;
 			switch (e.keyCode) {
 
@@ -1109,19 +1110,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 				case SWT.ARROW_UP :
 					newSelection -= 1;
 					if (newSelection < 0)
-						newSelection= fProposalTable.getItemCount() - 1;
+						newSelection= itemCount - 1;
 					break;
 
 				case SWT.ARROW_DOWN :
 					newSelection += 1;
-					if (newSelection > fProposalTable.getItemCount() - 1)
+					if (newSelection > itemCount - 1)
 						newSelection= 0;
 					break;
 
 				case SWT.PAGE_DOWN :
 					newSelection += visibleRows;
-					if (newSelection >= fProposalTable.getItemCount())
-						newSelection= fProposalTable.getItemCount() - 1;
+					if (newSelection >= itemCount)
+						newSelection= itemCount - 1;
 					break;
 
 				case SWT.PAGE_UP :
@@ -1135,7 +1136,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 					break;
 
 				case SWT.END :
-					newSelection= fProposalTable.getItemCount() - 1;
+					newSelection= itemCount - 1;
 					break;
 
 				default :
