@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -110,7 +106,11 @@ public abstract class TagSource {
     }
 
     private static ICVSFolder[] getFolders(ICVSResource[] resources) {
-        return new ICVSFolder[] { getFirstFolder(resources) } ;
+    	HashSet result= new HashSet();
+    	for (int i= 0; i < resources.length; i++) {
+    		result.add(getFirstFolder(resources[i]));
+		}
+    	return (ICVSFolder[]) result.toArray(new ICVSFolder[result.size()]);
     }
 
     /**
@@ -167,11 +167,11 @@ public abstract class TagSource {
         return (ICVSResource[]) cvsResources.toArray(new ICVSResource[cvsResources.size()]);
     }
 
-    private static ICVSFolder getFirstFolder(ICVSResource[] resources) {
-		if (resources[0].isFolder()) {
-			return (ICVSFolder)resources[0];
+    private static ICVSFolder getFirstFolder(ICVSResource resource) {
+		if (resource.isFolder()) {
+			return (ICVSFolder)resource;
 		} else {
-			return resources[0].getParent();
+			return resource.getParent();
 		}
 	}
 	
@@ -241,7 +241,7 @@ public abstract class TagSource {
         Object[] list = listeners.getListeners();
         for (int i = 0; i < list.length; i++) {
             final ITagSourceChangeListener listener = (ITagSourceChangeListener)list[i];
-            Platform.run(new ISafeRunnable() {
+            SafeRunner.run(new ISafeRunnable() {
                 public void handleException(Throwable exception) {
                     // logged by run
                 }

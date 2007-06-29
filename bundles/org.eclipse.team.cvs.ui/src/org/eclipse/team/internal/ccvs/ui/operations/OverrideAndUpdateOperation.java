@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.ui.IWorkbenchPart;
@@ -39,12 +38,12 @@ public class OverrideAndUpdateOperation extends ReplaceOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation#getResourcesToUpdate(org.eclipse.team.internal.ccvs.core.ICVSResource[])
 	 */
-	protected ICVSResource[] getResourcesToUpdate(ICVSResource[] resources) throws CVSException {
+	protected ICVSResource[] getResourcesToUpdate(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		// Add the conflicting additions to the list of resources to update
 		Set update = new HashSet();
 		ICVSResource[] conflicts = getCVSArguments(conflictingAdditions);
 		update.addAll(Arrays.asList(conflicts));
-		update.addAll(Arrays.asList(super.getResourcesToUpdate(resources)));
+		update.addAll(Arrays.asList(super.getResourcesToUpdate(resources, monitor)));
 		return (ICVSResource[]) update.toArray(new ICVSResource[update.size()]);
 	}
 	

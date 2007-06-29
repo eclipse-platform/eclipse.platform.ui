@@ -128,5 +128,12 @@ public class CVSTag implements ITag {
 	public Date asDate(){
 		return tagNameToDate(name);
 	}
+	public boolean isHeadTag() {
+		return getType() == HEAD || (getType() == VERSION && getName().equals("HEAD")); //$NON-NLS-1$
+	}
+	
+	public boolean isBaseTag() {
+		return getType() == VERSION && getName().equals("BASE"); //$NON-NLS-1$
+	}
 
 }

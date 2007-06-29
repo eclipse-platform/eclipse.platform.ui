@@ -11,22 +11,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.PrepareForReplaceVisitor;
-import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -82,7 +83,7 @@ public class ReplaceOperation extends UpdateOperation {
 
     private IStatus internalExecuteCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
         monitor.beginTask(null, 100);
-        ICVSResource[] managedResources = getResourcesToUpdate(resources);
+        ICVSResource[] managedResources = getResourcesToUpdate(resources, Policy.subMonitorFor(monitor, 5));
         try {
         	// Purge any unmanaged or added files
         	PrepareForReplaceVisitor pfrv = new PrepareForReplaceVisitor(session, getTag());
@@ -91,7 +92,7 @@ public class ReplaceOperation extends UpdateOperation {
         		resources, 
         		CVSUIMessages.ReplaceOperation_1, 
         		recurse ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE, 
-        		Policy.subMonitorFor(monitor, 30));
+        		Policy.subMonitorFor(monitor, 25));
         	prepDeletedFiles = pfrv.getDeletedFiles();
         	
         	// Only perform the remote command if some of the resources being replaced were managed
@@ -120,21 +121,56 @@ public class ReplaceOperation extends UpdateOperation {
 	 * @return resources that are to be updated from the server
 	 * @throws CVSException
 	 */
-	protected ICVSResource[] getResourcesToUpdate(ICVSResource[] resources) throws CVSException {
+	protected ICVSResource[] getResourcesToUpdate(ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		// Accumulate the managed resources from the list of provided resources
 		List managedResources = new ArrayList();
+		monitor.beginTask(null, resources.length * 100);
 		for (int i = 0; i < resources.length; i++) {
 			ICVSResource resource = resources[i];
 			if ((resource.isFolder() && ((ICVSFolder)resource).isCVSFolder())) {
-				managedResources.add(resource);
+				addResourceIfTagExists(managedResources, resource, Policy.subMonitorFor(monitor, 100));
 			} else if (!resource.isFolder()){
 				byte[] syncBytes = ((ICVSFile)resource).getSyncBytes();
 				if (syncBytes != null && !ResourceSyncInfo.isAddition(syncBytes)) {
-					managedResources.add(resource);
+					addResourceIfTagExists(managedResources, resource, Policy.subMonitorFor(monitor, 100));
 				}
 			}
 		}
+		monitor.done();
 		return (ICVSResource[]) managedResources.toArray(new ICVSResource[managedResources.size()]);
+	}
+
+	private void addResourceIfTagExists(List managedResources, ICVSResource resource, IProgressMonitor monitor) {
+		CVSTag tag = getTag();
+		if (tag.getType() == CVSTag.DATE || tag.isHeadTag() || tag.isBaseTag()) {
+			// No need to check for date, head or base tags
+			managedResources.add(resource);
+		} else {
+			TagSource tagSource= TagSource.create(new ICVSResource[] { resource });
+			if (isTagPresent(tagSource, tag)) {
+				managedResources.add(resource);
+			} else {
+				// If the tag usn't present, lets refresh just to make sure
+				try {
+					tagSource.refresh(false, monitor);
+					if (isTagPresent(tagSource, tag)) {
+						managedResources.add(resource);
+					} else {
+						tagSource.refresh(true, monitor);
+						if (isTagPresent(tagSource, tag)) {
+							managedResources.add(resource);
+						}
+					}
+				} catch (TeamException e) {
+					CVSUIPlugin.log(e);
+				}
+			}
+		}
+	}
+	
+	private boolean isTagPresent(TagSource tagSource, CVSTag tag) {
+		CVSTag[] tags= tagSource.getTags(TagSource.convertIncludeFlaqsToTagTypes(TagSourceWorkbenchAdapter.INCLUDE_ALL_TAGS));
+		return Arrays.asList(tags).contains(tag);
 	}
 	
 	/* (non-Javadoc)
