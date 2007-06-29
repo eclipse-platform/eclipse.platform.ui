@@ -30,6 +30,7 @@ public class EnabledTopicTest extends TestCase {
 		
 		private String label;
 		private boolean isEnabled;
+		private List children = new ArrayList();
 
 		public ETopic(String label, boolean isEnabled) {
 			this.label = label; 
@@ -37,12 +38,12 @@ public class EnabledTopicTest extends TestCase {
 		}
 
 		public ITopic[] getSubtopics() {
-			return new ITopic[0];
+			return (ITopic[])children.toArray(new ITopic[children.size()]);
 		}
 
 		public IUAElement[] getChildren() {
 
-			return new IUAElement[0];
+			return getSubtopics();
 		}
 
 		public boolean isEnabled(IEvaluationContext context) {
@@ -50,12 +51,28 @@ public class EnabledTopicTest extends TestCase {
 		}
 
 		public String getHref() {
-			return null;
+			return "http://www.eclipse.org";
 		}
 
 		public String getLabel() {
 			return label;
-		}		
+		}	
+		
+		public void addSubTopic(ITopic subTopic) {
+			children.add(subTopic);
+		}
+	}
+	
+	private class NoHrefTopic extends ETopic {
+		
+		public NoHrefTopic(String label) {
+			super(label, true);
+		}
+		
+		public String getHref() {
+			return null;
+		}
+		
 	}
 	
 	private class EIndexEntry extends UAElement implements IIndexEntry  {
@@ -142,6 +159,46 @@ public class EnabledTopicTest extends TestCase {
         assertEquals(2, enabled.length);
         assertEquals("T1", enabled[0].getLabel());
         assertEquals("T3", enabled[1].getLabel());
+	}
+
+	public void testNoHref() {
+		ITopic noHref = new NoHrefTopic("N1");
+		assertFalse(EnabledTopicUtils.isEnabled(noHref));
+	}
+
+	public void testNoHrefValidChild() {
+		ETopic noHref = new NoHrefTopic("N1");
+		noHref.addSubTopic(new ETopic("T1", true));
+		assertTrue(EnabledTopicUtils.isEnabled(noHref));
+	}
+
+	public void testNoHrefInvalidChild() {
+		ETopic noHref = new NoHrefTopic("N1");
+		noHref.addSubTopic(new ETopic("T1", false));
+		assertFalse(EnabledTopicUtils.isEnabled(noHref));
+	}
+	
+	public void testNoHrefMixedChildren() {
+		ETopic noHref = new NoHrefTopic("N1");
+		noHref.addSubTopic(new ETopic("T1", false));
+		noHref.addSubTopic(new ETopic("T2", true));
+		assertTrue(EnabledTopicUtils.isEnabled(noHref));
+	}
+
+	public void testNoHrefValidGrandchild() {
+		ETopic noHref = new NoHrefTopic("N1");
+		ETopic subTopic = new NoHrefTopic("N2");
+		noHref.addSubTopic(subTopic);
+		subTopic.addSubTopic(new ETopic("T2", true));
+		assertTrue(EnabledTopicUtils.isEnabled(noHref));
+	}
+	
+	public void testNoHrefInvalidGrandchild() {
+		ETopic noHref = new NoHrefTopic("N1");
+		ETopic subTopic = new NoHrefTopic("N2");
+		noHref.addSubTopic(subTopic);
+		subTopic.addSubTopic(new ETopic("T2", false));
+		assertFalse(EnabledTopicUtils.isEnabled(noHref));
 	}
 
 	public void testEmptyIndexEntry() {

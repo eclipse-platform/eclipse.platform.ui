@@ -128,7 +128,7 @@ public class TocFragmentServlet extends HttpServlet {
 		}
 	
 		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {
-			ITopic[] topics = tocData.getEnabledSubtopics(toc);
+			ITopic[] topics = EnabledTopicUtils.getEnabled(toc.getTopics());
 			if (topics.length <= 0) {
 				// do not generate toc when there are no leaf topics
 				return;

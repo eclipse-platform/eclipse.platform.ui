@@ -31,7 +31,20 @@ public class EnabledTopicUtils {
 	 * @return
 	 */
 	public static boolean isEnabled(ITopic topic) {
-		return topic.isEnabled(HelpEvaluationContext.getContext());
+		if (!topic.isEnabled(HelpEvaluationContext.getContext())) {
+			return false;
+		}
+		if (topic.getHref() != null) {
+			return true;
+		}
+		// A topic without an href is enabled only if at least one child is enabled
+		ITopic[] subtopics = topic.getSubtopics();
+		for (int i = 0; i < subtopics.length; i++) {
+			if (isEnabled(subtopics[i])) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -45,13 +58,13 @@ public class EnabledTopicUtils {
 		}
 		ITopic[] topics = entry.getTopics();
 		for (int i=0;i<topics.length;++i) {
-			if (EnabledTopicUtils.isEnabled(topics[i])) {
+			if (isEnabled(topics[i])) {
 				return true;
 			}
 		}
 		IIndexEntry[] subentries = entry.getSubentries();
 		for (int i=0;i<subentries.length;++i) {
-			if (EnabledTopicUtils.isEnabled(subentries[i])) {
+			if (isEnabled(subentries[i])) {
 				return true;
 			}
 		}
