@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -677,47 +677,49 @@ class ContextInformationPopup implements IContentAssistListener {
 		char key= e.character;
 		if (key == 0) {
 
-			int change;
+			int newSelection= fContextSelectorTable.getSelectionIndex();
 			int visibleRows= (fContextSelectorTable.getSize().y / fContextSelectorTable.getItemHeight()) - 1;
-			int selection= fContextSelectorTable.getSelectionIndex();
-
+			int itemCount= fContextSelectorTable.getItemCount();
 			switch (e.keyCode) {
-
-				case SWT.ARROW_UP:
-					change= (fContextSelectorTable.getSelectionIndex() > 0 ? -1 : 0);
+				case SWT.ARROW_UP :
+					newSelection -= 1;
+					if (newSelection < 0)
+						newSelection= itemCount - 1;
 					break;
 
-				case SWT.ARROW_DOWN:
-					change= (fContextSelectorTable.getSelectionIndex() < fContextSelectorTable.getItemCount() - 1 ? 1 : 0);
+				case SWT.ARROW_DOWN :
+					newSelection += 1;
+					if (newSelection > itemCount - 1)
+						newSelection= 0;
 					break;
 
 				case SWT.PAGE_DOWN :
-					change= visibleRows;
-					if (selection + change >= fContextSelectorTable.getItemCount())
-						change= fContextSelectorTable.getItemCount() - selection;
+					newSelection += visibleRows;
+					if (newSelection >= itemCount)
+						newSelection= itemCount - 1;
 					break;
 
 				case SWT.PAGE_UP :
-					change= -visibleRows;
-					if (selection + change < 0)
-						change= -selection;
+					newSelection -= visibleRows;
+					if (newSelection < 0)
+						newSelection= 0;
 					break;
 
 				case SWT.HOME :
-					change= -selection;
+					newSelection= 0;
 					break;
 
 				case SWT.END :
-					change= fContextSelectorTable.getItemCount() - selection;
+					newSelection= itemCount - 1;
 					break;
 
-				default:
+				default :
 					if (e.keyCode != SWT.CAPS_LOCK && e.keyCode != SWT.MOD1 && e.keyCode != SWT.MOD2 && e.keyCode != SWT.MOD3 && e.keyCode != SWT.MOD4)
 						hideContextSelector();
 					return true;
 			}
 
-			fContextSelectorTable.setSelection(selection + change);
+			fContextSelectorTable.setSelection(newSelection);
 			fContextSelectorTable.showSelection();
 			e.doit= false;
 			return false;
