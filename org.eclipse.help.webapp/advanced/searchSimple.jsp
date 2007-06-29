@@ -213,7 +213,7 @@ function onloadHandler(e)
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="advanced" href="javascript:openAdvanced();" alt='<%=ServletResources.getString("Advanced", request)%>' title='<%=ServletResources.getString("Advanced", request)%>' onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Advanced", request))%>'; return true;" onmouseout="window.status='';"><%=UrlUtil.JavaScriptEncode(ServletResources.getString("Advanced", request))%></a>&nbsp;
+					<a id="advanced" href="javascript:openAdvanced();" alt='<%=ServletResources.getString("Advanced", request)%>' title='<%=ServletResources.getString("Advanced", request)%>' onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Advanced", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getString("Advanced", request)%></a>&nbsp;
 				</td>
 			</tr>
 
