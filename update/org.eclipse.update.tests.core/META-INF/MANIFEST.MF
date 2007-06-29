@@ -28,9 +28,7 @@ Export-Package: org.eclipse.update.tests,
  org.eclipse.update.tests.uivalues
 Require-Bundle: org.eclipse.core.runtime,
  org.junit,
- org.eclipse.core.resources,
  org.eclipse.update.core,
- org.eclipse.tomcat,
  org.eclipse.help.appserver,
  org.eclipse.update.configurator,
  org.eclipse.test.performance
