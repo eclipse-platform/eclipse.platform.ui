@@ -399,6 +399,7 @@ public class CreateLinkedResourceGroup {
 		if (type == IResource.FILE) {
 			if (isDefault) {
 				FileDialog dialog = new FileDialog(linkTargetField.getShell());
+				dialog.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionTitle);
 				if (store != null) {
 					if (store.fetchInfo().isDirectory()) {
 						dialog.setFilterPath(linkTarget);
