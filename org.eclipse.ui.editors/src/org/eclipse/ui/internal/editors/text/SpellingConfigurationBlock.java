@@ -254,7 +254,12 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		PixelConverter pc= new PixelConverter(composite);
 		layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
-
+		
+		if (EditorsUI.getSpellingService().getSpellingEngineDescriptors().length == 0) {
+			Label label= new Label(composite, SWT.NONE);
+			label.setText(TextEditorMessages.SpellingConfigurationBlock_error_not_installed);
+			return composite;
+		}
 
 		/* check box for new editors */
 		fEnablementCheckbox= new Button(composite, SWT.CHECK);
@@ -436,13 +441,15 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	void updateListDependencies() {
 		SpellingEngineDescriptor desc= EditorsUI.getSpellingService().getActiveSpellingEngineDescriptor(fStore);
-		String id= desc != null ? desc.getId() : ""; //$NON-NLS-1$
+		String id;
 		if (desc == null) {
 			// safety in case there is no such descriptor
+			id= ""; //$NON-NLS-1$
 			String message= TextEditorMessages.SpellingConfigurationBlock_error_not_exist;
 			EditorsPlugin.log(new Status(IStatus.WARNING, EditorsUI.PLUGIN_ID, IStatus.OK, message, null));
 			fCurrentBlock= new ErrorPreferences(message);
 		} else {
+			id= desc.getId();
 			fCurrentBlock= (ISpellingPreferenceBlock) fProviderPreferences.get(id);
 			if (fCurrentBlock == null) {
 				try {
@@ -559,6 +566,9 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private void restoreFromPreferences() {
+		if (fEnablementCheckbox == null)
+			return;
+		
 		boolean enabled= fStore.getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED);
 		fEnablementCheckbox.setSelection(enabled);
 

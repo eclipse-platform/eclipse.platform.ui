@@ -110,6 +110,7 @@ final class TextEditorMessages extends NLS {
 	public static String SpellingConfigurationBlock_enable;
 	public static String SpellingConfigurationBlock_combo_caption;
 	public static String SpellingConfigurationBlock_info_no_preferences;
+	public static String SpellingConfigurationBlock_error_not_installed;
 	public static String SpellingConfigurationBlock_error_not_exist;
 	public static String SpellingConfigurationBlock_error_title;
 	public static String SpellingConfigurationBlock_error_message;

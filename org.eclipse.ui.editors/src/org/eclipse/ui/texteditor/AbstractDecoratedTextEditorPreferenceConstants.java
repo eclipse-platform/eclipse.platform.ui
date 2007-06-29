@@ -540,7 +540,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		 * reason we disable it when running the UI test application.
 		 */ 
 		boolean isInTestMode= System.getProperty("eclipse.perf.dbloc") != null; //$NON-NLS-1$
-		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, !isInTestMode);
+		boolean isInstalled= EditorsUI.getSpellingService().getSpellingEngineDescriptors().length > 0;
+		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, !isInTestMode && isInstalled);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENGINE, ""); //$NON-NLS-1$
 		
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
