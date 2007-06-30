@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93353 - 
+ *     [Dialogs] InternalErrorDialog#buttonPressed should explicitly call super
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -93,8 +95,7 @@ public class InternalErrorDialog extends MessageDialog {
         if (buttonId == detailButtonID) {
             toggleDetailsArea();
         } else {
-            setReturnCode(buttonId);
-            close();
+            super.buttonPressed(buttonId);
         }
     }
 
