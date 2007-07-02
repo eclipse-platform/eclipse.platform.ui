@@ -329,8 +329,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	protected ISharedTextColors getSharedColors() {
-		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
-		return sharedColors;
+		return EditorsPlugin.getDefault().getSharedTextColors();
 	}
 
 	protected IOverviewRuler createOverviewRuler(ISharedTextColors sharedColors) {
