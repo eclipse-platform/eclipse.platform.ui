@@ -758,29 +758,28 @@ class FindReplaceDialog extends Dialog {
 	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
 
 		if (forwardSearch) {
-			if (wrapSearch) {
-				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
-				if (index == -1) {
-					if (okToUse(getShell()) && !isIncrementalSearch())
-						getShell().getDisplay().beep();
-					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
-				}
-				return index;
-			}
-			return findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
-		}
-
-		// backward
-		if (wrapSearch) {
-			int index= findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
+			int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
-				if (okToUse(getShell()) && !isIncrementalSearch())
+				if (okToUse(getShell()))
 					getShell().getDisplay().beep();
-				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
+
+				if (wrapSearch)
+					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
+
 			}
 			return index;
 		}
-		return findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
+
+		// backward
+		int index= startPosition == 0 ? -1 : findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
+		if (index == -1) {
+			if (okToUse(getShell()))
+				getShell().getDisplay().beep();
+
+			if (wrapSearch)
+				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
+		}
+		return index;
 	}
 
 	/**
