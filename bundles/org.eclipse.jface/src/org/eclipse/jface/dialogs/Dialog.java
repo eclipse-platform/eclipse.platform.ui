@@ -439,8 +439,13 @@ public abstract class Dialog extends Window {
 	 */
 	protected Dialog(IShellProvider parentShell) {
 		super(parentShell);
-		setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL
-				| getDefaultOrientation());
+		if (isResizable()) {
+			setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL | SWT.MAX | SWT.RESIZE
+					| getDefaultOrientation());
+		} else {
+			setShellStyle(SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL
+					| getDefaultOrientation());
+		}
 		setBlockOnOpen(true);
 	}
 
@@ -1268,5 +1273,32 @@ public abstract class Dialog extends Window {
 		// No attempt is made to constrain the bounds. The default
 		// constraining behavior in Window will be used.
 		return result;
+	}
+	
+	/**
+	 * Returns a boolean indicating whether the dialog should be
+	 * considered resizable when the shell style is initially
+	 * set.  
+	 * 
+	 * This method is used to ensure that all style 
+	 * bits appropriate for resizable dialogs are added to the 
+	 * shell style.  Individual dialogs may always set the shell 
+	 * style to ensure that a dialog is resizable, but using this
+	 * method ensures that resizable dialogs will be created with
+	 * the same set of style bits.
+	 * 
+	 * Style bits will never be removed based on the return value 
+	 * of this method.  For example, if a dialog returns 
+	 * <code>false</code>, but also sets a style bit for a 
+	 * SWT.RESIZE border, the style bit will be honored.
+	 * 
+	 * @return a boolean indicating whether the dialog is 
+	 * resizable and should have the default style bits for
+	 * resizable dialogs
+	 * 
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return false;
 	}
 }
