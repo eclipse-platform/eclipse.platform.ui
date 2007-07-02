@@ -760,7 +760,7 @@ class FindReplaceDialog extends Dialog {
 		if (forwardSearch) {
 			int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
-				if (okToUse(getShell()))
+				if (okToUse(getShell()) && !isIncrementalSearch())
 					getShell().getDisplay().beep();
 
 				if (wrapSearch)
@@ -773,7 +773,7 @@ class FindReplaceDialog extends Dialog {
 		// backward
 		int index= startPosition == 0 ? -1 : findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 		if (index == -1) {
-			if (okToUse(getShell()))
+			if (okToUse(getShell()) && !isIncrementalSearch())
 				getShell().getDisplay().beep();
 
 			if (wrapSearch)
