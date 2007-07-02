@@ -103,7 +103,6 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		super(parentShell);
 		this.container = container;
 		setTitle(IDEWorkbenchMessages.NewFolderDialog_title);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setStatusLineAboveButtons(true);
 	}
 

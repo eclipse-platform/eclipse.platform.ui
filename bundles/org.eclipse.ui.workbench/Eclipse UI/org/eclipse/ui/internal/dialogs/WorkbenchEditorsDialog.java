@@ -133,7 +133,6 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         super(window.getShell());
         this.window = window;
         setTitle(WorkbenchMessages.WorkbenchEditorsDialog_title); 
-        setShellStyle(getShellStyle() | SWT.RESIZE);
 
         IDialogSettings s = getDialogSettings();
         if (s.get(ALLPERSP) == null) {

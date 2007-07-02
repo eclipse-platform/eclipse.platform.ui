@@ -98,9 +98,6 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
         setResult(new ArrayList(0));
         setStatusLineAboveButtons(true);
-
-        int shellStyle = getShellStyle();
-        setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
     }
 
     /**

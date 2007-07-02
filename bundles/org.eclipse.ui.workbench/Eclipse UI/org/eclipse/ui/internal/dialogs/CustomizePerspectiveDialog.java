@@ -877,9 +877,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
      * @param persp the perspective
      */
     public CustomizePerspectiveDialog(IWorkbenchWindowConfigurer configurer, Perspective persp) {
-        super(configurer.getWindow().getShell());
-        setShellStyle(SWT.MAX | SWT.RESIZE | getShellStyle());
-        
+        super(configurer.getWindow().getShell());        
         this.configurer = configurer;
         perspective = persp;
         window = (WorkbenchWindow) configurer.getWindow();
@@ -1760,5 +1758,12 @@ public class CustomizePerspectiveDialog extends TrayDialog {
     protected boolean applyDialogFont() {
         return false;
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

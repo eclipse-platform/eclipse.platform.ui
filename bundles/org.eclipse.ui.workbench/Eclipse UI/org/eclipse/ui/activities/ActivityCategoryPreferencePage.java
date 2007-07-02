@@ -129,8 +129,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
          */
         protected AdvancedDialog(Shell parentShell) {
             super(parentShell);
-            setShellStyle(getShellStyle() | SWT.RESIZE);
-        }
+         }
         
         /* (non-Javadoc)
          * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
@@ -177,6 +176,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             } 
             return section;
     	}
+    	
+        /*
+         * (non-Javadoc)
+         * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+         */
+        protected boolean isResizable() {
+        	return true;
+        }
     }
     private class CategoryLabelProvider extends LabelProvider implements
             ITableLabelProvider, IActivityManagerListener {

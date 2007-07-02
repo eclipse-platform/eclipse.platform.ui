@@ -103,7 +103,6 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	public MarkerResolutionDialog(Shell shell, IMarker marker,
 			IMarkerResolution[] newResolutions, MarkerView view) {
 		super(shell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		initializeResolutionsSorter();
 		resolutionsComparator.sort(view.getViewer(), newResolutions);
 		resolutions = newResolutions;
@@ -748,5 +747,12 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		}
 		super.cancelPressed();
 	}
-
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

@@ -297,10 +297,14 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 */
 	public ProgressMonitorDialog(Shell parent) {
 		super(parent);
-		setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
-				| SWT.APPLICATION_MODAL); // no
-		// close
-		// button
+		// no close button on the shell style
+		if (isResizable()) {
+			setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
+					| SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.MAX); 
+		} else {
+			setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
+					| SWT.APPLICATION_MODAL); 
+		}
 		setBlockOnOpen(false);
 	}
 

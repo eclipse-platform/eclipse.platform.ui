@@ -80,9 +80,6 @@ public abstract class AbstractElementListSelectionDialog extends
             ILabelProvider renderer) {
         super(parent);
         fRenderer = renderer;
-
-        int shellStyle = getShellStyle();
-        setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
     }
 
     /**

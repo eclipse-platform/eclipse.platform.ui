@@ -89,7 +89,7 @@ public class StatusDialog extends ErrorDialog {
 				StatusAdapter.TITLE_PROPERTY), statusInfo.getStatus()
 				.getStatus().getMessage(), statusInfo.getStatus().getStatus(),
 				displayMask);
-		setShellStyle(SWT.RESIZE | SWT.MIN | getShellStyle());
+		setShellStyle(SWT.RESIZE | SWT.MAX | SWT.MIN | getShellStyle());
 		this.selectedStatus = statusInfo;
 		setBlockOnOpen(false);
 

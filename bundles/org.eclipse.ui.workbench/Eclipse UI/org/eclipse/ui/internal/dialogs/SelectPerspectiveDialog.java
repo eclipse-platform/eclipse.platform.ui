@@ -74,7 +74,6 @@ public class SelectPerspectiveDialog extends Dialog implements
             IPerspectiveRegistry perspReg) {
         super(parentShell);
         this.perspReg = perspReg;
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /*
@@ -262,5 +261,13 @@ public class SelectPerspectiveDialog extends Dialog implements
         if (WorkbenchActivityHelper.allowUseOf(triggerPoint, getSelection())) {
 			super.okPressed();
 		}
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
     }
 }

@@ -467,5 +467,12 @@ public abstract class ProductInfoDialog extends TrayDialog {
                 .size()][2]), (String[]) links
                 .toArray(new String[links.size()]));
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

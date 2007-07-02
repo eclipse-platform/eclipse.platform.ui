@@ -96,7 +96,6 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      */
     public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
         super(parentShell, workingSetIds);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         initWorkbenchWindow();
         
         contentProvider = new ArrayContentProvider();

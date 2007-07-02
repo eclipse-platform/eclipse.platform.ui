@@ -486,7 +486,6 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	DialogMarkerFilter(Shell parentShell, MarkerFilter[] filtersList) {
 		super(parentShell);
 		setFilters(filtersList);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/**
@@ -1484,5 +1483,12 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		createButton(buttons, DESELECT_ALL_FILTERS_ID,
 				MarkerMessages.filtersDialog_deselectAll, false);
 	}
-
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

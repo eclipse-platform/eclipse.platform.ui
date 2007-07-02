@@ -94,7 +94,6 @@ public class ContainerSelectionDialog extends SelectionDialog {
 		} else {
 			setMessage(IDEWorkbenchMessages.ContainerSelectionDialog_message);
 		}
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /* (non-Javadoc)

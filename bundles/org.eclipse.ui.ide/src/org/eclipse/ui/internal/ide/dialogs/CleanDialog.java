@@ -100,7 +100,6 @@ public class CleanDialog extends MessageDialog {
         if (this.selection == null) {
 			this.selection = new Object[0];
 		}
-        setShellStyle(SWT.RESIZE | getShellStyle());
     }
 
     /*
@@ -354,4 +353,11 @@ public class CleanDialog extends MessageDialog {
         return initialSize;
     }
     
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

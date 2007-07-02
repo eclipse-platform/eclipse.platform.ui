@@ -218,7 +218,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	public FilteredItemsSelectionDialog(Shell shell, boolean multi) {
 		super(shell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
 		filterHistoryJob = new FilterHistoryJob();
 		filterJob = new FilterJob();

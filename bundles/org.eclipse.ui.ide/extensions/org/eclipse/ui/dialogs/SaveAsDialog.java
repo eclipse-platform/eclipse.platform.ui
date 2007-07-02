@@ -80,7 +80,6 @@ public class SaveAsDialog extends TitleAreaDialog {
      */
     public SaveAsDialog(Shell parentShell) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /* (non-Javadoc)
@@ -329,4 +328,12 @@ public class SaveAsDialog extends TitleAreaDialog {
         } 
         return section;
 	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

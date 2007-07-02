@@ -51,9 +51,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
      */
     public FileExtensionDialog(Shell parentShell) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
-
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
@@ -203,5 +201,13 @@ public class FileExtensionDialog extends TitleAreaDialog {
         IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
         if (section == null) section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
         return section;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
     }
 }

@@ -97,7 +97,6 @@ public class ShowViewDialog extends Dialog implements
         super(window.getShell());
         this.window = window;
         this.viewReg = viewReg;
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /**
@@ -475,4 +474,11 @@ public class ShowViewDialog extends Dialog implements
 			}
 		}.open();
 	}  
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

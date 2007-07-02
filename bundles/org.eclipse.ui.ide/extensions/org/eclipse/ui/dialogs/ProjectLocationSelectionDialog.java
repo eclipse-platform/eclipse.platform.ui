@@ -69,7 +69,6 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	public ProjectLocationSelectionDialog(Shell parentShell,
 			IProject existingProject) {
 		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setTitle(PROJECT_LOCATION_SELECTION_TITLE);
 		setStatusLineAboveButtons(true);
 		this.project = existingProject;

@@ -167,7 +167,6 @@ public class PathVariableDialog extends TitleAreaDialog {
     public PathVariableDialog(Shell parentShell, int type, int variableType,
             IPathVariableManager pathVariableManager, Set namesInUse) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.type = type;
         this.newVariable = type == NEW_VARIABLE;
         this.variableName = ""; //$NON-NLS-1$
@@ -593,6 +592,14 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     public void setVariableValue(String variableValue) {
         this.variableValue = variableValue;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
     }
 
 }

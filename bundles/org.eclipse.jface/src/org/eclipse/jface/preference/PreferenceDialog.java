@@ -218,7 +218,6 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	public PreferenceDialog(Shell parentShell, PreferenceManager manager) {
 		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		preferenceManager = manager;
 	}
 
@@ -1504,4 +1503,13 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
             });
         }
     }	
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
+
 }

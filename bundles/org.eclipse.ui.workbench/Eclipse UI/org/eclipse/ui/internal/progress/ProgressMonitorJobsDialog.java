@@ -68,7 +68,6 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      */
     public ProgressMonitorJobsDialog(Shell parent) {
         super(parent);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /*
@@ -479,5 +478,12 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
         }
         return result;
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }

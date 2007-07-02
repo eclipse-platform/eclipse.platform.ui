@@ -97,8 +97,6 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
         setStatusLineAboveButtons(true);
         fContainerMode = false;
         fExpandedElements = null;
-        int shellStyle = getShellStyle();
-        setShellStyle(shellStyle | SWT.MAX | SWT.RESIZE);
     }
 
     /**

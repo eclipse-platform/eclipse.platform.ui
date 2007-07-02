@@ -159,7 +159,6 @@ class ConfigureWindowWorkingSetsDialog extends AbstractWorkingSetDialog {
 
 	protected ConfigureWindowWorkingSetsDialog(IWorkbenchWindow window) {
 		super(window.getShell(), null);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.window = window;
 		setTitle(WorkbenchMessages.WorkingSetSelectionDialog_title_multiSelect);
 		setMessage(WorkbenchMessages.WorkingSetSelectionDialog_message_multiSelect);

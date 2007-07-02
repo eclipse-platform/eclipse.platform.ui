@@ -111,8 +111,6 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     public AboutFeaturesDialog(Shell parentShell, String productName,
             AboutBundleGroupData[] bundleGroupInfos) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
-
         this.productName = productName;
 
         // the order of the array may be changed due to sorting, so create a

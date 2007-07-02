@@ -137,7 +137,6 @@ public class ErrorDialog extends IconAndMessageDialog {
 								"Reason", new Object[] { message, status.getMessage() }); //$NON-NLS-1$
 		this.status = status;
 		this.displayMask = displayMask;
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/*
@@ -677,4 +676,13 @@ public class ErrorDialog extends IconAndMessageDialog {
 			return 2;
 		return 3;
 	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
+
 }

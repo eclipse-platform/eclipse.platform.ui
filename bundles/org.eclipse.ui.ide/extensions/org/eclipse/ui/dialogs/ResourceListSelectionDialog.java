@@ -354,7 +354,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
      */
     public ResourceListSelectionDialog(Shell parentShell, IResource[] resources) {
         super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
         gatherResourcesDynamically = false;
         initDescriptors(resources);
     }
@@ -375,7 +374,6 @@ public class ResourceListSelectionDialog extends SelectionDialog {
         super(parentShell);
         this.container = container;
         this.typeMask = typeMask;
-        setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
     /**

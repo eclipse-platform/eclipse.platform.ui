@@ -127,7 +127,6 @@ public class DialogMarkerProperties extends TrayDialog {
 	 */
 	public DialogMarkerProperties(Shell parentShell) {
 		super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/**
@@ -143,7 +142,6 @@ public class DialogMarkerProperties extends TrayDialog {
 	 */
 	public DialogMarkerProperties(Shell parentShell, String title) {
 		super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.title = title;
 	}
 	
@@ -164,7 +162,6 @@ public class DialogMarkerProperties extends TrayDialog {
 	 */
 	public DialogMarkerProperties(Shell parentShell, String title, String markerName) {
 		super(parentShell);
-        setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.title = title;
 		this.markerName = markerName;
 	}
@@ -635,4 +632,13 @@ public class DialogMarkerProperties extends TrayDialog {
 				MarkerMessages.DialogMarkerProperties_Create, markerName);
 		
 	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
+
 }
