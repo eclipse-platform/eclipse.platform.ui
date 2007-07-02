@@ -1,25 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.eclipse.core.expressions.tests"
-   name="%pluginName"
-   version="3.3.0.qualifier"
-   provider-name="%providerName"
-   class="org.eclipse.core.internal.expressions.tests.ExpressionTestPlugin">
+<plugin>
 
-   <runtime>
-      <library name="expressionstests.jar">
-         <export name="*"/>
-      </library>
-   </runtime>
-
-   <requires>
-      <import plugin="org.junit"/>
-   	  <import plugin="org.eclipse.core.runtime"/>
-   	  <import plugin="org.eclipse.core.expressions"/>
-   </requires>
-
-   <extension point="org.eclipse.core.expressions.propertyTesters">
+     <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
             namespace="org.eclipse.core.internal.expressions.tests"
             properties="simple, overridden, ordering, chainOrdering"
