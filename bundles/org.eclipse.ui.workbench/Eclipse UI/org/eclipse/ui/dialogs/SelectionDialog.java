@@ -298,4 +298,12 @@ public abstract class SelectionDialog extends TrayDialog {
 	protected int getDialogBoundsStrategy() {
 		return dialogBoundsStrategy;
 	}
+	
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+     */
+    protected boolean isResizable() {
+    	return true;
+    }
 }
