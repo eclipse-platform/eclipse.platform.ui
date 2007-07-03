@@ -39,6 +39,11 @@ public class URIUtilTest extends FileSystemTest {
 	 */
 	public void testEquals() {
 		if (EFS.getLocalFileSystem().isCaseSensitive()) {
+			//test that case variants are not equal
+			URI one = new java.io.File("c:\\temp\\test").toURI();
+			URI two = new java.io.File("c:\\TEMP\\test").toURI();
+			assertTrue("1.0", !URIUtil.equals(one, two));
+		} else {
 			//test that case variants are equal
 			URI one = new java.io.File("c:\\temp\\test").toURI();
 			URI two = new java.io.File("c:\\TEMP\\test").toURI();
