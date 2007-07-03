@@ -33,6 +33,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
+import org.eclipse.help.internal.base.util.LinkUtil;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.internal.util.ProductPreferences;
@@ -1429,7 +1430,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		} else if (target instanceof FormText) {
 			FormText text = (FormText) target;
-			final String href = parseHref(text.getSelectedLinkHref().toString());
+			final String href = LinkUtil.stripParams(text.getSelectedLinkHref().toString());
 			final String label = text.getSelectedLinkText();
 			if (href != null) {
 				return new IHelpResource() {
@@ -1444,17 +1445,6 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		}
 		return null;
-	}
-	
-	private String parseHref(String href) {
-		int index = href.indexOf('?');
-		if (index != -1) {
-			String param = href.substring(index);
-			href = href.substring(0, index);
-			if ((index = param.indexOf('#')) != -1)
-				href = href + param.substring(index);
-		}
-		return href;
 	}
 
 	private void doBookmark(Object target) {

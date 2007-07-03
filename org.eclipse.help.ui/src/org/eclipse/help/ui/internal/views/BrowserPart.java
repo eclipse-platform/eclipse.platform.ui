@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.util.LinkUtil;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
@@ -218,7 +219,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		syncTocAction.setEnabled(false);
 		bookmarkAction = new Action() {
 			public void run() {
-				String href = BaseHelpSystem.unresolve(url);
+				String href = LinkUtil.stripParams(BaseHelpSystem.unresolve(url));
 				BaseHelpSystem.getBookmarkManager().addBookmark(href, title);
 			}
 		};
