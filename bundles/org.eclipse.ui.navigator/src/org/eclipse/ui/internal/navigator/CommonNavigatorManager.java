@@ -98,9 +98,11 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 				 */
 				public void run() throws Exception {
-					IStructuredSelection selection = new StructuredSelection(commonNavigator.getCommonViewer().getInput());
-					actionService.setContext(new ActionContext(selection));
-					actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());				
+					if(commonNavigator.getCommonViewer().getInput() != null) {
+						IStructuredSelection selection = new StructuredSelection(commonNavigator.getCommonViewer().getInput());
+						actionService.setContext(new ActionContext(selection));
+						actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
+					}
 				}
 				/*
 				 * (non-Javadoc)
