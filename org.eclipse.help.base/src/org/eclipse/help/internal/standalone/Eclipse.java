@@ -46,7 +46,6 @@ public class Eclipse extends Thread {
 			ensureEclipseExeExists();
 		} else {
 			prepareJavaCommand();
-			ensureStartupJarExists();
 		}
 		ensureVmExists();
 	}
@@ -65,7 +64,7 @@ public class Eclipse extends Thread {
 			cmdarray[4 + eclipseArgs.size() + i] = (String) vmArgs.get(i);
 		}
 	}
-	private void prepareJavaCommand() {
+	private void prepareJavaCommand() throws Exception {
 		List vmArgs = Options.getVmArgs();
 		List eclipseArgs = Options.getEclipseArgs();
 		cmdarray = new String[1 + vmArgs.size() + 3 + eclipseArgs.size()];
@@ -74,7 +73,7 @@ public class Eclipse extends Thread {
 			cmdarray[1 + i] = (String) vmArgs.get(i);
 		}
 		cmdarray[1 + vmArgs.size()] = "-cp"; //$NON-NLS-1$
-		cmdarray[2 + vmArgs.size()] = "startup.jar"; //$NON-NLS-1$
+		cmdarray[2 + vmArgs.size()] = getStartupJar();
 		cmdarray[3 + vmArgs.size()] = "org.eclipse.core.launcher.Main"; //$NON-NLS-1$
 		for (int i = 0; i < eclipseArgs.size(); i++) {
 			cmdarray[4 + vmArgs.size() + i] = (String) eclipseArgs.get(i);
@@ -169,13 +168,19 @@ public class Eclipse extends Thread {
 		throw new Exception("File " + eclipseExe.getAbsolutePath() //$NON-NLS-1$
 				+ " does not exists.  Pass a correct -eclipsehome option"); //$NON-NLS-1$
 	}
-	private void ensureStartupJarExists() throws Exception {
-		File startupJar = new File(Options.getEclipseHome(), "startup.jar"); //$NON-NLS-1$
-		if (startupJar.exists() && !startupJar.isDirectory()) {
-			return;
-		}
-		throw new Exception("File " + startupJar.getAbsolutePath() //$NON-NLS-1$
+	private String getStartupJar() throws Exception {
+		File pluginsDir = new File(Options.getEclipseHome(), "plugins/"); //$NON-NLS-1$
+		if (!pluginsDir.exists() || !pluginsDir.isDirectory())
+			throw new Exception("Plugins directory " + pluginsDir.getAbsolutePath() //$NON-NLS-1$
 				+ " does not exists.  Pass a correct -eclipsehome option"); //$NON-NLS-1$
+		File[] plugins = pluginsDir.listFiles();
+		for (int i = 0; i < plugins.length; i++) {
+			String file = plugins[i].getName();
+			if (file.startsWith("org.eclipse.equinox.launcher") && file.endsWith(".jar") && !plugins[i].isDirectory()) //$NON-NLS-1$ //$NON-NLS-2$
+				return "plugins/" + file; //$NON-NLS-1$
+		}
+		throw new Exception("Plugins directory " + pluginsDir.getAbsolutePath() //$NON-NLS-1$
+				+ " does not contain a valid startup jar.  Pass a correct -eclipsehome option"); //$NON-NLS-1$
 	}
 	/**
 	 * @return Exception
