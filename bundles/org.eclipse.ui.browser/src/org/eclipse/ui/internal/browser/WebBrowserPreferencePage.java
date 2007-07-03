@@ -165,24 +165,19 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_FILL);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		composite.setLayoutData(data);
 
 		Label label = new Label(composite, SWT.WRAP);
 		label.setText(Messages.preferenceWebBrowserDescription);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data = new GridData(SWT.FILL, SWT.NONE, false, false);
 		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		
-		label = new Label(composite, SWT.WRAP);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		data.horizontalSpan = 2;
+		data.widthHint = 275;
 		label.setLayoutData(data);
 
 		internal = new Button(composite, SWT.RADIO);
 		internal.setText(Messages.prefInternalBrowser);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data = new GridData(SWT.FILL, SWT.NONE, true, false);
 		data.horizontalSpan = 2;
 		internal.setLayoutData(data);
 
@@ -191,20 +186,19 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 		external = new Button(composite, SWT.RADIO);
 		external.setText(Messages.prefExternalBrowser);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		data = new GridData(SWT.FILL, SWT.NONE, true, false);
 		data.horizontalSpan = 2;
 		external.setLayoutData(data);
 
 		label = new Label(composite, SWT.NONE);
 		label.setText(Messages.browserList);
-		data = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.VERTICAL_ALIGN_CENTER);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
 
 		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL
 				| SWT.H_SCROLL | SWT.SINGLE | SWT.FULL_SELECTION);
-		data = new GridData(GridData.FILL_BOTH);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		table.setLayoutData(data);
 		table.setHeaderVisible(false);
 		table.setLinesVisible(false);
