@@ -333,9 +333,10 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 			for (Iterator contentItr = contentExtensions.values().iterator(); contentItr
 					.hasNext();) {
-				structuredViewerManager
-						.initialize(((NavigatorContentExtension) contentItr
-								.next()).getContentProvider());
+				NavigatorContentExtension ext = (NavigatorContentExtension) contentItr.next();
+				if(ext.isLoaded()) {
+					structuredViewerManager.initialize(ext.getContentProvider());
+				}
 			}
 
 			rootContentProviders = extractContentProviders(findRootContentExtensions(aNewInput));
