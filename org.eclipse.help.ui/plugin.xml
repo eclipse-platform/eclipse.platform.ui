@@ -24,8 +24,8 @@
             name="%remote_help_preferences_page_name"
             category="org.eclipse.help.ui.browsersPreferencePage"
             class="org.eclipse.help.ui.internal.preferences.HelpContentPreferencePage"
-            id="org.eclipse.help.ui.appserverPreferencePage">
-            <keywordReference id="org.eclipse.help.ui.appserverPreferencePage"/>
+            id="org.eclipse.help.ui.contentPreferencePage">
+            <keywordReference id="org.eclipse.help.ui.contentPreferencePage"/>
       </page>
    </extension>
    <extension
@@ -34,8 +34,8 @@
             label="%preferenceKeywords.browsersPreferencePage"
             id="org.eclipse.help.ui.browsersPreferencePage"/>
       <keyword
-            label="%preferenceKeywords.appserverPreferencePage"
-            id="org.eclipse.help.ui.appserverPreferencePage"/>
+            label="%preferenceKeywords.contentPreferencePage"
+            id="org.eclipse.help.ui.contentPreferencePage"/>
    </extension>
 <!-- Web Browsers -->
    <extension
