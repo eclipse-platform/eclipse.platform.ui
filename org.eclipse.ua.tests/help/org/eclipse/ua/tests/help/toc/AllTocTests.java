@@ -31,5 +31,6 @@ public class AllTocTests extends TestSuite {
 	public AllTocTests() {
 		addTest(TocAssemblerTest.suite());
 		addTest(EnabledTopicTest.suite());
+		addTest(TocLinkChecker.suite());
 	}
 }
