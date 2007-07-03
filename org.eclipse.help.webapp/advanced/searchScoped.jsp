@@ -6,7 +6,8 @@
  http://www.eclipse.org/legal/epl-v10.html
  
  Contributors:
-     IBM Corporation - initial API and implementation
+     IBM Corporation - initial API and implementation    
+     Pierre Candela  - fix for Bug 194911
 --%>
 <%@ include file="header.jsp"%>
 
@@ -158,13 +159,13 @@ function openAdvanced()
 <%
 if (data.isIE()){
 %>
-	var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
-	var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+	var l = parent.screenLeft + (parent.document.body.clientWidth - w) / 2;
+	var t = parent.screenTop + (parent.document.body.clientHeight - h) / 2;
 <%
 } else {
 %>
-	var l = top.screenX + (top.innerWidth - w) / 2;
-	var t = top.screenY + (top.innerHeight - h) / 2;
+	var l = parent.screenX + (parent.innerWidth - w) / 2;
+	var t = parent.screenY + (parent.innerHeight - h) / 2;
 <%
 }
 %>

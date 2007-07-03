@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pierre Candela  - fix for Bug 194911
  *******************************************************************************/
 
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
@@ -77,7 +78,7 @@ function printToc(errorMsg) {
 	var href = parent.tocViewFrame.getSelectedTopic();
 	if (href && href != ":blank") {
 		var contentRect = getWindowBounds(parent.parent.parent.parent.ContentFrame.ContentViewFrame.window);
-		var topRect = getWindowBounds(top);
+		var topRect = getWindowBounds(parent.parent.parent.parent.parent);
 		var w = contentRect.width;
 		var h = topRect.height;
 		var x = topRect.x + (topRect.width - w)/2;
