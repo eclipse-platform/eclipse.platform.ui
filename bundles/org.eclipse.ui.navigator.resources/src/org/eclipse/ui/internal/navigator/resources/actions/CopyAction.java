@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 
 /**
  * Standard action for copying the currently selected resources to the clipboard.
@@ -67,12 +68,12 @@ import org.eclipse.ui.part.ResourceTransfer;
      * @param clipboard a platform clipboard
      */
     public CopyAction(Shell shell, Clipboard clipboard) {
-        super("Copy"); // TODO ResourceNavigatorMessages.CopyAction_title); //$NON-NLS-1$
+        super(WorkbenchNavigatorMessages.CopyAction_Cop_); 
         Assert.isNotNull(shell);
         Assert.isNotNull(clipboard);
         this.shell = shell;
         this.clipboard = clipboard;
-        setToolTipText("Copy Tooltip"); // TODO ResourceNavigatorMessages.CopyAction_toolTip); //$NON-NLS-1$
+        setToolTipText(WorkbenchNavigatorMessages.CopyAction_Copy_selected_resource_s_); 
         setId(CopyAction.ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "CopyHelpId"); //$NON-NLS-1$
 				// TODO INavigatorHelpContextIds.COPY_ACTION);

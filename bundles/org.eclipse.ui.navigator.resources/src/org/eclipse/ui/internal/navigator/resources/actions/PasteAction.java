@@ -27,6 +27,7 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.CopyProjectOperation;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 
 /**
  * Standard action for pasting resources on the clipboard to the selected resource's location.
@@ -60,12 +61,12 @@ import org.eclipse.ui.part.ResourceTransfer;
      * @param clipboard the clipboard
      */
     public PasteAction(Shell shell, Clipboard clipboard) {
-        super("Paste"); // TODO ResourceNavigatorMessages.PasteAction_title); //$NON-NLS-1$
+        super(WorkbenchNavigatorMessages.PasteAction_Past_); 
         Assert.isNotNull(shell);
         Assert.isNotNull(clipboard);
         this.shell = shell;
         this.clipboard = clipboard;
-        setToolTipText("Paste ToolTip"); // TODO ResourceNavigatorMessages.PasteAction_toolTip); //$NON-NLS-1$
+        setToolTipText(WorkbenchNavigatorMessages.PasteAction_Paste_selected_resource_s_); 
         setId(PasteAction.ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, "HelpId"); //$NON-NLS-1$
 				// TODO INavigatorHelpContextIds.PASTE_ACTION);

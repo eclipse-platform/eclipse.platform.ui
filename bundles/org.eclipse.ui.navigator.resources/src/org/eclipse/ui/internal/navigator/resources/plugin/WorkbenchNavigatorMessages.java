@@ -68,6 +68,14 @@ public class WorkbenchNavigatorMessages extends NLS {
 
 	public static String WorkingSetRootModeActionGroup_Working_Set_;
 
+	public static String CopyAction_Cop_;
+
+	public static String CopyAction_Copy_selected_resource_s_;
+
+	public static String PasteAction_Past_;
+
+	public static String PasteAction_Paste_selected_resource_s_;
+
 	static {
 		initializeMessages(BUNDLE_NAME, WorkbenchNavigatorMessages.class);
 	}
