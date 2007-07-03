@@ -94,17 +94,6 @@ public class WebappPreferences {
 		return prefs.getString("advanced.viewFont"); //$NON-NLS-1$
 	}
 
-	public int getBookAtOnceLimit() {
-		return prefs.getInt("loadBookAtOnceLimit"); //$NON-NLS-1$
-	}
-
-	public int getLoadDepth() {
-		int value = prefs.getInt("dynamicLoadDepthsHint"); //$NON-NLS-1$
-		if (value < 1) {
-			return 1;
-		}
-		return value;
-	}
 	public boolean isWindowTitlePrefix() {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "windowTitlePrefix"); //$NON-NLS-1$
 	}

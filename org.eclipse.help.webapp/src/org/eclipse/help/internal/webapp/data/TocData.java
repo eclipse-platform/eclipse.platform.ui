@@ -66,6 +66,8 @@ public class TocData extends ActivitiesData {
 
 	// images directory
 	private String imagesDirectory;
+	private static final int DYNAMIC_LOAD_DEPTH = 3;
+	private static final int LOAD_BOOK_AT_ONCE_LIMIT = 1000;
 
 	/**
 	 * Constructs the xml data for the contents page.
@@ -77,9 +79,8 @@ public class TocData extends ActivitiesData {
 			HttpServletResponse response) {
 		super(context, request, response);
 		if (dynamicLoadDepths < 1) {
-			WebappPreferences pref = new WebappPreferences();
-			loadBookAtOnceLimit = pref.getBookAtOnceLimit();
-			dynamicLoadDepths = pref.getLoadDepth();
+			loadBookAtOnceLimit = LOAD_BOOK_AT_ONCE_LIMIT;
+			dynamicLoadDepths = DYNAMIC_LOAD_DEPTH;
 			honorLevelsLimit = loadBookAtOnceLimit / 4;
 		}
 
