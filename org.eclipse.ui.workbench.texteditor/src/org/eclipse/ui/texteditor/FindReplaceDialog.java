@@ -126,7 +126,7 @@ class FindReplaceDialog extends Dialog {
 					fNeedsInitialFindBeforeReplace= false;
 					findAndSelect(offset, "", isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked()); //$NON-NLS-1$
 				} else {
-					performSearch(false);
+					performSearch(false, false);
 				}
 			}
 
@@ -752,15 +752,16 @@ class FindReplaceDialog extends Dialog {
 	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
+	 * @param beepOnWrap if <code>true</code> beeps when search needs to wrap
 	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing found
 	 * @since 3.0
 	 */
-	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
+	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch, boolean beepOnWrap) {
 
 		if (forwardSearch) {
 			int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
-				if (okToUse(getShell()) && !isIncrementalSearch())
+				if (beepOnWrap && okToUse(getShell()))
 					getShell().getDisplay().beep();
 
 				if (wrapSearch)
@@ -773,7 +774,7 @@ class FindReplaceDialog extends Dialog {
 		// backward
 		int index= startPosition == 0 ? -1 : findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 		if (index == -1) {
-			if (okToUse(getShell()) && !isIncrementalSearch())
+			if (beepOnWrap && okToUse(getShell()))
 				getShell().getDisplay().beep();
 
 			if (wrapSearch)
@@ -835,11 +836,12 @@ class FindReplaceDialog extends Dialog {
 	 * @param wholeWord does the search string represent a complete word
 	 * @param incremental is this an incremental search
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
+	 * @param beepOnWrap if <code>true</code> beeps when search needs to wrap
 	 * @return <code>true</code> if the search string can be found using the given options
 	 *
 	 * @since 3.0
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch, boolean beepOnWrap) {
 
 		if (fTarget == null)
 			return false;
@@ -856,7 +858,7 @@ class FindReplaceDialog extends Dialog {
 
 		fNeedsInitialFindBeforeReplace= false;
 
-		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch);
+		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch, beepOnWrap);
 
 		if (index != -1)
 			return true;
@@ -1308,16 +1310,17 @@ class FindReplaceDialog extends Dialog {
 	 * Locates the user's findString in the text of the target.
 	 */
 	private void performSearch() {
-		performSearch(isIncrementalSearch() && !isRegExSearchAvailableAndChecked());
+		performSearch(isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), true);
 	}
 
 	/**
 	 * Locates the user's findString in the text of the target.
 	 *
 	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
+	 * @param beepOnWrap if <code>true</code> beeps when search needs to wrap
 	 * @since 3.0
 	 */
-	private void performSearch(boolean mustInitIncrementalBaseLocation) {
+	private void performSearch(boolean mustInitIncrementalBaseLocation, boolean beepOnWrap) {
 
 		if (mustInitIncrementalBaseLocation)
 			initIncrementalBaseLocation();
@@ -1328,7 +1331,7 @@ class FindReplaceDialog extends Dialog {
 		if (findString != null && findString.length() > 0) {
 
 			try {
-				somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked());
+				somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beepOnWrap);
 				if (somethingFound) {
 					statusMessage(""); //$NON-NLS-1$
 				} else {
