@@ -329,8 +329,8 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 				if (provider == null) {
 					provider = aProviderDescriptor.createActionProvider();
 					if (provider != null) {
-						initialize(aProviderDescriptor.getId(), provider);
 						actionProviderInstances.put(aProviderDescriptor, provider);
+						initialize(aProviderDescriptor.getId(), provider);
 					} else {
 						actionProviderInstances.put(aProviderDescriptor,
 								(provider = SkeletonActionProvider.INSTANCE));
