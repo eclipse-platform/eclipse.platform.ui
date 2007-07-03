@@ -142,7 +142,7 @@ public class ReplaceOperation extends UpdateOperation {
 
 	private void addResourceIfTagExists(List managedResources, ICVSResource resource, IProgressMonitor monitor) {
 		CVSTag tag = getTag();
-		if (tag.getType() == CVSTag.DATE || tag.isHeadTag() || tag.isBaseTag()) {
+		if (tag == null || tag.getType() == CVSTag.DATE || tag.isHeadTag() || tag.isBaseTag()) {
 			// No need to check for date, head or base tags
 			managedResources.add(resource);
 		} else {
