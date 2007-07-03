@@ -53,6 +53,9 @@ public class WorkbenchNavigatorMessages extends NLS {
 	public static String DropAdapter_resourcesCanNotBeSiblings;
 
 	/** Message key. */
+	public static String DropAdapter_canNotDropProjectIntoProject;
+	
+	/** Message key. */
 	public static String DropAdapter_dropOperationErrorOther;
 	
 

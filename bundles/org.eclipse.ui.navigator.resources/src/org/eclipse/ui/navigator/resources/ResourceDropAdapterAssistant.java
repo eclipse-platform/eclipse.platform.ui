@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -106,27 +107,40 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 		// drag within Eclipse?
 		if (LocalSelectionTransfer.getTransfer().isSupportedType(transferType)) {
 			IResource[] selectedResources = getSelectedResources();
-
-			if (selectedResources.length == 0) {
-				message = WorkbenchNavigatorMessages.DropAdapter_dropOperationErrorOther;
-			} else {
-				CopyFilesAndFoldersOperation operation;
-				if (aDropOperation == DND.DROP_COPY) {
-					if (DEBUG) {
-						System.out
-								.println("ResourceDropAdapterAssistant.validateDrop validating COPY."); //$NON-NLS-1$
-					}
-
-					operation = new CopyFilesAndFoldersOperation(getShell());
-				} else {
-					if (DEBUG) {
-						System.out
-								.println("ResourceDropAdapterAssistant.validateDrop validating MOVE."); //$NON-NLS-1$
-					}
-					operation = new MoveFilesAndFoldersOperation(getShell());
+			
+			boolean bProjectDrop = false;
+			for (int iRes = 0; iRes < selectedResources.length; iRes++) {
+				IResource res = selectedResources[iRes];
+				if(res instanceof IProject) {
+					bProjectDrop = true;
 				}
-				message = operation.validateDestination(destination,
-						selectedResources);
+			}
+			if(bProjectDrop) {
+				// drop of projects not supported on other IResources
+				// "Path for project must have only one segment."
+				message = WorkbenchNavigatorMessages.DropAdapter_canNotDropProjectIntoProject;
+			} else {
+				if (selectedResources.length == 0) {
+					message = WorkbenchNavigatorMessages.DropAdapter_dropOperationErrorOther;
+				} else {
+					CopyFilesAndFoldersOperation operation;
+					if (aDropOperation == DND.DROP_COPY) {
+						if (DEBUG) {
+							System.out
+									.println("ResourceDropAdapterAssistant.validateDrop validating COPY."); //$NON-NLS-1$
+						}
+	
+						operation = new CopyFilesAndFoldersOperation(getShell());
+					} else {
+						if (DEBUG) {
+							System.out
+									.println("ResourceDropAdapterAssistant.validateDrop validating MOVE."); //$NON-NLS-1$
+						}
+						operation = new MoveFilesAndFoldersOperation(getShell());
+					}
+					message = operation.validateDestination(destination,
+							selectedResources);
+				}
 			}
 		} // file import?
 		else if (FileTransfer.getInstance().isSupportedType(transferType)) {
