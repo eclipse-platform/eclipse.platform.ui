@@ -50,6 +50,9 @@ public class LogListener extends CommandOutputListener {
     //Tag used for accumulating all of a branch's revision info
     public final static String BRANCH_REVISION = "branchRevision"; //$NON-NLS-1$
     
+    private static final CVSTag[] NO_TAGS = new CVSTag[0];
+    private static final String[] NO_VERSIONS = new String[0];
+    
     // Instance variables for accumulating Log information
     private RemoteFile currentFile;
     private int state = BEGIN;
@@ -123,7 +126,7 @@ public class LogListener extends CommandOutputListener {
     			} else  if (line.startsWith("symbolic names:")) { //$NON-NLS-1$
     				state = SYMBOLIC_NAMES;
     			} else if (line.startsWith("revision ")) { //$NON-NLS-1$
-    				revision = internString(line.substring(9));
+    				revision = internAndCopyString(line.substring(9));
     				state = REVISION;
     			} else if (line.startsWith("total revisions:")){ //$NON-NLS-1$
     				//if there are no current revision selected and this is a branch then we are in the 
@@ -145,8 +148,8 @@ public class LogListener extends CommandOutputListener {
     				state = BEGIN;
     			} else {
     				int firstColon = line.indexOf(':');
-    				String tagName = new String(line.substring(1, firstColon));
-    				String tagRevision = internString(line.substring(firstColon + 2));
+    				String tagName = internAndCopyString(line.substring(1, firstColon));
+    				String tagRevision = internAndCopyString(line.substring(firstColon + 2));
     				versions.add(new VersionInfo(tagRevision, tagName));
     			}
     			break;
@@ -158,10 +161,10 @@ public class LogListener extends CommandOutputListener {
     
     			// get the author name
     			int endOfAuthorIndex = line.indexOf(';', endOfDateIndex + 1);
-    			author = internString(line.substring(endOfDateIndex + 11, endOfAuthorIndex));
+    			author = internAndCopyString(line.substring(endOfDateIndex + 11, endOfAuthorIndex));
     
     			// get the file state (because this revision might be "dead")
-    			fileState = internString(line.substring(endOfAuthorIndex + 10, line.indexOf(';', endOfAuthorIndex + 1)));
+    			fileState = internAndCopyString(line.substring(endOfAuthorIndex + 10, line.indexOf(';', endOfAuthorIndex + 1)));
     			comment = new StringBuffer();
     			state = COMMENT;
     			break;
@@ -183,9 +186,9 @@ public class LogListener extends CommandOutputListener {
     	}
     	if (state == DONE) {
     		// we are only interested in tag names for this revision, remove all others.
-    		List thisRevisionTags = new ArrayList(3);
+    		List thisRevisionTags = versions.isEmpty() ? Collections.EMPTY_LIST : new ArrayList(3);
     		//a parallel lists for revision tags (used only for branches with no commits on them)
-    		List revisionVersions = new ArrayList(3);
+    		List revisionVersions = versions.isEmpty() ? Collections.EMPTY_LIST : new ArrayList(3);
     		for (Iterator i = versions.iterator(); i.hasNext();) {
     			VersionInfo version = (VersionInfo) i.next();
     			String tagName = version.getTagName();
@@ -204,7 +207,7 @@ public class LogListener extends CommandOutputListener {
     		
     		if (currentFile != null) {
     			LogEntry entry = new LogEntry(currentFile, revision, author, creationDate,
-    				comment.toString(), fileState, (CVSTag[]) thisRevisionTags.toArray(new CVSTag[thisRevisionTags.size()]), (String[]) revisionVersions.toArray(new String[revisionVersions.size()]));
+    				internString(comment.toString()), fileState, !thisRevisionTags.isEmpty() ? (CVSTag[]) thisRevisionTags.toArray(new CVSTag[thisRevisionTags.size()]) : NO_TAGS, !revisionVersions.isEmpty() ? (String[]) revisionVersions.toArray(new String[revisionVersions.size()]) : NO_VERSIONS);
     			addEntry(entry);
     		}
     		state = BEGIN;
@@ -243,13 +246,22 @@ public class LogListener extends CommandOutputListener {
         }
     }
     
-    private String internString(String string) {
+    private String internAndCopyString(String string) {
     	String internedString = (String) internedStrings.get(string);
     	if (internedString == null) {
     		internedString = new String(string);
     		internedStrings.put(internedString, internedString);
     	}
     	return internedString;
+    }
+    
+    private String internString(String string) {
+    	String internedString = (String) internedStrings.get(string);
+    	if (internedString == null) {
+    		internedString = string;
+    		internedStrings.put(internedString, internedString);
+    	}
+    	return internedString;    	
     }
     
     private static class VersionInfo {
