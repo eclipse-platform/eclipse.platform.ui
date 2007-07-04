@@ -32,7 +32,6 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 	private final Number max;
 
 	private String outOfRangeMessage;
-	private String parseErrorMessage;
 
 	/**
 	 * Constructs a new instance.
@@ -79,11 +78,8 @@ public abstract class AbstractStringToNumberValidator implements IValidator {
 				return ValidationStatus.error(outOfRangeMessage);
 			}
 		} else if (result.getPosition() != null) {
-			if (parseErrorMessage == null) {
-				parseErrorMessage = StringToNumberParser
-						.createParseErrorMessage((String) value, result
-								.getPosition());
-			}
+			String parseErrorMessage = StringToNumberParser.createParseErrorMessage(
+					(String) value, result.getPosition());
 
 			return ValidationStatus.error(parseErrorMessage);
 		}

@@ -87,6 +87,7 @@ import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObserv
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
+import org.eclipse.core.tests.internal.databinding.validation.AbstractStringToNumberValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.NumberToByteValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.NumberToDoubleValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.NumberToFloatValidatorTest;
@@ -229,6 +230,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DetailObservableValueTest.class);
 
 		// org.eclipse.core.tests.internal.databinding.validation
+		addTestSuite(AbstractStringToNumberValidatorTest.class);
 		addTestSuite(NumberToByteValidatorTest.class);
 		addTestSuite(NumberToDoubleValidatorTest.class);
 		addTestSuite(NumberToFloatValidatorTest.class);
