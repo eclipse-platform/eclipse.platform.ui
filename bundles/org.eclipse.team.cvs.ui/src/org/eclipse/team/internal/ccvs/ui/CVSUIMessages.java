@@ -47,6 +47,10 @@ public class CVSUIMessages extends NLS {
 	public static String CommitAction_3;
 	public static String CommitAction_1;
 	public static String CommitAction_2;
+	public static String CommitCommentArea_10;
+	public static String CommitCommentArea_7;
+	public static String CommitCommentArea_8;
+	public static String CommitCommentArea_9;
 	public static String CommitWizard_10;
 	public static String CommitWizard_11;
 	public static String CommitWizard_12;

@@ -17,13 +17,15 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.*;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -36,10 +38,13 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
-import org.eclipse.ui.*;
+import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.editors.text.*;
-import org.eclipse.ui.handlers.*;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.texteditor.*;
 
 
@@ -67,7 +72,7 @@ public class CommitCommentArea extends DialogArea {
             cc.setLayout(new FillLayout());
             cc.setLayoutData(new GridData(GridData.FILL_BOTH));
             
-            SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+            final SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
             fTextField = sourceViewer.getTextWidget();
             
             fTextField.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
@@ -84,6 +89,123 @@ public class CommitCommentArea extends DialogArea {
             
             final IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getService(IHandlerService.class);
             final IHandlerActivation handlerActivation= installQuickFixActionHandler(handlerService, sourceViewer);
+            
+            final TextViewerAction cutAction = new TextViewerAction(sourceViewer, ITextOperationTarget.CUT);
+            cutAction.setText(CVSUIMessages.CommitCommentArea_7);
+            cutAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+            
+            final TextViewerAction copyAction = new TextViewerAction(sourceViewer, ITextOperationTarget.COPY);
+            copyAction.setText(CVSUIMessages.CommitCommentArea_8);
+            copyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+            
+            final TextViewerAction pasteAction = new TextViewerAction(sourceViewer, ITextOperationTarget.PASTE);
+            pasteAction.setText(CVSUIMessages.CommitCommentArea_9);
+            pasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+            
+            final TextViewerAction selectAllAction = new TextViewerAction(sourceViewer, ITextOperationTarget.SELECT_ALL);
+            selectAllAction.setText(CVSUIMessages.CommitCommentArea_10);
+            selectAllAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);            
+            
+            MenuManager contextMenu = new MenuManager();
+            contextMenu.add(cutAction);
+            contextMenu.add(copyAction);
+            contextMenu.add(pasteAction);
+            contextMenu.add(selectAllAction);
+            contextMenu.add(new Separator());
+            
+            final SubMenuManager quickFixMenu = new SubMenuManager(contextMenu);
+            quickFixMenu.setVisible(true);
+            quickFixMenu.addMenuListener(new IMenuListener() {
+			
+				public void menuAboutToShow(IMenuManager manager) {
+					quickFixMenu.removeAll();
+					
+            		IAnnotationModel annotationModel = sourceViewer.getAnnotationModel();
+            		Iterator annotationIterator = annotationModel.getAnnotationIterator();
+            		while (annotationIterator.hasNext()) {
+            			Annotation annotation = (Annotation) annotationIterator.next();
+            			if (!annotation.isMarkedDeleted() && includes(annotationModel.getPosition(annotation), sourceViewer.getTextWidget().getCaretOffset()) && sourceViewer.getQuickAssistAssistant().canFix(annotation)) {
+            				ICompletionProposal[] computeQuickAssistProposals = sourceViewer.getQuickAssistAssistant().getQuickAssistProcessor().computeQuickAssistProposals(sourceViewer.getQuickAssistInvocationContext());
+            				for (int i = 0; i < computeQuickAssistProposals.length; i++) {
+            					final ICompletionProposal proposal = computeQuickAssistProposals[i];
+            					quickFixMenu.add(new Action(proposal.getDisplayString()) {
+            						
+            						/* (non-Javadoc)
+            						 * @see org.eclipse.jface.action.Action#run()
+            						 */
+            						public void run() {
+            							proposal.apply(sourceViewer.getDocument());
+            						}
+            						
+            						/* (non-Javadoc)
+            						 * @see org.eclipse.jface.action.Action#getImageDescriptor()
+            						 */
+            						public ImageDescriptor getImageDescriptor() {
+            							if (proposal.getImage() != null) {
+            								return ImageDescriptor.createFromImage(proposal.getImage());
+            							}
+            							return null;
+            						}
+            					});
+            				}
+            			}
+            		}
+				}
+			
+			});
+            
+            fTextField.addFocusListener(new FocusListener() {
+    			
+				private IHandlerActivation cutHandlerActivation;
+				private IHandlerActivation copyHandlerActivation;
+				private IHandlerActivation pasteHandlerActivation;
+				private IHandlerActivation selectAllHandlerActivation;
+
+				public void focusGained(FocusEvent e) {
+					cutAction.update();
+					copyAction.update();
+					IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+					this.cutHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.CUT, new ActionHandler(cutAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.copyHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.COPY, new ActionHandler(copyAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.pasteHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.PASTE, new ActionHandler(pasteAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.selectAllHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.SELECT_ALL, new ActionHandler(selectAllAction), new ActiveShellExpression(getComposite().getShell()));
+		            
+		            
+				}
+				
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.events.FocusAdapter#focusLost(org.eclipse.swt.events.FocusEvent)
+				 */
+				public void focusLost(FocusEvent e) {
+					IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+					
+					if (cutHandlerActivation != null) {
+						service.deactivateHandler(cutHandlerActivation);
+					}
+					
+					if (copyHandlerActivation != null) {
+						service.deactivateHandler(copyHandlerActivation);
+					}
+					
+					if (pasteHandlerActivation != null) {
+						service.deactivateHandler(pasteHandlerActivation);
+					}
+					
+					if (selectAllHandlerActivation != null) {
+						service.deactivateHandler(selectAllHandlerActivation);
+					}
+				}
+			
+			});
+            
+            fTextField.addSelectionListener(new SelectionAdapter() {
+    			
+				public void widgetSelected(SelectionEvent e) {
+					cutAction.update();
+					copyAction.update();
+				}
+			
+			});
             
             sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
 			
@@ -105,7 +227,13 @@ public class CommitCommentArea extends DialogArea {
             fTextField.addModifyListener(this);
             fTextField.addFocusListener(this);
             
+            fTextField.setMenu(contextMenu.createContextMenu(fTextField));
+            
         }
+        
+        protected boolean includes(Position position, int caretOffset) {
+			return position.includes(caretOffset) || (position.offset + position.length) == caretOffset;
+		}
         
         /**
          * Installs the quick fix action handler
