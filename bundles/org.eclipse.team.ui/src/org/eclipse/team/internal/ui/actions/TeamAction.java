@@ -404,7 +404,11 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 		if(window != null) {
 			window.getSelectionService().removePostSelectionListener(selectionListener);
 		}
+		// Don't hold on to anything when we are disposed to prevent memory leaks (see bug 195521)
         selection = null;
+        window = null;
+        targetPart = null;
+        shell = null;
 	}
 
 	/**
