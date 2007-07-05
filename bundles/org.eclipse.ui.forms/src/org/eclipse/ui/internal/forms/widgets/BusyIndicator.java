@@ -11,19 +11,18 @@
 package org.eclipse.ui.internal.forms.widgets;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -31,13 +30,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.osgi.framework.Bundle;
 
-public class BusyIndicator extends Canvas {
-	private static final int MARGIN = 0;
-
-	private ImageData[] progressData;
-
-	protected ImageLoader loader;
-
+public final class BusyIndicator extends Canvas {
+	private static final int MARGIN = 0;	
+	private static final int IMAGE_COUNT = 8;
+	private static final int MILLISECONDS_OF_DELAY = 180; 
+	private Image[] imageCache;
 	protected Image image;
 
 	protected Image animationImage;
@@ -45,7 +42,7 @@ public class BusyIndicator extends Canvas {
 	protected Thread busyThread;
 
 	protected boolean stop;
-
+	
 	/**
 	 * BusyWidget constructor comment.
 	 * 
@@ -57,38 +54,11 @@ public class BusyIndicator extends Canvas {
 	public BusyIndicator(Composite parent, int style) {
 		super(parent, style);
 
-		loadProgressImage();
-
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				onPaint(event);
 			}
 		});
-	}
-
-	private void loadProgressImage() {
-		InputStream is = null;
-		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
-	    URL url = FileLocator.find(bundle, new Path("$nl$/icons/progress/ani/progress.gif"),null); //$NON-NLS-1$
-		if (url != null) {
-			try {
-				url = FileLocator.resolve(url);
-				is = url.openStream();
-			} catch (IOException e) {
-			    is = null;
-			}
-		}
-		if (is != null) {
-			loader = new ImageLoader();
-			try {
-				progressData = loader.load(is);
-			} catch (IllegalArgumentException e) {
-			}
-			try {
-				is.close();
-			} catch (IOException e) {
-			}
-		}
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
@@ -98,9 +68,10 @@ public class BusyIndicator extends Canvas {
 			size.x = ibounds.width;
 			size.y = ibounds.height;
 		}
-		if (loader != null && isBusy()) {
-			size.x = Math.max(size.x, loader.logicalScreenWidth);
-			size.y = Math.max(size.y, loader.logicalScreenHeight);
+		if (isBusy()) {
+			Rectangle bounds = getImage(0).getBounds();
+			size.x = Math.max(size.x, bounds.width);
+			size.y = Math.max(size.y, bounds.height);
 		}
 		size.x += MARGIN + MARGIN;
 		size.y += MARGIN + MARGIN;
@@ -115,10 +86,11 @@ public class BusyIndicator extends Canvas {
 			return;
 
 		stop = false;
+		final Rectangle bounds = getImage(0).getBounds();
 		final Display display = getDisplay();
 		final Image offScreenImage = new Image(display,
-				loader.logicalScreenWidth,
-				loader.logicalScreenHeight);
+				bounds.width,
+				bounds.height);
 		final GC offScreenImageGC = new GC(offScreenImage);
 		busyThread = new Thread() {
 			private Image timage;
@@ -134,8 +106,8 @@ public class BusyIndicator extends Canvas {
 						public void run() {
 							if (!isDisposed())
 								drawBackground(offScreenImageGC, 0, 0,
-										loader.logicalScreenWidth,
-										loader.logicalScreenHeight);
+										bounds.width,
+										bounds.height);
 						}
 					});
 					if (isDisposed())
@@ -146,10 +118,8 @@ public class BusyIndicator extends Canvas {
 					 * image.
 					 */
 					int imageDataIndex = 0;
-					ImageData imageData = progressData[imageDataIndex];
-					if (timage != null && !timage.isDisposed())
-						timage.dispose();
-					timage = new Image(display, imageData);
+					timage = getImage(imageDataIndex);
+					ImageData imageData = timage.getImageData();
 					offScreenImageGC.drawImage(timage, 0, 0,
 							imageData.width, imageData.height, imageData.x,
 							imageData.y, imageData.width, imageData.height);
@@ -159,46 +129,26 @@ public class BusyIndicator extends Canvas {
 					 * each one on the off-screen image before drawing it on
 					 * the shell.
 					 */
-					int repeatCount = loader.repeatCount;
-					while (loader.repeatCount == 0 || repeatCount > 0) {
-						if (stop || isDisposed())
-							break;
-						switch (imageData.disposalMethod) {
-						case SWT.DM_FILL_BACKGROUND:
-							/*
-							 * Fill with the background color before
-							 * drawing.
-							 */
-							/*
-							 * offScreenImageGC.fillRectangle(imageData.x,
-							 * imageData.y, imageData.width,
-							 * imageData.height);
-							 */
-							final ImageData fimageData = imageData;
-							display.syncExec(new Runnable() {
-								public void run() {
-									if (!isDisposed()) {
-										drawBackground(offScreenImageGC, fimageData.x,
-												fimageData.y, fimageData.width,
-												fimageData.height);
-									}
+					while (!stop && !isDisposed() && timage != null) {
+		
+						/*
+						 * Fill with the background color before
+						 * drawing.
+						 */
+						final ImageData fimageData = imageData;
+						display.syncExec(new Runnable() {
+							public void run() {
+								if (!isDisposed()) {
+									drawBackground(offScreenImageGC, fimageData.x,
+											fimageData.y, fimageData.width,
+											fimageData.height);
 								}
-							});
-							break;
-						case SWT.DM_FILL_PREVIOUS:
-							/* Restore the previous image before drawing. */
-							offScreenImageGC.drawImage(timage, 0, 0,
-									imageData.width, imageData.height,
-									imageData.x, imageData.y,
-									imageData.width, imageData.height);
-							break;
-						}
+							}
+						});
 
-						imageDataIndex = (imageDataIndex + 1)
-								% progressData.length;
-						imageData = progressData[imageDataIndex];
-						timage.dispose();
-						timage = new Image(display, imageData);
+						imageDataIndex = (imageDataIndex + 1) % IMAGE_COUNT;
+						timage = getImage(imageDataIndex);
+						imageData = timage.getImageData();
 						offScreenImageGC.drawImage(timage, 0, 0,
 								imageData.width, imageData.height,
 								imageData.x, imageData.y, imageData.width,
@@ -213,29 +163,17 @@ public class BusyIndicator extends Canvas {
 							}
 						});
 						/*
-						 * Sleep for the specified delay time (adding
-						 * commonly-used slow-down fudge factors).
+						 * Sleep for the specified delay time 
 						 */
 						try {
-							int ms = imageData.delayTime * 10;
-							if (ms < 20)
-								ms += 50;
-							if (ms < 30)
-								ms += 20;
-							Thread.sleep(ms);
+							Thread.sleep(MILLISECONDS_OF_DELAY);
 						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 
-						/*
-						 * If we have just drawn the last image, decrement
-						 * the repeat count and start again.
-						 */
-						if (imageDataIndex == progressData.length - 1)
-							repeatCount--;
+
 					}
 				} catch (Exception e) {
-					// Trace.trace(Trace.WARNING, "Busy error", e);
-					// //$NON-NLS-1$
 				} finally {
 					display.syncExec(new Runnable() {
 						public void run() {
@@ -247,8 +185,7 @@ public class BusyIndicator extends Canvas {
 								offScreenImageGC.dispose();
 						}
 					});
-					if (timage != null && !timage.isDisposed())
-						timage.dispose();
+					clearImages();
 				}
 				if (busyThread == null)
 					display.syncExec(new Runnable() {
@@ -334,4 +271,40 @@ public class BusyIndicator extends Canvas {
 			redraw();
 		}
 	}
+	
+
+	private ImageDescriptor createImageDescriptor(String relativePath) {
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
+		URL url = FileLocator.find(bundle, new Path(relativePath),null);
+		if (url == null) return null;
+		try {
+			url = FileLocator.resolve(url);
+			return ImageDescriptor.createFromURL(url);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	private Image getImage(int index) {
+		if (imageCache == null) {
+			imageCache = new Image[IMAGE_COUNT];
+		}
+		if (imageCache[index] == null){
+			ImageDescriptor descriptor = createImageDescriptor("$nl$/icons/progress/ani/" + (index + 1) + ".png"); //$NON-NLS-1$ //$NON-NLS-2$
+		    imageCache[index] = descriptor.createImage();
+		}
+		return imageCache[index];
+	}
+	
+	private void clearImages() {
+		if (imageCache != null) {
+			for (int index = 0; index < IMAGE_COUNT; index++) {
+				if (imageCache[index] != null && !imageCache[index].isDisposed()) {
+					imageCache[index].dispose();
+					imageCache[index] = null;
+				}
+			}
+		}
+	}
+
 }
