@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -80,9 +78,9 @@ public class GotoLineAction extends TextEditorAction {
 	}
 
 	/**
-	 * Standard input dialog which additionally sets the focus to the
-	 * text input field. Workaround for <code>InputDialog</code> issue.
-	 * 1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
+	 * Standard input dialog with custom dialog bounds
+	 * strategy and settings.
+	 * 
 	 * @since 2.0
 	 */
 	static class GotoLineDialog extends InputDialog {
@@ -92,16 +90,6 @@ public class GotoLineAction extends TextEditorAction {
 		 */
 		public GotoLineDialog(Shell parent, String title, String message, String initialValue, IInputValidator validator) {
 			super(parent, title, message, initialValue, validator);
-		}
-
-		/*
-		 * @see InputDialog#createDialogArea(Composite)
-		 */
-		protected Control createDialogArea(Composite parent) {
-			Control result= super.createDialogArea(parent);
-			getText().setFocus();
-			applyDialogFont(result);
-			return result;
 		}
 		
 		/*
