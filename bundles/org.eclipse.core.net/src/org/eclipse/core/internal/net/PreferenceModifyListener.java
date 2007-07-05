@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.net;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceModifyListener extends
 		org.eclipse.core.runtime.preferences.PreferenceModifyListener {
@@ -20,7 +21,13 @@ public class PreferenceModifyListener extends
 	}
 	
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
-		((ProxyManager)ProxyManager.getProxyManager()).migrateUpdateHttpProxy(node.node("instance"), false); //$NON-NLS-1$
+		try {
+			if (node.nodeExists("instance")) { //$NON-NLS-1$
+				((ProxyManager)ProxyManager.getProxyManager()).migrateUpdateHttpProxy(node.node("instance"), false); //$NON-NLS-1$
+			}
+		} catch (BackingStoreException e) {
+			Activator.logError("Could not access instance preferences", e); //$NON-NLS-1$
+		}
 		return super.preApply(node);
 	}
 

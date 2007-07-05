@@ -305,14 +305,16 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		}
 	}
 	
-	void migrateUpdateHttpProxy(Preferences node, boolean checkSystemProperties) {
+	void migrateUpdateHttpProxy(Preferences node, boolean isInitialize) {
 		Preferences netPrefs = node.node(Activator.ID);
 		if (!netPrefs.getBoolean(PREF_HAS_MIGRATED, false)) {
-			netPrefs.putBoolean(PREF_HAS_MIGRATED, true);
+			// Only set the migration bit when initializing
+			if (isInitialize)
+				netPrefs.putBoolean(PREF_HAS_MIGRATED, true);
 			Preferences updatePrefs = node.node("org.eclipse.update.core"); //$NON-NLS-1$
-			String httpProxyHost = getHostToMigrate(updatePrefs, checkSystemProperties);
-			int port = getPortToMigrate(updatePrefs, checkSystemProperties);
-			boolean httpProxyEnable = getEnablementToMigrate(updatePrefs, checkSystemProperties);
+			String httpProxyHost = getHostToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
+			int port = getPortToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
+			boolean httpProxyEnable = getEnablementToMigrate(updatePrefs, isInitialize /* checkSystemProperties */);
 			if (httpProxyHost != null) {
 				ProxyData proxyData = new ProxyData(IProxyData.HTTP_PROXY_TYPE, httpProxyHost, port, false);
 				ProxyType type = getType(proxyData);
