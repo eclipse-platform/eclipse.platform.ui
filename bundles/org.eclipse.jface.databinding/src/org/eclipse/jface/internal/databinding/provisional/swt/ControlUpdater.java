@@ -110,10 +110,10 @@ public abstract class ControlUpdater {
 	private PrivateInterface privateInterface = new PrivateInterface();
 	private Control theControl;
 	private IObservable[] dependencies = new IObservable[0];
-	private boolean dirty = true;
+	private boolean dirty = false;
 	
 	/**
-	 * Creates an updator for the given control.  
+	 * Creates an updater for the given control.  
 	 * 
 	 * @param toUpdate control to update
 	 */
@@ -122,7 +122,7 @@ public abstract class ControlUpdater {
 		
 		theControl.addDisposeListener(privateInterface);
 		theControl.addPaintListener(privateInterface);
-		updateIfNecessary();
+		makeDirty();
 	}
 	
 	private void updateIfNecessary() {
