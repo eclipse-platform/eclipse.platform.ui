@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Tom Schindl and others.
+ * Copyright (c) 2007 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * Example usage of none mandatory interfaces of ITableFontProvider and
- * ITableColorProvider
+ * Demonstrate alternating row colors using new Jace 3.3 API 
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * 
