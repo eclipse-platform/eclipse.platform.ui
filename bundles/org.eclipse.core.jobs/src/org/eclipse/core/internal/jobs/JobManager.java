@@ -777,6 +777,7 @@ public class JobManager implements IJobManager {
 				Thread.sleep(100);
 			}
 		} finally {
+			lockManager.aboutToRelease();
 			removeJobChangeListener(listener);
 			reportUnblocked(monitor);
 			monitor.done();
