@@ -167,8 +167,12 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			write(BUILD_SPEC, Arrays.asList(description.getBuildSpec(false)), writer);
 			write(NATURES, NATURE, description.getNatureIds(false), writer);
 			HashMap links = description.getLinks();
-			if (links != null)
-				write(LINKED_RESOURCES, links.values(), writer);
+			if (links != null) {
+				// ensure consistent order of map elements
+				List sorted = new ArrayList(links.values());
+				Collections.sort(sorted);
+				write(LINKED_RESOURCES, sorted, writer);
+			}
 		}
 		writer.endTag(PROJECT_DESCRIPTION);
 	}
@@ -185,10 +189,14 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 */
 	protected void write(String name, Map table, XMLWriter writer) {
 		writer.startTag(name, null);
-		for (Iterator it = table.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String key = (String) entry.getKey();
-			Object value = entry.getValue();
+		
+		// ensure consistent order of map elements
+		List sorted = new ArrayList(table.keySet());
+		Collections.sort(sorted);
+		
+		for (Iterator it = sorted.iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			Object value = table.get(key);
 			writer.startTag(DICTIONARY, null);
 			{
 				writer.printSimpleTag(KEY, key);
