@@ -45,11 +45,12 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
+					if (!isEnabled()) 
+						return;
 					IProject project = getSelectedProjects()[0];
 					ConfigureProjectWizard wizard = new ConfigureProjectWizard();
 					wizard.init(null, project);
 					WizardDialog dialog = new ResizeWizardDialog(getShell(), wizard);
-					//dialog.
 					dialog.open();
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
