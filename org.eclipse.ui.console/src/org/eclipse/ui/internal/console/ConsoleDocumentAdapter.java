@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * Adapts a Console's document to the viewer StyledText widget. Allows proper line
- * wrapping of fixed width consoles without having to add line delimeters to the StyledText.
+ * wrapping of fixed width consoles without having to add line delimiters to the StyledText.
  * 
  * By using this adapter, the offset of any character is the same in both the widget and the
  * document.
@@ -200,7 +200,10 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		int midIndex = 0;
 		
 		while (left <= right) {
-		    midIndex= (left + right) / 2;
+			if(left == right) {
+	    		return right;
+	    	}
+		    midIndex = (left + right) / 2;
 		    
 		    if (offset < offsets[midIndex]) {
 		        right = midIndex;
