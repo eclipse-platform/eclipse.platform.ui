@@ -95,12 +95,8 @@ public class CVSFileHistory extends FileHistory {
 		if (refetchRevisions) {
 			monitor.beginTask(NLS.bind(CVSMessages.CVSFileHistory_0, cvsFile.getRepositoryRelativePath()), 300);
 			try {
-				// try fetching log entries only when file's project is accessible
-				// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=190434
-				ILogEntry[] entries = (cvsFile.getIResource() != null && cvsFile
-						.getIResource().getProject().isAccessible()) ? cvsFile
-						.getLogEntries(new SubProgressMonitor(monitor, 200))
-						: new ILogEntry[0];
+				ILogEntry[] entries = cvsFile
+						.getLogEntries(new SubProgressMonitor(monitor, 200));
 				
 				if (entries.length == 0){
 					//Get the parent folder

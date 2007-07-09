@@ -281,6 +281,13 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * @see ICVSFile#getLogEntries(IProgressMonitor)
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor)	throws TeamException {
+		
+		// try fetching log entries only when the file's project is accessible
+		// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=190434
+		if (getIResource() == null
+				|| !getIResource().getProject().isAccessible())
+			return new ILogEntry[0];
+		
 		byte[] syncBytes = getSyncBytes();
 		if(syncBytes != null && !ResourceSyncInfo.isAddition(syncBytes)) {
 			ICVSRemoteResource remoteFile = CVSWorkspaceRoot.getRemoteResourceFor(resource);
