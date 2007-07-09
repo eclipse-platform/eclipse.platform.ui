@@ -495,5 +495,15 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
-	public void launchesRemoved(ILaunch[] launches) {}
+	public void launchesRemoved(ILaunch[] launches) {
+		//we want to ensure that even if a launch is removed from the debug view 
+		//when it is not terminated we update the label just in case.
+		//bug 195232
+		for(int i = 0; i < launches.length; i++) {
+			if(!launches[i].isTerminated()) {
+				fUpdateLabel = true;
+				return;
+			}
+		}
+	}
 }
