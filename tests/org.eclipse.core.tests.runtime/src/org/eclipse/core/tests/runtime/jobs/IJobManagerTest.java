@@ -65,9 +65,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
-//		TestSuite suite = new TestSuite();
-//		suite.addTest(new IJobManagerTest("testJobFamilyCancel"));
-//		return suite;
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new IJobManagerTest("testJobFamilyCancel"));
+		//		return suite;
 	}
 
 	public IJobManagerTest() {
@@ -93,6 +93,13 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	protected void cancel(ArrayList jobs) {
 		for (Iterator it = jobs.iterator(); it.hasNext();)
 			((Job) it.next()).cancel();
+	}
+
+	/**
+	 * Returns whether we are currently running on windows.
+	 */
+	private boolean isWindows() {
+		return Platform.isRunning() && Platform.getOS().equals(Platform.OS_WIN32);
 	}
 
 	private String printState(int state) {
@@ -137,7 +144,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		super.tearDown();
 		//		manager.startup();
 	}
-	
+
 	/**
 	 * Tests running a job that begins a rule but never ends it
 	 */
@@ -534,21 +541,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		assertEquals("15.0", NUM_JOBS, allJobs.size());
 		allJobs.clear();
 	}
-	
-	public void testJobFamilyJoinNothing() {
-		//test joining a bogus family, and the monitor should be used up
-		try {
-			final FussyProgressMonitor monitor = new FussyProgressMonitor();
-			monitor.prepare();
-			manager.join(new Object(), monitor);
-			monitor.sanityCheck();
-			monitor.assertUsedUp();
-		} catch (OperationCanceledException e) {
-			fail("4.99", e);
-		} catch (InterruptedException e) {
-			fail("4.99", e);
-		}
-	}
 
 	public void testJobFamilyJoin() {
 		//test the join method on a family of jobs
@@ -767,6 +759,48 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//all the jobs should now be in the NONE state
 		for (int j = 0; j < NUM_JOBS; j++) {
 			assertState("3." + j, jobs[j], Job.NONE);
+		}
+	}
+
+	/**
+	 * Asserts that the LockListener is called correctly during invocation of 
+	 * {@link IJobManager#join(Object, IProgressMonitor)}.
+	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=195839.
+	 */
+	public void testJobFamilyJoinLockListener() {
+		final TestJobFamily family = new TestJobFamily(TestJobFamily.TYPE_ONE);
+		int count = 5;
+		Job[] jobs = new Job[count];
+		for (int i = 0; i < jobs.length; i++) {
+			jobs[i] = new FamilyTestJob("TestJobFamilyJoinLockListener" + i, 5, 500, family.getType());
+			jobs[i].schedule();
+		}
+		TestLockListener lockListener = new TestLockListener();
+		try {
+			manager.setLockListener(lockListener);
+			manager.join(family, new FussyProgressMonitor());
+		} catch (OperationCanceledException e) {
+			fail("4.99", e);
+		} catch (InterruptedException e) {
+			fail("4.99", e);
+		} finally {
+			manager.setLockListener(null);
+		}
+		lockListener.assertNotWaiting("1.0");
+	}
+
+	public void testJobFamilyJoinNothing() {
+		//test joining a bogus family, and the monitor should be used up
+		try {
+			final FussyProgressMonitor monitor = new FussyProgressMonitor();
+			monitor.prepare();
+			manager.join(new Object(), monitor);
+			monitor.sanityCheck();
+			monitor.assertUsedUp();
+		} catch (OperationCanceledException e) {
+			fail("4.99", e);
+		} catch (InterruptedException e) {
+			fail("4.99", e);
 		}
 	}
 
@@ -1090,7 +1124,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		for (int i = 0; i < JOBS_PER_FAMILY; i++) {
 			//the running job may not respond immediately
 			if (!family2[i].cancel())
-			waitForCancel(family2[i]);
+				waitForCancel(family2[i]);
 			assertState("5." + i, family2[i], Job.NONE);
 		}
 
@@ -1156,13 +1190,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		}
 		//cancel the final job
 		jobs[JOB_COUNT - 1].cancel();
-	}
-
-	/**
-	 * Returns whether we are currently running on windows.
-	 */
-	private boolean isWindows() {
-		return Platform.isRunning() && Platform.getOS().equals(Platform.OS_WIN32);
 	}
 
 	public void testOrder() {
@@ -1513,16 +1540,19 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.endRule(rule);
 		}
 	}
+
 	/**
 	 * Simple test of rule transfer
 	 */
 	public void testTransferSimple() {
 		class RuleEnder implements Runnable {
-			private final ISchedulingRule rule;
 			Exception error;
+			private final ISchedulingRule rule;
+
 			RuleEnder(ISchedulingRule rule) {
 				this.rule = rule;
 			}
+
 			public void run() {
 				try {
 					manager.endRule(rule);
@@ -1545,6 +1575,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		if (ender.error != null)
 			fail("1.0", ender.error);
 	}
+
 	/**
 	 * Tests a batch of jobs that use two mutually exclusive rules.
 	 */
@@ -1647,11 +1678,12 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			Thread.yield();
 			//sanity test to avoid hanging tests
 			if (i++ >= 1000) {
-				dumpState(); 
+				dumpState();
 				assertTrue("Timeout waiting for job to start. Job: " + job + ", state: " + job.getState(), false);
 			}
 		}
 	}
+
 	/**
 	 * A job has been scheduled.  Pause this thread so that a worker thread
 	 * has a chance to pick up the new job.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,12 @@ import junit.framework.Assert;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.core.tests.harness.TestBarrier;
-import org.eclipse.core.tests.harness.TestJob;
+import org.eclipse.core.tests.harness.*;
 
 /**
  * Tests the implemented get/set methods of the abstract class Job
  */
-public class JobTest extends TestCase {
+public class JobTest extends AbstractJobTest {
 	protected Job longJob;
 	protected Job shortJob;
 
@@ -77,14 +76,6 @@ public class JobTest extends TestCase {
 		super.setUp();
 		shortJob = new TestJob("Short Test Job", 100, 10);
 		longJob = new TestJob("Long Test Job", 1000000, 10);
-	}
-
-	private void sleep(long duration) {
-		try {
-			Thread.sleep(duration);
-		} catch (InterruptedException e) {
-			//ignore
-		}
 	}
 
 	/*
@@ -605,6 +596,27 @@ public class JobTest extends TestCase {
 		//finally canceling the job will cause the join to return
 		longJob.cancel();
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+	}
+
+	/**
+	 * Asserts that the LockListener is called correctly during invocation of 
+	 * {@link Job#join()}.
+	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=195839.
+	 */
+	public void testJoinLockListener() {
+		Job testJob = new TestJob("testJoinLockListener", 5, 500);
+		TestLockListener lockListener = new TestLockListener();
+		try {
+			Job.getJobManager().setLockListener(lockListener);
+			testJob.join();
+		} catch (OperationCanceledException e) {
+			fail("4.99", e);
+		} catch (InterruptedException e) {
+			fail("4.99", e);
+		} finally {
+			Job.getJobManager().setLockListener(null);
+		}
+		lockListener.assertNotWaiting("1.0");
 	}
 
 	/**
