@@ -202,7 +202,7 @@ function onloadHandler(e)
 			<tr nowrap  valign="middle">
 				<td <%=isRTL?"nowrap":""%>>
 					<label id="searchLabel" for="searchWord" accesskey="<%=ServletResources.getAccessKey("Search", request)%>">
-					&nbsp;<%=ServletResources.getLabel("Search", request)%>:
+					&nbsp;<%=ServletResources.getLabel("Search", request)%>
 					</label>
 				</td>
 				<td>
