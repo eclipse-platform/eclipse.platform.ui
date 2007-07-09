@@ -78,8 +78,8 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 					tab.dispose();
 				}
 			}
+			fTabs.clear();
 		}
-		fTabs.clear();
 	}
 	
 	/**
