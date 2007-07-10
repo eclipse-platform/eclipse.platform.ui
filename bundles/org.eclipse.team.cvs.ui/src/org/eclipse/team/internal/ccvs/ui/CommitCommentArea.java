@@ -489,6 +489,41 @@ public class CommitCommentArea extends DialogArea {
         return stripped;
     }
     
+	/**
+	 * Calculates a shortened form of the commit message for use as a commit set
+	 * title
+	 * @return The first line or sentence of the commit message.  The commit template
+	 * text will be removed, as will leading and trailing whitespace.
+	 */
+	public String getFirstLineOfComment() {
+		String comment= fTextBox.getText();
+		if (comment == null) {
+			comment= ""; //$NON-NLS-1$
+		}
+		
+		comment= strip(comment);
+		
+		
+		int cr= comment.indexOf('\r');
+		if (cr != -1) {
+			comment= comment.substring(0, cr);
+		}
+		
+		int lf= comment.indexOf('\n');
+		if (lf != -1) {
+			comment= comment.substring(0, lf);
+		}
+		
+		int dot= comment.indexOf('.');
+		if (dot != -1) {
+			comment= comment.substring(0, dot);
+		}
+
+		comment= comment.trim();
+		
+		return comment;
+	}
+	
     public String getCommentWithPrompt(Shell shell) {
         final String comment= getComment(false);
         if (comment.length() == 0) {

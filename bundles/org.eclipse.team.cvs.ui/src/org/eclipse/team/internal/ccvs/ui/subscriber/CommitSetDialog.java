@@ -38,12 +38,12 @@ public class CommitSetDialog extends TitleAreaDialog {
     private final ActiveChangeSet set;
     private CommitCommentArea commitCommentArea;
     private Text nameText;
-    private Button useTitleButton;
-    private Button enterCommentButton;
+    private Button customTitleButton;
     private final String title;
     private final String description;
     private String comment;
     private short mode;
+	protected String customTitle;
 
     public CommitSetDialog(Shell parentShell, ActiveChangeSet set, IResource[] files, short mode) {
         super(parentShell);
@@ -93,8 +93,6 @@ public class CommitSetDialog extends TitleAreaDialog {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
         composite.setFont(parentComposite.getFont());
 		
-		createNameArea(composite);
-		
 		if (hasCommitTemplate()) {
 		    if (set.hasComment()) {
 		        // Only set the comment if the set has a custom comment.
@@ -105,7 +103,6 @@ public class CommitSetDialog extends TitleAreaDialog {
 		} else {
 		    comment = set.getComment();
 		    commitCommentArea.setProposedComment(comment);
-		    createOptionsArea(composite);
 		}
 		
 		commitCommentArea.createArea(composite);
@@ -116,10 +113,16 @@ public class CommitSetDialog extends TitleAreaDialog {
 					okPressed();
 				} else if (event.getProperty() == CommitCommentArea.COMMENT_MODIFIED) {
 				    comment = (String)event.getNewValue();
+				    if (!customTitleButton.getSelection()) {
+				    	nameText.setText(commitCommentArea.getFirstLineOfComment());
+				    }
 					updateEnablements();
 				}
 			}
 		});
+
+		createOptionsArea(composite);
+		createNameArea(composite);
 		
 		initializeValues();
 		updateEnablements();
@@ -158,6 +161,7 @@ public class CommitSetDialog extends TitleAreaDialog {
 		nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         nameText.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
+            	customTitle = nameText.getText();
                 updateEnablements();
             }
         });
@@ -169,9 +173,8 @@ public class CommitSetDialog extends TitleAreaDialog {
         nameText.setText(initialText);
         nameText.setSelection(0, initialText.length());
         
-        if (useTitleButton != null) {
-            useTitleButton.setSelection(!set.hasComment());
-            enterCommentButton.setSelection(set.hasComment());
+        if (customTitleButton != null) {
+            customTitleButton.setSelection(!commitCommentArea.getFirstLineOfComment().equals(initialText));
         }
     }
     
@@ -184,28 +187,39 @@ public class CommitSetDialog extends TitleAreaDialog {
 		radioAreaLayout.marginBottom = 0;
 		radioArea.setLayout(radioAreaLayout);
 		
-        useTitleButton = createRadioButton(radioArea, CVSUIMessages.CommitSetDialog_2); 
-        enterCommentButton = createRadioButton(radioArea, CVSUIMessages.CommitSetDialog_3); 
+        customTitleButton = createCheckButton(radioArea, CVSUIMessages.CommitSetDialog_2); 
         SelectionAdapter listener = new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
+            	if (customTitleButton.getSelection()) {
+            		nameText.setText(customTitle);
+            	} else {
+            		nameText.setText(commitCommentArea.getFirstLineOfComment());
+            	}
                 updateEnablements();
             }
         };
-        useTitleButton.addSelectionListener(listener);
-        enterCommentButton.addSelectionListener(listener);
+        customTitleButton.addSelectionListener(listener);
         
     }
     
-	private Button createRadioButton(Composite parent, String label) {
-		Button button = new Button(parent, SWT.RADIO);
+	private Button createCheckButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.CHECK);
 		button.setText(label);
 		return button;
 	}
 	
     private void updateEnablements() {
-        commitCommentArea.setEnabled(isUseCustomComment());
 		setErrorMessage(null);
-		String name = nameText.getText();
+		String name;
+		
+		nameText.setEnabled(customTitleButton.getSelection());
+		
+		if (customTitleButton.getSelection()) {
+			name = customTitle;
+		} else {
+			name = commitCommentArea.getFirstLineOfComment();
+		}
+		
 		if (name.length() == 0) {
 			setPageComplete(false);
 			return;
@@ -229,12 +243,6 @@ public class CommitSetDialog extends TitleAreaDialog {
 		}
 
         
-        if (isUseCustomComment()) {
-            if (comment == null || comment.length() == 0) {
-               setPageComplete(false);
-               return;
-            }
-        }
         setPageComplete(true);
     }
     
@@ -253,19 +261,20 @@ public class CommitSetDialog extends TitleAreaDialog {
      * @see org.eclipse.jface.dialogs.Dialog#okPressed()
      */
     protected void okPressed() {
-        set.setTitle(nameText.getText());
-        if (isUseCustomComment()) {
-            // Call getComment so the comment gets saved
-            set.setComment(commitCommentArea.getComment(true));
-        } else {
-            set.setComment(null);
-        }
+    	String title = null;
+    	if (customTitleButton.getSelection()) {
+			title= customTitle;
+		} else {
+			title= commitCommentArea.getFirstLineOfComment();
+		}
+    	
+        set.setTitle(title);
+        // Call getComment so the comment gets saved
+        set.setComment(commitCommentArea.getComment(true));
+        
         super.okPressed();
     }
 
-    private boolean isUseCustomComment() {
-        return enterCommentButton == null || enterCommentButton.getSelection();
-    }
 
 	protected Label createWrappingLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
