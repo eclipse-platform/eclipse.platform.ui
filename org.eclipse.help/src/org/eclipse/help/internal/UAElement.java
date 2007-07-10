@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal;
 
-import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +30,6 @@ import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 /*
  * Base class for UA model elements.
  */
@@ -137,11 +132,7 @@ public class UAElement implements IUAElement {
 			if (builder == null) {
 				try {
 					builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-					builder.setEntityResolver(new EntityResolver() {
-						public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-							return new InputSource(new StringReader("")); //$NON-NLS-1$
-						}
-					});
+					builder.setEntityResolver(new CachedEntityResolver());
 				}
 				catch (ParserConfigurationException e) {
 					String msg = "Error creating document builder"; //$NON-NLS-1$

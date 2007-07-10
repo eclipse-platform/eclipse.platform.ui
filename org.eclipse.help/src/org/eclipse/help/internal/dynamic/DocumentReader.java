@@ -13,16 +13,15 @@ package org.eclipse.help.internal.dynamic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.help.internal.CachedEntityResolver;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.UAElementFactory;
 import org.w3c.dom.Document;
-import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -40,11 +39,7 @@ public class DocumentReader {
 			factory.setNamespaceAware(false);
 			factory.setExpandEntityReferences(false);
 			builder = factory.newDocumentBuilder();
-			builder.setEntityResolver(new EntityResolver() {
-				public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-					return new InputSource(new StringReader("")); //$NON-NLS-1$
-				}
-			});
+			builder.setEntityResolver(new CachedEntityResolver());
 		}
 		InputSource input = null;
 		if (charset != null) {

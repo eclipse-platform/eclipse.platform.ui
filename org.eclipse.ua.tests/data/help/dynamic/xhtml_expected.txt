@@ -9,7 +9,7 @@
 
 <link rel="STYLESHEET" href="../book.css" charset="ISO-8859-1" type="text/css" />
 <title>Exporting files</title>
-<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"> </script>
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js" xml:space="preserve"> </script>
 </head>
 
 <body bgcolor="#ffffff">
@@ -21,7 +21,7 @@ Exporting files </h1>
   <li> <img align="texttop" border="0" src="../images/win_only.png" alt="Windows only" />
     Copying and pasting to the file system, or</li>
   <li> Using the
-  <a class="command-link" href="javascript:executeCommand(&quot;org.eclipse.ui.file.export&quot;)">
+  <a class="command-link" href="javascript:executeCommand(&quot;org.eclipse.ui.file.export&quot;)" shape="rect">
   <img src="PLUGINS_ROOT/org.eclipse.help/command_link.png"/>
   <b>Export wizard</b></a>.</li>
 </ul>

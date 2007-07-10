@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.help.internal;
 
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
 import org.eclipse.help.internal.extension.ContentExtensionManager;
 import org.eclipse.help.internal.index.IndexManager;
 import org.eclipse.help.internal.toc.TocManager;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -40,6 +44,7 @@ public class HelpPlugin extends Plugin {
 	private ContentExtensionManager contentExtensionManager;
 	private IndexManager indexManager;
 	private IHelpProvider helpProvider;
+	private File configurationDirectory;
 
 	public static void logWarning(String message) {
 		Status errorStatus = new Status(IStatus.WARNING, PLUGIN_ID, IStatus.OK, message, null);
@@ -131,6 +136,22 @@ public class HelpPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		
+		// determine configuration location for this plug-in
+		Location location = Platform.getConfigurationLocation();
+		if (location != null) {
+			URL configURL = location.getURL();
+			if (configURL != null && configURL.getProtocol().startsWith("file")) { //$NON-NLS-1$
+				configurationDirectory = new File(configURL.getFile(), PLUGIN_ID);
+			}
+		}
+		if (configurationDirectory == null) {
+			configurationDirectory = getStateLocation().toFile();
+		}
+	}
+
+	public static File getConfigurationDirectory() {
+		return getDefault().configurationDirectory;
 	}
 
 	/* (non-Javadoc)
