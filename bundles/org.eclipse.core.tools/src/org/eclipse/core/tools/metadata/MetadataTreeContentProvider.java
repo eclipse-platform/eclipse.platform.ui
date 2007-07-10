@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	}
 
 	/**
-	 * Helper method that creates a new TreeContentroviderNode object given a File 
+	 * Helper method that creates a new TreeContentProviderNode object given a File 
 	 * object.
 	 * 
 	 * @param file the file a node will created for
@@ -185,28 +185,6 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 				return isRoot() ? file.getAbsolutePath() : file.getName();
 			}
 		};
-	}
-
-	/**
-	 * Filters accepted files (the ones who are registered in the DumperFactory).
-	 * 
-	 * @see MetadataTreeContentProvider#MetadataTreeContentProvider(String[]) 
-	 * @see java.io.FileFilter
-	 */
-	private class MetadataFileFilter implements FileFilter {
-		private String[] fileNames;
-
-		private MetadataFileFilter(String[] fileNames) {
-			this.fileNames = fileNames;
-			Arrays.sort(this.fileNames);
-		}
-
-		/**
-		 * @see java.io.FileFilter#accept(java.io.File)
-		 */
-		public boolean accept(File file) {
-			return file.isFile() && Arrays.binarySearch(fileNames, file.getName()) >= 0;
-		}
 	}
 
 	/**

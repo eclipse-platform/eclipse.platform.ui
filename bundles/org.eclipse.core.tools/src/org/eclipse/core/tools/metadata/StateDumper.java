@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,10 @@ public class StateDumper extends AbstractDumper {
 		PlatformAdmin admin = Platform.getPlatformAdmin();
 		// use the deprecated API to support running against a 3.0 Eclipse
 		State state = admin.getFactory().readState(new DataInputStream(input));
+		if (state==null){
+			contents.append("Unable to read state file.");
+			return;
+		}
 		contents.append("State resolved: "); //$NON-NLS-1$
 		contents.append(state.isResolved());
 		contents.append("\n"); //$NON-NLS-1$

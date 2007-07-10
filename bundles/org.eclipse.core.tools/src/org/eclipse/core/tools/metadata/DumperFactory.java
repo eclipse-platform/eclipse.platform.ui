@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.File;
+import java.util.Enumeration;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.CoreToolsPlugin;
@@ -58,7 +59,7 @@ public class DumperFactory {
 		IConfigurationElement[] dumperDefinitions = dumpersPoint.getConfigurationElements();
 		for (int i = 0; i < dumperDefinitions.length; i++)
 			if (dumperDefinitions[i].getName().equals(ELEM_DUMPER))
-				configuration.put(dumperDefinitions[i].getAttributeAsIs(ATTR_FILE_NAME), dumperDefinitions[i]);
+				configuration.put(dumperDefinitions[i].getAttribute(ATTR_FILE_NAME), dumperDefinitions[i]);
 	}
 
 	/**
@@ -79,22 +80,24 @@ public class DumperFactory {
 	 * @param fileName the file to be dumped's name
 	 * @return a <code>IDumper</code> that knows how to read the file
 	 * @throws DumpException if there is no dumper class registered for the 
-	 * provided file name
+	 * provided file name of if we cannot instanciate the dumper class
 	 */
 	public IDumper getDumper(String fileName) throws DumpException {
 		fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1);
 
 		Object dumper = configuration.get(fileName);
 
-		if (dumper == null)
-			throw new DumpException("There is no dumper class for <" + fileName + "> files"); //$NON-NLS-1$ //$NON-NLS-2$
-
+		if (dumper == null) {
+			String NO_DUMPER_MSG = "There is no dumper class for <" + fileName + "> files"; //$NON-NLS-1$ //$NON-NLS-2$
+			NO_DUMPER_MSG += getListOfDumperClass(configuration);
+			throw new DumpException(NO_DUMPER_MSG);
+		}
 		// legacy-style definition (from the properties file)
 		if (dumper instanceof String)
 			try {
 				return (IDumper) Class.forName((String) dumper).newInstance();
 			} catch (Exception e) {
-				throw new DumpException("Error instantiating dumper for <" + fileName + "> file", e); //$NON-NLS-1$ //$NON-NLS-2$
+				throw new DumpException("Error instantiating dumper named " + dumper + " for <" + fileName + "> file", e); //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		// dumper defined through extension mechanism	
 		try {
@@ -102,5 +105,15 @@ public class DumperFactory {
 		} catch (CoreException ce) {
 			throw new DumpException("Error instantiating dumper for <" + fileName + "> file", ce); //$NON-NLS-1$ //$NON-NLS-2$		
 		}
+	}
+
+	private String getListOfDumperClass(Properties cfg) {
+		StringBuffer buf = new StringBuffer("\r\nList of files who have a dumper class");
+		for (Enumeration e = cfg.keys(); e.hasMoreElements();) {
+			String element = (String) e.nextElement();
+			buf.append("\r\n");
+			buf.append(element);
+		}
+		return buf.toString();
 	}
 }
