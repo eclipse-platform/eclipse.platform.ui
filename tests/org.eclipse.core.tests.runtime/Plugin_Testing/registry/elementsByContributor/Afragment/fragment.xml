@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<fragment>
+   <extension-point id="org.eclipse.test.registryByContrib.PointFA" 
+         name="By Contributors PointFA" 
+         schema="schema/PointFA.exsd"/>
+   <extension id="org.eclipse.test.registryByContrib.ExtensionFA"
+         name="Extension FA"
+         point="org.eclipse.test.registryByContrib.PointFA">
+   </extension>
+</fragment>

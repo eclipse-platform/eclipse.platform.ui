@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Fragment Contributor Test
+Bundle-SymbolicName: testByContributorsFragmentA; singleton := true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: jar.jar
+Fragment-Host: testByContributorsA
+Bundle-Localization: plugin
