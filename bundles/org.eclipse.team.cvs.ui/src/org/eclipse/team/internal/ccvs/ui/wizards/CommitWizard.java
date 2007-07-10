@@ -165,8 +165,9 @@ public class CommitWizard extends ResizableWizard {
     
     public CommitWizard(final IResource [] resources) throws CVSException {
         
-        super(CVSUIMessages.CommitWizard_3, CVSUIPlugin.getPlugin().getDialogSettings()); 
+        super(CVSUIMessages.CommitWizard_3, CVSUIPlugin.getPlugin().getDialogSettings());
         
+        setNeedsProgressMonitor(true);
         setWindowTitle(CVSUIMessages.CommitWizard_2); 
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
         
@@ -294,7 +295,16 @@ public class CommitWizard extends ResizableWizard {
             return false;
         }
         
+        fCommitPage.finish();
         return super.performFinish();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.wizards.ResizableWizard#performCancel()
+     */
+    public boolean performCancel() {
+    	fCommitPage.finish();
+    	return super.performCancel();
     }
 
     public void addPages() {

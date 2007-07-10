@@ -15,21 +15,25 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
  * A participant that uses our decorator instead of the standard one.
  */
 public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
-    
+	
     /**
      * The actions to be displayed in the context menu.
      */
@@ -68,8 +72,11 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
             return decoration;
         }
     }
+
+	protected static final String ACTION_GROUP = "org.eclipse.tam.cvs.ui.CommitActions"; //$NON-NLS-1$
     
     final CommitWizard fWizard;
+	protected Action showComparePaneAction;
     
     public CommitWizardParticipant(ISynchronizeScope scope, CommitWizard wizard) {
         super(scope);
@@ -83,17 +90,19 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
     public ChangeSetCapability getChangeSetCapability() {
         return null; // we don't want that button
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
      */
-    protected void initializeConfiguration( ISynchronizePageConfiguration configuration) {
+    protected void initializeConfiguration( final ISynchronizePageConfiguration configuration) {
         super.initializeConfiguration(configuration);
-        configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.LAYOUT_GROUP});
+        configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ACTION_GROUP, ISynchronizePageConfiguration.LAYOUT_GROUP});
         configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP_3);
         configuration.addActionContribution(new ActionContribution());
+        configuration.setRunnableContext(fWizard.getContainer());
         
         // Wrap the container so that we can update the enablements after the runnable
         // (i.e. the container resets the state to what it was at the beginning of the
@@ -110,11 +119,59 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
         });
         configuration.setSupportedModes(ISynchronizePageConfiguration.OUTGOING_MODE);
         configuration.setMode(ISynchronizePageConfiguration.OUTGOING_MODE);
+        configuration.addActionContribution(new SynchronizePageActionGroup() {
+        	public void initialize(ISynchronizePageConfiguration configuration) {
+        		super.initialize(configuration);
+        		showComparePaneAction = new Action(null, Action.AS_CHECK_BOX) {
+        			public void run() {
+        				fWizard.getCommitPage().showComparePane(this.isChecked());
+        			}
+        		};
+        		Utils.initAction(showComparePaneAction, "ComnitWizardComparePaneToggle.", Policy.getActionBundle()); //$NON-NLS-1$
+        		showComparePaneAction.setChecked(isComparePaneVisible());
+        		appendToGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ACTION_GROUP, showComparePaneAction);
+        	}
+		});
+        configuration.setProperty(SynchronizePageConfiguration.P_OPEN_ACTION, new Action() {
+			public void run() {
+				ISelection selection = configuration.getSite().getSelectionProvider().getSelection();
+				if(selection instanceof IStructuredSelection) {
+					final Object obj = ((IStructuredSelection) selection).getFirstElement();
+					if (obj instanceof SyncInfoModelElement) {
+						try {
+							fWizard.getContainer().run(true, true, new IRunnableWithProgress() {
+								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+									try {
+										((SyncInfoModelElement)obj).cacheContents(monitor);
+									} catch (TeamException e) {
+										throw new InvocationTargetException(e);
+									}
+							    	fWizard.getContainer().getShell().getDisplay().syncExec(new Runnable() {
+										public void run() {
+											fWizard.getCommitPage().showComparePane(true);
+											showComparePaneAction.setChecked(true);
+											fWizard.getCommitPage().setCompareInput(obj);						
+										}
+							    	});
+								}
+							});
+						} catch (InvocationTargetException e) {
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+			}
+        });
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#doesSupportSynchronize()
      */
     public boolean doesSupportSynchronize() {
         return false;
+    }
+    
+    private boolean isComparePaneVisible() {
+    	return fWizard.getDialogSettings().getSection(CVSUIMessages.CommitWizard_3).getBoolean(CommitWizardCommitPage.SHOW_COMPARE);
     }
 }

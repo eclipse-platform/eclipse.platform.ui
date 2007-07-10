@@ -11,10 +11,12 @@
 
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -23,6 +25,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -46,7 +49,14 @@ import org.eclipse.ui.part.PageBook;
  */
 public class CommitWizardCommitPage extends WizardPage implements IPropertyChangeListener {
     
-    private final CommitCommentArea fCommentArea;
+    public static final String SHOW_COMPARE = "ShowCompare"; //$NON-NLS-1$
+    private static final String H_WEIGHT_1 = "HWeight1"; //$NON-NLS-1$
+    private static final String H_WEIGHT_2 = "HWeight2"; //$NON-NLS-1$
+    private static final String V_WEIGHT_1 = "VWeight1"; //$NON-NLS-1$
+    private static final String V_WEIGHT_2 = "VWeight2"; //$NON-NLS-1$
+    
+
+	private final CommitCommentArea fCommentArea;
     
     private ISynchronizePageConfiguration fConfiguration;
     
@@ -59,6 +69,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 
 	private boolean fIsEmpty;
     
+    private CompareViewerSwitchingPane compareViewerPane;
+	private SashForm horizontalSash;
+	private SashForm verticalSash;
+	private boolean showCompare;
+	
     public CommitWizardCommitPage(IResource [] resources, CommitWizard wizard) {
         
         super(CVSUIMessages.CommitWizardCommitPage_0); 
@@ -85,9 +100,53 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         // set F1 help
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_COMMENT_PAGE);
         
-        createCommentArea(composite, converter);
-        createChangesArea(composite, converter);
         
+        horizontalSash = new SashForm(composite, SWT.HORIZONTAL);
+        horizontalSash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
+        verticalSash = new SashForm(horizontalSash, SWT.VERTICAL);
+        verticalSash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        createCommentArea(verticalSash, converter);
+        
+        createChangesArea(verticalSash, converter);
+
+        compareViewerPane = new CompareViewerSwitchingPane(horizontalSash, SWT.BORDER | SWT.FLAT) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				CompareConfiguration cc = new CompareConfiguration();
+				cc.setLeftEditable(false);
+				cc.setRightEditable(false);
+				
+				return CompareUI.findContentViewer(oldViewer, input, this, cc);	
+			}
+		};
+        compareViewerPane.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+        
+        IDialogSettings section = getDialogSettings().getSection(CVSUIMessages.CommitWizard_3);
+		showCompare = section.getBoolean(SHOW_COMPARE);
+		int vWeight1 = 50;
+		int vWeight2 = 50;
+		try {
+			vWeight1 = section.getInt(V_WEIGHT_1);
+			vWeight2 = section.getInt(V_WEIGHT_2);
+		} catch (NumberFormatException e) {
+		}
+		
+		int hWeight1 = 35;
+		int hWeight2 = 65;
+		try {
+			hWeight1 = section.getInt(H_WEIGHT_1);
+			hWeight2 = section.getInt(H_WEIGHT_2);
+		} catch (NumberFormatException e) {
+		}
+
+		if (!showCompare) {
+			horizontalSash.setMaximizedControl(verticalSash);
+		}
+		
+		verticalSash.setWeights(new int[] {vWeight1, vWeight2});
+		horizontalSash.setWeights(new int[] {hWeight1, hWeight2});
+		
         //fSashForm.setWeights(weights);
         Dialog.applyDialogFont(parent);
         setControl(composite);
@@ -97,13 +156,20 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         validatePage(false);
     }
     
+    public void setCompareInput(final Object input) {
+		compareViewerPane.setInput(input);
+    }
+    
     private void createCommentArea(Composite parent, PixelConverter converter) {
+        Composite c = new Composite(parent, SWT.NONE);
+        c.setLayout(GridLayoutFactory.fillDefaults().margins(0, 0).create());
         
-        fCommentArea.createArea(parent);
-        fCommentArea.getComposite().setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true));
+        fCommentArea.createArea(c);
+        GridData gd = SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true);
+        fCommentArea.getComposite().setLayoutData(gd);
         fCommentArea.addPropertyChangeListener(this);
         
-        createPlaceholder(parent);
+        createPlaceholder(c);
     }
     
     private void createChangesArea(Composite parent, PixelConverter converter) {
@@ -131,8 +197,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             final Composite composite= new Composite(parent, SWT.NONE);
             composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
             composite.setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, SWT.DEFAULT, SWT.FILL, SWT.FILL, true, true));
-            
-            createPlaceholder(composite);
             
             Control c = createChangesPage(composite, participant);
             c.setLayoutData(SWTUtils.createHVFillGridData());
@@ -370,6 +434,29 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 		}
 		return false;
    }
+	
+	public void finish() {
+		int[] hWeights = horizontalSash.getWeights();
+		int[] vWeights = verticalSash.getWeights();
+		IDialogSettings section = getDialogSettings().getSection(CVSUIMessages.CommitWizard_3);
+		if (showCompare) {
+			section.put(H_WEIGHT_1, hWeights[0]);
+			section.put(H_WEIGHT_2, hWeights[1]);
+		}
+		section.put(V_WEIGHT_1, vWeights[0]);
+		section.put(V_WEIGHT_2, vWeights[1]);
+		section.put(SHOW_COMPARE, showCompare);
+	}
+
+	public void showComparePane(boolean showCompare) {
+		this.showCompare = showCompare;
+		if (showCompare) {
+			horizontalSash.setMaximizedControl(null);
+		} else {
+			horizontalSash.setMaximizedControl(verticalSash);
+		}
+		
+	}
     
 }    
 
