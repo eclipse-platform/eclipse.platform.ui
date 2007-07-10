@@ -41,8 +41,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
-import com.ibm.icu.text.MessageFormat;
-
 /**
  * Manages contributed launch configuration tabs
  * 
@@ -164,8 +162,7 @@ public class LaunchConfigurationPresentationManager {
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
-			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {type.getIdentifier()})), null);   //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "No tab group defined for launch configuration type " + type.getIdentifier(), null);   //$NON-NLS-1$
 			 throw new CoreException(status);
 		} 
 		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), null);		
@@ -184,8 +181,7 @@ public class LaunchConfigurationPresentationManager {
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension ext = getExtension(config.getType().getIdentifier(), modes);
 		if (ext == null) {
-			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {config.getType().getIdentifier()})), null);   //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "No tab group defined for launch configuration type " + config.getType().getIdentifier(), null);   //$NON-NLS-1$
 			 throw new CoreException(status);
 		} 
 		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), config);
@@ -300,8 +296,7 @@ public class LaunchConfigurationPresentationManager {
 		modes.add(mode);
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
-			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {type.getIdentifier()})), null);  //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "No tab group defined for launch configuration type " + type.getIdentifier(), null);  //$NON-NLS-1$
 			 throw new CoreException(status);
 		} 
 		return ext.getHelpContextId();		
