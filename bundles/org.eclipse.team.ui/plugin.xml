@@ -213,13 +213,6 @@
          </showInPart>
       </perspectiveExtension>
    </extension>
-   
-<!-- ********** New Project Wizard ************** --> 
-   <extension
-         point="org.eclipse.ui.newWizards">
-         <category name="%Team" id="org.eclipse.team.ui.newWizards">
-         </category>
-   </extension>
 <!-- ****************** Import Wizards ********************* -->
    <extension
          point="org.eclipse.ui.importWizards">
