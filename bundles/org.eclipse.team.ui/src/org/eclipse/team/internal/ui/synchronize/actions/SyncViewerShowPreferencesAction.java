@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.dialogs.PreferencePageContainerDialog;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -28,7 +27,6 @@ public class SyncViewerShowPreferencesAction extends Action {
 	public void run() {
 	    PreferencePage[] pages = configuration.getParticipant().getPreferencePages();
         PreferencePageContainerDialog dialog = new PreferencePageContainerDialog(configuration.getSite().getShell(), pages);
-        dialog.setHelpContextId(IHelpContextIds.SYNC_VIEW_PREFERENCE_DIALOG);
 		dialog.setBlockOnOpen(true);
 		dialog.open();
 	}

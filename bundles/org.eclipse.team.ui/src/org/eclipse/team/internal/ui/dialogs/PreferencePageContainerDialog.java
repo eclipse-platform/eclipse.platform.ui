@@ -16,42 +16,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.compare.internal.TabFolderLayout;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.preference.IPersistentPreferenceStore;
-import org.eclipse.jface.preference.IPreferencePageContainer;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.util.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.ui.PlatformUI;
 
-public class PreferencePageContainerDialog extends TrayDialog implements IPreferencePageContainer {
+public class PreferencePageContainerDialog extends TrayDialog 
+	implements IPreferencePageContainer, IPageChangeProvider {
 
 	private PreferencePage[] pages;
 	private PreferencePage currentPage;
@@ -65,6 +45,8 @@ public class PreferencePageContainerDialog extends TrayDialog implements IPrefer
 	private Image fErrorMsgImage;
 
 	private Button fOkButton;
+	
+	private ListenerList pageChangedListeners = new ListenerList();
 	
 	/**
 	 * The Composite in which a page is shown.
@@ -86,7 +68,6 @@ public class PreferencePageContainerDialog extends TrayDialog implements IPrefer
 	 */
 	protected static final String PREF_DLG_TITLE_IMG = "preference_page_container_image";//$NON-NLS-1$
 	protected static final String PREF_DLG_IMG_TITLE_ERROR = "preference_page_container_title_error_image";//$NON-NLS-1$
-    private String helpId;
 	static {
 		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class, "images/pref_dialog_title.gif"));//$NON-NLS-1$
@@ -146,9 +127,14 @@ public class PreferencePageContainerDialog extends TrayDialog implements IPrefer
 	
 		setTitle(TeamUIMessages.PreferencePageContainerDialog_6); 
 		applyDialogFont(parent);
-        if (helpId != null) {
-            PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, helpId);
-        }
+		
+		composite.addHelpListener(new HelpListener(){
+			public void helpRequested(HelpEvent e) {
+				currentPage.performHelp();
+			}
+			
+		});
+		
 		return composite;
 	}
 	
@@ -181,6 +167,7 @@ public class PreferencePageContainerDialog extends TrayDialog implements IPrefer
             currentPage = (PreferencePage)pageMap.get(items[0]);
             updateMessage();
         }
+        firePageChanged(new PageChangedEvent(this, currentPage));
     }
 
     private boolean isSinglePage() {
@@ -355,6 +342,7 @@ public class PreferencePageContainerDialog extends TrayDialog implements IPrefer
 	/**
 	 * Set the message text. If the message line currently displays an error,
 	 * the message is stored and will be shown after a call to clearErrorMessage
+	 * @param newMessage 
 	 */
 	public void setMessage(String newMessage) {
 		fMessage = newMessage;
@@ -465,7 +453,30 @@ public class PreferencePageContainerDialog extends TrayDialog implements IPrefer
         }
 	}
 
-    public void setHelpContextId(String helpId) {
-        this.helpId = helpId;    
+    
+    public void addPageChangedListener(final IPageChangedListener listener) {
+    	pageChangedListeners.add(listener);
+	}
+
+	public Object getSelectedPage() {
+		return currentPage;
+	}
+
+	public void removePageChangedListener(IPageChangedListener listener) {
+		pageChangedListeners.remove(listener);
+	}
+	
+	private void firePageChanged(final PageChangedEvent event) {
+        Object[] listeners = pageChangedListeners.getListeners();
+        for (int i = 0; i < listeners.length; i++) {
+            final IPageChangedListener l = (IPageChangedListener) listeners[i];
+            SafeRunnable.run(new SafeRunnable() {
+                public void run() {
+                    l.pageChanged(event);
+                }
+            });
+        }
     }
+	
+	
 }
