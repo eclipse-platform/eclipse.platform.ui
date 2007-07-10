@@ -691,8 +691,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.TextViewer#setVisibleRegion(int, int)
 	 */
 	public void setVisibleRegion(int start, int length) {
-		if (!isSegmented())
-			fWasProjectionEnabled= isProjectionMode();
+		fWasProjectionEnabled= isProjectionMode();
 		disableProjection();
 		super.setVisibleRegion(start, length);
 	}
