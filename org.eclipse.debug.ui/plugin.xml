@@ -179,14 +179,15 @@
             </groupMarker>
          </menu>
          <action
-               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
-               label="%RemoveAllBreakpointsAction.label"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
                definitionId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
-               style="push"
+               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
+               helpContextId="remove_all_breakpoints_action_context"
+               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"
+               label="%RemoveAllBreakpointsAction.label"
                menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"/>
+               style="push"/>
           <action
                definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
                label="%SkipAllBreakpointsAction.label"
