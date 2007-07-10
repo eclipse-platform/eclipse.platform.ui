@@ -1,8 +1,9 @@
-#Tue Jun 26 10:22:16 CEST 2007
+#Tue Jul 10 14:17:35 CEST 2007
 eclipse.preferences.version=1
 formatter_profile=_JDT UI Code Style Conventions
 formatter_settings_version=11
-internal.default.compliance=default
 org.eclipse.jdt.ui.ignorelowercasenames=true
 org.eclipse.jdt.ui.importorder=java;javax;junit;org.eclipse.text;org.eclipse.core.runtime;org.eclipse.core.expressions;org.eclipse.core.filebuffers;org.eclipse.core.resources;org.eclipse.ltk.refactoring.core;org.eclipse.ltk.refactoring.internal.core;org.eclipse.compare;org.eclipse.ui;org.eclipse.jdt.core;org.eclipse.ltk.refactoring.ui;org.eclipse.ltk.refactoring.internal.ui;org.eclipse.ltk.ui.refactoring.tests;
 org.eclipse.jdt.ui.ondemandthreshold=99
+org.eclipse.jdt.ui.staticondemandthreshold=99
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>
