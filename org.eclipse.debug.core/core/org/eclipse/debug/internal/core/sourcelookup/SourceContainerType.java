@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,12 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 
 /**
  * Proxy to contributed source container type extension.
+ * 
+ * @see IConfigurationElementConstants
  * 
  * @since 3.0
  */
@@ -54,20 +57,20 @@ public class SourceContainerType implements ISourceContainerType {
 		if (this.equals(container.getType())) {
 			return getDelegate().getMemento(container);
 		}
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.SourceContainerType_3, null); 
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Unable to persist source lookup path.", null);  //$NON-NLS-1$
 		throw new CoreException(status);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getName()
 	 */
 	public String getName() {
-		return fElement.getAttribute("name"); //$NON-NLS-1$
+		return fElement.getAttribute(IConfigurationElementConstants.NAME);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getId()
 	 */
 	public String getId() {
-		return fElement.getAttribute("id"); //$NON-NLS-1$
+		return fElement.getAttribute(IConfigurationElementConstants.ID);
 	}
 	
 	/**
@@ -77,7 +80,7 @@ public class SourceContainerType implements ISourceContainerType {
 	 */
 	private ISourceContainerTypeDelegate getDelegate() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (ISourceContainerTypeDelegate) fElement.createExecutableExtension("class"); //$NON-NLS-1$
+			fDelegate = (ISourceContainerTypeDelegate) fElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
 		}
 		return fDelegate;
 	}
@@ -85,6 +88,6 @@ public class SourceContainerType implements ISourceContainerType {
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainerType#getDescription()
 	 */
 	public String getDescription() {
-		return fElement.getAttribute("description"); //$NON-NLS-1$
+		return fElement.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 	}
 }

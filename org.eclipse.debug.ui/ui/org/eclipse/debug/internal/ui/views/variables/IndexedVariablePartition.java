@@ -127,14 +127,14 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
 	 */
 	public void setValue(String expression) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, VariablesViewMessages.IndexedVariablePartition_4, null)); 
+		throw new DebugException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "Value modification not supported for indexed partitions.", null));  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
 	 */
 	public void setValue(IValue value) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, VariablesViewMessages.IndexedVariablePartition_4, null)); 
+		throw new DebugException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "Value modification not supported for indexed partitions.", null));  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

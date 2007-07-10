@@ -19,6 +19,8 @@ import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * Proxy to a runtime classpath entry resolver extension.
+ * 
+ * @see IConfigurationElementConstants
  */
 public class LaunchConfigurationComparator implements Comparator {
 
@@ -41,7 +43,7 @@ public class LaunchConfigurationComparator implements Comparator {
 	protected Comparator getComparator() {
 		if (fDelegate == null) {
 			try {
-				fDelegate = (Comparator)fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+				fDelegate = (Comparator)fConfigurationElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}

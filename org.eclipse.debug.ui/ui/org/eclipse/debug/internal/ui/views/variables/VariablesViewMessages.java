@@ -38,8 +38,6 @@ public class VariablesViewMessages extends NLS {
 	public static String VariablesView_41;
 	public static String ExpressionView_4;
 
-	public static String IndexedVariablePartition_4;
-
 	public static String AvailableLogicalStructuresAction_0;
 	public static String AvailableLogicalStructuresAction_1;
 

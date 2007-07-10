@@ -20,7 +20,6 @@ public class DebugCoreMessages extends NLS {
 	public static String BreakpointManager_Missing_model_identifier;
 	public static String DebugEvent_illegal_detail;
 	public static String DebugEvent_illegal_kind;
-	public static String DebugPlugin_Exception_occurred_executing_command_line__1;
 	public static String DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2;
 	public static String DebugPlugin_1;
 	public static String EnvironmentVariableResolver_0;
@@ -60,14 +59,7 @@ public class DebugCoreMessages extends NLS {
 	public static String SystemPropertyResolver_0;	
 	public static String InputStreamMonitor_label;
 	public static String Launch_terminate_failed;
-	public static String LaunchConfiguration_Exception_occurred_creating_launch_configuration_memento_9;
-	public static String LaunchConfiguration_Exception_occurred_parsing_memento_5;
 	public static String LaunchConfiguration_Failed_to_delete_launch_configuration__1;
-	public static String LaunchConfiguration_Invalid_launch_configuration_memento__missing_path_attribute_3;
-	public static String LaunchConfiguration_Invalid_launch_configuration_memento__missing_local_attribute_4;
-	public static String LaunchConfiguration_Unable_to_restore_location_for_launch_configuration_from_memento___0__1;
-	public static String LaunchConfiguration_Unable_to_generate_memento_for__0___shared_file_does_not_exist__1;
-	public static String LaunchConfiguration_13;
 	public static String LaunchConfigurationDelegate_6;
 	public static String LaunchConfigurationDelegate_7;
 	public static String LaunchConfigurationInfo_Attribute__0__is_not_of_type_boolean__3;
@@ -86,16 +78,11 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchManager_does_not_exist;
 	public static String LaunchManager_Source_locator_does_not_exist___0__13;
 	public static String LaunchManager_30;
-	public static String LaunchMode_1;
-	public static String LogicalStructureType_7;
 	public static String LogicalStructureType_0;
-	public static String LogicalStructureProvider_0;
-	public static String LogicalStructureProvider_1;
 	public static String OutputStreamMonitor_label;
 	public static String ProcessMonitorJob_0;
 	public static String RuntimeProcess_terminate_failed;
 	public static String RuntimeProcess_Exit_value_not_available_until_process_terminates__1;
-	public static String LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1;
 	public static String WatchExpression_0;
 	public static String NullStreamsProxy_0;
 
@@ -103,7 +90,5 @@ public class DebugCoreMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, DebugCoreMessages.class);
 	}
-
-	public static String LaunchConfiguration_10;
 	public static String LaunchMode_0;
 }

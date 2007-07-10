@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ public class ImportExportMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, ImportExportMessages.class);
 	}
 
-	public static String ImportBreakpointsOperation_1;
 	public static String WizardImportBreakpoints_0;
 	public static String WizardExportBreakpoints_0;
 	public static String WizardBreakpointsPage_0;
@@ -51,5 +50,4 @@ public class ImportExportMessages extends NLS {
 	public static String WizardExportBreakpointsPage_0;
 	public static String WizardExportBreakpointsPage_1;
 	public static String WizardImportBreakpointsPage_6;
-	public static String ImportBreakpointsOperation_0;
 }

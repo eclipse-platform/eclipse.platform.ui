@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.IMarker;
@@ -42,6 +41,8 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Imports breakpoints from a file into the workspace.
@@ -123,11 +124,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				} 
 				catch(FileNotFoundException e) {
 					throw new CoreException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, 
-							MessageFormat.format(ImportExportMessages.ImportBreakpointsOperation_0, new String[]{fFileName}), e));
+							MessageFormat.format("Breakpoint import file not found: {0}", new String[]{fFileName}), e)); //$NON-NLS-1$
 				}
 				catch (UnsupportedEncodingException e) {
 					throw new CoreException(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, 
-							MessageFormat.format(ImportExportMessages.ImportBreakpointsOperation_1, new String[]{fFileName}), e));
+							MessageFormat.format("The import file was written in non-UTF-8 encoding.", new String[]{fFileName}), e)); //$NON-NLS-1$
 				}
 			}
 		};

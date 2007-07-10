@@ -80,7 +80,7 @@ public class BreakpointWorkingSetCache {
 	}
 	
 	/**
-	 * Flushes the cache of only the sepcified marker
+	 * Flushes the cache of only the specified marker
 	 * @param marker the marker whose cache is to be flushed
 	 */
 	public void flushMarkerCache(IMarker marker) {

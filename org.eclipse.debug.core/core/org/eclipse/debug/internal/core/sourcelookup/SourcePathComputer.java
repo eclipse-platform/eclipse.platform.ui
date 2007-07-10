@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 
 /**
  * Proxy to contributed source path computer extension.
+ * 
+ * @see IConfigurationElementConstants
  */
 public class SourcePathComputer implements ISourcePathComputer {
 	
@@ -43,7 +46,7 @@ public class SourcePathComputer implements ISourcePathComputer {
 	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputer#getId()
 	 */
 	public String getId() {
-		return fElement.getAttribute("id"); //$NON-NLS-1$
+		return fElement.getAttribute(IConfigurationElementConstants.ID); 
 	}
 	
 	/**
@@ -53,7 +56,7 @@ public class SourcePathComputer implements ISourcePathComputer {
 	 */
 	private ISourcePathComputerDelegate getDelegate() throws CoreException {
 		if (fDelegate == null) {
-			fDelegate = (ISourcePathComputerDelegate) fElement.createExecutableExtension("class"); //$NON-NLS-1$
+			fDelegate = (ISourcePathComputerDelegate) fElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
 		}
 		return fDelegate;
 	}

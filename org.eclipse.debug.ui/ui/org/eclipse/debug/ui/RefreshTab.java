@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -466,13 +466,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			Path path = new Path(pathString);
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format(StringSubstitutionMessages.RefreshTab_38, new String[]{pathString}), null)); 
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format("Refresh scope refers to non-existent resource {0}", new String[]{pathString}), null));  //$NON-NLS-1$
 			} 
 			return new IResource[]{resource};
 		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
 			IWorkingSet workingSet =  getWorkingSet(scope);
 			if (workingSet == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, StringSubstitutionMessages.RefreshTab_39, null)); 
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Refresh scope invalid", null));  //$NON-NLS-1$
 			} 
 			IAdaptable[] elements = workingSet.getElements();
 			IResource[] resources = new IResource[elements.length];
@@ -601,6 +601,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 		}
 		return null;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */

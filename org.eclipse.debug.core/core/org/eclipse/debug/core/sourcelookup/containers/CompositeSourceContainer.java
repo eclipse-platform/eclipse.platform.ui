@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,12 @@ package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 
 /**
  * A source container of source containers.
@@ -92,7 +92,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 				if (single == null) {
 					single = e;
 				} else if (multiStatus == null) {
-					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.CompositeSourceContainer_0, null); 
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, "Source lookup error", null);  //$NON-NLS-1$
 					multiStatus.add(e.getStatus());
 				} else {
 					multiStatus.add(e.getStatus());

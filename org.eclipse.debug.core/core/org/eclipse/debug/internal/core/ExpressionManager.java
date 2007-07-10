@@ -126,7 +126,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		try {
 			IConfigurationElement element= (IConfigurationElement) fWatchExpressionDelegates.get(debugModel);
 			if (element != null) {
-				return (IWatchExpressionDelegate) element.createExecutableExtension("delegateClass"); //$NON-NLS-1$
+				return (IWatchExpressionDelegate) element.createExecutableExtension(IConfigurationElementConstants.DELEGATE_CLASS);
 			} 
 			return null;
 		} catch (CoreException e) {

@@ -23,6 +23,8 @@ import org.eclipse.debug.core.model.IValue;
 
 /**
  * Proxy to a logical structure type extension.
+ * 
+ * @see IConfigurationElementConstants
  */
 public class LogicalStructureType implements ILogicalStructureType {
 
@@ -50,11 +52,11 @@ public class LogicalStructureType implements ILogicalStructureType {
 	 * @exception CoreException if required attributes are missing
 	 */
 	private void verifyAttributes() throws CoreException {
-		verifyAttributeExists("id"); //$NON-NLS-1$
-		verifyAttributeExists("class"); //$NON-NLS-1$
-		fModelId = fConfigurationElement.getAttribute("modelIdentifier"); //$NON-NLS-1$
+		verifyAttributeExists(IConfigurationElementConstants.ID);
+		verifyAttributeExists(IConfigurationElementConstants.CLASS);
+		fModelId = fConfigurationElement.getAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER); 
 		if (fModelId == null) {
-			missingAttribute("modelIdentifier"); //$NON-NLS-1$
+			missingAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER);
 		}
 	}
 	
@@ -69,22 +71,27 @@ public class LogicalStructureType implements ILogicalStructureType {
 		}
 	}
 
+	/**
+	 * Throws a new <code>CoreException</code> about the specified attribute being missing
+	 * @param attrName the name of the missing attribute
+	 * @throws CoreException
+	 */
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_7,new String[]{attrName}), null));		 
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Required attribute {0} missing for logicalStructureType extension.", new String[]{attrName}), null));		  //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getDescription()
 	 */
 	public String getDescription() {
-		return fConfigurationElement.getAttribute("description"); //$NON-NLS-1$
+		return fConfigurationElement.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.ILogicalStructureType#getId()
 	 */
 	public String getId() {
-		return fConfigurationElement.getAttribute("id"); //$NON-NLS-1$
+		return fConfigurationElement.getAttribute(IConfigurationElementConstants.ID);
 	}	
 
 	/* (non-Javadoc)
@@ -104,10 +111,14 @@ public class LogicalStructureType implements ILogicalStructureType {
 		return false;
 	}
 
+	/**
+	 * Returns the <code>ILogicalStructuresTypeDelegate</code> delegate
+	 * @return the delegate
+	 */
 	protected ILogicalStructureTypeDelegate getDelegate() {
 		if (fDelegate == null) {
 			try {
-				fDelegate = (ILogicalStructureTypeDelegate) fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+				fDelegate = (ILogicalStructureTypeDelegate) fConfigurationElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}
@@ -127,7 +138,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 		if (!fVerifiedDescription) {
 		    fVerifiedDescription = true;
 		    try {
-                verifyAttributeExists("description"); //$NON-NLS-1$
+                verifyAttributeExists(IConfigurationElementConstants.DESCRIPTION);
             } catch (CoreException e) {
                 DebugPlugin.log(e);
             }

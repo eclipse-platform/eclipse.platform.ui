@@ -45,6 +45,10 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Manages contributed launch configuration tabs
+ * 
+ * @see LaunchConfigurationTabGroupWrapper
+ * @see LaunchConfigurationTabExtension
+ * @see LaunchConfigurationTabGroupExtension
  */ 
 public class LaunchConfigurationPresentationManager {
 	
@@ -57,7 +61,7 @@ public class LaunchConfigurationPresentationManager {
 	 * Collection of launch configuration tab group extensions
 	 * defined in plug-in xml. Entries are keyed by launch
 	 * configuration type identifier (<code>String</code>),
-	 * and entires are tables of launch modes (<code>String</code>)
+	 * and entries are tables of launch modes (<code>String</code>)
 	 * to <code>LaunchConfigurationTabGroupExtension</code>. "*" is
 	 * used to represent the default tab group (i.e. unspecified mode).
 	 */
@@ -65,7 +69,7 @@ public class LaunchConfigurationPresentationManager {
 	
 	/**
 	 * contributed tabs are stored by the tab group id that they contribute to.
-	 * each entry is a futher <code>Hashtable</code> consisting of the corrseponding
+	 * each entry is a <code>Hashtable</code> consisting of the corresponding
 	 * <code>LaunchConfigurationTabExtension</code> objects for each contributed tab stored by their 
 	 * id
 	 * 
@@ -161,14 +165,14 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null);  
+			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {type.getIdentifier()})), null);   //$NON-NLS-1$
 			 throw new CoreException(status);
 		} 
 		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), null);		
 	}
 	
 	/**
-	 * Returns the tab group for the given launch configutation and the mode the dialog opened in
+	 * Returns the tab group for the given launch configuration and the mode the dialog opened in
 	 * @param type the type of the configuration
 	 * @param config
 	 * @param mode
@@ -181,7 +185,7 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension ext = getExtension(config.getType().getIdentifier(), modes);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {config.getType().getIdentifier()})), null);  
+			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {config.getType().getIdentifier()})), null);   //$NON-NLS-1$
 			 throw new CoreException(status);
 		} 
 		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), config);
@@ -297,7 +301,7 @@ public class LaunchConfigurationPresentationManager {
 		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
-			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null); 
+			 MessageFormat.format("No tab group defined for launch configuration type {0}", (new String[] {type.getIdentifier()})), null);  //$NON-NLS-1$
 			 throw new CoreException(status);
 		} 
 		return ext.getHelpContextId();		

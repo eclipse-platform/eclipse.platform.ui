@@ -871,7 +871,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
-	 * Returns the first occurance of any one of the configurations in the provided list, if they are found in the launch history
+	 * Returns the first occurrence of any one of the configurations in the provided list, if they are found in the launch history
 	 * for the corresponding launch group
 	 * @param configurations
 	 * @param mode

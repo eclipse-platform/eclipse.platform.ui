@@ -66,23 +66,6 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private final static int ADDED = 0;
 	private final static int REMOVED = 1;
 	private final static int CHANGED = 2;
-	
-	/**
-	 * String constants corresponding to XML extension keys
-	 */
-	private final static String CLASS = "class"; //$NON-NLS-1$
-	
-	/**
-	 * Attribute name for the <code>"markerType"</code> attribute of
-	 * a breakpoint extension.
-	 */
-	private static final String MARKER_TYPE= "markerType";	 //$NON-NLS-1$
-	
-	/**
-	 * Attribute name for the <code>"name"</code> attribute of a
-	 * breakpoint extension.
-	 */
-	private static final String TYPE_NAME= "name"; //$NON-NLS-1$
 
 	/**
 	 * A collection of breakpoints registered with this manager.
@@ -320,8 +303,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i= 0; i < elements.length; i++) {
-			String markerType = elements[i].getAttribute(MARKER_TYPE);
-			String className = elements[i].getAttribute(CLASS);
+			String markerType = elements[i].getAttribute(IConfigurationElementConstants.MARKER_TYPE);
+			String className = elements[i].getAttribute(IConfigurationElementConstants.CLASS);
 			if (markerType == null) {
 				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: markerType", new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
 			} else if (className == null){
@@ -495,12 +478,12 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
 					DebugException.CONFIGURATION_INVALID, MessageFormat.format(DebugCoreMessages.BreakpointManager_Missing_breakpoint_definition, new String[] {marker.getType()}), null)); 
 			}
-			Object object = config.createExecutableExtension(CLASS);
+			Object object = config.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			if (object instanceof IBreakpoint) {
 				breakpoint = (IBreakpoint)object;
 				breakpoint.setMarker(marker);
 			} else {
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: class", new String[]{config.getAttribute(CLASS), config.getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: class", new String[]{config.getAttribute(IConfigurationElementConstants.CLASS), config.getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
 			}
 			return breakpoint;		
 		} catch (CoreException e) {
@@ -1107,10 +1090,10 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
             try {
                 IConfigurationElement element = (IConfigurationElement) fBreakpointExtensions.get(marker.getType());
                 if (element != null) {
-                    typeName= element.getAttribute(TYPE_NAME);
+                    typeName= element.getAttribute(IConfigurationElementConstants.NAME);
                 }
-            } catch (CoreException e) {
-            }
+            } 
+            catch (CoreException e) {}
         }
         return typeName;
     }

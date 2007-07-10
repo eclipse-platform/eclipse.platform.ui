@@ -17,230 +17,304 @@ package org.eclipse.debug.internal.core;
 public interface IConfigurationElementConstants {
 
 	/**
-	 * The id node name for a configuration element
+	 * The id node name for a configuration element.
+	 * <p>Equal to the word: <code>id</code></p>
 	 */
 	public static final String ID = "id"; //$NON-NLS-1$
 	
 	/**
-	 * the name node name for a configuration element
+	 * The name node name for a configuration element.
+	 * <p>Equal to the word: <code>name</code></p>
 	 */
 	public static final String NAME = "name"; //$NON-NLS-1$
 	
 	/**
-	 * the category node name for a configuration element
+	 * The category node name for a configuration element.
+	 * <p>Equal to the word: <code>category</code></p>
 	 */
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	
 	/**
-	 * the local node name for a configuration element
+	 * The local node name for a configuration element.
+	 * <p>Equal to the word: <code>local</code></p>
 	 */
 	public static final String LOCAL = "local"; //$NON-NLS-1$
 	
 	/**
-	 * the shortcutId node name for a configuration element
+	 * The shortcutId node name for a configuration element.
+	 * <p>Equal to the word: <code>shortcutID</code></p>
 	 */
 	public static final String LAUNCH_SHORTCUT_ID = "shortcutID"; //$NON-NLS-1$
 
 	/**
-	 * the launchPerspectives node name for a configuration element
+	 * The launchPerspectives node name for a configuration element.
+	 * <p>Equal to the word: <code>launchPerspectives</code></p>
 	 */
 	public static final String LAUNCH_PERSPECTIVES = "launchPerspectives";  //$NON-NLS-1$
 	
 	/**
-	 * the launchPerspective node name for a configuration element
+	 * The launchPerspective node name for a configuration element.
+	 * <p>Equal to the word: <code>launchPerspective</code></p>
 	 */
 	public static final String LAUNCH_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
 	
 	/**
-	 * the launchConfiguration node name for a configuration element
+	 * The markerType node name for a configuration element.
+	 * <p>Equal to the word: <code>markerType</code></p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String MARKER_TYPE = "markerType";	 //$NON-NLS-1$
+	
+	/**
+	 * The delegateClass node name for a configuration element.
+	 * <p>Equal to the word: <code>delegateClass</code></p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String DELEGATE_CLASS = "delegateClass"; //$NON-NLS-1$
+	
+	/**
+	 * The launchConfiguration node name for a configuration element.
+	 * <p>Equal to the word: <code>launchConfiguration</code></p>
 	 */
 	public static final String LAUNCH_CONFIGURATION = "launchConfiguration"; //$NON-NLS-1$
 	
 	/**
-	 * the launchMode node name for a configuration element
+	 * The launchMode node name for a configuration element.
+	 * <p>Equal to the word: <code>launchMode</code></p>
 	 */
 	public static final String LAUNCH_MODE = "launchMode"; //$NON-NLS-1$
 	
 	/**
-	 * the lastLaunch node name for a configuration element
+	 * The lastLaunch node name for a configuration element.
+	 * <p>Equal to the word: <code>lastLaunch</code></p>
 	 */
 	public static final String LAST_LAUNCH = "lastLaunch"; //$NON-NLS-1$
 	
 	/**
-	 * the launch node name for a configuration element
+	 * The launch node name for a configuration element.
+	 * <p>Equal to the word: <code>launch</code></p>
 	 */
 	public static final String LAUNCH = "launch"; //$NON-NLS-1$
 	
 	/**
-	 * the launchHistory node name for a configuration element
+	 * The launch as label node name for a configuration element.
+	 *  <p>Equal to the word: <code>launchAsLabel</code></p>
+	 *  
+	 *  @since 3.4
+	 */
+	public static final String LAUNCH_AS_LABEL = "launchAsLabel"; //$NON-NLS-1$
+	
+	/**
+	 * The launchHistory node name for a configuration element.
+	 * <p>Equal to the word: <code>launchHistory</code></p>
 	 */
 	public static final String LAUNCH_HISTORY = "launchHistory"; //$NON-NLS-1$
 	
 	/**
-	 * the node name for a launch group configuration element
-	 * @since 3.3
+	 * The node name for a launch group configuration element.
+	 * <p>Equal to the word: <code>launchGroup</code></p>
 	 */
 	public static final String LAUNCH_GROUP = "launchGroup"; //$NON-NLS-1$
 	
 	/**
-	 * the node name for a launch history MRU list configuration element
-	 * @since 3.3
+	 * The node name for a launch history MRU list configuration element.
+	 * <p>Equal to the word: <code>mruHistory</code></p>
 	 */
 	public static final String MRU_HISTORY = "mruHistory"; //$NON-NLS-1$	
 	
 	/**
-	 * the node name for a launch favorites list configuration element
-	 * @since 3.3
+	 * The node name for a launch favorites list configuration element.
+	 * <p>Equal to the word: <code>favorites</code></p>
 	 */
 	public static final String FAVORITES = "favorites"; //$NON-NLS-1$
 	
 	/**
-	 * the after node name for a configuration element
+	 * The after node name for a configuration element.
+	 * <p>Equal to the word: <code>after</code></p>
 	 */
 	public static final String AFTER = "after"; //$NON-NLS-1$
 	
 	/**
-	 * the path node name for a configuration element
+	 * The path node name for a configuration element.
+	 * <p>Equal to the word: <code>path</code></p>
 	 */
 	public static final String PATH = "path"; //$NON-NLS-1$
 	
 	/**
-	 * the placement node name for a configuration element
+	 * The placement node name for a configuration element.
+	 * <p>Equal to the word: <code>placement</code></p>
 	 */
 	public static final String PLACEMENT = "placement"; //$NON-NLS-1$
 	
 	/**
-	 * the associated launch delegate node name for s configuration element
+	 * The associated launch delegate node name for a configuration element
+	 * <p>Equal to the word: <code>associatedDelegate</code></p>
 	 */
 	public static final String ASSOCIATED_DELEGATE = "associatedDelegate"; //$NON-NLS-1$
 	
 	/**
-	 * the label node name for a configuration element
+	 * The label node name for a configuration element.
+	 * <p>Equal to the word: <code>label</code></p>
 	 */
 	public static final String LABEL = "label"; //$NON-NLS-1$
 	
 	/**
-	 * the description node name for a configuration element
+	 * The description node name for a configuration element.
+	 * <p>Equal to the word: <code>description</code></p>
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	
 	/**
-	 * the helpContextId node name for a configuration element
+	 * The helpContextId node name for a configuration element.
+	 * <p>Equal to the word: <code>helpContextId</code></p>
 	 */
 	public static final String HELP_CONTEXT_ID = "helpContextId"; //$NON-NLS-1$
 	
 	/**
-	 * the icon node name for a configuration element
+	 * The icon node name for a configuration element.
+	 * <p>Equal to the word: <code>icon</code></p>
 	 */
 	public static final String ICON = "icon"; //$NON-NLS-1$
 	
 	/**
-	 * the public node name for a configuration element
+	 * The public node name for a configuration element
+	 * <p>Equal to the word: <code>public</code></p>
 	 */
 	public static final String PUBLIC = "public"; //$NON-NLS-1$
 	
 	/**
-	 * the perspective node name for a configuration element
+	 * The perspective node name for a configuration element.
+	 * <p>Equal to the word: <code>perspective</code></p>
 	 */
 	public static final String PERSPECTIVE = "perspective"; //$NON-NLS-1$
 	
 	/**
-	 * the preferredDelegates node name for a configuration element
+	 * The preferredDelegates node name for a configuration element.
+	 * <p>Equal to the word: <code>preferredDelegates</code></p>
 	 */
 	public static final String PREFERRED_DELEGATES = "preferredDelegates"; //$NON-NLS-1$
 	
 	/**
-	 * the modes node name for a configuration element
+	 * The modes node name for a configuration element.
+	 * <p>Equal to the word: <code>modes</code></p>
 	 */
 	public static final String MODES = "modes"; //$NON-NLS-1$
 	
 	/**
-	 * the modesCombination node name for a configuration element 
+	 * The modesCombination node name for a configuration element.
+	 * <p>Equal to the word: <code>modeCombination</code></p> 
 	 */
 	public static final String MODE_COMBINATION = "modeCombination"; //$NON-NLS-1$
 	
 	/**
-	 * the mode node name for a configuration element
+	 * The mode node name for a configuration element.
+	 * <p>Equal to the word: <code>mode</code></p>
 	 */
 	public static final String MODE = "mode"; //$NON-NLS-1$
 	
 	/**
-	 * the type node name for a configuration element
+	 * The type node name for a configuration element.
+	 * <p>Equal to the word: <code>type</code></p>
 	 */
 	public static final String TYPE = "type"; //$NON-NLS-1$
 	
 	/**
-	 * the typeid node name for a configuration element 
+	 * The typeid node name for a configuration element.
+	 * <p>Equal to the word: <code>typeid</code></p> 
 	 */
 	public static final String TYPE_ID = "typeid"; //$NON-NLS-1$
 	
 	/**
-	 * the option node name for a configuration element
+	 * The option node name for a configuration element.
+	 * <p>Equal to the word: <code>options</code></p>
 	 */
 	public static final String OPTIONS = "options"; //$NON-NLS-1$
 	
 	/**
-	 * the delegate node name for a configuration element
+	 * The delegate node name for a configuration element.
+	 * <p>Equal to the word: <code>delegate</code></p>
 	 */
 	public static final String DELEGATE = "delegate"; //$NON-NLS-1$
 	
 	/**
-	 * the defaultShortcut node name for a configuration element
+	 * The defaultShortcut node name for a configuration element.
+	 * <p>Equal to the word: <code>defaultShortcut</code></p>
 	 */
 	public static final String DEFAULT_LAUNCH_SHORTCUT = "defaultShortcut"; //$NON-NLS-1$
 	
 	/**
-	 * the delegatename node name for a configuration element
+	 * The delegateName node name for a configuration element.
+	 * <p>Equal to the word: <code>delegateName</code></p>
 	 */
 	public static final String DELEGATE_NAME = "delegateName"; //$NON-NLS-1$
 	
 	/**
-	 * the group node name for a configuration element
+	 * The group node name for a configuration element.
+	 * <p>Equal to the word: <code>group</code></p>
 	 */
 	public static final String GROUP = "group"; //$NON-NLS-1$
 	
 	/**
-	 * the class node name for a configuration element
+	 * The class node name for a configuration element.
+	 * <p>Equal to the word: <code>class</code></p>
 	 */
 	public static final String CLASS = "class"; //$NON-NLS-1$
 	
 	/**
-	 * the configurationTypes node name for a configuration element
+	 * The modelIdentifier node name for a configuration element.
+	 * <p>Equal to the word: <code>modelIdentifier</code></p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String MODEL_IDENTIFIER = "modelIdentifier"; //$NON-NLS-1$
+	
+	/**
+	 * The configurationTypes node name for a configuration element.
+	 * <p>Equal to the word: <code>configurationType</code></p>
 	 */
 	public static final String CONFIGURATION_TYPES = "configurationType"; //$NON-NLS-1$
 	
 	/**
-	 * the contextLabel node name for a configuration element
+	 * The contextLabel node name for a configuration element.
+	 * <p>Equal to the word: <code>contextLabel</code></p>
 	 */
 	public static final String CONTEXT_LABEL = "contextLabel"; //$NON-NLS-1$
 	
 	/**
-	 * the contextualLaunch node name for a configuration element
+	 * The contextualLaunch node name for a configuration element.
+	 * <p>Equal to the word: <code>contextualLaunch</code></p>
 	 */
 	public static final String CONTEXTUAL_LAUNCH = "contextualLaunch"; //$NON-NLS-1$
 	
 	/**
-	 * the sourcePathComputerId node name for a configuration element
+	 * The sourcePathComputerId node name for a configuration element.
+	 * <p>Equal to the word: <code>sourcePathComputerId</code></p>
 	 */
 	public static final String SOURCE_PATH_COMPUTER = "sourcePathComputerId"; //$NON-NLS-1$
 	
 	/**
-	 * the delegateDescription node name for a configuration element
+	 * The delegateDescription node name for a configuration element.
+	 * <p>Equal to the word: <code>delegateDescription</code></p>
 	 */
 	public static final String DELEGATE_DESCRIPTION = "delegateDescription"; //$NON-NLS-1$
 	
 	/**
-	 * the sourceLocatorId node name for a configuration element
+	 * The sourceLocatorId node name for a configuration element.
+	 * <p>Equal to the word: <code>sourceLocatorId</code></p>
 	 */
 	public static final String SOURCE_LOCATOR = "sourceLocatorId"; //$NON-NLS-1$
 	
 	/**
-	 * the migrationDelegate node name for a configuration element
+	 * The migrationDelegate node name for a configuration element.
+	 * <p>Equal to the word: <code>migrationDelegate</code></p>
 	 */
 	public static final String MIGRATION_DELEGATE = "migrationDelegate";  //$NON-NLS-1$
 	
 	/**
-	 * the memento node name for a configuration element
+	 * The memento node name for a configuration element.
+	 * <p>Equal to the word: <code>memento</code></p>
 	 */
 	public static final String MEMENTO = "memento"; //$NON-NLS-1$
 }

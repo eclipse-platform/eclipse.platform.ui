@@ -56,12 +56,12 @@ import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.DebugOptions;
 import org.eclipse.debug.internal.core.ExpressionManager;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.core.MemoryBlockManager;
 import org.eclipse.debug.internal.core.StepFilterManager;
 import org.eclipse.debug.internal.core.commands.CommandAdapterFactory;
-import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.osgi.service.environment.Constants;
 import org.osgi.framework.BundleContext;
@@ -522,7 +522,7 @@ public class DebugPlugin extends Plugin {
 		IConfigurationElement config = (IConfigurationElement)fStatusHandlers.get(key);
 		if (config != null) {
 			try {
-				Object handler = config.createExecutableExtension("class"); //$NON-NLS-1$
+				Object handler = config.createExecutableExtension(IConfigurationElementConstants.CLASS);
 				if (handler instanceof IStatusHandler) {
 					return (IStatusHandler)handler;
 				}
@@ -682,7 +682,7 @@ public class DebugPlugin extends Plugin {
 			}
 			IProcessFactory processFactory= null;
 			try {
-				processFactory = (IProcessFactory)element.createExecutableExtension("class"); //$NON-NLS-1$
+				processFactory = (IProcessFactory)element.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			} catch (CoreException exception) {
 				log(exception);
 				return null;
@@ -771,7 +771,7 @@ public class DebugPlugin extends Plugin {
 	 * @param workingDirectory the working directory, or <code>null</code>
 	 * @param envp the environment variables set in the process, or <code>null</code>
 	 * @return the resulting process or <code>null</code> if the exec is
-	 *  cancelled
+	 *  canceled
 	 * @exception CoreException if the exec fails
 	 * @see Runtime
 	 * 
@@ -786,7 +786,7 @@ public class DebugPlugin extends Plugin {
 				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
-		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_Exception_occurred_executing_command_line__1, e); 
+		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Exception occurred executing command line.", e);  //$NON-NLS-1$
 		    throw new CoreException(status);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory			
@@ -1125,7 +1125,7 @@ public class DebugPlugin extends Plugin {
 		try {
 			return LaunchManager.getDocument();
 		} catch (ParserConfigurationException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_3, e); 
+			abort("Unable to create new XML document.", e);  //$NON-NLS-1$
 		}		
 		return null;
 	}	
@@ -1142,9 +1142,9 @@ public class DebugPlugin extends Plugin {
 		try {
 			return LaunchManager.serializeDocument(document);
 		} catch (TransformerException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_4, e); 
+			abort("Unable to serialize XML document.", e);  //$NON-NLS-1$
 		} catch (IOException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_5, e); 
+			abort("Unable to serialize XML document.",e);  //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -1167,20 +1167,20 @@ public class DebugPlugin extends Plugin {
 			stream = new ByteArrayInputStream(document.getBytes());
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_6, e); 
+			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 		} catch (FactoryConfigurationError e) {
-			abort(SourceLookupMessages.SourceLookupUtils_7, e); 
+			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 		} catch (SAXException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_8, e); 
+			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 		} catch (IOException e) {
-			abort(SourceLookupMessages.SourceLookupUtils_9, e); 
+			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 		} finally { 
 			try{
                 if (stream != null) {
                     stream.close();
                 }
 			} catch(IOException e) {
-				abort(SourceLookupMessages.SourceLookupUtils_10, e); 
+				abort("Unable to parse XML document.", e);  //$NON-NLS-1$
 			}
 		}		
 		return root;

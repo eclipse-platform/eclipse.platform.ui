@@ -20,6 +20,8 @@ import org.eclipse.debug.core.ILaunchMode;
 
 /**
  * Proxy to a launch mode extension.
+ * 
+ * @see IConfigurationElementConstants
  */
 public class LaunchMode implements ILaunchMode {
 
@@ -42,8 +44,8 @@ public class LaunchMode implements ILaunchMode {
 	 * @exception CoreException if required attributes are missing
 	 */
 	private void verifyAttributes() throws CoreException {
-		verifyAttributeExists("mode"); //$NON-NLS-1$
-		verifyAttributeExists("label"); //$NON-NLS-1$
+		verifyAttributeExists(IConfigurationElementConstants.MODE);
+		verifyAttributeExists(IConfigurationElementConstants.LABEL);
 	}
 	
 	/**
@@ -57,28 +59,34 @@ public class LaunchMode implements ILaunchMode {
 		}
 	}
 
+	/**
+	 * This method is used to create a new internal error describing that the specified attribute
+	 * is missing 
+	 * @param attrName the name of the attribute that is missing
+	 * @throws CoreException
+	 */
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchMode_1,new String[]{attrName}), null));		 
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Required attribute {0} missing for launchMode extension.",new String[]{attrName}), null));		  //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchMode#getIdentifier()
 	 */
 	public String getIdentifier() {
-		return fConfigurationElement.getAttribute("mode"); //$NON-NLS-1$;
+		return fConfigurationElement.getAttribute(IConfigurationElementConstants.MODE);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchMode#getLabel()
 	 */
 	public String getLabel() {
-		return fConfigurationElement.getAttribute("label"); //$NON-NLS-1$;
+		return fConfigurationElement.getAttribute(IConfigurationElementConstants.LABEL);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchMode#getLaunchAsLabel()
 	 */
 	public String getLaunchAsLabel() {
-		String label = fConfigurationElement.getAttribute("launchAsLabel"); //$NON-NLS-1$
+		String label = fConfigurationElement.getAttribute(IConfigurationElementConstants.LAUNCH_AS_LABEL);
 		if (label == null) {
 			return MessageFormat.format(DebugCoreMessages.LaunchMode_0, new String[]{getLabel()});
 		}

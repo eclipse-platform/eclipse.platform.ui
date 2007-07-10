@@ -21,6 +21,8 @@ import org.eclipse.debug.core.model.IValue;
 
 /**
  * Manage logical structure provider extensions
+ * 
+ * @see IConfigurationElementConstants
  */
 public class LogicalStructureProvider {
 
@@ -32,13 +34,13 @@ public class LogicalStructureProvider {
 
 	public LogicalStructureProvider(IConfigurationElement element) throws CoreException {
 		fConfigurationElement= element;
-		fModelIdentifier= fConfigurationElement.getAttribute("modelIdentifier"); //$NON-NLS-1$
+		fModelIdentifier= fConfigurationElement.getAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER);
 		if (fModelIdentifier == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_0, null)); 
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Required attribute modelIdentifier missing for logicalStructureType extension.", null));  //$NON-NLS-1$
 		}
-		String className= fConfigurationElement.getAttribute("class"); //$NON-NLS-1$
+		String className= fConfigurationElement.getAttribute(IConfigurationElementConstants.CLASS);
 		if (className == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_1, null)); 
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Required attribute class missing for logicalStructureType extension.", null));  //$NON-NLS-1$
 		}
 	}
 	
@@ -62,7 +64,7 @@ public class LogicalStructureProvider {
 	protected ILogicalStructureProvider getDelegate() {
 		if (fDelegate == null) {
 			try {
-				fDelegate = (ILogicalStructureProvider) fConfigurationElement.createExecutableExtension("class"); //$NON-NLS-1$
+				fDelegate = (ILogicalStructureProvider) fConfigurationElement.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			} catch (CoreException e) {
 				DebugPlugin.log(e);
 			}

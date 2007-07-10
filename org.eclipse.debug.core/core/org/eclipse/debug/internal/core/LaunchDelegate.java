@@ -48,6 +48,8 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * Clients are NOT intended to subclass this class
  * 
+ * @see IConfigurationElementConstants
+ * 
  * @since 3.3
  */
 public final class LaunchDelegate implements ILaunchDelegate {
@@ -84,7 +86,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			if(obj instanceof ILaunchConfigurationDelegate) {
 				fDelegate = (ILaunchConfigurationDelegate)obj;
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getId()}), null));
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Launch delegate for {0} does not implement required interface ILaunchConfigurationDelegate.", new String[]{getId()}), null)); //$NON-NLS-1$
 			}
 		}
 		return fDelegate;
@@ -114,7 +116,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	}
 	
 	/**
-	 * Simple method to parse mode strings (seperated by commmas)
+	 * Simple method to parse mode strings (separated by commas)
 	 * @param element the config element to read the mode string from
 	 * @return a set of the parsed strings or an empty collection
 	 * @since 3.3
@@ -146,7 +148,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 				fPerspectiveIds.put(modeset, children[i].getAttribute(IConfigurationElementConstants.PERSPECTIVE));
 			}
 			//try to get the modes from the old definition and make each one
-			//a seperate set of one element
+			//a separate set of one element
 			modeset = null;
 			String modes = fElement.getAttribute(IConfigurationElementConstants.MODES); 
 			if (modes != null) {
