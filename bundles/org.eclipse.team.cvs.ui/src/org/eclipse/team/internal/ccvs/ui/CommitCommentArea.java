@@ -23,7 +23,6 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.*;
@@ -74,8 +73,6 @@ public class CommitCommentArea extends DialogArea {
             
             final SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
             fTextField = sourceViewer.getTextWidget();
-            
-            fTextField.setFont(JFaceResources.getFont(JFaceResources.TEXT_FONT));
             fTextField.setIndent(2);
             
             final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
