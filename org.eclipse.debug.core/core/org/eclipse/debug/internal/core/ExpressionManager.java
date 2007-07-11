@@ -329,7 +329,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 *
 	 * @param expressions expressions to insert into the collection
 	 * @param insertionLocation the expression at the location where expressions will be inserted
-	 * @param insertBefore whether to insert the epressions before or after the given insertion location
+	 * @param insertBefore whether to insert the expressions before or after the given insertion location
 	 * @since 3.4
 	 */
 	public void insertExpressions(IExpression[] expressions, IExpression insertionLocation, boolean insertBefore){
@@ -592,6 +592,10 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		}
 	}
 	
+	/**
+	 * Returns the expressions notifier
+	 * @return the expressions notifier
+	 */
 	private ExpressionsNotifier getExpressionsNotifier() {
 		return new ExpressionsNotifier();
 	}
@@ -651,6 +655,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		 * 
 		 * @param expressions the expressions that changed
 		 * @param update the type of change
+		 * @param index the index of the first change
 		 */
 		public void notify(IExpression[] expressions, int update, int index) {
 			if (fExpressionsListeners != null) {

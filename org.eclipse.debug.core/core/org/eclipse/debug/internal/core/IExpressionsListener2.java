@@ -3,6 +3,10 @@ package org.eclipse.debug.internal.core;
 import org.eclipse.debug.core.IExpressionsListener;
 import org.eclipse.debug.core.model.IExpression;
 
+/**
+ * Provides call-back methods for expressions that have been moved or inserted
+ * @since 3.4
+ */
 public interface IExpressionsListener2 extends IExpressionsListener {
 
 	/**
