@@ -1531,9 +1531,12 @@ public interface IWorkspace extends IAdaptable {
 	 * <p>
 	 * Note: this method does not consider whether files or directories exist in
 	 * the file system at the specified path.
+	 * </p>
 	 * 
-	 * @param project the project to validate the location for
-	 * @param location the location of the project contents on disk
+	 * @param project the project to validate the location for, can be <code>null</code>
+	 * if non default project location is validated
+	 * @param location the location of the project contents on disk, or <code>null</code> 
+	 * if the default project location is used
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * location is valid as the project content location, otherwise a status
 	 * object indicating what is wrong with the location
@@ -1559,9 +1562,12 @@ public interface IWorkspace extends IAdaptable {
 	 * <p>
 	 * Note: this method does not consider whether files or directories exist in
 	 * the file system at the specified path.
+	 * </p>
 	 * 
-	 * @param project the project to validate the location for
-	 * @param location the location of the project contents on disk
+	 * @param project the project to validate the location for, can be <code>null</code>
+	 * if non default project location is validated
+	 * @param location the location of the project contents on disk, or <code>null</code> 
+	 * if the default project location is used
 	 * @return a status object with code <code>IStatus.OK</code> if the given
 	 * location is valid as the project content location, otherwise a status
 	 * object indicating what is wrong with the location

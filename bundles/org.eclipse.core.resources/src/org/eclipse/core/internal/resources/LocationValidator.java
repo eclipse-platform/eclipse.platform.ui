@@ -284,9 +284,9 @@ public class LocationValidator {
 	}
 
 	public IStatus validateProjectLocation(IProject context, IPath unresolvedLocation) {
-		// the default default is ok for all projects
 		if (unresolvedLocation == null)
-			return Status.OK_STATUS;
+			return validateProjectLocationURI(context, null);
+
 		IPath location = workspace.getPathVariableManager().resolvePath(unresolvedLocation);
 		//check that the location is absolute
 		if (!location.isAbsolute()) {
@@ -304,10 +304,30 @@ public class LocationValidator {
 	 * @see IWorkspace#validateProjectLocation(IProject, URI)
 	 */
 	public IStatus validateProjectLocationURI(IProject context, URI unresolvedLocation) {
+		if (context == null && unresolvedLocation == null)
+			throw new IllegalArgumentException("Either a project or a location must be provided"); //$NON-NLS-1$
+
+		// Checks if the new location overlaps the workspace metadata location
+		boolean isMetadataLocation = false;
+
+		if (unresolvedLocation != null) {
+			if (URIUtil.equals(unresolvedLocation, URIUtil.toURI(Platform.getLocation().addTrailingSeparator().append(LocalMetaArea.F_METADATA)))) {
+				isMetadataLocation = true;
+			}
+		} else if (context != null && context.getName().equals(LocalMetaArea.F_METADATA)) {
+			isMetadataLocation = true;
+		}
+
 		String message;
-		// the default default is ok for all projects
+		if (isMetadataLocation) {
+			message = NLS.bind(Messages.resources_invalidPath, toString(URIUtil.toURI(Platform.getLocation().addTrailingSeparator().append(LocalMetaArea.F_METADATA))));
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		}
+
+		// the default is ok for all other projects
 		if (unresolvedLocation == null)
 			return Status.OK_STATUS;
+
 		URI location = workspace.getPathVariableManager().resolveURI(unresolvedLocation);
 		//check the standard path name restrictions
 		IStatus result = validateSegments(location);
@@ -322,7 +342,7 @@ public class LocationValidator {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		//overlaps with default default location can only occur with file URIs
+		//overlaps with default location can only occur with file URIs
 		if (location.getScheme().equals(EFS.SCHEME_FILE)) {
 			IPath locationPath = URIUtil.toPath(location);
 			// test if the given location overlaps the default default location
@@ -351,7 +371,7 @@ public class LocationValidator {
 			// if the project uses the default location then continue
 			if (testLocation == null)
 				continue;
-			if (project.equals(context)) {
+			if (context != null && project.equals(context)) {
 				//tolerate locations being the same if this is the project being tested
 				if (URIUtil.equals(testLocation, location))
 					continue;
@@ -368,7 +388,7 @@ public class LocationValidator {
 		}
 		//if this project exists and has linked resources, the project location cannot overlap
 		//the locations of any linked resources in that project
-		if (context.exists() && context.isOpen()) {
+		if (context != null && context.exists() && context.isOpen()) {
 			IResource[] children = null;
 			try {
 				children = context.members();

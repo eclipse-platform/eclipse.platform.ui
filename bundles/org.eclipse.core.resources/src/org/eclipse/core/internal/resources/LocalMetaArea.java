@@ -38,6 +38,7 @@ public class LocalMetaArea implements ICoreConstants {
 	/* package */static final String F_SYNCINFO = ".syncinfo"; //$NON-NLS-1$
 	/* package */static final String F_TREE = ".tree"; //$NON-NLS-1$
 	/* package */static final String URI_PREFIX = "URI//"; //$NON-NLS-1$
+	/* package */static final String F_METADATA = ".metadata"; //$NON-NLS-1$
 	
 
 	protected final IPath metaAreaLocation;

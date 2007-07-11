@@ -619,6 +619,39 @@ public class IProjectTest extends ResourceTest {
 	}
 
 	/**
+	 * Tests creating a project whose location is invalid
+	 */
+	public void testProjectCreationInvalidLocation() {
+		IProject target = getWorkspace().getRoot().getProject("Project");
+		IProjectDescription description = getWorkspace().newProjectDescription(target.getName());
+		description.setLocation(Platform.getLocation().append(".metadata"));
+		try {
+			target.create(description, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//expected
+		}
+
+		//default location for a project called .metadata is invalid
+		target = getWorkspace().getRoot().getProject(".metadata");
+		description = getWorkspace().newProjectDescription(target.getName());
+		try {
+			target.create(description, getMonitor());
+			fail("1.1");
+		} catch (CoreException e) {
+			//expected
+		}
+		
+		//same with one argument constructor
+		try {
+			target.create(getMonitor());
+			fail("1.2");
+		} catch (CoreException e) {
+			//expected
+		}
+	}
+
+	/**
 	 * Tests for IProject.delete where:
 	 * 	- project is CLOSED
 	 * 	- content area is the DEFAULT

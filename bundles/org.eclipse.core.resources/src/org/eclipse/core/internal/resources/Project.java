@@ -103,8 +103,6 @@ public class Project extends Container implements IProject {
 	 */
 	protected void checkDescription(IProject project, IProjectDescription desc, boolean moving) throws CoreException {
 		URI location = desc.getLocationURI();
-		if (location == null)
-			return;
 		String message = Messages.resources_invalidProjDesc;
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 		status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
@@ -223,8 +221,13 @@ public class Project extends Container implements IProject {
 			try {
 				workspace.prepareOperation(rule, monitor);
 				checkDoesNotExist();
-				if (description != null)
-					checkDescription(this, description, false);
+				
+				if (description == null) {
+					description = new ProjectDescription();
+					description.setName(getName());
+				}		
+				checkDescription(this, description, false);
+					
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
 				workspace.beginOperation(true);
 				workspace.createResource(this, false);
@@ -232,13 +235,8 @@ public class Project extends Container implements IProject {
 				ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
 
 				// setup description to obtain project location
-				ProjectDescription desc;
-				if (description == null) {
-					desc = new ProjectDescription();
-				} else {
-					desc = (ProjectDescription) ((ProjectDescription) description).clone();
-					desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
-				}
+				ProjectDescription desc = (ProjectDescription) ((ProjectDescription) description).clone();
+				desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
 				desc.setName(getName());
 				internalSetDescription(desc, false);
 				// see if there potentially are already contents on disk

@@ -1145,6 +1145,12 @@ public class IWorkspaceTest extends ResourceTest {
 			ensureDoesNotExistInFileSystem(openProjectLocation.toFile());
 			ensureDoesNotExistInFileSystem(closedProjectLocation.toFile());
 		}
+		
+		// cannot overlap .metadata folder from the current workspace
+		assertTrue("11.1", !(workspace.validateProjectLocation(project, platformLocation.addTrailingSeparator().append(".metadata"))).isOK());
+		
+		IProject metadataProject = workspace.getRoot().getProject(".metadata");
+		assertTrue("11.2", !(workspace.validateProjectLocation(metadataProject, null)).isOK());
 
 		// FIXME: Should this be valid?
 		assertTrue("23.1", workspace.validateProjectLocation(project, new Path("/asf")).isOK());
