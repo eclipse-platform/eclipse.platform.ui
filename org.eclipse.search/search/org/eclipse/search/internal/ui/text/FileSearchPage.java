@@ -38,7 +38,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.ide.IDE;
@@ -142,9 +141,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}	
 
 	protected void configureTableViewer(TableViewer viewer) {
+		ColoredViewersManager.install(viewer);
 		viewer.setUseHashlookup(true);
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, fCurrentSortOrder);
-		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		viewer.setLabelProvider(new DecoratingFileSearchLabelProvider(innerLabelProvider));
 		viewer.setContentProvider(new FileTableContentProvider(this));
 		viewer.setComparator(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();
@@ -152,9 +152,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
+		ColoredViewersManager.install(viewer);
 		viewer.setUseHashlookup(true);
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL);
-		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		viewer.setLabelProvider(new DecoratingFileSearchLabelProvider(innerLabelProvider));
 		viewer.setContentProvider(new FileTreeContentProvider(this, viewer));
 		viewer.setComparator(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();

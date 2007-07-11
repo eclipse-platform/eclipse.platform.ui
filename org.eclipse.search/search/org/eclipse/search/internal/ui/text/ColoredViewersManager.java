@@ -14,12 +14,12 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
@@ -29,15 +29,25 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 import org.eclipse.search.internal.ui.text.ColoredString.Style;
 
-public class ColoredViewersManager {
+public class ColoredViewersManager implements IPropertyChangeListener {
 	
-	public static final String LINENR_COLOR_NAME= "org.eclipse.search.ui.ColoredLabels.linenr"; //$NON-NLS-1$
-	public static final String HIGHLIGHT_COLOR_NAME= "org.eclipse.search.ui.ColoredLabels.highlight"; //$NON-NLS-1$
+	// temporarly reusing the reusing JDT constants
+	private static final String QUALIFIER_FG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.qualifier"; //$NON-NLS-1$
+	private static final String DECORATIONS_FG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.decorations"; //$NON-NLS-1$
+	private static final String COUNTER_FG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.counter"; //$NON-NLS-1$
+
+	public static final Style QUALIFIER_STYLE= new Style(QUALIFIER_FG_COLOR_NAME, null); 
+	public static final Style COUNTER_STYLE= new Style(COUNTER_FG_COLOR_NAME, null); 
+	public static final Style DECORATIONS_STYLE= new Style(DECORATIONS_FG_COLOR_NAME, null);
 	
 	private static ColoredViewersManager fgInstance= new ColoredViewersManager();
 	
@@ -47,14 +57,16 @@ public class ColoredViewersManager {
 	public ColoredViewersManager() {
 		fManagedViewers= new HashMap();
 		fColorRegisty= JFaceResources.getColorRegistry();
-		// TODO use configurable colors
-		fColorRegisty.put(LINENR_COLOR_NAME, new RGB(0, 0, 128));
-		fColorRegisty.put(HIGHLIGHT_COLOR_NAME, new RGB(206, 204, 247));
 	}
 	
 	public void installColoredLabels(StructuredViewer viewer) {
 		if (fManagedViewers.containsKey(viewer)) {
 			return; // already installed
+		}
+		if (fManagedViewers.isEmpty()) {
+			// first viewer installed
+			SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+			fColorRegisty.addListener(this);
 		}
 		fManagedViewers.put(viewer, new ManagedViewer(viewer));
 	}
@@ -64,6 +76,12 @@ public class ColoredViewersManager {
 		ManagedViewer mv= (ManagedViewer) fManagedViewers.remove(viewer);
 		if (mv == null)
 			return; // not installed
+		
+		if (fManagedViewers.isEmpty()) {
+			SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+			fColorRegisty.removeListener(this);
+			// last viewer uninstalled
+		}
 	}
 	
 	public Color getColorForName(String symbolicName) {
@@ -71,6 +89,25 @@ public class ColoredViewersManager {
 	}
 	
 		
+	public void propertyChange(PropertyChangeEvent event) {
+		String property= event.getProperty();
+		if (property.equals(QUALIFIER_FG_COLOR_NAME) || property.equals(COUNTER_FG_COLOR_NAME) || property.equals(DECORATIONS_FG_COLOR_NAME)
+				|| property.equals(SearchPreferencePage.COLORED_LABELS)) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					refreshAllViewers();
+				}
+			});
+		}
+	}
+	
+	protected final void refreshAllViewers() {
+		for (Iterator iterator= fManagedViewers.values().iterator(); iterator.hasNext();) {
+			ManagedViewer viewer= (ManagedViewer) iterator.next();
+			viewer.refresh();
+		}
+	}
+	
 	private class ManagedViewer implements DisposeListener {
 		
 		private static final String COLORED_LABEL_KEY= "coloredlabel"; //$NON-NLS-1$
@@ -82,7 +119,9 @@ public class ColoredViewersManager {
 			fViewer= viewer;
 			fOwnerDrawSupport= null;
 			fViewer.getControl().addDisposeListener(this);
-			installOwnerDraw();
+			if (showColoredLabels()) {
+				installOwnerDraw();
+			}
 		}
 		
 		/* (non-Javadoc)
@@ -90,6 +129,17 @@ public class ColoredViewersManager {
 		 */
 		public void widgetDisposed(DisposeEvent e) {
 			uninstallColoredLabels(fViewer);
+		}
+		
+		public final void refresh() {
+			Control control= fViewer.getControl();
+			if (!control.isDisposed()) {
+				if (showColoredLabels()) {
+					installOwnerDraw();
+				} else {
+					uninstallOwnerDraw();
+				}
+			}
 		}
 		
 		protected void installOwnerDraw() {
@@ -105,6 +155,15 @@ public class ColoredViewersManager {
 					}
 				};
 			}
+			refreshViewer();
+		}
+		
+		protected void uninstallOwnerDraw() {
+			if (fOwnerDrawSupport == null)
+				return; // not installed
+
+			fOwnerDrawSupport.dispose(); // removes itself as listener
+			fOwnerDrawSupport= null;
 			refreshViewer();
 		}
 		
@@ -148,14 +207,23 @@ public class ColoredViewersManager {
 				newLabel= new ColoredString(itemText); // fallback. Should never happen.
 			} else if (!newLabel.getString().equals(itemText)) {
 				// the decorator manager has already queued an new update 
-				newLabel= decorateColoredString(newLabel, itemText, ColoredString.DEFAULT_STYLE);
+				newLabel= decorateColoredString(newLabel, itemText, DECORATIONS_STYLE);
 			}
 			item.setData(COLORED_LABEL_KEY, newLabel); // cache the result
 			return newLabel;
 		}
 
 	}
-
+	
+	public static boolean showColoredLabels() {
+		String preference= SearchPlugin.getDefault().getPreferenceStore().getString(SearchPreferencePage.COLORED_LABELS);
+		return preference != null && Boolean.valueOf(preference).booleanValue();
+	}
+	
+	public static void install(StructuredViewer viewer) {
+		fgInstance.installColoredLabels(viewer);
+	}
+	
 	public static ColoredString decorateColoredString(ColoredString string, String decorated, Style color) {
 		String label= string.getString();
 		int originalStart= decorated.indexOf(label);
@@ -172,9 +240,4 @@ public class ColoredViewersManager {
 		}
 		return string; // no change
 	}
-	
-	public static void install(StructuredViewer viewer) {
-		fgInstance.installColoredLabels(viewer);
-	}
-
 }

@@ -137,23 +137,14 @@ public abstract class OwnerDrawSupport implements Listener {
 				ColoredString.StyleRange curr= (ColoredString.StyleRange) ranges.next();
 				ColoredString.Style style= curr.style;
 				if (style != null) {
-					Color foreground, background;
 					String foregroundColorName= style.getForegroundColorName();
+					Color foreground= foregroundColorName != null ? getColor(foregroundColorName, display) : null;
 					String backgroundColorName= style.getBackgroundColorName();
-					if (foregroundColorName != null){
-						foreground= getColor(style.getForegroundColorName(), display);
+					Color background= backgroundColorName != null ? getColor(backgroundColorName, display) : null;
+					if (foreground != null || background != null) {
+						TextStyle textStyle= new TextStyle(null, foreground, background);
+						fTextLayout.setStyle(textStyle, curr.offset, curr.offset + curr.length - 1);
 					}
-					else{
-						foreground= null;
-					}
-					if (backgroundColorName != null){
-						background= getColor(style.getBackgroundColorName(), display);
-					}
-					else{
-						background= null;
-					}
-					TextStyle textStyle= new TextStyle(null, foreground, background);
-					fTextLayout.setStyle(textStyle, curr.offset, curr.offset + curr.length - 1);
 				}
 			}
 		}
