@@ -26,6 +26,7 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
  */
 public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	static final String SHARED_ID = "org.eclipse.ui.browser"; //$NON-NLS-1$
+	static final String DEFAULT_ID_BASE = "org.eclipse.ui.defaultBrowser"; //$NON-NLS-1$
 
 	protected HashMap browserIdMap = new HashMap();
 
@@ -84,7 +85,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	public IWebBrowser createBrowser(int style, String browserId, String name,
 			String tooltip) throws PartInitException {
 		if (browserId == null)
-			browserId = SHARED_ID;
+			browserId = getDefaultId();
 		IWebBrowser browser = getExistingWebBrowser(browserId);
 		if (browser != null) {
 			if (browser instanceof InternalBrowserInstance) {
@@ -180,5 +181,15 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 			}
 		} else
 			browserIdMap.remove(baseId);
+	}
+	
+	private String getDefaultId() {
+		String id = null;
+		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+			id = DEFAULT_ID_BASE + i;
+			if (browserIdMap.get(id) == null)
+				break;
+		}
+		return id;
 	}
 }
