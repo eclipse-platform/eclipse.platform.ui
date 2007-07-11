@@ -102,8 +102,9 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 	 * @param flags
 	 *            the flags
 	 * @return the refactoring descriptor
+	 * @throws IllegalArgumentException if the argument map contains invalid keys/values 
 	 */
-	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) {
+	public RefactoringDescriptor createDescriptor(final String id, final String project, final String description, final String comment, final Map arguments, final int flags) throws IllegalArgumentException {
 		Assert.isNotNull(id);
 		Assert.isNotNull(description);
 		Assert.isNotNull(arguments);
