@@ -461,7 +461,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		fUpdateLabel = isContextLaunchEnabled();
+		if(isContextLaunchEnabled()) {
+			fUpdateLabel = true;
+		}
 	}
 
 	/* (non-Javadoc)
