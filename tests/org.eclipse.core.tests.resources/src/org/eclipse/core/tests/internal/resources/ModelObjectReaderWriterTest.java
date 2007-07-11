@@ -292,6 +292,47 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		}
 	}
 
+	/**
+	 * Verifies that project description file is written in a consistent way.
+	 * (bug 177148) 
+	 */
+	public void testConsistentWrite() throws Throwable {
+		String locationA = getTempDir().append("testPath1").toPortableString();
+		String locationB = getTempDir().append("testPath1").toPortableString();
+		String newline = System.getProperty("line.separator");
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>"+ locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
+		
+		IFileStore tempStore = getTempStore();
+		URI location = tempStore.toURI();
+		
+		ProjectDescription description = new ProjectDescription();
+		description.setLocationURI(location);
+		description.setName("MyProjectDescription");
+		HashMap args = new HashMap(2);
+		// key values are important
+		args.put("b", "ARGH!");
+		args.put("aA", "2 x ARGH!");
+		ICommand[] commands = new ICommand[1];
+		commands[0] = description.newCommand();
+		commands[0].setBuilderName("MyCommand");
+		commands[0].setArguments(args);
+		description.setBuildSpec(commands);
+		HashMap linkDescriptions = new HashMap(2);
+		LinkDescription link = createLinkDescription("pathB", IResource.FOLDER, locationB);
+		// key values are important
+		linkDescriptions.put("b", link);
+		link = createLinkDescription("pathA", IResource.FOLDER, locationA);
+		linkDescriptions.put("aA", link);
+		description.setLinkDescriptions(linkDescriptions);
+
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		new ModelObjectWriter().write(description, buffer);
+		String result = buffer.toString();
+		
+		// order of keys in serialized file should be exactly the same as expected
+		assertEquals("1.0", expected, result);
+	}
+
 	public void testInvalidProjectDescription1() throws Throwable {
 		String invalidProjectDescription = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<homeDescription>\n" + "	<name>abc</name>\n" + "	<comment></comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.jdt.core.javabuilder</name>\n" + "			<arguments>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "	<nature>org.eclipse.jdt.core.javanature</nature>\n" + "	</natures>\n" + "	<linkedResources>\n" + "		<link>\n" + "			<name>newLink</name>\n" + "			<type>2</type>\n" + "			<location>" + PATH_STRING + "</location>\n" + "		</link>\n" + "	</linkedResources>\n" + "</homeDescription>";
 
@@ -660,47 +701,6 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			/* remove trash */
 			Workspace.clear(location.toFile());
 		}
-	}
-
-	/**
-	 * Verifies that project description file is written in a consistent way.
-	 * (bug 177148) 
-	 */
-	public void testConsistentWrite() throws Throwable {
-		String locationA = getTempDir().append("testPath1").toPortableString();
-		String locationB = getTempDir().append("testPath1").toPortableString();
-		String newline = System.getProperty("line.separator");
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>"+ locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
-		
-		IFileStore tempStore = getTempStore();
-		URI location = tempStore.toURI();
-		
-		ProjectDescription description = new ProjectDescription();
-		description.setLocationURI(location);
-		description.setName("MyProjectDescription");
-		HashMap args = new HashMap(2);
-		// key values are important
-		args.put("b", "ARGH!");
-		args.put("aA", "2 x ARGH!");
-		ICommand[] commands = new ICommand[1];
-		commands[0] = description.newCommand();
-		commands[0].setBuilderName("MyCommand");
-		commands[0].setArguments(args);
-		description.setBuildSpec(commands);
-		HashMap linkDescriptions = new HashMap(2);
-		LinkDescription link = createLinkDescription("pathB", IResource.FOLDER, locationB);
-		// key values are important
-		linkDescriptions.put("b", link);
-		link = createLinkDescription("pathA", IResource.FOLDER, locationA);
-		linkDescriptions.put("aA", link);
-		description.setLinkDescriptions(linkDescriptions);
-
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		new ModelObjectWriter().write(description, buffer);
-		String result = buffer.toString();
-		
-		// order of keys in serialized file should be exactly the same as expected
-		assertEquals("1.0", expected, result);
 	}
 	
 	protected URI uriFromPortableString(String pathString) {
