@@ -260,13 +260,27 @@ public class ExpandableComposite extends Canvas {
 					- thmargin - thmargin;
 			if (tsize.x > 0)
 				twidth -= tsize.x + IGAP;
-			if (textClient != null)
+			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			if (tcsize.x > 0)
-				twidth -= tcsize.x + IGAP;
+			}
 			Point size = NULL_SIZE;
-			if (textLabel != null)
-				size = textLabelCache.computeSize(twidth, SWT.DEFAULT);
+			if (textLabel != null) {
+				if (tcsize.x > 0 && FormUtil.isWrapControl(textClient)) {
+					size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (twidth < size.x + IGAP + tcsize.x) {
+						twidth -= IGAP;
+						if (textLabel instanceof Label)
+							size = FormUtil.computeWrapSize(new GC(textLabel), ((Label)textLabel).getText(), Math.round(twidth*(size.x/(float)(size.x+tcsize.x))));
+						else
+							size = textLabelCache.computeSize(Math.round(twidth*(size.x/(float)(size.x+tcsize.x))), SWT.DEFAULT);
+						tcsize = textClientCache.computeSize(twidth-size.x, SWT.DEFAULT);
+					}
+				}
+				else {
+					twidth -= tcsize.x + IGAP;
+					size = textLabelCache.computeSize(twidth, SWT.DEFAULT);
+				}
+			}
 			if (textLabel instanceof Label) {
 				Point defSize = textLabelCache.computeSize(SWT.DEFAULT,
 						SWT.DEFAULT);
@@ -386,13 +400,26 @@ public class ExpandableComposite extends Canvas {
 			Point tcsize = NULL_SIZE;
 			if (textClient != null) {
 				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (innertHint != SWT.DEFAULT)
-					innertHint -= IGAP + tcsize.x;
 			}
 			Point size = NULL_SIZE;
 
-			if (textLabel != null)
-				size = textLabelCache.computeSize(innertHint, SWT.DEFAULT);
+			if (textLabel != null) {
+				if (tcsize.x > 0 && FormUtil.isWrapControl(textClient)) {
+					size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					if (innertHint != SWT.DEFAULT && innertHint < size.x + IGAP + tcsize.x) {
+						innertHint -= IGAP;
+						if (textLabel instanceof Label)
+							size = FormUtil.computeWrapSize(new GC(textLabel), ((Label)textLabel).getText(), Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))));
+						else
+							size = textLabelCache.computeSize(Math.round(innertHint*(size.x/(float)(size.x+tcsize.x))), SWT.DEFAULT);
+						tcsize = textClientCache.computeSize(innertHint-size.x, SWT.DEFAULT);
+					}
+				} else {
+					if (innertHint != SWT.DEFAULT)
+						innertHint -= IGAP + tcsize.x;
+					size = textLabelCache.computeSize(innertHint, SWT.DEFAULT);
+				}
+			}
 			if (textLabel instanceof Label) {
 				Point defSize = textLabelCache.computeSize(SWT.DEFAULT,
 						SWT.DEFAULT);
@@ -450,7 +477,7 @@ public class ExpandableComposite extends Canvas {
 			}
 			if (toggle != null) {
 				height = height - size.y + Math.max(size.y, tsize.y);
-				width += twidth;
+				width += twidth +IGAP;
 			}
 
 			Point result = new Point(width + marginWidth + marginWidth
