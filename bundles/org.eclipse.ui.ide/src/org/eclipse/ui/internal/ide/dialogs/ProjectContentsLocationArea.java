@@ -15,13 +15,13 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -109,6 +109,12 @@ public class ProjectContentsLocationArea {
 			// If we get a CoreException assume the default.
 		}
 		createContents(composite, defaultEnabled);
+	}
+	
+	public void setExistingProject(IProject existingProject)
+	{
+		projectName = existingProject.getName();
+		this.existingProject = existingProject;
 	}
 
 	/**
@@ -368,38 +374,29 @@ public class ProjectContentsLocationArea {
 	 * @return String
 	 */
 	public String checkValidLocation() {
-
-		if (isDefault()) {
-			return null;
-		}
-
+		
 		String locationFieldContents = locationPathField.getText();
 		if (locationFieldContents.length() == 0) {
-			return (IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty);
+			return IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty;
 		}
 
 		URI newPath = getProjectLocationURI();
 		if (newPath == null) {
 			return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 		}
-
-		//create a dummy project for the purpose of validation if necessary
-		IProject project = existingProject;
-		if (project == null) {
-			String name = new Path(locationFieldContents).lastSegment();
-			if (name != null && Path.EMPTY.isValidSegment(name)){
-				project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
-			}
-			else {
-				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
-			}
+		
+		if (existingProject == null && isDefault()) {
+			return IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty;
 		}
-		IStatus locationStatus = project.getWorkspace()
-				.validateProjectLocationURI(project, newPath);
+		
+		IStatus locationStatus = ResourcesPlugin.getWorkspace()
+				.validateProjectLocationURI(existingProject,
+						isDefault() ? null : newPath);
 
 		if (!locationStatus.isOK()) {
 			return locationStatus.getMessage();
 		}
+
 		if (existingProject != null) {
 			URI projectPath = existingProject.getLocationURI();
 			if (projectPath != null && URIUtil.equals(projectPath, newPath)) {

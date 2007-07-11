@@ -303,17 +303,16 @@ public class WizardNewProjectCreationPage extends WizardPage {
             setErrorMessage(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectExistsMessage);
             return false;
         }
-        
-        /*
-         * If not using the default value validate the location.
-         */
-        if (!locationArea.isDefault()) {
-        	String validLocationMessage = locationArea.checkValidLocation();
-        	if (validLocationMessage != null) { //there is no destination location given
-        		setErrorMessage(validLocationMessage);
-        		return false;
-        	}
-        }
+                
+        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(
+				getProjectNameFieldValue());
+		locationArea.setExistingProject(project);
+		
+		String validLocationMessage = locationArea.checkValidLocation();
+		if (validLocationMessage != null) { // there is no destination location given
+			setErrorMessage(validLocationMessage);
+			return false;
+		}
 
         setErrorMessage(null);
         setMessage(null);
