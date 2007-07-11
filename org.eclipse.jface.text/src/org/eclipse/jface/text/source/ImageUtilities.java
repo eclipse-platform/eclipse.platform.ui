@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Canvas;
 /**
  * Provides methods for drawing images onto a canvas.
  * <p>
- * This class is neither intended to be instantiated nor instantiated.
+ * This class is neither intended to be instantiated nor subclassed.
  * </p>
  *
  * @since 3.0

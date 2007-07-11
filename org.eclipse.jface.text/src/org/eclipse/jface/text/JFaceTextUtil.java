@@ -18,7 +18,7 @@ import org.eclipse.jface.text.source.LineRange;
 /**
  * A collection of JFace Text functions.
  * <p>
- * This class is neither intended to be instantiated nor instantiated.
+ * This class is neither intended to be instantiated nor subclassed.
  * </p>
  * 
  * @since 3.3
