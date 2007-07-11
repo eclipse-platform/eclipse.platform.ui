@@ -155,6 +155,19 @@
                overrideActionId="replaceFromHistory"
                tooltip="%ReplaceLocalHistory.tooltip"/>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            id="org.eclipse.team.ui.ResourceContributions">
+         <action
+               label="%ApplyPatch.label"
+               tooltip="%ApplyPatch.tooltip"
+               class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
+               menubarPath="team.main/group1"
+               enablesFor="*"
+               id="org.eclipse.team.ui.applyPatch">
+         </action>
+      </objectContribution>
    </extension>
 <!-- ************** Views ********************** -->
    <extension

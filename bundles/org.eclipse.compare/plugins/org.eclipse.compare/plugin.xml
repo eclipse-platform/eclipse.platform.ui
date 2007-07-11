@@ -188,14 +188,6 @@
                   name="compareWithGroup">
             </separator>
          </menu>
-         <menu
-               label="%TeamMenu.label"
-               path="additions"
-               id="team.main">
-            <separator
-                  name="group1">
-            </separator>
-         </menu>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IResource"
@@ -208,14 +200,6 @@
                menubarPath="compareWithMenu/compareWithGroup"
                enablesFor="2+"
                id="compareWithEachOther">
-         </action>
-         <action
-               label="%CompareWithPatchAction.label"
-               tooltip="%CompareWithPatchAction.tooltip"
-               class="org.eclipse.compare.internal.patch.CompareWithPatchAction"
-               menubarPath="team.main/group1"
-               enablesFor="1"
-               id="compareWithPatch">
          </action>
       </objectContribution>
       <objectContribution
