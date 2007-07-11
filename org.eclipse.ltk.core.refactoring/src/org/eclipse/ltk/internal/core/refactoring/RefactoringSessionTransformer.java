@@ -235,7 +235,7 @@ public final class RefactoringSessionTransformer {
 	 * @param name
 	 *            the non-empty name of the argument
 	 * @param value
-	 *            the non-empty value of the argument
+	 *            the value of the argument
 	 * 
 	 * @throws CoreException
 	 *             if an error occurs while creating a new argument
@@ -244,7 +244,6 @@ public final class RefactoringSessionTransformer {
 		Assert.isNotNull(name);
 		Assert.isTrue(!"".equals(name)); //$NON-NLS-1$
 		Assert.isNotNull(value);
-		Assert.isTrue(!"".equals(value)); //$NON-NLS-1$
 		if (fDocument != null && fRefactoringArguments != null && value != null) {
 			try {
 				final Attr attribute= fDocument.createAttribute(name);

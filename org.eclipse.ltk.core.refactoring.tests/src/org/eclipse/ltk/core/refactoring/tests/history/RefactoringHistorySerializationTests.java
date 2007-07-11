@@ -437,12 +437,8 @@ public class RefactoringHistorySerializationTests extends TestCase {
 		String version= "3.0";
 		String comment= null;
 		RefactoringSessionDescriptor session= new RefactoringSessionDescriptor(new RefactoringDescriptor[] { first, second, third}, version, comment);
-		String xml= "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"value 0\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
-		try {
-			compareWrittenDescriptor(session, true, xml);
-		} catch (CoreException exception) {
-			assertEquals("Wrong status code for refactoring history format exception:", IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, exception.getStatus().getCode());
-		}
+		String xml= "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<session version=\"3.0\">\n" + "<refactoring arg0=\"\" comment=\"A mock comment\" description=\"A mock refactoring\" id=\"org.eclipse.ltk.core.mock\"/>\n" + "<refactoring arg1=\"value 1\" comment=\"No comment\" description=\"Another mock refactoring\" flags=\"1\" id=\"org.eclipse.ltk.core.mock\" version=\"1.0\"/>\n" + "<refactoring arg2=\"value 2\" description=\"Yet another mock refactoring\" flags=\"5\" id=\"org.eclipse.ltk.core.mock\" project=\"test0\" version=\"1.1\"/>\n" + "</session>\n" + "";
+		compareWrittenDescriptor(session, true, xml);
 	}
 
 }

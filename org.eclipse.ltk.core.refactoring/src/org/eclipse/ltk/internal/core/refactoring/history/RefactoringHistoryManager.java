@@ -66,6 +66,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
+import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionReader;
@@ -96,33 +97,6 @@ public final class RefactoringHistoryManager {
 	private static final Calendar fgCalendar= Calendar.getInstance(TimeZone.getTimeZone("GMT+00:00")); //$NON-NLS-1$
 
 	/**
-	 * Checks whether the argument is well-formed.
-	 * 
-	 * @param argument
-	 *            the argument
-	 * @param whitespace
-	 *            <code>true</code> if the arguments should be checked for
-	 *            whitespace characters, <code>false</code> otherwise
-	 * @throws CoreException
-	 *             if the argument violates any of the constraints
-	 */
-	private static void checkArgument(final Object argument, final boolean whitespace) throws CoreException {
-		if (argument instanceof String) {
-			final String string= (String) argument;
-			final char[] characters= string.toCharArray();
-			if (characters.length == 0)
-				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_empty_argument, null));
-			if (whitespace) {
-				for (int index= 0; index < characters.length; index++) {
-					if (Character.isWhitespace(characters[index]))
-						throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_whitespace_argument_key, null));
-				}
-			}
-		} else
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_non_string_argument, null));
-	}
-
-	/**
 	 * Checks whether the argument map is well-formed.
 	 * <p>
 	 * All arguments contained in the map are checked according to the rules of
@@ -138,8 +112,22 @@ public final class RefactoringHistoryManager {
 		Assert.isNotNull(arguments);
 		for (final Iterator iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
 			final Map.Entry entry= (Map.Entry) iterator.next();
-			checkArgument(entry.getKey(), true);
-			checkArgument(entry.getValue(), false);
+			if (entry.getKey() instanceof String) {
+				final String string= (String) entry.getKey();
+				final char[] characters= string.toCharArray();
+				if (characters.length == 0) {
+					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_empty_argument, null));
+				}
+				for (int index= 0; index < characters.length; index++) {
+					if (Character.isWhitespace(characters[index]))
+						throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_whitespace_argument_key, null));
+				}
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, Messages.format(RefactoringCoreMessages.RefactoringHistoryManager_non_string_argument, entry.getKey()), null));
+			}
+			if (! (entry.getValue() instanceof String)) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, Messages.format(RefactoringCoreMessages.RefactoringHistoryManager_non_string_value, entry.getKey()), null));
+			}
 		}
 	}
 

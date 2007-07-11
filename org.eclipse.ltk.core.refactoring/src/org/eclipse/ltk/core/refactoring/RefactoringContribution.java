@@ -138,9 +138,11 @@ public abstract class RefactoringContribution {
 	 *            the flags of the refactoring descriptor
 	 * @return the refactoring descriptor
 	 * 
+	 * @throws IllegalArgumentException if the argument map contains invalid keys/values 
+	 * 
 	 * @see #retrieveArgumentMap(RefactoringDescriptor)
 	 */
-	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags);
+	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException;
 
 	/**
 	 * Returns the refactoring id for which this refactoring contribution has

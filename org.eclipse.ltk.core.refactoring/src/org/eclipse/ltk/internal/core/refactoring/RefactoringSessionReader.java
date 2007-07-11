@@ -22,6 +22,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
@@ -57,6 +58,11 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 */
 	private List fRefactoringDescriptors= null;
 
+	/**
+	 * List of exceptions occurred while creating the descriptors 
+	 */
+	private List fDescriptorStatus= null;
+	
 	/** Has a session been found during parsing? */
 	private boolean fSessionFound= false;
 
@@ -115,9 +121,12 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 */
 	public RefactoringSessionDescriptor readSession(final InputSource source) throws CoreException {
 		fSessionFound= false;
+		fDescriptorStatus= new ArrayList();
 		try {
 			source.setSystemId("/"); //$NON-NLS-1$
 			createParser(SAXParserFactory.newInstance()).parse(source, this);
+			if (fDescriptorStatus.size() != 0)
+				throw new CoreException(new MultiStatus(RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, (IStatus[]) fDescriptorStatus.toArray(new IStatus[fDescriptorStatus.size()]), RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, null));
 			if (!fSessionFound)
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringSessionReader_no_session, null));
 			if (fRefactoringDescriptors != null) {
@@ -137,6 +146,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			fRefactoringDescriptors= null;
 			fVersion= null;
 			fComment= null;
+			fDescriptorStatus= null;
 		}
 		return null;
 	}
@@ -170,7 +180,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 						comment= value;
 				} else if (fProjects && IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
 					project= value;
-				else if (!"".equals(name) && !"".equals(value)) //$NON-NLS-1$//$NON-NLS-2$
+				else if (!"".equals(name)) //$NON-NLS-1$
 					map.put(name, value);
 			}
 			int flag= 0;
@@ -180,7 +190,12 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				// Do nothing
 			}
 
-			final RefactoringDescriptor descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
+			RefactoringDescriptor descriptor= null;
+			try {
+				descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
+			} catch (RuntimeException e) {
+				fDescriptorStatus.add(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), e.getLocalizedMessage(), e));
+			}
 			if (descriptor != null) {
 				try {
 					descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
