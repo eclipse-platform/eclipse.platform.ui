@@ -667,8 +667,10 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	 * (bug 177148) 
 	 */
 	public void testConsistentWrite() throws Throwable {
+		String locationA = getTempDir().append("testPath1").toPortableString();
+		String locationB = getTempDir().append("testPath1").toPortableString();
 		String newline = System.getProperty("line.separator");
-		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>d:/abc/def/ghi</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>d:/abc/def/jkl</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
+		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline + "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>"+ locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
 		
 		IFileStore tempStore = getTempStore();
 		URI location = tempStore.toURI();
@@ -686,10 +688,10 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		commands[0].setArguments(args);
 		description.setBuildSpec(commands);
 		HashMap linkDescriptions = new HashMap(2);
-		LinkDescription link = createLinkDescription("pathB", IResource.FOLDER, "d:/abc/def/jkl");
+		LinkDescription link = createLinkDescription("pathB", IResource.FOLDER, locationB);
 		// key values are important
 		linkDescriptions.put("b", link);
-		link = createLinkDescription("pathA", IResource.FOLDER, "d:/abc/def/ghi");
+		link = createLinkDescription("pathA", IResource.FOLDER, locationA);
 		linkDescriptions.put("aA", link);
 		description.setLinkDescriptions(linkDescriptions);
 
