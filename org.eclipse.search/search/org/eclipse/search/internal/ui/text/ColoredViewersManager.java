@@ -11,7 +11,7 @@
  * Copied from JDT UI: org.eclipse.jdt.internal.ui.viewsupport.ColoredViewersManager.
  * Will be removed again when made API. https://bugs.eclipse.org/bugs/show_bug.cgi?id=196128
  *******************************************************************************/
-package org.eclipse.search.internal.ui.viewsupport;
+package org.eclipse.search.internal.ui.text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +32,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 
-import org.eclipse.search.internal.ui.viewsupport.ColoredString.Style;
+import org.eclipse.search.internal.ui.text.ColoredString.Style;
 
 public class ColoredViewersManager {
 	
