@@ -76,7 +76,6 @@ public class CommitCommentArea extends DialogArea {
             fTextField.setIndent(2);
             
             final SourceViewerDecorationSupport support = new SourceViewerDecorationSupport(sourceViewer, null, annotationAccess, EditorsUI.getSharedTextColors());
-            support.setMarginPainterPreferenceKeys(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
             
     		Iterator e= new MarkerAnnotationPreferences().getAnnotationPreferences().iterator();
     		while (e.hasNext())
