@@ -302,7 +302,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	}
 
 	private void createScopeSet(Section section, FormToolkit toolkit) {
-		scopeSetLink = toolkit.createHyperlink(section, null, SWT.NULL);
+		scopeSetLink = toolkit.createHyperlink(section, null, SWT.WRAP);
 		scopeSetLink.addHyperlinkListener(new HyperlinkAdapter() {
 
 			public void linkActivated(HyperlinkEvent e) {
