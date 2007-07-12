@@ -11,7 +11,6 @@
 package org.eclipse.search.tests.filesearch;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 
 import junit.framework.Test;
