@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 95292 - [Intro] 
+ *     		Help > Welcome missing F1 context
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -55,6 +57,9 @@ public class IntroAction extends Action implements
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
+        window.getWorkbench().getHelpSystem().setHelp(this,
+				IWorkbenchHelpContextIds.INTRO_ACTION);
+        
         IntroDescriptor introDescriptor = ((Workbench) workbenchWindow
                 .getWorkbench()).getIntroDescriptor();
         String labelOverride = introDescriptor.getLabelOverride();

@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 95292 - [Intro] 
+ *     		Help > Welcome missing F1 context
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -194,6 +196,9 @@ public interface IWorkbenchHelpContextIds {
 	
     public static final String DYNAMIC_HELP_ACTION = PREFIX
     + "dynamic_help_action_context"; //$NON-NLS-1$
+    
+    public static final String INTRO_ACTION = PREFIX
+    + "intro_action_context"; //$NON-NLS-1$
 
 //    // Dialogs
     public static final String ABOUT_DIALOG = PREFIX + "about_dialog_context"; //$NON-NLS-1$
