@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 93373 - [Intro] 
+ *     		TipsAndTricksAction should not use magic numbers
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -111,7 +113,7 @@ public class TipsAndTricksAction extends PartEventAction implements
                 IStatus status = new Status(
                         IStatus.ERROR,
                         IDEWorkbenchPlugin.IDE_WORKBENCH,
-                        1,
+                        IStatus.INFO,
                         IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
                 ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
                         IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref,
@@ -119,7 +121,7 @@ public class TipsAndTricksAction extends PartEventAction implements
             }
         } else {
             IStatus status = new Status(IStatus.ERROR,
-                    IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
+                    IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.INFO, IDEWorkbenchMessages.TipsAndTricksErrorDialog_noHref, null);
             ErrorDialog.openError(shell, IDEWorkbenchMessages.TipsAndTricksErrorDialog_title,
                     IDEWorkbenchMessages.TipsAndTricksErrorDialog_noFeatures, 
                     status);
