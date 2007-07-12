@@ -31,8 +31,10 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.provisional.views.markers.MarkerContentGenerator;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
@@ -106,9 +108,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object SEVERITY_ID = "org.eclipse.ui.ide.severity";//$NON-NLS-1$
 
+	private static final String MARKER_CONTENT_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
+
+	private static final String DEFAULT_FOR_PERSPECTIVE = "defaultForPerspective"; //$NON-NLS-1$
+
 	private static MarkerSupportRegistry singleton;
 
-	// Create a lock so that initiization happens in one thread
+	// Create a lock so that initialisation happens in one thread
 	private static Object creationLock = new Object();
 
 	/**
@@ -139,6 +145,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private HashMap hierarchyOrders = new HashMap();
 
 	private MarkerType rootType;
+
+	private HashMap generators = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -203,6 +211,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				markerGroups.put(group.getId(), group);
 				tracker.registerObject(extension, group,
 						IExtensionTracker.REF_STRONG);
+				continue;
 			}
 
 			if (element.getName().equals(MARKER_GROUPING_ENTRY)) {
@@ -226,6 +235,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 				tracker.registerObject(extension, entry,
 						IExtensionTracker.REF_STRONG);
+				continue;
 			}
 
 			if (element.getName().equals(MARKER_ATTRIBUTE_GROUPING)) {
@@ -239,6 +249,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 				tracker.registerObject(extension, grouping,
 						IExtensionTracker.REF_STRONG);
+				continue;
 			}
 
 			if (element.getName().equals(MARKER_CATEGORY)) {
@@ -252,9 +263,39 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				}
 				tracker.registerObject(extension, categoryName,
 						IExtensionTracker.REF_STRONG);
+				continue;
+			}
+
+			if (element.getName().equals(MARKER_CONTENT_GENERATOR)) {
+
+				processContentGenerator(tracker, extension, element);
+				continue;
 			}
 
 		}
+	}
+
+	/**
+	 * Process the content generator defined in the extension.
+	 * 
+	 * @param tracker
+	 * @param extension
+	 * @param element
+	 */
+	private void processContentGenerator(IExtensionTracker tracker,
+			IExtension extension, IConfigurationElement element) {
+		String id = element.getAttribute(ID);
+		String name = element.getAttribute(NAME);
+
+		MarkerContentGenerator generator = new MarkerContentGenerator(id, name);
+
+		generators.put(id, generator);
+
+		generator.setDefaultPerspectiveId(element
+				.getAttribute(DEFAULT_FOR_PERSPECTIVE));
+
+		tracker.registerObject(extension, generator,
+				IExtensionTracker.REF_STRONG);
 	}
 
 	/**
@@ -676,7 +717,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param type
 	 * @return TableSorter or <code>null</code>.
 	 */
-	private TableComparator findSorterInChildren(String typeName, MarkerType type) {
+	private TableComparator findSorterInChildren(String typeName,
+			MarkerType type) {
 
 		MarkerType[] types = type.getAllSubTypes();
 		TableComparator defaultSorter = null;
@@ -687,7 +729,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < types.length; i++) {
 			MarkerType[] subtypes = types[i].getAllSubTypes();
 			for (int j = 0; j < subtypes.length; j++) {
-				TableComparator sorter = findSorterInChildren(typeName, subtypes[j]);
+				TableComparator sorter = findSorterInChildren(typeName,
+						subtypes[j]);
 				if (sorter != null) {
 					return sorter;
 				}
@@ -714,6 +757,37 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	public IField getDefaultGroup() {
 
 		return (IField) markerGroups.get(SEVERITY_ID);
+	}
+
+	/**
+	 * Get the generator for id
+	 * 
+	 * @param id
+	 * @return MarkerContentGenerator or <code>null</code>.
+	 */
+	public MarkerContentGenerator getGenerator(String id) {
+		if (generators.containsKey(id))
+			return (MarkerContentGenerator) generators.get(id);
+		return null;
+	}
+
+	/**
+	 * Return the generator for the supplied perspective.
+	 * 
+	 * @param perspective
+	 * @return {@link MarkerContentGenerator} or <code>null</code>.
+	 */
+	public MarkerContentGenerator generatorFor(
+			IPerspectiveDescriptor perspective) {
+		String id = perspective.getId();
+		Iterator generatorIterator = generators.entrySet().iterator();
+		while (generatorIterator.hasNext()) {
+			MarkerContentGenerator generator = (MarkerContentGenerator) generatorIterator
+					.next();
+			if (id.equals(generator.getDefaultPerspectiveId()))
+				return generator;
+		}
+		return null;
 	}
 
 }

@@ -69,7 +69,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -1066,14 +1065,7 @@ public abstract class MarkerView extends TableView {
 		return markerFilters;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.internal.tableview.TableView#handleKeyPressed(org.eclipse.swt.events.KeyEvent)
-	 */
-	protected void handleKeyPressed(KeyEvent event) {
-		// Default is do nothing.
-	}
+
 
 	/*
 	 * (non-Javadoc)

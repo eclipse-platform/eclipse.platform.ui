@@ -25,13 +25,13 @@ import org.eclipse.core.runtime.Platform;
  * Maintains a model of all known marker types. Accessed statically as
  * the list does not change frequently.
  */
-class MarkerTypesModel {
+public class MarkerTypesModel {
 	
 	/**
 	 * Return the singleton implementation.
 	 * @return MarkerTypesModel
 	 */
-	static MarkerTypesModel getInstance(){
+	public static MarkerTypesModel getInstance(){
 		if(instance == null) {
 			instance = new MarkerTypesModel();
 		}

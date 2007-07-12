@@ -38,8 +38,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -175,11 +173,7 @@ public abstract class TableView extends ViewPart {
 				handleOpenEvent(event);
 			}
 		});
-		viewer.getControl().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent e) {
-				handleKeyPressed(e);
-			}
-		});
+		
 	}
 
 
@@ -584,7 +578,6 @@ public abstract class TableView extends ViewPart {
 		return (TableComparator) viewer.getComparator();
 	}
 
-	protected abstract void handleKeyPressed(KeyEvent event);
 
 	protected abstract void handleOpenEvent(OpenEvent event);
 
