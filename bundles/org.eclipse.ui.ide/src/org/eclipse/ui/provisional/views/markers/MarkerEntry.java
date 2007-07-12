@@ -151,7 +151,7 @@ public class MarkerEntry extends MarkerItem {
 		if (collationKeys.containsKey(attribute))
 			return (CollationKey) collationKeys.get(attribute);
 		String attributeValue = getAttributeValue(attribute, defaultValue);
-		if (attributeValue.isEmpty())
+		if (attributeValue.length() == 0)
 			return MarkerUtilities.EMPTY_COLLATION_KEY;
 		CollationKey key = Collator.getInstance().getCollationKey(
 				attributeValue);
