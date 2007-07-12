@@ -2082,7 +2082,7 @@
          </colorOverride>
          <colorOverride
                value="9,9,9"
-               id="defaultedcolor2">
+               id="adefaultedcolor2">
          </colorOverride>
          <fontOverride
                value="Courier-italic-10"
@@ -2129,18 +2129,18 @@
             id="swtcolor">
       </colorDefinition>
       <colorDefinition
-            label="defaultedcolor"
+            label="zdefaultedcolor"
             defaultsTo="rgbcolor"
             id="defaultedcolor">
       </colorDefinition>
       <colorDefinition
-            label="defaultedcolor2"
+            label="adefaultedcolor2"
             defaultsTo="defaultedcolor"
-            id="defaultedcolor2">
+            id="adefaultedcolor2">
       </colorDefinition>
       <colorDefinition
             label="defaultedcolor3"
-            defaultsTo="defaultedcolor2"
+            defaultsTo="adefaultedcolor2"
             id="defaultedcolor3">
       </colorDefinition>
       <colorDefinition
