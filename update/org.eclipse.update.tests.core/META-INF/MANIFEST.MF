@@ -34,4 +34,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.test.performance,
  org.eclipse.equinox.http.registry
 Eclipse-LazyStart: true
-Import-Package: org.osgi.service.http;version="1.2.0"
+Import-Package: org.eclipse.equinox.http.jetty,
+ org.osgi.service.http;version="1.2.0"

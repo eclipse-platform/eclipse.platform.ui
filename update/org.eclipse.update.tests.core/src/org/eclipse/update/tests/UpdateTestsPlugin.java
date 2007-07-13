@@ -9,11 +9,15 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.tests;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.http.jetty.JettyConfigurator;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -85,7 +89,9 @@ public class UpdateTestsPlugin extends Plugin {
 		try {
 
 			// ensure that the http stuff is started
-			ensureBundleStarted("org.eclipse.equinox.http.jetty"); //$NON-NLS-1$
+			Dictionary d = new Hashtable();
+			d.put("http.port", new Integer(0)); //$NON-NLS-1$
+			JettyConfigurator.startServer("updateTests", d);
 			ensureBundleStarted("org.eclipse.equinox.http.registry"); //$NON-NLS-1$
 			
 			ServiceReference reference = 
