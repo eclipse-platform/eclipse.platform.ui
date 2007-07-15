@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -209,6 +209,60 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		} catch (BadLocationException e) {
 			Assert.assertTrue(false);
 		}
+	}
+	
+	public void testRegexReplace() throws Exception {
+		fDocument.set(
+				"UnixWindowsMacInferred\n" +
+				"Chars"
+		);
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		regexReplace("Unix", "$0\\n", findReplaceDocumentAdapter);
+		regexReplace("(Windows)", "$1\\r\\n", findReplaceDocumentAdapter);
+		regexReplace("(M)ac", "\\0\\r", findReplaceDocumentAdapter);
+		regexReplace("(Inferred)", "\\1\\R", findReplaceDocumentAdapter);
+		regexReplace("Chars", "\\\\, \\xF6, \\u00F6, \\t, \\n, \\r, \\f, \\a, \\e, \\cF", findReplaceDocumentAdapter);
+			
+		String text= "Unix\nWindows\r\nMac\rInferred\n\n\\, \u00F6, \u00F6, \t, \n, \r, \f, \u0007, \u001B, \u0006";
+		assertEquals(text, fDocument.get());
+	}
+	
+	public void testRegexReplace2() throws Exception {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		
+		fDocument.set("foo");
+		regexReplace("foo", "\\00", findReplaceDocumentAdapter);
+		assertEquals("foo0", fDocument.get());
+		
+		fDocument.set("foo");
+		regexReplace("foo", "\\010", findReplaceDocumentAdapter);
+		assertEquals("foo10", fDocument.get());
+		
+		fDocument.set("foo");
+		regexReplace("foo", "$00", findReplaceDocumentAdapter);
+		assertEquals("foo0", fDocument.get());
+		
+		fDocument.set("foo");
+		regexReplace("foo", "$010", findReplaceDocumentAdapter);
+		assertEquals("foo10", fDocument.get());
+	}
+	
+	public void testRegexReplace3() throws Exception {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		
+		fDocument.set("foo");
+		regexReplace("(f)oo", "\\10", findReplaceDocumentAdapter);
+		assertEquals("f0", fDocument.get());
+		
+		fDocument.set("foo");
+		regexReplace("(f)oo", "$10", findReplaceDocumentAdapter);
+		assertEquals("f0", fDocument.get());
+	}
+	
+	private void regexReplace(String find, String replace, FindReplaceDocumentAdapter findReplaceDocumentAdapter) throws BadLocationException {
+		findReplaceDocumentAdapter.find(0, find, true, true, false, true);
+		IRegion r= findReplaceDocumentAdapter.replace(replace, true);
+		assertNotNull(r);
 	}
 	
 	public void testIllegalState() {

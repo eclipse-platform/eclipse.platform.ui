@@ -48,6 +48,10 @@ final class RegExMessages extends NLS {
 	public static String additionalInfo_bs_n;
 	public static String displayString_bs_r;
 	public static String additionalInfo_bs_r;
+	public static String displayString_bs_rnWU;
+	public static String additionalInfo_bs_rnWU;
+	public static String displayString_bs_rn;
+	public static String additionalInfo_bs_rn;
 	public static String displayString_bs_f;
 	public static String additionalInfo_bs_f;
 	public static String displayString_bs_a;
@@ -189,12 +193,14 @@ final class RegExMessages extends NLS {
 	//replace
 	public static String displayString_dollar;
 	public static String additionalInfo_dollar;
-	public static String additionalInfo_replace_bs;
+	public static String displayString_replace_cap;
+	public static String additionalInfo_replace_cap;
 	public static String displayString_replace_bs;
-	public static String displayString_tab;
-	public static String additionalInfo_tab;
-	public static String displayString_nl;
-	public static String additionalInfo_nl;
-	public static String displayString_cr;
-	public static String additionalInfo_cr;
+	public static String additionalInfo_replace_bs;
+	public static String displayString_replace_bs_n;
+	public static String additionalInfo_replace_bs_n;
+	public static String displayString_replace_bs_r;
+	public static String additionalInfo_replace_bs_r;
+	public static String displayString_replace_bs_R;
+	public static String additionalInfo_replace_bs_R;
 }

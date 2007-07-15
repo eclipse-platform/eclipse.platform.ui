@@ -124,12 +124,14 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	 * @return the find string
 	 */
 	private String getFindString() {
-		String string= getSelectionString();
-
-		if ((string == null || fRegExSearch && string.equals(fSelection)) && !fFindHistory.isEmpty())
-			string= (String) fFindHistory.get(0);
-
-		return string;
+		String fullSelection= fTarget.getSelectionText();
+		String firstLine= getFirstLine(fullSelection);
+		if ((firstLine.length() == 0 || fRegExSearch && fullSelection.equals(fSelection)) && !fFindHistory.isEmpty())
+			return (String) fFindHistory.get(0);
+		else if (fRegExSearch && fullSelection.length() > 0)
+			return FindReplaceDialog.escapeForRegExPattern(fullSelection);
+		else
+			return firstLine;
 	}
 
 	/**
@@ -385,17 +387,12 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 	}
 
 	/**
-	 * Returns the actual selection of the find replace target.
-	 *
-	 * @return the actual selection of the find replace target
+	 * Returns the first line of the given selection.
+	 * 
+	 * @param selection the selection
+	 * @return the first line of the selection
 	 */
-	private String getSelectionString() {
-
-		/*
-		 * 1GF86V3: ITPUI:WINNT - Internal errors using Find/Replace Dialog
-		 * Now uses TextUtilities rather than focusing on '\n'
-		 */
-		String selection= fTarget.getSelectionText();
+	private String getFirstLine(String selection) {
 		if (selection.length() > 0) {
 			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
@@ -403,6 +400,6 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 			else if (info[0] == -1)
 				return selection;
 		}
-		return null;
+		return selection;
 	}
 }

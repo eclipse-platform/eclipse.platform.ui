@@ -919,11 +919,12 @@ class FindReplaceDialog extends Dialog {
 	// ------- init / close ---------------------------------------
 
 	/**
-	 * Returns the actual selection of the find replace target.
-	 * @return the selection of the target
+	 * Returns the first line of the given selection.
+	 * 
+	 * @param selection the selection
+	 * @return the first line of the selection
 	 */
-	private String getSelectionString() {
-		String selection= fTarget.getSelectionText();
+	private String getFirstLine(String selection) {
 		if (selection.length() > 0) {
 			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
 			if (info[0] > 0)
@@ -931,7 +932,7 @@ class FindReplaceDialog extends Dialog {
 			else if (info[0] == -1)
 				return selection;
 		}
-		return null;
+		return selection;
 	}
 
 	/**
@@ -978,7 +979,7 @@ class FindReplaceDialog extends Dialog {
 	private void writeSelection() {
 		if (fTarget == null)
 			return;
-		
+
 		IDialogSettings s= getDialogSettings();
 		s.put("selection", fTarget.getSelectionText()); //$NON-NLS-1$
 	}
@@ -1006,11 +1007,15 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void initFindStringFromSelection() {
 		if (fTarget != null && okToUse(fFindField)) {
-			String selection= getSelectionString();
+			String fullSelection= fTarget.getSelectionText();
+			String firstLine= getFirstLine(fullSelection);
+			boolean isRegEx= isRegExSearchAvailableAndChecked();
 			fFindField.removeModifyListener(fFindModifyListener);
-			if (selection != null) {
-				fFindField.setText(selection);
-				if (!selection.equals(fTarget.getSelectionText())) {
+			if (firstLine.length() > 0 || (isRegEx && fullSelection.length() > 0)) {
+				String pattern= isRegEx ? escapeForRegExPattern(fullSelection) : firstLine;
+				fFindField.setText(pattern);
+				if (!firstLine.equals(fullSelection)) {
+					// multiple lines selected
 					useSelectedLines(true);
 					fGlobalRadioButton.setSelection(false);
 					fSelectedRangeRadioButton.setSelection(true);
@@ -1027,6 +1032,71 @@ class FindReplaceDialog extends Dialog {
 			fFindField.setSelection(new Point(0, fFindField.getText().length()));
 			fFindField.addModifyListener(fFindModifyListener);
 		}
+	}
+
+	/**
+	 * Escapes special characters in the string, such that the resulting pattern
+	 * matches the given string.
+	 * 
+	 * @param string the string to escape
+	 * @return a regex pattern that matches the given string
+	 */
+	public static String escapeForRegExPattern(String string) {
+		//implements https://bugs.eclipse.org/bugs/show_bug.cgi?id=44422
+
+		StringBuffer pattern= new StringBuffer(string.length() + 16);
+		int length= string.length();
+		if (length > 0 && string.charAt(0) == '^')
+			pattern.append('\\');
+		for (int i= 0; i < length; i++) {
+			char ch= string.charAt(i);
+			switch (ch) {
+				case '\\':
+				case '(':
+				case ')':
+				case '[':
+				case ']':
+				case '{':
+				case '}':
+				case '.':
+				case '?':
+				case '*':
+				case '+':
+				case '|':
+					pattern.append('\\').append(ch);
+					break;
+					
+				case '\n':
+					pattern.append("\\n"); //$NON-NLS-1$
+					break;
+				case '\r':
+					pattern.append("\\r"); //$NON-NLS-1$
+					break;
+				case '\t':
+					pattern.append("\\t"); //$NON-NLS-1$
+					break;
+				case '\f':
+					pattern.append("\\f"); //$NON-NLS-1$
+					break;
+				case 0x07:
+					pattern.append("\\a"); //$NON-NLS-1$
+					break;
+				case 0x1B:
+					pattern.append("\\e"); //$NON-NLS-1$
+					break;
+
+				default:
+					if (0 <= ch && ch < 0x20) {
+						pattern.append("\\x"); //$NON-NLS-1$
+						pattern.append(Integer.toHexString(ch).toUpperCase());
+					} else {
+						pattern.append(ch);
+					}
+			}
+		}
+		if (length > 0 && string.charAt(length - 1) == '$')
+			pattern.insert(pattern.length() - 1, '\\');
+		return pattern.toString();
 	}
 
 	/**

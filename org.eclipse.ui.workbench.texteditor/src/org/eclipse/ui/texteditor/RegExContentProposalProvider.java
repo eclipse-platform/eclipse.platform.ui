@@ -119,10 +119,12 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 			addBsProposal("\\t", RegExMessages.displayString_bs_t, RegExMessages.additionalInfo_bs_t); //$NON-NLS-1$
 			addBsProposal("\\n", RegExMessages.displayString_bs_n, RegExMessages.additionalInfo_bs_n); //$NON-NLS-1$
 			addBsProposal("\\r", RegExMessages.displayString_bs_r, RegExMessages.additionalInfo_bs_r); //$NON-NLS-1$
+			addBracketProposal("\\r?\\n", 5, RegExMessages.displayString_bs_rnWU, RegExMessages.additionalInfo_bs_rnWU); //$NON-NLS-1$
+			addBracketProposal("(\\r\\n?|\\n)", 10, RegExMessages.displayString_bs_rn, RegExMessages.additionalInfo_bs_rn); //$NON-NLS-1$
 			addBsProposal("\\f", RegExMessages.displayString_bs_f, RegExMessages.additionalInfo_bs_f); //$NON-NLS-1$
 			addBsProposal("\\a", RegExMessages.displayString_bs_a, RegExMessages.additionalInfo_bs_a); //$NON-NLS-1$
 			addBsProposal("\\e", RegExMessages.displayString_bs_e, RegExMessages.additionalInfo_bs_e); //$NON-NLS-1$
-			addBsProposal("\\c", RegExMessages.displayString_bs_c, RegExMessages.additionalInfo_bs_c); //$NON-NLS-1$
+			addBracketProposal("\\c", 2, RegExMessages.displayString_bs_c, RegExMessages.additionalInfo_bs_c); //$NON-NLS-1$
 			
 			if (! fIsEscape)
 				addBracketProposal(".", 1, RegExMessages.displayString_dot, RegExMessages.additionalInfo_dot); //$NON-NLS-1$
@@ -156,25 +158,6 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 				addBracketProposal("\\P{}", 3, RegExMessages.displayString_posixNot, RegExMessages.additionalInfo_posixNot); //$NON-NLS-1$
 			}
 			
-//			addBsProposal("\\p{Lower}", RegExMessages.displayString_bs_p{Lower}, RegExMessages.additionalInfo_bs_p{Lower}); //$NON-NLS-1$
-//			addBsProposal("\\p{Upper}", RegExMessages.displayString_bs_p{Upper}, RegExMessages.additionalInfo_bs_p{Upper}); //$NON-NLS-1$
-//			addBsProposal("\\p{ASCII}", RegExMessages.displayString_bs_p{ASCII}, RegExMessages.additionalInfo_bs_p{ASCII}); //$NON-NLS-1$
-//			addBsProposal("\\p{Alpha}", RegExMessages.displayString_bs_p{Alpha}, RegExMessages.additionalInfo_bs_p{Alpha}); //$NON-NLS-1$
-//			addBsProposal("\\p{Digit}", RegExMessages.displayString_bs_p{Digit}, RegExMessages.additionalInfo_bs_p{Digit}); //$NON-NLS-1$
-//			addBsProposal("\\p{Alnum}", RegExMessages.displayString_bs_p{Alnum}, RegExMessages.additionalInfo_bs_p{Alnum}); //$NON-NLS-1$
-//			addBsProposal("\\p{Punct}", RegExMessages.displayString_bs_p{Punct}, RegExMessages.additionalInfo_bs_p{Punct}); //$NON-NLS-1$
-//			addBsProposal("\\p{Graph}", RegExMessages.displayString_bs_p{Graph}, RegExMessages.additionalInfo_bs_p{Graph}); //$NON-NLS-1$
-//			addBsProposal("\\p{Print}", RegExMessages.displayString_bs_p{Print}, RegExMessages.additionalInfo_bs_p{Print}); //$NON-NLS-1$
-//			addBsProposal("\\p{Blank}", RegExMessages.displayString_bs_p{Blank}, RegExMessages.additionalInfo_bs_p{Blank}); //$NON-NLS-1$
-//			addBsProposal("\\p{Cntrl}", RegExMessages.displayString_bs_p{Cntrl}, RegExMessages.additionalInfo_bs_p{Cntrl}); //$NON-NLS-1$
-//			addBsProposal("\\p{XDigit}", RegExMessages.displayString_bs_p{XDigit}, RegExMessages.additionalInfo_bs_p{XDigit}); //$NON-NLS-1$
-//			addBsProposal("\\p{Space}", RegExMessages.displayString_bs_p{Space}, RegExMessages.additionalInfo_bs_p{Space}); //$NON-NLS-1$
-//
-//			addBsProposal("\\p{InGreek}", RegExMessages.displayString_bs_p{InGreek}, RegExMessages.additionalInfo_bs_p{InGreek}); //$NON-NLS-1$
-//			addBsProposal("\\p{Lu}", RegExMessages.displayString_bs_p{Lu}, RegExMessages.additionalInfo_bs_p{Lu}); //$NON-NLS-1$
-//			addBsProposal("\\p{Sc}", RegExMessages.displayString_bs_p{Sc}, RegExMessages.additionalInfo_bs_p{Sc}); //$NON-NLS-1$
-//			addBsProposal("\\P{InGreek}", RegExMessages.displayString_bs_P{InGreek}, RegExMessages.additionalInfo_bs_P{InGreek}); //$NON-NLS-1$
-			
 			//boundary matchers
 			if (fDocumentOffset == 0) {
 				addPriorityProposal("^", RegExMessages.displayString_start, RegExMessages.additionalInfo_start); //$NON-NLS-1$
@@ -203,7 +186,7 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 				addBracketProposal("(?:)", 3, RegExMessages.displayString_nonCap, RegExMessages.additionalInfo_nonCap); //$NON-NLS-1$
 				addBracketProposal("(?>)", 3, RegExMessages.displayString_atomicCap, RegExMessages.additionalInfo_atomicCap); //$NON-NLS-1$
 				
-				//lookaraound
+				//look around
 				addBracketProposal("(?=)", 3, RegExMessages.displayString_posLookahead, RegExMessages.additionalInfo_posLookahead); //$NON-NLS-1$
 				addBracketProposal("(?!)", 3, RegExMessages.displayString_negLookahead, RegExMessages.additionalInfo_negLookahead); //$NON-NLS-1$
 				addBracketProposal("(?<=)", 4, RegExMessages.displayString_posLookbehind, RegExMessages.additionalInfo_posLookbehind); //$NON-NLS-1$
@@ -249,11 +232,23 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 			if (fDocumentOffset > 0 && '$' == fExpression.charAt(fDocumentOffset - 1)) {
 				addProposal("", RegExMessages.displayString_dollar, RegExMessages.additionalInfo_dollar); //$NON-NLS-1$
 			} else {
-				addProposal("$", RegExMessages.displayString_dollar, RegExMessages.additionalInfo_dollar); //$NON-NLS-1$
+				if (! fIsEscape)
+					addProposal("$", RegExMessages.displayString_dollar, RegExMessages.additionalInfo_dollar); //$NON-NLS-1$
+				addBsProposal("\\", RegExMessages.displayString_replace_cap, RegExMessages.additionalInfo_replace_cap); //$NON-NLS-1$
 				addBsProposal("\\", RegExMessages.displayString_replace_bs, RegExMessages.additionalInfo_replace_bs); //$NON-NLS-1$
-				addProposal("\t", RegExMessages.displayString_tab, RegExMessages.additionalInfo_tab); //$NON-NLS-1$
+				addBsProposal("\\R", RegExMessages.displayString_replace_bs_R, RegExMessages.additionalInfo_replace_bs_R); //$NON-NLS-1$
+				addBracketProposal("\\x", 2, RegExMessages.displayString_bs_x, RegExMessages.additionalInfo_bs_x); //$NON-NLS-1$
+				addBracketProposal("\\u", 2, RegExMessages.displayString_bs_u, RegExMessages.additionalInfo_bs_u); //$NON-NLS-1$
+				addBsProposal("\\t", RegExMessages.displayString_bs_t, RegExMessages.additionalInfo_bs_t); //$NON-NLS-1$
+				addBsProposal("\\n", RegExMessages.displayString_replace_bs_n, RegExMessages.additionalInfo_replace_bs_n); //$NON-NLS-1$
+				addBsProposal("\\r", RegExMessages.displayString_replace_bs_r, RegExMessages.additionalInfo_replace_bs_r); //$NON-NLS-1$
+				addBsProposal("\\f", RegExMessages.displayString_bs_f, RegExMessages.additionalInfo_bs_f); //$NON-NLS-1$
+				addBsProposal("\\a", RegExMessages.displayString_bs_a, RegExMessages.additionalInfo_bs_a); //$NON-NLS-1$
+				addBsProposal("\\e", RegExMessages.displayString_bs_e, RegExMessages.additionalInfo_bs_e); //$NON-NLS-1$
+				addBracketProposal("\\c", 2, RegExMessages.displayString_bs_c, RegExMessages.additionalInfo_bs_c); //$NON-NLS-1$
 			}
-			return (IContentProposal[]) fProposals.toArray(new IContentProposal[fProposals.size()]);
+			fPriorityProposals.addAll(fProposals);
+			return (IContentProposal[]) fPriorityProposals.toArray(new IContentProposal[fPriorityProposals.size()]);
 		}
 		
 		/**
