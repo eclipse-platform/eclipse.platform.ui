@@ -34,7 +34,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.provisional.views.markers.MarkerContentGenerator;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
