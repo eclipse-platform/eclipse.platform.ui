@@ -466,13 +466,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			Path path = new Path(pathString);
 			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
 			if (resource == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, MessageFormat.format("Refresh scope refers to non-existent resource {0}", new String[]{pathString}), null));  //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(StringSubstitutionMessages.RefreshTab_43, new String[]{pathString}), null)); 
 			} 
 			return new IResource[]{resource};
 		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
 			IWorkingSet workingSet =  getWorkingSet(scope);
 			if (workingSet == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Refresh scope invalid", null));  //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, StringSubstitutionMessages.RefreshTab_44, null));  
 			} 
 			IAdaptable[] elements = workingSet.getElements();
 			IResource[] resources = new IResource[elements.length];

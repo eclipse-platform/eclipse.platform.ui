@@ -165,9 +165,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 
 			String message = null;				
 			if (path == null) {
-				message = "Invalid launch configuration memento: missing path attribute";  //$NON-NLS-1$
+				message = DebugCoreMessages.LaunchConfiguration_18;  
 			} else if (localString == null) {
-				message = "Invalid launch configuration memento: missing local attribute";  //$NON-NLS-1$
+				message = DebugCoreMessages.LaunchConfiguration_19;  
 			}
 			if (message != null) {
 				IStatus s = newStatus(message, DebugException.INTERNAL_ERROR, null);
@@ -183,7 +183,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			setLocation(location);
 			if (location == null) {
-				IStatus s = newStatus(MessageFormat.format("Unable to restore location for launch configuration from memento: {0}", new String[]{path}), DebugPlugin.INTERNAL_ERROR, null);  //$NON-NLS-1$
+				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_1, new String[]{path}), DebugPlugin.INTERNAL_ERROR, null); 
 				throw new CoreException(s);
 			}
 			return;
@@ -194,7 +194,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		} catch (IOException e) {
 			ex = e;
 		}
-		IStatus s = newStatus("Exception occurred parsing memento", DebugException.INTERNAL_ERROR, ex);  //$NON-NLS-1$
+		IStatus s = newStatus(DebugCoreMessages.LaunchConfiguration_17, DebugException.INTERNAL_ERROR, ex); 
 		throw new CoreException(s);
 	}
 
@@ -432,7 +432,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		List types = getAttribute(ATTR_MAPPED_RESOURCE_TYPES, (List)null);
 		if (types == null || types.size() != paths.size()) {
-			throw new CoreException(newStatus("Launch configuration has corrupt resource mapping attributes", DebugPlugin.INTERNAL_ERROR, null)); //$NON-NLS-1$
+			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.INTERNAL_ERROR, null)); 
 		}
 		ArrayList list = new ArrayList();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -443,7 +443,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			try {
 				type = Integer.decode(typeStr).intValue();
 			} catch (NumberFormatException e) {
-				throw new CoreException(newStatus("Launch configuration has corrupt resource mapping attributes", DebugPlugin.INTERNAL_ERROR, e)); //$NON-NLS-1$
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.INTERNAL_ERROR, e)); 
 			}
 			IPath path = Path.fromPortableString(pathStr);
 			IResource res = null;
@@ -461,7 +461,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				res = root;
 				break;
 			default:
-				throw new CoreException(newStatus("Launch configuration has corrupt resource mapping attributes", DebugPlugin.INTERNAL_ERROR, null)); //$NON-NLS-1$
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.INTERNAL_ERROR, null));
 			}
 			if(res != null) {
 				list.add(res);
@@ -487,7 +487,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			IFile file = getFile();
 			if (file == null) {
 				// cannot generate memento - missing file
-				IStatus status = newStatus(MessageFormat.format("Unable to generate memento for {0}, shared file does not exist.", new String[]{getName()}), DebugException.INTERNAL_ERROR, null);  //$NON-NLS-1$
+				IStatus status = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_15, new String[]{getName()}), DebugException.INTERNAL_ERROR, null);
 				throw new CoreException(status); 
 			}
 			relativePath = file.getFullPath();
@@ -507,7 +507,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		} catch (TransformerException te) {
 			e= te;
 		}
-		IStatus status = newStatus("Exception occurred creating launch configuration memento", DebugException.INTERNAL_ERROR,  e);  //$NON-NLS-1$
+		IStatus status = newStatus(DebugCoreMessages.LaunchConfiguration_16, DebugException.INTERNAL_ERROR,  e);  
 		throw new CoreException(status);
 	}
 
@@ -644,7 +644,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    		if (handler != null) {
 	    			handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
 	    		}
-	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found - launch canceled", null); //$NON-NLS-1$
+	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchConfiguration_11, null); 
 	    		throw new CoreException(status);
 	    	} else {
 	    		ILaunchDelegate del = getPreferredDelegate(modes);
@@ -667,13 +667,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 						}
 						else {
 							monitor.setCanceled(true);
-							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected - launch canceled", null); //$NON-NLS-1$
+							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
 				    		throw new CoreException(status);
 						}
 					}
 					else {
 						monitor.setCanceled(true);
-						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected - launch canceled", null); //$NON-NLS-1$
+						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
 			    		throw new CoreException(status);
 					}
 	    		}
@@ -697,7 +697,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				// ensure the launch mode is valid
 				if (!mode.equals(launch.getLaunchMode())) {
 					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
-							MessageFormat.format("Incompatible launch mode: expecting {0} instead of {1}", new String[]{mode, launch.getLaunchMode()}), null);  //$NON-NLS-1$
+							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, new String[]{mode, launch.getLaunchMode()}), null); 
 					throw new CoreException(status);
 				}
 			}

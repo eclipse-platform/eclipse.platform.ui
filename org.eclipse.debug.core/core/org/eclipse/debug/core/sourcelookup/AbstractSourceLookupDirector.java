@@ -148,7 +148,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 					if (single == null) {
 						single = e;
 					} else if (multiStatus == null) {
-						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, "Source lookup error", null);  //$NON-NLS-1$
+						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
 						multiStatus.add(e.getStatus());
 					} else {
 						multiStatus.add(e.getStatus());

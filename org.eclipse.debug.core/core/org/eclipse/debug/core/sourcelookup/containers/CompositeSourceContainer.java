@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 
 /**
  * A source container of source containers.
@@ -92,7 +93,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 				if (single == null) {
 					single = e;
 				} else if (multiStatus == null) {
-					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, "Source lookup error", null);  //$NON-NLS-1$
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
 					multiStatus.add(e.getStatus());
 				} else {
 					multiStatus.add(e.getStatus());

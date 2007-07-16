@@ -19,6 +19,10 @@ public class StringSubstitutionMessages extends NLS {
 	public static String PromptingResolver_0;
 
 	public static String RefreshTab_0;
+
+	public static String RefreshTab_43;
+
+	public static String RefreshTab_44;
 	public static String RefreshTab_6;
 	public static String RefreshTab_7;
 	public static String RefreshTab_8;

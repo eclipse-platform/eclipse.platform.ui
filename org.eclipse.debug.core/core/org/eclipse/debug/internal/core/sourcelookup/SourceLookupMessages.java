@@ -20,6 +20,8 @@ public class SourceLookupMessages extends NLS {
 	public static String AbstractSourceLookupDirector_13;
 	public static String AbstractSourceLookupDirector_14;
 
+	public static String Source_Lookup_Error;
+
 	public static String ExternalArchiveSourceContainer_1;
 
 	public static String ExternalArchiveSourceContainer_2;
@@ -45,6 +47,8 @@ public class SourceLookupMessages extends NLS {
 	public static String ProjectSourceContainerType_10;
 	public static String ProjectSourceContainerType_11;
 	public static String ProjectSourceContainerType_12;
+
+	public static String SourceContainerType_0;
 
 	public static String WorkspaceSourceContainer_0;
 

@@ -66,7 +66,7 @@ public class LaunchMode implements ILaunchMode {
 	 * @throws CoreException
 	 */
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Required attribute {0} missing for launchMode extension.",new String[]{attrName}), null));		  //$NON-NLS-1$
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchMode_1,new String[]{attrName}), null));
 	}
 	
 	/* (non-Javadoc)

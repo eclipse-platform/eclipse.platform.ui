@@ -20,24 +20,48 @@ public class DebugCoreMessages extends NLS {
 	public static String BreakpointManager_Missing_model_identifier;
 	public static String DebugEvent_illegal_detail;
 	public static String DebugEvent_illegal_kind;
+
+	public static String DebugPlugin_0;
+
+	public static String DebugPlugin_2;
+
+	public static String DebugPlugin_3;
+
+	public static String DebugPlugin_4;
+
+	public static String DebugPlugin_5;
+
+	public static String DebugPlugin_6;
+
+	public static String DebugPlugin_7;
+
+	public static String DebugPlugin_8;
 	public static String DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2;
 	public static String DebugPlugin_1;
 	public static String EnvironmentVariableResolver_0;
 
+	public static String LaunchConfiguration_0;
+	public static String LaunchConfiguration_1;
+	public static String LaunchConfiguration_11;
+	public static String LaunchConfiguration_13;
+	public static String LaunchConfiguration_14;
+
+	public static String LaunchConfiguration_15;
+
+	public static String LaunchConfiguration_16;
+
+	public static String LaunchConfiguration_17;
+
+	public static String LaunchConfiguration_18;
+
+	public static String LaunchConfiguration_19;
 	public static String LaunchConfiguration_2;
-
 	public static String LaunchConfiguration_3;
-
 	public static String LaunchConfiguration_4;
-
 	public static String LaunchConfiguration_5;
-
 	public static String LaunchConfiguration_6;
-
 	public static String LaunchConfiguration_7;
-
 	public static String LaunchConfiguration_8;
-
 	public static String LaunchConfiguration_9;
 	public static String LaunchConfigurationInfo_35;
 	public static String LaunchConfigurationType_7;
@@ -56,6 +80,14 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchManager_29;
 
 	public static String LaunchManager_31;
+
+	public static String LaunchMode_1;
+
+	public static String LogicalStructureProvider_0;
+
+	public static String LogicalStructureProvider_1;
+
+	public static String LogicalStructureType_1;
 	public static String SystemPropertyResolver_0;	
 	public static String InputStreamMonitor_label;
 	public static String Launch_terminate_failed;

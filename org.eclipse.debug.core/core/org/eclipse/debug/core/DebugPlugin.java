@@ -786,7 +786,7 @@ public class DebugPlugin extends Plugin {
 				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
-		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Exception occurred executing command line.", e);  //$NON-NLS-1$
+		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, e); 
 		    throw new CoreException(status);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory			
@@ -878,7 +878,7 @@ public class DebugPlugin extends Plugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not externalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null)); //$NON-NLS-1$
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_2, new String[] {message}), null)); 
 		}
 	}
 	
@@ -909,7 +909,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$
+		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_3, t);
 		log(status);
 	}
 	
@@ -958,13 +958,13 @@ public class DebugPlugin extends Plugin {
 			} else {
 				// invalid process factory
 				String badDefiner= infos[i].getContributor().getName();
-				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format("Invalid process factory extension contributed by {0}; id: {1}", new String[] {badDefiner, id}), null));  //$NON-NLS-1$
+				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_4, new String[] {badDefiner, id}), null)); 
 			}
 		}			
 	}
 	
 	private void invalidStatusHandler(Exception e, String id) {
-		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format("Invalid status handler extension: {0}", new String[] {id}), e));  //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_5, new String[] {id}), e));
 	}
 	
 	/**
@@ -1022,7 +1022,7 @@ public class DebugPlugin extends Plugin {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "An exception occurred in asynchronous runnable.", exception);  //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_6, exception); 
 			log(status);
 		}
 
@@ -1052,11 +1052,11 @@ public class DebugPlugin extends Plugin {
 		public void handleException(Throwable exception) {
 			switch (fMode) {
 				case NOTIFY_FILTERS:
-					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "An exception occurred while filtering debug events.", exception);  //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_7, exception); 
 					log(status);
 					break;
 				case NOTIFY_EVENTS:				
-					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, "An exception occurred while dispatching debug events.", exception);  //$NON-NLS-1$
+					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_8, exception); 
 					log(status);
 					break;
 			}
