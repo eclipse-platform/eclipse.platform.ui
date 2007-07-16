@@ -35,6 +35,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -558,7 +559,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     public IPerspectiveRegistry getPerspectiveRegistry() {
         if (perspRegistry == null) {
             perspRegistry = new PerspectiveRegistry();
-            perspRegistry.load();
+            // the load methods can touch on WorkbenchImages if an image is
+			// missing so we need to wrap the call in
+			// a startup block for the case where a custom descriptor exists on
+			// startup that does not have an image
+			// associated with it. See bug 196352.
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				public void runWithException() throws Throwable {
+					perspRegistry.load();
+				}
+			});
+            
         }
         return perspRegistry;
     }
