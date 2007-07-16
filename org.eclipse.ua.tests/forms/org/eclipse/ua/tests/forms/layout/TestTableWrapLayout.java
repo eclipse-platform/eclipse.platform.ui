@@ -61,9 +61,8 @@ public class TestTableWrapLayout extends TestCase {
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
-	 /* 
-     Test suppressed for now - does not pass but not sure if this is a bug
-	public void testWrappingPoint() {
+    // Test suppressed for now - does not pass but not sure if this is a bug
+	public void suppressed_testWrappingPoint() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
 		shell.setSize(300, 300);
@@ -87,12 +86,12 @@ public class TestTableWrapLayout extends TestCase {
 		assertTrue(l1.getSize().y > originalHeight);
 		shell.dispose();
 	}
-    */
 	
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
-	public void testTableWrapLayoutWrappingLabels() {
+	// Test suppressed for now, see Bug 196686 
+	public void suppressed_testTableWrapLayoutWrappingLabels() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
 		shell.setSize(100, 300);
@@ -147,7 +146,8 @@ public class TestTableWrapLayout extends TestCase {
 	/**
 	 * Test alignments and margins
 	 */
-	public void testTableWrapLayoutAlignment() {
+	// Suppressed for now - see Bug 196686 
+	public void suppressed_testTableWrapLayoutAlignment() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
 		shell.setSize(100, 300);
