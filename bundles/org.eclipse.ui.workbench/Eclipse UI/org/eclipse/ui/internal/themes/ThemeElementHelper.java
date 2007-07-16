@@ -222,7 +222,11 @@ public final class ThemeElementHelper {
             IHierarchalThemeElementDefinition[] allDefs) {
         SortedSet set = new TreeSet(IThemeRegistry.ID_COMPARATOR);
         set.addAll(Arrays.asList(definitions));
-        Arrays.sort(allDefs, new IThemeRegistry.HierarchyComparator(allDefs));
+        
+        IHierarchalThemeElementDefinition copy [] = new IHierarchalThemeElementDefinition[allDefs.length];
+		System.arraycopy(allDefs, 0, copy, 0, allDefs.length);
+		
+        Arrays.sort(allDefs, new IThemeRegistry.HierarchyComparator(copy));
         for (int i = 0; i < allDefs.length; i++) {
             IHierarchalThemeElementDefinition def = allDefs[i];
             if (def.getDefaultsTo() != null) {
