@@ -1153,11 +1153,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Evaluates the elements to that are later passed to {@link #elementsChanged(Object[])}. By default
-	 * the element to change are the elements attached to the matches ({@link Match#getElement()}).
+	 * the element to change are the elements received by ({@link Match#getElement()}). Client implementations
+	 * can modify this behavior.
 	 *  
 	 * @param matches the matches that were added or removed
-	 * @param changedElements the set that collects the elements to change.
-	 * Clients should only add new elements to the set.
+	 * @param changedElements the set that collects the elements to change. Clients should only add elements to the set.
 	 * @since 3.4
 	 */
 	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
