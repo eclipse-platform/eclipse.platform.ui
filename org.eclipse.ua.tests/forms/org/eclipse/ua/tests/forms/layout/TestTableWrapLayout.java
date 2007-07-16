@@ -61,6 +61,37 @@ public class TestTableWrapLayout extends TestCase {
 	/**
 	 * Test that labels with the WRAP property set do indeed wrap.
 	 */
+	 /* 
+     Test suppressed for now - does not pass but not sure if this is a bug
+	public void testWrappingPoint() {
+		Display display = PlatformUI.getWorkbench().getDisplay();
+		Shell shell = new Shell(display);
+		shell.setSize(300, 300);
+		shell.setLayout(new FillLayout());
+		Composite inner = new Composite(shell, SWT.V_SCROLL);
+		TableWrapLayout tableWrapLayout = new TableWrapLayout();
+		tableWrapLayout.leftMargin = 0;
+		tableWrapLayout.rightMargin = 0;
+		inner.setLayout(tableWrapLayout);
+		Label l1 = new Label(inner, SWT.WRAP);
+		l1.setText(A10);
+		shell.layout();
+		int originalWidth = l1.getSize().x;
+		int originalHeight = l1.getSize().y;
+		shell.setSize(originalWidth, 300);
+		shell.layout();
+		assertEquals(l1.getSize().y, originalHeight);
+		shell.setSize(originalWidth / 2, 300);
+		shell.layout();
+		inner.layout();
+		assertTrue(l1.getSize().y > originalHeight);
+		shell.dispose();
+	}
+    */
+	
+	/**
+	 * Test that labels with the WRAP property set do indeed wrap.
+	 */
 	public void testTableWrapLayoutWrappingLabels() {
 		Display display = PlatformUI.getWorkbench().getDisplay();
 		Shell shell = new Shell(display);
