@@ -62,7 +62,6 @@ import org.eclipse.jface.text.Region;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -413,6 +412,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * that this notification is asynchronous. i.e. further changes may have
 	 * occurred by the time this method is called. They will be described in a
 	 * future call.
+	 * <p>The changed elements are evaluated by {@link #evaluateChangedElements(Match[], Set)}.</p>
 	 * 
 	 * @param objects
 	 *            array of objects that has to be refreshed
@@ -465,6 +465,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	/**
 	 * Determines whether the provided selection can be used to remove matches from the result.
+	 * @param selection the selection to test
+	 * @return returns <code>true</code> if the elements in the current selection can be removed.
 	 * @since 3.2
 	 */
 	protected boolean canRemoveMatchesWith(ISelection selection) {
@@ -1060,12 +1062,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		super.init(pageSite);
 		IMenuManager menuManager= pageSite.getActionBars().getMenuManager();
 		addLayoutActions(menuManager);
-		initActionDefinitionIDs(pageSite.getWorkbenchWindow());
+		initActionDefinitionIDs();
 		menuManager.updateAll(true);
 		pageSite.getActionBars().updateActionBars();
 	}
 
-	private void initActionDefinitionIDs(IWorkbenchWindow window) {
+	private void initActionDefinitionIDs() {
 		fCopyToClipboardAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		fRemoveSelectedMatches.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
 		//using manifest strings to work around https://bugs.eclipse.org/bugs/show_bug.cgi?id=54581 :
@@ -1134,6 +1136,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Handles a search result event for the current search result.
+	 * @param e the event to handle
 	 * 
 	 * @since 3.2
 	 */
@@ -1147,11 +1150,24 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			updateFilterActions(fFilterActions);
 		}
 	}
-
-	private synchronized void postUpdate(Match[] matches) {
+	
+	/**
+	 * Evaluates the elements to that are later passed to {@link #elementsChanged(Object[])}. By default
+	 * the element to change are the elements attached to the matches ({@link Match#getElement()}).
+	 *  
+	 * @param matches the matches that were added or removed
+	 * @param changedElements the set that collects the elements to change.
+	 * Clients should only add new elements to the set.
+	 * @since 3.4
+	 */
+	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
 		for (int i = 0; i < matches.length; i++) {
-			fBatchedUpdates.add(matches[i].getElement());
+			changedElements.add(matches[i].getElement());
 		}
+	}
+	
+	private synchronized void postUpdate(Match[] matches) {
+		evaluateChangedElements(matches, fBatchedUpdates);
 		scheduleUIUpdate();
 	}
 
