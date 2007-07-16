@@ -54,6 +54,8 @@ import org.eclipse.ui.PlatformUI;
  */
 public class CommitWizard extends ResizableWizard {
     
+	public static final String COMMIT_WIZARD_DIALOG_SETTINGS = "CommitWizard"; //$NON-NLS-1$
+	
     /**
      * An operation to add and commit resources to a CVS repository.
      */
@@ -165,7 +167,7 @@ public class CommitWizard extends ResizableWizard {
     
     public CommitWizard(final IResource [] resources) throws CVSException {
         
-        super(CVSUIMessages.CommitWizard_3, CVSUIPlugin.getPlugin().getDialogSettings());
+        super(COMMIT_WIZARD_DIALOG_SETTINGS, CVSUIPlugin.getPlugin().getDialogSettings());
         
         setNeedsProgressMonitor(true);
         setWindowTitle(CVSUIMessages.CommitWizard_2); 

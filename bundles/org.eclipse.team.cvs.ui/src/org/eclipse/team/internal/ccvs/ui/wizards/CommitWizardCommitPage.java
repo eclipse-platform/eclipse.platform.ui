@@ -122,22 +122,26 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 		};
         compareViewerPane.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
-        IDialogSettings section = getDialogSettings().getSection(CVSUIMessages.CommitWizard_3);
-		showCompare = section.getBoolean(SHOW_COMPARE);
+        IDialogSettings section = getDialogSettings().getSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
+		showCompare = section == null ? false : section.getBoolean(SHOW_COMPARE);
 		int vWeight1 = 50;
 		int vWeight2 = 50;
-		try {
-			vWeight1 = section.getInt(V_WEIGHT_1);
-			vWeight2 = section.getInt(V_WEIGHT_2);
-		} catch (NumberFormatException e) {
+		if (section != null) {
+			try {
+				vWeight1 = section.getInt(V_WEIGHT_1);
+				vWeight2 = section.getInt(V_WEIGHT_2);
+			} catch (NumberFormatException e) {
+			}
 		}
 		
 		int hWeight1 = 35;
 		int hWeight2 = 65;
-		try {
-			hWeight1 = section.getInt(H_WEIGHT_1);
-			hWeight2 = section.getInt(H_WEIGHT_2);
-		} catch (NumberFormatException e) {
+		if (section != null) {
+			try {
+				hWeight1 = section.getInt(H_WEIGHT_1);
+				hWeight2 = section.getInt(H_WEIGHT_2);
+			} catch (NumberFormatException e) {
+			}
 		}
 
 		if (!showCompare) {
@@ -438,7 +442,9 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 	public void finish() {
 		int[] hWeights = horizontalSash.getWeights();
 		int[] vWeights = verticalSash.getWeights();
-		IDialogSettings section = getDialogSettings().getSection(CVSUIMessages.CommitWizard_3);
+		IDialogSettings section = getDialogSettings().getSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
+    	if (section == null)
+    		section= getDialogSettings().addNewSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
 		if (showCompare) {
 			section.put(H_WEIGHT_1, hWeights[0]);
 			section.put(H_WEIGHT_2, hWeights[1]);

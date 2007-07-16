@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
@@ -172,6 +173,7 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
     }
     
     private boolean isComparePaneVisible() {
-    	return fWizard.getDialogSettings().getSection(CVSUIMessages.CommitWizard_3).getBoolean(CommitWizardCommitPage.SHOW_COMPARE);
+    	IDialogSettings section = fWizard.getDialogSettings().getSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
+		return section == null ? false : section.getBoolean(CommitWizardCommitPage.SHOW_COMPARE);
     }
 }

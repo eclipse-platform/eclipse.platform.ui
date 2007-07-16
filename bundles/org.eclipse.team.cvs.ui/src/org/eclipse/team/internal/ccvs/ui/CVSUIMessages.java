@@ -1039,7 +1039,6 @@ public class CVSUIMessages extends NLS {
 	public static String CommitWizard_0;
 	public static String CommitWizard_1;
 	public static String CommitWizard_2;
-	public static String CommitWizard_3;
 	public static String CommitWizard_4;
 	public static String CommitWizard_6;
 	public static String CommitWizard_7;
