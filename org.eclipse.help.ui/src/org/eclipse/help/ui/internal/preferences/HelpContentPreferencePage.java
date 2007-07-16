@@ -164,6 +164,8 @@ public class HelpContentPreferencePage extends PreferencePage
         hostLabel.setText(Messages.HelpContentPreferencePage_host);
         hostText = new Text(parent, SWT.BORDER);
         hostText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        if (hostText.getOrientation() == SWT.RIGHT_TO_LEFT)
+        	hostText.setOrientation(SWT.LEFT_TO_RIGHT);
         hostText.addListener(SWT.Modify, changeListener);
 	}
 
@@ -175,6 +177,8 @@ public class HelpContentPreferencePage extends PreferencePage
         pathLabel.setText(Messages.HelpContentPreferencePage_path);
         pathText = new Text(parent, SWT.BORDER);
         pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        if (pathText.getOrientation() == SWT.RIGHT_TO_LEFT)
+        	pathText.setOrientation(SWT.LEFT_TO_RIGHT);
         pathText.addListener(SWT.Modify, changeListener);
 	}
 
