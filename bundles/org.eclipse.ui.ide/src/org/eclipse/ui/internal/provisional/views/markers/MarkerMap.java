@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.provisional.views.markers;
+package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 
