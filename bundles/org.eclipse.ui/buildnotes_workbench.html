@@ -12,6 +12,91 @@
 <h1>Eclipse Platform Build Notes (3.3)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (July 16, 2007, 3:39 p.m.)</p>
+  <p>Problem reports updated</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=29853">Bug 29853</a>. [Workbench] OpenWithMenu and setFile (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=35243">Bug 35243</a>. [Import/Export] File and Import and Export Dialog have inconsistent labels (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=46197">Bug 46197</a>. [Workbench] bogus javadoc for IMemento.TAG_ID (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=63075">Bug 63075</a>. [PropertiesDialog] The file size in the file Properties dialog and the file Properties view is not formatted for the locale (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=70370">Bug 70370</a>. [Viewers] ViewerDropAdapter couples auto-scroll and auto-expand (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=72489">Bug 72489</a>. [Dialogs] ErrorDialog resize behaviour should be improved (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=73092">Bug 73092</a>. [IDE] WorkspaceModifyOperation does not avoid updates, although comment indicates it does (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=74549">Bug 74549</a>. [Workbench] UIPlugin should remove initializeDefaultPreferences (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=82937">Bug 82937</a>. [Dialogs] There is no title in the dialog (FileDialog class) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=85742">Bug 85742</a>. [RCP] Doc clarification required for IWorkbenchConfigurer.create* (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=93353">Bug 93353</a>. [Dialogs] InternalErrorDialog#buttonPressed should explicitly call super (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=93373">Bug 93373</a>. [Intro] TipsAndTricksAction should not use magic numbers (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=95292">Bug 95292</a>. [Intro] Help > Welcome missing F1 context (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=95882">Bug 95882</a>. [Progress] Provide toString() for PendingUpdateAdapter (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=96943">Bug 96943</a>. [Dialogs] [open type] Open Type dialog should open menu on Ctrl+F10 (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=97229">Bug 97229</a>. [Dialogs] ListSelectionDialog should be resizable by default (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=97667">Bug 97667</a>. [Preferences][PatchProvided] Pref Page General/Editors - problems (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=98467">Bug 98467</a>. [WorkbenchLauncher] [Preferences] Workspace path with comma (ASSIGNED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=101468">Bug 101468</a>. [Workbench] Incorrect doctype line in package.html files (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=103747">Bug 103747</a>. [Viewers] calling refresh on treeviewer in treeExpanded function, but it mess (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=107029">Bug 107029</a>. [Dialogs] API - Many resizable dialogs do not have a maximize button, but should. (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=107771">Bug 107771</a>. [WorkingSets] Working Set selection dialogs have thier own image caches (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=108479">Bug 108479</a>. [Preferences] Workspace preference page is not correctly vertically aligned (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=109389">Bug 109389</a>. [JFace] API -  IntegerFieldEditor does not fire property change all the time (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=111034">Bug 111034</a>. Eclipse allows me to create a project named '.metadata' (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121727">Bug 121727</a>. [Viewers] ContentViewer.getLabelProvider javadoc is wrong (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121789">Bug 121789</a>. [Viewers] ColorAndFontCollector javadoc is wrong (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121794">Bug 121794</a>. [Viewers] preservingSelection(Runnable) comments are stale (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121796">Bug 121796</a>. [Viewers] getControl() contains no javadoc (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=121797">Bug 121797</a>. [Viewers] internalRefresh(Object) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=123169">Bug 123169</a>. [Progress] NPE from JobInfo (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=124282">Bug 124282</a>. [Dialogs] TypeFilteringDialog: label has wrong case (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128526">Bug 128526</a>. [ViewMgmt] Show View Dialog should remember size & location (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=128529">Bug 128529</a>. [ViewMgmt] Show View Dialog should be able to show a view's description (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=130315">Bug 130315</a>. [JFace] ImageRegistry.put(String, Image) cannot accept null Image (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=131989">Bug 131989</a>. [Browser] NullPointerException in WorkbenchBrowserSupport.createBrowser (ASSIGNED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=135818">Bug 135818</a>. ITreeSelection does not offer getElementComparer() (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=138034">Bug 138034</a>. [Preferences] Label decorations page - extra space (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=140041">Bug 140041</a>. [Preferences] ConcurrentModificationException in WorkingCopyManager.applyChanges (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=142802">Bug 142802</a>. [Markers] FieldSeverityAndMessage should protect against uninitialzed images (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=144219">Bug 144219</a>. [Workbench] org.eclipse.tests.ui.harness has unneccessary reliance on ide (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=156852">Bug 156852</a>. [Wizards] New spelling error marking: add to dictionary and fix with dictionary (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=161026">Bug 161026</a>. [Wizards] ProjectContentsLocationArea uses wrong file separator (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=162505">Bug 162505</a>. [Markers] DCR: Make MarkerView API (to support client feedback view) (ASSIGNED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=164662">Bug 164662</a>. [Workbench] Minor typo in IPageLayout (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=165676">Bug 165676</a>. [JFace] Add javadoc to Window.close() to tell that no shellClosed event is sent (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=172261">Bug 172261</a>. [Actions] When rename a file in one project's navigator, the other selected file's name is renamed (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=174228">Bug 174228</a>. [Preferences] PreferencePage javadoc needs tidying up (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177767">Bug 177767</a>. [Markers] In task preferences dialog, negative value results in internal error (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180248">Bug 180248</a>. [Progress] NPE in JobTreeElement.compareTo(...) (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180701">Bug 180701</a>. [JFace] API - Popup dialog is creating image descriptors every time it is opened (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180731">Bug 180731</a>. [Preferences] Appearance preference page should have keyword 'animations' (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=180989">Bug 180989</a>. [Progress] Stale API field in IWorkbenchSiteProgressService (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=182354">Bug 182354</a>. [Dialogs] API - make ElementTreeSelectionDialog usable with a FilteredTree (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=182505">Bug 182505</a>. [FieldAssist]  API - ContentProposalAdapter needs hasProposalPopupFocus() method (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=184423">Bug 184423</a>. [JFace] ColorRegistry.getRGB(String) can return null (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185347">Bug 185347</a>. [Progress] Concatenate task and subtask with ": " in ProgressMonitorPart (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185500">Bug 185500</a>. [Common Navigator] DND allows to Drop Projects on Projects but shows error (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=185892">Bug 185892</a>. [Import/Export] Unexpectedly cursor moving in import dialog. (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186344">Bug 186344</a>. [CommonNavigator] Project Explorer duplicates Working Set actions (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=187877">Bug 187877</a>. [EFS] Null pointer exception when getting path of FileEditorInput whose file does not exist (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188269">Bug 188269</a>. [IDE] [Dialogs] - conflicting mnemonics caused by AbstractEncodingFieldEditor (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=188448">Bug 188448</a>. Javadoc for PathEditorInput#getPath is ambiguous (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189636">Bug 189636</a>. Custom rule template failing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189867">Bug 189867</a>. [Preferences] [preferences] Editors prefs page should have keywords 'restore' and 'state' (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189885">Bug 189885</a>. [Dialogs] SafeRunnableDialog class Javadoc contains special char: Ž (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=190360">Bug 190360</a>. [pde viz] Nodes appear on top of one another (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=191042">Bug 191042</a>. Missing since tags in schemas (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=191147">Bug 191147</a>. [CommonNavigator] Problem with selection causes view to fail to load (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=191694">Bug 191694</a>. [EFS] NPE in FileEditorInput.getPath (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=192536">Bug 192536</a>. [Progress] Progress view doesn't differentiate between cancelled and canel requested (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=192577">Bug 192577</a>. Support explicit "Embedded" type for IReportItemPresentation (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=193260">Bug 193260</a>. [Databinding] Incorrect javadoc for TextObservableValue (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=194353">Bug 194353</a>. [DataBinding] AbstractStringToNumberValidator caches message across validation requests (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=194587">Bug 194587</a>. [DataBinding] Policy.getLog().log() could be a bit more informative (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=194790">Bug 194790</a>. [DataBinding] ObservableTracker/CompositeUpdater improvements (NEW)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=195152">Bug 195152</a>. [KeyBindings] NPE when opening Keys preference page (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196204">Bug 196204</a>. [Intro] SWT Welcome RSS Feed doesn't Work (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196352">Bug 196352</a>. [WorkbenchLauncher] Null Display using Display.getCurrent() (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196362">Bug 196362</a>. [Themes] Incorrect use of IThemeRegistry.HierarchyComparator in ThemeElementHelper.addDefaulted(...) (FIXED)<br>
+  </p>
+
 <p>Integration Build (June 13, 2007, 2:32 p.m.)</p>
   <p>Problem reports updated</p>
   <p>
