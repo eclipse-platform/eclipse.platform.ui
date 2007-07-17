@@ -11,48 +11,55 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
- * MarkerResourceField is the field that specifies the resource column.
+ * MarkerPathField is the field for the paths column.
  * 
  * @since 3.4
  * 
  */
-public class MarkerResourceField extends MarkerField {
+public class MarkerPathField extends MarkerField {
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.provisional.views.markers.MarkerItem,
-	 *      org.eclipse.ui.provisional.views.markers.MarkerItem)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
+	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		// TODO Auto-generated method stub
-		return 0;
+		if (!(item1.isConcrete() && item2.isConcrete()))
+			return 0;
+
+		return item1.getPath().compareTo(item2.getPath());
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getColumnHeaderText()
+	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		return MarkerMessages.description_resource;
+		return MarkerMessages.description_folder;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.provisional.views.markers.MarkerItem)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getColumnWeight()
+	 */
+	public float getColumnWeight() {
+		return 2;
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		if (item.isConcrete()) {
-			return item.getAttributeValue(MarkerViewUtil.NAME_ATTRIBUTE, item
-					.getConcreteRepresentative().getMarker().getResource()
-					.getName());
-		}
-		return MarkerUtilities.EMPTY_STRING;
+		return item.getPath();
 	}
+
 }

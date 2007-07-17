@@ -15,10 +15,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
-
 
 /**
  * The MarkerEntry is the class that wrappers an {@link IMarker} for display in
@@ -33,6 +38,7 @@ public class MarkerEntry extends MarkerItem {
 	private MarkerCategory category;
 	Map attributeCache = new HashMap(0);
 	Map collationKeys = new HashMap(0);
+	private String folder;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -120,7 +126,7 @@ public class MarkerEntry extends MarkerItem {
 			attributeCache.put(attribute, new Integer(marker.getAttribute(
 					attribute, defaultValue)));
 		return ((Integer) attributeCache.get(attribute)).intValue();
-	
+
 	}
 
 	/**
@@ -133,10 +139,10 @@ public class MarkerEntry extends MarkerItem {
 	 */
 	public String getAttributeValue(String attribute, String defaultValue) {
 		if (!attributeCache.containsKey(attribute))
-			attributeCache.put(attribute, new Integer(marker.getAttribute(
-					attribute, defaultValue)));
+			attributeCache.put(attribute, marker.getAttribute(attribute,
+					defaultValue));
 		return (String) attributeCache.get(attribute);
-	
+
 	}
 
 	/**
@@ -157,6 +163,115 @@ public class MarkerEntry extends MarkerItem {
 				attributeValue);
 		collationKeys.put(attribute, key);
 		return key;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getPath()
+	 */
+	public String getPath() {
+		if (folder == null) {
+			if (!marker.exists()) {
+				return super.getPath();
+			}
+
+			// If the path attribute is set use it.
+			try {
+				Object pathAttribute = marker
+						.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
+
+				if (pathAttribute != null) {
+					folder = pathAttribute.toString();
+					return folder;
+				}
+			} catch (CoreException exception) {
+				// Log the exception and fall back.
+				StatusManager.getManager().handle(exception.getStatus());
+			}
+
+			IPath path = marker.getResource().getFullPath();
+			int n = path.segmentCount() - 1; // n is the number of segments
+			// in container, not path
+			if (n <= 0) {
+				return super.getPath();
+			}
+			int len = 0;
+			for (int i = 0; i < n; ++i) {
+				len += path.segment(i).length();
+			}
+			// account for /'s
+			if (n > 1) {
+				len += n - 1;
+			}
+			StringBuffer sb = new StringBuffer(len);
+			for (int i = 0; i < n; ++i) {
+				if (i != 0) {
+					sb.append('/');
+				}
+				sb.append(path.segment(i));
+			}
+			folder = sb.toString();
+
+		}
+		return folder;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getLocation()
+	 */
+	public String getLocation() {
+		if (attributeCache.containsKey(IMarker.LOCATION))
+			return (String) attributeCache.get(IMarker.LOCATION);
+		try {
+			if (marker.getAttribute(IMarker.LOCATION) != null) {
+				String value = marker.getAttribute(IMarker.LOCATION,
+						MarkerUtilities.EMPTY_STRING);
+				attributeCache.put(IMarker.LOCATION, marker
+						.getAttribute(IMarker.LOCATION));
+				return value;
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+
+		// No luck with the override so use line number
+		int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+		String lineNumberString;
+		if (lineNumber < 0)
+			lineNumberString = MarkerMessages.Unknown;
+		else
+			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
+					Integer.toString(lineNumber));
+
+		attributeCache.put(IMarker.LOCATION, lineNumberString);
+		return lineNumberString;
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getCreationTime()
+	 */
+	public long getCreationTime() {
+		try {
+			return marker.getCreationTime();
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return -1;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getID()
+	 */
+	public long getID() {
+		return marker.getId();
 	}
 
 }

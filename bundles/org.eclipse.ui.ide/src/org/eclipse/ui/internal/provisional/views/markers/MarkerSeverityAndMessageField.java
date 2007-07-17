@@ -26,7 +26,7 @@ import com.ibm.icu.text.CollationKey;
  * @since 3.3
  * 
  */
-public class MarkerSeverityAndMessageField implements IMarkerField {
+public class MarkerSeverityAndMessageField extends MarkerField {
 
 	/**
 	 * Return the collation key for the description.
@@ -41,25 +41,13 @@ public class MarkerSeverityAndMessageField implements IMarkerField {
 		return MarkerUtilities.EMPTY_COLLATION_KEY;
 	}
 
-	/**
-	 * Get the severity of the element.
-	 * 
-	 * @param obj1
-	 * @return int
-	 */
-	private int getSeverity(MarkerItem element) {
-		if (element.isConcrete())
-			return element.getAttributeValue(IMarker.SEVERITY, -1);
-		return 0;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		return MarkerMessages.problemSeverity_description;
+		return MarkerMessages.description_message;
 	}
 
 	/*
@@ -68,17 +56,9 @@ public class MarkerSeverityAndMessageField implements IMarkerField {
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getColumnWeight()
 	 */
 	public float getColumnWeight() {
-		return 50;
+		return 4;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getDefaultDirection()
-	 */
-	public int getDefaultDirection() {
-		return IMarkerField.ASCENDING;
-	}
 
 	/*
 	 * (non-Javadoc)

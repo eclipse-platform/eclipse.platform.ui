@@ -11,41 +11,71 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.ui.IMemento;
+
 /**
- * MarkerState is the class that manages the state of an instnace of a marker view.
- * @since 3.3
- *
+ * MarkerState is the object that handles the state of an ExtendedMarkersView.
+ * 
+ * @since 3.4
+ * 
  */
-class MarkerState {
+public class MarkerState {
 
-	private IMarkerProvider provider;
+	private IMemento memento;
 
 	/**
-	 * Get the current sort direction for the field/
-	 * @param field
-	 * @return int one of {@link IMarkerField#DESCENDING} or {@link IMarkerField#ASCENDING}
+	 * Create a new instance of the receiver from the supplied memento.
+	 * 
+	 * @param memento
 	 */
-	public int getSortDirection(IMarkerField field) {
-		//TODO handle mementos here
-		return field.getDefaultDirection();
+	public MarkerState(IMemento memento) {
+		this.memento = memento;
 	}
 
 	/**
-	 * Return whether or not this is the primary sort field for the receiver.
+	 * Return whether or not the receiver was the primary sort field.
+	 * 
 	 * @param markerField
-	 * @return boolean <code>true</code> if it is the primary field.
+	 * @return
 	 */
-	public boolean isPrimarySortField(IMarkerField markerField) {
-		//TODO handle mementos here
-		return provider.isPrimarySortField(markerField);
+	public boolean isPrimarySortField(MarkerField markerField) {
+		// TODO Hook this up to the memento
+		return markerField instanceof MarkerSeverityAndMessageField;
 	}
 
 	/**
-	 * Get the currently displayed fields for the receiver.
-	 * @return {@link IMarkerField}[]
+	 * Return whether or not we are set to the default.
+	 * @return
 	 */
-	public IMarkerField[] getFields() {
-		return provider.getFields();
+	public boolean useDefaults() {
+		return memento == null;
+	}
+
+	/**
+	 * Return the integer value for the tag.
+	 * @param tag
+	 * @return
+	 */
+	public Integer getInteger(String tag) {
+		return memento.getInteger(tag);
+	}
+
+	/**
+	 * Return the String associated with tag.
+	 * @param tag
+	 * @return String
+	 */
+	public String getString(String tag) {
+		return memento.getString(tag);
+	}
+
+	/**
+	 * Return the sort direction stored for the field.
+	 * @param field
+	 * @return
+	 */
+	public int getSortDirection(MarkerField field) {
+		return field.getDefaultDirection();
 	}
 
 }

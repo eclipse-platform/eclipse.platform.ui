@@ -68,4 +68,5 @@ class MarkerUtilities {
 				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
 
 	}
+	
 }

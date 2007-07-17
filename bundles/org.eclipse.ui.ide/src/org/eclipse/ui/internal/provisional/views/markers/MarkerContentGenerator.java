@@ -23,12 +23,15 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
@@ -41,13 +44,20 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  */
 public class MarkerContentGenerator {
 
-	private String defaultPerspectiveId;
 	private Collection markerTypes;
 	private IWorkingSet workingSet;
-	private IMarkerField[] fields;
-	private IMarkerField categoryField;
+	private MarkerField[] visibleFields;
+	private MarkerField[] sortFields;
+	private IConfigurationElement configurationElement;
+	private MarkerField categoryField;
 	static final Object CACHE_UPDATE_FAMILY = new Object();
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
+	private static final String ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE = "defaultForPerspective"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
+	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -56,13 +66,6 @@ public class MarkerContentGenerator {
 	 * @param name
 	 */
 	public MarkerContentGenerator(String id, String name) {
-		fields = new IMarkerField[] { new MarkerSeverityAndMessageField()};
-//		,
-//				new MarkerFolderField(), new MarkerResourceField(), new MarkerLineNumberField(),
-//				new MarkerCreationTimeField(), new MarkerIDField()
-
-//		};
-//		categoryField = new MarkerSeverityField();
 
 	}
 
@@ -72,35 +75,35 @@ public class MarkerContentGenerator {
 	 * @return String or <code>null</code>.
 	 */
 	public String getDefaultPerspectiveId() {
-		return defaultPerspectiveId;
-	}
-
-	/**
-	 * Set the default perspective id.
-	 * 
-	 * @param id
-	 *            The id to set.
-	 */
-	public void setDefaultPerspectiveId(String id) {
-		this.defaultPerspectiveId = id;
+		return configurationElement
+				.getAttribute(ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE);
 	}
 
 	/**
 	 * Get the fields that this content generator is displaying
 	 * 
-	 * @return
+	 * @return {@link MarkerField}[]
 	 */
-	public IMarkerField[] getFields() {
-		// TODO Make these real
-		return fields;
+	public MarkerField[] getVisibleFields() {
+		return visibleFields;
+	}
+	
+	/**
+	 * Get the fields that this content generator is using to sort
+	 * 
+	 * @return {@link MarkerField}[]
+	 */
+	public MarkerField[] getSortingFields() {
+		return sortFields;
 	}
 
 	/**
-	 * Return the fields used to generate categories.
+	 * Return the field used to generate categories.
 	 * 
-	 * @return IMarkerField
+	 * @return IMarkerField for <code>null</code>.
 	 */
-	public IMarkerField getCategoryField() {
+	public MarkerField getCategoryField() {
+
 		return categoryField;
 	}
 
@@ -387,8 +390,12 @@ public class MarkerContentGenerator {
 	public Collection getMarkerTypes() {
 		if (markerTypes == null) {
 			markerTypes = new HashSet();
-			markerTypes.add(MarkerTypesModel.getInstance().getType(
-					IMarker.PROBLEM));
+			// TODO filter this by type
+			MarkerType[] types = MarkerTypesModel.getInstance().getType(
+					IMarker.PROBLEM).getAllSubTypes();
+			for (int i = 0; i < types.length; i++) {
+				markerTypes.add(types[i]);
+			}
 		}
 		return markerTypes;
 	}
@@ -396,21 +403,64 @@ public class MarkerContentGenerator {
 	/**
 	 * Return a new instance of the receiver with the fiels
 	 * 
-	 * @return
+	 * @return MarkerComparator
 	 */
 	public MarkerComparator getComparator() {
-		return new MarkerComparator(getCategoryField(), getFields());
+		return new MarkerComparator(getCategoryField(), getSortingFields());
 	}
 
 	/**
-	 * Get the result of the category field for the element
+	 * Set the configuration element used to define the receiver.
 	 * 
 	 * @param element
-	 * @return String
 	 */
-	public String getCategoryValue(Object element) {
-		// TODO Auto-generated method stub
-		return null;
+	public void setConfigurationElement(IConfigurationElement element) {
+		configurationElement = element;
+	}
+
+	/**
+	 * Return whether or not we are showing a hierarchy,.
+	 * 
+	 * @return <code>true</code> if a hierarchy is being shown.
+	 */
+	public boolean isShowingHierarchy() {
+		return categoryField == null;
+	}
+
+	/**
+	 * Initialise the receiver from the configuration element. This is done as a
+	 * post processing step.
+	 */
+	public void initializeFromConfigurationElement() {
+		String categoryName = configurationElement
+				.getAttribute(ATTRIBUTE_DEFAULT_MARKER_GROUPING);
+		if (categoryName != null) {
+			FieldMarkerGroup group = MarkerSupportRegistry.getInstance()
+					.getMarkerGroup(categoryName);
+			if (group != null)
+				categoryField = new MarkerGroupField(group);
+		}
+
+		IConfigurationElement[] elements = configurationElement
+				.getChildren(MARKER_FIELD_REFERENCE);
+		Collection sortFieldList = new ArrayList();
+		Collection visibleFieldList = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			MarkerField field = MarkerSupportRegistry.getInstance().getField(
+					elements[i].getAttribute(ATTRIBUTE_ID));
+			if (field != null)
+				sortFieldList.add(field);
+			if (!VALUE_FALSE
+					.equals(elements[i].getAttribute(ATTRIBUTE_VISIBLE)))
+				visibleFieldList.add(field);
+		}
+
+		sortFields = new MarkerField[sortFieldList.size()];
+		sortFieldList.toArray(sortFields);
+
+		visibleFields = new MarkerField[visibleFieldList.size()];
+		visibleFieldList.toArray(visibleFields);
+
 	}
 
 }

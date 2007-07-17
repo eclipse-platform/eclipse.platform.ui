@@ -36,7 +36,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class CachedMarkerBuilder {
 
-	private MarkerMap currentMap;
+	private MarkerMap currentMap = null;
 
 	private MarkerCategory[] categories;
 
@@ -63,10 +63,10 @@ public class CachedMarkerBuilder {
 	/**
 	 * Create a new instance of the receiver. Update using the updateJob.
 	 * 
-	 * @param generator
+	 * @param contentGenerator
 	 */
-	CachedMarkerBuilder(MarkerContentGenerator generator) {
-		this.generator = generator;
+	CachedMarkerBuilder(MarkerContentGenerator contentGenerator) {
+		this.generator = contentGenerator;
 		createMarkerProcessJob();
 		// Hook up to the resource changes after all widget have been created
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
@@ -197,7 +197,7 @@ public class CachedMarkerBuilder {
 				return;
 
 			Arrays.sort(newMarkers.toArray(), generator.getComparator());
-			
+
 			monitor.worked(30);
 
 			if (newMarkers.getSize() == 0) {
@@ -212,7 +212,7 @@ public class CachedMarkerBuilder {
 			if (monitor.isCanceled())
 				return;
 
-			if (generator.getComparator().isShowingHierarchy()) {
+			if (generator.isShowingHierarchy()) {
 				MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
 						newMarkers.getSize() - 1, 0);
 				if (monitor.isCanceled())
@@ -263,8 +263,8 @@ public class CachedMarkerBuilder {
 				// Are we at a category boundary?
 				if (sorter.compareCategory(previous, elements[i]) != 0) {
 					categories.add(new MarkerCategory(this, categoryStart,
-							i - 1, generator.getCategoryValue(markers
-									.elementAt(categoryStart))));
+							i - 1, generator.getCategoryField().getValue(
+									markers.elementAt(categoryStart))));
 					categoryStart = i;
 				}
 			}
@@ -273,9 +273,9 @@ public class CachedMarkerBuilder {
 		}
 
 		if (end >= categoryStart) {
-			categories
-					.add(new MarkerCategory(this, categoryStart, end, generator
-							.getCategoryValue(markers.elementAt(categoryStart))));
+			categories.add(new MarkerCategory(this, categoryStart, end,
+					generator.getCategoryField().getValue(
+							markers.elementAt(categoryStart))));
 		}
 
 		MarkerCategory[] nodes = new MarkerCategory[categories.size()];
@@ -315,7 +315,7 @@ public class CachedMarkerBuilder {
 		if (building) {
 			return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
 		}
-		if (generator.getComparator().isShowingHierarchy()
+		if (generator.isShowingHierarchy()
 				&& categories != null) {
 			return categories;
 		}

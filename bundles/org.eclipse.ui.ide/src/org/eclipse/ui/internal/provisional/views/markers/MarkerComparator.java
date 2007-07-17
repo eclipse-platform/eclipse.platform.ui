@@ -22,8 +22,8 @@ import java.util.Comparator;
  */
 class MarkerComparator implements Comparator {
 
-	private IMarkerField category;
-	private IMarkerField[] fields;
+	private MarkerField category;
+	private MarkerField[] fields;
 
 	/**
 	 * Create a new instance of the receiver categorised by categoryField
@@ -32,19 +32,9 @@ class MarkerComparator implements Comparator {
 	 *            May be <code>null/<code>
 	 * @param mainFields in order of compare significance
 	 */
-	public MarkerComparator(IMarkerField categoryField,
-			IMarkerField[] mainFields) {
+	public MarkerComparator(MarkerField categoryField, MarkerField[] mainFields) {
 		category = categoryField;
 		fields = mainFields;
-	}
-
-	/**
-	 * Return whether not the hierarchy is being shown.
-	 * 
-	 * @return boolean if there is a category field.
-	 */
-	public boolean isShowingHierarchy() {
-		return category != null;
 	}
 
 	/**

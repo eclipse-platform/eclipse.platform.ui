@@ -35,6 +35,8 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerField;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
@@ -76,6 +78,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object PROBLEM_FILTER = "problemFilter";//$NON-NLS-1$
 
+	private static final Object MARKER_FILTER = "markerFilter";//$NON-NLS-1$
+
 	private static final String SCOPE = "scope"; //$NON-NLS-1$
 
 	private static final String SELECTED_TYPE = "selectedType"; //$NON-NLS-1$
@@ -110,7 +114,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String MARKER_CONTENT_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 
-	private static final String DEFAULT_FOR_PERSPECTIVE = "defaultForPerspective"; //$NON-NLS-1$
+	private static final Object MARKER_FIELD = "markerField"; //$NON-NLS-1$
+
+	private static final Object DEFAULT_PROBLEMS_GENERATOR_ID = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
+
+	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	private static MarkerSupportRegistry singleton;
 
@@ -147,6 +155,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private MarkerType rootType;
 
 	private HashMap generators = new HashMap();
+
+	private HashMap fields = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -196,7 +206,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 		for (int j = 0; j < elements.length; j++) {
 			IConfigurationElement element = elements[j];
-			if (element.getName().equals(PROBLEM_FILTER)) {
+			if (element.getName().equals(PROBLEM_FILTER)
+					|| element.getName().equals(MARKER_FILTER)) {
 				ProblemFilter filter = newFilter(element);
 				registeredFilters.add(filter);
 				tracker.registerObject(extension, filter,
@@ -272,7 +283,35 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
+			if (element.getName().equals(MARKER_FIELD)) {
+
+				processMarkerField(tracker, extension, element);
+				continue;
+			}
+
 		}
+	}
+
+	/**
+	 * Create a table of MarkerFields
+	 * 
+	 * @param tracker
+	 * @param extension
+	 * @param element
+	 */
+	private void processMarkerField(IExtensionTracker tracker,
+			IExtension extension, IConfigurationElement element) {
+		MarkerField field = null;
+		try {
+			field = (MarkerField) IDEWorkbenchPlugin.createExtension(element,
+					ATTRIBUTE_CLASS);
+			field.setConfigurationElement(element);
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+
+		if (field != null)
+			fields.put(element.getAttribute(ID), field);
 	}
 
 	/**
@@ -291,8 +330,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 		generators.put(id, generator);
 
-		generator.setDefaultPerspectiveId(element
-				.getAttribute(DEFAULT_FOR_PERSPECTIVE));
+		generator.setConfigurationElement(element);
 
 		tracker.registerObject(extension, generator,
 				IExtensionTracker.REF_STRONG);
@@ -313,6 +351,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			Collection attributeMappings) {
 		processGroupingEntries(groupingEntries);
 		processAttributeMappings(attributeMappings);
+		postProcessContentGenerators();
+	}
+
+	/**
+	 * Set up the fields and filters
+	 */
+	private void postProcessContentGenerators() {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
@@ -766,7 +813,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return MarkerContentGenerator or <code>null</code>.
 	 */
 	public MarkerContentGenerator getGenerator(String id) {
-		if (generators.containsKey(id))
+		if (id != null && generators.containsKey(id))
 			return (MarkerContentGenerator) generators.get(id);
 		return null;
 	}
@@ -787,6 +834,39 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (id.equals(generator.getDefaultPerspectiveId()))
 				return generator;
 		}
+		return getDefaultGenerator();
+	}
+
+	/**
+	 * Return the default content generator.
+	 * 
+	 * @return MarkerContentGenerator
+	 */
+	private MarkerContentGenerator getDefaultGenerator() {
+		return (MarkerContentGenerator) generators
+				.get(DEFAULT_PROBLEMS_GENERATOR_ID);
+	}
+
+	/**
+	 * Get the markerGroup associated with categoryName
+	 * 
+	 * @param categoryName
+	 * @return FieldMarkerGroup or <code>null</code>
+	 */
+	public FieldMarkerGroup getMarkerGroup(String categoryName) {
+		if (markerGroups.containsKey(categoryName))
+			return (FieldMarkerGroup) markerGroups.get(categoryName);
+		return null;
+	}
+
+	/**
+	 * Return the field that maps to id.
+	 * @param id
+	 * @return {@link MarkerField} or <code>null</code>
+	 */
+	public MarkerField getField(String id) {
+		if (fields.containsKey(id))
+			return (MarkerField) markerGroups.get(id);
 		return null;
 	}
 

@@ -22,14 +22,14 @@ import org.eclipse.swt.graphics.Image;
  */
 public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
-	IMarkerField field;
+	MarkerField field;
 
 	/**
 	 * Create a MarkerViewLabelProvider on a field.
 	 * 
 	 * @param field
 	 */
-	MarkerColumnLabelProvider(IMarkerField field) {
+	MarkerColumnLabelProvider(MarkerField field) {
 		this.field = field;
 
 	}

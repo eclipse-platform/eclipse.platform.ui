@@ -12,15 +12,15 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
 
-
 /**
- * The MarkerItem class is the class that represents the objects displayed
- * in the ExtendedMarkersView.
- *
+ * The MarkerItem class is the class that represents the objects displayed in
+ * the ExtendedMarkersView.
+ * 
  */
 public abstract class MarkerItem {
 
@@ -28,37 +28,42 @@ public abstract class MarkerItem {
 
 	/**
 	 * Get the children of the node.
+	 * 
 	 * @return MarkerNode[]
 	 */
 	public abstract MarkerItem[] getChildren();
 
 	/**
-	 * Return the parent node or <code>null</code> if this is a top
-	 * level element.
+	 * Return the parent node or <code>null</code> if this is a top level
+	 * element.
+	 * 
 	 * @return MarkerNode
 	 */
-	public abstract MarkerItem getParent() ;
+	public abstract MarkerItem getParent();
 
 	/**
 	 * Return whether or not this is a concrete node
+	 * 
 	 * @return boolean
 	 */
 	public abstract boolean isConcrete();
 
 	/**
 	 * Return the description of the receiver.
+	 * 
 	 * @return String
 	 */
-	public abstract String getDescription() ;
+	public abstract String getDescription();
 
 	/**
-	 * Get a concrete marker from the receiver. If the receiver
-	 * is concrete return the receiver otherwise return one of the
-	 * concrete markers it contains.
+	 * Get a concrete marker from the receiver. If the receiver is concrete
+	 * return the receiver otherwise return one of the concrete markers it
+	 * contains.
+	 * 
 	 * @return MarkerEntry
 	 */
 	public abstract MarkerEntry getConcreteRepresentative();
-	
+
 	/**
 	 * Get the value of the attribute in the enclosed marker.
 	 * 
@@ -68,9 +73,9 @@ public abstract class MarkerItem {
 	 * @return int
 	 */
 	public int getAttributeValue(String attribute, int defaultValue) {
-		//There are no integer values by default
+		// There are no integer values by default
 		return defaultValue;
-	
+
 	}
 
 	/**
@@ -82,11 +87,11 @@ public abstract class MarkerItem {
 	 * @return String
 	 */
 	public String getAttributeValue(String attribute, String defaultValue) {
-		//All items have messages
+		// All items have messages
 		if (attribute == IMarker.MESSAGE)
 			return getDescription();
 		return defaultValue;
-	
+
 	}
 
 	/**
@@ -99,7 +104,8 @@ public abstract class MarkerItem {
 	 */
 	public CollationKey getCollationKey(String attribute, String defaultValue) {
 		if (collationKey == null)
-			collationKey = Collator.getInstance().getCollationKey(getDescription());
+			collationKey = Collator.getInstance().getCollationKey(
+					getDescription());
 		return collationKey;
 	}
 
@@ -111,6 +117,45 @@ public abstract class MarkerItem {
 		return null;
 	}
 
+	/**
+	 * Get the path string for the receiver.
+	 * 
+	 * @return String
+	 * @see MarkerViewUtil#PATH_ATTRIBUTE
+	 */
+	public String getPath() {
+		//There is no path by default
+		return MarkerUtilities.EMPTY_STRING;
 
+	}
+	
+	/**
+	 * Get the location string for the receiver.
+	 * 
+	 * @return String
+	 * @see IMarker.LOCATION
+	 */
+	public String getLocation() {
+		//There is no location by default
+		return MarkerUtilities.EMPTY_STRING;
+
+	}
+
+	/**
+	 * Return the creation time for the receiver.
+	 * @return long
+	 */
+	public long getCreationTime() {
+		return -1;
+	}
+
+	/**
+	 * Return the ID of the receiver
+	 * @return String
+	 */
+	public long getID() {
+		return -1;
+		
+	}
 
 }

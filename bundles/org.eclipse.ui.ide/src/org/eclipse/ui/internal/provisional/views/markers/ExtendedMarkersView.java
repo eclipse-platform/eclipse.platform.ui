@@ -51,7 +51,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -82,7 +81,7 @@ public class ExtendedMarkersView extends ViewPart {
 		Object[] cachedValues;
 
 		MarkerSelectionEntry(MarkerItem item) {
-			IMarkerField[] fields = builder.getGenerator().getFields();
+			MarkerField[] fields = builder.getGenerator().getVisibleFields();
 			cachedValues = new Object[fields.length];
 			for (int i = 0; i < fields.length; i++) {
 				cachedValues[i] = fields[i].getValue(item);
@@ -96,7 +95,7 @@ public class ExtendedMarkersView extends ViewPart {
 		 * @return boolean <code>true</code> if they are equivalent
 		 */
 		boolean isEquivalentTo(MarkerItem item) {
-			IMarkerField[] fields = builder.getGenerator().getFields();
+			MarkerField[] fields = builder.getGenerator().getVisibleFields();
 
 			if (cachedValues.length != fields.length)
 				return false;
@@ -117,7 +116,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private CachedMarkerBuilder builder;
 	Collection categoriesToExpand = new HashSet();
-	private IMemento memento;
 	Collection preservedSelection = new ArrayList();
 	private MarkerState state;
 	private Job updateJob;
@@ -146,7 +144,7 @@ public class ExtendedMarkersView extends ViewPart {
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
 
-		IMarkerField[] fields = state.getFields();
+		MarkerField[] fields = builder.getGenerator().getVisibleFields();
 		int totalWeight = 0;
 		for (int i = 0; i < fields.length; i++) {
 			totalWeight += fields[i].getColumnWeight();
@@ -156,7 +154,7 @@ public class ExtendedMarkersView extends ViewPart {
 		float multiplier = 100 / totalWeight;
 
 		for (int i = 0; i < fields.length; i++) {
-			IMarkerField markerField = fields[i];
+			MarkerField markerField = fields[i];
 			layout.addColumnData(new ColumnWeightData((int) (markerField
 					.getColumnWeight() * multiplier), true));
 			TreeViewerColumn column = new TreeViewerColumn(viewer, SWT.NONE);
@@ -179,12 +177,14 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer = new TreeViewer(new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.MULTI | SWT.FULL_SELECTION | SWT.VIRTUAL));
 		viewer.getTree().setLinesVisible(true);
-
+		viewer.setUseHashlookup(true);
+		
 		createColumns();
 
 		viewer.setContentProvider(getContentProvider(viewer));
+		viewer.getTree().setItemCount(builder.getElements().length);
 
-		viewer.setInput(getBuilder());
+		viewer.setInput(builder);
 
 		Scrollable scrollable = (Scrollable) viewer.getControl();
 		ScrollBar bar = scrollable.getVerticalBar();
@@ -271,6 +271,7 @@ public class ExtendedMarkersView extends ViewPart {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
 		});
+		
 
 	}
 
@@ -282,34 +283,6 @@ public class ExtendedMarkersView extends ViewPart {
 	public void dispose() {
 		super.dispose();
 		updateJob.cancel();
-	}
-
-	/**
-	 * Get the starting builder for the receiver. First look up the generator to
-	 * use. If there is one in the memento use it, if not then find the one that
-	 * is the default for this perspective.
-	 * 
-	 * @return {@link CachedMarkerBuilder}
-	 */
-	private CachedMarkerBuilder getBuilder() {
-
-		if (builder == null) {
-			MarkerContentGenerator generator = MarkerSupportRegistry
-					.getInstance().getGenerator(getStringValue(TAG_GENERATOR));
-			if (generator == null)
-				generator = MarkerSupportRegistry.getInstance().generatorFor(
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-								.getActivePage().getPerspective());
-			builder = new CachedMarkerBuilder(generator);
-			builder.setUpdateJob(getUpdateJob(builder));
-			Object service = getSite().getAdapter(
-					IWorkbenchSiteProgressService.class);
-			if (service != null)
-				builder
-						.setProgressService((IWorkbenchSiteProgressService) service);
-		}
-		return builder;
-
 	}
 
 	/**
@@ -336,13 +309,23 @@ public class ExtendedMarkersView extends ViewPart {
 			 *      int)
 			 */
 			public void updateChildCount(Object element, int currentChildCount) {
+
+				MarkerItem[] children;
+
 				if (element instanceof MarkerItem) {
 					MarkerItem item = (MarkerItem) element;
-					viewer.setChildCount(element, item.getChildren().length);
+					children = item.getChildren();
+
+				} else {
+					// If it is not a MarkerItem it is the root
+					CachedMarkerBuilder builder = (CachedMarkerBuilder) element;
+					children = builder.getElements();
 				}
-				// If it is not a MarkerItem it is the root
-				CachedMarkerBuilder builder = (CachedMarkerBuilder) element;
-				viewer.setChildCount(element, builder.getElements().length);
+
+				// No updates if it hasn't changed
+				if (children.length == currentChildCount)
+					return;
+				viewer.setChildCount(element, children.length);
 
 			}
 
@@ -361,6 +344,7 @@ public class ExtendedMarkersView extends ViewPart {
 					newItem = ((CachedMarkerBuilder) parent).getElements()[index];
 
 				viewer.replace(parent, index, newItem);
+				updateChildCount(newItem, -1);
 
 			}
 
@@ -395,10 +379,10 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return int
 	 */
 	private int getIntValue(String tag) {
-		if (memento == null) {
+		if (state.useDefaults())
 			return 0;
-		}
-		Integer intValue = memento.getInteger(tag);
+
+		Integer intValue = state.getInteger(tag);
 		return (intValue == null) ? 0 : intValue.intValue();
 	}
 
@@ -426,19 +410,6 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		return MarkerUtilities.EMPTY_MARKER_ARRAY;
 
-	}
-
-	/**
-	 * Return the string value for tag
-	 * 
-	 * @param tag
-	 * @return String or <code>null</code>
-	 */
-	private String getStringValue(String tag) {
-		if (memento == null) {
-			return null;
-		}
-		return memento.getString(tag);
 	}
 
 	/**
@@ -574,7 +545,20 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		this.memento = memento;
+		MarkerContentGenerator generator = null;
+		if (memento != null)
+			generator = MarkerSupportRegistry.getInstance().getGenerator(
+					memento.getString(TAG_GENERATOR));
+		if (generator == null)
+			generator = MarkerSupportRegistry.getInstance().generatorFor(
+					site.getPage().getPerspective());
+		builder = new CachedMarkerBuilder(generator);
+		builder.setUpdateJob(getUpdateJob(builder));
+		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
+		if (service != null)
+			builder.setProgressService((IWorkbenchSiteProgressService) service);
+		state = new MarkerState(memento);
+
 	}
 
 	/**
@@ -621,11 +605,11 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Update the direction indicator as column is now the primary column.
 	 * 
 	 * @param column
-	 * @field {@link IMarkerField}
+	 * @field {@link MarkerField}
 	 */
-	void updateDirectionIndicator(TreeColumn column, IMarkerField field) {
+	void updateDirectionIndicator(TreeColumn column, MarkerField field) {
 		viewer.getTree().setSortColumn(column);
-		if (state.getSortDirection(field) == IMarkerField.ASCENDING)
+		if (state.getSortDirection(field) == MarkerField.ASCENDING)
 			viewer.getTree().setSortDirection(SWT.UP);
 		else
 			viewer.getTree().setSortDirection(SWT.DOWN);
@@ -637,8 +621,8 @@ public class ExtendedMarkersView extends ViewPart {
 	protected void updateTitle() {
 
 		String status = MarkerUtilities.EMPTY_STRING;
-		int filteredCount = getBuilder().getVisibleMarkers().getSize();
-		int totalCount = getBuilder().getTotalMarkerCount();
+		int filteredCount = builder.getVisibleMarkers().getSize();
+		int totalCount = builder.getTotalMarkerCount();
 		if (filteredCount == totalCount) {
 			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
 					totalCount));

@@ -11,26 +11,28 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
- * IMarkerProvider is the specification of a contributed object that provides
- * marker support.
+ * MarkerLocationField is the field for the location field.
  * @since 3.4
  *
  */
-public interface IMarkerProvider {
+public class MarkerLocationField extends MarkerField {
 
-	/**
-	 * Get the fields for the receiver.
-	 * @return
-	 */
-	IMarkerField[] getFields();
 
-	/**
-	 * Return whether or not markerField is the primary sort field.
-	 * @param markerField
-	 * @return boolean
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
-	boolean isPrimarySortField(IMarkerField markerField);
+	public String getColumnHeaderText() {
+		return MarkerMessages.description_lineNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
+	 */
+	public String getValue(MarkerItem item) {
+		return item.getLocation();
+	}
 
 }
