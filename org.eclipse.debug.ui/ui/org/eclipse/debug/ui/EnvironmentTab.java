@@ -24,6 +24,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -31,11 +32,12 @@ import org.eclipse.debug.internal.ui.MultipleInputDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -65,7 +67,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -416,7 +417,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			envVariables.remove(var.getName());
 		}
 		
-		ListSelectionDialog dialog = new NativeEnvironmentDialog(getShell(), envVariables, createSelectionDialogContentProvider(), createSelectionDialogLabelProvider(), LaunchConfigurationsMessages.EnvironmentTab_19); 
+		NativeEnvironmentSelectionDialog dialog = new NativeEnvironmentSelectionDialog(getShell(), envVariables); 
 		dialog.setTitle(LaunchConfigurationsMessages.EnvironmentTab_20); 
 		
 		int button = dialog.open();
@@ -429,65 +430,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		
 		updateAppendReplace();
 		updateLaunchConfigurationDialog();
-	}
-
-	/**
-	 * Creates a label provider for the native native environment variable selection dialog.
-	 * @return A label provider for the native native environment variable selection dialog.
-	 */
-	private ILabelProvider createSelectionDialogLabelProvider() {
-		return new ILabelProvider() {
-			public Image getImage(Object element) {
-				return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
-			}
-			public String getText(Object element) {
-				EnvironmentVariable var = (EnvironmentVariable) element;
-				return MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_7, new String[] {var.getName(), var.getValue()}); 
-			}
-			public void addListener(ILabelProviderListener listener) {
-			}
-			public void dispose() {
-			}
-			public boolean isLabelProperty(Object element, String property) {
-				return false;
-			}
-			public void removeListener(ILabelProviderListener listener) {
-			}				
-		};
-	}
-
-	/**
-	 * Creates a content provider for the native native environment variable selection dialog.
-	 * @return A content provider for the native native environment variable selection dialog.
-	 */
-	private IStructuredContentProvider createSelectionDialogContentProvider() {
-		return new IStructuredContentProvider() {
-			public Object[] getElements(Object inputElement) {
-				EnvironmentVariable[] elements = null;
-				if (inputElement instanceof HashMap) {
-					Comparator comparator = new Comparator() {
-						public int compare(Object o1, Object o2) {
-							String s1 = (String)o1;
-							String s2 = (String)o2;
-							return s1.compareTo(s2);
-						}
-					};
-					TreeMap envVars = new TreeMap(comparator);
-					envVars.putAll((Map)inputElement);
-					elements = new EnvironmentVariable[envVars.size()];
-					int index = 0;
-					for (Iterator iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
-						Object key = iterator.next();
-						elements[index] = (EnvironmentVariable) envVars.get(key);
-					}
-				}
-				return elements;
-			}
-			public void dispose() {	
-			}
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			}
-		};
 	}
 
 	/**
@@ -646,31 +588,103 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// do nothing when de-activated
 	}
 	
-	private class NativeEnvironmentDialog extends ListSelectionDialog {
-		public NativeEnvironmentDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
-			super(parentShell, input, contentProvider, labelProvider, message);
+	/**
+	 * This dialog allows users to select one or more known native environment variables from a list.
+	 */
+	private class NativeEnvironmentSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
+		
+		private Object fInput;
+		
+		public NativeEnvironmentSelectionDialog(Shell parentShell, Object input) {
+			super(parentShell);
+			fInput = input;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
+			setShowSelectAllButtons(true);
 		}
 		
-		/**
-		 * Returns the name of the section that this dialog stores its settings in
-		 * 
-		 * @return String
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 		 */
-		protected String getDialogSettingsSectionName() {
+		protected String getDialogSettingsId() {
 			return IDebugUIConstants.PLUGIN_ID + ".ENVIRONMENT_TAB.NATIVE_ENVIROMENT_DIALOG"; //$NON-NLS-1$
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
+		 */
+		protected String getHelpContextId() {
+			return IDebugHelpContextIds.SELECT_NATIVE_ENVIRONMENT_DIALOG;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+		 */
+		protected Object getViewerInput() {
+			return fInput;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+		 */
+		protected String getViewerLabel() {
+			return LaunchConfigurationsMessages.EnvironmentTab_19;
+		}
 		
-		 /* (non-Javadoc)
-	     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	     */
-	    protected IDialogSettings getDialogBoundsSettings() {
-	    	 IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-	         IDialogSettings section = settings.getSection(getDialogSettingsSectionName());
-	         if (section == null) {
-	             section = settings.addNewSection(getDialogSettingsSectionName());
-	         } 
-	         return section;
-	    }
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
+		 */
+		protected IBaseLabelProvider getLabelProvider() {
+			return new ILabelProvider() {
+				public Image getImage(Object element) {
+					return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
+				}
+				public String getText(Object element) {
+					EnvironmentVariable var = (EnvironmentVariable) element;
+					return MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_7, new String[] {var.getName(), var.getValue()}); 
+				}
+				public void addListener(ILabelProviderListener listener) {
+				}
+				public void dispose() {
+				}
+				public boolean isLabelProperty(Object element, String property) {
+					return false;
+				}
+				public void removeListener(ILabelProviderListener listener) {
+				}				
+			};
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
+		 */
+		protected IContentProvider getContentProvider() {
+			return new IStructuredContentProvider() {
+				public Object[] getElements(Object inputElement) {
+					EnvironmentVariable[] elements = null;
+					if (inputElement instanceof HashMap) {
+						Comparator comparator = new Comparator() {
+							public int compare(Object o1, Object o2) {
+								String s1 = (String)o1;
+								String s2 = (String)o2;
+								return s1.compareTo(s2);
+							}
+						};
+						TreeMap envVars = new TreeMap(comparator);
+						envVars.putAll((Map)inputElement);
+						elements = new EnvironmentVariable[envVars.size()];
+						int index = 0;
+						for (Iterator iterator = envVars.keySet().iterator(); iterator.hasNext(); index++) {
+							Object key = iterator.next();
+							elements[index] = (EnvironmentVariable) envVars.get(key);
+						}
+					}
+					return elements;
+				}
+				public void dispose() {	
+				}
+				public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+				}
+			};
+		}
 	}
 }

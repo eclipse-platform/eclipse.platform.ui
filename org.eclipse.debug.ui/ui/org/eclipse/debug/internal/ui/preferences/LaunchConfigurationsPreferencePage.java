@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -28,7 +29,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -36,7 +36,8 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
@@ -56,7 +57,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
@@ -71,24 +71,59 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 public class LaunchConfigurationsPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
+	 * Creates a dialog that allows users to select one or more projects to migrate.
 	 * @since 3.2
 	 */
-	class LaunchConfigurationMigrationSelectionDialog extends ListSelectionDialog {
+	class LaunchConfigurationMigrationSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
 		
-		private String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".MIGRATION_SELECTION_DIALOG"; //$NON-NLS-1$
+		private Object fInput;
 		
-		public LaunchConfigurationMigrationSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
-			super(parentShell, input, contentProvider, labelProvider, message);
+		public LaunchConfigurationMigrationSelectionDialog(Shell parentShell, Object input) {
+			super(parentShell);
+			fInput = input;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
 		}
 
-		protected IDialogSettings getDialogBoundsSettings() {
-			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-			IDialogSettings section = settings.getSection(SETTINGS_ID);
-			if (section == null) {
-				section = settings.addNewSection(SETTINGS_ID);
-			} 
-			return section;
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
+		 */
+		protected String getDialogSettingsId() {
+			return IDebugUIConstants.PLUGIN_ID + ".MIGRATION_SELECTION_DIALOG"; //$NON-NLS-1$
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
+		 */
+		protected String getHelpContextId() {
+			return IDebugHelpContextIds.SELECT_LAUNCH_CONFIGURATION_MIGRATION_DIALOG;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+		 */
+		protected Object getViewerInput() {
+			return fInput;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+		 */
+		protected String getViewerLabel() {
+			return DebugPreferencesMessages.LaunchingPreferencePage_0;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
+		 */
+		protected IContentProvider getContentProvider() {
+			return new WorkbenchContentProvider();	
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
+		 */
+		protected IBaseLabelProvider getLabelProvider() {
+			return DebugUITools.newDebugModelPresentation();
 		}
 	}
 	
@@ -284,11 +319,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				MessageDialog.openInformation(getShell(), DebugPreferencesMessages.LaunchingPreferencePage_29, DebugPreferencesMessages.LaunchingPreferencePage_30);
 				return;
 			}
-			LaunchConfigurationMigrationSelectionDialog listd = new LaunchConfigurationMigrationSelectionDialog(getShell(), 
-																new AdaptableList(pub), 
-																new WorkbenchContentProvider(),	
-																DebugUITools.newDebugModelPresentation(), 
-																DebugPreferencesMessages.LaunchingPreferencePage_0);
+			LaunchConfigurationMigrationSelectionDialog listd = new LaunchConfigurationMigrationSelectionDialog(getShell(),new AdaptableList(pub));
 			listd.setTitle(DebugPreferencesMessages.LaunchingPreferencePage_28);
 			listd.setInitialSelections(configurations);
 			if(listd.open() == IDialogConstants.OK_ID) {

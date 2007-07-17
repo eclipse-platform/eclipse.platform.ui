@@ -17,6 +17,10 @@ public class DebugUIMessages extends NLS {
 
     public static String AbstractAsyncTableRendering_2;
 
+	public static String AbstractDebugCheckboxSelectionDialog_0;
+
+	public static String AbstractDebugCheckboxSelectionDialog_1;
+
 	public static String DebugUIPlugin_23;
 	public static String DebugUIPlugin_24;
 	public static String DebugUIPlugin_0;

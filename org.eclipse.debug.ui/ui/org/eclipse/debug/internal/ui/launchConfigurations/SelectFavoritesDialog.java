@@ -16,20 +16,14 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
@@ -85,6 +79,7 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 		fHistory = history;
 		fCurrentFavoriteSet = favorites;
 		setTitle(MessageFormat.format(LaunchConfigurationsMessages.FavoritesDialog_0, new String[]{getModeLabel()}));
+		setShowSelectAllButtons(true);
 	}
 
 	/**
@@ -131,26 +126,4 @@ public class SelectFavoritesDialog extends AbstractDebugCheckboxSelectionDialog 
 		return LaunchConfigurationsMessages.FavoritesDialog_7;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void addCustomFooterControls(Composite parent) {
-		Composite comp = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
-		GridData gd = (GridData) comp.getLayoutData();
-		gd.horizontalAlignment = SWT.END;
-		Button button = SWTFactory.createPushButton(comp, LaunchConfigurationsMessages.SelectFavoritesDialog_0, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				getCheckBoxTableViewer().setAllChecked(true);
-				getOkButton().setEnabled(true);
-			}
-		});
-		button = SWTFactory.createPushButton(comp, LaunchConfigurationsMessages.SelectFavoritesDialog_1, null);
-		button.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				getCheckBoxTableViewer().setAllChecked(false);
-				getOkButton().setEnabled(false);
-			}
-		});
-	}
 }

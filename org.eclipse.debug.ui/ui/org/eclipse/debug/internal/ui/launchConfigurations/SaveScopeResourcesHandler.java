@@ -21,27 +21,28 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
@@ -64,38 +65,97 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 * Provides a custom class for a resizable selection dialog with a don't ask again button on it
 	 * @since 3.2
 	 */
-	class ScopedResourcesSelectionDialog extends ListSelectionDialog {
+	class ScopedResourcesSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
 
 		private final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SCOPED_SAVE_SELECTION_DIALOG"; //$NON-NLS-1$
 		Button fSavePref;
+		Object fInput;
+		IStructuredContentProvider fContentProvider;
+		ILabelProvider fLabelProvider;
 		
-		public ScopedResourcesSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider, String message) {
-			super(parentShell, input, contentProvider, labelProvider, message);
+		public ScopedResourcesSelectionDialog(Shell parentShell, Object input, IStructuredContentProvider contentProvider, ILabelProvider labelProvider) {
+			super(parentShell);
+			fInput = input;
+			fContentProvider = contentProvider;
+			fLabelProvider = labelProvider;
 			setShellStyle(getShellStyle() | SWT.RESIZE);
+			setShowSelectAllButtons(true);
 		}
 		
-		protected Control createDialogArea(Composite parent) {
-			Composite ctrl = (Composite) super.createDialogArea(parent);
-			fSavePref = new Button(ctrl, SWT.CHECK);
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getContentProvider()
+		 */
+		protected IContentProvider getContentProvider() {
+			return fContentProvider;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
+		 */
+		protected IBaseLabelProvider getLabelProvider() {
+			return fLabelProvider;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
+		 */
+		protected String getDialogSettingsId() {
+			return SETTINGS_ID;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
+		 */
+		protected String getHelpContextId() {
+			return IDebugHelpContextIds.SELECT_RESOURCES_TO_SAVE_DIALOG;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+		 */
+		protected Object getViewerInput() {
+			return fInput;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerLabel()
+		 */
+		protected String getViewerLabel() {
+			return LaunchConfigurationsMessages.SaveScopeResourcesHandler_2;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addCustomFooterControls(org.eclipse.swt.widgets.Composite)
+		 */
+		protected void addCustomFooterControls(Composite parent) {
+			super.addCustomFooterControls(parent);
+			fSavePref = new Button(parent, SWT.CHECK);
 			fSavePref.setText(LaunchConfigurationsMessages.SaveScopeResourcesHandler_1);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IDebugHelpContextIds.SELECT_RESOURCES_TO_SAVE_DIALOG);
-			return ctrl;
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#okPressed()
+		 */
 		protected void okPressed() {
 			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 			String val = (fSavePref.getSelection() ? MessageDialogWithToggle.ALWAYS : MessageDialogWithToggle.PROMPT);
 			store.setValue(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH, val);
 			super.okPressed();
 		}
-
-		protected IDialogSettings getDialogBoundsSettings() {
-			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-			IDialogSettings section = settings.getSection(SETTINGS_ID);
-			if (section == null) {
-				section = settings.addNewSection(SETTINGS_ID);
-			} 
-			return section;
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
+		 */
+		protected void addViewerListeners(StructuredViewer viewer) {
+			// Override to remove listener that affects the ok button
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#refreshEnablement()
+		 */
+		protected void refreshEnablement() {
+			// OK button is always enabled
+			getOkButton().setEnabled(true);
 		}
 	}
 	
@@ -180,7 +240,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				((IEditorPart)fSaves[i]).doSave(new NullProgressMonitor());
 			}
 		}
-	}
+	} 
 	
 	/**
 	 * show the save dialog with a list of editors to save (if any)
@@ -197,8 +257,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				ScopedResourcesSelectionDialog lsd = new ScopedResourcesSelectionDialog(DebugUIPlugin.getShell(),
 						new AdaptableList(editors),
 						new WorkbenchContentProvider(),
-						new WorkbenchPartLabelProvider(),
-						LaunchConfigurationsMessages.SaveScopeResourcesHandler_2);
+						new WorkbenchPartLabelProvider());
 				lsd.setInitialSelections(editors);
 				lsd.setTitle(LaunchConfigurationsMessages.SaveScopeResourcesHandler_3);
 				if(lsd.open() == IDialogConstants.CANCEL_ID) {

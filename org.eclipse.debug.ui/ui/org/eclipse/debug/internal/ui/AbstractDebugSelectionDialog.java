@@ -8,17 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.launchConfigurations;
+package org.eclipse.debug.internal.ui;
 
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DefaultLabelProvider;
-import org.eclipse.debug.internal.ui.SWTFactory;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -129,6 +130,15 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		//do nothing by default
 	}
 	
+	/**
+	 * Returns the viewer used to display information in this dialog.
+	 * Can be <code>null</code> if the viewer has not been created.
+	 * @return viewer used in this dialog
+	 */
+	protected Viewer getViewer(){
+    	return fViewer;
+    }
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -148,6 +158,10 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		fViewer.setLabelProvider(getLabelProvider());
 		fViewer.setContentProvider(getContentProvider());
 		fViewer.setInput(getViewerInput());
+		List selectedElements = getInitialElementSelections();
+		if (selectedElements != null && !selectedElements.isEmpty()){
+			fViewer.setSelection(new StructuredSelection(selectedElements));
+		}
 		addViewerListeners(fViewer);
 		addCustomFooterControls(comp);
 		initializeControls();

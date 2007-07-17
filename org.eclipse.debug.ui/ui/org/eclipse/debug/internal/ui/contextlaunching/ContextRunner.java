@@ -270,10 +270,7 @@ public final class ContextRunner {
 	 * @param mode the mode
 	 */
 	protected void showConfigurationSelectionDialog(List configurations, String mode) {
-		LaunchConfigurationSelectionDialog lsd = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell());
-		if(configurations != null) {
-			lsd.setInput(configurations);
-		}
+		LaunchConfigurationSelectionDialog lsd = new LaunchConfigurationSelectionDialog(DebugUIPlugin.getShell(), configurations);
 		if(lsd.open() == IDialogConstants.OK_ID) {
 			ILaunchConfiguration config = (ILaunchConfiguration) lsd.getResult()[0];
 			launch(config, mode);
@@ -288,8 +285,7 @@ public final class ContextRunner {
 	 * @param mode the mode
 	 */
 	protected void showShortcutSelectionDialog(IResource resource, List shortcuts, String mode) {
-		LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(resource, mode);
-		dialog.setInput(shortcuts);
+		LaunchShortcutSelectionDialog dialog = new LaunchShortcutSelectionDialog(shortcuts, resource, mode);
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
 			if(result.length > 0) {
