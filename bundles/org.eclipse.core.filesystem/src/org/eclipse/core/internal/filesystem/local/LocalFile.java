@@ -172,6 +172,8 @@ public class LocalFile extends FileStore {
 	}
 
 	public int hashCode() {
+		if (LocalFileSystem.MACOSX)
+			return filePath.toLowerCase().hashCode();
 		return file.hashCode();
 	}
 
