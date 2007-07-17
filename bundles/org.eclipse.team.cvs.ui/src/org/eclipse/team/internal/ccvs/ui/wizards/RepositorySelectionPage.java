@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryComparator;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.*;
 
@@ -90,6 +91,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		table = createTable(composite, 1);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new DecoratingRepoLabelProvider()/*WorkbenchLabelProvider()*/);
+		table.setComparator(new RepositoryComparator());
         table.addDoubleClickListener(new IDoubleClickListener() {
             public void doubleClick(DoubleClickEvent event) {
                 getContainer().showPage(getNextPage());
