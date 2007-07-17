@@ -638,6 +638,76 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertNull("2.0", node.get(key, null));
 	}
 
+	/*
+	 * Bug 95052 - external property removals are not detected.
+	 */
+	public void test_95052() {
+		IProject project = getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+		Preferences node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
+		node.put("key1", "value1");
+		node.put("key2", "value2");
+		node.put("key3", "value3");
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.1", e);
+		}
+		IFile prefFile = getFileInWorkspace(project, ResourcesPlugin.PI_RESOURCES);
+		assertTrue("1.2", prefFile.exists());
+		Properties properties = new Properties();
+		InputStream contents = null;
+		try {
+			contents = prefFile.getContents();
+		} catch (CoreException e) {
+			fail("1.3", e);
+		}
+		try {
+			properties.load(contents);
+		} catch (IOException e) {
+			fail("1.4", e);
+		} finally {
+			try {
+				contents.close();
+			} catch (IOException e) {
+				//
+			}
+		}
+		assertEquals("2.0", "value1", properties.get("key1"));
+		assertEquals("2.1", "value2", properties.get("key2"));
+		assertEquals("2.2", "value3", properties.get("key3"));
+		// add a new property
+		properties.put("key0", "value0");
+		// change an existing property		
+		properties.put("key2", "value2".toUpperCase());
+		// removes a property
+		properties.remove("key3");
+		ByteArrayOutputStream tempOutput = new ByteArrayOutputStream();
+		try {
+			properties.store(tempOutput, null);
+		} catch (IOException e) {
+			// should never happen, we are not doing I/O			
+			fail("2.4", e);
+		}
+		ByteArrayInputStream tempInput = new ByteArrayInputStream(tempOutput.toByteArray());
+		try {
+			prefFile.setContents(tempInput, false, false, getMonitor());
+		} catch (CoreException e) {
+			fail("2.5", e);
+		}
+
+		// here, project preferences should have caught up with the changes		
+		node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
+		// property was added
+		assertEquals("3.0", "value0", node.get("key0", null));
+		// property value was not changed		
+		assertEquals("3.1", "value1", node.get("key1", null));
+		// property value was changed to upper case		
+		assertEquals("3.2", "value2".toUpperCase(), node.get("key2", null));
+		// property was deleted
+		assertNull("3.3", node.get("key3", null));
+	}
+
 	public void testProjectOpenClose() {
 		IProject project = getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
