@@ -12,6 +12,8 @@
 
 package org.eclipse.core.tests.databinding.observable;
 
+import junit.framework.Test;
+
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -19,9 +21,15 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.jface.conformance.databinding.AbstractObservableContractDelegate;
+import org.eclipse.jface.conformance.databinding.ObservableContractTests;
+import org.eclipse.jface.conformance.databinding.ObservableStaleContractTests;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests for AbstractObservable.
@@ -205,7 +213,43 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	public static Test suite() {
+		Object[] params = new Object[] { new Delegate() };
+
+		return new SuiteBuilder()
+				.addTests(AbstractObservableTest.class)
+				.addParameterizedTests(ObservableContractTests.class, params)
+				.addParameterizedTests(ObservableStaleContractTests.class,
+						params).build();
+	}
+
+	/* package */static class Delegate extends
+			AbstractObservableContractDelegate {
+		private IObservable currentObservable;
+
+		public void change(IObservable observable) {
+			((ObservableStub) observable).fireChange();
+		}
+
+		public void setStale(IObservable observable, boolean stale) {
+			((ObservableStub) observable).setStale(stale);
+		}
+
+		public IObservable createObservable() {
+			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
+					new Runnable() {
+						public void run() {
+							currentObservable = new ObservableStub();
+						}
+					});
+
+			return currentObservable;
+		}
+	}
+
 	private static class ObservableStub extends AbstractObservable {
+		private boolean stale;
+
 		public ObservableStub() {
 			this(Realm.getDefault());
 		}
@@ -218,6 +262,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		}
 
 		private boolean firstListenerAdded;
+
 		private boolean lastListenerRemoved;
 
 		protected Object doGetValue() {
@@ -237,7 +282,16 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public boolean isStale() {
-			return false;
+			return stale;
+		}
+
+		public void setStale(boolean stale) {
+			boolean old = this.stale;
+			this.stale = stale;
+
+			if (stale && !old) {
+				fireStale();
+			}
 		}
 
 		protected boolean hasListeners() {

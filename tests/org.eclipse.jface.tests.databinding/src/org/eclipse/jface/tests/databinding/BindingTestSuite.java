@@ -147,7 +147,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StringToNumberConverterTest.class);
 
 		// org.eclipse.core.tests.databinding.observable
-		addTestSuite(AbstractObservableTest.class);
+		addTest(AbstractObservableTest.suite());
 		addTestSuite(Diffs_ListDiffTests.class);
 		addTestSuite(DiffsTest.class);
 		addTestSuite(ObservablesTest.class);
@@ -174,7 +174,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableValueTest.class);
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
-		addTestSuite(WritableValueTest.class);
+		addTest(WritableValueTest.suite());
+//		addTestSuite(WritableValueTest.class);
 		
 		//org.eclipse.core.tests.databinding.validation
 		addTestSuite(ValidationStatusTest.class);
@@ -261,7 +262,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(EditMaskParserTest.class);
 
 		//org.eclipse.jface.tests.internal.databinding.internal.swt
-		addTestSuite(ButtonObservableValueTest.class);
+		addTest(ButtonObservableValueTest.suite());
+//		addTestSuite(ButtonObservableValueTest.class);
 		addTestSuite(CComboObservableValueTest.class);
 		addTestSuite(CLabelObservableValueTest.class);
 		addTestSuite(ComboObservableValueTest.class);
