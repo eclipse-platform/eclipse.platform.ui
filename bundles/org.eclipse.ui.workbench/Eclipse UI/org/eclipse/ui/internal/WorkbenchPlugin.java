@@ -12,7 +12,9 @@
 package org.eclipse.ui.internal;
 
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -35,6 +37,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceManager;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -62,7 +65,13 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
-import org.osgi.framework.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.SynchronousBundleListener;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -556,9 +565,19 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return IPerspectiveRegistry. The registry for the receiver.
      */
     public IPerspectiveRegistry getPerspectiveRegistry() {
-        if (perspRegistry == null) {
+    	if (perspRegistry == null) {
             perspRegistry = new PerspectiveRegistry();
-            perspRegistry.load();
+            // the load methods can touch on WorkbenchImages if an image is
+			// missing so we need to wrap the call in
+			// a startup block for the case where a custom descriptor exists on
+			// startup that does not have an image
+			// associated with it. See bug 196352.
+			StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				public void runWithException() throws Throwable {
+					perspRegistry.load();
+				}
+			});
+            
         }
         return perspRegistry;
     }
