@@ -182,6 +182,9 @@ public class LocalFile extends FileStore {
 	 */
 	private boolean internalDelete(File target, String pathToDelete, MultiStatus status, IProgressMonitor monitor) {
 		//first try to delete - this should succeed for files and symbolic links to directories
+		if (monitor.isCanceled()) {
+			throw new OperationCanceledException();
+		}		
 		if (target.delete() || !target.exists())
 			return true;
 		if (target.isDirectory()) {
@@ -191,7 +194,10 @@ public class LocalFile extends FileStore {
 				list = EMPTY_STRING_ARRAY;
 			int parentLength = pathToDelete.length();
 			boolean failedRecursive = false;
-			for (int i = 0, imax = list.length; i < imax; i++) {
+			for (int i = 0, imax = list.length; i < imax; i++) {			
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}				
 				//optimized creation of child path object
 				StringBuffer childBuffer = new StringBuffer(parentLength + list[i].length() + 1);
 				childBuffer.append(pathToDelete);

@@ -467,6 +467,21 @@ class ResourceTree implements IResourceTree {
 	private boolean isNameChange(IProject project, IProjectDescription description) {
 		return !project.getName().equals(description.getName());
 	}
+	
+	/**
+	 * Refreshes the resource hierarchy with its children. In case of failure
+	 * adds an appropriate status to the resource tree's status.
+	 */
+	private void safeRefresh(IResource resource) {
+		try {
+			resource.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+		} catch (CoreException ce) {
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.refresh_refreshErr, ce);
+			if (ce.getStatus() != null)
+				status.merge(ce.getStatus());
+			failed(status);
+		}
+	}
 
 	/**
 	 * @see IResourceTree#isSynchronized(IResource, int)
@@ -780,6 +795,9 @@ class ResourceTree implements IResourceTree {
 		try {
 			lock.acquire();
 			internalDeleteFolder(folder, flags, monitor);
+		} catch (OperationCanceledException oce) {
+			safeRefresh(folder);
+			throw oce;
 		} finally {
 			lock.release();
 			monitor.done();
@@ -836,6 +854,10 @@ class ResourceTree implements IResourceTree {
 					} else {
 						projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
 					}
+				} 
+				catch (OperationCanceledException oce) {
+					safeRefresh(project);
+					throw oce;
 				} catch (CoreException ce) {
 					message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());
 					MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
