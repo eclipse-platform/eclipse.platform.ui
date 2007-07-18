@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1071,14 +1071,33 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		DocumentEvent e= new DocumentEvent(this, pos, length, text);
 		fireDocumentAboutToBeChanged(e);
 
+		boolean mustRepairLineInformation= mustRepairLineInformation(pos, length, text);
+		
 		getStore().replace(pos, length, text);
-		getTracker().replace(pos, length, text);
+		
+		if (mustRepairLineInformation)
+			repairLineInformation();
+		else
+			getTracker().replace(pos, length, text);
 
 		fModificationStamp= modificationStamp;
 		fNextModificationStamp= Math.max(fModificationStamp, fNextModificationStamp);
 		e.fModificationStamp= fModificationStamp;
 
 		fireDocumentChanged(e);
+	}
+
+	/**
+	 * Checks whether the line information needs to be repaired.
+	 * 
+	 * @param pos the start position to check
+	 * @param length the length position to check
+	 * @param text the substitution text to check
+	 * @return <code>true</code> if the line information must be repaired
+	 * @since 3.4
+	 */
+	protected boolean mustRepairLineInformation(int pos, int length, String text) {
+		return false;
 	}
 
 	/*

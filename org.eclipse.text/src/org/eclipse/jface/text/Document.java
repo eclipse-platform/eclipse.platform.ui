@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 
@@ -61,4 +60,53 @@ public class Document extends AbstractDocument {
 		getTracker().set(initialContent);
 		completeInitialization();
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractDocument#mustRepairLineInformation(int, int, java.lang.String)
+	 * @since 3.4
+	 */
+	protected boolean mustRepairLineInformation(int pos, int length, String text) {
+		try {
+			return mustRepairLineInformation(text) || mustRepairLineInformation(get(pos, length));
+		} catch (BadLocationException e) {
+			return true;
+		}
+	}
+
+	/**
+	 * Checks whether the line information needs to be repaired.
+	 * 
+	 * @param text the text to check
+	 * @return <code>true</code> if the line information must be repaired
+	 * @since 3.4
+	 */
+	private boolean mustRepairLineInformation(String text) {
+		if (text == null)
+			return false;
+
+		int length= text.length();
+		if (length == 0)
+			return false;
+
+		int rIndex= text.indexOf('\r');
+		int nIndex= text.indexOf('\n');
+		if (rIndex == -1 && nIndex == -1)
+			return false;
+
+		if (rIndex > 0 && rIndex < length-1 && nIndex > 1 && rIndex < length-2)
+			return false;
+
+		String defaultLD= getDefaultLineDelimiter();
+
+		if (defaultLD.length() == 1) {
+			if (rIndex != -1 && !"\\r".equals(defaultLD)) //$NON-NLS-1$
+				return true;
+			if (nIndex != -1 && !"\\n".equals(defaultLD)) //$NON-NLS-1$
+				return true;
+		} else if (defaultLD.length() == 2)
+			return rIndex == -1 || nIndex - rIndex != 1;
+		
+		return false;
+	}
+	
 }
