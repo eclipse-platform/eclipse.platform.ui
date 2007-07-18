@@ -8,22 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal;
-
-import org.eclipse.jface.util.Assert;
+package org.eclipse.compare.contentmergeviewer;
 
 import org.eclipse.compare.rangedifferencer.IRangeComparator;
-import org.eclipse.compare.contentmergeviewer.ITokenComparator;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Implements the <code>ITokenComparator</code> interface for words (or tokens)
  * in a string.
  * A <code>TokenComparator</code> is used as the input for the <code>RangeDifferencer</code>
  * engine to perform a token oriented compare on strings.
+ * <p>
+ * This class may be instantiated by clients but is not intended to be subclassed.
+ * @since 3.4
  */
 public class TokenComparator implements ITokenComparator {
 
-	private boolean fShouldEscape= true;
 	private String fText;
 	private int fCount;
 	private int[] fStarts;
@@ -65,29 +65,16 @@ public class TokenComparator implements ITokenComparator {
 			fLengths[fCount-1]++;
 		}
 	}
-	
-	/**
-	 * Creates a <code>TokenComparator</code> for the given string.
-	 *
-	 * @param text the string that is split into token
-	 * @param shouldEscape
-	 */
-	public TokenComparator(String text, boolean shouldEscape) {
-		this(text);
-		fShouldEscape= shouldEscape;
-	}
 
-	/**
-	 * Returns the number of token in the string.
-	 *
-	 * @return number of token in the string
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.rangedifferencer.IRangeComparator#getRangeCount()
 	 */
 	public int getRangeCount() {
 		return fCount;
 	}
 
-	/* (non Javadoc)
-	 * see ITokenComparator.getTokenStart
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ITokenComparator#getTokenStart(int)
 	 */
 	public int getTokenStart(int index) {
 		if (index < fCount)
@@ -95,8 +82,8 @@ public class TokenComparator implements ITokenComparator {
 		return fText.length();
 	}
 
-	/* (non Javadoc)
-	 * see ITokenComparator.getTokenLength
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ITokenComparator#getTokenLength(int)
 	 */
 	public int getTokenLength(int index) {
 		if (index < fCount)
@@ -104,14 +91,8 @@ public class TokenComparator implements ITokenComparator {
 		return 0;
 	}
 		
-	/**
-	 * Returns <code>true</code> if a token given by the first index
-	 * matches a token specified by the other <code>IRangeComparator</code> and index.
-	 *
-	 * @param thisIndex	the number of the token within this range comparator
-	 * @param other the range comparator to compare this with
-	 * @param otherIndex the number of the token within the other comparator
-	 * @return <code>true</code> if the token are equal
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.rangedifferencer.IRangeComparator#rangesEqual(int, org.eclipse.compare.rangedifferencer.IRangeComparator, int)
 	 */
 	public boolean rangesEqual(int thisIndex, IRangeComparator other, int otherIndex) {
 		if (other != null && getClass() == other.getClass()) {
@@ -124,14 +105,10 @@ public class TokenComparator implements ITokenComparator {
 		return false;
 	}
 
-	/*
-	 * Aborts the comparison if the number of tokens is too large.
-	 * @return <code>true</code> to abort a token comparison
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.rangedifferencer.IRangeComparator#skipRangeComparison(int, int, org.eclipse.compare.rangedifferencer.IRangeComparator)
 	 */
 	public boolean skipRangeComparison(int length, int max, IRangeComparator other) {
-
-		if (!fShouldEscape)
-			return false;
 
 		if (getRangeCount() < 50 || other.getRangeCount() < 50)
 			return false;
@@ -150,26 +127,4 @@ public class TokenComparator implements ITokenComparator {
 
 		return true;
 	}
-		
-//	public static void main(String args[]) {
-//		//String in= "private static boolean isWhitespace(char c) {";
-//		//String in= "for (int j= 0; j < l-1; j++) {";
-//		String in= "for do    i= 123; i++";
-//		TokenComparator tc= new TokenComparator(in, false);
-//		
-//		System.out.println("n: " + tc.getRangeCount());
-//		System.out.println(in);
-//		
-//		int p= 0;
-//		for (int i= 0; i < tc.getRangeCount(); i++) {
-//			int l= tc.getTokenLength(i);
-//			System.out.print("<");
-//			
-//			for (int j= 0; j < l-1; j++)
-//				System.out.print(" ");
-//		}
-//		System.out.println();
-//		
-//		//System.out.println("extract: <" + tc.extract(16, 1) + ">");
-//	}
 }
