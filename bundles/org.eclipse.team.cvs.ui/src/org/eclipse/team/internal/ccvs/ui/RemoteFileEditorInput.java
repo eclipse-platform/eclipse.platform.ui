@@ -11,6 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui;
 
  
+import java.net.URI;
+
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -20,15 +22,15 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSResourceVariantFileRevision;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.history.IHistoryPageSource;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * An editor input for a file in a repository.
  */
-public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput {
+public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput, IURIEditorInput {
 	ICVSRemoteFile file;
 	IStorage storage;
 
@@ -232,6 +234,13 @@ public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchA
 	 */
 	public ICVSRemoteFile getCVSRemoteFile() {
 		return file;
+	}
+
+	public URI getURI() {
+		IFileRevision revision = (IFileRevision)Utils.getAdapter(file, IFileRevision.class);
+		if (revision != null)
+			return revision.getURI();
+		return null;
 	}
 
 }

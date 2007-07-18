@@ -16,13 +16,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * An editor input for a cvs annotation response
  */
-public class RemoteAnnotationEditorInput extends RemoteFileEditorInput implements IWorkbenchAdapter, IStorageEditorInput {
+public class RemoteAnnotationEditorInput extends RemoteFileEditorInput {
 
 	InputStream contents;
 	

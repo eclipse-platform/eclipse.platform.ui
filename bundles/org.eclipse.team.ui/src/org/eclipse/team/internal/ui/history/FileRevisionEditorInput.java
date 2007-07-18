@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.history;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Date;
 
 import org.eclipse.core.resources.*;
@@ -20,13 +21,12 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import com.ibm.icu.text.DateFormat;
 
-public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput {
+public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput, IURIEditorInput {
 
 	private final Object fileRevision;
 	private final IStorage storage;
@@ -165,6 +165,14 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	public IFileRevision getFileRevision() {
 		if (fileRevision instanceof IFileRevision) {
 			return (IFileRevision) fileRevision;
+		}
+		return null;
+	}
+
+	public URI getURI() {
+		if (fileRevision instanceof IFileRevision) {
+			IFileRevision fr = (IFileRevision) fileRevision;
+			return fr.getURI();
 		}
 		return null;
 	}
