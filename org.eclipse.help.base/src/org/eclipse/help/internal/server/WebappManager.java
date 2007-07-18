@@ -21,30 +21,51 @@ import org.eclipse.equinox.http.jetty.JettyConfigurator;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 public class WebappManager {
 
 	private static String host;
 	private static int port = -1;
+	private static final int AUTO_SELECT_JETTY_PORT = 0;
 	
 	public static void start(String webappName) throws CoreException {
 		Dictionary d = new Hashtable();
 		
-		// configure the port
-		d.put("http.port", new Integer(getPort())); //$NON-NLS-1$
+		configurePort();
+		d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
 
 		// set the base URL
 		d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
+		d.put("other.info", "org.eclipse.help"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// suppress Jetty INFO/DEBUG messages to stderr
 		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$
 		
 		try {
 			JettyConfigurator.startServer(webappName, d);
-			ensureBundleStarted("org.eclipse.equinox.http.registry"); //$NON-NLS-1$
+			checkBundle();
 		}
 		catch (Exception e) {
 			HelpBasePlugin.logError("An error occured while starting the help server", e); //$NON-NLS-1$
+		}
+	}
+	
+	/*
+	 * Ensures that the bundle with the specified name and the highest available
+	 * version is started and reads the port number
+	 */
+	private static void checkBundle() throws InvalidSyntaxException, BundleException {
+		Bundle bundle = Platform.getBundle("org.eclipse.equinox.http.registry"); //$NON-NLS-1$if (bundle != null) {
+		if (bundle.getState() == Bundle.RESOLVED) {
+			bundle.start(Bundle.START_TRANSIENT);
+		}
+		if (port == -1) {
+			// Jetty selected a port number for us
+			ServiceReference[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=org.eclipse.help)"); //$NON-NLS-1$ //$NON-NLS-2$
+			Object assignedPort = reference[0].getProperty("http.port"); //$NON-NLS-1$
+			port = Integer.parseInt((String)assignedPort);
 		}
 	}
 
@@ -58,6 +79,10 @@ public class WebappManager {
 	}
 
 	public static int getPort() {
+		return port;
+	}
+
+	private static void configurePort() {
 		if (port == -1) {
 			String portCommandLineOverride = HelpBasePlugin.getBundleContext().getProperty("server_port"); //$NON-NLS-1$
 			if (portCommandLineOverride != null && portCommandLineOverride.trim().length() > 0) {
@@ -69,9 +94,15 @@ public class WebappManager {
 					HelpBasePlugin.logError(msg, e);
 				}
 			}
-			if (port == -1) {
-				port = SocketUtil.findUnusedLocalPort();
-			}
+		}
+	}
+	
+	/*
+	 * Get the port number which will be passed to Jetty
+	 */
+	private static int getPortParameter() {
+		if (port == -1) { 
+			return AUTO_SELECT_JETTY_PORT;
 		}
 		return port;
 	}
@@ -92,16 +123,4 @@ public class WebappManager {
 	private WebappManager() {
 	}
 	
-	/*
-	 * Ensures that the bundle with the specified name and the highest available
-	 * version is started.
-	 */
-	private static void ensureBundleStarted(String symbolicName) throws BundleException {
-		Bundle bundle = Platform.getBundle(symbolicName);
-		if (bundle != null) {
-			if (bundle.getState() == Bundle.RESOLVED) {
-				bundle.start(Bundle.START_TRANSIENT);
-			}
-		}
-	}
 }
