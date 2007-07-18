@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
+import org.eclipse.core.commands.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizard;
@@ -23,8 +24,10 @@ import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.commands.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * A global refresh action that allows the user to select the participant to refresh 
@@ -44,8 +47,8 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	private Action synchronizeAction;
 	private IWorkbenchWindow window;
 	private IAction actionProxy;
-	private HandlerSubmission syncAll;
-	private HandlerSubmission syncLatest;
+	private IHandlerActivation syncAll;
+	private IHandlerActivation syncLatest;
 
 	class RefreshParticipantAction extends Action {
 		private ISynchronizeParticipantReference participant;
@@ -64,29 +67,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	}
 
 	public GlobalRefreshAction() {
-		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { 
-			public void run() {
-				IWizard wizard = new GlobalSynchronizeWizard();
-				WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-				dialog.open();
-			}
-		};
-		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
-		synchronizeAction.setActionDefinitionId("org.eclipse.team.ui.synchronizeAll"); //$NON-NLS-1$
-		
-		// hook up actions to the commands
-		IHandler handler = new ActionHandler(synchronizeAction);
-        syncAll = new HandlerSubmission(null,
-                null, null, "org.eclipse.team.ui.synchronizeAll", handler, Priority.LOW);	 //$NON-NLS-1$
-		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(syncAll);
-				
-		handler = new ActionHandler(this);
-        syncLatest = new HandlerSubmission(null,
-                null, null, "org.eclipse.team.ui.synchronizeLast", handler, Priority.MEDIUM);	 //$NON-NLS-1$
-		PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(syncLatest);
-		
-		setMenuCreator(this);
-		TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);
+		// Nothing to do
 	}
 
 	/*
@@ -102,10 +83,15 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		TeamUI.getSynchronizeManager().removeSynchronizeParticipantListener(this);
 		
 		// handlers
-		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(syncAll);
-		syncAll.getHandler().dispose();
-		PlatformUI.getWorkbench().getCommandSupport().removeHandlerSubmission(syncLatest);
-		syncLatest.getHandler().dispose();
+		if (window != null) {
+			IHandlerService hs = (IHandlerService)window.getService(IHandlerService.class);
+			if (hs != null) {
+				if (syncAll != null)
+					hs.deactivateHandler(syncAll);
+				if (syncLatest != null)
+					hs.deactivateHandler(syncLatest);
+			}
+		}
 	}
 
 	/*
@@ -147,6 +133,40 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	 */
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
+
+		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { 
+			public void run() {
+				IWizard wizard = new GlobalSynchronizeWizard();
+				WizardDialog dialog = new WizardDialog(GlobalRefreshAction.this.window.getShell(), wizard);
+				dialog.open();
+			}
+		};
+		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW));
+		synchronizeAction.setActionDefinitionId("org.eclipse.team.ui.synchronizeAll"); //$NON-NLS-1$
+		
+		IHandlerService hs = (IHandlerService)window.getService(IHandlerService.class);
+		if (hs != null) {
+			// hook up actions to the commands
+			IHandler handler = new AbstractHandler() {
+				public Object execute(ExecutionEvent event)
+						throws ExecutionException {
+					synchronizeAction.run();
+					return null;
+				}
+			};
+			syncAll = hs.activateHandler("org.eclipse.team.ui.synchronizeAll", handler); //$NON-NLS-1$
+					
+			handler = new AbstractHandler() {
+				public Object execute(ExecutionEvent event)
+						throws ExecutionException {
+					run();
+					return null;
+				}
+			};
+	        syncLatest = hs.activateHandler("org.eclipse.team.ui.synchronizeLast", handler);	 //$NON-NLS-1$
+		}
+		setMenuCreator(this);
+		TeamUI.getSynchronizeManager().addSynchronizeParticipantListener(this);
 	}
 
 	public void run() {
