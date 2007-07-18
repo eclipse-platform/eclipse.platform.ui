@@ -64,7 +64,7 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
 content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.Viewer:org.eclipse.compare.IViewerCreator"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.compare.IViewerCreator"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -101,6 +101,7 @@ content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreat
          </attribute>
       </complexType>
    </element>
+
 
    <annotation>
       <appInfo>
