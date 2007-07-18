@@ -1969,18 +1969,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		sb1.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 			    if (fSynchronizedScrolling) {
-					int max= sb1.getMaximum()-sb1.getThumb();
-					double v= 0.0;
-					if (max > 0)
-						v= (float)sb1.getSelection() / (float)max;
-					if (st2.isVisible()) {
-						ScrollBar sb2= st2.getHorizontalBar();
-						st2.setHorizontalPixel((int)((sb2.getMaximum()-sb2.getThumb()) * v));
-					}
-					if (st3.isVisible()) {
-						ScrollBar sb3= st3.getHorizontalBar();
-						st3.setHorizontalPixel((int)((sb3.getMaximum()-sb3.getThumb()) * v));
-					}
+					int v= sb1.getSelection();
+					if (st2.isVisible())
+						st2.setHorizontalPixel(v);
+					if (st3.isVisible())
+						st3.setHorizontalPixel(v);
 					workaround65205();
 			    }
 			}
