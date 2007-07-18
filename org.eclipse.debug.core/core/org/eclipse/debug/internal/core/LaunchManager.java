@@ -1277,7 +1277,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						stream = file.getContents(true);
 					}
 					info = createInfoFromXML(stream);
-					fLaunchConfigurations.put(config, info);
+					synchronized (this) {
+						fLaunchConfigurations.put(config, info);
+					}
 				} catch (FileNotFoundException e) {
 					throwException(config, e);					
 				} catch (SAXException e) {
@@ -2008,7 +2010,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param config the launch configuration that was changed
 	 */
 	protected void launchConfigurationChanged(ILaunchConfiguration config) {
-		fLaunchConfigurations.remove(config);
+		synchronized(this) {
+			fLaunchConfigurations.remove(config);
+		}
 		clearConfigNameCache();
 		if (isValid(config)) {
 			// in case the config has been refreshed and it was removed from the
