@@ -159,7 +159,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 						getContainer().run(true, true, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 								try {
-									location.validateConnection(monitor);
+									validateLocation(monitor);
 								} catch (CVSException e) {
 									throw new InvocationTargetException(e);
 								}
@@ -188,7 +188,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		}
 	}
 
-	private ICVSRemoteFolder[] internalGetSelectedModules() {
+	/* package */ ICVSRemoteFolder[] internalGetSelectedModules() {
 		if (moduleList != null && moduleList.getControl().isEnabled()) {
 			ISelection selection = moduleList.getSelection();
 			if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
@@ -204,25 +204,28 @@ public class ModuleSelectionPage extends CVSWizardPage {
 				return (ICVSRemoteFolder[]) result.toArray(new ICVSRemoteFolder[result.size()]);
 			}
 		} else {
-			ICVSRemoteFolder folder = null;
 			if (moduleName != null) {
-				folder = internalCreateModuleHandle(moduleName);
-			} else {
-				if (project != null) {
-					folder = internalCreateModuleHandle(project.getName());
-				}
-			}
-			if (folder != null) {
-				return new ICVSRemoteFolder[] { folder };
+				return internalCreateModuleHandle(moduleName);
+			} else if (project != null) {
+				return internalCreateModuleHandle(project.getName());
 			}
 		} 
 		return new ICVSRemoteFolder[0];
 	}
 	
-	private ICVSRemoteFolder internalCreateModuleHandle(String name) {
+	private ICVSRemoteFolder[] internalCreateModuleHandle(String name) {
 		ICVSRepositoryLocation location = getLocation();
-		if (location == null) return null;
-		return location.getRemoteFolder(name, CVSTag.DEFAULT);
+		if (location == null) return new ICVSRemoteFolder[0];
+		String[] names = name.split(","); //$NON-NLS-1$
+		int length = names.length;
+		java.util.List folders = new ArrayList();
+		for (int i = 0; i < length; i++) {
+			// call trim() in case the user has added spaces after the commas
+			String trimmedName = names[i].trim();
+			if (trimmedName.length() > 0)
+				folders.add(location.getRemoteFolder(trimmedName, CVSTag.DEFAULT));
+		}
+		return (ICVSRemoteFolder[]) folders.toArray(new ICVSRemoteFolder[folders.size()]);
 	}
 	
 	/**
@@ -298,7 +301,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		result.getTree().addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
 				if (getSelectedModule() != null) {
-					ModuleSelectionPage.this.getContainer().showPage(getNextPage());
+					gotoNextPage();
 				}
 			}
 		});
@@ -330,5 +333,13 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	}
 	public void setSupportsMultiSelection(boolean supportsMultiSelection) {
 		this.supportsMultiSelection = supportsMultiSelection;
+	}
+
+	/* package */ void gotoNextPage() {
+		getContainer().showPage(getNextPage());
+	}
+
+	/* package */ void validateLocation(IProgressMonitor monitor) throws CVSException {
+		location.validateConnection(monitor);
 	}
 }
