@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.lang.reflect.*;
 import java.net.*;
 
@@ -18,16 +19,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 
-import com.jcraft.jsch.SocketFactory;
-
 /**
  * Class copied from "org.eclipse.jsch.internal.core"
  */
-public class ResponsiveSocketFactory implements SocketFactory {
+public class ResponsiveSocketFactory {
   private static final String JAVA_NET_PROXY="java.net.Proxy"; //$NON-NLS-1$
   private static final int DEFAULT_TIMEOUT=60; // Seconds
-  InputStream in = null;
-  OutputStream out = null;
   private IProgressMonitor monitor;
   private final int timeout;
   private static Class proxyClass;
@@ -37,16 +34,6 @@ public class ResponsiveSocketFactory implements SocketFactory {
       monitor = new NullProgressMonitor();
     this.monitor = monitor;
     this.timeout=timeout;
-  }
-  public InputStream getInputStream(Socket socket) throws IOException {
-    if (in == null)
-      in = socket.getInputStream();
-    return in;
-  }
-  public OutputStream getOutputStream(Socket socket) throws IOException {
-    if (out == null)
-      out = socket.getOutputStream();
-    return out;
   }
   public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
     Socket socket = null;
