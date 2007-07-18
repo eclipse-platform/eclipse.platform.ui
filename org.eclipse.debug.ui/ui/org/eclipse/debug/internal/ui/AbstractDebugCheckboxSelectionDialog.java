@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Table;
 public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebugSelectionDialog {
 	
 	/**
-	 * Whether to add Select All / Deselect All buttons to the custom footer controls.
+	 * Whether to add Select All / De-select All buttons to the custom footer controls.
 	 */
 	private boolean fShowSelectButtons = false;
 	
@@ -67,6 +67,7 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 			getCheckBoxTableViewer().setCheckedElements(selectedElements.toArray());
 			getCheckBoxTableViewer().setSelection(StructuredSelection.EMPTY);
 		}
+		super.initializeControls();
 	}
 	
 	/* (non-Javadoc)
@@ -93,31 +94,17 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 	 */
 	private class DefaultCheckboxListener implements ICheckStateListener{
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			refreshEnablement();
+			getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 		}
 	}
 	
-	/**
-	 * Provides an opportunity to update the enablement of the OK button and other controls.
-	 * By default, updates the OK button to be enabled only if at least one element in the
-	 * checkbox viewer is checked.
-	 * 
-	 * This class calls this method when the dialog is first opened, when a checkStateChanged event occurs
-	 * (if the default listener is used), and when the select all or deselect all buttons are pressed (if they
-	 * are enabled).
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#isValid()
 	 */
-	protected void refreshEnablement(){
-		getButton(IDialogConstants.OK_ID).setEnabled(getCheckBoxTableViewer().getCheckedElements().length > 0);
+	protected boolean isValid() {
+		return getCheckBoxTableViewer().getCheckedElements().length > 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
-		refreshEnablement();
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
@@ -139,14 +126,14 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					getCheckBoxTableViewer().setAllChecked(true);
-					refreshEnablement();
+					getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 				}
 			});
 			button = SWTFactory.createPushButton(comp, DebugUIMessages.AbstractDebugCheckboxSelectionDialog_1, null);
 			button.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					getCheckBoxTableViewer().setAllChecked(false);
-					refreshEnablement();
+					getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 				}
 			});
 		}
@@ -154,10 +141,10 @@ public abstract class AbstractDebugCheckboxSelectionDialog extends AbstractDebug
 	
 	/**
 	 * If this setting is set to true before the dialog is opened, a Select All and 
-	 * a Deselect All button will be added to the custom footer controls.  The default
+	 * a De-select All button will be added to the custom footer controls.  The default
 	 * setting is false.
 	 * 
-	 * @param setting whether to show the select all and deselect all buttons
+	 * @param setting whether to show the select all and de-select all buttons
 	 */
 	protected void setShowSelectAllButtons(boolean setting){
 		fShowSelectButtons = setting;

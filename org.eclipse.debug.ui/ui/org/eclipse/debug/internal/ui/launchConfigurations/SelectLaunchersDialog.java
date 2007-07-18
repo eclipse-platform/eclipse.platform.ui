@@ -145,15 +145,6 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
-	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
-		// Even if a user does not change anything, they can still press ok
-		getButton(IDialogConstants.OK_ID).setEnabled(true);
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomHeaderControls(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addCustomHeaderControls(Composite parent) {
@@ -233,6 +224,7 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 					viewer.setSelection(new StructuredSelection());
 					viewer.setAllChecked(false);
 				}
+				getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 			}
 			catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		}

@@ -61,18 +61,12 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 	protected void addViewerListeners(StructuredViewer viewer) {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
-				getButton(IDialogConstants.OK_ID).setEnabled(false);
-				ISelection selection = fListViewer.getSelection();
-				if (selection instanceof IStructuredSelection){
-					if (((IStructuredSelection)selection).size() == 1){
-						getButton(IDialogConstants.OK_ID).setEnabled(true);
-					}
-				}		
+				getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 			}
 		});
 		viewer.addDoubleClickListener(new IDoubleClickListener(){
 			public void doubleClick(DoubleClickEvent event) {
-				if (getButton(IDialogConstants.OK_ID).isEnabled()){
+				if (isValid()){
 					okPressed();
 				}
 			}
@@ -80,11 +74,16 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#isValid()
 	 */
-	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
-		getButton(IDialogConstants.OK_ID).setEnabled(false);
+	protected boolean isValid() {
+		if(fListViewer != null) {
+			ISelection sel = fListViewer.getSelection();
+			if(sel instanceof IStructuredSelection) {
+				return ((IStructuredSelection)sel).size() == 1;
+			}
+		}
+		return false;
 	}
 	
     /* (non-Javadoc)

@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -28,9 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
- * This class provides the framework for general selection dialog class.
- * 
- * TODO Use this abstract class hierarchy instead of the SelectionDialog for dialogs in the debug plugin
+ * This class provides the framework for a general selection dialog class.
  * 
  * @see AbstractDebugListSelectionDialog
  * @see AbstractDebugCheckboxSelectionDialog
@@ -68,6 +67,16 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 * @return the viewer to use in the dialog
 	 */
 	protected abstract StructuredViewer createViewer(Composite parent);
+	
+	/**
+	 * Returns if the dialog and/or current selection is/are valid.
+	 * This method is polled when selection changes are made to update the enablement
+	 * of the OK button by default 
+	 * @return true if the dialog is in a valid state, false otherwise
+	 * 
+	 * @since 3.4
+	 */
+	protected abstract boolean isValid();
 	
 	/**
 	 * Returns the content provider for the viewer
@@ -123,11 +132,14 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	}
 	
 	/**
-	 * This method allows the newly created controls to be initialized, with this method being called from
-	 * the createDialogArea method
+	 * This method allows the newly created controls to be initialized.
+	 * This method is called only once all controls have been created from the 
+	 * <code>createContents</code> method.
+	 * 
+	 * By default this method initializes the OK button control.
 	 */
 	protected void initializeControls() {
-		//do nothing by default
+		getButton(IDialogConstants.OK_ID).setEnabled(isValid());
 	}
 	
 	/**
@@ -138,6 +150,15 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	protected Viewer getViewer(){
     	return fViewer;
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Composite comp = (Composite) super.createContents(parent);
+		initializeControls();
+		return comp;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
@@ -164,7 +185,6 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		}
 		addViewerListeners(fViewer);
 		addCustomFooterControls(comp);
-		initializeControls();
 		Dialog.applyDialogFont(comp);
 		String help = getHelpContextId();
 		if(help != null) {
@@ -206,10 +226,10 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 				}
 			}
 			catch (NumberFormatException nfe) {
-				return new Point(300, 350);
+				return new Point(350, 350);
 			}
 		}
-		return new Point(300, 350);
+		return new Point(350, 350);
 	}
 	
 }
