@@ -26,7 +26,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import com.ibm.icu.text.DateFormat;
 
-public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput, IURIEditorInput {
+public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput {
 
 	private final Object fileRevision;
 	private final IStorage storage;

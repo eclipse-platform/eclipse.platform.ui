@@ -30,7 +30,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * An editor input for a file in a repository.
  */
-public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput, IURIEditorInput {
+public class RemoteFileEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput {
 	ICVSRemoteFile file;
 	IStorage storage;
 
