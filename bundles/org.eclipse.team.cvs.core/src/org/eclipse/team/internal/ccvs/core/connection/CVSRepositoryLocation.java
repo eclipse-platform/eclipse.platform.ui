@@ -419,8 +419,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/**
-	 * Return the list of plugged-in connection methods.
-	 * @return the list of plugged-in connection methods
+	 * Return the sorted array of plugged-in connection methods.
+	 * @return the sorted array of plugged-in connection methods
 	 */
 	public static IConnectionMethod[] getPluggedInConnectionMethods() {
 		if(pluggedInConnectionMethods==null) {
@@ -445,7 +445,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					}
 				}
 			}
-			pluggedInConnectionMethods = (IConnectionMethod[])connectionMethods.toArray(new IConnectionMethod[0]);
+			IConnectionMethod[] methods = (IConnectionMethod[]) connectionMethods.toArray(new IConnectionMethod[0]);
+			Arrays.sort(methods, new Comparator(){
+				public int compare(Object o1, Object o2) {
+					if (o1 instanceof IConnectionMethod && o2 instanceof IConnectionMethod) {
+						IConnectionMethod cm1 = (IConnectionMethod) o1;
+						IConnectionMethod cm2 = (IConnectionMethod) o2;
+						return cm1.getName().compareTo(cm2.getName());
+					}
+					return 0;
+				}});
+			pluggedInConnectionMethods = methods;
 		}
 		return pluggedInConnectionMethods;
 	}

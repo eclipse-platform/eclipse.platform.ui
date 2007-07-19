@@ -11,10 +11,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -427,13 +425,16 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			connectionMethodCombo.add(methods[i].getName());
 		}
 		
-		connectionMethodCombo.select(0);
+		// pserver is a default connection method
+		int defaultIndex = connectionMethodCombo.indexOf("pserver") != -1 ? connectionMethodCombo.indexOf("pserver") : 0;  //$NON-NLS-1$ //$NON-NLS-2$
+		
+		connectionMethodCombo.select(defaultIndex);
 		useDefaultPort.setSelection(true);
 		
 		if(properties != null) {
 			String method = properties.getProperty("connection"); //$NON-NLS-1$
 			if (method == null) {
-				connectionMethodCombo.select(0);
+				connectionMethodCombo.select(defaultIndex);
 			} else {
 				connectionMethodCombo.select(connectionMethodCombo.indexOf(method));
 			}
