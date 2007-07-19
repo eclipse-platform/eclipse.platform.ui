@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
@@ -55,7 +56,7 @@ public class FieldMarkerGroup implements IField {
 		 * @return MarkerGroupingEntry or <code>null</code> if there is not
 		 *         entry.
 		 */
-		public MarkerGroupingEntry testAttribute(ConcreteMarker marker) {
+		public MarkerGroupingEntry testAttribute(IMarker marker) {
 			return null;
 		}
 	}
@@ -98,19 +99,20 @@ public class FieldMarkerGroup implements IField {
 		 * 
 		 * @see org.eclipse.ui.views.markers.internal.FieldMarkerGroup.EntryMapping#testAttribute(org.eclipse.ui.views.markers.internal.ConcreteMarker)
 		 */
-		public MarkerGroupingEntry testAttribute(ConcreteMarker marker) {
+		public MarkerGroupingEntry testAttribute(IMarker marker) {
 			Object value;
-			
-			if(!marker.getMarker().exists())
-				return null;//If the marker was deleted during the update drop it
-			
+
+			if (!marker.exists())
+				return null;// If the marker was deleted during the update drop
+							// it
+
 			try {
-				value = marker.getMarker().getAttribute(attribute);
+				value = marker.getAttribute(attribute);
 			} catch (CoreException e) {
 				Util.log(e);
 				return null;
 			}
-			
+
 			if (value != null && attributeValue.equals(value.toString())) {
 				return groupingEntry;
 			}
@@ -206,15 +208,29 @@ public class FieldMarkerGroup implements IField {
 	 * Find the group value. If it cannot be found in an attribute mapping then
 	 * return null;
 	 * 
-	 * @param marker
+	 * @param concreteMarker
 	 * @return String or <code>null</code>
 	 */
-	private MarkerGroupingEntry findGroupValue(ConcreteMarker marker) {
+	private MarkerGroupingEntry findGroupValue(ConcreteMarker concreteMarker) {
 
-		if (typesToMappings.containsKey(marker.getType())) {
+		String type = concreteMarker.getType();
+		IMarker marker = concreteMarker.getMarker();
+
+		return findGroupValue(type, marker);
+
+	} 
+
+	/**
+	 * Find the group for the marker of the specified marker type.
+	 * @param type
+	 * @param marker
+	 * @return MarkerGroupingEntry
+	 */
+	public MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
+		if (typesToMappings.containsKey(type)) {
 			EntryMapping defaultMapping = null;
-			Iterator mappings = ((Collection) typesToMappings.get(marker
-					.getType())).iterator();
+			Iterator mappings = ((Collection) typesToMappings.get(type))
+					.iterator();
 			while (mappings.hasNext()) {
 				EntryMapping mapping = (EntryMapping) mappings.next();
 				if (mapping.hasAttributes()) {
@@ -234,12 +250,7 @@ public class FieldMarkerGroup implements IField {
 		}
 
 		return undefinedEntry;
-
-	} /*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
-		 */
+	}
 
 	public Image getImage(Object obj) {
 		return null;
@@ -337,6 +348,7 @@ public class FieldMarkerGroup implements IField {
 
 	/**
 	 * Return the marker types that match and are subtypes of markerType.
+	 * 
 	 * @param markerType
 	 * @return MarkerType[]
 	 */
@@ -388,24 +400,25 @@ public class FieldMarkerGroup implements IField {
 
 	/**
 	 * Remove the entry from all of the entries in the receiver.
+	 * 
 	 * @param entry
 	 */
 	public void remove(MarkerGroupingEntry entry) {
 		Iterator entries = typesToMappings.values().iterator();
 		Collection removeCollection = new ArrayList();
-		while(entries.hasNext()){
+		while (entries.hasNext()) {
 			Collection mappings = (Collection) entries.next();
 			Iterator mappingsIterator = mappings.iterator();
-			while(mappingsIterator.hasNext()){
+			while (mappingsIterator.hasNext()) {
 				EntryMapping next = (EntryMapping) mappingsIterator.next();
-				if(next.groupingEntry.equals(entry)){
+				if (next.groupingEntry.equals(entry)) {
 					removeCollection.add(next);
 				}
-					
+
 			}
 			mappings.removeAll(removeCollection);
 			removeCollection.clear();
 		}
-		
+
 	}
 }

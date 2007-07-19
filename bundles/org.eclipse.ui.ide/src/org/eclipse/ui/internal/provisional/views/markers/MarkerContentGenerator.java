@@ -87,7 +87,7 @@ public class MarkerContentGenerator {
 	public MarkerField[] getVisibleFields() {
 		return visibleFields;
 	}
-	
+
 	/**
 	 * Get the fields that this content generator is using to sort
 	 * 
@@ -424,19 +424,23 @@ public class MarkerContentGenerator {
 	 * @return <code>true</code> if a hierarchy is being shown.
 	 */
 	public boolean isShowingHierarchy() {
-		return categoryField == null;
+		return categoryField != null;
 	}
 
 	/**
 	 * Initialise the receiver from the configuration element. This is done as a
 	 * post processing step.
+	 * 
+	 * @param registry
+	 *            the MarkerSupportRegistry being used to initialise the
+	 *            receiver.
 	 */
-	public void initializeFromConfigurationElement() {
+	public void initializeFromConfigurationElement(
+			MarkerSupportRegistry registry) {
 		String categoryName = configurationElement
 				.getAttribute(ATTRIBUTE_DEFAULT_MARKER_GROUPING);
 		if (categoryName != null) {
-			FieldMarkerGroup group = MarkerSupportRegistry.getInstance()
-					.getMarkerGroup(categoryName);
+			FieldMarkerGroup group = registry.getMarkerGroup(categoryName);
 			if (group != null)
 				categoryField = new MarkerGroupField(group);
 		}
@@ -446,10 +450,11 @@ public class MarkerContentGenerator {
 		Collection sortFieldList = new ArrayList();
 		Collection visibleFieldList = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
-			MarkerField field = MarkerSupportRegistry.getInstance().getField(
-					elements[i].getAttribute(ATTRIBUTE_ID));
-			if (field != null)
-				sortFieldList.add(field);
+			MarkerField field = registry.getField(elements[i]
+					.getAttribute(ATTRIBUTE_ID));
+			if (field == null)
+				continue;
+			sortFieldList.add(field);
 			if (!VALUE_FALSE
 					.equals(elements[i].getAttribute(ATTRIBUTE_VISIBLE)))
 				visibleFieldList.add(field);

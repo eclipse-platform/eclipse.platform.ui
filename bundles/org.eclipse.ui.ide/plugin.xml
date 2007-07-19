@@ -558,6 +558,14 @@
             class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            icon="$nl$/icons/full/eview16/problems_view.gif"
+            id="org.eclipse.ui.ide.MarkersView"
+            name="%Views.Markers">
+      </view>
     
    </extension>
    <extension
@@ -1015,6 +1023,42 @@
   
    <extension
          point="org.eclipse.ui.ide.markerSupport">
+      <markerContentGenerator
+            defaultForPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            defaultMarkerGrouping="org.eclipse.ui.ide.severity"
+            id="org.eclipse.ui.ide.problemsGenerator"
+            name="%ContentGenerator.Problems">
+         <markerFilterReference
+               id="org.eclipse.ui.ide.selectedWarnings">
+         </markerFilterReference>
+         <markerFilterReference
+               id="org.eclipse.ui.ide.allErrors">
+         </markerFilterReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.severityAndMessageField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.resourceField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.pathField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.locationField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.idField"
+               visible="false">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.creationTimeField"
+               visible="false">
+         </markerFieldReference>
+      </markerContentGenerator>
       <markerGrouping
             id="org.eclipse.ui.ide.severity"
             label="%markerGrouping.severity"
@@ -1048,6 +1092,51 @@
                markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
                value="0"/>
       </markerAttributeGrouping>
+      <markerFilter
+            enabled="true"
+            id="org.eclipse.ui.ide.allErrors"
+            name="All Errors"
+            scope="ON_ANY"
+            severity="ERROR">
+      </markerFilter>
+      <markerFilter
+            enabled="true"
+            id="org.eclipse.ui.ide.selectedWarnings"
+            name="Warnings on Selected Items"
+            scope="ON_SELECTED_AND_CHILDREN"
+            severity="WARNING">
+      </markerFilter>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerCreationTimeField"
+            id="org.eclipse.ui.ide.creationTimeField"
+            name="%Field.CreationTimeLabel">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerSeverityAndMessageField"
+            id="org.eclipse.ui.ide.severityAndMessageField"
+            name="%Field.SeverityAndMessageLabel">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerResourceField"
+            id="org.eclipse.ui.ide.resourceField"
+            name="%Field.ResourceLabel">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerPathField"
+            id="org.eclipse.ui.ide.pathField"
+            name="%Field.PathLabel">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerLocationField"
+            id="org.eclipse.ui.ide.locationField"
+            name="%Field.LocationLabel">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerIDField"
+            id="org.eclipse.ui.ide.idField"
+            name="%Field.IDLabel">
+      </markerField>
+     
    </extension>
    <extension
          point="org.eclipse.ui.menus">

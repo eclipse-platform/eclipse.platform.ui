@@ -11,12 +11,17 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
+import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
 
 /**
  * MarkerGroupField is the field that wrappers a FieldMarkerGroup.
+ * 
  * @since 3.4
- *
+ * 
  */
 class MarkerGroupField extends MarkerField {
 
@@ -24,24 +29,41 @@ class MarkerGroupField extends MarkerField {
 
 	/**
 	 * Create an instance of the receiver.
+	 * 
 	 * @param group
 	 */
 	public MarkerGroupField(FieldMarkerGroup group) {
 		markerGroup = group;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
 		return markerGroup.getColumnHeaderText();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return null;
+		if (item.isConcrete()) {
+			IMarker marker = ((MarkerEntry) item).getMarker();			
+			MarkerGroupingEntry groupingEntry;
+			try {
+				groupingEntry = markerGroup.findGroupValue(marker.getType(), marker);
+				return groupingEntry.getLabel();
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(e.getStatus());
+				return MarkerUtilities.EMPTY_STRING;
+			}
+			
+		}
+		return item.getDescription();
 	}
 
 }

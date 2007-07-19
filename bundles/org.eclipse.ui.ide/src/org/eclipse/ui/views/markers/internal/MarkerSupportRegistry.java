@@ -358,7 +358,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * Set up the fields and filters
 	 */
 	private void postProcessContentGenerators() {
-		// TODO Auto-generated method stub
+		Iterator generatorIterator = generators.values().iterator();
+		while (generatorIterator.hasNext()) {
+			MarkerContentGenerator generator = (MarkerContentGenerator) generatorIterator
+					.next();
+			generator.initializeFromConfigurationElement(this);
+		}
 
 	}
 
@@ -827,7 +832,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	public MarkerContentGenerator generatorFor(
 			IPerspectiveDescriptor perspective) {
 		String id = perspective.getId();
-		Iterator generatorIterator = generators.entrySet().iterator();
+		Iterator generatorIterator = generators.values().iterator();
 		while (generatorIterator.hasNext()) {
 			MarkerContentGenerator generator = (MarkerContentGenerator) generatorIterator
 					.next();
@@ -861,12 +866,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	/**
 	 * Return the field that maps to id.
+	 * 
 	 * @param id
 	 * @return {@link MarkerField} or <code>null</code>
 	 */
 	public MarkerField getField(String id) {
 		if (fields.containsKey(id))
-			return (MarkerField) markerGroups.get(id);
+			return (MarkerField) fields.get(id);
 		return null;
 	}
 
