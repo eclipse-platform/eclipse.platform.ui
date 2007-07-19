@@ -30,7 +30,7 @@ public class WebappManager {
 	private static int port = -1;
 	private static final int AUTO_SELECT_JETTY_PORT = 0;
 	
-	public static void start(String webappName) throws CoreException {
+	public static void start(String webappName) throws Exception {
 		Dictionary d = new Hashtable();
 		
 		configurePort();
@@ -41,15 +41,11 @@ public class WebappManager {
 		d.put("other.info", "org.eclipse.help"); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// suppress Jetty INFO/DEBUG messages to stderr
-		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$
+		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
+
+		JettyConfigurator.startServer(webappName, d);
+		checkBundle();
 		
-		try {
-			JettyConfigurator.startServer(webappName, d);
-			checkBundle();
-		}
-		catch (Exception e) {
-			HelpBasePlugin.logError("An error occured while starting the help server", e); //$NON-NLS-1$
-		}
 	}
 	
 	/*
