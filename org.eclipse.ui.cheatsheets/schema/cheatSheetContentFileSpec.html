@@ -58,7 +58,7 @@ rendered as a single space or a line break. Whitespace immediately after the
 &lt;<b>description</b>&gt; and &lt;<b>br/</b>&gt; tags is ignored, as is
 whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 <br><br>
-<p class=code id=dtd>&lt;!ELEMENT <a name="e.item">item</a> (<a href="#e.description">description</a> , (<a href="#e.action">action</a> | <a href="#e.command">command</a> | <a href="#e.perform-when">perform-when</a> | (<a href="#e.subitem">subitem</a> | <a href="#e.conditional-subitem">conditional-subitem</a> | <a href="#e.conditional-subitem">conditional-subitem</a>)*))&gt;</p>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.item">item</a> (<a href="#e.description">description</a> , (<a href="#e.action">action</a> | <a href="#e.command">command</a> | <a href="#e.perform-when">perform-when</a> | (<a href="#e.subitem">subitem</a> | <a href="#e.conditional-subitem">conditional-subitem</a> | <a href="#e.repeated-subitem">repeated-subitem</a>)*) , <a href="#e.onCompletion">onCompletion</a>?)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST item</p>
 <p class=code id=dtdAttlist>title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>dialog&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>contextId&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>href&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
 <p></p>

@@ -125,9 +125,10 @@ based on cheat sheet variables whose value are acquired in earlier steps.&lt;/p&
                <choice minOccurs="0" maxOccurs="unbounded">
                   <element ref="subitem"/>
                   <element ref="conditional-subitem"/>
-                  <element ref="conditional-subitem"/>
+                  <element ref="repeated-subitem"/>
                </choice>
             </choice>
+            <element ref="onCompletion" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="title" type="string" use="required">
             <annotation>
@@ -415,8 +416,6 @@ Examples:
 &lt;code&gt;translate = &quot;param2, param3&quot;&lt;/code&gt;  means translate param2 and param3 only.
 &lt;br&gt;
 &lt;code&gt;translate = &quot;&quot;&lt;/code&gt; means do not translate any parameters for this action.
-
-
                </documentation>
             </annotation>
          </attribute>
@@ -495,8 +494,6 @@ Examples:
 &lt;code&gt;translate = &quot;param2, param3&quot;&lt;/code&gt;  means translate param2 and param3 only.
 &lt;br&gt;
 &lt;code&gt;translate = &quot;&quot;&lt;/code&gt; means do not translate any parameters for this command.
-
-
                </documentation>
             </annotation>
          </attribute>
