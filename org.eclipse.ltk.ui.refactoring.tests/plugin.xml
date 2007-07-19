@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+<!--
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="org.eclipse.ltk.ui.refactoring.examples.ExampleRefactoringAction">
+         <action
+               label="Replace content (ltk.ui.refactoring.examples)"
+               tooltip="Replace content (ltk.ui.refactoring.examples)"
+               class="org.eclipse.ltk.ui.refactoring.examples.ExampleRefactoringAction"
+               menubarPath="ExampleRefactoringAction"
+               enablesFor="1"
+               id="ExampleRefactoringAction">
+         </action>
+      </objectContribution>
+   </extension>
+-->
+</plugin>
