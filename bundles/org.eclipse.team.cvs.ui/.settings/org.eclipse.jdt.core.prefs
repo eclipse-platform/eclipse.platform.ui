@@ -1,4 +1,4 @@
-#Wed Jul 18 10:32:47 EDT 2007
+#Thu Jul 19 13:17:34 EDT 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=disabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.2
@@ -44,7 +44,7 @@ org.eclipse.jdt.core.compiler.problem.redundantNullCheck=ignore
 org.eclipse.jdt.core.compiler.problem.specialParameterHidingField=disabled
 org.eclipse.jdt.core.compiler.problem.staticAccessReceiver=error
 org.eclipse.jdt.core.compiler.problem.suppressWarnings=enabled
-org.eclipse.jdt.core.compiler.problem.syntheticAccessEmulation=warning
+org.eclipse.jdt.core.compiler.problem.syntheticAccessEmulation=ignore
 org.eclipse.jdt.core.compiler.problem.typeParameterHiding=warning
 org.eclipse.jdt.core.compiler.problem.uncheckedTypeOperation=warning
 org.eclipse.jdt.core.compiler.problem.undocumentedEmptyBlock=ignore
