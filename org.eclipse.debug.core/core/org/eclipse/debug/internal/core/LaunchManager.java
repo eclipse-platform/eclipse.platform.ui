@@ -822,6 +822,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						key = null;
 						value = null;
 					}
+					else {
+						line = reader.readLine();
+					}
 				}
 				reader.close();
 			}
