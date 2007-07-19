@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -149,7 +152,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 
 	private boolean fSaved= false;
 
-	protected ReplaceDialog2(Shell parentShell, IFile[] entries, FileSearchPage page) {
+	protected ReplaceDialog2(Shell parentShell, Match[] entries, FileSearchPage page) {
 		super(parentShell);
 		Assert.isNotNull(entries);
 		Assert.isNotNull(page.getInput());
@@ -169,13 +172,9 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		return (FileSearchQuery) fPage.getInput().getQuery();
 	}
 		
-	private void initializeMarkers(IFile[] entries) {
-		for (int j= 0; j < entries.length; j++) {
-			IFile entry = entries[j];
-			Match[] matches= fPage.getDisplayedMatches(entry);
-			for (int i= 0; i < matches.length; i++) {
-				fMarkers.add(matches[i]);
-			}
+	private void initializeMarkers(Match[] matches) {
+		for (int i= 0; i < matches.length; i++) {
+			fMarkers.add(matches[i]);
 		}
 	}
 	
@@ -195,11 +194,6 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 	public int open() {
 		boolean wasAutobuild = false;
-		try {
-			wasAutobuild= disableAutobuild();
-		} catch (CoreException e) {
-			ExceptionHandler.handle(e, getShell(), getDialogTitle(), SearchMessages.ReplaceDialog2_error_disableAutobuild); 
-		}
 		try {
 			return super.open();
 		} finally {
@@ -726,9 +720,8 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		List matching= new ArrayList();
 		for (int i= 0; i < fMarkers.size(); i++) {
 			Match marker= (Match)fMarkers.get(i);
-			if (!resource.equals(marker.getElement()))
-				break;
-			matching.add(marker);
+			if (resource.equals(marker.getElement()))
+				matching.add(marker);
 		}
 		Match[] markers= new Match[matching.size()];
 		return (Match[])matching.toArray(markers);

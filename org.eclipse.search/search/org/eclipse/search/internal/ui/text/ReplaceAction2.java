@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -18,24 +21,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-import org.eclipse.search.ui.NewSearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
-
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
-import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -43,8 +32,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.swt.widgets.Item;
 
@@ -61,10 +57,18 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
+import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
+
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
+
 /* package */ class ReplaceAction2 extends Action {
 	
 	private IWorkbenchSite fSite;
-	private IFile[] fElements;
+	private Match[] fMatchesToReplace;
 	private FileSearchPage fPage;
 	
 	private static class ItemIterator implements Iterator {
@@ -90,17 +94,17 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		}
 	}
 
-	public ReplaceAction2(FileSearchPage page, IFile[] elements) {
+	public ReplaceAction2(FileSearchPage page, Match[] matches) {
 		Assert.isNotNull(page);
 		fSite= page.getSite();
-		if (elements != null)
-			fElements= elements;
+		if (matches != null)
+			fMatchesToReplace= matches;
 		else
-			fElements= new IFile[0];
+			fMatchesToReplace= new Match[0];
 		fPage= page;
 		
 		setText(SearchMessages.ReplaceAction_label_all); 
-		setEnabled(!(fElements.length == 0));
+		setEnabled(!(fMatchesToReplace.length == 0));
 	}
 	
 	public ReplaceAction2(FileSearchPage page) {
@@ -115,10 +119,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		} else if (viewer instanceof TableViewer) {
 			items= ((TableViewer)viewer).getTable().getItems();
 		}
-		fElements= collectFiles(new ItemIterator(items));
+		fMatchesToReplace= collectMatches(new ItemIterator(items));
 		
 		setText(SearchMessages.ReplaceAction_label_all); 
-		setEnabled(!(fElements.length == 0));
+		setEnabled(!(fMatchesToReplace.length == 0));
 	}
 
 	
@@ -126,37 +130,41 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		fSite= page.getSite();
 		fPage= page;
 		setText(SearchMessages.ReplaceAction_label_selected); 
-		fElements= collectFiles(selection.iterator());
-		setEnabled(!(fElements.length == 0));
+		fMatchesToReplace= collectMatches(selection.iterator());
+		setEnabled(!(fMatchesToReplace.length == 0));
 	}
 	
-	private IFile[] collectFiles(Iterator resources) {
-		final Set files= new HashSet();
+	private Match[] collectMatches(Iterator resources) {
+		final Set matches= new HashSet();
 		final AbstractTextSearchResult result= fPage.getInput();
 		if (result == null)
-			return new IFile[0];
+			return new Match[0];
 		while (resources.hasNext()) {
-			IResource resource= (IResource) resources.next();
-			try {
-				resource.accept(new IResourceProxyVisitor() {
-					public boolean visit(IResourceProxy proxy) throws CoreException {
-						if (proxy.getType() == IResource.FILE) {
-							IResource file= proxy.requestResource();
-							if (result.getMatchCount(file) > 0) {
-								files.add(file);
+			Object o= resources.next();
+			if (o instanceof Match) {
+				matches.add(o);
+			} else {
+				IResource resource= (IResource) o;
+				try {
+					resource.accept(new IResourceProxyVisitor() {
+						public boolean visit(IResourceProxy proxy) throws CoreException {
+							if (proxy.getType() == IResource.FILE) {
+								IResource file= proxy.requestResource();
+								Match[] fileMatches= result.getMatches(file);
+								for (int i= 0; i < fileMatches.length; i++) {
+									matches.add(fileMatches[i]);
+								}
+								return false;
 							}
-							return false;
+							return true;
 						}
-						return true;
-					}
-				}, IResource.NONE);
-			} catch (CoreException e) {
-				// TODO Don't know yet how to handle this. This is called when we open the context
-				// menu. A bad time to show a dialog.
-				SearchPlugin.getDefault().getLog().log(e.getStatus());
+					}, IResource.NONE);
+				} catch (CoreException e) {
+					SearchPlugin.log(e);
+				}
 			}
 		}
-		return (IFile[]) files.toArray(new IFile[files.size()]);
+		return (Match[]) matches.toArray(new Match[matches.size()]);
 	}
 
 
@@ -164,14 +172,14 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
 		ISchedulingRule rule= workspace.getRuleFactory().modifyRule(workspace.getRoot());
 		try { 
-			Platform.getJobManager().beginRule(rule, null);
+			Job.getJobManager().beginRule(rule, null);
 			if (validateResources((FileSearchQuery) fPage.getInput().getQuery())) {
-				ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage);
+				ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fMatchesToReplace, fPage);
 				dialog.open();
 			}
 		} catch (OperationCanceledException e) {
 		} finally {
-			Platform.getJobManager().endRule(rule);
+			Job.getJobManager().endRule(rule);
 		}
 	}
 	
@@ -186,22 +194,18 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		}
 
 		final List outOfDateEntries= new ArrayList();
-		for (int j= 0; j < fElements.length; j++) {
-			IFile entry = fElements[j];
-			Match[] markers= fPage.getDisplayedMatches(entry);
-			for (int i= 0; i < markers.length; i++) {
-				if (isOutOfDate((FileMatch)markers[i])) {
-					outOfDateEntries.add(entry);
-					break;
-				}				
-			}
+		for (int j= 0; j < fMatchesToReplace.length; j++) {
+			if (isOutOfDate((FileMatch)fMatchesToReplace[j])) {
+				outOfDateEntries.add(fMatchesToReplace[j]);
+				break;
+			}				
 		}
 	
 		final List outOfSyncEntries= new ArrayList();
-		for (int i= 0; i < fElements.length; i++) {
-			IFile entry = fElements[i];
+		for (int i= 0; i < fMatchesToReplace.length; i++) {
+			IFile entry = (IFile)fMatchesToReplace[i].getElement();
 			if (isOutOfSync(entry)) {
-				outOfSyncEntries.add(entry);
+				outOfSyncEntries.add(fMatchesToReplace[i]);
 			}
 		}
 		
@@ -228,9 +232,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 	private IFile[] getReadOnlyFiles() {
 		Set readOnly= new HashSet();
-		for (int i = 0; i < fElements.length; i++) {
-			if (fElements[i].isReadOnly())
-				readOnly.add(fElements[i]);
+		for (int i = 0; i < fMatchesToReplace.length; i++) {
+			IFile file= (IFile) fMatchesToReplace[i].getElement();
+			if (file.isReadOnly())
+				readOnly.add(file);
 		}
 		IFile[] readOnlyArray= new IFile[readOnly.size()];
 		return (IFile[]) readOnly.toArray(readOnlyArray);

@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -23,10 +26,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 
+import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileLabelProvider extends LabelProvider implements IRichLabelProvider {
 		
@@ -66,6 +69,13 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	 * @see org.eclipse.search.internal.ui.text.IRichLabelProvider#getRichTextLabel(java.lang.Object)
 	 */
 	public ColoredString getRichTextLabel(Object element) {
+		if (element instanceof FileMatch) {
+			FileMatch match= (FileMatch) element;
+			ColoredString str= new ColoredString(match.getLine());
+			str.colorize(match.getOffsetWithinLine(), match.getLength(), ColoredViewersManager.HIGHLIGHT_STYLE);
+			return str;
+		}
+		
 		if (!(element instanceof IResource))
 			return new ColoredString();
 
@@ -106,6 +116,9 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
+		if (element instanceof FileMatch) {
+			return getImage(((FileMatch) element).getElement()); // return image of corresponding file
+		}
 		if (!(element instanceof IResource))
 			return null;
 

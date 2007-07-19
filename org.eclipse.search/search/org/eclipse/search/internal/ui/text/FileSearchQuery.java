@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -44,6 +47,8 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 		private ArrayList fCachedMatches;
 		
+		private static final int MAX_LINE_CONTEXT= 100;
+		
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
 			fIsFileSearchOnly= isFileSearchOnly;
@@ -53,7 +58,7 @@ public class FileSearchQuery implements ISearchQuery {
 		
 		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsFileSearchOnly) {
-				fResult.addMatch(new FileMatch(file, 0, 0));
+				fResult.addMatch(new FileMatch(file, 0, 0, null, -1));
 			}
 			flushMatches();
 			return true;
@@ -67,10 +72,34 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
-			fCachedMatches.add(new FileMatch(matchRequestor.getFile(), matchRequestor.getMatchOffset(), matchRequestor.getMatchLength()));
+			int start= matchRequestor.getMatchOffset();
+			int min= Math.max(0, start - MAX_LINE_CONTEXT);
+			for (int i= start; i >= min; i--) {
+				char ch= matchRequestor.getFileContentChar(i);
+				if (isLineDelimiter(ch))
+					break;
+				if (!Character.isWhitespace(ch))
+					start= i;
+			}
+			
+			int end= matchRequestor.getMatchOffset() + matchRequestor.getMatchLength();
+			int max= Math.min(matchRequestor.getFileContentLength(), end + MAX_LINE_CONTEXT);
+			for (int i= end; i < max; i++) {
+				char ch= matchRequestor.getFileContentChar(i);
+				if (isLineDelimiter(ch))
+					break;
+				if (!Character.isWhitespace(ch))
+					end= i + 1;
+			}
+			String context= matchRequestor.getFileContent(start, end - start);
+			fCachedMatches.add(new FileMatch(matchRequestor.getFile(), matchRequestor.getMatchOffset(), matchRequestor.getMatchLength(), context, matchRequestor.getMatchOffset() - start));
 			return true;
 		}
 
+		private static boolean isLineDelimiter(char ch) {
+			return ch == '\n' || ch == '\r';
+		}
+		
 		public void beginReporting() {
 			fCachedMatches= new ArrayList();
 		}

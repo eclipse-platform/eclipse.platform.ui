@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -23,6 +26,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.Match;
 
 public class FileTreeContentProvider implements ITreeContentProvider, IFileSearchContentProvider {
 
@@ -70,7 +74,10 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		if (result != null) {
 			Object[] elements= result.getElements();
 			for (int i= 0; i < elements.length; i++) {
-				insert(elements[i],  false);
+				Match[] matches= result.getMatches(elements[i]);
+				for (int j= 0; j < matches.length; j++) {
+					insert(matches[j], false);
+				}
 			}
 		}
 	}
@@ -158,7 +165,16 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		for (int i= 0; i < updatedElements.length; i++) {
-			if (fResult.getMatchCount(updatedElements[i]) > 0)
+			if (!(updatedElements[i] instanceof Match))
+				continue;
+			Match match= (Match) updatedElements[i];
+			Match[] matches= fResult.getMatches(match.getElement());
+			boolean foundMatch= false;
+			for (int matchIndex= 0; matchIndex < matches.length; matchIndex++) {
+				if (matches[matchIndex] == match)
+					foundMatch= true;
+			}
+			if (foundMatch)
 				insert(updatedElements[i], true);
 			else
 				remove(updatedElements[i], true);
@@ -176,6 +192,10 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		if (element instanceof IResource) {
 			IResource resource = (IResource) element;
 			return resource.getParent();
+		}
+		if (element instanceof Match) {
+			Match match= (Match) element;
+			return match.getElement();
 		}
 		return null;
 	}

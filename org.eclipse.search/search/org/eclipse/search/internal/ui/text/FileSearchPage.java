@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -85,6 +89,14 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	        if (cat1 != cat2) {
 				return cat1 - cat2;
 			}
+	        
+	        if (e1 instanceof Match && e2 instanceof Match) {
+	        	Match m1= (Match) e1;
+	        	Match m2= (Match) e2;
+	        	if (m1.getElement() == m2.getElement()) {
+	        		return m1.getOffset() - m2.getOffset();
+	        	}
+	        }
 	    	
 	        String name1= fLabelProvider.getText(e1);
 	        String name2= fLabelProvider.getText(e2);
@@ -305,14 +317,46 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			AbstractTextSearchResult result= getInput();
 			if (result != null) {
 				int itemCount= ((IStructuredContentProvider) tv.getContentProvider()).getElements(getInput()).length;
-				int fileCount= getInput().getElements().length;
-				if (itemCount < fileCount) {
-					String format= SearchMessages.FileSearchPage_limited_format; 
-					return Messages.format(format, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
+				if (getLayout() == FLAG_LAYOUT_TREE) {
+					int matchCount= getInput().getMatchCount();
+					if (itemCount < matchCount) {
+						return Messages.format(SearchMessages.FileSearchPage_limited_format_matches, new Object[]{label, new Integer(itemCount), new Integer(matchCount)});
+					}
+				} else {
+					int fileCount= getInput().getElements().length;
+					if (itemCount < fileCount) {
+						return Messages.format(SearchMessages.FileSearchPage_limited_format_files, new Object[]{label, new Integer(itemCount), new Integer(fileCount)});
+					}
 				}
 			}
 		}
 		return label;
 	}
+	
+	public int getDisplayedMatchCount(Object element) {
+		if (element instanceof Match) {
+			return 1;
+		}
+		return 0;
+	}
 
+	public Match[] getDisplayedMatches(Object element) {
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			if (element instanceof Match) {
+				return new Match[] { (Match)element };
+			}
+			return new Match[0];
+		}
+		return super.getDisplayedMatches(element);
+	}
+	
+	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			for (int i = 0; i < matches.length; i++) {
+				changedElements.add(matches[i]);
+			}
+		} else {
+			super.evaluateChangedElements(matches, changedElements);
+		}
+	}
 }

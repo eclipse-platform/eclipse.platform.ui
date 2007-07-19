@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Juerg Billeter, juergbi@ethz.ch - 47136 Search view should show match objects
+ *     Ulrich Etter, etteru@ethz.ch - 47136 Search view should show match objects
+ *     Roman Fuchs, fuchsro@ethz.ch - 47136 Search view should show match objects
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
@@ -25,7 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -70,6 +72,7 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.FileTextSearchScope;
+import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 
@@ -264,10 +267,16 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 						ISearchResultPage page= view.getActivePage();
 						if (page instanceof FileSearchPage) {
 							FileSearchPage filePage= (FileSearchPage) page;
-							Object[] elements= filePage.getInput().getElements();
-							IFile[] files= new IFile[elements.length];
-							System.arraycopy(elements, 0, files, 0, files.length);
-							new ReplaceAction2(filePage, files).run();
+							Object[] files= filePage.getInput().getElements();
+							ArrayList matches= new ArrayList();
+							for (int i= 0; i < files.length; i++) {
+								Match[] fileMatches= filePage.getInput().getMatches(files[i]);
+								for (int j= 0; j < fileMatches.length; j++) {
+									matches.add(fileMatches[j]);
+								}
+							}
+							Match[] matchesArray= (Match[]) matches.toArray(new Match[matches.size()]);
+							new ReplaceAction2(filePage, matchesArray).run();
 						}
 					}
 				}
