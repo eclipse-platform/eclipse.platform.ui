@@ -11,19 +11,37 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
-import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
-import org.eclipse.team.internal.ccvs.ui.model.DateTagCategory;
-import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
-import org.eclipse.team.internal.ccvs.ui.model.VersionCategory;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.ui.model.*;
 
 public class RepositoryComparator extends ViewerComparator {
+	
+	/**
+	 * Default sorting order, by label.
+	 */
+	public static final int ORDER_DEFAULT = 0;
+
+	public static final int ORDER_LOCATION = 1;
+	
+	public static final int ORDER_HOST = 2; 
+	
+	private int order = ORDER_DEFAULT;
+	
+	public RepositoryComparator(int order) {
+		super();
+		this.order = order;
+	}
+	
+	public RepositoryComparator() {
+		super();
+	}
+	
+	public int getOrder() {
+		return order;
+	}
+	
 	public int category(Object element) {
 		if (element instanceof ICVSRemoteFolder) {
 			if (((ICVSRemoteFolder)element).isDefinedModule()) {
@@ -96,6 +114,29 @@ public class RepositoryComparator extends ViewerComparator {
 		
 		if (o1 instanceof ICVSRepositoryLocation && o2 instanceof ICVSRepositoryLocation) {
 			return ((ICVSRepositoryLocation)o1).getLocation(false).compareTo(((ICVSRepositoryLocation)o2).getLocation(false));
+		}
+		
+		if (o1 instanceof RepositoryRoot && o2 instanceof RepositoryRoot) {
+			RepositoryRoot rr1 = (RepositoryRoot) o1;
+			RepositoryRoot rr2 = (RepositoryRoot) o2;
+			
+			// use repository location strings to compare RepositoryRoots
+			ICVSRepositoryLocation rl1 = rr1.getRoot();
+			ICVSRepositoryLocation rl2 = rr2.getRoot();
+			
+			switch (order) {
+			case ORDER_DEFAULT:
+				// for default order use super.compare
+				break;
+			case ORDER_HOST:
+				if (rl1.getHost().compareTo(rl2.getHost()) != 0)
+					return rl1.getHost().compareTo(rl2.getHost());
+				// no break
+			// add other cases here
+			case ORDER_LOCATION:
+			default:
+				return (rl1.getLocation(false).compareTo(rl2.getLocation(false)));
+			}
 		}
 		
 		return super.compare(viewer, o1, o2);

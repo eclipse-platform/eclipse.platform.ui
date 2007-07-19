@@ -96,6 +96,10 @@ public class CVSUIMessages extends NLS {
 	public static String RemoveRootAction_RepositoryRemovalDialogMessageSingle;
 	public static String RemoveRootAction_RepositoryRemovalDialogTitle;
 	public static String ReplaceWithLatestRevisionAction_error;
+	public static String RepositoriesSortingActionGroup_host;
+	public static String RepositoriesSortingActionGroup_label;
+	public static String RepositoriesSortingActionGroup_location;
+	public static String RepositoriesSortingActionGroup_sortBy;
 	public static String ShowAnnotationOperation_QDAnnotateMessage;
 	public static String ShowAnnotationOperation_QDAnnotateTitle;
 	public static String SyncAction_1;

@@ -15,6 +15,9 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
@@ -55,6 +58,11 @@ public class RepositoriesView extends RemoteViewPart {
 	private PropertyDialogAction propertiesAction;
 	private RemoveRootAction removeRootAction;
 	private RemoveDateTagAction removeDateTagAction;
+	
+	private RepositoriesSortingActionGroup repositoriesSortingActionGroup;
+	private IDialogSettings dialogSettings;
+	private static final String SELECTED_COMPARATOR = "selectedComparator"; //$NON-NLS-1$
+	private String savedComparator;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
@@ -132,6 +140,12 @@ public class RepositoriesView extends RemoteViewPart {
 	 */
 	public RepositoriesView() {
 		super(VIEW_ID);		
+		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
+		dialogSettings = workbenchSettings.getSection(VIEW_ID);
+		if (dialogSettings == null) {
+			dialogSettings = workbenchSettings.addNewSection(VIEW_ID);
+		}
+		savedComparator = dialogSettings.get(SELECTED_COMPARATOR);
 	}
 
 	/**
@@ -205,8 +219,48 @@ public class RepositoriesView extends RemoteViewPart {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeAction);
 		
+		// Working Set action group
+		IPropertyChangeListener comparatorUpdater = new IPropertyChangeListener() {
+            public void propertyChange(PropertyChangeEvent event) {
+                String property = event.getProperty();
+                if (RepositoriesSortingActionGroup.CHANGE_COMPARATOR
+                        .equals(property)) {
+                    Object newValue = event.getNewValue();
+                    getViewer().setComparator((ViewerComparator) newValue);
+                    saveSelectedComparator(((RepositoryComparator) newValue).getOrder()+""); //$NON-NLS-1$
+                }
+            }
+
+        };
+		setActionGroup(new RepositoriesSortingActionGroup(shell, comparatorUpdater));
+		getRepositoriesSortingActionGroup().setSelectedComparator(savedComparator);
+		
 		super.contributeActions();
 	}
+	
+	private void saveSelectedComparator(String selectedComparator) {
+		if (dialogSettings != null) {
+			dialogSettings.put(SELECTED_COMPARATOR, selectedComparator);
+		}
+	}
+	
+    /**
+     * Returns the action group.
+     * 
+     * @return the action group
+     */
+    private RepositoriesSortingActionGroup getRepositoriesSortingActionGroup() {
+        return repositoriesSortingActionGroup;
+    }
+
+    /**
+     * Sets the action group.
+     * 
+     * @param actionGroup the action group
+     */
+    private void setActionGroup(RepositoriesSortingActionGroup actionGroup) {
+        this.repositoriesSortingActionGroup = actionGroup;
+    }
 
 	/**
 	 * Method includeEclipseConnection.
@@ -250,6 +304,7 @@ public class RepositoriesView extends RemoteViewPart {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		CVSUIPlugin.getPlugin().getRepositoryManager().addRepositoryListener(listener);
+		getRepositoriesSortingActionGroup().fillActionBars(getViewSite().getActionBars());
 	}
 	
 	/*
@@ -257,6 +312,9 @@ public class RepositoriesView extends RemoteViewPart {
 	 */
 	public void dispose() {
 		CVSUIPlugin.getPlugin().getRepositoryManager().removeRepositoryListener(listener);
+        if (getRepositoriesSortingActionGroup() != null) {
+            getRepositoriesSortingActionGroup().dispose();
+        }
 		super.dispose();
 	}
 	
