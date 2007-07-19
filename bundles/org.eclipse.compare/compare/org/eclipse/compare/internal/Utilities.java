@@ -31,6 +31,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -747,5 +748,17 @@ public class Utilities {
 			}
 		}
 		job.schedule();
+	}
+
+	public static void runInUIThread(final Runnable runnable) {
+		if (Display.getCurrent() != null) {
+			BusyIndicator.showWhile(Display.getCurrent(), runnable);
+		} else {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					BusyIndicator.showWhile(Display.getCurrent(), runnable);
+				}
+			});
+		}
 	}
 }

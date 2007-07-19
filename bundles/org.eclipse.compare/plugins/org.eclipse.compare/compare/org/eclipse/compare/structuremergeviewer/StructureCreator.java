@@ -73,8 +73,22 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.structuremergeviewer.IStructureCreator2#createStructure(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStructureComparator createStructure(Object element, IProgressMonitor monitor) throws CoreException {
-		IDocument document = null;
+	public IStructureComparator createStructure(final Object element, final IProgressMonitor monitor) throws CoreException {
+		final IStructureComparator[] result = new IStructureComparator[] { null };
+		Runnable runnable = new Runnable() {
+			public void run() {
+				result[0] = internalCreateStructure(element, monitor);
+			}
+		};
+		Utilities.runInUIThread(runnable);
+		return result[0];
+	}
+
+	/*
+	 * We need to create the structure in the UI thread since IDocument requires this
+	 */
+	private IStructureComparator internalCreateStructure(Object element,
+			IProgressMonitor monitor) {
 		final ISharedDocumentAdapter sda = SharedDocumentAdapterWrapper.getAdapter(element);
 		if (sda != null) {
 			final IEditorInput input = sda.getDocumentKey(element);
@@ -83,7 +97,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 				if (provider != null) {
 					try {
 						sda.connect(provider, input);
-						document = provider.getDocument(input);
+						IDocument document = provider.getDocument(input);
 						setupDocument(document);
 						return createStructureComparator(element, document, wrapSharedDocumentAdapter(sda, element, document), monitor);
 					} catch (CoreException e) {
