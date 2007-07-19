@@ -71,7 +71,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 			});
         }
         
-		private void createChangeSet(IDiff[] diffs) {
+		/* package */ void createChangeSet(IDiff[] diffs) {
             ActiveChangeSet set =  getChangeSetCapability().createChangeSet(getConfiguration(), diffs);
             if (set != null) {
                 getActiveChangeSetManager().add(set);
@@ -87,7 +87,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 	 * Escape a string so it can be used as an action text without '&'
 	 * being interpreted as a mnemonic. Specifically, turn each '&' into '&&'.
 	 */
-	private static String escapeActionText(String x) {
+	/* package */ static String escapeActionText(String x) {
 		// Loosely based on org.eclipse.jface.action.LegacyActionTools#removeMnemonics
 		int ampersandIndex = x.indexOf('&');
 		if (ampersandIndex == -1)
@@ -184,7 +184,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
         public void run() {
             ActiveChangeSet set = getSelectedSet();
             if (set == null) return;
-            getChangeSetCapability().editChangeSet(getSynchronizePageConfiguration(), set);
+            getChangeSetCapability().editChangeSet(internalGetSynchronizePageConfiguration(), set);
         }
 	}
 	
@@ -197,7 +197,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
         public void run() {
             ActiveChangeSet set = getSelectedSet();
             if (set == null) return;
-            if (MessageDialog.openConfirm(getSynchronizePageConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] { set.getTitle() }))) { // 
+            if (MessageDialog.openConfirm(internalGetSynchronizePageConfiguration().getSite().getShell(), TeamUIMessages.ChangeSetActionGroup_0, NLS.bind(TeamUIMessages.ChangeSetActionGroup_1, new String[] { set.getTitle() }))) { // 
                 getActiveChangeSetManager().remove(set);
             }
         }
@@ -227,16 +227,16 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		}
 
 		public void run() {
-			int sortCriteria = getSortCriteria(getSynchronizePageConfiguration());
+			int sortCriteria = getSortCriteria(internalGetSynchronizePageConfiguration());
 			if (isChecked() && sortCriteria != criteria) {
-			    setSortCriteria(getSynchronizePageConfiguration(), criteria);
+			    setSortCriteria(internalGetSynchronizePageConfiguration(), criteria);
 				update();
-				((SynchronizePageConfiguration)getSynchronizePageConfiguration()).getPage().getViewer().refresh();
+				((SynchronizePageConfiguration)internalGetSynchronizePageConfiguration()).getPage().getViewer().refresh();
 			}
 		}
 		
 		public void update() {
-		    setChecked(criteria == getSortCriteria(getSynchronizePageConfiguration()));
+		    setChecked(criteria == getSortCriteria(internalGetSynchronizePageConfiguration()));
 		}
 	}
 	
@@ -352,7 +352,8 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 	}
 	
     protected void addChangeSets(IMenuManager manager) {
-        ChangeSet[] sets = getActiveChangeSetManager().getSortedSets();
+        ChangeSet[] sets = getActiveChangeSetManager().getSets();
+        Arrays.sort(sets, new ChangeSetComparator());
         ISelection selection = getContext().getSelection();
         createChangeSet.selectionChanged(selection);
 		addToChangeSet.add(createChangeSet);
@@ -397,12 +398,12 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
         return null;
     }
     
-    private void syncExec(final Runnable runnable) {
+    /* package */ void syncExec(final Runnable runnable) {
 		final Control ctrl = getSynchronizePageConfiguration().getPage().getViewer().getControl();
 		Utils.syncExec(runnable, ctrl);
     }
 
-	private ActiveChangeSetManager getActiveChangeSetManager() {
+	/* package */ ActiveChangeSetManager getActiveChangeSetManager() {
 		return CVSUIPlugin.getPlugin().getChangeSetManager();
 	}
 
@@ -498,7 +499,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		};
 	}
 
-	private boolean isVisible(IDiff diff) {
+	/* package */ boolean isVisible(IDiff diff) {
 		return ((SynchronizePageConfiguration)getSynchronizePageConfiguration()).isVisible(diff);
 	}
 	
@@ -553,5 +554,9 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 			return provider.isEnabled();
 		}
 		return false;
+	}
+
+	/* package */ ISynchronizePageConfiguration internalGetSynchronizePageConfiguration() {
+		return getSynchronizePageConfiguration();
 	}
 }

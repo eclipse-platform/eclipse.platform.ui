@@ -11,6 +11,8 @@
 
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
+import java.util.Arrays;
+
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -34,6 +36,7 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetComparator;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.*;
@@ -404,6 +407,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     private String getProposedComment(IResource[] resourcesToCommit) {
     	StringBuffer comment = new StringBuffer();
         ChangeSet[] sets = CVSUIPlugin.getPlugin().getChangeSetManager().getSets();
+        Arrays.sort(sets, new ChangeSetComparator());
         int numMatchedSets = 0;
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];

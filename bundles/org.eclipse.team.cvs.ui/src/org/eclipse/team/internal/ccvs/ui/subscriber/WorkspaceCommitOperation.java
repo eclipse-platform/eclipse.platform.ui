@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IProject;
@@ -33,6 +32,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetComparator;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
@@ -283,7 +283,8 @@ public class WorkspaceCommitOperation extends CVSSubscriberOperation {
 
     private String getProposedComment(IResource[] resourcesToCommit) {
     	StringBuffer comment = new StringBuffer();
-        ChangeSet[] sets = CVSUIPlugin.getPlugin().getChangeSetManager().getSortedSets();
+        ChangeSet[] sets = CVSUIPlugin.getPlugin().getChangeSetManager().getSets();
+        Arrays.sort(sets, new ChangeSetComparator());
         int numMatchedSets = 0;
         for (int i = 0; i < sets.length; i++) {
             ChangeSet set = sets[i];

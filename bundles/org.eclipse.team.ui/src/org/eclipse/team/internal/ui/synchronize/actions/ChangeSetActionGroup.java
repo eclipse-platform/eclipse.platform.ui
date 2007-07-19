@@ -11,8 +11,8 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.Collator;
+import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -352,7 +352,13 @@ public class ChangeSetActionGroup extends SynchronizePageActionGroup {
     }
     
     protected void addChangeSets(IMenuManager manager) {
-        ChangeSet[] sets = getActiveChangeSetManager().getSortedSets();
+        ChangeSet[] sets = getActiveChangeSetManager().getSets();
+        Arrays.sort(sets, new Comparator() {
+        	private Collator collator = Collator.getInstance();
+        	public int compare(Object o1, Object o2) {
+        		return collator.compare(((ChangeSet) o1).getName(), ((ChangeSet) o2).getName());
+        	}
+        });
         ISelection selection = getContext().getSelection();
         createChangeSet.selectionChanged(selection);
 		addToChangeSet.add(createChangeSet);
