@@ -24,18 +24,18 @@ import org.eclipse.core.databinding.observable.Realm;
  * 
  * @since 3.2
  */
-public class ObservableContractTests extends TestCase {
+public class ObservableContractTest extends TestCase {
 	private Realm previousRealm;
 
 	private IObservableContractDelegate delegate;
 
-	public ObservableContractTests(IObservableContractDelegate delegate) {
+	public ObservableContractTest(IObservableContractDelegate delegate) {
 		super();
 		
 		this.delegate = delegate;
 	}
 	
-	public ObservableContractTests(String testName,
+	public ObservableContractTest(String testName,
 			IObservableContractDelegate delegate) {
 		super(testName);
 		this.delegate = delegate;

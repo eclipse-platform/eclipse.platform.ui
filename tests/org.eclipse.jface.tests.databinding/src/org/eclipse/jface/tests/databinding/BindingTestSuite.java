@@ -154,9 +154,11 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(RealmTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.list
-		addTestSuite(AbstractObservableListTest.class);
+		addTest(AbstractObservableListTest.suite());
+//		addTestSuite(AbstractObservableListTest.class);
 		addTestSuite(ObservableListTest.class);
-		addTestSuite(WritableListTest.class);
+		addTest(WritableListTest.suite());
+//		addTestSuite(WritableListTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);

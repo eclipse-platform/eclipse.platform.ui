@@ -19,7 +19,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableValueContractTests;
+import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -53,7 +53,7 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 		Object[] params = new Object[] { new Delegate() };
 
 		return new SuiteBuilder().addTests(WritableValueTest.class)
-				.addParameterizedTests(ObservableValueContractTests.class,
+				.addParameterizedTests(ObservableValueContractTest.class,
 						params).build();
 	}
 

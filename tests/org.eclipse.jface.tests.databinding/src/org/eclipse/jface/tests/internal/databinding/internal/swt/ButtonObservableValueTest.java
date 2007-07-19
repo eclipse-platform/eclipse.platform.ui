@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableValueContractTests;
+import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
 import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
@@ -50,7 +50,7 @@ public class ButtonObservableValueTest extends TestCase {
 		Object[] params = new Object[] { new Delegate() };
 
 		return new SuiteBuilder().addTests(ButtonObservableValueTest.class)
-				.addParameterizedTests(ObservableValueContractTests.class,
+				.addParameterizedTests(ObservableValueContractTest.class,
 						params).build();
 	}
 

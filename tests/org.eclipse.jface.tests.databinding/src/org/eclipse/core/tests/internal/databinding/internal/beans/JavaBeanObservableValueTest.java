@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableValueContractTests;
+import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -97,7 +97,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		Object[] params = new Object[] {new Delegate()};
 		
 		return new SuiteBuilder().addTests(JavaBeanObservableValueTest.class)
-				.addParameterizedTests(ObservableValueContractTests.class, params).build();
+				.addParameterizedTests(ObservableValueContractTest.class, params).build();
 	}
 
 	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {

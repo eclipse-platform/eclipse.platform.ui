@@ -125,7 +125,7 @@ public class SuiteBuilder {
 			Class[] types = constructor.getParameterTypes();
 
 			if (types.length != expectedParametersLength
-					|| !String.class.equals(types[i])) {
+					|| !String.class.equals(types[0])) {
 				continue;
 			}
 

@@ -12,14 +12,22 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.conformance.databinding.ObservableCollectionContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -60,20 +68,6 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
-	public void testIteratorGetterCalled() throws Exception {
-		final AbstractObservableListStub list = new AbstractObservableListStub();
-
-		IObservable[] observables = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						list.iterator();
-					}
-				}, null, null);
-
-		assertEquals("length", 1, observables.length);
-		assertEquals("observable", list, observables[0]);
-	}
-
 	public void testListIteratorGetterCalled() throws Exception {
 		final AbstractObservableListStub list = new AbstractObservableListStub();
 
@@ -88,7 +82,35 @@ public class AbstractObservableListTest extends TestCase {
 		assertEquals("observable", list, observables[0]);
 	}
 
+	public static Test suite() {
+		return new SuiteBuilder().addTests(AbstractObservableListTest.class)
+				.addParameterizedTests(ObservableCollectionContractTest.class,
+						new Object[] { new Delegate() }).build();
+
+	}
+
+	/* package */static class Delegate extends
+			AbstractObservableCollectionContractDelegate {
+		private AbstractObservableListStub current;
+
+		public IObservableCollection createObservableCollection() {
+			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
+					new Runnable() {
+						public void run() {
+							current = new AbstractObservableListStub();
+							current.elementType = String.class;
+						}
+					});
+			return current;
+		}
+		
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
+	}
+
 	static class AbstractObservableListStub extends AbstractObservableList {
+		Object elementType;
 		protected int doGetSize() {
 			return 0;
 		}
@@ -98,7 +120,7 @@ public class AbstractObservableListTest extends TestCase {
 		}
 
 		public Object getElementType() {
-			return null;
+			return elementType;
 		}
 
 		protected void fireChange() {

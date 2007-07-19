@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -24,11 +25,11 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 /**
  * @since 3.2
  */
-public class ObservableValueContractTests extends ObservableContractTests {
+public class ObservableValueContractTest extends ObservableContractTest {
 
 	private IObservableValueContractDelegate delegate;
 
-	public ObservableValueContractTests(
+	public ObservableValueContractTest(
 			IObservableValueContractDelegate delegate) {
 		super(delegate);
 		this.delegate = delegate;
@@ -38,7 +39,7 @@ public class ObservableValueContractTests extends ObservableContractTests {
 	 * @param testName
 	 * @param delegate
 	 */
-	public ObservableValueContractTests(String testName,
+	public ObservableValueContractTest(String testName,
 			IObservableValueContractDelegate delegate) {
 		super(testName, delegate);
 
@@ -162,6 +163,18 @@ public class ObservableValueContractTests extends ObservableContractTests {
 		assertEquals(
 				"Value change listeners should not be notified after they've been removed from the observable.",
 				1, listener.count);
+	}
+	
+	public void testGetValueInvokesGetterCalled() throws Exception {
+		final IObservableValue observable = delegate.createObservableValue();
+		IObservable[] observables = ObservableTracker.runAndMonitor(new Runnable() {
+			public void run() {
+				observable.getValue();
+			}
+		}, null, null);
+	
+		assertEquals("IObservableValue.getValue() should invoke ObservableTracker.getterCalled() once.", 1, observables.length);
+		assertEquals("IObservableValue.getValue() should invoke ObservableTracker.getterCalled() for the observable.", observable, observables[0]);
 	}
 
 	/* package */static class ChangeListener implements IChangeListener {

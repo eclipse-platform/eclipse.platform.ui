@@ -15,14 +15,19 @@ package org.eclipse.core.tests.databinding.observable.list;
 import java.util.Arrays;
 import java.util.Collections;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
+import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.conformance.databinding.MutableObservableCollectionContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
@@ -203,5 +208,38 @@ public class WritableListTest extends TestCase {
 		assertNotNull(list);
 		assertEquals(Realm.getDefault(), list.getRealm());
 		assertEquals(elementType, list.getElementType());
+	}
+
+	public static Test suite() {
+		Object[] params = new Object[] { new Delegate() };
+		return new SuiteBuilder().addTests(WritableListTest.class)
+				.addParameterizedTests(
+						MutableObservableCollectionContractTest.class, params)
+				.build();
+	}
+
+	/* package */static class Delegate extends
+			AbstractObservableCollectionContractDelegate {
+		private WritableList current;
+
+		public IObservableCollection createObservableCollection() {
+			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
+					new Runnable() {
+						public void run() {
+							current = WritableList
+									.withElementType(String.class);
+						}
+					});
+
+			return current;
+		}
+
+		public Object createElement(IObservableCollection collection) {
+			return String.valueOf(collection.size() + 1);
+		}
+		
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
 	}
 }

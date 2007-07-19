@@ -22,8 +22,8 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.conformance.databinding.AbstractObservableContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableContractTests;
-import org.eclipse.jface.conformance.databinding.ObservableStaleContractTests;
+import org.eclipse.jface.conformance.databinding.ObservableContractTest;
+import org.eclipse.jface.conformance.databinding.ObservableStaleContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -218,8 +218,8 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 
 		return new SuiteBuilder()
 				.addTests(AbstractObservableTest.class)
-				.addParameterizedTests(ObservableContractTests.class, params)
-				.addParameterizedTests(ObservableStaleContractTests.class,
+				.addParameterizedTests(ObservableContractTest.class, params)
+				.addParameterizedTests(ObservableStaleContractTest.class,
 						params).build();
 	}
 

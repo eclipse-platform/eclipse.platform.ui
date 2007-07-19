@@ -17,16 +17,16 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.jface.conformance.databinding.ObservableContractTests.DummyRealm;
+import org.eclipse.jface.conformance.databinding.ObservableContractTest.DummyRealm;
 
 /**
  * @since 3.3
  */
-public class ObservableStaleContractTests extends TestCase {
+public class ObservableStaleContractTest extends TestCase {
 	private IObservableContractDelegate delegate;
 	private Realm previousRealm;
 	
-	public ObservableStaleContractTests(String testName, IObservableContractDelegate delegate) {
+	public ObservableStaleContractTest(String testName, IObservableContractDelegate delegate) {
 		super(testName);
 		this.delegate = delegate;
 	}
