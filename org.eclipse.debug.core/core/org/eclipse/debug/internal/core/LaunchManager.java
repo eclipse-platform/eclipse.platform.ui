@@ -290,6 +290,36 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 	
 	/**
+	 * Visitor for handling a resource begin deleted, and the need to check mapped configurations
+	 * for auto-deletion
+	 * @since 3.4
+	 */
+	class MappedResourceVisitor implements IResourceDeltaVisitor {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
+		 */
+		public boolean visit(IResourceDelta delta) throws CoreException {
+			if(delta.getKind() == IResourceDelta.REMOVED && delta.getFlags() != IResourceDelta.MOVED_TO) {
+				if (isDeleteConfigurations()) {
+					ArrayList configs = collectAssociatedLaunches(delta.getResource());
+					if(configs.size() > 0) {
+						for(Iterator iter = configs.iterator(); iter.hasNext();) {
+							try { 
+								((ILaunchConfiguration)iter.next()).delete();
+							} catch (CoreException e) {
+								DebugPlugin.log(e.getStatus());
+							}
+						}
+					}
+				}
+				return false;
+			}
+			return true;
+		}
+	}
+	
+	/**
 	 * Visitor for handling resource deltas.
 	 */
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
@@ -335,7 +365,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
 				if (delta.getResource() instanceof IProject) {
 					IProject project = (IProject)delta.getResource();
-					
 					if (project.isOpen()) {
 						LaunchManager.this.projectOpened(project);
 					} else { 
@@ -371,22 +400,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					}
 				}
 				return false;
-			} else if (resource instanceof IProject) {
-				if (isDeleteConfigurations()) {
-					if(delta.getKind() == IResourceDelta.REMOVED && delta.getFlags() != IResourceDelta.MOVED_TO) {
-						IProject project = (IProject) resource;
-						ArrayList configs = collectAssociatedLaunches(project);
-						if(configs.size() > 0) {
-							for(Iterator iter = configs.iterator(); iter.hasNext();) {
-								try { 
-									((ILaunchConfiguration)iter.next()).delete();
-								} catch (CoreException e) {
-									DebugPlugin.log(e.getStatus());
-								}
-							}
-						}
-					}
-				}
 			}
 			return true;
 		}
@@ -629,6 +642,15 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * to update launch configuration index.
 	 */
 	private LaunchManagerVisitor fgVisitor;
+	
+	/**
+	 * Visitor used to process a deleted resource,
+	 * to remove mapped launch configurations in the event
+	 * auto-removal of launch configurations is enabled
+	 * 
+	 * @since 3.4
+	 */
+	private MappedResourceVisitor fgMRVisitor;
 	
 	/**
 	 * Whether this manager is listening for resource change events
@@ -1179,6 +1201,18 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	    return fgVisitor;
 	}
 	
+	/**
+	 * Returns the resource delta visitor for auto-removal of mapped launch configurations
+	 * @return the resource delta visitor for auto-removal of mapped launch configurations
+	 * 
+	 * @since 3.4
+	 */
+	private MappedResourceVisitor getMappedResourceVisitor() {
+		if(fgMRVisitor == null) {
+			fgMRVisitor = new MappedResourceVisitor();
+		}
+		return fgMRVisitor;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#getEnvironment(org.eclipse.debug.core.ILaunchConfiguration)
@@ -2165,8 +2199,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
             }
 		} else {
 		    LaunchManagerVisitor visitor = getDeltaVisitor();
+		    MappedResourceVisitor v = getMappedResourceVisitor();
 		    try {
 		    	delta.accept(visitor);
+		    	delta.accept(v);
 		    } catch (CoreException e) {
 		    	DebugPlugin.log(e.getStatus());
 		    }
@@ -2175,14 +2211,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 	
 	/**
-	 * Gets the launch configuration associated with the specified project.
+	 * Gets the launch configuration associated with the specified <code>IResource</code>.
 	 * This method relies on the resource mapping existing, if no such mapping 
 	 * exists the launch configuration is ignored.
 	 * 
-	 * @param project the project to collect launch configurations for
+	 * @param resource the resource to collect launch configurations for
 	 * @return the list of associated launch configurations
 	 */
-	private ArrayList collectAssociatedLaunches(IProject project) {
+	private ArrayList collectAssociatedLaunches(IResource resource) {
 		ArrayList list = new ArrayList();
 		try { 
 			ILaunchConfiguration[] configs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
@@ -2192,7 +2228,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					resources = configs[i].getMappedResources();
 					if(resources != null) {
 						for(int j = 0; j < resources.length; j++){
-							if(project.equals(resources[j].getProject())) {
+							if(resource.equals(resources[j]) || 
+									resource.getFullPath().isPrefixOf(resources[j].getFullPath())) {
 								list.add(configs[i]);
 							}
 						}
