@@ -81,7 +81,7 @@ public class ExampleRefactoring extends Refactoring {
 			return RefactoringStatus.createFatalErrorStatus("New text must be set and not empty");
 		}
 		
-		TextFileChange change= new TextFileChange("", fFile);
+		TextFileChange change= new TextFileChange("Replace in file " + fFile.getName(), fFile);
 		change.setEdit(new MultiTextEdit());
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
