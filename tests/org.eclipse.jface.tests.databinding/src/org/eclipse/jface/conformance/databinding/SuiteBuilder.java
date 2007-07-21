@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  */
 public class SuiteBuilder {
 	private LinkedHashSet content;
-	
+
 	public SuiteBuilder() {
 		content = new LinkedHashSet();
 	}
@@ -63,12 +63,27 @@ public class SuiteBuilder {
 					"The parameters provided don't match a constructor found in ["
 							+ testCase.getName() + "]");
 		}
-		
+
 		content.add(new ParameterizedTest(testCase, constructor, parameters));
 
 		return this;
 	}
-	
+
+	/**
+	 * Convenience method for invoking
+	 * {@link #addParameterizedTests(Class, Object[])} with a delegate.
+	 * 
+	 * @param testCase
+	 * @param delegate
+	 * @return
+	 */
+	public SuiteBuilder addObservableContractTest(Class testCase,
+			IObservableContractDelegate delegate) {
+
+		addParameterizedTests(testCase, new Object[] {delegate});
+		return this;
+	}
+
 	/**
 	 * Builds a new TestSuite out of the tests.
 	 * 
@@ -76,21 +91,22 @@ public class SuiteBuilder {
 	 */
 	public TestSuite build() {
 		TestSuite suite = new TestSuite();
-		
-		for(Iterator it = content.iterator(); it.hasNext();) {
+
+		for (Iterator it = content.iterator(); it.hasNext();) {
 			Object o = it.next();
 			if (o instanceof Class) {
 				suite.addTestSuite((Class) o);
 			} else if (o instanceof ParameterizedTest) {
 				ParameterizedTest test = (ParameterizedTest) o;
-				
+
 				Method[] methods = test.testClass.getMethods();
 				for (int i = 0; i < methods.length; i++) {
 					String name = methods[i].getName();
 					if (name.startsWith("test")) {
 						try {
-							suite.addTest((Test) test.constructor.newInstance(toParamArray(
-									name, test.parameters)));
+							suite.addTest((Test) test.constructor
+									.newInstance(toParamArray(name,
+											test.parameters)));
 						} catch (Exception e) {
 							throw new RuntimeException(e);
 						}
@@ -98,7 +114,7 @@ public class SuiteBuilder {
 				}
 			}
 		}
-		
+
 		return suite;
 	}
 
@@ -145,13 +161,16 @@ public class SuiteBuilder {
 
 		return null;
 	}
-	
-	/* package */ static class ParameterizedTest {
+
+	/* package */static class ParameterizedTest {
 		final Constructor constructor;
+
 		final Object[] parameters;
+
 		private Class testClass;
-		
-		ParameterizedTest(Class testClass, Constructor constructor, Object[] parameterss) {
+
+		ParameterizedTest(Class testClass, Constructor constructor,
+				Object[] parameterss) {
 			this.testClass = testClass;
 			this.constructor = constructor;
 			this.parameters = parameterss;

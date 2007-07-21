@@ -16,11 +16,18 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * TestCase that asserts the conformance of an observable to the defined
- * contract for changes.
+ * Tests for IObservable that don't require mutating the observable.
+ * <p>
+ * This class is experimental and can change at any time. It is recommended to
+ * not subclass or assume the test names will not change. The only API that is
+ * guaranteed to not change are the constructors. The tests will remain public
+ * and not final in order to allow for consumers to turn off a test if needed by
+ * subclassing.
+ * </p>
  * 
  * @since 3.2
  */
@@ -31,10 +38,10 @@ public class ObservableContractTest extends TestCase {
 
 	public ObservableContractTest(IObservableContractDelegate delegate) {
 		super();
-		
+
 		this.delegate = delegate;
 	}
-	
+
 	public ObservableContractTest(String testName,
 			IObservableContractDelegate delegate) {
 		super(testName);
@@ -58,7 +65,8 @@ public class ObservableContractTest extends TestCase {
 	public void testRealmIsNotNull() throws Exception {
 		IObservable observable = delegate.createObservable();
 
-		assertNotNull("The observable's realm should not be null.", observable.getRealm());
+		assertNotNull("The observable's realm should not be null.", observable
+				.getRealm());
 	}
 
 	public void testChangeFiresChangeEvent() throws Exception {
@@ -68,7 +76,9 @@ public class ObservableContractTest extends TestCase {
 		observable.addChangeListener(listener);
 		delegate.change(observable);
 
-		assertEquals("A change in the observable should notify change listeners.", listener.count, 1);
+		assertEquals(
+				"A change in the observable should notify change listeners.",
+				listener.count, 1);
 	}
 
 	public void testChangeEventObservable() throws Exception {
@@ -80,9 +90,10 @@ public class ObservableContractTest extends TestCase {
 
 		ChangeEvent event = listener.event;
 		assertNotNull("change event was null", event);
-		
-		assertSame("In the change event the source of the change should be the observable.", observable,
-				event.getObservable());
+
+		assertSame(
+				"In the change event the source of the change should be the observable.",
+				observable, event.getObservable());
 	}
 
 	public void testObservableRealmIsTheCurrentRealmOnChange() throws Exception {
@@ -91,7 +102,8 @@ public class ObservableContractTest extends TestCase {
 		observable.addChangeListener(listener);
 
 		delegate.change(observable);
-		assertTrue("On change the current realm should be the realm of the observable.",
+		assertTrue(
+				"On change the current realm should be the realm of the observable.",
 				listener.isCurrentRealm);
 	}
 
@@ -108,15 +120,43 @@ public class ObservableContractTest extends TestCase {
 		observable.removeChangeListener(listener);
 		delegate.change(observable);
 
-		assertEquals("When a change listener is removed it should not still receive change events.", 1,
-				listener.count);
+		assertEquals(
+				"When a change listener is removed it should not still receive change events.",
+				1, listener.count);
 	}
 
 	public void testIsNotStale() throws Exception {
 		IObservable observable = delegate.createObservable();
 
 		delegate.setStale(observable, false);
-		assertFalse("When an observable is not stale isStale() should return false.", observable.isStale());
+		assertFalse(
+				"When an observable is not stale isStale() should return false.",
+				observable.isStale());
+	}
+
+	/**
+	 * Asserts that ObservableTracker.getterCalled(...) is invoked when the
+	 * provided <code>runnable</code> is invoked.
+	 * 
+	 * @param runnable
+	 * @param methodName
+	 *            method name to display when displaying a message
+	 * @param observable
+	 *            observable that should be collected by ObservableTracker
+	 */
+	/* package */static void assertGetterCalled(Runnable runnable,
+			String methodName, IObservable observable) {
+		IObservable[] observables = ObservableTracker.runAndMonitor(runnable,
+				null, null);
+
+		assertEquals(methodName
+				+ " should invoke ObservableTracker.getterCalled() once.", 1,
+				observables.length);
+
+		assertEquals(
+				methodName
+						+ " should invoke ObservableTracker.getterCalled() for the observable.",
+				observable, observables[0]);
 	}
 
 	/**

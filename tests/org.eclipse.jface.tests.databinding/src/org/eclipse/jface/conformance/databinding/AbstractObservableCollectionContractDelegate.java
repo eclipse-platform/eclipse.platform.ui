@@ -24,12 +24,12 @@ public abstract class AbstractObservableCollectionContractDelegate extends
 		IObservableCollectionContractDelegate {
 
 	/**
-	 * Invokes {@link #createObservableCollection()}.
+	 * Invokes {@link #createObservableCollection(elementCount)}.
 	 */
 	public final IObservable createObservable() {
-		return createObservableCollection();
+		return createObservableCollection(0);
 	}
-
+	
 	public Object createElement(IObservableCollection collection) {
 		//no op
 		return null;

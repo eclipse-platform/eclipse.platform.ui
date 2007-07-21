@@ -13,9 +13,8 @@ package org.eclipse.jface.conformance.databinding;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
 
-
 /**
- * Delegate interface for an observable collection.
+ * Delegate interface for an IObservableCollection.
  * 
  * <p>
  * This interface is not intended to be implemented by clients. Clients should
@@ -28,21 +27,23 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
  */
 public interface IObservableCollectionContractDelegate extends
 		IObservableContractDelegate {
-
 	/**
-	 * Creates a new observable collection.
+	 * Creates a new observable collection with the provided
+	 * <code>elementCount</code>.
 	 * 
-	 * @return
+	 * @param elementCount
+	 *            number of elements to initialize the collection with
+	 * @return new observable collection
 	 */
-	public IObservableCollection createObservableCollection();
+	public IObservableCollection createObservableCollection(int elementCount);
 
 	/**
 	 * Creates a new element of the appropriate type for the provided
-	 * <code>collection</code>. This element can be added to or removed from
-	 * the collection.
+	 * <code>collection</code>. This element will be employed to assert the
+	 * addition and removal of elements in the collection.
 	 * 
 	 * @param collection
-	 * @return
+	 * @return valid element for the collection
 	 */
 	public Object createElement(IObservableCollection collection);
 

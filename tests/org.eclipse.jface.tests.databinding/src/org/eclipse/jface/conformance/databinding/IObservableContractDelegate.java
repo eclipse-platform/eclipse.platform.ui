@@ -37,7 +37,8 @@ public interface IObservableContractDelegate {
 	public void tearDown();
 
 	/**
-	 * Invokes an operation to set the stale state to the provided value.
+	 * Invokes an operation to set the stale state of the provided
+	 * <code>observable</code>.
 	 * 
 	 * @param observable
 	 * @param stale

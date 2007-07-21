@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -165,16 +164,13 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				1, listener.count);
 	}
 	
-	public void testGetValueInvokesGetterCalled() throws Exception {
+	public void testGetValue_GetterCalled() throws Exception {
 		final IObservableValue observable = delegate.createObservableValue();
-		IObservable[] observables = ObservableTracker.runAndMonitor(new Runnable() {
+		assertGetterCalled(new Runnable() {
 			public void run() {
 				observable.getValue();
 			}
-		}, null, null);
-	
-		assertEquals("IObservableValue.getValue() should invoke ObservableTracker.getterCalled() once.", 1, observables.length);
-		assertEquals("IObservableValue.getValue() should invoke ObservableTracker.getterCalled() for the observable.", observable, observables[0]);
+		}, "IObservableValue.getValue()", observable);
 	}
 
 	/* package */static class ChangeListener implements IChangeListener {

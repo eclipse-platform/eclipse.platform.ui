@@ -19,6 +19,15 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.jface.tests.databinding.EventTrackers.ChangeEventTracker;
 
 /**
+ * Mutability tests for IObservableCollection.
+ * <p>
+ * This class is experimental and can change at any time. It is recommended to
+ * not subclass or assume the test names will not change. The only API that is
+ * guaranteed to not change are the constructors. The tests will remain public
+ * and not final in order to allow for consumers to turn off a test if needed by
+ * subclassing.
+ * </p>
+ * 
  * @since 3.2
  */
 public class MutableObservableCollectionContractTest extends
@@ -45,244 +54,105 @@ public class MutableObservableCollectionContractTest extends
 		collection = super.getObservableCollection();
 	}
 
-	public void testAdd_FiresChangeEvent() throws Exception {
-		ChangeEventTracker listener = addElement(collection, delegate);
-
-		assertEquals("Collection.add(...) should fire one ChangeEvent.", 1,
-				listener.count);
+	public void testAdd_ChangeEvent() throws Exception {
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				collection.add(delegate.createElement(collection));
+			}
+		}, "Collection.add(Object)", collection);
 	}
 
-	public void testAdd_ObservableOfChangeEvent() throws Exception {
-		ChangeEventTracker listener = addElement(collection, delegate);
-
-		assertEquals(
-				"Collection.add(..)'s change event observable should be the created Collection.",
-				collection, listener.event.getObservable());
-	}
-
-	public void testAdd_ElementIsAdded() throws Exception {
-		Object element = delegate.createElement(collection);
-
-		// precondition
-		assertFalse(collection.contains(element));
-		collection.add(element);
-
-		assertTrue(
-				"Collection.add(...) should add the element to the Collection.",
-				collection.contains(element));
-	}
-
-	public void testAdd_FiresChangeEventAfterElementIsAdded() throws Exception {
+	public void testAdd_ChangeEventFiredAfterElementIsAdded() throws Exception {
 		final Object element = delegate.createElement(collection);
 
-		ContainsListener listener = new ContainsListener(collection, element)
-				.init();
-
-		// precondition
-		assertFalse(collection.contains(element));
-		collection.add(element);
-
-		assertTrue(
-				"When Collection.add(...) fires the change event the element should already have been added to the Collection.",
-				listener.contains);
+		assertContainsDuringChangeEvent(new Runnable() {
+			public void run() {
+				collection.add(element);
+			}
+		}, "Collection.add(Object)", collection, element);
 	}
 
-	private ChangeEventTracker addElement(IObservableCollection collection,
-			IObservableCollectionContractDelegate delegate) {
-		ChangeEventTracker listener = new ChangeEventTracker();
-		collection.addChangeListener(listener);
-		Object element = delegate.createElement(collection);
-		collection.add(element);
-
-		return listener;
+	public void testAddAll_ChangeEvent() throws Exception {
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				collection.addAll(Arrays.asList(new Object[] { delegate
+						.createElement(collection) }));
+			}
+		}, "Collection.addAll(Collection)", collection);
 	}
 
-	public void testAddAll_FiresChangeEvent() throws Exception {
-		ChangeEventTracker listener = addAllElements(collection, delegate);
-
-		assertEquals("Collection.addAll(...) should fire one ChangeEvent.", 1,
-				listener.count);
-	}
-
-	public void testAddAll_ObservableOfChangeEvent() throws Exception {
-		ChangeEventTracker listener = addAllElements(collection, delegate);
-
-		assertEquals(
-				"Collection.addAll(..)'s change event observable should be the created Collection.",
-				collection, listener.event.getObservable());
-	}
-
-	public void testAddAll_ElementsAreAdded() throws Exception {
-		Object element = delegate.createElement(collection);
-
-		// precondition
-		assertFalse(collection.contains(element));
-		collection.addAll(Arrays.asList(new Object[] { element }));
-
-		assertTrue(
-				"Collection.addAll(...) should add the element to the Collection.",
-				collection.contains(element));
-	}
-
-	public void testAddAll_FiresChangeEventAfterElementsAreAdded()
+	public void testAddAll_ChangeEventFiredAfterElementsAreAdded()
 			throws Exception {
 		final Object element = delegate.createElement(collection);
 
-		ContainsListener listener = new ContainsListener(collection, element)
-				.init();
-
-		// precondition
-		assertFalse(collection.contains(element));
-		collection.addAll(Arrays.asList(new Object[] { element }));
-
-		assertTrue(
-				"When Collection.addAll(...) fires the change event the element should already have been added to the Collection.",
-				listener.contains);
+		assertContainsDuringChangeEvent(new Runnable() {
+			public void run() {
+				collection.addAll(Arrays.asList(new Object[] { element }));
+			}
+		}, "Collection.addAll(Collection)", collection, element);
 	}
 
-	private ChangeEventTracker addAllElements(IObservableCollection collection,
-			IObservableCollectionContractDelegate delegate) {
-		ChangeEventTracker listener = new ChangeEventTracker();
-		collection.addChangeListener(listener);
-		Object element = delegate.createElement(collection);
-		collection.addAll(Arrays.asList(new Object[] { element }));
-
-		return listener;
-	}
-
-	public void testRemove_FiresChangeEvent() throws Exception {
-		ChangeEventTracker listener = removeElement(collection, delegate);
-
-		assertEquals("Collection.remove(...) should fire one ChangeEvent.", 1,
-				listener.count);
-	}
-
-	public void testRemove_ObervableOfChangeEvent() throws Exception {
-		ChangeEventTracker listener = removeElement(collection, delegate);
-		assertEquals(
-				"Collection.remove(...)'s change event observable should be the created Collection.",
-				collection, listener.event.getObservable());
-	}
-
-	public void testRemove_ElementIsRemoved() throws Exception {
-		Object element = delegate.createElement(collection);
+	public void testRemove_ChangeEvent() throws Exception {
+		final Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		// precondition
-		assertTrue(collection.contains(element));
-		collection.remove(element);
-
-		assertFalse(
-				"Collection.remove(...) should remove the element from the Collection.",
-				collection.contains(element));
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				collection.remove(element);
+			}
+		}, "Collection.remove(Object)", collection);
 	}
 
-	public void testRemove_FiresChangeEventAfterElementIsRemoved()
+	public void testRemove_ChangeEventFiredAfterElementIsRemoved()
 			throws Exception {
-		Object element = delegate.createElement(collection);
-		collection.add(element);
-		// precondition
-		assertTrue(collection.contains(element));
-
-		ContainsListener listener = new ContainsListener(collection, element)
-				.init();
-		listener.contains = true;
-		collection.remove(element);
-		assertFalse(
-				"When Collection.remove(...) fires the change event the element should already have been removed from the Collection.",
-				listener.contains);
-	}
-
-	private ChangeEventTracker removeElement(IObservableCollection collection,
-			IObservableCollectionContractDelegate delegate) {
-		ChangeEventTracker listener = new ChangeEventTracker();
-		Object element = delegate.createElement(collection);
-		collection.add(element);
-		collection.addChangeListener(listener);
-		collection.remove(element);
-
-		return listener;
-	}
-
-	public void testRemoveAll_FiresChangeEvent() throws Exception {
-		ChangeEventTracker listener = removeAllElements(collection, delegate);
-
-		assertEquals("Collection.removeAll(...) should fire one ChangeEvent.",
-				1, listener.count);
-	}
-
-	public void testRemoveAll_ObervableOfChangeEvent() throws Exception {
-		ChangeEventTracker listener = removeAllElements(collection, delegate);
-		assertEquals(
-				"Collection.removeAll(...)'s change event observable should be the created Collection.",
-				collection, listener.event.getObservable());
-	}
-
-	public void testRemoveAll_ElementsAreRemoved() throws Exception {
-		Object element = delegate.createElement(collection);
+		final Object element = delegate.createElement(collection);
 		collection.add(element);
 
-		// precondition
-		assertTrue(collection.contains(element));
-		collection.removeAll(Arrays.asList(new Object[] { element }));
-
-		assertFalse(
-				"Collection.removeAll(...) should remove the element from the Collection.",
-				collection.contains(element));
+		assertDoesNotContainDuringChangeEvent(new Runnable() {
+			public void run() {
+				collection.remove(element);
+			}
+		}, "Collection.remove(Object)", collection, element);
 	}
 
-	public void testRemoveAll_FiresChangeEventAfterElementsAreRemoved()
+	public void testRemoveAll_ChangeEvent() throws Exception {
+		final Object element = delegate.createElement(collection);
+		collection.add(element);
+
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				collection.removeAll(Arrays.asList(new Object[] { element }));
+			}
+		}, "Collection.removeAll(Collection)", collection);
+	}
+
+	public void testRemoveAll_ChangeEventFiredAfterElementsAreRemoved()
 			throws Exception {
-		Object element = delegate.createElement(collection);
+		final Object element = delegate.createElement(collection);
 		collection.add(element);
-		// precondition
-		assertTrue(collection.contains(element));
 
-		ContainsListener listener = new ContainsListener(collection, element)
-				.init();
-		listener.contains = true;
-		collection.removeAll(Arrays.asList(new Object[] { element }));
-		assertFalse(
-				"When Collection.remove(...) fires the change event the element should already have been removed from the Collection.",
-				listener.contains);
+		assertDoesNotContainDuringChangeEvent(new Runnable() {
+			public void run() {
+				collection.removeAll(Arrays.asList(new Object[] { element }));
+			}
+		}, "Collection.removeAll(Collection)", collection, element);
 	}
 
-	public void testRetainAll_FiresChangeEvent() throws Exception {
-		ChangeEventTracker listener = retainAllElements(collection, delegate);
-
-		assertEquals("Collection.retainAll(...) should fire one ChangeEvent.",
-				1, listener.count);
-	}
-
-	public void testRetainAll_ObervableOfChangeEvent() throws Exception {
-		ChangeEventTracker listener = retainAllElements(collection, delegate);
-		assertEquals(
-				"Collection.retainAll(...)'s change event observable should be the created Collection.",
-				collection, listener.event.getObservable());
-	}
-
-	public void testRetainAll_ElementsAreRetained() throws Exception {
-		Object element1 = delegate.createElement(collection);
+	public void testRetainAll_ChangeEvent() throws Exception {
+		final Object element1 = delegate.createElement(collection);
 		collection.add(element1);
 		Object element2 = delegate.createElement(collection);
 		collection.add(element2);
 
-		// precondition
-		assertTrue(collection.contains(element1));
-		assertTrue(collection.contains(element2));
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				collection.retainAll(Arrays.asList(new Object[] { element1 }));
+			}
 
-		collection.retainAll(Arrays.asList(new Object[] { element1 }));
-
-		assertTrue(
-				"Collection.retainAll(...) should retain the element in the Collection.",
-				collection.contains(element1));
-
-		assertFalse(
-				"Collection.retainAll(...) should remove the discarded element from the Collection.",
-				collection.contains(element2));
+		}, "Collection.retainAll(Collection)", collection);
 	}
 
-	public void testRetainAll_FiresChangeEventAfterElementsAreRetained()
+	public void testRetainAll_ChangeEventFiredAfterElementsAreRetained()
 			throws Exception {
 		Object element1 = delegate.createElement(collection);
 		collection.add(element1);
@@ -298,10 +168,11 @@ public class MutableObservableCollectionContractTest extends
 		ContainsListener listener2 = new ContainsListener(collection, element2)
 				.init();
 
-		//set contains the the opposite of the expected outcome to ensure they get set
+		// set contains the the opposite of the expected outcome to ensure they
+		// get set
 		listener1.contains = false;
 		listener2.contains = true;
-		
+
 		collection.retainAll(Arrays.asList(new Object[] { element1 }));
 		assertTrue(
 				"When Collection.retainAll(...) fires the change event the element should have been retained in the Collection.",
@@ -311,32 +182,84 @@ public class MutableObservableCollectionContractTest extends
 				listener2.contains);
 	}
 
-	private ChangeEventTracker retainAllElements(
-			IObservableCollection collection,
-			IObservableCollectionContractDelegate delegate) {
+	/**
+	 * Asserts that a ChangeEvent is fired once when the provided
+	 * <code>runnable</code> is invoked and the source is the provided
+	 * <code>collection</code>.
+	 * 
+	 * @param runnable
+	 * @param methodName
+	 * @param collection
+	 */
+	/* package */void assertChangeEventFired(Runnable runnable,
+			String methodName, IObservableCollection collection) {
 		ChangeEventTracker listener = new ChangeEventTracker();
-		Object element1 = delegate.createElement(collection);
-		Object element2 = delegate.createElement(collection);
-
-		collection.add(element1);
-		collection.add(element2);
-
 		collection.addChangeListener(listener);
-		collection.retainAll(Arrays.asList(new Object[] { element1 }));
+		runnable.run();
 
-		return listener;
+		assertEquals(methodName + " should fire one ChangeEvent.", 1,
+				listener.count);
+		assertEquals(
+				methodName
+						+ "'s change event observable should be the created Collection.",
+				collection, listener.event.getObservable());
 	}
 
-	private ChangeEventTracker removeAllElements(
-			IObservableCollection collection,
-			IObservableCollectionContractDelegate delegate) {
-		ChangeEventTracker listener = new ChangeEventTracker();
-		Object element = delegate.createElement(collection);
-		collection.add(element);
-		collection.addChangeListener(listener);
-		collection.removeAll(Arrays.asList(new Object[] { element }));
+	/**
+	 * Asserts that when the change event is fired for the action contained in
+	 * the <code>runnable</code> the change will have been applied to the
+	 * <code>collection</code>.
+	 * 
+	 * @param runnable
+	 * @param methodName
+	 * @param collection
+	 * @param elementContained
+	 */
+	/* package */void assertDoesNotContainDuringChangeEvent(Runnable runnable,
+			String methodName, IObservableCollection collection,
+			Object elementNotContained) {
 
-		return listener;
+		// precondition
+		assertTrue(collection.contains(elementNotContained));
+
+		ContainsListener listener = new ContainsListener(collection,
+				elementNotContained).init();
+		listener.contains = true;
+		collection.remove(elementNotContained);
+		assertFalse(
+				new StringBuffer("When ")
+						.append(methodName)
+						.append(
+								" fires a change event the element should have been removed from the Collection.")
+						.toString(), listener.contains);
+	}
+
+	/**
+	 * Asserts that when the change event is fired for the action contained in
+	 * the <code>runnable</code> the change will have been applied to the
+	 * <code>collection</code>.
+	 * 
+	 * @param runnable
+	 * @param methodName
+	 * @param collection
+	 * @param elementContained
+	 */
+	/* package */void assertContainsDuringChangeEvent(Runnable runnable,
+			String methodName, IObservableCollection collection,
+			Object elementContained) {
+		ContainsListener listener = new ContainsListener(collection,
+				elementContained).init();
+
+		// precondition
+		assertFalse(collection.contains(elementContained));
+		runnable.run();
+
+		assertTrue(
+				new StringBuffer("When ")
+						.append(methodName)
+						.append(
+								" fires a change event the element should have been added to the Collection.")
+						.toString(), listener.contains);
 	}
 
 	/* package */static class ContainsListener implements IChangeListener {

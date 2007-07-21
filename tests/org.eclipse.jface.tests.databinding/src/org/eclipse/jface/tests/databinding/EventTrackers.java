@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.tests.databinding;
 
+import java.util.List;
+
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
@@ -29,41 +31,85 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 public class EventTrackers {
 	public static class ChangeEventTracker implements IChangeListener {
 		public int count;
+
 		public ChangeEvent event;
+
+		/**
+		 * Queue that the listener will add itself too when it is notified of an
+		 * event. Used to determine order of notifications of listeners.
+		 */
+		public final List notificationQueue;
+
+		public ChangeEventTracker() {
+			notificationQueue = null;
+		}
+
+		public ChangeEventTracker(List notificationQueue) {
+			this.notificationQueue = notificationQueue;
+		}
 
 		public void handleChange(ChangeEvent event) {
 			count++;
 			this.event = event;
+			if (notificationQueue != null) {
+				notificationQueue.add(this);
+			}
 		}
 	}
 
 	public static class ValueChangeEventTracker implements IValueChangeListener {
 		public int count;
+
 		public ValueChangeEvent event;
+
+		public ValueChangeEventTracker() {
+		}
 
 		public void handleValueChange(ValueChangeEvent event) {
 			count++;
 			this.event = event;
 		}
 	}
-	
+
 	public static class MapChangeEventTracker implements IMapChangeListener {
 		public int count;
+
 		public MapChangeEvent event;
-		
+
+		public MapChangeEventTracker() {
+		}
+
 		public void handleMapChange(MapChangeEvent event) {
 			count++;
 			this.event = event;
-		}		
+		}
 	}
-	
+
 	public static class ListChangeEventTracker implements IListChangeListener {
 		public int count;
+
 		public ListChangeEvent event;
 		
+		/**
+		 * Queue that the listener will add itself too when it is notified of an
+		 * event. Used to determine order of notifications of listeners.
+		 */
+		public final List notificationQueue;
+
+		public ListChangeEventTracker() {
+			notificationQueue = null;
+		}
+		
+		public ListChangeEventTracker(List notificationQueue) {
+			this.notificationQueue = notificationQueue;
+		}
+
 		public void handleListChange(ListChangeEvent event) {
 			count++;
 			this.event = event;
-		}	
+			if (notificationQueue != null) {
+				notificationQueue.add(this);
+			}
+		}
 	}
 }

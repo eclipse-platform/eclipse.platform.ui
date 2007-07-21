@@ -12,21 +12,18 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.conformance.databinding.MutableObservableCollectionContractTest;
+import org.eclipse.jface.conformance.databinding.MutableObservableListContractTest;
+import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.RealmTester;
@@ -40,54 +37,6 @@ public class WritableListTest extends TestCase {
 	protected void tearDown() throws Exception {
 		RealmTester.setDefault(null);
 	}
-
-	public void testClear() {
-		ThreadRealm realm = new ThreadRealm();
-		realm.init(Thread.currentThread());
-
-		WritableList writableList = new WritableList(realm);
-		writableList.add("hello");
-		writableList.add("world");
-		assertEquals(2, writableList.size());
-		writableList.clear();
-		assertEquals(0, writableList.size());
-	}
-    
-    public void testRemoveAllChangeEvent() throws Exception {
-        CurrentRealm realm = new CurrentRealm(true);
-        
-        WritableList list = new WritableList(realm);
-        String element = "element";
-        
-        list.add(element);
-        
-        class ListChangeListener implements IListChangeListener {
-            int count;
-            ListChangeEvent event;
-            
-            /* (non-Javadoc)
-             * @see org.eclipse.core.databinding.observable.list.IListChangeListener#handleListChange(org.eclipse.core.databinding.observable.list.ListChangeEvent)
-             */
-            public void handleListChange(ListChangeEvent event) {
-                count++;
-                this.event = event;
-            }
-        }
-        
-        ListChangeListener listener = new ListChangeListener();
-        list.addListChangeListener(listener);
-        assertEquals(0, listener.count);
-        
-        list.removeAll(Arrays.asList(new String[] {element}));
-        assertEquals(1, listener.count);
-        
-        assertEquals(1, listener.event.diff.getDifferences().length);
-        ListDiffEntry diffEntry = listener.event.diff.getDifferences()[0];
-        assertFalse("addition", diffEntry.isAddition());
-        assertEquals("element", element, diffEntry.getElement());
-        assertEquals("position", 0, diffEntry.getPosition());
-        assertFalse(list.contains(element));
-    }
 
 	public void testSetRealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
@@ -211,10 +160,11 @@ public class WritableListTest extends TestCase {
 	}
 
 	public static Test suite() {
-		Object[] params = new Object[] { new Delegate() };
+		Delegate delegate = new Delegate();
 		return new SuiteBuilder().addTests(WritableListTest.class)
-				.addParameterizedTests(
-						MutableObservableCollectionContractTest.class, params)
+				.addObservableContractTest(ObservableListContractTest.class,
+						delegate).addObservableContractTest(
+						MutableObservableListContractTest.class, delegate)
 				.build();
 	}
 
@@ -222,24 +172,33 @@ public class WritableListTest extends TestCase {
 			AbstractObservableCollectionContractDelegate {
 		private WritableList current;
 
-		public IObservableCollection createObservableCollection() {
+		public Object createElement(IObservableCollection collection) {
+			return String.valueOf(collection.size() + 1);
+		}
+
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
+
+		public IObservableCollection createObservableCollection(
+				final int itemCount) {
 			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
 					new Runnable() {
 						public void run() {
 							current = WritableList
 									.withElementType(String.class);
+
+							for (int i = 0; i < itemCount; i++) {
+								current.add(String.valueOf(i));
+							}
 						}
 					});
 
 			return current;
 		}
-
-		public Object createElement(IObservableCollection collection) {
-			return String.valueOf(collection.size() + 1);
-		}
 		
-		public Object getElementType(IObservableCollection collection) {
-			return String.class;
+		public void change(IObservable observable) {
+			((WritableList) observable).add("");
 		}
 	}
 }

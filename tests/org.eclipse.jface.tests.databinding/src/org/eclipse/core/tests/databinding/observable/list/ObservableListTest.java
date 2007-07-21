@@ -15,13 +15,22 @@ package org.eclipse.core.tests.databinding.observable.list;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -60,58 +69,51 @@ public class ObservableListTest extends TestCase {
 		});
 	}
 
-	public void testIteratorGetterCalled() throws Exception {
-		final ObservableListStub list = new ObservableListStub(
-				new ArrayList(0), Object.class);
-
-		IObservable[] observables = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						list.iterator();
+	public static Test suite() {
+		return new SuiteBuilder().addTests(ObservableListTest.class)
+				.addObservableContractTest(ObservableListContractTest.class,
+						new Delegate()).build();
+	}
+	
+	/* package */ static class Delegate extends AbstractObservableCollectionContractDelegate {
+		private IObservableCollection currentCollection;
+		
+		public IObservableCollection createObservableCollection(final int elementCount) {
+			Realm.runWithDefault(SWTObservables.getRealm(Display.getCurrent()), new Runnable() {
+				public void run() {
+					List wrappedList = new ArrayList();
+					for (int i = 0; i < elementCount; i++) {
+						wrappedList.add(String.valueOf(i));
 					}
-				}, null, null);
-
-		assertEquals("length", 1, observables.length);
-		assertEquals("observable", list, observables[0]);
+					
+					currentCollection = new ObservableListStub(wrappedList, String.class);
+				}				
+			});
+			
+			return currentCollection;
+		}
+		
+		public void change(IObservable observable) {
+			ObservableListStub list = (ObservableListStub) observable;
+			Object element = "element";
+			list.wrappedList.add(element);
+			list.fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(list.size(), true, element)));
+		}
+		
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
 	}
 
-	public void testListIteratorGetterCalled() throws Exception {
-		ArrayList arrayList = new ArrayList();
-		arrayList.add("");
-		final ObservableListStub list = new ObservableListStub(arrayList,
-				Object.class);
-
-		IObservable[] observables = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						list.listIterator();
-					}
-				}, null, null);
-
-		assertEquals("length", 1, observables.length);
-		assertEquals("observable", list, observables[0]);
-	}
-
-	public void testListIteratorByIndexGetterCalled() throws Exception {
-		ArrayList arrayList = new ArrayList();
-		arrayList.add("");
-		final ObservableListStub list = new ObservableListStub(arrayList,
-				Object.class);
-
-		IObservable[] observables = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						list.listIterator(1);
-					}
-				}, null, null);
-
-		assertEquals("length", 1, observables.length);
-		assertEquals("observable", list, observables[0]);
-	}
-
-	static class ObservableListStub extends ObservableList {
+	/* package */static class ObservableListStub extends ObservableList {
+		List wrappedList;
 		protected ObservableListStub(List wrappedList, Object elementType) {
 			super(wrappedList, elementType);
+			this.wrappedList = wrappedList;
+		}
+		
+		protected void fireListChange(ListDiff diff) {
+			super.fireListChange(diff);
 		}
 	}
 }
