@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -128,11 +129,35 @@ public final class ExpressionConverter {
 						IStatus.ERROR, 
 						Messages.format(
 							ExpressionMessages.Expression_unknown_element,  
-							children[i].getName()),
+							getDebugPath(children[i])),
 						null));
 				result.add(child);
 			}
 		}		
+	}
+
+	private String getDebugPath(IConfigurationElement configurationElement) {
+		StringBuffer buf= new StringBuffer();
+		buf.append(configurationElement.getName());
+		Object parent= configurationElement.getParent();
+		while (parent != null) {
+			if (parent instanceof IConfigurationElement) {
+				buf.append(" > "); //$NON-NLS-1$
+				IConfigurationElement parent2= (IConfigurationElement) parent;
+				buf.append(parent2.getName());
+				parent= parent2.getParent();
+			} else if (parent instanceof IExtension) {
+				IExtension parent2= (IExtension) parent;
+				buf.append(" : "); //$NON-NLS-1$
+				buf.append(parent2.getExtensionPointUniqueIdentifier());
+				buf.append(" @ "); //$NON-NLS-1$
+				buf.append(parent2.getContributor().getName());
+				parent= null;
+			} else {
+				parent= null;
+			}
+		}
+		return buf.toString();
 	}
 
 	/* package */ void processChildren(Element element, CompositeExpression result) throws CoreException {
