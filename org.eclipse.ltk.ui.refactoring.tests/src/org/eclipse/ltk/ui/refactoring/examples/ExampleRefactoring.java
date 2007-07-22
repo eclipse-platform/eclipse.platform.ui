@@ -26,6 +26,7 @@ import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -81,18 +82,15 @@ public class ExampleRefactoring extends Refactoring {
 			return RefactoringStatus.createFatalErrorStatus("New text must be set and not empty");
 		}
 		
-		TextFileChange change= new TextFileChange("Replace in file " + fFile.getName(), fFile);
+		TextFileChange change= new TextFileChange(getName(), fFile);
 		change.setEdit(new MultiTextEdit());
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
 		manager.connect(fFile.getFullPath(), LocationKind.IFILE, null);
 		try {
 			ITextFileBuffer textFileBuffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
-			if (textFileBuffer == null) {
-				return RefactoringStatus.createFatalErrorStatus("Text buffer could not be aquired");
-			}
-
 			String content= textFileBuffer.getDocument().get();
+			
 			int i= 0;
 			int count= 1;
 			while (i < content.length()) {
@@ -107,6 +105,7 @@ public class ExampleRefactoring extends Refactoring {
 				}
 			}
 			if (count == 1) {
+				fChange= new NullChange(getName());
 				return RefactoringStatus.createErrorStatus("No matches found for '" + fOldText +"'");
 			}
 			fChange= change;

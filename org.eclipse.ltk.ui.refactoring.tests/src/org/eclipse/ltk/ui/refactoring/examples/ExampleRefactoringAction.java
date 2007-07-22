@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizard;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 
-/** In plugin.xml:
+/* In plugin.xml:
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution

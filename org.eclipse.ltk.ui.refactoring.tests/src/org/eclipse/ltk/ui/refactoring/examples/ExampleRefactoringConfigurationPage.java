@@ -22,13 +22,13 @@ import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
 class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 
-	private final ExampleRefactoring fCleanUpRefactoring;
+	private final ExampleRefactoring fRefactoring;
 	private Text fOldText;
 	private Text fNewText;
 
 	public ExampleRefactoringConfigurationPage(ExampleRefactoring refactoring) {
 		super("MyExampleRefactoringInputPage");
-		fCleanUpRefactoring= refactoring;
+		fRefactoring= refactoring;
     }
 
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 		composite.setFont(parent.getFont());
 		
 		Label label1= new Label(composite, SWT.NONE);
-		label1.setText("New string:");
+		label1.setText("&Find:");
 		label1.setLayoutData(new GridData());
 		
 		fOldText= new Text(composite, SWT.BORDER);
@@ -49,13 +49,13 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 		fOldText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		
 		Label label2= new Label(composite, SWT.NONE);
-		label2.setText("Old string:");
+		label2.setText("&Replace with:");
 		label2.setLayoutData(new GridData());
 		
 		fNewText= new Text(composite, SWT.BORDER);
 		fNewText.setText("B");
 		fNewText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-					
+		
 		setControl(composite);
 		
 		Dialog.applyDialogFont(composite);
@@ -83,7 +83,7 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
     }
 
 	private void initializeRefactoring() {
-		fCleanUpRefactoring.setOldText(fOldText.getText());
-		fCleanUpRefactoring.setNewText(fNewText.getText());
+		fRefactoring.setOldText(fOldText.getText());
+		fRefactoring.setNewText(fNewText.getText());
     }
 }
