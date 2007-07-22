@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2006 Brad Reynolds and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Brad Reynolds - initial API and implementation
+ *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
@@ -22,55 +22,60 @@ import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContra
 import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.internal.swt.LabelObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
+import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 
 /**
  * @since 3.2
  */
-public class LabelObservableValueTest extends ObservableDelegateTest {
+public class SpinnerObservableValueMaxTest extends ObservableDelegateTest {
 	private Delegate delegate;
+
+	private Spinner spinner;
+
 	private IObservableValue observable;
-	private Label label;
-	
-	public LabelObservableValueTest() {
+
+	public SpinnerObservableValueMaxTest() {
 		this(null);
 	}
-	
-	public LabelObservableValueTest(String testName) {
+
+	public SpinnerObservableValueMaxTest(String testName) {
 		super(testName, new Delegate());
 	}
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		delegate = (Delegate) getObservableContractDelegate();
 		observable = (IObservableValue) getObservable();
-		label = delegate.label;
+		spinner = delegate.spinner;
 	}
 	
 	protected IObservable doCreateObservable() {
 		return getObservableContractDelegate().createObservable(SWTObservables.getRealm(Display.getDefault()));
 	}
+
+	public void testGetValue() throws Exception {
+		int max = 100;
+		spinner.setMaximum(max);
+		assertEquals(new Integer(max), observable.getValue());
+	}
+
+	public void testSetValue() throws Exception {
+		int max = 100;
+		observable.setValue(new Integer(max));
+		assertEquals(max, spinner.getMaximum());
+	}
 	
-    public void testSetValue() throws Exception {
-    	//preconditions
-        assertEquals("", label.getText());
-        assertEquals("", observable.getValue());
-        
-        String value = "value";
-        observable.setValue(value);
-        assertEquals("label text", value, label.getText());
-        assertEquals("observable value", value, observable.getValue());
-    }
-    
-    public static Test suite() {
+	public static Test suite() {
 		Delegate delegate = new Delegate();
-		return new SuiteBuilder().addTests(LabelObservableValueTest.class).addObservableContractTest(
-				SWTObservableValueContractTest.class, delegate)
+		return new SuiteBuilder().addTests(SpinnerObservableValueMaxTest.class)
+				.addObservableContractTest(
+						SWTObservableValueContractTest.class, delegate)
 				.addObservableContractTest(
 						SWTMutableObservableValueContractTest.class, delegate)
 				.build();
@@ -80,11 +85,12 @@ public class LabelObservableValueTest extends ObservableDelegateTest {
 			AbstractObservableValueContractDelegate {
 		private Shell shell;
 
-		Label label;
+		Spinner spinner;
 
 		public void setUp() {
 			shell = new Shell();
-			label = new Label(shell, SWT.NONE);
+			spinner = new Spinner(shell, SWT.NONE);
+			spinner.setMaximum(1000);
 		}
 
 		public void tearDown() {
@@ -92,20 +98,24 @@ public class LabelObservableValueTest extends ObservableDelegateTest {
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new LabelObservableValue(realm, label);
+			return new SpinnerObservableValue(realm, spinner, SWTProperties.MAX);
 		}
 
 		public void change(IObservable observable) {
-			IObservableValue value = (IObservableValue) observable;
-			value.setValue(value.getValue() + "a");
+			IObservableValue observableValue = (IObservableValue) observable;
+			observableValue.setValue(createValue(observableValue));
 		}
-		
+
 		public Object getValueType(IObservableValue observable) {
-			return String.class;
+			return Integer.TYPE;
 		}
-		
+
 		public Object createValue(IObservableValue observable) {
-			return observable.getValue() + "a";
+			return createIntegerValue(observable);
+		}
+
+		private Integer createIntegerValue(IObservableValue observable) {
+			return new Integer(((Integer) observable.getValue()).intValue() + 1);
 		}
 	}
 }

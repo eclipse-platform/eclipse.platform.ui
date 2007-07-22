@@ -21,9 +21,11 @@ import org.eclipse.jface.conformance.databinding.AbstractObservableValueContract
 import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.CLabelObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -31,6 +33,37 @@ import org.eclipse.swt.widgets.Shell;
  * 
  */
 public class CLabelObservableValueTest extends TestCase {
+	private Delegate delegate;
+	private IObservableValue observable;
+	private CLabel label;
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		delegate = new Delegate();
+		delegate.setUp();
+		label = delegate.label;
+		observable = delegate.createObservableValue(SWTObservables.getRealm(Display.getDefault()));
+	}
+	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		
+		delegate.tearDown();
+		observable.dispose();
+	}
+	
+    public void testSetValue() throws Exception {
+    	//preconditions
+        assertEquals("", label.getText());
+        assertEquals("", observable.getValue());
+        
+        String value = "value";
+        observable.setValue(value);
+        assertEquals("label text", value, label.getText());
+        assertEquals("observable value", value, observable.getValue());
+    }
+	
 	public static Test suite() {
 		Delegate delegate = new Delegate();
 		return new SuiteBuilder().addObservableContractTest(
@@ -44,7 +77,7 @@ public class CLabelObservableValueTest extends TestCase {
 			AbstractObservableValueContractDelegate {
 		private Shell shell;
 
-		private CLabel label;
+		CLabel label;
 
 		public void setUp() {
 			shell = new Shell();

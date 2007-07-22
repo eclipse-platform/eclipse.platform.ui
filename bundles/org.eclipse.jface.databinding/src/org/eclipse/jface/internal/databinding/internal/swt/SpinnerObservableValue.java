@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
@@ -40,13 +41,29 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 		super(spinner);
 		this.spinner = spinner;
 		this.attribute = attribute;
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param spinner
+	 * @param attribute
+	 */
+	public SpinnerObservableValue(Realm realm, Spinner spinner, String attribute) {
+		super(realm, spinner);
+		this.spinner = spinner;
+		this.attribute = attribute;
+		init();
+	}
+	
+	private void init() {		
 		if (attribute.equals(SWTProperties.SELECTION)) {
 			currentSelection = spinner.getSelection();
 			spinner.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
 						int newSelection = SpinnerObservableValue.this.spinner
-								.getSelection();
+						.getSelection();
 						fireValueChange(Diffs.createValueDiff(new Integer(
 								currentSelection), new Integer(newSelection)));
 						currentSelection = newSelection;

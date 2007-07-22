@@ -56,6 +56,13 @@ public class MutableObservableValueContractTest extends
 		this.observable = (IObservableValue) getObservable();
 	}
 
+	public void testSetValue() throws Exception {
+		Object value = delegate.createValue(observable);
+		
+		observable.setValue(value);
+		assertEquals("IObservableValue.setValue(Object) should set the value of the observable.", value, observable.getValue());
+	}
+	
 	public void testSetValue_ChangeEvent() throws Exception {
 		ChangeEventTracker listener = new ChangeEventTracker().register(observable);
 		

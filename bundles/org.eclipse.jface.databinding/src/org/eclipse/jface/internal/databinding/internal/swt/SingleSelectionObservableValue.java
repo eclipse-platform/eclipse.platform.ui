@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.widgets.Control;
 
@@ -32,7 +33,19 @@ abstract public class SingleSelectionObservableValue extends
 	 */
 	public SingleSelectionObservableValue(Control control) {
 		super(control);
-
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param control
+	 */
+	public SingleSelectionObservableValue(Realm realm, Control control) {
+		super(realm, control);
+		init();
+	}
+	
+	private void init() {		
 		currentSelection = doGetSelectionIndex();
 		doAddSelectionListener(new Runnable(){
 			public void run() {

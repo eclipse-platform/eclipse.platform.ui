@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.widgets.Text;
 
@@ -26,8 +27,16 @@ public class TextEditableObservableValue extends AbstractSWTObservableValue {
 	 * @param text
 	 */
 	public TextEditableObservableValue(Text text) {
-		super(text);
-		
+		super(text);	
+		this.text = text;
+	}
+	
+	/**
+	 * @param realm
+	 * @param text
+	 */
+	public TextEditableObservableValue(Realm realm, Text text) {
+		super(realm, text);
 		this.text = text;
 	}
 

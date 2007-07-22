@@ -81,4 +81,13 @@ public class ObservableDelegateTest extends TestCase {
 	protected IObservable getObservable() {
 		return observable;
 	}	
+	
+	/**
+	 * Returns the delegate in use.
+	 * 
+	 * @return delegate
+	 */
+	protected IObservableContractDelegate getObservableContractDelegate() {
+		return delegate;
+	}
 }

@@ -115,9 +115,13 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservable
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.internal.swt.TableObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMaxTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMinTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMaxTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMinTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.TableSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextEditableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
@@ -271,11 +275,16 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ComboObservableValueTextTest.suite());
 		
 		addTestSuite(ControlObservableValueTest.class);
-		addTestSuite(LabelObservableValueTest.class);
-		addTestSuite(ScaleObservableValueTest.class);
-		addTestSuite(SpinnerObservableValueTest.class);
-		addTestSuite(TableObservableValueTest.class);
-		addTestSuite(TextEditableObservableValueTest.class);
+		addTest(LabelObservableValueTest.suite());
+		addTest(ScaleObservableValueMinTest.suite());
+		addTest(ScaleObservableValueMaxTest.suite());
+		addTest(ScaleObservableValueSelectionTest.suite());
+		
+		addTest(SpinnerObservableValueMinTest.suite());
+		addTest(SpinnerObservableValueMaxTest.suite());
+		addTest(SpinnerObservableValueSelectionTest.suite());
+		addTest(TableSingleSelectionObservableValueTest.suite());
+		addTest(TextEditableObservableValueTest.suite());
 		addTestSuite(TextObservableValueTest.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers

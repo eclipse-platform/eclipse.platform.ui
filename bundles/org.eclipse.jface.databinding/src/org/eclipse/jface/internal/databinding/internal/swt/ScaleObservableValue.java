@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,13 +44,29 @@ public class ScaleObservableValue extends AbstractSWTObservableValue {
 		super(scale);
 		this.scale = scale;
 		this.attribute = attribute;
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param scale
+	 * @param attribute
+	 */
+	public ScaleObservableValue(Realm realm, Scale scale, String attribute) {
+		super(realm, scale);
+		this.scale = scale;
+		this.attribute = attribute;
+		init();
+	}
+	
+	private void init() {		
 		if (attribute.equals(SWTProperties.SELECTION)) {
 			currentSelection = scale.getSelection();
 			scale.addSelectionListener(listener = new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (!updating) {
 						int newSelection = ScaleObservableValue.this.scale
-								.getSelection();
+						.getSelection();
 						fireValueChange(Diffs.createValueDiff(new Integer(
 								currentSelection), new Integer(newSelection)));
 						currentSelection = newSelection;
