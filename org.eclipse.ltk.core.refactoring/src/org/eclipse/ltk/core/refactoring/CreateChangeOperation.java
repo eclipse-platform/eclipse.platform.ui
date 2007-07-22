@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
 import org.eclipse.ltk.internal.core.refactoring.NotCancelableProgressMonitor;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.UnknownRefactoringDescriptor;
 
 /**
@@ -149,7 +150,11 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 				final CompositeChange composite= new CompositeChange(fChange.getName()) {
 
 					public final ChangeDescriptor getDescriptor() {
-						return new RefactoringChangeDescriptor(new UnknownRefactoringDescriptor(fChange.getName()));
+						String name= fChange.getName();
+						if (name.length() == 0)
+							name= RefactoringCoreMessages.CreateChangeOperation_unknown_Refactoring;
+						UnknownRefactoringDescriptor unknownDescriptor= new UnknownRefactoringDescriptor(name);
+						return new RefactoringChangeDescriptor(unknownDescriptor);
 					}
 				};
 				composite.markAsSynthetic();

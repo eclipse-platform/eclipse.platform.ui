@@ -29,7 +29,7 @@ public final class UnknownRefactoringDescriptor extends RefactoringDescriptor {
 	 * Creates a new unknown refactoring descriptor.
 	 * 
 	 * @param name
-	 *            the name of the change
+	 *            the name of the change, must not be <code>null</code> or empty
 	 */
 	public UnknownRefactoringDescriptor(final String name) {
 		super(ID_UNKNOWN, null, name, null, RefactoringDescriptor.NONE);
