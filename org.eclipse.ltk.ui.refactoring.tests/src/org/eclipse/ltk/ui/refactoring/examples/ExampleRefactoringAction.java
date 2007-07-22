@@ -29,10 +29,11 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             objectClass="org.eclipse.core.resources.IFile"
+			adaptable="true"      
             id="org.eclipse.ltk.ui.refactoring.examples.ExampleRefactoringAction">
          <action
-               label="Replace content (ltk.ui.refactoring.examples)"
-               tooltip="Replace content (ltk.ui.refactoring.examples)"
+               label="Replace content... (ltk.ui.refactoring.examples)"
+               tooltip="Replace content... (ltk.ui.refactoring.examples)"
                class="org.eclipse.ltk.ui.refactoring.examples.ExampleRefactoringAction"
                menubarPath="ExampleRefactoringAction"
                enablesFor="1"
