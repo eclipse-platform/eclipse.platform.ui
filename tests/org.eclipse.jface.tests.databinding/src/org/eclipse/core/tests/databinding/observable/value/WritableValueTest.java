@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.conformance.databinding.MutableObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -50,35 +51,32 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		Object[] params = new Object[] { new Delegate() };
+		Delegate delegate = new Delegate();
 
 		return new SuiteBuilder().addTests(WritableValueTest.class)
-				.addParameterizedTests(ObservableValueContractTest.class,
-						params).build();
+				.addObservableContractTest(ObservableValueContractTest.class,
+						delegate).addObservableContractTest(
+						MutableObservableValueContractTest.class, delegate)
+				.build();
 	}
 
 	/* package */static class Delegate extends
 			AbstractObservableValueContractDelegate {
-		private WritableValue current;
-
-		public IObservableValue createObservableValue() {
-			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
-					new Runnable() {
-						public void run() {
-							current = new WritableValue("", String.class);
-						}
-					});
-
-			return current;
+		public IObservableValue createObservableValue(Realm realm) {
+			return new WritableValue(realm, "", String.class);
 		}
 
 		public void change(IObservable observable) {
-			WritableValue writableValue = (WritableValue) observable;
-			writableValue.setValue(writableValue.getValue() + "a");
+			IObservableValue observableValue = (IObservableValue) observable;
+			observableValue.setValue(createValue(observableValue));
 		}
 
 		public Object getValueType(IObservableValue observable) {
 			return String.class;
+		}
+		
+		public Object createValue(IObservableValue observable) {
+			return observable.getValue() + "a";
 		}
 	}
 }

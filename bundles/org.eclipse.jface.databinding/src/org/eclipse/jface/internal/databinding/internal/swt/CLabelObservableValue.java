@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.custom.CLabel;
 
@@ -28,6 +29,15 @@ public class CLabelObservableValue extends AbstractSWTObservableValue {
 	 */
 	public CLabelObservableValue(CLabel label) {
 		super(label);
+		this.label = label;
+	}
+	
+	/**
+	 * @param realm
+	 * @param label
+	 */
+	public CLabelObservableValue(Realm realm, CLabel label) {
+		super(realm, label);
 		this.label = label;
 	}
 

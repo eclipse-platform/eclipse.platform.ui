@@ -11,54 +11,43 @@
 
 package org.eclipse.jface.conformance.databinding;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.jface.conformance.databinding.ObservableContractTest.DummyRealm;
 
 /**
  * @since 3.3
  */
-public class ObservableStaleContractTest extends TestCase {
+public class ObservableStaleContractTest extends ObservableDelegateTest {
 	private IObservableContractDelegate delegate;
-	private Realm previousRealm;
+	private IObservable observable;
+	
+	public ObservableStaleContractTest(IObservableContractDelegate delegate) {
+		this(null, delegate);
+	}
 	
 	public ObservableStaleContractTest(String testName, IObservableContractDelegate delegate) {
-		super(testName);
+		super(testName, delegate);
 		this.delegate = delegate;
 	}
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-
-		previousRealm = Realm.getDefault();
-		delegate.setUp();
-	}
-
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
-		delegate.tearDown();
-		DummyRealm.setDefaultRealm(previousRealm);
+		
+		observable = getObservable();
 	}
 	
 	public void testIsStaleReturnsTrueWhenStale() throws Exception {
-		IObservable observable = delegate.createObservable();
 		delegate.setStale(observable, true);
 		assertTrue("When stale isStale() should return true.", observable.isStale());
 	}
 	
 	public void testIsStaleReturnsFalseWhenNotStale() throws Exception {
-		IObservable observable = delegate.createObservable();
 		delegate.setStale(observable, false);
 		assertFalse("When not stale isStale() should return false.", observable.isStale());
 	}
 
 	public void testBecomingStaleFiresStaleEvent() throws Exception {
-		IObservable observable = delegate.createObservable();
 		StaleListener listener = new StaleListener();
 
 		// precondition
@@ -71,7 +60,6 @@ public class ObservableStaleContractTest extends TestCase {
 	}
 
 	public void testStaleEventObservable() throws Exception {
-		IObservable observable = delegate.createObservable();
 		StaleListener listener = new StaleListener();
 
 		// precondition
@@ -88,7 +76,6 @@ public class ObservableStaleContractTest extends TestCase {
 
 	public void testRemoveStaleListenerRemovesListener() throws Exception {
 		StaleListener listener = new StaleListener();
-		IObservable observable = delegate.createObservable();
 
 		observable.addStaleListener(listener);
 		ensureStale(observable, false);
@@ -107,7 +94,6 @@ public class ObservableStaleContractTest extends TestCase {
 
 	public void testStaleListenersAreNotNotifiedWhenObservableIsNoLongerStale()
 			throws Exception {
-		IObservable observable = delegate.createObservable();
 		ensureStale(observable, true);
 
 		StaleListener listener = new StaleListener();
@@ -119,7 +105,6 @@ public class ObservableStaleContractTest extends TestCase {
 	}
 
 	public void testObservableRealmIsCurrentOnStale() throws Exception {
-		IObservable observable = delegate.createObservable();
 		ensureStale(observable, false);
 
 		StaleListener listener = new StaleListener();

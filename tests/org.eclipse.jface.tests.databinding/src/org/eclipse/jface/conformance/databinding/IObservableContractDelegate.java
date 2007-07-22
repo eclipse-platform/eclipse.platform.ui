@@ -12,6 +12,7 @@
 package org.eclipse.jface.conformance.databinding;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Delegate interface for observables.
@@ -48,9 +49,10 @@ public interface IObservableContractDelegate {
 	/**
 	 * Creates a new observable.
 	 * 
+	 * @param realm realm of the observable
 	 * @return observable
 	 */
-	public IObservable createObservable();
+	public IObservable createObservable(Realm realm);
 
 	/**
 	 * Invokes a change operation on the observable resulting in a change event

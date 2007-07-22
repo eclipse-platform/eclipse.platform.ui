@@ -27,10 +27,8 @@ import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -76,21 +74,13 @@ public class ObservableListTest extends TestCase {
 	}
 	
 	/* package */ static class Delegate extends AbstractObservableCollectionContractDelegate {
-		private IObservableCollection currentCollection;
-		
-		public IObservableCollection createObservableCollection(final int elementCount) {
-			Realm.runWithDefault(SWTObservables.getRealm(Display.getCurrent()), new Runnable() {
-				public void run() {
-					List wrappedList = new ArrayList();
-					for (int i = 0; i < elementCount; i++) {
-						wrappedList.add(String.valueOf(i));
-					}
-					
-					currentCollection = new ObservableListStub(wrappedList, String.class);
-				}				
-			});
+		public IObservableCollection createObservableCollection(Realm realm, final int elementCount) {
+			List wrappedList = new ArrayList();
+			for (int i = 0; i < elementCount; i++) {
+				wrappedList.add(String.valueOf(i));
+			}
 			
-			return currentCollection;
+			return new ObservableListStub(realm, wrappedList, String.class);
 		}
 		
 		public void change(IObservable observable) {
@@ -107,7 +97,12 @@ public class ObservableListTest extends TestCase {
 
 	/* package */static class ObservableListStub extends ObservableList {
 		List wrappedList;
-		protected ObservableListStub(List wrappedList, Object elementType) {
+		ObservableListStub(Realm realm, List wrappedList, Object elementType) {
+			super(realm, wrappedList, elementType);
+			this.wrappedList = wrappedList;
+		}
+		
+		ObservableListStub(List wrappedList, Object elementType) {
 			super(wrappedList, elementType);
 			this.wrappedList = wrappedList;
 		}

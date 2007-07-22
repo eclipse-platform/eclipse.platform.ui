@@ -30,8 +30,7 @@ import org.eclipse.jface.tests.databinding.EventTrackers.ChangeEventTracker;
  * 
  * @since 3.2
  */
-public class MutableObservableCollectionContractTest extends
-		ObservableCollectionContractTest {
+public class MutableObservableCollectionContractTest extends ObservableDelegateTest {
 	private IObservableCollectionContractDelegate delegate;
 
 	private IObservableCollection collection;
@@ -51,7 +50,7 @@ public class MutableObservableCollectionContractTest extends
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		collection = super.getObservableCollection();
+		collection = (IObservableCollection) super.getObservable();
 	}
 
 	public void testAdd_ChangeEvent() throws Exception {

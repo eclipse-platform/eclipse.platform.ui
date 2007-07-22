@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,17 +38,32 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 		super(combo);
 		this.combo = combo;
 		this.attribute = attribute;
-		
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param combo
+	 * @param attribute
+	 */
+	public ComboObservableValue(Realm realm, Combo combo, String attribute) {
+		super(realm, combo);
+		this.combo = combo;
+		this.attribute = attribute;
+		init();
+	}
+	
+	private void init() {		
 		if (attribute.equals(SWTProperties.SELECTION)
 				|| attribute.equals(SWTProperties.TEXT)) {
 			this.currentValue = combo.getText();
 			combo.addModifyListener(new ModifyListener() {
-
+				
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
 						String oldValue = currentValue;
 						currentValue = ComboObservableValue.this.combo
-								.getText();
+						.getText();
 						fireValueChange(Diffs.createValueDiff(oldValue,
 								currentValue));
 					}

@@ -13,6 +13,7 @@ package org.eclipse.jface.conformance.databinding;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Abstract implementation of {@link IObservableCollectionContractDelegate}.
@@ -24,10 +25,10 @@ public abstract class AbstractObservableCollectionContractDelegate extends
 		IObservableCollectionContractDelegate {
 
 	/**
-	 * Invokes {@link #createObservableCollection(elementCount)}.
+	 * Invokes {@link #createObservableCollection(Realm, elementCount)}.
 	 */
-	public final IObservable createObservable() {
-		return createObservableCollection(0);
+	public final IObservable createObservable(Realm realm) {
+		return createObservableCollection(realm, 0);
 	}
 	
 	public Object createElement(IObservableCollection collection) {

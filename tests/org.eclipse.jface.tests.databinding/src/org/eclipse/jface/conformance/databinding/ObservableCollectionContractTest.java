@@ -45,11 +45,9 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 	}
 
 	protected void setUp() throws Exception {
-		collection = delegate.createObservableCollection(0);
-	}
-
-	protected IObservableCollection getObservableCollection() {
-		return collection;
+		super.setUp();
+		
+		collection = (IObservableCollection) getObservable();
 	}
 
 	public void testIterator_GetterCalled() throws Exception {

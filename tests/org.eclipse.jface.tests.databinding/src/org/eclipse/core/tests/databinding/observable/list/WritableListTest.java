@@ -12,6 +12,7 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import junit.framework.Test;
@@ -170,8 +171,6 @@ public class WritableListTest extends TestCase {
 
 	/* package */static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
-		private WritableList current;
-
 		public Object createElement(IObservableCollection collection) {
 			return String.valueOf(collection.size() + 1);
 		}
@@ -180,23 +179,17 @@ public class WritableListTest extends TestCase {
 			return String.class;
 		}
 
-		public IObservableCollection createObservableCollection(
+		public IObservableCollection createObservableCollection(Realm realm,
 				final int itemCount) {
-			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
-					new Runnable() {
-						public void run() {
-							current = WritableList
-									.withElementType(String.class);
+			WritableList observable = new WritableList(realm, new ArrayList(), String.class);
 
-							for (int i = 0; i < itemCount; i++) {
-								current.add(String.valueOf(i));
-							}
-						}
-					});
+			for (int i = 0; i < itemCount; i++) {
+				observable.add(String.valueOf(i));
+			}
 
-			return current;
+			return observable;
 		}
-		
+
 		public void change(IObservable observable) {
 			((WritableList) observable).add("");
 		}

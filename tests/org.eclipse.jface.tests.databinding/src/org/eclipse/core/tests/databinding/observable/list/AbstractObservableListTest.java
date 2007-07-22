@@ -28,10 +28,8 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -80,24 +78,18 @@ public class AbstractObservableListTest extends TestCase {
 
 	/* package */static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
-		private AbstractObservableListStub current;
 
-		public IObservableCollection createObservableCollection(
+		public IObservableCollection createObservableCollection(Realm realm,
 				final int itemCount) {
-			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
-					new Runnable() {
-						public void run() {
-							String[] items = new String[itemCount];
-							for (int i = 0; i < itemCount; i++) {
-								items[i] = String.valueOf(i);
-							}
 
-							current = new AbstractObservableListStub(Arrays
-									.asList(items));
-							current.elementType = String.class;
-						}
-					});
-			return current;
+			String[] items = new String[itemCount];
+			for (int i = 0; i < itemCount; i++) {
+				items[i] = String.valueOf(i);
+			}
+
+			AbstractObservableListStub observable = new AbstractObservableListStub(realm, Arrays.asList(items));
+			observable.elementType = String.class;
+			return observable;
 		}
 
 		public Object getElementType(IObservableCollection collection) {
@@ -119,7 +111,8 @@ public class AbstractObservableListTest extends TestCase {
 			wrappedList = new ArrayList();
 		}
 
-		public AbstractObservableListStub(List list) {
+		public AbstractObservableListStub(Realm realm, List list) {
+			super(realm);
 			this.wrappedList = list;
 		}
 

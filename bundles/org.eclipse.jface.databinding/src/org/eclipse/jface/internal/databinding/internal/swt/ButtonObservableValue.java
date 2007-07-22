@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -43,8 +44,22 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 	public ButtonObservableValue(Button button) {
 		super(button);
 		this.button = button;
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param button
+	 */
+	public ButtonObservableValue(Realm realm, Button button) {
+		super(realm, button);
+		this.button = button;
+		init();
+	}
+	
+	private void init() {
 		button.addListener(SWT.Selection, updateListener);
-		button.addListener(SWT.DefaultSelection, updateListener);
+		button.addListener(SWT.DefaultSelection, updateListener);		
 	}
 
 	public void doSetValue(final Object value) {

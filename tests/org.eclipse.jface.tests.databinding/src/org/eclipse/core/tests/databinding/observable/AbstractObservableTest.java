@@ -15,8 +15,6 @@ package org.eclipse.core.tests.databinding.observable;
 import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
-import org.eclipse.core.databinding.observable.ChangeEvent;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
@@ -25,11 +23,10 @@ import org.eclipse.jface.conformance.databinding.AbstractObservableContractDeleg
 import org.eclipse.jface.conformance.databinding.ObservableContractTest;
 import org.eclipse.jface.conformance.databinding.ObservableStaleContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.tests.databinding.RealmTester;
+import org.eclipse.jface.tests.databinding.EventTrackers.ChangeEventTracker;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests for AbstractObservable.
@@ -94,7 +91,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	public void testChangeListener() throws Exception {
 		assertFalse(observable.hasListeners());
 
-		ChangeListener listener1 = new ChangeListener();
+		ChangeEventTracker listener1 = new ChangeEventTracker();
 
 		assertFalse(observable.firstListenerAdded);
 		observable.addChangeListener(listener1);
@@ -107,10 +104,10 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		observable.fireChange();
 
 		assertEquals(1, listener1.count);
-		assertSame(observable, listener1.source);
+		assertSame(observable, listener1.event.getSource());
 
 		// Add a second listener as the 1 vs. 2 listener code is different.
-		ChangeListener listener2 = new ChangeListener();
+		ChangeEventTracker listener2 = new ChangeEventTracker();
 		observable.addChangeListener(listener2);
 		assertEquals(0, listener2.count);
 
@@ -119,7 +116,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, listener2.count);
 
 		// Add a third listener as the 2 vs. 3 or greater code is different.
-		ChangeListener listener3 = new ChangeListener();
+		ChangeEventTracker listener3 = new ChangeEventTracker();
 		observable.addChangeListener(listener3);
 		assertEquals(0, listener3.count);
 
@@ -139,7 +136,7 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testHasListenersWithChangeAndStaleListeners() throws Exception {
-		ChangeListener changeListener = new ChangeListener();
+		ChangeEventTracker changeListener = new ChangeEventTracker();
 		StaleListener staleListener = new StaleListener();
 
 		assertFalse(observable.hasListeners());
@@ -193,16 +190,6 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		});
 	}
 
-	private class ChangeListener implements IChangeListener {
-		int count;
-		IObservable source;
-
-		public void handleChange(ChangeEvent event) {
-			count++;
-			this.source = event.getObservable();
-		}
-	}
-
 	private class StaleListener implements IStaleListener {
 		int count;
 		IObservable source;
@@ -214,18 +201,17 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		Object[] params = new Object[] { new Delegate() };
+		Delegate delegate = new Delegate();
 
 		return new SuiteBuilder()
 				.addTests(AbstractObservableTest.class)
-				.addParameterizedTests(ObservableContractTest.class, params)
-				.addParameterizedTests(ObservableStaleContractTest.class,
-						params).build();
+				.addObservableContractTest(ObservableContractTest.class, delegate)
+				.addObservableContractTest(ObservableStaleContractTest.class, delegate)
+				.build();
 	}
 
 	/* package */static class Delegate extends
 			AbstractObservableContractDelegate {
-		private IObservable currentObservable;
 
 		public void change(IObservable observable) {
 			((ObservableStub) observable).fireChange();
@@ -235,15 +221,8 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 			((ObservableStub) observable).setStale(stale);
 		}
 
-		public IObservable createObservable() {
-			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()),
-					new Runnable() {
-						public void run() {
-							currentObservable = new ObservableStub();
-						}
-					});
-
-			return currentObservable;
+		public IObservable createObservable(Realm realm) {
+			return new ObservableStub(realm);
 		}
 	}
 

@@ -11,13 +11,10 @@
 
 package org.eclipse.jface.conformance.databinding;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Tests for IObservable that don't require mutating the observable.
@@ -31,47 +28,34 @@ import org.eclipse.core.databinding.observable.Realm;
  * 
  * @since 3.2
  */
-public class ObservableContractTest extends TestCase {
-	private Realm previousRealm;
+public class ObservableContractTest extends ObservableDelegateTest {
+	private IObservable observable;
 
 	private IObservableContractDelegate delegate;
 
 	public ObservableContractTest(IObservableContractDelegate delegate) {
-		super();
-
-		this.delegate = delegate;
+		this(null, delegate);
 	}
 
 	public ObservableContractTest(String testName,
 			IObservableContractDelegate delegate) {
-		super(testName);
+		super(testName, delegate);
+		
 		this.delegate = delegate;
 	}
 
 	protected void setUp() throws Exception {
 		super.setUp();
-
-		previousRealm = Realm.getDefault();
-		delegate.setUp();
+		observable = getObservable();
 	}
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
-		delegate.tearDown();
-		DummyRealm.setDefaultRealm(previousRealm);
-	}
-
-	public void testRealmIsNotNull() throws Exception {
-		IObservable observable = delegate.createObservable();
-
+	public void testGetRealm_NotNull() throws Exception {
 		assertNotNull("The observable's realm should not be null.", observable
 				.getRealm());
 	}
 
-	public void testChangeFiresChangeEvent() throws Exception {
+	public void testChange_ChangeEvent() throws Exception {
 		ChangeListener listener = new ChangeListener();
-		IObservable observable = delegate.createObservable();
 
 		observable.addChangeListener(listener);
 		delegate.change(observable);
@@ -83,7 +67,6 @@ public class ObservableContractTest extends TestCase {
 
 	public void testChangeEventObservable() throws Exception {
 		ChangeListener listener = new ChangeListener();
-		IObservable observable = delegate.createObservable();
 
 		observable.addChangeListener(listener);
 		delegate.change(observable);
@@ -97,7 +80,6 @@ public class ObservableContractTest extends TestCase {
 	}
 
 	public void testObservableRealmIsTheCurrentRealmOnChange() throws Exception {
-		IObservable observable = delegate.createObservable();
 		ChangeListener listener = new ChangeListener();
 		observable.addChangeListener(listener);
 
@@ -109,7 +91,6 @@ public class ObservableContractTest extends TestCase {
 
 	public void testRemoveChangeListenerRemovesListener() throws Exception {
 		ChangeListener listener = new ChangeListener();
-		IObservable observable = delegate.createObservable();
 
 		observable.addChangeListener(listener);
 		delegate.change(observable);
@@ -126,8 +107,6 @@ public class ObservableContractTest extends TestCase {
 	}
 
 	public void testIsNotStale() throws Exception {
-		IObservable observable = delegate.createObservable();
-
 		delegate.setStale(observable, false);
 		assertFalse(
 				"When an observable is not stale isStale() should return false.",
@@ -158,29 +137,7 @@ public class ObservableContractTest extends TestCase {
 						+ " should invoke ObservableTracker.getterCalled() for the observable.",
 				observable, observables[0]);
 	}
-
-	/**
-	 * Workaround to be able to set the default realm outside a runnable. The
-	 * setDefaultRealm(...) method is the only usable method.
-	 * 
-	 * @since 3.2
-	 */
-	/* package */static class DummyRealm extends Realm {
-		/**
-		 * Can't be instantiated.
-		 */
-		private DummyRealm() {
-		}
-
-		static void setDefaultRealm(Realm realm) {
-			setDefault(realm);
-		}
-
-		public boolean isCurrent() {
-			throw new UnsupportedOperationException();
-		}
-	}
-
+	
 	/* package */static class ChangeListener implements IChangeListener {
 		int count;
 

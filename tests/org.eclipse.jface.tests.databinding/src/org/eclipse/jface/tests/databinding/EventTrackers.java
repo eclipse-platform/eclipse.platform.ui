@@ -15,10 +15,12 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 
@@ -55,6 +57,20 @@ public class EventTrackers {
 				notificationQueue.add(this);
 			}
 		}
+		
+		/**
+		 * Convenience method to register the listener on an observable allowing for one line setup.
+		 * <pre><code>
+		 * ChangeEventTracker listener = new ChangeEventTracker().register(observable);
+		 * </code></pre>
+		 * 
+		 * @param observable
+		 * @return
+		 */
+		public ChangeEventTracker register(IObservable observable) {
+			observable.addChangeListener(this);
+			return this;
+		}
 	}
 
 	public static class ValueChangeEventTracker implements IValueChangeListener {
@@ -68,6 +84,20 @@ public class EventTrackers {
 		public void handleValueChange(ValueChangeEvent event) {
 			count++;
 			this.event = event;
+		}
+		
+		/**
+		 * Convenience method to register the listener on an observable allowing for one line setup.
+		 * <pre><code>
+		 * ValueChangeEventTracker listener = new ValueChangeEventTracker().register(observable);
+		 * </code></pre>
+		 * 
+		 * @param observable
+		 * @return
+		 */
+		public ValueChangeEventTracker register(IObservableValue observable) {
+			observable.addValueChangeListener(this);
+			return this;
 		}
 	}
 

@@ -12,6 +12,7 @@
 package org.eclipse.jface.conformance.databinding;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Delegate interface for an IObservableCollection.
@@ -31,11 +32,13 @@ public interface IObservableCollectionContractDelegate extends
 	 * Creates a new observable collection with the provided
 	 * <code>elementCount</code>.
 	 * 
+	 * @param realm realm of the collection
 	 * @param elementCount
 	 *            number of elements to initialize the collection with
+	 * 
 	 * @return new observable collection
 	 */
-	public IObservableCollection createObservableCollection(int elementCount);
+	public IObservableCollection createObservableCollection(Realm realm, int elementCount);
 
 	/**
 	 * Creates a new element of the appropriate type for the provided

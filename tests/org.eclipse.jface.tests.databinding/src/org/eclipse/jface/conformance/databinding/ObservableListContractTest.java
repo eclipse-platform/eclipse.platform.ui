@@ -12,6 +12,7 @@
 package org.eclipse.jface.conformance.databinding;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * Tests for IObservableList that don't require mutating the collection.
@@ -49,7 +50,7 @@ public class ObservableListContractTest extends
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		list = (IObservableList) getObservableCollection();
+		list = (IObservableList) getObservable();
 	}
 
 	public void testListIterator_GetterCalled() throws Exception {
@@ -61,7 +62,7 @@ public class ObservableListContractTest extends
 	}
 
 	public void testGet_GetterCalled() throws Exception {
-		list = (IObservableList) delegate.createObservableCollection(1);
+		list = (IObservableList) delegate.createObservableCollection(new CurrentRealm(true), 1);
 		assertGetterCalled(new Runnable() {
 			public void run() {
 				list.get(0);
@@ -88,7 +89,7 @@ public class ObservableListContractTest extends
 	public void testListIteratorAtIndex_GetterCalled() throws Exception {
 		// Create a new list instead of adding an item because the list might
 		// not be mutable
-		list = (IObservableList) delegate.createObservableCollection(1);
+		list = (IObservableList) delegate.createObservableCollection(new CurrentRealm(true), 1);
 		assertGetterCalled(new Runnable() {
 			public void run() {
 				list.listIterator(0);
@@ -97,7 +98,7 @@ public class ObservableListContractTest extends
 	}
 
 	public void testSubList_GetterCalled() throws Exception {
-		list = (IObservableList) delegate.createObservableCollection(1);
+		list = (IObservableList) delegate.createObservableCollection(new CurrentRealm(true), 1);
 		assertGetterCalled(new Runnable() {
 			public void run() {
 				list.subList(0, 1);

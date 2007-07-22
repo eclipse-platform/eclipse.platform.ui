@@ -11,8 +11,16 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.internal.databinding.internal.swt.CLabelObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -20,21 +28,48 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- *
+ * 
  */
 public class CLabelObservableValueTest extends TestCase {
-    public void testSetValue() throws Exception {
-        Shell shell = new Shell();
-        CLabel label = new CLabel(shell, SWT.NONE);
-        CLabelObservableValue observableValue = new CLabelObservableValue(label);
-        
-        assertEquals(null, label.getText());
-        assertEquals(null, observableValue.getValue());
-        
-        String value = "value";
-        observableValue.setValue(value);
-        assertEquals("label value", value, label.getText());
-        assertEquals("observable value was incorrect", value, observableValue.getValue());
-        shell.dispose();
-    }
+	public static Test suite() {
+		Delegate delegate = new Delegate();
+		return new SuiteBuilder().addObservableContractTest(
+				SWTObservableValueContractTest.class, delegate)
+				.addObservableContractTest(
+						SWTMutableObservableValueContractTest.class, delegate)
+				.build();
+	}
+
+	/* package */static class Delegate extends
+			AbstractObservableValueContractDelegate {
+		private Shell shell;
+
+		private CLabel label;
+
+		public void setUp() {
+			shell = new Shell();
+			label = new CLabel(shell, SWT.NONE);
+		}
+
+		public void tearDown() {
+			shell.dispose();
+		}
+
+		public IObservableValue createObservableValue(Realm realm) {
+			return new CLabelObservableValue(realm, label);
+		}
+
+		public void change(IObservable observable) {
+			IObservableValue value = (IObservableValue) observable;
+			value.setValue(value.getValue() + "a");
+		}
+		
+		public Object getValueType(IObservableValue observable) {
+			return String.class;
+		}
+		
+		public Object createValue(IObservableValue observable) {
+			return observable.getValue() + "a";
+		}
+	}
 }

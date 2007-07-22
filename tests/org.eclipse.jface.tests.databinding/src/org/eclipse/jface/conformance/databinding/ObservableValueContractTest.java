@@ -16,20 +16,21 @@ import java.util.List;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.jface.tests.databinding.RealmTester;
+import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
+import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * @since 3.2
  */
 public class ObservableValueContractTest extends ObservableContractTest {
-
 	private IObservableValueContractDelegate delegate;
+	private IObservableValue observable;
 
-	public ObservableValueContractTest(
-			IObservableValueContractDelegate delegate) {
+	public ObservableValueContractTest(IObservableValueContractDelegate delegate) {
 		super(delegate);
 		this.delegate = delegate;
 	}
@@ -45,53 +46,31 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		this.delegate = delegate;
 	}
 
-	public void testChangeNotifiesValueChangeListeners() throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
-		ValueChangeListener listener = new ValueChangeListener(observable)
-				.init();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.conformance.databinding.ObservableContractTest#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		observable = (IObservableValue) getObservable();
+	}
+
+	public void testChange_ValueChangeEvent() throws Exception {
+		ValueChangeEventTracker listener = new ValueChangeEventTracker().register(observable);
 
 		delegate.change(observable);
 		assertEquals("On change value change listeners should be notified.", 1,
 				listener.count);
 	}
 
-	public void testSettingSameValueDoesNotNotifiyValueChangeListeners()
-			throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
-		delegate.change(observable);
-
-		ValueChangeListener listener = new ValueChangeListener(observable)
-				.init();
-		Object value = observable.getValue();
-		observable.setValue(value);
-
-		assertEquals(
-				"When the current value is set on the observable a change does not occur thus value change listeners should not be notified.",
-				0, listener.count);
-	}
-
-	public void testSettingSameValueDoesNotNotifyChangeListeners()
-			throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
-		delegate.change(observable);
-
-		ChangeListener listener = new ChangeListener(observable).init();
-		Object value = observable.getValue();
-		observable.setValue(value);
-
-		assertEquals(
-				"When the current value is set on the observable a change does not occur thus change listeners should not be notified.",
-				0, listener.count);
-	}
-
-	public void testObservableTypeIsTheExpectedType() throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
+	public void testGetValueType_ExpectedType() throws Exception {
 		assertEquals("Type of the value should be returned from getType().",
 				delegate.getValueType(observable), observable.getValueType());
 	}
 
-	public void testChangeListenersAreNotifiedBeforeValueChangeListeners()
-			throws Exception {
+	public void testChange_OrderOfNotifications() throws Exception {
 		final List listeners = new ArrayList();
 		IChangeListener changeListener = new IChangeListener() {
 			public void handleChange(ChangeEvent event) {
@@ -105,7 +84,6 @@ public class ObservableValueContractTest extends ObservableContractTest {
 			}
 		};
 
-		IObservableValue observable = delegate.createObservableValue();
 		observable.addChangeListener(changeListener);
 		observable.addValueChangeListener(valueChangeListener);
 
@@ -120,10 +98,8 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				valueChangeListener, listeners.get(1));
 	}
 
-	public void testValueChangeEventOldValueIsPreviousValue() throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
-		ValueChangeListener listener = new ValueChangeListener(observable)
-				.init();
+	public void testChange_ValueChangeEventDiff() throws Exception {
+		ValueChangeEventTracker listener = new ValueChangeEventTracker().register(observable);
 		Object oldValue = observable.getValue();
 
 		delegate.change(observable);
@@ -132,24 +108,33 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		assertEquals(
 				"When a value change event is fired the old value should be the previous value of the observable value.",
 				oldValue, event.diff.getOldValue());
-	}
-
-	public void testValueChangeEventObservableValue() throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
-		ValueChangeListener listener = new ValueChangeListener(observable)
-				.init();
-		delegate.change(observable);
-
-		ValueChangeEvent event = listener.event;
 		assertEquals(
 				"When a value change event is fired the new value should be the same as the current value of the observable value.",
 				observable.getValue(), event.diff.getNewValue());
 	}
 
+	public void testChange_ValueChangeEventFiredAfterValueIsSet()
+			throws Exception {
+		class ValueChangeListener extends ValueChangeEventTracker {
+			Object value;
+
+			public void handleValueChange(ValueChangeEvent event) {
+				super.handleValueChange(event);
+
+				this.value = event.getObservableValue().getValue();
+			}
+		}
+
+		ValueChangeListener listener = (ValueChangeListener) new ValueChangeListener()
+				.register(observable);
+		delegate.change(observable);
+		assertEquals(
+				"When a value change event is fired the new value should be applied before firing the change event.",
+				listener.value, observable.getValue());
+	}
+
 	public void testRemoveValueChangeListenerRemovesListener() throws Exception {
-		IObservableValue observable = delegate.createObservableValue();
-		ValueChangeListener listener = new ValueChangeListener(observable)
-				.init();
+		ValueChangeEventTracker listener = new ValueChangeEventTracker().register(observable);
 		delegate.change(observable);
 
 		// precondition
@@ -163,9 +148,8 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				"Value change listeners should not be notified after they've been removed from the observable.",
 				1, listener.count);
 	}
-	
+
 	public void testGetValue_GetterCalled() throws Exception {
-		final IObservableValue observable = delegate.createObservableValue();
 		assertGetterCalled(new Runnable() {
 			public void run() {
 				observable.getValue();
@@ -173,45 +157,11 @@ public class ObservableValueContractTest extends ObservableContractTest {
 		}, "IObservableValue.getValue()", observable);
 	}
 
-	/* package */static class ChangeListener implements IChangeListener {
-		int count;
-
-		IObservable observable;
-
-		ChangeListener(IObservable observable) {
-			this.observable = observable;
-		}
-
-		ChangeListener init() {
-			observable.addChangeListener(this);
-			return this;
-		}
-
-		public void handleChange(ChangeEvent event) {
-			count++;
-		}
-	}
-
-	/* package */static class ValueChangeListener implements
-			IValueChangeListener {
-		int count;
-
-		ValueChangeEvent event;
-
-		private IObservableValue observable;
-
-		ValueChangeListener(IObservableValue observable) {
-			this.observable = observable;
-		}
-
-		ValueChangeListener init() {
-			observable.addValueChangeListener(this);
-			return this;
-		}
-
-		public void handleValueChange(ValueChangeEvent event) {
-			count++;
-			this.event = event;
-		}
+	public void testGetValue_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				observable.getValue();
+			}
+		}, (CurrentRealm) observable.getRealm());
 	}
 }

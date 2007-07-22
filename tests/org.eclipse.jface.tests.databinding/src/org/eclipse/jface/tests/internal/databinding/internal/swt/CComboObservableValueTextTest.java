@@ -21,39 +21,53 @@ import org.eclipse.jface.conformance.databinding.AbstractObservableValueContract
 import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
+import org.eclipse.jface.databinding.swt.ISWTObservable;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.internal.databinding.internal.swt.CComboObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
  */
-public class ButtonObservableValueTest extends TestCase {
-	public void testSetSelectionNotifiesObservable() throws Exception {
-		Shell shell = new Shell();
-		Button button = new Button(shell, SWT.CHECK);
+public class CComboObservableValueTextTest extends TestCase {
+	private Delegate delegate;
 
-		ButtonObservableValue observableValue = new ButtonObservableValue(
-				button);
-		ValueChangeEventTracker listener = new ValueChangeEventTracker();
-		observableValue.addValueChangeListener(listener);
-		button.setSelection(true);
+	private CCombo combo;
 
-		// precondition
-		assertEquals(0, listener.count);
-		button.notifyListeners(SWT.Selection, null);
+	protected void setUp() throws Exception {
+		super.setUp();
 
-		assertEquals("Selection event should notify observable.", 1,
-				listener.count);
-		shell.dispose();
+		delegate = new Delegate();
+		delegate.setUp();
+		combo = delegate.combo;
+	}
+
+	protected void tearDown() throws Exception {
+		super.tearDown();
+
+		delegate.tearDown();
+	}
+
+	public void testModify_NotifiesObservable() throws Exception {
+		IObservableValue observable = delegate
+				.createObservableValue(SWTObservables.getRealm(Display
+						.getDefault()));
+		ValueChangeEventTracker listener = new ValueChangeEventTracker()
+				.register(observable);
+
+		combo.setText((String) delegate.createValue(observable));
+
+		assertEquals("Observable was not notified.", 1, listener.count);
 	}
 
 	public static Test suite() {
 		Delegate delegate = new Delegate();
-
-		return new SuiteBuilder().addTests(ButtonObservableValueTest.class)
+		return new SuiteBuilder().addTests(CComboObservableValueTextTest.class)
 				.addObservableContractTest(
 						SWTObservableValueContractTest.class, delegate)
 				.addObservableContractTest(
@@ -63,42 +77,34 @@ public class ButtonObservableValueTest extends TestCase {
 
 	/* package */static class Delegate extends
 			AbstractObservableValueContractDelegate {
-		Shell shell;
+		/* package */CCombo combo;
 
-		Button button;
+		private Shell shell;
 
 		public void setUp() {
-			super.setUp();
-
 			shell = new Shell();
-			button = new Button(shell, SWT.CHECK);
+			combo = new CCombo(shell, SWT.NONE);
 		}
 
 		public void tearDown() {
-			super.tearDown();
-
 			shell.dispose();
 		}
 
 		public IObservableValue createObservableValue(Realm realm) {
-			return new ButtonObservableValue(realm, button);
-		}
-
-		public Object getValueType(IObservableValue observable) {
-			return Boolean.TYPE;
+			return new CComboObservableValue(realm, combo, SWTProperties.TEXT);
 		}
 
 		public void change(IObservable observable) {
-			IObservableValue observableValue = (IObservableValue) observable;
-			observableValue.setValue(createValue(observableValue));
+			CCombo combo = (CCombo) ((ISWTObservable) observable).getWidget();
+			combo.setText(combo.getText() + "a");
 		}
-		
+
+		public Object getValueType(IObservableValue observable) {
+			return String.class;
+		}
+
 		public Object createValue(IObservableValue observable) {
-			if (Boolean.TRUE.equals(observable.getValue())) {
-				return Boolean.FALSE;
-			}
-			
-			return Boolean.TRUE;
+			return observable.getValue() + "a";
 		}
 	}
 }

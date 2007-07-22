@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.CCombo;
@@ -44,17 +45,32 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 		super(ccombo);
 		this.ccombo = ccombo;
 		this.attribute = attribute;
+		init();
+	}
 
+	/**
+	 * @param realm
+	 * @param ccombo
+	 * @param attribute
+	 */
+	public CComboObservableValue(Realm realm, CCombo ccombo, String attribute) {
+		super(realm, ccombo);
+		this.ccombo = ccombo;
+		this.attribute = attribute;
+		init();
+	}
+	
+	private void init() {		
 		if (attribute.equals(SWTProperties.SELECTION)
 				|| attribute.equals(SWTProperties.TEXT)) {
 			this.currentValue = ccombo.getText();
 			ccombo.addModifyListener(new ModifyListener() {
-
+				
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
 						String oldValue = currentValue;
 						currentValue = CComboObservableValue.this.ccombo
-								.getText();
+						.getText();
 						fireValueChange(Diffs.createValueDiff(oldValue,
 								currentValue));
 					}
@@ -63,7 +79,7 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 		} else
 			throw new IllegalArgumentException();
 	}
-
+	
 	public void doSetValue(final Object value) {
 		String oldValue = ccombo.getText();
 		try {

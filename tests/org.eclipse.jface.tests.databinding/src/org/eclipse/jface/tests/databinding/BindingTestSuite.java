@@ -108,9 +108,11 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderT
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CLabelObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueTest;
@@ -155,11 +157,8 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.core.tests.databinding.observable.list
 		addTest(AbstractObservableListTest.suite());
-//		addTestSuite(AbstractObservableListTest.class);
 		addTest(ObservableListTest.suite());
-//		addTestSuite(ObservableListTest.class);
 		addTest(WritableListTest.suite());
-//		addTestSuite(WritableListTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
@@ -178,7 +177,6 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
 		addTest(WritableValueTest.suite());
-//		addTestSuite(WritableValueTest.class);
 		
 		//org.eclipse.core.tests.databinding.validation
 		addTestSuite(ValidationStatusTest.class);
@@ -222,7 +220,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(JavaBeanObservableListTest.class);
 		addTestSuite(JavaBeanObservableMapTest.class);
 		addTestSuite(JavaBeanObservableSetTest.class);
-		addTestSuite(JavaBeanObservableValueTest.class);
+		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(ListenerSupportTest.class);
 		
 		//org.eclipse.core.tests.internal.databinding.observable
@@ -266,10 +264,12 @@ public class BindingTestSuite extends TestSuite {
 
 		//org.eclipse.jface.tests.internal.databinding.internal.swt
 		addTest(ButtonObservableValueTest.suite());
-//		addTestSuite(ButtonObservableValueTest.class);
-		addTestSuite(CComboObservableValueTest.class);
-		addTestSuite(CLabelObservableValueTest.class);
-		addTestSuite(ComboObservableValueTest.class);
+		addTest(CComboObservableValueSelectionTest.suite());
+		addTest(CComboObservableValueTextTest.suite());
+		addTest(CLabelObservableValueTest.suite());
+		addTest(ComboObservableValueSelectionTest.suite());
+		addTest(ComboObservableValueTextTest.suite());
+		
 		addTestSuite(ControlObservableValueTest.class);
 		addTestSuite(LabelObservableValueTest.class);
 		addTestSuite(ScaleObservableValueTest.class);

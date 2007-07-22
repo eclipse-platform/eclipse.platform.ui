@@ -56,7 +56,7 @@ public class MutableObservableListContractTest extends
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		list = (IObservableList) getObservableCollection();
+		list = (IObservableList) getObservable();
 	}
 
 	public void testAdd_ListChangeEvent() throws Exception {

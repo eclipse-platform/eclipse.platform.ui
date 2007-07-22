@@ -24,9 +24,7 @@ import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableVa
 import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -36,10 +34,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	private JavaBeanObservableValue observableValue;
 	private PropertyDescriptor propertyDescriptor;
 	private String propertyName;
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -102,7 +97,6 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {
 		private Bean bean;
-		private IObservableValue observable;
 		
 		public void setUp() {
 			super.setUp();
@@ -110,29 +104,27 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 			bean = new Bean("");
 		}
 		
-		public IObservableValue createObservableValue() {
-			Realm.runWithDefault(SWTObservables.getRealm(Display.getDefault()), new Runnable() {
-				public void run() {
-					try {
-						PropertyDescriptor propertyDescriptor = new PropertyDescriptor("value", Bean.class);
-						observable = new JavaBeanObservableValue(Realm.getDefault(), bean,
-								propertyDescriptor, String.class);					
-					} catch (IntrospectionException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			});
-			
-			return observable;
+		public IObservableValue createObservableValue(Realm realm) {
+			try {
+				PropertyDescriptor propertyDescriptor = new PropertyDescriptor("value", Bean.class);
+				return new JavaBeanObservableValue(realm, bean,
+						propertyDescriptor, String.class);					
+			} catch (IntrospectionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 		public void change(IObservable observable) {
 			IObservableValue observableValue = (IObservableValue) observable;
-			observableValue.setValue(observableValue.getValue() + "a");
+			observableValue.setValue(createValue(observableValue));
 		}
 		
 		public Object getValueType(IObservableValue observable) {
 			return String.class;
+		}
+		
+		public Object createValue(IObservableValue observable) {
+			return observable.getValue() + "a";
 		}
 	}
 	
@@ -167,6 +159,5 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		public void setValue(String value) {
 			this.value = value;
 		}
-
 	}
 }

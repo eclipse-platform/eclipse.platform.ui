@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.conformance.databinding;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
@@ -31,9 +32,11 @@ public interface IObservableValueContractDelegate extends
 	/**
 	 * Creates a new observable value.
 	 * 
+	 * @param realm
+	 *            realm of the observable
 	 * @return observable value
 	 */
-	public IObservableValue createObservableValue();
+	public IObservableValue createObservableValue(Realm realm);
 
 	/**
 	 * Returns the expected type of the observable.
@@ -42,4 +45,12 @@ public interface IObservableValueContractDelegate extends
 	 * @return type
 	 */
 	public Object getValueType(IObservableValue observable);
+	
+	/**
+	 * Returns a valid value that is not the current value of the observable.
+	 * 
+	 * @param observable
+	 * @return value
+	 */
+	public Object createValue(IObservableValue observable);
 }

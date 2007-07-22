@@ -12,6 +12,7 @@
 package org.eclipse.jface.conformance.databinding;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
@@ -24,10 +25,10 @@ public abstract class AbstractObservableValueContractDelegate extends
 		IObservableValueContractDelegate {
 
 	/**
-	 * Invokes {@link #createObservableValue()}.
+	 * Invokes {@link #createObservableValue(Realm)}.
 	 */
-	public final IObservable createObservable() {
-		return createObservableValue();
+	public final IObservable createObservable(Realm realm) {
+		return createObservableValue(realm);
 	}
 
 	/**
@@ -35,6 +36,14 @@ public abstract class AbstractObservableValueContractDelegate extends
 	 */
 	public Object getValueType(IObservableValue observable) {
 		// no op
+		return null;
+	}
+	
+	/**
+	 * Default implementation returns <code>null</code>.
+	 */
+	public Object createValue(IObservableValue observable) {
+		//no op
 		return null;
 	}
 }
