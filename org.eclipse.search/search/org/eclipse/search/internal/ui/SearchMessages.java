@@ -36,6 +36,9 @@ public final class SearchMessages extends NLS {
 	public static String ReplaceConfigurationPage_description_many_in_many;
 	public static String ReplaceConfigurationPage_description_many_in_one;
 	public static String ReplaceConfigurationPage_description_one_in_one;
+	public static String ReplaceConfigurationPage_isRegex_label;
+	public static String ReplaceConfigurationPage_replace_label;
+	public static String ReplaceConfigurationPage_with_label;
 	public static String ReplaceRefactoring_composite_change_name;
 	public static String ReplaceRefactoring_error_access_file;
 	public static String ReplaceRefactoring_error_accessing_file_buffer;
@@ -171,27 +174,12 @@ public final class SearchMessages extends NLS {
 	public static String SearchPreferencePage_emphasizePotentialMatches;
 	public static String SearchPreferencePage_potentialMatchFgColor;
 	public static String SearchPreferencePage_reuseEditor;
-	public static String SearchPreferencePage_limit_label;
-	public static String SearchPreferencePage_limit_error;
 	public static String SearchPreferencePage_bringToFront;
 	public static String SearchPreferencePage_defaultPerspective;
 	public static String SearchPreferencePage_defaultPerspective_none;
 	public static String SearchPreferencePage_ignorePotentialMatches;
 	public static String ReplaceAction_label_all;
 	public static String ReplaceAction_label_selected;
-	public static String ReplaceAction2_error_validate_title;
-	public static String ReplaceAction2_error_validate_message;
-	public static String ReplaceDialog_replace_label;
-	public static String ReplaceDialog_with_label;
-	public static String ReplaceDialog_replace;
-	public static String ReplaceDialog_replaceAllInFile;
-	public static String ReplaceDialog_replaceAll;
-	public static String ReplaceDialog_skip;
-	public static String ReplaceDialog2_regexError_format;
-	public static String ReplaceDialog_skipFile;
-	public static String ReplaceDialog_dialog_title;
-	public static String ReplaceDialog_error_unable_to_open_text_editor;
-	public static String ReplaceDialog_error_unable_to_replace;
 	public static String SelectAllAction_label;
 	public static String SelectAllAction_tooltip;
 	public static String RemovePotentialMatchesAction_removePotentialMatch_text;
@@ -201,29 +189,11 @@ public final class SearchMessages extends NLS {
 	public static String RemovePotentialMatchesAction_dialog_title;
 	public static String RemovePotentialMatchesAction_dialog_message;
 	public static String OpenWithMenu_label;
-	public static String ReadOnlyDialog_skipFile;
-	public static String ReadOnlyDialog_skipAll;
-	public static String ReadOnlyDialog_message;
-	public static String ReplaceDialog_task_replace;
-	public static String ReplaceDialog_task_replaceInFile;
-	public static String ReplaceDialog_task_replace_replaceAll;
-	public static String ReplaceDialog2_error_disableAutobuild;
-	public static String ReplaceDialog2_error_restoreAutobuild;
-	public static String ReplaceAction_label;
-	public static String ReplaceAction_research_error;
-	public static String ReplaceAction2_statusMessage;
-	public static String SearchAgainConfirmationDialog_outofsync_message;
-	public static String SearchAgainConfirmationDialog_outofsync_label;
-	public static String SearchAgainConfirmationDialog_stale_message;
-	public static String SearchAgainConfirmationDialog_stale_label;
-	public static String SearchAgainConfirmationDialog_title;
-	public static String ReplaceDialog_isRegex_label;
-
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, SearchMessages.class);
 	}
 
-	public static String ReplaceDialog2_nomatches_error;
+//	public static String ReplaceDialog2_nomatches_error;
     public static String SearchPreferencePage_textSearchEngine;
 	public static String TextSearchEngineRegistry_defaulttextsearch_label;
 	public static String FileSearchQuery_singularPatternWithFileExt;

@@ -87,7 +87,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		FileSearchQuery query= fReplaceRefactoring.getQuery();
 		
 		Label label1= new Label(result, SWT.NONE);
-		label1.setText(SearchMessages.ReplaceDialog_replace_label);
+		label1.setText(SearchMessages.ReplaceConfigurationPage_replace_label);
 		
 		Text clabel= new Text(result, SWT.BORDER | SWT.READ_ONLY);
 		clabel.setText(query.getSearchString());
@@ -97,7 +97,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		
 		
 		Label label2= new Label(result, SWT.NONE);
-		label2.setText(SearchMessages.ReplaceDialog_with_label);
+		label2.setText(SearchMessages.ReplaceConfigurationPage_with_label);
 		
 		fTextField= new Combo(result, SWT.DROP_DOWN);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
@@ -116,7 +116,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		
 		new Label(result, SWT.NONE);
 		fReplaceWithRegex= new Button(result, SWT.CHECK);
-		fReplaceWithRegex.setText(SearchMessages.ReplaceDialog_isRegex_label);
+		fReplaceWithRegex.setText(SearchMessages.ReplaceConfigurationPage_isRegex_label);
 		fReplaceWithRegex.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				setContentAssistsEnablement(fReplaceWithRegex.getSelection());
