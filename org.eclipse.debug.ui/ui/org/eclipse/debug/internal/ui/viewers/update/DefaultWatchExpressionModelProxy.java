@@ -101,7 +101,10 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 						context= ((ILaunch) object).getDebugTarget();
 					}
 				}
-				((IWatchExpression)getExpression()).setExpressionContext(context);
+				IWatchExpression expression = (IWatchExpression)getExpression();
+				if (expression != null){
+					expression.setExpressionContext(context);
+				}
 			}
 		}
 	}
