@@ -103,7 +103,7 @@ public interface IPageLayout {
     public static String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
     
     /**
-     * The view id for the workbench's Problems View standard component.
+     * The view id for the workbench's Progress View standard component.
      * @since 3.2
      */
     public static String ID_PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
