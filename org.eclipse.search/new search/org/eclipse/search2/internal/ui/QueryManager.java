@@ -43,6 +43,11 @@ class QueryManager {
 		}
 	}
 	
+	/**
+	 * Returns the queries in LRU order. Smaller index means more recently used. 
+	 * 
+	 * @return all queries
+	 */
 	public ISearchQuery[] getQueries() {
 		synchronized (this) {
 			return (ISearchQuery[]) fQueries.toArray(new ISearchQuery[fQueries.size()]);
@@ -154,13 +159,4 @@ class QueryManager {
 		}
 	}
 	
-	public ISearchQuery getOldestQuery() {
-		synchronized (this) {
-			if (!fQueries.isEmpty()) {
-				return (ISearchQuery) fQueries.get(fQueries.size()-1);
-			}
-		}
-		return null;
-	}
-
 }

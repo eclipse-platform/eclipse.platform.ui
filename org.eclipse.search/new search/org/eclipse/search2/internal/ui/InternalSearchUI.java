@@ -308,17 +308,28 @@ public class InternalSearchUI {
 		if (query == null) {
 			throw new IllegalArgumentException();
 		}
-			
+		establishHistoryLimit();
+		getSearchManager().addQuery(query);
+	}
+	
+	private void establishHistoryLimit() {
+		int historyLimit= SearchPreferencePage.getHistoryLimit();
 		QueryManager searchManager= getSearchManager();
-		int removeCount= searchManager.getSize() + 1 - SearchPreferencePage.getHistoryLimit();
-		for (int i = 0; i < removeCount; i++) {
-			ISearchQuery oldestQuery= searchManager.getOldestQuery();
-			if (oldestQuery != null) {
-				removeQuery(oldestQuery);
+		if (historyLimit >= searchManager.getSize()) {
+			return;
+		}
+		int numberQueriesNotShown= 0;
+		SearchViewManager searchViewManager= getSearchViewManager();
+		ISearchQuery[] queries= searchManager.getQueries();
+		for (int i= 0; i < queries.length; i++) {
+			ISearchQuery query= queries[i];
+			if (!searchViewManager.isShown(query)) {
+				if (++numberQueriesNotShown >= historyLimit) {
+					removeQuery(query);
+				}
 			}
 		}
-		searchManager.addQuery(query);
-	}	
+	}
 	
 	public void removeAllQueries() {
 		for (Iterator queries= fSearchJobs.keySet().iterator(); queries.hasNext();) {
@@ -334,7 +345,7 @@ public class InternalSearchUI {
 			boolean isPinned= searchView.isPinned();
 			searchView.setPinned(true);
 			try {
-				SearchView newPart= (SearchView) InternalSearchUI.getInstance().getSearchViewManager().activateSearchView(true);
+				SearchView newPart= (SearchView) getSearchViewManager().activateSearchView(true);
 				showSearchResult(newPart, result);
 			} finally {
 				searchView.setPinned(isPinned);
