@@ -26,6 +26,7 @@ public class PinSearchViewAction extends Action implements IUpdate {
 
 	/**
 	 * Constructs a 'pin console' action
+	 * @param view the search view
 	 */
 	public PinSearchViewAction(SearchView view) {
 		super(SearchMessages.PinSearchViewAction_label, IAction.AS_CHECK_BOX); 
