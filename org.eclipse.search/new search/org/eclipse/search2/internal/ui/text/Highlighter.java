@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,19 +55,40 @@ public class Highlighter {
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(fBufferListener);
 	}
 	
+	/**
+	 * Adds highlighting for the given matches
+	 * 
+	 * @param matches the matches to add highlighting
+	 */
 	public void addHighlights(Match[] matches) {
 	}
-
+	
+	/**
+	 * Removes highlighting for the given matches
+	 * 
+	 * @param matches the matches to remove the highlighting
+	 */
 	public void removeHighlights(Match[] matches) {
 	}
 	
+	/**
+	 * Removes all highlighting
+	 */
 	public void removeAll() {
 	}
 	
+	/**
+	 * Called when the highlighter is disposed.
+	 */
 	public void dispose() {
 		FileBuffers.getTextFileBufferManager().removeFileBufferListener(fBufferListener);
 	}
 	
+	/**
+	 * Notifies that a buffer has its content changed
+	 * 
+	 * @param buffer the buffer
+	 */
 	protected void handleContentReplaced(IFileBuffer buffer) {
 	}
 

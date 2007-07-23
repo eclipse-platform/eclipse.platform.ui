@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Wind River Systems and others.
+ * Copyright (c) 2006, 2007 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0 
  * which accompanies this distribution, and is available at 
@@ -45,14 +45,18 @@ public class TextSearchGroup extends ActionGroup {
 	 * Constructs a TextSearchGroup for adding actions to the context menu
 	 * of the editor provided. The editor will be accessed for the purpose of
 	 * determining the search string.
+	 * 
+	 * @param editor the editor 
 	 */
 	public TextSearchGroup(IEditorPart editor) {
 		createActions(editor);
 	}
 
 	/**
-	 * Changes the text that is used for the submenu. The default is 
+	 * Changes the text that is used for the submenu label. The default is 
 	 * "Search Text".
+	 * 
+	 * @param text the text for the menu label.
 	 */
 	public void setMenuText(String text) {
 		fMenuText= text;
@@ -61,6 +65,8 @@ public class TextSearchGroup extends ActionGroup {
 	/**
 	 * Changes the group where the submenu is appended to. The default is
 	 * ITextEditorActionConstants.GROUP_FIND.
+	 * 
+	 * @param groupID the group id to append to
 	 */
 	public void setAppendToGroup(String groupID) {
 		fAppendToGroup= groupID;
