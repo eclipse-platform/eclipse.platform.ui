@@ -334,7 +334,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      */
     private void createEncodingComponent(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
-	    String defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+	    String defaultEncoding = IDEEncoding.getResourceEncoding();
+	    if(defaultEncoding == null) {
+	    	defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
+	    }
 	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
 	    
 	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding})); 
@@ -757,6 +760,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		String encoding = null;
 		if(fAltEncodingButton.getSelection()) {
 		    encoding = fEncodingCombo.getText();
+		}
+		else {
+			encoding = IDEEncoding.getResourceEncoding();
 		}
 		configuration.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, encoding);
 		boolean captureOutput = false;

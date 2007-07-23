@@ -223,13 +223,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @since 3.0
 	 */
 	protected Button createCheckButton(Composite parent, String label) {
-		Button button = new Button(parent, SWT.CHECK);
-		button.setText(label);
-		GridData data = new GridData();
-		button.setLayoutData(data);
-		button.setFont(parent.getFont());
-		SWTFactory.setButtonDimensionHint(button);
-		return button;
+		return SWTFactory.createCheckButton(parent, label, null, false, 1);
 	}
 	
 	/**
@@ -252,11 +246,7 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @param colSpan the number of line of vertical space to add
 	 */
 	protected void createVerticalSpacer(Composite comp, int colSpan) {
-		Label label = new Label(comp, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = colSpan;
-		label.setLayoutData(gd);
-		label.setFont(comp.getFont());
+		SWTFactory.createVerticalSpacer(comp, colSpan);
 	}	
 	
 	/**
