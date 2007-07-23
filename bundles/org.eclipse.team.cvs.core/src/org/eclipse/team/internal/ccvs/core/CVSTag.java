@@ -133,7 +133,7 @@ public class CVSTag implements ITag {
 	}
 	
 	public boolean isBaseTag() {
-		return getType() == VERSION && getName().equals("BASE"); //$NON-NLS-1$
+		return getName().equals("BASE"); //$NON-NLS-1$
 	}
 
 }

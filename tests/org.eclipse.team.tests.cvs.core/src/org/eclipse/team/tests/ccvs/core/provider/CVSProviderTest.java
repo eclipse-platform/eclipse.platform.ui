@@ -703,7 +703,7 @@ public class CVSProviderTest extends EclipseTest {
     	assertTrue("File has changed after revert to base",
     			compareContent(new ByteArrayInputStream(("line1" + eol + "line2" + eol + "line3" + eol).getBytes()),
     					project.getFile("file1.txt").getContents()));
-    	assertEquals(getRepositoryProvider(project), getRepositoryProvider(copy), false, true);
+    	assertEquals(getRepositoryProvider(copy), getRepositoryProvider(project), false, true);
     }
     
     private CVSTeamProvider getRepositoryProvider(IProject project) {
