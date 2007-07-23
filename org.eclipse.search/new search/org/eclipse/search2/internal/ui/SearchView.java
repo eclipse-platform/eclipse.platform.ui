@@ -18,8 +18,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -36,6 +40,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
 
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IViewSite;
@@ -47,6 +52,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -83,6 +89,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private SearchAgainAction fSearchAgainAction;
 	private CancelSearchAction fCancelAction;
 	private PinSearchViewAction fPinSearchViewAction;
+	private UndoRedoActionGroup fUndoRedoActionGroup;
 	
 	private IMemento fPageState;
 	private boolean fIsPinned;
@@ -390,9 +397,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	}
 
 	public void createPartControl(Composite parent) {
+		createActions();
+		
 		super.createPartControl(parent);
 		fDefaultPartName= getPartName();
-		createActions();
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
 		
@@ -451,10 +459,15 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fCancelAction= new CancelSearchAction(this);
 		fCancelAction.setEnabled(false);
 		fPinSearchViewAction= new PinSearchViewAction(this);
-				
+		
+		IUndoContext workspaceContext= (IUndoContext)ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
+		fUndoRedoActionGroup= new UndoRedoActionGroup(getViewSite(), workspaceContext, true);
 	}
 
 	public void dispose() {
+		if (fUndoRedoActionGroup != null) {
+			fUndoRedoActionGroup.dispose();
+		}
 		InternalSearchUI.getInstance().getSearchViewManager().searchViewClosed(this);
 		InternalSearchUI.getInstance().getSearchManager().removeQueryListener(this);
 		super.dispose();
@@ -563,9 +576,12 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	protected void initPage(IPageBookViewPage page) {
 		super.initPage(page);
-		page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), fSearchAgainAction);
-		page.getSite().getActionBars().updateActionBars();
-
+		IActionBars actionBars= page.getSite().getActionBars();
+		actionBars.setGlobalActionHandler(ActionFactory.REFRESH.getId(), fSearchAgainAction);
+		actionBars.updateActionBars();
+		
+		fUndoRedoActionGroup.fillActionBars(actionBars);
+		
 		ISearchResultPage srPage= (ISearchResultPage) page;
 		IMemento memento= null;
 		if (fPageState != null) {

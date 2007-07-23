@@ -30,6 +30,25 @@ public final class SearchMessages extends NLS {
 	public static String FileTextSearchScope_ws_scope_single;
 	public static String FileTextSearchScope_ws_scope_double;
 	public static String FileTextSearchScope_ws_scope_multiple;
+	public static String ReplaceAction_description_operation;
+	public static String ReplaceAction_title_all;
+	public static String ReplaceAction_title_selected;
+	public static String ReplaceConfigurationPage_description_many_in_many;
+	public static String ReplaceConfigurationPage_description_many_in_one;
+	public static String ReplaceConfigurationPage_description_one_in_one;
+	public static String ReplaceRefactoring_composite_change_name;
+	public static String ReplaceRefactoring_error_access_file;
+	public static String ReplaceRefactoring_error_accessing_file_buffer;
+	public static String ReplaceRefactoring_error_illegal_search_string;
+	public static String ReplaceRefactoring_error_match_content_changed;
+	public static String ReplaceRefactoring_error_no_changes;
+	public static String ReplaceRefactoring_error_no_matches;
+	public static String ReplaceRefactoring_error_no_replace_string;
+	public static String ReplaceRefactoring_error_replacement_expression;
+	public static String ReplaceRefactoring_group_label_change_for_file;
+	public static String ReplaceRefactoring_group_label_match_replace;
+	public static String ReplaceRefactoring_refactoring_name;
+	public static String ReplaceRefactoring_result_update_name;
 
 	public static String SearchDialog_title;
 	public static String SearchDialog_searchAction;

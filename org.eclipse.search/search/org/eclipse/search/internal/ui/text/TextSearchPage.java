@@ -72,7 +72,6 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.FileTextSearchScope;
-import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 
@@ -258,8 +257,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			if (!status.isOK()) {
 				ErrorDialog.openError(getShell(), SearchMessages.TextSearchPage_replace_searchproblems_title, SearchMessages.TextSearchPage_replace_runproblem_message, status);
 			}
-			
-			
+						
 			Display.getCurrent().asyncExec(new Runnable() {
 				public void run() {
 					ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
@@ -267,16 +265,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 						ISearchResultPage page= view.getActivePage();
 						if (page instanceof FileSearchPage) {
 							FileSearchPage filePage= (FileSearchPage) page;
-							Object[] files= filePage.getInput().getElements();
-							ArrayList matches= new ArrayList();
-							for (int i= 0; i < files.length; i++) {
-								Match[] fileMatches= filePage.getInput().getMatches(files[i]);
-								for (int j= 0; j < fileMatches.length; j++) {
-									matches.add(fileMatches[j]);
-								}
-							}
-							Match[] matchesArray= (Match[]) matches.toArray(new Match[matches.size()]);
-							new ReplaceAction2(filePage, matchesArray).run();
+							new ReplaceAction(filePage.getSite().getShell(), (FileSearchResult) filePage.getInput(), null, true).run();
 						}
 					}
 				}
@@ -776,7 +765,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private void setContentAssistsEnablement(boolean enable) {
 		if (enable) {
 			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fPattern, ReplaceDialog2.createContentAssistant(true));
+				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fPattern, ReplaceConfigurationPage.createContentAssistant(true));
 			}
 			fReplaceContentAssistHandler.setEnabled(true);
 		} else {

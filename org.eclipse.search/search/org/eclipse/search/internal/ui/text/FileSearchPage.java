@@ -214,15 +214,18 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		fActionGroup.setContext(new ActionContext(getSite().getSelectionProvider().getSelection()));
 		fActionGroup.fillContextMenu(mgr);
 		FileSearchQuery query= (FileSearchQuery) getInput().getQuery();
-		if (!"".equals(query.getSearchString())) { //$NON-NLS-1$
-		ReplaceAction2 replaceAction= new ReplaceAction2(this, (IStructuredSelection) getViewer().getSelection());
-		if (replaceAction.isEnabled())
-			mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAction);
+		if (query.getSearchString().length() > 0) {
+			IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection();
+			if (!selection.isEmpty()) {
+				ReplaceAction replaceSelection= new ReplaceAction(getSite().getShell(), (FileSearchResult) getInput(), selection.toArray(), true);
+				replaceSelection.setText(SearchMessages.ReplaceAction_label_selected);
+				mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceSelection);
 				
-		ReplaceAction2 replaceAll= new ReplaceAction2(this);
-		if (replaceAll.isEnabled())
-			mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
-	}
+				ReplaceAction replaceAll= new ReplaceAction(getSite().getShell(), (FileSearchResult) getInput(), null, true);
+				replaceAll.setText(SearchMessages.ReplaceAction_label_all);
+				mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
+			}
+		}
 	}
 	
 	private void addSortActions(IMenuManager mgr) {

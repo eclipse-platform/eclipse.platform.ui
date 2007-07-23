@@ -18,13 +18,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.search.ui.text.Match;
 
 public class FileMatch extends Match {
-	private long fCreationTimeStamp;
 	private String fLine;
 	private int fOffsetWithinLine; // offset of the match within the context line
 	
 	public FileMatch(IFile element, int offset, int length, String line, int offsetWithinLine) {
 		super(element, offset, length);
-		fCreationTimeStamp= element.getModificationStamp();
 		fLine= line;
 		fOffsetWithinLine= offsetWithinLine;
 	}
@@ -39,9 +37,5 @@ public class FileMatch extends Match {
 	
 	public int getOffsetWithinLine(){
 		return fOffsetWithinLine;
-	}
-	
-	public long getCreationTimeStamp() {
-		return fCreationTimeStamp;
 	}
 }
