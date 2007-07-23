@@ -23,6 +23,7 @@ import org.eclipse.ui.WorkbenchException;
 
 import org.eclipse.search.ui.IQueryListener;
 import org.eclipse.search.ui.ISearchQuery;
+import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
@@ -106,6 +107,17 @@ public class SearchViewManager {
 		return null;
 	}
 	
+	public boolean isShown(ISearchQuery query) {
+		for (Iterator iter= fLRUSearchViews.iterator(); iter.hasNext();) {
+			SearchView view= (SearchView) iter.next();
+			ISearchResult currentSearchResult= view.getCurrentSearchResult();
+			if (currentSearchResult != null && query == currentSearchResult.getQuery()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void activateSearchView(ISearchResultViewPart viewPart) {
 		try {
 			IWorkbenchPage activePage= viewPart.getSite().getPage();
@@ -161,6 +173,8 @@ public class SearchViewManager {
 		}
 		return null;
 	}
+
+
 	
 	
 	
