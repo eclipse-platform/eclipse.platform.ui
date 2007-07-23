@@ -150,7 +150,7 @@ public final class ApplyRefactoringScriptWizard extends RefactoringHistoryWizard
 			final Object element= selection.getFirstElement();
 			if (element instanceof IFile) {
 				final IFile file= (IFile) element;
-				if (file.getFileExtension().equals(ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension))
+				if (ScriptingMessages.CreateRefactoringScriptWizardPage_script_extension.equals(file.getFileExtension()))
 					fScriptLocation= file.getRawLocationURI();
 			}
 		}
