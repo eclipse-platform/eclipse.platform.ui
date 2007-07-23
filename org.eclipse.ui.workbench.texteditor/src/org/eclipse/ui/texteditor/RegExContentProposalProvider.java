@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,10 +117,9 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 			addBracketProposal("\\x", 2, RegExMessages.displayString_bs_x, RegExMessages.additionalInfo_bs_x); //$NON-NLS-1$
 			addBracketProposal("\\u", 2, RegExMessages.displayString_bs_u, RegExMessages.additionalInfo_bs_u); //$NON-NLS-1$
 			addBsProposal("\\t", RegExMessages.displayString_bs_t, RegExMessages.additionalInfo_bs_t); //$NON-NLS-1$
+			addBsProposal("\\R", RegExMessages.displayString_bs_R, RegExMessages.additionalInfo_bs_R); //$NON-NLS-1$
 			addBsProposal("\\n", RegExMessages.displayString_bs_n, RegExMessages.additionalInfo_bs_n); //$NON-NLS-1$
 			addBsProposal("\\r", RegExMessages.displayString_bs_r, RegExMessages.additionalInfo_bs_r); //$NON-NLS-1$
-			addBracketProposal("\\r?\\n", 5, RegExMessages.displayString_bs_rnWU, RegExMessages.additionalInfo_bs_rnWU); //$NON-NLS-1$
-			addBracketProposal("(\\r\\n?|\\n)", 10, RegExMessages.displayString_bs_rn, RegExMessages.additionalInfo_bs_rn); //$NON-NLS-1$
 			addBsProposal("\\f", RegExMessages.displayString_bs_f, RegExMessages.additionalInfo_bs_f); //$NON-NLS-1$
 			addBsProposal("\\a", RegExMessages.displayString_bs_a, RegExMessages.additionalInfo_bs_a); //$NON-NLS-1$
 			addBsProposal("\\e", RegExMessages.displayString_bs_e, RegExMessages.additionalInfo_bs_e); //$NON-NLS-1$

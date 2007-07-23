@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
+import java.util.regex.PatternSyntaxException;
+
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -265,6 +267,89 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		assertNotNull(r);
 	}
 	
+	public void testRegexFindLinebreak() throws Exception {
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		String contents= "Unix\nWindows\r\nMac\rEnd";
+		fDocument.set(contents);
+		
+		int n= contents.indexOf("\n");
+		int rn= contents.indexOf("\r\n");
+		int r= contents.indexOf("\rEnd");
+		
+		IRegion region= adapter.find(0, "\\R", true, false, false, true);
+		assertEquals(new Region(n, 1), region);
+		
+		region= adapter.find(n + 1, "\\R", true, false, false, true);
+		assertEquals(new Region(rn, 2), region);
+		
+		region= adapter.find(rn + 2, "\\R", true, false, false, true);
+		assertEquals(new Region(r, 1), region);
+		
+		region= adapter.find(r + 1, "\\R", true, false, false, true);
+		assertNull(region);
+	}
+
+	public void testRegexFindLinebreak2() throws Exception {
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		String contents= "Unix\n[\\R]\\R\r\n";
+		fDocument.set(contents);
+		
+		int n= contents.indexOf("\n");
+		int rn= contents.indexOf("\r\n");
+		
+		IRegion region= adapter.find(0, "[a-zA-Z\\t{\\\\R}]*\\{?\\R", true, false, false, true);
+		assertEquals(new Region(0, n + 1), region);
+		
+		region= adapter.find(n + 1, "\\Q[\\R]\\R\\E{0,1}(\\R)", true, false, false, true);
+		assertEquals(new Region(n + 1, rn + 2 - (n + 1)), region);
+		adapter.replace("Win\\1$1", true);
+		assertEquals("Unix\nWin\r\n\r\n", fDocument.get());
+	}
+	
+	public void testRegexFindLinebreak3() throws Exception {
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		String contents= "One\r\nTwo\r\n\r\nEnd";
+		fDocument.set(contents);
+		
+		int two= contents.indexOf("Two");
+		int end= contents.indexOf("End");
+		
+		IRegion region= adapter.find(0, "[a-zA-Z]+\\R", true, false, false, true);
+		assertEquals(new Region(0, two), region);
+		region= adapter.find(two, "[a-zA-Z]+\\R", true, false, false, true);
+		assertEquals(new Region(two, 3 + 2), region);
+		
+		region= adapter.find(0, "[a-zA-Z]+\\R{2}", true, false, false, true);
+		assertEquals(new Region(two, end - two), region);
+	}
+	
+	public void testRegexFindLinebreakIllegal() throws Exception {
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		fDocument.set("\n");
+		
+		IRegion region= null;
+		try {
+			region= adapter.find(0, "[\\R]", true, false, false, true);
+		} catch (PatternSyntaxException e) {
+			//expected
+		}
+		assertNull(region);
+		
+		try {
+			region= adapter.find(0, "[\\s&&[^\\R]]", true, false, false, true);
+		} catch (PatternSyntaxException e) {
+			//expected
+		}
+		assertNull(region);
+		
+		try {
+			region= adapter.find(0, "\\p{\\R}", true, false, false, true);
+		} catch (PatternSyntaxException e) {
+			//expected
+		}
+		assertNull(region);
+	}
+
 	public void testIllegalState() {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		try {

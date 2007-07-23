@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,14 +44,12 @@ final class RegExMessages extends NLS {
 	public static String additionalInfo_bs_u;
 	public static String displayString_bs_t;
 	public static String additionalInfo_bs_t;
+	public static String displayString_bs_R;
+	public static String additionalInfo_bs_R;
 	public static String displayString_bs_n;
 	public static String additionalInfo_bs_n;
 	public static String displayString_bs_r;
 	public static String additionalInfo_bs_r;
-	public static String displayString_bs_rnWU;
-	public static String additionalInfo_bs_rnWU;
-	public static String displayString_bs_rn;
-	public static String additionalInfo_bs_rn;
 	public static String displayString_bs_f;
 	public static String additionalInfo_bs_f;
 	public static String displayString_bs_a;
