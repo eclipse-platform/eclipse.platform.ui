@@ -725,5 +725,22 @@ public class CVSProviderTest extends EclipseTest {
     					copy.getFile("file1.txt").getContents()));
     	assertEquals(getRepositoryProvider(project), getRepositoryProvider(copy), false, true);
     }
+	
+    public void testSwitchTagForModifiedFile()throws CoreException, IOException {
+    	// it's a similar scenario as in https://bugs.eclipse.org/bugs/show_bug.cgi?id=192392
+    	// create a project
+    	IProject project = createProject("testSwitchTagForModifiedFile", new String[] {"file"});
+    	commitProject(project);
+    	// tag it
+    	CVSTag tag = new CVSTag("A", CVSTag.BRANCH);
+    	tagProject(project, tag, true);
+    	// modify a file
+    	appendText(project.getFile("file"), "changed in head" + eol, false);
+    	// switch to the tag
+    	updateProject(project, tag, false);
+    	ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(project.getFile("file"));
+    	// we expect the file to have the same tag used when switching 
+    	assertEquals(tag, cvsFile.getSyncInfo().getTag());
+    }
 }
 
