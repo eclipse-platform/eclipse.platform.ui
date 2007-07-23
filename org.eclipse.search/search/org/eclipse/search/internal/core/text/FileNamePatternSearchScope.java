@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public class FileNamePatternSearchScope extends TextSearchScope {
 	 * Returns a scope for the given resources.
 	 * @param description description of the scope
 	 * @param resources the resources to be contained
+	 * @param includeDerived specifies if derived resources are included or not
 	 * @return a scope for the given resources.
 	 */
 	public static FileNamePatternSearchScope newSearchScope(String description, IResource[] resources, boolean includeDerived) {
