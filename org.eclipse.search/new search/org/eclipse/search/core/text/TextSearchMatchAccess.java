@@ -59,6 +59,7 @@ public abstract class TextSearchMatchAccess {
 	/**
 	 * Returns a character of the file's content at the given offset
 	 * 
+	 * @param offset the offset
 	 * @return the character at the given offset
 	 * @throws IndexOutOfBoundsException an {@link IndexOutOfBoundsException} is
 	 * thrown when the <code>offset</code> is negative or not less than the file content's length.
