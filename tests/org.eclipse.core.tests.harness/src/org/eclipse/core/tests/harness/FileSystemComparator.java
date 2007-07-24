@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *		Danail Nachev - Bug 197605 [Test Harness] FileSystemComparator use timestamp as size
  *******************************************************************************/
 package org.eclipse.core.tests.harness;
 
@@ -15,8 +16,8 @@ import java.util.*;
 import junit.framework.Assert;
 
 /** 
- * A utility class that compares file system states. It is able to take snapshot of the file system and save ot into a 
- * text file for laer comparison. 
+ * A utility class that compares file system states. It is able to take snapshot of the file system and save it into a 
+ * text file for later comparison. 
  */
 public class FileSystemComparator {
 
@@ -31,7 +32,7 @@ public class FileSystemComparator {
 				throw new IllegalArgumentException(file + " does not exist");
 			path = file.getAbsolutePath();
 			timestamp = file.lastModified();
-			size = file.isDirectory() ? -1 : file.lastModified();
+			size = file.isDirectory() ? -1 : file.length();
 		}
 
 		FileSummary(String file, long timestamp, long size) {
@@ -44,7 +45,7 @@ public class FileSystemComparator {
 			if (!path.equals(other.path))
 				throw new IllegalArgumentException();
 			Assert.assertEquals(tag + " timestamps differ", timestamp, other.timestamp);
-			Assert.assertEquals(tag + " sizes differ", timestamp, other.timestamp);
+			Assert.assertEquals(tag + " sizes differ", size, other.size);
 		}
 
 		public boolean equals(Object obj) {
