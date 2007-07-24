@@ -301,15 +301,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
 			if(delta.getKind() == IResourceDelta.REMOVED && delta.getFlags() != IResourceDelta.MOVED_TO) {
-				if (isDeleteConfigurations()) {
-					ArrayList configs = collectAssociatedLaunches(delta.getResource());
-					if(configs.size() > 0) {
-						for(Iterator iter = configs.iterator(); iter.hasNext();) {
-							try { 
-								((ILaunchConfiguration)iter.next()).delete();
-							} catch (CoreException e) {
-								DebugPlugin.log(e.getStatus());
-							}
+				ArrayList configs = collectAssociatedLaunches(delta.getResource());
+				if(configs.size() > 0) {
+					for(Iterator iter = configs.iterator(); iter.hasNext();) {
+						try { 
+							((ILaunchConfiguration)iter.next()).delete();
+						} catch (CoreException e) {
+							DebugPlugin.log(e.getStatus());
 						}
 					}
 				}
@@ -2199,10 +2197,15 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
             }
 		} else {
 		    LaunchManagerVisitor visitor = getDeltaVisitor();
-		    MappedResourceVisitor v = getMappedResourceVisitor();
+		    MappedResourceVisitor v = null;
+		    if (isDeleteConfigurations()) {
+		    	v = getMappedResourceVisitor();
+		    }
 		    try {
 		    	delta.accept(visitor);
-		    	delta.accept(v);
+		    	if (v != null) {
+		    		delta.accept(v);
+		    	}
 		    } catch (CoreException e) {
 		    	DebugPlugin.log(e.getStatus());
 		    }
