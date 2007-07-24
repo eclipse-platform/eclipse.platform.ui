@@ -68,7 +68,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.ide.IDEEncoding;
@@ -334,10 +333,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      */
     private void createEncodingComponent(Composite parent) {
 	    List allEncodings = IDEEncoding.getIDEEncodings();
-	    String defaultEncoding = IDEEncoding.getResourceEncoding();
-	    if(defaultEncoding == null) {
-	    	defaultEncoding = WorkbenchEncoding.getWorkbenchDefaultEncoding();
-	    }
+	    String defaultEncoding = ResourcesPlugin.getEncoding();
 	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
 	    
 	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding})); 
@@ -768,9 +764,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		String encoding = null;
 		if(fAltEncodingButton.getSelection()) {
 		    encoding = fEncodingCombo.getText();
-		}
-		else {
-			encoding = IDEEncoding.getResourceEncoding();
 		}
 		configuration.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, encoding);
 		boolean captureOutput = false;

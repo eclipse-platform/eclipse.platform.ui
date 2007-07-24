@@ -708,6 +708,9 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
 			}
 			String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
+			if(attribute == null) {
+				attribute = ResourcesPlugin.getEncoding();
+			}
 			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);
 			
 		// perform initial pre-launch sanity checks
