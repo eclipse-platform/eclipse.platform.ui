@@ -114,7 +114,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
-	 * can be revertable. This attirbute is not saveable and will never appear in a saved
+	 * can be revertable. This attribute is not saveable and will never appear in a saved
 	 * launch configuration.
 	 * @since 3.3
 	 */
@@ -344,7 +344,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
 	    gd.horizontalSpan = 2;
 	    fDefaultEncodingButton.setLayoutData(gd);
-	    
+	   
 	    fAltEncodingButton = createRadioButton(group, LaunchConfigurationsMessages.CommonTab_3);  
 	    fAltEncodingButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
 	    
@@ -363,8 +363,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         });
 	    SelectionListener listener = new SelectionAdapter() {
 	        public void widgetSelected(SelectionEvent e) {
-	            updateLaunchConfigurationDialog();
-	            fEncodingCombo.setEnabled(fAltEncodingButton.getSelection() == true);
+	        	if(e.getSource() instanceof Button) {
+	        		Button button = (Button)e.getSource();
+	        		if(button.getSelection()) {
+		        		updateLaunchConfigurationDialog();
+			            fEncodingCombo.setEnabled(fAltEncodingButton.getSelection() == true);
+	        		}
+	        	}
+	        	else {
+	        		updateLaunchConfigurationDialog();
+	        	}
 	        }
 	    };
 	    fAltEncodingButton.addSelectionListener(listener);
