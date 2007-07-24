@@ -17,7 +17,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
@@ -58,8 +58,6 @@ public class CompareConfiguration {
 	public static final String USE_OUTLINE_VIEW= "USE_OUTLINE_VIEW"; //$NON-NLS-1$
 	
 	private static ImageDescriptor[] fgImages= new ImageDescriptor[16];
-	private static Object fgDummy= new Object();
-	private static HashMap fgMap= new HashMap(20);
 	private static boolean fLeftIsLocal= true;
 
 	static {
@@ -103,9 +101,10 @@ public class CompareConfiguration {
 	private Image fAncestorImage;
 	private Image fRightImage;
 	private Image fLeftImage;
-	private Image[] fImages= new Image[16];
 	private ICompareContainer fContainer;
 	private DefaultLabelProvider labelProvider = new DefaultLabelProvider();
+	private boolean fDisposed;
+	private LocalResourceManager fResourceManager;
 	
 	private class DefaultLabelProvider extends LabelProvider implements ICompareInputLabelProvider, ILabelProviderListener {
 		private Map labelProviders = new HashMap();
@@ -286,19 +285,20 @@ public class CompareConfiguration {
 	 * @since 2.0
 	 */
 	public Image getImage(int kind) {
-		if (fImages == null)
-			// The configuration has been disposed
+		if (fDisposed)
 			return null;
-		Image image= fImages[kind & 15];
-		if (image == null) {
-			ImageDescriptor id= fgImages[kind & 15];
-			if (id != null)				
-				image= id.createImage();
-			fImages[kind & 15]= image;
-		}
-		return image;
+		ImageDescriptor id= fgImages[kind & 15];
+		ResourceManager rm = getResourceManager();
+		return rm.createImage(id);
 	}
 	
+	private synchronized ResourceManager getResourceManager() {
+		if (fResourceManager == null) {
+			fResourceManager = new LocalResourceManager(JFaceResources.getResources());
+		}
+		return fResourceManager;
+	}
+
 	/**
 	 * Returns an image showing the specified change kind applied to a
 	 * given base image. The different kind of changes are defined in the <code>Differencer</code>.
@@ -313,25 +313,12 @@ public class CompareConfiguration {
 	 * @see org.eclipse.compare.structuremergeviewer.Differencer
 	 */
 	public Image getImage(Image base, int kind) {
-
-		Object key= base;
-		if (key == null)
-			key= fgDummy;
-
+		if (fDisposed)
+			return null;
 		kind &= 15;
-
-		Image[] a= (Image[]) fgMap.get(key);
-		if (a == null) {
-			a= new Image[16];
-			fgMap.put(key, a);
-		}
-		Image b= a[kind];
-		if (b == null) {
-			b= new DiffImage(base, fgImages[kind], ICompareUIConstants.COMPARE_IMAGE_WIDTH, !fLeftIsLocal).createImage();
-			CompareUI.disposeOnShutdown(b);
-			a[kind]= b;
-		}
-		return b;
+		ImageDescriptor id = new DiffImage(base, fgImages[kind], ICompareUIConstants.COMPARE_IMAGE_WIDTH, !fLeftIsLocal);
+		ResourceManager rm = getResourceManager();
+		return rm.createImage(id);
 	}
 	
 	/**
@@ -340,14 +327,10 @@ public class CompareConfiguration {
 	 * An implementation must dispose of all resources.
 	 */
 	public void dispose() {
-		if (fImages != null) {
-			for (int i= 0; i < fImages.length; i++){
-				Image image= fImages[i];
-				if (image != null && !image.isDisposed())
-					image.dispose();
-			}
+		fDisposed = true;
+		if (fResourceManager != null) {
+			fResourceManager.dispose();
 		}
-		fImages= null;
 		labelProvider.dispose();
 	}
 
