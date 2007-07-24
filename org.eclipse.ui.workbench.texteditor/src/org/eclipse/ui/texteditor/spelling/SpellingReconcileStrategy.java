@@ -95,8 +95,11 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 			
 			synchronized (fLockObject) {
 				Iterator iter= fAnnotationModel.getAnnotationIterator();
-				while (iter.hasNext())
-					toRemove.add(iter.next());
+				while (iter.hasNext()) {
+					Annotation annotation= (Annotation)iter.next();
+					if (SpellingAnnotation.TYPE.equals(annotation.getType()))
+						toRemove.add(annotation);
+				}
 				Annotation[] annotationsToRemove= (Annotation[])toRemove.toArray(new Annotation[toRemove.size()]);
 
 				if (fAnnotationModel instanceof IAnnotationModelExtension)
