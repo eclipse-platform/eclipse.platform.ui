@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -245,25 +246,19 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationAdded(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
-		try {
-			if (configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false)) {
-				return;
+		if(isSupportedConfiguration(configuration)) {
+			Display display = DebugUIPlugin.getStandardDisplay();
+			if (display.getThread() == Thread.currentThread()) {
+			    // If we're already in the UI thread (user pressing New in the
+			    // dialog), update the tree immediately.
+			    handleConfigurationAdded(configuration);
+			} else {
+		        display.asyncExec(new Runnable() {
+		            public void run() {
+		                handleConfigurationAdded(configuration);
+		            }
+		        });
 			}
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-			return;
-		}
-		Display display = DebugUIPlugin.getStandardDisplay();
-		if (display.getThread() == Thread.currentThread()) {
-		    // If we're already in the UI thread (user pressing New in the
-		    // dialog), update the tree immediately.
-		    handleConfigurationAdded(configuration);
-		} else {
-	        display.asyncExec(new Runnable() {
-	            public void run() {
-	                handleConfigurationAdded(configuration);
-	            }
-	        });
 		}
 	}
 
@@ -290,6 +285,30 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
         }
     }
 
+    /**
+     * Returns if the specified configuration is supported by this instance of the view.
+     * Supported means that:
+     * <ul>
+     * <li>The configuration is not private</li>
+     * <li>AND that the configurations' type supports the mode of the current launch group</li>
+     * <li>AND that the category of the configurations' type matches that of the current launch group</li>
+     * </ul>
+     * @param configuration the configuration
+     * @return true if the configuration is supported by this instance of the view, false otherwise
+     * 
+     * @since 3.4
+     */
+    protected boolean isSupportedConfiguration(ILaunchConfiguration configuration) {
+    	try {
+    		ILaunchConfigurationType type = configuration.getType();
+    		return !configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) && 
+    				type.supportsMode(getLaunchGroup().getMode()) && 
+    				type.getCategory().equals(getLaunchGroup().getCategory());
+    	}
+    	catch(CoreException ce) {}
+    	return false;
+    }
+    
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
@@ -299,22 +318,24 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(final ILaunchConfiguration configuration) {
-		// if moved, ignore
-		ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
-		if (to != null) {
-			return;
-		}
-		Display display = DebugUIPlugin.getStandardDisplay();
-		if (display.getThread() == Thread.currentThread()) {
-		    // If we're already in the UI thread (user pressing Delete in the
-		    // dialog), update the tree immediately.
-            handleConfigurationRemoved(configuration);
-		} else {
-			display.asyncExec(new Runnable() {
-		        public void run() {
-		            handleConfigurationRemoved(configuration);
-		        }
-			});
+		if(isSupportedConfiguration(configuration)) {
+			// if moved, ignore
+			ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
+			if (to != null) {
+				return;
+			}
+			Display display = DebugUIPlugin.getStandardDisplay();
+			if (display.getThread() == Thread.currentThread()) {
+			    // If we're already in the UI thread (user pressing Delete in the
+			    // dialog), update the tree immediately.
+	            handleConfigurationRemoved(configuration);
+			} else {
+				display.asyncExec(new Runnable() {
+			        public void run() {
+			            handleConfigurationRemoved(configuration);
+			        }
+				});
+			}
 		}
 	}
 
