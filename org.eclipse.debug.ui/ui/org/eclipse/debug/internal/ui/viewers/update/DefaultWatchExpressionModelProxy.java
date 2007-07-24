@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
+ * Model proxy for the expressions view
+ * 
+ * @see org.eclipse.debug.internal.ui.views.expression.ExpressionView
+ * @see org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider
+ * @see org.eclipse.debug.internal.ui.model.elements.ExpressionsViewMementoProvider
+ * 
  * @since 3.2
- *
  */
 public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProxy implements IDebugContextListener {
 	
@@ -88,6 +93,10 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		return new DebugEventHandler[]{new ExpressionEventHandler(this)};
 	}
 
+	/**
+	 * Handles the activation of the specified debug context (i.e. the selection)
+	 * @param selection the specified context to 'activate'
+	 */
 	protected void contextActivated(ISelection selection) {
 		if (fWindow != null) {
 			if (selection instanceof IStructuredSelection) {
@@ -109,6 +118,9 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
+	 */
 	public void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
 			contextActivated(event.getContext());
