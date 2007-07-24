@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * Combines an image with an overlay.
  */
-public class DiffImage extends CompositeImageDescriptor {
+public class DiffImageDescriptor extends CompositeImageDescriptor {
 
 	static final int HEIGHT= 16;
 
@@ -28,7 +28,7 @@ public class DiffImage extends CompositeImageDescriptor {
 	private final boolean fLeft;
 	private final int hashCode;
 
-	public DiffImage(Image base, ImageDescriptor overlay, int w, boolean onLeft) {
+	public DiffImageDescriptor(Image base, ImageDescriptor overlay, int w, boolean onLeft) {
 		ImageData data = null;
 		if (base != null) {
 			data = base.getImageData();
@@ -114,8 +114,8 @@ public class DiffImage extends CompositeImageDescriptor {
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (obj instanceof DiffImage) {
-			DiffImage other = (DiffImage) obj;
+		if (obj instanceof DiffImageDescriptor) {
+			DiffImageDescriptor other = (DiffImageDescriptor) obj;
 			return (other.hashCode == hashCode
 					&& isEqual(other.fOverlayImage, fOverlayImage)
 					&& other.fWidth == fWidth 

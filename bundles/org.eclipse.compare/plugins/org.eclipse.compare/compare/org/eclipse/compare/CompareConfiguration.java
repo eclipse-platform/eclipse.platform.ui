@@ -316,7 +316,7 @@ public class CompareConfiguration {
 		if (fDisposed)
 			return null;
 		kind &= 15;
-		ImageDescriptor id = new DiffImage(base, fgImages[kind], ICompareUIConstants.COMPARE_IMAGE_WIDTH, !fLeftIsLocal);
+		ImageDescriptor id = new DiffImageDescriptor(base, fgImages[kind], ICompareUIConstants.COMPARE_IMAGE_WIDTH, !fLeftIsLocal);
 		ResourceManager rm = getResourceManager();
 		return rm.createImage(id);
 	}
