@@ -62,9 +62,15 @@ public class ContextManager {
 	 * Returns the Context for the given id and locale.
 	 */
 	public IContext getContext(String contextId, String locale) {
+		if (HelpPlugin.DEBUG_CONTEXT  && contextId != null) {
+			System.out.println("ContextManager.getContext(\"" + contextId + "\")"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		// first check for dynamic context definitions
 		Context dynamicContext = (Context)contextsById.get(contextId);
 		if (dynamicContext != null) {
+			if (HelpPlugin.DEBUG_CONTEXT) {
+				System.out.println("ContextManager.getContext found dynamic context"); //$NON-NLS-1$
+			}
 			return dynamicContext;
 		}
 		
@@ -78,6 +84,9 @@ public class ContextManager {
 				try {
 					IContext context = provider.getContext(contextId, locale);
 					if (context != null) {
+						if (HelpPlugin.DEBUG_CONTEXT) {
+							System.out.println("ContextManager.getContext found non dynamic context, description = \"" + context.getText() + '"'); //$NON-NLS-1$
+						}
 						return new Context(context, contextId);
 					}
 				}
@@ -87,6 +96,9 @@ public class ContextManager {
 					HelpPlugin.logError(msg, t);
 				}
 			}
+		}
+		if (HelpPlugin.DEBUG_CONTEXT) {
+			System.out.println("ContextManager.getContext - no context found"); //$NON-NLS-1$
 		}
 		return null;
 	}

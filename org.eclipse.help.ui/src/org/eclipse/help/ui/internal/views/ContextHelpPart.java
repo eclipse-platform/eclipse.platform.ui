@@ -304,8 +304,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		RelatedTopicsPart part = (RelatedTopicsPart) parent
 				.findPart(IHelpUIConstants.HV_RELATED_TOPICS);
 		if (part != null) {
-			if (expression != null)
+			if (expression != null) {
+				if (HelpPlugin.DEBUG_CONTEXT) {
+				    System.out.println("Dynamic help - search for " + expression); //$NON-NLS-1$
+			    }
 				part.startSearch(expression, lastContext);
+			}
 		}
 	}
 

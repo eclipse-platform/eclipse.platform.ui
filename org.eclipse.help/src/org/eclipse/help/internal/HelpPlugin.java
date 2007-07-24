@@ -31,6 +31,10 @@ import org.osgi.framework.BundleContext;
 public class HelpPlugin extends Plugin {
 
 	public final static String PLUGIN_ID = "org.eclipse.help"; //$NON-NLS-1$
+	// debug options
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_CONTEXT = false;
+	
 	public final static String HELP_DATA_KEY = "HELP_DATA"; //$NON-NLS-1$
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_TOCS_KEY = "ignoredTOCS"; //$NON-NLS-1$
@@ -147,6 +151,11 @@ public class HelpPlugin extends Plugin {
 		}
 		if (configurationDirectory == null) {
 			configurationDirectory = getStateLocation().toFile();
+		}
+		// Setup debugging options
+		DEBUG = isDebugging();
+		if (DEBUG) {
+			DEBUG_CONTEXT = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/context")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
