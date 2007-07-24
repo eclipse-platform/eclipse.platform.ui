@@ -44,20 +44,21 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
  */
 public class MarkerContentGenerator {
 
-	private Collection markerTypes;
-	private IWorkingSet workingSet;
-	private MarkerField[] visibleFields;
-	private MarkerField[] sortFields;
-	private IConfigurationElement configurationElement;
-	private MarkerField categoryField;
-	static final Object CACHE_UPDATE_FAMILY = new Object();
-	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	private static final String ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE = "defaultForPerspective"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
-	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
+	static final Object CACHE_UPDATE_FAMILY = new Object();
+	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
+	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
+	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
+	private MarkerField categoryField;
+	private IConfigurationElement configurationElement;
+	private Collection markerTypes;
+	private MarkerField[] sortFields;
+	private MarkerField[] visibleFields;
+	private IWorkingSet workingSet;
+	private String name;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -66,79 +67,22 @@ public class MarkerContentGenerator {
 	 * @param name
 	 */
 	public MarkerContentGenerator(String id, String name) {
+		this.name = name;
 
 	}
 
 	/**
-	 * Get the id of the perspective this content generator is the default for.
-	 * 
-	 * @return String or <code>null</code>.
-	 */
-	public String getDefaultPerspectiveId() {
-		return configurationElement
-				.getAttribute(ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE);
-	}
-
-	/**
-	 * Get the fields that this content generator is displaying
-	 * 
-	 * @return {@link MarkerField}[]
-	 */
-	public MarkerField[] getVisibleFields() {
-		return visibleFields;
-	}
-
-	/**
-	 * Get the fields that this content generator is using to sort
-	 * 
-	 * @return {@link MarkerField}[]
-	 */
-	public MarkerField[] getSortingFields() {
-		return sortFields;
-	}
-
-	/**
-	 * Return the field used to generate categories.
-	 * 
-	 * @return IMarkerField for <code>null</code>.
-	 */
-	public MarkerField getCategoryField() {
-
-		return categoryField;
-	}
-
-	/**
-	 * Return the enabled filters for the receiver.
-	 * 
-	 * @return
-	 */
-	public MarkerFilter[] getEnabledFilters() {
-		// TODO Get some real content here
-		return new MarkerFilter[0];
-	}
-
-	/**
-	 * Re-generate all of the markers and filter them based on the enabled
-	 * filters.
+	 * Compute all of the markers for the receiver's type.
 	 * 
 	 * @param subMonitor
-	 * @return MarkerMap
+	 * @return MarkerEntry
 	 */
-	public MarkerMap generateFilteredMarkers(SubProgressMonitor subMonitor) {
-
-		MarkerFilter[] filters = getEnabledFilters();
-		Collection returnMarkers;
-		if (filters.length > 0) {
-			returnMarkers = new HashSet();
-			for (int i = 0; i < filters.length; i++) {
-				computeMarkers(returnMarkers, subMonitor, filters[i]);
-			}
-
-		} else
-			returnMarkers = computeAllMarkers(subMonitor);
-		MarkerEntry[] entries = new MarkerEntry[returnMarkers.size()];
-		returnMarkers.toArray(entries);
-		return new MarkerMap(entries);
+	private Collection computeAllMarkers(SubProgressMonitor subMonitor) {
+		Collection allMarkers = new HashSet();
+		findMarkers(allMarkers, new IResource[] { ResourcesPlugin
+				.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
+				subMonitor);
+		return allMarkers;
 	}
 
 	/**
@@ -181,81 +125,6 @@ public class MarkerContentGenerator {
 		}
 		}
 
-	}
-
-	/**
-	 * Get the resources in the current working set.
-	 * 
-	 * @return IResource[]
-	 */
-	private IResource[] getResourcesInWorkingSet() {
-
-		// TODO hook up working sets
-		if (workingSet == null) {
-			return new IResource[0];
-		}
-
-		if (workingSet.isEmpty()) {
-			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
-		}
-
-		IAdaptable[] elements = workingSet.getElements();
-		List result = new ArrayList(elements.length);
-
-		for (int idx = 0; idx < elements.length; idx++) {
-			IResource next = (IResource) elements[idx]
-					.getAdapter(IResource.class);
-
-			if (next != null) {
-				result.add(next);
-			}
-		}
-
-		return (IResource[]) result.toArray(new IResource[result.size()]);
-
-	}
-
-	/**
-	 * @param focusResources
-	 * @return
-	 */
-	private IResource[] getProjects(IResource[] focusResources) {
-
-		if (focusResources.length == 0)
-			return EMPTY_RESOURCE_ARRAY;
-		HashSet projects = new HashSet();
-
-		for (int idx = 0; idx < focusResources.length; idx++) {
-			projects.add(focusResources[idx].getProject());
-		}
-		if (projects.isEmpty())
-			return EMPTY_RESOURCE_ARRAY;
-		return (IResource[]) projects.toArray(new IResource[projects.size()]);
-
-	}
-
-	/**
-	 * Return the current focussed resources.
-	 * 
-	 * @return
-	 */
-	private IResource[] getFocusResources() {
-		// TODO tie this to the selection
-		return new IResource[0];
-	}
-
-	/**
-	 * Compute all of the markers for the receiver's type.
-	 * 
-	 * @param subMonitor
-	 * @return MarkerEntry
-	 */
-	private Collection computeAllMarkers(SubProgressMonitor subMonitor) {
-		Collection allMarkers = new HashSet();
-		findMarkers(allMarkers, new IResource[] { ResourcesPlugin
-				.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
-				subMonitor);
-		return allMarkers;
 	}
 
 	/**
@@ -383,21 +252,37 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Return the markerTypes for the receiver.
+	 * Re-generate all of the markers and filter them based on the enabled
+	 * filters.
 	 * 
-	 * @return Collection of {@link MarkerType}
+	 * @param subMonitor
+	 * @return MarkerMap
 	 */
-	public Collection getMarkerTypes() {
-		if (markerTypes == null) {
-			markerTypes = new HashSet();
-			// TODO filter this by type
-			MarkerType[] types = MarkerTypesModel.getInstance().getType(
-					IMarker.PROBLEM).getAllSubTypes();
-			for (int i = 0; i < types.length; i++) {
-				markerTypes.add(types[i]);
+	public MarkerMap generateFilteredMarkers(SubProgressMonitor subMonitor) {
+
+		MarkerFilter[] filters = getEnabledFilters();
+		Collection returnMarkers;
+		if (filters.length > 0) {
+			returnMarkers = new HashSet();
+			for (int i = 0; i < filters.length; i++) {
+				computeMarkers(returnMarkers, subMonitor, filters[i]);
 			}
-		}
-		return markerTypes;
+
+		} else
+			returnMarkers = computeAllMarkers(subMonitor);
+		MarkerEntry[] entries = new MarkerEntry[returnMarkers.size()];
+		returnMarkers.toArray(entries);
+		return new MarkerMap(entries);
+	}
+
+	/**
+	 * Return the field used to generate categories.
+	 * 
+	 * @return IMarkerField for <code>null</code>.
+	 */
+	public MarkerField getCategoryField() {
+
+		return categoryField;
 	}
 
 	/**
@@ -410,21 +295,135 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Set the configuration element used to define the receiver.
+	 * Get the id of the perspective this content generator is the default for.
 	 * 
-	 * @param element
+	 * @return String or <code>null</code>.
 	 */
-	public void setConfigurationElement(IConfigurationElement element) {
-		configurationElement = element;
+	public String getDefaultPerspectiveId() {
+		return configurationElement
+				.getAttribute(ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE);
 	}
 
 	/**
-	 * Return whether or not we are showing a hierarchy,.
+	 * Return the enabled filters for the receiver.
 	 * 
-	 * @return <code>true</code> if a hierarchy is being shown.
+	 * @return
 	 */
-	public boolean isShowingHierarchy() {
-		return categoryField != null;
+	public MarkerFilter[] getEnabledFilters() {
+		// TODO Get some real content here
+		return new MarkerFilter[0];
+	}
+
+	/**
+	 * Return the current focussed resources.
+	 * 
+	 * @return
+	 */
+	private IResource[] getFocusResources() {
+		// TODO tie this to the selection
+		return new IResource[0];
+	}
+
+	/**
+	 * Return the markerTypes for the receiver.
+	 * 
+	 * @return Collection of {@link MarkerType}
+	 */
+	public Collection getMarkerTypes() {
+		if (markerTypes == null) {
+			markerTypes = new HashSet();
+			IConfigurationElement[] markerTypeElements = configurationElement
+					.getChildren(MarkerSupportRegistry.MARKER_TYPE_REFERENCE);
+			for (int i = 0; i < markerTypeElements.length; i++) {
+				IConfigurationElement configurationElement = markerTypeElements[i];
+				String elementName = configurationElement
+						.getAttribute(ATTRIBUTE_ID);
+				MarkerType[] types = MarkerTypesModel.getInstance().getType(
+						elementName).getAllSubTypes();
+				for (int j = 0; j < types.length; j++) {
+					markerTypes.add(types[j]);
+				}
+				markerTypes.add(MarkerTypesModel.getInstance().getType(
+						elementName));
+			}
+			if (markerTypes.isEmpty()) {
+				MarkerType[] types = MarkerTypesModel.getInstance().getType(
+						IMarker.PROBLEM).getAllSubTypes();
+				for (int i = 0; i < types.length; i++) {
+					markerTypes.add(types[i]);
+				}
+			}
+		}
+		return markerTypes;
+	}
+
+	/**
+	 * @param focusResources
+	 * @return
+	 */
+	private IResource[] getProjects(IResource[] focusResources) {
+
+		if (focusResources.length == 0)
+			return EMPTY_RESOURCE_ARRAY;
+		HashSet projects = new HashSet();
+
+		for (int idx = 0; idx < focusResources.length; idx++) {
+			projects.add(focusResources[idx].getProject());
+		}
+		if (projects.isEmpty())
+			return EMPTY_RESOURCE_ARRAY;
+		return (IResource[]) projects.toArray(new IResource[projects.size()]);
+
+	}
+
+	/**
+	 * Get the resources in the current working set.
+	 * 
+	 * @return IResource[]
+	 */
+	private IResource[] getResourcesInWorkingSet() {
+
+		// TODO hook up working sets
+		if (workingSet == null) {
+			return new IResource[0];
+		}
+
+		if (workingSet.isEmpty()) {
+			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
+		}
+
+		IAdaptable[] elements = workingSet.getElements();
+		List result = new ArrayList(elements.length);
+
+		for (int idx = 0; idx < elements.length; idx++) {
+			IResource next = (IResource) elements[idx]
+					.getAdapter(IResource.class);
+
+			if (next != null) {
+				result.add(next);
+			}
+		}
+
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+
+	}
+
+	/**
+	 * Get the fields that this content generator is using to sort
+	 * 
+	 * @return {@link MarkerField}[]
+	 */
+	public MarkerField[] getSortingFields() {
+		return sortFields;
+	}
+
+	/**
+	 * Get the fields that this content generator is displaying
+	 * 
+	 * @return {@link MarkerField}[]
+	 */
+	public MarkerField[] getVisibleFields() {
+		return visibleFields;
 	}
 
 	/**
@@ -466,6 +465,32 @@ public class MarkerContentGenerator {
 		visibleFields = new MarkerField[visibleFieldList.size()];
 		visibleFieldList.toArray(visibleFields);
 
+	}
+
+	/**
+	 * Return whether or not we are showing a hierarchy,.
+	 * 
+	 * @return <code>true</code> if a hierarchy is being shown.
+	 */
+	public boolean isShowingHierarchy() {
+		return categoryField != null;
+	}
+
+	/**
+	 * Set the configuration element used to define the receiver.
+	 * 
+	 * @param element
+	 */
+	public void setConfigurationElement(IConfigurationElement element) {
+		configurationElement = element;
+	}
+
+	/**
+	 * Return the name for the receiver.
+	 * @return String
+	 */
+	public String getName() {
+		return name;
 	}
 
 }

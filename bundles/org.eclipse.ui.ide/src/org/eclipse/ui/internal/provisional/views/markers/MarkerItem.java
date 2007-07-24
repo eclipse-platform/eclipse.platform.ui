@@ -27,42 +27,17 @@ public abstract class MarkerItem {
 	private CollationKey collationKey;
 
 	/**
-	 * Get the children of the node.
-	 * 
-	 * @return MarkerNode[]
+	 * Return the boolean associated with attributeName or defaultValue if
+	 * it is not found.
+	 * @param attribute
+	 * @param defaultValue
+	 * @return <code>boolean</code>
 	 */
-	public abstract MarkerItem[] getChildren();
+	public boolean getAttributeValue(String attribute, boolean defaultValue) {
+		// There are no boolean values by default
+		return defaultValue;
 
-	/**
-	 * Return the parent node or <code>null</code> if this is a top level
-	 * element.
-	 * 
-	 * @return MarkerNode
-	 */
-	public abstract MarkerItem getParent();
-
-	/**
-	 * Return whether or not this is a concrete node
-	 * 
-	 * @return boolean
-	 */
-	public abstract boolean isConcrete();
-
-	/**
-	 * Return the description of the receiver.
-	 * 
-	 * @return String
-	 */
-	public abstract String getDescription();
-
-	/**
-	 * Get a concrete marker from the receiver. If the receiver is concrete
-	 * return the receiver otherwise return one of the concrete markers it
-	 * contains.
-	 * 
-	 * @return MarkerEntry
-	 */
-	public abstract MarkerEntry getConcreteRepresentative();
+	}
 
 	/**
 	 * Get the value of the attribute in the enclosed marker.
@@ -95,6 +70,13 @@ public abstract class MarkerItem {
 	}
 
 	/**
+	 * Get the children of the node.
+	 * 
+	 * @return MarkerNode[]
+	 */
+	public abstract MarkerItem[] getChildren();
+
+	/**
 	 * Get the CollationKey for the string attribute.
 	 * 
 	 * @param attribute
@@ -110,12 +92,65 @@ public abstract class MarkerItem {
 	}
 
 	/**
+	 * Get a concrete marker from the receiver. If the receiver is concrete
+	 * return the receiver otherwise return one of the concrete markers it
+	 * contains.
+	 * 
+	 * @return MarkerEntry
+	 */
+	public abstract MarkerEntry getConcreteRepresentative();
+
+	/**
+	 * Return the creation time for the receiver.
+	 * @return long
+	 */
+	public long getCreationTime() {
+		return -1;
+	}
+
+	/**
+	 * Return the description of the receiver.
+	 * 
+	 * @return String
+	 */
+	public abstract String getDescription();
+
+	/**
+	 * Return the ID of the receiver
+	 * @return String
+	 */
+	public long getID() {
+		return -1;
+		
+	}
+
+	/**
+	 * Get the location string for the receiver.
+	 * 
+	 * @return String
+	 * @see IMarker.LOCATION
+	 */
+	public String getLocation() {
+		//There is no location by default
+		return MarkerUtilities.EMPTY_STRING;
+
+	}
+	
+	/**
 	 * @return
 	 */
 	public IMarker getMarker() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/**
+	 * Return the parent node or <code>null</code> if this is a top level
+	 * element.
+	 * 
+	 * @return MarkerNode
+	 */
+	public abstract MarkerItem getParent();
 
 	/**
 	 * Get the path string for the receiver.
@@ -128,34 +163,12 @@ public abstract class MarkerItem {
 		return MarkerUtilities.EMPTY_STRING;
 
 	}
-	
+
 	/**
-	 * Get the location string for the receiver.
+	 * Return whether or not this is a concrete node
 	 * 
-	 * @return String
-	 * @see IMarker.LOCATION
+	 * @return boolean
 	 */
-	public String getLocation() {
-		//There is no location by default
-		return MarkerUtilities.EMPTY_STRING;
-
-	}
-
-	/**
-	 * Return the creation time for the receiver.
-	 * @return long
-	 */
-	public long getCreationTime() {
-		return -1;
-	}
-
-	/**
-	 * Return the ID of the receiver
-	 * @return String
-	 */
-	public long getID() {
-		return -1;
-		
-	}
+	public abstract boolean isConcrete();
 
 }

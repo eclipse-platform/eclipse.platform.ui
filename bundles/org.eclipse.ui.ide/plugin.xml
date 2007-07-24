@@ -779,6 +779,11 @@
                optional="false"
                typeId="org.eclipse.ui.ide.resourcePath"/>
       </command>
+      <category
+            description="%ContentGenerator.CategoryDescription"
+            id="org.eclipse.ui.ide.markerContents"
+            name="%ContentGenerator.Category">
+      </category>
    </extension>
    
    <extension
@@ -1035,7 +1040,7 @@
                id="org.eclipse.ui.ide.allErrors">
          </markerFilterReference>
          <markerFieldReference
-               id="org.eclipse.ui.ide.severityAndMessageField"
+               id="org.eclipse.ui.ide.severityAndDescriptionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
@@ -1058,6 +1063,9 @@
                id="org.eclipse.ui.ide.creationTimeField"
                visible="false">
          </markerFieldReference>
+         <markerTypeReference
+               id="org.eclipse.core.resources.problemmarker">
+         </markerTypeReference>
       </markerContentGenerator>
       <markerGrouping
             id="org.eclipse.ui.ide.severity"
@@ -1112,30 +1120,114 @@
             name="%Field.CreationTimeLabel">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerSeverityAndMessageField"
-            id="org.eclipse.ui.ide.severityAndMessageField"
-            name="%Field.SeverityAndMessageLabel">
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionAndMessageField"
+            id="org.eclipse.ui.ide.severityAndDescriptionField"
+            name="%Field.Description">
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerResourceField"
             id="org.eclipse.ui.ide.resourceField"
-            name="%Field.ResourceLabel">
+            name="%Field.Resource">
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerPathField"
             id="org.eclipse.ui.ide.pathField"
-            name="%Field.PathLabel">
+            name="%Field.Path">
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerLocationField"
             id="org.eclipse.ui.ide.locationField"
-            name="%Field.LocationLabel">
+            name="%Field.Location">
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerIDField"
             id="org.eclipse.ui.ide.idField"
-            name="%Field.IDLabel">
+            name="%Field.ID">
       </markerField>
+      <markerContentGenerator
+            defaultForPerspective="org.eclipse.ui.resourcePerspective"
+            id="org.eclipse.ui.ide.tasksGenerator"
+            name="%ContentGenerator.Tasks">
+         <markerFieldReference
+               id="org.eclipse.ui.ide.completionField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.priorityField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.descriptionField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.resourceField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.pathField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.locationField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.creationTimeField"
+               visible="false">
+         </markerFieldReference>
+         <markerTypeReference
+               id="org.eclipse.core.resources.taskmarker">
+         </markerTypeReference>
+      </markerContentGenerator>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerCompletionField"
+            icon="$nl$/icons/full/obj16/header_complete.gif"
+            id="org.eclipse.ui.ide.completionField"
+            name="%Field.Completion">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerPriorityField"
+            icon="icons/full/obj16/header_priority.gif"
+            id="org.eclipse.ui.ide.priorityField"
+            name="%Field.Priority">
+      </markerField>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionField"
+            id="org.eclipse.ui.ide.descriptionField"
+            name="%Field.Description">
+      </markerField>
+      <markerContentGenerator
+            id="org.eclipse.ui.ide.bookmarksGenerator"
+            name="%ContentGenerator.Bookmarks">
+         <markerFieldReference
+               id="org.eclipse.ui.ide.severityAndDescriptionField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.resourceField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.pathField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.locationField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.idField"
+               visible="false">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.creationTimeField"
+               visible="false">
+         </markerFieldReference>
+         <markerTypeReference
+               id="org.eclipse.core.resources.bookmark">
+         </markerTypeReference>
+      </markerContentGenerator>
      
    </extension>
    <extension
@@ -1173,6 +1265,17 @@
                tooltip="%menu.toggleCoolbar.tooltip">
                <!-- no visibility needed - the result of this action will remove the ability to show this menu anyway -->
          </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
+         <menu
+               id="org.eclipse.ui.ide.markers.contentsMenu"
+               label="%MarkerContentsMenu.Contents">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  id="org.eclipse.ui.ide.dynamic1">
+            </dynamic>
+         </menu>
       </menuContribution>
    </extension>
    

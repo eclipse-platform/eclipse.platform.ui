@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerCreationTimeField is the field that shows the creation time of a field.
@@ -21,14 +20,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class MarkerCreationTimeField extends MarkerField {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerMessages.description_creationTime;
-	}
 
 	/*
 	 * (non-Javadoc)

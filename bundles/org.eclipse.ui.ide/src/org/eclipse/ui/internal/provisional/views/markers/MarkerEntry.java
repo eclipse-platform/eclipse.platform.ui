@@ -34,11 +34,11 @@ import com.ibm.icu.text.Collator;
  */
 public class MarkerEntry extends MarkerItem {
 
-	IMarker marker;
-	private MarkerCategory category;
 	Map attributeCache = new HashMap(0);
+	private MarkerCategory category;
 	Map collationKeys = new HashMap(0);
 	private String folder;
+	IMarker marker;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -48,69 +48,15 @@ public class MarkerEntry extends MarkerItem {
 	public MarkerEntry(IMarker marker) {
 		this.marker = marker;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getChildren()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getAttributeValue(java.lang.String, boolean)
 	 */
-	public MarkerItem[] getChildren() {
-		return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getDescription()
-	 */
-	public String getDescription() {
-		return getAttributeValue(IMarker.MESSAGE, MarkerUtilities.EMPTY_STRING);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getParent()
-	 */
-	public MarkerItem getParent() {
-		return category;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#isConcrete()
-	 */
-	public boolean isConcrete() {
-		return true;
-	}
-
-	/**
-	 * Return the Marker that the receiver is wrapping.
-	 * 
-	 * @return {@link IMarker}
-	 */
-	public IMarker getMarker() {
-		return marker;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getConcreteRepresentative()
-	 */
-	public MarkerEntry getConcreteRepresentative() {
-		return this;
-	}
-
-	/**
-	 * Set the category to markerCategory.
-	 * 
-	 * @param markerCategory
-	 */
-	public void setCategory(MarkerCategory markerCategory) {
-		category = markerCategory;
-
+	public boolean getAttributeValue(String attribute, boolean defaultValue) {
+		if (!attributeCache.containsKey(attribute))
+			attributeCache.put(attribute, new Boolean(marker.getAttribute(
+					attribute, defaultValue)));
+		return ((Boolean) attributeCache.get(attribute)).booleanValue();
 	}
 
 	/**
@@ -145,6 +91,15 @@ public class MarkerEntry extends MarkerItem {
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getChildren()
+	 */
+	public MarkerItem[] getChildren() {
+		return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
+	}
+
 	/**
 	 * Get the CollationKey for the string attribute.
 	 * 
@@ -163,6 +118,99 @@ public class MarkerEntry extends MarkerItem {
 				attributeValue);
 		collationKeys.put(attribute, key);
 		return key;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getConcreteRepresentative()
+	 */
+	public MarkerEntry getConcreteRepresentative() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getCreationTime()
+	 */
+	public long getCreationTime() {
+		try {
+			return marker.getCreationTime();
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return -1;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getDescription()
+	 */
+	public String getDescription() {
+		return getAttributeValue(IMarker.MESSAGE, MarkerUtilities.EMPTY_STRING);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getID()
+	 */
+	public long getID() {
+		return marker.getId();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getLocation()
+	 */
+	public String getLocation() {
+		if (attributeCache.containsKey(IMarker.LOCATION))
+			return (String) attributeCache.get(IMarker.LOCATION);
+		try {
+			if (marker.getAttribute(IMarker.LOCATION) != null) {
+				String value = marker.getAttribute(IMarker.LOCATION,
+						MarkerUtilities.EMPTY_STRING);
+				attributeCache.put(IMarker.LOCATION, marker
+						.getAttribute(IMarker.LOCATION));
+				return value;
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+
+		// No luck with the override so use line number
+		int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+		String lineNumberString;
+		if (lineNumber < 0)
+			lineNumberString = MarkerMessages.Unknown;
+		else
+			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
+					Integer.toString(lineNumber));
+
+		attributeCache.put(IMarker.LOCATION, lineNumberString);
+		return lineNumberString;
+
+	}
+
+	/**
+	 * Return the Marker that the receiver is wrapping.
+	 * 
+	 * @return {@link IMarker}
+	 */
+	public IMarker getMarker() {
+		return marker;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getParent()
+	 */
+	public MarkerItem getParent() {
+		return category;
 	}
 
 	/*
@@ -220,58 +268,20 @@ public class MarkerEntry extends MarkerItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getLocation()
+	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#isConcrete()
 	 */
-	public String getLocation() {
-		if (attributeCache.containsKey(IMarker.LOCATION))
-			return (String) attributeCache.get(IMarker.LOCATION);
-		try {
-			if (marker.getAttribute(IMarker.LOCATION) != null) {
-				String value = marker.getAttribute(IMarker.LOCATION,
-						MarkerUtilities.EMPTY_STRING);
-				attributeCache.put(IMarker.LOCATION, marker
-						.getAttribute(IMarker.LOCATION));
-				return value;
-			}
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
-		}
-
-		// No luck with the override so use line number
-		int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
-		String lineNumberString;
-		if (lineNumber < 0)
-			lineNumberString = MarkerMessages.Unknown;
-		else
-			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
-					Integer.toString(lineNumber));
-
-		attributeCache.put(IMarker.LOCATION, lineNumberString);
-		return lineNumberString;
-
+	public boolean isConcrete() {
+		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Set the category to markerCategory.
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getCreationTime()
+	 * @param markerCategory
 	 */
-	public long getCreationTime() {
-		try {
-			return marker.getCreationTime();
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
-			return -1;
-		}
-	}
+	public void setCategory(MarkerCategory markerCategory) {
+		category = markerCategory;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getID()
-	 */
-	public long getID() {
-		return marker.getId();
 	}
 
 }

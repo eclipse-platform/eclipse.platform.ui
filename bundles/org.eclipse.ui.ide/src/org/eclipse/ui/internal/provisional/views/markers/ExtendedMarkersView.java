@@ -134,15 +134,14 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Create the columns for the receiver.
+	 * 
+	 * @param currentColumns
+	 *            the columns to refresh
 	 */
-	private void createColumns() {
+	private void createColumns(TreeColumn[] currentColumns) {
 
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
-
-		viewer.getTree().setLayout(layout);
-		tree.setLinesVisible(true);
-		tree.setHeaderVisible(true);
 
 		MarkerField[] fields = builder.getGenerator().getVisibleFields();
 		int totalWeight = 0;
@@ -157,12 +156,29 @@ public class ExtendedMarkersView extends ViewPart {
 			MarkerField markerField = fields[i];
 			layout.addColumnData(new ColumnWeightData((int) (markerField
 					.getColumnWeight() * multiplier), true));
-			TreeViewerColumn column = new TreeViewerColumn(viewer, SWT.NONE);
+			TreeViewerColumn column;
+			if (i < currentColumns.length)
+				column = new TreeViewerColumn(viewer,currentColumns[i]);
+			else
+				column = new TreeViewerColumn(viewer, SWT.NONE);
 			column.setLabelProvider(new MarkerColumnLabelProvider(markerField));
 			column.getColumn().setText(markerField.getColumnHeaderText());
 			if (state.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 		}
+		
+		//Remove extra columns
+		if(currentColumns.length > fields.length){
+			for (int i = fields.length; i < currentColumns.length; i++) {
+				currentColumns[i].dispose();
+				
+			}
+		}
+		
+		viewer.getTree().setLayout(layout);
+		tree.setLinesVisible(true);
+		tree.setHeaderVisible(true);
+		tree.layout(true);
 
 	}
 
@@ -178,8 +194,8 @@ public class ExtendedMarkersView extends ViewPart {
 				| SWT.MULTI | SWT.FULL_SELECTION | SWT.VIRTUAL));
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
-		
-		createColumns();
+
+		createColumns(new TreeColumn[0]);
 
 		viewer.setContentProvider(getContentProvider(viewer));
 		viewer.getTree().setItemCount(builder.getElements().length);
@@ -271,7 +287,6 @@ public class ExtendedMarkersView extends ViewPart {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
 		});
-		
 
 	}
 
@@ -558,7 +573,6 @@ public class ExtendedMarkersView extends ViewPart {
 		if (service != null)
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		state = new MarkerState(memento);
-
 	}
 
 	/**
@@ -572,7 +586,7 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Preserve the selection for reselection after the next update.
+	 * Preserve the selection for re-selection after the next update.
 	 * 
 	 * @param selection
 	 */
@@ -632,6 +646,16 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		setContentDescription(status);
 
+	}
+
+	/**
+	 * Set the content generator for the receiver.
+	 * 
+	 * @param generator
+	 */
+	public void setContentGenerator(MarkerContentGenerator generator) {
+		builder.setGenerator(generator);
+		createColumns(viewer.getTree().getColumns());
 	}
 
 }

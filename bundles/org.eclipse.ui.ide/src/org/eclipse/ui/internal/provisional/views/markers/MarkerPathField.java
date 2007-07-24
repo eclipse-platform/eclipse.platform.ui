@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerPathField is the field for the paths column.
@@ -32,15 +31,6 @@ public class MarkerPathField extends MarkerField {
 			return 0;
 
 		return item1.getPath().compareTo(item2.getPath());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerMessages.description_folder;
 	}
 
 	/*

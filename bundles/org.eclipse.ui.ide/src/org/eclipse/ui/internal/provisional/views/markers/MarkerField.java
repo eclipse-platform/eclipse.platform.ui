@@ -11,9 +11,15 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.net.URL;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * MarkerField is the abstract superclass of the definition of the content
@@ -32,7 +38,7 @@ public abstract class MarkerField {
 	 * Constant to indicate an descending sort direction.
 	 */
 	public static final int DESCENDING = -1;
-    IConfigurationElement configurationElement;
+	IConfigurationElement configurationElement;
 
 	//
 	// /**
@@ -49,15 +55,27 @@ public abstract class MarkerField {
 	/**
 	 * @return The text to be displayed in the column header for this field.
 	 */
-	public abstract String getColumnHeaderText();
+	public String getColumnHeaderText() {
+		return configurationElement.getAttribute(MarkerSupportRegistry.NAME);
+	}
 
-	//
-	// /**
-	// * @return The image to be displayed in the column header for this field
-	// or <code>null<code>.
-	// */
-	// Image getColumnHeaderImage();
-	//
+	/**
+	 * @return The image to be displayed in the column header for this field or
+	 *         <code>null<code>.
+	 */
+	public Image getColumnHeaderImage() {
+		String path = configurationElement
+				.getAttribute(MarkerUtilities.ATTRIBUTE_ICON);
+		if (path == null)
+			return null;
+		URL url = BundleUtility.find(configurationElement.getContributor()
+				.getName(), path);
+		if(url == null)
+			return null;
+		return IDEWorkbenchPlugin.getDefault().getResourceManager()
+				.createImageWithDefault(ImageDescriptor.createFromURL(url));
+	}
+
 	/**
 	 * @param item
 	 * @return The String value of the object for this particular field to be
@@ -67,16 +85,18 @@ public abstract class MarkerField {
 
 	/**
 	 * Return the image for the receiver. By default return <code>null</code>.
+	 * 
 	 * @param item
 	 * @return The image value of the object for this particular field to be
 	 *         displayed to the user or <code>null<code>.
 	 */
-	public Image getImage(MarkerItem item){
+	public Image getImage(MarkerItem item) {
 		return null;
 	}
 
 	/**
 	 * Compare item1 and item2 for sorting purposes.
+	 * 
 	 * @param item1
 	 * @param item2
 	 * @return Either:
@@ -87,7 +107,7 @@ public abstract class MarkerField {
 	 *         <li>a positive number if the value of item1 is greater than the
 	 *         value of item2 for this field.
 	 */
-	public int compare(MarkerItem item1, MarkerItem item2){
+	public int compare(MarkerItem item1, MarkerItem item2) {
 		return getValue(item1).compareTo(getValue(item2));
 	}
 
@@ -102,12 +122,12 @@ public abstract class MarkerField {
 	}
 
 	/**
-	 * Get the column weight. A value of 1 (the default) indicates that it should be roughly
-	 * equal to the other columns.
+	 * Get the column weight. A value of 1 (the default) indicates that it
+	 * should be roughly equal to the other columns.
 	 * 
 	 * @return float
 	 */
-	public float getColumnWeight(){
+	public float getColumnWeight() {
 		return 1;
 	}
 
@@ -125,11 +145,12 @@ public abstract class MarkerField {
 
 	/**
 	 * Set the configuration element used by the receiver.
+	 * 
 	 * @param element
 	 */
 	public void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
-		
+
 	}
 
 	// /**

@@ -11,22 +11,12 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * @since 3.4
  * 
  */
 public class MarkerIDField extends MarkerField {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerMessages.description_markerId;
-	}
 
 	/*
 	 * (non-Javadoc)

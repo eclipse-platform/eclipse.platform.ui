@@ -25,11 +25,15 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 
 /**
  * This internal class represents the top of the IDE workbench.
@@ -83,6 +87,8 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
      * Marker image registry; lazily initialized.
      */
     private MarkerImageProviderRegistry markerImageProviderRegistry = null;
+
+	private ResourceManager resourceManager;
 
 	/**
 	 * Create an instance of the receiver.
@@ -304,6 +310,22 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	public static ImageDescriptor getIDEImageDescriptor(String relativePath){
 		return imageDescriptorFromPlugin(IDE_WORKBENCH, ICONS_PATH + relativePath);
 	}
+	/**
+	 * Return the resourceManager used by this plug-in.
+	 * @return
+	 */
+	public ResourceManager getResourceManager() {
+		if(resourceManager == null){
+			resourceManager = new LocalResourceManager(JFaceResources.getResources());
+		}
+		return resourceManager;
+	}
 	
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		resourceManager.dispose();
+	}
 }

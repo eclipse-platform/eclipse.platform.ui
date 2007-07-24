@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
+import org.eclipse.ui.views.markers.internal.MarkerType;
 
 /**
  * The CachedMarkerBuilder is the object that generates the list of markers from
@@ -119,9 +120,9 @@ public class CachedMarkerBuilder {
 			private boolean hasMarkerDelta(IResourceChangeEvent event) {
 				Iterator markerTypes = generator.getMarkerTypes().iterator();
 				while (markerTypes.hasNext()) {
+					MarkerType type = (MarkerType) markerTypes.next();
 
-					if (event.findMarkerDeltas((String) markerTypes.next(),
-							true).length > 0)
+					if (event.findMarkerDeltas(type.getId(), true).length > 0)
 						return true;
 
 				}
@@ -315,8 +316,7 @@ public class CachedMarkerBuilder {
 		if (building) {
 			return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
 		}
-		if (generator.isShowingHierarchy()
-				&& categories != null) {
+		if (generator.isShowingHierarchy() && categories != null) {
 			return categories;
 		}
 		return currentMap.toArray();
@@ -416,6 +416,16 @@ public class CachedMarkerBuilder {
 	 */
 	public MarkerEntry[] getMarkerEntries() {
 		return currentMap.toArray();
+	}
+
+	/**
+	 * Set the generator and update the contents.
+	 * 
+	 * @param generator
+	 */
+	void setGenerator(MarkerContentGenerator generator) {
+		this.generator = generator;
+		scheduleMarkerUpdate();
 	}
 
 }

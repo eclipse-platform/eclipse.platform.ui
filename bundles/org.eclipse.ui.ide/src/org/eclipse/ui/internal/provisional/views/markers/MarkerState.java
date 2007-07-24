@@ -40,7 +40,7 @@ public class MarkerState {
 	 */
 	public boolean isPrimarySortField(MarkerField markerField) {
 		// TODO Hook this up to the memento
-		return markerField instanceof MarkerSeverityAndMessageField;
+		return markerField instanceof MarkerDescriptionAndMessageField;
 	}
 
 	/**

@@ -11,54 +11,19 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
-import com.ibm.icu.text.CollationKey;
 
 /**
- * MarkerSeverityAndMessageField is the field for severity and messages.
+ * MarkerDescriptionAndMessageField is the field for severity and messages.
  * 
  * @since 3.3
  * 
  */
-public class MarkerSeverityAndMessageField extends MarkerField {
-
-	/**
-	 * Return the collation key for the description.
-	 * 
-	 * @param element
-	 * @return
-	 */
-	private CollationKey getDescriptionKey(Object element) {
-		if (element instanceof MarkerEntry)
-			return ((MarkerItem) element).getCollationKey(IMarker.MESSAGE,
-					MarkerUtilities.EMPTY_STRING);
-		return MarkerUtilities.EMPTY_COLLATION_KEY;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerMessages.description_message;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getColumnWeight()
-	 */
-	public float getColumnWeight() {
-		return 4;
-	}
-
+public class MarkerDescriptionAndMessageField extends MarkerDescriptionField {
 
 	/*
 	 * (non-Javadoc)
@@ -71,7 +36,7 @@ public class MarkerSeverityAndMessageField extends MarkerField {
 		int severity1 = getSeverity(item1);
 		int severity2 = getSeverity(item2);
 		if (severity1 == severity2)
-			return getDescriptionKey(item1).compareTo(getDescriptionKey(item2));
+			return super.compare(item1, item2);
 		return severity2 - severity1;
 	}
 
@@ -94,16 +59,6 @@ public class MarkerSeverityAndMessageField extends MarkerField {
 			return null;
 		}
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.provisional.views.markers.MarkerItem)
-	 */
-	public String getValue(MarkerItem item) {
-		return item.getAttributeValue(IMarker.MESSAGE,
-				MarkerUtilities.EMPTY_STRING);
 	}
 
 }

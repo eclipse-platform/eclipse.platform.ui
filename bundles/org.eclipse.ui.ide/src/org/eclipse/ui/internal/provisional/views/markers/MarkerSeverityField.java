@@ -22,15 +22,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class MarkerSeverityField extends MarkerField {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerUtilities.EMPTY_STRING;// Not intended for columns
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 

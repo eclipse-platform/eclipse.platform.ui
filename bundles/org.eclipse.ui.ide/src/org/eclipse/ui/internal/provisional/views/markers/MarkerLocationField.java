@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerLocationField is the field for the location field.
@@ -19,14 +18,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  *
  */
 public class MarkerLocationField extends MarkerField {
-
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerMessages.description_lineNumber;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)

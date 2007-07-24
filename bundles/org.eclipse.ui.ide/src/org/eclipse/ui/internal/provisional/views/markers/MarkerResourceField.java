@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.ui.views.markers.MarkerViewUtil;
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerResourceField is the field that specifies the resource column.
@@ -21,26 +20,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * 
  */
 public class MarkerResourceField extends MarkerField {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#compare(org.eclipse.ui.provisional.views.markers.MarkerItem,
-	 *      org.eclipse.ui.provisional.views.markers.MarkerItem)
-	 */
-	public int compare(MarkerItem item1, MarkerItem item2) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return MarkerMessages.description_resource;
-	}
 
 	/*
 	 * (non-Javadoc)

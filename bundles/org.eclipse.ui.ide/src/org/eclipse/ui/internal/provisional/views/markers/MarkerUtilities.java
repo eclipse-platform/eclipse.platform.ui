@@ -11,10 +11,15 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.net.URL;
+
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.util.BundleUtility;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
@@ -33,6 +38,7 @@ class MarkerUtilities {
 	static final CollationKey EMPTY_COLLATION_KEY = Collator.getInstance()
 			.getCollationKey(EMPTY_STRING);
 	static final MarkerItem[] EMPTY_MARKER_ITEM_ARRAY = new MarkerItem[0];
+	static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
 
 	/**
 	 * Get the image for the supplied severity
@@ -68,5 +74,20 @@ class MarkerUtilities {
 				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
 
 	}
-	
+
+	/**
+	 * Create the image at the supplied path.
+	 * 
+	 * @param completeImagePath
+	 * @return Image or <code>null</code>.
+	 */
+	public static Image createImage(String completeImagePath) {
+		URL url = BundleUtility.find(IDEWorkbenchPlugin.getDefault()
+				.getBundle().getSymbolicName(), completeImagePath);
+		if (url == null)
+			return null;
+		return IDEWorkbenchPlugin.getDefault().getResourceManager()
+				.createImageWithDefault(ImageDescriptor.createFromURL(url));
+	}
+
 }

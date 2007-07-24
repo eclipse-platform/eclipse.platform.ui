@@ -66,7 +66,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public static final String MARKER_SUPPORT = "markerSupport";//$NON-NLS-1$
 
-	private static final String NAME = "name"; //$NON-NLS-1$
+	/**
+	 * The name attribute.
+	 */
+	public static final String NAME = "name"; //$NON-NLS-1$
 
 	private static final Object ON_ANY = "ON_ANY"; //$NON-NLS-1$
 
@@ -86,7 +89,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String SEVERITY = "severity";//$NON-NLS-1$
 
-	private static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
+	/**
+	 * The key for marker type references.
+	 */
+	public static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
 	private static final String MARKER_CATEGORY = "markerTypeCategory";//$NON-NLS-1$
 
@@ -874,6 +880,18 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		if (fields.containsKey(id))
 			return (MarkerField) fields.get(id);
 		return null;
+	}
+
+	/**
+	 * Return an array of MarkerContentGenerator for the receiver.
+	 * 
+	 * @return MarkerContentGenerator[]
+	 */
+	public MarkerContentGenerator[] getGenerators() {
+		MarkerContentGenerator[] generatorArray = new MarkerContentGenerator[generators
+				.size()];
+		generators.values().toArray(generatorArray);
+		return generatorArray;
 	}
 
 }
