@@ -17,6 +17,9 @@
             base-name="/"
             httpcontextId="help">
       </resource>
+      <serviceSelector
+            filter="(other.info=org.eclipse.help)">
+      </serviceSelector>
    </extension>
    <extension
          point="org.eclipse.equinox.http.registry.servlets">
@@ -100,5 +103,8 @@
             class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/"
             httpcontextId="help">
       </servlet>
+      <serviceSelector
+            filter="(other.info=org.eclipse.help)">
+      </serviceSelector>
    </extension>
 </plugin>
