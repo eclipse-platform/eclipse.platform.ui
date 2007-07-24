@@ -932,7 +932,7 @@ class FindReplaceDialog extends Dialog {
 			else if (info[0] == -1)
 				return selection;
 		}
-		return selection;
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -1008,10 +1008,10 @@ class FindReplaceDialog extends Dialog {
 	private void initFindStringFromSelection() {
 		if (fTarget != null && okToUse(fFindField)) {
 			String fullSelection= fTarget.getSelectionText();
-			String firstLine= getFirstLine(fullSelection);
 			boolean isRegEx= isRegExSearchAvailableAndChecked();
 			fFindField.removeModifyListener(fFindModifyListener);
-			if (firstLine.length() > 0 || (isRegEx && fullSelection.length() > 0)) {
+			if (fullSelection.length() > 0) {
+				String firstLine= getFirstLine(fullSelection);
 				String pattern= isRegEx ? escapeForRegExPattern(fullSelection) : firstLine;
 				fFindField.setText(pattern);
 				if (!firstLine.equals(fullSelection)) {
