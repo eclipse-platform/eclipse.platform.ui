@@ -55,6 +55,14 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationEditDialog_0;
 
 	public static String LaunchConfigurationEditDialog_1;
+
+	public static String LaunchConfigurationFilteredTree_discard_changes;
+
+	public static String LaunchConfigurationFilteredTree_search_with_changes;
+
+	public static String LaunchConfigurationFilteredTree_search_with_errors;
+
+	public static String LaunchConfigurationFilteredTree_type_filter_text;
 	public static String LaunchConfigurationTabGroupViewer_0;
 	public static String LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8;
 	public static String LaunchConfigurationDialog_Discard_changes__38;

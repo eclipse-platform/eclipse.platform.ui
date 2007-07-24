@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -32,6 +33,10 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * Overrides the default filtered tree to use our own tree viewer which supports preserving selection after filtering
+ * 
+ * @see LaunchConfigurationView
+ * @see LaunchConfigurationViewer
+ * 
  * @since 3.3 
  */
 public final class LaunchConfigurationFilteredTree extends FilteredTree {
@@ -40,6 +45,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	private ViewerFilter[] fFilters = null;
 	private int fTreeStyle = -1;
 	private PatternFilter fPatternFilter = null;
+	boolean filtertextchanging = false;
 	
 	/**
 	 * Constructor
@@ -111,6 +117,43 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		String id = computeContextId();
 		if (id != null)
 			PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.FilteredTree#textChanged()
+	 */
+	protected void textChanged() {
+		if(!filtertextchanging) {
+			filtertextchanging = true;
+			LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+			if(dialog != null) {
+				LaunchConfigurationTabGroupViewer viewer = dialog.getTabViewer();
+				if(viewer != null && viewer.isDirty()) {
+					if(viewer.canSave()) {
+						if(MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes, LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_changes)) {
+							viewer.handleApplyPressed();
+							super.textChanged();
+						}
+						else {
+							setFilterText(LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_type_filter_text);
+						}
+					}
+					else {
+						if(MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes, LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_errors)) { 
+							viewer.handleRevertPressed();
+							super.textChanged();
+						}
+						else {
+							setFilterText(LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_type_filter_text); 
+						}
+					}
+				}
+				else {
+					super.textChanged();
+				}
+			}
+			filtertextchanging = false;
+		}
 	}
 	
 	/**
