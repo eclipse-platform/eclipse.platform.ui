@@ -67,8 +67,6 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
     public void createControl(Composite parent) {
     	Composite result= new Composite(parent, SWT.NONE);
     	GridLayout layout= new GridLayout(2, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
 		result.setLayout(layout);
 		
 		Label description= new Label(result, SWT.NONE);
