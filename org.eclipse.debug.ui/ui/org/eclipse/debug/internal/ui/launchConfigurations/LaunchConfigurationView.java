@@ -303,11 +303,29 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
     		ILaunchConfigurationType type = configuration.getType();
     		return !configuration.getAttribute(IDebugUIConstants.ATTR_PRIVATE, false) && 
     				type.supportsMode(getLaunchGroup().getMode()) && 
-    				type.getCategory().equals(getLaunchGroup().getCategory());
+    				equalCategories(type.getCategory(), getLaunchGroup().getCategory());
     	}
-    	catch(CoreException ce) {}
+    	catch(CoreException ce) {
+    		DebugUIPlugin.log(ce);
+    	}
     	return false;
     }
+    
+    /**
+	 * Returns whether the given categories are equal.
+	 * 
+	 * @param c1 category identifier or <code>null</code>
+	 * @param c2 category identifier or <code>null</code>
+	 * @return boolean
+	 * 
+	 * @since 3.4
+	 */
+	private boolean equalCategories(String c1, String c2) {
+		if (c1 == null || c2 == null) {
+			return c1 == c2;
+		}
+		return c1.equals(c2);
+	} 
     
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
@@ -318,24 +336,22 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(final ILaunchConfiguration configuration) {
-		if(isSupportedConfiguration(configuration)) {
-			// if moved, ignore
-			ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
-			if (to != null) {
-				return;
-			}
-			Display display = DebugUIPlugin.getStandardDisplay();
-			if (display.getThread() == Thread.currentThread()) {
-			    // If we're already in the UI thread (user pressing Delete in the
-			    // dialog), update the tree immediately.
-	            handleConfigurationRemoved(configuration);
-			} else {
-				display.asyncExec(new Runnable() {
-			        public void run() {
-			            handleConfigurationRemoved(configuration);
-			        }
-				});
-			}
+		// if moved, ignore
+		ILaunchConfiguration to = getLaunchManager().getMovedTo(configuration);
+		if (to != null) {
+			return;
+		}
+		Display display = DebugUIPlugin.getStandardDisplay();
+		if (display.getThread() == Thread.currentThread()) {
+		    // If we're already in the UI thread (user pressing Delete in the
+		    // dialog), update the tree immediately.
+            handleConfigurationRemoved(configuration);
+		} else {
+			display.asyncExec(new Runnable() {
+		        public void run() {
+		            handleConfigurationRemoved(configuration);
+		        }
+			});
 		}
 	}
 
