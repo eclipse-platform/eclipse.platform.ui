@@ -85,11 +85,13 @@ public class Context extends UAElement implements IContext3 {
 				if (ELEMENT_DESCRIPTION.equals(node.getNodeName())) {
 					node.normalize();
 					Node text = node.getFirstChild();
+					if (text == null) {
+						return new String();
+					}
 					if (text.getNodeType() == Node.TEXT_NODE) {
 						return text.getNodeValue();
 					}
 				}
-				return new String();
 			}
 			node = node.getNextSibling();
 		}
