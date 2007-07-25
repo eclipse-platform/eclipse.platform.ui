@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
@@ -37,6 +35,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Creates documents for processes as they are registered with a launch.
@@ -138,17 +138,10 @@ public class ProcessConsoleManager implements ILaunchListener {
                 if (process.getStreamsProxy() == null) {
                     continue;
                 }
-                ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 
                 //create a new console.
                 IConsoleColorProvider colorProvider = getColorProvider(process.getAttribute(IProcess.ATTR_PROCESS_TYPE));
-                String encoding = null;
-                try {
-                    if (launchConfiguration != null) {
-                        encoding = launchConfiguration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-                    }
-                } catch (CoreException e) {
-                }
+                String encoding = launch.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
                 ProcessConsole pc = new ProcessConsole(process, colorProvider, encoding);
                 pc.setAttribute(IDebugUIConstants.ATTR_CONSOLE_PROCESS, process);
 
