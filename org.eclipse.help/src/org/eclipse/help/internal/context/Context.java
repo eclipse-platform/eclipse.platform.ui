@@ -13,6 +13,7 @@ package org.eclipse.help.internal.context;
 
 import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
 import org.eclipse.help.IContext3;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.ITopic;
@@ -25,6 +26,7 @@ import org.w3c.dom.Node;
 
 public class Context extends UAElement implements IContext3 {
 
+	public static final String ATTRIBUTE_TITLE = "title"; //$NON-NLS-1$
 	public static final String NAME = "context"; //$NON-NLS-1$
 	public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -38,6 +40,12 @@ public class Context extends UAElement implements IContext3 {
 		super(NAME);
 		setText(src.getText());
 		setId(id);
+		if (src instanceof IContext2) {
+			String title  = ((IContext2)src).getTitle();
+			if (title != null) {
+				element.setAttribute(ATTRIBUTE_TITLE, title);
+			}
+		}
 		if (src instanceof IContext3) {
 			ICommandLink[] commands = ((IContext3)src).getRelatedCommands();
 			for (int i=0;i<commands.length;++i) {
@@ -99,7 +107,11 @@ public class Context extends UAElement implements IContext3 {
 	}
 	
 	public String getTitle() {
-		return null;
+		String title = element.getAttribute(ATTRIBUTE_TITLE);
+		if (title == null || title.length() == 0) {
+			return null;
+		}
+		return title;
 	}
 
 	public void setId(String id) {
