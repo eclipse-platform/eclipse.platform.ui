@@ -84,6 +84,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private Font codeFont;
 
+	private String savedDescription;
+
 	/**
 	 * @param parent
 	 * @param toolkit
@@ -99,11 +101,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		section.setClient(container);
 		section.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
-				if (e.getState()
-						&& (lastProvider != null || lastControl != null)) {
-					String helpText = createContextHelp(lastProvider,
-							lastControl);
-					updateText(helpText);
+				if (e.getState()) {
+					updateText(savedDescription);
 				}
 			}
 		});
@@ -234,9 +233,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		lastPart = part;
 		lastProvider = null;
 		String helpText = createContextHelp(c);
-		if (getSection().isExpanded())
-			updateText(helpText);
+		updateDescription(helpText);
 		updateDynamicHelp(false);
+	}
+
+	private void updateDescription(String helpText) {
+		if (getSection().isExpanded()) {
+			updateText(helpText);
+		}
+		savedDescription = helpText;
 	}
 
 	private void updateDynamicHelp(boolean explicitContext) {
@@ -270,8 +275,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		else
 			helpText = createContextHelp(c);
 		updateTitle(context!=null);
-		if (getSection().isExpanded())
-			updateText(helpText);
+		updateDescription(helpText);
 		updateDynamicHelp(context!=null);
 	}
 	
@@ -401,16 +405,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (loc!= -1)
 			return name.substring(0, loc)+name.substring(loc+1);
 		return name;
-	}
-
-	private String createContextHelp(IContextProvider provider, Control c) {
-		if (provider == null)
-			return createContextHelp(c);
-		lastContext = provider.getContext(c);
-		if (lastContext != null) {
-			return formatHelpContext(lastContext);
-		}
-		return null;
 	}
 
 	private String createContextHelp(Control page) {
