@@ -60,12 +60,12 @@ contexts manifest file:&lt;/b&gt;&lt;/i&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT contexts (context)* ) &gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT context (description?,topic*) &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST context 
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;id CDATA #REQUIRED&lt;/tt&gt;
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;title CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;id CDATA #REQUIRED
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;title CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT description (#PCDATA)&gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT topic EMPTY &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic 
-&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;label CDATA #REQUIRED &lt;/tt&gt;
+&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;label CDATA #REQUIRED &lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;href CDATA #REQUIRED &gt;&lt;/tt&gt;
 &lt;p&gt;The contexts manifest files provide all the information needed when
 context-sensitive help is requested by the user. The id is passed by the
