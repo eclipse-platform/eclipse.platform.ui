@@ -22,8 +22,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IThreeWayDiff;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.mapping.*;
@@ -135,6 +134,9 @@ public abstract class ModelParticipantAction extends BaseSelectionListenerAction
 			case ISynchronizePageConfiguration.BOTH_MODE:
 				return true;
 			}
+		} else if (configuration.getComparisonType() == ISynchronizePageConfiguration.TWO_WAY
+				&& node instanceof ITwoWayDiff) {
+			return true;
 		}
 		return false;
 	}
