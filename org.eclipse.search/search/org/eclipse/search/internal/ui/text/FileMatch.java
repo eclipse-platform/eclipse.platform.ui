@@ -19,12 +19,13 @@ import org.eclipse.search.ui.text.Match;
 
 public class FileMatch extends Match {
 	private String fLine;
-	private int fOffsetWithinLine; // offset of the match within the context line
+	private int fOffsetWithinLine, fLengthWithinLine; // offset/length of the match within the context line
 	
-	public FileMatch(IFile element, int offset, int length, String line, int offsetWithinLine) {
+	public FileMatch(IFile element, int offset, int length, String line, int offsetWithinLine, int lengthWithinLine) {
 		super(element, offset, length);
 		fLine= line;
 		fOffsetWithinLine= offsetWithinLine;
+		fLengthWithinLine= lengthWithinLine;
 	}
 	
 	public IFile getFile() {
@@ -37,5 +38,9 @@ public class FileMatch extends Match {
 	
 	public int getOffsetWithinLine(){
 		return fOffsetWithinLine;
+	}
+	
+	public int getLengthWithinLine(){
+		return fLengthWithinLine;
 	}
 }

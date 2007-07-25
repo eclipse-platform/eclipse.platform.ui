@@ -47,7 +47,8 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 		private ArrayList fCachedMatches;
 		
-		private static final int MAX_LINE_CONTEXT= 100;
+		private static final int MAX_LINE_CONTEXT= 70;
+		private static final int MAX_LINE_LENGTH= 250;
 		
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
@@ -58,7 +59,7 @@ public class FileSearchQuery implements ISearchQuery {
 		
 		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsFileSearchOnly) {
-				fResult.addMatch(new FileMatch(file, 0, 0, null, -1));
+				fResult.addMatch(new FileMatch(file, 0, 0, null, -1, 0));
 			}
 			flushMatches();
 			return true;
@@ -72,30 +73,60 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
-			int start= matchRequestor.getMatchOffset();
-			int min= Math.max(0, start - MAX_LINE_CONTEXT);
-			for (int i= start; i >= min; i--) {
+			int matchOffset= matchRequestor.getMatchOffset();
+			int matchEnd= matchRequestor.getMatchOffset() + matchRequestor.getMatchLength();
+			
+			int lineStart= matchOffset;
+			int min= Math.max(0, lineStart - MAX_LINE_CONTEXT);
+			for (int i= lineStart; i >= min; i--) {
 				char ch= matchRequestor.getFileContentChar(i);
 				if (isLineDelimiter(ch))
 					break;
 				if (!Character.isWhitespace(ch))
-					start= i;
+					lineStart= i;
 			}
 			
-			int end= matchRequestor.getMatchOffset() + matchRequestor.getMatchLength();
-			int max= Math.min(matchRequestor.getFileContentLength(), end + MAX_LINE_CONTEXT);
-			for (int i= end; i < max; i++) {
+			int lineEnd= matchEnd;
+			int max= Math.min(matchRequestor.getFileContentLength(), lineEnd + MAX_LINE_CONTEXT);
+			for (int i= lineEnd; i < max; i++) {
 				char ch= matchRequestor.getFileContentChar(i);
 				if (isLineDelimiter(ch))
 					break;
 				if (!Character.isWhitespace(ch))
-					end= i + 1;
+					lineEnd= i + 1;
 			}
-			String context= matchRequestor.getFileContent(start, end - start);
-			fCachedMatches.add(new FileMatch(matchRequestor.getFile(), matchRequestor.getMatchOffset(), matchRequestor.getMatchLength(), context, matchRequestor.getMatchOffset() - start));
+			
+			StringBuffer buf= new StringBuffer();
+			appendString(matchRequestor, lineStart, matchOffset, buf);
+			int offsetWithinLine= buf.length();
+			int lineLength= lineEnd - lineStart;
+			if (lineLength > MAX_LINE_LENGTH) {
+				int numCharsToCut= lineLength - MAX_LINE_LENGTH;
+				int half= (matchRequestor.getMatchLength() - numCharsToCut) / 2;
+				appendString(matchRequestor, matchOffset, matchOffset + half, buf);
+				buf.append("..."); //$NON-NLS-1$
+				appendString(matchRequestor, matchEnd - half, matchEnd, buf);
+			} else {
+				appendString(matchRequestor, matchOffset, matchEnd, buf);
+			}
+			int lengthWithinLine= buf.length()- offsetWithinLine;
+			appendString(matchRequestor, matchEnd, lineEnd, buf);
+			
+			fCachedMatches.add(new FileMatch(matchRequestor.getFile(), matchOffset, matchEnd - matchOffset, buf.toString(), offsetWithinLine, lengthWithinLine));
 			return true;
 		}
-
+		
+		private static void appendString(TextSearchMatchAccess matchRequestor, int start, int end, StringBuffer buf) {
+			for (int i= start; i < end; i++) {
+				char ch= matchRequestor.getFileContentChar(i);
+				if (Character.isWhitespace(ch) || Character.isISOControl(ch)) {
+					buf.append(' ');
+				} else {
+					buf.append(ch);
+				}
+			}
+		}
+		
 		private static boolean isLineDelimiter(char ch) {
 			return ch == '\n' || ch == '\r';
 		}

@@ -72,7 +72,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		if (element instanceof FileMatch) {
 			FileMatch match= (FileMatch) element;
 			ColoredString str= new ColoredString(match.getLine());
-			str.colorize(match.getOffsetWithinLine(), match.getLength(), ColoredViewersManager.HIGHLIGHT_STYLE);
+			str.colorize(match.getOffsetWithinLine(), match.getLengthWithinLine(), ColoredViewersManager.HIGHLIGHT_STYLE);
 			return str;
 		}
 		

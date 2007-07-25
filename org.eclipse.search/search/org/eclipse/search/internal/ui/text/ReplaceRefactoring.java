@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -267,7 +268,7 @@ public class ReplaceRefactoring extends Refactoring {
 		Pattern pattern= null;
 		FileSearchQuery query= getQuery();
 		if (query.isRegexSearch()) {
-			pattern= createReplacePattern(query);
+			pattern= createSearchPattern(query);
 		}
 		
 		RefactoringStatus resultingStatus= new RefactoringStatus();
@@ -356,15 +357,24 @@ public class ReplaceRefactoring extends Refactoring {
 				Position currentPosition= tracker.getCurrentPosition(match);
 				if (currentPosition != null) {
 					offset= currentPosition.offset;
-					length= currentPosition.length;
+					if (length != currentPosition.length) {
+						resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_match_content_changed, file.getName()));
+						continue;
+					}
 				}
-				String originalText= match.getLine().substring(match.getOffsetWithinLine(), match.getOffsetWithinLine() + match.getLength());
-				if (!isMatchingFileContent(originalText, textFileBuffer.getDocument(), offset, length)) {
+				
+				String originalText= getOriginalText(textFileBuffer.getDocument(), offset, length);
+				if (originalText == null) {
 					resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_match_content_changed, file.getName()));
 					continue;
 				}
 				
 				String replacementString= computeReplacementString(pattern, originalText, fReplaceString);
+				if (replacementString == null) {
+					resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_match_content_changed, file.getName()));
+					continue;
+				}
+				
 				ReplaceEdit replaceEdit= new ReplaceEdit(offset, length, replacementString);
 				change.addEdit(replaceEdit);
 				TextEditChangeGroup textEditChangeGroup= new TextEditChangeGroup(change, new TextEditGroup(SearchMessages.ReplaceRefactoring_group_label_match_replace, replaceEdit));
@@ -377,29 +387,31 @@ public class ReplaceRefactoring extends Refactoring {
 		return change;
 	}
 	
-	private static boolean isMatchingFileContent(String originalText, IDocument doc, int offset, int length) {
-		if (originalText.length() != length) {
-			return false;
-		}
+	private static String getOriginalText(IDocument doc, int offset, int length) {
 		try {
-			if (!doc.get(offset, length).equals(originalText)) {
-				return false;
-			}
+			return doc.get(offset, length);
 		} catch (BadLocationException e) {
-			return false;
+			return null;
 		}
-		return true;
 	}
 	
-	
-	private Pattern createReplacePattern(FileSearchQuery query) {
+	private Pattern createSearchPattern(FileSearchQuery query) {
 		return PatternConstructor.createPattern(query.getSearchString(), true, true, query.isCaseSensitive(), false);
 	}
 	
 	private String computeReplacementString(Pattern pattern, String originalText, String replacementText) throws PatternSyntaxException {
 		if (pattern != null) {
 			try {
-				return pattern.matcher(originalText).replaceFirst(replacementText);
+				Matcher matcher= pattern.matcher(originalText);
+		        StringBuffer sb = new StringBuffer();
+		        matcher.reset();
+		        if (matcher.find()) {
+		        	matcher.appendReplacement(sb, replacementText);
+		        } else {
+		        	return null;
+		        }
+		        matcher.appendTail(sb);
+		        return sb.toString();
 			} catch (IndexOutOfBoundsException ex) {
 				throw new PatternSyntaxException(ex.getLocalizedMessage(), replacementText, -1);
 			}
