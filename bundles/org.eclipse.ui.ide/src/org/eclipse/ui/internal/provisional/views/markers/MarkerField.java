@@ -14,11 +14,13 @@ package org.eclipse.ui.internal.provisional.views.markers;
 import java.net.URL;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
@@ -70,7 +72,7 @@ public abstract class MarkerField {
 			return null;
 		URL url = BundleUtility.find(configurationElement.getContributor()
 				.getName(), path);
-		if(url == null)
+		if (url == null)
 			return null;
 		return IDEWorkbenchPlugin.getDefault().getResourceManager()
 				.createImageWithDefault(ImageDescriptor.createFromURL(url));
@@ -150,19 +152,21 @@ public abstract class MarkerField {
 	 */
 	public void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
-
 	}
 
-	// /**
-	// * Return whether not the receiver is showing.
-	// * @return boolean
-	// */
-	// boolean isShowing();
-	//   
-	// /**
-	// * Set whether or not the receiver is showing.
-	// * @param showing
-	// */
-	// void setShowing(boolean showing);
+	/**
+	 * Generate the filter for the receiver from the configurationElement.
+	 * 
+	 * @return MarkerFieldFilter
+	 */
+	public MarkerFieldFilter generateFilter() {
+		try {
+			return (MarkerFieldFilter) IDEWorkbenchPlugin.createExtension(
+					configurationElement, MarkerUtilities.ATTRIBUTE_CLASS);
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return null;
+		}
+	}
 
 }

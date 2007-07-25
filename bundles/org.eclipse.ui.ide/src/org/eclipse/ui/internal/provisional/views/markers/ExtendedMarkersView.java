@@ -158,7 +158,7 @@ public class ExtendedMarkersView extends ViewPart {
 					.getColumnWeight() * multiplier), true));
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
-				column = new TreeViewerColumn(viewer,currentColumns[i]);
+				column = new TreeViewerColumn(viewer, currentColumns[i]);
 			else
 				column = new TreeViewerColumn(viewer, SWT.NONE);
 			column.setLabelProvider(new MarkerColumnLabelProvider(markerField));
@@ -166,15 +166,15 @@ public class ExtendedMarkersView extends ViewPart {
 			if (state.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 		}
-		
-		//Remove extra columns
-		if(currentColumns.length > fields.length){
+
+		// Remove extra columns
+		if (currentColumns.length > fields.length) {
 			for (int i = fields.length; i < currentColumns.length; i++) {
 				currentColumns[i].dispose();
-				
+
 			}
 		}
-		
+
 		viewer.getTree().setLayout(layout);
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
@@ -573,6 +573,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (service != null)
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		state = new MarkerState(memento);
+		setPartName(generator.getName());
 	}
 
 	/**
@@ -656,6 +657,71 @@ public class ExtendedMarkersView extends ViewPart {
 	public void setContentGenerator(MarkerContentGenerator generator) {
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
+		setPartName(generator.getName());
+	}
+
+	/**
+	 * Return whether or not generator is the selected one.
+	 * 
+	 * @param generator
+	 * @return boolean
+	 */
+	public boolean isShowing(MarkerContentGenerator generator) {
+		return this.builder.getGenerator().equals(generator);
+	}
+
+	/**
+	 * Open the filters dialog for the receiver.
+	 */
+	public void openFiltersDialog() {
+		// Open a config dialog
+		// DialogMarkerFilter dialog = createFiltersDialog();
+		//
+		// if (dialog.open() == Window.OK) {
+		//
+		// MarkerFieldFilterGroup[] result = dialog.getFilters();
+		// if (result == null)
+		// return;
+		//
+		// if (result.length == 0)
+		// builder
+		// .getGenerator()
+		// .setFilters(
+		// new MarkerFilter[] {
+		// createFilter(MarkerMessages.MarkerFilter_defaultFilterName) });
+		// else
+		// builder.getGenerator().setFilters(result);
+		//
+		// }
+
+	}
+
+	/**
+	 * Get all of the filters for the receiver.
+	 * 
+	 * @return Collection of {@link MarkerFieldFilterGroup}
+	 */
+	public Collection getAllFilters() {
+		return builder.getGenerator().getAllFilters();
+	}
+
+	/**
+	 * Return whether or not group is enabled.
+	 * 
+	 * @param group
+	 * @return boolean
+	 */
+	public boolean isEnabled(MarkerFieldFilterGroup group) {
+		return builder.getGenerator().getEnabledFilters().contains(group);
+	}
+
+	/**
+	 * Add group to the enabled filters.
+	 * @param group
+	 */
+	public void applyFilter(MarkerFieldFilterGroup group) {
+		builder.enableFilter(group);
+		
 	}
 
 }

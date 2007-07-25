@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
-import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -46,29 +45,28 @@ public class MarkerContentGenerator {
 
 	private static final String ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE = "defaultForPerspective"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 	static final Object CACHE_UPDATE_FAMILY = new Object();
+	private static final String ELEMENT_MARKER_FIELD_FILTER_GROUP = "markerFieldFilterGrouping"; //$NON-NLS-1$;
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
 	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
 	private MarkerField categoryField;
 	private IConfigurationElement configurationElement;
+	private Collection enabledFilters;
+	private Collection filters;
 	private Collection markerTypes;
 	private MarkerField[] sortFields;
 	private MarkerField[] visibleFields;
 	private IWorkingSet workingSet;
-	private String name;
 
 	/**
 	 * Create a new MarkerContentGenerator
 	 * 
-	 * @param id
-	 * @param name
+	 * @param element
 	 */
-	public MarkerContentGenerator(String id, String name) {
-		this.name = name;
-
+	public MarkerContentGenerator(IConfigurationElement element) {
+		configurationElement = element;
 	}
 
 	/**
@@ -90,36 +88,36 @@ public class MarkerContentGenerator {
 	 * 
 	 * @param returnMarkers
 	 * @param subMonitor
-	 * @param markerFilter
+	 * @param filterGroup
 	 */
 	private void computeMarkers(Collection returnMarkers,
-			SubProgressMonitor subMonitor, MarkerFilter markerFilter) {
+			SubProgressMonitor subMonitor, MarkerFieldFilterGroup filterGroup) {
 
-		int filterType = markerFilter.getOnResource();
+		int filterType = filterGroup.getScope();
 
 		switch (filterType) {
-		case MarkerFilter.ON_ANY: {
+		case MarkerFieldFilterGroup.ON_ANY: {
 			findMarkers(returnMarkers, new IResource[] { ResourcesPlugin
 					.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
 					subMonitor);
 			break;
 		}
-		case MarkerFilter.ON_SELECTED_ONLY: {
+		case MarkerFieldFilterGroup.ON_SELECTED_ONLY: {
 			findMarkers(returnMarkers, getFocusResources(),
 					IResource.DEPTH_ZERO, subMonitor);
 			break;
 		}
-		case MarkerFilter.ON_SELECTED_AND_CHILDREN: {
+		case MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN: {
 			findMarkers(returnMarkers, getFocusResources(),
 					IResource.DEPTH_INFINITE, subMonitor);
 			break;
 		}
-		case MarkerFilter.ON_ANY_IN_SAME_CONTAINER: {
+		case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
 			findMarkers(returnMarkers, getProjects(getFocusResources()),
 					IResource.DEPTH_INFINITE, subMonitor);
 			break;
 		}
-		case MarkerFilter.ON_WORKING_SET: {
+		case MarkerFieldFilterGroup.ON_WORKING_SET: {
 			findMarkers(returnMarkers, getResourcesInWorkingSet(),
 					IResource.DEPTH_INFINITE, subMonitor);
 		}
@@ -260,12 +258,14 @@ public class MarkerContentGenerator {
 	 */
 	public MarkerMap generateFilteredMarkers(SubProgressMonitor subMonitor) {
 
-		MarkerFilter[] filters = getEnabledFilters();
+		Collection filters = getEnabledFilters();
 		Collection returnMarkers;
-		if (filters.length > 0) {
+		if (filters.size() > 0) {
 			returnMarkers = new HashSet();
-			for (int i = 0; i < filters.length; i++) {
-				computeMarkers(returnMarkers, subMonitor, filters[i]);
+			Iterator filtersIterator = filters.iterator();
+			while (filtersIterator.hasNext()) {
+				computeMarkers(returnMarkers, subMonitor,
+						(MarkerFieldFilterGroup) filtersIterator.next());
 			}
 
 		} else
@@ -273,6 +273,27 @@ public class MarkerContentGenerator {
 		MarkerEntry[] entries = new MarkerEntry[returnMarkers.size()];
 		returnMarkers.toArray(entries);
 		return new MarkerMap(entries);
+	}
+
+	/**
+	 * Return all of the filters for the receiver.
+	 * 
+	 * @return Collection of MarkerFieldFilterGroup
+	 */
+	public Collection getAllFilters() {
+		if (filters == null) {
+			filters = new ArrayList();
+			IConfigurationElement[] filterReferences = configurationElement
+					.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+			for (int i = 0; i < filterReferences.length; i++) {
+				MarkerFieldFilterGroup filter = new MarkerFieldFilterGroup(
+						filterReferences[i]);
+				if (filter != null)
+					filters.add(filter);
+			}
+
+		}
+		return filters;
 	}
 
 	/**
@@ -305,17 +326,26 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Return the enabled filters for the receiver.
+	 * Return the currently enabled filters.
 	 * 
-	 * @return
+	 * @return Collection of MarkerFieldFilterGroup
 	 */
-	public MarkerFilter[] getEnabledFilters() {
-		// TODO Get some real content here
-		return new MarkerFilter[0];
+	public Collection getEnabledFilters() {
+		if (enabledFilters == null) {
+			enabledFilters = new HashSet();
+			Iterator filtersIterator = getAllFilters().iterator();
+			while (filtersIterator.hasNext()) {
+				MarkerFieldFilterGroup next = (MarkerFieldFilterGroup) filtersIterator
+						.next();
+				if (next.isEnabled())
+					enabledFilters.add(next);
+			}
+		}
+		return enabledFilters;
 	}
 
 	/**
-	 * Return the current focussed resources.
+	 * Return the current focused resources.
 	 * 
 	 * @return
 	 */
@@ -337,7 +367,7 @@ public class MarkerContentGenerator {
 			for (int i = 0; i < markerTypeElements.length; i++) {
 				IConfigurationElement configurationElement = markerTypeElements[i];
 				String elementName = configurationElement
-						.getAttribute(ATTRIBUTE_ID);
+						.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(
 						elementName).getAllSubTypes();
 				for (int j = 0; j < types.length; j++) {
@@ -355,6 +385,15 @@ public class MarkerContentGenerator {
 			}
 		}
 		return markerTypes;
+	}
+
+	/**
+	 * Return the name for the receiver.
+	 * 
+	 * @return String
+	 */
+	public String getName() {
+		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -450,7 +489,7 @@ public class MarkerContentGenerator {
 		Collection visibleFieldList = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			MarkerField field = registry.getField(elements[i]
-					.getAttribute(ATTRIBUTE_ID));
+					.getAttribute(MarkerUtilities.ATTRIBUTE_ID));
 			if (field == null)
 				continue;
 			sortFieldList.add(field);
@@ -477,20 +516,21 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Set the configuration element used to define the receiver.
+	 * Return the id of the receiver.
 	 * 
-	 * @param element
+	 * @return String
 	 */
-	public void setConfigurationElement(IConfigurationElement element) {
-		configurationElement = element;
+	public String getId() {
+		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
 	}
 
 	/**
-	 * Return the name for the receiver.
-	 * @return String
+	 * Add group to the enabled filters.
+	 * @param group
 	 */
-	public String getName() {
-		return name;
+	public void enableFilter(MarkerFieldFilterGroup group) {
+		getEnabledFilters().add(group);
+		
 	}
 
 }

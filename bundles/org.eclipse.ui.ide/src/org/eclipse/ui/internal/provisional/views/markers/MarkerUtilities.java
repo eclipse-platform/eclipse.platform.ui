@@ -33,13 +33,45 @@ import com.ibm.icu.text.Collator;
  */
 class MarkerUtilities {
 
-	static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 	static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+	static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
+	static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	static final CollationKey EMPTY_COLLATION_KEY = Collator.getInstance()
 			.getCollationKey(EMPTY_STRING);
-	static final MarkerItem[] EMPTY_MARKER_ITEM_ARRAY = new MarkerItem[0];
-	static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
+	static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 
+	static final MarkerItem[] EMPTY_MARKER_ITEM_ARRAY = new MarkerItem[0];
+	
+
+	/**
+	 * Create the image at the supplied path.
+	 * 
+	 * @param completeImagePath
+	 * @return Image or <code>null</code>.
+	 */
+	public static Image createImage(String completeImagePath) {
+		URL url = BundleUtility.find(IDEWorkbenchPlugin.getDefault()
+				.getBundle().getSymbolicName(), completeImagePath);
+		if (url == null)
+			return null;
+		return IDEWorkbenchPlugin.getDefault().getResourceManager()
+				.createImageWithDefault(ImageDescriptor.createFromURL(url));
+	}
+
+	/**
+	 * Get the IDE image at path.
+	 * 
+	 * @param path
+	 * @return Image
+	 */
+	private static Image getIDEImage(String constantName) {
+
+		return JFaceResources.getResources().createImageWithDefault(
+				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
+
+	}
 	/**
 	 * Get the image for the supplied severity
 	 * 
@@ -60,34 +92,6 @@ class MarkerUtilities {
 
 		return null;
 
-	}
-
-	/**
-	 * Get the IDE image at path.
-	 * 
-	 * @param path
-	 * @return Image
-	 */
-	private static Image getIDEImage(String constantName) {
-
-		return JFaceResources.getResources().createImageWithDefault(
-				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
-
-	}
-
-	/**
-	 * Create the image at the supplied path.
-	 * 
-	 * @param completeImagePath
-	 * @return Image or <code>null</code>.
-	 */
-	public static Image createImage(String completeImagePath) {
-		URL url = BundleUtility.find(IDEWorkbenchPlugin.getDefault()
-				.getBundle().getSymbolicName(), completeImagePath);
-		if (url == null)
-			return null;
-		return IDEWorkbenchPlugin.getDefault().getResourceManager()
-				.createImageWithDefault(ImageDescriptor.createFromURL(url));
 	}
 
 }

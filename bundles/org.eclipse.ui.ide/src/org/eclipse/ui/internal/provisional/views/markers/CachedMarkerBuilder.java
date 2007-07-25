@@ -428,4 +428,14 @@ public class CachedMarkerBuilder {
 		scheduleMarkerUpdate();
 	}
 
+	/**
+	 * Enable the filter for group.
+	 * @param group
+	 */
+	public void enableFilter(MarkerFieldFilterGroup group) {
+		getGenerator().enableFilter(group);
+		scheduleMarkerUpdate();
+		
+	}
+
 }

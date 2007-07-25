@@ -7,11 +7,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
@@ -21,7 +16,7 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * @since 3.4
  * 
  */
-public class ContentsContribution extends CompoundContributionItem {
+public class ContentsContribution extends MarkersContribution {
 
 	/**
 	 * Create a new instance of the receiver.
@@ -51,14 +46,25 @@ public class ContentsContribution extends CompoundContributionItem {
 				 *      int)
 				 */
 				public void fill(Menu menu, int index) {
-					MenuItem item = new MenuItem(menu, SWT.PUSH);
+					MenuItem item = new MenuItem(menu, SWT.CHECK);
 					item.setText(generator.getName());
-					item.addListener(SWT.Selection,
-							getMenuItemListener(generator));
+					ExtendedMarkersView view = getView();
+					item.addListener(SWT.Selection, getMenuItemListener(
+							generator, view));
+					if (view != null && view.isShowing(generator))
+						item.setSelection(true);
 				}
 
+				/**
+				 * Create a menu listener for the generator and the view.
+				 * 
+				 * @param generator
+				 * @param view
+				 * @return Listener
+				 */
 				private Listener getMenuItemListener(
-						final MarkerContentGenerator generator) {
+						final MarkerContentGenerator generator,
+						final ExtendedMarkersView view) {
 					return new Listener() {
 						/*
 						 * (non-Javadoc)
@@ -66,18 +72,8 @@ public class ContentsContribution extends CompoundContributionItem {
 						 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 						 */
 						public void handleEvent(Event event) {
-							IWorkbenchWindow active = PlatformUI.getWorkbench()
-									.getActiveWorkbenchWindow();
-							if (active == null)
-								return;
-							IWorkbenchPage page = active.getActivePage();
-							if (page == null)
-								return;
-							IWorkbenchPart part = page.getActivePart();
-							if (part == null)
-								return;
-							((ExtendedMarkersView) part)
-									.setContentGenerator(generator);
+							if (view != null)
+								view.setContentGenerator(generator);
 						}
 					};
 				}
@@ -85,5 +81,4 @@ public class ContentsContribution extends CompoundContributionItem {
 		}
 		return items;
 	}
-
 }

@@ -80,9 +80,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final Object ON_SELECTED_ONLY = "ON_SELECTED_ONLY"; //$NON-NLS-1$
 
 	private static final Object PROBLEM_FILTER = "problemFilter";//$NON-NLS-1$
-
-	private static final Object MARKER_FILTER = "markerFilter";//$NON-NLS-1$
-
+	
 	private static final String SCOPE = "scope"; //$NON-NLS-1$
 
 	private static final String SELECTED_TYPE = "selectedType"; //$NON-NLS-1$
@@ -148,7 +146,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		return singleton;
 	}
 
-	private Collection registeredFilters = new ArrayList();
+	private Map registeredFilters = new HashMap();
 
 	private Map markerGroups = new HashMap();
 
@@ -212,10 +210,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 		for (int j = 0; j < elements.length; j++) {
 			IConfigurationElement element = elements[j];
-			if (element.getName().equals(PROBLEM_FILTER)
-					|| element.getName().equals(MARKER_FILTER)) {
+			if (element.getName().equals(PROBLEM_FILTER)) {
 				ProblemFilter filter = newFilter(element);
-				registeredFilters.add(filter);
+				registeredFilters.put(filter.getId(), filter);
 				tracker.registerObject(extension, filter,
 						IExtensionTracker.REF_STRONG);
 
@@ -329,14 +326,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	private void processContentGenerator(IExtensionTracker tracker,
 			IExtension extension, IConfigurationElement element) {
-		String id = element.getAttribute(ID);
-		String name = element.getAttribute(NAME);
+		MarkerContentGenerator generator = new MarkerContentGenerator(element);
 
-		MarkerContentGenerator generator = new MarkerContentGenerator(id, name);
-
-		generators.put(id, generator);
-
-		generator.setConfigurationElement(element);
+		generators.put(generator.getId(), generator);
 
 		tracker.registerObject(extension, generator,
 				IExtensionTracker.REF_STRONG);
@@ -489,7 +481,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public Collection getRegisteredFilters() {
 		Collection filteredFilters = new ArrayList();
-		Iterator registeredIterator = registeredFilters.iterator();
+		Iterator registeredIterator = registeredFilters.values().iterator();
 		while (registeredIterator.hasNext()) {
 			ProblemFilter next = (ProblemFilter) registeredIterator.next();
 			if (next.isFilteredOutByActivity()) {
@@ -893,5 +885,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		generators.values().toArray(generatorArray);
 		return generatorArray;
 	}
+
 
 }

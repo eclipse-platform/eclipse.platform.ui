@@ -1033,12 +1033,6 @@
             defaultMarkerGrouping="org.eclipse.ui.ide.severity"
             id="org.eclipse.ui.ide.problemsGenerator"
             name="%ContentGenerator.Problems">
-         <markerFilterReference
-               id="org.eclipse.ui.ide.selectedWarnings">
-         </markerFilterReference>
-         <markerFilterReference
-               id="org.eclipse.ui.ide.allErrors">
-         </markerFilterReference>
          <markerFieldReference
                id="org.eclipse.ui.ide.severityAndDescriptionField"
                visible="true">
@@ -1066,7 +1060,19 @@
          <markerTypeReference
                id="org.eclipse.core.resources.problemmarker">
          </markerTypeReference>
-      </markerContentGenerator>
+         <markerFieldFilterGrouping
+               id="org.eclipse.ui.ide.errorsFilter"
+               name="%MarkerFilterGrouping.AllErrors"
+               scope="ON_ANY"
+               values="org.eclipse.ui.internal.provisional.views.markers.AllErrorsParameters">
+         </markerFieldFilterGrouping>
+     
+         <markerFieldFilterGrouping
+               id="org.eclipse.ui.ide.selectedWarningsGrouping"
+               name="%MarkerFilterGrouping.SelectedWarnings"
+               scope="ON_SELECTED_ONLY"
+               values="org.eclipse.ui.internal.provisional.views.markers.SelectedWarningsParameters">
+         </markerFieldFilterGrouping> </markerContentGenerator>
       <markerGrouping
             id="org.eclipse.ui.ide.severity"
             label="%markerGrouping.severity"
@@ -1100,20 +1106,6 @@
                markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
                value="0"/>
       </markerAttributeGrouping>
-      <markerFilter
-            enabled="true"
-            id="org.eclipse.ui.ide.allErrors"
-            name="All Errors"
-            scope="ON_ANY"
-            severity="ERROR">
-      </markerFilter>
-      <markerFilter
-            enabled="true"
-            id="org.eclipse.ui.ide.selectedWarnings"
-            name="Warnings on Selected Items"
-            scope="ON_SELECTED_AND_CHILDREN"
-            severity="WARNING">
-      </markerFilter>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCreationTimeField"
             id="org.eclipse.ui.ide.creationTimeField"
@@ -1273,7 +1265,18 @@
                label="%MarkerContentsMenu.Contents">
             <dynamic
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
-                  id="org.eclipse.ui.ide.dynamic1">
+                  id="org.eclipse.ui.ide.contentsContribution">
+            </dynamic>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
+         <menu
+               id="org.eclipse.ui.ide.markers.filtersMenu"
+               label="%MarkerFiltersMenu.Filters">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
          </menu>
       </menuContribution>

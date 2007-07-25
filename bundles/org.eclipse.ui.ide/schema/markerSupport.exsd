@@ -20,7 +20,6 @@
             <element ref="markerAttributeGrouping" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerContentGenerator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerField" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="markerFilter" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,94 +48,13 @@
       </complexType>
    </element>
 
-   <element name="markerFilter">
-      <annotation>
-         <documentation>
-            A problem filter is a filter that can be applied to markers. Since 3.4
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="selectedType"/>
-         </sequence>
-         <attribute name="enabled" type="boolean">
-            <annotation>
-               <documentation>
-                  Whether or not this filter is enabled by default. If this value is not specified the value is true.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="scope">
-            <annotation>
-               <documentation>
-                  The scope of the filter. One of 
-ON_ANY: any item in the workbench
-ON_SELECTED_ONLY: on the currently selected item
-ON_SELECTED_AND_CHILDREN: on the currently selected item and it&apos;s children
-ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the selection
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="ON_ANY">
-                  </enumeration>
-                  <enumeration value="ON_SELECTED_ONLY">
-                  </enumeration>
-                  <enumeration value="ON_SELECTED_AND_CHILDREN">
-                  </enumeration>
-                  <enumeration value="ON_ANY_IN_SAME_CONTAINER">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="onDescription" type="string">
-            <annotation>
-               <documentation>
-                  The description of the problem to check against. If this value is preceded with a ! the check will check that the description does not contain this string.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="severity">
-            <annotation>
-               <documentation>
-                  The severity of problem this filter is enabled for. If this value is not set then no filtering by severity will occur. Severity can be one of the following values: ERROR, WARNING or INFO.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="ERROR">
-                  </enumeration>
-                  <enumeration value="WARNING">
-                  </enumeration>
-                  <enumeration value="INFO">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The human readable name of the filter.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The unique id of the filter.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="problemFilter">
       <annotation>
          <appInfo>
             <meta.element deprecated="true"/>
          </appInfo>
          <documentation>
-            A problem filter is a filter that can be applied to problems. Deprecated in 3.4 Use markerFilter instead.
+            A problem filter is a filter that can be applied to the problems view.
          </documentation>
       </annotation>
       <complexType>
@@ -415,8 +333,8 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       <complexType>
          <sequence>
             <element ref="markerFieldReference" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="markerFilterReference" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="markerFieldFilterGrouping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -496,6 +414,16 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="filterClass" type="string">
+            <annotation>
+               <documentation>
+                  The filterClass is the class that does filtering on this field when enabled. If this is not specified no filtering will occur based on this field.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -503,6 +431,8 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       <annotation>
          <documentation>
             A markerFieldReference is a reference to a markerField in a markerContentGenerator. The columns in a markersView are created in the order that the markerFieldReferences are specified. This is also the default sortOrder for the fields.
+
+All markerContentGenerators are assumed to use the
          </documentation>
       </annotation>
       <complexType>
@@ -523,19 +453,69 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       </complexType>
    </element>
 
-   <element name="markerFilterReference">
+   <element name="markerFieldFilterGrouping">
       <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
          <documentation>
-            The markerFilterReference is a reference to markerFilter.
+            markerFieldFilterGrouping is a definition of a grouping for a markerContentGenerator.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The id of the filter being referred to.
+                  The id of the grouping.
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The human readable name of the grouping.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="values" type="string">
+            <annotation>
+               <documentation>
+                  The values is a class that specifies the values that are to be set in the filterClass of a markerField for the enclosing markerContentGenerator.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.FiltersContributionParameters:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="scope">
+            <annotation>
+               <documentation>
+                  The scope of the grouping 
+
+One of 
+ON_ANY: any item in the workbench
+ON_SELECTED_ONLY: on the currently selected item
+ON_SELECTED_AND_CHILDREN: on the currently selected item and it&apos;s children
+ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the selection.
+
+If this value is not set the value is ON_ANY
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="ON_ANY">
+                  </enumeration>
+                  <enumeration value="ON_SELECTED_ONLY">
+                  </enumeration>
+                  <enumeration value="ON_SELECTED_AND_CHILDREN">
+                  </enumeration>
+                  <enumeration value="ON_ANY_IN_SAME_CONTAINER">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
