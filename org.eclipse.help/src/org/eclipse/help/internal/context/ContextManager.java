@@ -85,7 +85,7 @@ public class ContextManager {
 					IContext context = provider.getContext(contextId, locale);
 					if (context != null) {
 						if (HelpPlugin.DEBUG_CONTEXT) {
-							System.out.println("ContextManager.getContext found non dynamic context, description = \"" + context.getText() + '"'); //$NON-NLS-1$
+							System.out.println("ContextManager.getContext found context, description = \"" + context.getText() + '"'); //$NON-NLS-1$
 						}
 						return new Context(context, contextId);
 					}
