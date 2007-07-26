@@ -59,10 +59,10 @@ public class WorkingSetsFilter extends ViewerFilter {
 				if(wsets.length < 1) {
 					return true;
 				}
-				//remove breakpoint workingsets
+				//remove breakpoint working sets
 				ArrayList ws = new ArrayList();
 				for (int i = 0; i < wsets.length; i++) {
-					if(!wsets[i].getId().equals(IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET)) {
+					if(!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(wsets[i].getId())) {
 						ws.add(wsets[i]);
 					}
 				}
