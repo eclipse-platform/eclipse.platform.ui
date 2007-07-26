@@ -351,9 +351,7 @@ class ResourceTree implements IResourceTree {
 			localManager.delete(folder, flags, Policy.subMonitorFor(monitor, Policy.totalWork));
 		} catch (CoreException ce) {
 			message = NLS.bind(Messages.localstore_couldnotDelete, folder.getFullPath());
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
-			if (ce.getStatus() != null)
-				status.merge(ce.getStatus());
+			IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message, ce);		
 			failed(status);
 			return false;
 		}
@@ -476,9 +474,7 @@ class ResourceTree implements IResourceTree {
 		try {
 			resource.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		} catch (CoreException ce) {
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.refresh_refreshErr, ce);
-			if (ce.getStatus() != null)
-				status.merge(ce.getStatus());
+			IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), Messages.refresh_refreshErr, ce);			
 			failed(status);
 		}
 	}
@@ -860,9 +856,7 @@ class ResourceTree implements IResourceTree {
 					throw oce;
 				} catch (CoreException ce) {
 					message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());
-					MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, ce);
-					if (ce.getStatus() != null)
-						status.merge(ce.getStatus());
+					IStatus status = new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message, ce);
 					failed(status);
 					return;
 				}
