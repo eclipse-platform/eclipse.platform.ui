@@ -14,6 +14,7 @@
 package org.eclipse.search2.internal.ui;
 
 import com.ibm.icu.text.MessageFormat;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,10 +29,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Link;
 
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
@@ -71,6 +77,7 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
+import org.eclipse.search.internal.ui.OpenSearchDialogAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
@@ -181,22 +188,37 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		public Object getAdapter(Class adapter) { return null; }
 	}
 
-	class EmptySearchView extends Page implements ISearchResultPage {
-		Control fControl;
+	static class EmptySearchView extends Page implements ISearchResultPage {
+		private Composite fControl;
 		private String fId;
 
 		public void createControl(Composite parent) {
-			fControl= new Tree(parent, SWT.NONE);
-			//fControl.setText(SearchMessages.getString("SearchView.empty.message")); //$NON-NLS-1$
-		}
+			Color background= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			
+			Composite composite= new Composite(parent, SWT.NONE);
+			composite.setLayout(new GridLayout(1, false));
+			
+			composite.setBackground(background);
+			
+			Link link= new Link(composite, SWT.NONE);
+			link.setText(SearchMessages.SearchView_empty_search_label);
+			link.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false));
+			link.setBackground(background);
+			link.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					new OpenSearchDialogAction().run();
+				}
+			});
+			
+			fControl= composite;
+		}		
 
 		public Control getControl() {
 			return fControl;
 		}
 
 		public void setFocus() {
-			if (fControl != null)
-				fControl.setFocus();
+			// do nothing
 		}
 
 		/* (non-Javadoc)

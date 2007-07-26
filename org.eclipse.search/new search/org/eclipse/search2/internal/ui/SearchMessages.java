@@ -51,6 +51,7 @@ public final class SearchMessages extends NLS {
 	public static String SearchHistorySelectionDialog_history_size_title;
 	public static String SearchHistorySelectionDialog_open_in_new_button;
 	public static String SearchHistorySelectionDialog_restore_default_button;
+	public static String SearchView_empty_search_label;
 	public static String ShowSearchesAction_label;
 	public static String ShowSearchesAction_tooltip;
 	public static String SearchView_showIn_menu;
