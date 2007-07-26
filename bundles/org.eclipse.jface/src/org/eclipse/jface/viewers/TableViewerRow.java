@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											- fix in bug: 174355,195908
+ *     											 - fix in bug: 174355,195908,198035
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -196,7 +196,7 @@ public class TableViewerRow extends ViewerRow {
 		return item.getData();
 	}
 
-	int getVisualIndex(int creationIndex) {
+	public int getVisualIndex(int creationIndex) {
 		int[] order = item.getParent().getColumnOrder();
 
 		for (int i = 0; i < order.length; i++) {
@@ -208,7 +208,7 @@ public class TableViewerRow extends ViewerRow {
 		return super.getVisualIndex(creationIndex);
 	}
 
-	int getCreationIndex(int visualIndex) {
+	public int getCreationIndex(int visualIndex) {
 		if( item != null && ! item.isDisposed() && hasColumns() && isValidOrderIndex(visualIndex) ) {
 			return item.getParent().getColumnOrder()[visualIndex];
 		}

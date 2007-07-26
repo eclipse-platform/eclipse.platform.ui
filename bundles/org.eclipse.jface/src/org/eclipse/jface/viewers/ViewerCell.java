@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											- fix in bug: 195908
+ *     											 - fix in bug: 195908,198035
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -209,9 +209,9 @@ public class ViewerCell {
 	 * columns are reordered
 	 *
 	 * @return the current index (as shown in the UI)
-	 * @since 3.3.1
+	 * @since 3.4
 	 */
-	int getVisualIndex() {
+	public int getVisualIndex() {
 		return row.getVisualIndex(getColumnIndex());
 	}
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                                fix for bug: 166346,167325,174355,195908
+ *                                               - fix in bug: 166346,167325,174355,195908,198035
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -284,9 +284,9 @@ public abstract class ViewerRow implements Cloneable {
 	 * @param creationIndex
 	 *            the original index
 	 * @return the current index (as shown in the UI)
-	 * @since 3.3.1
+	 * @since 3.4
 	 */
-	int getVisualIndex(int creationIndex) {
+	public int getVisualIndex(int creationIndex) {
 		return creationIndex;
 	}
 
@@ -302,8 +302,9 @@ public abstract class ViewerRow implements Cloneable {
 	 * @param visualIndex
 	 *            the current index (as shown in the UI)
 	 * @return the original index
+	 * @since 3.4
 	 */
-	int getCreationIndex(int visualIndex) {
+	public int getCreationIndex(int visualIndex) {
 		return visualIndex;
 	}
 }
