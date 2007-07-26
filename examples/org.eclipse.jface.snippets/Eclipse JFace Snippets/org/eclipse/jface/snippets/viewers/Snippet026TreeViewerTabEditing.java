@@ -14,7 +14,6 @@ package org.eclipse.jface.snippets.viewers;
 import java.util.ArrayList;
 
 import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CellNavigationStrategy;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
@@ -46,7 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet026TreeViewerTabEditing {
 	public Snippet026TreeViewerTabEditing(final Shell shell) {
 		Button b = new Button(shell,SWT.PUSH);
-		b.setText("BBB");
+		b.setText("Remove column");
 		final TreeViewer v = new TreeViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		v.getTree().setLinesVisible(true);
@@ -58,15 +57,11 @@ public class Snippet026TreeViewerTabEditing {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				MyModel root = (MyModel)v.getInput();
-				TreePath path = new TreePath(new Object[]{root,root.child.get(1), ((MyModel)root.child.get(1)).child.get(0)});
-				v.editElement(path, 0);
-				// v.editElement(root.child.get(0), 0);
+				v.getTree().getColumn(1).dispose();
 			}
 			
 		});
-		
-		 
+				 
 		TreeViewerFocusCellManager focusCellManager = new TreeViewerFocusCellManager(v,new FocusCellOwnerDrawHighlighter(v));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
 			protected boolean isEditorActivationEvent(
@@ -86,11 +81,43 @@ public class Snippet026TreeViewerTabEditing {
 
 		TreeViewerColumn column = new TreeViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
+		column.getColumn().setMoveable(true);
 		column.getColumn().setText("Column 1");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
 				return "Column 1 => " + element.toString();
+			}
+
+		});
+		column.setEditingSupport(new EditingSupport(v) {
+			protected boolean canEdit(Object element) {
+				return false;
+			}
+
+			protected CellEditor getCellEditor(Object element) {
+				return textCellEditor;
+			}
+
+			protected Object getValue(Object element) {
+				return ((MyModel) element).counter + "";
+			}
+
+			protected void setValue(Object element, Object value) {
+				((MyModel) element).counter = Integer
+						.parseInt(value.toString());
+				v.update(element, null);
+			}
+		});
+
+		column = new TreeViewerColumn(v, SWT.NONE);
+		column.getColumn().setWidth(200);
+		column.getColumn().setMoveable(true);
+		column.getColumn().setText("Column 2");
+		column.setLabelProvider(new ColumnLabelProvider() {
+
+			public String getText(Object element) {
+				return "Column 2 => " + element.toString();
 			}
 
 		});
@@ -113,14 +140,15 @@ public class Snippet026TreeViewerTabEditing {
 				v.update(element, null);
 			}
 		});
-
+		
 		column = new TreeViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
-		column.getColumn().setText("Column 2");
+		column.getColumn().setMoveable(true);
+		column.getColumn().setText("Column 3");
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
-				return "Column 2 => " + element.toString();
+				return "Column 3 => " + element.toString();
 			}
 
 		});

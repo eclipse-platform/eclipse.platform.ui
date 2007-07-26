@@ -45,19 +45,33 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 
 		public boolean isCollapseEvent(ColumnViewer viewer,
 				ViewerCell cellToCollapse, Event event) {
+			
+			if( cellToCollapse == null ) {
+				return false;
+			}
+			
 			return cellToCollapse != null
 					&& ((TreeItem) cellToCollapse.getItem()).getExpanded()
-					&& cellToCollapse.getColumnIndex() == 0
-					&& event.keyCode == SWT.ARROW_LEFT;
+					&& event.keyCode == SWT.ARROW_LEFT
+					&& isFirstColumnCell(cellToCollapse);
 		}
 
 		public boolean isExpandEvent(ColumnViewer viewer,
 				ViewerCell cellToExpand, Event event) {
+			
+			if( cellToExpand == null ) {
+				return false;
+			}
+			
 			return cellToExpand != null
 					&& ((TreeItem) cellToExpand.getItem()).getItemCount() > 0
 					&& !((TreeItem) cellToExpand.getItem()).getExpanded()
-					&& cellToExpand.getColumnIndex() == 0
-					&& event.keyCode == SWT.ARROW_RIGHT;
+					&& event.keyCode == SWT.ARROW_RIGHT
+					&& isFirstColumnCell(cellToExpand);
+		}
+		
+		private boolean isFirstColumnCell(ViewerCell cell) {
+			return cell.getViewerRow().getVisualIndex(cell.getColumnIndex()) == 0;
 		}
 	};
 	

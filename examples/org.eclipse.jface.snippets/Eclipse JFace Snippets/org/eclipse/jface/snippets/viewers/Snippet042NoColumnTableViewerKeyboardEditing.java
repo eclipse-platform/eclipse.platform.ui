@@ -34,15 +34,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * Example of a different focus cell rendering with a simply focus border
+ * Demonstrates how to use keyboard-editing support in a TableViewer with no column
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * 
  */
-public class Snippet036FocusBorderCellHighlighter {
+public class Snippet042NoColumnTableViewerKeyboardEditing {
 
 	private class MyContentProvider implements IStructuredContentProvider {
 
@@ -116,12 +115,12 @@ public class Snippet036FocusBorderCellHighlighter {
 
 	}
 
-	public Snippet036FocusBorderCellHighlighter(Shell shell) {
+	public Snippet042NoColumnTableViewerKeyboardEditing(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
 
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()), new TextCellEditor(v.getTable()), new TextCellEditor(v.getTable()) });
+		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()) });
 		v.setCellModifier(new ICellModifier() {
 
 			public boolean canModify(Object element, String property) {
@@ -138,7 +137,7 @@ public class Snippet036FocusBorderCellHighlighter {
 			
 		});
 		
-		v.setColumnProperties(new String[] {"1","2","3"});
+		v.setColumnProperties(new String[] {"1"});
 		
 		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(v,new FocusBorderCellHighlighter(v));
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(v) {
@@ -155,23 +154,7 @@ public class Snippet036FocusBorderCellHighlighter {
 				| ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
 				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION);
 
-		
-		TableColumn column = new TableColumn(v.getTable(), SWT.NONE);
-		column.setWidth(200);
-		column.setMoveable(true);
-		column.setText("Column 1");
 
-		column = new TableColumn(v.getTable(), SWT.NONE);
-		column.setWidth(200);
-		column.setMoveable(true);
-		column.setText("Column 2");
-
-		column = new TableColumn(v.getTable(), SWT.NONE);
-		column.setWidth(200);
-		column.setMoveable(true);
-		column.setText("Column 3");
-
-		
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
@@ -196,7 +179,7 @@ public class Snippet036FocusBorderCellHighlighter {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet036FocusBorderCellHighlighter(shell);
+		new Snippet042NoColumnTableViewerKeyboardEditing(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {

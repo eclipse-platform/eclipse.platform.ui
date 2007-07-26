@@ -262,4 +262,49 @@ public abstract class ViewerRow implements Cloneable {
 		return true;
 	}
 
+	/**
+	 * The cell at the current index (as shown in the UI). This can be different
+	 * to the original index when columns are reordered.
+	 * 
+	 * @param currentIndex
+	 *            the current index (as shown in the UI)
+	 * @return the cell at the currently visible index
+	 */
+	ViewerCell getCellAtCurrentIndex(int currentIndex) {
+		return getCell(getCreationIndex(currentIndex));
+	}
+
+	/**
+	 * Translate the original column index to the actual one.
+	 * <p>
+	 * <b>Because of backwards API compatibility the default implementation
+	 * returns the original index. Implementators of {@link ColumnViewer} should
+	 * overwrite this method if their widget supports reordered columns</b>
+	 * </p>
+	 * 
+	 * @param creationIndex
+	 *            the original index
+	 * @return the current index (as shown in the UI)
+	 * @since 3.3.1
+	 */
+	int getVisualIndex(int creationIndex) {
+		return creationIndex;
+	}
+
+	/**
+	 * Translate the current column index (as shown in the UI) to the original
+	 * one.
+	 * <p>
+	 * <b>Because of backwards API compatibility the default implementation
+	 * returns the original index. Implementators of {@link ColumnViewer} should
+	 * overwrite this method if their widget supports reordered columns</b>
+	 * </p>
+	 * 
+	 * @param visualIndex
+	 *            the current index (as shown in the UI)
+	 * @return the original index
+	 */
+	int getCreationIndex(int visualIndex) {
+		return visualIndex;
+	}
 }

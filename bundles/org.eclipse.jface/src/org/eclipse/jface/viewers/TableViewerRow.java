@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class TableViewerRow extends ViewerRow {
 	private TableItem item;
-	
+
 	/**
 	 * Create a new instance of the receiver from item.
 	 * @param item
@@ -36,7 +36,7 @@ public class TableViewerRow extends ViewerRow {
 	TableViewerRow(TableItem item) {
 		this.item = item;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getBounds(int)
 	 */
@@ -60,8 +60,8 @@ public class TableViewerRow extends ViewerRow {
 
 	void setItem(TableItem item) {
 		this.item = item;
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getColumnCount()
 	 */
@@ -141,7 +141,7 @@ public class TableViewerRow extends ViewerRow {
 	public void setText(int columnIndex, String text) {
 		item.setText(columnIndex, text == null ? "" : text); //$NON-NLS-1$
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerRow#getControl()
 	 */
@@ -159,20 +159,20 @@ public class TableViewerRow extends ViewerRow {
 		}
 	}
 
-	
+
 	private ViewerRow getRowAbove() {
 		int index = item.getParent().indexOf(item) - 1;
-		
+
 		if( index >= 0 ) {
-			return new TableViewerRow(item.getParent().getItem(index)); 
+			return new TableViewerRow(item.getParent().getItem(index));
 		}
-		
+
 		return null;
 	}
 
 	private ViewerRow getRowBelow() {
 		int index = item.getParent().indexOf(item) + 1;
-		
+
 		if( index < item.getParent().getItemCount() ) {
 			TableItem tmp = item.getParent().getItem(index);
 			//TODO NULL can happen in case of VIRTUAL => How do we deal with that
@@ -180,19 +180,46 @@ public class TableViewerRow extends ViewerRow {
 				return new TableViewerRow(tmp);
 			}
 		}
-		
+
 		return null;
 	}
 
 	public TreePath getTreePath() {
 		return new TreePath(new Object[] {item.getData()});
 	}
-	
+
 	public Object clone() {
 		return new TableViewerRow(item);
 	}
-			
+
 	public Object getElement() {
 		return item.getData();
+	}
+
+	int getVisualIndex(int creationIndex) {
+		int[] order = item.getParent().getColumnOrder();
+
+		for (int i = 0; i < order.length; i++) {
+			if (order[i] == creationIndex) {
+				return i;
+			}
+		}
+
+		return super.getVisualIndex(creationIndex);
+	}
+
+	int getCreationIndex(int visualIndex) {
+		if( item != null && ! item.isDisposed() && hasColumns() && isValidOrderIndex(visualIndex) ) {
+			return item.getParent().getColumnOrder()[visualIndex];
+		}
+		return super.getCreationIndex(visualIndex);
+	}
+
+	private boolean hasColumns() {
+		return this.item.getParent().getColumnCount() != 0;
+	}
+
+	private boolean isValidOrderIndex(int currentIndex) {
+		return currentIndex < this.item.getParent().getColumnOrder().length;
 	}
 }
