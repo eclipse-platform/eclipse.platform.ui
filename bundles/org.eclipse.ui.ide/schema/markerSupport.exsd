@@ -431,8 +431,6 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
       <annotation>
          <documentation>
             A markerFieldReference is a reference to a markerField in a markerContentGenerator. The columns in a markersView are created in the order that the markerFieldReferences are specified. This is also the default sortOrder for the fields.
-
-All markerContentGenerators are assumed to use the
          </documentation>
       </annotation>
       <complexType>
