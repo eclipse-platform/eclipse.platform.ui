@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * 
  */
-public class Snippet042NoColumnTableViewerKeyboardEditing {
+public class Snippet044NoColumnTableViewerKeyboardEditing {
 
 	private class MyContentProvider implements IStructuredContentProvider {
 
@@ -115,7 +115,7 @@ public class Snippet042NoColumnTableViewerKeyboardEditing {
 
 	}
 
-	public Snippet042NoColumnTableViewerKeyboardEditing(Shell shell) {
+	public Snippet044NoColumnTableViewerKeyboardEditing(Shell shell) {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new MyLabelProvider());
 		v.setContentProvider(new MyContentProvider());
@@ -179,7 +179,7 @@ public class Snippet042NoColumnTableViewerKeyboardEditing {
 
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new Snippet042NoColumnTableViewerKeyboardEditing(shell);
+		new Snippet044NoColumnTableViewerKeyboardEditing(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {
