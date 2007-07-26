@@ -27,6 +27,7 @@ import org.eclipse.help.ui.internal.ExecuteCommandAction;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.EscapeUtils;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogPage;
@@ -464,7 +465,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					sbuf.append("<a href=\"command://"); //$NON-NLS-1$
 					sbuf.append(commands[i].getSerialization());
 					sbuf.append("\">"); //$NON-NLS-1$	 		
-					sbuf.append(parent.escapeSpecialChars(commands[i].getLabel()));
+					sbuf.append(EscapeUtils.escapeSpecialChars(commands[i].getLabel()));
 					sbuf.append("</a>"); //$NON-NLS-1$
 					sbuf.append("</li>"); //$NON-NLS-1$
 				}
@@ -498,10 +499,10 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					String tcat = getTopicCategory(link.getHref(), locale);
 					if (tcat != null && !Platform.getWS().equals(Platform.WS_GTK)) {
 						sbuf.append("\" alt=\""); //$NON-NLS-1$
-						sbuf.append(parent.escapeSpecialChars(tcat));
+						sbuf.append(EscapeUtils.escapeSpecialChars(tcat));
 					}
 					sbuf.append("\">"); //$NON-NLS-1$	 		
-					sbuf.append(parent.escapeSpecialChars(link.getLabel()));
+					sbuf.append(EscapeUtils.escapeSpecialChars(link.getLabel()));
 					sbuf.append("</a>"); //$NON-NLS-1$
 					sbuf.append("</li>"); //$NON-NLS-1$
 				}
@@ -553,7 +554,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		decodedString = parent.escapeSpecialChars(decodedString, true);
+		decodedString = EscapeUtils.escapeSpecialCharsLeavinggBold(decodedString);
 		decodedString = decodedString.replaceAll("\r\n|\n|\r", "<br/>");  //$NON-NLS-1$ //$NON-NLS-2$		
 		return decodedString;
 	}

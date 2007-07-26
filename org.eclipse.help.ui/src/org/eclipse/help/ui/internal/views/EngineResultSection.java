@@ -25,6 +25,7 @@ import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.EscapeUtils;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -356,7 +357,7 @@ public class EngineResultSection {
 						absoluteHref = absoluteHref + CAT_HEADING_PREFIX;
 					}
 					absoluteHref = absoluteHref + hit.toAbsoluteHref(cat.getHref(), true);
-					buff.append(part.parent.escapeSpecialChars(absoluteHref));
+					buff.append(EscapeUtils.escapeSpecialChars(absoluteHref));
 					buff.append("\">"); //$NON-NLS-1$
 					buff.append(cat.getLabel());
 					buff.append("</a>"); //$NON-NLS-1$
@@ -405,7 +406,7 @@ public class EngineResultSection {
 			if (href==null) {
 				if (hit.getForceExternalWindow())
 					href = "nw:";//$NON-NLS-1$
-				href = part.parent.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), false));
+				href = EscapeUtils.escapeSpecialChars(hit.toAbsoluteHref(hit.getHref(), false));
 			}
 			buff.append(href);
 			buff.append("\""); //$NON-NLS-1$
@@ -424,13 +425,13 @@ public class EngineResultSection {
 				elabel = hit.getLabel();
 			}
 			
-			elabel = part.parent.escapeSpecialChars(elabel);
+			elabel = EscapeUtils.escapeSpecialChars(elabel);
 			buff.append(elabel);
 			buff.append("</a>"); //$NON-NLS-1$
 			if (part.getShowDescription()) {
 				String edesc = hit.getDescription();
 				if (edesc != null) {
-					edesc = part.parent.escapeSpecialChars(edesc);
+					edesc = EscapeUtils.escapeSpecialChars(edesc);
 					buff.append("<br/>"); //$NON-NLS-1$
 					buff.append(edesc);
 				}
@@ -487,12 +488,12 @@ public class EngineResultSection {
 		buff.append(ISharedImages.IMG_OBJS_ERROR_TSK);
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append("<b>"); //$NON-NLS-1$
-		buff.append(part.parent.escapeSpecialChars(errorStatus.getMessage()));
+		buff.append(EscapeUtils.escapeSpecialChars(errorStatus.getMessage()));
 		buff.append("</b>"); //$NON-NLS-1$
 		buff.append("<br/>"); //$NON-NLS-1$
 		Throwable t = errorStatus.getException();
 		if (t != null)
-			buff.append(part.parent.escapeSpecialChars(t.getMessage()));
+			buff.append(EscapeUtils.escapeSpecialChars(t.getMessage()));
 		buff.append("</li>"); //$NON-NLS-1$
 	}
 

@@ -32,6 +32,7 @@ import org.eclipse.help.search.ISearchEngineResult2;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.EscapeUtils;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.widgets.Composite;
@@ -348,11 +349,11 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append("\""); //$NON-NLS-1$
 				if (hit.getToc()!=null && !Platform.getWS().equals(Platform.WS_GTK)) {
 					buff.append(" alt=\""); //$NON-NLS-1$
-					buff.append(parent.escapeSpecialChars(hit.getToc().getLabel()));
+					buff.append(EscapeUtils.escapeSpecialChars(hit.getToc().getLabel()));
 					buff.append("\""); //$NON-NLS-1$
 				}
 				buff.append(">"); //$NON-NLS-1$
-				buff.append(parent.escapeSpecialChars(hit.getLabel()));
+				buff.append(EscapeUtils.escapeSpecialChars(hit.getLabel()));
 				buff.append("</a>"); //$NON-NLS-1$
 				buff.append("</li>"); //$NON-NLS-1$
 			}
