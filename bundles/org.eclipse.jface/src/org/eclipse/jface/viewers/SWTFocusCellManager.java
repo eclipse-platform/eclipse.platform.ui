@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                               - bug fix for bug 187189
+ *                                               - bug fix for bug 187189, 182800
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Listener;
  * This class is responsible to provide cell management base features for the
  * SWT-Controls {@link org.eclipse.swt.widgets.Table} and
  * {@link org.eclipse.swt.widgets.Tree}.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 abstract class SWTFocusCellManager {
 
@@ -38,13 +38,13 @@ abstract class SWTFocusCellManager {
 	private ViewerCell focusCell;
 
 	private FocusCellHighlighter cellHighlighter;
-	
+
 	private DisposeListener itemDeletionListener = new DisposeListener() {
 
 		public void widgetDisposed(DisposeEvent e) {
 			setFocusCell(null);
 		}
-		
+
 	};
 
 	/**
@@ -154,31 +154,33 @@ abstract class SWTFocusCellManager {
 					setFocusCell(null);
 				}
 			}
-			
+
 		});
 		viewer.getControl().addListener(SWT.FocusIn, listener);
 	}
 
 	/**
 	 * @return the cell with the focus
-	 * 
+	 *
 	 */
 	public ViewerCell getFocusCell() {
 		return focusCell;
 	}
 
 	void setFocusCell(ViewerCell focusCell) {
+		ViewerCell oldCell = this.focusCell;
+
 		if( this.focusCell != null && ! this.focusCell.getItem().isDisposed() ) {
 			this.focusCell.getItem().removeDisposeListener(itemDeletionListener);
 		}
-		
+
 		this.focusCell = focusCell;
-		
+
 		if( this.focusCell != null && ! this.focusCell.getItem().isDisposed() ) {
 			this.focusCell.getItem().addDisposeListener(itemDeletionListener);
 		}
-		
-		this.cellHighlighter.focusCellChanged(focusCell);
+
+		this.cellHighlighter.focusCellChanged(focusCell,oldCell);
 	}
 
 	ColumnViewer getViewer() {

@@ -6,9 +6,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
+ * 	   IBM Corporation - initial API and implementation
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- * 												 - fix for bug 183850, 182652
- *     IBM Corporation - initial API and implementation
+ * 												 - fix for bug 183850, 182652, 182800
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -23,15 +23,12 @@ import org.eclipse.swt.widgets.Listener;
 
 /**
  * @since 3.3
- * 
+ *
  */
 public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
-
-	private ViewerCell oldCell;
-
 	// Needed to work-around problem in bug 183850
 	private static final boolean WIN_32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
-	
+
 	/**
 	 * @param viewer
 	 *            the viewer
@@ -125,22 +122,17 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.FocusCellHighlighter#focusCellChanged(org.eclipse.jface.viewers.ViewerCell)
-	 */
-	protected void focusCellChanged(ViewerCell cell) {
-		super.focusCellChanged(cell);
+	protected void focusCellChanged(ViewerCell newCell, ViewerCell oldCell) {
+		super.focusCellChanged(newCell,oldCell);
 
 		// Redraw new area
-		if (cell != null) {
-			Rectangle rect = cell.getBounds();
-			int x = cell.getColumnIndex() == 0 ? 0 : rect.x;
-			int width = cell.getColumnIndex() == 0 ? rect.x + rect.width
+		if (newCell != null) {
+			Rectangle rect = newCell.getBounds();
+			int x = newCell.getColumnIndex() == 0 ? 0 : rect.x;
+			int width = newCell.getColumnIndex() == 0 ? rect.x + rect.width
 					: rect.width;
 			// 1 is a fix for Linux-GTK
-			cell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
+			newCell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
 		}
 
 		if (oldCell != null) {
@@ -151,7 +143,5 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 			// 1 is a fix for Linux-GTK
 			oldCell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
 		}
-
-		this.oldCell = cell;
 	}
 }
