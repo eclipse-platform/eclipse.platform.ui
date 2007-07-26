@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                                 fixes in bug: 178946
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -15,16 +17,31 @@ import java.util.EventObject;
 
 /**
  * This event is fired when an editor deactivated
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ColumnViewerEditorDeactivationEvent extends EventObject {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * The event type
+	 */
+	public int eventType;
+
+	/**
+	 * Event when editor is canceled
+	 */
+	public static final int EDITOR_CANCELED = 1;
+
+	/**
+	 * Event when editor is saved
+	 */
+	public static final int EDITOR_SAVED = 2;
 
 	/**
 	 * @param source
@@ -32,5 +49,4 @@ public class ColumnViewerEditorDeactivationEvent extends EventObject {
 	public ColumnViewerEditorDeactivationEvent(Object source) {
 		super(source);
 	}
-
 }

@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug 151295
- *                                                 fix in bug 166500
+ *     											   fix in bug: 151295, 178946, 166500
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -248,6 +247,7 @@ public abstract class ColumnViewerEditor {
 			// using cell editor ?
 			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
 					cell);
+			tmp.eventType=ColumnViewerEditorDeactivationEvent.EDITOR_SAVED;
 			if (editorActivationListener != null
 					&& !editorActivationListener.isEmpty()) {
 				Object[] ls = editorActivationListener.getListeners();
@@ -302,6 +302,7 @@ public abstract class ColumnViewerEditor {
 		if (cellEditor != null) {
 			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
 					cell);
+			tmp.eventType=ColumnViewerEditorDeactivationEvent.EDITOR_CANCELED;
 			if (editorActivationListener != null
 					&& !editorActivationListener.isEmpty()) {
 				Object[] ls = editorActivationListener.getListeners();
