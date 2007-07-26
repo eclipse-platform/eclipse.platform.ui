@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     											- fix in bug: 195908
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -251,7 +252,7 @@ public class ViewerCell {
 			}
 
 			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
-				return row.getCellAtCurrentIndex(columnIndex);
+				return row.getCellAtVisualIndex(columnIndex);
 			}
 		}
 

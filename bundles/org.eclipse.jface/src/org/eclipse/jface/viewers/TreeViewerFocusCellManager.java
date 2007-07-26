@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
+ *     											- fix in bug: 195908
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -21,9 +23,9 @@ import org.eclipse.swt.widgets.TreeItem;
  * This class is responsible to provide the concept of cells for {@link Tree}.
  * This concept is needed to provide features like editor activation with the
  * keyboard
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	private static final CellNavigationStrategy TREE_NAVIGATE = new CellNavigationStrategy() {
@@ -45,11 +47,11 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 
 		public boolean isCollapseEvent(ColumnViewer viewer,
 				ViewerCell cellToCollapse, Event event) {
-			
+
 			if( cellToCollapse == null ) {
 				return false;
 			}
-			
+
 			return cellToCollapse != null
 					&& ((TreeItem) cellToCollapse.getItem()).getExpanded()
 					&& event.keyCode == SWT.ARROW_LEFT
@@ -58,26 +60,26 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 
 		public boolean isExpandEvent(ColumnViewer viewer,
 				ViewerCell cellToExpand, Event event) {
-			
+
 			if( cellToExpand == null ) {
 				return false;
 			}
-			
+
 			return cellToExpand != null
 					&& ((TreeItem) cellToExpand.getItem()).getItemCount() > 0
 					&& !((TreeItem) cellToExpand.getItem()).getExpanded()
 					&& event.keyCode == SWT.ARROW_RIGHT
 					&& isFirstColumnCell(cellToExpand);
 		}
-		
+
 		private boolean isFirstColumnCell(ViewerCell cell) {
 			return cell.getViewerRow().getVisualIndex(cell.getColumnIndex()) == 0;
 		}
 	};
-	
+
 	/**
-	 * Create a new manager 
-	 * 
+	 * Create a new manager
+	 *
 	 * @param viewer
 	 *            the viewer the manager is bound to
 	 * @param focusDrawingDelegate
@@ -90,11 +92,11 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 
 	ViewerCell getInitialFocusCell() {
 		Tree tree = (Tree) getViewer().getControl();
-		
+
 		if( tree.getItemCount() > 0 ) {
 			return getViewer().getViewerRowFromItem(tree.getItem(0)).getCell(0);
 		}
-		
+
 		return null;
 	}
 }
