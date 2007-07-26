@@ -355,6 +355,15 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Return the id of the receiver.
+	 * 
+	 * @return String
+	 */
+	public String getId() {
+		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
+	}
+
+	/**
 	 * Return the markerTypes for the receiver.
 	 * 
 	 * @return Collection of {@link MarkerType}
@@ -516,21 +525,14 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Return the id of the receiver.
-	 * 
-	 * @return String
-	 */
-	public String getId() {
-		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
-	}
-
-	/**
 	 * Add group to the enabled filters.
 	 * @param group
 	 */
-	public void enableFilter(MarkerFieldFilterGroup group) {
-		getEnabledFilters().add(group);
-		
+	public void toggleFilter(MarkerFieldFilterGroup group) {
+		Collection enabled = getEnabledFilters();
+		if(enabled.remove(group))//true if it was present
+			return;
+		enabled.add(group);
 	}
 
 }

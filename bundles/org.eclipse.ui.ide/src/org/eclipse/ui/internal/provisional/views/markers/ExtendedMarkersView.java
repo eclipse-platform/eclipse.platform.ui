@@ -719,8 +719,8 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Add group to the enabled filters.
 	 * @param group
 	 */
-	public void applyFilter(MarkerFieldFilterGroup group) {
-		builder.enableFilter(group);
+	public void toggleFilter(MarkerFieldFilterGroup group) {
+		builder.toggleFilter(group);
 		
 	}
 

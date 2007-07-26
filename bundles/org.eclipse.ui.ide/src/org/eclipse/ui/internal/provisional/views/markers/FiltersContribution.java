@@ -82,7 +82,7 @@ public class FiltersContribution extends MarkersContribution {
 						 */
 						public void handleEvent(Event event) {
 							if (view != null)
-								view.applyFilter(group);
+								view.toggleFilter(group);
 						}
 					};
 				}

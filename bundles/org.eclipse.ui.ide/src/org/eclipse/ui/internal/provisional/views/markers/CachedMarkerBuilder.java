@@ -429,11 +429,11 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Enable the filter for group.
+	 * Toggle the enabled state of the filter for group.
 	 * @param group
 	 */
-	public void enableFilter(MarkerFieldFilterGroup group) {
-		getGenerator().enableFilter(group);
+	public void toggleFilter(MarkerFieldFilterGroup group) {
+		getGenerator().toggleFilter(group);
 		scheduleMarkerUpdate();
 		
 	}
