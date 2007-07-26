@@ -292,7 +292,7 @@ public final class RefactoringSessionTransformer {
 	 * @return the object representing the refactoring session, or
 	 *         <code>null</code> if no session has been transformed
 	 */
-	public Object getResult() {
+	public Document getResult() {
 		final Document document= fDocument;
 		fDocument= null;
 		return document;

@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,14 +36,6 @@ import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -72,11 +67,13 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionReader;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringSessionTransformer;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -474,7 +471,7 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs while transforming the descriptor
 	 */
-	private static Object transformDescriptor(final RefactoringDescriptor descriptor, final boolean projects) throws CoreException {
+	private static Document transformDescriptor(final RefactoringDescriptor descriptor, final boolean projects) throws CoreException {
 		final RefactoringSessionTransformer transformer= new RefactoringSessionTransformer(projects);
 		try {
 			transformer.beginSession(null, IRefactoringSerializationConstants.CURRENT_VERSION);
@@ -586,6 +583,152 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
+	 * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
+	 * compilation against JCL Foundation (bug 80053). 
+	 */
+	private static final class DOMWriter extends PrintWriter {
+
+		private int tab;
+
+		/* constants */
+		private static final String XML_VERSION= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
+
+		/**
+		 * Creates a new DOM writer on the given output writer.
+		 * 
+		 * @param output the output writer
+		 */
+		public DOMWriter(Writer output) {
+			super(output);
+			tab= 0;
+		}
+
+		public void printDocument(Document doc) {
+			println(XML_VERSION);
+			printElement(doc.getDocumentElement());
+		}
+
+		/**
+		 * Prints the given element.
+		 * 
+		 * @param element the element to print
+		 */
+		public void printElement(Element element) {
+			// Ensure extra whitespace is not emitted next to a Text node,
+			// as that will result in a situation where the restored text data is not the
+			// same as the saved text data.
+			boolean hasChildren= element.hasChildNodes();
+			startTag(element, hasChildren);
+			if (hasChildren) {
+				tab++;
+				boolean prevWasText= false;
+				NodeList children= element.getChildNodes();
+				for (int i= 0; i < children.getLength(); i++) {
+					Node node= children.item(i);
+					if (node instanceof Element) {
+						if (!prevWasText) {
+							println();
+							printTabulation();
+						}
+						printElement((Element) children.item(i));
+						prevWasText= false;
+					} else if (node instanceof Text) {
+						print(getEscaped(node.getNodeValue()));
+						prevWasText= true;
+					}
+				}
+				tab--;
+				if (!prevWasText) {
+					println();
+					printTabulation();
+				}
+				endTag(element);
+			}
+		}
+
+		private void printTabulation() {
+			// Indenting is disabled, as it can affect the result of getTextData().
+			// In 3.0, elements were separated by a newline but not indented.
+			// This causes getTextData() to return "\n" even if no text data had explicitly been set.
+			// The code here emulates that behaviour.
+
+//    		for (int i = 0; i < tab; i++)
+//    			super.print("\t"); //$NON-NLS-1$
+		}
+
+		private void startTag(Element element, boolean hasChildren) {
+			StringBuffer sb= new StringBuffer();
+			sb.append("<"); //$NON-NLS-1$
+			sb.append(element.getTagName());
+			NamedNodeMap attributes= element.getAttributes();
+			for (int i= 0; i < attributes.getLength(); i++) {
+				Attr attribute= (Attr) attributes.item(i);
+				sb.append(" "); //$NON-NLS-1$
+				sb.append(attribute.getName());
+				sb.append("=\""); //$NON-NLS-1$
+				sb.append(getEscaped(String.valueOf(attribute.getValue())));
+				sb.append("\""); //$NON-NLS-1$
+			}
+			sb.append(hasChildren ? ">" : "/>"); //$NON-NLS-1$ //$NON-NLS-2$
+			print(sb.toString());
+		}
+
+		private void endTag(Element element) {
+			StringBuffer sb= new StringBuffer();
+			sb.append("</"); //$NON-NLS-1$
+			sb.append(element.getNodeName());
+			sb.append(">"); //$NON-NLS-1$
+			print(sb.toString());
+		}
+
+		private static void appendEscapedChar(StringBuffer buffer, char c) {
+			String replacement= getReplacement(c);
+			if (replacement != null) {
+				buffer.append('&');
+				buffer.append(replacement);
+				buffer.append(';');
+			} else {
+				buffer.append(c);
+			}
+		}
+
+		private static String getEscaped(String s) {
+			StringBuffer result= new StringBuffer(s.length() + 10);
+			for (int i= 0; i < s.length(); ++i) {
+				appendEscapedChar(result, s.charAt(i));
+			}
+			return result.toString();
+		}
+
+		private static String getReplacement(char c) {
+			// Encode special XML characters into the equivalent character references.
+			// The first five are defined by default for all XML documents.
+			// The next three (#xD, #xA, #x9) are encoded to avoid them
+			// being converted to spaces on deserialization
+			// (fixes bug 93720)
+			switch (c) {
+				case '<':
+					return "lt"; //$NON-NLS-1$
+				case '>':
+					return "gt"; //$NON-NLS-1$
+				case '"':
+					return "quot"; //$NON-NLS-1$
+				case '\'':
+					return "apos"; //$NON-NLS-1$
+				case '&':
+					return "amp"; //$NON-NLS-1$
+				case '\r':
+					return "#x0D"; //$NON-NLS-1$
+				case '\n':
+					return "#x0A"; //$NON-NLS-1$
+				case '\u0009':
+					return "#x09"; //$NON-NLS-1$
+			}
+			return null;
+		}
+	}
+
+	/**
 	 * Writes refactoring session descriptor to the specified output stream.
 	 * 
 	 * @param stream
@@ -626,25 +769,15 @@ public final class RefactoringHistoryManager {
 		} finally {
 			transformer.endSession();
 		}
-		final Object result= transformer.getResult();
-		if (result instanceof Node) {
-			try {
-				final Transformer transform= TransformerFactory.newInstance().newTransformer();
-				transform.setOutputProperty(OutputKeys.INDENT, IRefactoringSerializationConstants.OUTPUT_INDENT);
-				transform.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
-				transform.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
-				transform.transform(new DOMSource((Node) result), new StreamResult(stream));
-			} catch (TransformerConfigurationException exception) {
-				throw createCoreException(exception);
-			} catch (TransformerFactoryConfigurationError exception) {
-				throw createCoreException(exception);
-			} catch (TransformerException exception) {
-				final Throwable throwable= exception.getException();
-				if (throwable instanceof IOException)
-					throw createCoreException(exception);
-				RefactoringCorePlugin.log(exception);
-			}
-		}
+		final Document result= transformer.getResult();
+		writeNode(stream, result);
+	}
+
+	private static void writeNode(final OutputStream stream, Document document) {
+		OutputStreamWriter outputStreamWriter= new OutputStreamWriter(stream);
+		DOMWriter writer= new DOMWriter(outputStreamWriter);
+		writer.printDocument(document);
+		writer.flush();
 	}
 
 	/** The cached session descriptor, or <code>null</code> */
@@ -721,10 +854,10 @@ public final class RefactoringHistoryManager {
 							// Do nothing
 						}
 						monitor.worked(1);
-						final Object result= transformDescriptor(descriptor, false);
-						if (result instanceof Document) {
+						final Document result= transformDescriptor(descriptor, false);
+						if (result != null) {
 							boolean found= false;
-							final NodeList list= ((Document) result).getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
+							final NodeList list= result.getElementsByTagName(IRefactoringSerializationConstants.ELEMENT_REFACTORING);
 							final Element root= document.getDocumentElement();
 							if (sort) {
 								final String string= Long.toString(stamp);
@@ -767,11 +900,9 @@ public final class RefactoringHistoryManager {
 					}
 				} else {
 					try {
-						final Object result= transformDescriptor(descriptor, false);
-						if (result instanceof Node) {
-							writeHistoryEntry(history, (Node) result, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
-							writeIndexEntry(index, proxies, EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
-						}
+						final Document result= transformDescriptor(descriptor, false);
+						writeHistoryEntry(history, result, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
+						writeIndexEntry(index, proxies, EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 					} catch (IOException exception) {
 						throw createCoreException(exception);
 					}
@@ -1110,8 +1241,8 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param file
 	 *            the refactoring history file
-	 * @param node
-	 *            the node representing the history entry
+	 * @param document
+	 *            the document representing the history entry
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @param task
@@ -1119,44 +1250,25 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs while adding the history entry
 	 */
-	private void writeHistoryEntry(final IFileStore file, final Node node, final IProgressMonitor monitor, final String task) throws CoreException {
+	private void writeHistoryEntry(final IFileStore file, final Document document, final IProgressMonitor monitor, final String task) throws CoreException {
 		OutputStream output= null;
 		try {
 			monitor.beginTask(task, 2);
-			try {
-				file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-				output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-				final Transformer transformer= TransformerFactory.newInstance().newTransformer();
-				transformer.setOutputProperty(OutputKeys.INDENT, IRefactoringSerializationConstants.OUTPUT_INDENT);
-				transformer.setOutputProperty(OutputKeys.METHOD, IRefactoringSerializationConstants.OUTPUT_METHOD);
-				transformer.setOutputProperty(OutputKeys.ENCODING, IRefactoringSerializationConstants.OUTPUT_ENCODING);
+			file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+			output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+			writeNode(output, document);
+		} finally {
+			fCachedDocument= null;
+			fCachedPath= null;
+			fCachedDescriptor= null;
+			fCachedStore= null;
+			if (output != null) {
 				try {
-					transformer.transform(new DOMSource(node), new StreamResult(output));
-				} finally {
-					fCachedDocument= null;
-					fCachedPath= null;
-					fCachedDescriptor= null;
-					fCachedStore= null;
-				}
-			} catch (TransformerConfigurationException exception) {
-				throw createCoreException(exception);
-			} catch (TransformerFactoryConfigurationError exception) {
-				throw createCoreException(exception);
-			} catch (TransformerException exception) {
-				final Throwable throwable= exception.getException();
-				if (throwable instanceof IOException)
-					throw createCoreException(exception);
-				RefactoringCorePlugin.log(exception);
-			} finally {
-				if (output != null) {
-					try {
-						output.close();
-					} catch (IOException exception) {
-						// Do nothing
-					}
+					output.close();
+				} catch (IOException exception) {
+					// Do nothing
 				}
 			}
-		} finally {
 			monitor.done();
 		}
 	}
