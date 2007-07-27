@@ -286,7 +286,7 @@ public abstract class ViewerRow implements Cloneable {
 	 * @return the current index (as shown in the UI)
 	 * @since 3.4
 	 */
-	public int getVisualIndex(int creationIndex) {
+	protected int getVisualIndex(int creationIndex) {
 		return creationIndex;
 	}
 
@@ -304,7 +304,7 @@ public abstract class ViewerRow implements Cloneable {
 	 * @return the original index
 	 * @since 3.4
 	 */
-	public int getCreationIndex(int visualIndex) {
+	protected int getCreationIndex(int visualIndex) {
 		return visualIndex;
 	}
 }
