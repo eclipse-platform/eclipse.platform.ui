@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt Carter - bug 182822
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
