@@ -69,14 +69,28 @@ public final class AggregateValidationStatus implements IObservableValue {
 	 */
 	public AggregateValidationStatus(final IObservableCollection bindings,
 			int strategy) {
+		this(Realm.getDefault(), bindings, strategy);
+	}
+	
+	/**
+	 * @param realm
+	 * 			  Realm
+	 * @param bindings
+	 *            an observable collection containing elements of type IStatus
+	 * @param strategy
+	 *            a strategy constant, one of {@link #MERGED} or
+	 *            {@link #MAX_SEVERITY}.
+	 */
+	public AggregateValidationStatus(final Realm realm, final IObservableCollection bindings,
+			int strategy) {
 		if (strategy == MERGED) {
-			implementation = new ComputedValue(IStatus.class) {
+			implementation = new ComputedValue(realm, IStatus.class) {
 				protected Object calculate() {
 					return getStatusMerged(bindings);
 				}
 			};
 		} else {
-			implementation = new ComputedValue(IStatus.class) {
+			implementation = new ComputedValue(realm, IStatus.class) {
 				protected Object calculate() {
 					return getStatusMaxSeverity(bindings);
 				}
