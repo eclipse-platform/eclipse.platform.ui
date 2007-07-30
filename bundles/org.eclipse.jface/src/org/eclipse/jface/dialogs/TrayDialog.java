@@ -239,7 +239,7 @@ public abstract class TrayDialog extends Dialog {
 			GridLayout grid = (GridLayout)layout;
 			return !grid.makeColumnsEqualWidth && (grid.horizontalSpacing == 0) &&
 					(grid.marginWidth == 0) && (grid.marginHeight == 0) &&
-					(grid.horizontalSpacing == 0) && (grid.numColumns == 5);
+					(grid.numColumns == 5);
 		}
 		return false;
 	}
