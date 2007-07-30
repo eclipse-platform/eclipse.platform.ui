@@ -492,13 +492,11 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
             <annotation>
                <documentation>
                   The scope of the grouping 
-
 One of 
 ON_ANY: any item in the workbench
 ON_SELECTED_ONLY: on the currently selected item
 ON_SELECTED_AND_CHILDREN: on the currently selected item and it&apos;s children
 ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the selection.
-
 If this value is not set the value is ON_ANY
                </documentation>
             </annotation>
