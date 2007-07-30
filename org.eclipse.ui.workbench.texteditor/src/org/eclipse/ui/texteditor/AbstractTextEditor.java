@@ -3804,6 +3804,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Initializes the editor's title based on the given editor input.
+	 * <p>
+	 * <strong>Note:</strong> We use the editor's image instead of the image from the
+	 * editor input to distinguish situations where the same editor input is
+	 * opened in different kinds of editors.
+	 * </p>
 	 *
 	 * @param input the editor input to be used
 	 */
