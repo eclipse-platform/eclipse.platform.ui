@@ -21,7 +21,7 @@ import org.eclipse.swt.dnd.TransferData;
 
 /**
  * This class can be used to transfer an instance of <code>PluginTransferData</code>
- * between two parts in a workbench in a drop and drop operation.
+ * between two parts in a workbench in a drag and drop operation.
  * <p>
  * In every drag and drop operation there is a <code>DragSource</code> and 
  * a <code>DropTarget</code>.  When a drag occurs a <code>Transfer</code> is 
