@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Juan A. Hernandez - bug 89926
+ *     dakshinamurthy.karra@gmail.com - bug 165371
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,10 +66,13 @@ import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.service.resolver.BundleDescription;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuildTab;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch delegate for Ant builds
@@ -85,6 +88,20 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$
 	private static final String REMOTE_INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.ProxyInputHandler"; //$NON-NLS-1$
     
+	/**
+	 * String attribute identifying the build scope for a launch configuration.
+	 * <code>null</code> indicates the default workspace build.
+	 */
+	private static final String ATTR_BUILD_SCOPE = AntUIPlugin.getUniqueIdentifier() + ".ATTR_BUILD_SCOPE"; //$NON-NLS-1$
+
+	/**
+	 * Attribute identifier specifying whether referenced projects should be 
+	 * considered when computing the projects to build. Default value is
+	 * <code>true</code>.
+	 */
+	private static final String ATTR_INCLUDE_REFERENCED_PROJECTS = AntUIPlugin.getUniqueIdentifier() + ".ATTR_INCLUDE_REFERENCED_PROJECTS"; //$NON-NLS-1$
+
+	
     private static String fgSWTLibraryLocation;
 	
 	private String fMode;
@@ -668,17 +685,11 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
 	 */
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
-		String scope = null;
-		try {
-			scope = configuration.getAttribute(AntBuildTab.ATTR_BUILD_SCOPE, (String)null);
-		} catch (CoreException e) {
-			return null;
+		IProject[] projects = ExternalToolsBuildTab.getBuildProjects(configuration, ATTR_BUILD_SCOPE);
+		if (projects == null) {
+			return null ;
 		}
-		if (scope == null) {
-			return null;
-		}
-		IProject[] projects = AntBuildTab.getBuildProjects(scope);
-		boolean isRef = AntBuildTab.isIncludeReferencedProjects(configuration);
+		boolean isRef = ExternalToolsBuildTab.isIncludeReferencedProjects(configuration, ATTR_INCLUDE_REFERENCED_PROJECTS);
 		if (isRef) {
 			return computeReferencedBuildOrder(projects);
 		}

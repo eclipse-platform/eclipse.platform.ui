@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,6 @@ public interface IAntUIConstants {
 	public static final String IMG_SORT_OUTLINE= PLUGIN_ID + ".sortOutline"; //$NON-NLS-1$
 	public static final String IMG_LINK_WITH_EDITOR= PLUGIN_ID + ".linkWithEditor"; //$NON-NLS-1$
 	public static final String IMG_REFRESH = PLUGIN_ID + ".IMG_REFRESH"; //$NON-NLS-1$
-	public static final String IMG_ANT_BUILD_TAB = PLUGIN_ID + ".IMG_BUILD_TAB"; //$NON-NLS-1$
 	
 	public static final String IMG_WIZARD_BANNER = PLUGIN_ID + ".IMG_WIZARD_BANNER"; //$NON-NLS-1$
     public static final String IMG_EXPORT_WIZARD_BANNER = PLUGIN_ID + ".IMG_EXPORT_WIZARD_BANNER"; //$NON-NLS-1$

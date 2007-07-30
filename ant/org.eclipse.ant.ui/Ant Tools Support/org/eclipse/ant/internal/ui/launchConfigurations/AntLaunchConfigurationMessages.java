@@ -1,11 +1,12 @@
 /**********************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * dakshinamurthy.karra@gmail.com - bug 165371
  **********************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
@@ -18,16 +19,6 @@ public class AntLaunchConfigurationMessages extends NLS {
 	public static String AddVariableStringAction_2;
 	public static String AddVariableStringAction_3;
 	public static String AddVariableStringAction_4;
-
-	public static String AntBuildTab_1;
-	public static String AntBuildTab_2;
-	public static String AntBuildTab_3;
-	public static String AntBuildTab_4;
-	public static String AntBuildTab_5;
-	public static String AntBuildTab_6;
-	public static String AntBuildTab_7;
-	public static String AntBuildTab_8;
-	public static String AntBuildTab_9;
 
 	public static String AntLaunchDelegate_Launching__0__1;
 	public static String AntLaunchDelegate_Running__0__2;
