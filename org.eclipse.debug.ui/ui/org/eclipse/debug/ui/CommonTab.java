@@ -420,7 +420,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				IProject  proj;
 				for (int i = 0; i < res.length; i++) {
 					proj = res[i].getProject();
-					if(proj.isAccessible()) {
+					if(proj != null && proj.isAccessible()) {
 						return proj.getFullPath().toOSString();
 					}
 				}
