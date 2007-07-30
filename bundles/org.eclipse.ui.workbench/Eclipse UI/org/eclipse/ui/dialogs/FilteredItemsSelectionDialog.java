@@ -7,6 +7,9 @@
  *
  * Contributors:
  *  IBM Corporation - initial API and implementation 
+ *  Willian Mitsuda <wmitsuda@gmail.com> 
+ *     - Fix for bug 196553 - [Dialogs] Support IColorProvider/IFontProvider in FilteredItemsSelectionDialog
+
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -48,6 +51,7 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -77,6 +81,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -1484,7 +1489,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	private class ItemsListLabelProvider extends LabelProvider implements
-			IColorProvider, ILabelProviderListener {
+			IColorProvider, IFontProvider, ILabelProviderListener {
 		private ILabelProvider provider;
 
 		private ILabelDecorator selectionDecorator;
@@ -1706,6 +1711,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
 		 */
 		public Color getBackground(Object element) {
+			if (element instanceof ItemsListSeparator) {
+				return null;
+			}
+			if (provider instanceof IColorProvider) {
+				return ((IColorProvider) provider).getBackground(element);
+			}
 			return null;
 		}
 
@@ -1719,7 +1730,24 @@ public abstract class FilteredItemsSelectionDialog extends
 				return Display.getCurrent().getSystemColor(
 						SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
+			if (provider instanceof IColorProvider) {
+				return ((IColorProvider) provider).getForeground(element);
+			}
+			return null;
+		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+		 */
+		public Font getFont(Object element) {
+			if (element instanceof ItemsListSeparator) {
+				return null;
+			}
+			if (provider instanceof IFontProvider) {
+				return ((IFontProvider) provider).getFont(element);
+			}
 			return null;
 		}
 
