@@ -1377,7 +1377,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </p>
 	 * <p>
 	 * A resource's project-relative path indicates the route from the project
-	 * to the resource.  Within a workspace, there is exactly one such path
+	 * to the resource.  Within a project, there is exactly one such path
 	 * for any given resource. The returned path never has a trailing slash.
 	 * </p>
 	 * <p>
