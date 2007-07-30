@@ -11,8 +11,11 @@
 package org.eclipse.core.tests.internal.registry;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import junit.framework.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.spi.IDynamicExtensionRegistry;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.Bundle;
@@ -114,6 +117,39 @@ public class ContributorsTest extends TestCase {
 			if (fragment != null)
 				fragment.uninstall();
 		}
+	}
+
+	/**
+	 * Checks {@link IDynamicExtensionRegistry#removeContributor(IContributor, Object)}. A separate
+	 * registry is created as removal functionality is not allowed by the default Eclipse registry.
+	 * 
+	 * @throws IOException
+	 * @throws BundleException
+	 */
+	public void testContributorRemoval() throws IOException {
+		Object masterKey = new Object();
+		IExtensionRegistry registry = RegistryFactory.createRegistry(null, masterKey, null);
+
+		assertTrue(addContribution(registry, "A"));
+		assertTrue(addContribution(registry, "B"));
+
+		IContributor contributorB = ContributorFactorySimple.createContributor("B"); //$NON-NLS-1$
+
+		assertNotNull(registry.getExtensionPoint("org.eclipse.test.registryByContrib.PointA"));
+		assertNotNull(registry.getExtensionPoint("org.eclipse.test.registryByContrib.PointB"));
+
+		((IDynamicExtensionRegistry) registry).removeContributor(contributorB, masterKey);
+
+		assertNotNull(registry.getExtensionPoint("org.eclipse.test.registryByContrib.PointA"));
+		assertNull(registry.getExtensionPoint("org.eclipse.test.registryByContrib.PointB"));
+	}
+
+	private boolean addContribution(IExtensionRegistry registry, String fileName) throws IOException {
+		String fullPath = RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/elementsByContributor/" + fileName + "/plugin.xml";
+		URL urlA = RuntimeTestsPlugin.getContext().getBundle().getEntry(fullPath);
+		InputStream is = urlA.openStream();
+		IContributor nonBundleContributor = ContributorFactorySimple.createContributor(fileName); //$NON-NLS-1$
+		return registry.addContribution(is, nonBundleContributor, false, urlA.getFile(), null, null);
 	}
 
 	public static Test suite() {
