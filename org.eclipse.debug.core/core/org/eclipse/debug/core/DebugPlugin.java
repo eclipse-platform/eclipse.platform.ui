@@ -237,8 +237,12 @@ public class DebugPlugin extends Plugin {
 	
     /**
      * This launch attribute designates the encoding to be used by the console
-     * associated with the launch. When unspecified, the platform's default
-     * encoding will be used.
+     * associated with the launch.
+     * <p>
+     * For release 3.3, the system encoding is used when unspecified. Since 3.4, 
+     * the inherited encoding is used when unspecified. See {@link ILaunchManager} for a
+     * description in <code>getEncoding(ILaunchConfiguration)</code>.
+     * </p>
      * <p>
      * Value of this constant is the same as the value of the old 
      * <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code> constant for backward
