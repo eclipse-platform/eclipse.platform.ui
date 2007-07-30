@@ -17,28 +17,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.wizards.ConfigureProjectWizard;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * Action for configuring a project. Configuring involves associating
  * the project with a Team provider and performing any provider-specific
  * configuration that is necessary.
  */
-public class ConfigureProjectAction extends TeamAction implements IWorkbenchWindowActionDelegate {
-	private static class ResizeWizardDialog extends WizardDialog {
-		public ResizeWizardDialog(Shell parentShell, IWizard newWizard) {
-			super(parentShell, newWizard);
-			setShellStyle(getShellStyle() | SWT.RESIZE);
-		}		
-	}
+public class ConfigureProjectAction extends TeamAction {
 	
 	protected void execute(IAction action) throws InvocationTargetException,
 			InterruptedException {
@@ -47,11 +35,8 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 				try {
 					if (!isEnabled()) 
 						return;
-					IProject project = getSelectedProjects()[0];
-					ConfigureProjectWizard wizard = new ConfigureProjectWizard();
-					wizard.init(null, project);
-					WizardDialog dialog = new ResizeWizardDialog(getShell(), wizard);
-					dialog.open();
+					IProject[] projects = getSelectedProjects();
+					ConfigureProjectWizard.shareProjects(getShell(), projects);
 				} catch (Exception e) {
 					throw new InvocationTargetException(e);
 				}
@@ -64,15 +49,11 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 	 */
 	public boolean isEnabled() {
 		IProject[] selectedProjects = getSelectedProjects();
-		if (selectedProjects.length != 1) return false;
-		if (!selectedProjects[0].isAccessible()) return false;
-		if (!RepositoryProvider.isShared(selectedProjects[0])) return true;
-		return false;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
+		for (int i = 0; i < selectedProjects.length; i++) {
+			IProject project = selectedProjects[i];
+			if (!project.isAccessible()) return false;
+			if (!RepositoryProvider.isShared(project)) return true;	
+		}		
+		return true;
 	}
 }

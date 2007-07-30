@@ -11,15 +11,16 @@
 package org.eclipse.team.examples.filesystem.ui;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.examples.filesystem.FileSystemPlugin;
-import org.eclipse.team.examples.filesystem.FileSystemProvider;
-import org.eclipse.team.examples.filesystem.Policy;
+import org.eclipse.team.examples.filesystem.*;
 import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.team.ui.IConfigurationWizardExtension;
 import org.eclipse.ui.IWorkbench;
 
 /**
@@ -29,9 +30,9 @@ import org.eclipse.ui.IWorkbench;
  * Repository Provider. One invoked, this wizard makes use of the <code>FileSystemMainPage</code>
  * in order to obtain a target location on disk.
  */
-public class ConfigurationWizard extends Wizard implements IConfigurationWizard {
+public class ConfigurationWizard extends Wizard implements IConfigurationWizard, IAdaptable {
 	
-	IProject project;
+	IProject[] projects;
 	
 	FileSystemMainPage mainPage;
 	
@@ -51,7 +52,7 @@ public class ConfigurationWizard extends Wizard implements IConfigurationWizard 
 	 * @see org.eclipse.team.ui.IConfigurationWizard#init(IWorkbench, IProject)
 	 */
 	public void init(IWorkbench workbench, IProject project) {
-		this.project = project;
+		setProjects(new IProject[] { project } );
 	}
 	
 	public void addPages() {
@@ -70,10 +71,20 @@ public class ConfigurationWizard extends Wizard implements IConfigurationWizard 
 	public boolean performFinish() {
 		mainPage.finish(null);
 		try {
-			// Map the provider and set the location
-			RepositoryProvider.map(project, FileSystemPlugin.PROVIDER_ID);
-			FileSystemProvider provider = (FileSystemProvider) RepositoryProvider.getProvider(project);
-			provider.setTargetLocation(mainPage.getLocation());
+			if (projects.length == 1) {
+				// Map the provider and set the location
+				RepositoryProvider.map(projects[0], FileSystemPlugin.PROVIDER_ID);
+				FileSystemProvider provider = (FileSystemProvider) RepositoryProvider.getProvider(projects[0]);
+				provider.setTargetLocation(mainPage.getLocation());
+			} else {
+				for (int i = 0; i < projects.length; i++) {
+					IProject project = projects[i];
+					RepositoryProvider.map(project, FileSystemPlugin.PROVIDER_ID);
+					FileSystemProvider provider = (FileSystemProvider) RepositoryProvider.getProvider(project);
+					String path = new Path(mainPage.getLocation()).append(project.getName()).toOSString();
+					provider.setTargetLocation(path);
+				}
+			}
 		} catch (TeamException e) {
 			ErrorDialog.openError(
 				getShell(),
@@ -85,4 +96,18 @@ public class ConfigurationWizard extends Wizard implements IConfigurationWizard 
 		return true;
 	}
 
+	public Object getAdapter(Class adapter) {
+		if (adapter == IConfigurationWizardExtension.class) {
+			return new IConfigurationWizardExtension(){
+				public void init(IWorkbench workbench, IProject[] projects) {
+					setProjects(projects);
+				}
+			};
+		}
+		return null;
+	}
+
+	/* package */ void setProjects(IProject[] projects) {
+		this.projects = projects;
+	}
 }

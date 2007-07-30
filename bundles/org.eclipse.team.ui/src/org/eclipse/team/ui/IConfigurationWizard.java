@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkbench;
 public interface IConfigurationWizard extends IWizard {
 	/**
 	 * Initializes this creation wizard using the passed workbench and
-	 * object selection.
+	 * the selected project.
 	 * <p>
 	 * This method is called after the no argument constructor and
 	 * before other methods are called.

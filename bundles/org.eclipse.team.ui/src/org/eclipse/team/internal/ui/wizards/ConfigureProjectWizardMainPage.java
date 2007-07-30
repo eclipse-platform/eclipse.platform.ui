@@ -20,17 +20,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -48,11 +46,10 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	private TableViewer viewer;
 	private AdaptableList wizards;
 	private AdaptableList disabledWizards;
-	private IWorkbench workbench;
-	private IProject project;
+	private IProject[] projects;
 	private String description;
 	
-	private IConfigurationWizard selectedWizard;
+	private IWizard selectedWizard;
 	
 	/**
 	 * Create a new ConfigureProjectWizardMainPage
@@ -84,7 +81,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		this.description = description;
 	}
 	
-	public IConfigurationWizard getSelectedWizard() {
+	public IWizard getSelectedWizard() {
 		return selectedWizard;
 	}
 	/*
@@ -136,8 +133,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 				}
 				ConfigurationWizardElement selectedElement = (ConfigurationWizardElement)ss.getFirstElement();
 				try {
-					selectedWizard = (IConfigurationWizard)selectedElement.createExecutableExtension();
-					selectedWizard.init(workbench, project);
+					selectedWizard = (IWizard)selectedElement.createExecutableExtension(getUnsharedProjects());
 				} catch (CoreException e) {					
 					return;
 				}
@@ -187,6 +183,17 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		}
         Dialog.applyDialogFont(parent);
 	}
+	
+	/* package */ IProject[] getUnsharedProjects() {
+		java.util.List unshared = new ArrayList();
+		for (int i = 0; i < projects.length; i++) {
+			IProject project = projects[i];
+			if (!RepositoryProvider.isShared(project)) 
+				unshared.add(project);
+		}
+		return (IProject[]) unshared.toArray(new IProject[unshared.size()]);
+	}
+
 	/**
 	 * The <code>WizardSelectionPage</code> implementation of 
 	 * this <code>IWizardPage</code> method returns the first page 
@@ -205,23 +212,11 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 			.getActivitySupport().getTriggerPointManager()
 			.getTriggerPoint(TeamUIPlugin.TRIGGER_POINT_ID);
 	}
-
-	/**
-	 * Set the workbench to the argument
-	 * 
-	 * @param workbench  the workbench to set
-	 */
-	public void setWorkbench(IWorkbench workbench) {
-		this.workbench = workbench;
+	
+	public void setProjects(IProject[] projects) {
+		this.projects = projects;
 	}
-	/**
-	 * Set the project to the argument
-	 * 
-	 * @param project  the project to set
-	 */
-	public void setProject(IProject project) {
-		this.project = project;
-	}
+	
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {

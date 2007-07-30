@@ -11,10 +11,15 @@
 package org.eclipse.team.internal.ui.wizards;
 
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IPluginContribution;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.team.ui.IConfigurationWizardExtension;
+import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
@@ -40,12 +45,44 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	 * Create an the instance of the object described by the configuration
 	 * element. That is, create the instance of the class the isv supplied in
 	 * the extension point.
+	 * @return the instance of the configuration wizard of type {@link IConfigurationWizard}
 	 * 
 	 * @throws CoreException if an error occurs creating the extension
 	 */
 	public Object createExecutableExtension() throws CoreException {
 		return TeamUIPlugin.createExtension(configurationElement, ConfigureProjectWizard.ATT_CLASS);
 	}
+	
+	/**
+	 * Creates the instance of the wizard and initializes with the given input.
+	 * @param projects the projects being shared by this wizard
+	 * @return the wizard instance of type {@link IConfigurationWizard}
+	 * @throws CoreException if an error occurs creating the extension 
+	 */
+	public IWizard createExecutableExtension(IProject[] projects) throws CoreException {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IConfigurationWizard wizard = (IConfigurationWizard)createExecutableExtension();
+		IConfigurationWizardExtension extension = (IConfigurationWizardExtension)Utils.getAdapter(wizard, IConfigurationWizardExtension.class);
+		if (extension == null) {
+			if (projects.length == 1) {
+				wizard.init(workbench, projects[0]);
+			} else {
+				// Dispose of the created wizard, just in case
+				try {
+					wizard.dispose();
+				} catch (RuntimeException e) {
+					// If a general exception occurred here, log it and continue
+					TeamUIPlugin.log(IStatus.ERROR, "An internal error occurred", e); //$NON-NLS-1$
+				}
+				IWizard multiWizard = new ConfigureMultipleProjectsWizard(projects, this);
+				return multiWizard;
+			}
+		} else {
+			extension.init(workbench, projects);
+		}
+		return wizard;
+	}
+	
 	/*
 	 * Method declared on IAdaptable.
 	 */
@@ -108,7 +145,7 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	/**
 	 * Set the description parameter of this element
 	 *
-	 * @param value  the new desrciption
+	 * @param value  the new description
 	 */
 	public void setDescription(String value) {
 		// Not used
@@ -141,6 +178,30 @@ public class ConfigurationWizardElement extends WorkbenchAdapter implements IAda
 	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return configurationElement.getNamespace();
+		return configurationElement.getNamespaceIdentifier();
+	}
+	
+	/**
+	 * Return whether the wizard created for this element has pages.
+	 * Unfortunately, the only way to find this out is to create the wizard.
+	 * @param projects the projects being shared
+	 * @return whether the resulting wizard has pages
+	 */
+	public boolean wizardHasPages(IProject[] projects) {
+		try {
+			IWizard wizard = (IWizard)createExecutableExtension(projects);
+			try {
+				wizard.addPages();
+				return (wizard.getPageCount() > 0);
+			} finally {
+				wizard.dispose();
+			}
+		} catch (CoreException e) {
+			TeamUIPlugin.log(e);
+		} catch (RuntimeException e) {
+			// If a general exception occurred here, log it and continue
+			TeamUIPlugin.log(IStatus.ERROR, "An internal error occurred", e); //$NON-NLS-1$
+		}
+		return false;
 	}
 }

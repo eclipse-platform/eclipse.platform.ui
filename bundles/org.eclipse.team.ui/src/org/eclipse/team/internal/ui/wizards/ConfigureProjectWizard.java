@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
-
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.jface.wizard.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.ui.IConfigurationWizard;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
@@ -26,13 +24,9 @@ import org.eclipse.ui.model.AdaptableList;
 /**
  * The wizard for associating projects with team providers
  */
-public class ConfigureProjectWizard extends Wizard implements IConfigurationWizard {
-	protected IWorkbench workbench;
-	protected IProject project;
-	protected IConfigurationWizard wizard;
-	
+public class ConfigureProjectWizard extends Wizard {
+	protected IProject[] projects;
 	protected ConfigureProjectWizardMainPage mainPage;
-	private String pluginId = TeamUIPlugin.PLUGIN_ID;
 	
 	protected final static String PT_CONFIGURATION ="configurationWizards"; //$NON-NLS-1$
 	protected final static String TAG_WIZARD = "wizard"; //$NON-NLS-1$
@@ -42,66 +36,27 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	protected final static String ATT_ICON = "icon"; //$NON-NLS-1$
 	protected final static String ATT_ID = "id"; //$NON-NLS-1$
 	
-	public ConfigureProjectWizard() {
+	private ConfigureProjectWizard(IProject[] projects) {
+		this.projects = projects;
 		setNeedsProgressMonitor(true);
-		setWindowTitle(getWizardWindowTitle()); 
+		setWindowTitle(TeamUIMessages.ConfigureProjectWizard_title); 
 	}
 	
-	protected String getExtensionPoint() {
-		return PT_CONFIGURATION;
-	}
-	
-	protected String getWizardWindowTitle() {
-		return TeamUIMessages.ConfigureProjectWizard_title; 
-	}
-	
-	protected String getWizardLabel() {
-		return TeamUIMessages.ConfigureProjectWizard_configureProject; 
-	}
-	
-	protected String getWizardDescription() {
-		return TeamUIMessages.ConfigureProjectWizard_description; 
-	}
-	
-	/*
-	 * @see Wizard#addPages
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#addPages()
 	 */
 	public void addPages() {
 		AdaptableList disabledWizards = new AdaptableList();
-		AdaptableList wizards = getAvailableWizards(disabledWizards);	
-		if (wizards.size() == 1 && disabledWizards.size() == 0) {
-			// If there is only one wizard, skip the first page.
-			// Only skip the first page if the one wizard has at least one page.
-			ConfigurationWizardElement element = (ConfigurationWizardElement)wizards.getChildren()[0];
-			try {
-				this.wizard = (IConfigurationWizard)element.createExecutableExtension();
-				wizard.init(workbench, project);
-				wizard.addPages();
-				if (wizard.getPageCount() > 0) {
-					wizard.setContainer(getContainer());
-					IWizardPage[] pages = wizard.getPages();
-					for (int i = 0; i < pages.length; i++) {
-						addPage(pages[i]);
-					}
-					return;
-				}
-			} catch (CoreException e) {
-				TeamUIPlugin.log(e);
-				return;
-			}
-		}
-		mainPage = new ConfigureProjectWizardMainPage("configurePage1", getWizardLabel(), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE), wizards, disabledWizards); //$NON-NLS-1$
-		mainPage.setDescription(getWizardDescription());
-		mainPage.setProject(project);
-		mainPage.setWorkbench(workbench);
+		AdaptableList wizards = getAvailableWizards(disabledWizards);
+		mainPage = new ConfigureProjectWizardMainPage("configurePage1", TeamUIMessages.ConfigureProjectWizard_configureProject, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_WIZBAN_SHARE), wizards, disabledWizards); //$NON-NLS-1$
+		mainPage.setDescription(TeamUIMessages.ConfigureProjectWizard_description);
+		mainPage.setProjects(projects);
 		addPage(mainPage);
 	}
-	public IWizardPage getNextPage(IWizardPage page) {
-		if (wizard != null) {
-			return wizard.getNextPage(page);
-		}
-		return super.getNextPage(page);
-	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#canFinish()
+	 */
 	public boolean canFinish() {
 		// If we are on the first page, never allow finish unless the selected wizard has no pages.
 		if (getContainer().getCurrentPage() == mainPage) {
@@ -110,44 +65,59 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 			}
 			return false;
 		}
-		if (wizard != null) {
-			return wizard.canFinish();
-		}
 		return super.canFinish();
 	}
-	/*
-	 * @see Wizard#performFinish
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		// There is only one wizard with at least one page
-		if (wizard != null) {
-			return wizard.performFinish();
-		}
 		// If we are on the first page and the selected wizard has no pages then
 		// allow it to finish.
 		if (getContainer().getCurrentPage() == mainPage) {
-			IConfigurationWizard noPageWizard = mainPage.getSelectedWizard();
+			IWizard noPageWizard = mainPage.getSelectedWizard();
 			if (noPageWizard != null) {
 				if (noPageWizard.canFinish()) 
 				{
 					return noPageWizard.performFinish();
 				}
 			}
-		}
+		}		
 		// If the wizard has pages and there are several
 		// wizards registered then the registered wizard
 		// will call it's own performFinish().		
 		return true;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.IWizard#performCancel()
-	 */
-	public boolean performCancel() {
-		if (wizard != null) {
-			return wizard.performCancel();
+	private static class ResizeWizardDialog extends WizardDialog {
+		public ResizeWizardDialog(Shell parentShell, IWizard newWizard) {
+			super(parentShell, newWizard);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+		}		
+	}
+	
+	public static void shareProjects(Shell shell, IProject[] projects) {
+		IWizard wizard = null;
+		// If we only have one wizard registered, we'll just use that wizard
+		// unless it doesn't have any pages
+		AdaptableList disabledWizards = new AdaptableList();
+		AdaptableList wizards = getAvailableWizards(disabledWizards);	
+		if (wizards.size() == 1 && disabledWizards.size() == 0) {
+			ConfigurationWizardElement element = (ConfigurationWizardElement)wizards.getChildren()[0];
+			if (element.wizardHasPages(projects)) {
+				try {
+					wizard = (IWizard)element.createExecutableExtension(projects);
+				} catch (CoreException e) {
+					// Log the exception and fall through to show the wizard
+					TeamUIPlugin.log(e);
+				}
+			}
 		}
-		return super.performCancel();
+		if (wizard == null) {
+			wizard = new ConfigureProjectWizard(projects);
+			((ConfigureProjectWizard)wizard).setForcePreviousAndNextButtons(true);
+		}
+		openWizard(shell, wizard);
 	}
 	
 	/**
@@ -155,10 +125,10 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * 
 	 * @return the available wizards
 	 */
-	protected AdaptableList getAvailableWizards(AdaptableList disabledWizards) {
+	private static AdaptableList getAvailableWizards(AdaptableList disabledWizards) {
 		AdaptableList result = new AdaptableList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IExtensionPoint point = registry.getExtensionPoint(pluginId, getExtensionPoint());
+		IExtensionPoint point = registry.getExtensionPoint(TeamUIPlugin.PLUGIN_ID, PT_CONFIGURATION);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
@@ -179,9 +149,9 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 		return result;
 	}
 	
-	private boolean filterItem(IConfigurationElement element) {
+	private static boolean filterItem(IConfigurationElement element) {
 		String extensionId = element.getAttribute(ATT_ID);
-		String extensionPluginId = element.getNamespace();
+		String extensionPluginId = element.getNamespaceIdentifier();
 	    IActivityManager activityMgr = PlatformUI.getWorkbench().getActivitySupport().getActivityManager();
 	    IIdentifier id = activityMgr.getIdentifier(extensionPluginId + "/" +  extensionId); //$NON-NLS-1$
 	    return (!id.isEnabled());
@@ -197,7 +167,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 * @param element  the element for which to create a wizard element
 	 * @return the wizard element for the given element
 	 */
-	protected ConfigurationWizardElement createWizardElement(IConfigurationElement element) {
+	private static ConfigurationWizardElement createWizardElement(IConfigurationElement element) {
 		// WizardElements must have a name attribute
 		String nameString = element.getAttribute(ATT_NAME);
 		if (nameString == null) {
@@ -220,7 +190,7 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	 *	@param config  the registry to get properties from
 	 *	@return whether initialization was successful
 	 */
-	protected boolean initializeWizard(ConfigurationWizardElement element, IConfigurationElement config) {
+	private static boolean initializeWizard(ConfigurationWizardElement element, IConfigurationElement config) {
 		element.setID(config.getAttribute(ATT_ID));
 		String description = ""; //$NON-NLS-1$
 		IConfigurationElement [] children = config.getChildren(TAG_DESCRIPTION);
@@ -242,14 +212,11 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 			// Missing attribute
 			return false;
 		}
-		setForcePreviousAndNextButtons(true);
 		return true;	
 	}
-	/*
-	 * Method declared on IConfigurationWizard
-	 */
-	public void init(IWorkbench workbench, IProject project) {
-		this.workbench = workbench;
-		this.project = project;
+
+	public static void openWizard(Shell shell, IWizard wizard) {
+		WizardDialog dialog = new ResizeWizardDialog(shell, wizard);
+		dialog.open();
 	}
 }

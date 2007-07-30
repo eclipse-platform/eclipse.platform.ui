@@ -21,6 +21,16 @@ public class TeamUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
 	
+	public static String ConfigureMultipleProjectsWizard_0;
+
+	public static String ConfigureMultipleProjectsWizard_1;
+
+	public static String ProjectSelectionPage_0;
+
+	public static String ProjectSelectionPage_1;
+
+	public static String ProjectSelectionPage_2;
+
 	public static String TextPreferencePage_ExtensionNotCompleted;
 	
     public static String CompareInputChangeNotifier_0;
