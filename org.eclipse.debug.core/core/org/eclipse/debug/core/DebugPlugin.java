@@ -749,7 +749,7 @@ public class DebugPlugin extends Plugin {
 	 * @param cmdLine the command line
 	 * @param workingDirectory the working directory, or <code>null</code>
 	 * @return the resulting process or <code>null</code> if the exec is
-	 *  cancelled
+	 *  canceled
 	 * @exception CoreException if the exec fails
 	 * @see Runtime
 	 * 

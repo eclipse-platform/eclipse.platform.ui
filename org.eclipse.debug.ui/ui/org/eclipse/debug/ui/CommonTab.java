@@ -82,14 +82,14 @@ import com.ibm.icu.text.MessageFormat;
  * is stored in, whether it should appear in the favorites list, and perspective
  * switching behavior for an associated launch.
  * <p>
- * Clients may instantiate this class. This class is not intended to be subclassed.
+ * Clients may instantiate this class. This class is not intended to be sub-classed.
  * </p>
  * @since 2.0
  */
 public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
-	 * Provides a persistable dialog for selecting the shared project location
+	 * Provides a persistible dialog for selecting the shared project location
 	 * @since 3.2
 	 */
 	class SharedLocationSelectionDialog extends ContainerSelectionDialog {
@@ -113,7 +113,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
-	 * can be revertable. This attribute is not saveable and will never appear in a saved
+	 * can be revertible. This attribute is not saveable and will never appear in a saved
 	 * launch configuration.
 	 * @since 3.3
 	 */
@@ -328,15 +328,39 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     }
     
     /**
+     * Returns the default encoding for the specified config
+     * @param config
+     * @return the default encoding
+     * 
+     * @since 3.4
+     */
+    private String getDefaultEncoding(ILaunchConfiguration config) {
+    	try {
+	    	IResource[] resources = config.getMappedResources();
+			if(resources != null && resources.length > 0) {
+				IResource res = resources[0];
+				if(res instanceof IFile) {
+					return ((IFile)res).getCharset();
+				}
+				else if(res instanceof IContainer) { 
+					return ((IContainer)res).getDefaultCharset();
+				}
+			}
+    	}
+    	catch(CoreException ce) {
+    		DebugUIPlugin.log(ce);
+    	}
+    	return ResourcesPlugin.getEncoding();
+    }
+    
+    /**
      * Creates the encoding component
      * @param parent the parent to add this composite to
      */
     private void createEncodingComponent(Composite parent) {
-	    List allEncodings = IDEEncoding.getIDEEncodings();
-	    String defaultEncoding = ResourcesPlugin.getEncoding();
 	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
-	    
-	    fDefaultEncodingButton = createRadioButton(group, MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding})); 
+	
+	    fDefaultEncodingButton = createRadioButton(group, "");  //$NON-NLS-1$
 	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
 	    gd.horizontalSpan = 2;
 	    fDefaultEncodingButton.setLayoutData(gd);
@@ -347,6 +371,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	    fEncodingCombo = new Combo(group, SWT.READ_ONLY);
 	    fEncodingCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    fEncodingCombo.setFont(parent.getFont());
+	    List allEncodings = IDEEncoding.getIDEEncodings();
         String[] encodingArray = (String[]) allEncodings.toArray(new String[0]);
 	    fEncodingCombo.setItems(encodingArray);
         if (encodingArray.length > 0) {
@@ -538,7 +563,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	        encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
         } catch (CoreException e) {
         }
-        
+	    String defaultEncoding = getDefaultEncoding(configuration);
+	    fDefaultEncodingButton.setText(MessageFormat.format(LaunchConfigurationsMessages.CommonTab_2, new String[]{defaultEncoding}));
+	    fDefaultEncodingButton.pack();
         if (encoding != null) {
             fAltEncodingButton.setSelection(true);
             fDefaultEncodingButton.setSelection(false);

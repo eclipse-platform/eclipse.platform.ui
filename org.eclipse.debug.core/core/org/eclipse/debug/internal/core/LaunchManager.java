@@ -865,7 +865,30 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fLaunchConfigurationIndex.clear();
 		}
 	}
-			
+		
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getEncoding(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public String getEncoding(ILaunchConfiguration configuration) throws CoreException {
+		String encoding = configuration.getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
+		if(encoding == null) {
+			IResource[] resources = configuration.getMappedResources();
+			if(resources != null && resources.length > 0) {
+				IResource res = resources[0];
+				if(res instanceof IFile) {
+					return ((IFile)res).getCharset();
+				}
+				else if(res instanceof IContainer) { 
+					return ((IContainer)res).getDefaultCharset();
+				}
+			}
+			else {
+				return ResourcesPlugin.getEncoding();
+			}
+		}
+		return encoding;
+	}
+	
 	/**
 	 * The launch config name cache is cleared when a config is added, deleted or changed.
 	 */

@@ -140,7 +140,25 @@ public interface ILaunchManager {
 	 * unable to resolve a variable in an environment variable's value
 	 * @since 3.0
 	 */
-	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;	
+	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException;
+	/**
+	 * This method returns the character encoding to use when launching the specified <code>ILaunchConfiguration</code>.
+	 * The returned encoding can be derived from one of three places in the following order:
+	 * <ol> 
+	 * <li>An attribute saved on the configuration itself (where no attribute means use the default encoding).</li>
+	 * <li>The mapped resources for the configuration, in the event one of them has a specific encoding that 
+	 * is not the workspace default. If there are more than one mapped resource we optimistically ask only the first resource
+	 * for its encoding.</li>
+	 * <li>We ask the <code>ResourcesPlugin</code> for the workspace preference (which resolves back to the system
+	 * property <code>file.encoding</code> if the user has made no changes to the workspace encoding preference).</li>
+	 * </ol>
+	 * @param configuration the <code>ILaunchConfiguration</code> to get the encoding for
+	 * @return the encoding to use when launching the specified <code>ILaunchConfiguration</code>
+	 * @throws CoreException
+	 * 
+	 * @since 3.4
+	 */
+	public String getEncoding(ILaunchConfiguration configuration) throws CoreException;
 	/**
 	 * Returns a handle to the launch configuration contained
 	 * in the specified file. The file is not verified to exist

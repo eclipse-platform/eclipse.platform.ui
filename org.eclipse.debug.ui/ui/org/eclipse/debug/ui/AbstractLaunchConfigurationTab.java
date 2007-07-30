@@ -35,7 +35,6 @@ import org.eclipse.swt.widgets.Shell;
  * @since 2.0
  */
 public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigurationTab {
-//	 TODO Add in access methods for createGroup, createLabel and createSingleText from SWTFactory post 3.2 API freeze
 	
 	/**
 	 * The control for this page, or <code>null</code>
