@@ -28,10 +28,12 @@ import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -185,6 +187,21 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				showWithMarker(editor, file, offset, length);
 			}
 		}
+	}
+	
+	protected void handleOpen(OpenEvent event) {
+		Object firstElement= ((IStructuredSelection)event.getSelection()).getFirstElement();
+		if (firstElement instanceof IFile) {
+			if (getDisplayedMatchCount(firstElement) == 0) {
+				try {
+					fEditorOpener.open((IFile) firstElement, false);
+				} catch (PartInitException e) {
+					ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus()); 
+				}
+				return;
+			}
+		}
+		super.handleOpen(event);
 	}
 	
 	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {

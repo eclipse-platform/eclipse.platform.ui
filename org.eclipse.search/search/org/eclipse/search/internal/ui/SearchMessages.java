@@ -21,6 +21,8 @@ public final class SearchMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String FileSearchPage_open_file_dialog_title;
+	public static String FileSearchPage_open_file_failed;
 	public static String FileTextSearchScope_scope_empty;
 	public static String FileTextSearchScope_scope_single;
 	public static String FileTextSearchScope_scope_double;
