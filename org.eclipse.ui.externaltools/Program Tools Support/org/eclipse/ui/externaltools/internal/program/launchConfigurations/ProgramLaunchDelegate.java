@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Keith Seitz (keiths@redhat.com) - environment variables contribution (Bug 27243)
+ *     dakshinamurthy.karra@gmail.com - bug 165371
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
@@ -16,6 +17,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,6 +37,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuildTab;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -165,11 +168,11 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		if (p != null) {
 			monitor.beginTask(NLS.bind(ExternalToolsProgramMessages.ProgramLaunchDelegate_3, new String[] {configuration.getName()}), IProgressMonitor.UNKNOWN);
 			process = DebugPlugin.newProcess(launch, p, location.toOSString(), processAttributes);
-			if (process == null) {
+		}
+		if (p == null || process == null) {
+			if (p != null)
 				p.destroy();
-				throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, ExternalToolsProgramMessages.ProgramLaunchDelegate_4, null));
-			}
-			
+			throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, ExternalToolsProgramMessages.ProgramLaunchDelegate_4, null));
 		}
 		process.setAttribute(IProcess.ATTR_CMDLINE, generateCommandLine(cmdLine));
 		
@@ -226,4 +229,18 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		return buf.toString();
 	}	
 	
+    /* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
+	 */
+	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
+		IProject[] projects = ExternalToolsBuildTab.getBuildProjects(configuration, null);
+		if (projects == null) {
+			return null ;
+		}
+		boolean isRef = ExternalToolsBuildTab.isIncludeReferencedProjects(configuration, null);
+		if (isRef) {
+			return computeReferencedBuildOrder(projects);
+		}
+		return computeBuildOrder(projects);
+	}
 }

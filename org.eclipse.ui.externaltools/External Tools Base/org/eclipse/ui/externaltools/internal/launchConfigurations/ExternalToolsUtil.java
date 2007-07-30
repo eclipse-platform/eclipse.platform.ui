@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Keith Seitz (keiths@redhat.com) - Bug 27243 (environment variables contribution)
+ *     dakshinamurthy.karra@gmail.com - bug 165371
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
@@ -172,7 +173,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if an exception occurs while retrieving the resources
 	 */
 	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration) throws CoreException {
-		String scope = configuration.getAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String) null);
+		String scope = configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String) null);
 		if (scope == null) {
 			return null;
 		}

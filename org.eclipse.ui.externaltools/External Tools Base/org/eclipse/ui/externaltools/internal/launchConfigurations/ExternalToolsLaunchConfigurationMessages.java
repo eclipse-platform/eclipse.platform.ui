@@ -1,11 +1,12 @@
 /**********************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * dakshinamurthy.karra@gmail.com - bug 165371
  **********************************************************************/
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
@@ -36,6 +37,17 @@ public class ExternalToolsLaunchConfigurationMessages extends NLS {
 	public static String ExternalToolsMainTab_30;
 	public static String ExternalToolsMainTab_31;
 	public static String ExternalToolsMainTab_32;
+
+	public static String ExternalToolsBuildTab_1;
+	public static String ExternalToolsBuildTab_2;
+	public static String ExternalToolsBuildTab_3;
+	public static String ExternalToolsBuildTab_4;
+	public static String ExternalToolsBuildTab_5;
+	public static String ExternalToolsBuildTab_6;
+	public static String ExternalToolsBuildTab_7;
+	public static String ExternalToolsBuildTab_8;
+	public static String ExternalToolsBuildTab_9;
+
 
 	public static String ExternalToolsUtil_Location_not_specified_by__0__1;
 	public static String ExternalToolsUtil_invalidLocation__0_;

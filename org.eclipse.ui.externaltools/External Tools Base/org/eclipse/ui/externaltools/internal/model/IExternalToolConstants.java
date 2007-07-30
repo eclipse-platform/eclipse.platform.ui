@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     dakshinamurthy.karra@gmail.com - bug 165371
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.model;
 
@@ -93,7 +94,12 @@ public interface IExternalToolConstants {
 	 * Main tab image.
 	 */
 	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
-	
+
+	/**
+	 * Build tab image
+	 */
+	public static final String IMG_TAB_BUILD = PLUGIN_ID + ".IMG_TAB_BUILD"; //$NON-NLS-1$
+
 	// ------- Launch configuration types --------
 	/**
 	 * Program launch configuration type identifier.
@@ -158,9 +164,8 @@ public interface IExternalToolConstants {
 	 * external tool to run. Default value is <code>null</code>
 	 * indicating that the builder will be triggered for all changes.
 	 */
-	public static final String ATTR_BUILD_SCOPE = PLUGIN_ID + ".ATTR_BUILD_SCOPE"; //$NON-NLS-1$
+	public static final String ATTR_BUILDER_SCOPE = PLUGIN_ID + ".ATTR_BUILD_SCOPE"; //$NON-NLS-1$
 		
-	
 	/**
 	 * String attribute containing an array of build kinds for which an
 	 * external tool builder should be run.
@@ -210,4 +215,17 @@ public interface IExternalToolConstants {
 	 * @since 3.1
 	 */
 	public static final String ATTR_TRIGGERS_CONFIGURED = PLUGIN_ID + ".ATTR_TRIGGERS_CONFIGURED";		 //$NON-NLS-1$
+
+	/**
+	 * String attribute identifying the build scope for a launch configuration.
+	 * <code>null</code> indicates the default workspace build.
+	 */
+	public static final String ATTR_BUILD_SCOPE = PLUGIN_ID + ".ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE"; //$NON-NLS-1$
+
+	/**
+	 * Attribute identifier specifying whether referenced projects should be 
+	 * considered when computing the projects to build. Default value is
+	 * <code>true</code>.
+	 */
+	public static final String ATTR_INCLUDE_REFERENCED_PROJECTS = PLUGIN_ID + ".ATTR_INCLUDE_REFERENCED_PROJECTS"; //$NON-NLS-1$
 }

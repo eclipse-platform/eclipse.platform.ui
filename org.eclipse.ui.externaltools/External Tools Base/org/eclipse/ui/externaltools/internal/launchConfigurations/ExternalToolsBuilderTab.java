@@ -5,9 +5,9 @@
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
- * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     dakshinamurthy.karra@gmail.com - bug 165371
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
@@ -316,7 +316,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		String buildScope= null;
 		try {
 			buildKindString= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, ""); //$NON-NLS-1$
-			buildScope= configuration.getAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
+			buildScope= configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String)null);
 		} catch (CoreException e) {
 		}
 		
@@ -426,9 +426,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         }
 		if (workingSetButton.getSelection()) {
 			String scope = RefreshTab.getRefreshAttribute(workingSet);
-			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, scope);
+			configuration.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, scope);
 		} else {
-			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);
+			configuration.setAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String)null);
 		}
 		configuration.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, fLaunchInBackgroundButton.getSelection());
         
