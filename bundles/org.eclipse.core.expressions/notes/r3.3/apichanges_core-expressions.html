@@ -1,0 +1,90 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <meta name="Author" content="IBM">
+  <title>Core Expressions Breaking API changes</title>
+  <link rel="stylesheet" href="http://dev.eclipse.org/default_style.css"
+ type="text/css">
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">
+<font color="#8080ff" size="-2">core expressions</font>
+<p>This document lists the breaking API changes that occurred between
+R3.2 and R3.3 and
+how to migrate from the R3.2 API to the R3.3 API.
+</p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>core expressions -
+Breaking API changes from R3.2 to R3.3</b></font> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      None
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Non-breaking API changes">
+  <tbody>
+    <tr>
+      <td align="left" width="72%"> <font size="+3"><b>core expressions -
+Non-breaking API changes from R3.2 to R3.3</b></font> <br>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      New API in <code>org.eclipse.core.expressions.ElementHandler</code>:
+      <ul>
+        <li>
+          <code>Expression create(ExpressionConverter converter, Element element) throws CoreException</code>
+        </li>
+        <li>
+          <code>processChildren(ExpressionConverter converter, Element element, CompositeExpression expression) throws CoreException</code>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      New API in <code>org.eclipse.core.expressions.ExpressionConverter</code>:
+      <ul>
+        <li>
+          <code>Expression perform(Element root) throws CoreException</code>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      New API constants in <code>org.eclipse.core.expressions.ExpressionTagNames</code>:
+      <ul>
+        <li>
+          <code>REFERENCE</code>
+        </li>
+      </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      New API classes in package <code>org.eclipse.core.expressions</code>:
+      <ul>
+        <li>
+          <code>IIterable</code>
+        </li>
+        <li>
+          <code>ICountable</code>
+        </li>
+      </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+</body>
+</html>
+
