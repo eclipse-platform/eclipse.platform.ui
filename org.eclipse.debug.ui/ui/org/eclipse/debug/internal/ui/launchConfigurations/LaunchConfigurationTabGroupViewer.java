@@ -734,12 +734,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fOptionsLink.setVisible(visible);
 		if(visible) {
 			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
-			fTabComposite.layout();
 		}
 		else {
 			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
 		}
-		fTabPlaceHolder.layout(true);
+		fTabPlaceHolder.layout(true, true);
 	}
 	
     /**

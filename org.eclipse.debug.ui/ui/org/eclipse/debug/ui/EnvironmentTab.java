@@ -29,12 +29,11 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.MultipleInputDialog;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.EnvironmentVariable;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -47,7 +46,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -61,7 +59,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -82,25 +79,14 @@ import com.ibm.icu.text.MessageFormat;
 public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 	protected TableViewer environmentTable;
-	protected String[] envTableColumnHeaders =
-	{
+	protected String[] envTableColumnHeaders = {
 		LaunchConfigurationsMessages.EnvironmentTab_Variable_1, 
 		LaunchConfigurationsMessages.EnvironmentTab_Value_2, 
-	};
-	protected ColumnLayoutData[] envTableColumnLayouts =
-	{
-		new ColumnWeightData(50),
-		new ColumnWeightData(50)
 	};
 	private static final String NAME_LABEL= LaunchConfigurationsMessages.EnvironmentTab_8; 
 	private static final String VALUE_LABEL= LaunchConfigurationsMessages.EnvironmentTab_9; 
 	protected static final String P_VARIABLE = "variable"; //$NON-NLS-1$
 	protected static final String P_VALUE = "value"; //$NON-NLS-1$
-	protected static String[] envTableColumnProperties =
-	{
-		P_VARIABLE,
-		P_VALUE
-	};
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
@@ -190,15 +176,9 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void createControl(Composite parent) {
 		// Create main composite
-		Composite mainComposite = new Composite(parent, SWT.NONE);
+		Composite mainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_HORIZONTAL);
 		setControl(mainComposite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		mainComposite.setLayout(layout);
-		mainComposite.setLayoutData(gridData);
-		mainComposite.setFont(parent.getFont());
 		
 		createEnvironmentTable(mainComposite);
 		createTableButtons(mainComposite);
@@ -208,27 +188,36 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
+	 * Sets the column widths
+	 * 
+	 * @since 3.4
+	 */
+	private void setColumnWidths() {
+		Table table = environmentTable.getTable();
+		int width = (table.getSize().x/2)-1;
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            if ((width <= 0) || (i == table.getColumnCount() - 1)) {
+                table.getColumn(i).pack();
+            } else {
+                table.getColumn(i).setWidth(width);
+            }
+        }
+	}
+	/**
 	 * Creates and configures the widgets which allow the user to
 	 * choose whether the specified environment should be appended
 	 * to the native environment or if it should completely replace it.
 	 * @param parent the composite in which the widgets should be created
 	 */
 	protected void createAppendReplace(Composite parent) {
-		Composite appendReplaceComposite= new Composite(parent, SWT.NONE);
-		GridData gridData= new GridData();
-		gridData.horizontalSpan= 2;
-		GridLayout layout= new GridLayout();
-		appendReplaceComposite.setLayoutData(gridData);
-		appendReplaceComposite.setLayout(layout);
-		appendReplaceComposite.setFont(parent.getFont());
-		
-		appendEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.EnvironmentTab_16); 
+		Composite comp = SWTFactory.createComposite(parent, 1, 2, GridData.FILL_HORIZONTAL);
+		appendEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_16); 
 		appendEnvironment.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		replaceEnvironment= createRadioButton(appendReplaceComposite, LaunchConfigurationsMessages.EnvironmentTab_17); 
+		replaceEnvironment= createRadioButton(comp, LaunchConfigurationsMessages.EnvironmentTab_17); 
 	}
 	
 	/**
@@ -247,34 +236,22 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @param parent the composite in which the table should be created
 	 */
 	protected void createEnvironmentTable(Composite parent) {
-		Font font= parent.getFont();
+		Font font = parent.getFont();
+		// Create label, add it to the parent to align the right side buttons with the top of the table
+		SWTFactory.createLabel(parent, LaunchConfigurationsMessages.EnvironmentTab_Environment_variables_to_set__3, 2);
 		// Create table composite
-		Composite tableComposite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 1;
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = 150;
-		tableComposite.setLayout(layout);
-		tableComposite.setLayoutData(gridData);
-		tableComposite.setFont(font);
-		// Create label
-		Label label = new Label(tableComposite, SWT.NONE);
-		label.setFont(font);
-		label.setText(LaunchConfigurationsMessages.EnvironmentTab_Environment_variables_to_set__3); 
+		Composite tableComposite = SWTFactory.createComposite(parent, font, 1, 1, GridData.FILL_BOTH, 0, 0);
 		// Create table
 		environmentTable = new TableViewer(tableComposite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		Table table = environmentTable.getTable();
-		TableLayout tableLayout = new TableLayout();
-		table.setLayout(tableLayout);
+		table.setLayout(new GridLayout());
 		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
 		table.setFont(font);
-		gridData = new GridData(GridData.FILL_BOTH);
-		environmentTable.getControl().setLayoutData(gridData);
+		environmentTable.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		environmentTable.setContentProvider(new EnvironmentVariableContentProvider());
 		environmentTable.setLabelProvider(new EnvironmentVariableLabelProvider());
-		environmentTable.setColumnProperties(envTableColumnProperties);
+		environmentTable.setColumnProperties(new String[] {P_VARIABLE, P_VALUE});
 		environmentTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTableSelectionChanged(event);
@@ -288,12 +265,10 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		// Create columns
-		for (int i = 0; i < envTableColumnHeaders.length; i++) {
-			tableLayout.addColumnData(envTableColumnLayouts[i]);
-			TableColumn tc = new TableColumn(table, SWT.NONE, i);
-			tc.setResizable(envTableColumnLayouts[i].resizable);
-			tc.setText(envTableColumnHeaders[i]);
-		}
+		TableColumn tc = new TableColumn(table, SWT.NONE, 0);
+		tc.setText(envTableColumnHeaders[0]);
+		tc = new TableColumn(table, SWT.NONE, 1);
+		tc.setText(envTableColumnHeaders[1]);
 	}
 	
 	/**
@@ -312,25 +287,15 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	protected void createTableButtons(Composite parent) {
 		// Create button composite
-		Composite buttonComposite = new Composite(parent, SWT.NONE);
-		GridLayout glayout = new GridLayout();
-		glayout.marginHeight = 0;
-		glayout.marginWidth = 0;
-		glayout.numColumns = 1;
-		GridData gdata = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
-		buttonComposite.setLayout(glayout);
-		buttonComposite.setLayoutData(gdata);
-		buttonComposite.setFont(parent.getFont());
+		Composite buttonComposite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END, 0, 0);
 
-		createVerticalSpacer(buttonComposite, 1);
 		// Create buttons
 		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null); 
-		envAddButton.addSelectionListener(new SelectionAdapter()
-		{
+		envAddButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvAddButtonSelected();
 			}
-				});
+		});
 		envSelectButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_18, null); 
 		envSelectButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
@@ -338,16 +303,14 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 		envEditButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Edit_5, null); 
-		envEditButton.addSelectionListener(new SelectionAdapter()
-		{
+		envEditButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvEditButtonSelected();
 			}
 		});
 		envEditButton.setEnabled(false);
 		envRemoveButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Remove_6, null); 
-		envRemoveButton.addSelectionListener(new SelectionAdapter()
-		{
+		envRemoveButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleEnvRemoveButtonSelected();
 			}
@@ -527,8 +490,9 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		}
 		updateEnvironment(configuration);
 		updateAppendReplace();
+		setColumnWidths();
 	}
-
+	
 	/**
 	 * Stores the environment in the given configuration
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
@@ -579,6 +543,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 */
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing when activated
+		setColumnWidths();
 	}
 
 	/* (non-Javadoc)
