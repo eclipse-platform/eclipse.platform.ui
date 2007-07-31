@@ -47,7 +47,7 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 		private ArrayList fCachedMatches;
 		
-		private static final int MAX_LINE_CONTEXT= 70;
+		private static final int MAX_LINE_CONTEXT= 80;
 		private static final int MAX_LINE_LENGTH= 250;
 		
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
@@ -85,7 +85,11 @@ public class FileSearchQuery implements ISearchQuery {
 				if (!Character.isWhitespace(ch))
 					lineStart= i;
 			}
+			StringBuffer buf= new StringBuffer();
 			
+			if (lineStart == min) {
+				buf.append("..."); //$NON-NLS-1$
+			}
 			int lineEnd= matchEnd;
 			int max= Math.min(matchRequestor.getFileContentLength(), lineEnd + MAX_LINE_CONTEXT);
 			for (int i= lineEnd; i < max; i++) {
@@ -96,7 +100,6 @@ public class FileSearchQuery implements ISearchQuery {
 					lineEnd= i + 1;
 			}
 			
-			StringBuffer buf= new StringBuffer();
 			appendString(matchRequestor, lineStart, matchOffset, buf);
 			int offsetWithinLine= buf.length();
 			int lineLength= lineEnd - lineStart;
