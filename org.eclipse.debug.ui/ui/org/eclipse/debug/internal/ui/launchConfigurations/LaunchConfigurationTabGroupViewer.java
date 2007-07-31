@@ -986,8 +986,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected void refreshStatus() {
 		if (!fInitializingTabs) {
-			getLaunchConfigurationDialog().updateButtons();
-			getLaunchConfigurationDialog().updateMessage();
+			LaunchConfigurationsDialog lcd = (LaunchConfigurationsDialog) getLaunchConfigurationDialog();
+			lcd.refreshStatus();
 		}
 	}	
 	

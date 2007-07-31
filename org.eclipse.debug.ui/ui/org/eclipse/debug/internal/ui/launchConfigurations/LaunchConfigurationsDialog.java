@@ -130,7 +130,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected static final Point DEFAULT_INITIAL_DIALOG_SIZE = new Point(800, 640);
 	/**
-	 * defines some default sashweights when we have a new workspace
+	 * defines some default sash weights when we have a new workspace
 	 * @since 3.2
 	 */
 	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] {190, 610};
