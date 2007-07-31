@@ -25,6 +25,8 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 	private Action labelSortingAction;
 	private Action locationSortingAction;
 	private Action hostSortingAction;
+	// action for switching between asc/desc sorting order
+	private Action reverseSortingOrderAction;
 
 	/**
 	 * Current comparator set.
@@ -51,7 +53,8 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 
 		this.comparatorUpdater = comparatorUpdater;
 		labelSortingAction = new Action(
-				CVSUIMessages.RepositoriesSortingActionGroup_label, Action.AS_RADIO_BUTTON) {
+				CVSUIMessages.RepositoriesSortingActionGroup_label,
+				Action.AS_RADIO_BUTTON) {
 			public void run() {
 				if (labelSortingAction.isChecked())
 					setComparator(orderByLabelComparator);
@@ -65,22 +68,42 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 					setComparator(orderByLocationComparator);
 			}
 		};
-		hostSortingAction = new Action(CVSUIMessages.RepositoriesSortingActionGroup_host,
+		hostSortingAction = new Action(
+				CVSUIMessages.RepositoriesSortingActionGroup_host,
 				Action.AS_RADIO_BUTTON) {
 			public void run() {
 				if (hostSortingAction.isChecked())
 					setComparator(orderByHostComparator);
 			}
 		};
+		reverseSortingOrderAction = new Action(
+				CVSUIMessages.RepositoriesSortingActionGroup_descending,
+				Action.AS_CHECK_BOX) {
+			public void run() {
+				switchOrder(comparator);
+			}
+		};
 		// set sorting by label as default
-		setComparator(orderByLabelComparator);
+		setSelectedComparator(orderByLabelComparator);
 		labelSortingAction.setChecked(true);
+		reverseSortingOrderAction.setChecked(!orderByLabelComparator.isAscending());
 	}
 
 	/* package */void setComparator(RepositoryComparator newComparator) {
 		RepositoryComparator oldComparator = this.comparator;
+		// preserve sorting order
+		if (oldComparator != null)
+			newComparator.setAscending(oldComparator.isAscending());
 		this.comparator = newComparator;
 		firePropertyChange(newComparator, oldComparator);
+	}
+
+	private void switchOrder(RepositoryComparator currentComparator) {
+		RepositoryComparator oldComparator = this.comparator;
+		RepositoryComparator switchedComparator = currentComparator
+				.getReversedComparator();
+		this.comparator = switchedComparator;
+		firePropertyChange(switchedComparator, oldComparator);
 	}
 
 	private void firePropertyChange(RepositoryComparator newComparator,
@@ -113,31 +136,22 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 		sortSubmenu.add(labelSortingAction);
 		sortSubmenu.add(locationSortingAction);
 		sortSubmenu.add(hostSortingAction);
+		sortSubmenu.add(new Separator());
+		sortSubmenu.add(reverseSortingOrderAction);
 	}
 
-	public void setSelectedComparator(String selectedComparator) {
-		
-		//uncheck all
-		labelSortingAction.setChecked(false);
-		locationSortingAction.setChecked(false);
-		hostSortingAction.setChecked(false);
-		
-		try {
-			switch (Integer.parseInt(selectedComparator)) {
-			case RepositoryComparator.ORDER_LOCATION:
-				locationSortingAction.setChecked(true);
-				firePropertyChange(orderByLocationComparator, null);
-				return;
-			case RepositoryComparator.ORDER_HOST:
-				hostSortingAction.setChecked(true);
-				firePropertyChange(orderByHostComparator, null);
-				return;
-			}
-		} catch (NumberFormatException e) {
-			// ignore
-		}
-		// default comparator
-		labelSortingAction.setChecked(true);
-		firePropertyChange(orderByLabelComparator, null);
+	public void setSelectedComparator(RepositoryComparator selectedComparator) {
+		this.comparator = selectedComparator;
+
+		labelSortingAction
+				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_DEFAULT);
+		locationSortingAction
+				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_LOCATION);
+		hostSortingAction
+				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_HOST);
+
+		reverseSortingOrderAction.setChecked(!selectedComparator.isAscending());
+
+		firePropertyChange(comparator, null);
 	}
 }

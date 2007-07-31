@@ -25,23 +25,45 @@ public class RepositoryComparator extends ViewerComparator {
 
 	public static final int ORDER_LOCATION = 1;
 	
-	public static final int ORDER_HOST = 2; 
+	public static final int ORDER_HOST = 2;
+
+	private int orderBy = ORDER_DEFAULT;
 	
-	private int order = ORDER_DEFAULT;
+	private boolean ascending = true;
+	
+	public RepositoryComparator(int order, boolean ascending) {
+		super();
+		this.orderBy = order;
+		this.ascending = ascending;
+	}
 	
 	public RepositoryComparator(int order) {
 		super();
-		this.order = order;
+		this.orderBy = order;
+		// default sorting order is ascending
 	}
 	
 	public RepositoryComparator() {
 		super();
+		// default is sort by label ascending
 	}
 	
-	public int getOrder() {
-		return order;
+	public int getOrderBy() {
+		return orderBy;
 	}
 	
+	public void setOrder(int orderBy) {
+		this.orderBy = orderBy;
+	}
+	
+	public void setAscending(boolean ascending) {
+		this.ascending = ascending;
+	}
+	
+	public boolean isAscending() {
+		return ascending;
+	}
+
 	public int category(Object element) {
 		if (element instanceof ICVSRemoteFolder) {
 			if (((ICVSRemoteFolder)element).isDefinedModule()) {
@@ -124,19 +146,24 @@ public class RepositoryComparator extends ViewerComparator {
 			ICVSRepositoryLocation rl1 = rr1.getRoot();
 			ICVSRepositoryLocation rl2 = rr2.getRoot();
 			
-			switch (order) {
-			case ORDER_DEFAULT:
-				// for default order use super.compare
-				break;
+			int compareResult = 0;
+			switch (orderBy) {
 			case ORDER_HOST:
-				if (rl1.getHost().compareTo(rl2.getHost()) != 0)
-					return rl1.getHost().compareTo(rl2.getHost());
-				// no break
-			// add other cases here
+				compareResult = rl1.getHost().compareTo(rl2.getHost());
+				if (compareResult != 0)
+					break;
 			case ORDER_LOCATION:
+				compareResult = rl1.getLocation(false).compareTo(
+						rl2.getLocation(false));
+				if (compareResult != 0)
+					break;
+				// add other cases here
+			case ORDER_DEFAULT:
+				// for default order use super.compare (i.e. compare labels)
 			default:
-				return (rl1.getLocation(false).compareTo(rl2.getLocation(false)));
+				compareResult = super.compare(viewer, o1, o2);
 			}
+			return ascending ? compareResult : -compareResult;
 		}
 		
 		return super.compare(viewer, o1, o2);
@@ -152,5 +179,19 @@ public class RepositoryComparator extends ViewerComparator {
 		if (tag2 == null) return -1;
 		return tag2.compareTo(tag1);
 	}
+	
+	/**
+	 * Returns a reversed RepositoryComparator. 
+	 * 
+	 * @return A comparator which sorts repositories by the same criterion but
+	 *         in a reversed order.
+	 */
+	public RepositoryComparator getReversedComparator() {
+		RepositoryComparator repositoryComparator = new RepositoryComparator(
+				orderBy);
+		repositoryComparator.setAscending(!this.ascending);
+		return repositoryComparator;
+	}
+
 }
 

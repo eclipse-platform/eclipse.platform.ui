@@ -61,8 +61,9 @@ public class RepositoriesView extends RemoteViewPart {
 	
 	private RepositoriesSortingActionGroup repositoriesSortingActionGroup;
 	private IDialogSettings dialogSettings;
-	private static final String SELECTED_COMPARATOR = "selectedComparator"; //$NON-NLS-1$
-	private String savedComparator;
+	private static final String SELECTED_ORDER_BY = "selectedOrderBy"; //$NON-NLS-1$
+	private static final String SELECTED_SORTING_ORDER = "selectedSortingOrder"; //$NON-NLS-1$
+	private RepositoryComparator savedComparator = RepositoriesSortingActionGroup.orderByLabelComparator;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
@@ -133,10 +134,9 @@ public class RepositoriesView extends RemoteViewPart {
     }
     
     RepositoryDragSourceListener repositoryDragSourceListener;
-	
+
 	/**
 	 * Constructor for RepositoriesView.
-	 * @param partName
 	 */
 	public RepositoriesView() {
 		super(VIEW_ID);		
@@ -145,7 +145,19 @@ public class RepositoriesView extends RemoteViewPart {
 		if (dialogSettings == null) {
 			dialogSettings = workbenchSettings.addNewSection(VIEW_ID);
 		}
-		savedComparator = dialogSettings.get(SELECTED_COMPARATOR);
+		
+		try {
+			// parse the values
+			String selectedOrderBy = dialogSettings.get(SELECTED_ORDER_BY);
+			String selectedSortingOrder = dialogSettings.get(SELECTED_SORTING_ORDER);
+			
+			int orderBy = Integer.parseInt(selectedOrderBy);
+			boolean ascending = Boolean.valueOf(selectedSortingOrder).booleanValue();
+			
+			savedComparator = new RepositoryComparator(orderBy, ascending);
+		} catch (NumberFormatException e) {
+			// ignore, use default comparator
+		}
 	}
 
 	/**
@@ -219,7 +231,7 @@ public class RepositoriesView extends RemoteViewPart {
 		IActionBars bars = getViewSite().getActionBars();
 		bars.setGlobalActionHandler(ActionFactory.DELETE.getId(), removeAction);
 		
-		// Working Set action group
+		// Sort By action group
 		IPropertyChangeListener comparatorUpdater = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 String property = event.getProperty();
@@ -227,20 +239,21 @@ public class RepositoriesView extends RemoteViewPart {
                         .equals(property)) {
                     Object newValue = event.getNewValue();
                     getViewer().setComparator((ViewerComparator) newValue);
-                    saveSelectedComparator(((RepositoryComparator) newValue).getOrder()+""); //$NON-NLS-1$
+                    saveSelectedComparator((RepositoryComparator) newValue);
                 }
             }
-
         };
 		setActionGroup(new RepositoriesSortingActionGroup(shell, comparatorUpdater));
+		// restore comparator selection
 		getRepositoriesSortingActionGroup().setSelectedComparator(savedComparator);
 		
 		super.contributeActions();
 	}
 	
-	private void saveSelectedComparator(String selectedComparator) {
+	private void saveSelectedComparator(RepositoryComparator selectedComparator) {
 		if (dialogSettings != null) {
-			dialogSettings.put(SELECTED_COMPARATOR, selectedComparator);
+			dialogSettings.put(SELECTED_ORDER_BY, selectedComparator.getOrderBy());
+			dialogSettings.put(SELECTED_SORTING_ORDER, selectedComparator.isAscending());
 		}
 	}
 	

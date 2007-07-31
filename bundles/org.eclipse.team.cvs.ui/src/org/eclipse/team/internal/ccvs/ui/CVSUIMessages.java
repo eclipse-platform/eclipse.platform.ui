@@ -100,6 +100,7 @@ public class CVSUIMessages extends NLS {
 	public static String RepositoriesSortingActionGroup_label;
 	public static String RepositoriesSortingActionGroup_location;
 	public static String RepositoriesSortingActionGroup_sortBy;
+	public static String RepositoriesSortingActionGroup_descending;
 	public static String ShowAnnotationOperation_QDAnnotateMessage;
 	public static String ShowAnnotationOperation_QDAnnotateTitle;
 	public static String SyncAction_1;
