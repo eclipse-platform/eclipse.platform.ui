@@ -87,7 +87,7 @@ public class FileSearchQuery implements ISearchQuery {
 			}
 			StringBuffer buf= new StringBuffer();
 			
-			if (lineStart == min) {
+			if (lineStart == min && lineStart != 0) {
 				buf.append("..."); //$NON-NLS-1$
 			}
 			int lineEnd= matchEnd;
