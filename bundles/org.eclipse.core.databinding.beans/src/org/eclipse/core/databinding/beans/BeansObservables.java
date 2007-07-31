@@ -81,7 +81,7 @@ final public class BeansObservables {
 			String propertyName) {
 		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(),
 				propertyName);
-		return new JavaBeanObservableValue(realm, bean, descriptor, null);
+		return new JavaBeanObservableValue(realm, bean, descriptor);
 	}
 
 	/**

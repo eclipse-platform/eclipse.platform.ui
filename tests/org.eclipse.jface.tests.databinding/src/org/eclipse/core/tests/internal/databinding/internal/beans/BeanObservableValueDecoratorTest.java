@@ -42,7 +42,7 @@ public class BeanObservableValueDecoratorTest extends AbstractDefaultRealmTestCa
 				Bean.class);
 		observableValue = new JavaBeanObservableValue(
 				SWTObservables.getRealm(Display.getDefault()), bean,
-				propertyDescriptor, String.class);
+				propertyDescriptor);
 		decorator = new BeanObservableValueDecorator(
 				observableValue, new WritableValue(bean, Object.class), observableValue
 						.getPropertyDescriptor());
