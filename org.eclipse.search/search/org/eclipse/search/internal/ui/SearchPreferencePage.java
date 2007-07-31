@@ -94,7 +94,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(TEXT_SEARCH_ENGINE, ""); //default search engine is empty string //$NON-NLS-1$
 		store.setDefault(TEXT_SEARCH_QUERY_PROVIDER, ""); // default query provider is empty string  //$NON-NLS-1$
 		store.setDefault(LIMIT_HISTORY, 10);
-		store.setDefault(COLORED_LABELS, false);
+		store.setDefault(COLORED_LABELS, true);
 	}
 
 
@@ -130,7 +130,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 			getFieldEditorParent());
 		addField(fEmphasizedCheckbox);
 		
-		addField(new BooleanFieldEditor(COLORED_LABELS, "Show colored labels in file search (experimental)", getFieldEditorParent()));
+		addField(new BooleanFieldEditor(COLORED_LABELS, SearchMessages.SearchPreferencePage_colored_labels, getFieldEditorParent()));
 
 		fColorEditor= new ColorFieldEditor(
 			POTENTIAL_MATCH_FG_COLOR,

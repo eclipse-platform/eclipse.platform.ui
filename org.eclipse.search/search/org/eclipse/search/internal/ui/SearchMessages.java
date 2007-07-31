@@ -66,6 +66,7 @@ public final class SearchMessages extends NLS {
 	public static String SearchManager_resourceChanged;
 	public static String SearchManager_resourceDeleted;
 	public static String SearchManager_updating;
+	public static String SearchPreferencePage_colored_labels;
 	public static String SearchResultView_title;
 	public static String SearchResultView_titleWithDescription;
 	public static String SearchResultView_matches;
