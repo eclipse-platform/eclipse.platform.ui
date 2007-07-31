@@ -511,11 +511,14 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	public void writeMarkerDebugString(StringBuffer buffer) {
+		Map markerDeltas = deltaInfo.getMarkerDeltas();
+		if (markerDeltas == null || markerDeltas.isEmpty())
+			return;
 		buffer.append('[');
-		for (Iterator e = deltaInfo.getMarkerDeltas().keySet().iterator(); e.hasNext();) {
+		for (Iterator e = markerDeltas.keySet().iterator(); e.hasNext();) {
 			IPath key = (IPath) e.next();
 			if (getResource().getFullPath().equals(key)) {
-				IMarkerSetElement[] deltas = ((MarkerSet) deltaInfo.getMarkerDeltas().get(key)).elements();
+				IMarkerSetElement[] deltas = ((MarkerSet) markerDeltas.get(key)).elements();
 				boolean addComma = false;
 				for (int i = 0; i < deltas.length; i++) {
 					IMarkerDelta delta = (IMarkerDelta) deltas[i];
