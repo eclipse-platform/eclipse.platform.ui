@@ -1113,6 +1113,7 @@
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionAndMessageField"
+            filterClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionFieldFilter"
             id="org.eclipse.ui.ide.severityAndDescriptionField"
             name="%Field.Description">
       </markerField>

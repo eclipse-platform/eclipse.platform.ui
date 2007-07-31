@@ -21,10 +21,20 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class FilterConfigurationArea {
 	
+	private MarkerField field;
+
 	/**
 	 * Create the contents of the configuration area in the parent.
 	 * @param parent
 	 */
 	public abstract void createContents(Composite parent);
+
+	/**
+	 * Get the title for the receiver.
+	 * @return
+	 */
+	public String getTitle() {
+		return field.getColumnHeaderText();
+	}
 
 }

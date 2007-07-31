@@ -430,12 +430,25 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Toggle the enabled state of the filter for group.
+	 * 
 	 * @param group
 	 */
 	public void toggleFilter(MarkerFieldFilterGroup group) {
 		getGenerator().toggleFilter(group);
 		scheduleMarkerUpdate();
-		
+
 	}
 
+	/**
+	 * Update the receiver for a change in selection.
+	 * 
+	 * @param newElements
+	 */
+	public void updateForNewSelection(Object[] newElements) {
+		if (generator.updateNeeded(newElements)) {
+			generator.updateFocusElements(newElements);
+			scheduleMarkerUpdate();
+		}
+
+	}
 }

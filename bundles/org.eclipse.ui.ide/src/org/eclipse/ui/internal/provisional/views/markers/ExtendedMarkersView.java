@@ -15,14 +15,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -36,6 +41,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeAdapter;
@@ -49,7 +55,9 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
@@ -60,6 +68,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
+import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
  * The ExtendedMarkersView is the view that shows markers using the
@@ -214,6 +223,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 		getSite().setSelectionProvider(viewer);
 
+		// Initialise any selection based filtering
+		ISelectionListener listener = getPageSelectionListener();
+		getSite().getPage().addSelectionListener(listener);
+		listener.selectionChanged(getSite().getPage().getActivePart(),
+				getSite().getPage().getSelection());
+
 		viewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
 				IMarker[] markers = getSelectedMarkers();
@@ -288,6 +303,101 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		});
 
+	}
+
+	/**
+	 * Return the selection listener for the page selection change.
+	 * 
+	 * @return
+	 */
+	private ISelectionListener getPageSelectionListener() {
+		return new ISelectionListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
+			 *      org.eclipse.jface.viewers.ISelection)
+			 */
+			public void selectionChanged(IWorkbenchPart part,
+					ISelection selection) {
+
+				List selectedElements = new ArrayList();
+				if (part instanceof IEditorPart) {
+					IEditorPart editor = (IEditorPart) part;
+					IFile file = ResourceUtil.getFile(editor.getEditorInput());
+					if (file == null) {
+						IEditorInput editorInput = editor.getEditorInput();
+						if (editorInput != null) {
+							Object mapping = editorInput
+									.getAdapter(ResourceMapping.class);
+							if (mapping != null) {
+								selectedElements.add(mapping);
+							}
+						}
+					} else {
+						selectedElements.add(file);
+					}
+				} else {
+					if (selection instanceof IStructuredSelection) {
+						for (Iterator iterator = ((IStructuredSelection) selection)
+								.iterator(); iterator.hasNext();) {
+							Object object = iterator.next();
+							if (object instanceof IAdaptable) {
+								ITaskListResourceAdapter taskListResourceAdapter;
+								Object adapter = ((IAdaptable) object)
+										.getAdapter(ITaskListResourceAdapter.class);
+								if (adapter != null
+										&& adapter instanceof ITaskListResourceAdapter) {
+									taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
+								} else {
+									taskListResourceAdapter = getDefaultTaskListAdapter();
+								}
+
+								IResource resource = taskListResourceAdapter
+										.getAffectedResource((IAdaptable) object);
+								if (resource == null) {
+									Object mapping = ((IAdaptable) object)
+											.getAdapter(ResourceMapping.class);
+									if (mapping != null) {
+										selectedElements.add(mapping);
+									}
+								} else {
+									selectedElements.add(resource);
+								}
+							}
+						}
+					}
+				}
+				builder.updateForNewSelection(selectedElements.toArray());
+			}
+
+			/**
+			 * Get an ITaskListResourceAdapter for use by the default/
+			 * 
+			 * @return ITaskListResourceAdapter
+			 */
+			private ITaskListResourceAdapter getDefaultTaskListAdapter() {
+				return new ITaskListResourceAdapter() {
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
+					 */
+					public IResource getAffectedResource(IAdaptable adaptable) {
+						Object resource = adaptable.getAdapter(IResource.class);
+						if (resource == null)
+							resource = adaptable.getAdapter(IFile.class);
+						if (resource == null)
+							return null;
+						return (IResource) resource;
+
+					}
+
+				};
+			}
+
+		};
 	}
 
 	/*
@@ -674,26 +784,10 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Open the filters dialog for the receiver.
 	 */
 	public void openFiltersDialog() {
-		// Open a config dialog
-		// DialogMarkerFilter dialog = createFiltersDialog();
-		//
-		// if (dialog.open() == Window.OK) {
-		//
-		// MarkerFieldFilterGroup[] result = dialog.getFilters();
-		// if (result == null)
-		// return;
-		//
-		// if (result.length == 0)
-		// builder
-		// .getGenerator()
-		// .setFilters(
-		// new MarkerFilter[] {
-		// createFilter(MarkerMessages.MarkerFilter_defaultFilterName) });
-		// else
-		// builder.getGenerator().setFilters(result);
-		//
-		// }
-
+		Dialog dialog = new FiltersConfigurationDialog(new SameShellProvider(
+				getSite().getWorkbenchWindow().getShell()), builder
+				.getGenerator().getAllFilters());
+		dialog.open();
 	}
 
 	/**
@@ -717,11 +811,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Add group to the enabled filters.
+	 * 
 	 * @param group
 	 */
 	public void toggleFilter(MarkerFieldFilterGroup group) {
 		builder.toggleFilter(group);
-		
+
 	}
 
 }

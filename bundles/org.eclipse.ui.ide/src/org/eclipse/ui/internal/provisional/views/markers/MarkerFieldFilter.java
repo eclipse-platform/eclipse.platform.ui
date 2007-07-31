@@ -25,9 +25,9 @@ public abstract class MarkerFieldFilter {
 	/**
 	 * Return whether or not marker should be filtered by the receiver.
 	 * @param marker
-	 * @return boolean <code>true</code> if the marker should not be shown.
+	 * @return boolean <code>true</code> if the marker should be shown.
 	 */
-	public abstract boolean filter(IMarker marker);
+	public abstract boolean select(IMarker marker);
 	
 	/**
 	 * Initialise the receiver with the values in the values Map.
@@ -37,5 +37,4 @@ public abstract class MarkerFieldFilter {
 	public void initialize(Map values){
 		//Do nothing by default
 	}
-
 }

@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.provisional.views.markers;
 import java.net.URL;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
@@ -43,6 +44,7 @@ class MarkerUtilities {
 	static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 
 	static final MarkerItem[] EMPTY_MARKER_ITEM_ARRAY = new MarkerItem[0];
+	static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	
 
 	/**

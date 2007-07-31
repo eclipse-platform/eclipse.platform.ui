@@ -424,6 +424,16 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="filterConfigurationClass" type="string">
+            <annotation>
+               <documentation>
+                  The filterConfigurationClass is an optional area that is used for configuration of the field in a filter dialog.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

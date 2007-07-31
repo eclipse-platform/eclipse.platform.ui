@@ -21,10 +21,14 @@ import java.util.List;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -59,6 +63,7 @@ public class MarkerContentGenerator {
 	private MarkerField[] sortFields;
 	private MarkerField[] visibleFields;
 	private IWorkingSet workingSet;
+	private IResource[] focusResources = MarkerUtilities.EMPTY_RESOURCE_ARRAY;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -78,7 +83,7 @@ public class MarkerContentGenerator {
 	private Collection computeAllMarkers(SubProgressMonitor subMonitor) {
 		Collection allMarkers = new HashSet();
 		findMarkers(allMarkers, new IResource[] { ResourcesPlugin
-				.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
+				.getWorkspace().getRoot() }, null, IResource.DEPTH_INFINITE,
 				subMonitor);
 		return allMarkers;
 	}
@@ -98,27 +103,27 @@ public class MarkerContentGenerator {
 		switch (filterType) {
 		case MarkerFieldFilterGroup.ON_ANY: {
 			findMarkers(returnMarkers, new IResource[] { ResourcesPlugin
-					.getWorkspace().getRoot() }, IResource.DEPTH_INFINITE,
-					subMonitor);
+					.getWorkspace().getRoot() }, filterGroup,
+					IResource.DEPTH_INFINITE, subMonitor);
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_SELECTED_ONLY: {
-			findMarkers(returnMarkers, getFocusResources(),
+			findMarkers(returnMarkers, focusResources, filterGroup,
 					IResource.DEPTH_ZERO, subMonitor);
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN: {
-			findMarkers(returnMarkers, getFocusResources(),
+			findMarkers(returnMarkers, focusResources, filterGroup,
 					IResource.DEPTH_INFINITE, subMonitor);
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
-			findMarkers(returnMarkers, getProjects(getFocusResources()),
-					IResource.DEPTH_INFINITE, subMonitor);
+			findMarkers(returnMarkers, getProjects(focusResources),
+					filterGroup, IResource.DEPTH_INFINITE, subMonitor);
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_WORKING_SET: {
-			findMarkers(returnMarkers, getResourcesInWorkingSet(),
+			findMarkers(returnMarkers, getResourcesInWorkingSet(), filterGroup,
 					IResource.DEPTH_INFINITE, subMonitor);
 		}
 		}
@@ -131,11 +136,13 @@ public class MarkerContentGenerator {
 	 * @param results
 	 *            The Collection to add new entries to
 	 * @param resources
-	 * @param markerTypeId
+	 * @param group
+	 *            the group to filter on. May be <code>null</code>.
+	 * @param markerType
 	 * @param depth
 	 */
 	private void findMarkers(Collection results, IResource[] resources,
-			int depth, IProgressMonitor monitor) {
+			MarkerFieldFilterGroup group, int depth, IProgressMonitor monitor) {
 		if (resources == null) {
 			return;
 		}
@@ -225,8 +232,8 @@ public class MarkerContentGenerator {
 			while (iter.hasNext()) {
 				MarkerType markerType = (MarkerType) iter.next();
 				try {
-					// Only search for subtypes of the marker if we found all of
-					// its subtypes in the filter criteria.
+					// Only search for sub-types of the marker if we found all of
+					// its sub-types in the filter criteria.
 					IMarker[] markers = resource.findMarkers(
 							markerType.getId(), includeAllSubtypes
 									.contains(markerType), depth);
@@ -235,10 +242,9 @@ public class MarkerContentGenerator {
 
 					for (int idx = 0; idx < markers.length; idx++) {
 						MarkerItem marker;
-
 						marker = new MarkerEntry(markers[idx]);
-
-						results.add(marker);
+						if (group == null || group.select(markers[idx]))
+							results.add(marker);
 					}
 				} catch (CoreException e) {
 					StatusManager.getManager().handle(e.getStatus());
@@ -287,7 +293,7 @@ public class MarkerContentGenerator {
 					.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
 			for (int i = 0; i < filterReferences.length; i++) {
 				MarkerFieldFilterGroup filter = new MarkerFieldFilterGroup(
-						filterReferences[i]);
+						filterReferences[i], this);
 				if (filter != null)
 					filters.add(filter);
 			}
@@ -345,16 +351,6 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Return the current focused resources.
-	 * 
-	 * @return
-	 */
-	private IResource[] getFocusResources() {
-		// TODO tie this to the selection
-		return new IResource[0];
-	}
-
-	/**
 	 * Return the id of the receiver.
 	 * 
 	 * @return String
@@ -402,7 +398,8 @@ public class MarkerContentGenerator {
 	 * @return String
 	 */
 	public String getName() {
-		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_NAME);
+		return configurationElement
+				.getAttribute(MarkerUtilities.ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -526,13 +523,107 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Add group to the enabled filters.
+	 * 
 	 * @param group
 	 */
 	public void toggleFilter(MarkerFieldFilterGroup group) {
 		Collection enabled = getEnabledFilters();
-		if(enabled.remove(group))//true if it was present
+		if (enabled.remove(group))// true if it was present
 			return;
 		enabled.add(group);
+	}
+
+	/**
+	 * Return whether or not the list contains a resource that will require
+	 * regeneration.
+	 * 
+	 * @return boolean <code>true</code> if regeneration is required.
+	 */
+	boolean updateNeeded(Object[] newElements) {
+
+		Iterator filters = getEnabledFilters().iterator();
+
+		while (filters.hasNext()) {
+			MarkerFieldFilterGroup filter = (MarkerFieldFilterGroup) filters
+					.next();
+
+			int scope = filter.getScope();
+			if (scope == MarkerFieldFilterGroup.ON_ANY
+					|| scope == MarkerFieldFilterGroup.ON_WORKING_SET)
+				continue;
+
+			if (newElements == null || newElements.length < 1)
+				continue;
+
+			if (focusResources.length == 0)
+				return true; //We had nothing now we have something
+
+			if (Arrays.equals(focusResources, newElements))
+				continue;
+
+			if (scope == MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER) {
+				Collection oldProjects = MarkerFieldFilterGroup
+						.getProjectsAsCollection(focusResources);
+				Collection newProjects = MarkerFieldFilterGroup
+						.getProjectsAsCollection(newElements);
+
+				if (oldProjects.size() == newProjects.size()
+						&& newProjects.containsAll(oldProjects))
+					continue;
+				return true;//Something must be different
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Update the focus resources from list. If there is an update required
+	 * return <code>true</code>. This method assumes that there are filters
+	 * on resources enabled.
+	 * 
+	 * @param elements
+	 */
+	void updateFocusElements(Object[] elements) {
+		Collection resourceCollection = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof IResource) {
+				resourceCollection.add(elements[i]);
+			} else {
+				addResources(resourceCollection,
+						((ResourceMapping) elements[i]));
+			}
+		}
+
+		focusResources = new IResource[resourceCollection.size()];
+		resourceCollection.toArray(focusResources);
+	}
+
+	/**
+	 * Add the resources in resourceMapping to the resourceCollection
+	 * 
+	 * @param resourceCollection
+	 * @param resourceMapping
+	 */
+	private void addResources(Collection resourceCollection,
+			ResourceMapping resourceMapping) {
+
+		try {
+			ResourceTraversal[] traversals = resourceMapping.getTraversals(
+					ResourceMappingContext.LOCAL_CONTEXT,
+					new NullProgressMonitor());
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				IResource[] result = traversal.getResources();
+				for (int j = 0; j < result.length; j++) {
+					resourceCollection.add(result[j]);
+				}
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+
 	}
 
 }

@@ -40,19 +40,9 @@ public abstract class MarkerField {
 	 * Constant to indicate an descending sort direction.
 	 */
 	public static final int DESCENDING = -1;
+	private static final String ATTRIBUTE_FILTER_CLASS = "filterClass"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
 	IConfigurationElement configurationElement;
-
-	//
-	// /**
-	// * @return String the description of the field.
-	// */
-	// String getDescription();
-	//
-	// /**
-	// * @return the image associated with the description of the field or
-	// <code>null<code>.
-	// */
-	// Image getDescriptionImage();
 
 	/**
 	 * @return The text to be displayed in the column header for this field.
@@ -157,16 +147,36 @@ public abstract class MarkerField {
 	/**
 	 * Generate the filter for the receiver from the configurationElement.
 	 * 
-	 * @return MarkerFieldFilter
+	 * @return MarkerFieldFilter or <code>null</code>.
 	 */
-	public MarkerFieldFilter generateFilter() {
+	MarkerFieldFilter generateFilter() {
 		try {
+			if (configurationElement.getAttribute(ATTRIBUTE_FILTER_CLASS) == null)
+				return null;
 			return (MarkerFieldFilter) IDEWorkbenchPlugin.createExtension(
-					configurationElement, MarkerUtilities.ATTRIBUTE_CLASS);
+					configurationElement, ATTRIBUTE_FILTER_CLASS);
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
 			return null;
 		}
 	}
 
+	/**
+	 * Create a FilterConfigurationArea for the receiver.
+	 * 
+	 * @return FilterConfigurationArea or <code>null</code>
+	 */
+	FilterConfigurationArea generateFilterArea() {
+		try {
+			if (configurationElement
+					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null)
+				return null;
+			return (FilterConfigurationArea) IDEWorkbenchPlugin
+					.createExtension(configurationElement,
+							ATTRIBUTE_FILTER_CONFIGURATION_CLASS);
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return null;
+		}
+	}
 }
