@@ -281,7 +281,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		
 		refresh(subscriber, project);
 		IEditorInput input = openEditor(subscriber, project.getFile("file1.txt"));
-		ModelParticipantSyncInfoSource.getParticipant(subscriber).dispose();
+		getSyncInfoSource().disposeSubscriber(subscriber);
 		assertEditorClosed(input);
 	}
 	
@@ -299,7 +299,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		String contents = "this is the file contents";
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
-		ModelParticipantSyncInfoSource.getParticipant(subscriber).dispose();
+		getSyncInfoSource().disposeSubscriber(subscriber);
 		assertEditorOpen(input, subscriber);
 	}
 	

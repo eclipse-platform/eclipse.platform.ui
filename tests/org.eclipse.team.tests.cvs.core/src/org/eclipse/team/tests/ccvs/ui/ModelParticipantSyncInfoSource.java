@@ -171,16 +171,24 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 	
 	public void waitForCollectionToFinish(Subscriber subscriber) {
 		ModelSynchronizeParticipant family = getParticipant(subscriber);
-		while (waitUntilFamilyDone(subscriber) 
-				|| waitUntilFamilyDone(family)
-				|| waitUntilFamilyDone(family.getContext())
-				|| waitUntilFamilyDone(family.getContext().getScope())
-				|| waitUntilFamilyDone(((SynchronizationContext)family.getContext()).getScopeManager())) {
-			// just keep looping until we no longer wait for any jobs
+		if (family == null) {
+			while (waitUntilFamilyDone(subscriber)) {
+				// just keep looping until we no longer wait for any jobs
+			}
+		} else {
+			while (waitUntilFamilyDone(subscriber) 
+					|| waitUntilFamilyDone(family)
+					|| waitUntilFamilyDone(family.getContext())
+					|| waitUntilFamilyDone(family.getContext().getScope())
+					|| waitUntilFamilyDone(((SynchronizationContext)family.getContext()).getScopeManager())) {
+				// just keep looping until we no longer wait for any jobs
+			}
 		}
 	}
 
 	private boolean waitUntilFamilyDone(Object family) {
+		if (family == null)
+			return false;
 		Job[] jobs = Platform.getJobManager().find(family);
 		boolean waited = false;
 		for (int i = 0; i < jobs.length; i++) {
@@ -342,6 +350,12 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		ModelSynchronizeParticipant participant = new ModelCompareParticipant(CompareSubscriberContext.createContext(createScopeManager(resource, s), s));
 		showParticipant(participant);
 		return s;
+	}
+	
+	public void disposeSubscriber(Subscriber subscriber) {
+		ISynchronizeParticipant participant = getParticipant(subscriber);
+		ISynchronizeManager synchronizeManager = TeamUI.getSynchronizeManager();
+		synchronizeManager.removeSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
 	}
 	
 	public void mergeResources(Subscriber subscriber, IResource[] resources, boolean allowOverwrite) throws TeamException {

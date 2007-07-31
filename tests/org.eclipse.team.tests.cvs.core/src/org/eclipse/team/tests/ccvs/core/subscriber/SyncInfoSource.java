@@ -55,6 +55,10 @@ public class SyncInfoSource {
 		return subscriber;
 	}
 	
+	public void disposeSubscriber(Subscriber subscriber) {
+		// Nothing to do
+	}
+	
 	public Subscriber createWorkspaceSubscriber() throws TeamException {
 		return CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
 	}
