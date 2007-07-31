@@ -93,7 +93,7 @@ public abstract class CompositeSourceContainer extends AbstractSourceContainer {
 				if (single == null) {
 					single = e;
 				} else if (multiStatus == null) {
-					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
+					multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
 					multiStatus.add(e.getStatus());
 				} else {
 					multiStatus.add(e.getStatus());

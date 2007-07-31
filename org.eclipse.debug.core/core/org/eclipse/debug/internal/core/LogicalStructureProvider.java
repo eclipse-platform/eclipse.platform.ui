@@ -36,11 +36,11 @@ public class LogicalStructureProvider {
 		fConfigurationElement= element;
 		fModelIdentifier= fConfigurationElement.getAttribute(IConfigurationElementConstants.MODEL_IDENTIFIER);
 		if (fModelIdentifier == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_0, null));
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LogicalStructureProvider_0, null));
 		}
 		String className= fConfigurationElement.getAttribute(IConfigurationElementConstants.CLASS);
 		if (className == null) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LogicalStructureProvider_1, null));
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LogicalStructureProvider_1, null));
 		}
 	}
 	

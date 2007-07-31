@@ -40,7 +40,7 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);
 		throw new CoreException(status);
 	}
 	
@@ -53,7 +53,7 @@ public abstract class AbstractSourceContainer extends PlatformObject implements 
 	 * @since 3.3
 	 */	
 	protected void warn(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.WARNING, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		IStatus status = new Status(IStatus.WARNING, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);
 		throw new CoreException(status);
 	}
 	

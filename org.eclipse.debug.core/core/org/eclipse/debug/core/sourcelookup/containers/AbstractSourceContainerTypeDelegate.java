@@ -35,7 +35,7 @@ public abstract class AbstractSourceContainerTypeDelegate implements ISourceCont
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);
 		throw new CoreException(status);
 	}
 	

@@ -75,7 +75,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	 * @throws CoreException
 	 */
 	private void missingAttribute(String attrName) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_1, new String[]{attrName}), null));
+		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LogicalStructureType_1, new String[]{attrName}), null));
 	}
 	
 	/* (non-Javadoc)

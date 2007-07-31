@@ -86,7 +86,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			if(obj instanceof ILaunchConfigurationDelegate) {
 				fDelegate = (ILaunchConfigurationDelegate)obj;
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Launch delegate for {0} does not implement required interface ILaunchConfigurationDelegate.", new String[]{getId()}), null)); //$NON-NLS-1$
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, MessageFormat.format(DebugCoreMessages.LaunchDelegate_3, new String[]{getId()}), null)); 
 			}
 		}
 		return fDelegate;

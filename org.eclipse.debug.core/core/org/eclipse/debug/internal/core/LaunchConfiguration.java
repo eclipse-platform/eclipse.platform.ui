@@ -183,7 +183,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 			setLocation(location);
 			if (location == null) {
-				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_1, new String[]{path}), DebugPlugin.INTERNAL_ERROR, null); 
+				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.LaunchConfiguration_1, new String[]{path}), DebugPlugin.ERROR, null); 
 				throw new CoreException(s);
 			}
 			return;
@@ -432,7 +432,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		List types = getAttribute(ATTR_MAPPED_RESOURCE_TYPES, (List)null);
 		if (types == null || types.size() != paths.size()) {
-			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.INTERNAL_ERROR, null)); 
+			throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null)); 
 		}
 		ArrayList list = new ArrayList();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -443,7 +443,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			try {
 				type = Integer.decode(typeStr).intValue();
 			} catch (NumberFormatException e) {
-				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.INTERNAL_ERROR, e)); 
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, e)); 
 			}
 			IPath path = Path.fromPortableString(pathStr);
 			IResource res = null;
@@ -461,7 +461,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				res = root;
 				break;
 			default:
-				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.INTERNAL_ERROR, null));
+				throw new CoreException(newStatus(DebugCoreMessages.LaunchConfiguration_0, DebugPlugin.ERROR, null));
 			}
 			if(res != null) {
 				list.add(res);
@@ -644,7 +644,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    		if (handler != null) {
 	    			handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
 	    		}
-	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchConfiguration_11, null); 
+	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_11, null); 
 	    		throw new CoreException(status);
 	    	} else {
 	    		ILaunchDelegate del = getPreferredDelegate(modes);
@@ -667,13 +667,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 						}
 						else {
 							monitor.setCanceled(true);
-							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
+							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
 				    		throw new CoreException(status);
 						}
 					}
 					else {
 						monitor.setCanceled(true);
-						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
+						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
 			    		throw new CoreException(status);
 					}
 	    		}
@@ -696,7 +696,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			} else {
 				// ensure the launch mode is valid
 				if (!mode.equals(launch.getLaunchMode())) {
-					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
+					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, 
 							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_14, new String[]{mode, launch.getLaunchMode()}), null); 
 					throw new CoreException(status);
 				}

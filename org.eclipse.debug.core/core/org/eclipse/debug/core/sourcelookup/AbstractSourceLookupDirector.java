@@ -148,7 +148,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 					if (single == null) {
 						single = e;
 					} else if (multiStatus == null) {
-						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
+						multiStatus = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, new IStatus[]{single.getStatus()}, SourceLookupMessages.Source_Lookup_Error, null); 
 						multiStatus.add(e.getStatus());
 					} else {
 						multiStatus.add(e.getStatus());
@@ -225,7 +225,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);
 		throw new CoreException(status);
 	}
 	

@@ -57,7 +57,7 @@ public class SourceContainerType implements ISourceContainerType {
 		if (this.equals(container.getType())) {
 			return getDelegate().getMemento(container);
 		}
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, SourceLookupMessages.SourceContainerType_0, null); 
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, SourceLookupMessages.SourceContainerType_0, null); 
 		throw new CoreException(status);
 	}
 	/* (non-Javadoc)

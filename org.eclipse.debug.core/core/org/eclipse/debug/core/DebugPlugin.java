@@ -200,9 +200,16 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_LAUNCH_OPTIONS = "launchOptions"; //$NON-NLS-1$
 	
 	/**
-	 * Status code indicating an unexpected internal error.
+	 * Status code indicating an unexpected error.
 	 */
-	public static final int INTERNAL_ERROR = 120;		
+	public static final int ERROR = 120;	
+	
+	/**
+	 * Status code indicating an unexpected internal error.  Internal errors 
+	 * should never be displayed to the user in dialogs or status text.
+	 * Internal error messages are not translated.
+	 */
+	public static final int INTERNAL_ERROR = 125;	
 
 	/**
 	 * Status code indicating that the Eclipse runtime does not support
@@ -790,7 +797,7 @@ public class DebugPlugin extends Plugin {
 				p= Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
-		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_0, e); 
+		    Status status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_0, e); 
 		    throw new CoreException(status);
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory			
@@ -882,7 +889,7 @@ public class DebugPlugin extends Plugin {
 		if (getDefault().isDebugging()) {
 			// this message is intentionally not externalized, as an exception may
 			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_2, new String[] {message}), null)); 
+			log(new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_2, new String[] {message}), null)); 
 		}
 	}
 	
@@ -893,7 +900,7 @@ public class DebugPlugin extends Plugin {
 	 * @param throwable the exception that occurred or <code>null</code> if none
 	 */
 	public static void logMessage(String message, Throwable throwable) {
-		log(new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, message, throwable));
+		log(new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, message, throwable));
 	}
 	
 	/**
@@ -913,7 +920,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_3, t);
+		IStatus status= new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_3, t);
 		log(status);
 	}
 	
@@ -962,13 +969,13 @@ public class DebugPlugin extends Plugin {
 			} else {
 				// invalid process factory
 				String badDefiner= infos[i].getContributor().getName();
-				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_4, new String[] {badDefiner, id}), null)); 
+				log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_4, new String[] {badDefiner, id}), null)); 
 			}
 		}			
 	}
 	
 	private void invalidStatusHandler(Exception e, String id) {
-		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_5, new String[] {id}), e));
+		log(new Status(IStatus.ERROR, DebugPlugin.PI_DEBUG_CORE, ERROR, MessageFormat.format(DebugCoreMessages.DebugPlugin_5, new String[] {id}), e));
 	}
 	
 	/**
@@ -1026,7 +1033,7 @@ public class DebugPlugin extends Plugin {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_6, exception); 
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_6, exception); 
 			log(status);
 		}
 
@@ -1056,11 +1063,11 @@ public class DebugPlugin extends Plugin {
 		public void handleException(Throwable exception) {
 			switch (fMode) {
 				case NOTIFY_FILTERS:
-					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_7, exception); 
+					IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_7, exception); 
 					log(status);
 					break;
 				case NOTIFY_EVENTS:				
-					status = new Status(IStatus.ERROR, getUniqueIdentifier(), INTERNAL_ERROR, DebugCoreMessages.DebugPlugin_8, exception); 
+					status = new Status(IStatus.ERROR, getUniqueIdentifier(), ERROR, DebugCoreMessages.DebugPlugin_8, exception); 
 					log(status);
 					break;
 			}
@@ -1198,7 +1205,7 @@ public class DebugPlugin extends Plugin {
 	 * @throws CoreException
 	 */
 	private static void abort(String message, Throwable exception) throws CoreException {
-		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
+		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, message, exception);
 		throw new CoreException(status);
 	}
 	

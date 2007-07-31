@@ -306,9 +306,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			String markerType = elements[i].getAttribute(IConfigurationElementConstants.MARKER_TYPE);
 			String className = elements[i].getAttribute(IConfigurationElementConstants.CLASS);
 			if (markerType == null) {
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: markerType", new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$ 
 			} else if (className == null){
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: class", new String[]{elements[i].getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: class", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				fBreakpointExtensions.put(markerType, elements[i]);
 			}
@@ -483,7 +483,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				breakpoint = (IBreakpoint)object;
 				breakpoint.setMarker(marker);
 			} else {
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format("Breakpoint extension {0} missing required attribute: class", new String[]{config.getAttribute(IConfigurationElementConstants.CLASS), config.getDeclaringExtension().getUniqueIdentifier()}), null)); //$NON-NLS-1$ 
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + config.getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: class", null)); //$NON-NLS-1$ //$NON-NLS-2$ 
 			}
 			return breakpoint;		
 		} catch (CoreException e) {

@@ -40,6 +40,8 @@ public class DebugCoreMessages extends NLS {
 	public static String DebugPlugin_1;
 	public static String EnvironmentVariableResolver_0;
 
+	public static String J9VMRunner_0;
+
 	public static String LaunchConfiguration_0;
 	public static String LaunchConfiguration_1;
 	public static String LaunchConfiguration_11;
@@ -76,6 +78,8 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchDelegate_0;
 	public static String LaunchDelegate_1;
 	public static String LaunchDelegate_2;
+
+	public static String LaunchDelegate_3;
 	
 	public static String LaunchManager_29;
 
