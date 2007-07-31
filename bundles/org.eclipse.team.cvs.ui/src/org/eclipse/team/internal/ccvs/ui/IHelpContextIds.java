@@ -33,6 +33,7 @@ public interface IHelpContextIds {
 	public static final String KEYBOARD_INTERACTIVE_DIALOG = PREFIX + "keyboard_interactive_dialog_context"; //$NON-NLS-1$
 	public static final String COMMIT_SET_DIALOG = PREFIX + "commit_set_dialog_context"; //$NON-NLS-1$
     public static final String TAG_UNCOMMITED_PROMPT = PREFIX + "tag_uncommmited_dialog_context"; //$NON-NLS-1$
+    public static final String ALTERNATIVE_REPOSITORY_DIALOG = PREFIX + "alternative_repository_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$

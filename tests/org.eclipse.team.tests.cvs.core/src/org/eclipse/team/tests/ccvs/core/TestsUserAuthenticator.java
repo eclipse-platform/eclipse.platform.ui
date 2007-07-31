@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
 
-import org.eclipse.team.internal.ccvs.core.*;
+import java.util.Map;
+
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.IUserAuthenticator;
+import org.eclipse.team.internal.ccvs.core.IUserInfo;
 
 /**
  * A test authenticator that provide defaults for all methods.
@@ -40,4 +45,8 @@ public class TestsUserAuthenticator implements IUserAuthenticator {
     public boolean promptForHostKeyChange(ICVSRepositoryLocation location) {
         return false;
     }
+
+	public Map promptToConfigureRepositoryLocations(Map alternativeMap) {
+		return null;
+	}
 }

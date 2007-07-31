@@ -353,6 +353,16 @@ public class CVSUIMessages extends NLS {
 	public static String CommitWizardFileTypePage_0;
 	public static String CommitWizardFileTypePage_2;
 	public static String CommitWizardFileTypePage_3;
+	
+	public static String ConfigureRepositoryLocationsWizard_title;
+	public static String ConfigureRepositoryLocationsWizard_message;
+	public static String ConfigureRepositoryLocationsWizard_createLocation;
+	public static String ConfigureRepositoryLocationsWizard_createLocationTooltip;
+	public static String ConfigureRepositoryLocationsWizard_column0;
+	public static String ConfigureRepositoryLocationsWizard_column1;
+	public static String ConfigureRepositoryLocationsWizard_showConnection;
+	public static String ConfigureRepositoryLocationsWizardDialog_finish;
+	
 
 	public static String CommitSyncAction_questionRelease;
 	public static String CommitSyncAction_titleRelease;
@@ -508,6 +518,15 @@ public class CVSUIMessages extends NLS {
 	public static String NewLocationWizard_validationFailedText;
 	public static String NewLocationWizard_validationFailedTitle;
 	public static String NewLocationWizard_exception;
+	
+	public static String AlternativeLocationWizard_title;
+	public static String AlternativeLocationWizard_heading;
+	public static String AlternativeLocationWizard_description;
+	public static String AlternativeLocationWizard_validationFailedText;
+	public static String AlternativeLocationWizard_validationFailedTitle;
+	public static String AlternativeLocationWizard_exception;
+	
+	public static String AlternativeConfigurationWizardMainPage_0;
 
 	public static String OpenLogEntryAction_deletedTitle;
 	public static String OpenLogEntryAction_deleted;

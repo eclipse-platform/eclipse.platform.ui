@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
+import java.util.Map;
+
 /**
  * IUserAuthenticators are used to ensure that the user
  * is validated for access to a given repository.  The
@@ -130,4 +132,21 @@ public interface IUserAuthenticator {
      * @return true if new host key should be accepted
      */
     public boolean promptForHostKeyChange(ICVSRepositoryLocation location);
+    
+    /**
+	 * If the project set contains only partial repository information (some of
+	 * location are unknown) we will display a dialog to associate each project
+	 * set repository with a known repository location or create a new one or at
+	 * last use the default locations.
+	 * 
+	 * @param alternativeMap
+	 *            a map of CVS repository locations form the project set (as
+	 *            keys) and a list of suggested alternative (known) CVS
+	 *            repository locations (as values)
+	 * @return a map of CVS repository locations from the project set (as keys)
+	 *         and confirmed CVS repository locations to be used during checkout
+	 *         (as values) or <code>null</code> if the operation is to be
+	 *         canceled
+	 */
+	public abstract Map promptToConfigureRepositoryLocations(Map alternativeMap);
 }

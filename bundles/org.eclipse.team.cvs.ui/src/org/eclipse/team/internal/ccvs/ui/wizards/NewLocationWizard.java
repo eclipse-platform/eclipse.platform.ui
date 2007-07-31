@@ -32,8 +32,8 @@ import org.eclipse.ui.*;
 
 public class NewLocationWizard extends Wizard implements INewWizard {
 	
-	private ConfigurationWizardMainPage mainPage;
-	private Properties properties = null;
+	protected ConfigurationWizardMainPage mainPage;
+	protected Properties properties = null;
 	private boolean switchPerspectives = true;
 	
 	/**
@@ -65,7 +65,7 @@ public class NewLocationWizard extends Wizard implements INewWizard {
 	 * Creates the wizard pages
 	 */
 	public void addPages() {
-		mainPage = new ConfigurationWizardMainPage("repositoryPage1", CVSUIMessages.NewLocationWizard_heading, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION)); //$NON-NLS-1$ 
+		mainPage = createMainPage();
 		if (properties != null) {
 			mainPage.setProperties(properties);
 		}
@@ -74,6 +74,11 @@ public class NewLocationWizard extends Wizard implements INewWizard {
 		mainPage.setDialogSettings(getDialogSettings());
 		addPage(mainPage);
 	}
+	
+	protected ConfigurationWizardMainPage createMainPage() {
+		return new ConfigurationWizardMainPage("repositoryPage1", CVSUIMessages.NewLocationWizard_heading, CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION)); //$NON-NLS-1$ 
+	}
+	
 	/*
 	 * @see IWizard#performFinish
 	 */

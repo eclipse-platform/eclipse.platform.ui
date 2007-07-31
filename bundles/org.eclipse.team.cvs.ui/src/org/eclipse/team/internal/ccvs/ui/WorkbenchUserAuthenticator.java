@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.Window;
@@ -321,4 +323,40 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
         }
         return openConfirm[0];
     }
+    
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#promptToConfigureRepositoryLocations(java.util.Map)
+	 */
+	public Map promptToConfigureRepositoryLocations(final Map alternativeMap) {
+		final Map[] result = new Map[1];
+		Display display = Display.getCurrent();
+		if (display != null) {
+			result[0] = openAlternativeRepositoryDialog(alternativeMap);
+		} else {
+			// sync exec in default thread
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					result[0] = openAlternativeRepositoryDialog(alternativeMap);
+				}
+			});
+		}
+		return result[0];
+	}
+	
+	/**
+	 * Opens the Alternative Repository Selection dialog.
+	 * 
+	 * @param alternativeMap
+	 * @return a map with selected repositories to use or <code>null</code>
+	 *         when canceled.
+	 */
+	private Map openAlternativeRepositoryDialog(Map alternativeMap) {
+		ConfigureRepositoryLocationsDialog dialog = new ConfigureRepositoryLocationsDialog(
+				null, alternativeMap);
+		int result = dialog.open();
+		return result == IDialogConstants.CANCEL_ID ? null : dialog
+				.getSelected();
+	}
 }

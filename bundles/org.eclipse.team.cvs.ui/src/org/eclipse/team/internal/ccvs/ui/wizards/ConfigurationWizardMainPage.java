@@ -525,7 +525,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	 * Validates the contents of the editable fields and set page completion 
 	 * and error messages appropriately.
 	 */
-	private void validateFields() {
+	protected void validateFields() {
 		String user = userCombo.getText();
 		IStatus status = validateUserName(user);
 		if (!isStatusOK(status)) {
