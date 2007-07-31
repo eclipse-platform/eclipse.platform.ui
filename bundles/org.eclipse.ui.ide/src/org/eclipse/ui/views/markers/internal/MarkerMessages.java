@@ -150,6 +150,7 @@ public class MarkerMessages extends NLS{
 
 	public static String completion_description;
 	public static String priority_description;
+	public static String severity_description;
 
 	public static String priority_high;
 	public static String priority_normal;

@@ -171,9 +171,12 @@ public abstract class MarkerField {
 			if (configurationElement
 					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null)
 				return null;
-			return (FilterConfigurationArea) IDEWorkbenchPlugin
+			FilterConfigurationArea area =  (FilterConfigurationArea) IDEWorkbenchPlugin
 					.createExtension(configurationElement,
 							ATTRIBUTE_FILTER_CONFIGURATION_CLASS);
+			if(area != null)
+				area.setField(this);
+			return area;
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
 			return null;

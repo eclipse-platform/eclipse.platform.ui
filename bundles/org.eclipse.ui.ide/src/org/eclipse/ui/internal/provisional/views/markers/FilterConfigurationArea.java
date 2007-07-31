@@ -14,27 +14,39 @@ package org.eclipse.ui.internal.provisional.views.markers;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * FilterConfigurationArea is the area that the user can configure
- * a filter in.
+ * FilterConfigurationArea is the area that the user can configure a filter in.
+ * 
  * @since 3.4
- *
+ * 
  */
 public abstract class FilterConfigurationArea {
-	
+
 	private MarkerField field;
 
 	/**
 	 * Create the contents of the configuration area in the parent.
+	 * 
 	 * @param parent
 	 */
 	public abstract void createContents(Composite parent);
 
 	/**
 	 * Get the title for the receiver.
+	 * 
 	 * @return
 	 */
 	public String getTitle() {
 		return field.getColumnHeaderText();
+	}
+
+	/**
+	 * Set the markerField for the receiver
+	 * 
+	 * @param markerField
+	 */
+	public void setField(MarkerField markerField) {
+		field = markerField;
+
 	}
 
 }

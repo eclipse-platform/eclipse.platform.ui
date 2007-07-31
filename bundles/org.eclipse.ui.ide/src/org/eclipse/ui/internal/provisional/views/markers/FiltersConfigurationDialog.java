@@ -19,6 +19,8 @@ import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -29,6 +31,7 @@ import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * FiltersConfigurationDialog is the dialog for configuring the filters for the
@@ -53,10 +56,17 @@ public class FiltersConfigurationDialog extends Dialog {
 		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 		 */
 		public void createContents(Composite parent) {
-			Label label = new Label(parent,SWT.NONE);
+			Label label = new Label(parent, SWT.NONE);
 			label.setText("Test"); //$NON-NLS-1$
-			
+		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#getTitle()
+		 */
+		public String getTitle() {
+			return MarkerMessages.severity_description;
 		}
 
 	}
@@ -69,7 +79,8 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * Create a new instance of the receiver on group.
 	 * 
 	 * @param parentShell
-	 * @param groups Collection of MarkerFieldFilterGroup
+	 * @param groups
+	 *            Collection of MarkerFieldFilterGroup
 	 */
 	public FiltersConfigurationDialog(IShellProvider parentShell,
 			Collection groups) {
@@ -97,10 +108,11 @@ public class FiltersConfigurationDialog extends Dialog {
 		form.setBackground(parent.getBackground());
 		form.getBody().setLayout(new GridLayout());
 
-		createFieldArea(toolkit,form, scopeArea);
+		createFieldArea(toolkit, form, scopeArea);
 		Iterator areas = getFilterGroup().getFieldFilterAreas().iterator();
 		while (areas.hasNext()) {
-			createFieldArea(toolkit,form, (FilterConfigurationArea) areas.next());
+			createFieldArea(toolkit, form, (FilterConfigurationArea) areas
+					.next());
 
 		}
 
@@ -109,11 +121,23 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	/**
 	 * Return a MarkerFieldFilterGroup
+	 * 
 	 * @return MarkerFieldFilterGroup
 	 */
 	private MarkerFieldFilterGroup getFilterGroup() {
-		//TODO use all of the groups
+		// TODO use all of the groups
 		return (MarkerFieldFilterGroup) filterGroups.iterator().next();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		Rectangle bounds = getShell().getDisplay().getBounds();
+		return new Point(Math.min(500, bounds.width / 3), Math.min(400,
+				bounds.height / 2));
 	}
 
 	/**
@@ -132,6 +156,13 @@ public class FiltersConfigurationDialog extends Dialog {
 		expandable.setBackground(form.getBackground());
 		expandable.setLayout(new GridLayout());
 		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		Composite sectionClient = toolkit.createComposite(expandable);
+		sectionClient.setLayout(new GridLayout());
+		sectionClient.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+		sectionClient.setBackground(form.getBackground());
+		area.createContents(sectionClient);
+		expandable.setClient(sectionClient);
 
 		expandable.addExpansionListener(new IExpansionListener() {
 			/*
@@ -140,11 +171,7 @@ public class FiltersConfigurationDialog extends Dialog {
 			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
 			 */
 			public void expansionStateChanged(ExpansionEvent e) {
-				Composite sectionClient = toolkit.createComposite(expandable);
-				sectionClient.setLayout(new GridLayout());
-				sectionClient.setBackground(form.getBackground());
-				area.createContents(sectionClient);
-				expandable.setClient(sectionClient);
+				
 			}
 
 			/*
