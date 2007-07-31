@@ -406,7 +406,13 @@ public class DetachedWindow implements IDragOverListener {
 		if (getShell() == null) {
 			create();
 		} 
-		 
+
+		// Re-parent the ViewPanes back to this shell
+		LayoutPart[] kids = getChildren();
+		for (int i = 0; i < kids.length; i++) {
+			kids[i].reparent((Composite)getControl());
+		}
+
 		Rectangle bounds = getShell().getBounds(); 
         getShell().setVisible(true);
 		 
