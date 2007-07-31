@@ -190,15 +190,17 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 	
 	protected void handleOpen(OpenEvent event) {
-		Object firstElement= ((IStructuredSelection)event.getSelection()).getFirstElement();
-		if (firstElement instanceof IFile) {
-			if (getDisplayedMatchCount(firstElement) == 0) {
-				try {
-					fEditorOpener.open((IFile) firstElement, false);
-				} catch (PartInitException e) {
-					ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus()); 
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			Object firstElement= ((IStructuredSelection)event.getSelection()).getFirstElement();
+			if (firstElement instanceof IFile) {
+				if (getDisplayedMatchCount(firstElement) == 0) {
+					try {
+						fEditorOpener.open((IFile) firstElement, false);
+					} catch (PartInitException e) {
+						ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus()); 
+					}
+					return;
 				}
-				return;
 			}
 		}
 		super.handleOpen(event);
