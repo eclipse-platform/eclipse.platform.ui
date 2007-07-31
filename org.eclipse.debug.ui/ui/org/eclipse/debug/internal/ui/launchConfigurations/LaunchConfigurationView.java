@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -383,7 +384,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		if (getViewer() instanceof StructuredViewer) {
 			((StructuredViewer)getViewer()).addDoubleClickListener(this);
 		}
-		fFilteredNotice = SWTFactory.createLabel(parent, "", 1); //$NON-NLS-1$
+		fFilteredNotice = SWTFactory.createLabel(parent, IInternalDebugUIConstants.EMPTY_STRING, 1);
 		fFilteredNotice.setBackground(parent.getBackground());
 	}
 	

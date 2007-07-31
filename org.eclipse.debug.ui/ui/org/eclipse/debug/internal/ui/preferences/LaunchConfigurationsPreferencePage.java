@@ -397,7 +397,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		DebugPlugin.getDefault().getPluginPreferences().setValue(
 				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection());
 		//save table
-		String types = ""; //$NON-NLS-1$
+		String types = IInternalDebugUIConstants.EMPTY_STRING;
 		TableItem[] items = fTable.getItems();
 		ILaunchConfigurationType type;
 		for(int i = 0; i < items.length; i++) {

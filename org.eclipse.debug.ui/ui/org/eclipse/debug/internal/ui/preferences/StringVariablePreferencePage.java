@@ -20,6 +20,7 @@ import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.MultipleInputDialog;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -662,17 +663,17 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 					case 1:
 						String value= variable.getValue(); 
 						if (value == null) {
-							value= ""; //$NON-NLS-1$
+							value= IInternalDebugUIConstants.EMPTY_STRING;
 						}
 						return value;
 					case 2:
 						String description= variable.getDescription();
 						if (description == null) {
-							description= ""; //$NON-NLS-1$
+							description= IInternalDebugUIConstants.EMPTY_STRING;
 						}
 						return description;
 					case 3:
-						String contribution = ""; //$NON-NLS-1$
+						String contribution = IInternalDebugUIConstants.EMPTY_STRING;
 						if (variable.isContributed()) {
                             String pluginId = getVariableManager().getContributingPluginId(variable.getUnderlyingVariable());
                             if (pluginId != null) {

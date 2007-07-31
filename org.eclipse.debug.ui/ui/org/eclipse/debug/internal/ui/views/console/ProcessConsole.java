@@ -48,6 +48,7 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -115,7 +116,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
      * @param encoding the desired encoding for this console
      */
     public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider, String encoding) {
-        super("", IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null, encoding, true); //$NON-NLS-1$
+        super(IInternalDebugUIConstants.EMPTY_STRING, IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null, encoding, true);
         fProcess = process;
 
         ILaunchConfiguration configuration = process.getLaunch().getLaunchConfiguration();

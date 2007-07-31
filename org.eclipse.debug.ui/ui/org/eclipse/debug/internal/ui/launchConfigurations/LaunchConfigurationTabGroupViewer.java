@@ -79,7 +79,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class LaunchConfigurationTabGroupViewer extends Viewer {
 
-	private final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * Containing launch dialog
 	 */
@@ -449,7 +448,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	public void setName(String name) {
 		if (getWorkingCopy() != null) {
 			if (name == null) {
-				fNameWidget.setText(EMPTY_STRING);
+				fNameWidget.setText(IInternalDebugUIConstants.EMPTY_STRING);
 			}
 			else {
 				fNameWidget.setText(name.trim());
@@ -690,7 +689,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		ILaunchConfigurationDialog lcd = getLaunchConfigurationDialog();
 		if(lcd instanceof LaunchConfigurationsDialog) {
 			if(((LaunchConfigurationsDialog)lcd).isTreeSelectionEmpty()) {
-				fDescription = EMPTY_STRING;
+				fDescription = IInternalDebugUIConstants.EMPTY_STRING;
 			}
 		}
 	}
@@ -819,7 +818,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fTabType = configType;
 		ILaunchConfigurationTab[] tabs = getTabs();
 		CTabItem tab = null;
-		String name = EMPTY_STRING;
+		String name = IInternalDebugUIConstants.EMPTY_STRING;
 		Control control = null;
 		for (int i = 0; i < tabs.length; i++) {
 			tab = new CTabItem(fTabFolder, SWT.BORDER);
@@ -861,7 +860,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			description = LaunchConfigurationPresentationManager.getDefault().getDescription(configType, mode);
 		}	
 		if (description == null) {
-			description = EMPTY_STRING;
+			description = IInternalDebugUIConstants.EMPTY_STRING;
 		}
 		return description;
 	}

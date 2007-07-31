@@ -109,8 +109,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
 	 * can be revertible. This attribute is not saveable and will never appear in a saved
@@ -360,7 +358,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
     private void createEncodingComponent(Composite parent) {
 	    Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.CommonTab_1, 2, 1, GridData.FILL_BOTH);
 	
-	    fDefaultEncodingButton = createRadioButton(group, "");  //$NON-NLS-1$
+	    fDefaultEncodingButton = createRadioButton(group, IInternalDebugUIConstants.EMPTY_STRING); 
 	    GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
 	    gd.horizontalSpan = 2;
 	    fDefaultEncodingButton.setLayoutData(gd);
@@ -438,7 +436,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	private String getDefaultSharedConfigLocation(ILaunchConfiguration config) {
-		String path = EMPTY_STRING;
+		String path = IInternalDebugUIConstants.EMPTY_STRING;
 		try {
 			IResource[] res = config.getMappedResources();
 			if(res != null) {
@@ -503,7 +501,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedEnabled(isShared);
 		fSharedLocationText.setText(getDefaultSharedConfigLocation(configuration));
 		if(isShared) {
-			String containerName = EMPTY_STRING;
+			String containerName = IInternalDebugUIConstants.EMPTY_STRING;
 			IFile file = configuration.getFile();
 			if (file != null) {
 				IContainer parent = file.getParent();

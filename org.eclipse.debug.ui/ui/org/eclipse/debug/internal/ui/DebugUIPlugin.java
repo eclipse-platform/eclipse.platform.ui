@@ -819,7 +819,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 		
-		monitor.beginTask("", 1); //$NON-NLS-1$
+		monitor.beginTask(IInternalDebugUIConstants.EMPTY_STRING, 1);
 		try
 		{
 			return configuration.launch(

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.core.sourcelookup.containers.ZipEntryStorage;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -58,7 +59,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 			buffer.append(storage.getArchive().getName());
 			return buffer.toString();
 		}
-		return ""; //$NON-NLS-1$
+		return IInternalDebugUIConstants.EMPTY_STRING;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
@@ -84,6 +85,6 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 			}
 			return buffer.toString();
 		}
-		return ""; //$NON-NLS-1$
+		return IInternalDebugUIConstants.EMPTY_STRING;
 	}
 }

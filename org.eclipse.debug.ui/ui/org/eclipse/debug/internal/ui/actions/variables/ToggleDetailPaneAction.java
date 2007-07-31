@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ public class ToggleDetailPaneAction extends Action {
 	private String fOrientation;
 
 	public ToggleDetailPaneAction(VariablesView view, String orientation, String hiddenLabel) {
-		super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+		super(IInternalDebugUIConstants.EMPTY_STRING, AS_RADIO_BUTTON);
 		setVariablesView(view);
 		setOrientation(orientation);
 				

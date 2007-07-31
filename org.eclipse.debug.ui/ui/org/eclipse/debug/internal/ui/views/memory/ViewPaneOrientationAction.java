@@ -25,7 +25,7 @@ class ViewPaneOrientationAction extends Action
 
 		ViewPaneOrientationAction(MemoryView view, int orientation)
 		{
-			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
+			super(IInternalDebugUIConstants.EMPTY_STRING, AS_RADIO_BUTTON);
 			fView = view;
 			fOrientation = orientation;
 			

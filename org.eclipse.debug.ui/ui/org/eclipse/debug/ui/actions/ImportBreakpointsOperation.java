@@ -153,7 +153,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		marker.setAttribute(IImportExportConstants.IE_NODE_TYPE, child.getString(IImportExportConstants.IE_NODE_TYPE));
 		marker.setAttribute(IImportExportConstants.CHARSTART, child.getString(IImportExportConstants.CHARSTART));
 		childnodes = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
-		String workingsets = ""; //$NON-NLS-1$
+		String workingsets = IInternalDebugUIConstants.EMPTY_STRING;
 		for (int j = 0; j < childnodes.length; j++) {
 			// get the attribute and try to convert it to either Integer, Boolean or leave it alone (String)
 			String name = childnodes[j].getString(IImportExportConstants.IE_NODE_NAME), 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
@@ -243,7 +244,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	private void storeRenderings()
 	{
 		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-		String renderingsStr= ""; //$NON-NLS-1$
+		String renderingsStr= IInternalDebugUIConstants.EMPTY_STRING;
 		try {
 			renderingsStr= getRenderingsAsXML();
 		} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 
 /**
  * A parition (subrange) of values of an indexed value 
@@ -68,7 +69,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	public String getValueString() {
-		return ""; //$NON-NLS-1$
+		return IInternalDebugUIConstants.EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)

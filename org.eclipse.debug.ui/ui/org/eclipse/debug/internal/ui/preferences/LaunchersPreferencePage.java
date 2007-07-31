@@ -24,6 +24,7 @@ import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.jface.preference.PreferencePage;
@@ -54,18 +55,15 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * This class provides a preference page for selecting and changing preferred launch delegates for those of them
  * that have conflicting delegates.
  * 
- * Delegates are considered to be conflicting if they are for the same launc configuraiton type, and apply to the same 
+ * Delegates are considered to be conflicting if they are for the same launch configuration type, and apply to the same 
  * mode sets.
  * 
  * @since 3.3
- * 
- * TODO create a help topic for this page....it needs a good description
- * 
  */
 public class LaunchersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
-	 * Class to collect and persist attributes to sufficiently describe a dupicate launch delegate
+	 * Class to collect and persist attributes to sufficiently describe a duplicate launch delegate
 	 */
 	class DuplicateDelegate {
 		private ILaunchConfigurationType fType = null;
@@ -222,7 +220,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 					fDescription.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
 				}
 				else {
-					fDescription.setText(""); //$NON-NLS-1$
+					fDescription.setText(IInternalDebugUIConstants.EMPTY_STRING);
 				}
 			}
 		});

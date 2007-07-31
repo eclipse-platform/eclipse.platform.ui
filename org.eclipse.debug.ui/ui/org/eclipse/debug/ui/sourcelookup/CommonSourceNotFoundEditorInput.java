@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.ui.sourcelookup;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -53,7 +54,7 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 			pres.dispose();
 		}
 		if (fLabel == null) {
-			fLabel = "";  //$NON-NLS-1$
+			fLabel = IInternalDebugUIConstants.EMPTY_STRING;
 		}
 	}	
 	

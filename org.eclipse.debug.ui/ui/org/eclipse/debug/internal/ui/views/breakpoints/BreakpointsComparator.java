@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -63,8 +64,8 @@ public class BreakpointsComparator extends ViewerComparator {
 			if (result != 0) {
 				return result;
 			}
-			String type1= ""; //$NON-NLS-1$
-			String type2= ""; //$NON-NLS-1$
+			String type1= IInternalDebugUIConstants.EMPTY_STRING;
+			String type2= IInternalDebugUIConstants.EMPTY_STRING;
 			IMarker marker1= b1.getMarker();
 			if (!marker1.exists()) {
 				return 0;

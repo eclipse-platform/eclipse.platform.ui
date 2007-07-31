@@ -14,6 +14,7 @@ import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
 import org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector;
@@ -249,7 +250,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 			 text = variable.getDescription();
 		}
 		if (text == null) {
-			text = ""; //$NON-NLS-1$
+			text = IInternalDebugUIConstants.EMPTY_STRING;
 		}
 		fArgumentText.setEnabled(argEnabled);
 		fArgumentButton.setEnabled(buttonEnabled);

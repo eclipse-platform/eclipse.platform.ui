@@ -149,11 +149,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		protected void createPanel(Composite parent, String heading) {
 			fMainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 			SWTFactory.createWrapLabel(fMainComposite, heading, 2);
-			fMessage = SWTFactory.createWrapLabel(fMainComposite, "", 2, 250); //$NON-NLS-1$
+			fMessage = SWTFactory.createWrapLabel(fMainComposite, IInternalDebugUIConstants.EMPTY_STRING, 2, 250);
 		}
 		
 		public void setMessage(String msg) {
-			fMessage.setText((msg == null ? "" : msg)); //$NON-NLS-1$
+			fMessage.setText((msg == null ? IInternalDebugUIConstants.EMPTY_STRING : msg));
 		}
 		
 		public void refreshPanel(IStructuredSelection selection) {
@@ -354,7 +354,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			fPerspectivesPanel.setMessage(DebugPreferencesMessages.LaunchPerspectivePreferencePage_1);
 			return;
 		}
-		fPerspectivesPanel.setMessage(""); //$NON-NLS-1$
+		fPerspectivesPanel.setMessage(IInternalDebugUIConstants.EMPTY_STRING);
 		List fmodes = null;
 		Combo combo = null;
 		Set smodes = null;
@@ -362,7 +362,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			smodes = (Set) iter.next();
 			fmodes = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(smodes);
 			if(!fmodes.isEmpty()) {
-				//add the modeset and create a combo
+				//add the mode set and create a combo
 				SWTFactory.createLabel(parent, fmodes.toString()+":", 1); //$NON-NLS-1$
 				combo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 1, fgPerspectiveLabels);
 				String text = getComboSelection(smodes);

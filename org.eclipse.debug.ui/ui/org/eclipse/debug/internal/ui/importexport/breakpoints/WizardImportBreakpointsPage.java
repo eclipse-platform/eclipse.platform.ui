@@ -124,7 +124,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	private boolean detectPageComplete() {
 		String fileName = fFileNameField.getText().trim();
-		if (fileName.equals("")) {//$NON-NLS-1$
+		if (fileName.equals(IInternalDebugUIConstants.EMPTY_STRING)) {
 			setMessage(ImportExportMessages.WizardImportBreakpointsPage_6);
 			return false;
 		}

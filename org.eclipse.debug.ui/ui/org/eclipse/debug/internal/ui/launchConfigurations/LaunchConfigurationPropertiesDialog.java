@@ -22,6 +22,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
@@ -161,7 +162,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	
 		// Set the things that TitleAreaDialog takes care of 
 		setTitle(getTitleAreaTitle());
-		setMessage(""); //$NON-NLS-1$
+		setMessage(IInternalDebugUIConstants.EMPTY_STRING);
 		setModeLabelState();
 	
 		// Build the launch configuration edit area and put it into the composite.

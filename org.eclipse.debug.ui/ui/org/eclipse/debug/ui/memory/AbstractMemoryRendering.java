@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.PropertyChangeNotifier;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IMenuListener;
@@ -244,16 +245,16 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	public  String getLabel()
 	{
 		if (fMemoryBlock == null)
-			return ""; //$NON-NLS-1$
+			return IInternalDebugUIConstants.EMPTY_STRING;
 		
-		StringBuffer label = new StringBuffer(""); //$NON-NLS-1$
+		StringBuffer label = new StringBuffer(IInternalDebugUIConstants.EMPTY_STRING);
 		
 		if (fMemoryBlock instanceof IMemoryBlockExtension)
 		{
 			String expression = ((IMemoryBlockExtension)fMemoryBlock).getExpression();
 			
 			if (expression == null)
-				expression = ""; //$NON-NLS-1$
+				expression = IInternalDebugUIConstants.EMPTY_STRING;
 			
 			label.append(expression);
 			

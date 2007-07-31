@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -87,7 +88,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 		try {
 			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 			if(fCodePage == null)
-				return ""; //$NON-NLS-1$
+				return IInternalDebugUIConstants.EMPTY_STRING;
 			
 			boolean[] invalid = new boolean[data.length];
 			boolean hasInvalid = false;

@@ -175,7 +175,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 			TableItem[] tableItems = table.getItems();
 			String tableAsString = new String();
 			tableAsString = concatenateTableAsString(tableItems);
-			if (!tableAsString.equals("")) { //$NON-NLS-1$
+			if (!tableAsString.equals(IInternalDebugUIConstants.EMPTY_STRING)) {
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
 				clip.setContents(new Object[] {tableAsString}, new Transfer[] {plainTextTransfer});
 			}

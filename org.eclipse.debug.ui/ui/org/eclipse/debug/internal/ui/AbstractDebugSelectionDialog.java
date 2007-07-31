@@ -168,11 +168,11 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		addCustomHeaderControls(comp);
 		String label = getMessage();
-		if(label != null && !"".equals(label)) { //$NON-NLS-1$
+		if(label != null && !IInternalDebugUIConstants.EMPTY_STRING.equals(label)) {
 			SWTFactory.createWrapLabel(comp, label, 1);
 		}
 		label = getViewerLabel();
-		if(label != null && !"".equals(label)) { //$NON-NLS-1$
+		if(label != null && !IInternalDebugUIConstants.EMPTY_STRING.equals(label)) {
 			SWTFactory.createLabel(comp, label, 1);
 		}
 		fViewer = createViewer(comp);

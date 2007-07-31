@@ -589,7 +589,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
 			shell.forceActive();
 		}
-		String message = ""; //$NON-NLS-1$
+		String message = IInternalDebugUIConstants.EMPTY_STRING;
 		if(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND.equals(preferenceKey)) {
 			if (getPerspectiveDescription(perspectiveId) != null) {
 				message = LaunchConfigurationsMessages.PerspectiveManager_suspend_description;
@@ -966,7 +966,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 								lctype = lm.getLaunchConfigurationType(type);
 								ldelegate = lm.getLaunchDelegate(delegate);
 								modes = parseModes(mode);
-								if(lctype != null && !modes.isEmpty() && !"".equals(perspective)) { //$NON-NLS-1$
+								if(lctype != null && !modes.isEmpty() && !IInternalDebugUIConstants.EMPTY_STRING.equals(perspective)) {
 									setLaunchPerspective(lctype, modes, ldelegate, perspective);
 								}
 							}
@@ -1000,7 +1000,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @return the 
 	 */
 	private String createModesetString(Set modes) {
-		String str = ""; //$NON-NLS-1$
+		String str = IInternalDebugUIConstants.EMPTY_STRING;
 		if(modes != null) {
 			for(Iterator iter = modes.iterator(); iter.hasNext();) {
 				str += iter.next();

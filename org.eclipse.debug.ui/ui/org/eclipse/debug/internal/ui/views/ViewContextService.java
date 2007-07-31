@@ -1024,7 +1024,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                 DebugContextViewBindings binding = (DebugContextViewBindings) bindings.next();
                 binding.saveBindings(document, root, done);
             }
-            String prefValue = ""; //$NON-NLS-1$
+            String prefValue = IInternalDebugUIConstants.EMPTY_STRING;
             if (root.hasChildNodes()) {
             	prefValue = DebugPlugin.serializeDocument(document);
             }

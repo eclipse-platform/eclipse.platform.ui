@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.jface.action.Action;
@@ -33,7 +34,7 @@ public class GroupBreakpointsAction extends Action {
      * @param view the breakpoints view
      */
     public GroupBreakpointsAction(IBreakpointOrganizer organizer, BreakpointsView view) {
-        super("", IAction.AS_RADIO_BUTTON); //$NON-NLS-1$
+        super(IInternalDebugUIConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
         fOrganzier= organizer;
         fView= view;
     }

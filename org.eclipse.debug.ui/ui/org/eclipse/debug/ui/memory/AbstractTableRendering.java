@@ -1988,7 +1988,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 
 	private String buildLabel(boolean showAddress) {
-		String label = ""; //$NON-NLS-1$
+		String label = IInternalDebugUIConstants.EMPTY_STRING;
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			label = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
@@ -3190,7 +3190,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	public String getSelectedAsString() {
 
 		if (isAddressOutOfRange(fSelectedAddress))
-			return ""; //$NON-NLS-1$
+			return IInternalDebugUIConstants.EMPTY_STRING;
 		
 		int col = fTableCursor.getColumn();
 		TableItem rowItem = fTableCursor.getRow();
@@ -3204,7 +3204,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		// check precondition
 		if (col > getBytesPerLine()/getBytesPerColumn())
 		{
-			return ""; //$NON-NLS-1$
+			return IInternalDebugUIConstants.EMPTY_STRING;
 		}
 				
 		TableItem tableItem = getTableViewer().getTable().getItem(row);

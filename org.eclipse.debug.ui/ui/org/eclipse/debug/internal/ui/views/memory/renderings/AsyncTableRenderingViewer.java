@@ -886,7 +886,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					TableItem item = getTable().getItem(idx);
 					return item.getText(columnIndex);
 				}
-				return ""; //$NON-NLS-1$
+				return IInternalDebugUIConstants.EMPTY_STRING;
 			}
 
 			public void addListener(ILabelProviderListener listener) {

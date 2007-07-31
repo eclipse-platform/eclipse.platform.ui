@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 
 
@@ -207,7 +208,7 @@ public class LaunchConfigurationTabGroupExtension {
 			description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 			
 		}
-		return (description == null ? "" : description); //$NON-NLS-1$
+		return (description == null ? IInternalDebugUIConstants.EMPTY_STRING : description);
 	}
 	
 }

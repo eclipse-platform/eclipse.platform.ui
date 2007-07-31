@@ -372,7 +372,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
-		return ""; //$NON-NLS-1$
+		return IInternalDebugUIConstants.EMPTY_STRING;
 	}
 	
 	protected String getMarkerImageKey(IMarker marker) {

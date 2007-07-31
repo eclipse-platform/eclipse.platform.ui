@@ -64,7 +64,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	 * @param shell shell
 	 */
 	public DirectorySourceContainerDialog(Shell shell) {
-		this(shell, "", DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING)); //$NON-NLS-1$
+		this(shell, IInternalDebugUIConstants.EMPTY_STRING, DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
 		fNewContainer = true;
 	}
 
@@ -73,7 +73,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	 *  
 	 * @param shell shell
 	 * @param directory directory to edit or empty string
-	 * @param searchSubfolders whether the search subfolders button should be checked
+	 * @param searchSubfolders whether the search sub-folders button should be checked
 	 * @param newContainer 
 	 */
 	public DirectorySourceContainerDialog(Shell shell, String directory, boolean searchSubfolders) {
@@ -209,7 +209,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 			last = DebugUIPlugin.getDefault().getDialogSettings().get(LAST_PATH_SETTING);
 		}
 		if (last == null) {
-			last = "";  //$NON-NLS-1$
+			last = IInternalDebugUIConstants.EMPTY_STRING; 
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SINGLE);
 		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0); 

@@ -140,7 +140,7 @@ public class MultipleInputDialog extends Dialog {
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				public boolean validate() {
-					return !text.getText().equals(""); //$NON-NLS-1$
+					return !text.getText().equals(IInternalDebugUIConstants.EMPTY_STRING);
 				}
 			});
 			text.addModifyListener(new ModifyListener() {
@@ -181,7 +181,7 @@ public class MultipleInputDialog extends Dialog {
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				public boolean validate() {
-					return !text.getText().equals(""); //$NON-NLS-1$
+					return !text.getText().equals(IInternalDebugUIConstants.EMPTY_STRING);
 				}
 			});
 
@@ -198,7 +198,7 @@ public class MultipleInputDialog extends Dialog {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setMessage(DebugUIMessages.MultipleInputDialog_7);  
 				String currentWorkingDir = text.getText();
-				if (!currentWorkingDir.trim().equals("")) { //$NON-NLS-1$
+				if (!currentWorkingDir.trim().equals(IInternalDebugUIConstants.EMPTY_STRING)) {
 					File path = new File(currentWorkingDir);
 					if (path.exists()) {
 						dialog.setFilterPath(currentWorkingDir);
@@ -245,7 +245,7 @@ public class MultipleInputDialog extends Dialog {
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				public boolean validate() {
-					return !text.getText().equals(""); //$NON-NLS-1$
+					return !text.getText().equals(IInternalDebugUIConstants.EMPTY_STRING);
 				}
 			});
 

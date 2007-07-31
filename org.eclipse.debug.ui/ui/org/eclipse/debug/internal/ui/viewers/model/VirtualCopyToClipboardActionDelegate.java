@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -41,7 +42,6 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	
 	private ContentViewer fViewer;
 	private static final String TAB = "\t"; //$NON-NLS-1$
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SEPARATOR = "line.separator"; //$NON-NLS-1$
 	private boolean fDone = false;
 	
@@ -88,7 +88,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		if(count > 0) {
 			for (int i = 0; i < count; i++) {
 				String text = labels[i];
-				if(text != null && !text.trim().equals(EMPTY_STRING)) {
+				if(text != null && !text.trim().equals(IInternalDebugUIConstants.EMPTY_STRING)) {
 					buffer.append(text+TAB);
 				}
 			}

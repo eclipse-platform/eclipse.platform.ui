@@ -296,7 +296,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private class SwitchPageJob extends UIJob {
 		private Object fLock = new Object();
 		private boolean fShowMessagePage = false;
-		private String fMessage = ""; //$NON-NLS-1$
+		private String fMessage = IInternalDebugUIConstants.EMPTY_STRING;
 
 		private SwitchPageJob() {
 			super("SwitchPageJob");//$NON-NLS-1$
@@ -1898,7 +1898,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	private String buildLabel(boolean showAddress) {
-		String label = ""; //$NON-NLS-1$
+		String label = IInternalDebugUIConstants.EMPTY_STRING;
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			label = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
@@ -2103,7 +2103,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	public String getSelectedAsString() {
 
 		if (getSelectedAddress() == null)
-			return ""; //$NON-NLS-1$
+			return IInternalDebugUIConstants.EMPTY_STRING;
 		
 		MemoryByte[] bytes = getSelectedAsBytes();
 		if (bytes.length > 0)
@@ -2111,7 +2111,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return getString(this.getRenderingId(), getSelectedAddress(), bytes);
 		}
 		else
-			return ""; //$NON-NLS-1$
+			return IInternalDebugUIConstants.EMPTY_STRING;
 		
 	}
 

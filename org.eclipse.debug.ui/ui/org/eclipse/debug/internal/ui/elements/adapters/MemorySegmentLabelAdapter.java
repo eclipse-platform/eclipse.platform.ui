@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 						labels[i+1] = getColumnText(element, i+1, tableRendering, (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class));
 					}
 					
-					labels[labels.length - 1 ] = ""; //$NON-NLS-1$
+					labels[labels.length - 1 ] = IInternalDebugUIConstants.EMPTY_STRING;
 					return labels;
 				}
 			}
@@ -111,7 +111,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			{
 				MemorySegment segment = (MemorySegment)element;
 				if (segment.getBytes().length != tableRendering.getBytesPerLine())
-					return ""; //$NON-NLS-1$
+					return IInternalDebugUIConstants.EMPTY_STRING;
 			}
 			
 			ILabelProvider labelProvider = (ILabelProvider)tableRendering.getAdapter(ILabelProvider.class);

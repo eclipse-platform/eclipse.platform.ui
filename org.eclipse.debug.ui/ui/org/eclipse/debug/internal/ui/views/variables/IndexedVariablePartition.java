@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -92,7 +93,7 @@ public class IndexedVariablePartition extends PlatformObject implements IVariabl
 			IVariable variable = (IVariable) fOriginalVariable;
 			return variable.getReferenceTypeName();
 		}
-		return ""; //$NON-NLS-1$
+		return IInternalDebugUIConstants.EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)

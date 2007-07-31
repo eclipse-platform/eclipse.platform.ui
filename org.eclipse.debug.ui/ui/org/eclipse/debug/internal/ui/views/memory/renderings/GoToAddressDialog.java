@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import java.util.Vector;
 
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
@@ -122,7 +123,7 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener{
 
 		String input = expressionInput.getText();
 	
-		if (input == null || input.equals("")) //$NON-NLS-1$
+		if (input == null || input.equals(IInternalDebugUIConstants.EMPTY_STRING))
 		{
 			getButton(IDialogConstants.OK_ID).setEnabled(false);	
 		}

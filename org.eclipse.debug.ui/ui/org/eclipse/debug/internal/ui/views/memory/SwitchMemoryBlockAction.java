@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -177,8 +178,8 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		}
 		
 		private void getLabels(final IMemoryBlock memBlk) {
-			StringBuffer text = new StringBuffer(""); //$NON-NLS-1$
-			String label = new String(""); //$NON-NLS-1$
+			StringBuffer text = new StringBuffer(IInternalDebugUIConstants.EMPTY_STRING);
+			String label = new String(IInternalDebugUIConstants.EMPTY_STRING);
 			if (memBlk instanceof IMemoryBlockExtension) {
 				String expression = ((IMemoryBlockExtension)memBlk).getExpression();
 				if (expression == null) {

@@ -153,7 +153,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 			
 			if (input.length() == 0)
 			{
-				expressions.add(""); //$NON-NLS-1$
+				expressions.add(IInternalDebugUIConstants.EMPTY_STRING);
 			}
 			else
 			{

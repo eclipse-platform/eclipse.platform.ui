@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -38,7 +39,7 @@ public class RegisterGroupLabelProvider extends DebugElementLabelProvider {
 		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
 			return super.getLabel(elementPath, context, columnId);
 		} else {
-			return ""; //$NON-NLS-1$
+			return IInternalDebugUIConstants.EMPTY_STRING;
 		}
 	}
 	

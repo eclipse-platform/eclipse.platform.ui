@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.actions.variables.details;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -164,7 +165,7 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
     public void setErrorMessage(String errorMessage) {
     	fErrorMessage = errorMessage;
     	if (fErrorTextWidget != null && !fErrorTextWidget.isDisposed()) {
-    		fErrorTextWidget.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
+    		fErrorTextWidget.setText(errorMessage == null ? IInternalDebugUIConstants.EMPTY_STRING : errorMessage);
     		fErrorTextWidget.getParent().update();
     		// Access the ok button by id, in case clients have overridden button creation.
     		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643

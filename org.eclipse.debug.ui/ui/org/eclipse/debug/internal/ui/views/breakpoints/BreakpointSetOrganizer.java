@@ -308,7 +308,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 *            default working set or <code>null</code>
 	 */
 	public static void setDefaultWorkingSet(IWorkingSet set) {
-		String name = ""; //$NON-NLS-1$
+		String name = IInternalDebugUIConstants.EMPTY_STRING;
 		if (set != null) {
 			// only consider breakpoint working sets
 			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {

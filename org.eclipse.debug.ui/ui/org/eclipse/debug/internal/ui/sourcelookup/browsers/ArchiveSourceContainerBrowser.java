@@ -22,6 +22,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -43,14 +44,14 @@ public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowse
 	private ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 		public IStatus validate(Object[] selection) {
 			if (selection.length == 0) {
-				return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugUIConstants.EMPTY_STRING, null);
 			}
 			for (int i= 0; i < selection.length; i++) {
 				if (!(selection[i] instanceof IFile)) {
-					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugUIConstants.EMPTY_STRING, null);
 				}					
 			}
-			return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+			return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugUIConstants.EMPTY_STRING, null);
 		}			
 	};
 

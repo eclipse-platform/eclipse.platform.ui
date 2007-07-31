@@ -236,7 +236,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 * @return if the prerequesites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
-		boolean emptyFile = fDestinationNameField.getText().trim().equals(""); //$NON-NLS-1$
+		boolean emptyFile = fDestinationNameField.getText().trim().equals(IInternalDebugUIConstants.EMPTY_STRING);
 		if (emptyFile) {
 			setMessage(ImportExportMessages.WizardExportBreakpointsPage_0, IMessageProvider.NONE);
 			return false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.actions.variables;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -32,7 +33,7 @@ import org.eclipse.swt.widgets.Text;
  * A simple input dialog for soliciting an input string
  * from the user.
  * <p>
- * This concete dialog class can be instantiated as is, 
+ * This concrete dialog class can be instantiated as is, 
  * or further subclassed as required.
  * </p>
  */
@@ -52,7 +53,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/**
 	 * The input value; the empty string by default.
 	 */
-	private String value= "";//$NON-NLS-1$
+	private String value= IInternalDebugUIConstants.EMPTY_STRING;
 	
 	/**
 	 * The input validator, or <code>null</code> if none.
@@ -93,7 +94,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		this.title = dialogTitle;
 		message = dialogMessage;
 		if (initialValue == null)
-			value = "";//$NON-NLS-1$
+			value = IInternalDebugUIConstants.EMPTY_STRING;
 		else
 			value = initialValue;
 		this.validator = validator;
@@ -168,7 +169,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 						if (okButton.isEnabled()) {
 							return;
 						}
-						errorMessageLabel.setText(""); //$NON-NLS-1$
+						errorMessageLabel.setText(IInternalDebugUIConstants.EMPTY_STRING); 
 						errorMessageLabel.getParent().update();
 						okButton.setEnabled(true);
 					}
@@ -241,8 +242,8 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 			errorMessage = validator.isValid(text.getText());
 		}
 		
-		// Bug 16256: important not to treat "" (blank error) the same as null (no error)
-		errorMessageLabel.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
+		// Bug 16256: important not to treat empty string (blank error) the same as null (no error)
+		errorMessageLabel.setText(errorMessage == null ? IInternalDebugUIConstants.EMPTY_STRING : errorMessage);
 		okButton.setEnabled(errorMessage == null);
 		
 		errorMessageLabel.getParent().update();

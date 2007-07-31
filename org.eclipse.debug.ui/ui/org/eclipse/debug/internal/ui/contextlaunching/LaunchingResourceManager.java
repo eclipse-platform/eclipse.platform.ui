@@ -110,7 +110,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Constant denoting the empty string;
 	 */
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final String EMPTY_STRING = IInternalDebugUIConstants.EMPTY_STRING;
 	
 	/**
 	 * Provides a mouse tracker listener for the launching main toolbar 
