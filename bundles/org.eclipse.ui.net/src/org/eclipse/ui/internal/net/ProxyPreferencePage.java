@@ -225,9 +225,9 @@ public class ProxyPreferencePage extends PreferencePage implements
 		proxyService.setProxiesEnabled(proxiesEnabled);
 		if (proxiesEnabled) {
 			try {
-				proxyService.setProxyData(proxyData);
 				proxyService.setNonProxiedHosts(
 						nonHostComposite.getList());
+				proxyService.setProxyData(proxyData);
 			} catch (CoreException e) {
 				ErrorDialog.openError(getShell(), null, null, e.getStatus());
 			}
