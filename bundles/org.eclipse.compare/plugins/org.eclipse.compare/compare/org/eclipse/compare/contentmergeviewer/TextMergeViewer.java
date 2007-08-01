@@ -11,6 +11,7 @@
  *     gilles.querret@free.fr - fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=72995
  *     Max Weninger (max.weninger@windriver.com) - Bug 131895 [Edit] Undo in compare
  *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 178968 [Viewers] Lines scrambled and different font size in compare
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
@@ -4164,7 +4165,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (! fSynchronizedScrolling)
 			return;
 
-		int lineHeight= fLeft.getTextWidget().getLineHeight();			
+		int lineHeightLeft= fLeft.getTextWidget().getLineHeight();
+		int lineHeightRight= fRight.getTextWidget().getLineHeight();
 		int visibleHeight= fRight.getViewportHeight();
 
 		Point size= canvas.getSize();
@@ -4202,12 +4204,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					continue;
 
 				fLeft.getLineRange(diff.fLeftPos, region);
-				int ly= (region.x * lineHeight) + lshift;
-				int lh= region.y * lineHeight;
+				int ly= (region.x * lineHeightLeft) + lshift;
+				int lh= region.y * lineHeightLeft;
 	
 				fRight.getLineRange(diff.fRightPos, region);
-				int ry= (region.x * lineHeight) + rshift;
-				int rh= region.y * lineHeight;
+				int ry= (region.x * lineHeightRight) + rshift;
+				int rh= region.y * lineHeightRight;
 	
 				if (Math.max(ly+lh, ry+rh) < 0)
 					continue;
