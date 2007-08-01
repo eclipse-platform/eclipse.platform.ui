@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.*;
-
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
@@ -24,12 +22,9 @@ public class ImageManager {
 	
 	private static final String PROP_IMAGE_MANAGER = TeamUIPlugin.ID + ".imageManager"; //$NON-NLS-1$
 	
-	// Cache for images that have been overlayed
-	private Map fgImageCache = new HashMap(10);
-	
+	private LocalResourceManager imageManager;
 	// Contains direction images
 	private CompareConfiguration compareConfig = new CompareConfiguration();
-	
 	private boolean disposed = false;
 	
 	public synchronized static ImageManager getImageManager(ISynchronizationContext context) {
@@ -50,23 +45,23 @@ public class ImageManager {
 	public Image getImage(ImageDescriptor descriptor) {
 		if (descriptor == null || disposed)
 			return null;
-		Image image = (Image)fgImageCache.get(descriptor);
-		if (image == null) {
-			image = descriptor.createImage();
-			fgImageCache.put(descriptor, image);
-		}
+		ResourceManager manager = getResourceManager();
+		Image image = manager.createImage(descriptor);
 		return image;
 	}
 	
+	private synchronized ResourceManager getResourceManager() {
+		if (imageManager == null) {
+			imageManager = new LocalResourceManager(JFaceResources.getResources());
+		}
+		return imageManager;
+	}
+
 	public void dispose() {
 		disposed = true;
 		compareConfig.dispose();
-		if (fgImageCache != null) {
-			Iterator it = fgImageCache.values().iterator();
-			while (it.hasNext()) {
-				Image element = (Image) it.next();
-				element.dispose();
-			}
+		if (imageManager != null) {
+			imageManager.dispose();
 		}
 	}
 
