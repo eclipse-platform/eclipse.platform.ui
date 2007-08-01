@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 185708 Provide link to open SSH/SSH2/proxy preferences from Connection wizard
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 107025 [Wizards] expose the 'paste cvs connection' easter egg
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 

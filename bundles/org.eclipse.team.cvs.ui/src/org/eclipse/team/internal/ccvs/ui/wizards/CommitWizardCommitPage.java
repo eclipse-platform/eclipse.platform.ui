@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 166333 [Wizards] Show diff in CVS commit dialog
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 190674 Conflicting resources message lost when typing in commit wizard
  *******************************************************************************/
-
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.util.Arrays;

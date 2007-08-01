@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 189304 [Sync Info] cvsignore lines should be split on whitespace
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 

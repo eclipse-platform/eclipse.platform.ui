@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 179977 CVS log command doesn't scale well with lots of tags and versions
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 194396 Reduce retained memory usage of LogEntry objects
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 

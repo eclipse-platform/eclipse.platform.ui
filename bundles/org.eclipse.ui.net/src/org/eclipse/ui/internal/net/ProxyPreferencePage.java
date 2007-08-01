@@ -14,6 +14,7 @@
  * 20070219   174674 pmoogk@ca.ibm.com - Peter Moogk
  * 20070402   180622 brockj@tpg.com.au - Brock Janiczak, Inconsistent enablement states in network preference page
  * 20070416   177897 ymnk@jcraft.com - Atsuhiko Yamanaka, Improve UI of Proxy Preferences Page
+ * 20070801   197977 holger.oehm@sap.com - Holger Oehm, [Proxy] non-proxy hosts not correctly updated
  *******************************************************************************/
 package org.eclipse.ui.internal.net;
 

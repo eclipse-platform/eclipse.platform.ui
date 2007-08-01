@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 166333 [Wizards] Show diff in CVS commit dialog
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 

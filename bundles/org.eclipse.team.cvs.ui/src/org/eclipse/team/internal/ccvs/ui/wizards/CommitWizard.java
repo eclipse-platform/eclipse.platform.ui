@@ -9,8 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 161536 Warn user when committing resources with problem markers
  *     Brock Janiczak <brockj@tpg.com.au> - Bug 177519 [Wizards] Adopt new IResource.findMaxProblemSeverity API
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 166333 [Wizards] Show diff in CVS commit dialog
+ *     
  *******************************************************************************/
-
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;

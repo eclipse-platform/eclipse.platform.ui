@@ -12,6 +12,7 @@
  *     Max Weninger (max.weninger@windriver.com) - Bug 131895 [Edit] Undo in compare
  *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 178968 [Viewers] Lines scrambled and different font size in compare
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 191524 [Viewers] Synchronize horizontal scrolling by # characters, not % of longest line
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
