@@ -223,7 +223,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
    <element name="description">
       <annotation>
          <documentation>
-            Provdies a mode specific desciption for this launch shortcut. This element was added in the 3.3. release.
+            Provides a mode specific description for this launch shortcut. This element was added in the 3.3. release.
          </documentation>
       </annotation>
       <complexType>
@@ -246,6 +246,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          </attribute>
       </complexType>
    </element>
+
 
    <annotation>
       <appInfo>
@@ -388,6 +389,7 @@ Example of a description for the run mode only:
 &lt;/p&gt;
       </documentation>
    </annotation>
+
 
    <annotation>
       <appInfo>
