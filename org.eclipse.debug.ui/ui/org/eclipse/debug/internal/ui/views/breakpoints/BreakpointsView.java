@@ -669,17 +669,19 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	    		else {
 	    			Tree tree = item.getParent();
 	    			TreeItem[] items = tree.getItems();
-	    			for(int i = 0; i < items.length; i++) {
-	    				if(item.equals(items[i])) {
-	    					if(i - 1 < 0 && items.length > 1) {
-	    						toselect = items[i+1];
-	    						break;
-	    					}
-	    					else if(items.length > 1){
-	    						toselect = items[i-1].getData();
-	    						break;
-	    					}
-	    				}
+	    			if (items.length > 1){
+		    			for(int i = 0; i < items.length; i++) {
+		    				if(item.equals(items[i])) {
+		    					if(i+1 >= items.length){
+		    						toselect = items[i-1].getData();
+		    						break;
+		    					} else {
+		    						toselect = items[i+1].getData();
+		    						break;
+		    					}
+		    					
+		    				}
+		    			}
 	    			}
 	    		}
 	    	}
