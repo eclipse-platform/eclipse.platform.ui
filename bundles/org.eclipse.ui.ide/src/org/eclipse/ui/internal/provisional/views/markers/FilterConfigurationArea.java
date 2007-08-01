@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class FilterConfigurationArea {
 
-	private MarkerField field;
+	MarkerField field;
 
 	/**
 	 * Create the contents of the configuration area in the parent.
@@ -46,7 +46,18 @@ public abstract class FilterConfigurationArea {
 	 */
 	public void setField(MarkerField markerField) {
 		field = markerField;
-
 	}
+	
+	/**
+	 * Initialise the receiver using the entries in group.
+	 * @param group
+	 */
+	public abstract void initializeFromGroup(MarkerFieldFilterGroup group);
+	
+	/**
+	 * Apply the current settings to group.
+	 * @param group
+	 */
+	public abstract void applyToGroup(MarkerFieldFilterGroup group);
 
 }

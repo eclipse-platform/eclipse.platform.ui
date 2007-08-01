@@ -232,7 +232,8 @@ public class MarkerContentGenerator {
 			while (iter.hasNext()) {
 				MarkerType markerType = (MarkerType) iter.next();
 				try {
-					// Only search for sub-types of the marker if we found all of
+					// Only search for sub-types of the marker if we found all
+					// of
 					// its sub-types in the filter criteria.
 					IMarker[] markers = resource.findMarkers(
 							markerType.getId(), includeAllSubtypes
@@ -556,7 +557,7 @@ public class MarkerContentGenerator {
 				continue;
 
 			if (focusResources.length == 0)
-				return true; //We had nothing now we have something
+				return true; // We had nothing now we have something
 
 			if (Arrays.equals(focusResources, newElements))
 				continue;
@@ -570,7 +571,7 @@ public class MarkerContentGenerator {
 				if (oldProjects.size() == newProjects.size()
 						&& newProjects.containsAll(oldProjects))
 					continue;
-				return true;//Something must be different
+				return true;// Something must be different
 			}
 			return true;
 		}
@@ -624,6 +625,34 @@ public class MarkerContentGenerator {
 			StatusManager.getManager().handle(e.getStatus());
 		}
 
+	}
+
+	/**
+	 * Set the filters for the receiver.
+	 * 
+	 * @param newFilters
+	 */
+	public void setFilters(Collection newFilters) {
+		filters = newFilters;
+		enabledFilters = null;
+
+	}
+
+	/**
+	 * Return a collection of all of the configuration fields for this generator
+	 * 
+	 * @return Collection of {@link FilterConfigurationArea}
+	 */
+	public Collection getFilterConfigurationFields() {
+		Collection result = new ArrayList();
+		for (int i = 0; i < visibleFields.length; i++) {
+			FilterConfigurationArea area = visibleFields[i]
+					.generateFilterArea();
+			if (area != null)
+				result.add(area);
+
+		}
+		return result;
 	}
 
 }

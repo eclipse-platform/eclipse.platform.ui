@@ -37,4 +37,11 @@ public abstract class MarkerFieldFilter {
 	public void initialize(Map values){
 		//Do nothing by default
 	}
+
+	/**
+	 * Make a working copy of the receiver for use by configuration dialogs.
+	 * Any change to this clone should not affect the receiver.
+	 * @return MarkerFieldFilter
+	 */
+	public abstract MarkerFieldFilter makeWorkingCopy();
 }

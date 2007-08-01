@@ -451,4 +451,14 @@ public class CachedMarkerBuilder {
 		}
 
 	}
+
+	/**
+	 * The filters have changed. Set the list and regenerate the receiver.
+	 * @param filters
+	 */
+	void setFilters(Collection filters) {
+		generator.setFilters(filters);
+		scheduleMarkerUpdate();
+		
+	}
 }

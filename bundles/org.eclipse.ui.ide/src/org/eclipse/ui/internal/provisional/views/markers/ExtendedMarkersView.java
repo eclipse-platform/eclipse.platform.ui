@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -42,6 +41,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.SameShellProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeAdapter;
@@ -784,10 +784,13 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Open the filters dialog for the receiver.
 	 */
 	public void openFiltersDialog() {
-		Dialog dialog = new FiltersConfigurationDialog(new SameShellProvider(
-				getSite().getWorkbenchWindow().getShell()), builder
-				.getGenerator().getAllFilters());
-		dialog.open();
+		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
+				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
+				builder.getGenerator().getAllFilters(), builder.getGenerator()
+						.getFilterConfigurationFields());
+		if (dialog.open() == Window.OK)
+			builder.setFilters(dialog.getFilters());
+
 	}
 
 	/**

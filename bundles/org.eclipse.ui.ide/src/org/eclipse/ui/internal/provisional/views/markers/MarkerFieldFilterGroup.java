@@ -267,4 +267,30 @@ class MarkerFieldFilterGroup {
 		}
 		return areas;
 	}
+
+	/**
+	 * Make a working copy of the receiver.
+	 * 
+	 * @return MarkerFieldFilterGroup
+	 */
+	public MarkerFieldFilterGroup makeWorkingCopy() {
+		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
+				this.contentGenerator);
+		clone.scope = this.scope;
+		clone.enabled = this.enabled;
+		clone.fieldFilters = new MarkerFieldFilter[fieldFilters.length];
+		for (int i = 0; i < fieldFilters.length; i++) {
+			clone.fieldFilters[i] = fieldFilters[i].makeWorkingCopy();
+		}
+		return clone;
+		
+	}
+
+	/**
+	 * Set the scope of the receiver.
+	 * @param newScope
+	 */
+	public void setScope(int newScope) {
+		scope = newScope;		
+	}
 }

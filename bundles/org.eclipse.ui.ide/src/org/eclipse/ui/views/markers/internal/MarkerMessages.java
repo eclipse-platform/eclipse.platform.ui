@@ -80,6 +80,7 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_workingSet;
 	public static String filtersDialog_workingSetSelect;
 	public static String filtersDialog_noWorkingSet;
+	public static String filtersDialog_currentWorkingSet;
 	public static String filtersDialog_selectAll;
 	public static String filtersDialog_deselectAll;
 	public static String filtersDialog_selectAllTypes;

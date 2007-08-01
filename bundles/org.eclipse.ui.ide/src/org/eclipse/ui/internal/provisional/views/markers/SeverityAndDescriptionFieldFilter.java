@@ -54,5 +54,14 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 			selectedSeverity = ((Integer) value).intValue();
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#makeWorkingCopy()
+	 */
+	public MarkerFieldFilter makeWorkingCopy() {
+		SeverityAndDescriptionFieldFilter clone = new SeverityAndDescriptionFieldFilter();
+		clone.selectedSeverity = this.selectedSeverity;
+		return clone;
+	}
 
 }

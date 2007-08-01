@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -56,6 +57,9 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private class ScopeArea extends FilterConfigurationArea {
 
+		private Button[] buttons;
+		int scope;
+
 		/**
 		 * Create a new instance of the receiver.
 		 */
@@ -66,11 +70,66 @@ public class FiltersConfigurationDialog extends Dialog {
 		/*
 		 * (non-Javadoc)
 		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#applyToGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
+		 */
+		public void applyToGroup(MarkerFieldFilterGroup group) {
+			group.setScope(scope);
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 		 */
 		public void createContents(Composite parent) {
-			Label label = new Label(parent, SWT.NONE);
-			label.setText("Test"); //$NON-NLS-1$
+
+			buttons = new Button[5];
+
+			buttons[MarkerFieldFilterGroup.ON_ANY] = createRadioButton(parent,
+					MarkerMessages.filtersDialog_anyResource,
+					MarkerFieldFilterGroup.ON_ANY);
+			buttons[MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER] = createRadioButton(
+					parent,
+					MarkerMessages.filtersDialog_anyResourceInSameProject,
+					MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER);
+			buttons[MarkerFieldFilterGroup.ON_SELECTED_ONLY] = createRadioButton(
+					parent, MarkerMessages.filtersDialog_selectedResource,
+					MarkerFieldFilterGroup.ON_SELECTED_ONLY);
+			buttons[MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN] = createRadioButton(
+					parent, MarkerMessages.filtersDialog_selectedAndChildren,
+					MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN);
+			buttons[MarkerFieldFilterGroup.ON_WORKING_SET] = createRadioButton(
+					parent, MarkerMessages.filtersDialog_currentWorkingSet,
+					MarkerFieldFilterGroup.ON_WORKING_SET);
+		}
+
+		/**
+		 * Creates a radio button with the given parent and text.
+		 * 
+		 * @param parent
+		 *            the parent composite
+		 * @param text
+		 *            the text for the check box
+		 * @return the radio box button
+		 */
+		protected Button createRadioButton(Composite parent, String text,
+				final int value) {
+			Button button = new Button(parent, SWT.RADIO);
+			button.setText(text);
+			button.setSelection(value == scope);
+			button.addSelectionListener(new SelectionAdapter() {
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				public void widgetSelected(SelectionEvent e) {
+					scope = value;
+				}
+			});
+			return button;
 		}
 
 		/*
@@ -82,13 +141,26 @@ public class FiltersConfigurationDialog extends Dialog {
 			return MarkerMessages.severity_description;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
+		 */
+		public void initializeFromGroup(MarkerFieldFilterGroup group) {
+			buttons[scope].setSelection(false);
+			scope = group.getScope();
+			buttons[scope].setSelection(true);
+		}
+
 	}
 
-	private FilterConfigurationArea scopeArea = new ScopeArea();
+	private Collection filterAreas;
 
 	private Collection filterGroups;
 
 	private CheckboxTableViewer filtersList;
+
+	private FilterConfigurationArea scopeArea = new ScopeArea();
 
 	private MarkerFieldFilterGroup selectedFilterGroup;
 
@@ -98,11 +170,14 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param parentShell
 	 * @param groups
 	 *            Collection of MarkerFieldFilterGroup
+	 * @param fieldFilterAreas -
+	 *            Collection of FilterConfigurationArea
 	 */
 	public FiltersConfigurationDialog(IShellProvider parentShell,
-			Collection groups) {
+			Collection groups, Collection fieldFilterAreas) {
 		super(parentShell);
-		filterGroups = groups;
+		filterGroups = makeWorkingCopy(groups);
+		filterAreas = fieldFilterAreas;
 	}
 
 	/*
@@ -112,12 +187,8 @@ public class FiltersConfigurationDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 
-		if (!filterGroups.isEmpty())
-			setSelectedFilter((MarkerFieldFilterGroup) filterGroups.iterator()
-					.next());
-
 		Composite top = (Composite) super.createDialogArea(parent);
-		
+
 		initializeDialogUnits(top);
 
 		GridLayout layout = new GridLayout();
@@ -137,22 +208,73 @@ public class FiltersConfigurationDialog extends Dialog {
 		});
 		final ScrolledForm form = toolkit.createScrolledForm(top);
 		form.setBackground(parent.getBackground());
-		
-		GridData data = new GridData(SWT.FILL,SWT.FILL,true,true);
-		data.widthHint =  convertHorizontalDLUsToPixels(150);
+
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.widthHint = convertHorizontalDLUsToPixels(150);
 		data.heightHint = convertVerticalDLUsToPixels(150);
 		form.setLayoutData(data);
 		form.getBody().setLayout(new GridLayout());
 
 		createFieldArea(toolkit, form, scopeArea);
-		Iterator areas = selectedFilterGroup.getFieldFilterAreas().iterator();
+		Iterator areas = filterAreas.iterator();
 		while (areas.hasNext()) {
 			createFieldArea(toolkit, form, (FilterConfigurationArea) areas
 					.next());
 
 		}
 
+		if (!filterGroups.isEmpty()) {
+			filtersList.setSelection(new StructuredSelection(filterGroups
+					.iterator().next()));
+		}
+
 		return top;
+	}
+
+	/**
+	 * Create a field area in the form for the FilterConfigurationArea
+	 * 
+	 * @param toolkit
+	 * @param form
+	 * @param area
+	 */
+	private void createFieldArea(final FormToolkit toolkit,
+			final ScrolledForm form, final FilterConfigurationArea area) {
+		final ExpandableComposite expandable = toolkit
+				.createExpandableComposite(form.getBody(),
+						ExpandableComposite.TWISTIE);
+		expandable.setText(area.getTitle());
+		expandable.setBackground(form.getBackground());
+		expandable.setLayout(new GridLayout());
+		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+		Composite sectionClient = toolkit.createComposite(expandable);
+		sectionClient.setLayout(new GridLayout());
+		sectionClient
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		sectionClient.setBackground(form.getBackground());
+		area.createContents(sectionClient);
+		expandable.setClient(sectionClient);
+
+		expandable.addExpansionListener(new IExpansionListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
+			 */
+			public void expansionStateChanged(ExpansionEvent e) {
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanging(org.eclipse.ui.forms.events.ExpansionEvent)
+			 */
+			public void expansionStateChanging(ExpansionEvent e) {
+
+			}
+		});
 	}
 
 	/**
@@ -168,7 +290,7 @@ public class FiltersConfigurationDialog extends Dialog {
 				true));
 
 		Label title = new Label(filtersComposite, SWT.NONE);
-		title.setText(MarkerMessages.MarkerFilter_filtersTitle);
+		title.setText(MarkerMessages.filtersDialog_title);
 		GridData titleData = new GridData();
 		titleData.horizontalSpan = 2;
 		title.setLayoutData(titleData);
@@ -179,19 +301,19 @@ public class FiltersConfigurationDialog extends Dialog {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
-			public Object[] getElements(Object inputElement) {
-				return filterGroups.toArray();
+			public void dispose() {
+				// Do nothing
 			}
 
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
-			public void dispose() {
-				// Do nothing
+			public Object[] getElements(Object inputElement) {
+				return filterGroups.toArray();
 			}
 
 			/*
@@ -230,7 +352,6 @@ public class FiltersConfigurationDialog extends Dialog {
 					 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 					 */
 					public void selectionChanged(SelectionChangedEvent event) {
-						applyFilterChanges();
 						setSelectedFilter((MarkerFieldFilterGroup) ((IStructuredSelection) event
 								.getSelection()).getFirstElement());
 
@@ -309,85 +430,88 @@ public class FiltersConfigurationDialog extends Dialog {
 	}
 
 	/**
-	 * Remove the filters in selection.
-	 * @param selection
-	 */
-	protected void removeFilters(ISelection selection) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
 	 * Create a new filter called newName
+	 * 
 	 * @param newName
 	 */
 	protected void createNewFilter(String newName) {
 		// TODO Create one
-		
+
 	}
 
 	/**
-	 * Apply the filter areas to the current filter
+	 * Return the filter groups modified by the receiver.
+	 * 
+	 * @return Collection of {@link MarkerFieldFilterGroup}
 	 */
-	protected void applyFilterChanges() {
-		// TODO Actually apply these
-		
+	public Collection getFilters() {
+		return filterGroups;
+	}
+
+	/**
+	 * Make a working copy of the groups.
+	 * 
+	 * @param groups
+	 * @return Collection of MarkerFieldFilterGroup
+	 */
+	private Collection makeWorkingCopy(Collection groups) {
+		Iterator initialFiltersIterator = groups.iterator();
+		Collection returnFilters = new ArrayList(groups.size());
+		while (initialFiltersIterator.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) initialFiltersIterator
+					.next();
+			returnFilters.add(group.makeWorkingCopy());
+		}
+		return returnFilters;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	protected void okPressed() {
+		super.okPressed();
+		if (selectedFilterGroup == null)
+			return;
+		scopeArea.applyToGroup(selectedFilterGroup);
+		Iterator areas = filterAreas.iterator();
+		while (areas.hasNext()) {
+			((FilterConfigurationArea) areas.next())
+					.applyToGroup(selectedFilterGroup);
+		}
+
+	}
+
+	/**
+	 * Remove the filters in selection.
+	 * 
+	 * @param selection
+	 */
+	protected void removeFilters(ISelection selection) {
+		// TODO Auto-generated method stub
+
 	}
 
 	/**
 	 * Set the filter that is being worked on.
+	 * 
 	 * @param markerFieldFilterGroup
 	 */
 	void setSelectedFilter(MarkerFieldFilterGroup markerFieldFilterGroup) {
+		MarkerFieldFilterGroup old = selectedFilterGroup;
 		selectedFilterGroup = markerFieldFilterGroup;
-
-	}
-
-
-	/**
-	 * Create a field area in the form for the FilterConfigurationArea
-	 * 
-	 * @param toolkit
-	 * @param form
-	 * @param area
-	 */
-	private void createFieldArea(final FormToolkit toolkit,
-			final ScrolledForm form, final FilterConfigurationArea area) {
-		final ExpandableComposite expandable = toolkit
-				.createExpandableComposite(form.getBody(),
-						ExpandableComposite.TWISTIE);
-		expandable.setText(area.getTitle());
-		expandable.setBackground(form.getBackground());
-		expandable.setLayout(new GridLayout());
-		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
-		Composite sectionClient = toolkit.createComposite(expandable);
-		sectionClient.setLayout(new GridLayout());
-		sectionClient
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		sectionClient.setBackground(form.getBackground());
-		area.createContents(sectionClient);
-		expandable.setClient(sectionClient);
-
-		expandable.addExpansionListener(new IExpansionListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
-			 */
-			public void expansionStateChanged(ExpansionEvent e) {
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanging(org.eclipse.ui.forms.events.ExpansionEvent)
-			 */
-			public void expansionStateChanging(ExpansionEvent e) {
-
-			}
-		});
+		if (old != null)
+			scopeArea.applyToGroup(old);
+		scopeArea.initializeFromGroup(selectedFilterGroup);
+		Iterator areas = filterAreas.iterator();
+		while (areas.hasNext()) {
+			FilterConfigurationArea area = (FilterConfigurationArea) areas
+					.next();
+			if (old != null)
+				area.applyToGroup(old);
+			area.initializeFromGroup(selectedFilterGroup);
+		}
 	}
 
 }
