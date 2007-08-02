@@ -15,7 +15,6 @@ import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.DebugElement;
 
 /**
@@ -38,11 +37,6 @@ public abstract class AntDebugElement extends DebugElement {
 	 */
 	public String getModelIdentifier() {
 		return IAntDebugConstants.ID_ANT_DEBUG_MODEL;
-	}
-	
-	protected void abort(String message, Throwable e) throws DebugException {
-		throw new DebugException(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 
-				DebugPlugin.INTERNAL_ERROR, message, e));
 	}
     
 	/**
