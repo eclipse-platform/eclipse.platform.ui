@@ -36,7 +36,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -605,10 +604,8 @@ public final class CommandContributionItem extends ContributionItem {
 						}
 					});
 					// position the menu below the drop down item
-					Rectangle b = ti.getBounds();
-					Point p = ti.getParent().toDisplay(
-							new Point(b.x, b.y + b.height));
-					menu.setLocation(p.x, p.y); // waiting for SWT
+					Point point = ti.getParent().toDisplay(new Point(event.x, event.y));
+					menu.setLocation(point.x, point.y); // waiting for SWT
 					// 0.42
 					menu.setVisible(true);
 					return true; // we don't fire the action

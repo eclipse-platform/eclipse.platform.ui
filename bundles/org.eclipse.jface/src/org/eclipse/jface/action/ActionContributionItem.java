@@ -26,7 +26,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -518,10 +517,8 @@ public class ActionContributionItem extends ContributionItem {
 							Menu m = mc.getMenu(ti.getParent());
 							if (m != null) {
 								// position the menu below the drop down item
-								Rectangle b = ti.getBounds();
-								Point p = ti.getParent().toDisplay(
-										new Point(b.x, b.y + b.height));
-								m.setLocation(p.x, p.y); // waiting for SWT
+								Point point = ti.getParent().toDisplay(new Point(e.x, e.y));
+								m.setLocation(point.x, point.y); // waiting for SWT
 															// 0.42
 								m.setVisible(true);
 								return; // we don't fire the action
