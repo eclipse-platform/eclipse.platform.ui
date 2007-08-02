@@ -201,6 +201,8 @@ public class DebugPlugin extends Plugin {
 	
 	/**
 	 * Status code indicating an unexpected error.
+	 * 
+	 * @since 3.4
 	 */
 	public static final int ERROR = 120;	
 	
