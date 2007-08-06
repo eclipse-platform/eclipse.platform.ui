@@ -12,6 +12,10 @@ package org.eclipse.ui.texteditor.templates;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,13 +53,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileStore;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
@@ -1206,13 +1203,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		if (path == null)
 			return;
-		
-		IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(path));
 
 		try {
 			TemplateReaderWriter reader= new TemplateReaderWriter();
-			if (fileStore.fetchInfo().exists()) {
-				InputStream input= new BufferedInputStream(fileStore.openInputStream(EFS.NONE, null));
+			File file= new File(path);
+			if (file.exists()) {
+				InputStream input= new BufferedInputStream(new FileInputStream(file));
 				try {
 					TemplatePersistenceData[] datas= reader.read(input, null);
 					for (int i= 0; i < datas.length; i++) {
@@ -1232,7 +1228,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			fTableViewer.setAllChecked(false);
 			fTableViewer.setCheckedElements(getEnabledTemplates());
 
-		} catch (CoreException e) {
+		} catch (FileNotFoundException e) {
 			openReadErrorDialog();
 		} catch (IOException e) {
 			openReadErrorDialog();
@@ -1260,31 +1256,28 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (path == null)
 			return;
 
-		IFileStore fileStore= EFS.getLocalFileSystem().getStore(new Path(path));
-		IFileInfo fileInfo= fileStore.fetchInfo();
+		File file= new File(path);
 
-		if (fileInfo.getAttribute(EFS.ATTRIBUTE_HIDDEN)) {
+		if (file.isHidden()) {
 			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
-			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, fileStore.toString());
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_hidden, file.getAbsolutePath());
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
 
-		if (fileInfo.exists() && fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
+		if (file.exists() && !file.canWrite()) {
 			String title= TextEditorTemplateMessages.TemplatePreferencePage_export_error_title;
-			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, fileStore.toString());
+			String message= NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_error_canNotWrite, file.getAbsolutePath());
 			MessageDialog.openError(getShell(), title, message);
 			return;
 		}
 
-		if (!fileInfo.exists() || confirmOverwrite(fileStore)) {
+		if (!file.exists() || confirmOverwrite(file)) {
 			OutputStream output= null;
 			try {
-				output= new BufferedOutputStream(fileStore.openOutputStream(EFS.NONE, null));
+				output= new BufferedOutputStream(new FileOutputStream(file));
 				TemplateReaderWriter writer= new TemplateReaderWriter();
 				writer.save(templates, output);
-			} catch (CoreException e) {
-				openWriteErrorDialog();
 			} catch (IOException e) {
 				openWriteErrorDialog();
 			} finally {
@@ -1299,10 +1292,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 	}
 
-	private boolean confirmOverwrite(IFileStore fileStore) {
+	private boolean confirmOverwrite(File file) {
 		return MessageDialog.openQuestion(getShell(),
 			TextEditorTemplateMessages.TemplatePreferencePage_export_exists_title,
-			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, fileStore.toString()));
+			NLSUtility.format(TextEditorTemplateMessages.TemplatePreferencePage_export_exists_message, file.getAbsolutePath()));
 	}
 
 	private void remove() {
