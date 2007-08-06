@@ -29,6 +29,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
+import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManager;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -112,8 +113,8 @@ public final class RefactoringHistoryMerger implements IStreamMerger, IStorageMe
 	 *             if an error occurs
 	 */
 	private void performMerge(final OutputStream output, final InputStream target, final InputStream source) throws CoreException {
-		final RefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source);
-		final RefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target);
+		final DefaultRefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source);
+		final DefaultRefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target);
 		final Set set= new HashSet();
 		for (int index= 0; index < sourceDescriptors.length; index++)
 			set.add(sourceDescriptors[index]);

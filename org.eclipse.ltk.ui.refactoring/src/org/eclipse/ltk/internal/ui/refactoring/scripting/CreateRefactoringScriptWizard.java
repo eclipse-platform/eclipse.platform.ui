@@ -29,6 +29,8 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -332,6 +334,8 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			if (throwable instanceof CoreException) {
 				final CoreException extended= (CoreException) throwable;
 				throw extended;
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, ScriptingMessages.CreateRefactoringScriptWizard_unexpected_exception, throwable));
 			}
 		} catch (InterruptedException exception) {
 			// Do nothing

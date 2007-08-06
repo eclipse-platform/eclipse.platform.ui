@@ -21,8 +21,12 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
+
 /**
  * Default implementation of a refactoring descriptor.
+ * This refactoring descriptor can only be used as temporary storage to transfer
+ * refactoring descriptor data. {@link #createRefactoring(RefactoringStatus)} always returns null. 
  * 
  * @since 3.2
  */
@@ -55,8 +59,11 @@ public final class DefaultRefactoringDescriptor extends RefactoringDescriptor {
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @return always null
 	 */
 	public Refactoring createRefactoring(final RefactoringStatus status) throws CoreException {
+		status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DefaultRefactoringDescriptor_cannot_create_refactoring));
 		return null;
 	}
 

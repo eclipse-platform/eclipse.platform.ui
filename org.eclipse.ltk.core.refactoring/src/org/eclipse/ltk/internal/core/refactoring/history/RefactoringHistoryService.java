@@ -1333,7 +1333,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isNotNull(stream);
 		Assert.isTrue(flags >= RefactoringDescriptor.NONE);
 		final List list= new ArrayList();
-		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(true).readSession(new InputSource(stream));
+		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(false, null).readSession(new InputSource(stream));
 		if (descriptor != null) {
 			final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 			if (flags > RefactoringDescriptor.NONE) {

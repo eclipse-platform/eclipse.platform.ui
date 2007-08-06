@@ -22,20 +22,23 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.ltk.core.refactoring.IRefactoringCoreStatusCodes;
+import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 
+import org.eclipse.ltk.internal.core.refactoring.history.DefaultRefactoringDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContributionManager;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -49,35 +52,45 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	/** The comment of the refactoring session, or <code>null</code> */
 	private String fComment= null;
 
-	/** Should project information be included? */
-	private final boolean fProjects;
+	/**
+	 * The project of the refactoring descriptors, or <code>null</code>
+	 * if the project should be read from the descriptors.
+	 */
+	private final String fProject;
 
+	private final boolean fCreateDefaultDescriptors;
+	
 	/**
 	 * The current list of refactoring descriptors, or <code>null</code>
 	 * (element type: <code>RefactoringDescriptor</code>)
 	 */
 	private List fRefactoringDescriptors= null;
 
-	/**
-	 * List of exceptions occurred while creating the descriptors 
-	 */
-	private List fDescriptorStatus= null;
-	
 	/** Has a session been found during parsing? */
 	private boolean fSessionFound= false;
 
 	/** The current version of the refactoring script, or <code>null</code> */
 	private String fVersion= null;
 
+	private Locator fLocator;
+
 	/**
 	 * Creates a new refactoring session reader.
 	 * 
-	 * @param projects
-	 *            <code>true</code> to include project information,
-	 *            <code>false</code> otherwise
+	 * @param createDefaultDescriptors
+	 *            <code>true</code> iff {@link DefaultRefactoringDescriptor}s should be created,
+	 *            <code>false</code> if {@link RefactoringContribution#createDescriptor(String, String, String, String, Map, int)}
+	 *            should be used to create contribution-specific descriptors.
+	 *            Note that default descriptors may miss the project property and that they
+	 *            are <b>not</b> capable of creating a refactoring.
+	 * @param project
+	 *            the project of the refactoring descriptors, or <code>null</code>
+	 *            if the project should be read from the descriptors. This parameter is not used
+	 *            if <code>createDefaultDescriptors</code> is <code>true</code>.
 	 */
-	public RefactoringSessionReader(final boolean projects) {
-		fProjects= projects;
+	public RefactoringSessionReader(boolean createDefaultDescriptors, String project) {
+		fCreateDefaultDescriptors= createDefaultDescriptors;
+		fProject= project;
 	}
 
 	/**
@@ -121,12 +134,9 @@ public final class RefactoringSessionReader extends DefaultHandler {
 	 */
 	public RefactoringSessionDescriptor readSession(final InputSource source) throws CoreException {
 		fSessionFound= false;
-		fDescriptorStatus= new ArrayList();
 		try {
 			source.setSystemId("/"); //$NON-NLS-1$
 			createParser(SAXParserFactory.newInstance()).parse(source, this);
-			if (fDescriptorStatus.size() != 0)
-				throw new CoreException(new MultiStatus(RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, (IStatus[]) fDescriptorStatus.toArray(new IStatus[fDescriptorStatus.size()]), RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, null));
 			if (!fSessionFound)
 				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringSessionReader_no_session, null));
 			if (fRefactoringDescriptors != null) {
@@ -146,9 +156,16 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			fRefactoringDescriptors= null;
 			fVersion= null;
 			fComment= null;
-			fDescriptorStatus= null;
+			fLocator= null;
 		}
 		return null;
+	}
+	
+	/*
+	 * @see org.xml.sax.helpers.DefaultHandler#setDocumentLocator(org.xml.sax.Locator)
+	 */
+	public void setDocumentLocator(Locator locator) {
+		fLocator= locator;
 	}
 
 	/**
@@ -167,21 +184,25 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			for (int index= 0; index < length; index++) {
 				final String name= attributes.getQName(index);
 				final String value= attributes.getValue(index);
-				if (IRefactoringSerializationConstants.ATTRIBUTE_ID.equals(name))
+				if (IRefactoringSerializationConstants.ATTRIBUTE_ID.equals(name)) {
 					id= value;
-				else if (IRefactoringSerializationConstants.ATTRIBUTE_STAMP.equals(name))
+				} else if (IRefactoringSerializationConstants.ATTRIBUTE_STAMP.equals(name)) {
 					stamp= value;
-				else if (IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION.equals(name))
+				} else if (IRefactoringSerializationConstants.ATTRIBUTE_DESCRIPTION.equals(name)) {
 					description= value;
-				else if (IRefactoringSerializationConstants.ATTRIBUTE_FLAGS.equals(name))
+				} else if (IRefactoringSerializationConstants.ATTRIBUTE_FLAGS.equals(name)) {
 					flags= value;
-				else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name)) {
+				} else if (IRefactoringSerializationConstants.ATTRIBUTE_COMMENT.equals(name)) {
 					if (!"".equals(value)) //$NON-NLS-1$
 						comment= value;
-				} else if (fProjects && IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name))
+				} else if (IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name)) {
+					if (! fCreateDefaultDescriptors && fProject != null) {
+						throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator);
+					}
 					project= value;
-				else if (!"".equals(name)) //$NON-NLS-1$
+				} else if (!"".equals(name)) { //$NON-NLS-1$
 					map.put(name, value);
+				}
 			}
 			int flag= 0;
 			try {
@@ -191,21 +212,31 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			}
 
 			RefactoringDescriptor descriptor= null;
-			try {
-				descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
-			} catch (RuntimeException e) {
-				fDescriptorStatus.add(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), e.getLocalizedMessage(), e));
-			}
-			if (descriptor != null) {
-				try {
-					descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
-				} catch (NumberFormatException exception) {
-					// Do nothing
+			if (fCreateDefaultDescriptors) {
+				descriptor= new DefaultRefactoringDescriptor(id, project, description, comment, map, flag);
+			} else {
+				if (fProject != null) {
+					if (project != null) {
+						// fProject should be null if xml file contains project information
+						throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator);
+					}
+					project= fProject;
 				}
-				if (fRefactoringDescriptors == null)
-					fRefactoringDescriptors= new ArrayList();
-				fRefactoringDescriptors.add(descriptor);
+				try {
+					descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
+				} catch (RuntimeException e) {
+					throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator, e);
+				}
 			}
+			try {
+				descriptor.setTimeStamp(Long.valueOf(stamp).longValue());
+			} catch (NumberFormatException exception) {
+				// Do nothing
+			}
+			if (fRefactoringDescriptors == null)
+				fRefactoringDescriptors= new ArrayList();
+			fRefactoringDescriptors.add(descriptor);
+			
 		} else if (IRefactoringSerializationConstants.ELEMENT_SESSION.equals(qualifiedName)) {
 			fSessionFound= true;
 			final String version= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_VERSION);

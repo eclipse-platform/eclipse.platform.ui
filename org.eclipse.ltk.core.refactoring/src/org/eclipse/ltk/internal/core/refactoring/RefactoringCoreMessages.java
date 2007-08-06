@@ -28,7 +28,7 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String CreateChangeOperation_unknown_Refactoring;
 
-	public static String DefaultRefactoringDescriptor_initialization_error;
+	public static String DefaultRefactoringDescriptor_cannot_create_refactoring;
 
 	public static String NullChange_name;
 

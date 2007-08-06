@@ -283,7 +283,7 @@ public final class RefactoringHistoryManager {
 	}
 
 	/**
-	 * Reads refactoring descriptors from the specified input stream.
+	 * Reads default refactoring descriptors from the specified input stream.
 	 * <p>
 	 * The refactoring descriptors are returned in no particular order.
 	 * </p>
@@ -294,14 +294,14 @@ public final class RefactoringHistoryManager {
 	 * @throws CoreException
 	 *             if an error occurs while reading the descriptors
 	 */
-	public static RefactoringDescriptor[] readRefactoringDescriptors(final InputStream stream) throws CoreException {
+	public static DefaultRefactoringDescriptor[] readRefactoringDescriptors(final InputStream stream) throws CoreException {
 		final List list= new ArrayList(64);
 		readRefactoringDescriptors(stream, list, new NullProgressMonitor());
-		return (RefactoringDescriptor[]) list.toArray(new RefactoringDescriptor[list.size()]);
+		return (DefaultRefactoringDescriptor[]) list.toArray(new DefaultRefactoringDescriptor[list.size()]);
 	}
 
 	/**
-	 * Reads refactoring descriptors from the specified input stream.
+	 * Reads default refactoring descriptors from the specified input stream.
 	 * 
 	 * @param stream
 	 *            the input stream where to read from
@@ -315,7 +315,7 @@ public final class RefactoringHistoryManager {
 	private static void readRefactoringDescriptors(final InputStream stream, final Collection collection, final IProgressMonitor monitor) throws CoreException {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
-			final RefactoringDescriptor[] results= new RefactoringSessionReader(true).readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
+			final RefactoringDescriptor[] results= new RefactoringSessionReader(true, null).readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
 			for (int index= 0; index < results.length; index++)
 				collection.add(results[index]);
 		} finally {
@@ -679,7 +679,7 @@ public final class RefactoringHistoryManager {
 			sb.append(element.getNodeName());
 			sb.append(">"); //$NON-NLS-1$
 			print(sb.toString());
-		}
+	}
 
 		private static void appendEscapedChar(StringBuffer buffer, char c) {
 			String replacement= getReplacement(c);
@@ -771,7 +771,7 @@ public final class RefactoringHistoryManager {
 		}
 		final Document result= transformer.getResult();
 		writeNode(stream, result);
-	}
+			}
 
 	private static void writeNode(final OutputStream stream, Document document) {
 		OutputStreamWriter outputStreamWriter= new OutputStreamWriter(stream);
@@ -902,7 +902,7 @@ public final class RefactoringHistoryManager {
 					try {
 						final Document result= transformDescriptor(descriptor, false);
 						writeHistoryEntry(history, result, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
-						writeIndexEntry(index, proxies, EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
+							writeIndexEntry(index, proxies, EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 					} catch (IOException exception) {
 						throw createCoreException(exception);
 					}
@@ -942,16 +942,18 @@ public final class RefactoringHistoryManager {
 	 * 
 	 * @param store
 	 *            the file store of the descriptor
+	 * @param projectName
+	 *            project name, or <code>null</code> for the workspace
 	 * @param input
 	 *            the input stream where to read the descriptor
 	 * @return the cached refactoring session descriptor
 	 * @throws CoreException
 	 *             if an error occurs while reading the session
 	 */
-	private RefactoringSessionDescriptor getCachedSession(final IFileStore store, final InputStream input) throws CoreException {
+	private RefactoringSessionDescriptor getCachedSession(final IFileStore store, String projectName, final InputStream input) throws CoreException {
 		if (store.equals(fCachedStore) && fCachedDescriptor != null)
 			return fCachedDescriptor;
-		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(true).readSession(new InputSource(input));
+		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(false, projectName).readSession(new InputSource(input));
 		fCachedDescriptor= descriptor;
 		fCachedStore= store;
 		return descriptor;
@@ -1144,26 +1146,25 @@ public final class RefactoringHistoryManager {
 					final IFileStore file= folder.getChild(RefactoringHistoryService.NAME_HISTORY_FILE);
 					if (file.fetchInfo(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)).exists()) {
 						input= new BufferedInputStream(file.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-						final RefactoringSessionDescriptor descriptor= getCachedSession(file, input);
+						final RefactoringSessionDescriptor descriptor= getCachedSession(file, fProjectName, input);
 						if (descriptor != null) {
 							final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 							for (int index= 0; index < descriptors.length; index++) {
-								if (descriptors[index].getTimeStamp() == stamp) {
-									final RefactoringDescriptor result= descriptors[index];
-									result.setProject(fProjectName);
-									return result;
+								final RefactoringDescriptor refactoringDescriptor= descriptors[index];
+								if (refactoringDescriptor.getTimeStamp() == stamp) {
+									return refactoringDescriptor;
 								}
 							}
 						}
 					}
 				} catch (CoreException exception) {
-					// Do nothing
+					RefactoringCorePlugin.log(exception);
 				} finally {
 					try {
 						if (input != null)
 							input.close();
 					} catch (IOException exception) {
-						// Do nothing
+						RefactoringCorePlugin.log(exception);
 					}
 				}
 			}
@@ -1254,21 +1255,21 @@ public final class RefactoringHistoryManager {
 		OutputStream output= null;
 		try {
 			monitor.beginTask(task, 2);
-			file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-			output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+				file.getParent().mkdir(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+				output= new BufferedOutputStream(file.openOutputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
 			writeNode(output, document);
-		} finally {
-			fCachedDocument= null;
-			fCachedPath= null;
-			fCachedDescriptor= null;
-			fCachedStore= null;
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException exception) {
-					// Do nothing
+				} finally {
+					fCachedDocument= null;
+					fCachedPath= null;
+					fCachedDescriptor= null;
+					fCachedStore= null;
+				if (output != null) {
+					try {
+						output.close();
+					} catch (IOException exception) {
+						// Do nothing
+					}
 				}
-			}
 			monitor.done();
 		}
 	}
