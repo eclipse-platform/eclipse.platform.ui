@@ -30,6 +30,10 @@ import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 public class CompareWithTagAction extends WorkspaceTraversalAction {
 
+	private static boolean isOpenEditorForSingleFile() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_OPEN_COMPARE_EDITOR_FOR_SINGLE_FILE);
+	}
+	
 	public void execute(IAction action) throws InvocationTargetException, InterruptedException {
         
         // First, determine the tag to compare with
@@ -37,6 +41,16 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 		CVSTag tag = promptForTag(resources);
 		if (tag == null)
 			return;
+		
+		if (isOpenEditorForSingleFile()) {
+			IFile file = getSelectedFile();
+			if (file != null && SyncAction.isOKToShowSingleFile(file)) {
+				CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
+				SyncAction.showSingleFileComparison(getShell(), compareSubscriber, file, getTargetPage());
+				compareSubscriber.dispose();
+				return;
+			}
+		}
 		
         // Create a subscriber that can cover all projects involved
 		if (isShowModelSync()) {
@@ -59,13 +73,6 @@ public class CompareWithTagAction extends WorkspaceTraversalAction {
 			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
 			participant.run(getTargetPart());
 		} else {
-			IFile file = getSelectedFile();
-			if (file != null && SyncAction.isOKToShowSingleFile(file)) {
-				CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
-				SyncAction.showSingleFileComparison(getShell(), compareSubscriber, file, getTargetPage());
-				compareSubscriber.dispose();
-				return;
-			}
 			CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(getProjects(resources), tag);
 	        ResourceMapping[] resourceMappings = getCVSResourceMappings();
 			if (isLogicalModel(resourceMappings)) {
