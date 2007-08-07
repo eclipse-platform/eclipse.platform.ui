@@ -113,7 +113,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
         }
         if (!fDisposed) {
             fViewer.getControl().setRedraw(false);
-            // maintain expandsion based on visible breakpoints
+            // maintain expansion based on visible breakpoints
             IBreakpoint[] breakpoints = null;
             if (isShowingGroups()) {
                 breakpoints = fViewer.getVisibleBreakpoints();
