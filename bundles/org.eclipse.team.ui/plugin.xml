@@ -513,7 +513,7 @@
       <transfer
             id="org.eclipse.team.transfer.ignores"
             icon="$nl$/icons/full/obj/ignoreprefs.gif"
-            name="Team Ignored Resources Transfer ">
+            name="%ignoresTransferName">
          <mapping
                scope="instance">
             <entry
