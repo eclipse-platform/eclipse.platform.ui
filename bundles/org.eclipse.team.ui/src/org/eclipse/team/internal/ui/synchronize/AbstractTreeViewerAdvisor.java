@@ -24,7 +24,7 @@ import org.eclipse.ui.*;
 /**
  * Abstract superclass for tree viewer advisors
  */
-public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implements IAdaptable {
+public abstract class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implements IAdaptable {
 
 	private ICompareNavigator nav;
 	private INavigatable navigatable;

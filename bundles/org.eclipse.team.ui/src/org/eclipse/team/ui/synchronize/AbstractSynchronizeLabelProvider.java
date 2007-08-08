@@ -379,12 +379,20 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	private ImageManager getImageManager() {
 		ISynchronizationContext context = getContext();
 		if (context != null) {
-			return ImageManager.getImageManager(context);
+			return ImageManager.getImageManager(context, getConfiguration());
 		}
 		if (localImageManager == null) {
 			localImageManager = new ImageManager();
 		}
 		return localImageManager;
+	}
+
+	private ISynchronizePageConfiguration getConfiguration() {
+		if (this instanceof SynchronizationLabelProvider) {
+			SynchronizationLabelProvider slp = (SynchronizationLabelProvider) this;
+			return (ISynchronizePageConfiguration)slp.getExtensionSite().getExtensionStateModel().getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_PAGE_CONFIGURATION);
+		}
+		return null;
 	}
 
 	private ISynchronizationContext getContext() {

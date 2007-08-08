@@ -223,7 +223,7 @@ public class ResourceModelLabelProvider extends
 	protected ImageManager getImageManager() {
 		ISynchronizationContext context = getContext();
 		if (context != null) {
-			return ImageManager.getImageManager(context);
+			return ImageManager.getImageManager(context, getConfiguration());
 		}
 		if (localImageManager == null) {
 			localImageManager = new ImageManager();

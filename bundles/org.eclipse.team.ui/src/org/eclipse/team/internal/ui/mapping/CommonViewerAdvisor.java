@@ -309,6 +309,10 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 			});
 			dlp.setDecorationContext(decorationContext);
 		}
+	}
+	
+	public void setInitialInput() {
+		CommonViewer viewer = (CommonViewer)getViewer();
         viewer.setInput(getInitialInput());
         viewer.expandToLevel(2);
 	}

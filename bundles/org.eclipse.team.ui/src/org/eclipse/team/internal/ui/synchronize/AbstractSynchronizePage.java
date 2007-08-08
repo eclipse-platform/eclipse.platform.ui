@@ -110,7 +110,7 @@ public abstract class AbstractSynchronizePage extends Page implements ISynchroni
 		
 		// Create the changes section which, in turn, creates the changes viewer and its configuration
 		this.changesSection = createChangesSection(composite);
-		this.changesViewer = createChangesViewer(changesSection.getContainer());
+		createChangesViewer(changesSection.getContainer());
 		changesSection.setViewer(changesViewer);
 	}
 
@@ -125,11 +125,11 @@ public abstract class AbstractSynchronizePage extends Page implements ISynchroni
 	 * with the page.
 	 * 
 	 * @param parent the parent of the viewer
-	 * @return the changes viewer control
 	 */
-	protected Viewer createChangesViewer(Composite parent) {
+	private void createChangesViewer(Composite parent) {
 		viewerAdvisor = createViewerAdvisor(parent);
-		return viewerAdvisor.getViewer();
+		changesViewer = viewerAdvisor.getViewer();
+		viewerAdvisor.setInitialInput();
 	}
 
 	protected abstract AbstractViewerAdvisor createViewerAdvisor(Composite parent);

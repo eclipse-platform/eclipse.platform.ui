@@ -137,6 +137,10 @@ public class TreeViewerAdvisor extends AbstractTreeViewerAdvisor {
 		viewer.getControl().setLayoutData(data);
 		initializeViewer(viewer);		
 	}
+	
+	public void setInitialInput() {
+		// The input will be set later
+	}
 
 	/**
 	 * Create the model manager to be used by this advisor

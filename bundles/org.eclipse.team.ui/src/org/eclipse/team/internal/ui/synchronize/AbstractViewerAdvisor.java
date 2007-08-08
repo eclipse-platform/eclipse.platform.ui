@@ -65,4 +65,6 @@ public abstract class AbstractViewerAdvisor {
 	}
 
 	public abstract void setActionBars(IActionBars actionBars);
+
+	public abstract void setInitialInput();
 }
