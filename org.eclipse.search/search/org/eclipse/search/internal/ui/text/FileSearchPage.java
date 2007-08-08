@@ -356,14 +356,30 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 	
 	public int getDisplayedMatchCount(Object element) {
-		if (element instanceof Match)
-			return 1;
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			if (element instanceof Match)
+				return 1;
+		
+			AbstractTextSearchResult result= getInput();
+			if (result == null)
+				return 0;
+		
+			Match[] matches= result.getMatches(element);
+			if (matches.length != 1 || !(matches[0] instanceof FileMatch) || !((FileMatch)matches[0]).isFileSearch())
+				return 0;
+		}	
 		return super.getDisplayedMatchCount(element);
 	}
 
 	public Match[] getDisplayedMatches(Object element) {
-		if (getLayout() == FLAG_LAYOUT_TREE && element instanceof Match)
-			return new Match[] { (Match)element };
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			if (element instanceof Match)
+				return new Match[] { (Match)element };
+			Match[] matches= super.getDisplayedMatches(element);
+			if (matches.length == 1 && matches[0] instanceof FileMatch && ((FileMatch)matches[0]).isFileSearch())
+				return matches;
+			return EMPTY_MATCH_ARRAY;
+		}					
 		return super.getDisplayedMatches(element);
 	}
 	
