@@ -52,8 +52,8 @@ public class ConfigureProjectAction extends TeamAction {
 		for (int i = 0; i < selectedProjects.length; i++) {
 			IProject project = selectedProjects[i];
 			if (!project.isAccessible()) return false;
-			if (!RepositoryProvider.isShared(project)) return true;	
+			if (RepositoryProvider.isShared(project)) return false;	
 		}		
-		return true;
+		return selectedProjects.length > 0;
 	}
 }
