@@ -147,11 +147,18 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				return new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
 			}
 		} catch (IOException exception) {
-			throwCoreException(exception);
+			throwCoreException(exception, exception.getLocalizedMessage());
 		} catch (ParserConfigurationException exception) {
-			throwCoreException(exception);
+			throwCoreException(exception, exception.getLocalizedMessage());
+		} catch (SAXParseException exception) {
+			String message= Messages.format(RefactoringCoreMessages.RefactoringSessionReader_invalid_contents_at,
+					new Object[] {
+							Integer.toString(exception.getLineNumber()),
+							Integer.toString(exception.getColumnNumber())
+			});
+			throwCoreException(exception, message);
 		} catch (SAXException exception) {
-			throwCoreException(exception);
+			throwCoreException(exception, exception.getLocalizedMessage());
 		} finally {
 			fRefactoringDescriptors= null;
 			fVersion= null;
@@ -161,11 +168,11 @@ public final class RefactoringSessionReader extends DefaultHandler {
 		return null;
 	}
 
-	private void throwCoreException(Exception exception) throws CoreException {
+	private void throwCoreException(Exception exception, String message) throws CoreException {
 		throw new CoreException(new Status(IStatus.ERROR,
 				RefactoringCorePlugin.getPluginId(),
 				IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR,
-				RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml,
+				message,
 				exception));
 	}
 	
@@ -204,9 +211,6 @@ public final class RefactoringSessionReader extends DefaultHandler {
 					if (!"".equals(value)) //$NON-NLS-1$
 						comment= value;
 				} else if (IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name)) {
-					if (! fCreateDefaultDescriptors && fProject != null) {
-						throw new SAXParseException(getInvalidContentsMessage(), fLocator);
-					}
 					project= value;
 				} else if (!"".equals(name)) { //$NON-NLS-1$
 					map.put(name, value);
@@ -223,17 +227,13 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			if (fCreateDefaultDescriptors) {
 				descriptor= new DefaultRefactoringDescriptor(id, project, description, comment, map, flag);
 			} else {
-				if (fProject != null) {
-					if (project != null) {
-						// fProject should be null if xml file contains project information
-						throw new SAXParseException(getInvalidContentsMessage(), fLocator);
-					}
-					project= fProject;
+				if (fProject != null && project == null) {
+					project= fProject; // override project from file if fProject != null
 				}
 				try {
 					descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
 				} catch (RuntimeException e) {
-					throw new SAXParseException(getInvalidContentsMessage(), fLocator, e);
+					throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator, e);
 				}
 			}
 			try {
@@ -252,13 +252,5 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				fVersion= version;
 			fComment= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 		}
-	}
-
-	private String getInvalidContentsMessage() {
-		return Messages.format(RefactoringCoreMessages.RefactoringSessionReader_invalid_contents_at,
-				new Object[] {
-						Integer.toString(fLocator.getLineNumber()),
-						Integer.toString(fLocator.getColumnNumber())
-				});
 	}
 }
