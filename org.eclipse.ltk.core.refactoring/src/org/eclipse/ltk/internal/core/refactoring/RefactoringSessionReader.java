@@ -147,11 +147,11 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				return new RefactoringSessionDescriptor((RefactoringDescriptor[]) fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
 			}
 		} catch (IOException exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
+			throwCoreException(exception);
 		} catch (ParserConfigurationException exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
+			throwCoreException(exception);
 		} catch (SAXException exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
+			throwCoreException(exception);
 		} finally {
 			fRefactoringDescriptors= null;
 			fVersion= null;
@@ -159,6 +159,14 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			fLocator= null;
 		}
 		return null;
+	}
+
+	private void throwCoreException(Exception exception) throws CoreException {
+		throw new CoreException(new Status(IStatus.ERROR,
+				RefactoringCorePlugin.getPluginId(),
+				IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR,
+				RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml,
+				exception));
 	}
 	
 	/*
@@ -197,7 +205,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 						comment= value;
 				} else if (IRefactoringSerializationConstants.ATTRIBUTE_PROJECT.equals(name)) {
 					if (! fCreateDefaultDescriptors && fProject != null) {
-						throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator);
+						throw new SAXParseException(getInvalidContentsMessage(), fLocator);
 					}
 					project= value;
 				} else if (!"".equals(name)) { //$NON-NLS-1$
@@ -218,14 +226,14 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				if (fProject != null) {
 					if (project != null) {
 						// fProject should be null if xml file contains project information
-						throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator);
+						throw new SAXParseException(getInvalidContentsMessage(), fLocator);
 					}
 					project= fProject;
 				}
 				try {
 					descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
 				} catch (RuntimeException e) {
-					throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator, e);
+					throw new SAXParseException(getInvalidContentsMessage(), fLocator, e);
 				}
 			}
 			try {
@@ -244,5 +252,13 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				fVersion= version;
 			fComment= attributes.getValue(IRefactoringSerializationConstants.ATTRIBUTE_COMMENT);
 		}
+	}
+
+	private String getInvalidContentsMessage() {
+		return Messages.format(RefactoringCoreMessages.RefactoringSessionReader_invalid_contents_at,
+				new Object[] {
+						Integer.toString(fLocator.getLineNumber()),
+						Integer.toString(fLocator.getColumnNumber())
+				});
 	}
 }

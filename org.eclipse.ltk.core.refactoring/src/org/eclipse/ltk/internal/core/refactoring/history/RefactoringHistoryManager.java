@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
@@ -953,10 +954,20 @@ public final class RefactoringHistoryManager {
 	private RefactoringSessionDescriptor getCachedSession(final IFileStore store, String projectName, final InputStream input) throws CoreException {
 		if (store.equals(fCachedStore) && fCachedDescriptor != null)
 			return fCachedDescriptor;
-		final RefactoringSessionDescriptor descriptor= new RefactoringSessionReader(false, projectName).readSession(new InputSource(input));
-		fCachedDescriptor= descriptor;
-		fCachedStore= store;
-		return descriptor;
+		final RefactoringSessionDescriptor descriptor;
+		try {
+			descriptor= new RefactoringSessionReader(false, projectName).readSession(new InputSource(input));
+			fCachedDescriptor= descriptor;
+			fCachedStore= store;
+			return descriptor;
+		} catch (CoreException e) {
+			throw new CoreException(new MultiStatus(
+					RefactoringCorePlugin.getPluginId(),
+					IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR,
+					new IStatus[] { e.getStatus() },
+					Messages.format(RefactoringCoreMessages.RefactoringHistoryManager_error_reading_file, store.toURI()),
+					null));
+		}
 	}
 
 	/**

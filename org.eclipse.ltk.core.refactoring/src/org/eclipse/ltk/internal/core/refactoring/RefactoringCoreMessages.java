@@ -76,6 +76,8 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String RefactoringHistoryManager_empty_argument;
 
+	public static String RefactoringHistoryManager_error_reading_file;
+
 	public static String RefactoringHistoryManager_non_string_argument;
 
 	public static String RefactoringHistoryManager_non_string_value;
@@ -89,6 +91,8 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String RefactoringHistoryService_retrieving_history;
 
 	public static String RefactoringHistoryService_updating_history;
+
+	public static String RefactoringSessionReader_invalid_contents_at;
 
 	public static String RefactoringSessionReader_invalid_values_in_xml;
 
