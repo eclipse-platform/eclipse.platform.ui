@@ -59,7 +59,7 @@ public class FileSearchQuery implements ISearchQuery {
 		
 		public boolean acceptFile(IFile file) throws CoreException {
 			if (fIsFileSearchOnly) {
-				fResult.addMatch(new FileMatch(file, 0, 0, null, -1, 0));
+				fResult.addMatch(new FileMatch(file));
 			}
 			flushMatches();
 			return true;

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.search.ui.text.Match;
@@ -21,8 +23,13 @@ public class FileMatch extends Match {
 	private String fLine;
 	private int fOffsetWithinLine, fLengthWithinLine; // offset/length of the match within the context line
 	
+	public FileMatch(IFile element) {
+		super(element, -1, -1);
+	}
+	
 	public FileMatch(IFile element, int offset, int length, String line, int offsetWithinLine, int lengthWithinLine) {
 		super(element, offset, length);
+		Assert.isLegal(line != null);
 		fLine= line;
 		fOffsetWithinLine= offsetWithinLine;
 		fLengthWithinLine= lengthWithinLine;
@@ -42,5 +49,9 @@ public class FileMatch extends Match {
 	
 	public int getLengthWithinLine(){
 		return fLengthWithinLine;
+	}
+	
+	public boolean isFileSearch() {
+		return fLine == null;
 	}
 }

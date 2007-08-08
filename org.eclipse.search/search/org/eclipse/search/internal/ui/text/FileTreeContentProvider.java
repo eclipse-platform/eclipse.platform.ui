@@ -83,6 +83,8 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	}
 
 	protected void insert(Object child, boolean refreshViewer) {
+		if (child instanceof FileMatch && ((FileMatch)child).isFileSearch())
+			child= getParent(child);
 
 		Object parent= getParent(child);
 		while (parent != null) {
