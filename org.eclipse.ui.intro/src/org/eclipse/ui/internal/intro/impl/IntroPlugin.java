@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
@@ -41,8 +42,10 @@ public class IntroPlugin extends AbstractUIPlugin {
     // plug-in is still active. This is important for
     // switching themes after the plug-in has been loaded.
     private ImageRegistry volatileImageRegistry;
-
-
+    
+    // debug options
+	public static boolean DEBUG = false;
+	public static boolean DEBUG_NO_BROWSER = false;
 
     /**
      * The constructor.
@@ -161,6 +164,11 @@ public class IntroPlugin extends AbstractUIPlugin {
         inst = this;
         if (Log.logInfo)
             Log.info("IntroPlugin - calling start on Intro bundle"); //$NON-NLS-1$
+    	// Setup debugging options
+		DEBUG = isDebugging();
+		if (DEBUG) {
+			DEBUG_NO_BROWSER = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/flags/noBrowser")); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 
     }
 

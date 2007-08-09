@@ -19,6 +19,10 @@ org.eclipse.ui.intro/trace/logPerformance = false
 # dynamic page will be printed to the console when the page is loaded in the browser.  
 org.eclipse.ui.intro/trace/printHTML = false
 
+# Used for testing the non Browser presentation. By default the HTML presentation
+# will be used if possible. If this flag is true the Browser presentation will not be used.
+org.eclipse.ui.intro/flags/noBrowser= false
+
 # Performance flags used by the Performance framework to report failures 
 # of specific thresholds.  
 

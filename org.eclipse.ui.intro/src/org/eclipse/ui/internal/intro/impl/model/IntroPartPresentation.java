@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
@@ -390,11 +391,14 @@ public class IntroPartPresentation extends AbstractIntroElement {
 		if (!implementationType.equals(BROWSER_IMPL_KIND) && !implementationType.equals(FORMS_IMPL_KIND)
 				&& !implementationType.equals(TEXT_IMPL_KIND))
 			return null;
+		if (implementationType.equals(BROWSER_IMPL_KIND) && IntroPlugin.DEBUG_NO_BROWSER) 
+			return null;
 
 		AbstractIntroPartImplementation implementation = null;
 		try {
 			if (implementationType.equals(BROWSER_IMPL_KIND))
-				implementation = new BrowserIntroPartImplementation();
+				implementation = //null; 
+			      new BrowserIntroPartImplementation(); 
 			else if (implementationType.equals(FORMS_IMPL_KIND))
 				implementation = new FormIntroPartImplementation();
 			else
