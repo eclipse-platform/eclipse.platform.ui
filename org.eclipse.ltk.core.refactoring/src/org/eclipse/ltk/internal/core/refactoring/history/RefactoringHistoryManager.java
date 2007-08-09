@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -775,7 +776,7 @@ public final class RefactoringHistoryManager {
 			}
 
 	private static void writeNode(final OutputStream stream, Document document) {
-		OutputStreamWriter outputStreamWriter= new OutputStreamWriter(stream);
+		OutputStreamWriter outputStreamWriter= new OutputStreamWriter(stream, Charset.forName("UTF-8")); //$NON-NLS-1$
 		DOMWriter writer= new DOMWriter(outputStreamWriter);
 		writer.printDocument(document);
 		writer.flush();
