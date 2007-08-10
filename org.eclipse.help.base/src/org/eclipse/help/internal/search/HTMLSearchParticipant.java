@@ -86,31 +86,25 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 	 * @return whether the content should be treated as XHTML
 	 */
 	private boolean isXHTML(String pluginId, URL url) {
-		// if the search participant isn't bound to the plugin we shouldn't use it
-		LocalSearchManager manager = BaseHelpSystem.getLocalSearchManager();
-		if (manager.isParticipantBound(pluginId, "org.eclipse.help.base.xhtml")) { //$NON-NLS-1$
-			if (xhtmlDescriber == null) {
-				xhtmlDescriber = new XHTMLContentDescriber();
-			}
-			InputStream in = null;
-			try {
-				in = url.openStream();
-				return (xhtmlDescriber.describe(in, null) == IContentDescriber.VALID);
-			}
-			catch (Exception e) {
-				// if anything goes wrong, treat it as not xhtml
-			}
-			finally {
-				if (in != null) {
-					try {
-						in.close();
-					}
-					catch (IOException e) {
-						// nothing we can do
-					}
+		if (xhtmlDescriber == null) {
+			xhtmlDescriber = new XHTMLContentDescriber();
+		}
+		InputStream in = null;
+		try {
+			in = url.openStream();
+			return (xhtmlDescriber.describe(in, null) == IContentDescriber.VALID);
+		} catch (Exception e) {
+			// if anything goes wrong, treat it as not xhtml
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// nothing we can do
 				}
 			}
 		}
+
 		return false;
 	}
 }
