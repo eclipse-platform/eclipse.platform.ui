@@ -1216,10 +1216,20 @@ public abstract class PartSashContainer extends LayoutPart implements
     protected abstract PartStack createStack();
 
     public void stack(LayoutPart newPart, ILayoutContainer container) {
-
         getControl().setRedraw(false);
-        // Remove the part from old container.
-        derefPart(newPart);
+
+		// Only deref the part if it is being referenced in -this- perspective
+        PerspectiveHelper pres = page.getActivePerspective().getPresentation();
+        ILayoutContainer curContainer = newPart.getContainer(); 
+    	if (pres != null && curContainer instanceof ViewStack) {
+    		ViewStack vs = (ViewStack) curContainer;
+    		LayoutPart fp = pres.findPart(vs.getID(), null);
+    		if (fp != null) {
+    	        // Remove the part from old container.
+    	        derefPart(newPart);
+    		}
+    	}
+    	
         // Reparent part and add it to the workbook
         newPart.reparent(getParent());
         container.add(newPart);
