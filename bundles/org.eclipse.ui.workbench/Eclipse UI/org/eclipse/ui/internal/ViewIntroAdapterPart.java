@@ -26,7 +26,6 @@ import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * Simple view that will wrap an <code>IIntroPart</code>.
@@ -51,13 +50,9 @@ public final class ViewIntroAdapterPart extends ViewPart {
             ref.addInternalPropertyListener(
                     new IPropertyListener() {
                         public void propertyChanged(Object source, int propId) {
-                            if (handleZoomEvents && ref.getPane().getContainer() instanceof ViewStack) {
-                        		ViewStack vs = (ViewStack) ref.getPane().getContainer();
+                            if (handleZoomEvents) {
                                 if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_ZOOMED) {
-                               		setStandby(vs.getState() == IStackPresentationSite.STATE_MAXIMIZED);
-                                }
-                                else if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_MAXIMIZED) {
-                               		setStandby(vs.getState() != IStackPresentationSite.STATE_MAXIMIZED);
+                                    setStandby(!ref.getPane().isZoomed());
                                 }
                             }
                         }
@@ -192,7 +187,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
 	private void setBarVisibility(final boolean visible) {
 		WorkbenchWindow window = (WorkbenchWindow) getSite()
 				.getWorkbenchWindow();
-
+		
 		final boolean layout = (visible != window.getCoolBarVisible())
 				|| (visible != window.getPerspectiveBarVisible()); // don't layout unless things have actually changed
 		if (visible) {
