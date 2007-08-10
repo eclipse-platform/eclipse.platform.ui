@@ -117,8 +117,10 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			// and now dispose the delegates since the
 			// PluginActionContributionItem
 			// can no longer do that
-			actionBuilder.dispose();
-			actionBuilder = null;
+			if (actionBuilder != null) {
+				actionBuilder.dispose();
+				actionBuilder = null;
+			}
 
 			// Free the site.
 			site.dispose();
