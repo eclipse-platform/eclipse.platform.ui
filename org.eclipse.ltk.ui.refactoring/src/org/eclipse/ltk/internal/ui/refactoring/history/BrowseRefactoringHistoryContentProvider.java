@@ -248,7 +248,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 				final String project= (String) iterator.next();
 				if (project.equals(WORKSPACE_PROJECT)) {
 					final RefactoringHistory history= getRefactoringHistory(project);
-					if (project != null) {
+					if (history != null) {
 						if (fControlConfiguration.isTimeDisplayed()) {
 							final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(project);
 							if (provider != null) {
