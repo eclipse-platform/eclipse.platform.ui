@@ -12,8 +12,8 @@ package org.eclipse.help.internal.search.federated;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 
 public class IndexerJob extends Job {
@@ -24,7 +24,12 @@ public class IndexerJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex(Platform.getNL());
 		try {
+			long start = System.currentTimeMillis();
 			BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(monitor, index);
+			long stop = System.currentTimeMillis();
+			if (HelpPlugin.DEBUG_SEARCH) {
+			    System.out.println("Milliseconds to update index =  = " + (stop - start)); //$NON-NLS-1$
+			}
 			return Status.OK_STATUS;
 		}
 		catch (OperationCanceledException e) {

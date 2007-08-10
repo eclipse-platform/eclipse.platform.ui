@@ -34,6 +34,7 @@ public class HelpPlugin extends Plugin {
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
+	public static boolean DEBUG_SEARCH = false;
 	
 	public final static String HELP_DATA_KEY = "HELP_DATA"; //$NON-NLS-1$
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
@@ -156,6 +157,7 @@ public class HelpPlugin extends Plugin {
 		DEBUG = isDebugging();
 		if (DEBUG) {
 			DEBUG_CONTEXT = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/context")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
