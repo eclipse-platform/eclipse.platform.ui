@@ -55,105 +55,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class FiltersConfigurationDialog extends Dialog {
 
-	private class ScopeArea extends FilterConfigurationArea {
-
-		private Button[] buttons;
-		int scope;
-
-		/**
-		 * Create a new instance of the receiver.
-		 */
-		public ScopeArea() {
-			super();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#applyToGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
-		 */
-		public void applyToGroup(MarkerFieldFilterGroup group) {
-			group.setScope(scope);
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
-		 */
-		public void createContents(Composite parent) {
-
-			buttons = new Button[5];
-
-			buttons[MarkerFieldFilterGroup.ON_ANY] = createRadioButton(parent,
-					MarkerMessages.filtersDialog_anyResource,
-					MarkerFieldFilterGroup.ON_ANY);
-			buttons[MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER] = createRadioButton(
-					parent,
-					MarkerMessages.filtersDialog_anyResourceInSameProject,
-					MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER);
-			buttons[MarkerFieldFilterGroup.ON_SELECTED_ONLY] = createRadioButton(
-					parent, MarkerMessages.filtersDialog_selectedResource,
-					MarkerFieldFilterGroup.ON_SELECTED_ONLY);
-			buttons[MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN] = createRadioButton(
-					parent, MarkerMessages.filtersDialog_selectedAndChildren,
-					MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN);
-			buttons[MarkerFieldFilterGroup.ON_WORKING_SET] = createRadioButton(
-					parent, MarkerMessages.filtersDialog_currentWorkingSet,
-					MarkerFieldFilterGroup.ON_WORKING_SET);
-		}
-
-		/**
-		 * Creates a radio button with the given parent and text.
-		 * 
-		 * @param parent
-		 *            the parent composite
-		 * @param text
-		 *            the text for the check box
-		 * @return the radio box button
-		 */
-		protected Button createRadioButton(Composite parent, String text,
-				final int value) {
-			Button button = new Button(parent, SWT.RADIO);
-			button.setText(text);
-			button.setSelection(value == scope);
-			button.addSelectionListener(new SelectionAdapter() {
-
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-				 */
-				public void widgetSelected(SelectionEvent e) {
-					scope = value;
-				}
-			});
-			return button;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#getTitle()
-		 */
-		public String getTitle() {
-			return MarkerMessages.severity_description;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
-		 */
-		public void initializeFromGroup(MarkerFieldFilterGroup group) {
-			buttons[scope].setSelection(false);
-			scope = group.getScope();
-			buttons[scope].setSelection(true);
-		}
-
-	}
-
 	private Collection filterAreas;
 
 	private Collection filterGroups;
@@ -210,16 +111,16 @@ public class FiltersConfigurationDialog extends Dialog {
 		form.setBackground(parent.getBackground());
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.widthHint = convertHorizontalDLUsToPixels(150);
-		data.heightHint = convertVerticalDLUsToPixels(150);
 		form.setLayoutData(data);
 		form.getBody().setLayout(new GridLayout());
 
-		createFieldArea(toolkit, form, scopeArea);
+		// Expand all of the filter areas if the choices are small
+		boolean expand = filterAreas.size() < 3;
+		createFieldArea(toolkit, form, scopeArea, expand);
 		Iterator areas = filterAreas.iterator();
 		while (areas.hasNext()) {
 			createFieldArea(toolkit, form, (FilterConfigurationArea) areas
-					.next());
+					.next(), expand);
 
 		}
 
@@ -237,9 +138,12 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param toolkit
 	 * @param form
 	 * @param area
+	 * @param expand
+	 *            <code>true</code> if the area should be expanded by default
 	 */
 	private void createFieldArea(final FormToolkit toolkit,
-			final ScrolledForm form, final FilterConfigurationArea area) {
+			final ScrolledForm form, final FilterConfigurationArea area,
+			boolean expand) {
 		final ExpandableComposite expandable = toolkit
 				.createExpandableComposite(form.getBody(),
 						ExpandableComposite.TWISTIE);
@@ -247,6 +151,22 @@ public class FiltersConfigurationDialog extends Dialog {
 		expandable.setBackground(form.getBackground());
 		expandable.setLayout(new GridLayout());
 		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		expandable.addExpansionListener(new IExpansionListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
+			 */
+			public void expansionStateChanged(ExpansionEvent e) {
+				expandable.getParent().layout(true);
+				
+			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanging(org.eclipse.ui.forms.events.ExpansionEvent)
+			 */
+			public void expansionStateChanging(ExpansionEvent e) {
+				
+			}
+		});
 
 		Composite sectionClient = toolkit.createComposite(expandable);
 		sectionClient.setLayout(new GridLayout());
@@ -255,26 +175,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		sectionClient.setBackground(form.getBackground());
 		area.createContents(sectionClient);
 		expandable.setClient(sectionClient);
-
-		expandable.addExpansionListener(new IExpansionListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
-			 */
-			public void expansionStateChanged(ExpansionEvent e) {
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanging(org.eclipse.ui.forms.events.ExpansionEvent)
-			 */
-			public void expansionStateChanging(ExpansionEvent e) {
-
-			}
-		});
+		expandable.setExpanded(expand);
 	}
 
 	/**
@@ -460,7 +361,9 @@ public class FiltersConfigurationDialog extends Dialog {
 		while (initialFiltersIterator.hasNext()) {
 			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) initialFiltersIterator
 					.next();
-			returnFilters.add(group.makeWorkingCopy());
+			MarkerFieldFilterGroup copy = group.makeWorkingCopy();
+			if (copy != null)
+				returnFilters.add(copy);
 		}
 		return returnFilters;
 	}

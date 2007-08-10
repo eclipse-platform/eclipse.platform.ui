@@ -1072,7 +1072,11 @@
                name="%MarkerFilterGrouping.SelectedWarnings"
                scope="ON_SELECTED_ONLY"
                values="org.eclipse.ui.internal.provisional.views.markers.SelectedWarningsParameters">
-         </markerFieldFilterGrouping> </markerContentGenerator>
+         </markerFieldFilterGrouping>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.markerType"
+               visible="true">
+         </markerFieldReference> </markerContentGenerator>
       <markerGrouping
             id="org.eclipse.ui.ide.severity"
             label="%markerGrouping.severity"
@@ -1109,11 +1113,12 @@
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCreationTimeField"
             id="org.eclipse.ui.ide.creationTimeField"
-            name="%Field.CreationTimeLabel">
+            name="%Field.CreationTime">
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionAndMessageField"
             filterClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionConfigurationArea"
             id="org.eclipse.ui.ide.severityAndDescriptionField"
             name="%Field.Description">
       </markerField>
@@ -1172,6 +1177,10 @@
          <markerTypeReference
                id="org.eclipse.core.resources.taskmarker">
          </markerTypeReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.markerType"
+               visible="true">
+         </markerFieldReference>
       </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCompletionField"
@@ -1220,7 +1229,18 @@
          <markerTypeReference
                id="org.eclipse.core.resources.bookmark">
          </markerTypeReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.markerType"
+               visible="true">
+         </markerFieldReference>
       </markerContentGenerator>
+      <markerField
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerTypeField"
+            filterClass="org.eclipse.ui.internal.provisional.views.markers.MarkerTypeFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea"
+            id="org.eclipse.ui.ide.markerType"
+            name="%Field.Type">
+      </markerField>
      
    </extension>
    <extension

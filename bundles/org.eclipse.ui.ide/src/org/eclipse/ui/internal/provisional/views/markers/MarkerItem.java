@@ -171,4 +171,12 @@ public abstract class MarkerItem {
 	 */
 	public abstract boolean isConcrete();
 
+	/**
+	 * Get the human readable name of the type/
+	 * @return
+	 */
+	public String getMarkerTypeName() {
+		return MarkerUtilities.EMPTY_STRING;
+	}
+
 }

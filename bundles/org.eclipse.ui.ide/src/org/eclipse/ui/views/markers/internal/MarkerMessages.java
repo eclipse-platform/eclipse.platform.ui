@@ -100,6 +100,7 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_statusComplete;
 	public static String filtersDialog_statusIncomplete;
 	public static String filtersDialog_conflictingName;
+	public static String filtersDialog_scopeLabel;
 
 	public static String propertiesDialog_creationTime_text;
 	public static String propertiesDialog_description_text;

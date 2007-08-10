@@ -16,14 +16,19 @@ import org.eclipse.core.resources.IMarker;
 
 /**
  * SeverityAndDescriptionFieldFilter is the filter for the severity and
- * descripton field.
+ * description field.
  * 
  * @since 3.4
  * 
  */
 public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 
-	int selectedSeverity = -1;
+	static final String CONTAINS = "CONTAINS"; //$NON-NLS-1$
+	static String DOES_NOT_CONTAIN = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
+	int selectedSeverities = IMarker.SEVERITY_ERROR | IMarker.SEVERITY_WARNING
+			| IMarker.SEVERITY_INFO;
+	String containsModifier = CONTAINS;
+	String containsText = MarkerUtilities.EMPTY_STRING;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -39,7 +44,7 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	 */
 	public boolean select(IMarker marker) {
 
-		return (marker.getAttribute(IMarker.SEVERITY, -1) & selectedSeverity) > 0;
+		return (marker.getAttribute(IMarker.SEVERITY, -1) & selectedSeverities) > 0;
 
 	}
 
@@ -51,17 +56,67 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	public void initialize(Map values) {
 		Object value = values.get(IMarker.SEVERITY);
 		if (value != null && value instanceof Integer) {
-			selectedSeverity = ((Integer) value).intValue();
+			selectedSeverities = ((Integer) value).intValue();
 		}
+		Object modifier = values.get(MarkerUtilities.CONTAINS_MODIFIER_TOKEN);
+		if (modifier != null && modifier instanceof String)
+			containsModifier = (String) modifier;
+
+		Object text = values.get(MarkerUtilities.CONTAINS_TEXT_TOKEN);
+		if (text != null && text instanceof String)
+			containsText = (String) text;
+
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#makeWorkingCopy()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter)
 	 */
-	public MarkerFieldFilter makeWorkingCopy() {
-		SeverityAndDescriptionFieldFilter clone = new SeverityAndDescriptionFieldFilter();
-		clone.selectedSeverity = this.selectedSeverity;
-		return clone;
+	public void populateWorkingCopy(MarkerFieldFilter copy) {
+		super.populateWorkingCopy(copy);
+		SeverityAndDescriptionFieldFilter clone = (SeverityAndDescriptionFieldFilter) copy;
+		clone.selectedSeverities = this.selectedSeverities;
+		clone.containsModifier = this.containsModifier;
+		clone.containsText = this.containsText;
+	}
+
+	/**
+	 * Return the contains modifier.
+	 * 
+	 * @return One of {@link #CONTAINS} or {@link #DOES_NOT_CONTAIN}
+	 */
+	public String getContainsModifier() {
+		return containsModifier;
+	}
+
+	/**
+	 * Set the contains modifier.
+	 * 
+	 * @param containsString
+	 *            One of {@link #CONTAINS} or {@link #DOES_NOT_CONTAIN}
+	 */
+	public void setContainsModifier(String containsString) {
+		this.containsModifier = containsString;
+	}
+
+	/**
+	 * Return the text to apply the containsModifier to.
+	 * 
+	 * @return String
+	 */
+	public String getContainsText() {
+		return containsText;
+	}
+
+	/**
+	 * Set the text to apply the containsModifier to.
+	 * 
+	 * @param containsText
+	 *            String
+	 */
+	public void setContainsText(String containsText) {
+		this.containsText = containsText;
 	}
 
 }

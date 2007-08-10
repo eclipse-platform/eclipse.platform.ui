@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -29,7 +28,7 @@ public class ConfigureFiltersHandler extends AbstractHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
+	public Object execute(ExecutionEvent arg0)  {
 		IWorkbenchPart part = HandlerUtil.getActivePart(arg0);
 		if(part != null)
 			((ExtendedMarkersView) part).openFiltersDialog();

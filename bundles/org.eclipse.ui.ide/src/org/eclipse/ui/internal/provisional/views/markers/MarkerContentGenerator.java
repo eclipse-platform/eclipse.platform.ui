@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,12 +33,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
+import org.eclipse.ui.views.markers.internal.Util;
 
 /**
  * MarkerContentGenerator is the representation of the markerContentGenerator
@@ -55,6 +60,7 @@ public class MarkerContentGenerator {
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
 	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
+	private static final String TAG_FILTERS_SECTION = null;
 	private MarkerField categoryField;
 	private IConfigurationElement configurationElement;
 	private Collection enabledFilters;
@@ -64,6 +70,7 @@ public class MarkerContentGenerator {
 	private MarkerField[] visibleFields;
 	private IWorkingSet workingSet;
 	private IResource[] focusResources = MarkerUtilities.EMPTY_RESOURCE_ARRAY;
+	private Collection selectedTypes = null;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -293,10 +300,8 @@ public class MarkerContentGenerator {
 			IConfigurationElement[] filterReferences = configurationElement
 					.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
 			for (int i = 0; i < filterReferences.length; i++) {
-				MarkerFieldFilterGroup filter = new MarkerFieldFilterGroup(
-						filterReferences[i], this);
-				if (filter != null)
-					filters.add(filter);
+				filters.add(new MarkerFieldFilterGroup(filterReferences[i],
+						this));
 			}
 
 		}
@@ -464,7 +469,7 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Get the fields that this content generator is displaying
+	 * Get the fields that this content generator is displaying and/or fi
 	 * 
 	 * @return {@link MarkerField}[]
 	 */
@@ -635,7 +640,46 @@ public class MarkerContentGenerator {
 	public void setFilters(Collection newFilters) {
 		filters = newFilters;
 		enabledFilters = null;
+		savePreferences();
+		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
+		writeFiltersSettings(memento);
+
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+		}
+
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
+				getMementoPreferenceName(), writer.toString());
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+	}
+
+	/**
+	 * Write the settings for the filters to the memento.
+	 * @param memento
+	 */
+	private void writeFiltersSettings(XMLMemento memento) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * Get the name for the preferences for the receiver.
+	 * @return String
+	 */
+	private String getMementoPreferenceName() {
+		return getClass().getName() + getId();
+	}
+
+	/**
+	 * Save the preferences for the receiver.
+	 */
+	private void savePreferences() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	/**
@@ -653,6 +697,24 @@ public class MarkerContentGenerator {
 
 		}
 		return result;
+	}
+
+	/**
+	 * Get the currently selected marker types.
+	 * @return Collection of MarkerType
+	 */
+	Collection getSelectedMarkerTypes() {
+		if(selectedTypes  == null)
+			return getMarkerTypes();
+		return selectedTypes;
+	}
+
+	/**
+	 * Set the selected types to newSelections.
+	 * @param newSelections
+	 */
+	public void setSelectedMarkerTypes(Collection newSelections) {
+		selectedTypes = newSelections;		
 	}
 
 }

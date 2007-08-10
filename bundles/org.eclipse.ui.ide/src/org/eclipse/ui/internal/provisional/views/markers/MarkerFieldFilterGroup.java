@@ -23,8 +23,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.internal.MarkerType;
 
 /**
  * MarkerFieldFilterGroup is the representation of a grouping of marker filters.
@@ -45,6 +48,10 @@ class MarkerFieldFilterGroup {
 
 	private static final String ATTRIBUTE_SCOPE = "scope"; //$NON-NLS-1$
 
+	private static final String ATTRIBUTE_VALUES = "values"; //$NON-NLS-1$
+
+	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
+
 	/**
 	 * Constant for any element.
 	 */
@@ -59,18 +66,14 @@ class MarkerFieldFilterGroup {
 	 * Constant for selected element and children.
 	 */
 	static final int ON_SELECTED_AND_CHILDREN = 2;
-
 	/**
 	 * Constant for any selected element only.
 	 */
 	static final int ON_SELECTED_ONLY = 1;
-
 	/**
 	 * Constant for on working set.
 	 */
 	static final int ON_WORKING_SET = 4;
-	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
-	private static final String ATTRIBUTE_VALUES = "values"; //$NON-NLS-1$
 
 	/**
 	 * Returns the set of projects that contain the given set of resources.
@@ -113,14 +116,14 @@ class MarkerFieldFilterGroup {
 		return projects;
 	}
 
+	private MarkerContentGenerator contentGenerator;
+
 	private IConfigurationElement element;
 
-	private boolean enabled = true;
-
-	private int scope;
-	private MarkerContentGenerator contentGenerator;
-	private MarkerFieldFilter[] fieldFilters;
 	private Map EMPTY_MAP = new HashMap();
+	private boolean enabled = true;
+	private MarkerFieldFilter[] fieldFilters;
+	private int scope;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -136,12 +139,83 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
+	 * Get all of the filter configuration areas defined on the receiver.
+	 * 
+	 * @return Collection of FilterConfigurationArea
+	 */
+	Collection getFieldFilterAreas() {
+
+		Collection areas = new ArrayList();
+		MarkerField[] fields = contentGenerator.getVisibleFields();
+		for (int i = 0; i < fields.length; i++) {
+			FilterConfigurationArea area = fields[i].generateFilterArea();
+			if (area != null) {
+				areas.add(area);
+			}
+		}
+		return areas;
+	}
+
+	/**
+	 * Get the filters registered on the receiver.
+	 * 
+	 * @return MarkerFieldFilter[]
+	 */
+	private MarkerFieldFilter[] getFieldFilters() {
+		if (fieldFilters == null) {
+			Map values = getValues();
+			Collection filters = new ArrayList();
+			MarkerField[] fields = contentGenerator.getVisibleFields();
+			for (int i = 0; i < fields.length; i++) {
+				MarkerFieldFilter fieldFilter = fields[i].generateFilter();
+				if (fieldFilter != null) {
+					filters.add(fieldFilter);
+					
+					//The type filter needs information from the generator
+					if (fieldFilter instanceof MarkerTypeFieldFilter)
+						((MarkerTypeFieldFilter) fieldFilter)
+								.setGenerator(this.contentGenerator);
+					if (values != null)
+						fieldFilter.initialize(values);
+				}
+			}
+			fieldFilters = new MarkerFieldFilter[filters.size()];
+			filters.toArray(fieldFilters);
+		}
+		return fieldFilters;
+	}
+
+	/**
+	 * Return the MarkerFieldFilter for field or <code>null</code> if there
+	 * isn't one.
+	 * 
+	 * @param field
+	 * @return MarkerFieldFilter
+	 */
+	public MarkerFieldFilter getFilter(MarkerField field) {
+		MarkerFieldFilter[] filters = getFieldFilters();
+		for (int i = 0; i < filters.length; i++) {
+			if (filters[i].getField().equals(field))
+				return filters[i];
+		}
+		return null;
+	}
+
+	/**
 	 * Return the name of the receiver.
 	 * 
 	 * @return
 	 */
 	public String getName() {
 		return element.getAttribute(MarkerUtilities.ATTRIBUTE_NAME);
+	}
+
+	/**
+	 * Get the root types for the receiver
+	 * @return
+	 */
+	public Collection getAllTypes() {
+		return contentGenerator.getMarkerTypes();
 	}
 
 	/**
@@ -159,12 +233,75 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
+	 * Return a collection of marker types.
+	 * @return Collection of {@link MarkerType}
+	 */
+	Collection getSelectedTypes() {
+		return contentGenerator.getSelectedMarkerTypes();
+	}
+
+	/**
+	 * Get the values defined for the receiver.
+	 * 
+	 * @return Map of values to apply to a {@link MarkerFieldFilter}
+	 */
+	private Map getValues() {
+
+		try {
+			String className = element.getAttribute(ATTRIBUTE_VALUES);
+			if (className != null) {
+				FiltersContributionParameters parameters = (FiltersContributionParameters) IDEWorkbenchPlugin
+						.createExtension(element, ATTRIBUTE_VALUES);
+				return parameters.getParameterValues();
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return null;
+		}
+		return EMPTY_MAP;
+
+	}
+
+	/**
 	 * Return whether or not the receiver is enabled.
 	 * 
 	 * @return boolean
 	 */
 	public boolean isEnabled() {
 		return enabled;
+	}
+
+	/**
+	 * Make a working copy of the receiver.
+	 * 
+	 * @return MarkerFieldFilterGroup or <code> null</code> if it failed.
+	 */
+	MarkerFieldFilterGroup makeWorkingCopy() {
+		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
+				this.contentGenerator);
+		clone.scope = this.scope;
+		clone.enabled = this.enabled;
+		clone.fieldFilters = new MarkerFieldFilter[getFieldFilters().length];
+		for (int i = 0; i < fieldFilters.length; i++) {
+			try {
+				clone.fieldFilters[i] = (MarkerFieldFilter) fieldFilters[i]
+						.getClass().newInstance();
+				fieldFilters[i].populateWorkingCopy(clone.fieldFilters[i]);
+			} catch (InstantiationException e) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(IStatus.ERROR, e
+								.getLocalizedMessage(), e), StatusManager.SHOW);
+				return null;
+			} catch (IllegalAccessException e) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(IStatus.ERROR, e
+								.getLocalizedMessage(), e), StatusManager.SHOW);
+				return null;
+			}
+
+		}
+		return clone;
+
 	}
 
 	/**
@@ -205,92 +342,21 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
-	 * Get the filters registered on the receiver.
-	 * 
-	 * @return MarkerFieldFilter[]
-	 */
-	private MarkerFieldFilter[] getFieldFilters() {
-		if (fieldFilters == null) {
-			Map values = getValues();
-			Collection filters = new ArrayList();
-			MarkerField[] fields = contentGenerator.getVisibleFields();
-			for (int i = 0; i < fields.length; i++) {
-				MarkerFieldFilter fieldFilter = fields[i].generateFilter();
-				if (fieldFilter != null) {
-					filters.add(fieldFilter);
-					if (values != null)
-						fieldFilter.initialize(values);
-				}
-			}
-			fieldFilters = new MarkerFieldFilter[filters.size()];
-			filters.toArray(fieldFilters);
-		}
-		return fieldFilters;
-	}
-
-	/**
-	 * Get the values defined for the receiver.
-	 * 
-	 * @return Map of values to apply to a {@link MarkerFieldFilter}
-	 */
-	private Map getValues() {
-
-		try {
-			String className = element.getAttribute(ATTRIBUTE_VALUES);
-			if (className != null) {
-				FiltersContributionParameters parameters = (FiltersContributionParameters) IDEWorkbenchPlugin
-						.createExtension(element, ATTRIBUTE_VALUES);
-				return parameters.getParameterValues();
-			}
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
-			return null;
-		}
-		return EMPTY_MAP;
-
-	}
-
-	/**
-	 * Get all of the filter configuration areas defined on the receiver.
-	 * 
-	 * @return Collection of FilterConfigurationArea
-	 */
-	Collection getFieldFilterAreas() {
-
-		Collection areas = new ArrayList();
-		MarkerField[] fields = contentGenerator.getVisibleFields();
-		for (int i = 0; i < fields.length; i++) {
-			FilterConfigurationArea area = fields[i].generateFilterArea();
-			if (area != null) {
-				areas.add(area);
-			}
-		}
-		return areas;
-	}
-
-	/**
-	 * Make a working copy of the receiver.
-	 * 
-	 * @return MarkerFieldFilterGroup
-	 */
-	public MarkerFieldFilterGroup makeWorkingCopy() {
-		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
-				this.contentGenerator);
-		clone.scope = this.scope;
-		clone.enabled = this.enabled;
-		clone.fieldFilters = new MarkerFieldFilter[fieldFilters.length];
-		for (int i = 0; i < fieldFilters.length; i++) {
-			clone.fieldFilters[i] = fieldFilters[i].makeWorkingCopy();
-		}
-		return clone;
-		
-	}
-
-	/**
 	 * Set the scope of the receiver.
+	 * 
 	 * @param newScope
 	 */
 	public void setScope(int newScope) {
-		scope = newScope;		
+		scope = newScope;
 	}
+
+	/**
+	 * Set the selected types of the receiver.
+	 * @param selectedTypes
+	 */
+	public void setSelectedTypes(Collection selectedTypes) {
+		contentGenerator.setSelectedMarkerTypes(selectedTypes);
+		
+	}
+
 }

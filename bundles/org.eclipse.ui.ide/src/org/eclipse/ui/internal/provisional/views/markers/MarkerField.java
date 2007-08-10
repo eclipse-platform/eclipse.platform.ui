@@ -153,8 +153,13 @@ public abstract class MarkerField {
 		try {
 			if (configurationElement.getAttribute(ATTRIBUTE_FILTER_CLASS) == null)
 				return null;
-			return (MarkerFieldFilter) IDEWorkbenchPlugin.createExtension(
+			Object filter = IDEWorkbenchPlugin.createExtension(
 					configurationElement, ATTRIBUTE_FILTER_CLASS);
+			if(filter == null)
+				return null;
+			MarkerFieldFilter fieldFilter = (MarkerFieldFilter) filter;
+			fieldFilter.setField(this);
+			return fieldFilter;
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
 			return null;

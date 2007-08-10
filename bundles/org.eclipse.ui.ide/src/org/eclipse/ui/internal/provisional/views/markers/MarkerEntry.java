@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
+import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
@@ -48,9 +49,12 @@ public class MarkerEntry extends MarkerItem {
 	public MarkerEntry(IMarker marker) {
 		this.marker = marker;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getAttributeValue(java.lang.String, boolean)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getAttributeValue(java.lang.String,
+	 *      boolean)
 	 */
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
 		if (!attributeCache.containsKey(attribute))
@@ -202,6 +206,20 @@ public class MarkerEntry extends MarkerItem {
 	 */
 	public IMarker getMarker() {
 		return marker;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getMarkerTypeName()
+	 */
+	public String getMarkerTypeName() {
+		try {
+			return MarkerTypesModel.getInstance().getType(marker.getType())
+					.getLabel();
+		} catch (CoreException e) {
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker.toString());
+		}
 	}
 
 	/*

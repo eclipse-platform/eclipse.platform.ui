@@ -22,6 +22,8 @@ import org.eclipse.core.resources.IMarker;
  */
 public abstract class MarkerFieldFilter {
 	
+	private MarkerField field;
+
 	/**
 	 * Return whether or not marker should be filtered by the receiver.
 	 * @param marker
@@ -37,11 +39,29 @@ public abstract class MarkerFieldFilter {
 	public void initialize(Map values){
 		//Do nothing by default
 	}
+	
+	/**
+	 * Populate the working copy with the copy of whatever fields are required.
+	 * @param copy
+	 */
+	public void populateWorkingCopy(MarkerFieldFilter copy){
+		copy.field = this.field;
+	}
 
 	/**
-	 * Make a working copy of the receiver for use by configuration dialogs.
-	 * Any change to this clone should not affect the receiver.
-	 * @return MarkerFieldFilter
+	 * Set the field for the receiver.
+	 * @param markerField
 	 */
-	public abstract MarkerFieldFilter makeWorkingCopy();
+	public final void setField(MarkerField markerField) {
+		field = markerField;
+		
+	}
+
+	/**
+	 * Get the field for the receiver.
+	 * @return MarkerField
+	 */
+	public final MarkerField getField() {
+		return field;
+	}
 }
