@@ -35,7 +35,7 @@ public interface IPathEditorInput extends IEditorInput {
     /**
      * Returns the local file system path of the file underlying this editor input.
      *
-     * @return a local file system {@link IPath} or <code>null</code> if it could not be found
+     * @return a local file system path
      */
     public IPath getPath();
 }

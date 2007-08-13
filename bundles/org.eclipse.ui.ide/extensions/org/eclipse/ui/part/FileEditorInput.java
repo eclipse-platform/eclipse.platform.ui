@@ -39,6 +39,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
 		IPersistableElement {
 	private IFile file;
+	private IPath path;
+	private URI uri;
 
 	/**
 	 * Creates an editor input based of the given file resource.
@@ -46,10 +48,18 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 * @param file the file resource
 	 */
 	public FileEditorInput(IFile file) {
-		if (file == null) {
+		if (file == null) 
 			throw new IllegalArgumentException();
-		}
 		this.file = file;
+		
+		this.path = internalGetPath();
+		if(this.path == null) 
+			throw new IllegalArgumentException();
+		
+		
+		this.uri = file.getLocationURI();
+		if(this.uri == null)
+			throw new IllegalArgumentException();
 	}
 
 	/* (non-Javadoc)
@@ -158,7 +168,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 * @see org.eclipse.ui.IURIEditorInput#getURI()
 	 */
 	public URI getURI() {
-		return file.getLocationURI();
+		return uri;
 	}
 	
 	
@@ -166,6 +176,14 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 * @see org.eclipse.ui.IPathEditorInput#getPath()
 	 */
 	public IPath getPath() {
+		return this.path;
+	}
+
+	/**
+	 * Get the path of the receiver.
+	 * @return {@link IPath} or <code>null</code> if it cannot be found.
+	 */
+	private IPath internalGetPath() {
 		IPath location = file.getLocation();
 		if (location != null)
 			return location;

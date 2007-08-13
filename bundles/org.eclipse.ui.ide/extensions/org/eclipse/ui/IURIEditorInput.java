@@ -36,7 +36,7 @@ public interface IURIEditorInput extends IEditorInput {
     /**
      * Returns the {@link URI} of the file underlying this editor input.
      *
-     * @return {@link URI} or <code>null</code> if the path cannot be found.
+     * @return {@link URI}
      */
     public URI getURI();
 }
