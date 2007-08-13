@@ -39,8 +39,40 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
 		IPersistableElement {
 	private IFile file;
-	private IPath path;
-	private URI uri;
+	
+	/**
+	 * Return whether or not file is local. Only {@link IFile}s with a local
+	 * value should call {@link IPathEditorInput#getPath()}
+	 * @param file
+	 * @return boolean <code>true</code> if the file has a local implementation.
+	 */
+	public static boolean isLocalFile(IFile file){
+
+		IPath location = file.getLocation();
+		if (location != null)
+			return true;
+		//this is not a local file, so try to obtain a local file
+		try {
+	        final URI locationURI = file.getLocationURI();
+	        if (locationURI == null)
+	           return false;
+	        IFileStore store = EFS.getStore(locationURI);
+			//first try to obtain a local file directly fo1r this store
+			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
+			//if no local file is available, obtain a cached file
+			if (localFile == null)
+				localFile = store.toLocalFile(EFS.CACHE, null);
+			if (localFile == null)
+				return false;
+			return true;
+		} catch (CoreException e) {
+			//this can only happen if the file system is not available for this scheme
+			IDEWorkbenchPlugin.log(
+					"Failed to obtain file store for resource", e); //$NON-NLS-1$
+			return false;
+		}
+	
+	}
 
 	/**
 	 * Creates an editor input based of the given file resource.
@@ -51,15 +83,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 		if (file == null) 
 			throw new IllegalArgumentException();
 		this.file = file;
-		
-		this.path = internalGetPath();
-		if(this.path == null) 
-			throw new IllegalArgumentException();
-		
-		
-		this.uri = file.getLocationURI();
-		if(this.uri == null)
-			throw new IllegalArgumentException();
+	
 	}
 
 	/* (non-Javadoc)
@@ -168,7 +192,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 * @see org.eclipse.ui.IURIEditorInput#getURI()
 	 */
 	public URI getURI() {
-		return uri;
+		return file.getLocationURI();
 	}
 	
 	
@@ -176,14 +200,6 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 * @see org.eclipse.ui.IPathEditorInput#getPath()
 	 */
 	public IPath getPath() {
-		return this.path;
-	}
-
-	/**
-	 * Get the path of the receiver.
-	 * @return {@link IPath} or <code>null</code> if it cannot be found.
-	 */
-	private IPath internalGetPath() {
 		IPath location = file.getLocation();
 		if (location != null)
 			return location;
@@ -191,7 +207,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 		try {
 	        final URI locationURI = file.getLocationURI();
 	        if (locationURI == null)
-	           return null;
+	           throw new IllegalArgumentException();
 	        IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
@@ -199,7 +215,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 			if (localFile == null)
 				localFile = store.toLocalFile(EFS.CACHE, null);
 			if (localFile == null)
-				return null;
+				throw new IllegalArgumentException();
 			return Path.fromOSString(localFile.getAbsolutePath());
 		} catch (CoreException e) {
 			//this can only happen if the file system is not available for this scheme
@@ -208,6 +224,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 			throw new RuntimeException(e);
 		}
 	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
