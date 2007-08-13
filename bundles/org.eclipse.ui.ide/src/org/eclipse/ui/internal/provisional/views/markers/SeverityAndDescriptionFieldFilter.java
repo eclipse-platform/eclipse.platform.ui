@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.provisional.views.markers;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.IMemento;
 
 /**
  * SeverityAndDescriptionFieldFilter is the filter for the severity and
@@ -24,6 +25,9 @@ import org.eclipse.core.resources.IMarker;
 public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 
 	static final String CONTAINS = "CONTAINS"; //$NON-NLS-1$
+	private static final String TAG_SELECTED_SEVERITIES = "selectedSeverities"; //$NON-NLS-1$
+	private static final String TAG_CONTAINS_MODIFIER = "containsModifier"; //$NON-NLS-1$
+	private static final String TAG_CONTAINS_TEXT = "containsText"; //$NON-NLS-1$
 	static String DOES_NOT_CONTAIN = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
 	int selectedSeverities = IMarker.SEVERITY_ERROR | IMarker.SEVERITY_WARNING
 			| IMarker.SEVERITY_INFO;
@@ -117,6 +121,30 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	 */
 	public void setContainsText(String containsText) {
 		this.containsText = containsText;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
+	 */
+	public void saveSettings(IMemento memento) {
+
+		memento.putString(TAG_SELECTED_SEVERITIES, String
+				.valueOf(selectedSeverities));
+		memento.putString(TAG_CONTAINS_MODIFIER, containsModifier);
+		memento.putString(TAG_CONTAINS_TEXT, containsText);
+
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
+	 */
+	public void loadSettings(IMemento memento) {
+		
+		selectedSeverities = memento.getInteger(TAG_SELECTED_SEVERITIES).intValue();
+		containsModifier = memento.getString(TAG_CONTAINS_MODIFIER);
+		containsText = memento.getString(TAG_CONTAINS_TEXT);
 	}
 
 }

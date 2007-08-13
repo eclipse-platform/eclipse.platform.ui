@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.provisional.views.markers;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.IMemento;
 
 /**
  * A MarkerFieldFilter is a filter on a particular marker field.
@@ -64,4 +65,27 @@ public abstract class MarkerFieldFilter {
 	public final MarkerField getField() {
 		return field;
 	}
+
+	/**
+	 * Get the id this was registered against.
+	 * @return
+	 */
+	String getID() {
+		return getField().getID();
+	}
+
+	/**
+	 * Save any of the relevant state for the receiver in the memento
+	 * so that it can be used to restore the user settings.
+	 * @param memento
+	 * @see #loadSettings(IMemento)
+	 */
+	public abstract void saveSettings(IMemento memento) ;
+
+	/**
+	 * Load any settings for the receiver from the memento.
+	 * @param memento
+	 * @see #saveSettings(IMemento)
+	 */
+	public abstract void loadSettings(IMemento memento) ;
 }

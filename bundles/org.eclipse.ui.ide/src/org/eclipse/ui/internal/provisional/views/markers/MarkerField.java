@@ -155,7 +155,7 @@ public abstract class MarkerField {
 				return null;
 			Object filter = IDEWorkbenchPlugin.createExtension(
 					configurationElement, ATTRIBUTE_FILTER_CLASS);
-			if(filter == null)
+			if (filter == null)
 				return null;
 			MarkerFieldFilter fieldFilter = (MarkerFieldFilter) filter;
 			fieldFilter.setField(this);
@@ -176,15 +176,24 @@ public abstract class MarkerField {
 			if (configurationElement
 					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null)
 				return null;
-			FilterConfigurationArea area =  (FilterConfigurationArea) IDEWorkbenchPlugin
+			FilterConfigurationArea area = (FilterConfigurationArea) IDEWorkbenchPlugin
 					.createExtension(configurationElement,
 							ATTRIBUTE_FILTER_CONFIGURATION_CLASS);
-			if(area != null)
+			if (area != null)
 				area.setField(this);
 			return area;
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
 			return null;
 		}
+	}
+
+	/**
+	 * Return the id for the receiver.
+	 * 
+	 * @return String
+	 */
+	String getID() {
+		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
 	}
 }

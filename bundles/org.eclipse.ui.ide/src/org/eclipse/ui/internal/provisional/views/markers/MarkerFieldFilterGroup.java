@@ -24,10 +24,10 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.internal.MarkerType;
 
 /**
  * MarkerFieldFilterGroup is the representation of a grouping of marker filters.
@@ -74,6 +74,9 @@ class MarkerFieldFilterGroup {
 	 * Constant for on working set.
 	 */
 	static final int ON_WORKING_SET = 4;
+	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
+	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
+	private static final String TAG_FIELD_FILTER_ENTRY = "fieldFilter"; //$NON-NLS-1$
 
 	/**
 	 * Returns the set of projects that contain the given set of resources.
@@ -170,11 +173,13 @@ class MarkerFieldFilterGroup {
 				MarkerFieldFilter fieldFilter = fields[i].generateFilter();
 				if (fieldFilter != null) {
 					filters.add(fieldFilter);
-					
-					//The type filter needs information from the generator
+
+					// The type filter needs information from the generator
 					if (fieldFilter instanceof MarkerTypeFieldFilter)
+						// Show everything by default
 						((MarkerTypeFieldFilter) fieldFilter)
-								.setGenerator(this.contentGenerator);
+								.setAndSelectAllTypes(contentGenerator
+										.getMarkerTypes());
 					if (values != null)
 						fieldFilter.initialize(values);
 				}
@@ -211,7 +216,17 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
+	 * Return the id of the receiver.
+	 * 
+	 * @return
+	 */
+	public String getID() {
+		return element.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
+	}
+
+	/**
 	 * Get the root types for the receiver
+	 * 
 	 * @return
 	 */
 	public Collection getAllTypes() {
@@ -230,14 +245,6 @@ class MarkerFieldFilterGroup {
 	 */
 	public int getScope() {
 		return scope;
-	}
-
-	/**
-	 * Return a collection of marker types.
-	 * @return Collection of {@link MarkerType}
-	 */
-	Collection getSelectedTypes() {
-		return contentGenerator.getSelectedMarkerTypes();
 	}
 
 	/**
@@ -351,12 +358,50 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
-	 * Set the selected types of the receiver.
-	 * @param selectedTypes
+	 * Save the settings for the receiver in the memento.
+	 * 
+	 * @param memento
 	 */
-	public void setSelectedTypes(Collection selectedTypes) {
-		contentGenerator.setSelectedMarkerTypes(selectedTypes);
-		
+	void saveFilterSettings(IMemento memento) {
+		memento.putString(TAG_ENABLED, String.valueOf(enabled));
+		memento.putString(TAG_SCOPE, String.valueOf(scope));
+		MarkerFieldFilter[] filters = getFieldFilters();
+
+		for (int i = 0; i < filters.length; i++) {
+			IMemento child = memento.createChild(TAG_FIELD_FILTER_ENTRY,
+					filters[i].getID());
+			filters[i].saveSettings(child);
+
+		}
+
 	}
 
+	/**
+	 * Load the current settings from the child.
+	 * 
+	 * @param memento -
+	 *            the memento to load from
+	 */
+	public void loadSettings(IMemento memento) {
+		enabled = Boolean.getBoolean(memento.getString(TAG_ENABLED));
+		scope = memento.getInteger(TAG_SCOPE).intValue();
+
+		Map filterMap = new HashMap();
+		MarkerFieldFilter[] filters = getFieldFilters();
+		for (int i = 0; i < filters.length; i++) {
+			filterMap.put(filters[i].getID(), filters[i]);
+
+		}
+
+		IMemento[] children = memento.getChildren(TAG_FIELD_FILTER_ENTRY);
+		for (int i = 0; i < children.length; i++) {
+			IMemento childMemento = children[i];
+			String id = childMemento.getString(MarkerUtilities.ATTRIBUTE_ID);
+			if (filterMap.containsKey(id)) {
+				((MarkerFieldFilter) filterMap.get(id))
+						.loadSettings(childMemento);
+			}
+		}
+
+	}
 }

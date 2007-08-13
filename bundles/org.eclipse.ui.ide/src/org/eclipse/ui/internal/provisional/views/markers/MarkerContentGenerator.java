@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -59,18 +60,19 @@ public class MarkerContentGenerator {
 	private static final String ELEMENT_MARKER_FIELD_FILTER_GROUP = "markerFieldFilterGrouping"; //$NON-NLS-1$;
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
+	private static final String TAG_FILTERS_SECTION = "filterGroups"; //$NON-NLS-1$
+	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
 	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
-	private static final String TAG_FILTERS_SECTION = null;
 	private MarkerField categoryField;
 	private IConfigurationElement configurationElement;
 	private Collection enabledFilters;
 	private Collection filters;
+	private IResource[] focusResources = MarkerUtilities.EMPTY_RESOURCE_ARRAY;
 	private Collection markerTypes;
 	private MarkerField[] sortFields;
 	private MarkerField[] visibleFields;
+
 	private IWorkingSet workingSet;
-	private IResource[] focusResources = MarkerUtilities.EMPTY_RESOURCE_ARRAY;
-	private Collection selectedTypes = null;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -79,6 +81,32 @@ public class MarkerContentGenerator {
 	 */
 	public MarkerContentGenerator(IConfigurationElement element) {
 		configurationElement = element;
+	}
+
+	/**
+	 * Add the resources in resourceMapping to the resourceCollection
+	 * 
+	 * @param resourceCollection
+	 * @param resourceMapping
+	 */
+	private void addResources(Collection resourceCollection,
+			ResourceMapping resourceMapping) {
+
+		try {
+			ResourceTraversal[] traversals = resourceMapping.getTraversals(
+					ResourceMappingContext.LOCAL_CONTEXT,
+					new NullProgressMonitor());
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				IResource[] result = traversal.getResources();
+				for (int j = 0; j < result.length; j++) {
+					resourceCollection.add(result[j]);
+				}
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+
 	}
 
 	/**
@@ -357,6 +385,23 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Return a collection of all of the configuration fields for this generator
+	 * 
+	 * @return Collection of {@link FilterConfigurationArea}
+	 */
+	public Collection getFilterConfigurationFields() {
+		Collection result = new ArrayList();
+		for (int i = 0; i < visibleFields.length; i++) {
+			FilterConfigurationArea area = visibleFields[i]
+					.generateFilterArea();
+			if (area != null)
+				result.add(area);
+
+		}
+		return result;
+	}
+
+	/**
 	 * Return the id of the receiver.
 	 * 
 	 * @return String
@@ -396,6 +441,15 @@ public class MarkerContentGenerator {
 			}
 		}
 		return markerTypes;
+	}
+
+	/**
+	 * Get the name for the preferences for the receiver.
+	 * 
+	 * @return String
+	 */
+	private String getMementoPreferenceName() {
+		return getClass().getName() + getId();
 	}
 
 	/**
@@ -528,6 +582,31 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Set the filters for the receiver.
+	 * 
+	 * @param newFilters
+	 */
+	public void setFilters(Collection newFilters) {
+		filters = newFilters;
+		enabledFilters = null;
+
+		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
+
+		writeFiltersSettings(memento);
+
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+		}
+
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
+				getMementoPreferenceName(), writer.toString());
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+	}
+
+	/**
 	 * Add group to the enabled filters.
 	 * 
 	 * @param group
@@ -537,6 +616,28 @@ public class MarkerContentGenerator {
 		if (enabled.remove(group))// true if it was present
 			return;
 		enabled.add(group);
+	}
+
+	/**
+	 * Update the focus resources from list. If there is an update required
+	 * return <code>true</code>. This method assumes that there are filters
+	 * on resources enabled.
+	 * 
+	 * @param elements
+	 */
+	void updateFocusElements(Object[] elements) {
+		Collection resourceCollection = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof IResource) {
+				resourceCollection.add(elements[i]);
+			} else {
+				addResources(resourceCollection,
+						((ResourceMapping) elements[i]));
+			}
+		}
+
+		focusResources = new IResource[resourceCollection.size()];
+		resourceCollection.toArray(focusResources);
 	}
 
 	/**
@@ -585,136 +686,55 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Update the focus resources from list. If there is an update required
-	 * return <code>true</code>. This method assumes that there are filters
-	 * on resources enabled.
-	 * 
-	 * @param elements
-	 */
-	void updateFocusElements(Object[] elements) {
-		Collection resourceCollection = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof IResource) {
-				resourceCollection.add(elements[i]);
-			} else {
-				addResources(resourceCollection,
-						((ResourceMapping) elements[i]));
-			}
-		}
-
-		focusResources = new IResource[resourceCollection.size()];
-		resourceCollection.toArray(focusResources);
-	}
-
-	/**
-	 * Add the resources in resourceMapping to the resourceCollection
-	 * 
-	 * @param resourceCollection
-	 * @param resourceMapping
-	 */
-	private void addResources(Collection resourceCollection,
-			ResourceMapping resourceMapping) {
-
-		try {
-			ResourceTraversal[] traversals = resourceMapping.getTraversals(
-					ResourceMappingContext.LOCAL_CONTEXT,
-					new NullProgressMonitor());
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				IResource[] result = traversal.getResources();
-				for (int j = 0; j < result.length; j++) {
-					resourceCollection.add(result[j]);
-				}
-			}
-		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
-		}
-
-	}
-
-	/**
-	 * Set the filters for the receiver.
-	 * 
-	 * @param newFilters
-	 */
-	public void setFilters(Collection newFilters) {
-		filters = newFilters;
-		enabledFilters = null;
-		savePreferences();
-		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
-
-		writeFiltersSettings(memento);
-
-		StringWriter writer = new StringWriter();
-		try {
-			memento.save(writer);
-		} catch (IOException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
-		}
-
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
-				getMementoPreferenceName(), writer.toString());
-		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
-	}
-
-	/**
 	 * Write the settings for the filters to the memento.
+	 * 
 	 * @param memento
 	 */
 	private void writeFiltersSettings(XMLMemento memento) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * Get the name for the preferences for the receiver.
-	 * @return String
-	 */
-	private String getMementoPreferenceName() {
-		return getClass().getName() + getId();
-	}
-
-	/**
-	 * Save the preferences for the receiver.
-	 */
-	private void savePreferences() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * Return a collection of all of the configuration fields for this generator
-	 * 
-	 * @return Collection of {@link FilterConfigurationArea}
-	 */
-	public Collection getFilterConfigurationFields() {
-		Collection result = new ArrayList();
-		for (int i = 0; i < visibleFields.length; i++) {
-			FilterConfigurationArea area = visibleFields[i]
-					.generateFilterArea();
-			if (area != null)
-				result.add(area);
-
+		Iterator groups = getAllFilters().iterator();
+		while (groups.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+					.next();
+			IMemento child = memento
+					.createChild(TAG_GROUP_ENTRY, group.getID());
+			group.saveFilterSettings(child);
 		}
-		return result;
+
 	}
 
 	/**
-	 * Get the currently selected marker types.
-	 * @return Collection of MarkerType
+	 * Load the settings from the memento.
+	 * 
+	 * @param memento
 	 */
-	Collection getSelectedMarkerTypes() {
-		if(selectedTypes  == null)
-			return getMarkerTypes();
-		return selectedTypes;
+	public void loadSettings(IMemento memento) {
+		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
+
+		for (int i = 0; i < children.length; i++) {
+			IMemento child = children[i];
+			String id = child.getString(MarkerUtilities.ATTRIBUTE_ID);
+			Iterator groups = getAllFilters().iterator();
+			while (groups.hasNext()) {
+				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+						.next();
+				if (id.equals(group.getID()))
+					group.loadSettings(child);
+				continue;
+			}
+
+			// Did not find a match must have been added by the user
+			loadUserFilter(child);
+		}
+
 	}
 
 	/**
-	 * Set the selected types to newSelections.
-	 * @param newSelections
+	 * Load the user supplied filter
+	 * @param child
 	 */
-	public void setSelectedMarkerTypes(Collection newSelections) {
-		selectedTypes = newSelections;		
+	private void loadUserFilter(IMemento child) {
+		// TODO Fill this in
+		
 	}
 
 }

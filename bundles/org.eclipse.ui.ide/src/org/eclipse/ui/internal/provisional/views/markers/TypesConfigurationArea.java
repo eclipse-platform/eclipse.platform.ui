@@ -273,7 +273,8 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 				selectedTypes.add(((MarkerTypeEntry) elements[i])
 						.getMarkerType());
 		}
-		group.setSelectedTypes(selectedTypes);
+		((MarkerTypeFieldFilter) getFilter(group))
+				.setSelectedTypes(selectedTypes);
 
 	}
 
@@ -584,7 +585,8 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 			Collection entries, Collection greyEntries) {
 		Iterator elements = elementsForGroup(group).iterator();
 
-		Collection selectedTypes = group.getSelectedTypes();
+		Collection selectedTypes = ((MarkerTypeFieldFilter) getFilter(group))
+				.getSelectedTypes();
 		while (elements.hasNext()) {
 			TypesEntry entry = (TypesEntry) elements.next();
 			entry.addElementsMatching(selectedTypes, entries);

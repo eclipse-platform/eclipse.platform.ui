@@ -677,6 +677,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
+		generator.loadSettings(memento);
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
