@@ -178,10 +178,9 @@ public class FileSearchQuery implements ISearchQuery {
 		textResult.removeAll();
 		
 		Pattern searchPattern= getSearchPattern();
-		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
 		boolean searchInBinaries= !isScopeAllFileTypes();
 		
-		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileSearchOnly, searchInBinaries);
+		TextSearchResultCollector collector= new TextSearchResultCollector(textResult, isFileNameSearch(), searchInBinaries);
 		return TextSearchEngine.create().search(fScope, collector, searchPattern, monitor);
 	}
 	
@@ -246,14 +245,17 @@ public class FileSearchQuery implements ISearchQuery {
 		FileTextSearchScope scope= FileTextSearchScope.newSearchScope(new IResource[] { file }, new String[] { "*" }, true); //$NON-NLS-1$
 		
 		Pattern searchPattern= getSearchPattern();
-		boolean isFileSearchOnly= searchPattern.pattern().length() == 0;
-		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileSearchOnly, true);
+		TextSearchResultCollector collector= new TextSearchResultCollector(result, isFileNameSearch(), true);
 		
 		return TextSearchEngine.create().search(scope, collector, searchPattern, monitor);
 	}
 	
 	protected Pattern getSearchPattern() {
 		return PatternConstructor.createPattern(fSearchText, fIsCaseSensitive, fIsRegEx);
+	}
+	
+	public boolean isFileNameSearch() {
+		return fSearchText.length() == 0;
 	}
 	
 	public boolean isRegexSearch() {

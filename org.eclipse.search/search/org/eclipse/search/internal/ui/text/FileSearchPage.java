@@ -190,7 +190,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 	
 	protected void handleOpen(OpenEvent event) {
-		if (getLayout() == FLAG_LAYOUT_TREE) {
+		if (showLineMatches()) {
 			Object firstElement= ((IStructuredSelection)event.getSelection()).getFirstElement();
 			if (firstElement instanceof IFile) {
 				if (getDisplayedMatchCount(firstElement) == 0) {
@@ -339,7 +339,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			AbstractTextSearchResult result= getInput();
 			if (result != null) {
 				int itemCount= ((IStructuredContentProvider) tv.getContentProvider()).getElements(getInput()).length;
-				if (getLayout() == FLAG_LAYOUT_TREE) {
+				if (showLineMatches()) {
 					int matchCount= getInput().getMatchCount();
 					if (itemCount < matchCount) {
 						return Messages.format(SearchMessages.FileSearchPage_limited_format_matches, new Object[]{label, new Integer(itemCount), new Integer(matchCount)});
@@ -356,35 +356,27 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 	
 	public int getDisplayedMatchCount(Object element) {
-		if (getLayout() == FLAG_LAYOUT_TREE) {
-			if (element instanceof Match)
+		if (showLineMatches()) {
+			if (element instanceof Match) {
 				return 1;
-		
-			AbstractTextSearchResult result= getInput();
-			if (result == null)
-				return 0;
-		
-			Match[] matches= result.getMatches(element);
-			if (matches.length != 1 || !(matches[0] instanceof FileMatch) || !((FileMatch)matches[0]).isFileSearch())
-				return 0;
-		}	
+			}
+			return 0;
+		}
 		return super.getDisplayedMatchCount(element);
 	}
 
 	public Match[] getDisplayedMatches(Object element) {
-		if (getLayout() == FLAG_LAYOUT_TREE) {
-			if (element instanceof Match)
+		if (showLineMatches()) {
+			if (element instanceof Match) {
 				return new Match[] { (Match)element };
-			Match[] matches= super.getDisplayedMatches(element);
-			if (matches.length == 1 && matches[0] instanceof FileMatch && ((FileMatch)matches[0]).isFileSearch())
-				return matches;
-			return EMPTY_MATCH_ARRAY;
-		}					
+			}
+			return new Match[0];
+		}
 		return super.getDisplayedMatches(element);
 	}
 	
 	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
-		if (getLayout() == FLAG_LAYOUT_TREE) {
+		if (showLineMatches()) {
 			for (int i = 0; i < matches.length; i++) {
 				changedElements.add(matches[i]);
 			}
@@ -392,4 +384,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			super.evaluateChangedElements(matches, changedElements);
 		}
 	}
+	
+	private boolean showLineMatches() {
+		AbstractTextSearchResult input= getInput();
+		return getLayout() == FLAG_LAYOUT_TREE && input != null && !((FileSearchQuery) input.getQuery()).isFileNameSearch();
+	}
+	
 }

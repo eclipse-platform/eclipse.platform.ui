@@ -71,21 +71,24 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	protected synchronized void initialize(AbstractTextSearchResult result) {
 		fResult= result;
 		fChildrenMap= new HashMap();
+		boolean showLineMatches= !((FileSearchQuery) fResult.getQuery()).isFileNameSearch();
+		
 		if (result != null) {
 			Object[] elements= result.getElements();
 			for (int i= 0; i < elements.length; i++) {
-				Match[] matches= result.getMatches(elements[i]);
-				for (int j= 0; j < matches.length; j++) {
-					insert(matches[j], false);
+				if (showLineMatches) {
+					Match[] matches= result.getMatches(elements[i]);
+					for (int j= 0; j < matches.length; j++) {
+						insert(matches[j], false);
+					}
+				} else {
+					insert(elements[i], false);
 				}
 			}
 		}
 	}
 
 	protected void insert(Object child, boolean refreshViewer) {
-		if (child instanceof FileMatch && ((FileMatch)child).isFileSearch())
-			child= getParent(child);
-
 		Object parent= getParent(child);
 		while (parent != null) {
 			if (insertChild(parent, child)) {
