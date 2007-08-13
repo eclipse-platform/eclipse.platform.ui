@@ -161,9 +161,9 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 		return file.getLocationURI();
 	}
 	
-	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IPathEditorInput#getPath()
+	 * Method declared on IPathEditorInput
+	 * @since 3.0
 	 */
 	public IPath getPath() {
 		IPath location = file.getLocation();
@@ -171,10 +171,8 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 			return location;
 		//this is not a local file, so try to obtain a local file
 		try {
-	        final URI locationURI = file.getLocationURI();
-	        if (locationURI == null)
-	           return null;
-	        IFileStore store = EFS.getStore(locationURI);
+			final URI locationURI = file.getLocationURI();
+			IFileStore store = EFS.getStore(locationURI);
 			//first try to obtain a local file directly fo1r this store
 			java.io.File localFile = store.toLocalFile(EFS.NONE, null);
 			//if no local file is available, obtain a cached file
