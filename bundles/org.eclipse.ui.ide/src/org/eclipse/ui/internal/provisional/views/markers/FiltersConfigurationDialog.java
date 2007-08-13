@@ -151,20 +151,24 @@ public class FiltersConfigurationDialog extends Dialog {
 		expandable.setBackground(form.getBackground());
 		expandable.setLayout(new GridLayout());
 		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		expandable.addExpansionListener(new IExpansionListener(){
-			/* (non-Javadoc)
+		expandable.addExpansionListener(new IExpansionListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanged(org.eclipse.ui.forms.events.ExpansionEvent)
 			 */
 			public void expansionStateChanged(ExpansionEvent e) {
 				expandable.getParent().layout(true);
-				
+
 			}
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.forms.events.IExpansionListener#expansionStateChanging(org.eclipse.ui.forms.events.ExpansionEvent)
 			 */
 			public void expansionStateChanging(ExpansionEvent e) {
-				
+
 			}
 		});
 
@@ -374,15 +378,16 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		super.okPressed();
-		if (selectedFilterGroup == null)
-			return;
-		scopeArea.applyToGroup(selectedFilterGroup);
-		Iterator areas = filterAreas.iterator();
-		while (areas.hasNext()) {
-			((FilterConfigurationArea) areas.next())
-					.applyToGroup(selectedFilterGroup);
+		if (selectedFilterGroup != null) {
+
+			scopeArea.applyToGroup(selectedFilterGroup);
+			Iterator areas = filterAreas.iterator();
+			while (areas.hasNext()) {
+				((FilterConfigurationArea) areas.next())
+						.applyToGroup(selectedFilterGroup);
+			}
 		}
+		super.okPressed();
 
 	}
 
