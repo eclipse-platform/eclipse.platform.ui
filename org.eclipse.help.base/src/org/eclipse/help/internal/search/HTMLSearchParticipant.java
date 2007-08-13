@@ -28,9 +28,11 @@ import org.eclipse.help.search.LuceneSearchParticipant;
 
 public class HTMLSearchParticipant extends LuceneSearchParticipant {
 
+	private static final String HELP_BASE_XHTML = "org.eclipse.help.base.xhtml"; //$NON-NLS-1$
 	private HTMLDocParser parser;
 	private String indexPath;
 	private IContentDescriber xhtmlDescriber;
+	private XHTMLSearchParticipant xhtmlParticipant;
 
 	public HTMLSearchParticipant(String indexPath) {
 		parser = new HTMLDocParser();
@@ -42,8 +44,11 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 		// if it's XHTML, forward it on to the proper search participant
 		if (isXHTML(pluginId, url)) {
 			LocalSearchManager manager = BaseHelpSystem.getLocalSearchManager();
-			LuceneSearchParticipant xhtmlParticipant = manager.getParticipant("org.eclipse.help.base.xhtml"); //$NON-NLS-1$
-			return xhtmlParticipant.addDocument(index, pluginId, name, url, id, doc);
+			LuceneSearchParticipant participant  = manager.getParticipant(HELP_BASE_XHTML); 
+			if (participant == null) {
+				participant = getXhtmlParticipant();
+			}
+			return participant.addDocument(index, pluginId, name, url, id, doc);
 		}
 		// otherwise, treat it as HTML
 		else {		
@@ -78,6 +83,13 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 		}
 	}
 	
+	private XHTMLSearchParticipant getXhtmlParticipant() {
+		if (xhtmlParticipant == null) {
+			xhtmlParticipant = new XHTMLSearchParticipant();
+		}
+		return xhtmlParticipant;
+	}
+
 	/**
 	 * Returns whether or not the given content should be treated as XHTML.
 	 * 
