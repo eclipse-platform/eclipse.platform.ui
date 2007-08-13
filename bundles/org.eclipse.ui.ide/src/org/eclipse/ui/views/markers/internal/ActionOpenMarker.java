@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,6 +28,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Action to open an editor on the selected bookmarks.
@@ -83,6 +84,10 @@ public class ActionOpenMarker extends MarkerSelectionProviderAction {
 
 			if (marker.getResource() instanceof IFile) {
 				try {
+					IFile file = (IFile) marker.getResource();
+					if (file.getLocation() == null
+							|| file.getLocationURI() == null)
+						return; // Abort if it cannot be opened
 					IDE.openEditor(part.getSite().getPage(), marker,
 							OpenStrategy.activateOnOpen());
 				} catch (PartInitException e) {
@@ -101,20 +106,38 @@ public class ActionOpenMarker extends MarkerSelectionProviderAction {
 					if (nestedException != null) {
 						// Open an error dialog and include the extra
 						// status information from the nested CoreException
-						ErrorDialog.openError(part.getSite().getShell(),
-								MarkerMessages.OpenMarker_errorTitle, e
-										.getMessage(), nestedException
-										.getStatus());
+						reportStatus(nestedException.getStatus());
 					} else {
 						// Open a regular error dialog since there is no
 						// extra information to display
-						MessageDialog.openError(part.getSite().getShell(),
-								MarkerMessages.OpenMarker_errorTitle, e
-										.getMessage());
+						reportError(e.getLocalizedMessage());
 					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Report an error message
+	 * 
+	 * @param message
+	 */
+	private void reportError(String message) {
+		IStatus status = new Status(IStatus.ERROR,
+				IDEWorkbenchPlugin.IDE_WORKBENCH, message);
+		reportStatus(status);
+	}
+
+	/**
+	 * Report the status
+	 * 
+	 * @param status
+	 */
+	private void reportStatus(IStatus status) {
+		StatusAdapter adapter = new StatusAdapter(status);
+		adapter.setProperty(StatusAdapter.TITLE_PROPERTY,
+				MarkerMessages.OpenMarker_errorTitle);
+		StatusManager.getManager().handle(adapter, StatusManager.SHOW);
 	}
 
 	/*
