@@ -62,7 +62,7 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 public class SaveScopeResourcesHandler implements IStatusHandler {
 
 	/**
-	 * Provides a custom class for a resizable selection dialog with a don't ask again button on it
+	 * Opens a resizable dialog listing possible files to save, the user can select none, some or all of the files before pressing OK.
 	 * @since 3.2
 	 */
 	class ScopedResourcesSelectionDialog extends AbstractDebugCheckboxSelectionDialog {
@@ -151,11 +151,10 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		}
 		
 		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugCheckboxSelectionDialog#refreshEnablement()
+		 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#isValid()
 		 */
-		protected void refreshEnablement() {
-			// OK button is always enabled
-			getOkButton().setEnabled(true);
+		protected boolean isValid() {
+			return true;
 		}
 	}
 	
