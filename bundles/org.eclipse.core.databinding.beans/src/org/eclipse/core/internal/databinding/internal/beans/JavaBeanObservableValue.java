@@ -143,6 +143,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	private void unhookListener() {
 		if (listenerSupport != null) {
 			listenerSupport.dispose();
+			listenerSupport = null;
 		}
 	}
 

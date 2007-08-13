@@ -13,6 +13,10 @@ package org.eclipse.jface.tests.databinding;
 
 import java.util.Locale;
 
+import org.eclipse.core.databinding.util.ILogger;
+import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.IStatus;
+
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 
@@ -32,6 +36,11 @@ public class BindingTestSetup extends TestSetup {
 		super.setUp();
 		oldLocale = Locale.getDefault();
 		Locale.setDefault(Locale.US);
+		Policy.setLog(new ILogger() {
+			public void log(IStatus status) {
+				fail();
+			}
+		});
 	}
 
 	protected void tearDown() throws Exception {
