@@ -534,8 +534,9 @@ public class ActionContributionItem extends ContributionItem {
 			if (action.isEnabled()) {
 				boolean trace = Policy.TRACE_ACTIONS;
 
-				long ms = System.currentTimeMillis();
+				long ms = 0L;
 				if (trace) {
+					ms = System.currentTimeMillis();
 					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
 				}
 
