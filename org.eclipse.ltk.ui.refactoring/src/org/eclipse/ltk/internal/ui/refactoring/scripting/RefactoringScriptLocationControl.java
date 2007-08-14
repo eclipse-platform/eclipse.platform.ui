@@ -210,6 +210,8 @@ public class RefactoringScriptLocationControl extends Composite {
 	 */
 	public void loadHistory() {
 		fExternalLocationControl.loadHistory();
+		if (fFromClipboardButton.getSelection())
+			handleClipboardScriptChanged();
 	}
 
 	/**
