@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -44,10 +45,13 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
@@ -119,17 +123,35 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
+	private static int instanceCount = 0;
 	private static final String TAG_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 
+	/**
+	 * Return the next secondary id.
+	 * @return String
+	 */
+	static String newSecondaryID() {
+		return String.valueOf(instanceCount);
+	}
 	private CachedMarkerBuilder builder;
 	Collection categoriesToExpand = new HashSet();
+	private Clipboard clipboard;
 	Collection preservedSelection = new ArrayList();
-	private MarkerState state;
-	private Job updateJob;
 
+	private MarkerState state;
+
+	private Job updateJob;
 	private TreeViewer viewer;
+
+	/**
+	 * Return a new instance of the receiver.
+	 */
+	public ExtendedMarkersView() {
+		super();
+		instanceCount++;
+	}
 
 	/**
 	 * Add the category to the list of expanded categories.
@@ -302,7 +324,148 @@ public class ExtendedMarkersView extends ViewPart {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
 		});
+		
+		registerContextMenu();
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		updateJob.cancel();
+		instanceCount --;
+		clipboard.dispose();
+	}
+
+	/**
+	 * Get all of the filters for the receiver.
+	 * 
+	 * @return Collection of {@link MarkerFieldFilterGroup}
+	 */
+	public Collection getAllFilters() {
+		return builder.getGenerator().getAllFilters();
+	}
+	
+	/**
+	 * Get all of the fields visible in the receiver.
+	 * @return MarkerField[]
+	 */
+	public MarkerField[] getVisibleFields(){
+		return builder.getGenerator().getVisibleFields();
+	}
+
+	/**
+	 * Return the clipboard for the receiver.
+	 * @return
+	 */
+	Clipboard getClipboard() {
+		if(clipboard == null)
+			clipboard = new Clipboard(viewer.getControl().getDisplay());
+		return clipboard;
+	}
+
+	/**
+	 * Return the content provider for the receiver.
+	 * 
+	 * @return ILazyTreeContentProvider
+	 */
+	private ILazyTreeContentProvider getContentProvider(final TreeViewer viewer) {
+		return new ILazyTreeContentProvider() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
+			public void dispose() {
+				// TODO Auto-generated method stub
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
+			 */
+			public Object getParent(Object element) {
+				return ((MarkerItem) element).getParent();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+				// TODO Auto-generated method stub
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object,
+			 *      int)
+			 */
+			public void updateChildCount(Object element, int currentChildCount) {
+
+				MarkerItem[] children;
+
+				if (element instanceof MarkerItem) {
+					MarkerItem item = (MarkerItem) element;
+					children = item.getChildren();
+
+				} else {
+					// If it is not a MarkerItem it is the root
+					CachedMarkerBuilder builder = (CachedMarkerBuilder) element;
+					children = builder.getElements();
+				}
+
+				// No updates if it hasn't changed
+				if (children.length == currentChildCount)
+					return;
+				viewer.setChildCount(element, children.length);
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement(java.lang.Object,
+			 *      int)
+			 */
+			public void updateElement(Object parent, int index) {
+				Object newItem;
+
+				if (parent instanceof MarkerItem)
+					newItem = ((MarkerItem) parent).getChildren()[index];
+				else
+					newItem = ((CachedMarkerBuilder) parent).getElements()[index];
+
+				viewer.replace(parent, index, newItem);
+				updateChildCount(newItem, -1);
+
+			}
+		};
+	}
+
+	/**
+	 * Get the int value for the tag.
+	 * 
+	 * @param tag
+	 * @return int
+	 */
+	private int getIntValue(String tag) {
+		if (state.useDefaults())
+			return 0;
+
+		Integer intValue = state.getInteger(tag);
+		return (intValue == null) ? 0 : intValue.intValue();
 	}
 
 	/**
@@ -312,6 +475,32 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private ISelectionListener getPageSelectionListener() {
 		return new ISelectionListener() {
+			/**
+			 * Get an ITaskListResourceAdapter for use by the default/
+			 * 
+			 * @return ITaskListResourceAdapter
+			 */
+			private ITaskListResourceAdapter getDefaultTaskListAdapter() {
+				return new ITaskListResourceAdapter() {
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
+					 */
+					public IResource getAffectedResource(IAdaptable adaptable) {
+						Object resource = adaptable.getAdapter(IResource.class);
+						if (resource == null)
+							resource = adaptable.getAdapter(IFile.class);
+						if (resource == null)
+							return null;
+						return (IResource) resource;
+
+					}
+
+				};
+			}
+
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -371,144 +560,7 @@ public class ExtendedMarkersView extends ViewPart {
 				builder.updateForNewSelection(selectedElements.toArray());
 			}
 
-			/**
-			 * Get an ITaskListResourceAdapter for use by the default/
-			 * 
-			 * @return ITaskListResourceAdapter
-			 */
-			private ITaskListResourceAdapter getDefaultTaskListAdapter() {
-				return new ITaskListResourceAdapter() {
-
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
-					 */
-					public IResource getAffectedResource(IAdaptable adaptable) {
-						Object resource = adaptable.getAdapter(IResource.class);
-						if (resource == null)
-							resource = adaptable.getAdapter(IFile.class);
-						if (resource == null)
-							return null;
-						return (IResource) resource;
-
-					}
-
-				};
-			}
-
 		};
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		updateJob.cancel();
-	}
-
-	/**
-	 * Return the content provider for the receiver.
-	 * 
-	 * @return ILazyTreeContentProvider
-	 */
-	private ILazyTreeContentProvider getContentProvider(final TreeViewer viewer) {
-		return new ILazyTreeContentProvider() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
-			 */
-			public Object getParent(Object element) {
-				return ((MarkerItem) element).getParent();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object,
-			 *      int)
-			 */
-			public void updateChildCount(Object element, int currentChildCount) {
-
-				MarkerItem[] children;
-
-				if (element instanceof MarkerItem) {
-					MarkerItem item = (MarkerItem) element;
-					children = item.getChildren();
-
-				} else {
-					// If it is not a MarkerItem it is the root
-					CachedMarkerBuilder builder = (CachedMarkerBuilder) element;
-					children = builder.getElements();
-				}
-
-				// No updates if it hasn't changed
-				if (children.length == currentChildCount)
-					return;
-				viewer.setChildCount(element, children.length);
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement(java.lang.Object,
-			 *      int)
-			 */
-			public void updateElement(Object parent, int index) {
-				Object newItem;
-
-				if (parent instanceof MarkerItem)
-					newItem = ((MarkerItem) parent).getChildren()[index];
-				else
-					newItem = ((CachedMarkerBuilder) parent).getElements()[index];
-
-				viewer.replace(parent, index, newItem);
-				updateChildCount(newItem, -1);
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
-			public void dispose() {
-				// TODO Auto-generated method stub
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-	}
-
-	/**
-	 * Get the int value for the tag.
-	 * 
-	 * @param tag
-	 * @return int
-	 */
-	private int getIntValue(String tag) {
-		if (state.useDefaults())
-			return 0;
-
-		Integer intValue = state.getInteger(tag);
-		return (intValue == null) ? 0 : intValue.intValue();
 	}
 
 	/**
@@ -688,6 +740,51 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return whether or not group is enabled.
+	 * 
+	 * @param group
+	 * @return boolean
+	 */
+	public boolean isEnabled(MarkerFieldFilterGroup group) {
+		return builder.getGenerator().getEnabledFilters().contains(group);
+	}
+
+	/**
+	 * Return whether or not generator is the selected one.
+	 * 
+	 * @param generator
+	 * @return boolean
+	 */
+	public boolean isShowing(MarkerContentGenerator generator) {
+		return this.builder.getGenerator().equals(generator);
+	}
+
+	/**
+	 * Open the filters dialog for the receiver.
+	 */
+	public void openFiltersDialog() {
+		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
+				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
+				builder.getGenerator().getAllFilters(), builder.getGenerator()
+						.getFilterConfigurationFields());
+		if (dialog.open() == Window.OK)
+			builder.setFilters(dialog.getFilters());
+
+	}
+
+	/**
+	 * Register the context menu for the receiver so that commands may
+	 * be added to it.
+	 */
+	private void registerContextMenu() {
+		MenuManager contextMenu = new MenuManager();
+		getSite().registerContextMenu(contextMenu, viewer);
+		Control control = viewer.getControl();
+		Menu menu = contextMenu.createContextMenu(control);
+		control.setMenu(menu);
+	}
+
+	/**
 	 * Remove the category from the list of expanded ones.
 	 * 
 	 * @param category
@@ -717,6 +814,17 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
+	/**
+	 * Set the content generator for the receiver.
+	 * 
+	 * @param generator
+	 */
+	public void setContentGenerator(MarkerContentGenerator generator) {
+		builder.setGenerator(generator);
+		createColumns(viewer.getTree().getColumns());
+		setPartName(generator.getName());
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -724,6 +832,16 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void setFocus() {
 		// Do nothing by default
+
+	}
+
+	/**
+	 * Add group to the enabled filters.
+	 * 
+	 * @param group
+	 */
+	public void toggleFilter(MarkerFieldFilterGroup group) {
+		builder.toggleFilter(group);
 
 	}
 
@@ -760,67 +878,5 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/**
-	 * Set the content generator for the receiver.
-	 * 
-	 * @param generator
-	 */
-	public void setContentGenerator(MarkerContentGenerator generator) {
-		builder.setGenerator(generator);
-		createColumns(viewer.getTree().getColumns());
-		setPartName(generator.getName());
-	}
-
-	/**
-	 * Return whether or not generator is the selected one.
-	 * 
-	 * @param generator
-	 * @return boolean
-	 */
-	public boolean isShowing(MarkerContentGenerator generator) {
-		return this.builder.getGenerator().equals(generator);
-	}
-
-	/**
-	 * Open the filters dialog for the receiver.
-	 */
-	public void openFiltersDialog() {
-		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
-				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
-				builder.getGenerator().getAllFilters(), builder.getGenerator()
-						.getFilterConfigurationFields());
-		if (dialog.open() == Window.OK)
-			builder.setFilters(dialog.getFilters());
-
-	}
-
-	/**
-	 * Get all of the filters for the receiver.
-	 * 
-	 * @return Collection of {@link MarkerFieldFilterGroup}
-	 */
-	public Collection getAllFilters() {
-		return builder.getGenerator().getAllFilters();
-	}
-
-	/**
-	 * Return whether or not group is enabled.
-	 * 
-	 * @param group
-	 * @return boolean
-	 */
-	public boolean isEnabled(MarkerFieldFilterGroup group) {
-		return builder.getGenerator().getEnabledFilters().contains(group);
-	}
-
-	/**
-	 * Add group to the enabled filters.
-	 * 
-	 * @param group
-	 */
-	public void toggleFilter(MarkerFieldFilterGroup group) {
-		builder.toggleFilter(group);
-
-	}
 
 }

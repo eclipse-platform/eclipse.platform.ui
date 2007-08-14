@@ -784,6 +784,11 @@
             id="org.eclipse.ui.ide.markerContents"
             name="%ContentGenerator.Category">
       </category>
+      <command
+            defaultHandler="org.eclipse.ui.internal.provisional.views.markers.OpenMarkersViewHandler"
+            id="org.eclipse.ui.ide.OpenMarkersView"
+            name="%MarkerFiltersMenu.OpenNew">
+      </command>
    </extension>
    
    <extension
@@ -1301,6 +1306,33 @@
             </dynamic>
          </menu>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
+         <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+         <command
+               commandId="org.eclipse.ui.edit.copy">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerCopyHandler"
+            commandId="org.eclipse.ui.edit.copy">
+         <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
    
 </plugin>

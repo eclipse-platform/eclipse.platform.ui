@@ -196,4 +196,13 @@ public abstract class MarkerField {
 	String getID() {
 		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
 	}
+
+	/**
+	 * Return the value for a marker.
+	 * @param marker
+	 * @return String
+	 */
+	String getMarkerValue(IMarker marker) {
+		return getValue(new MarkerEntry(marker));
+	}
 }

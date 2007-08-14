@@ -69,7 +69,7 @@ public class MarkerContentGenerator {
 	private Collection filters;
 	private IResource[] focusResources = MarkerUtilities.EMPTY_RESOURCE_ARRAY;
 	private Collection markerTypes;
-	private MarkerField[] sortFields;
+	private MarkerField[] allFields;
 	private MarkerField[] visibleFields;
 
 	private IWorkingSet workingSet;
@@ -352,7 +352,7 @@ public class MarkerContentGenerator {
 	 * @return MarkerComparator
 	 */
 	public MarkerComparator getComparator() {
-		return new MarkerComparator(getCategoryField(), getSortingFields());
+		return new MarkerComparator(getCategoryField(), getAllFields());
 	}
 
 	/**
@@ -514,12 +514,12 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Get the fields that this content generator is using to sort
+	 * Get the all of the fields that this content generator is using.
 	 * 
 	 * @return {@link MarkerField}[]
 	 */
-	public MarkerField[] getSortingFields() {
-		return sortFields;
+	public MarkerField[] getAllFields() {
+		return allFields;
 	}
 
 	/**
@@ -551,21 +551,21 @@ public class MarkerContentGenerator {
 
 		IConfigurationElement[] elements = configurationElement
 				.getChildren(MARKER_FIELD_REFERENCE);
-		Collection sortFieldList = new ArrayList();
+		Collection allFieldList = new ArrayList();
 		Collection visibleFieldList = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			MarkerField field = registry.getField(elements[i]
 					.getAttribute(MarkerUtilities.ATTRIBUTE_ID));
 			if (field == null)
 				continue;
-			sortFieldList.add(field);
+			allFieldList.add(field);
 			if (!VALUE_FALSE
 					.equals(elements[i].getAttribute(ATTRIBUTE_VISIBLE)))
 				visibleFieldList.add(field);
 		}
 
-		sortFields = new MarkerField[sortFieldList.size()];
-		sortFieldList.toArray(sortFields);
+		allFields = new MarkerField[allFieldList.size()];
+		allFieldList.toArray(allFields);
 
 		visibleFields = new MarkerField[visibleFieldList.size()];
 		visibleFieldList.toArray(visibleFields);
@@ -708,6 +708,10 @@ public class MarkerContentGenerator {
 	 * @param memento
 	 */
 	public void loadSettings(IMemento memento) {
+		
+		if(memento == null)
+			return;
+		
 		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
 
 		for (int i = 0; i < children.length; i++) {
