@@ -1229,6 +1229,10 @@ public abstract class PartSashContainer extends LayoutPart implements
     	        derefPart(newPart);
     		}
     	}
+    	else {
+	        // Remove the part from old container.
+	        derefPart(newPart);
+    	}
     	
         // Reparent part and add it to the workbook
         newPart.reparent(getParent());
