@@ -15,6 +15,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -104,5 +105,21 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		sorter.inverted = true;
 		treeViewer.refresh();
 		treeViewer.removeSelectionChangedListener(listener);
+	}
+	
+	public void testBug184712() {
+		class TableAndTreeLabelProvider extends LabelProvider implements ITableLabelProvider {
+			public Image getColumnImage(Object element, int columnIndex) {
+				return null;
+			}
+			public String getColumnText(Object element, int columnIndex) {
+				return "wrong";
+			}
+			public String getText(Object element) {
+				return "right";
+			}
+		}
+		treeViewer.setLabelProvider(new TableAndTreeLabelProvider());
+		assertEquals("right", treeViewer.getTree().getItem(0).getText());
 	}
 }
