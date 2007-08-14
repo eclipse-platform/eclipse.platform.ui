@@ -33,8 +33,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
@@ -599,11 +597,7 @@ public final class CommandContributionItem extends ContributionItem {
 									menuManager, "menu:" + id); //$NON-NLS-1$
 						}
 					});
-					menu.addDisposeListener(new DisposeListener() {
-						public void widgetDisposed(DisposeEvent e) {
-							System.out.println("dispose menu"); //$NON-NLS-1$
-						}
-					});
+					
 					// position the menu below the drop down item
 					Rectangle b = ti.getBounds();
 					Point p = ti.getParent().toDisplay(
