@@ -815,10 +815,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	public Object getAdapter(Class adapter) {
 		Object result = super.getAdapter(adapter);
 		// restrict delegating to the UI thread for bug 144851
-		// TODO to be fixed properly in 3.2.1
 		if (result == null && Display.getCurrent()!=null) {
 			IEditorPart innerEditor = getActiveEditor();
-			// see bug 138823 - this is a hack
+			// see bug 138823 - prevent some subclasses from causing
+			// an infinite loop
 			if (innerEditor != null && innerEditor != this) {
 				result = Util.getAdapter(innerEditor, adapter);
 			}
