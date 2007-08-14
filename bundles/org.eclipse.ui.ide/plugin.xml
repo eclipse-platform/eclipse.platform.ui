@@ -1324,6 +1324,18 @@
                commandId="org.eclipse.ui.edit.selectAll">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+         <command
+               commandId="org.eclipse.ui.navigate.showInQuickMenu">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+         <command
+               commandId="org.eclipse.ui.file.properties">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -1350,6 +1362,23 @@
                </equals>
             </with>
          </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.PropertiesHandler"
+            commandId="org.eclipse.ui.file.properties">
+         <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <count
+                  value="1">
+            </count>
+         </enabledWhen>
       </handler>
    </extension>
    

@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-class DialogProblemProperties extends DialogMarkerProperties {
+public class DialogProblemProperties extends DialogMarkerProperties {
 
 	private Label severityLabel;
 
 	private Label severityImage;
 
-	DialogProblemProperties(Shell parentShell) {
+	public DialogProblemProperties(Shell parentShell) {
 		super(parentShell);
 		setType(IMarker.PROBLEM);
 	}
