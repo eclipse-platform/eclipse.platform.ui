@@ -51,6 +51,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.views.navigator.NavigatorDragAdapter;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
@@ -151,7 +152,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	private void addDragAdapters(StructuredViewer viewer) {
 		Transfer[] transfers= new Transfer[] { ResourceTransfer.getInstance() };
 		int ops= DND.DROP_COPY | DND.DROP_LINK;
-		viewer.addDragSupport(ops, transfers, new ResourceTransferDragAdapter(viewer));
+		viewer.addDragSupport(ops, transfers, new NavigatorDragAdapter(viewer));
 	}	
 
 	protected void configureTableViewer(TableViewer viewer) {
