@@ -155,7 +155,8 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
 						return false;
 					} catch (CoreException exception) {
-						return handleCoreException(exception);
+						handleCoreException(exception);
+						return false;
 					} finally {
 						if (stream != null) {
 							try {
@@ -170,14 +171,18 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			}
 			OutputStream stream= null;
 			try {
+				File parentFile= file.getParentFile();
+				if (parentFile != null)
+					parentFile.mkdirs();
 				stream= new BufferedOutputStream(new FileOutputStream(file));
 				writeRefactoringDescriptorProxies(writable, stream);
 				return true;
 			} catch (CoreException exception) {
-				return handleCoreException(exception);
+				handleCoreException(exception);
+				return false;
 			} catch (FileNotFoundException exception) {
 				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
-				return true;
+				return false;
 			} finally {
 				if (stream != null) {
 					try {
@@ -212,13 +217,14 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					return false;
 				}
 			} catch (CoreException exception) {
-				return handleCoreException(exception);
+				handleCoreException(exception);
+				return false;
 			}
 		}
 		return false;
 	}
 
-	private boolean handleCoreException(CoreException exception) {
+	private void handleCoreException(CoreException exception) {
 		IStatus status= exception.getStatus();
 		final Throwable throwable= status.getException();
 		if (throwable instanceof IOException) {
@@ -227,7 +233,6 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 			MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, status.getMessage());
 			RefactoringUIPlugin.log(exception);
 		}
-		return false;
 	}
 
 	/**
