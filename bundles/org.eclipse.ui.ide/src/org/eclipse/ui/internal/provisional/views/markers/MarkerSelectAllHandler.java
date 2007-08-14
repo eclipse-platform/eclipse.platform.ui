@@ -1,3 +1,4 @@
+package org.eclipse.ui.internal.provisional.views.markers;
 /*******************************************************************************
  * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -9,28 +10,25 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.provisional.views.markers;
-
 import org.eclipse.core.commands.ExecutionEvent;
-
+import org.eclipse.core.commands.IHandler;
 
 /**
- * ConfigureFiltersHandler the handler for opening the configure filters
- * dialog.
+ * MarkerSelectAllHandler is the handler for the select all action.
  * @since 3.4
  *
  */
-public class ConfigureFiltersHandler extends MarkerViewHandler {
+public class MarkerSelectAllHandler extends MarkerViewHandler implements
+		IHandler {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public Object execute(ExecutionEvent arg0)  {
-		ExtendedMarkersView view = getView(arg0);
+	public Object execute(ExecutionEvent event)  {
+		ExtendedMarkersView view = getView(event);
 		if(view != null)
-			view.openFiltersDialog();
+			view.selectAll();
 		return this;
 	}
-
 
 }

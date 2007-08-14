@@ -130,11 +130,13 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return the next secondary id.
+	 * 
 	 * @return String
 	 */
 	static String newSecondaryID() {
 		return String.valueOf(instanceCount);
 	}
+
 	private CachedMarkerBuilder builder;
 	Collection categoriesToExpand = new HashSet();
 	private Clipboard clipboard;
@@ -324,7 +326,7 @@ public class ExtendedMarkersView extends ViewPart {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
 		});
-		
+
 		registerContextMenu();
 	}
 
@@ -336,8 +338,9 @@ public class ExtendedMarkersView extends ViewPart {
 	public void dispose() {
 		super.dispose();
 		updateJob.cancel();
-		instanceCount --;
-		clipboard.dispose();
+		instanceCount--;
+		if (clipboard != null)
+			clipboard.dispose();
 	}
 
 	/**
@@ -348,21 +351,23 @@ public class ExtendedMarkersView extends ViewPart {
 	public Collection getAllFilters() {
 		return builder.getGenerator().getAllFilters();
 	}
-	
+
 	/**
 	 * Get all of the fields visible in the receiver.
+	 * 
 	 * @return MarkerField[]
 	 */
-	public MarkerField[] getVisibleFields(){
+	public MarkerField[] getVisibleFields() {
 		return builder.getGenerator().getVisibleFields();
 	}
 
 	/**
 	 * Return the clipboard for the receiver.
+	 * 
 	 * @return
 	 */
 	Clipboard getClipboard() {
-		if(clipboard == null)
+		if (clipboard == null)
 			clipboard = new Clipboard(viewer.getControl().getDisplay());
 		return clipboard;
 	}
@@ -773,8 +778,8 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Register the context menu for the receiver so that commands may
-	 * be added to it.
+	 * Register the context menu for the receiver so that commands may be added
+	 * to it.
 	 */
 	private void registerContextMenu() {
 		MenuManager contextMenu = new MenuManager();
@@ -878,5 +883,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
+	/**
+	 * Select all of the elements in the receiver.
+	 */
+	void selectAll() {
+		viewer.getTree().selectAll();
+
+	}
 
 }

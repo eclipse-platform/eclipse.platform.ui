@@ -10,14 +10,10 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -27,7 +23,7 @@ import org.eclipse.ui.part.MarkerTransfer;
  * @since 3.4
  * 
  */
-public class MarkerCopyHandler extends AbstractHandler implements IHandler {
+public class MarkerCopyHandler extends MarkerViewHandler  {
 
 	/*
 	 * (non-Javadoc)
@@ -35,11 +31,11 @@ public class MarkerCopyHandler extends AbstractHandler implements IHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) {
-		IWorkbenchPart part = HandlerUtil.getActivePart(event);
-		if (part == null)
+		ExtendedMarkersView view = getView(event);
+		if (view == null)
 			return null;
 
-		setClipboard((ExtendedMarkersView) part);
+		setClipboard(view);
 		return this;
 	}
 

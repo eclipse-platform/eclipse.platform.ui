@@ -11,26 +11,30 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * ConfigureFiltersHandler the handler for opening the configure filters
- * dialog.
+ * MarkerViewHandler is the abstract class of the handlers for the 
+ * {@link ExtendedMarkersView}
  * @since 3.4
  *
  */
-public class ConfigureFiltersHandler extends MarkerViewHandler {
+abstract class MarkerViewHandler extends AbstractHandler {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	/**
+	 * Get the view this event occurred on.
+	 * @param arg0
+	 * @return ExtendedMarkersView or <code>null</code>
 	 */
-	public Object execute(ExecutionEvent arg0)  {
-		ExtendedMarkersView view = getView(arg0);
-		if(view != null)
-			view.openFiltersDialog();
-		return this;
+	protected ExtendedMarkersView getView(ExecutionEvent arg0) {
+		IWorkbenchPart part =  HandlerUtil.getActivePart(arg0);
+		if(part == null)
+			return null;
+		return (ExtendedMarkersView) part;
 	}
 
-
+	
 }

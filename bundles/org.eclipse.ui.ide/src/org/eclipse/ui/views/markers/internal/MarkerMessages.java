@@ -254,4 +254,6 @@ public class MarkerMessages extends NLS{
 	public static String task_title;
 	public static String problem_title;
 	public static String bookmark_title;
+	
+	public static String PasteHandler_title;
 }

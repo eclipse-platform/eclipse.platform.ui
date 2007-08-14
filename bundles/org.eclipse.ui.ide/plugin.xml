@@ -1318,12 +1318,30 @@
                commandId="org.eclipse.ui.edit.copy">
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+         <command
+               commandId="org.eclipse.ui.edit.selectAll">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCopyHandler"
             commandId="org.eclipse.ui.edit.copy">
+         <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerSelectAllHandler"
+            commandId="org.eclipse.ui.edit.selectAll">
          <activeWhen>
             <with
                   variable="activePartId">
