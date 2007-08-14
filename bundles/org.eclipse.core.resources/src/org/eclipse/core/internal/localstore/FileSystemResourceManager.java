@@ -59,6 +59,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			IProject project = projects[i];
 			//check the project location
 			URI testLocation = project.getLocationURI();
+			if (testLocation == null)
+				continue;
 			// if we are looking for file: locations try to get a file: location for this project
 			if (isFileLocation && !EFS.SCHEME_FILE.equals(testLocation.getScheme()))
 				testLocation = getFileURI(testLocation);
