@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -235,7 +234,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         settings = viewsSettings.getSection(STORE_SECTION);
         if (settings == null) {
             settings = viewsSettings.addNewSection(STORE_SECTION);
-            migrateDialogSettings();
         }
 
         initLinkingEnabled();
@@ -409,9 +407,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
         // If not in the dialog settings, check the preference store for the default setting. 
         // Use the UI plugin's preference store since this is a public preference.
-        AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
-        linkingEnabled = uiPlugin.getPreferenceStore().getBoolean(
+        linkingEnabled = PlatformUI.getPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
     }
 
@@ -947,30 +943,6 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     protected void makeActions() {
         setActionGroup(new MainActionGroup(this));
-    }
-
-    /**
-     * Migrates the dialog settings from the UI plugin store to the 
-     * Views plugin store.
-     */
-    private void migrateDialogSettings() {
-        AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
-        IDialogSettings uiSettings = uiPlugin.getDialogSettings();
-
-        uiSettings = uiSettings.getSection(STORE_SECTION);
-        if (uiSettings != null) {
-            String workingSetName = uiSettings.get(STORE_WORKING_SET);
-            if (workingSetName != null && workingSetName.length() > 0) {
-                settings.put(STORE_WORKING_SET, workingSetName);
-                uiSettings.put(STORE_WORKING_SET, ""); //$NON-NLS-1$
-            }
-            String sortType = uiSettings.get(STORE_SORT_TYPE);
-            if (sortType != null && sortType.length() > 0) {
-                settings.put(STORE_SORT_TYPE, sortType);
-                uiSettings.put(STORE_SORT_TYPE, ""); //$NON-NLS-1$
-            }
-        }
     }
 
     /**
