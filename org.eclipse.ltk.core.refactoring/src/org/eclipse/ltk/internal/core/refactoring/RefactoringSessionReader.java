@@ -233,7 +233,12 @@ public final class RefactoringSessionReader extends DefaultHandler {
 				try {
 					descriptor= RefactoringContributionManager.getInstance().createDescriptor(id, project, description, comment, map, flag);
 				} catch (RuntimeException e) {
-					throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator, e);
+					throw new SAXParseException(RefactoringCoreMessages.RefactoringSessionReader_invalid_values_in_xml, fLocator, e) {
+						private static final long serialVersionUID= 1L;
+						public Throwable getCause() { // support proper 1.4-style exception chaining
+							return getException();
+						}
+					};
 				}
 			}
 			try {

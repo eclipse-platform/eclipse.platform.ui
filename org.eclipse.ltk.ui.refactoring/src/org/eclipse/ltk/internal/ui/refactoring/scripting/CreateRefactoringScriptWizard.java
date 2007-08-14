@@ -153,16 +153,9 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						set.toArray(writable);
 					} catch (FileNotFoundException exception) {
 						MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
-						return true;
+						return false;
 					} catch (CoreException exception) {
-						final Throwable throwable= exception.getStatus().getException();
-						if (throwable instanceof IOException) {
-							MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-							return true;
-						} else {
-							RefactoringUIPlugin.log(exception);
-							return false;
-						}
+						return handleCoreException(exception);
 					} finally {
 						if (stream != null) {
 							try {
@@ -181,14 +174,7 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 				writeRefactoringDescriptorProxies(writable, stream);
 				return true;
 			} catch (CoreException exception) {
-				final Throwable throwable= exception.getStatus().getException();
-				if (throwable instanceof IOException) {
-					MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-					return true;
-				} else {
-					RefactoringUIPlugin.log(exception);
-					return false;
-				}
+				return handleCoreException(exception);
 			} catch (FileNotFoundException exception) {
 				MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, exception.getLocalizedMessage());
 				return true;
@@ -226,15 +212,20 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 					return false;
 				}
 			} catch (CoreException exception) {
-				final Throwable throwable= exception.getStatus().getException();
-				if (throwable instanceof IOException) {
-					MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-					return true;
-				} else {
-					RefactoringUIPlugin.log(exception);
-					return false;
-				}
+				return handleCoreException(exception);
 			}
+		}
+		return false;
+	}
+
+	private boolean handleCoreException(CoreException exception) {
+		IStatus status= exception.getStatus();
+		final Throwable throwable= status.getException();
+		if (throwable instanceof IOException) {
+			MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
+		} else {
+			MessageDialog.openError(getShell(), RefactoringUIMessages.ChangeExceptionHandler_refactoring, status.getMessage());
+			RefactoringUIPlugin.log(exception);
 		}
 		return false;
 	}
