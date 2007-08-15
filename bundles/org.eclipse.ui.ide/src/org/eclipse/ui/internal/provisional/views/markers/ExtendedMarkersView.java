@@ -283,6 +283,7 @@ public class ExtendedMarkersView extends ViewPart {
 		registerContextMenu();
 	}
 
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -897,5 +898,14 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 	}
+
+	/**
+	 * Return the object that is the input to the viewer.
+	 * @return Object
+	 */
+	Object getViewerInput() {
+		return viewer.getInput();
+	}
+	
 
 }
