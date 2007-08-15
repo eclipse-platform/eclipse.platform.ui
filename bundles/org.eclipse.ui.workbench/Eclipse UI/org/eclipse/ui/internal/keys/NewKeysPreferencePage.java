@@ -1093,6 +1093,20 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 		return Util.equals(platform, p);
 	}
+	
+	private final String[] getSchemeIds(String schemeId) {
+		final List strings = new ArrayList();
+		while (schemeId != null) {
+			strings.add(schemeId);
+			try {
+				schemeId = bindingService.getScheme(schemeId).getParentId();
+			} catch (final NotDefinedException e) {
+				return new String[0];
+			}
+		}
+
+		return (String[]) strings.toArray(new String[strings.size()]);
+	}
 
 	private final void bindingRestore(final ParameterizedCommand cmd,
 			boolean removeCmd) {
@@ -1122,23 +1136,41 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		}
 
 		if (!addSystemAll.isEmpty()) {
+			String[] activeSchemeIds = getSchemeIds(getSchemeId());
 			Binding[] sysArray = (Binding[]) addSystemAll
 					.toArray(new Binding[addSystemAll.size()]);
-			for (Iterator i = removeBinding.iterator(); i.hasNext();) {
-				Binding del = (Binding) i.next();
-				for (int k = 0; k < sysArray.length; k++) {
-					Binding sys = sysArray[k];
+			for (int k = 0; k < sysArray.length; k++) {
+				Binding sys = sysArray[k];
+				boolean deleted = false;
+				for (Iterator i = removeBinding.iterator(); i.hasNext();) {
+					Binding del = (Binding) i.next();
 					if (deletes(del, sys)) {
 						if (del.getType() == Binding.USER) {
 							removeUser.add(del);
 							localChangeManager.removeBinding(del);
 						} else {
+							deleted = true;
 							addSystemAll.remove(sys);
 						}
 					}
 				}
+				// Check the scheme ids.
+				final String schemeId = sys.getSchemeId();
+				boolean found = false;
+				if (activeSchemeIds != null && !deleted) {
+					for (int j = 0; j < activeSchemeIds.length; j++) {
+						if (Util.equals(schemeId, activeSchemeIds[j])) {
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found && sys.getType() == Binding.SYSTEM) {
+					addSystemAll.remove(sys);
+				}
 			}
 		}
+		
 
 		bindingModel.addAll(addSystemAll);
 		bindingModel.removeAll(removeUser);
