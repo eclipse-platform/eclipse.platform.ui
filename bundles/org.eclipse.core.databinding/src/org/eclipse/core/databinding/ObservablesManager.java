@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bob Smith - bug 198880
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -23,11 +24,11 @@ import org.eclipse.core.internal.databinding.Pair;
 /**
  * An observables manager can be used for lifecycle management of
  * {@link IObservable} objects.
- * 
+ *
  * This class is not intended to be extended by clients.
- * 
+ *
  * @since 1.0
- * 
+ *
  */
 public class ObservablesManager {
 
@@ -43,7 +44,7 @@ public class ObservablesManager {
 
 	/**
 	 * Adds the given observable to this manager.
-	 * 
+	 *
 	 * @param observable
 	 *            the observable
 	 */
@@ -54,7 +55,7 @@ public class ObservablesManager {
 	/**
 	 * Adds the given observable to this manager's exclusion list. The given
 	 * observable will not be disposed of by this manager.
-	 * 
+	 *
 	 * @param observable
 	 *            the observable
 	 */
@@ -65,7 +66,7 @@ public class ObservablesManager {
 	/**
 	 * Adds the given data binding context's target and/or model observables to
 	 * this manager.
-	 * 
+	 *
 	 * @param context
 	 *            the data binding context
 	 * @param trackTargets
@@ -102,7 +103,7 @@ public class ObservablesManager {
 					observables.add(binding.getTarget());
 				}
 				if (disposeModels) {
-					observables.add(binding.getTarget());
+					observables.add(binding.getModel());
 				}
 			}
 		}

@@ -11,6 +11,7 @@
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 164247
  *     Brad Reynolds - bug 164653, 159768, 170848, 147515
+ *     Bob Smith - bug 198880
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -21,6 +22,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.tests.databinding.AggregateValidationStatusTest;
 import org.eclipse.core.tests.databinding.DatabindingContextTest;
 import org.eclipse.core.tests.databinding.ListBindingTest;
+import org.eclipse.core.tests.databinding.ObservablesManagerTest;
 import org.eclipse.core.tests.databinding.UpdateStrategyTest;
 import org.eclipse.core.tests.databinding.UpdateValueStrategyTest;
 import org.eclipse.core.tests.databinding.ValueBindingTest;
@@ -138,6 +140,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(UpdateStrategyTest.class);
 		addTestSuite(UpdateValueStrategyTest.class);
 		addTestSuite(ValueBindingTest.class);
+		addTestSuite(ObservablesManagerTest.class);
 
 		// org.eclipse.core.tests.databinding.beans
 		addTestSuite(BeansObservablesTest.class);
@@ -169,16 +172,16 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(UnionSetRealmTest.class);
 		addTestSuite(WritableSetRealmTest.class);
 		addTestSuite(WritableSetTest.class);
-		
+
 		//org.eclipse.core.tests.databinding.observable.value
 		addTestSuite(AbstractObservableValueTest.class);
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
 		addTestSuite(WritableValueTest.class);
-		
+
 		//org.eclipse.core.tests.databinding.validation
 		addTestSuite(ValidationStatusTest.class);
-		
+
 		// org.eclipse.core.tests.internal.databinding
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
@@ -220,10 +223,10 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(JavaBeanObservableSetTest.class);
 		addTestSuite(JavaBeanObservableValueTest.class);
 		addTestSuite(ListenerSupportTest.class);
-		
+
 		//org.eclipse.core.tests.internal.databinding.observable
 		addTestSuite(UnmodifiableObservableListTest.class);
-		
+
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTestSuite(DetailObservableListTest.class);
 		addTestSuite(DetailObservableSetTest.class);
@@ -251,11 +254,11 @@ public class BindingTestSuite extends TestSuite {
 
 		//org.eclipse.jface.tests.databinding.swt
 		addTestSuite(SWTObservablesTest.class);
-		
+
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
-		
+
 		//org.eclipse.jface.tests.example.databinding.mask.internal
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(EditMaskParserTest.class);
@@ -272,7 +275,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(TableObservableValueTest.class);
 		addTestSuite(TextEditableObservableValueTest.class);
 		addTestSuite(TextObservableValueTest.class);
-		
+
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
 	}
