@@ -1923,7 +1923,10 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 		// Figure out where command identifiers apply to the selected category.
 		final String categoryId = getCategoryId();
-		final Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+		Set commandIds = (Set) commandIdsByCategoryId.get(categoryId);
+		if (commandIds==null) {
+			commandIds = Collections.EMPTY_SET;
+		}
 
 		/*
 		 * Generate an array of parameterized commands based on these
