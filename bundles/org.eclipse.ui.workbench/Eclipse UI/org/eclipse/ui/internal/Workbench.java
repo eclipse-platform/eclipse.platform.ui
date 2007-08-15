@@ -2502,13 +2502,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 					}
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
-						if (perspectiveId.equals(persp.getDesc().getId())) {
-							Shell shell = win.getShell();
-							shell.open();
-							if (shell.getMinimized()) {
-								shell.setMinimized(false);
+						if (persp != null) {
+							IPerspectiveDescriptor desc = persp.getDesc();
+							if (desc != null) {
+								if (perspectiveId.equals(desc.getId())) {
+									Shell shell = win.getShell();
+									shell.open();
+									if (shell.getMinimized()) {
+										shell.setMinimized(false);
+									}
+									return page;
+								}
 							}
-							return page;
 						}
 					}
 				}
@@ -2617,9 +2622,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 					}
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
-						if (perspectiveId.equals(persp.getDesc().getId())) {
-							win.getShell().open();
-							return page;
+						if (persp != null) {
+							IPerspectiveDescriptor desc = persp.getDesc();
+							if (desc != null) {
+								if (perspectiveId.equals(desc.getId())) {
+									win.getShell().open();
+									return page;
+								}
+							}
 						}
 					}
 				}
