@@ -255,54 +255,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 		viewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
-				IMarker[] markers = getSelectedMarkers();
-				for (int i = 0; i < markers.length; i++) {
-					IMarker marker = markers[i];
-
-					// optimization: if the active editor has the same input as
-					// the
-					// selected marker then
-					// RevealMarkerAction would have been run and we only need
-					// to
-					// activate the editor
-					IEditorPart editor = getSite().getPage().getActiveEditor();
-					if (editor != null) {
-						IEditorInput input = editor.getEditorInput();
-						IFile file = ResourceUtil.getFile(input);
-						if (file != null) {
-							if (marker.getResource().equals(file)) {
-								getSite().getPage().activate(editor);
-							}
-						}
-					}
-
-					if (marker.getResource() instanceof IFile) {
-						try {
-							IDE.openEditor(getSite().getPage(), marker,
-									OpenStrategy.activateOnOpen());
-						} catch (PartInitException e) {
-
-							// Check for a nested CoreException
-							IStatus status = e.getStatus();
-							if (status != null
-									&& status.getException() instanceof CoreException) {
-								status = ((CoreException) status.getException())
-										.getStatus();
-							}
-
-							if (status == null)
-								StatusManager.getManager().handle(
-										StatusUtil.newStatus(IStatus.ERROR, e
-												.getMessage(), e),
-										StatusManager.SHOW);
-
-							else
-								StatusManager.getManager().handle(status,
-										StatusManager.SHOW);
-
-						}
-					}
-				}
+				openSelectedMarkers();
 			}
 
 		});
@@ -889,6 +842,60 @@ public class ExtendedMarkersView extends ViewPart {
 	void selectAll() {
 		viewer.getTree().selectAll();
 
+	}
+
+	/**
+	 * Open the selected markers
+	 */
+	void openSelectedMarkers() {
+		IMarker[] markers = getSelectedMarkers();
+		for (int i = 0; i < markers.length; i++) {
+			IMarker marker = markers[i];
+
+			// optimization: if the active editor has the same input as
+			// the
+			// selected marker then
+			// RevealMarkerAction would have been run and we only need
+			// to
+			// activate the editor
+			IEditorPart editor = getSite().getPage().getActiveEditor();
+			if (editor != null) {
+				IEditorInput input = editor.getEditorInput();
+				IFile file = ResourceUtil.getFile(input);
+				if (file != null) {
+					if (marker.getResource().equals(file)) {
+						getSite().getPage().activate(editor);
+					}
+				}
+			}
+
+			if (marker.getResource() instanceof IFile) {
+				try {
+					IDE.openEditor(getSite().getPage(), marker,
+							OpenStrategy.activateOnOpen());
+				} catch (PartInitException e) {
+
+					// Check for a nested CoreException
+					IStatus status = e.getStatus();
+					if (status != null
+							&& status.getException() instanceof CoreException) {
+						status = ((CoreException) status.getException())
+								.getStatus();
+					}
+
+					if (status == null)
+						StatusManager.getManager().handle(
+								StatusUtil.newStatus(IStatus.ERROR, e
+										.getMessage(), e),
+								StatusManager.SHOW);
+
+					else
+						StatusManager.getManager().handle(status,
+								StatusManager.SHOW);
+
+				}
+			}
+		}
 	}
 
 }

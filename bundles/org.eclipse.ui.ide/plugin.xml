@@ -789,6 +789,7 @@
             id="org.eclipse.ui.ide.OpenMarkersView"
             name="%MarkerFiltersMenu.OpenNew">
       </command>
+  
    </extension>
    
    <extension
@@ -1315,6 +1316,12 @@
       <menuContribution
             locationURI="popup:org.eclipse.ui.ide.MarkersView">
          <command
+               commandId="org.eclipse.ui.navigate.goToResource">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+         <command
                commandId="org.eclipse.ui.edit.copy">
          </command>
       </menuContribution>
@@ -1328,6 +1335,12 @@
             locationURI="popup:org.eclipse.ui.ide.MarkersView">
          <command
                commandId="org.eclipse.ui.navigate.showInQuickMenu">
+            <visibleWhen
+                  checkEnabled="true">
+               <count
+                     value="+">
+               </count>
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
@@ -1350,6 +1363,11 @@
                </equals>
             </with>
          </activeWhen>
+         <enabledWhen>
+            <count
+                  value="+">
+            </count>
+         </enabledWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerSelectAllHandler"
@@ -1377,6 +1395,23 @@
          <enabledWhen>
             <count
                   value="1">
+            </count>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerGoToHandler"
+            commandId="org.eclipse.ui.navigate.goToResource">
+         <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <count
+                  value="+">
             </count>
          </enabledWhen>
       </handler>
