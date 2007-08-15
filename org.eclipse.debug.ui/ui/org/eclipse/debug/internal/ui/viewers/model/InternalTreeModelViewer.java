@@ -1228,4 +1228,19 @@ public class InternalTreeModelViewer extends TreeViewer {
 		((ILazyTreePathContentProvider) getContentProvider())
 				.updateElement(treePath, index);
 	}	
+	
+	/**
+	 * Performs auto expand on an element at the specified path if the auto expand
+	 * level dictates the element should be expanded.
+	 * 
+	 * @param elementPath tree path to element to consider for expansion
+	 */
+	void autoExpand(TreePath elementPath) {
+		int level = getAutoExpandLevel();
+		if (level > 0 || level == ALL_LEVELS) {
+			if (level == ALL_LEVELS || level >= elementPath.getSegmentCount()) {
+				expandToLevel(elementPath, 1);
+			}
+		}
+	}
 }

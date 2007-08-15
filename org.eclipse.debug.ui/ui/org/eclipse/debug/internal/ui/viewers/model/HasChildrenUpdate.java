@@ -48,6 +48,9 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 			System.out.println("setHasChildren(" + getElement() + " >> " + fHasChildren); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		((TreeViewer)(contentProvider.getViewer())).setHasChildren(elementPath, fHasChildren);
+		if (fHasChildren) {
+			((InternalTreeModelViewer)contentProvider.getViewer()).autoExpand(elementPath);
+		}
 		if (elementPath.getSegmentCount() > 0) {
 			contentProvider.doRestore(elementPath);
 		}
