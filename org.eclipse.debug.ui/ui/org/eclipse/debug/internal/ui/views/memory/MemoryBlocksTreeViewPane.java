@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget
+     
  *******************************************************************************/
  
 package org.eclipse.debug.internal.ui.views.memory;
@@ -21,7 +24,6 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IMemoryBlockListener;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
@@ -203,7 +205,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				// should only handle the terminate event if the target is terminated
 				if (event.getSource() instanceof IDebugTarget)
 				{
-					IMemoryBlockRetrieval srcRetrieval = getMemoryBlockRetrieval(event.getSource());
+					IMemoryBlockRetrieval srcRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(event.getSource());
 					if (srcRetrieval == fRetrieval)
 					{
 						// #setInput must be done on the UI thread
@@ -252,7 +254,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				if (obj instanceof IAdaptable)
 				{
 					IAdaptable context = (IAdaptable)obj;
-					IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 					if (retrieval != null && retrieval != fRetrieval &&
 						fTreeViewer != null && fTreeViewer.getContentProvider() != null)
 					{
@@ -293,8 +295,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fTreeViewer = new MemoryViewTreeViewer(parent, style, presentationContext);
 		
 		IAdaptable context = DebugUITools.getDebugContext();
-		IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
-		fTreeViewer.setInput(retrieval);
+		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
+		if (retrieval != null)
+			fTreeViewer.setInput(retrieval);
+		
 		fRetrieval = retrieval;
 		
 		fParent.getViewSite().getSelectionProvider().addSelectionChangedListener(this);
@@ -310,7 +314,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 				fSelectionProvider.setSelection(treeSelected);
 			}});
 
-		populateViewPane();
+		updateRetrieval();
 		fEvtHandler = new ViewPaneEventHandler();
 		
 		// create context menu
@@ -334,52 +338,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	/**
 	 * 
 	 */
-	private void populateViewPane() {
+	private void updateRetrieval() {
 		
 		Object context = DebugUITools.getDebugContext();
 		fRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
-		
-		ISelection selection = null;
-		if (fParent.getSite().getSelectionProvider() != null)
-			selection = fParent.getSite().getSelectionProvider().getSelection();
-		
-		IMemoryBlock memoryBlock = null;
-		
-		if (selection == null)
-		{
-			return;
-		}
-		
-		// get memory block from selection if selection is not null
-		memoryBlock = getMemoryBlock(selection);
-		
-		if (memoryBlock == null)
-		{
-			IMemoryBlock [] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
-			if (memoryBlocks.length > 0)
-				memoryBlock = memoryBlocks[0];
-		}
-	}
-	
-	private IMemoryBlock getMemoryBlock(ISelection selection)
-	{
-		if (!(selection instanceof IStructuredSelection))
-			return null;
-
-		//only single selection of PICLDebugElements is allowed for this action
-		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
-		{
-			return null;
-		}
-
-		Object elem = ((IStructuredSelection)selection).getFirstElement();
-		
-		if (elem instanceof IMemoryBlock)
-			return (IMemoryBlock)elem;
-		else if (elem instanceof IMemoryRendering)
-			return ((IMemoryRendering)elem).getMemoryBlock();
-		else
-			return null;
 	}
 
 	protected MenuManager createContextMenuManager() {
@@ -441,21 +403,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		
 	}
 
-	private IMemoryBlockRetrieval getMemoryBlockRetrieval(Object obj) {
-		IAdaptable adaptable = (IAdaptable)obj;
-		IMemoryBlockRetrieval retrieval = null;
-		if (adaptable != null)
-		{
-			retrieval = (IMemoryBlockRetrieval)adaptable.getAdapter(IMemoryBlockRetrieval.class);
-			if(retrieval == null && obj instanceof IDebugElement)
-			{
-				IDebugTarget debugTarget = ((IDebugElement)obj).getDebugTarget();
-				if (debugTarget != null)
-					retrieval = debugTarget;
-			}
-		}
-		return retrieval;
-	}
+
 	
 	public String getId()
 	{
@@ -518,7 +466,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	 * @see org.eclipse.debug.internal.ui.views.memory.IMemoryViewPane#restoreViewPane()
 	 */
 	public void restoreViewPane() {
-		populateViewPane();
+		updateRetrieval();
 		updateActionsEnablement();
 	}
 

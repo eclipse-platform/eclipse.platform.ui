@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,18 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget     
  *******************************************************************************/
 
 package org.eclipse.debug.ui.actions;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -166,11 +168,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 		if (fDebugContext == null)
 			return;
 		
-		IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)fDebugContext.getAdapter(IMemoryBlockRetrieval.class);
-		if (retrieval == null && fDebugContext instanceof IDebugElement)
-		{
-			retrieval = ((IDebugElement)fDebugContext).getDebugTarget();
-		}
+		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(fDebugContext);
 		
 		if (retrieval == null)
 			return;

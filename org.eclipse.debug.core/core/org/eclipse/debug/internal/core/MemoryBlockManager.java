@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 
 package org.eclipse.debug.internal.core;
@@ -232,8 +234,13 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 				}
 			}
 			else {	
+				IMemoryBlockRetrieval mbRetrieval = (IMemoryBlockRetrieval)blocks[i].getAdapter(IMemoryBlockRetrieval.class);
+				
 				// standard memory block always uses the debug target as the memory block retrieval
-				if (blocks[i].getDebugTarget() == retrieve) {
+				if (mbRetrieval == null)
+					mbRetrieval = blocks[i].getDebugTarget();
+				
+				if (mbRetrieval == retrieve) {
 					memoryBlocksList.add(blocks[i]);
 				}
 			}

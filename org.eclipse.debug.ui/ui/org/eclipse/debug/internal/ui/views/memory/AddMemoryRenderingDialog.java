@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
@@ -18,9 +20,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -426,29 +428,31 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			else // otherwise, take selection from selection service
 				selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW); 
 			
-			IDebugElement element = getMemoryBlock(selection);
+			IMemoryBlock element = getMemoryBlock(selection);
 			
-			if (!(element instanceof IMemoryBlock))
+			if (element == null)
 			{
-				
 				IAdaptable context = DebugUITools.getDebugContext();	
 				
 				if (context != null)
 				{
-					IDebugElement debugElement = (IDebugElement)context.getAdapter(IDebugElement.class);
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
 					
-					if (debugElement != null)
-					{
-						IMemoryBlock[] blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(debugElement.getDebugTarget());
-						
-						if (blocks.length > 0)
-							currentBlock = blocks[0];
-					}
+					if (retrieval == null)
+						return currentBlock;
+					
+					IMemoryBlock[] blocks = new IMemoryBlock[0];
+					
+					if (retrieval != null)
+						blocks = MemoryViewUtil.getMemoryBlockManager().getMemoryBlocks(retrieval);
+					
+					if (blocks.length > 0)
+						currentBlock = blocks[0];
 				}
 			}
 			else
 			{	
-				currentBlock = (IMemoryBlock)element;
+				currentBlock = element;
 			}
 		}
 		return currentBlock;
@@ -499,7 +503,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		if (!(selection instanceof IStructuredSelection))
 			return null;
 
-		//only single selection of PICLDebugElements is allowed for this action
+		//only single selection of debug element is allowed for this action
 		if (selection.isEmpty() || ((IStructuredSelection)selection).size() > 1)
 		{
 			return null;
@@ -528,28 +532,37 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		Job job = new Job("Populate dialog") //$NON-NLS-1$
 		{
 			protected IStatus run(IProgressMonitor monitor) {
-				fMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(selectMB.getDebugTarget());
-				int selectionIdx = 0;
-				for (int i=0; i<fMemoryBlocks.length; i++)
-				{
-					if (fMemoryBlocks[i] == selectMB)
+			    IMemoryBlockRetrieval mbRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(selectMB);
+			    
+			    if (mbRetrieval != null)
+			    {			    
+					fMemoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(mbRetrieval);
+					int selectionIdx = 0;
+					for (int i=0; i<fMemoryBlocks.length; i++)
 					{
-						selectionIdx = i;
-						break;
+						if (fMemoryBlocks[i] == selectMB)
+						{
+							selectionIdx = i;
+							break;
+						}
 					}
-				}
-				
-				final String[] labels = getLabels(fMemoryBlocks);
-				final int idx = selectionIdx;
-				final IMemoryBlock selectedBlk = selectMB;
-				WorkbenchJob wbJob = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
-
-					public IStatus runInUIThread(IProgressMonitor wbMonitor) {
-						doPopulateDialog(memoryBlock, fViewer, labels, idx, selectedBlk);	
-						return Status.OK_STATUS;
-					}};
-					wbJob.setSystem(true);
-					wbJob.schedule();		
+					
+					final String[] labels = getLabels(fMemoryBlocks);
+					final int idx = selectionIdx;
+					final IMemoryBlock selectedBlk = selectMB;
+					WorkbenchJob wbJob = new WorkbenchJob("populate dialog"){ //$NON-NLS-1$
+	
+						public IStatus runInUIThread(IProgressMonitor wbMonitor) {
+							doPopulateDialog(memoryBlock, fViewer, labels, idx, selectedBlk);	
+							return Status.OK_STATUS;
+						}};
+						wbJob.setSystem(true);
+						wbJob.schedule();		
+			    }
+			    else
+			    {
+			    	DebugUIPlugin.logErrorMessage("Unable to obtain memory block retrieval."); //$NON-NLS-1$
+			    }
 				return Status.OK_STATUS;
 			}};
 		job.setSystem(true);

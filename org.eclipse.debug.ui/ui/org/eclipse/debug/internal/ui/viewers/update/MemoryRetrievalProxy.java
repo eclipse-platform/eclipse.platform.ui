@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget
+     
  *******************************************************************************/
  
 package org.eclipse.debug.internal.ui.viewers.update;
@@ -24,6 +27,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
+import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,9 +51,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		ModelDelta delta = new ModelDelta(fRetrieval, 0, IModelDelta.NO_CHANGE, allMB.length);
 		
 		for (int i=0; i<memory.length; i++){
-			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)memory[i].getAdapter(IMemoryBlockRetrieval.class);
-			if (retrieval == null)
-				retrieval = memory[i].getDebugTarget();
+			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memory[i]);
 			
 			if (retrieval != null)
 			{
@@ -74,9 +76,7 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 				// find a memory block to select
 				
 				for (int i=0; i<memory.length; i++){
-					IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)memory[i].getAdapter(IMemoryBlockRetrieval.class);
-					if (retrieval == null)
-						retrieval = memory[i].getDebugTarget();
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memory[i]);
 					
 					if (retrieval != null)
 					{

@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.elements.adapters;
@@ -233,7 +235,9 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		// is already terminated
 		IDebugTarget target = descriptor.getMemoryBlock().getDebugTarget();
 		
-		if (target.isDisconnected() || target.isTerminated())
+		// TODO:  [MEMORY VIEW]  This null check is not valid
+		// revisit when looking at supporting flexible hierarchy
+		if (target != null && (target.isDisconnected() || target.isTerminated()))
 			return new Object[0];
 		
 		boolean error = false;

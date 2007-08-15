@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.views.memory;
@@ -310,10 +312,8 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		IAdaptable context = DebugUITools.getDebugContext();
 		if (context instanceof IDebugElement) {
 			IDebugElement debugContext = (IDebugElement)context;
-			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)debugContext.getAdapter(IMemoryBlockRetrieval.class);
-			if (retrieval == null) {
-				retrieval = debugContext.getDebugTarget();
-			}
+			IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(debugContext);
+
 			if (retrieval != null) {
 				IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
 				doSwitchToNext(memoryBlocks);

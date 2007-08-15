@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 192028 [Memory View] Memory view does not 
+ *                 display memory blocks that do not reference IDebugTarget     
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -16,8 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
@@ -245,18 +245,11 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		}
 										
 		// ask for debug target and memory block retrieval
-		IDebugTarget debugTarget = ((IDebugElement)getMemoryBlock()).getDebugTarget();
-		IMemoryBlockRetrieval standardMemRetrieval = (IMemoryBlockRetrieval)((IDebugElement)getMemoryBlock()).getAdapter(IMemoryBlockRetrieval.class);
-		
-		if (standardMemRetrieval == null)
-		{	
-			standardMemRetrieval = debugTarget;
-		}
+		IMemoryBlockRetrieval standardMemRetrieval = MemoryViewUtil.getMemoryBlockRetrieval(getMemoryBlock());
 		
 		if (standardMemRetrieval == null)
 			return;
-		
-		
+				
 		// make a copy of the container, may be diposed when a rendering is added
 		IMemoryRenderingContainer container = fContainer;
 		// add memory renderings to Memory Rendering Manager

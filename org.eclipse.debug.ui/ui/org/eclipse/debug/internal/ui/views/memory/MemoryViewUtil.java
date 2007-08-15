@@ -22,6 +22,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -107,11 +108,17 @@ public class MemoryViewUtil {
 	 */
 	public static boolean isValidContext(Object elem) {
 		// if not debug element
-		if (!(elem instanceof IDebugElement))
+		if (!(elem instanceof IAdaptable))
 			return false;
 	
-		IDebugTarget debugTarget = ((IDebugElement)elem).getDebugTarget();
-		IMemoryBlockRetrieval memRetrieval =(IMemoryBlockRetrieval) ((IDebugElement)elem).getAdapter(IMemoryBlockRetrieval.class);
+		IMemoryBlockRetrieval memRetrieval =(IMemoryBlockRetrieval) ((IAdaptable)elem).getAdapter(IMemoryBlockRetrieval.class);
+
+		IDebugTarget debugTarget = null;
+		if (elem instanceof IDebugElement) {
+		    debugTarget = ((IDebugElement)elem).getDebugTarget();
+		} else {
+		    debugTarget = (IDebugTarget)((IAdaptable)elem).getAdapter(IDebugTarget.class);
+		}
 		
 		if (memRetrieval == null)
 		{
@@ -119,14 +126,11 @@ public class MemoryViewUtil {
 			memRetrieval = debugTarget;
 		}
 		
-		if (debugTarget == null)
-			return false;
-		
 		// not valid if the debug target is already terminated
-		if (debugTarget.isTerminated() || debugTarget.isDisconnected())
+		if (debugTarget != null && (debugTarget.isTerminated() || debugTarget.isDisconnected()))
 			return false;
 		
-		if (memRetrieval.supportsStorageRetrieval()) {
+		if (memRetrieval != null && memRetrieval.supportsStorageRetrieval()) {
 			return true;
 		}
 		
@@ -208,9 +212,18 @@ public class MemoryViewUtil {
 		return (String[])MEMORY_BLOCKS_HISTORY.toArray(new String[MEMORY_BLOCKS_HISTORY.size()]);
 	}
 	
+	/**
+	 * Return the memory block retrieval of the given object
+	 * @param object
+	 * @return the memory block retrieval of the given object or <code>null</code>
+	 *  if no memory block retrieval can be found
+	 */
 	public static IMemoryBlockRetrieval getMemoryBlockRetrieval(Object object)
 	{
 		IMemoryBlockRetrieval retrieval = null;
+		
+		if (object instanceof IMemoryBlockExtension)
+			return ((IMemoryBlockExtension)object).getMemoryBlockRetrieval();
 
 		if (object instanceof IAdaptable)
 		{
