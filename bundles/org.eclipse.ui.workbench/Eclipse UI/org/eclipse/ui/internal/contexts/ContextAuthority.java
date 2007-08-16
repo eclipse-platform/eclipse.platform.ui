@@ -154,6 +154,10 @@ public final class ContextAuthority extends ExpressionAuthority {
 	final void activateContext(final IContextActivation activation) {
 		// First we update the contextActivationsByContextId map.
 		final String contextId = activation.getContextId();
+		if (DEFER_EVENTS.equals(contextId) || SEND_EVENTS.equals(contextId)) {
+			contextManager.addActiveContext(contextId);
+			return;
+		}
 		final Object value = contextActivationsByContextId.get(contextId);
 		if (value instanceof Collection) {
 			final Collection contextActivations = (Collection) value;
@@ -329,6 +333,9 @@ public final class ContextAuthority extends ExpressionAuthority {
 	final void deactivateContext(final IContextActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
 		final String contextId = activation.getContextId();
+		if (DEFER_EVENTS.equals(contextId) || SEND_EVENTS.equals(contextId)) {
+			return;
+		}
 		final Object value = contextActivationsByContextId.get(contextId);
 		if (value instanceof Collection) {
 			final Collection contextActivations = (Collection) value;
