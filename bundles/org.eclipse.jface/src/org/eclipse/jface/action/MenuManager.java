@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 12116 [Contributions] widgets: MenuManager.setImageDescriptor() method needed
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -15,6 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -63,6 +67,16 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * The text for a sub-menu.
      */
     private String menuText;
+    
+    /**
+     * The image for a sub-menu.
+     */
+    private ImageDescriptor image;
+    
+    /**
+     * A resource manager to remember all of the images that have been used by this menu.
+     */
+    private LocalResourceManager imageManager;
 
     /**
      * The overrides for items of this manager
@@ -92,7 +106,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * Typically used for creating a context menu, where it doesn't need to be referred to by id.
      */
     public MenuManager() {
-        this(null, null);
+        this(null, null, null);
     }
 
     /**
@@ -103,7 +117,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * @param text the text for the menu, or <code>null</code> if none
      */
     public MenuManager(String text) {
-        this(text, null);
+        this(text, null, null);
     }
 
     /**
@@ -114,7 +128,21 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * @param id the menu id, or <code>null</code> if it is to have no id
      */
     public MenuManager(String text, String id) {
+        this(text, null, id);
+    }
+
+    /**
+     * Creates a menu manager with the given text, image, and id.
+     * Typically used for creating a sub-menu, where it needs to be referred to by id.
+     * 
+     * @param text the text for the menu, or <code>null</code> if none
+     * @param image the image for the menu, or <code>null</code> if none
+     * @param id the menu id, or <code>null</code> if it is to have no id
+     * @since 3.4
+     */
+    public MenuManager(String text, ImageDescriptor image, String id) {
         this.menuText = text;
+        this.image = image;
         this.id = id;
     }
 
@@ -192,6 +220,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
             menuItem = null;
         }
 
+        disposeOldImages();
+        
         IContributionItem[] items = getItems();
         for (int i = 0; i < items.length; i++) {
             items[i].dispose();
@@ -222,6 +252,14 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 			}
 
             menuItem.setText(getMenuText());
+
+            if (image != null) {
+				LocalResourceManager localManager = new LocalResourceManager(
+						JFaceResources.getResources());
+				menuItem.setImage(localManager.createImage(image));
+				disposeOldImages();
+				imageManager = localManager;
+			}
 
             if (!menuExist()) {
 				menu = new Menu(parent);
@@ -335,6 +373,16 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     public String getMenuText() {
         return menuText;
+    }
+    
+    /**
+     * Returns the image for this menu as an image descriptor.
+     * 
+     * @return the image, or <code>null</code> if this menu has no image
+     * @since 3.4
+     */
+    public ImageDescriptor getImageDescriptor() {
+    	return image;
     }
 
     /* (non-Javadoc)
@@ -723,41 +771,58 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         for (int i = 0; i < items.length; i++) {
 			items[i].update(property);
 		}
+        
+        if (menu != null && !menu.isDisposed() && menu.getParentItem() != null) {
+        	if (IAction.TEXT.equals(property)) {
+                String text = getOverrides().getText(this);
 
-        if (menu != null && !menu.isDisposed() && menu.getParentItem() != null
-                && IAction.TEXT.equals(property)) {
-            String text = getOverrides().getText(this);
+                if (text == null) {
+    				text = getMenuText();
+    			}
 
-            if (text == null) {
-				text = getMenuText();
-			}
+                if (text != null) {
+                    ExternalActionManager.ICallback callback = ExternalActionManager
+                            .getInstance().getCallback();
 
-            if (text != null) {
-                ExternalActionManager.ICallback callback = ExternalActionManager
-                        .getInstance().getCallback();
+                    if (callback != null) {
+                        int index = text.indexOf('&');
 
-                if (callback != null) {
-                    int index = text.indexOf('&');
+                        if (index >= 0 && index < text.length() - 1) {
+                            char character = Character.toUpperCase(text
+                                    .charAt(index + 1));
 
-                    if (index >= 0 && index < text.length() - 1) {
-                        char character = Character.toUpperCase(text
-                                .charAt(index + 1));
-
-                        if (callback.isAcceleratorInUse(SWT.ALT | character)) {
-                            if (index == 0) {
-								text = text.substring(1);
-							} else {
-								text = text.substring(0, index)
-                                        + text.substring(index + 1);
-							}
+                            if (callback.isAcceleratorInUse(SWT.ALT | character)) {
+                                if (index == 0) {
+    								text = text.substring(1);
+    							} else {
+    								text = text.substring(0, index)
+                                            + text.substring(index + 1);
+    							}
+                            }
                         }
                     }
-                }
 
-                menu.getParentItem().setText(text);
-            }
+                    menu.getParentItem().setText(text);
+                }
+        	} else if (IAction.IMAGE.equals(property) && image != null) {
+    			LocalResourceManager localManager = new LocalResourceManager(JFaceResources
+    					.getResources());
+    			menu.getParentItem().setImage(localManager.createImage(image));
+    			disposeOldImages();
+    			imageManager = localManager;
+        	}
         }
     }
+
+	/**
+	 * Dispose any images allocated for this menu
+	 */
+	private void disposeOldImages() {
+		if (imageManager != null) {
+			imageManager.dispose();
+			imageManager = null;
+		}
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IMenuManager#updateAll(boolean)
