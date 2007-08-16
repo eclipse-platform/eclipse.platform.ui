@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Status;
  * {@link Binding} can be used.
  * <p>
  * A block of code is said to be executing within a realm if calling
- * {@link #getDefault()} from that block returns true. Code reached by calling
+ * {@link #isCurrent()} from that block returns true. Code reached by calling
  * methods from that block will execute within the same realm, with the
  * exception of methods on this class that can be used to execute code within a
  * specific realm. Clients can use {@link #syncExec(Runnable)},
