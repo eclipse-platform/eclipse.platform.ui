@@ -35,7 +35,7 @@ public class NullFileStore extends FileStore {
 		this.path = path;
 	}
 
-	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
+	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) {
 		return EMPTY_FILE_INFO_ARRAY;
 	}
 
@@ -75,13 +75,13 @@ public class NullFileStore extends FileStore {
 		return super.mkdir(options, monitor);
 	}
 
-	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
+	public InputStream openInputStream(int options, IProgressMonitor monitor) {
 		return new ByteArrayInputStream(new byte[0]);
 	}
 
-	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
+	public OutputStream openOutputStream(int options, IProgressMonitor monitor) {
 		return new OutputStream() {
-			public void write(int b) throws IOException {
+			public void write(int b) {
 				//do nothing
 			}
 		};
