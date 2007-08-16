@@ -1724,12 +1724,34 @@ M4 = Platform-specific fourth key
             sequence="CTRL+Z"
             platform="win32"/>
        <key
-            sequence="M3+M2+Q B"
+            sequence="M2+M3+Q B"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.BreakpointView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
-            sequence="M3+M2+Q V"
+            platform="carbon"
+            sequence="M2+M3+Q B"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            platform="carbon"
+            sequence="M1+M3+Q B"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.BreakpointView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            sequence="M2+M3+Q V"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.debug.ui.VariableView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            platform="carbon"
+            sequence="M2+M3+Q V"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+            platform="carbon"
+            sequence="M1+M3+Q V"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.VariableView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>

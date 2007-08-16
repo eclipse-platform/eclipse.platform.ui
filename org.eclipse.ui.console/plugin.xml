@@ -36,7 +36,17 @@ M4 = Platform-specific fourth key
    </extension>
     <extension point="org.eclipse.ui.bindings">
      <key 
-  	    	sequence="M3+M2+Q C"
+  	    	sequence="M2+M3+Q C"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ui.console.ConsoleView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key 
+            platform="carbon"
+  	    	sequence="M2+M3+Q C"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key 
+  	    	sequence="M1+M3+Q C"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.ui.console.ConsoleView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
