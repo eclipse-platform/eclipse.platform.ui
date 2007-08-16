@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 
@@ -224,6 +225,10 @@ public class FormUtil {
 	}
 
 	public static void ensureVisible(ScrolledComposite scomp, Control control) {
+		// if the control is a FormText we do not need to scroll since it will
+		// ensure visibility of its segments as necessary
+		if (control instanceof FormText)
+			return;
 		Point controlSize = control.getSize();
 		Point controlOrigin = getControlLocation(scomp, control);
 		ensureVisible(scomp, controlOrigin, controlSize);
