@@ -30,7 +30,6 @@ import org.osgi.framework.Bundle;
  * </p>
  * 
  * @see IProductProvider
- * @see org.eclipse.ui.branding.IProductConstants
  * @since 3.0
  */
 public interface IProduct {
