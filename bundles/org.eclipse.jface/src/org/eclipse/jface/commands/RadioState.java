@@ -72,7 +72,7 @@ public class RadioState extends ToggleState {
 			 *            <code>null</code>.
 			 */
 			private final void activateMember(final RadioState state) {
-				if (active != state) {
+				if (active!=null && active != state) {
 					active.setValue(Boolean.FALSE);
 				}
 				active = state;
