@@ -1471,7 +1471,9 @@ public class FormText extends Canvas {
 						break;
 					valid = setControlFocus(advance, selectable);
 				}
-				if (selectable != null)
+				if (selectable == null)
+					setFocusToNextSibling(this, true);
+				else
 					ensureVisible(selectable);
 				if (selectable instanceof IHyperlinkSegment) {
 					enterLink((IHyperlinkSegment) selectable, SWT.NULL);
@@ -1702,10 +1704,8 @@ public class FormText extends Canvas {
 	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
 	public boolean setFocus() {
-		mouseFocus = true;
 		FormUtil.setFocusScrollingEnabled(this, false);
 		boolean result = super.setFocus();
-		mouseFocus = false;
 		FormUtil.setFocusScrollingEnabled(this, true);
 		return result;
 	}
