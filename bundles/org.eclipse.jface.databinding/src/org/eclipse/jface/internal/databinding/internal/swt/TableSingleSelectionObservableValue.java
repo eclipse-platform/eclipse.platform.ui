@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -19,7 +20,10 @@ import org.eclipse.swt.widgets.Table;
  * @since 1.0
  * 
  */
-public class TableSingleSelectionObservableValue extends SingleSelectionObservableValue {
+public class TableSingleSelectionObservableValue extends
+		SingleSelectionObservableValue {
+
+	private SelectionListener selectionListener;
 
 	/**
 	 * @param table
@@ -33,7 +37,7 @@ public class TableSingleSelectionObservableValue extends SingleSelectionObservab
 	}
 
 	protected void doAddSelectionListener(final Runnable runnable) {
-		getTable().addSelectionListener(new SelectionListener() {
+		selectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				runnable.run();
 			}
@@ -41,7 +45,8 @@ public class TableSingleSelectionObservableValue extends SingleSelectionObservab
 			public void widgetSelected(SelectionEvent e) {
 				runnable.run();
 			}
-		});
+		};
+		getTable().addSelectionListener(selectionListener);
 	}
 
 	protected int doGetSelectionIndex() {
@@ -52,4 +57,15 @@ public class TableSingleSelectionObservableValue extends SingleSelectionObservab
 		getTable().setSelection(index);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (selectionListener != null && !getTable().isDisposed()) {
+			getTable().removeSelectionListener(selectionListener);
+		}
+	}
 }

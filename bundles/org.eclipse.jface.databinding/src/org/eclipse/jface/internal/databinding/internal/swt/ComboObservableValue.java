@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -28,6 +29,7 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 	private final String attribute;
 	private boolean updating = false;
 	private String currentValue;
+	private ModifyListener modifyListener;
 
 	/**
 	 * @param combo
@@ -41,7 +43,7 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 		if (attribute.equals(SWTProperties.SELECTION)
 				|| attribute.equals(SWTProperties.TEXT)) {
 			this.currentValue = combo.getText();
-			combo.addModifyListener(new ModifyListener() {
+			modifyListener = new ModifyListener() {
 
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
@@ -52,7 +54,8 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 								currentValue));
 					}
 				}
-			});
+			};
+			combo.addModifyListener(modifyListener);
 		} else
 			throw new IllegalArgumentException();
 	}
@@ -110,5 +113,18 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 	 */
 	public String getAttribute() {
 		return attribute;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+
+		if (modifyListener != null && !combo.isDisposed()) {
+			combo.removeModifyListener(modifyListener);
+		}
 	}
 }

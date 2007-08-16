@@ -111,10 +111,13 @@ import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerA
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CLabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TableObservableValueTest;
@@ -266,10 +269,13 @@ public class BindingTestSuite extends TestSuite {
 		//org.eclipse.jface.tests.internal.databinding.internal.swt
 		addTestSuite(ButtonObservableValueTest.class);
 		addTestSuite(CComboObservableValueTest.class);
+		addTestSuite(CComboSingleSelectionObservableValueTest.class);
 		addTestSuite(CLabelObservableValueTest.class);
 		addTestSuite(ComboObservableValueTest.class);
+		addTestSuite(ComboSingleSelectionObservableValueTest.class);
 		addTestSuite(ControlObservableValueTest.class);
 		addTestSuite(LabelObservableValueTest.class);
+		addTestSuite(ListSingleSelectionObservableValueTest.class);
 		addTestSuite(ScaleObservableValueTest.class);
 		addTestSuite(SpinnerObservableValueTest.class);
 		addTestSuite(TableObservableValueTest.class);

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -62,6 +63,20 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 
 	public Object getValueType() {
 		return Boolean.class;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+
+		if (!button.isDisposed()) {
+			button.removeListener(SWT.Selection, updateListener);
+			button.removeListener(SWT.DefaultSelection, updateListener);
+		}
 	}
 
 }

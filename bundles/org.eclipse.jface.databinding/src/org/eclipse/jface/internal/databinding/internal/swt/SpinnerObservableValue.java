@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -32,6 +33,8 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 
 	private int currentSelection;
 
+	private ModifyListener modifyListener;
+
 	/**
 	 * @param spinner
 	 * @param attribute
@@ -42,7 +45,7 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 		this.attribute = attribute;
 		if (attribute.equals(SWTProperties.SELECTION)) {
 			currentSelection = spinner.getSelection();
-			spinner.addModifyListener(new ModifyListener() {
+			modifyListener = new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
 					if (!updating) {
 						int newSelection = SpinnerObservableValue.this.spinner
@@ -52,7 +55,8 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 						currentSelection = newSelection;
 					}
 				}
-			});
+			};
+			spinner.addModifyListener(modifyListener);
 		} else if (!attribute.equals(SWTProperties.MIN)
 				&& !attribute.equals(SWTProperties.MAX)) {
 			throw new IllegalArgumentException(
@@ -108,5 +112,17 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 	 */
 	public String getAttribute() {
 		return attribute;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (modifyListener != null && !spinner.isDisposed()) {
+			spinner.removeModifyListener(modifyListener);
+		}
 	}
 }
