@@ -23,7 +23,6 @@ public class MarkerGoToHandler extends MarkerViewHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event)  {
-		System.out.println("PPP"); //$NON-NLS-1$
 		ExtendedMarkersView view = getView(event);
 		if(view == null)
 			return this;
