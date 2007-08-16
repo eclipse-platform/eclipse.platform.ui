@@ -61,6 +61,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
@@ -283,7 +284,6 @@ public class ExtendedMarkersView extends ViewPart {
 		registerContextMenu();
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -340,7 +340,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -361,7 +360,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
-				// TODO Auto-generated method stub
 
 			}
 
@@ -852,60 +850,68 @@ public class ExtendedMarkersView extends ViewPart {
 		IMarker[] markers = getSelectedMarkers();
 		for (int i = 0; i < markers.length; i++) {
 			IMarker marker = markers[i];
+			IWorkbenchPage page = getSite().getPage();
 
-			// optimization: if the active editor has the same input as
-			// the
-			// selected marker then
-			// RevealMarkerAction would have been run and we only need
-			// to
-			// activate the editor
-			IEditorPart editor = getSite().getPage().getActiveEditor();
-			if (editor != null) {
-				IEditorInput input = editor.getEditorInput();
-				IFile file = ResourceUtil.getFile(input);
-				if (file != null) {
-					if (marker.getResource().equals(file)) {
-						getSite().getPage().activate(editor);
-					}
+			openMarkerInEditor(marker, page);
+		}
+	}
+
+	/**
+	 * Open the supplied marker in an editor in page
+	 * @param marker
+	 * @param page
+	 */
+	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
+		// optimization: if the active editor has the same input as
+		// the
+		// selected marker then
+		// RevealMarkerAction would have been run and we only need
+		// to
+		// activate the editor
+		IEditorPart editor = page.getActiveEditor();
+		if (editor != null) {
+			IEditorInput input = editor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				if (marker.getResource().equals(file)) {
+					page.activate(editor);
 				}
 			}
+		}
 
-			if (marker.getResource() instanceof IFile) {
-				try {
-					IDE.openEditor(getSite().getPage(), marker,
-							OpenStrategy.activateOnOpen());
-				} catch (PartInitException e) {
+		if (marker.getResource() instanceof IFile) {
+			try {
+				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+			} catch (PartInitException e) {
 
-					// Check for a nested CoreException
-					IStatus status = e.getStatus();
-					if (status != null
-							&& status.getException() instanceof CoreException) {
-						status = ((CoreException) status.getException())
-								.getStatus();
-					}
-
-					if (status == null)
-						StatusManager.getManager().handle(
-								StatusUtil.newStatus(IStatus.ERROR, e
-										.getMessage(), e),
-								StatusManager.SHOW);
-
-					else
-						StatusManager.getManager().handle(status,
-								StatusManager.SHOW);
-
+				// Check for a nested CoreException
+				IStatus status = e.getStatus();
+				if (status != null
+						&& status.getException() instanceof CoreException) {
+					status = ((CoreException) status.getException())
+							.getStatus();
 				}
+
+				if (status == null)
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
+									e), StatusManager.SHOW);
+
+				else
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW);
+
 			}
 		}
 	}
 
 	/**
 	 * Return the object that is the input to the viewer.
+	 * 
 	 * @return Object
 	 */
 	Object getViewerInput() {
 		return viewer.getInput();
 	}
-	
 
 }

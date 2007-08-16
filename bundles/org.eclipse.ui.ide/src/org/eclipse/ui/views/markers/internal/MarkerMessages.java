@@ -138,6 +138,7 @@ public class MarkerMessages extends NLS{
 	public static String resolveMarkerAction_title;
 	public static String resolveMarkerAction_dialogTitle;
 	public static String resolveMarkerAction_computationAction;
+	public static String resolveMarkerAction_computationManyAction;
 
 	public static String deleteCompletedTasks_dialogTitle;
 	public static String deleteCompletedTasks_noneCompleted;
@@ -225,6 +226,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionDialog_Resolutions_List_Title;
 	public static String MarkerResolutionDialog_CannotFixTitle;
 	public static String MarkerResolutionDialog_CannotFixMessage;
+	public static String MarkerResolutionDialog_NoResolutionsFound ;
 
 	public static String MarkerResolutionDialog_Title;
 	public static String MarkerResolutionDialog_CalculatingTask;
