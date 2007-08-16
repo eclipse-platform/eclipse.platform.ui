@@ -1291,56 +1291,30 @@
                tooltip="%menu.toggleCoolbar.tooltip">
                <!-- no visibility needed - the result of this action will remove the ability to show this menu anyway -->
          </command>
+        
       </menuContribution>
-      <menuContribution
-            locationURI="menu:org.eclipse.ui.ide.MarkersView">
-         <menu
-               id="org.eclipse.ui.ide.markers.contentsMenu"
-               label="%MarkerContentsMenu.Contents">
-            <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
-                  id="org.eclipse.ui.ide.contentsContribution">
-            </dynamic>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            locationURI="menu:org.eclipse.ui.ide.MarkersView">
-         <menu
-               id="org.eclipse.ui.ide.markers.filtersMenu"
-               label="%MarkerFiltersMenu.Filters">
-            <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
-                  id="org.eclipse.ui.ide.filtersContribution">
-            </dynamic>
-         </menu>
-      </menuContribution>
-      <menuContribution
-            locationURI="menu:org.eclipse.ui.ide.MarkersView">
-         <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView">
-         </command>
-      </menuContribution>
+     
       <menuContribution
             locationURI="popup:org.eclipse.ui.ide.MarkersView">
-         <command
-               commandId="org.eclipse.ui.navigate.goToResource">
-         </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+          <command
+                commandId="org.eclipse.ui.navigate.goToResource"
+                style="push">
+          </command>
+         <separator
+               name="org.eclipse.ui.ide.separator4"
+               visible="true">
+         </separator>
          <command
                commandId="org.eclipse.ui.edit.copy">
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.ide.MarkersView">
-         <command
+           <command
                commandId="org.eclipse.ui.edit.selectAll">
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.ide.MarkersView">
-         <command
+         <separator
+               name="org.eclipse.ui.ide.markersSeperator1"
+               visible="true">
+         </separator>
+          <command
                commandId="org.eclipse.ui.navigate.showInQuickMenu">
             <visibleWhen
                   checkEnabled="true">
@@ -1349,18 +1323,40 @@
                </count>
             </visibleWhen>
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.ide.MarkersView">
-         <command
+           <command
                commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
                style="push">
          </command>
-      </menuContribution>
-      <menuContribution
-            locationURI="popup:org.eclipse.ui.ide.MarkersView">
-         <command
+         <separator
+               name="org.eclipse.ui.ide.markersSeperator3"
+               visible="true">
+         </separator>
+          <command
                commandId="org.eclipse.ui.file.properties">
+         </command>
+      </menuContribution>
+  
+    
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
+              <menu
+               id="org.eclipse.ui.ide.markers.contentsMenu"
+               label="%MarkerContentsMenu.Contents">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  id="org.eclipse.ui.ide.contentsContribution">
+            </dynamic>
+         </menu>
+          <menu
+               id="org.eclipse.ui.ide.markers.filtersMenu"
+               label="%MarkerFiltersMenu.Filters">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  id="org.eclipse.ui.ide.filtersContribution">
+            </dynamic>
+         </menu>
+          <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
       </menuContribution>
    </extension>
@@ -1443,7 +1439,7 @@
          <enabledWhen>
             <iterate
                   ifEmpty="false"
-                  operator="and">
+                  operator="or">
                <test
                      forcePluginActivation="false"
                      property="org.eclipse.ui.ide.quickFix">
