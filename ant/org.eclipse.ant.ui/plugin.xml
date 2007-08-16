@@ -143,28 +143,62 @@ M4 = Platform-specific fourth key -->
             commandId="org.eclipse.ant.ui.openExternalDoc"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
-            sequence="M3+M2+R"
+            sequence="M2+M3+R"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            commandId="org.eclipse.ant.ui.renameInFile"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+         	platform="carbon"
+            sequence="M2+M3+R"
+            contextId="org.eclipse.ant.ui.AntEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key
+         	platform="carbon"
+            sequence="M1+M3+R"
             contextId="org.eclipse.ant.ui.AntEditorScope"
             commandId="org.eclipse.ant.ui.renameInFile"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            sequence="M3+M2+X Q"
+            sequence="M2+M3+X Q"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.ant.ui.antShortcut.run"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            sequence="M3+M2+D Q"
+         	platform="carbon"
+            sequence="M2+M3+X Q"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+         	platform="carbon"
+            sequence="M1+M3+X Q"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.antShortcut.run"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+M3+D Q"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.ant.ui.antShortcut.debug"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <!-- On carbon: Shift+Option+D is a character, Command+Option+D is Show/Hide Dock, Command+Control+D is dictionary lookup -->
+      <key
+         	platform="carbon"
+            sequence="M2+M3+D Q"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+         	platform="carbon"
+            sequence="M1+M3+M4+D Q"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.ant.ui.antShortcut.debug"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key 
-  	    	sequence="M3+M2+O"
+  	    	sequence="M2+M3+O"
   	    	contextId="org.eclipse.ant.ui.AntEditorScope"
   	    	commandId="org.eclipse.ant.ui.toggleMarkOccurrences"
   	    	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
       <key
          	platform="carbon"
-         	sequence="M3+M2+O"
+         	sequence="M2+M3+O"
          	contextId="org.eclipse.ant.ui.AntEditorScope"
          	commandId=""
          	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" /> 
