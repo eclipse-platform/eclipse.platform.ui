@@ -11,10 +11,13 @@
 
 package org.eclipse.jface.databinding.viewers;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderMultipleSelectionObservableList;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -24,6 +27,12 @@ import org.eclipse.swt.widgets.Display;
 public class ViewersObservables {
 
 	/**
+	 * Returns an observable value that tracks the current selection of the
+	 * given selection provider. If the selection provider provides selections
+	 * of type {@link IStructuredSelection}, the observable value will be the
+	 * first element of the structured selection as returned by
+	 * {@link IStructuredSelection#getFirstElement()}.
+	 * 
 	 * @param selectionProvider
 	 * @return the observable value tracking the (single) selection of the given
 	 *         selection provider
@@ -33,6 +42,32 @@ public class ViewersObservables {
 		return new SelectionProviderSingleSelectionObservableValue(
 				SWTObservables.getRealm(Display.getDefault()),
 				selectionProvider);
+	}
+
+	/**
+	 * Returns an observable value that tracks the current selection of the
+	 * given selection provider. Assumes that the selection provider provides
+	 * selections of type {@link IStructuredSelection}. Note that the
+	 * observable list will not honor the full contract of
+	 * <code>java.util.List</code> in that it may delete or reorder elements
+	 * based on what the selection provider returns from
+	 * {@link ISelectionProvider#getSelection()} after having called
+	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
+	 * based on the requested change to the observable list. The affected
+	 * methods are <code>add</code>, <code>addAll</code>, and
+	 * <code>set</code>.
+	 * 
+	 * @param selectionProvider
+	 * @return the observable value tracking the (multi) selection of the given
+	 *         selection provider
+	 * 
+	 * @since 1.2
+	 */
+	public static IObservableList observeMultiSelection(
+			ISelectionProvider selectionProvider) {
+		return new SelectionProviderMultipleSelectionObservableList(
+				SWTObservables.getRealm(Display.getDefault()),
+				selectionProvider, Object.class);
 	}
 
 }
