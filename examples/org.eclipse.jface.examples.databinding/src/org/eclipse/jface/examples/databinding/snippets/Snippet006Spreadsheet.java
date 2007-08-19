@@ -44,9 +44,9 @@ public class Snippet006Spreadsheet {
 
 	private static final int COUNTER_UPDATE_DELAY = 1000;
 
-	private static final int NUM_COLUMNS = 16;
+	private static final int NUM_COLUMNS = 6;
 
-	private static final int NUM_ROWS = 100;
+	private static final int NUM_ROWS = 16;
 
 	/**
 	 * 0 for no output, 1 for some, 2 for more
@@ -56,7 +56,7 @@ public class Snippet006Spreadsheet {
 	/**
 	 * If true, there will be a automatic counter at B1.
 	 */
-	private static boolean FUNKY_COUNTER = true;
+	private static boolean FUNKY_COUNTER = false;
 
 	/**
 	 * // * If true, all formulas (except for row 1 and column A) will be the
@@ -147,6 +147,7 @@ public class Snippet006Spreadsheet {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				Shell shell = new Shell(display);
+				shell.setText("Data Binding Snippet 006");
 
 				final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
 						| SWT.FULL_SELECTION | SWT.VIRTUAL);
@@ -156,7 +157,7 @@ public class Snippet006Spreadsheet {
 				for (int i = 0; i < NUM_COLUMNS; i++) {
 					TableColumn tableColumn = new TableColumn(table, SWT.NONE);
 					tableColumn.setText(Character.toString((char) ('A' + i)));
-					tableColumn.setWidth(40);
+					tableColumn.setWidth(60);
 				}
 				for (int i = 0; i < NUM_ROWS; i++) {
 					new TableItem(table, SWT.NONE);

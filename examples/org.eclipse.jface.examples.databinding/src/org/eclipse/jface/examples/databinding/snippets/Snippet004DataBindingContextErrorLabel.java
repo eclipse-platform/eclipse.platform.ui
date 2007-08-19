@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Snippet that displays how to bind the validation error of the
- * {@link DataBindingContext} to a label.
+ * {@link DataBindingContext} to a label. http://www.eclipse.org
  * 
  * @since 3.2
  */
@@ -42,6 +42,7 @@ public class Snippet004DataBindingContextErrorLabel {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				Shell shell = new Shell(display);
+				shell.setText("Data Binding Snippet 004");
 				shell.setLayout(new GridLayout(2, false));
 
 				new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");
@@ -58,8 +59,11 @@ public class Snippet004DataBindingContextErrorLabel {
 				DataBindingContext dbc = new DataBindingContext();
 
 				// Bind the text to the value.
-				dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
-						value, new UpdateValueStrategy().setAfterConvertValidator(new FiveValidator()), null);
+				dbc.bindValue(
+						SWTObservables.observeText(text, SWT.Modify),
+						value,
+						new UpdateValueStrategy().setAfterConvertValidator(new FiveValidator()),
+						null);
 
 				// Bind the error label to the validation error on the dbc.
 				dbc.bindValue(SWTObservables.observeText(errorLabel),
