@@ -100,7 +100,7 @@ public class SelectionProviderMultipleSelectionObservableList extends
 		if (sel instanceof IStructuredSelection) {
 			return ((IStructuredSelection) sel).toList();
 		}
-		return Collections.emptyList();
+		return Collections.EMPTY_LIST;
 	}
 
 	public synchronized void dispose() {
