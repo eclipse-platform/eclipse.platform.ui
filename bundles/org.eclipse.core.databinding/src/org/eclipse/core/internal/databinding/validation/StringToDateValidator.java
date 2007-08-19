@@ -40,7 +40,7 @@ public class StringToDateValidator implements IValidator {
 	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
 	 */
 	public IStatus validate(Object value) {
-		if (value instanceof String && ((String)value).trim().isEmpty()) {
+		if (value instanceof String && ((String)value).trim().length()==0) {
 			return Status.OK_STATUS;
 		}
 		Object convertedValue = converter.convert(value);
