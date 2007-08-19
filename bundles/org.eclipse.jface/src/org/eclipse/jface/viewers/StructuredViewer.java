@@ -1462,7 +1462,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * 
-	 * Refreshes the given TableItem with the given element. Calls
+	 * Refreshes the given item with the given element. Calls
 	 * <code>doUpdateItem(..., false)</code>.
 	 * <p>
 	 * This method is internal to the framework; subclassers should not call
