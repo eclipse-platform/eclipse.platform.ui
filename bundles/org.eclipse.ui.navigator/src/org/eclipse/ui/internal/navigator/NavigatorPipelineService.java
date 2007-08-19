@@ -74,15 +74,45 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		ContributorTrackingSet trackedSet =(ContributorTrackingSet) anAddModification.getChildren();
 		
 		Set contentDescriptors = contentService.findDescriptorsByTriggerPoint(anAddModification.getParent());
+		
+		
 		for (Iterator descriptorsItr = contentDescriptors.iterator(); descriptorsItr.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorsItr.next();
 			pipelineInterceptAdd(anAddModification, trackedSet, descriptor); 
-		}
-		 
+		}		 
+
+		// for consistency, we register the contribution from our best known match
+		registerContribution(anAddModification.getParent(), anAddModification.getChildren().toArray()); 
 		return anAddModification;
 
 	}
  
+	/** 
+	 * @param parent The object to which data was contributed 
+	 * @param contributions Data contributed to the viewer
+	 */
+	private void registerContribution(Object parent, Object[] contributions) {
+		 
+		// returns an array sorted by priority
+		Set possibleContributors = contentService.findDescriptorsByTriggerPoint(parent);
+		Set possibleMatches = null;
+		for (int i = 0; i < contributions.length; i++) {
+			// returns an array sorted by priority
+			possibleMatches = contentService.findDescriptorsWithPossibleChild(contributions[i]);
+			for (Iterator iterator = possibleMatches.iterator(); iterator
+					.hasNext();) {
+				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) iterator.next();
+				
+				// terminates once the highest priority match is found for this child
+				if(possibleContributors.contains(descriptor)) {
+					contentService.rememberContribution(descriptor, contributions[i]);
+					break;
+				}
+				
+			}
+		}
+	}
+
 	private void pipelineInterceptAdd(PipelinedShapeModification anAddModification, ContributorTrackingSet trackedSet, INavigatorContentDescriptor descriptor) {
 		if(descriptor.hasOverridingExtensions()) {
 			Set overridingDescriptors = descriptor.getOverriddingExtensions();
@@ -97,7 +127,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 					pipelineInterceptAdd(anAddModification, trackedSet, overridingDescriptor);
 				}
 			}		
-		}
+		}  
 	} 
 	 
 
