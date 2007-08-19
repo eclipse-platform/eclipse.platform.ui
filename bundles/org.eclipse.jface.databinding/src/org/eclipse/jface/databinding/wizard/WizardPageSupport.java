@@ -23,7 +23,9 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 
 /**
@@ -124,10 +126,39 @@ public class WizardPageSupport {
 		if (currentStatus != null
 				&& currentStatus.getSeverity() == IStatus.ERROR) {
 			wizardPage.setPageComplete(false);
+			wizardPage.setMessage(null);
 			wizardPage.setErrorMessage(uiChanged ? currentStatus.getMessage()
 					: null);
+		} else if (currentStatus != null
+				&& currentStatus.getSeverity() != IStatus.OK) {
+			int severity = currentStatus.getSeverity();
+			wizardPage.setPageComplete((severity & IStatus.CANCEL) != 0);
+			int type;
+			switch (severity) {
+			case IStatus.OK:
+				type = IMessageProvider.NONE;
+				break;
+			case IStatus.CANCEL:
+				type = IMessageProvider.NONE;
+				break;
+			case IStatus.INFO:
+				type = IMessageProvider.INFORMATION;
+				break;
+			case IStatus.WARNING:
+				type = IMessageProvider.WARNING;
+				break;
+			case IStatus.ERROR:
+				type = IMessageProvider.ERROR;
+				break;
+			default:
+				throw new AssertionFailedException(
+						"incomplete switch statement"); //$NON-NLS-1$
+			}
+			wizardPage.setErrorMessage(null);
+			wizardPage.setMessage(currentStatus.getMessage(), type);
 		} else {
 			wizardPage.setPageComplete(true);
+			wizardPage.setMessage(null);
 			wizardPage.setErrorMessage(null);
 		}
 	}
