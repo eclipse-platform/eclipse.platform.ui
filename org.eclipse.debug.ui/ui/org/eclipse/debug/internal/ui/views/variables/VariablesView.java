@@ -41,9 +41,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputRequestor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ViewerInputService;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
@@ -144,6 +147,26 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * part last had focus, the tree or the detail pane.
 	 */
 	private Listener fDetailPaneActivatedListener;	
+	
+	/**
+	 * Viewer input service used to translate active debug context to viewer input.
+	 */
+	private ViewerInputService fInputService;
+	
+	/**
+	 * Viewer input requester used to update the viewer once the viewer input has been
+	 * resolved.
+	 */
+	private IViewerInputRequestor fRequester = new IViewerInputRequestor() {
+		public void viewerInputComplete(IViewerInputUpdate update) {
+			if (!update.isCanceled()) {
+				setViewerInput(update.getViewerInput());
+				showViewer();
+				updateAction(VARIABLES_FIND_ELEMENT_ACTION);
+				updateAction(FIND_ACTION);
+			}
+		}
+	};
 	
 	/**
 	 * These are used to initialize and persist the position of the sash that
@@ -315,6 +338,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		JFaceResources.getFontRegistry().addListener(this);
 
 		TreeModelViewer variablesViewer = createTreeViewer(fSashForm);
+		fInputService = new ViewerInputService(fRequester, variablesViewer.getPresentationContext());
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
 			
@@ -879,14 +903,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (!isAvailable() || !isVisible()) {
 			return;
 		}
-		
 		if (selection instanceof IStructuredSelection) {
-			setViewerInput(((IStructuredSelection)selection).getFirstElement());
+			Object source = ((IStructuredSelection)selection).getFirstElement();
+			fInputService.resolveViewerInput(source);
 		}
-		showViewer();
-		
-		updateAction(VARIABLES_FIND_ELEMENT_ACTION);
-		updateAction(FIND_ACTION);
 	}
 		
 	/**

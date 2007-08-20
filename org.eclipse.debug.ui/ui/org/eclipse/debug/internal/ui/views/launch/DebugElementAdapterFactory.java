@@ -30,6 +30,7 @@ import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryRetrievalContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemorySegmentLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameSourceDisplayAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.StackFrameViewerInputProvider;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnFactoryAdapter;
 import org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.DebugTargetContentProvider;
@@ -58,6 +59,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
@@ -234,6 +236,12 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         }
         
+        if (adapterType.equals(IViewerInputProvider.class)) {
+        	if (adaptableObject instanceof IStackFrame) {
+        		return new StackFrameViewerInputProvider(); // TODO static?
+        	}
+        }
+        
         return null;
     }
 
@@ -251,7 +259,8 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         		IElementContentProvider.class,
         		IElementLabelProvider.class,
         		IElementMementoProvider.class,
-        		IElementEditor.class};
+        		IElementEditor.class,
+        		IViewerInputProvider.class};
     }
 
 }
