@@ -191,7 +191,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		provider.createSupportArea(supportArea, status);
 
 		GridData supportData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		supportData.verticalSpan = 3;
+		supportData.verticalSpan = 4;
 		supportArea.setLayoutData(supportData);
 		if (supportArea.getLayout() == null){
 			GridLayout layout = new GridLayout();
@@ -530,6 +530,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		} else {
 			list = createDropDownList((Composite) getContents());
 			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
+			getContents().getShell().layout();
 		}
 		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		getShell()
