@@ -210,7 +210,7 @@ public class EditorAreaHelper {
         editorArea.getPage().partAdded(ref);
         
         // Explicitly make this the active editor for commands
-        editorArea.getPage().makeActiveEditor(ref);
+        //editorArea.getPage().makeActiveEditor(ref);
     }
     
     private void addToLayout(EditorPane pane, EditorStack stack) {

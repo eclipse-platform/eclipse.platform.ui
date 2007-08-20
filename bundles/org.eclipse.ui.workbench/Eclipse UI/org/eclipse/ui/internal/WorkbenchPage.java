@@ -1566,6 +1566,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /* package */ void partAdded(WorkbenchPartReference ref) {
         activationList.add(ref);
         partList.addPart(ref);
+        updateActivePart();
     }
     
     /**
