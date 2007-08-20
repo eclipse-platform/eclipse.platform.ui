@@ -1194,7 +1194,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *
      * @param ref the editor to make active, or <code>null</code> for no active editor
      */
-    private void makeActiveEditor(IEditorReference ref) {
+    public void makeActiveEditor(IEditorReference ref) {
         if (ref == getActiveEditorReference()) {
             return;
         }
@@ -1566,7 +1566,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /* package */ void partAdded(WorkbenchPartReference ref) {
         activationList.add(ref);
         partList.addPart(ref);
-        updateActivePart();
     }
     
     /**
