@@ -339,7 +339,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		if (fPendingState == null) { 
 			return;
 		}
-		final IElementMementoProvider defaultProvider = getViewerStateAdapter(getViewer().getInput());
 		IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
 			public boolean visit(IModelDelta delta, int depth) {
 				if (delta.getParentDelta() == null) {
@@ -348,8 +347,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				Object element = delta.getElement();
 				Object potentialMatch = path.getSegment(depth - 1);
 				if (element instanceof IMemento) {
-					if (defaultProvider != null) {
-						defaultProvider.compareElements(new IElementCompareRequest[]{
+					IElementMementoProvider provider = getViewerStateAdapter(potentialMatch);
+					if (provider == null) {
+						provider = getViewerStateAdapter(getViewer().getInput());
+					}
+					if (provider != null) {
+						provider.compareElements(new IElementCompareRequest[]{
 								new ElementCompareRequest(ModelContentProvider.this,
 										potentialMatch, path, (IMemento) element, (ModelDelta)delta)});
 					}
@@ -435,7 +438,28 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#processReqeusts()
 			 */
 			public synchronized void processReqeusts() {
-				defaultProvider.encodeElements((IElementMementoRequest[]) requests.toArray(new IElementMementoRequest[requests.size()]));
+				Map providers = new HashMap();
+				Iterator iterator = requests.iterator();
+				while (iterator.hasNext()) {
+					IElementMementoRequest request = (IElementMementoRequest) iterator.next();
+					IElementMementoProvider provider = getViewerStateAdapter(request.getElement());
+					if (provider == null) {
+						provider = defaultProvider;
+					}
+					List reqs = (List) providers.get(provider);
+					if (reqs == null) {
+						reqs = new ArrayList();
+						providers.put(provider, reqs);
+					}
+					reqs.add(request);
+				}
+				iterator = providers.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Entry entry = (Entry) iterator.next();
+					IElementMementoProvider provider = (IElementMementoProvider) entry.getKey();
+					List reqs = (List) entry.getValue();
+					provider.encodeElements((IElementMementoRequest[]) reqs.toArray(new IElementMementoRequest[reqs.size()]));
+				}
 			}
 		
 			/* (non-Javadoc)

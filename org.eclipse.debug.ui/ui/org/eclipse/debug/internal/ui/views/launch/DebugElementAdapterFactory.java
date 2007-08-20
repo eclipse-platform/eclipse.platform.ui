@@ -37,7 +37,8 @@ import org.eclipse.debug.internal.ui.model.elements.DebugTargetContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionManagerContentProvider;
-import org.eclipse.debug.internal.ui.model.elements.ExpressionsViewMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.ExpressionManagerMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.ExpressionMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchManagerContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.MemoryBlockContentProvider;
@@ -46,12 +47,14 @@ import org.eclipse.debug.internal.ui.model.elements.MemoryRetrievalContentProvid
 import org.eclipse.debug.internal.ui.model.elements.MemoryViewElementMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupLabelProvider;
+import org.eclipse.debug.internal.ui.model.elements.RegisterGroupMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.StackFrameMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.ThreadContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableEditor;
 import org.eclipse.debug.internal.ui.model.elements.VariableLabelProvider;
-import org.eclipse.debug.internal.ui.model.elements.VariablesViewElementMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.VariableMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -103,8 +106,11 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementContentProvider fgCPMemoryRetrieval = new MemoryRetrievalContentProvider();
     private static IElementContentProvider fgCPMemoryBlock = new MemoryBlockContentProvider();
     
-    private static IElementMementoProvider fgMPFrame = new VariablesViewElementMementoProvider();
-    private static IElementMementoProvider fgMPExpressions = new ExpressionsViewMementoProvider();
+    private static IElementMementoProvider fgMPFrame = new StackFrameMementoProvider();
+    private static IElementMementoProvider fgMPVariable = new VariableMementoProvider();
+    private static IElementMementoProvider fgMPExpression = new ExpressionMementoProvider();
+    private static IElementMementoProvider fgMPRegisterGroup = new RegisterGroupMementoProvider();
+    private static IElementMementoProvider fgMPExpressionManager = new ExpressionManagerMementoProvider();
     private static IElementMementoProvider fgMPMemory = new MemoryViewElementMementoProvider();
     
     private static IColumnPresentationFactory fgVariableColumnFactory = new VariableColumnFactoryAdapter();
@@ -222,8 +228,17 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	if (adaptableObject instanceof IStackFrame) {
         		return fgMPFrame;
         	}
+        	if (adaptableObject instanceof IVariable) {
+        		return fgMPVariable;
+        	}
+        	if (adaptableObject instanceof IRegisterGroup) {
+        		return fgMPRegisterGroup;
+        	}
+        	if (adaptableObject instanceof IExpression) {
+        		return fgMPExpression;
+        	}
         	if (adaptableObject instanceof IExpressionManager) {
-        		return fgMPExpressions;
+        		return fgMPExpressionManager;
         	}
         	if (adaptableObject instanceof IMemoryBlockRetrieval) {
         		return fgMPMemory;

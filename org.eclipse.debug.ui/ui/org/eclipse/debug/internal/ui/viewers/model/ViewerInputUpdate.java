@@ -66,6 +66,7 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
     	fContext = context;
     	fSource = source;
     	fRequestor = requestor;
+    	fViewerInputUpdateJob.setSystem(true);
     }
 
 	/* (non-Javadoc)
