@@ -22,13 +22,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -36,7 +34,6 @@ import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
@@ -48,7 +45,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
@@ -255,7 +251,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	private  synchronized void startRestoreViewerState(final Object input) {
 		fPendingState = null;
-		final IElementMementoProvider defaultProvider = getViewerStateAdapter(input);
+		final IElementMementoProvider defaultProvider = ViewerAdapterService.getMementoProvider(input);
 		if (defaultProvider != null) {
 			// build a model delta representing expansion and selection state
 			final ModelDelta delta = new ModelDelta(input, IModelDelta.NO_CHANGE);
@@ -347,9 +343,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				Object element = delta.getElement();
 				Object potentialMatch = path.getSegment(depth - 1);
 				if (element instanceof IMemento) {
-					IElementMementoProvider provider = getViewerStateAdapter(potentialMatch);
+					IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(potentialMatch);
 					if (provider == null) {
-						provider = getViewerStateAdapter(getViewer().getInput());
+						provider = ViewerAdapterService.getMementoProvider(getViewer().getInput());
 					}
 					if (provider != null) {
 						provider.compareElements(new IElementCompareRequest[]{
@@ -374,7 +370,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @param oldInput
 	 */
 	protected void saveViewerState(Object input) {
-		IElementMementoProvider stateProvider = getViewerStateAdapter(input);
+		IElementMementoProvider stateProvider = ViewerAdapterService.getMementoProvider(input);
 		if (stateProvider != null) {
 			// build a model delta representing expansion and selection state
 			ModelDelta delta = new ModelDelta(input, IModelDelta.NO_CHANGE);
@@ -442,7 +438,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				Iterator iterator = requests.iterator();
 				while (iterator.hasNext()) {
 					IElementMementoRequest request = (IElementMementoRequest) iterator.next();
-					IElementMementoProvider provider = getViewerStateAdapter(request.getElement());
+					IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(request.getElement());
 					if (provider == null) {
 						provider = defaultProvider;
 					}
@@ -561,7 +557,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	protected synchronized void installModelProxy(Object element) {
 		if (!fModelProxies.containsKey(element)) {
-			IModelProxyFactory modelProxyFactory = getModelProxyFactoryAdapter(element);
+			IModelProxyFactory modelProxyFactory = ViewerAdapterService.getModelProxyFactory(element);
 			if (modelProxyFactory != null) {
 				final IModelProxy proxy = modelProxyFactory.createModelProxy(
 						element, getPresentationContext());
@@ -588,49 +584,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			}
 		}
 	}
-
-	/**
-	 * Returns the model proxy factory for the given element or
-	 * <code>null</code> if none.
-	 * 
-	 * @param element
-	 *            element to retrieve adapter for
-	 * @return model proxy factory adapter or <code>null</code>
-	 */
-	protected IModelProxyFactory getModelProxyFactoryAdapter(Object element) {
-		IModelProxyFactory adapter = null;
-		if (element instanceof IModelProxyFactory) {
-			adapter = (IModelProxyFactory) element;
-		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IModelProxyFactory) adaptable.getAdapter(IModelProxyFactory.class);
-			if (adapter == null && !(element instanceof PlatformObject)) {
-    	    	// for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IModelProxyFactory) new DebugElementAdapterFactory().getAdapter(element, IModelProxyFactory.class);
-	        }
-		}
-		return adapter;
-	}
-	
-	/**
-	 * Returns the viewer state adapter for the given element or
-	 * <code>null</code> if none.
-	 * 
-	 * @param element
-	 *            element to retrieve adapter for
-	 * @return viewer state adapter or <code>null</code>
-	 */
-	protected IElementMementoProvider getViewerStateAdapter(Object element) {
-		IElementMementoProvider adapter = null;
-		if (element instanceof IElementMementoProvider) {
-			adapter = (IElementMementoProvider) element;
-		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IElementMementoProvider) adaptable.getAdapter(IElementMementoProvider.class);
-		}
-		return adapter;
-	}	
 
 	/**
 	 * Returns the presentation context for this content provider.
@@ -702,30 +655,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			updateNodes(node.getChildDeltas());
 		}
 	}
-	
-    /**
-     * Returns the content adapter for the given element or
-     * <code>null</code> if none.
-     * 
-     * @param element
-     *            element to retrieve adapter for
-     * @return content adapter or <code>null</code>
-     */
-    protected IElementContentProvider getContentAdapter(Object element) {        
-        IElementContentProvider adapter = null;
-        if (element instanceof IElementContentProvider) {
-            adapter = (IElementContentProvider) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IElementContentProvider) adaptable.getAdapter(IElementContentProvider.class);
-            if (adapter == null && !(element instanceof PlatformObject)) {
-                // for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IElementContentProvider) new DebugElementAdapterFactory().getAdapter(element, IElementContentProvider.class);
-    	    }
-        }
-        return adapter;
-    }		
 
 	protected abstract void handleState(IModelDelta delta);
 

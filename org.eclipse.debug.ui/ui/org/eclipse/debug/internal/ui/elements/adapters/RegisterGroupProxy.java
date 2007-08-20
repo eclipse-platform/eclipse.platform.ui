@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.core.commands.Request;
+import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
@@ -34,7 +33,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IMemento;
 
@@ -277,42 +275,18 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory#createModelProxy(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
 	 */
 	public IModelProxy createModelProxy(Object element, IPresentationContext context) {
-		IModelProxyFactory factory = getModelProxyFactoryAdapter(fFrame);
+		IModelProxyFactory factory = ViewerAdapterService.getModelProxyFactory(fFrame);
 		if (factory != null) {
 			return factory.createModelProxy(fFrame, context);
 		}
 		return null;
-	}
-	
-	/**
-	 * Returns the model proxy factory for the given element or
-	 * <code>null</code> if none.
-	 * 
-	 * @param element
-	 *            element to retrieve adapter for
-	 * @return model proxy factory adapter or <code>null</code>
-	 */
-	protected IModelProxyFactory getModelProxyFactoryAdapter(Object element) {
-		IModelProxyFactory adapter = null;
-		if (element instanceof IModelProxyFactory) {
-			adapter = (IModelProxyFactory) element;
-		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IModelProxyFactory) adaptable.getAdapter(IModelProxyFactory.class);
-			if (adapter == null && !(element instanceof PlatformObject)) {
-    	    	// for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IModelProxyFactory) new DebugElementAdapterFactory().getAdapter(element, IModelProxyFactory.class);
-	        }
-		}
-		return adapter;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#createColumnPresentation(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public IColumnPresentation createColumnPresentation(IPresentationContext context, Object element) {
-		IColumnPresentationFactory factory = getColumnPresenetationFactoryAdapter(fFrame);
+		IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(fFrame);
 		if (factory != null) {
 			return factory.createColumnPresentation(context, fFrame);
 		}
@@ -323,40 +297,18 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory#getColumnPresentationId(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
 	 */
 	public String getColumnPresentationId(IPresentationContext context, Object element) {
-		IColumnPresentationFactory factory = getColumnPresenetationFactoryAdapter(fFrame);
+		IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(fFrame);
 		if (factory != null) {
 			return factory.getColumnPresentationId(context, fFrame);
 		}
 		return null;
 	}	
-	
-    /**
-     * Returns the column presentation factory for the given element or <code>null</code>.
-     * 
-     * @param input
-     * @return column presentation factory of <code>null</code>
-     */
-    protected IColumnPresentationFactory getColumnPresenetationFactoryAdapter(Object input) {
-    	IColumnPresentationFactory adapter = null;
-    	if (input instanceof IColumnPresentationFactory) {
-			adapter = (IColumnPresentationFactory) input;
-		} else if (input instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) input;
-			adapter = (IColumnPresentationFactory) adaptable.getAdapter(IColumnPresentationFactory.class);
-			if (adapter == null && !(input instanceof PlatformObject)) {
-    	    	// for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IColumnPresentationFactory) new DebugElementAdapterFactory().getAdapter(input, IColumnPresentationFactory.class);
-	        }
-		}
-    	return adapter;
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate[])
 	 */
 	public void update(IChildrenCountUpdate[] updates) {
-		IElementContentProvider provider = getContentAdapter(fFrame);
+		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
 		if (provider != null) {
 			IChildrenCountUpdate[] others = new IChildrenCountUpdate[updates.length];
 			for (int i = 0; i < updates.length; i++) {
@@ -372,7 +324,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate[])
 	 */
 	public void update(IChildrenUpdate[] updates) {
-		IElementContentProvider provider = getContentAdapter(fFrame);
+		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
 		if (provider != null) {
 			IChildrenUpdate[] others = new IChildrenUpdate[updates.length];
 			for (int i = 0; i < updates.length; i++) {
@@ -389,7 +341,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate[])
 	 */
 	public void update(IHasChildrenUpdate[] updates) {
-		IElementContentProvider provider = getContentAdapter(fFrame);
+		IElementContentProvider provider = ViewerAdapterService.getContentProvider(fFrame);
 		if (provider != null) {
 			IHasChildrenUpdate[] others = new IHasChildrenUpdate[updates.length];
 			for (int i = 0; i < updates.length; i++) {
@@ -412,36 +364,12 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			updates[i].done();
 		}
 	}
-	
-	  /**
-     * Returns the content adapter for the given element or
-     * <code>null</code> if none.
-     * 
-     * @param element
-     *            element to retrieve adapter for
-     * @return content adapter or <code>null</code>
-     */
-    protected IElementContentProvider getContentAdapter(Object element) {        
-        IElementContentProvider adapter = null;
-        if (element instanceof IElementContentProvider) {
-            adapter = (IElementContentProvider) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IElementContentProvider) adaptable.getAdapter(IElementContentProvider.class);
-            if (adapter == null && !(element instanceof PlatformObject)) {
-                // for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IElementContentProvider) new DebugElementAdapterFactory().getAdapter(element, IElementContentProvider.class);
-    	    }
-        }
-        return adapter;
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
 	 */
 	public void compareElements(IElementCompareRequest[] requests) {
-		IElementMementoProvider provider = getViewerStateAdapter(fFrame);
+		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
 			List others = new ArrayList(requests.length);
 			for (int i = 0; i < requests.length; i++) {
@@ -470,7 +398,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
 	 */
 	public void encodeElements(IElementMementoRequest[] requests) {
-		IElementMementoProvider provider = getViewerStateAdapter(fFrame);
+		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
 			List others = new ArrayList(requests.length);
 			for (int i = 0; i < requests.length; i++) {
@@ -489,28 +417,5 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			cancelUpdates(requests);
 		}
 	}	
-	
-	/**
-	 * Returns the viewer state adapter for the given element or
-	 * <code>null</code> if none.
-	 * 
-	 * @param element
-	 *            element to retrieve adapter for
-	 * @return viewer state adapter or <code>null</code>
-	 */
-	protected IElementMementoProvider getViewerStateAdapter(Object element) {
-		IElementMementoProvider adapter = null;
-		if (element instanceof IElementMementoProvider) {
-			adapter = (IElementMementoProvider) element;
-		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) element;
-			adapter = (IElementMementoProvider) adaptable.getAdapter(IElementMementoProvider.class);
-			if (adapter == null && !(element instanceof PlatformObject)) {
-    	    	// for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IElementMementoProvider) new DebugElementAdapterFactory().getAdapter(element, IElementMementoProvider.class);
-	        }
-		}
-		return adapter;
-	}		
+		
 }

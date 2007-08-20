@@ -59,7 +59,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	
 	protected synchronized void doUpdateChildCount(TreePath path) {
 		Object element = getElement(path);
-		IElementContentProvider contentAdapter = getContentAdapter(element);
+		IElementContentProvider contentAdapter = ViewerAdapterService.getContentProvider(element);
 		if (contentAdapter != null) {
 			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path, element, contentAdapter, getPresentationContext());
 			schedule(request);
@@ -68,7 +68,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	
 	protected synchronized void doUpdateElement(TreePath parentPath, int modelIndex) {
 		Object parent = getElement(parentPath);
-		IElementContentProvider contentAdapter = getContentAdapter(parent);
+		IElementContentProvider contentAdapter = ViewerAdapterService.getContentProvider(parent);
 		if (contentAdapter != null) {
 			ChildrenUpdate request = new ChildrenUpdate(this, parentPath, parent, modelIndex, contentAdapter, getPresentationContext());
 			schedule(request);
@@ -77,7 +77,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	
 	protected synchronized void doUpdateHasChildren(TreePath path) {
 		Object element = getElement(path);
-		IElementContentProvider contentAdapter = getContentAdapter(element);
+		IElementContentProvider contentAdapter = ViewerAdapterService.getContentProvider(element);
 		if (contentAdapter != null) {
 			HasChildrenUpdate request = new HasChildrenUpdate(this, path, element, contentAdapter, getPresentationContext());
 			schedule(request);

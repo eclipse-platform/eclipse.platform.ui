@@ -16,19 +16,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -197,7 +194,7 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	public synchronized void update(TreePath elementPath, ViewerRow row) {
 		String[] visibleColumns = fViewer.getVisibleColumns();
 		Object element = elementPath.getLastSegment();
-		IElementLabelProvider presentation = getLabelAdapter(element);
+		IElementLabelProvider presentation = ViewerAdapterService.getLabelProvider(element);
 		if (presentation != null) {
 			presentation.update(new ILabelUpdate[]{new LabelUpdate(elementPath, (TreeItem) row.getItem(), this, visibleColumns, fViewer.getPresentationContext())});
 		} else if (element instanceof String) {
@@ -214,30 +211,6 @@ public class TreeModelLabelProvider extends ColumnLabelProvider {
 	protected IPresentationContext getPresentationContext() {
 		return fViewer.getPresentationContext();
 	}
-	
-    /**
-     * Returns the label provider for the given element or
-     * <code>null</code> if none.
-     * 
-     * @param element
-     *            element to retrieve adapter for
-     * @return label adapter or <code>null</code>
-     */
-    protected IElementLabelProvider getLabelAdapter(Object element) {        
-    	IElementLabelProvider adapter = null;
-        if (element instanceof IElementLabelProvider) {
-            adapter = (IElementLabelProvider) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IElementLabelProvider) adaptable.getAdapter(IElementLabelProvider.class);
-	        if (adapter == null && !(element instanceof PlatformObject)) {
-    	    	// for objects that don't properly subclass PlatformObject to inherit default
-	        	// adapters, just delegate to the adapter factory
-    	    	adapter = (IElementLabelProvider) new DebugElementAdapterFactory().getAdapter(element, IElementLabelProvider.class);
-        	}            
-        }
-        return adapter;
-    }		
 
     /**
      * A label update is complete.

@@ -15,25 +15,20 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -173,7 +168,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 		 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 		 */
 		public boolean canModify(Object element, String property) {
-			IElementEditor editor = getElementEditorAdapter(element);
+			IElementEditor editor = ViewerAdapterService.getElementEditor(element);
 			if (editor != null) {
 				fModifier = editor.getCellModifier(getPresentationContext(), element);
 				if (fModifier != null) {
@@ -241,22 +236,6 @@ public class InternalTreeModelViewer extends TreeViewer {
 			}
 		}
 		
-	    /**
-	     * Returns the element editor for the given element or <code>null</code>.
-	     * 
-	     * @param input
-	     * @return element editor or <code>null</code>
-	     */
-	    protected IElementEditor getElementEditorAdapter(Object input) {
-	    	if (input instanceof IElementEditor) {
-				return (IElementEditor) input;
-			}
-	    	if (input instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) input;
-				return (IElementEditor) adaptable.getAdapter(IElementEditor.class);
-			}
-	    	return null;
-	    } 
 	}
 	
 	private CellModifierProxy fCellModifier;
@@ -357,7 +336,7 @@ public class InternalTreeModelViewer extends TreeViewer {
      * selection policy to select the new selection.
      */
 	protected void handleInvalidSelection(ISelection selection, ISelection newSelection) {
-	    IModelSelectionPolicy selectionPolicy = getSelectionPolicy(selection);
+	    IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(selection, getPresentationContext());
 	    if (selectionPolicy != null) {
 	    	ISelection temp = newSelection;
             newSelection = selectionPolicy.replaceInvalidSelection(selection, newSelection);
@@ -483,7 +462,7 @@ public class InternalTreeModelViewer extends TreeViewer {
     protected void resetColumns(Object input) {
     	if (input != null) {
     		// only change columns if the input is non-null (persist when empty)
-	    	IColumnPresentationFactory factory = getColumnPresenetationFactoryAdapter(input);
+	    	IColumnPresentationFactory factory = ViewerAdapterService.getColumnPresentationFactory(input);
 	    	PresentationContext context = (PresentationContext) getPresentationContext();
 	    	String type = null;
 	    	if (factory != null) {
@@ -512,23 +491,6 @@ public class InternalTreeModelViewer extends TreeViewer {
 				}
 			}
     	}
-    } 
-    
-    /**
-     * Returns the column presentation factory for the given element or <code>null</code>.
-     * 
-     * @param input
-     * @return column presentation factory of <code>null</code>
-     */
-    protected IColumnPresentationFactory getColumnPresenetationFactoryAdapter(Object input) {
-    	if (input instanceof IColumnPresentationFactory) {
-			return (IColumnPresentationFactory) input;
-		}
-    	if (input instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) input;
-			return (IColumnPresentationFactory) adaptable.getAdapter(IColumnPresentationFactory.class);
-		}
-    	return null;
     }    
         
     /**
@@ -912,7 +874,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 * @return
 	 */
 	protected boolean overrideSelection(ISelection current, ISelection candidate) {
-		IModelSelectionPolicy selectionPolicy = getSelectionPolicy(current);
+		IModelSelectionPolicy selectionPolicy = ViewerAdapterService.getSelectionPolicy(current, getPresentationContext());
 		if (selectionPolicy == null) {
 			return true;
 		}
@@ -920,33 +882,6 @@ public class InternalTreeModelViewer extends TreeViewer {
 			return selectionPolicy.overrides(current, candidate, getPresentationContext());
 		}
 		return !selectionPolicy.isSticky(current, getPresentationContext());
-	}
-	
-	/**
-	 * Returns the selection policy associated with the given selection
-	 * or <code>null</code> if none.
-	 * 
-	 * @param selection or <code>null</code>
-	 * @return selection policy or <code>null</code>
-	 */
-	protected IModelSelectionPolicy getSelectionPolicy(ISelection selection) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
-			Object element = ss.getFirstElement();
-			if (element instanceof IAdaptable) {
-				IAdaptable adaptable = (IAdaptable) element;
-				IModelSelectionPolicyFactory factory =  (IModelSelectionPolicyFactory) adaptable.getAdapter(IModelSelectionPolicyFactory.class);
-				if (factory == null && !(element instanceof PlatformObject)) {
-					// for objects that don't properly subclass PlatformObject to inherit default
-    	    		// adapters, just delegate to the adapter factory
-					factory = (IModelSelectionPolicyFactory) new DebugElementAdapterFactory().getAdapter(element, IModelSelectionPolicyFactory.class);
-				}
-				if (factory != null) {
-					return factory.createModelSelectionPolicyAdapter(adaptable, getPresentationContext());
-				}
-			}
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)

@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.internal.ui.viewers.model.ViewerInputUpdate;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 
 /**
  * Service to compute a viewer input from a source object
@@ -60,7 +58,7 @@ public class ViewerInputService {
 	 * @param source source from which to derive a viewer input
 	 */
 	public void resolveViewerInput(Object source) {
-		IViewerInputProvider provdier = getInputProvider(source);
+		IViewerInputProvider provdier = ViewerAdapterService.getInputProvider(source);
 		synchronized (this) {
 			// cancel any pending update
 			if (fPendingUpdate != null) {
@@ -76,27 +74,4 @@ public class ViewerInputService {
 		}
 	}
 	
-    /**
-     * Returns the viewer input provider for the given element or
-     * <code>null</code> if none.
-     * 
-     * @param element
-     *            element to retrieve adapter for
-     * @return content adapter or <code>null</code>
-     */
-    private IViewerInputProvider getInputProvider(Object element) {        
-    	IViewerInputProvider adapter = null;
-        if (element instanceof IViewerInputProvider) {
-            adapter = (IViewerInputProvider) element;
-        } else if (element instanceof IAdaptable) {
-            IAdaptable adaptable = (IAdaptable) element;
-            adapter = (IViewerInputProvider) adaptable.getAdapter(IViewerInputProvider.class);
-            if (adapter == null && !(element instanceof PlatformObject)) {
-                // for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = (IViewerInputProvider) new DebugElementAdapterFactory().getAdapter(element, IViewerInputProvider.class);
-    	    }
-        }
-        return adapter;
-    }		
 }
