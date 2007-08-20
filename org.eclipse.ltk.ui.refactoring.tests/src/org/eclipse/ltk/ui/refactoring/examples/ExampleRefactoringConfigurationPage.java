@@ -46,6 +46,7 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 		
 		fOldText= new Text(composite, SWT.BORDER);
 		fOldText.setText("A");
+		fOldText.selectAll();
 		fOldText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		
 		Label label2= new Label(composite, SWT.NONE);
@@ -54,6 +55,7 @@ class ExampleRefactoringConfigurationPage extends UserInputWizardPage {
 		
 		fNewText= new Text(composite, SWT.BORDER);
 		fNewText.setText("B");
+		fNewText.selectAll();
 		fNewText.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
 		
 		setControl(composite);
