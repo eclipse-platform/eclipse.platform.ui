@@ -151,7 +151,7 @@ public abstract class AbstractChangeNode extends PreviewNode {
 			}
 			return result;
 		} else {
-			return ACTIVE;
+			return fChange.isEnabled() ? ACTIVE : INACTIVE;
 		}
 	}
 
