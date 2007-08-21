@@ -66,6 +66,8 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private MarkerFieldFilterGroup selectedFilterGroup;
 
+	private ScrolledForm form;
+
 	/**
 	 * Create a new instance of the receiver on group.
 	 * 
@@ -108,7 +110,7 @@ public class FiltersConfigurationDialog extends Dialog {
 
 			}
 		});
-		final ScrolledForm form = toolkit.createScrolledForm(top);
+		form = toolkit.createScrolledForm(top);
 		form.setBackground(parent.getBackground());
 
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
@@ -125,12 +127,25 @@ public class FiltersConfigurationDialog extends Dialog {
 
 		}
 
-		if (!filterGroups.isEmpty()) {
+		if (filterGroups.isEmpty()) {
+			setFieldsVisible(false);
+		}else
+		{
 			filtersList.setSelection(new StructuredSelection(filterGroups
 					.iterator().next()));
 		}
 
 		return top;
+	}
+
+	/**
+	 * Set the visibility of the fields to visible.
+	 */
+	private void setFieldsVisible(boolean visible) {
+		Control[] children = form.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].setVisible(visible);
+		}
 	}
 
 	/**
@@ -418,6 +433,12 @@ public class FiltersConfigurationDialog extends Dialog {
 		selectedFilterGroup = markerFieldFilterGroup;
 		if (old != null)
 			scopeArea.applyToGroup(old);
+		
+		if(selectedFilterGroup ==null){
+			setFieldsVisible(false);
+			return;
+		}
+		setFieldsVisible(true);
 		scopeArea.initializeFromGroup(selectedFilterGroup);
 		Iterator areas = filterAreas.iterator();
 		while (areas.hasNext()) {

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -352,7 +351,10 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
 			 */
 			public Object getParent(Object element) {
-				return ((MarkerItem) element).getParent();
+				Object parent = ((MarkerItem) element).getParent();
+				if(parent == null)
+					return builder;
+				return parent;
 			}
 
 			/*
@@ -594,40 +596,8 @@ public class ExtendedMarkersView extends ViewPart {
 
 				updateTitle();
 				// Expand all if the list is small
-				if (builder.getVisibleMarkers().getSize() < 20) {
+				if (builder.getVisibleMarkers().getSize() < 20) 
 					viewer.expandAll();
-				} else {// Re-expand the old categories
-					MarkerCategory[] categories = builder.getCategories();
-					if (categories == null)
-						categoriesToExpand.clear();
-					else {
-						if (categories.length == 1) {// Expand if there is
-							// only
-							// one
-							getViewer().expandAll();
-							categoriesToExpand.clear();
-							if (monitor.isCanceled())
-								return Status.CANCEL_STATUS;
-							categoriesToExpand.add(categories[0].getName());
-						} else {
-							Collection newCategories = new HashSet();
-							for (int i = 0; i < categories.length; i++) {
-								if (monitor.isCanceled())
-									return Status.CANCEL_STATUS;
-								MarkerCategory category = categories[i];
-								if (categoriesToExpand.contains(category
-										.getName())) {
-									getViewer().expandToLevel(category,
-											AbstractTreeViewer.ALL_LEVELS);
-									newCategories.add(category.getName());
-								}
-
-							}
-							categoriesToExpand = newCategories;
-						}
-					}
-
-				}
 
 				if (preservedSelection.size() > 0) {
 
