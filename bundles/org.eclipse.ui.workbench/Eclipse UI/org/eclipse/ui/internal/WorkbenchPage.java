@@ -4174,7 +4174,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     }
                 }
 
-                // Skip fastviews
+                // Skip fastviews (unless overridden)
                 if (ref instanceof IViewReference) {
                     if (includeActiveFastViews || !((IViewReference) ref).isFastView()) {
                         for (int j = 0; j < views.length; j++) {
