@@ -132,6 +132,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     //Could be delete. This information is in the active part list;
     private ActivationList activationList = new ActivationList();
 
+	/**
+	 * This field controls whether or not the ActivationList will
+	 * remove Fast Views from its list of active views. It's currently
+	 * only <core>true</code> when new editors are added, allowing
+	 * a minimized View that opens (but doesn't activate) a new editor
+	 * to remain active. 
+	 */
+	private boolean includeActiveFastViews = false;
+
     private EditorManager editorMgr;
 
     private EditorAreaHelper editorPresentation;
@@ -1566,7 +1575,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /* package */ void partAdded(WorkbenchPartReference ref) {
         activationList.add(ref);
         partList.addPart(ref);
-        updateActivePart();
+        
+        // If we're adding a new editor then allow fast views
+        // to remain open
+        if (ref instanceof IEditorReference) {
+        	includeActiveFastViews = true;
+        	updateActivePart();
+        	includeActiveFastViews = false;
+        }
+        else
+        	updateActivePart();
     }
     
     /**
@@ -4157,9 +4175,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     }
                 }
 
-                // Skip fastviews
+                // Skip fast views (unless overridden)
                 if (ref instanceof IViewReference) {
-                    if (!((IViewReference) ref).isFastView()) {
+                    if (includeActiveFastViews || !((IViewReference) ref).isFastView()) {
                         for (int j = 0; j < views.length; j++) {
                             if (views[j] == ref) {
                                 return ref;
