@@ -393,7 +393,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   The class is the type used to instantiate the field.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.MarkerField:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.api.MarkerField:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -420,7 +420,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   The filterClass is the class that does filtering on this field when enabled. If this is not specified no filtering will occur based on this field.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -430,7 +430,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                   The filterConfigurationClass is an optional area that is used for configuration of the field in a filter dialog.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea:"/>
                </appInfo>
             </annotation>
          </attribute>
