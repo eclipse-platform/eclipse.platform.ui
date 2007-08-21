@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                                 fixes in bug 198665, 200731
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -22,9 +24,9 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * This is an editor-implementation for {@link Table}
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public final class TableViewerEditor extends ColumnViewerEditor {
 	/**
@@ -54,7 +56,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor with focusable cells
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param focusCellManager
@@ -86,7 +88,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor whose activation process is customized
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param editorActivationStrategy
@@ -140,7 +142,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 			if (!l.contains(focusCell.getElement())) {
 				getViewer().setSelection(
-						new StructuredSelection(focusCell.getElement()));
+						new StructuredSelection(focusCell.getElement()),true);
 			}
 		}
 	}

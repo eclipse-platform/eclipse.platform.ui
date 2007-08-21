@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation bug 154329
- *                                               - fixes in bug 170381
+ *                                               - fixes in bug 170381, 198665, 200731
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Widget;
  * This is a widget independent class implementors of
  * {@link org.eclipse.swt.widgets.Table} like widgets can use to provide a
  * viewer on top of their widget implementations.
- * 
+ *
  * @since 3.3
  */
 public abstract class AbstractTableViewer extends ColumnViewer {
@@ -48,7 +48,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
+		 *
 		 */
 		public VirtualManager() {
 			addTableListener();
@@ -61,7 +61,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			getControl().addListener(SWT.SetData, new Listener() {
 				/*
 				 * (non-Javadoc)
-				 * 
+				 *
 				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 				 */
 				public void handleEvent(Event event) {
@@ -89,7 +89,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * Get the element at index.Resolve it lazily if this is available.
-		 * 
+		 *
 		 * @param index
 		 * @return Object or <code>null</code> if it could not be found
 		 */
@@ -105,7 +105,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		/**
 		 * A non visible item has been added.
-		 * 
+		 *
 		 * @param element
 		 * @param index
 		 */
@@ -128,7 +128,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * The elements with the given indices need to be removed from the
 		 * cache.
-		 * 
+		 *
 		 * @param indices
 		 */
 		public void removeIndices(int[] indices) {
@@ -154,7 +154,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		/**
 		 * The elements between the given indices (inclusive) need to be removed
 		 * from the cache.
-		 * 
+		 *
 		 * @param from
 		 * @param to
 		 */
@@ -214,7 +214,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Initialize the virtual manager to manage the virtual state if the table
 	 * is VIRTUAL. If not use the default no-op version.
-	 * 
+	 *
 	 * @param style
 	 */
 	private void initializeVirtualManager(int style) {
@@ -234,7 +234,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * been added to the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param elements
 	 *            the elements to add
 	 */
@@ -243,7 +243,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (isBusy())
 			return;
 		Object[] filtered = filter(elements);
-		
+
 		for (int i = 0; i < filtered.length; i++) {
 			Object element = filtered[i];
 			int index = indexForElement(element);
@@ -253,10 +253,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/**
 	 * Create a new TableItem at index if required.
-	 * 
+	 *
 	 * @param element
 	 * @param index
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void createItem(Object element, int index) {
@@ -273,7 +273,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Create a new row.  Callers can only use the returned object locally and before
 	 * making the next call on the viewer since it may be re-used for subsequent method
 	 * calls.
-	 * 
+	 *
 	 * @param style
 	 *            the style for the new row
 	 * @param rowIndex
@@ -294,7 +294,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * the model. Note that there is another method for efficiently processing
 	 * the simultaneous addition of multiple elements.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the element to add
 	 */
@@ -304,7 +304,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindInputItem(java.lang.Object)
 	 */
 	protected Widget doFindInputItem(Object element) {
@@ -316,7 +316,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doFindItem(java.lang.Object)
 	 */
 	protected Widget doFindItem(Object element) {
@@ -335,7 +335,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#doUpdateItem(org.eclipse.swt.widgets.Widget,
 	 *      java.lang.Object, boolean)
 	 */
@@ -345,7 +345,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		try {
 			if (widget instanceof Item) {
 				final Item item = (Item) widget;
-	
+
 				// remember element we are showing
 				if (fullMap) {
 					associate(element, item);
@@ -357,11 +357,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 					item.setData(element);
 					mapElement(element, item);
 				}
-	
+
 				int columnCount = doGetColumnCount();
 				if (columnCount == 0)
 					columnCount = 1;// If there are no columns do the first one
-	
+
 				ViewerRow viewerRowFromItem = getViewerRowFromItem(item);
 
 				boolean isVirtual = (getControl().getStyle() & SWT.VIRTUAL) != 0;
@@ -370,30 +370,30 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				if (isVirtual) {
 					viewerRowFromItem = (ViewerRow) viewerRowFromItem.clone();
 				}
-				
+
 				// Also enter loop if no columns added. See 1G9WWGZ: JFUIF:WINNT -
 				// TableViewer with 0 columns does not work
 				for (int column = 0; column < columnCount || column == 0; column++) {
 					ViewerColumn columnViewer = getViewerColumn(column);
 					ViewerCell cellToUpdate = updateCell(viewerRowFromItem,
 							column, element);
-					
+
 					// If the control is virtual, we cannot use the cached cell object. See bug 188663.
 					if (isVirtual) {
 						cellToUpdate = new ViewerCell(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
 					}
 
 					columnViewer.refresh(cellToUpdate);
-	
+
 					// As it is possible for user code to run the event
 					// loop check here.
 					if (item.isDisposed()) {
 						unmapElement(element, item);
 						return;
 					}
-	
+
 				}
-	
+
 			}
 		} finally {
 			busy = oldBusy;
@@ -402,7 +402,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
@@ -415,7 +415,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 		if (columnCount == 0)// Hang it off the table if it
 			return getControl();
-		
+
 		return doGetColumn(columnIndex);
 	}
 
@@ -425,7 +425,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * <p>
 	 * This method is internal to the framework.
 	 * </p>
-	 * 
+	 *
 	 * @param index
 	 *            the zero-based index
 	 * @return the element at the given index, or <code>null</code> if the
@@ -457,7 +457,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	protected List getSelectionFromWidget() {
@@ -479,7 +479,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Get the virtual selection. Avoid calling SWT whenever possible to prevent
 	 * extra widget creation.
-	 * 
+	 *
 	 * @return List of Object
 	 */
 
@@ -561,7 +561,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object,
 	 *      java.lang.Object)
 	 */
@@ -587,7 +587,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * been added to the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 * @param position
@@ -610,7 +610,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object)
 	 */
 	protected void internalRefresh(Object element) {
@@ -619,7 +619,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#internalRefresh(java.lang.Object,
 	 *      boolean)
 	 */
@@ -641,7 +641,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/**
 	 * Refresh all with virtual elements.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void internalVirtualRefreshAll() {
@@ -664,9 +664,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Refresh all of the elements of the table. update the labels if
 	 * updatLabels is true;
-	 * 
+	 *
 	 * @param updateLabels
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private void internalRefreshAll(boolean updateLabels) {
@@ -741,7 +741,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/**
 	 * Removes the given elements from this table viewer.
-	 * 
+	 *
 	 * @param elements
 	 *            the elements to remove
 	 */
@@ -799,7 +799,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * been removed from the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param elements
 	 *            the elements to remove
 	 */
@@ -829,7 +829,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * </p>
 	 * <strong>NOTE:</strong> removing an object from a virtual table will
 	 * decrement the itemCount.
-	 * 
+	 *
 	 * @param element
 	 *            the element
 	 */
@@ -839,7 +839,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#reveal(java.lang.Object)
 	 */
 	public void reveal(Object element) {
@@ -852,7 +852,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#setSelectionToWidget(java.util.List,
 	 *      boolean)
 	 */
@@ -866,7 +866,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			virtualSetSelectionToWidget(list, reveal);
 			return;
 		}
-		
+
+		// This is vital to use doSetSelection because on SWT-Table on Win32 this will also
+		// move the focus to this row (See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=198665)
 		if (reveal) {
 			int size = list.size();
 			Item[] items = new Item[size];
@@ -912,10 +914,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			}
 		}
 	}
-	
+
 	/**
 	 * Set the selection on a virtual table
-	 * 
+	 *
 	 * @param list
 	 *            The elements to set
 	 * @param reveal
@@ -993,10 +995,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/**
 	 * Set the item count of the receiver.
-	 * 
+	 *
 	 * @param count
 	 *            the new table size.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void setItemCount(int count) {
@@ -1024,11 +1026,11 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * all of these values are correct and will not call the content provider to
 	 * verify. <strong>Note that this method will create a TableItem for all of
 	 * the elements provided</strong>.
-	 * 
+	 *
 	 * @param element
 	 * @param index
 	 * @see ILazyContentProvider
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void replace(Object element, int index) {
@@ -1040,10 +1042,10 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/**
 	 * Clear the table item at the specified index
-	 * 
+	 *
 	 * @param index
 	 *            the index of the table item to be cleared
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public void clear(int index) {
@@ -1056,7 +1058,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getRawChildren(java.lang.Object)
 	 */
 	protected Object[] getRawChildren(Object parent) {
@@ -1069,7 +1071,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#assertContentProviderType(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	protected void assertContentProviderType(IContentProvider provider) {
@@ -1081,30 +1083,30 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Searches the receiver's list starting at the first item (index 0) until
 	 * an item is found that is equal to the argument, and returns the index of
 	 * that item. If no item is found, returns -1.
-	 * 
+	 *
 	 * @param item
 	 *            the search item
 	 * @return the index of the item
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract int doIndexOf(Item item);
 
 	/**
 	 * Returns the number of items contained in the receiver.
-	 * 
+	 *
 	 * @return the number of items
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract int doGetItemCount();
 
 	/**
 	 * Sets the number of items contained in the receiver.
-	 * 
+	 *
 	 * @param count
 	 *            the number of items
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doSetItemCount(int count);
@@ -1112,9 +1114,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Returns a (possibly empty) array of TableItems which are the items in the
 	 * receiver.
-	 * 
+	 *
 	 * @return the items in the receiver
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract Item[] doGetItems();
@@ -1127,14 +1129,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * that a single column of data may be visible in the table. This occurs
 	 * when the programmer uses the table like a list, adding items but never
 	 * creating a column.
-	 * 
+	 *
 	 * @param index
 	 *            the index of the column to return
 	 * @return the column at the given index
 	 * @exception IllegalArgumentException -
 	 *                if the index is not between 0 and the number of elements
 	 *                in the list minus 1 (inclusive)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract Widget doGetColumn(int index);
@@ -1142,14 +1144,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Returns the item at the given, zero-relative index in the receiver.
 	 * Throws an exception if the index is out of range.
-	 * 
+	 *
 	 * @param index
 	 *            the index of the item to return
 	 * @return the item at the given index
 	 * @exception IllegalArgumentException -
 	 *                if the index is not between 0 and the number of elements
 	 *                in the list minus 1 (inclusive)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract Item doGetItem(int index);
@@ -1158,9 +1160,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Returns an array of {@link Item} that are currently selected in the
 	 * receiver. The order of the items is unspecified. An empty array indicates
 	 * that no items are selected.
-	 * 
+	 *
 	 * @return an array representing the selection
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract Item[] doGetSelection();
@@ -1169,9 +1171,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Returns the zero-relative indices of the items which are currently
 	 * selected in the receiver. The order of the indices is unspecified. The
 	 * array is empty if no items are selected.
-	 * 
+	 *
 	 * @return an array representing the selection
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract int[] doGetSelectionIndices();
@@ -1181,7 +1183,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * of the items are set to their default values. If the table was created
 	 * with the <code>SWT.VIRTUAL</code> style, these attributes are requested
 	 * again as needed.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doClearAll();
@@ -1189,33 +1191,33 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Resets the given item in the receiver. The text, icon and other attributes
 	 * of the item are set to their default values.
-	 * 
-	 * @param item the item to reset 
-	 * 
+	 *
+	 * @param item the item to reset
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doResetItem(Item item);
-	
+
 	/**
 	 * Removes the items from the receiver which are between the given
 	 * zero-relative start and end indices (inclusive).
-	 * 
+	 *
 	 * @param start
 	 *            the start of the range
 	 * @param end
 	 *            the end of the range
-	 * 
+	 *
 	 * @exception IllegalArgumentException -
 	 *                if either the start or end are not between 0 and the
 	 *                number of elements in the list minus 1 (inclusive)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doRemove(int start, int end);
 
 	/**
 	 * Removes all of the items from the receiver.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doRemoveAll();
@@ -1223,15 +1225,15 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	/**
 	 * Removes the items from the receiver's list at the given zero-relative
 	 * indices.
-	 * 
+	 *
 	 * @param indices
 	 *            the array of indices of the items
-	 * 
+	 *
 	 * @exception IllegalArgumentException -
 	 *                if the array is null, or if any of the indices is not
 	 *                between 0 and the number of elements in the list minus 1
 	 *                (inclusive)
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doRemove(int[] indices);
@@ -1240,20 +1242,20 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Shows the item. If the item is already showing in the receiver, this
 	 * method simply returns. Otherwise, the items are scrolled until the item
 	 * is visible.
-	 * 
+	 *
 	 * @param item
 	 *            the item to be shown
-	 * 
+	 *
 	 * @exception IllegalArgumentException -
 	 *                if the item is null
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doShowItem(Item item);
 
 	/**
 	 * Deselects all selected items in the receiver.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doDeselectAll();
@@ -1266,13 +1268,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * single-select and multiple items are specified, then all items are
 	 * ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param items
 	 *            the array of items
-	 * 
+	 *
 	 * @exception IllegalArgumentException -
 	 *                if the array of items is null
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doSetSelection(Item[] items);
@@ -1281,7 +1283,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * Shows the selection. If the selection is already showing in the receiver,
 	 * this method simply returns. Otherwise, the items are scrolled until the
 	 * selection is visible.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doShowSelection();
@@ -1294,13 +1296,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * receiver is single-select and multiple indices are specified, then all
 	 * indices are ignored.
 	 * </p>
-	 * 
+	 *
 	 * @param indices
 	 *            the indices of the items to select
-	 * 
+	 *
 	 * @exception IllegalArgumentException -
 	 *                if the array of indices is null
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doSetSelection(int[] indices);
@@ -1310,23 +1312,23 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * text, icon and other attributes of the item are set to the default value.
 	 * If the table was created with the <code>SWT.VIRTUAL</code> style, these
 	 * attributes are requested again as needed.
-	 * 
+	 *
 	 * @param index
 	 *            the index of the item to clear
-	 * 
+	 *
 	 * @exception IllegalArgumentException -
 	 *                if the index is not between 0 and the number of elements
 	 *                in the list minus 1 (inclusive)
-	 * 
+	 *
 	 * @see SWT#VIRTUAL
 	 * @see SWT#SetData
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected abstract void doClear(int index);
-	
-		
-			
+
+
+
 	/**
 	 * Selects the items at the given zero-relative indices in the receiver.
 	 * The current selection is not cleared before the new items are selected.
@@ -1341,8 +1343,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @param indices the array of indices for the items to select
 	 *
 	 * @exception IllegalArgumentException - if the array of indices is null
-	 * 
+	 *
 	 */
 	protected abstract void doSelect(int[] indices);
-	
+
 }

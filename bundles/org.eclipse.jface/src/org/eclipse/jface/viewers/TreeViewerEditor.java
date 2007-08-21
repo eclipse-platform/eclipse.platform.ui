@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     											   fixes in bug 198665, 200731
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -22,7 +24,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * This is an editor implementation for {@link Tree}
- * 
+ *
  * @since 3.3
  */
 public class TreeViewerEditor extends ColumnViewerEditor {
@@ -53,7 +55,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor with focusable cells
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param focusCellManager
@@ -85,7 +87,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 
 	/**
 	 * Create a customized editor whose activation process is customized
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the editor is created for
 	 * @param editorActivationStrategy
@@ -140,7 +142,7 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 			if (!l.contains(focusCell.getElement())) {
 				getViewer().setSelection(
 						new TreeSelection(focusCell.getViewerRow()
-								.getTreePath()));
+								.getTreePath()),true);
 			}
 		}
 	}
