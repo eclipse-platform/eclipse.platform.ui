@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                                 fixes in bug 198665
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -140,7 +142,7 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 
 			if (!l.contains(focusCell.getElement())) {
 				getViewer().setSelection(
-						new StructuredSelection(focusCell.getElement()));
+						new StructuredSelection(focusCell.getElement()),true);
 			}
 		}
 	}

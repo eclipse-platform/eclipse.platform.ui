@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation bug 154329
- *                                               - fixes in bug 170381
+ *                                               - fixes in bug 170381, 198665
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -867,6 +867,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			return;
 		}
 		
+		// This is vital to use doSetSelection because on SWT-Table on Win32 this will also
+		// move the focus to this row (See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=198665)
 		if (reveal) {
 			int size = list.size();
 			Item[] items = new Item[size];
