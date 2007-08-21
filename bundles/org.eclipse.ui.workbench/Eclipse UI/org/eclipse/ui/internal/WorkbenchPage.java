@@ -132,6 +132,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     //Could be delete. This information is in the active part list;
     private ActivationList activationList = new ActivationList();
 
+	/**
+	 * This field controls whether or not the ActivationList will
+	 * remove Fast Views from its list of active views. It's currently
+	 * only <core>true</code> when new editors are added, allowing
+	 * a minimized View that opens (but doesn't activate) a new editor
+	 * to remain active. 
+	 */
+	private boolean includeActiveFastViews = false;
+
     private EditorManager editorMgr;
 
     private EditorAreaHelper editorPresentation;
@@ -1194,7 +1203,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *
      * @param ref the editor to make active, or <code>null</code> for no active editor
      */
-    public void makeActiveEditor(IEditorReference ref) {
+    private void makeActiveEditor(IEditorReference ref) {
         if (ref == getActiveEditorReference()) {
             return;
         }
@@ -1566,7 +1575,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /* package */ void partAdded(WorkbenchPartReference ref) {
         activationList.add(ref);
         partList.addPart(ref);
-        updateActivePart();
+        
+        if (ref instanceof IEditorReference) {
+        	includeActiveFastViews = true;
+        	updateActivePart();
+        	includeActiveFastViews = false;
+        }
+        else
+        	updateActivePart();
     }
     
     /**
@@ -4129,8 +4145,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
         
         /*
-         * Find a part in the list starting from the end and filter fast views
-         * and views from other perspectives.
+         * Find a part in the list starting from the end and filter
+         * and views from other perspectives. Will filter fast views
+         * unless 'includeActiveFastViews' is true;
          */
         private IWorkbenchPartReference getActiveReference(int start, boolean editorsOnly, boolean skipPartsObscuredByZoom) {
             IWorkbenchPartReference[] views = getViewReferences();
@@ -4159,7 +4176,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
                 // Skip fastviews
                 if (ref instanceof IViewReference) {
-                    if (!((IViewReference) ref).isFastView()) {
+                    if (includeActiveFastViews || !((IViewReference) ref).isFastView()) {
                         for (int j = 0; j < views.length; j++) {
                             if (views[j] == ref) {
                                 return ref;
