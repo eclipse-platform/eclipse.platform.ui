@@ -37,6 +37,7 @@ public interface IDebugHelpContextIds {
 	public static final String VARIABLES_CONTENT_PROVIDERS_ACTION = PREFIX + "variables_content_providers_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_SELECT_LOGICAL_STRUCTURE = PREFIX + "variables_select_logical_structure"; //$NON-NLS-1$
 	public static final String VARIABLES_SELECT_DETAIL_PANE = PREFIX + "variables_select_detail_pane_action_context"; //$NON-NLS-1$
+	public static final String VARIABLES_AUTO_EXPAND = PREFIX + "variables_auto_expand_action_context"; //$NON-NLS-1$
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_context"; //$NON-NLS-1$			
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_context"; //$NON-NLS-1$
 	public static final String EDIT_LAUNCH_CONFIGURATION_ACTION = PREFIX + "edit_launch_configuration_action_context"; //$NON-NLS-1$

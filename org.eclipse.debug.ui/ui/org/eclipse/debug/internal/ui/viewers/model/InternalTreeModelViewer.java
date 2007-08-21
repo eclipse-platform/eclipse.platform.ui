@@ -1178,4 +1178,29 @@ public class InternalTreeModelViewer extends TreeViewer {
 			}
 		}
 	}
+
+	/* (non-Javadoc)
+	 * 
+	 * Works in conjunction with content provider. If there is a cached expand/select
+	 * state for a viewer input, use that instead.
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setAutoExpandLevel(int)
+	 */
+	public void setAutoExpandLevel(int level) {
+		super.setAutoExpandLevel(level);
+		((ModelContentProvider)getContentProvider()).setAutoExpandLevel(level);
+	}
+	
+	/**
+	 * Notification to restore a previously set auto-expand level to the given
+	 * level. Called by content provider when no viewer state is available to 
+	 * restore for a given viewer input.
+	 * 
+	 * @param level expand level
+	 */
+	protected void restoreAutoExpandLevel(int level) {
+		super.setAutoExpandLevel(level);
+	}
+	
+	
 }

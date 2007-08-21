@@ -45,9 +45,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IMemento;
@@ -111,6 +113,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * Used to queue a viewer input for state restore
 	 */
 	private Object fQueuedRestore = null;
+	
+	/**
+	 * Auto expand level
+	 */
+	private int fAutoExpandLevel = 0;
 	
 	/**
 	 * Used to determine when restoration delta has been processed
@@ -252,7 +259,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	private  synchronized void startRestoreViewerState(final Object input) {
 		fPendingState = null;
 		final IElementMementoProvider defaultProvider = ViewerAdapterService.getMementoProvider(input);
-		if (defaultProvider != null) {
+		if (defaultProvider == null) {
+			((InternalTreeModelViewer)fViewer).restoreAutoExpandLevel(fAutoExpandLevel);
+		} else {
+			((InternalTreeModelViewer)fViewer).restoreAutoExpandLevel(0);
 			// build a model delta representing expansion and selection state
 			final ModelDelta delta = new ModelDelta(input, IModelDelta.NO_CHANGE);
 			final XMLMemento inputMemento = XMLMemento.createWriteRoot("VIEWER_INPUT_MEMENTO"); //$NON-NLS-1$
@@ -270,7 +280,20 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 						try {
 							keyMemento.save(writer);
 							final ModelDelta stateDelta = (ModelDelta) fViewerStates.remove(writer.toString());
-							if (stateDelta != null) {
+							if (stateDelta == null) {
+								// trigger auto expand when no state to restore
+								((InternalTreeModelViewer)fViewer).restoreAutoExpandLevel(fAutoExpandLevel);
+								if (fAutoExpandLevel > 0 || fAutoExpandLevel == AbstractTreeViewer.ALL_LEVELS) {
+									UIJob job = new UIJob("auto expand") { //$NON-NLS-1$
+										public IStatus runInUIThread(IProgressMonitor monitor) {
+											((TreeViewer)fViewer).expandToLevel(1);
+											return Status.OK_STATUS;
+										}
+									};
+									job.setSystem(true);
+									job.schedule();
+								}
+							} else {
 								if (DEBUG_CONTENT_PROVIDER) {
 									System.out.println("RESTORE: " + stateDelta.toString()); //$NON-NLS-1$
 								}
@@ -1212,4 +1235,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			}
 		}
 	}
+
+	/**
+	 * Sets the auto-expand level for the viewer such that it works with viewer
+	 * select/expand state restoration.
+	 * 
+	 * @param level level to expand to
+	 */
+	protected void setAutoExpandLevel(int level) {
+		fAutoExpandLevel = level;
+		fViewerStates.clear();
+	}
+	
 }
