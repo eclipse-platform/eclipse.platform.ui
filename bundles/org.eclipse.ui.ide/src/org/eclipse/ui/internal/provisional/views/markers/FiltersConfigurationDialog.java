@@ -45,6 +45,7 @@ import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -61,7 +62,7 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private CheckboxTableViewer filtersList;
 
-	private FilterConfigurationArea scopeArea = new ScopeArea();
+	private GroupFilterConfigurationArea scopeArea = new ScopeArea();
 
 	private MarkerFieldFilterGroup selectedFilterGroup;
 
@@ -383,8 +384,14 @@ public class FiltersConfigurationDialog extends Dialog {
 			scopeArea.applyToGroup(selectedFilterGroup);
 			Iterator areas = filterAreas.iterator();
 			while (areas.hasNext()) {
-				((FilterConfigurationArea) areas.next())
-						.applyToGroup(selectedFilterGroup);
+				FilterConfigurationArea area = (FilterConfigurationArea) areas
+						.next();
+
+				// Handle the internal special cases
+				if (area instanceof GroupFilterConfigurationArea)
+					((GroupFilterConfigurationArea) area)
+							.applyToGroup(selectedFilterGroup);
+				area.apply(selectedFilterGroup.getFilter(area.getField()));
 			}
 		}
 		super.okPressed();
@@ -416,9 +423,15 @@ public class FiltersConfigurationDialog extends Dialog {
 		while (areas.hasNext()) {
 			FilterConfigurationArea area = (FilterConfigurationArea) areas
 					.next();
-			if (old != null)
-				area.applyToGroup(old);
-			area.initializeFromGroup(selectedFilterGroup);
+			if (old != null) {
+				if (area instanceof GroupFilterConfigurationArea)
+					((GroupFilterConfigurationArea) area).applyToGroup(old);
+				area.apply(old.getFilter(area.getField()));
+			}
+			if (area instanceof GroupFilterConfigurationArea)
+				((GroupFilterConfigurationArea) area)
+						.initializeFromGroup(selectedFilterGroup);
+			area.initialize(selectedFilterGroup.getFilter(area.getField()));
 		}
 	}
 

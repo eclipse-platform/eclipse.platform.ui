@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
 /**
  * The MarkerColumnLabelProvider is a label provider for an individual column.

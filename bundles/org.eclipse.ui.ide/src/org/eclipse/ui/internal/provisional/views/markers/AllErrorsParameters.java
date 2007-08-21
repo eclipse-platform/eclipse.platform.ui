@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.internal.provisional.views.markers.api.FiltersContributionParameters;
 
 /**
  * AllErrorsParameters is the parameters for the error severity type.

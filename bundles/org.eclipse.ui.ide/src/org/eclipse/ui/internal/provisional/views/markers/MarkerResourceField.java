@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
@@ -32,6 +35,6 @@ public class MarkerResourceField extends MarkerField {
 					.getConcreteRepresentative().getMarker().getResource()
 					.getName());
 		}
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 }

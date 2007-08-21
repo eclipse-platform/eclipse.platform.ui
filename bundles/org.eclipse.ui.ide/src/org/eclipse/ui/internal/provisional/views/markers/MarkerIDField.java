@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+
 
 /**
  * @since 3.4
@@ -26,7 +30,7 @@ public class MarkerIDField extends MarkerField {
 	public String getValue(MarkerItem item) {
 		if (item.isConcrete())
 			return String.valueOf(item.getID());
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 
 	/*

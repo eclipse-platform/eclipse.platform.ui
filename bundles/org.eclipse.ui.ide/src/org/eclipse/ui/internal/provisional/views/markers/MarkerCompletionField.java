@@ -12,6 +12,9 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 
 /**
  * MarkerCompletionField is the class that specifies the completion entry.
@@ -43,7 +46,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 
 	/*
@@ -52,7 +55,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 
 	/*
@@ -74,9 +77,9 @@ public class MarkerCompletionField extends MarkerField {
 			return null;
 
 		if (done == 1) {
-			return MarkerUtilities.createImage(COMPLETE_IMAGE_PATH);
+			return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH);
 		}
-		return MarkerUtilities.createImage(INCOMPLETE_IMAGE_PATH);
+		return MarkerSupportInternalUtilities.createImage(INCOMPLETE_IMAGE_PATH);
 	}
 
 	

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.provisional.views.markers;
+package org.eclipse.ui.internal.provisional.views.markers.api;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -36,11 +36,11 @@ public abstract class FilterConfigurationArea {
 	private FontMetrics fontMetrics;
 
 	/**
-	 * Apply the current settings to group.
+	 * Apply the current settings to the filter.
 	 * 
-	 * @param group
+	 * @param filter
 	 */
-	public abstract void applyToGroup(MarkerFieldFilterGroup group);
+	public abstract void apply(MarkerFieldFilter filter);
 
 	/**
 	 * Create the contents of the configuration area in the parent.
@@ -49,15 +49,6 @@ public abstract class FilterConfigurationArea {
 	 */
 	public abstract void createContents(Composite parent);
 
-	/**
-	 * Get the MarkerFieldFilter associated with the filter in group.
-	 * 
-	 * @param group
-	 * @return MarkerFieldFilter or <code>null</code>
-	 */
-	protected MarkerFieldFilter getFilter(MarkerFieldFilterGroup group) {
-		return group.getFilter(this.field);
-	}
 
 	/**
 	 * Return the {@link FontMetrics} for the receiver.
@@ -91,11 +82,11 @@ public abstract class FilterConfigurationArea {
 	}
 
 	/**
-	 * Initialise the receiver using the entries in group.
+	 * Initialise the receiver using the filter.
 	 * 
-	 * @param group
+	 * @param filter
 	 */
-	public abstract void initializeFromGroup(MarkerFieldFilterGroup group);
+	public abstract void initialize(MarkerFieldFilter filter);
 	
 	/**
 	 * Set the markerField for the receiver
@@ -117,6 +108,14 @@ public abstract class FilterConfigurationArea {
 		data.widthHint = Math.max(widthHint, minSize.x);
 		button.setLayoutData(data);
 		
+	}
+
+	/**
+	 * Return the field for the receiver.
+	 * @return
+	 */
+	public MarkerField getField() {
+		return field;
 	}
 
 }

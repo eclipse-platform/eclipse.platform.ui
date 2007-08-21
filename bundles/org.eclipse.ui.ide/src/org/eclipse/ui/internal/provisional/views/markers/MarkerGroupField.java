@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
@@ -59,7 +62,7 @@ class MarkerGroupField extends MarkerField {
 				return groupingEntry.getLabel();
 			} catch (CoreException e) {
 				StatusManager.getManager().handle(e.getStatus());
-				return MarkerUtilities.EMPTY_STRING;
+				return MarkerSupportConstants.EMPTY_STRING;
 			}
 			
 		}

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 
 /**
  * MarkerState is the object that handles the state of an ExtendedMarkersView.

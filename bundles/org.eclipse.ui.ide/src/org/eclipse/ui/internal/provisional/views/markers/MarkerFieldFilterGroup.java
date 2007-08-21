@@ -27,6 +27,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
+import org.eclipse.ui.internal.provisional.views.markers.api.FiltersContributionParameters;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -212,7 +217,7 @@ class MarkerFieldFilterGroup {
 	 * @return
 	 */
 	public String getName() {
-		return element.getAttribute(MarkerUtilities.ATTRIBUTE_NAME);
+		return element.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -221,7 +226,7 @@ class MarkerFieldFilterGroup {
 	 * @return
 	 */
 	public String getID() {
-		return element.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
+		return element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -396,7 +401,7 @@ class MarkerFieldFilterGroup {
 		IMemento[] children = memento.getChildren(TAG_FIELD_FILTER_ENTRY);
 		for (int i = 0; i < children.length; i++) {
 			IMemento childMemento = children[i];
-			String id = childMemento.getString(MarkerUtilities.ATTRIBUTE_ID);
+			String id = childMemento.getString(MarkerSupportConstants.ATTRIBUTE_ID);
 			if (filterMap.containsKey(id)) {
 				((MarkerFieldFilter) filterMap.get(id))
 						.loadSettings(childMemento);

@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+
 
 /**
  * MarkerCreationTimeField is the field that shows the creation time of a field.
@@ -29,7 +33,7 @@ public class MarkerCreationTimeField extends MarkerField {
 	public String getValue(MarkerItem item) {
 		long creationTime = item.getCreationTime();
 		if (creationTime < 0)
-			return MarkerUtilities.EMPTY_STRING;
+			return MarkerSupportConstants.EMPTY_STRING;
 		return String.valueOf(creationTime);
 
 	}

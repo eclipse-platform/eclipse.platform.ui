@@ -12,6 +12,9 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 
 /**
  * MarkerPriorityField is the field for task priority.
@@ -36,14 +39,14 @@ public class MarkerPriorityField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 	
 	/* (non-Javadoc)
@@ -61,10 +64,10 @@ public class MarkerPriorityField extends MarkerField {
             int priority = item.getAttributeValue(IMarker.PRIORITY,
                     IMarker.PRIORITY_NORMAL);
             if (priority == IMarker.PRIORITY_HIGH) {
-                return MarkerUtilities.createImage(HIGH_PRIORITY_IMAGE_PATH);
+                return MarkerSupportInternalUtilities.createImage(HIGH_PRIORITY_IMAGE_PATH);
             }
             if (priority == IMarker.PRIORITY_LOW) {
-                return MarkerUtilities.createImage(LOW_PRIORITY_IMAGE_PATH);
+                return MarkerSupportInternalUtilities.createImage(LOW_PRIORITY_IMAGE_PATH);
             }
         } catch (NumberFormatException e) {
             return null;

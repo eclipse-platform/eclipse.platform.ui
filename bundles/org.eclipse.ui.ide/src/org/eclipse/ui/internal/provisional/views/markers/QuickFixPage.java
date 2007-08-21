@@ -30,6 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.Util;
@@ -53,8 +54,8 @@ public class QuickFixPage extends WizardPage {
 	 * @param resolutions
 	 */
 	public QuickFixPage(IMarker marker, IMarkerResolution[] resolutions) {
-		super(marker.getAttribute(MarkerUtilities.ATTRIBUTE_NAME,
-				MarkerUtilities.EMPTY_STRING));
+		super(marker.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME,
+				MarkerSupportConstants.EMPTY_STRING));
 		this.marker = marker;
 		this.resolutions = resolutions;
 	}

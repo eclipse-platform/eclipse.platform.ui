@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.provisional.views.markers;
+package org.eclipse.ui.internal.provisional.views.markers.api;
 
 import java.net.URL;
 
@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
@@ -36,55 +37,13 @@ public abstract class MarkerField {
 	 * Constant to indicate an ascending sort direction.
 	 */
 	public static final int ASCENDING = 1;
+	private static final String ATTRIBUTE_FILTER_CLASS = "filterClass"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
 	/**
 	 * Constant to indicate an descending sort direction.
 	 */
 	public static final int DESCENDING = -1;
-	private static final String ATTRIBUTE_FILTER_CLASS = "filterClass"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
 	IConfigurationElement configurationElement;
-
-	/**
-	 * @return The text to be displayed in the column header for this field.
-	 */
-	public String getColumnHeaderText() {
-		return configurationElement.getAttribute(MarkerSupportRegistry.NAME);
-	}
-
-	/**
-	 * @return The image to be displayed in the column header for this field or
-	 *         <code>null<code>.
-	 */
-	public Image getColumnHeaderImage() {
-		String path = configurationElement
-				.getAttribute(MarkerUtilities.ATTRIBUTE_ICON);
-		if (path == null)
-			return null;
-		URL url = BundleUtility.find(configurationElement.getContributor()
-				.getName(), path);
-		if (url == null)
-			return null;
-		return IDEWorkbenchPlugin.getDefault().getResourceManager()
-				.createImageWithDefault(ImageDescriptor.createFromURL(url));
-	}
-
-	/**
-	 * @param item
-	 * @return The String value of the object for this particular field to be
-	 *         displayed to the user.
-	 */
-	public abstract String getValue(MarkerItem item);
-
-	/**
-	 * Return the image for the receiver. By default return <code>null</code>.
-	 * 
-	 * @param item
-	 * @return The image value of the object for this particular field to be
-	 *         displayed to the user or <code>null<code>.
-	 */
-	public Image getImage(MarkerItem item) {
-		return null;
-	}
 
 	/**
 	 * Compare item1 and item2 for sorting purposes.
@@ -104,52 +63,11 @@ public abstract class MarkerField {
 	}
 
 	/**
-	 * Get the default direction for the receiver. Return either #ASCENDING or
-	 * #DESCENDING. Default value is #ASCENDING
-	 * 
-	 * @return int
-	 */
-	public int getDefaultDirection() {
-		return ASCENDING;
-	}
-
-	/**
-	 * Get the column weight. A value of 1 (the default) indicates that it
-	 * should be roughly equal to the other columns.
-	 * 
-	 * @return float
-	 */
-	public float getColumnWeight() {
-		return 1;
-	}
-
-	/**
-	 * Get the severity of the element.
-	 * 
-	 * @param obj1
-	 * @return int
-	 */
-	protected int getSeverity(MarkerItem element) {
-		if (element.isConcrete())
-			return element.getAttributeValue(IMarker.SEVERITY, -1);
-		return 0;
-	}
-
-	/**
-	 * Set the configuration element used by the receiver.
-	 * 
-	 * @param element
-	 */
-	public void setConfigurationElement(IConfigurationElement element) {
-		configurationElement = element;
-	}
-
-	/**
 	 * Generate the filter for the receiver from the configurationElement.
 	 * 
 	 * @return MarkerFieldFilter or <code>null</code>.
 	 */
-	MarkerFieldFilter generateFilter() {
+	public MarkerFieldFilter generateFilter() {
 		try {
 			if (configurationElement.getAttribute(ATTRIBUTE_FILTER_CLASS) == null)
 				return null;
@@ -171,7 +89,7 @@ public abstract class MarkerField {
 	 * 
 	 * @return FilterConfigurationArea or <code>null</code>
 	 */
-	FilterConfigurationArea generateFilterArea() {
+	public FilterConfigurationArea generateFilterArea() {
 		try {
 			if (configurationElement
 					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null)
@@ -189,20 +107,104 @@ public abstract class MarkerField {
 	}
 
 	/**
+	 * @return The image to be displayed in the column header for this field or
+	 *         <code>null<code>.
+	 */
+	public Image getColumnHeaderImage() {
+		String path = configurationElement
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ICON);
+		if (path == null)
+			return null;
+		URL url = BundleUtility.find(configurationElement.getContributor()
+				.getName(), path);
+		if (url == null)
+			return null;
+		return IDEWorkbenchPlugin.getDefault().getResourceManager()
+				.createImageWithDefault(ImageDescriptor.createFromURL(url));
+	}
+
+	/**
+	 * @return The text to be displayed in the column header for this field.
+	 */
+	public String getColumnHeaderText() {
+		return configurationElement.getAttribute(MarkerSupportRegistry.NAME);
+	}
+
+	/**
+	 * Get the column weight. A value of 1 (the default) indicates that it
+	 * should be roughly equal to the other columns.
+	 * 
+	 * @return float
+	 */
+	public float getColumnWeight() {
+		return 1;
+	}
+
+	/**
+	 * Get the default direction for the receiver. Return either #ASCENDING or
+	 * #DESCENDING. Default value is #ASCENDING
+	 * 
+	 * @return int
+	 */
+	public int getDefaultDirection() {
+		return ASCENDING;
+	}
+
+	/**
 	 * Return the id for the receiver.
 	 * 
 	 * @return String
 	 */
-	String getID() {
-		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
+	public String getID() {
+		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+	}
+
+	/**
+	 * Return the image for the receiver. By default return <code>null</code>.
+	 * 
+	 * @param item
+	 * @return The image value of the object for this particular field to be
+	 *         displayed to the user or <code>null<code>.
+	 */
+	public Image getImage(MarkerItem item) {
+		return null;
 	}
 
 	/**
 	 * Return the value for a marker.
+	 * 
 	 * @param marker
 	 * @return String
 	 */
-	String getMarkerValue(IMarker marker) {
+	public String getMarkerValue(IMarker marker) {
 		return getValue(new MarkerEntry(marker));
+	}
+
+	/**
+	 * Get the severity of the element.
+	 * 
+	 * @param element
+	 * @return int
+	 */
+	public int getSeverity(MarkerItem element) {
+		if (element.isConcrete())
+			return element.getAttributeValue(IMarker.SEVERITY, -1);
+		return 0;
+	}
+
+	/**
+	 * @param item
+	 * @return The String value of the object for this particular field to be
+	 *         displayed to the user.
+	 */
+	public abstract String getValue(MarkerItem item);
+
+	/**
+	 * Set the configuration element used by the receiver.
+	 * 
+	 * @param element
+	 */
+	public void setConfigurationElement(IConfigurationElement element) {
+		configurationElement = element;
 	}
 }

@@ -9,9 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.provisional.views.markers;
+package org.eclipse.ui.internal.provisional.views.markers.api;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 import com.ibm.icu.text.CollationKey;
@@ -132,15 +133,15 @@ public abstract class MarkerItem {
 	 */
 	public String getLocation() {
 		//There is no location by default
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 
 	}
 	
 	/**
+	 * Return the marker for the receiver.
 	 * @return
 	 */
 	public IMarker getMarker() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -160,7 +161,7 @@ public abstract class MarkerItem {
 	 */
 	public String getPath() {
 		//There is no path by default
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 
 	}
 
@@ -176,7 +177,7 @@ public abstract class MarkerItem {
 	 * @return
 	 */
 	public String getMarkerTypeName() {
-		return MarkerUtilities.EMPTY_STRING;
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
 
 }

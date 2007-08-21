@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**

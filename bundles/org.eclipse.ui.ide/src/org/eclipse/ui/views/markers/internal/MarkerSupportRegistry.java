@@ -35,7 +35,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**

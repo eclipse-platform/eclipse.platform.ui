@@ -12,6 +12,9 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -39,7 +42,7 @@ public class MarkerSeverityField extends MarkerField {
 			return MarkerMessages.filtersDialog_severityInfo;
 
 		default:
-			return MarkerUtilities.EMPTY_STRING;
+			return MarkerSupportConstants.EMPTY_STRING;
 		}
 
 	}

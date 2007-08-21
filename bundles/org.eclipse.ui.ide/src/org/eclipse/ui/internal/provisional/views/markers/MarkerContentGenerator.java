@@ -36,6 +36,10 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -67,7 +71,7 @@ public class MarkerContentGenerator {
 	private IConfigurationElement configurationElement;
 	private Collection enabledFilters;
 	private Collection filters;
-	private IResource[] focusResources = MarkerUtilities.EMPTY_RESOURCE_ARRAY;
+	private IResource[] focusResources = MarkerSupportInternalUtilities.EMPTY_RESOURCE_ARRAY;
 	private Collection markerTypes;
 	private MarkerField[] allFields;
 	private MarkerField[] visibleFields;
@@ -407,7 +411,7 @@ public class MarkerContentGenerator {
 	 * @return String
 	 */
 	public String getId() {
-		return configurationElement.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
+		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -423,7 +427,7 @@ public class MarkerContentGenerator {
 			for (int i = 0; i < markerTypeElements.length; i++) {
 				IConfigurationElement configurationElement = markerTypeElements[i];
 				String elementName = configurationElement
-						.getAttribute(MarkerUtilities.ATTRIBUTE_ID);
+						.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(
 						elementName).getAllSubTypes();
 				for (int j = 0; j < types.length; j++) {
@@ -459,7 +463,7 @@ public class MarkerContentGenerator {
 	 */
 	public String getName() {
 		return configurationElement
-				.getAttribute(MarkerUtilities.ATTRIBUTE_NAME);
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -555,7 +559,7 @@ public class MarkerContentGenerator {
 		Collection visibleFieldList = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			MarkerField field = registry.getField(elements[i]
-					.getAttribute(MarkerUtilities.ATTRIBUTE_ID));
+					.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
 			if (field == null)
 				continue;
 			allFieldList.add(field);
@@ -716,7 +720,7 @@ public class MarkerContentGenerator {
 
 		for (int i = 0; i < children.length; i++) {
 			IMemento child = children[i];
-			String id = child.getString(MarkerUtilities.ATTRIBUTE_ID);
+			String id = child.getString(MarkerSupportConstants.ATTRIBUTE_ID);
 			Iterator groups = getAllFilters().iterator();
 			while (groups.hasNext()) {
 				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups

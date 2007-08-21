@@ -15,6 +15,7 @@ import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
 
 /**
@@ -47,7 +48,7 @@ public class MarkerDescriptionAndMessageField extends MarkerDescriptionField {
 	 */
 	public Image getImage(MarkerItem item) {
 		if (item.isConcrete())
-			return MarkerUtilities.getSeverityImage(getSeverity(item));
+			return MarkerSupportInternalUtilities.getSeverityImage(getSeverity(item));
 
 		try {
 			return JFaceResources

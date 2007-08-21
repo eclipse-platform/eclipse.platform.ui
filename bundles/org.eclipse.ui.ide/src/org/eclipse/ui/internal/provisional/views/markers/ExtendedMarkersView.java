@@ -67,6 +67,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -537,12 +540,12 @@ public class ExtendedMarkersView extends ViewPart {
 					result.add(((MarkerEntry) next).getMarker());
 			}
 			if (result.isEmpty())
-				return MarkerUtilities.EMPTY_MARKER_ARRAY;
+				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
 			IMarker[] markers = new IMarker[result.size()];
 			result.toArray(markers);
 			return markers;
 		}
-		return MarkerUtilities.EMPTY_MARKER_ARRAY;
+		return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
 
 	}
 
@@ -821,7 +824,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	protected void updateTitle() {
 
-		String status = MarkerUtilities.EMPTY_STRING;
+		String status = MarkerSupportConstants.EMPTY_STRING;
 		int filteredCount = builder.getVisibleMarkers().getSize();
 		int totalCount = builder.getTotalMarkerCount();
 		if (filteredCount == totalCount) {

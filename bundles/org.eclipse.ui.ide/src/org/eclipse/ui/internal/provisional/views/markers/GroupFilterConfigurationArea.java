@@ -11,25 +11,25 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
-
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
 
 /**
- * MarkerTypeField is the field that defines the marker type/
- * 
- * @since 3.3
- * 
+ * GroupFilterConfigurationArea is the FilterConfigurationArea for the special case
+ * group level settings for a {@link MarkerFieldFilterGroup}
+ * @since 3.4
+ *
  */
-public class MarkerTypeField extends MarkerField {
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
+abstract class GroupFilterConfigurationArea extends FilterConfigurationArea {
+	
+	/**
+	 * Apply to the group
+	 * @param group
 	 */
-	public String getValue(MarkerItem item) {
-		return item.getMarkerTypeName();
-	}
-
+	public abstract void applyToGroup(MarkerFieldFilterGroup group);
+	
+	/**
+	 * Initialise from the group
+	 * @param group
+	 */
+	public abstract void initializeFromGroup(MarkerFieldFilterGroup group);
 }

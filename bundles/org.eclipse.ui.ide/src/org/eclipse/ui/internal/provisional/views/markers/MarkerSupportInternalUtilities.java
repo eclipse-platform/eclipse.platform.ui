@@ -20,27 +20,27 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
 
 /**
- * MarkerUtilities is the class that maintains constants and functionality used
+ * MarkerSupportUtilities is the class that maintains constants and functionality used
  * by multiple classes.
  * 
  * @since 3.4
  * 
  */
-class MarkerUtilities {
+class MarkerSupportInternalUtilities {
 
-	static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
-	static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
-	static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	static final CollationKey EMPTY_COLLATION_KEY = Collator.getInstance()
-			.getCollationKey(EMPTY_STRING);
+			.getCollationKey(MarkerSupportConstants.EMPTY_STRING);
 	static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 
 	static final MarkerItem[] EMPTY_MARKER_ITEM_ARRAY = new MarkerItem[0];
@@ -96,6 +96,16 @@ class MarkerUtilities {
 
 		return null;
 
+	}
+	
+	/**
+	 * Get the MarkerFieldFilter associated with the filter in group.
+	 * 
+	 * @param group
+	 * @return MarkerFieldFilter or <code>null</code>
+	 */
+	public final MarkerFieldFilter getFilter(MarkerFieldFilterGroup group, FilterConfigurationArea area) {
+		return group.getFilter(area.getField());
 	}
 
 }

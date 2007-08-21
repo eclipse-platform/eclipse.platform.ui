@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -314,7 +315,7 @@ public class CachedMarkerBuilder {
 			building = true;
 		}
 		if (building) {
-			return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
+			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 		}
 		if (generator.isShowingHierarchy() && categories != null) {
 			return categories;

@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -48,7 +49,7 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
  * @since 3.4
  * 
  */
-public class TypesConfigurationArea extends FilterConfigurationArea {
+public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 	private class CategoryEntry extends TypesEntry {
 
@@ -72,6 +73,22 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 		public void add(MarkerTypeEntry node) {
 			children.add(node);
 			node.setParent(this);
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#addElementsMatching(java.util.Collection,
+		 *      java.util.Collection)
+		 */
+		public void addElementsMatching(Collection selectedTypes,
+				Collection entries) {
+			Iterator childIterator = children.iterator();
+			while (childIterator.hasNext()) {
+				((MarkerTypeEntry) childIterator.next()).addElementsMatching(
+						selectedTypes, entries);
+			}
 
 		}
 
@@ -111,22 +128,6 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 			return children.size() > 0;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#addElementsMatching(java.util.Collection,
-		 *      java.util.Collection)
-		 */
-		public void addElementsMatching(Collection selectedTypes,
-				Collection entries) {
-			Iterator childIterator = children.iterator();
-			while (childIterator.hasNext()) {
-				((MarkerTypeEntry) childIterator.next()).addElementsMatching(
-						selectedTypes, entries);
-			}
-
-		}
-
 	}
 
 	private class MarkerTypeEntry extends TypesEntry {
@@ -141,6 +142,19 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 		 */
 		public MarkerTypeEntry(MarkerType markerType) {
 			this.markerType = markerType;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#addElementsMatching(java.util.Collection,
+		 *      java.util.Collection)
+		 */
+		public void addElementsMatching(Collection selectedTypes,
+				Collection entries) {
+			if (selectedTypes.contains(markerType))
+				entries.add(this);
+
 		}
 
 		/*
@@ -198,22 +212,18 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea.TypesEntry#addElementsMatching(java.util.Collection,
-		 *      java.util.Collection)
-		 */
-		public void addElementsMatching(Collection selectedTypes,
-				Collection entries) {
-			if (selectedTypes.contains(markerType))
-				entries.add(this);
-
-		}
-
 	}
 
 	private abstract class TypesEntry {
+
+		/**
+		 * Add any elements that contain a type in selectedTypes tp entries.
+		 * 
+		 * @param selectedTypes
+		 * @param entries
+		 */
+		public abstract void addElementsMatching(Collection selectedTypes,
+				Collection entries);
 
 		/**
 		 * Return the children of the receiver.
@@ -243,29 +253,20 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 		 */
 		public abstract boolean hasChildren();
 
-		/**
-		 * Add any elements that contain a type in selectedTypes tp entries.
-		 * 
-		 * @param selectedTypes
-		 * @param entries
-		 */
-		public abstract void addElementsMatching(Collection selectedTypes,
-				Collection entries);
-
 	}
 
 	private static Collection EMPTY_COLLECTION = new HashSet();
 
-	private CheckboxTreeViewer typesViewer;
-
 	private HashMap models = new HashMap(0);
+
+	private CheckboxTreeViewer typesViewer;
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#applyToGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
-	public void applyToGroup(MarkerFieldFilterGroup group) {
+	public void apply(MarkerFieldFilter filter) {
 		Collection selectedTypes = new ArrayList();
 		Object[] elements = typesViewer.getCheckedElements();
 		for (int i = 0; i < elements.length; i++) {
@@ -273,9 +274,17 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 				selectedTypes.add(((MarkerTypeEntry) elements[i])
 						.getMarkerType());
 		}
-		((MarkerTypeFieldFilter) getFilter(group))
-				.setSelectedTypes(selectedTypes);
+		((MarkerTypeFieldFilter) filter).setSelectedTypes(selectedTypes);
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#applyToGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
+	 */
+	public void applyToGroup(MarkerFieldFilterGroup group) {
+		// Nothing to set at the group level
 	}
 
 	/*
@@ -427,6 +436,80 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 	}
 
 	/**
+	 * Return the elements for MarkerFieldFilterGroup groip.
+	 * 
+	 * @param group
+	 * @return List of TypesEntry
+	 */
+	protected List elementsForGroup(MarkerFieldFilterGroup group) {
+
+		if (models.containsKey(group))
+			return (List) models.get(group);
+		Iterator roots = group.getAllTypes().iterator();
+		List markerNodes = new ArrayList();
+		HashMap categories = new HashMap();
+		while (roots.hasNext()) {
+			MarkerType markerType = (MarkerType) roots.next();
+
+			String categoryName = MarkerSupportRegistry.getInstance()
+					.getCategory(markerType.getId());
+
+			if (categoryName == null) {
+				markerNodes.add(new MarkerTypeEntry(markerType));
+			} else {
+				CategoryEntry category;
+				if (categories.containsKey(categoryName)) {
+					category = (CategoryEntry) categories.get(categoryName);
+				} else {
+					category = new CategoryEntry(categoryName);
+					categories.put(categoryName, category);
+					markerNodes.add(category);
+				}
+				MarkerTypeEntry node = new MarkerTypeEntry(markerType);
+				category.add(node);
+			}
+
+		}
+		models.put(group, markerNodes);
+		return markerNodes;
+	}
+
+	/**
+	 * Find the type entries for group that correspond to it's current selection
+	 * and add them to the checked or grey checked lists as appropriate.
+	 * 
+	 * @param group
+	 * @param entries
+	 * @param greyEntries
+	 */
+	private void findTypeEntries(MarkerFieldFilterGroup group,
+			Collection entries, Collection greyEntries) {
+		Iterator elements = elementsForGroup(group).iterator();
+
+		Collection selectedTypes = ((MarkerTypeFieldFilter) group
+				.getFilter(this.getField())).getSelectedTypes();
+		while (elements.hasNext()) {
+			TypesEntry entry = (TypesEntry) elements.next();
+			entry.addElementsMatching(selectedTypes, entries);
+			if (entry.hasChildren()) {// Is it a category?
+				Collection children = entry.getChildren();
+				if (entries.containsAll(children))
+					entries.add(entry);
+				else {// See if we need to gray check it
+					Iterator iterator = children.iterator();
+					while (iterator.hasNext()) {
+						if (entries.contains(iterator.next())) {
+							greyEntries.add(entry);
+							break;
+						}
+					}
+				}
+			}
+
+		}
+	}
+
+	/**
 	 * Get a listener for the button selection of a checked button.
 	 * 
 	 * @param checkAll
@@ -518,44 +601,13 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 			}
 		};
 	}
-
-	/**
-	 * Return the elements for MarkerFieldFilterGroup groip.
-	 * 
-	 * @param group
-	 * @return List of TypesEntry
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
-	protected List elementsForGroup(MarkerFieldFilterGroup group) {
-
-		if (models.containsKey(group))
-			return (List) models.get(group);
-		Iterator roots = group.getAllTypes().iterator();
-		List markerNodes = new ArrayList();
-		HashMap categories = new HashMap();
-		while (roots.hasNext()) {
-			MarkerType markerType = (MarkerType) roots.next();
-
-			String categoryName = MarkerSupportRegistry.getInstance()
-					.getCategory(markerType.getId());
-
-			if (categoryName == null) {
-				markerNodes.add(new MarkerTypeEntry(markerType));
-			} else {
-				CategoryEntry category;
-				if (categories.containsKey(categoryName)) {
-					category = (CategoryEntry) categories.get(categoryName);
-				} else {
-					category = new CategoryEntry(categoryName);
-					categories.put(categoryName, category);
-					markerNodes.add(category);
-				}
-				MarkerTypeEntry node = new MarkerTypeEntry(markerType);
-				category.add(node);
-			}
-
-		}
-		models.put(group, markerNodes);
-		return markerNodes;
+	public void initialize(MarkerFieldFilter filter) {
+		// This was already done when initialising from the group.
+		
 	}
 
 	/*
@@ -571,41 +623,6 @@ public class TypesConfigurationArea extends FilterConfigurationArea {
 		findTypeEntries(group, checked, greyed);
 		typesViewer.setCheckedElements(checked.toArray());
 		typesViewer.setGrayedElements(greyed.toArray());
-	}
-
-	/**
-	 * Find the type entries for group that correspond to it's current selection
-	 * and add them to the checked or grey checked lists as appropriate.
-	 * 
-	 * @param group
-	 * @param entries
-	 * @param greyEntries
-	 */
-	private void findTypeEntries(MarkerFieldFilterGroup group,
-			Collection entries, Collection greyEntries) {
-		Iterator elements = elementsForGroup(group).iterator();
-
-		Collection selectedTypes = ((MarkerTypeFieldFilter) getFilter(group))
-				.getSelectedTypes();
-		while (elements.hasNext()) {
-			TypesEntry entry = (TypesEntry) elements.next();
-			entry.addElementsMatching(selectedTypes, entries);
-			if (entry.hasChildren()) {// Is it a category?
-				Collection children = entry.getChildren();
-				if (entries.containsAll(children))
-					entries.add(entry);
-				else {// See if we need to gray check it
-					Iterator iterator = children.iterator();
-					while (iterator.hasNext()) {
-						if (entries.contains(iterator.next())) {
-							greyEntries.add(entry);
-							break;
-						}
-					}
-				}
-			}
-
-		}
 	}
 
 }

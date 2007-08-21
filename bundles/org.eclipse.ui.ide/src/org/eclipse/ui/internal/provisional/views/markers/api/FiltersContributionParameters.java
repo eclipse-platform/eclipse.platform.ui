@@ -9,9 +9,10 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.provisional.views.markers;
+package org.eclipse.ui.internal.provisional.views.markers.api;
 
 import java.util.Map;
+
 
 /**
  * A MarkerFieldParameters is a class that specifies a Map of parameters

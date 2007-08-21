@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import java.util.Comparator;
 
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+
 /**
  * The MarkerComparator is the class that handles the comparison of markers for
  * a specific content provider.

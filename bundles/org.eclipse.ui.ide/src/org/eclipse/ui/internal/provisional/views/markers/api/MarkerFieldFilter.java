@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.provisional.views.markers;
+package org.eclipse.ui.internal.provisional.views.markers.api;
 
 import java.util.Map;
 
@@ -68,9 +68,9 @@ public abstract class MarkerFieldFilter {
 
 	/**
 	 * Get the id this was registered against.
-	 * @return
+	 * @return String
 	 */
-	String getID() {
+	public String getID() {
 		return getField().getID();
 	}
 

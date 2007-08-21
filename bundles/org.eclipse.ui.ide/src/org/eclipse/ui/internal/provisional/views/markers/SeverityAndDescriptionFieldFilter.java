@@ -14,6 +14,8 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 
 /**
  * SeverityAndDescriptionFieldFilter is the filter for the severity and
@@ -32,7 +34,7 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	int selectedSeverities = IMarker.SEVERITY_ERROR | IMarker.SEVERITY_WARNING
 			| IMarker.SEVERITY_INFO;
 	String containsModifier = CONTAINS;
-	String containsText = MarkerUtilities.EMPTY_STRING;
+	String containsText = MarkerSupportConstants.EMPTY_STRING;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -62,11 +64,11 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 		if (value != null && value instanceof Integer) {
 			selectedSeverities = ((Integer) value).intValue();
 		}
-		Object modifier = values.get(MarkerUtilities.CONTAINS_MODIFIER_TOKEN);
+		Object modifier = values.get(MarkerSupportInternalUtilities.CONTAINS_MODIFIER_TOKEN);
 		if (modifier != null && modifier instanceof String)
 			containsModifier = (String) modifier;
 
-		Object text = values.get(MarkerUtilities.CONTAINS_TEXT_TOKEN);
+		Object text = values.get(MarkerSupportInternalUtilities.CONTAINS_TEXT_TOKEN);
 		if (text != null && text instanceof String)
 			containsText = (String) text;
 

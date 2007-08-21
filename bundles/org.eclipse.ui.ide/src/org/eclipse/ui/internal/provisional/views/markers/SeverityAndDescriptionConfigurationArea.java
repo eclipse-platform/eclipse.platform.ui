@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -55,14 +57,17 @@ public class SeverityAndDescriptionConfigurationArea extends
 		super();
 	}
 
-	public void applyToGroup(MarkerFieldFilterGroup group) {
-		MarkerFieldFilter filter = getFilter(group);
-		if (filter == null)
-			return;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
+	 */
+	public void apply(MarkerFieldFilter filter) {
 		SeverityAndDescriptionFieldFilter sevFilter = (SeverityAndDescriptionFieldFilter) filter;
 		sevFilter.setContainsModifier(descriptionCombo.getText());
 		sevFilter.setContainsText(descriptionText.getText());
 		sevFilter.selectedSeverities = severities;
+
 	}
 
 	/*
@@ -187,12 +192,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
-	public void initializeFromGroup(MarkerFieldFilterGroup group) {
-		MarkerFieldFilter filter = getFilter(group);
-		if (filter == null)
-			return;
+	public void initialize(MarkerFieldFilter filter) {
 		SeverityAndDescriptionFieldFilter sevFilter = (SeverityAndDescriptionFieldFilter) filter;
 		descriptionCombo.setText(sevFilter.getContainsModifier());
 		descriptionText.setText(sevFilter.getContainsText());

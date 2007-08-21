@@ -16,6 +16,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -24,7 +25,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * @since 3.4
  *
  */
-class ScopeArea extends FilterConfigurationArea {
+class ScopeArea extends GroupFilterConfigurationArea {
 
 	private Button[] buttons;
 	int scope;
@@ -119,6 +120,22 @@ class ScopeArea extends FilterConfigurationArea {
 		buttons[scope].setSelection(false);
 		scope = group.getScope();
 		buttons[scope].setSelection(true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
+	 */
+	public void apply(MarkerFieldFilter filter) {
+		// Do nothing as this is a group level setting
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
+	 */
+	public void initialize(MarkerFieldFilter filter) {
+		// Do nothing as this is a group level setting
+		
 	}
 
 }

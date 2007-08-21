@@ -18,6 +18,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -101,7 +103,7 @@ public class MarkerEntry extends MarkerItem {
 	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getChildren()
 	 */
 	public MarkerItem[] getChildren() {
-		return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
+		return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 	}
 
 	/**
@@ -117,7 +119,7 @@ public class MarkerEntry extends MarkerItem {
 			return (CollationKey) collationKeys.get(attribute);
 		String attributeValue = getAttributeValue(attribute, defaultValue);
 		if (attributeValue.length() == 0)
-			return MarkerUtilities.EMPTY_COLLATION_KEY;
+			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		CollationKey key = Collator.getInstance().getCollationKey(
 				attributeValue);
 		collationKeys.put(attribute, key);
@@ -153,7 +155,7 @@ public class MarkerEntry extends MarkerItem {
 	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getDescription()
 	 */
 	public String getDescription() {
-		return getAttributeValue(IMarker.MESSAGE, MarkerUtilities.EMPTY_STRING);
+		return getAttributeValue(IMarker.MESSAGE, MarkerSupportConstants.EMPTY_STRING);
 	}
 
 	/*
@@ -176,7 +178,7 @@ public class MarkerEntry extends MarkerItem {
 		try {
 			if (marker.getAttribute(IMarker.LOCATION) != null) {
 				String value = marker.getAttribute(IMarker.LOCATION,
-						MarkerUtilities.EMPTY_STRING);
+						MarkerSupportConstants.EMPTY_STRING);
 				attributeCache.put(IMarker.LOCATION, marker
 						.getAttribute(IMarker.LOCATION));
 				return value;

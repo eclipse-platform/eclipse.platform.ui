@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 class MarkerCategory extends MarkerItem {
@@ -56,7 +57,7 @@ class MarkerCategory extends MarkerItem {
 			// Return nothing while a build is going on as this could be
 			// stale
 			if (this.cachedMarkerBuilder.isBuilding()) {
-				return MarkerUtilities.EMPTY_MARKER_ITEM_ARRAY;
+				return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 			}
 
 			MarkerItem[] allMarkers = cachedMarkerBuilder.getMarkerEntries();
