@@ -20,6 +20,8 @@ import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -235,6 +237,12 @@ public class RefactoringStatusViewer extends SashForm {
 		// Add a column so that we can pack it in setVisible.
 		TableColumn tc= new TableColumn(tableControl, SWT.NONE);
 		tc.setResizable(false);
+		
+		tableControl.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result= RefactoringUIMessages.RefactoringStatusViewer_Found_problems;
+			}
+		});
 	}
 
 	//---- Feed status entry into context viewer ---------------------------------------------------------
