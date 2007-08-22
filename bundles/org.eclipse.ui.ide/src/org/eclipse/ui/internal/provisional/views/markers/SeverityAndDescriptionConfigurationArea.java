@@ -220,7 +220,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 		if (enabled)
 			severities = constant | severities;
 		else
-			severities = constant | ~severities;
+			severities = constant ^ severities;
 
 	}
 
