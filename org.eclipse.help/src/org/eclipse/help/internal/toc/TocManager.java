@@ -181,6 +181,18 @@ public class TocManager {
 				ITocContribution[] contrib;
 				try {
 					contrib = providers[i].getTocContributions(locale);
+					for (int j=0;j<contrib.length;++j) {
+						TocContribution contribution = new TocContribution();
+						contribution.setCategoryId(contrib[j].getCategoryId());
+						contribution.setContributorId(contrib[j].getContributorId());
+						contribution.setExtraDocuments(contrib[j].getExtraDocuments());
+						contribution.setId(contrib[j].getId());
+						contribution.setLocale(contrib[j].getLocale());
+						contribution.setPrimary(contrib[j].isPrimary());
+						IToc toc = contrib[j].getToc();
+						contribution.setToc(toc instanceof Toc ? (Toc)toc : (Toc)UAElementFactory.newElement(toc));
+						contributions.add(contribution);
+					}
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
@@ -189,18 +201,6 @@ public class TocManager {
 					continue;
 				}
 				
-				for (int j=0;j<contrib.length;++j) {
-					TocContribution contribution = new TocContribution();
-					contribution.setCategoryId(contrib[j].getCategoryId());
-					contribution.setContributorId(contrib[j].getContributorId());
-					contribution.setExtraDocuments(contrib[j].getExtraDocuments());
-					contribution.setId(contrib[j].getId());
-					contribution.setLocale(contrib[j].getLocale());
-					contribution.setPrimary(contrib[j].isPrimary());
-					IToc toc = contrib[j].getToc();
-					contribution.setToc(toc instanceof Toc ? (Toc)toc : (Toc)UAElementFactory.newElement(toc));
-					contributions.add(contribution);
-				}
 			}
 			cached = (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
 			tocContributionsByLocale.put(locale, cached);
