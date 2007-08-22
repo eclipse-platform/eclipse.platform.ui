@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,8 +31,10 @@ import java.util.regex.Pattern;
  * dollar := '$'. <br />
  * variable := identifier | identifier ':' type. <br />
  * type := qualifiedname | qualifiedname '(' arguments ')'. <br />
- * arguments := (qualifiedname ',')* qualifiedname. <br />
+ * arguments := (argument ',')* argument. <br />
+ * argument := qualifiedname | argumenttext. <br />
  * qualifiedname := (identifier '.')* identifier. <br />
+ * argumenttext := ''' ((character - ''') || (''' '''))* '''. <br />
  * </p>
  * <p>
  * Clients may only replace the <code>createVariable</code> method of this class.
@@ -42,16 +44,41 @@ import java.util.regex.Pattern;
  */
 public class TemplateTranslator {
 	/**
+	 * Regex pattern for qualifiedname
+	 * @since 3.4
+	 */
+	private static final String QUALIFIED_NAME= "(?:\\w++\\.)*\\w++"; //$NON-NLS-1$
+
+	/**
+	 * Regex pattern for argumenttext
+	 * @since 3.4
+	 */
+	private static final String ARGUMENT_TEXT= "'(?:(?:'')|(?:[^']))*'"; //$NON-NLS-1$
+
+	/**
+	 * Regex pattern for argument
+	 * @since 3.4
+	 */
+	private static final String ARGUMENT= "(?:" + QUALIFIED_NAME + ")|(?:" + ARGUMENT_TEXT + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+	/**
 	 * Precompiled regex pattern for qualified names.
 	 * @since 3.3
 	 */
-	private static final Pattern PARAM_PATTERN= Pattern.compile("(?:\\w++\\.)*\\w++"); //$NON-NLS-1$
+	private static final Pattern PARAM_PATTERN= Pattern.compile(ARGUMENT);
 	/**
 	 * Precompiled regex pattern for valid dollar escapes (dollar literals and variables) and
 	 * (invalid) single dollars.
 	 * @since 3.3
 	 */
-	private static final Pattern ESCAPE_PATTERN= Pattern.compile("\\$\\$|\\$\\{\\s*+(\\w*+)\\s*+(?::\\s*+((?:\\w++\\.)*\\w++)\\s*+(?:\\(\\s*+((?:(?:\\w++\\.)*\\w++\\s*+,\\s*+)*(?:\\w++\\.)*\\w++)\\s*+\\))?\\s*+)?\\}|\\$"); //$NON-NLS-1$
+	private static final Pattern ESCAPE_PATTERN= Pattern.compile(
+			"\\$\\$|\\$\\{\\s*+" + // $$|${  														//$NON-NLS-1$
+			"(\\w*+)" + // variable id group (1)													//$NON-NLS-1$
+			"\\s*+(?::\\s*+" + // : 																//$NON-NLS-1$
+			"(" + QUALIFIED_NAME + ")" + // variable type group (2)									//$NON-NLS-1$ //$NON-NLS-2$
+			"\\s*+(?:\\(\\s*+" + // ( 																//$NON-NLS-1$
+			"((?:(?:" + ARGUMENT + ")\\s*+,\\s*+)*(?:" + ARGUMENT + "))" + // arguments group (3)	//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			"\\s*+\\))?\\s*+)?\\}|\\$"); // )}|$ 													//$NON-NLS-1$
 	/**
 	 * @since 3.3
 	 */
@@ -176,8 +203,15 @@ public class TemplateTranslator {
 
 		final Matcher matcher= PARAM_PATTERN.matcher(paramString);
 		List params= new ArrayList(5);
-		while (matcher.find())
-			params.add(matcher.group());
+		while (matcher.find()) {
+			String argument= matcher.group();
+			if (argument.charAt(0) == '\'') {
+				// argumentText
+				argument= argument.substring(1, argument.length() - 1).replaceAll("''", "'"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			params.add(argument);
+		}
 
 		return new TemplateVariableType(typeName, (String[]) params.toArray(new String[params.size()]));
 	}

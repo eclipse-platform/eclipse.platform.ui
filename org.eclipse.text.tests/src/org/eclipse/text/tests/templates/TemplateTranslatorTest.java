@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -266,6 +266,28 @@ public class TemplateTranslatorTest extends TestCase {
 		List params= new ArrayList(2);
 		params.add("qual.param1");
 		params.add("qual.param2");
+		assertEquals(params, vars[0].getVariableType().getParams());
+	}
+	
+	public void testTextParameterTemplate() throws Exception {
+		TemplateBuffer buffer= fTranslator.translate("foo ${ var : qual.type ( 'a parameter 1', qual.param2, 'a parameter ''3' ) } bar");
+		assertNull(fTranslator.getErrorMessage());
+		assertEquals("foo var bar", buffer.getString());
+		TemplateVariable[] vars= buffer.getVariables();
+		assertEquals(1, vars.length);
+		assertEquals("var", vars[0].getName());
+		assertEquals(1, vars[0].getOffsets().length);
+		assertEquals(4, vars[0].getOffsets()[0]);
+		assertEquals(3, vars[0].getLength());
+		assertEquals(false, vars[0].isUnambiguous());
+		assertEquals("var", vars[0].getDefaultValue());
+		assertEquals(1, vars[0].getValues().length);
+		assertEquals(vars[0].getDefaultValue(), vars[0].getValues()[0]);
+		assertEquals("qual.type", vars[0].getType());
+		List params= new ArrayList(3);
+		params.add("a parameter 1");
+		params.add("qual.param2");
+		params.add("a parameter '3");
 		assertEquals(params, vars[0].getVariableType().getParams());
 	}
 	
