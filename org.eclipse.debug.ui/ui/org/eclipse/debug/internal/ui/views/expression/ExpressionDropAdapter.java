@@ -156,7 +156,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
         		return validateVariableDrop(target);
         	}
         } else if (TextTransfer.getInstance().isSupportedType(transferType)) {
-            return true;
+            return validateTextDrop(target);
         }
         return false;
     }
@@ -204,6 +204,17 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	        }
 	    }
 	    return enabled == size;
+	}
+	
+	/**
+	 * Validates if the drop is valid by validating the drop location.
+	 * Only valid if the target is <code>null</code> or an <code>IExpression</code>.
+	 * You cannot add a new watch expression inside another.
+	 * @param target target of the drop
+	 * @return whether the drop is valid
+	 */
+	private boolean validateTextDrop(Object target){
+		return target == null || target instanceof IExpression;
 	}
 
 	/**
