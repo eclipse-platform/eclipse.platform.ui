@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.jface.window.Window;
+
 /**
  * Adding owner draw support to a control
  */
@@ -42,6 +44,7 @@ public abstract class OwnerDrawSupport implements Listener {
 	public OwnerDrawSupport(Control control) {
 		fControl= control;
 		fTextLayout= new TextLayout(control.getDisplay());
+		fTextLayout.setOrientation(Window.getDefaultOrientation());
 		
 		control.addListener(SWT.PaintItem, this);
 		control.addListener(SWT.EraseItem, this);
@@ -85,7 +88,7 @@ public abstract class OwnerDrawSupport implements Listener {
 		GC gc= event.gc;
 
 		ColoredString coloredLabel= getColoredLabel(item);
-		boolean isSelected= (event.detail & SWT.SELECTED) != 0 && fControl.isFocusControl();
+		boolean isSelected= (event.detail & SWT.SELECTED) != 0;
 		if (item instanceof TreeItem) {
 			TreeItem treeItem= (TreeItem) item;
 			Image image = treeItem.getImage(event.index);
