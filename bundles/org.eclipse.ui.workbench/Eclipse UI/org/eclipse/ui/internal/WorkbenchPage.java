@@ -1576,6 +1576,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         activationList.add(ref);
         partList.addPart(ref);
         
+        // If we're adding a new editor then allow fast views
+        // to remain open
         if (ref instanceof IEditorReference) {
         	includeActiveFastViews = true;
         	updateActivePart();
