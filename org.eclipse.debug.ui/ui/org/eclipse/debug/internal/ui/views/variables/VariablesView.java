@@ -180,9 +180,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private ConfigureColumnsAction fConfigureColumnsAction;
     
     protected String PREF_STATE_MEMENTO = "pref_state_memento."; //$NON-NLS-1$
-    
-    private static final String AUTO_EXPAND = "AUTO_EXPAND"; //$NON-NLS-1$
-    private int fAutoExpandLevel = 0;
 
 	public static final String LOGICAL_STRUCTURE_TYPE_PREFIX = "VAR_LS_"; //$NON-NLS-1$
 	
@@ -341,7 +338,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		JFaceResources.getFontRegistry().addListener(this);
 
 		TreeModelViewer variablesViewer = createTreeViewer(fSashForm);
-		variablesViewer.setAutoExpandLevel(fAutoExpandLevel);
 		fInputService = new ViewerInputService(fRequester, variablesViewer.getPresentationContext());
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
@@ -349,7 +345,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fDetailPane = new DetailPaneProxy(this);	
 		fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 		
-		createViewMenuActions(variablesViewer);
+		createOrientationActions(variablesViewer);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		String orientation = prefStore.getString(getDetailPanePreferenceKey());
 		for (int i = 0; i < fToggleDetailPaneActions.length; i++) {
@@ -417,10 +413,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 					}
 				}
 			}
-			Integer integer = mem.getInteger(AUTO_EXPAND);
-			if (integer != null) {
-				fAutoExpandLevel = integer.intValue();
-			}
 		}
 		site.getWorkbenchWindow().addPerspectiveListener(this);
     }
@@ -465,7 +457,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			memento.putInteger(SASH_DETAILS_PART, weights[1]);
 		}
 		getVariablesViewer().saveState(memento);
-		memento.putInteger(AUTO_EXPAND, fAutoExpandLevel);
 	}
 
 	/**
@@ -669,7 +660,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * 
 	 * @param viewer 
 	 */
-	private void createViewMenuActions(TreeModelViewer viewer) {
+	private void createOrientationActions(TreeModelViewer viewer) {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager viewMenu = actionBars.getMenuManager();
 		
@@ -684,7 +675,6 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		layoutSubMenu.add(fToggleDetailPaneActions[1]);
 		layoutSubMenu.add(fToggleDetailPaneActions[2]);
 		viewMenu.add(layoutSubMenu);
-		viewMenu.add(new AutoExpandLevelAction(this));
 		viewMenu.add(new Separator());
 		
 		fConfigureColumnsAction = new ConfigureColumnsAction(viewer);
@@ -1084,34 +1074,4 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			getViewer().getControl().setFocus();
 		}
 	}	
-	
-	/**
-	 * Sets the auto expand level for this view's viewer.
-	 * 
-	 * @param level expand level
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer
-	 */
-	protected void setAutoExpandLevel(int level) {
-		boolean diff = level != fAutoExpandLevel;
-		fAutoExpandLevel = level;
-		TreeModelViewer viewer = getVariablesViewer();
-		if (diff)  {
-			// trigger expand
-			Object input = viewer.getInput();
-			viewer.setInput(null);
-			// must set level after clearing input so previous state is not cached
-			viewer.setAutoExpandLevel(level);
-			viewer.setInput(input);
-		}
-	}
-	
-	/**
-	 * Returns the auto expand level for this view.
-	 * 
-	 * @return auto expand level
-	 */
-	protected int getAutoExpandLevel() {
-		return fAutoExpandLevel;
-	}
-	
 }

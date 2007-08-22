@@ -23,16 +23,6 @@ public class VariablesViewMessages extends NLS {
 
 	public static String DetailPaneMaxLengthDialog_3;
 
-	public static String AutoExpandLevelAction_0;
-
-	public static String AutoExpandLevelAction_1;
-
-	public static String AutoExpandLevelAction_2;
-
-	public static String AutoExpandLevelAction_3;
-
-	public static String AutoExpandLevelAction_4;
-
 	public static String LogicalStructureCache_0;
 
 	public static String VariablesView__Copy_8;
