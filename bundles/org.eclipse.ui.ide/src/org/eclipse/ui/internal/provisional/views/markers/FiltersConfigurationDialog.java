@@ -394,6 +394,12 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
+		
+		Iterator filterGroupIterator = filterGroups.iterator();
+		while(filterGroupIterator.hasNext()){
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filterGroupIterator.next();
+			group.setEnabled(filtersList.getChecked(group));
+		}
 		if (selectedFilterGroup != null) {
 
 			scopeArea.applyToGroup(selectedFilterGroup);

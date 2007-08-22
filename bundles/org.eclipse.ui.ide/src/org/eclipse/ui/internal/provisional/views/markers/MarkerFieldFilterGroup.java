@@ -387,8 +387,11 @@ class MarkerFieldFilterGroup {
 	 * @param memento -
 	 *            the memento to load from
 	 */
-	public void loadSettings(IMemento memento) {
-		enabled = Boolean.getBoolean(memento.getString(TAG_ENABLED));
+	void loadSettings(IMemento memento) {
+
+		String enabledString = memento.getString(TAG_ENABLED);
+		if (enabledString != null && enabledString.length() > 0)
+			enabled = Boolean.valueOf(enabledString).booleanValue();
 		scope = memento.getInteger(TAG_SCOPE).intValue();
 
 		Map filterMap = new HashMap();
@@ -401,12 +404,21 @@ class MarkerFieldFilterGroup {
 		IMemento[] children = memento.getChildren(TAG_FIELD_FILTER_ENTRY);
 		for (int i = 0; i < children.length; i++) {
 			IMemento childMemento = children[i];
-			String id = childMemento.getString(MarkerSupportConstants.ATTRIBUTE_ID);
+			String id = childMemento
+					.getString(MarkerSupportConstants.ATTRIBUTE_ID);
 			if (filterMap.containsKey(id)) {
 				((MarkerFieldFilter) filterMap.get(id))
 						.loadSettings(childMemento);
 			}
 		}
 
+	}
+
+	/**
+	 * Set whether or not the receiver is enabled.
+	 * @param enabled The enabled to set.
+	 */
+	void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

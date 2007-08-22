@@ -18,15 +18,17 @@ import org.eclipse.ui.internal.provisional.views.markers.api.FiltersContribution
 
 /**
  * AllErrorsParameters is the parameters for the error severity type.
+ * 
  * @since 3.4
- *
+ * 
  */
 public class AllErrorsParameters extends FiltersContributionParameters {
 
 	private static Map errorsMap;
-	static{
+	static {
 		errorsMap = new HashMap();
-		errorsMap.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
+		errorsMap.put(IMarker.SEVERITY, new Integer(
+				SeverityAndDescriptionFieldFilter.SEVERITY_ERROR));
 	}
 
 	/**
@@ -36,7 +38,9 @@ public class AllErrorsParameters extends FiltersContributionParameters {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.FiltersContributionParameters#getParameterValues()
 	 */
 	public Map getParameterValues() {

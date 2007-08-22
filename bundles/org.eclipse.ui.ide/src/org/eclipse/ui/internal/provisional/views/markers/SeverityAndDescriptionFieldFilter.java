@@ -27,12 +27,16 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConsta
 public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 
 	static final String CONTAINS = "CONTAINS"; //$NON-NLS-1$
+	final static int SEVERITY_ERROR = 1 << IMarker.SEVERITY_ERROR;
+	final static int SEVERITY_WARNING = 1 << IMarker.SEVERITY_WARNING;
+	final static int SEVERITY_INFO = 1 << IMarker.SEVERITY_INFO;
+	
 	private static final String TAG_SELECTED_SEVERITIES = "selectedSeverities"; //$NON-NLS-1$
 	private static final String TAG_CONTAINS_MODIFIER = "containsModifier"; //$NON-NLS-1$
 	private static final String TAG_CONTAINS_TEXT = "containsText"; //$NON-NLS-1$
 	static String DOES_NOT_CONTAIN = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
-	int selectedSeverities = IMarker.SEVERITY_ERROR | IMarker.SEVERITY_WARNING
-			| IMarker.SEVERITY_INFO;
+	int selectedSeverities = IMarker.SEVERITY_ERROR + IMarker.SEVERITY_WARNING
+			+ IMarker.SEVERITY_INFO;
 	String containsModifier = CONTAINS;
 	String containsText = MarkerSupportConstants.EMPTY_STRING;
 
@@ -50,7 +54,12 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	 */
 	public boolean select(IMarker marker) {
 
-		return (marker.getAttribute(IMarker.SEVERITY, -1) & selectedSeverities) > 0;
+		
+		int markerSeverity = marker.getAttribute(IMarker.SEVERITY, -1);
+		if(markerSeverity < 0)
+			return false;
+		//Convert from the marker to the filter
+		return (1 << markerSeverity & selectedSeverities) > 0;
 
 	}
 

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +33,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
@@ -335,6 +338,8 @@ public class MarkerContentGenerator {
 				filters.add(new MarkerFieldFilterGroup(filterReferences[i],
 						this));
 			}
+			//Apply the last settings
+			loadFiltersPreference();
 
 		}
 		return filters;
@@ -411,7 +416,8 @@ public class MarkerContentGenerator {
 	 * @return String
 	 */
 	public String getId() {
-		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+		return configurationElement
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -711,16 +717,18 @@ public class MarkerContentGenerator {
 	 * 
 	 * @param memento
 	 */
-	public void loadSettings(IMemento memento) {
-		
-		if(memento == null)
+	private void loadSettings(IMemento memento) {
+
+		if (memento == null)
 			return;
-		
+
 		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
 
 		for (int i = 0; i < children.length; i++) {
 			IMemento child = children[i];
-			String id = child.getString(MarkerSupportConstants.ATTRIBUTE_ID);
+			String id = child.getString(IMemento.TAG_ID);
+			if(id == null)
+				continue;
 			Iterator groups = getAllFilters().iterator();
 			while (groups.hasNext()) {
 				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
@@ -738,11 +746,29 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Load the user supplied filter
+	 * 
 	 * @param child
 	 */
 	private void loadUserFilter(IMemento child) {
 		// TODO Fill this in
+
+	}
+	
+	/**
+	 * Load the filters preference.
+	 */
+	private void loadFiltersPreference() {
 		
+		String mementoString = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(getMementoPreferenceName());
+		
+		if(mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+			return;
+		
+		try {
+			loadSettings(XMLMemento.createReadRoot( new StringReader(mementoString)));
+		} catch (WorkbenchException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
 	}
 
 }

@@ -11,7 +11,6 @@ package org.eclipse.ui.internal.provisional.views.markers;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -152,8 +151,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				updateSeverities(IMarker.SEVERITY_ERROR, errorButton
-						.getSelection());
+				updateSeverities(
+						SeverityAndDescriptionFieldFilter.SEVERITY_ERROR,
+						errorButton.getSelection());
 			}
 		});
 		GridData data = new GridData();
@@ -169,8 +169,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				updateSeverities(IMarker.SEVERITY_WARNING, warningButton
-						.getSelection());
+				updateSeverities(
+						SeverityAndDescriptionFieldFilter.SEVERITY_WARNING,
+						warningButton.getSelection());
 			}
 		});
 
@@ -183,8 +184,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				updateSeverities(IMarker.SEVERITY_INFO, infoButton
-						.getSelection());
+				updateSeverities(
+						SeverityAndDescriptionFieldFilter.SEVERITY_INFO,
+						infoButton.getSelection());
 			}
 		});
 	}
@@ -199,9 +201,12 @@ public class SeverityAndDescriptionConfigurationArea extends
 		descriptionCombo.setText(sevFilter.getContainsModifier());
 		descriptionText.setText(sevFilter.getContainsText());
 		severities = sevFilter.selectedSeverities;
-		infoButton.setSelection((IMarker.SEVERITY_INFO & severities) > 0);
-		warningButton.setSelection((IMarker.SEVERITY_WARNING & severities) > 0);
-		errorButton.setSelection((IMarker.SEVERITY_ERROR & severities) > 0);
+		infoButton
+				.setSelection((SeverityAndDescriptionFieldFilter.SEVERITY_INFO & severities) > 0);
+		warningButton
+				.setSelection((SeverityAndDescriptionFieldFilter.SEVERITY_WARNING & severities) > 0);
+		errorButton
+				.setSelection((SeverityAndDescriptionFieldFilter.SEVERITY_ERROR & severities) > 0);
 	}
 
 	/**
@@ -213,9 +218,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 */
 	protected void updateSeverities(int constant, boolean enabled) {
 		if (enabled)
-			severities = constant & severities;
+			severities = constant | severities;
 		else
-			severities = constant & ~severities;
+			severities = constant | ~severities;
 
 	}
 

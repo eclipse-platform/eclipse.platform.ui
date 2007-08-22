@@ -352,7 +352,7 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public Object getParent(Object element) {
 				Object parent = ((MarkerItem) element).getParent();
-				if(parent == null)
+				if (parent == null)
 					return builder;
 				return parent;
 			}
@@ -596,7 +596,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 				updateTitle();
 				// Expand all if the list is small
-				if (builder.getVisibleMarkers().getSize() < 20) 
+				if (builder.getVisibleMarkers().getSize() < 20)
 					viewer.expandAll();
 
 				if (preservedSelection.size() > 0) {
@@ -653,13 +653,14 @@ public class ExtendedMarkersView extends ViewPart {
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		MarkerContentGenerator generator = null;
-		if (memento != null)
+
+		if (memento != null) {
 			generator = MarkerSupportRegistry.getInstance().getGenerator(
-					memento.getString(TAG_GENERATOR));
+					memento.getString(MarkerSupportConstants.ATTRIBUTE_ID));
+		}
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
-		generator.loadSettings(memento);
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
@@ -667,6 +668,18 @@ public class ExtendedMarkersView extends ViewPart {
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		state = new MarkerState(memento);
 		setPartName(generator.getName());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		IMemento generator = memento.createChild(TAG_GENERATOR);
+		generator.putString(MarkerSupportConstants.ATTRIBUTE_ID, generator
+				.getID());
 	}
 
 	/**
@@ -831,6 +844,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Open the supplied marker in an editor in page
+	 * 
 	 * @param marker
 	 * @param page
 	 */

@@ -19,15 +19,17 @@ import org.eclipse.ui.internal.provisional.views.markers.api.FiltersContribution
 
 /**
  * SelectedWarningsParameters is the parameters for warnings.
+ * 
  * @since 3.4
- *
+ * 
  */
 public class SelectedWarningsParameters extends FiltersContributionParameters {
 
 	private static Map warningsMap;
 	static {
 		warningsMap = new HashMap();
-		warningsMap.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_WARNING));
+		warningsMap.put(IMarker.SEVERITY, new Integer(
+				SeverityAndDescriptionFieldFilter.SEVERITY_WARNING));
 	}
 
 	/**
