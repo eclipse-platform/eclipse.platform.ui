@@ -107,6 +107,7 @@ public class EclipseConnector {
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
+			    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
 						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
 					String error = errorPageBegin
