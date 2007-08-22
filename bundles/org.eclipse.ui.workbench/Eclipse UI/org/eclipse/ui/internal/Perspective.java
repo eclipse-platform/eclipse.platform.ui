@@ -2101,10 +2101,16 @@ public class Perspective {
             	String trimId = null;
             	
             	// If we can locate the correct trim stack then do so
-            	if (vPart != null && vPart.getContainer() instanceof ContainerPlaceholder) {
-            		ContainerPlaceholder cph = (ContainerPlaceholder) vPart.getContainer();
-                    String id = cph.getID();
-                    if (fastViewManager.getFastViews(id).size() > 0) {
+            	if (vPart != null) {
+            		String id = null;
+            		ILayoutContainer container = vPart.getContainer();
+            		if (container instanceof ContainerPlaceholder)
+            			id = ((ContainerPlaceholder)container).getID();
+            		else if (container instanceof ViewStack)
+            			id = ((ViewStack)container).getID();
+            		
+            		// Is this place-holder in the trim?
+                    if (id != null && fastViewManager.getFastViews(id).size() > 0) {
                     	trimId = id;
                     }
             	}
