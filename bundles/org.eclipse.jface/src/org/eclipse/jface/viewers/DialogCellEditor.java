@@ -39,13 +39,14 @@ import org.eclipse.swt.widgets.Layout;
  * or a file dialog) to change the cell editor's value.
  * The cell editor's value is the value of the dialog.
  * <p>
- * Subclasses may override the following method:
+ * Subclasses may override the following methods:
  * <ul>
  *	<li><code>createButton</code>: creates the cell editor's button control</li>
+ *	<li><code>createContents</code>: creates the cell editor's 'display value' control</li>
+ *	<li><code>updateContents</code>: updates the cell editor's 'display value' control
+ * 		after its value has changed</li>
  *	<li><code>openDialogBox</code>: opens the dialog box when the end user presses
  *      the button</li>
- *	<li><code>updateLabel</code>: updates the cell editor's label after its
- *		value has changed</li>
  * </ul>
  * </p>
  */
