@@ -26,6 +26,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
@@ -110,7 +111,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	/**
 	 * Constant denoting the empty string;
 	 */
-	private static final String EMPTY_STRING = IInternalDebugUIConstants.EMPTY_STRING;
+	private static final String EMPTY_STRING = IInternalDebugCoreConstants.EMPTY_STRING;
 	
 	/**
 	 * Provides a mouse tracker listener for the launching main toolbar 
