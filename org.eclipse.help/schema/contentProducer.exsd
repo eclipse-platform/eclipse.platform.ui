@@ -44,6 +44,11 @@
    </element>
 
    <element name="contentProducer">
+      <annotation>
+         <documentation>
+            A binding to a content producer class which will be used to produce content for all help documents in this plugin. A plugin may not contain more than one binding or contentProducer and may not contain both.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
             <element ref="producer"/>
@@ -99,6 +104,11 @@
    </element>
 
    <element name="binding">
+      <annotation>
+         <documentation>
+            A binding to a content producer defined in another plugin which will be used to produce content for all help documents in this plugin. A plugin may not contain more than one binding or contentProducer and may not contain both.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="producerId" type="string" use="required">
             <annotation>

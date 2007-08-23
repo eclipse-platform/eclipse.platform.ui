@@ -191,18 +191,18 @@ public class ResourceLocator {
 		Set logged = new HashSet();
 		Set keys = new HashSet();
 		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];			
-			String extensionName = element.getName();
+			IConfigurationElement element = elements[i];	
 			String pluginName = element.getContributor().getName();
-			String key = extensionName + '/' + pluginName;
+			String key = pluginName;
 			if (logged.contains(key)) {
 				continue;
 			}
 			if (keys.contains(key)) {
 				HelpPlugin.logWarning(
 						"Extension " + CONTENTPRODUCER_XP_FULLNAME + //$NON-NLS-1$
-						"in " + pluginName + " contains multiple <" //$NON-NLS-1$ //$NON-NLS-2$
-						+ extensionName + "> elements. All but the first have been ignored."); //$NON-NLS-1$
+						"in " + pluginName + " contains more than  <" //$NON-NLS-1$ //$NON-NLS-2$
+						+ CONTENTPRODUCER_XP_NAME + "> or <" //$NON-NLS-1$
+						+ BINDING + "> element. All but the first have been ignored."); //$NON-NLS-1$
 				logged.add(key);
 			} else {
 				keys.add(key);
