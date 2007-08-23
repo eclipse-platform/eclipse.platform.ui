@@ -160,6 +160,8 @@ public class ResourceLocator {
 			return null;
 		}
 		
+	    checkForDuplicateExtensionElements(elements);
+		
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			if (!elements[i].getContributor().getName().equals(pluginId)) {
@@ -177,6 +179,35 @@ public class ResourceLocator {
 			}
 		}
 		return null;
+	}
+
+	private static boolean isCheckedForDuplicates = false;
+	
+	private static void checkForDuplicateExtensionElements(IConfigurationElement[] elements) {
+		if (isCheckedForDuplicates) {
+			return;
+		}
+		isCheckedForDuplicates = true;
+		Set logged = new HashSet();
+		Set keys = new HashSet();
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement element = elements[i];			
+			String extensionName = element.getName();
+			String pluginName = element.getContributor().getName();
+			String key = extensionName + '/' + pluginName;
+			if (logged.contains(key)) {
+				continue;
+			}
+			if (keys.contains(key)) {
+				HelpPlugin.logWarning(
+						"Extension " + CONTENTPRODUCER_XP_FULLNAME + //$NON-NLS-1$
+						"in " + pluginName + " contains multiple <" //$NON-NLS-1$ //$NON-NLS-2$
+						+ extensionName + "> elements. All but the first have been ignored."); //$NON-NLS-1$
+				logged.add(key);
+			} else {
+				keys.add(key);
+			}
+		}
 	}
 
 	private static ProducerDescriptor findContentProducer(IConfigurationElement [] elements, String refId) {
