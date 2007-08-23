@@ -30,6 +30,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -296,7 +297,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private class SwitchPageJob extends UIJob {
 		private Object fLock = new Object();
 		private boolean fShowMessagePage = false;
-		private String fMessage = IInternalDebugUIConstants.EMPTY_STRING;
+		private String fMessage = IInternalDebugCoreConstants.EMPTY_STRING;
 
 		private SwitchPageJob() {
 			super("SwitchPageJob");//$NON-NLS-1$
@@ -1898,7 +1899,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	}
 	
 	private String buildLabel(boolean showAddress) {
-		String label = IInternalDebugUIConstants.EMPTY_STRING;
+		String label = IInternalDebugCoreConstants.EMPTY_STRING;
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			label = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
@@ -2103,7 +2104,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	public String getSelectedAsString() {
 
 		if (getSelectedAddress() == null)
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		
 		MemoryByte[] bytes = getSelectedAsBytes();
 		if (bytes.length > 0)
@@ -2111,7 +2112,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			return getString(this.getRenderingId(), getSelectedAddress(), bytes);
 		}
 		else
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		
 	}
 

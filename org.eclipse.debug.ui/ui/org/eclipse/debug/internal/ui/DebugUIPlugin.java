@@ -47,6 +47,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
@@ -819,7 +820,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 		
-		monitor.beginTask(IInternalDebugUIConstants.EMPTY_STRING, 1);
+		monitor.beginTask(IInternalDebugCoreConstants.EMPTY_STRING, 1);
 		try
 		{
 			return configuration.launch(

@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui;
 
 import java.util.List;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -168,11 +169,11 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		Composite comp = (Composite) super.createDialogArea(parent);
 		addCustomHeaderControls(comp);
 		String label = getMessage();
-		if(label != null && !IInternalDebugUIConstants.EMPTY_STRING.equals(label)) {
+		if(label != null && !IInternalDebugCoreConstants.EMPTY_STRING.equals(label)) {
 			SWTFactory.createWrapLabel(comp, label, 1);
 		}
 		label = getViewerLabel();
-		if(label != null && !IInternalDebugUIConstants.EMPTY_STRING.equals(label)) {
+		if(label != null && !IInternalDebugCoreConstants.EMPTY_STRING.equals(label)) {
 			SWTFactory.createLabel(comp, label, 1);
 		}
 		fViewer = createViewer(comp);

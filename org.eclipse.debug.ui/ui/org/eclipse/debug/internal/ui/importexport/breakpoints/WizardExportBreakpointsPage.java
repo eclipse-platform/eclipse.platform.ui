@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -236,7 +237,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 * @return if the prerequesites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
-		boolean emptyFile = fDestinationNameField.getText().trim().equals(IInternalDebugUIConstants.EMPTY_STRING);
+		boolean emptyFile = fDestinationNameField.getText().trim().equals(IInternalDebugCoreConstants.EMPTY_STRING);
 		if (emptyFile) {
 			setMessage(ImportExportMessages.WizardExportBreakpointsPage_0, IMessageProvider.NONE);
 			return false;

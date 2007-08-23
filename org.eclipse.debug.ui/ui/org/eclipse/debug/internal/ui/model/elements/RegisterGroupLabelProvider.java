@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -39,7 +39,7 @@ public class RegisterGroupLabelProvider extends DebugElementLabelProvider {
 		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
 			return super.getLabel(elementPath, context, columnId);
 		} else {
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 	}
 	

@@ -14,7 +14,7 @@ package org.eclipse.debug.internal.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -107,7 +107,7 @@ public abstract class AbstractSelectionActionDelegate implements IViewActionDele
 	 * @return the status message
 	 */
 	protected String getStatusMessage() {
-		return IInternalDebugUIConstants.EMPTY_STRING;
+		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 
 	/*

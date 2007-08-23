@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.actions.expressions;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
@@ -38,7 +38,7 @@ public class AddWatchExpressionAction extends WatchExpressionAction implements I
 	 */
 	public void run(IAction action) {
 		// create a watch expression
-		IWatchExpression watchExpression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression(IInternalDebugUIConstants.EMPTY_STRING);
+		IWatchExpression watchExpression= DebugPlugin.getDefault().getExpressionManager().newWatchExpression(IInternalDebugCoreConstants.EMPTY_STRING);
 		// open the watch expression dialog
 		if (new WatchExpressionDialog(DebugUIPlugin.getShell(), watchExpression, false).open() == Window.OK) {
 			// if OK is selected, add the expression to the expression view and try to evaluate the expression.

@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.sourcelookup.browsers;
 
 import java.io.File;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -64,7 +65,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 	 * @param shell shell
 	 */
 	public DirectorySourceContainerDialog(Shell shell) {
-		this(shell, IInternalDebugUIConstants.EMPTY_STRING, DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
+		this(shell, IInternalDebugCoreConstants.EMPTY_STRING, DebugUIPlugin.getDefault().getDialogSettings().getBoolean(LAST_SUBDIR_SETTING));
 		fNewContainer = true;
 	}
 
@@ -209,7 +210,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 			last = DebugUIPlugin.getDefault().getDialogSettings().get(LAST_PATH_SETTING);
 		}
 		if (last == null) {
-			last = IInternalDebugUIConstants.EMPTY_STRING; 
+			last = IInternalDebugCoreConstants.EMPTY_STRING; 
 		}
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SINGLE);
 		dialog.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_0); 

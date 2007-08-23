@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -448,7 +449,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	public void setName(String name) {
 		if (getWorkingCopy() != null) {
 			if (name == null) {
-				fNameWidget.setText(IInternalDebugUIConstants.EMPTY_STRING);
+				fNameWidget.setText(IInternalDebugCoreConstants.EMPTY_STRING);
 			}
 			else {
 				fNameWidget.setText(name.trim());
@@ -689,7 +690,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		ILaunchConfigurationDialog lcd = getLaunchConfigurationDialog();
 		if(lcd instanceof LaunchConfigurationsDialog) {
 			if(((LaunchConfigurationsDialog)lcd).isTreeSelectionEmpty()) {
-				fDescription = IInternalDebugUIConstants.EMPTY_STRING;
+				fDescription = IInternalDebugCoreConstants.EMPTY_STRING;
 			}
 		}
 	}
@@ -818,7 +819,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fTabType = configType;
 		ILaunchConfigurationTab[] tabs = getTabs();
 		CTabItem tab = null;
-		String name = IInternalDebugUIConstants.EMPTY_STRING;
+		String name = IInternalDebugCoreConstants.EMPTY_STRING;
 		Control control = null;
 		for (int i = 0; i < tabs.length; i++) {
 			tab = new CTabItem(fTabFolder, SWT.BORDER);
@@ -860,7 +861,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			description = LaunchConfigurationPresentationManager.getDefault().getDescription(configType, mode);
 		}	
 		if (description == null) {
-			description = IInternalDebugUIConstants.EMPTY_STRING;
+			description = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 		return description;
 	}

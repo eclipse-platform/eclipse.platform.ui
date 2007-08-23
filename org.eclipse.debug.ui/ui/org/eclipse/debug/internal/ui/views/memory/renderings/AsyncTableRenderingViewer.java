@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -886,7 +887,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 					TableItem item = getTable().getItem(idx);
 					return item.getText(columnIndex);
 				}
-				return IInternalDebugUIConstants.EMPTY_STRING;
+				return IInternalDebugCoreConstants.EMPTY_STRING;
 			}
 
 			public void addListener(ILabelProviderListener listener) {

@@ -115,7 +115,7 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 		Group group = SWTFactory.createGroup(parent, LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_2, 1, 1, GridData.FILL_BOTH);
 		GridData gd = (GridData) group.getLayoutData();
 		gd.heightHint = 100;
-		fDescriptionText = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		fDescriptionText = SWTFactory.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_HORIZONTAL);
 		fDescriptionText.setBackground(group.getBackground());
 	}
 

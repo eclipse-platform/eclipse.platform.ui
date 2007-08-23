@@ -16,6 +16,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 /**
  * This class is used to check properties of a debug model.  Two properties can be checked.
@@ -44,7 +45,7 @@ public class DebugModelPropertyTester extends PropertyTester {
 			}
 			if(target != null) {
 				// check that the expected value argument is valid
-				if (expectedValue == null || expectedValue.equals(IInternalDebugUIConstants.EMPTY_STRING)){
+				if (expectedValue == null || expectedValue.equals(IInternalDebugCoreConstants.EMPTY_STRING)){
 					return false;
 				}
 				//!target.isTerminated() && !target.isDisconnected() 

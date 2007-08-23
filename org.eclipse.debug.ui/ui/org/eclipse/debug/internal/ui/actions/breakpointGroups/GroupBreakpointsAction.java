@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.jface.action.Action;
@@ -34,7 +34,7 @@ public class GroupBreakpointsAction extends Action {
      * @param view the breakpoints view
      */
     public GroupBreakpointsAction(IBreakpointOrganizer organizer, BreakpointsView view) {
-        super(IInternalDebugUIConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
+        super(IInternalDebugCoreConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
         fOrganzier= organizer;
         fView= view;
     }

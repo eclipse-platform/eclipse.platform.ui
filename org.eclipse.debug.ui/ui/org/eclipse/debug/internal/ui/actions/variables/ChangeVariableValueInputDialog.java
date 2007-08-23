@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -53,7 +53,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 	/**
 	 * The input value; the empty string by default.
 	 */
-	private String value= IInternalDebugUIConstants.EMPTY_STRING;
+	private String value= IInternalDebugCoreConstants.EMPTY_STRING;
 	
 	/**
 	 * The input validator, or <code>null</code> if none.
@@ -94,7 +94,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		this.title = dialogTitle;
 		message = dialogMessage;
 		if (initialValue == null)
-			value = IInternalDebugUIConstants.EMPTY_STRING;
+			value = IInternalDebugCoreConstants.EMPTY_STRING;
 		else
 			value = initialValue;
 		this.validator = validator;
@@ -169,7 +169,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 						if (okButton.isEnabled()) {
 							return;
 						}
-						errorMessageLabel.setText(IInternalDebugUIConstants.EMPTY_STRING); 
+						errorMessageLabel.setText(IInternalDebugCoreConstants.EMPTY_STRING); 
 						errorMessageLabel.getParent().update();
 						okButton.setEnabled(true);
 					}
@@ -243,7 +243,7 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		}
 		
 		// Bug 16256: important not to treat empty string (blank error) the same as null (no error)
-		errorMessageLabel.setText(errorMessage == null ? IInternalDebugUIConstants.EMPTY_STRING : errorMessage);
+		errorMessageLabel.setText(errorMessage == null ? IInternalDebugCoreConstants.EMPTY_STRING : errorMessage);
 		okButton.setEnabled(errorMessage == null);
 		
 		errorMessageLabel.getParent().update();

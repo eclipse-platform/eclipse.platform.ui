@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -35,7 +36,7 @@ public class ToggleDetailPaneAction extends Action {
 	private String fOrientation;
 
 	public ToggleDetailPaneAction(VariablesView view, String orientation, String hiddenLabel) {
-		super(IInternalDebugUIConstants.EMPTY_STRING, AS_RADIO_BUTTON);
+		super(IInternalDebugCoreConstants.EMPTY_STRING, AS_RADIO_BUTTON);
 		setVariablesView(view);
 		setOrientation(orientation);
 				

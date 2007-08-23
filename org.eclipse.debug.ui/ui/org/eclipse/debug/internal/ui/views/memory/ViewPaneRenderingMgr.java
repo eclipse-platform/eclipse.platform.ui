@@ -23,9 +23,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
@@ -244,7 +244,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener{
 	private void storeRenderings()
 	{
 		Preferences prefs = DebugUIPlugin.getDefault().getPluginPreferences();
-		String renderingsStr= IInternalDebugUIConstants.EMPTY_STRING;
+		String renderingsStr= IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
 			renderingsStr= getRenderingsAsXML();
 		} catch (IOException e) {

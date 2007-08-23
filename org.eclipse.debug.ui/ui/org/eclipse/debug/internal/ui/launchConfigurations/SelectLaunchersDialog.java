@@ -16,10 +16,10 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -269,7 +269,7 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 					fDescriptionText.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
 				}
 				else {
-					fDescriptionText.setText(IInternalDebugUIConstants.EMPTY_STRING);
+					fDescriptionText.setText(IInternalDebugCoreConstants.EMPTY_STRING);
 				}
 			}
 		});

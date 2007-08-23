@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.StatusLineLayoutData;
@@ -34,7 +34,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	 * initialized.
 	 */
 	private Composite statusLine = null;
-	private String text= IInternalDebugUIConstants.EMPTY_STRING;
+	private String text= IInternalDebugCoreConstants.EMPTY_STRING;
 	private int widthHint = -1;
 
 	public StatusLineContributionItem(String id) {

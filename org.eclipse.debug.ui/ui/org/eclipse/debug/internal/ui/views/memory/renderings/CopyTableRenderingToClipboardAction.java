@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -175,7 +176,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 			TableItem[] tableItems = table.getItems();
 			String tableAsString = new String();
 			tableAsString = concatenateTableAsString(tableItems);
-			if (!tableAsString.equals(IInternalDebugUIConstants.EMPTY_STRING)) {
+			if (!tableAsString.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
 				clip.setContents(new Object[] {tableAsString}, new Transfer[] {plainTextTransfer});
 			}

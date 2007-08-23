@@ -32,6 +32,7 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.core.model.ITerminate;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -153,7 +154,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 			
 			if (input.length() == 0)
 			{
-				expressions.add(IInternalDebugUIConstants.EMPTY_STRING);
+				expressions.add(IInternalDebugCoreConstants.EMPTY_STRING);
 			}
 			else
 			{

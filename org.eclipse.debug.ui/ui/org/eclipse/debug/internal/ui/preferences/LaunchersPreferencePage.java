@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.jface.preference.PreferencePage;
@@ -220,7 +220,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 					fDescription.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
 				}
 				else {
-					fDescription.setText(IInternalDebugUIConstants.EMPTY_STRING);
+					fDescription.setText(IInternalDebugCoreConstants.EMPTY_STRING);
 				}
 			}
 		});

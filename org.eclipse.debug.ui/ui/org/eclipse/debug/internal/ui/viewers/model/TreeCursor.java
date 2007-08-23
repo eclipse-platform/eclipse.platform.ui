@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -417,7 +417,7 @@ void paint(Event event) {
 		x += imageSize.width;
 	}
 	String text = row.getText(columnIndex);
-	if (text != IInternalDebugUIConstants.EMPTY_STRING) {
+	if (text != IInternalDebugCoreConstants.EMPTY_STRING) {
 		Rectangle bounds = row.getBounds(columnIndex);
 		Point extent = gc.stringExtent(text);
 		// Temporary code - need a better way to determine table trim

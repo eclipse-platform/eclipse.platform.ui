@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchDelegate;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -149,11 +150,11 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		protected void createPanel(Composite parent, String heading) {
 			fMainComposite = SWTFactory.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 			SWTFactory.createWrapLabel(fMainComposite, heading, 2);
-			fMessage = SWTFactory.createWrapLabel(fMainComposite, IInternalDebugUIConstants.EMPTY_STRING, 2, 250);
+			fMessage = SWTFactory.createWrapLabel(fMainComposite, IInternalDebugCoreConstants.EMPTY_STRING, 2, 250);
 		}
 		
 		public void setMessage(String msg) {
-			fMessage.setText((msg == null ? IInternalDebugUIConstants.EMPTY_STRING : msg));
+			fMessage.setText((msg == null ? IInternalDebugCoreConstants.EMPTY_STRING : msg));
 		}
 		
 		public void refreshPanel(IStructuredSelection selection) {
@@ -354,7 +355,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			fPerspectivesPanel.setMessage(DebugPreferencesMessages.LaunchPerspectivePreferencePage_1);
 			return;
 		}
-		fPerspectivesPanel.setMessage(IInternalDebugUIConstants.EMPTY_STRING);
+		fPerspectivesPanel.setMessage(IInternalDebugCoreConstants.EMPTY_STRING);
 		List fmodes = null;
 		Combo combo = null;
 		Set smodes = null;

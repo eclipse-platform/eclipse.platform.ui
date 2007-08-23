@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -100,8 +101,8 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
      * @param shell a shell for prompting the user
      */
     protected void doDefaultEdit(Shell shell) {
-	    String name= IInternalDebugUIConstants.EMPTY_STRING;
-		String value= IInternalDebugUIConstants.EMPTY_STRING;
+	    String name= IInternalDebugCoreConstants.EMPTY_STRING;
+		String value= IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
 			name= fVariable.getName();
 			value= fVariable.getValue().getValueString();

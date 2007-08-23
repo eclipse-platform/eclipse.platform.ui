@@ -83,7 +83,7 @@ public class ResourceExtender extends PropertyTester {
             } else if (PROJECT_NATURE.equals(method)) {
                 try {
                     IProject proj = resource.getProject();
-                    return proj.isAccessible() && proj.hasNature((String) expectedValue);
+                    return proj != null && proj.isAccessible() && proj.hasNature((String) expectedValue);
                 } catch (CoreException e) {
                     return false;
                 }

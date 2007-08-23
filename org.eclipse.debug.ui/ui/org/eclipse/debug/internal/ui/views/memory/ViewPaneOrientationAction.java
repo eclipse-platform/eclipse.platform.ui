@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -25,7 +26,7 @@ class ViewPaneOrientationAction extends Action
 
 		ViewPaneOrientationAction(MemoryView view, int orientation)
 		{
-			super(IInternalDebugUIConstants.EMPTY_STRING, AS_RADIO_BUTTON);
+			super(IInternalDebugCoreConstants.EMPTY_STRING, AS_RADIO_BUTTON);
 			fView = view;
 			fOrientation = orientation;
 			

@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -124,7 +125,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	private boolean detectPageComplete() {
 		String fileName = fFileNameField.getText().trim();
-		if (fileName.equals(IInternalDebugUIConstants.EMPTY_STRING)) {
+		if (fileName.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 			setMessage(ImportExportMessages.WizardImportBreakpointsPage_6);
 			return false;
 		}

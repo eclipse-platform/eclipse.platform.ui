@@ -15,8 +15,8 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -176,7 +176,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * Default is to return the empty String.
 	 */
 	protected String getStatusMessage(){
-		return IInternalDebugUIConstants.EMPTY_STRING;
+		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)

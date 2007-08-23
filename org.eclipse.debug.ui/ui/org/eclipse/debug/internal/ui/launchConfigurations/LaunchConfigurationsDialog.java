@@ -28,6 +28,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -631,7 +632,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public String generateName(String name) {
 		if (name == null) {
-			name = IInternalDebugUIConstants.EMPTY_STRING;
+			name = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
 	}
@@ -648,7 +649,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public String generateName(String name, Set reservednames) {
 		if(name == null) {
-			name = IInternalDebugUIConstants.EMPTY_STRING;
+			name = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 		return ((LaunchManager)getLaunchManager()).generateUniqueLaunchConfigurationNameFrom(name, reservednames);
 	}
@@ -1138,14 +1139,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			TreeItem[] items = fLaunchConfigurationView.getTreeViewer().getTree().getItems();
 			String value = settings.get(DIALOG_EXPANDED_NODES);
 			if(value == null) {
-				value = IInternalDebugUIConstants.EMPTY_STRING;
+				value = IInternalDebugCoreConstants.EMPTY_STRING;
 			}
 			ArrayList list = new ArrayList();
 			String[] persisted = value.split(DELIMITER); 
 			for(int i = 0; i < persisted.length; i++) {
 				list.add(persisted[i]);
 			}
-			String type = IInternalDebugUIConstants.EMPTY_STRING;
+			String type = IInternalDebugCoreConstants.EMPTY_STRING;
 			//if the item is not in the list and is expanded add it, otherwise if it
 			//is not expanded do a remove...either way for the else we query the list
 			for(int i = 0; i < items.length; i++) {
@@ -1157,7 +1158,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					list.remove(type);
 				}
 			}
-			value = IInternalDebugUIConstants.EMPTY_STRING;
+			value = IInternalDebugCoreConstants.EMPTY_STRING;
 			//build the preference string
 			for(Iterator iter = list.iterator(); iter.hasNext();) {
 				value += iter.next() + DELIMITER;
@@ -1518,7 +1519,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(final PropertyChangeEvent event) {
-		WorkbenchJob job = new WorkbenchJob(IInternalDebugUIConstants.EMPTY_STRING) {
+		WorkbenchJob job = new WorkbenchJob(IInternalDebugCoreConstants.EMPTY_STRING) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
 				boolean newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();

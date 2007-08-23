@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import java.util.Iterator;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
@@ -183,7 +184,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
         getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, trackViews);
 		if (fResetPressed || !trackViews) {
             // Reset if the user has pressed reset or chosen to no longer track views
-			getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugUIConstants.EMPTY_STRING); 
+			getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS, IInternalDebugCoreConstants.EMPTY_STRING); 
 		}
 		return super.performOk();
 	}
@@ -211,7 +212,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
      * Always disable if "track views" is turned off.
 	 */
 	private void updateResetButton() {
-		boolean enableReset= !IInternalDebugUIConstants.EMPTY_STRING.equals(getPreferenceStore().getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS));
+		boolean enableReset= !IInternalDebugCoreConstants.EMPTY_STRING.equals(getPreferenceStore().getString(IInternalDebugUIConstants.PREF_USER_VIEW_BINDINGS));
         // Only enable the button if there are views to clear, the user hasn't pressed the reset
         // button, and the option to "track views" is turned on.
 		fResetViewsButton.setEnabled(enableReset && !fResetPressed && fTrackViewsButton.getSelection());

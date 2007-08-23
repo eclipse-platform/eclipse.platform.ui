@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.commands.Request;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -167,7 +167,7 @@ class LabelUpdate extends Request implements ILabelUpdate {
 			
 			for (int i=0; i<fNumColumns; i++){
 				// text might be null if the launch has been terminated
-				fItem.setText(i,(fLabels[i] == null ? IInternalDebugUIConstants.EMPTY_STRING : fLabels[i]));
+				fItem.setText(i,(fLabels[i] == null ? IInternalDebugCoreConstants.EMPTY_STRING : fLabels[i]));
 			}
 			fItem.setData(PREV_LABEL_KEY, fLabels);
 			

@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -1988,7 +1989,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	}
 
 	private String buildLabel(boolean showAddress) {
-		String label = IInternalDebugUIConstants.EMPTY_STRING;
+		String label = IInternalDebugCoreConstants.EMPTY_STRING;
 		if (getMemoryBlock() instanceof IMemoryBlockExtension)
 		{
 			label = ((IMemoryBlockExtension)getMemoryBlock()).getExpression();
@@ -3190,7 +3191,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	public String getSelectedAsString() {
 
 		if (isAddressOutOfRange(fSelectedAddress))
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		
 		int col = fTableCursor.getColumn();
 		TableItem rowItem = fTableCursor.getRow();
@@ -3204,7 +3205,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		// check precondition
 		if (col > getBytesPerLine()/getBytesPerColumn())
 		{
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 				
 		TableItem tableItem = getTableViewer().getTable().getItem(row);

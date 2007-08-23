@@ -34,6 +34,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 /**
  * Default implementation of a launch configuration delegate. Provides
@@ -64,28 +65,21 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	private static final String DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
 	
 	/**
-	 * Constant to represent the empty string
-	 * 
-	 * @since 3.2
-	 */
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
-	/**
 	 * Status code for which a UI prompter is registered.
 	 */
-	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, EMPTY_STRING, null);
+	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter is registered to ask the user if they
 	 * want to launch in debug mode when breakpoints are present.
 	 */
-	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 201, EMPTY_STRING, null);
+	protected static final IStatus switchToDebugPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 201, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
 	 * want to continue launch despite existing compile errors
 	 */
-	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 202, EMPTY_STRING, null);
+	protected static final IStatus complileErrorPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 202, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter will ask the user to save any/all of the dirty editors which have only to do
@@ -93,7 +87,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * 
 	 * @since 3.2
 	 */
-	protected static final IStatus saveScopedDirtyEditors = new Status(IStatus.INFO, DEBUG_CORE, 222, EMPTY_STRING, null);
+	protected static final IStatus saveScopedDirtyEditors = new Status(IStatus.INFO, DEBUG_CORE, 222, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	
 	/**
 	 * Status code for which a prompter is registered to ask the user if the
@@ -103,7 +97,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * 
 	 * @since 3.1
 	 */
-	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 203, EMPTY_STRING, null);
+	protected static final IStatus complileErrorProjectPromptStatus = new Status(IStatus.INFO, DEBUG_CORE, 203, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#getLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)

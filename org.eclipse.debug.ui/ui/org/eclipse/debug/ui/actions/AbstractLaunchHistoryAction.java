@@ -15,8 +15,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.ILaunchLabelChangedListener;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -222,7 +222,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		} else {
 			label = ActionMessages.AbstractLaunchHistoryAction_4; 
 		}
-		if(IInternalDebugUIConstants.EMPTY_STRING.equals(launchName)) {
+		if(IInternalDebugCoreConstants.EMPTY_STRING.equals(launchName)) {
 			return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_5, new String[] {label});
 		}
 		else {

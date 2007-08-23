@@ -126,20 +126,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.2
 	 */
 	private static final String DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
-	
-	/**
-	 * Constant to represent the empty string
-	 * 
-	 * @since 3.2
-	 */
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
     
 	/**
 	 * Status code for which a UI prompter is registered.
 	 * 
 	 * @since 3.2
 	 */
-	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, EMPTY_STRING, null);
+	protected static final IStatus promptStatus = new Status(IStatus.INFO, DEBUG_UI, 200, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	
 	/**
 	 * Step filter manager
@@ -1574,7 +1567,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			fPreferredDelegates = new HashSet();
 			Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
 			String preferred = prefs.getString(LaunchManager.PREF_PREFERRED_DELEGATES);
-			if(!EMPTY_STRING.equals(preferred)) {
+			if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(preferred)) {
 				try {
 					Element root = DebugPlugin.parseDocument(preferred);
 					NodeList nodes = root.getElementsByTagName(IConfigurationElementConstants.DELEGATE);
@@ -1600,7 +1593,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 							}
 						}
 						//take type id, modeset, delegate and create entry
-						if(delegate != null & !EMPTY_STRING.equals(typeid) & modeset != null) {
+						if(delegate != null & !IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) & modeset != null) {
 							fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
 						}
 						delegate = null;
@@ -2330,7 +2323,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			Element child = null;
 			ILaunchDelegate delegate = null;
 			Set modes = null;
-			String modestr = EMPTY_STRING;
+			String modestr = IInternalDebugCoreConstants.EMPTY_STRING;
 			for(int i = 0; i < types.length; i++) {
 				preferred = ((LaunchConfigurationType)types[i]).getPreferredDelegates();
 				if(preferred != null && preferred.size() > 0) {
@@ -2348,7 +2341,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 								}
 							}
 							child.setAttribute(IConfigurationElementConstants.MODES, modestr);
-							modestr = EMPTY_STRING;
+							modestr = IInternalDebugCoreConstants.EMPTY_STRING;
 							root.appendChild(child);
 						}
 					}

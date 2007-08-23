@@ -51,7 +51,9 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 	protected StructuredViewer createViewer(Composite parent){
 		//by default return a table viewer
 		fListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-		fListViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 150;
+		fListViewer.getTable().setLayoutData(gd);
 		return fListViewer;
 	}
 	

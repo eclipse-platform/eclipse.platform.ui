@@ -19,10 +19,10 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -44,7 +44,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	 * Constructs a new action.
 	 */
 	public EditLaunchConfigurationAction() {
-		super(IInternalDebugUIConstants.EMPTY_STRING);
+		super(IInternalDebugCoreConstants.EMPTY_STRING);
 		setEnabled(false);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
@@ -78,7 +78,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 						// while a launch is waiting for a build. These copied configurations
 						// have an attribute that points to the config that the user is really
 						// launching.
-						String underlyingHandle = configuration.getAttribute(DebugUIPlugin.ATTR_LAUNCHING_CONFIG_HANDLE, IInternalDebugUIConstants.EMPTY_STRING);
+						String underlyingHandle = configuration.getAttribute(DebugUIPlugin.ATTR_LAUNCHING_CONFIG_HANDLE, IInternalDebugCoreConstants.EMPTY_STRING);
 						if (underlyingHandle.length() > 0) {
 							ILaunchConfiguration underlyingConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(underlyingHandle);
 							if (underlyingConfig != null) {

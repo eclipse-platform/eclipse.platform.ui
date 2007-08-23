@@ -26,6 +26,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -195,7 +196,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 				}
 				// When selecting a index partition, clear the pane
 				if (val instanceof IndexedValuePartition) {
-					detailComputed(null, IInternalDebugUIConstants.EMPTY_STRING);
+					detailComputed(null, IInternalDebugCoreConstants.EMPTY_STRING);
 					val = null;
 				}
 				if (element instanceof String) {
@@ -220,7 +221,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			// or use the message, if the variable was a java.lang.String
 			if (!fComputed){
 				if (message == null) {
-					detailComputed(null,IInternalDebugUIConstants.EMPTY_STRING);
+					detailComputed(null,IInternalDebugCoreConstants.EMPTY_STRING);
 				} else {
 					detailComputed(null, message);
 				}
@@ -439,7 +440,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
        
 		TextViewerAction textAction= new TextViewerAction(fSourceViewer, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		textAction.configureAction(DetailMessages.DefaultDetailPane_Co_ntent_Assist_3, IInternalDebugUIConstants.EMPTY_STRING,IInternalDebugUIConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane_Co_ntent_Assist_3, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
@@ -451,25 +452,25 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
         handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
 			
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugUIConstants.EMPTY_STRING,IInternalDebugUIConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
-		textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, IInternalDebugUIConstants.EMPTY_STRING,IInternalDebugUIConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.CUT);
-		textAction.configureAction(DetailMessages.DefaultDetailPane_Cu_t_11, IInternalDebugUIConstants.EMPTY_STRING,IInternalDebugUIConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane_Cu_t_11, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CUT_ACTION);
 		setAction(DETAIL_CUT_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.PASTE);
-		textAction.configureAction(DetailMessages.DefaultDetailPane__Paste_14, IInternalDebugUIConstants.EMPTY_STRING,IInternalDebugUIConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane__Paste_14, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_PASTE_ACTION);
 		setAction(ActionFactory.PASTE.getId(), textAction);
@@ -675,7 +676,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			fDetailJob.cancel();
 		}
 		fLastDisplayed = null;
-		fDetailDocument.set(IInternalDebugUIConstants.EMPTY_STRING);
+		fDetailDocument.set(IInternalDebugCoreConstants.EMPTY_STRING);
 		fSourceViewer.setEditable(false);
 	}
 
@@ -718,7 +719,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	protected String getCursorPosition() {
 		
 		if (fSourceViewer == null) {
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 		
 		StyledText styledText= fSourceViewer.getTextWidget();
@@ -726,7 +727,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		IDocument document= fSourceViewer.getDocument();
 	
 		if (document == null) {
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 	
 		try {
@@ -748,7 +749,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			return MessageFormat.format(fPositionLabelPattern, fPositionLabelPatternArguments);
 			
 		} catch (BadLocationException x) {
-			return IInternalDebugUIConstants.EMPTY_STRING;
+			return IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 	}
 

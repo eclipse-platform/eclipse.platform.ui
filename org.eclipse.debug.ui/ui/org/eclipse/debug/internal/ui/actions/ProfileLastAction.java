@@ -12,7 +12,7 @@ package org.eclipse.debug.internal.ui.actions;
 
 
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -58,7 +58,7 @@ public class ProfileLastAction extends RelaunchLastAction {
 	 * @see org.eclipse.debug.internal.ui.actions.RelaunchLastAction#getTooltipText()
 	 */
 	protected String getTooltipText() {
-		return IInternalDebugUIConstants.EMPTY_STRING;
+		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 	
 	/* (non-Javadoc)

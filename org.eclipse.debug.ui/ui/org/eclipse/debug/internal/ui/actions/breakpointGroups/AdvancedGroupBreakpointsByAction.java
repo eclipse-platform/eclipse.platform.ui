@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -26,7 +26,7 @@ public class AdvancedGroupBreakpointsByAction extends Action {
 	private BreakpointsView fView;
 	
 	public AdvancedGroupBreakpointsByAction(BreakpointsView view) {
-        super(IInternalDebugUIConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
+        super(IInternalDebugCoreConstants.EMPTY_STRING, IAction.AS_RADIO_BUTTON);
 		fView= view;
 	}
 	

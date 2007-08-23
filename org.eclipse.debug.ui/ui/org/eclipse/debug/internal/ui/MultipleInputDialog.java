@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -140,7 +141,7 @@ public class MultipleInputDialog extends Dialog {
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				public boolean validate() {
-					return !text.getText().equals(IInternalDebugUIConstants.EMPTY_STRING);
+					return !text.getText().equals(IInternalDebugCoreConstants.EMPTY_STRING);
 				}
 			});
 			text.addModifyListener(new ModifyListener() {
@@ -181,7 +182,7 @@ public class MultipleInputDialog extends Dialog {
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				public boolean validate() {
-					return !text.getText().equals(IInternalDebugUIConstants.EMPTY_STRING);
+					return !text.getText().equals(IInternalDebugCoreConstants.EMPTY_STRING);
 				}
 			});
 
@@ -198,7 +199,7 @@ public class MultipleInputDialog extends Dialog {
 				DirectoryDialog dialog = new DirectoryDialog(getShell());
 				dialog.setMessage(DebugUIMessages.MultipleInputDialog_7);  
 				String currentWorkingDir = text.getText();
-				if (!currentWorkingDir.trim().equals(IInternalDebugUIConstants.EMPTY_STRING)) {
+				if (!currentWorkingDir.trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 					File path = new File(currentWorkingDir);
 					if (path.exists()) {
 						dialog.setFilterPath(currentWorkingDir);
@@ -245,7 +246,7 @@ public class MultipleInputDialog extends Dialog {
 		if (!allowEmpty) {
 			validators.add(new Validator() {
 				public boolean validate() {
-					return !text.getText().equals(IInternalDebugUIConstants.EMPTY_STRING);
+					return !text.getText().equals(IInternalDebugCoreConstants.EMPTY_STRING);
 				}
 			});
 

@@ -15,7 +15,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 
 /**
  * A parition (subrange) of values of an indexed value 
@@ -69,7 +69,7 @@ public class IndexedValuePartition implements IIndexedValue {
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	public String getValueString() {
-		return IInternalDebugUIConstants.EMPTY_STRING;
+		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 
 	/* (non-Javadoc)

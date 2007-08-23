@@ -14,8 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -88,7 +88,7 @@ abstract public class AbstractTextRendering extends AbstractTableRendering {
 		try {
 			String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 			if(fCodePage == null)
-				return IInternalDebugUIConstants.EMPTY_STRING;
+				return IInternalDebugCoreConstants.EMPTY_STRING;
 			
 			boolean[] invalid = new boolean[data.length];
 			boolean hasInvalid = false;

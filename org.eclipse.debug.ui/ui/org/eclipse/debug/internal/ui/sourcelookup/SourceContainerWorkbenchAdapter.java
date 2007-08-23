@@ -18,7 +18,7 @@ import org.eclipse.debug.core.sourcelookup.containers.ArchiveSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.DirectorySourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.ExternalArchiveSourceContainer;
 import org.eclipse.debug.core.sourcelookup.containers.FolderSourceContainer;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -63,7 +63,7 @@ public class SourceContainerWorkbenchAdapter implements IWorkbenchAdapter {
 			IPath path = new Path(container.getName());
 			return SourceElementWorkbenchAdapter.getQualifiedName(path);
 		}		
-		return IInternalDebugUIConstants.EMPTY_STRING;
+		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)

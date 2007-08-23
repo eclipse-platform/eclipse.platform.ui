@@ -13,7 +13,7 @@ package org.eclipse.debug.ui.sourcelookup;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -54,7 +54,7 @@ public class CommonSourceNotFoundEditorInput extends PlatformObject implements I
 			pres.dispose();
 		}
 		if (fLabel == null) {
-			fLabel = IInternalDebugUIConstants.EMPTY_STRING;
+			fLabel = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
 	}	
 	

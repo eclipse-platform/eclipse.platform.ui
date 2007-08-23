@@ -27,6 +27,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
@@ -308,7 +309,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 *            default working set or <code>null</code>
 	 */
 	public static void setDefaultWorkingSet(IWorkingSet set) {
-		String name = IInternalDebugUIConstants.EMPTY_STRING;
+		String name = IInternalDebugCoreConstants.EMPTY_STRING;
 		if (set != null) {
 			// only consider breakpoint working sets
 			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {

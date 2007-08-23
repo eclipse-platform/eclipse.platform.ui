@@ -15,6 +15,7 @@ import java.math.BigInteger;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.MemoryByte;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -64,7 +65,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 						labels[i+1] = getColumnText(element, i+1, tableRendering, (TableRenderingContentDescriptor)tableRendering.getAdapter(TableRenderingContentDescriptor.class));
 					}
 					
-					labels[labels.length - 1 ] = IInternalDebugUIConstants.EMPTY_STRING;
+					labels[labels.length - 1 ] = IInternalDebugCoreConstants.EMPTY_STRING;
 					return labels;
 				}
 			}
@@ -111,7 +112,7 @@ public class MemorySegmentLabelAdapter extends AsynchronousLabelAdapter {
 			{
 				MemorySegment segment = (MemorySegment)element;
 				if (segment.getBytes().length != tableRendering.getBytesPerLine())
-					return IInternalDebugUIConstants.EMPTY_STRING;
+					return IInternalDebugCoreConstants.EMPTY_STRING;
 			}
 			
 			ILabelProvider labelProvider = (ILabelProvider)tableRendering.getAdapter(ILabelProvider.class);

@@ -18,9 +18,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.MultipleInputDialog;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -663,17 +663,17 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 					case 1:
 						String value= variable.getValue(); 
 						if (value == null) {
-							value= IInternalDebugUIConstants.EMPTY_STRING;
+							value= IInternalDebugCoreConstants.EMPTY_STRING;
 						}
 						return value;
 					case 2:
 						String description= variable.getDescription();
 						if (description == null) {
-							description= IInternalDebugUIConstants.EMPTY_STRING;
+							description= IInternalDebugCoreConstants.EMPTY_STRING;
 						}
 						return description;
 					case 3:
-						String contribution = IInternalDebugUIConstants.EMPTY_STRING;
+						String contribution = IInternalDebugCoreConstants.EMPTY_STRING;
 						if (variable.isContributed()) {
                             String pluginId = getVariableManager().getContributingPluginId(variable.getUnderlyingVariable());
                             if (pluginId != null) {

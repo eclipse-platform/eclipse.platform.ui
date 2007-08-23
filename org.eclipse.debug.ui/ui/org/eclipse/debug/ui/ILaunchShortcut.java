@@ -29,6 +29,8 @@ import org.eclipse.ui.IEditorPart;
  * <p>
  * A launch shortcut extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a launch shortcut extension.
+ * </p>
+ * <br>
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.launchShortcuts"&gt;
  *   &lt;launchShortcut
@@ -57,6 +59,8 @@ import org.eclipse.ui.IEditorPart;
  *   &lt;/launchShortcut&gt;
  * &lt;/extension&gt;
  * </pre>
+ * <br>
+ * <p>
  * The attributes are specified as follows:
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this launch shortcut.</li>

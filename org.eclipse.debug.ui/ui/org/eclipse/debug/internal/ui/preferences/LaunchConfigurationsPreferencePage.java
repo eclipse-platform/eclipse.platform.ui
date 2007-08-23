@@ -18,6 +18,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -397,7 +398,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		DebugPlugin.getDefault().getPluginPreferences().setValue(
 				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection());
 		//save table
-		String types = IInternalDebugUIConstants.EMPTY_STRING;
+		String types = IInternalDebugCoreConstants.EMPTY_STRING;
 		TableItem[] items = fTable.getItems();
 		ILaunchConfigurationType type;
 		for(int i = 0; i < items.length; i++) {

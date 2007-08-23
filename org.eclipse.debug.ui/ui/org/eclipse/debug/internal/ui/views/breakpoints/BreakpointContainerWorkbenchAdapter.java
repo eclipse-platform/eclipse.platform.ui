@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -60,7 +60,7 @@ public class BreakpointContainerWorkbenchAdapter implements IWorkbenchAdapter, I
             }
             return container.getOrganizer().getLabel();
         }
-        return IInternalDebugUIConstants.EMPTY_STRING;
+        return IInternalDebugCoreConstants.EMPTY_STRING;
     }
 
     /* (non-Javadoc)

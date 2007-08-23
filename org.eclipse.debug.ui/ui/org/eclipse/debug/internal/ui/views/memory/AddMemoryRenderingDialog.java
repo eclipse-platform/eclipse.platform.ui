@@ -23,9 +23,9 @@ import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -463,7 +463,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		String[] labels = new String[memoryBlocks.length];
 		for (int i=0; i<memoryBlocks.length; i++)
 		{	
-			String text = IInternalDebugUIConstants.EMPTY_STRING;
+			String text = IInternalDebugCoreConstants.EMPTY_STRING;
 			if (memoryBlocks[i] instanceof IMemoryBlockExtension)
 			{
 				try {

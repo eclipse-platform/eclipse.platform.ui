@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.core.BreakpointManager;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.IImportExportConstants;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.ImportExportMessages;
@@ -153,7 +154,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		marker.setAttribute(IImportExportConstants.IE_NODE_TYPE, child.getString(IImportExportConstants.IE_NODE_TYPE));
 		marker.setAttribute(IImportExportConstants.CHARSTART, child.getString(IImportExportConstants.CHARSTART));
 		childnodes = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
-		String workingsets = IInternalDebugUIConstants.EMPTY_STRING;
+		String workingsets = IInternalDebugCoreConstants.EMPTY_STRING;
 		for (int j = 0; j < childnodes.length; j++) {
 			// get the attribute and try to convert it to either Integer, Boolean or leave it alone (String)
 			String name = childnodes[j].getString(IImportExportConstants.IE_NODE_NAME), 

@@ -17,8 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -88,7 +88,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		if(count > 0) {
 			for (int i = 0; i < count; i++) {
 				String text = labels[i];
-				if(text != null && !text.trim().equals(IInternalDebugUIConstants.EMPTY_STRING)) {
+				if(text != null && !text.trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 					buffer.append(text+TAB);
 				}
 			}

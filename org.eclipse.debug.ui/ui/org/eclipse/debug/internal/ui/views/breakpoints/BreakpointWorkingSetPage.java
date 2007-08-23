@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.importexport.breakpoints.EmbeddedBreakpointsViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
@@ -186,7 +186,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 
 		if (newText.equals(newText.trim()) == false)
 			errorMessage = DebugUIViewsMessages.BreakpointWorkingSetPage_4; 
-		if (newText.equals(IInternalDebugUIConstants.EMPTY_STRING)) {
+		if (newText.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 			if (fFirstCheck) {
 				setPageComplete(false);
 				fFirstCheck= false;

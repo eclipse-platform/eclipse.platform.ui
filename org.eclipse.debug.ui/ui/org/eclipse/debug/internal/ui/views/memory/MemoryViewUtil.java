@@ -24,8 +24,8 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -150,7 +150,7 @@ public class MemoryViewUtil {
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 //				 open error for the exception
-				String detail = IInternalDebugUIConstants.EMPTY_STRING;
+				String detail = IInternalDebugCoreConstants.EMPTY_STRING;
 				if (e != null)
 					detail = e.getMessage();
 				

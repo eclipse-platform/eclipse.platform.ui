@@ -14,8 +14,8 @@ package org.eclipse.debug.internal.ui.views.memory;
 
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -138,7 +138,7 @@ public class MonitorMemoryBlockDialog extends TrayDialog implements ModifyListen
 			String lengthText = lengthInput.getText();
 			String input = expressionInput.getText();
 			
-			if (input == null || input.equals(IInternalDebugUIConstants.EMPTY_STRING) || lengthText == null || lengthText.equals(IInternalDebugUIConstants.EMPTY_STRING))
+			if (input == null || input.equals(IInternalDebugCoreConstants.EMPTY_STRING) || lengthText == null || lengthText.equals(IInternalDebugCoreConstants.EMPTY_STRING))
 			{
 				getButton(IDialogConstants.OK_ID).setEnabled(false);	
 			}

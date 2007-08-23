@@ -34,6 +34,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.contexts.DebugModelContextBindingManager;
@@ -1024,7 +1025,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                 DebugContextViewBindings binding = (DebugContextViewBindings) bindings.next();
                 binding.saveBindings(document, root, done);
             }
-            String prefValue = IInternalDebugUIConstants.EMPTY_STRING;
+            String prefValue = IInternalDebugCoreConstants.EMPTY_STRING;
             if (root.hasChildNodes()) {
             	prefValue = DebugPlugin.serializeDocument(document);
             }

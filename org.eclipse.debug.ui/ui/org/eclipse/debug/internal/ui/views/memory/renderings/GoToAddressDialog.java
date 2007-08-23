@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.util.Vector;
 
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
@@ -123,7 +123,7 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener{
 
 		String input = expressionInput.getText();
 	
-		if (input == null || input.equals(IInternalDebugUIConstants.EMPTY_STRING))
+		if (input == null || input.equals(IInternalDebugCoreConstants.EMPTY_STRING))
 		{
 			getButton(IDialogConstants.OK_ID).setEnabled(false);	
 		}

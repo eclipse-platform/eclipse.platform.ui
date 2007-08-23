@@ -139,12 +139,6 @@ public interface IInternalDebugUIConstants {
     public static final String PREF_LAUNCH_PERSPECTIVES = IDebugUIConstants.PLUGIN_ID + ".PREF_LAUNCH_PERSPECTIVES"; //$NON-NLS-1$
     
     /**
-     * Represents the empty string
-     * @since 3.3
-     */
-    public static final String EMPTY_STRING = ""; //$NON-NLS-1$
-    
-    /**
      * Preference for enabling/disabling launch configuration filtering based on project accessibility status
      * 
      * @since 3.2

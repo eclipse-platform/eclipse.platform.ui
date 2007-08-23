@@ -39,6 +39,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.model.IWatchpoint;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -372,7 +373,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e);
 		}
-		return IInternalDebugUIConstants.EMPTY_STRING;
+		return IInternalDebugCoreConstants.EMPTY_STRING;
 	}
 	
 	protected String getMarkerImageKey(IMarker marker) {
