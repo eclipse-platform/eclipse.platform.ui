@@ -59,7 +59,6 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 		fIdentifier = identifier;
 		ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fIdentifier);
 		if(group != null) {
-			setImageDescriptor(group.getImageDescriptor());
 			String lbl = group.getLabel();
 			String actionLabel = MessageFormat.format(ActionMessages.OpenLaunchDialogAction_1, new String[] {lbl});
 			setText(DebugUIPlugin.adjustDBCSAccelerator(actionLabel));
