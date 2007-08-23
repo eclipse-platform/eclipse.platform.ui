@@ -16,11 +16,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -1243,27 +1242,30 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 													 LaunchConfigurationsMessages.LaunchConfigurationDialog_Name_required_for_launch_configuration_11, 
 													 null));
 			}
-	
-			// See if name contains any 'illegal' characters
-			IStatus status = ResourcesPlugin.getWorkspace().validateName(currentName, IResource.FILE);
-			if (status.getCode() != IStatus.OK) {
-				throw new CoreException(new Status(IStatus.ERROR,
-													 DebugUIPlugin.getUniqueIdentifier(),
-													 0,
-													 status.getMessage(),
-													 null));
+			if(Platform.OS_WIN32.equals(Platform.getOS())) {
+				String[] badnames = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+						"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+						"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+				for(int i = 0; i < badnames.length; i++) {
+					if(currentName.equals(badnames[i])) {
+						throw new CoreException(new Status(IStatus.ERROR,
+								DebugUIPlugin.getUniqueIdentifier(),
+								0,
+								MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_19, new String[] { currentName }), 
+								null));
+					}
+				}
 			}
-			
 			// See if name contains any characters that we deem illegal.
 			// '@' and '&' are disallowed because they corrupt menu items.
-			char[] disallowedChars = new char[] { '@', '&' };
+			char[] disallowedChars = new char[] { '@', '&','\\', '/', ':', '*', '?', '"', '<', '>', '|', '\0' };
 			for (int i = 0; i < disallowedChars.length; i++) {
 				char c = disallowedChars[i];
 				if (currentName.indexOf(c) > -1) {
 					throw new CoreException(new Status(IStatus.ERROR,
 														DebugUIPlugin.getUniqueIdentifier(),
 														0,
-														MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_0, new String[] { new String(new char[] {c}), currentName }), 
+														MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_0, new String[] { new String(new char[] {c}) }), 
 														null));
 				}
 			}
