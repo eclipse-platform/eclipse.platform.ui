@@ -141,8 +141,7 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	 */
 	public void saveSettings(IMemento memento) {
 
-		memento.putString(TAG_SELECTED_SEVERITIES, String
-				.valueOf(selectedSeverities));
+		memento.putInteger(TAG_SELECTED_SEVERITIES, selectedSeverities);
 		memento.putString(TAG_CONTAINS_MODIFIER, containsModifier);
 		memento.putString(TAG_CONTAINS_TEXT, containsText);
 

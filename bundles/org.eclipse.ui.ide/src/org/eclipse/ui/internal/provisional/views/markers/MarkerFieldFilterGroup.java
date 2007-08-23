@@ -404,8 +404,7 @@ class MarkerFieldFilterGroup {
 		IMemento[] children = memento.getChildren(TAG_FIELD_FILTER_ENTRY);
 		for (int i = 0; i < children.length; i++) {
 			IMemento childMemento = children[i];
-			String id = childMemento
-					.getString(MarkerSupportConstants.ATTRIBUTE_ID);
+			String id = childMemento.getID();
 			if (filterMap.containsKey(id)) {
 				((MarkerFieldFilter) filterMap.get(id))
 						.loadSettings(childMemento);
@@ -416,7 +415,9 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Set whether or not the receiver is enabled.
-	 * @param enabled The enabled to set.
+	 * 
+	 * @param enabled
+	 *            The enabled to set.
 	 */
 	void setEnabled(boolean enabled) {
 		this.enabled = enabled;

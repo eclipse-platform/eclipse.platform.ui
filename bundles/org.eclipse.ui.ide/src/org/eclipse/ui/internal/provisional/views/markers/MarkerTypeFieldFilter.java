@@ -105,7 +105,8 @@ public class MarkerTypeFieldFilter extends MarkerFieldFilter {
 		while (nextSpace > 0) {
 			String typeId = types.substring(start, nextSpace);
 			start = nextSpace + 1;
-
+			nextSpace = types.indexOf(TAG_TYPES_DELIMITER, start);
+			
 			if (allTypes.containsKey(typeId))
 				selectedTypes.add(allTypes.get(typeId));
 		}
@@ -119,7 +120,7 @@ public class MarkerTypeFieldFilter extends MarkerFieldFilter {
 	 */
 	public void setAndSelectAllTypes(Collection markerTypes) {
 		allTypes = new HashMap();
-		selectedTypes = markerTypes;
+		selectedTypes = new HashSet(markerTypes);
 		Iterator allIterator = markerTypes.iterator();
 		while (allIterator.hasNext()) {
 			MarkerType next = (MarkerType) allIterator.next();

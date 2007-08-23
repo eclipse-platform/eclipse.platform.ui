@@ -656,7 +656,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 		if (memento != null) {
 			generator = MarkerSupportRegistry.getInstance().getGenerator(
-					memento.getString(MarkerSupportConstants.ATTRIBUTE_ID));
+					memento.getID());
 		}
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
@@ -677,9 +677,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		IMemento generator = memento.createChild(TAG_GENERATOR);
-		generator.putString(MarkerSupportConstants.ATTRIBUTE_ID, generator
-				.getID());
+		memento.createChild(TAG_GENERATOR, builder.generator.getId());
 	}
 
 	/**
