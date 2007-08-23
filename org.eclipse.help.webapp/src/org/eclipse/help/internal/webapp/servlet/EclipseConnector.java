@@ -52,8 +52,12 @@ public class EclipseConnector {
 	private static final IFilter errorPageFilters[] = new IFilter[]{
 		new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter() };
 
-	public EclipseConnector(ServletContext context) {
-	}
+	private ServletContext context;
+	 
+ 	public EclipseConnector(ServletContext context) {
+		this.context= context;
+ 	}
+
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -168,7 +172,17 @@ public class EclipseConnector {
 			HttpServletResponse resp, String url) throws Exception {
 		URLConnection con;
 		con = openConnection(url, req, resp);
-		resp.setContentType(con.getContentType());
+		String contentType;
+		// use the context to get the mime type where possible
+		String pathInfo = req.getPathInfo();
+		String mimeType = context.getMimeType(pathInfo);
+		if (mimeType != null) {
+			contentType = mimeType;
+		} else {
+			contentType = con.getContentType();
+		}
+
+		resp.setContentType(contentType);
 
 		long maxAge = 0;
 		try {
