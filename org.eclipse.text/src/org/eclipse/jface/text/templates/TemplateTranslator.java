@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * arguments := (argument ',')* argument. <br />
  * argument := qualifiedname | argumenttext. <br />
  * qualifiedname := (identifier '.')* identifier. <br />
- * argumenttext := ''' ((character - ''') || (''' '''))* '''. <br />
+ * argumenttext := "'" (character - "'" | "'" "'")* "'". <br />
  * </p>
  * <p>
  * Clients may only replace the <code>createVariable</code> method of this class.
