@@ -28,7 +28,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
@@ -45,8 +47,10 @@ public class EclipseConnector {
 			+ "</head>\n" //$NON-NLS-1$
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
-	private static final IFilter filters[] = new IFilter[]{
-			new HighlightFilter(), new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter(), new BreadcrumbsFilter() };
+	private static final IFilter allFilters[] = new IFilter[]{
+		new HighlightFilter(), new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter(), new BreadcrumbsFilter() };
+	private static final IFilter errorPageFilters[] = new IFilter[]{
+		new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter() };
 
 	public EclipseConnector(ServletContext context) {
 	}
@@ -88,33 +92,35 @@ public class EclipseConnector {
 				url = "help:" + url; //$NON-NLS-1$
 			}
 
-			URLConnection con = openConnection(url, req, resp);
-			resp.setContentType(con.getContentType());
-
-			long maxAge = 0;
-			try {
-				// getExpiration() throws NullPointerException when URL is
-				// jar:file:...
-				long expiration = con.getExpiration();
-				maxAge = (expiration - System.currentTimeMillis()) / 1000;
-				if (maxAge < 0)
-					maxAge = 0;
-			} catch (Exception e) {
-			}
-			resp.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
+			URLConnection con = createConnection(req, resp, url);
 
 			InputStream is;
+			boolean pageNotFound = false;
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
 			    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			    pageNotFound = true;
 				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
 						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
-					String error = errorPageBegin
-							+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
-							+ errorPageEnd;
-					is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
+					// Try to load the error page if defined
+					Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+
+					String errorPage = prefs.getString("page_not_found"); //$NON-NLS-1$
+					if (errorPage != null && errorPage.length() > 0) {
+						con = createConnection(req, resp, "help:" + errorPage); //$NON-NLS-1$
+						try {
+						    is = con.getInputStream();
+						} catch (IOException ioe2) {
+							// Cannot open error page
+							return;							
+						}
+					} else {
+						// Error page not defined
+						return;
+					}
 				} else {
+					// Non HTML file
 					return;
 				}
 			}
@@ -143,6 +149,7 @@ public class EclipseConnector {
 			}
 
 			OutputStream out = resp.getOutputStream();
+			IFilter filters[] = pageNotFound ? errorPageFilters : allFilters;
 			for (int i = 0; i < filters.length; i++) {
 				out = filters[i].filter(req, out);
 			}
@@ -155,6 +162,26 @@ public class EclipseConnector {
 			String msg = "Error processing help request " + getURL(req); //$NON-NLS-1$
 			HelpWebappPlugin.logError(msg, e);
 		}
+	}
+
+	private URLConnection createConnection(HttpServletRequest req,
+			HttpServletResponse resp, String url) throws Exception {
+		URLConnection con;
+		con = openConnection(url, req, resp);
+		resp.setContentType(con.getContentType());
+
+		long maxAge = 0;
+		try {
+			// getExpiration() throws NullPointerException when URL is
+			// jar:file:...
+			long expiration = con.getExpiration();
+			maxAge = (expiration - System.currentTimeMillis()) / 1000;
+			if (maxAge < 0)
+				maxAge = 0;
+		} catch (Exception e) {
+		}
+		resp.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
+		return con;
 	}
 
 	/**
