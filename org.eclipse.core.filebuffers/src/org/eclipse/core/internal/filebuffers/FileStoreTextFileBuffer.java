@@ -147,10 +147,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	public IAnnotationModel getAnnotationModel() {
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
-				IPath path= getLocation();
-				if (path == null)
-					path= new Path(fFileStore.getName());
-				fAnnotationModel= fManager.createAnnotationModel(getLocation(), LocationKind.LOCATION);
+				fAnnotationModel= fManager.createAnnotationModel(getLocationOrName(), LocationKind.LOCATION);
 				if (fAnnotationModel != null)
 					fAnnotationModel.connect(fDocument);
 			}
@@ -242,7 +239,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		fStatus= null;
 
 		try {
-			original= fManager.createEmptyDocument(getLocation(), LocationKind.LOCATION);
+			original= fManager.createEmptyDocument(getLocationOrName(), LocationKind.LOCATION);
 			cacheEncodingState(monitor);
 			setDocumentContent(original, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
@@ -355,11 +352,11 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 */
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {
 		try {
-			fDocument= fManager.createEmptyDocument(getLocation(), LocationKind.LOCATION);
+			fDocument= fManager.createEmptyDocument(getLocationOrName(), LocationKind.LOCATION);
 			cacheEncodingState(monitor);
 			setDocumentContent(fDocument, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
-			fDocument= fManager.createEmptyDocument(getLocation(), LocationKind.LOCATION);
+			fDocument= fManager.createEmptyDocument(getLocationOrName(), LocationKind.LOCATION);
 			fStatus= x.getStatus();
 		}
 	}
@@ -624,5 +621,19 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			Status status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, 274 /* IResourceStatus.OUT_OF_SYNC_LOCAL */, FileBuffersMessages.FileBuffer_error_outOfSync, null);
 			throw new CoreException(status);
 		}
+	}
+
+	/**
+	 * Returns the location if it is <code>null</code> or
+	 * the name as <code>IPath</code> otherwise.
+	 * 
+	 * @return a non-null <code>IPath</code>
+	 * @since 3.3.1
+	 */
+	private IPath getLocationOrName() {
+		IPath path= getLocation();
+		if (path == null)
+			path= new Path(fFileStore.getName());
+		return path;
 	}
 }

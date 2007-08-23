@@ -20,6 +20,7 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IProject;
 
@@ -1165,4 +1166,25 @@ public abstract class FileBufferFunctions extends TestCase {
 			fManager.disconnect(fPath, LocationKind.NORMALIZE, null);
 		}
 	}
+	
+	/*
+	 * Tests isSynchronized.
+	 */
+	public void testGetFileStoreAnnotationModel() throws Exception {
+		IFileStore fileStore= EFS.getNullFileSystem().getStore(new Path("/dev/null"));
+		assertNotNull(fileStore);
+		fManager.connectFileStore(fileStore, null);
+		try {
+			ITextFileBuffer fileBuffer= fManager.getFileStoreTextFileBuffer(fileStore);
+			IAnnotationModel model= fileBuffer.getAnnotationModel();
+			Class clazz= getAnnotationModelClass();
+			if (clazz != null)
+				assertTrue(clazz.isInstance(model));
+			else
+				assertNotNull(model);
+		} finally {
+			fManager.disconnectFileStore(fileStore, null);
+		}
+	}
+	
 }
