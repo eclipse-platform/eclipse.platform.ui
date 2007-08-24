@@ -23,7 +23,6 @@ import java.util.Map;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
@@ -32,7 +31,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -49,7 +47,7 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 	private static final String DECORATIONS_FG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.decorations"; //$NON-NLS-1$
 	private static final String COUNTER_FG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.counter"; //$NON-NLS-1$
 
-	private static final String HIGHLIGHT_BG_COLOR_NAME= "org.eclipse.search.ui.ColoredLabels.highlight"; //$NON-NLS-1$
+	private static final String HIGHLIGHT_BG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.match_highlight"; //$NON-NLS-1$
 
 	public static final Style QUALIFIER_STYLE= new Style(QUALIFIER_FG_COLOR_NAME, null); 
 	public static final Style COUNTER_STYLE= new Style(COUNTER_FG_COLOR_NAME, null); 
@@ -63,9 +61,6 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 	
 	public ColoredViewersManager() {
 		fManagedViewers= new HashMap();
-		fColorRegisty= JFaceResources.getColorRegistry();
-		// FIXME use configurable color
-		fColorRegisty.put(HIGHLIGHT_BG_COLOR_NAME, new RGB(206, 204, 247));
 	}
 	
 	public void installColoredLabels(StructuredViewer viewer) {
@@ -101,7 +96,7 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (property.equals(QUALIFIER_FG_COLOR_NAME) || property.equals(COUNTER_FG_COLOR_NAME) || property.equals(DECORATIONS_FG_COLOR_NAME)
-				|| property.equals(SearchPreferencePage.COLORED_LABELS)) {
+				|| property.equals(HIGHLIGHT_BG_COLOR_NAME) || property.equals(SearchPreferencePage.COLORED_LABELS)) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					refreshAllViewers();
