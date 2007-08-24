@@ -1023,9 +1023,16 @@
        </factory>
        <factory
              adaptableType="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-             class="org.eclipse.ui.internal.provisional.views.markers.MarkerShowInAdapter">
+             class="org.eclipse.ui.internal.provisional.views.markers.MarkerHelpAdapterFactory">
           <adapter
                 type="org.eclipse.ui.part.IShowInSource">
+          </adapter>
+       </factory>
+       <factory
+             adaptableType="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+             class="org.eclipse.ui.internal.provisional.views.markers.MarkerHelpAdapterFactory">
+          <adapter
+                type="org.eclipse.help.IContextProvider">
           </adapter>
        </factory>
    </extension>

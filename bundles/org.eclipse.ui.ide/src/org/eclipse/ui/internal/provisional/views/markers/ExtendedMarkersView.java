@@ -27,6 +27,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -45,6 +47,8 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -63,6 +67,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -281,6 +286,25 @@ public class ExtendedMarkersView extends ViewPart {
 			public void treeExpanded(TreeEvent e) {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
+		});
+
+		// Set help on the view itself
+		viewer.getControl().addHelpListener(new HelpListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
+			 */
+			public void helpRequested(HelpEvent e) {
+				Object provider = getAdapter(IContextProvider.class);
+				if (provider == null)
+					return;
+
+				IContext context = ((IContextProvider) provider)
+						.getContext(viewer.getControl());
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
+			}
+
 		});
 
 		registerContextMenu();
