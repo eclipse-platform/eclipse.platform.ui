@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -24,8 +25,6 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
-
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Adapts a Console's document to the viewer StyledText widget. Allows proper line
@@ -320,11 +319,13 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		// work around to
 		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4994840
 		// see bug 84641
-		if (string.endsWith("\r")) { //$NON-NLS-1$
-			int len = string.length();
-			int index = len >= 2 ? len - 2 : 0;
-			string = string.substring(0, index);
+		int offset = string.length() - 1;
+		while (string.charAt(offset) == '\r') {
+			offset--;
 			count++;
+		}
+		if (offset < (string.length() - 1)) {
+			string = string.substring(0, offset);
 		}
 		
 		int lastIndex = 0;
