@@ -34,6 +34,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -76,6 +78,13 @@ class PropertySheetViewer extends Viewer {
     // SWT widgets
     private Tree tree;
 
+    /**
+     * Maintain a map from the PropertySheet entry to its
+     * corresponding TreeItem. This is used in 'findItem' to
+     * greatly increase the performance.
+     */
+    private HashMap entryToItemMap = new HashMap();
+    
     private TreeEditor treeEditor;
 
     private static String[] columnLabels = {
@@ -356,6 +365,19 @@ class PropertySheetViewer extends Viewer {
 
         // set the user data field
         item.setData(node);
+        
+        // Cache the entry <-> tree item relationship 
+        entryToItemMap.put(node, item);
+        
+        // Always ensure that if the tree item goes away that it's
+        // removed from the cache
+        item.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				Object possibleEntry = e.widget.getData();
+				if (possibleEntry != null)
+					entryToItemMap.remove(possibleEntry);
+			}
+        });        
 
         // add our listener
         if (node instanceof IPropertySheetEntry) {
@@ -433,6 +455,11 @@ class PropertySheetViewer extends Viewer {
      * there isn't one.
      */
     private TreeItem findItem(IPropertySheetEntry entry, TreeItem item) {
+    	// If we can find the TreeItem in the cache, just return it
+    	Object mapItem = entryToItemMap.get(entry);
+    	if (mapItem != null && mapItem instanceof TreeItem)
+    		return (TreeItem) mapItem;
+    	
         // compare with current item
         if (entry == item.getData()) {
 			return item;
@@ -886,6 +913,10 @@ class PropertySheetViewer extends Viewer {
                     .removePropertySheetEntryListener(entryListener);
 		}
         item.setData(null);
+        
+        // We explicitly remove the entry from the map since it's data has been null'd
+        entryToItemMap.remove(data);
+
         item.dispose();
     }
 
@@ -1142,6 +1173,9 @@ class PropertySheetViewer extends Viewer {
             TreeItem item) {
         // ensure that backpointer is correct
         item.setData(category);
+        
+        // Update the map accordingly
+        entryToItemMap.put(category, item);
 
         // Update the name and value columns
         item.setText(0, category.getCategoryName());
@@ -1292,6 +1326,9 @@ class PropertySheetViewer extends Viewer {
     private void updateEntry(IPropertySheetEntry entry, TreeItem item) {
         // ensure that backpointer is correct
         item.setData(entry);
+        
+        // update the map accordingly
+        entryToItemMap.put(entry, item);
 
         // update the name and value columns
         item.setText(0, entry.getDisplayName());
