@@ -2766,7 +2766,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            memento to which the history will be added
 		 */
 		public void saveHistory(IMemento memento) {
-			this.selectionHistory.save(memento);
+			if (this.selectionHistory != null)
+				this.selectionHistory.save(memento);
 		}
 
 		/**
