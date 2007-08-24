@@ -10,14 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.dialogs.MessageDialog;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -38,6 +32,9 @@ import org.eclipse.jface.text.link.LinkedModeUI;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.link.ProposalPosition;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -148,21 +145,23 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 		IDocument document= viewer.getDocument();
 		try {
 			fContext.setReadOnly(false);
+			int start;
 			TemplateBuffer templateBuffer;
-			try {
-				templateBuffer= fContext.evaluate(fTemplate);
-			} catch (TemplateException e1) {
-				fSelectedRegion= fRegion;
-				return;
+			{
+				try {
+					templateBuffer= fContext.evaluate(fTemplate);
+				} catch (TemplateException e1) {
+					fSelectedRegion= fRegion;
+					return;
+				}
+
+				start= getReplaceOffset();
+				int end= Math.max(getReplaceEndOffset(), offset);
+
+				// insert template string
+				String templateString= templateBuffer.getString();
+				document.replace(start, end - start, templateString);
 			}
-
-			int start= getReplaceOffset();
-			int end= Math.max(getReplaceEndOffset(), offset);
-
-			// insert template string
-			String templateString= templateBuffer.getString();
-			document.replace(start, end - start, templateString);
-
 
 			// translate positions
 			LinkedModeModel model= new LinkedModeModel();
@@ -179,18 +178,26 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 				int[] offsets= variable.getOffsets();
 				int length= variable.getLength();
 
-				String[] values= variable.getValues();
-				ICompletionProposal[] proposals= new ICompletionProposal[values.length];
-				for (int j= 0; j < values.length; j++) {
-					ensurePositionCategoryInstalled(document, model);
-					Position pos= new Position(offsets[0] + start, length);
-					document.addPosition(getCategory(), pos);
-					proposals[j]= new PositionBasedCompletionProposal(values[j], pos, length);
+				LinkedPosition first;
+				{
+					String[] values= variable.getValues();
+					ICompletionProposal[] proposals= new ICompletionProposal[values.length];
+					for (int j= 0; j < values.length; j++) {
+						ensurePositionCategoryInstalled(document, model);
+						Position pos= new Position(offsets[0] + start, length);
+						document.addPosition(getCategory(), pos);
+						proposals[j]= new PositionBasedCompletionProposal(values[j], pos, length);
+					}
+					
+					if (proposals.length > 1)
+						first= new ProposalPosition(document, offsets[0] + start, length, proposals);
+					else
+						first= new LinkedPosition(document, offsets[0] + start, length);
 				}
 
 				for (int j= 0; j != offsets.length; j++)
-					if (j == 0 && proposals.length > 1)
-						group.addPosition(new ProposalPosition(document, offsets[j] + start, length, proposals));
+					if (j == 0)
+						group.addPosition(first);
 					else
 						group.addPosition(new LinkedPosition(document, offsets[j] + start, length));
 
