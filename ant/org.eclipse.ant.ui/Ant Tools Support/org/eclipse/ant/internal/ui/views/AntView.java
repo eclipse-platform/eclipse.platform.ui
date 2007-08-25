@@ -529,6 +529,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		updateProjectActions();
+		projectViewer.refresh();
 	}
 
 	/* (non-Javadoc)

@@ -64,7 +64,7 @@ public class AntViewContentProvider extends AntModelContentProvider {
 	}
 	
 	public void removeAll() {
-		fTreeViewer.remove(fElements.toArray());
+		fTreeViewer.remove(fTreeViewer.getInput(), fElements.toArray());
 		fElements.clear();
 	}
 	
