@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,7 +57,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -475,8 +474,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	private void setProjectViewerSelectionAfterDeletion() {
 		Object[] children= getProjects();
 		if (children.length > 0) {
-			ViewerSorter sorter= projectViewer.getSorter();
-			sorter.sort(projectViewer, children);
+			ViewerComparator comparator= projectViewer.getComparator();
+			comparator.sort(projectViewer, children);
 			IStructuredSelection selection= new StructuredSelection(children[0]);
 			projectViewer.setSelection(selection);
 			handleSelectionChanged(selection);
